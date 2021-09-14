@@ -42,32 +42,32 @@ typedef struct
 
 ExtAudioFileRef recordingFile;
 
-static void StretchSamples(int16_t *outBuf, const int16_t *inBuf,
-                           int outFrames, int inFrames, int channels)
-{
-    int frame;
-    float ratio = outFrames / (float)inFrames;
-    
-    for (frame = 0; frame < outFrames; frame++) {
-        float iFrame = frame / ratio, iFrameF = floorf(iFrame);
-        float lerp = iFrame - iFrameF;
-        int iFrameI = iFrameF;
-        int ch;
-        
-        for (ch = 0; ch < channels; ch++) {
-            int a, b, c;
-            
-            a = inBuf[(iFrameI+0)*channels+ch];
-            b = inBuf[(iFrameI+1)*channels+ch];
-            
-            c = a + lerp*(b-a);
-            c = MAX(c, SHRT_MIN);
-            c = MIN(c, SHRT_MAX);
-            
-            outBuf[frame*channels+ch] = c;
-        }
-    }
-}
+//static void StretchSamples(int16_t *outBuf, const int16_t *inBuf,
+//                           int outFrames, int inFrames, int channels)
+//{
+//    int frame;
+//    float ratio = outFrames / (float)inFrames;
+//    
+//    for (frame = 0; frame < outFrames; frame++) {
+//        float iFrame = frame / ratio, iFrameF = floorf(iFrame);
+//        float lerp = iFrame - iFrameF;
+//        int iFrameI = iFrameF;
+//        int ch;
+//        
+//        for (ch = 0; ch < channels; ch++) {
+//            int a, b, c;
+//            
+//            a = inBuf[(iFrameI+0)*channels+ch];
+//            b = inBuf[(iFrameI+1)*channels+ch];
+//            
+//            c = a + lerp*(b-a);
+//            c = MAX(c, SHRT_MIN);
+//            c = MIN(c, SHRT_MAX);
+//            
+//            outBuf[frame*channels+ch] = c;
+//        }
+//    }
+//}
 # include <mach/mach_time.h>
 
 OSStatus RenderCallback(void                       *in,
@@ -92,16 +92,9 @@ OSStatus RenderCallback(void                       *in,
     void *head = TPCircularBufferTail(context->buffer, &availableBytes);
     int bytesRequested = inNumberFrames * context->bytesPerSample * context->channelCount;
     availableBytes = MIN(availableBytes, bytesRequested);
-    int leftover = bytesRequested - availableBytes;
     char *outBuffer = ioData->mBuffers[0].mData;
 
-    if (leftover > 0 && context->bytesPerSample==2) {
-        // time stretch
-        // FIXME this works a lot better with a larger buffer
-        int framesRequested = inNumberFrames;
-        int framesAvailable = availableBytes / (context->bytesPerSample * context->channelCount);
-        StretchSamples((int16_t*)outBuffer, head, framesRequested, framesAvailable, context->channelCount);
-    } else if (availableBytes) {
+    if (availableBytes) {
         memcpy(outBuffer, head, availableBytes);
     } else {
         memset(outBuffer, 0, bytesRequested);
@@ -239,7 +232,7 @@ OSStatus RenderCallback(void                       *in,
     for (int i = 0; i < bufferCount; ++i)
     {
 		TPCircularBufferClear(&([gameCore ringBufferAtIndex:i]->buffer));
-		_contexts[i] = (OEGameAudioContext){&([gameCore ringBufferAtIndex:i]->buffer), [gameCore channelCountForBuffer:i], [gameCore audioBitDepth]/8};
+		_contexts[i] = (OEGameAudioContext){&([gameCore ringBufferAtIndex:i]->buffer), (int)[gameCore channelCountForBuffer:i], (int)([gameCore audioBitDepth] /8)};
         
         //Create the converter node
         err = AUGraphAddNode(mGraph, (const AudioComponentDescription *)&desc, &mConverterNode);
@@ -283,7 +276,7 @@ OSStatus RenderCallback(void                       *in,
 
         err = AUGraphConnectNodeInput(mGraph, mConverterNode, 0, mMixerNode, i);
         if(err) { ELOG(@"Couldn't connect the converter to the mixer"); }
-        else { ELOG(@"Conncted the converter to the mixer"); }
+        else { ELOG(@"Connected the converter to the mixer"); }
     }
     // connect the player to the output unit (stream format will propagate)
          
@@ -291,7 +284,7 @@ OSStatus RenderCallback(void                       *in,
     if(err) {
         ELOG(@"Could not connect the input of the output");
     } {
-        DLOG(@"Conncted input of the output");
+        DLOG(@"Connected input of the output");
     }
     
     //AudioUnitSetParameter(mOutputUnit, kAudioUnitParameterUnit_LinearGain, kAudioUnitScope_Global, 0, [[[GameDocumentController sharedDocumentController] preferenceController] volume] ,0);

@@ -16,6 +16,7 @@ import QuickTableViewController
 import Reachability
 import RealmSwift
 import UIKit
+import RxSwift
 
 class PVQuickTableViewController: QuickTableViewController {
     open override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -31,12 +32,32 @@ class PVQuickTableViewController: QuickTableViewController {
 
 final class PVSettingsViewController: PVQuickTableViewController {
     // Check to see if we are connected to WiFi. Cannot continue otherwise.
-    let reachability: Reachability = Reachability()!
+    let reachability: Reachability = try! Reachability()
+    var conflictsController: ConflictsController!
+    private var numberOfConflicts = 0
+    private let disposeBag = DisposeBag()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        splitViewController?.title = "Settings"
         generateTableViewViewModels()
         tableView.reloadData()
+
+        #if os(tvOS)
+            tableView.backgroundColor = .black
+            tableView.rowHeight = 80
+            splitViewController?.view.backgroundColor = .black
+            tableView.sectionHeaderHeight = 0
+            tableView.sectionFooterHeight = 0
+        #endif
+
+        conflictsController.conflicts
+            .bind(onNext: {
+                self.numberOfConflicts = $0.count
+                self.generateTableViewViewModels()
+                self.tableView.reloadData()
+            })
+            .disposed(by: disposeBag)
 
         #if os(iOS)
             navigationItem.leftBarButtonItem?.tintColor = Theme.currentTheme.barButtonItemTint
@@ -46,6 +67,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        splitViewController?.title = "Settings"
         do {
             try reachability.startNotifier()
         } catch {
@@ -76,9 +98,9 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
         // -- Core Options
         let realm = try! Realm()
-        let cores: [NavigationRow<SystemSettingsCell>] = realm.objects(PVCore.self).compactMap { pvcore in
+        let cores: [NavigationRow<SystemSettingsCell>] = realm.objects(PVCore.self).sorted(byKeyPath: "projectName").compactMap { pvcore in
             guard let coreClass = NSClassFromString(pvcore.principleClass) as? CoreOptional.Type else {
-                DLOG("Class <\(pvcore.principleClass)> does not impliment CoreOptional")
+                VLOG("Class <\(pvcore.principleClass)> does not implement CoreOptional")
                 return nil
             }
 
@@ -92,12 +114,33 @@ final class PVSettingsViewController: PVQuickTableViewController {
         let coreOptionsSection = Section(title: "Core Options", rows: cores)
 
         // -- Section : Saves
+        #if os(iOS)
         let saveRows: [TableRow] = [
             PVSettingsSwitchRow(text: "Auto Save", key: \PVSettingsModel.autoSave),
             PVSettingsSwitchRow(text: "Timed Auto Saves", key: \PVSettingsModel.timedAutoSaves),
             PVSettingsSwitchRow(text: "Auto Load Saves", key: \PVSettingsModel.autoLoadSaves),
-            PVSettingsSwitchRow(text: "Ask to Load Saves", key: \PVSettingsModel.askToAutoLoad),
+            PVSettingsSwitchRow(text: "Ask to Load Saves", key: \PVSettingsModel.askToAutoLoad)
         ]
+        #else
+        let saveRows: [TableRow] = [
+            PVSettingsSwitchRow(text: "Auto Save", key: \PVSettingsModel.autoSave,
+                    customization: { cell, _ in
+                    cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+                    }),
+            PVSettingsSwitchRow(text: "Timed Auto Saves", key: \PVSettingsModel.timedAutoSaves,
+                    customization: { cell, _ in
+                    cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+                    }),
+            PVSettingsSwitchRow(text: "Auto Load Saves", key: \PVSettingsModel.autoLoadSaves,
+                    customization: { cell, _ in
+                    cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+                    }),
+            PVSettingsSwitchRow(text: "Ask to Load Saves", key: \PVSettingsModel.askToAutoLoad,
+                    customization: { cell, _ in
+                    cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+                    })
+        ]
+        #endif
 
         let savesSection = Section(title: "Saves", rows: saveRows)
 
@@ -106,51 +149,87 @@ final class PVSettingsViewController: PVQuickTableViewController {
         #if os(iOS)
             avRows.append(contentsOf: [PVSettingsSwitchRow(text: "Volume HUD", key: \PVSettingsModel.volumeHUD)])
             avRows.append(PVSettingsSliderRow(text: "Volume", detailText: nil, valueLimits: (min: 0.0, max: 1.0), key: \PVSettingsModel.volume))
-        #endif
-
         avRows.append(contentsOf: [
             PVSettingsSwitchRow(text: "Native Scale", key: \PVSettingsModel.nativeScaleEnabled),
+            PVSettingsSwitchRow(text: "Integer Scaling", key: \PVSettingsModel.integerScaleEnabled),
             PVSettingsSwitchRow(text: "CRT Filter", key: \PVSettingsModel.crtFilterEnabled),
             PVSettingsSwitchRow(text: "Image Smoothing", key: \PVSettingsModel.imageSmoothing),
-            PVSettingsSwitchRow(text: "FPS Counter", key: \PVSettingsModel.showFPSCount),
+            PVSettingsSwitchRow(text: "FPS Counter", key: \PVSettingsModel.showFPSCount)
         ])
+        #else
+        avRows.append(contentsOf: [
+            PVSettingsSwitchRow(text: "Native Scale", key: \PVSettingsModel.nativeScaleEnabled,
+                customization: { cell, _ in
+                cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+                }),
+            PVSettingsSwitchRow(text: "Integer Scaling", key: \PVSettingsModel.integerScaleEnabled,
+                customization: { cell, _ in
+                cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+                }),
+            PVSettingsSwitchRow(text: "CRT Filter", key: \PVSettingsModel.crtFilterEnabled,
+                customization: { cell, _ in
+                cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+                }),
+            PVSettingsSwitchRow(text: "Image Smoothing", key: \PVSettingsModel.imageSmoothing,
+                customization: { cell, _ in
+                cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+                }),
+            PVSettingsSwitchRow(text: "FPS Counter", key: \PVSettingsModel.showFPSCount,
+                customization: { cell, _ in
+                cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+                })
+        ]
+        )
+        #endif
 
-        let avSection = Section(title: "Audio/Video", rows: avRows)
+        let avSection = Section(title: "Video Options", rows: avRows)
 
         // -- Section : Controler
 
         var controllerRows = [TableRow]()
 
         #if os(iOS)
-            controllerRows.append(PVSettingsSliderRow(text: "Opacity", detailText: nil, valueLimits: (min: 0.2, max: 1.0), key: \PVSettingsModel.controllerOpacity))
+            controllerRows.append(PVSettingsSliderRow(text: "Opacity", detailText: nil, valueLimits: (min: 0.5, max: 1.0), key: \PVSettingsModel.controllerOpacity))
 
             controllerRows.append(contentsOf: [
                 PVSettingsSwitchRow(text: "Button Colors", key: \PVSettingsModel.buttonTints),
                 PVSettingsSwitchRow(text: "All-Right Shoulders", detailText: .subtitle("Moves L1, L2 & Z to right side"), key: \PVSettingsModel.allRightShoulders),
                 PVSettingsSwitchRow(text: "Haptic Feedback", key: \PVSettingsModel.buttonVibration),
-            ])
+                PVSettingsSwitchRow(text: "Enable 8BitDo M30 Mapping", detailText: .subtitle("For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X and the PC Engine."), key: \PVSettingsModel.use8BitdoM30)
+            ]
+
+        )
         #endif
         controllerRows.append(contentsOf: [
             SegueNavigationRow(text: "Controllers", detailText: .subtitle("Assign players"), viewController: self, segue: "controllersSegue"),
             SegueNavigationRow(text: "iCade Controller", detailText: .subtitle(PVSettingsModel.shared.myiCadeControllerSetting.description), viewController: self, segue: "iCadeSegue", customization: { cell, _ in
                 cell.detailTextLabel?.text = PVSettingsModel.shared.myiCadeControllerSetting.description
-            }),
+            })
         ])
+        #if os(tvOS)
+        controllerRows.append(contentsOf: [
+            PVSettingsSwitchRow(text: "Enable 8BitDo M30 Mapping", detailText: .subtitle("For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X and the PC Engine."), key: \PVSettingsModel.use8BitdoM30,
+            customization: { cell, _ in
+            cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+            cell.detailTextLabel?.font =  UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
+            })
+        ])
+        #endif
 
-        let controllerSection = Section(title: "Controller", rows: controllerRows, footer: "Check wiki for Controls per systems")
+        let controllerSection = Section(title: "Controller", rows: controllerRows, footer: "Check the wiki for controls per systems.")
 
         // Game Library
 
         var libraryRows: [TableRow] = [
             NavigationRow<SystemSettingsCell>(
                 text: "Launch Web Server",
-                detailText: .subtitle("Import/Export ROMs, saves, cover art..."),
+                detailText: .subtitle("Import/Export ROMs, saves, cover art…"),
                 icon: nil,
                 customization: nil,
                 action: { [weak self] _ in
                     self?.launchWebServerAction()
                 }
-            ),
+            )
         ]
 
         #if os(tvOS)
@@ -159,11 +238,12 @@ final class PVSettingsViewController: PVQuickTableViewController {
                 detailText: .subtitle(""),
                 key: \PVSettingsModel.webDavAlwaysOn,
                 customization: { cell, _ in
+                    cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
                     if PVSettingsModel.shared.webDavAlwaysOn {
-                        let subTitleText = "\nWebDav: \(PVWebServer.shared.webDavURLString)"
-
-                        let subTitleAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 26), NSAttributedString.Key.foregroundColor: UIColor.gray]
+                        let subTitleText = "WebDAV: \(PVWebServer.shared.webDavURLString)"
+                        let subTitleAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20), NSAttributedString.Key.foregroundColor: UIColor.gray]
                         let subTitleAttrString = NSMutableAttributedString(string: subTitleText, attributes: subTitleAttributes)
+                        // cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
                         cell.detailTextLabel?.attributedText = subTitleAttrString
                     } else {
                         cell.detailTextLabel?.text = nil
@@ -174,7 +254,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
             libraryRows.append(webServerAlwaysOn)
         #endif
 
-        let librarySection = Section(title: "Game Library", rows: libraryRows, footer: "Check the wiki about Importing ROMs.")
+        let librarySection = Section(title: "Game Library", rows: libraryRows, footer: "Check the wiki about importing ROMs.")
 
         // Game Library 2
         let library2Rows: [TableRow] = [
@@ -198,34 +278,24 @@ final class PVSettingsViewController: PVQuickTableViewController {
             ),
             NavigationRow<SystemSettingsCell>(
                 text: "Manage Conflicts",
-                detailText: .subtitle("Manually resolve conflicted imports"),
+                detailText: .subtitle(numberOfConflicts > 0 ? "Manually resolve conflicted imports: \(numberOfConflicts) detected" : "None detected"),
                 icon: nil,
-                customization: { cell, _ in
-                    let baseTitle = "Manually resolve conflicted imports"
-                    let detailText: String
-                    if let count = GameImporter.shared.conflictedFiles?.count, count > 0 {
-                        detailText = baseTitle + ": \(count) detected"
-                    } else {
-                        detailText = baseTitle + ": None detected"
-                    }
-
-                    cell.detailTextLabel?.text = detailText
-                },
-                action: { [weak self] _ in self?.manageConflictsAction() }
+                action: numberOfConflicts > 0 ? { [weak self] _ in self?.manageConflictsAction() } : nil
             ),
-            SegueNavigationRow(text: "Appearance", detailText: .subtitle("Visual options for Game Library"), viewController: self, segue: "appearanceSegue"),
+            SegueNavigationRow(text: "Appearance", detailText: .subtitle("Visual options for Game Library"), viewController: self, segue: "appearanceSegue")
         ]
 
         let librarySection2 = Section(title: nil, rows: library2Rows)
 
-        // Beta options
+         // Beta options
+        #if os(iOS)
         let betaRows: [TableRow] = [
             PVSettingsSwitchRow(text: "Missing Buttons Always On-Screen",
-                                detailText: .subtitle("Supports: SNES, SMS, SG, GG, SCD, PSX"),
+                                detailText: .subtitle("Supports: SNES, SMS, SG, GG, SCD, PSX."),
                                 key: \PVSettingsModel.missingButtonsAlwaysOn),
 
             PVSettingsSwitchRow(text: "iCloud Sync",
-                                detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud"),
+                                detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
                                 key: \PVSettingsModel.debugOptions.iCloudSync),
 
             PVSettingsSwitchRow(text: "Multi-threaded GL",
@@ -234,12 +304,42 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
             PVSettingsSwitchRow(text: "4X Multisampling GL",
                                 detailText: .subtitle("Use iOS's EAGLContext multisampling. Slower speed (slightly), smoother edges."),
-                                key: \PVSettingsModel.debugOptions.multiSampling),
+                                key: \PVSettingsModel.debugOptions.multiSampling)
 
 //            PVSettingsSwitchRow(text: "Unsupported Cores",
 //                                detailText: .subtitle("Cores that are in development"),
 //                                key: \PVSettingsModel.debugOptions.unsupportedCores)
         ]
+        #else
+         let betaRows: [TableRow] = [
+             PVSettingsSwitchRow(text: "iCloud Sync",
+                                detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
+                                key: \PVSettingsModel.debugOptions.iCloudSync,
+                                    customization: { cell, _ in
+                                        cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+                                        cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
+                            }
+            ),
+
+             PVSettingsSwitchRow(text: "Multi-threaded GL",
+                                detailText: .subtitle("Use tvOS's EAGLContext multiThreaded. May improve or slow down GL performance."),
+                                key: \PVSettingsModel.debugOptions.multiThreadedGL,
+                                    customization: { cell, _ in
+                                        cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+                                        cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
+                            }
+            ),
+
+             PVSettingsSwitchRow(text: "4X Multisampling GL",
+                                detailText: .subtitle("Use tvOS's EAGLContext multisampling. Slower speed (slightly), smoother edges."),
+                                key: \PVSettingsModel.debugOptions.multiSampling,
+                                    customization: { cell, _ in
+                                        cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+                                        cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
+                                }
+            )
+                ]
+        #endif
 
         let betaSection = Section(
             title: "Beta Features",
@@ -313,7 +413,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
             NavigationRow<SystemSettingsCell>(text: "Git Revision", detailText: .value2(revisionString)),
             NavigationRow<SystemSettingsCell>(text: "Build Date", detailText: .value2(buildDateString)),
             NavigationRow<SystemSettingsCell>(text: "Builder", detailText: .value2(builtByUser)),
-            NavigationRow<SystemSettingsCell>(text: "Bundle ID", detailText: .value2(Bundle.main.bundleIdentifier ?? "Unknown")),
+            NavigationRow<SystemSettingsCell>(text: "Bundle ID", detailText: .value2(Bundle.main.bundleIdentifier ?? "Unknown"))
         ]
 
         let buildSection = Section(title: "Build Information", rows: buildInformationRows)
@@ -321,7 +421,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
         // Extra Info Section
         let extraInfoRows: [TableRow] = [
             SegueNavigationRow(text: "Cores", detailText: .subtitle("Emulator cores provided by these projects"), viewController: self, segue: "coresSegue", customization: nil),
-            SegueNavigationRow(text: "Licenses", detailText: .none, viewController: self, segue: "licensesSegue", customization: nil),
+            SegueNavigationRow(text: "Licenses", detailText: .none, viewController: self, segue: "licensesSegue", customization: nil)
         ]
 
         let extraInfoSection = Section(title: "3rd Party & Legal", rows: extraInfoRows)
@@ -330,16 +430,15 @@ final class PVSettingsViewController: PVQuickTableViewController {
         let debugRows: [TableRow] = [
             NavigationRow<SystemSettingsCell>(text: "Logs", detailText: .subtitle("Live logging information"), icon: nil, customization: nil, action: { _ in
                 self.logsActions()
-            }),
+            })
         ]
 
         let debugSection = Section(title: "Debug", rows: debugRows)
 
         // Set table data
-        #if os(tvOS)
-            tableContents = [appSection, coreOptionsSection, savesSection, avSection, controllerSection, librarySection, librarySection2, betaSection, buildSection, extraInfoSection]
-        #else
-            tableContents = [appSection, coreOptionsSection, savesSection, avSection, controllerSection, librarySection, librarySection2, betaSection, buildSection, extraInfoSection, debugSection]
+        tableContents = [appSection, coreOptionsSection, savesSection, avSection, controllerSection, librarySection, librarySection2, betaSection, buildSection, extraInfoSection]
+        #if os(iOS)
+            tableContents.append(debugSection)
         #endif
     }
 
@@ -352,7 +451,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
                 showServerActiveAlert()
             } else {
                 // Display error
-                let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or settings and free up ports: 80, 81", preferredStyle: .alert)
+                let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or settings and free up ports: 80, 81.", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
                 }))
                 present(alert, animated: true) { () -> Void in }
@@ -369,7 +468,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
     func refreshGameLibraryAction() {
         tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
-        let alert = UIAlertController(title: "Refresh Game Library?", message: "Attempt to get artwork and title information for your library. This can be a slow process, especially for large libraries. Only do this if you really, really want to try and get more artwork. Please be patient, as this process can take several minutes.", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Refresh Game Library?", message: "Attempt to reload the artwork and title information for your entire library. This can be a slow process, especially for large libraries. Only do this if you really, really want to try and get more artwork or update the information.\n\n You will need to completely relaunch the App to start the library rebuild process.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (_: UIAlertAction) -> Void in
             NotificationCenter.default.post(name: NSNotification.Name.PVRefreshLibrary, object: nil)
         }))
@@ -379,7 +478,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
     func emptyImageCacheAction() {
         tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
-        let alert = UIAlertController(title: "Empty Image Cache?", message: "Empty the image cache to free up disk space. Images will be redownload on demand.", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Empty Image Cache?", message: "Empty the image cache to free up disk space. Images will be redownloaded on demand.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (_: UIAlertAction) -> Void in
             try? PVMediaCache.empty()
         }))
@@ -388,8 +487,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
     }
 
     func manageConflictsAction() {
-        let gameImporter = GameImporter.shared
-        let conflictViewController = PVConflictViewController(gameImporter: gameImporter)
+        let conflictViewController = PVConflictViewController(conflictsController: conflictsController)
         navigationController?.pushViewController(conflictViewController, animated: true)
     }
 
@@ -407,7 +505,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
     @IBAction func help(_: Any) {
         #if canImport(SafariServices)
-            let webVC = WebkitViewController(url: URL(string: "https://github.com/Provenance-Emu/Provenance/wiki")!)
+            let webVC = WebkitViewController(url: URL(string: "https://wiki.provenance-emu.com/")!)
             navigationController?.pushViewController(webVC, animated: true)
         #endif
     }

@@ -1,3 +1,67 @@
+cache:
+  local: ~/Library/Caches/Rome/
+  s3Bucket: cache.provenance
+currentMap:
+- PVLibrary:
+    - name: PVLibrary
+      platforms: [iOS]
+    - name: PVLibrary tvOS
+      platforms: [tvOS]
+- PVSupport:
+    - name: PVSupport
+      platforms: [iOS]
+    - name: PVSupport tvOS
+      platforms: [tvOS]
+- PVStella:
+    - name: PVStella
+      platforms: [iOS]
+    - name: PVStella tvOS
+      platforms: [tvOS]
+- PVGenesis:
+    - name: PVGenesis
+      platforms: [iOS]
+    - name: PVGenesis tvOS
+      platforms: [tvOS]
+- PVGB:
+    - name: PVGB
+      platforms: [iOS]
+    - name: PVGB tvOS
+      platforms: [tvOS]
+- PVGBA:
+    - name: PVGBA
+      platforms: [iOS]
+    - name: PVGBA tvOS
+      platforms: [tvOS]
+- PVMednafen:
+    - name: PVMednafen
+      platforms: [iOS]
+    - name: PVMednafen tvOS
+      platforms: [tvOS]
+- PVSNES:
+    - name: PVSNES
+      platforms: [iOS]
+    - name: PVSNES tvOS
+      platforms: [tvOS]
+- PVPokeMini:
+    - name: PVPokeMini
+      platforms: [iOS]
+    - name: PVPokeMini tvOS
+      platforms: [tvOS]
+- PVFCEU:
+    - name: PVFCEU
+      platforms: [iOS]
+    - name: PVFCEU tvOS
+      platforms: [tvOS]
+- PicoDrive:
+    - name: PicoDrive
+      platforms: [iOS]
+    - name: PicoDrive tvOS
+      platforms: [tvOS]
+- ProSystem:
+    - name: ProSystem
+      platforms: [iOS]
+    - name: ProSystem tvOS
+      platforms: [tvOS]  
 repositoryMap:
 - RxSwift:
   - name: RxSwift
@@ -5,47 +69,46 @@ repositoryMap:
   - name: RxAtomic
   - name: RxBlocking
   - name: RxTest
+    platforms: [iOS,tvOS]
+- RxDataSources:
+  - name: RxDataSources
+    platforms: [iOS,tvOS]
+  - name: Differentiator
+    platforms: [iOS,tvOS]
 - MarqueeLabel:
   - name: MarqueeLabel
   - name: MarqueeLabelSwift
-- HockeySDK-tvOS:
-  - name: HockeySDK
-    platforms: [tvOS] # optional, all platforms if empty
-- HockeySDK-iOS:
-  - name: HockeySDK
-    platforms: [iOS] # optional, all platforms if empty
-- XLActionController:
-  - name: XLActionController
-    platforms: [iOS] # optional, all platforms if empty
-- ZIPFoundation:
-  - name: ZIPFoundation
-    platforms: [iOS,tvOS] # optional, all platforms if empty
 - realm-cocoa:
   - name: Realm
-    platforms: [iOS,tvOS] # optional, all platforms if empty
+    platforms: [iOS,tvOS]
   - name: RealmSwift
-    platforms: [iOS,tvOS] # optional, all platforms if empty
+    platforms: [iOS,tvOS]
 - SQLite.swift:
   - name: SQLite
-    platforms: [iOS,tvOS] # optional, all platforms if empty
-  - name: SQLite.swift
-    platforms: [iOS,tvOS] # optional, all platforms if empty
+    platforms: [iOS,tvOS]
+  # - name: SQLite.swift
+  #   platforms: [iOS,tvOS]
 - ZipArchive:
   - name: ZipArchive
-    platforms: [iOS,tvOS] # optional, all platforms if empty
+    platforms: [iOS,tvOS]
 - SwiftyUserDefaults:
   - name: SwiftyUserDefaults
-    platforms: [iOS,tvOS] # optional, all platforms if empty
+    platforms: [iOS,tvOS]
 - CocoaLumberjack:
   - name: CocoaLumberjack
-    platforms: [iOS,tvOS] # optional, all platforms if empty
+    platforms: [iOS,tvOS]
   - name: CocoaLumberjackSwift
-    platforms: [iOS,tvOS] # optional, all platforms if empty
-- NSLogger:
-  - name: NSLogger
-    platforms: [iOS,tvOS] # optional, all platforms if empty
-  - name: NSLoggerSwift
-    platforms: [iOS,tvOS] # optional, all platforms if empty
-cache:
-  local: ~/Library/Caches/Rome/
-  s3Bucket: provenance-carthage
+    platforms: [iOS,tvOS]
+- Reachability.swift:
+  - name: Reachability
+    platforms: [iOS,tvOS]
+ignoreMap:
+- Fabric:
+  - name: Fabric
+    # platforms: [iOS, tvOS]
+- Answers:
+  - name: Answers
+    # platforms: [iOS, tvOS]
+- Crashlytics:
+  - name: Crashlytics
+    # platforms: [iOS, tvOS]

@@ -6,6 +6,16 @@
 
 
 /*
+ * By default, only ARMv4 instructions are used.
+ * If you want Cyclone to make use of newer ARM instructions, enable the
+ * options(s) below. You can also override this using make argument:
+ *   make HAVE_ARMv6=1
+ */
+#ifndef HAVE_ARMv6
+#define HAVE_ARMv6                  0
+#endif
+
+/*
  * If this option is enabled, Microsoft ARMASM compatible output is generated
  * (output file -  Cyclone.asm). Otherwise GNU as syntax is used (Cyclone.s).
  */

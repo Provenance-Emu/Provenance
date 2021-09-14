@@ -117,15 +117,10 @@ PICO_INTERNAL void SekInitS68k(void)
   }
 #endif
 #ifdef EMU_F68K
-  {
-    void *oldcontext = g_m68kcontext;
-    g_m68kcontext = &PicoCpuFS68k;
-    memset(&PicoCpuFS68k, 0, sizeof(PicoCpuFS68k));
-    fm68k_init();
-    PicoCpuFS68k.iack_handler = SekIntAckFS68k;
-    PicoCpuFS68k.sr = 0x2704; // Z flag
-    g_m68kcontext = oldcontext;
-  }
+  memset(&PicoCpuFS68k, 0, sizeof(PicoCpuFS68k));
+  fm68k_init();
+  PicoCpuFS68k.iack_handler = SekIntAckFS68k;
+  PicoCpuFS68k.sr = 0x2704; // Z flag
 #endif
 }
 
@@ -149,12 +144,7 @@ PICO_INTERNAL int SekResetS68k(void)
   }
 #endif
 #ifdef EMU_F68K
-  {
-    void *oldcontext = g_m68kcontext;
-    g_m68kcontext = &PicoCpuFS68k;
-    fm68k_reset();
-    g_m68kcontext = oldcontext;
-  }
+  fm68k_reset(&PicoCpuFS68k);
 #endif
 
   return 0;
@@ -178,10 +168,8 @@ PICO_INTERNAL int SekInterruptS68k(int irq)
   PicoCpuCS68k.irq=real_irq;
 #endif
 #ifdef EMU_M68K
-  void *oldcontext = m68ki_cpu_p;
-  m68k_set_context(&PicoCpuMS68k);
-  m68k_set_irq(real_irq);
-  m68k_set_context(oldcontext);
+  // avoid m68k_set_irq() for delaying to work
+  PicoCpuMS68k.int_level = real_irq << 8;
 #endif
 #ifdef EMU_F68K
   PicoCpuFS68k.interrupts[0]=real_irq;

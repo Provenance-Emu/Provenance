@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Promises
 import RxSwift
 
 public enum ImporterFileType {
@@ -48,25 +47,25 @@ extension URL {
     }
 }
 
-struct ImportCandiate2 {
-    let url: URL
+// struct ImportCandiate2 {
+//    let url: URL
+//
+//    var isFileArchive: Promise<Bool> { return Promise { self.url.isFileArchive } }
+// }
 
-    var isFileArchive: Promise<Bool> { return Promise { self.url.isFileArchive } }
-}
-
-public final class ImporterService {
-    public static let shared: ImporterService = ImporterService()
-
-    private let dispaseBag = DisposeBag()
-    private init() {
-        DirectoryWatcher2.shared.newFile
-            .do(onNext: handleNewFile(_:))
-            .subscribe()
-            .disposed(by: dispaseBag)
-    }
-
-    private func handleNewFile(_ url: URL) throws {
-        let importCandidate = ImportCandiate2(url: url)
+// public final class ImporterService {
+//    public static let shared: ImporterService = ImporterService()
+//
+//    private let dispaseBag = DisposeBag()
+//    private init() {
+//        DirectoryWatcher2.shared.newFile
+//            .do(onNext: handleNewFile(_:))
+//            .subscribe()
+//            .disposed(by: dispaseBag)
+//    }
+//
+//    private func handleNewFile(_ url: URL) throws {
+//        let importCandidate = ImportCandiate2(url: url)
 //
 //        importCandidate.isFileArchive.then {
 //            if $0 {
@@ -81,7 +80,7 @@ public final class ImporterService {
 //                GameImporter
 //            }
 //        }
-    }
+//    }
 
     /*
      Flow:
@@ -104,4 +103,4 @@ public final class ImporterService {
      y. multi-match, move to conflicts
 
      */
-}
+// }b

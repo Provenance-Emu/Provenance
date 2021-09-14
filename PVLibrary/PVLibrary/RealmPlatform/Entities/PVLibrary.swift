@@ -38,4 +38,4 @@ public extension PVLibrary {
     }
 }
 
-@objcMembers public final class PVRemoteFile: Object {}
+// @objcMembers public final class PVRemoteFile: Object {}

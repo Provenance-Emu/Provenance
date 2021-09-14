@@ -2,8 +2,8 @@
  *  Genesis Plus
  *  ROM Loading Support
  *
- *  Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003  Charles Mac Donald (original code)
- *  Copyright (C) 2007-2013  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 1998-2003  Charles Mac Donald (original code)
+ *  Copyright (C) 2007-2020  Eke-Eke (Genesis Plus GX)
  *
  *  Redistribution and use of this code or any derivative works are permitted
  *  provided that the following conditions are met:
@@ -311,7 +311,7 @@ void getrominfo(char *romheader)
     }
 
     /* if found, get infos from header */
-    if (offset)
+    if ((offset > 0) && (offset < cart.romsize))
     {
       /* checksum */
       rominfo.checksum = romheader[offset + 0x0a] | (romheader[offset + 0x0b] << 8);
@@ -389,11 +389,11 @@ void getrominfo(char *romheader)
  * Return loaded size (-1 if already loaded)
  *
  ***************************************************************************/
-int load_bios(void)
+int load_bios(int system)
 {
   int size = 0;
 
-  switch (system_hw)
+  switch (system)
   {
     case SYSTEM_MCD:
     {
@@ -417,6 +417,23 @@ int load_bios(void)
         /* CD BOOTROM loaded ? */
         if (size > 0)
         {
+          /* auto-detect CD hardware model */
+          if (!memcmp (&scd.bootrom[0x120], "WONDER-MEGA BOOT", 16))
+          {
+            /* Wondermega CD hardware */
+            cdd.type = CD_TYPE_WONDERMEGA;
+          }
+          else if (!memcmp (&scd.bootrom[0x120], "WONDERMEGA2 BOOT", 16))
+          {
+            /* Wondermega M2 / X'Eye CD hardware */
+            cdd.type = CD_TYPE_WONDERMEGA_M2;
+          }
+          else
+          {
+            /* default CD hardware */
+            cdd.type = CD_TYPE_DEFAULT;
+          }
+         
 #ifdef LSB_FIRST
           /* Byteswap ROM to optimize 16-bit access */
           int i;
@@ -453,7 +470,7 @@ int load_bios(void)
         if (cart.romsize <= 0x400000)
         {
           /* load Game Gear BOOTROM file */
-          size = load_archive(GG_BIOS, cart.rom + 0x400000, 0x100000, 0);
+          size = load_archive(GG_BIOS, cart.rom + 0x400000, 0x400000, 0);
 
           if (size > 0)
           {
@@ -512,6 +529,8 @@ int load_bios(void)
 
     default:
     {
+      /* mark all BOOTROM as unloaded  */
+      system_bios &= ~(0x10 | SYSTEM_SMS | SYSTEM_GG);
       return 0;
     }
   }
@@ -529,6 +548,15 @@ int load_rom(char *filename)
 {
   int i, size;
 
+#ifdef USE_DYNAMIC_ALLOC
+  if (!ext)
+  {
+    /* allocate & initialize memory for Cartridge / CD hardware if required */
+    ext = (external_t *)calloc(1, sizeof(external_t));
+    if (!ext) return (0);
+  }
+#endif
+
   /* clear any existing patches */
   ggenie_shutdown();
   areplay_shutdown();
@@ -540,30 +568,28 @@ int load_rom(char *filename)
     cdd.loaded = 0;
   }
 
-  /* auto-detect CD image files */
+  /* auto-detect CD image file */
   size = cdd_load(filename, (char *)(cart.rom));
   if (size < 0)
   {
     /* error opening file */
-    return 0;
+    return (0);
   }
 
-  if (size > 0)
+  /* CD image file ? */
+  if (size)
   {
-    /* CD image file loaded */
+    /* enable CD hardware */
     system_hw = SYSTEM_MCD;
+
+    /* boot from CD hardware */
+    scd.cartridge.boot = 0x00;
   }
   else
   {
     /* load file into ROM buffer */
     char extension[4];
-    size = load_archive(filename, cart.rom, sizeof(cart.rom), extension);
-    if (!size)
-    {
-      /* mark all BOOTROM as unloaded since they could have been overwritten */
-      system_bios &= ~(0x10 | SYSTEM_SMS | SYSTEM_GG);
-      return 0;
-    }
+    size = load_archive(filename, cart.rom, cdd.loaded ? 0x800000 : MAXROMSIZE, extension);
 
     /* mark BOOTROM as unloaded if they have been overwritten by cartridge ROM */
     if (size > 0x800000)
@@ -576,8 +602,16 @@ int load_rom(char *filename)
       /* Master System or Game Gear BIOS ROM are loaded within $400000-$4FFFFF area */
       system_bios &= ~(SYSTEM_SMS | SYSTEM_GG);
     }
+    else if (size <= 0)
+    {
+      /* mark all BOOTROM as unloaded since they could have been overwritten */
+      system_bios &= ~(0x10 | SYSTEM_SMS | SYSTEM_GG);
+      
+      /* error loading file */
+      return 0;
+    }
 
-    /* convert lower case to upper case */
+    /* convert lower case file extension to upper case */
     *(uint32 *)(extension) &= 0xdfdfdfdf;
 
     /* auto-detect system hardware from ROM file extension */
@@ -598,7 +632,7 @@ int load_rom(char *filename)
     }
     else
     {
-      /* Mega Drive hardware (Genesis mode) */
+      /* default is Mega Drive / Genesis hardware (16-bit mode) */
       system_hw = SYSTEM_MD;
 
       /* decode .MDX format */
@@ -613,7 +647,9 @@ int load_rom(char *filename)
 
       /* auto-detect byte-swapped dumps */
       if (!memcmp((char *)(cart.rom + 0x100),"ESAGM GE ARDVI E", 16) ||
-          !memcmp((char *)(cart.rom + 0x100),"ESAGG NESESI", 12))
+          !memcmp((char *)(cart.rom + 0x100),"ESAGG NESESI", 12) ||
+          !memcmp((char *)(cart.rom + 0x80000 + 0x100),"ESAGM GE ARDVI E", 16) ||
+          !memcmp((char *)(cart.rom + 0x80000 + 0x100),"ESAGG NESESI", 12))
       {
         for(i = 0; i < size; i += 2)
         {
@@ -629,9 +665,9 @@ int load_rom(char *filename)
     {
       /* remove header */
       size -= 512;
-      memcpy (cart.rom, cart.rom + 512, size);
+      memmove (cart.rom, cart.rom + 512, size);
 
-      /* assume interleaved Genesis ROM format (.smd) */
+      /* assume interleaved Mega Drive / Genesis ROM format (.smd) */
       if (system_hw == SYSTEM_MD)
       {
         for (i = 0; i < (size / 0x4000); i++)
@@ -651,26 +687,9 @@ int load_rom(char *filename)
   /* set console region */
   get_region((char *)(cart.rom));
 
-  /* CD image file */
-  if (system_hw == SYSTEM_MCD)
-  {   
-    /* load CD BOOT ROM */
-    if (!load_bios())
-    {
-      /* unmount CD image */
-      cdd_unload();
-
-      /* error loading CD BOOT ROM */
-      return (0);
-    }
-
-    /* boot from CD */
-    scd.cartridge.boot = 0x00;
-  }
-
 #ifdef LSB_FIRST
   /* 16-bit ROM specific */
-  else if (system_hw == SYSTEM_MD)
+  if (system_hw == SYSTEM_MD)
   {
     /* Byteswap ROM to optimize 16-bit access */
     for (i = 0; i < cart.romsize; i += 2)
@@ -682,14 +701,28 @@ int load_rom(char *filename)
   }
 #endif
 
-  /* Save auto-detected system hardware  */
-  romtype = system_hw;
-
   /* PICO ROM */
   if (strstr(rominfo.consoletype, "SEGA PICO") != NULL)
   {
     /* PICO hardware */
     system_hw = SYSTEM_PICO;
+  }
+
+  /* Save auto-detected system hardware  */
+  romtype = system_hw;
+  
+  /* CD image file */
+  if (system_hw == SYSTEM_MCD)
+  {   
+    /* try to load CD BOOTROM for selected region */
+    if (!load_bios(SYSTEM_MCD))
+    {
+      /* unmount CD image */
+      cdd_unload();
+
+      /* error booting from CD */
+      return (0);
+    }
   }
 
   /* CD BOOTROM */
@@ -698,7 +731,7 @@ int load_rom(char *filename)
     /* enable CD hardware */
     system_hw = SYSTEM_MCD;
 
-    /* boot from CD */
+    /* boot from CD hardware */
     scd.cartridge.boot = 0x00;
 
     /* copy ROM to BOOTROM area */
@@ -711,31 +744,50 @@ int load_rom(char *filename)
     system_bios = (system_bios & 0xf0) | (region_code >> 4);
   }
 
-  /* ROM cartridges with CD support */
+  /* ROM cartridge (max. 8MB) with CD loaded */
+  else if ((cart.romsize <= 0x800000) && cdd.loaded)
+  {
+    /* try to load CD BOOTROM */
+    if (load_bios(SYSTEM_MCD))
+    {
+      /* enable CD hardware */
+      system_hw = SYSTEM_MCD;
+
+      /* boot from cartridge */
+      scd.cartridge.boot = 0x40;
+    }
+    else
+    {
+      /* unmount CD image */
+      cdd_unload();
+    }    
+  }
+  
+  /* ROM cartridge with CD support */
   else if ((strstr(rominfo.domestic,"FLUX") != NULL) ||
            (strstr(rominfo.domestic,"WONDER LIBRARY") != NULL) ||
            (strstr(rominfo.product,"T-5740") != NULL))
   {
     /* check if console hardware is set to AUTO */
-    if (config.system == 0x00)
+    if (!config.system)
     {
-      /* auto-enable CD hardware */
-      system_hw = SYSTEM_MCD;
-
       /* try to load CD BOOTROM */
-      if (load_bios())
+      if (load_bios(SYSTEM_MCD))
       {
+        char fname[256];
+        int len = strlen(filename);
+
+        /* automatically try to load associated .iso file */
+        while ((len && (filename[len] != '.')) || (len > 251)) len--;
+        strncpy(fname, filename, len);
+        strcpy(&fname[len], ".iso");
+        cdd_load(fname, (char *)cdc.ram);
+
+        /* enable CD hardware */
+        system_hw = SYSTEM_MCD;
+
         /* boot from cartridge */
         scd.cartridge.boot = 0x40;
-
-        /* automatically load associated .iso image */
-        strncpy(&filename[strlen(filename) - 4], ".iso", 4);
-        cdd_load(filename, (char *)cdc.ram);
-      }
-      else
-      {
-        /* if not found, disable CD hardware */
-        system_hw = SYSTEM_MD;
       }
     }
   }
@@ -790,7 +842,7 @@ int load_rom(char *filename)
     }
 
     /* force MENACER configuration */
-    input.system[0] = SYSTEM_MD_GAMEPAD;
+    input.system[0] = SYSTEM_GAMEPAD;
     input.system[1] = SYSTEM_MENACER;
     input.x_offset = 82;
     input.y_offset = 0;
@@ -808,7 +860,7 @@ int load_rom(char *filename)
     }
 
     /* force MENACER configuration */
-    input.system[0] = SYSTEM_MD_GAMEPAD;
+    input.system[0] = SYSTEM_GAMEPAD;
     input.system[1] = SYSTEM_MENACER;
     input.x_offset = 133;
     input.y_offset = -8;
@@ -826,7 +878,7 @@ int load_rom(char *filename)
     }
 
     /* force MENACER configuration */
-    input.system[0] = SYSTEM_MD_GAMEPAD;
+    input.system[0] = SYSTEM_GAMEPAD;
     input.system[1] = SYSTEM_MENACER;
     input.x_offset = 68;
     input.y_offset = -24;
@@ -844,7 +896,7 @@ int load_rom(char *filename)
     }
 
     /* force MENACER configuration */
-    input.system[0] = SYSTEM_MD_GAMEPAD;
+    input.system[0] = SYSTEM_GAMEPAD;
     input.system[1] = SYSTEM_MENACER;
     input.x_offset = 64;
     input.y_offset = -8;
@@ -862,7 +914,7 @@ int load_rom(char *filename)
     }
 
     /* force MENACER configuration */
-    input.system[0] = SYSTEM_MD_GAMEPAD;
+    input.system[0] = SYSTEM_GAMEPAD;
     input.system[1] = SYSTEM_MENACER;
     input.x_offset = 61;
     input.y_offset = 0;
@@ -880,7 +932,7 @@ int load_rom(char *filename)
     }
 
     /* force MENACER configuration */
-    input.system[0] = SYSTEM_MD_GAMEPAD;
+    input.system[0] = SYSTEM_GAMEPAD;
     input.system[1] = SYSTEM_MENACER;
     input.x_offset = 70;
     input.y_offset = 18;
@@ -898,7 +950,7 @@ int load_rom(char *filename)
     }
 
     /* force MENACER configuration */
-    input.system[0] = SYSTEM_MD_GAMEPAD;
+    input.system[0] = SYSTEM_GAMEPAD;
     input.system[1] = SYSTEM_MENACER;
     input.x_offset = 49;
     input.y_offset = 0;
@@ -916,7 +968,7 @@ int load_rom(char *filename)
     }
 
     /* force MENACER configuration */
-    input.system[0] = SYSTEM_MD_GAMEPAD;
+    input.system[0] = SYSTEM_GAMEPAD;
     input.system[1] = SYSTEM_MENACER;
     input.x_offset = 60;
     input.y_offset = 30;
@@ -935,7 +987,7 @@ int load_rom(char *filename)
     }
 
     /* force JUSTIFIER configuration */
-    input.system[0] = SYSTEM_MD_GAMEPAD;
+    input.system[0] = SYSTEM_GAMEPAD;
     input.system[1] = SYSTEM_JUSTIFIER;
     input.x_offset = (strstr(rominfo.international,"GUN FIGHTERS") != NULL) ? 24 : 0;
     input.y_offset = 0;
@@ -960,18 +1012,18 @@ void get_region(char *romheader)
     if (system_hw == SYSTEM_MCD)
     {
       /* security code */
-      switch (romheader[0x20b])
+      switch ((unsigned char)romheader[0x20b])
       {
-        case 0x7a:
-          region_code = REGION_USA;
-          break;
-
         case 0x64:
           region_code = REGION_EUROPE;
           break;
    
-        default:
+        case 0xa1:
           region_code = REGION_JAPAN_NTSC;
+          break;
+
+        default:
+          region_code = REGION_USA;
           break;
       }
     }
@@ -989,6 +1041,7 @@ void get_region(char *romheader)
       /* from Gens */
       if (!memcmp(rominfo.country, "eur", 3)) country |= 8;
       else if (!memcmp(rominfo.country, "EUR", 3)) country |= 8;
+      else if (!memcmp(rominfo.country, "Europe", 3)) country |= 8;
       else if (!memcmp(rominfo.country, "jap", 3)) country |= 1;
       else if (!memcmp(rominfo.country, "JAP", 3)) country |= 1;
       else if (!memcmp(rominfo.country, "usa", 3)) country |= 4;
@@ -1024,7 +1077,9 @@ void get_region(char *romheader)
       if (((strstr(rominfo.product,"T-45033") != NULL) && (rominfo.checksum == 0x0F81)) || /* Alisia Dragon (Europe) */
            (strstr(rominfo.product,"T-69046-50") != NULL) ||    /* Back to the Future III (Europe) */
            (strstr(rominfo.product,"T-120106-00") != NULL) ||   /* Brian Lara Cricket (Europe) */
-           (strstr(rominfo.product,"T-70096 -00") != NULL))     /* Muhammad Ali Heavyweight Boxing (Europe) */
+           (strstr(rominfo.product,"T-97126 -50") != NULL) ||   /* Williams Arcade's Greatest Hits (Europe) */
+           (strstr(rominfo.product,"T-70096 -00") != NULL) ||   /* Muhammad Ali Heavyweight Boxing (Europe) */
+           ((rominfo.checksum == 0x0000) && (rominfo.realchecksum == 0x1f7f))) /* Radica - Sensible Soccer Plus edition */
       {
         /* need PAL settings */
         region_code = REGION_EUROPE;
@@ -1071,7 +1126,6 @@ void get_region(char *romheader)
   if (config.master_clock == 1) system_clock = MCLOCK_NTSC;
   else if (config.master_clock == 2) system_clock = MCLOCK_PAL;
 }
-
 
 /****************************************************************************
  * get_company (Softdev - 2006)

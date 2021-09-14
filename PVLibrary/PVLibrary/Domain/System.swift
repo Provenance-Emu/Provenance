@@ -62,29 +62,59 @@ public struct System: Codable, SystemProtocol {
 
     public let supportsRumble: Bool
     public let screenType: ScreenType
+
+    public init(name: String, identifier: String, shortName: String, shortNameAlt: String? = nil, manufacturer: String,
+                releaseYear: Int, bits: SystemBits, headerByteSize: Int, openvgDatabaseID: Int, requiresBIOS: Bool = false,
+                options: SystemOptions, bioses: [BIOS]? = nil, extensions: [String], games: [Game], cores: [Core], userPreferredCore: Core? = nil, usesCDs: Bool = false, portableSystem: Bool = false, supportsRumble: Bool = false, screenType: ScreenType) {
+        self.name = name
+        self.identifier = identifier
+        self.shortName = shortName
+        self.shortNameAlt = shortNameAlt
+        self.manufacturer = manufacturer
+        self.releaseYear = releaseYear
+        self.bits = bits
+        self.headerByteSize = headerByteSize
+        self.openvgDatabaseID = openvgDatabaseID
+        self.requiresBIOS = requiresBIOS
+        self.options = options
+        self.BIOSes = bioses
+        self.extensions = extensions
+        self.gameStructs = games
+        self.coreStructs = cores
+        self.userPreferredCore = userPreferredCore
+        self.usesCDs = usesCDs
+        self.portableSystem = portableSystem
+        self.supportsRumble = supportsRumble
+        self.screenType = screenType
+    }
+}
+
+func compareThing1<T: LocalFileBacked>(_ thing1: T) -> Bool {
+    return true
 }
 
 public extension System {
     init<S: SystemProtocol>(with system: S) where S.BIOSInfoProviderType: BIOSFileProvider {
-        name = system.name
-        identifier = system.identifier
-        shortName = system.shortName
-        shortNameAlt = system.shortNameAlt
-        manufacturer = system.manufacturer
-        releaseYear = system.releaseYear
-        bits = system.bits
+        let name = system.name
+        let identifier = system.identifier
+        let shortName = system.shortName
+        let shortNameAlt = system.shortNameAlt
+        let manufacturer = system.manufacturer
+        let releaseYear = system.releaseYear
+        let bits = system.bits
         //        generation = system.generation
-        headerByteSize = system.headerByteSize
-        openvgDatabaseID = system.openvgDatabaseID
+        let headerByteSize = system.headerByteSize
+        let openvgDatabaseID = system.openvgDatabaseID
 
-        options = system.options
-        BIOSes = system.BIOSes?.map { (bios: BIOSInfoProvider) in
+        let options = system.options
+        let bioses = system.BIOSes?.map { (bios: BIOSInfoProvider) -> BIOS in
 
-            #warning("FIX ME, file shoudl be able to beread from incoming if we can test type conformance confidiontally")
-            var file: LocalFile?
-            //            if bios is LocalFileBacked {
-            //                file = (bios as! LocalFileBacked).file
-            //            }
+            let file: LocalFile?
+            if let b = bios as? BIOS {
+                file = b.file
+            } else {
+                file = nil
+            }
 
             let status: BIOSStatus
             if let sp = bios as? BIOSStatusProvider {
@@ -115,16 +145,19 @@ public extension System {
                         file: file)
         }
 
-        extensions = system.extensions
-        requiresBIOS = system.requiresBIOS
-        gameStructs = system.gameStructs
-        coreStructs = system.coreStructs
-        userPreferredCore = system.userPreferredCore
+        let extensions = system.extensions
+        let requiresBIOS = system.requiresBIOS
+        let games = system.gameStructs
+        let cores = system.coreStructs
+        let userPreferredCore = system.userPreferredCore
 
-        usesCDs = system.usesCDs
-        portableSystem = system.portableSystem
+        let usesCDs = system.usesCDs
+        let portableSystem = system.portableSystem
 
-        supportsRumble = system.supportsRumble
-        screenType = system.screenType
+        let supportsRumble = system.supportsRumble
+        let screenType = system.screenType
+        self.init(name: name, identifier: identifier, shortName: shortName, shortNameAlt: shortNameAlt, manufacturer: manufacturer,
+                  releaseYear: releaseYear, bits: bits, headerByteSize: headerByteSize, openvgDatabaseID: openvgDatabaseID, requiresBIOS: requiresBIOS,
+                  options: options, bioses: bioses, extensions: extensions, games: games, cores: cores, userPreferredCore: userPreferredCore, usesCDs: usesCDs, portableSystem: portableSystem, supportsRumble: supportsRumble, screenType: screenType)
     }
 }

@@ -14,21 +14,54 @@
 # clipboard clipboard(value: lane_context[SharedValues::HOCKEY_DOWNLOAD_LINK] || "")
 # twitter https://github.com/rb-de0/fastlane-plugin-twitter
 
-REQUIRED_XCODE_VERSION = '10.0'.freeze
+
+#
+# Global Variables
+#
+
+PROJECT_NAME = "Provenance.xcworkspace"
+COMMIT_MSG = "fastlane build bump [ci skip]"
+
+# Building
+SCHEMES =  ["Provenance-Release", "ProvenanceTV-Release"]
+
+# Testing
+TEST_SCHEMES = []
+TEST_DEVICES = ["iPad Air"]
+
+REQUIRED_XCODE_VERSION = '12.0'.freeze
 
 default_platform(:ios)
-$dev_domain = ENV['DEV_DOMAIN'] || 'com.provenance-emu'
+$dev_domain = ENV['DEV_DOMAIN'] || 'org.provenance-emu'
+
+## Fastlane imports
+# The URL of the repository to import the Fastfile from.
+FASTLANE_GIT_URL = 'git@github.com:Provenance/ios-scripts.git'
+# The branch to checkout on the repository
+FASTLANE_GIT_BRANCH = 'HEAD'
+# The directory of the Fastfile's in the repository
+FASTLANE_GIT_PATH = 'Fastlane'
+# The version to checkout on the repository. 
+# Multiple conditions can be used to select the latest version within constraints.
+# eg; [">= 1.1.0", "< 2.0.0"] 
+FASTLANE_GIT_VERSION = [">= 1.0.0", "< 2.0.0"]
+IMPORTS = ["Build", "Certs", "Publish", "CI", "Badge", "Testing", "Install", "Enviroment"]
+FASTLANE_IMPORT_LOCAL = true
 
 platform :ios do
-  import('Fastfile+Build')
-  import('Fastfile+Carthage')
-  import('Fastfile+Rome')
-  import('Fastfile+Certs')
-  import('Fastfile+Publish')
-  import('Fastfile+CI')
-  import('Fastfile+Badge')
-  import('Fastfile+Testing')
-  import('Fastfile+Install')
+
+  IMPORTS.each do |import|
+    unless FASTLANE_IMPORT_LOCAL
+        import_from_git(
+            url: FASTLANE_GIT_URL,
+            branch: FASTLANE_GIT_BRANCH, 
+            path: "Fastlane/Fastfile+#{import}", 
+            version: FASTLANE_GIT_VERSION
+        )
+    else
+        import("Fastfile+#{import}")
+    end
+  end
 
   before_all do
     git_pull(only_tags: true)
@@ -56,8 +89,6 @@ platform :ios do
   #   end
   # end
 end
-
-import('Fastfile+Enviroment')
 
 def load_keys
   return if is_ci?

@@ -2,8 +2,8 @@
  *  Genesis Plus
  *  Input peripherals support
  *
- *  Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003  Charles Mac Donald (original code)
- *  Copyright (C) 2007-2013  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 1998-2003  Charles Mac Donald (original code)
+ *  Copyright (C) 2007-2016  Eke-Eke (Genesis Plus GX)
  *
  *  Redistribution and use of this code or any derivative works are permitted
  *  provided that the following conditions are met:
@@ -44,33 +44,35 @@
 #define MAX_DEVICES (8)
 
 /* Ports configuration */
-#define NO_SYSTEM           (0) /* unconnected port*/
-#define SYSTEM_MD_GAMEPAD   (1) /* single 3-buttons or 6-buttons Control Pad */
-#define SYSTEM_MOUSE        (2) /* Sega Mouse */
-#define SYSTEM_MENACER      (3) /* Sega Menacer (port B only) */
-#define SYSTEM_JUSTIFIER    (4) /* Konami Justifiers (port B only) */
-#define SYSTEM_XE_A1P       (5) /* XE-A1P analog controller (port A only) */
-#define SYSTEM_ACTIVATOR    (6) /* Sega Activator */
-#define SYSTEM_MS_GAMEPAD   (7) /* single 2-buttons Control Pad (Master System) */
-#define SYSTEM_LIGHTPHASER  (8) /* Sega Light Phaser (Master System) */
-#define SYSTEM_PADDLE       (9) /* Sega Paddle Control (Master System) */
-#define SYSTEM_SPORTSPAD   (10) /* Sega Sports Pad (Master System) */
-#define SYSTEM_TEAMPLAYER  (11) /* Multi Tap -- Sega TeamPlayer */
-#define SYSTEM_WAYPLAY     (12) /* Multi Tap -- EA 4-Way Play (use both ports) */
+#define NO_SYSTEM              (0) /* unconnected port*/
+#define SYSTEM_GAMEPAD         (1) /* 2-buttons, 3-buttons or 6-buttons Control Pad */
+#define SYSTEM_MOUSE           (2) /* Sega Mouse (only supported in either port A or port B) */
+#define SYSTEM_MENACER         (3) /* Sega Menacer (only supported in port B) */
+#define SYSTEM_JUSTIFIER       (4) /* Konami Justifiers (only supported in port B) */
+#define SYSTEM_XE_1AP          (5) /* XE-1AP analog controller */
+#define SYSTEM_ACTIVATOR       (6) /* Sega Activator */
+#define SYSTEM_LIGHTPHASER     (7) /* Sega Light Phaser */
+#define SYSTEM_PADDLE          (8) /* Sega Paddle Control */
+#define SYSTEM_SPORTSPAD       (9) /* Sega Sports Pad */
+#define SYSTEM_GRAPHIC_BOARD  (10) /* Sega Graphic Board */
+#define SYSTEM_MASTERTAP      (11) /* Multi Tap -- Furrtek's Master Tap (unofficial) */
+#define SYSTEM_TEAMPLAYER     (12) /* Multi Tap -- Sega TeamPlayer */
+#define SYSTEM_WAYPLAY        (13) /* Multi Tap -- EA 4-Way Play (use both ports) */
 
 /* Device type */
-#define NO_DEVICE         (0xff) /* unconnected device (fixed ID for Team Player) */
-#define DEVICE_PAD3B      (0x00) /* 3-buttons Control Pad (fixed ID for Team Player)*/
-#define DEVICE_PAD6B      (0x01) /* 6-buttons Control Pad (fixed ID for Team Player) */
-#define DEVICE_PAD2B      (0x02) /* 2-buttons Control Pad */
-#define DEVICE_MOUSE      (0x03) /* Sega Mouse */
-#define DEVICE_LIGHTGUN   (0x04) /* Sega Light Phaser, Menacer or Konami Justifiers */
-#define DEVICE_PADDLE     (0x05) /* Sega Paddle Control */
-#define DEVICE_SPORTSPAD  (0x06) /* Sega Sports Pad */
-#define DEVICE_PICO       (0x07) /* PICO tablet */
-#define DEVICE_TEREBI     (0x08) /* Terebi Oekaki tablet */
-#define DEVICE_XE_A1P     (0x09) /* XE-A1P analog controller */
-#define DEVICE_ACTIVATOR  (0x0a) /* Activator */
+#define NO_DEVICE             (0xff) /* unconnected device (fixed ID for Team Player) */
+#define DEVICE_PAD3B          (0x00) /* 3-buttons Control Pad (fixed ID for Team Player)*/
+#define DEVICE_PAD6B          (0x01) /* 6-buttons Control Pad (fixed ID for Team Player) */
+#define DEVICE_PAD2B          (0x02) /* 2-buttons Control Pad */
+#define DEVICE_MOUSE          (0x03) /* Sega Mouse */
+#define DEVICE_LIGHTGUN       (0x04) /* Sega Light Phaser, Menacer or Konami Justifiers */
+#define DEVICE_PADDLE         (0x05) /* Sega Paddle Control */
+#define DEVICE_SPORTSPAD      (0x06) /* Sega Sports Pad */
+#define DEVICE_GRAPHIC_BOARD  (0x07) /* Sega Graphic Board */
+#define DEVICE_PICO           (0x08) /* PICO tablet */
+#define DEVICE_TEREBI         (0x09) /* Terebi Oekaki tablet */
+#define DEVICE_XE_1AP         (0x0a) /* XE-1AP analog controller */
+#define DEVICE_ACTIVATOR      (0x0b) /* Activator */
 
 /* Default Input bitmasks */
 #define INPUT_MODE         (0x0800)
@@ -100,12 +102,14 @@
 #define INPUT_PICO_RED     (0x0010)
 
 /* XE-1AP specific bitmask */
-#define INPUT_XE_E1        (0x0800)
-#define INPUT_XE_E2        (0x0400)
-#define INPUT_XE_START     (0x0200)
-#define INPUT_XE_SELECT    (0x0100)
-#define INPUT_XE_A         (0x0080)
-#define INPUT_XE_B         (0x0040)
+#define INPUT_XE_E1        (0x2000)
+#define INPUT_XE_E2        (0x1000)
+#define INPUT_XE_START     (0x0800)
+#define INPUT_XE_SELECT    (0x0400)
+#define INPUT_XE_A         (0x0200)
+#define INPUT_XE_B         (0x0100)
+#define INPUT_XE_A2        (0x0080)
+#define INPUT_XE_B2        (0x0040)
 #define INPUT_XE_C         (0x0020)
 #define INPUT_XE_D         (0x0010)
 
@@ -127,6 +131,11 @@
 #define INPUT_ACTIVATOR_1U (0x0002)
 #define INPUT_ACTIVATOR_1L (0x0001)
 
+/* Graphic Board specific bitmasks */
+#define INPUT_GRAPHIC_PEN  (0x0004)
+#define INPUT_GRAPHIC_DO   (0x0002)
+#define INPUT_GRAPHIC_MENU (0x0001)
+
 typedef struct
 {
   uint8 system[2];              /* can be one of the SYSTEM_* values */
@@ -145,5 +154,6 @@ extern int old_system[2];
 extern void input_init(void);
 extern void input_reset(void);
 extern void input_refresh(void);
+extern void input_end_frame(unsigned int cycles);
 
 #endif

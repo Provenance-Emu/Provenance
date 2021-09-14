@@ -70,19 +70,11 @@ internal extension UIAppearance {
     static func appearance(context: AppearanceScope.Context) -> Self {
         switch (context.traitCollection, context.containerTypes) {
         case let (.some(traitCollection), .some(containerTypes)):
-            if #available(iOS 9.0, *) {
-                return appearance(for: traitCollection, whenContainedInInstancesOf: containerTypes)
-            } else {
-                preconditionFailure("SwiftyAppearance: whenContainedInInstancesOf not available on this platform")
-            }
+            return appearance(for: traitCollection, whenContainedInInstancesOf: containerTypes)
         case let (.some(traitCollection), .none):
             return appearance(for: traitCollection)
         case let (.none, .some(containerTypes)):
-            if #available(iOS 9.0, *) {
-                return appearance(whenContainedInInstancesOf: containerTypes)
-            } else {
-                preconditionFailure("SwiftyAppearance: whenContainedInInstancesOf not available on this platform")
-            }
+            return appearance(whenContainedInInstancesOf: containerTypes)
         case (.none, .none):
             return appearance()
         }

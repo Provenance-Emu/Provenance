@@ -199,7 +199,7 @@ public final class iCadeReaderView: UIView {
         let i = player - 1
 
         input.forEach {
-            if let index = self.onStates.index(of: $0) {
+            if let index = self.onStates.firstIndex(of: $0) {
                 let buttonOn = iCadeControllerState(rawValue: 1 << index)
                 if !states[i].contains(buttonOn) {
                     print("new on: \(buttonOn)")
@@ -209,7 +209,7 @@ public final class iCadeReaderView: UIView {
                 } else {
                     WLOG("State already contains \(buttonOn)")
                 }
-            } else if let index = self.offStates.index(of: $0) {
+            } else if let index = self.offStates.firstIndex(of: $0) {
                 let buttonOff = iCadeControllerState(rawValue: 1 << index)
                 if states[i].contains(buttonOff) {
                     print("new off: \(buttonOff)")

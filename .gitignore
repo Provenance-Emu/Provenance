@@ -30,3 +30,9 @@ report.xml
 *.zip
 /fastlane/test_output
 /.folio
+.DS_Store
+.build
+.swiftpm
+/bin
+.env
+/packages-cache

@@ -7,8 +7,7 @@
 //
 
 import Foundation
-import Promises
-import PVSupport
+@_exported import PVSupport
 import RxSwift
 import SWCompression
 

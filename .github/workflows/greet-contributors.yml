@@ -1,0 +1,13 @@
+name: 'GreetContributor'
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  GreetCommitter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Greet contributor'
+        uses: ibakshay/greet-contributors-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

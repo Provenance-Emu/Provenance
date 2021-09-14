@@ -7,10 +7,9 @@
 //
 
 import Foundation
-import Promises
-import PVSupport
-import RxCocoa
-import RxSwift
+@_exported import PVSupport
+@_exported import RxCocoa
+@_exported import RxSwift
 
 public struct ExtractionProgress {
     let path: URL
@@ -52,13 +51,13 @@ public final class DirectoryWatcher2 {
 
     private let disposeBag = DisposeBag()
 
-    private var watchedDirectories = Variable<Set<URL>>(Set<URL>())
+    private var watchedDirectories = BehaviorRelay<Set<URL>>(value: Set<URL>())
 
     public func watchDirectory(_ url: URL) throws {
         guard !watchedDirectories.value.contains(url) else { throw DirectoryWatcherError.pathAlreadyWatched }
         guard url.hasDirectoryPath else { throw DirectoryWatcherError.pathNotDirectory }
 
-        if watchedDirectories.value.insert(url).inserted {
+        if watchedDirectories.insert(url).inserted {
             serialQueue.async {
                 do {
                     try self.initialScan(url)
@@ -72,7 +71,7 @@ public final class DirectoryWatcher2 {
     }
 
     public func unwatchDirectory(_ url: URL) {
-        if let removed = watchedDirectories.value.remove(url) {
+        if let removed = watchedDirectories.remove(url) {
             _stopMonitoring(removed)
         }
     }
@@ -84,7 +83,7 @@ public final class DirectoryWatcher2 {
     }
 
     fileprivate var dispatch_sources = [URL: WatchedDir]()
-    fileprivate let serialQueue: DispatchQueue = DispatchQueue(label: "com.provenance-emu.provenance.serialExtractorQueue")
+    fileprivate let serialQueue: DispatchQueue = DispatchQueue(label: "org.provenance-emu.provenance.serialExtractorQueue")
 
     private func initialScan(_ url: URL) throws {
         let exts = PVEmulatorConfiguration.archiveExtensions

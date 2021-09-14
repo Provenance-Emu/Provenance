@@ -13,7 +13,7 @@ import RealmSwift
 public final class PVCore: Object {
     public dynamic var identifier: String = ""
     public dynamic var principleClass: String = ""
-    public dynamic var supportedSystems = List<PVSystem>()
+    public var supportedSystems = List<PVSystem>()
 
     public dynamic var projectName = ""
     public dynamic var projectURL = ""
@@ -41,6 +41,23 @@ public final class PVCore: Object {
 // MARK: - Conversions
 
 internal extension Core {
+//    init(with core: PVCore) {
+//        let identifier = core.identifier
+//        let principleClass = core.principleClass
+//        let systems : [System] = {
+//                let realm = try! Realm()
+//                let systems = realm.objects(PVSystem.self).filter { $0.cores.contains(where: {
+//                    $0.identifier == identifier
+//                }) }.map {
+//                    System(with: $0)
+//                }
+//                return systems.map { $0 }
+//        }()
+//
+//        // TODO: Supported systems
+//        let project = CoreProject(name: core.projectName, url: URL(string: core.projectURL)!, version: core.projectVersion)
+//        self.init(identifier: identifier, principleClass: principleClass, systems: systems, project: project)
+//    }
     init(with core: PVCore) {
         identifier = core.identifier
         principleClass = core.principleClass

@@ -1,9 +1,9 @@
 /***************************************************************************************
  *  Genesis Plus
- *  3-Buttons & 6-Buttons pad support
- *  Support for J-CART & 4-Way Play adapters
+ *  2-Buttons, 3-Buttons & 6-Buttons controller support
+ *  with support for J-Cart, 4-Way Play & Master Tap adapters
  *
- *  Copyright (C) 2007-2011  Eke-Eke (Genesis Plus GX)
+ *  Copyright (C) 2007-2019  Eke-Eke (Genesis Plus GX)
  *
  *  Redistribution and use of this code or any derivative works are permitted
  *  provided that the following conditions are met:
@@ -43,6 +43,7 @@
 /* Function prototypes */
 extern void gamepad_reset(int port);
 extern void gamepad_refresh(int port);
+extern void gamepad_end_frame(int port, unsigned int cycles);
 extern unsigned char gamepad_1_read(void);
 extern unsigned char gamepad_2_read(void);
 extern void gamepad_1_write(unsigned char data, unsigned char mask);
@@ -53,5 +54,9 @@ extern void wayplay_1_write(unsigned char data, unsigned char mask);
 extern void wayplay_2_write(unsigned char data, unsigned char mask);
 extern unsigned int jcart_read(unsigned int address);
 extern void jcart_write(unsigned int address, unsigned int data);
+extern unsigned char mastertap_1_read(void);
+extern unsigned char mastertap_2_read(void);
+extern void mastertap_1_write(unsigned char data, unsigned char mask);
+extern void mastertap_2_write(unsigned char data, unsigned char mask);
 
 #endif

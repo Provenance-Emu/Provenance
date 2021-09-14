@@ -51,7 +51,7 @@ extension QuickTableViewController: SliderCellDelegate {
 
     /// The `SliderCellDelegate` protocol allows the adopting delegate to respond to the UI interaction. Not available on tvOS.
     @available(tvOS, unavailable, message: "SliderCellDelegate is not available on tvOS.")
-    public protocol SliderCellDelegate: class {
+    public protocol SliderCellDelegate: AnyObject {
         /// Tells the delegate that the slider value has changed.
         func sliderCell(_ cell: SliderCell, didChangeValue newValue: Float)
     }
@@ -105,7 +105,7 @@ extension QuickTableViewController: SliderCellDelegate {
                 slider.maximumValue = row.valueLimits.max
                 slider.minimumValueImage = row.valueImages.min?.image
                 slider.maximumValueImage = row.valueImages.max?.image
-                slider.setValue(row.value, animated: true)
+                slider.setValue(row.value, animated: false)
             }
         }
 
@@ -123,10 +123,23 @@ extension QuickTableViewController: SliderCellDelegate {
         }
 
         private func setUpAppearance() {
-            slider.autoresizingMask = [.flexibleHeight, .flexibleWidth]
-            let leftInset = (textLabel?.bounds.width ?? 0) + 16
-            slider.frame = contentView.bounds.inset(by: UIEdgeInsets(top: 0, left: leftInset, bottom: 0, right: 16))
             contentView.addSubview(slider)
+
+            guard let textLabel = textLabel else {
+                return
+            }
+
+            contentView.heightAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
+
+            textLabel.translatesAutoresizingMaskIntoConstraints = false
+            textLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 15).isActive = true
+            textLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 0).isActive = true
+            textLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0).isActive = true
+
+            slider.translatesAutoresizingMaskIntoConstraints = false
+            slider.leadingAnchor.constraint(equalTo: textLabel.trailingAnchor, constant: 20).isActive = true
+            slider.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20).isActive = true
+            slider.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: 0).isActive = true
         }
     }
 #endif

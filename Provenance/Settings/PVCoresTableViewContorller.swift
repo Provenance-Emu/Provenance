@@ -47,7 +47,7 @@ final class PVCoresTableViewController: QuickTableViewController {
                         self.navigationController?.pushViewController(webVC, animated: true)
                     #endif
                 })
-            }),
+            })
         ]
     }
 }
@@ -88,7 +88,7 @@ final class PVCoresTableViewController: QuickTableViewController {
             hud.isUserInteractionEnabled = false
             hud.mode = .determinateHorizontalBar
             hud.progress = 0
-            hud.labelText = "Loading..."
+            hud.labelText = "Loading…"
 
             self.hud = hud
             webView.addSubview(hud)

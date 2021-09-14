@@ -6,7 +6,8 @@
 #import "PVLogViewController.h"
 //#import "Provenance/Version.h"
 #import <Realm/Realm.h>
-#import <SteamController/SteamController.h>
+#import "SteamController.h"
+#import "PVAltKitService.h"
 // Hack cause they can't make modules for some reason
 //#import <ProSystem/ProSystemGameCore.h>
 //#import <PicoDrive/PicodriveGameCore.h>
@@ -28,7 +29,6 @@
 //#import <PVSupport/DebugUtils.h>
 #import "PVAvailability.h"
 #import "PVGLViewController.h"
-#import "UIActionSheet+BlockAdditions.h"
 #import "MBProgressHUD.h"
 #import "PVWebServer.h"
 #import "UIDevice+Hardware.h"

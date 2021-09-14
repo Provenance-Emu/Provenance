@@ -238,8 +238,6 @@ enum iCloudError: Error {
 }
 
 public final class iCloudSync {
-    static let UbiquityIdentityTokenKey = "com.provenance-emu.provenenace.UbiquityIdentityToken"
-
     static var disposeBag: DisposeBag?
     public static func initICloudDocuments() {
         let fm = FileManager.default
@@ -342,13 +340,13 @@ public final class iCloudSync {
                         if !realm.isInWriteTransaction {
                             do {
                                 try realm.write {
-                                    realm.add(newSave, update: true)
+                                    realm.add(newSave, update: .all)
                                 }
                             } catch {
                                 ELOG(error.localizedDescription)
                             }
                         } else {
-                            realm.add(newSave, update: true)
+                            realm.add(newSave, update: .all)
                         }
                         ILOG("Added new save \(newSave.debugDescription)")
                     } catch {

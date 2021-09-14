@@ -4,14 +4,6 @@ DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 . "$DIR/setup_env.sh"
 
-function carthage_uninstall() {
-    if carthage_installed; then
-        echo "Found Carthage install. Removing..."
-        brew uninstall --force carthage
-        echo "Carthage uninstalled"
-    fi
-}
-
 function fastlane_uninstall() {
     if fastlane_installed; then
         echo "Found fastlane install. Removing..."
@@ -28,7 +20,7 @@ function brew_uninstall() {
     fi
 }
 
-echo "This will completely remove carthage, fastlane and homebrew."
+echo "This will completely remove fastlane and homebrew."
 echo "This is really only for dev testing of installation scripts on a clean system."
 echo -n "Are you sure? [y/N]: "
 read -n 1 -t 20 RES
@@ -36,7 +28,6 @@ read -n 1 -t 20 RES
 if [[ $RES == "y" || $RES == "Y" ]]; then
     echo "Uninstalling..."
     fastlane_uninstall
-    carthage_uninstall
     brew_uninstall
     echo "Done"
 else

@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:Provenance.xctestplan">
+   </FileRef>
+   <FileRef
       location = "container:Provenance.xcodeproj">
    </FileRef>
    <FileRef
@@ -57,9 +60,6 @@
       </FileRef>
       <FileRef
          location = "group:Cores/VirtualJaguar/Core-VirtualJaguar.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/Yabause/PVYabause.xcodeproj">
       </FileRef>
    </Group>
 </Workspace>

@@ -17,7 +17,7 @@ public struct iCadeControllerState: OptionSet, Hashable, CustomStringConvertible
         return rawValue
     }
 
-    static let none = iCadeControllerState(rawValue: 0)
+    static let none = iCadeControllerState([])
     static let joystickUp = iCadeControllerState(rawValue: 1 << 0)
     static let joystickRight = iCadeControllerState(rawValue: 1 << 1)
     static let joystickDown = iCadeControllerState(rawValue: 1 << 2)
@@ -53,7 +53,7 @@ public struct iCadeControllerState: OptionSet, Hashable, CustomStringConvertible
         .buttonI,
         .buttonJ,
         .buttonK,
-        .buttonL,
+        .buttonL
     ]
 
     public var description: String {
@@ -92,7 +92,7 @@ public struct iCadeControllerState: OptionSet, Hashable, CustomStringConvertible
     }()
 }
 
-public protocol iCadeEventDelegate: class {
+public protocol iCadeEventDelegate: AnyObject {
     func stateChanged(state: iCadeControllerState)
     func buttonDown(button: iCadeControllerState)
     func buttonUp(button: iCadeControllerState)

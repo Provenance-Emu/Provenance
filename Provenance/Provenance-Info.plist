@@ -2,10 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>ALTDeviceID</key>
+	<string></string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>$(APP_DISPLAY_NAME)</string>
+	<string>Provenance</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
@@ -56,7 +58,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.5</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -67,7 +69,7 @@
 			<key>CFBundleURLIconFile</key>
 			<string>URLIcon-83.5@2x</string>
 			<key>CFBundleURLName</key>
-			<string>com.provenance-emu.provenance</string>
+			<string>org.provenance-emu.provenance</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>provenance</string>
@@ -75,27 +77,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>2770</string>
-	<key>Fabric</key>
-	<dict>
-		<key>APIKey</key>
-		<string>9a48bf9b14f5179d99357ca6f8fe90ca3a82eb87</string>
-		<key>Kits</key>
-		<array>
-			<dict>
-				<key>KitInfo</key>
-				<dict/>
-				<key>KitName</key>
-				<string>Crashlytics</string>
-			</dict>
-			<dict>
-				<key>KitInfo</key>
-				<dict/>
-				<key>KitName</key>
-				<string>Answers</string>
-			</dict>
-		</array>
-	</dict>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>GCSupportedGameControllers</key>
 	<array>
 		<dict>
@@ -104,11 +86,11 @@
 		</dict>
 		<dict>
 			<key>ProfileName</key>
-			<string>Gamepad</string>
+			<string>MicroGamepad</string>
 		</dict>
 		<dict>
 			<key>ProfileName</key>
-			<string>MicroGamepad</string>
+			<string>DirectionalGamepad</string>
 		</dict>
 	</array>
 	<key>GCSupportsControllerUserInteraction</key>
@@ -119,6 +101,8 @@
 	<string></string>
 	<key>GitTag</key>
 	<string></string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.games</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>provenance</string>
@@ -132,15 +116,23 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Provenance uses Bluetooth to support game controllers.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_altserver._tcp</string>
+	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>Used for album artwork</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Provenance uses the local network to find and communicate with AltServer.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Provenance can set custom artworks from your photos or save screenshots to your photos library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Provenance can set custom artworks from your photos or save screenshots to your photos library.</string>
 	<key>NSUbiquitousContainers</key>
 	<dict>
-		<key>iCloud.com.provenance-emu.provenance</key>
+		<key>iCloud.org.provenance-emu.provenance</key>
 		<dict>
 			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
 			<true/>
@@ -152,8 +144,8 @@
 	</dict>
 	<key>NSUserActivityTypes</key>
 	<array>
-		<string>com.provenance-emu.webserver</string>
-		<string>com.provenance-emu.game.play</string>
+		<string>org.provenance-emu.webserver</string>
+		<string>org.provenance-emu.game.play</string>
 	</array>
 	<key>Revision</key>
 	<string>78dc628</string>
@@ -163,6 +155,7 @@
 		<string>bluetooth-central</string>
 		<string>external-accessory</string>
 		<string>fetch</string>
+		<string>processing</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UIFileSharingEnabled</key>

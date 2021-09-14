@@ -10,7 +10,7 @@ import Foundation
 import RealmSwift
 
 import CoreSpotlight
-import MobileCoreServices
+import CoreServices
 // import UIKit
 
 public extension PVGame {
@@ -19,8 +19,7 @@ public extension PVGame {
     }
 
     #if os(iOS)
-        @available(iOS 9.0, *)
-        public var spotlightContentSet: CSSearchableItemAttributeSet {
+    var spotlightContentSet: CSSearchableItemAttributeSet {
             let systemName = self.systemName
 
             var description = "\(systemName ?? "")"
@@ -69,12 +68,12 @@ public extension PVGame {
             //            contentSet.authorNames             = [data.authorName]
             // Could generate small thumbnail here
             if let p = pathOfCachedImage?.path, let t = UIImage(contentsOfFile: p), let s = t.scaledImage(withMaxResolution: 270) {
-                contentSet.thumbnailData = s.jpegData(compressionQuality: 0.5)
+                contentSet.thumbnailData = s.jpegData(compressionQuality: 0.85)
             }
             return contentSet
         }
 
-        public var pathOfCachedImage: URL? {
+    var pathOfCachedImage: URL? {
             let artworkKey = customArtworkURL.isEmpty ? originalArtworkURL : customArtworkURL
             if !PVMediaCache.fileExists(forKey: artworkKey) {
                 return nil
@@ -83,27 +82,25 @@ public extension PVGame {
             return artworkURL
         }
 
-        public var spotlightUniqueIdentifier: String {
-            return "com.provenance-emu.game.\(md5Hash)"
+    var spotlightUniqueIdentifier: String {
+            return "org.provenance-emu.game.\(md5Hash)"
         }
     #endif
 
     var spotlightActivity: NSUserActivity {
-        let activity = NSUserActivity(activityType: "com.provenance-emu.game.play")
+        let activity = NSUserActivity(activityType: "org.provenance-emu.game.play")
         activity.title = title
         activity.userInfo = ["md5": md5Hash]
 
-        if #available(iOS 9.0, tvOS 10.0, *) {
-            activity.requiredUserInfoKeys = ["md5"]
-            activity.isEligibleForSearch = true
-            activity.isEligibleForHandoff = false
+        activity.requiredUserInfoKeys = ["md5"]
+        activity.isEligibleForSearch = true
+        activity.isEligibleForHandoff = false
 
-            #if os(iOS)
-                activity.contentAttributeSet = spotlightContentSet
-            #endif
-            activity.requiredUserInfoKeys = ["md5"]
-            //            activity.expirationDate       =
-        }
+        #if os(iOS)
+            activity.contentAttributeSet = spotlightContentSet
+        #endif
+        activity.requiredUserInfoKeys = ["md5"]
+        //            activity.expirationDate       =
 
         return activity
     }

@@ -178,8 +178,10 @@ void *plat_mmap(unsigned long addr, size_t size, int need_exec, int is_fixed)
 	req = (void *)addr;
 	if (need_exec)
 		prot |= PROT_EXEC;
+	/* avoid MAP_FIXED, it overrides existing mappings..
 	if (is_fixed)
 		flags |= MAP_FIXED;
+	*/
 	if (size >= HUGETLB_THRESHOLD)
 		flags |= MAP_HUGETLB;
 
@@ -197,9 +199,14 @@ void *plat_mmap(unsigned long addr, size_t size, int need_exec, int is_fixed)
 	if (ret == MAP_FAILED)
 		return NULL;
 
-	if (req != NULL && ret != req)
-		fprintf(stderr,
-			"warning: mmaped to %p, requested %p\n", ret, req);
+	if (req != NULL && ret != req) {
+		fprintf(stderr, "%s: mmaped to %p, requested %p\n",
+			is_fixed ? "error" : "warning", ret, req);
+		if (is_fixed) {
+			munmap(ret, size);
+			return NULL;
+		}
+	}
 
 	return ret;
 }
@@ -209,8 +216,18 @@ void *plat_mremap(void *ptr, size_t oldsize, size_t newsize)
 	void *ret;
 
 	ret = mremap(ptr, oldsize, newsize, MREMAP_MAYMOVE);
-	if (ret == MAP_FAILED)
-		return NULL;
+	if (ret == MAP_FAILED) {
+		fprintf(stderr, "mremap %p %zd %zd: ",
+			ptr, oldsize, newsize);
+		perror(NULL);
+		// might be because huge pages can't be remapped,
+		// just make a new mapping
+		ret = plat_mmap(0, newsize, 0, 0);
+		if (ret == MAP_FAILED)
+			return NULL;
+		memcpy(ret, ptr, oldsize);
+		munmap(ptr, oldsize);
+	}
 	if (ret != ptr)
 		printf("warning: mremap moved: %p -> %p\n", ptr, ret);
 

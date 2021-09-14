@@ -60,7 +60,7 @@ open class Cache<KeyType: Hashable, ObjectType> {
         set { cache.name = newValue }
     }
 
-    open weak var delegate: NSCacheDelegate? {
+    open var delegate: NSCacheDelegate? {
         get { return cache.delegate }
         set { cache.delegate = newValue }
     }
@@ -87,7 +87,7 @@ open class Cache<KeyType: Hashable, ObjectType> {
 
     open var totalCostLimit: Int {
         get { return cache.totalCostLimit }
-        set { cache.totalCostLimit = totalCostLimit }
+        set { cache.totalCostLimit = newValue }
     }
 
     open var countLimit: Int {

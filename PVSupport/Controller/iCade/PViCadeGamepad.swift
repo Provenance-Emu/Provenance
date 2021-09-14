@@ -9,63 +9,63 @@
 
 import GameController
 
-public final class PViCadeGamepad: GCExtendedGamepad {
-    public let _dpad: PViCadeGamepadDirectionPad = PViCadeGamepadDirectionPad()
-    public let _buttonA: PViCadeGamepadButtonInput = PViCadeGamepadButtonInput()
-    public let _buttonB: PViCadeGamepadButtonInput = PViCadeGamepadButtonInput()
-    public let _buttonX: PViCadeGamepadButtonInput = PViCadeGamepadButtonInput()
-    public let _buttonY: PViCadeGamepadButtonInput = PViCadeGamepadButtonInput()
-    public let _leftShoulder: PViCadeGamepadButtonInput = PViCadeGamepadButtonInput()
-    public let _rightShoulder: PViCadeGamepadButtonInput = PViCadeGamepadButtonInput()
-    public let _leftTrigger: PViCadeGamepadButtonInput = PViCadeGamepadButtonInput()
-    public let _rightTrigger: PViCadeGamepadButtonInput = PViCadeGamepadButtonInput()
-    public let _start: PViCadeGamepadButtonInput = PViCadeGamepadButtonInput()
-    public let _select: PViCadeGamepadButtonInput = PViCadeGamepadButtonInput()
-    public let dummyThumbstick: PViCadeGamepadDirectionPad = PViCadeGamepadDirectionPad()
+internal final class PViCadeGamepad: GCExtendedGamepad {
+    private let _dpad: PViCadeGamepadDirectionPad = PViCadeGamepadDirectionPad()
+    private let _buttonA: PViCadeGamepadButtonInput = PViCadeGamepadButtonInput()
+    private let _buttonB: PViCadeGamepadButtonInput = PViCadeGamepadButtonInput()
+    private let _buttonX: PViCadeGamepadButtonInput = PViCadeGamepadButtonInput()
+    private let _buttonY: PViCadeGamepadButtonInput = PViCadeGamepadButtonInput()
+    private let _leftShoulder: PViCadeGamepadButtonInput = PViCadeGamepadButtonInput()
+    private let _rightShoulder: PViCadeGamepadButtonInput = PViCadeGamepadButtonInput()
+    private let _leftTrigger: PViCadeGamepadButtonInput = PViCadeGamepadButtonInput()
+    private let _rightTrigger: PViCadeGamepadButtonInput = PViCadeGamepadButtonInput()
+    private let _start: PViCadeGamepadButtonInput = PViCadeGamepadButtonInput()
+    private let _select: PViCadeGamepadButtonInput = PViCadeGamepadButtonInput()
+    private let dummyThumbstick: PViCadeGamepadDirectionPad = PViCadeGamepadDirectionPad()
 
-    public override var dpad: PViCadeGamepadDirectionPad {
+    override var dpad: PViCadeGamepadDirectionPad {
         return _dpad
     }
 
     // iCade only support 1 dpad and 8 buttons :(,
     // thus these are dummies.
-    public override var leftThumbstick: PViCadeGamepadDirectionPad {
+    override var leftThumbstick: PViCadeGamepadDirectionPad {
         return dummyThumbstick
     }
 
-    public override var rightThumbstick: PViCadeGamepadDirectionPad {
+    override var rightThumbstick: PViCadeGamepadDirectionPad {
         return dummyThumbstick
     }
 
-    public override var buttonA: PViCadeGamepadButtonInput {
+    override var buttonA: PViCadeGamepadButtonInput {
         return _buttonA
     }
 
-    public override var buttonB: PViCadeGamepadButtonInput {
+    override var buttonB: PViCadeGamepadButtonInput {
         return _buttonB
     }
 
-    public override var buttonX: PViCadeGamepadButtonInput {
+    override var buttonX: PViCadeGamepadButtonInput {
         return _buttonX
     }
 
-    public override var buttonY: PViCadeGamepadButtonInput {
+    override var buttonY: PViCadeGamepadButtonInput {
         return _buttonY
     }
 
-    public override var leftShoulder: PViCadeGamepadButtonInput {
+    override var leftShoulder: PViCadeGamepadButtonInput {
         return _leftShoulder
     }
 
-    public override var rightShoulder: PViCadeGamepadButtonInput {
+    override var rightShoulder: PViCadeGamepadButtonInput {
         return _rightShoulder
     }
 
-    public override var leftTrigger: PViCadeGamepadButtonInput {
+    override var leftTrigger: PViCadeGamepadButtonInput {
         return _leftTrigger
     }
 
-    public override var rightTrigger: PViCadeGamepadButtonInput {
+    override var rightTrigger: PViCadeGamepadButtonInput {
         return _rightTrigger
     }
 }

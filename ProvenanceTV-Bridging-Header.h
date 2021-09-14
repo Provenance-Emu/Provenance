@@ -2,7 +2,8 @@
 //  Use this file to import your target's public headers that you would like to expose to Swift.
 //
 #import "PVLogViewController.h"
-#import <SteamController/SteamController.h>
+#import "SteamController.h"
+#import "PVAltKitService.h"
 
 // -----------------------------------------------------------------------------
 // Begin Swiftify generated imports
@@ -19,7 +20,6 @@
 #import "MBProgressHUD.h"
 #import "PVGLViewController.h"
 #import "PVWebServer.h"
-#import "UIActionSheet+BlockAdditions.h"
 
 // End Swiftify generated imports
 // -----------------------------------------------------------------------------

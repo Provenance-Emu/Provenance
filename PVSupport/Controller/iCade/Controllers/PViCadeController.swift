@@ -10,7 +10,7 @@
 import GameController
 
 public class PViCadeController: GCController {
-    public private(set) var iCadeGamepad: PViCadeGamepad = PViCadeGamepad()
+    internal private(set) var iCadeGamepad: PViCadeGamepad = PViCadeGamepad()
     public let reader: PViCadeReader = PViCadeReader.shared
     public var controllerPressedAnyKey: ((_ controller: PViCadeController?) -> Void)?
 
@@ -97,14 +97,6 @@ public class PViCadeController: GCController {
         set(controllerPausedHandler) {
             // dummy method to avoid NSInternalInconsistencyException
         }
-    }
-
-    public override var gamepad: GCGamepad? {
-        return nil
-    }
-
-    public override var extendedGamepad: GCExtendedGamepad? {
-        return iCadeGamepad
     }
 
     public override var vendorName: String? {

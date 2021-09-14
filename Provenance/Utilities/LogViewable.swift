@@ -11,7 +11,7 @@ import Foundation
 
 #if os(iOS)
     @objc
-    public protocol LogDisplayer: class {
+    public protocol LogDisplayer: AnyObject {
         func displayLogViewer()
     }
 

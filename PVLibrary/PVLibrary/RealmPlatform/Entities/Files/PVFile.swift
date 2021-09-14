@@ -33,36 +33,17 @@ public enum RelativeRoot: Int {
         case .caches:
             return RelativeRoot.cachesDirectory
         case .iCloud:
-            return RelativeRoot.iCloudDocumentsDirectory ?? RelativeRoot.documentsDirectory
+            return RelativeRoot.iCloudDocumentsDirectory ?? Self.platformDefault.directoryURL
         }
     }
 
     func createRelativePath(fromURL url: URL) -> String {
-        let searchString: String
-        switch self {
-        case .documents:
-            searchString = "Documents/"
-        case .caches:
-            searchString = "Caches/"
-        case .iCloud:
-            searchString = "Documents/"
-        }
-
-        let path = url.path
-        guard let range = path.range(of: searchString) else {
-            return path
-        }
-
-        let suffixPath = String(path.suffix(from: range.upperBound))
-        return suffixPath
+        // We need the dropFirst to remove the leading /
+        return String(url.path.replacingOccurrences(of: directoryURL.path, with: "").dropFirst())
     }
 
     func appendingPath(_ path: String) -> URL {
-        if #available(iOS 9.0, *) {
-            return URL(fileURLWithPath: path, relativeTo: directoryURL)
-        } else {
-            return directoryURL.appendingPathComponent(path, isDirectory: false)
-        }
+        return URL(fileURLWithPath: path, relativeTo: directoryURL)
     }
 }
 
@@ -100,7 +81,7 @@ public extension PVFile {
 
     private(set) var url: URL {
         get {
-            if partialPath.contains("iCloud") {
+            if partialPath.contains("iCloud") || partialPath.contains("private") {
                 var pathComponents = (partialPath as NSString).pathComponents
                 pathComponents.removeFirst()
                 let path = pathComponents.joined(separator: "/")
@@ -174,6 +155,10 @@ public extension PVFile {
 
     var size: UInt64 {
         let fileSize: UInt64
+        guard FileManager.default.fileExists(atPath: url.absoluteString) else {
+            ELOG("No file at path: \(url.absoluteString)")
+            return 0
+        }
 
         if let attr = try? FileManager.default.attributesOfItem(atPath: url.path) as NSDictionary {
             fileSize = attr.fileSize()

@@ -32,7 +32,7 @@ private typealias Keys = SystemDictionaryKeys.ControllerLayoutKeys
 private let kDPadTopMargin: CGFloat = 96.0
 private let gripControl = false
 
-protocol StartSelectDelegate: class {
+protocol StartSelectDelegate: AnyObject {
     func pressStart(forPlayer player: Int)
     func releaseStart(forPlayer player: Int)
     func pressSelect(forPlayer player: Int)
@@ -174,11 +174,10 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
     var leftAnalogButton: JSButton?
     var rightAnalogButton: JSButton?
 
-    let alpha: CGFloat = PVSettingsModel.shared.controllerOpacity
+    let alpha: CGFloat = CGFloat(PVSettingsModel.shared.controllerOpacity)
 
     #if os(iOS)
         private var _feedbackGenerator: AnyObject?
-        @available(iOS 10.0, *)
         var feedbackGenerator: UISelectionFeedbackGenerator? {
             get {
                 return _feedbackGenerator as? UISelectionFeedbackGenerator
@@ -220,10 +219,8 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
         NotificationCenter.default.addObserver(self, selector: #selector(PVControllerViewController.controllerDidConnect(_:)), name: .GCControllerDidConnect, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVControllerViewController.controllerDidDisconnect(_:)), name: .GCControllerDidDisconnect, object: nil)
         #if os(iOS)
-            if #available(iOS 10.0, *) {
-                feedbackGenerator = UISelectionFeedbackGenerator()
-                feedbackGenerator?.prepare()
-            }
+            feedbackGenerator = UISelectionFeedbackGenerator()
+            feedbackGenerator?.prepare()
             updateHideTouchControls()
 
             if PVSettingsModel.shared.volumeHUD {
@@ -293,9 +290,10 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
             if PVSettingsModel.shared.buttonVibration {
                 // only iPhone 7 and 7 Plus support the taptic engine APIs for now.
                 // everything else should fall back to the vibration motor.
-                if #available(iOS 10.0, *), UIDevice.hasTapticMotor {
+                if UIDevice.hasTapticMotor {
                     feedbackGenerator?.selectionChanged()
-                } else {
+                } else if UIDevice.current.systemName == "iOS" {
+                    #if !targetEnvironment(macCatalyst)
                     AudioServicesStopSystemSound(Int32(kSystemSoundID_Vibrate))
                     let vibrationLength: Int = 30
                     let pattern: [Any] = [false, 0, true, vibrationLength]
@@ -303,6 +301,7 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
                     dictionary["VibePattern"] = pattern
                     dictionary["Intensity"] = 1
                     AudioServicesPlaySystemSoundWithVibration(Int32(kSystemSoundID_Vibrate), nil, dictionary)
+                    #endif
                 }
             }
         #endif
@@ -587,8 +586,9 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
             if rightShoulderButton != nil {
                 zTriggerFrame = CGRect(x: (rightShoulderButton?.frame.minX)! - controlSize.width, y: (rightShoulderButton?.frame.minY)!, width: controlSize.width, height: controlSize.height)
             } else {
-                zTriggerFrame = CGRect(x: view.frame.size.width - (controlSize.width * 2) - xPadding, y: view.frame.size.height - (controlSize.height * 2)
-                    - yPadding, width: controlSize.width, height: controlSize.height)
+                let x: CGFloat = view.frame.size.width - (controlSize.width * 2) - xPadding
+                let y: CGFloat = view.frame.size.height - (controlSize.height * 2) - yPadding
+                zTriggerFrame = CGRect(x: x, y: y, width: controlSize.width, height: controlSize.height)
             }
 
             if let zTriggerButton = self.zTriggerButton {

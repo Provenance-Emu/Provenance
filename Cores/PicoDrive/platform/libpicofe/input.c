@@ -50,26 +50,26 @@ static int menu_last_used_dev = 0;
 static int *in_alloc_binds(int drv_id, int key_count)
 {
 	const struct in_default_bind *defbinds;
-	int *binds;
+	int *binds, *binds_d;
 	int i;
 
 	binds = calloc(key_count * IN_BINDTYPE_COUNT * 2, sizeof(binds[0]));
 	if (binds == NULL)
 		return NULL;
 
+	binds_d = binds + key_count * IN_BINDTYPE_COUNT;
+
+	/* always have a copy of defbinds */
 	defbinds = DRV(drv_id).defbinds;
 	if (defbinds != NULL) {
 		for (i = 0; ; i++) {
-			if (defbinds[i].bit == 0 && defbinds[i].btype == 0
+			if (defbinds[i].code == 0 && defbinds[i].btype == 0
 			    && defbinds[i].bit == 0)
 				break;
-			binds[IN_BIND_OFFS(defbinds[i].code, defbinds[i].btype)] |=
+
+			binds_d[IN_BIND_OFFS(defbinds[i].code, defbinds[i].btype)] |=
 				1 << defbinds[i].bit;
 		}
-
-		/* always have a copy of defbinds */
-		memcpy(binds + key_count * IN_BINDTYPE_COUNT, binds,
-			sizeof(binds[0]) * key_count * IN_BINDTYPE_COUNT);
 	}
 
 	return binds;
@@ -140,6 +140,9 @@ void in_register(const char *nname, int drv_fd_hnd, void *drv_data,
 		free(tmp);
 		return;
 	}
+
+	memcpy(binds, binds + key_count * IN_BINDTYPE_COUNT,
+		sizeof(binds[0]) * key_count * IN_BINDTYPE_COUNT);
 
 	in_devices[i].name = tmp;
 	in_devices[i].binds = binds;
@@ -494,6 +497,8 @@ const int *in_get_dev_def_binds(int dev_id)
 	in_dev_t *dev = get_dev(dev_id);
 	if (dev == NULL)
 		return NULL;
+	if (dev->binds == NULL)
+		return NULL;
 
 	return dev->binds + dev->key_count * IN_BINDTYPE_COUNT;
 }
@@ -779,7 +784,7 @@ int in_config_parse_dev(const char *name)
 	}
 
 	if (drv_id < 0) {
-		lprintf("input: missing driver for %s\n", name);
+		lprintf("input: missing driver for '%s'\n", name);
 		return -1;
 	}
 
@@ -797,7 +802,8 @@ int in_config_parse_dev(const char *name)
 		for (i = 0; i < IN_MAX_DEVS; i++)
 			if (in_devices[i].name == NULL) break;
 		if (i >= IN_MAX_DEVS) {
-			lprintf("input: too many devices, can't add %s\n", name);
+			lprintf("input: too many devices, can't add '%s'\n",
+				name);
 			return -1;
 		}
 	}
@@ -862,7 +868,8 @@ int in_config_bind_key(int dev_id, const char *key, int acts, int bind_type)
 	}
 
 	if (kc < 0 || kc >= dev->key_count) {
-		lprintf("input: bad key: %s\n", key);
+		lprintf("input: bad key: '%s' for device '%s'\n",
+			key, dev->name);
 		return -1;
 	}
 
@@ -912,8 +919,25 @@ void in_debug_dump(void)
 		in_dev_t *d = &in_devices[i];
 		if (!d->probed && d->name == NULL && d->binds == NULL)
 			continue;
-		lprintf("%d %3d %6c %5c %s\n", i, d->drv_id, d->probed ? 'y' : 'n',
+		lprintf("%d %3d %6c %5c %s\n", i, d->drv_id,
+			d->probed ? 'y' : 'n',
 			d->binds ? 'y' : 'n', d->name);
+#if 0
+		if (d->binds) {
+			int kc, o, t, h;
+			for (kc = 0; kc < d->key_count; kc++) {
+				o = IN_BIND_OFFS(kc, 0);
+				for (t = h = 0; t < IN_BINDTYPE_COUNT; t++)
+					h |= d->binds[o + t];
+				if (h == 0)
+					continue;
+				lprintf("  [%3d] =", kc);
+				for (t = 0; t < IN_BINDTYPE_COUNT; t++)
+					printf(" %x", d->binds[o + t]);
+				printf("\n");
+			}
+		}
+#endif
 	}
 }
 

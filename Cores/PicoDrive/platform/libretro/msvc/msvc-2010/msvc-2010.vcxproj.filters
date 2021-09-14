@@ -1,0 +1,277 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\platform">
+      <UniqueIdentifier>{13ad8d51-3614-47ce-9d0d-8eb47a4cfabe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\platform\libretro">
+      <UniqueIdentifier>{56e5d1cc-a749-46f0-9c75-e26037b4e2b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\platform\common">
+      <UniqueIdentifier>{ab1e9796-fcf3-49c2-92f2-cbce4ad50f7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\zlib">
+      <UniqueIdentifier>{d7cd40e2-d074-4967-84ad-89488a9eed11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\unzip">
+      <UniqueIdentifier>{76c63342-13b7-413c-b44b-52ef07b4dccc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\pico">
+      <UniqueIdentifier>{04bd626c-6833-49c7-8256-dc94935efe03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\pico\cd">
+      <UniqueIdentifier>{3b94bd08-c15d-46a4-9672-094f4cafbc06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\pico\32x">
+      <UniqueIdentifier>{403b507e-7278-436e-b8a5-5a0deb70dfae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\pico\carthw">
+      <UniqueIdentifier>{27323686-5607-4502-9488-ac65c90e6969}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\pico\carthw\svp">
+      <UniqueIdentifier>{2e0a2f96-c25d-473e-9456-5e25b6eb8036}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\pico\sound">
+      <UniqueIdentifier>{a208ee7f-75c1-4ff9-9ed5-ea2d42832fc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\cpu">
+      <UniqueIdentifier>{04862576-b191-4769-a0f8-bb6400cfa861}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\cpu\famec">
+      <UniqueIdentifier>{337acc4a-3fe4-4547-b655-058d31318ffc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\cpu\cz80">
+      <UniqueIdentifier>{63c3bec2-54b1-4831-a420-5e1aa120738b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\cpu\drc">
+      <UniqueIdentifier>{85be1810-42b8-4ec7-bbd5-6c7d1dc5b763}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\cpu\sh2">
+      <UniqueIdentifier>{055bac11-1f11-4fe7-be7b-09ebaeab74d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\cpu\sh2\mame">
+      <UniqueIdentifier>{dd1911b8-6d08-42aa-ab21-0ba1154613e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\pico\pico">
+      <UniqueIdentifier>{a635c355-0290-4923-84c6-8290ea8b0065}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\libretro.c">
+      <Filter>Source Files\platform\libretro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\common\mp3.c">
+      <Filter>Source Files\platform\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\common\mp3_dummy.c">
+      <Filter>Source Files\platform\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\zlib\adler32.c">
+      <Filter>Source Files\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\zlib\compress.c">
+      <Filter>Source Files\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\zlib\crc32.c">
+      <Filter>Source Files\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\zlib\deflate.c">
+      <Filter>Source Files\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\zlib\example.c">
+      <Filter>Source Files\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\zlib\gzio.c">
+      <Filter>Source Files\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\zlib\infback.c">
+      <Filter>Source Files\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\zlib\inffast.c">
+      <Filter>Source Files\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\zlib\inflate.c">
+      <Filter>Source Files\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\zlib\inftrees.c">
+      <Filter>Source Files\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\zlib\trees.c">
+      <Filter>Source Files\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\zlib\uncompr.c">
+      <Filter>Source Files\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\zlib\zutil.c">
+      <Filter>Source Files\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\unzip\unzip.c">
+      <Filter>Source Files\unzip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\cart.c">
+      <Filter>Source Files\pico</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\carthw_cfg.c">
+      <Filter>Source Files\pico</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\debug.c">
+      <Filter>Source Files\pico</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\draw.c">
+      <Filter>Source Files\pico</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\draw2.c">
+      <Filter>Source Files\pico</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\eeprom.c">
+      <Filter>Source Files\pico</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\media.c">
+      <Filter>Source Files\pico</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\memory.c">
+      <Filter>Source Files\pico</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\misc.c">
+      <Filter>Source Files\pico</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\mode4.c">
+      <Filter>Source Files\pico</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\patch.c">
+      <Filter>Source Files\pico</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\pico.c">
+      <Filter>Source Files\pico</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\sek.c">
+      <Filter>Source Files\pico</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\sms.c">
+      <Filter>Source Files\pico</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\state.c">
+      <Filter>Source Files\pico</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\videoport.c">
+      <Filter>Source Files\pico</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\z80if.c">
+      <Filter>Source Files\pico</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\cd\cd_image.c">
+      <Filter>Source Files\pico\cd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\cd\cdc.c">
+      <Filter>Source Files\pico\cd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\cd\cdd.c">
+      <Filter>Source Files\pico\cd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\cd\cell_map.c">
+      <Filter>Source Files\pico\cd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\cd\cue.c">
+      <Filter>Source Files\pico\cd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\cd\gfx.c">
+      <Filter>Source Files\pico\cd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\cd\gfx_dma.c">
+      <Filter>Source Files\pico\cd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\cd\mcd.c">
+      <Filter>Source Files\pico\cd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\cd\memory.c">
+      <Filter>Source Files\pico\cd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\cd\misc.c">
+      <Filter>Source Files\pico\cd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\cd\pcm.c">
+      <Filter>Source Files\pico\cd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\cd\sek.c">
+      <Filter>Source Files\pico\cd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\32x\32x.c">
+      <Filter>Source Files\pico\32x</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\32x\memory.c">
+      <Filter>Source Files\pico\32x</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\32x\pwm.c">
+      <Filter>Source Files\pico\32x</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\32x\sh2soc.c">
+      <Filter>Source Files\pico\32x</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\carthw\carthw.c">
+      <Filter>Source Files\pico\carthw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\carthw\eeprom_spi.c">
+      <Filter>Source Files\pico\carthw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\carthw\svp\memory.c">
+      <Filter>Source Files\pico\carthw\svp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\carthw\svp\ssp16.c">
+      <Filter>Source Files\pico\carthw\svp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\carthw\svp\svp.c">
+      <Filter>Source Files\pico\carthw\svp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\sound\mix.c">
+      <Filter>Source Files\pico\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\sound\sn76496.c">
+      <Filter>Source Files\pico\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\sound\sound.c">
+      <Filter>Source Files\pico\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\sound\ym2612.c">
+      <Filter>Source Files\pico\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\cpu\fame\famec.c">
+      <Filter>Source Files\cpu\famec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\cpu\cz80\cz80.c">
+      <Filter>Source Files\cpu\cz80</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\cpu\drc\cmn.c">
+      <Filter>Source Files\cpu\drc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\cpu\sh2\sh2.c">
+      <Filter>Source Files\cpu\sh2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\cpu\sh2\mame\sh2pico.c">
+      <Filter>Source Files\cpu\sh2\mame</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\pico\xpcm.c">
+      <Filter>Source Files\pico\pico</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\pico\pico.c">
+      <Filter>Source Files\pico\pico</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\pico\memory.c">
+      <Filter>Source Files\pico\pico</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\pico\32x\draw.c">
+      <Filter>Source Files\pico\32x</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

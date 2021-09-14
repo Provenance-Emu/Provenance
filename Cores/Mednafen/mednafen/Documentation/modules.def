@@ -1,0 +1,1127 @@
+1.27.1
+apple2
+Apple II/II+
+250
+192
+1
+apple2.pal
+RGB mode 16-color(or 32-color for TFR) palette.  The presence of a custom palette will automatically enable RGB video mode if an RGB mode is not already selected via the "apple2.video.mode" setting.  If the palette has 32 color entries, the text fringe reduction variant of an RGB mode is enabled.
+16 32 
+0
+nes
+Nintendo Entertainment System/Famicom
+256
+240
+7
+nes.pal
+NTSC NES/Famicom
+64 512 
+nes-pal.pal
+PAL NES
+64 512 
+rp2c04-0001.pal
+Arcade RP2C04-0001
+64 
+rp2c04-0002.pal
+Arcade RP2C04-0002
+64 
+rp2c04-0003.pal
+Arcade RP2C04-0003
+64 
+rp2c04-0004.pal
+Arcade RP2C04-0004
+64 
+rp2c0x.pal
+Arcade RP2C03/RP2C05
+64 
+0
+snes
+Super Nintendo Entertainment System/Super Famicom
+256
+240
+1
+snes.pal
+SNES 15-bit BGR
+32768 
+0
+snes_faust
+Super Nintendo Entertainment System/Super Famicom
+292
+224
+0
+0
+gb
+GameBoy (Color)
+160
+144
+2
+gb.pal
+GameBoy(mono)
+4 8 12 
+gbc.pal
+GameBoy Color 15-bit BGR
+32768 
+0
+gba
+GameBoy Advance
+240
+160
+1
+gba.pal
+GBA 15-bit BGR
+32768 
+0
+pce
+PC Engine (CD)/TurboGrafx 16 (CD)/SuperGrafx
+320
+232
+1
+pce.pal
+PCE/TG16 9-bit GRB.  If only 512 triplets are present, the remaining 512 greyscale colors will be calculated automatically.
+512 1024 
+0
+pce_fast
+PC Engine (CD)/TurboGrafx 16 (CD)/SuperGrafx
+288
+232
+1
+pce_fast.pal
+PCE/TG16 9-bit GRB.  If only 512 triplets are present, the remaining 512 greyscale colors will be calculated automatically.
+512 1024 
+0
+lynx
+Atari Lynx
+160
+102
+1
+lynx.pal
+Atari Lynx 12-bit BRG
+4096 
+0
+md
+Sega Genesis/MegaDrive
+320
+240
+0
+0
+pcfx
+PC-FX
+288
+240
+0
+0
+ngp
+Neo Geo Pocket (Color)
+160
+152
+0
+0
+psx
+Sony PlayStation
+320
+240
+0
+0
+ss
+Sega Saturn
+302
+240
+0
+4
+region
+Region
+This database is used in conjunction with a game's internal header and the \"ss.region_default\" setting to automatically select the region of Saturn to emulate when the \"ss.region_autodetect\" setting is set to \"1\", the default.
+12
+Preview Sega Saturn Vol. 1 (Europe)
+10 8f e1 af 55 5a 95 42 04 85 7e 98 8c 53 6a 31
+1
+Europe
+
+Primal Rage (Europe)
+ed 4c 0b 87 35 37 86 76 a0 f6 32 c6 a4 c3 99 88
+1
+Europe
+
+Race Drivin' (Japan)
+15 fc 3a 82 16 a9 85 a5 a8 ad 30 af 9a ff 03 a9
+1
+Japan
+
+Riven - A Sequencia de Myst (Brazil) (Disc 1)
+e1 dd fd a1 8b 47 02 21 36 1e 5a ae 20 c0 59 9f
+1
+Brazil
+
+Riven - A Sequencia de Myst (Brazil) (Disc 2)
+bf 5f f8 5f f2 0c 35 f6 c9 8d 03 bc 34 d9 da 7f
+1
+Brazil
+
+Riven - A Sequencia de Myst (Brazil) (Disc 3)
+98 b6 6e 09 e6 dc 30 e6 55 db 85 01 33 0c 0b 9c
+1
+Brazil
+
+Riven - A Sequencia de Myst (Brazil) (Disc 4)
+a2 34 b0 b9 aa 47 74 1f d4 1e 35 da 3d e7 4d e3
+1
+Brazil
+
+Sega International Victory Goal (Japan)
+f7 e9 23 0a 9e 92 f1 93 16 43 f8 6c e8 21 50 66
+1
+Japan
+
+Virtua Racing (Europe)
+64 75 25 0c a1 9b 6c 5e 4e a0 6d 69 d9 0f 32 ca
+1
+Europe
+
+Virtua Racing (Japan)
+0d e3 fa fb 2b b9 6d 79 e0 3a b7 6d cc bf b0 2c
+1
+Japan
+
+Winter Heat (Europe) (Demo)
+6b 29 33 fc dd ad 8e 0d 95 81 a6 ee fd 90 4b 43
+1
+Europe
+
+WWF WrestleMania - The Arcade Game (Europe) (Demo)
+73 91 4b e1 ad 4d af 69 c3 eb b8 43 ee 3e b5 09
+1
+Europe
+
+cart
+Cart
+This database is used to automatically select the type of cart to emulate when the \"ss.cart\" setting is set to \"auto\", the default.  If a game is not found in the database when auto selection is enabled, then the cart used is specified by the \"ss.cart.auto_default\" setting, default \"backup\"(a backup memory cart).
+51
+Daytona USA CCE Net Link Edition
+MK-81218
+0
+None
+Reserved for future modem support.
+Duke Nukem 3D
+MK-81071
+0
+None
+Reserved for future modem support.
+PlanetWeb Browser (multiple versions)
+T-319-01H
+0
+None
+Reserved for future modem support.
+Saturn Bomberman
+MK-81070
+0
+None
+Reserved for future modem support.
+Sega Rally Championship Plus NetLink Edition
+MK-81215
+0
+None
+Reserved for future modem support.
+Virtual On NetLink Edition
+MK-81072
+0
+None
+Reserved for future modem support.
+Dennou Senki Virtual On (SegaNet)
+GS-7106
+0
+None
+Reserved for future modem support.
+Dragon's Dream (Japan)
+GS-7114
+0
+None
+Reserved for future modem support.
+Habitat II (Japan)
+GS-7105
+0
+None
+Reserved for future modem support.
+Pad Nifty (Japan)
+GS-7101
+0
+None
+Reserved for future modem support.
+Puzzle Bobble 3 (SegaNet)
+GS-7113
+0
+None
+Reserved for future modem support.
+Saturn Bomberman (SegaNet)
+T-14305G
+0
+None
+Reserved for future modem support.
+SegaSaturn Internet Vol. 1 (Japan)
+T-31301G
+0
+None
+Reserved for future modem support.
+King of Fighters '95, The (Europe)
+MK-81088
+0
+King of Fighters 95 ROM
+Game requirement.
+King of Fighters '95, The (Japan)
+T-3101G
+0
+King of Fighters 95 ROM
+Game requirement.
+Ultraman - Hikari no Kyojin Densetsu (Japan)
+T-13308G
+0
+Ultraman ROM
+Game requirement.
+Astra Superstars (Japan)
+T-1521G
+0
+1MiB Extended RAM
+
+Cotton 2 (Japan)
+T-9904G
+0
+1MiB Extended RAM
+
+Cyberbots (Japan)
+T-1217G
+0
+1MiB Extended RAM
+
+Fighter's History Dynamite (Japan)
+GS-9107
+0
+1MiB Extended RAM
+Game requirement.
+Friends (Japan)
+T-20109G
+0
+1MiB Extended RAM
+
+Groove on Fight (Japan)
+T-14411G
+0
+1MiB Extended RAM
+Game requirement.
+Marvel Super Heroes (Europe)
+T-7032H-50
+0
+1MiB Extended RAM
+
+Marvel Super Heroes (Japan)
+T-1215G
+0
+1MiB Extended RAM
+
+Metal Slug (Japan)
+T-3111G
+0
+1MiB Extended RAM
+Game requirement.
+NOël 3 (Japan)
+T-22205G
+0
+1MiB Extended RAM
+
+Pia Carrot e Youkoso!! 2 (Japan)
+T-20114G
+0
+1MiB Extended RAM
+
+Real Bout Garou Densetsu (Japan)
+T-3105G
+0
+1MiB Extended RAM
+Game requirement.
+Real Bout Garou Densetsu Special (Japan)
+T-3119G
+0
+1MiB Extended RAM
+Game requirement.
+Samurai Spirits - Amakusa Kourin (Japan)
+T-3116G
+0
+1MiB Extended RAM
+Game requirement.
+Samurai Spirits - Zankurou Musouken (Japan)
+T-3104G
+0
+1MiB Extended RAM
+Game requirement.
+Tech Saturn 1997.6 (Japan)
+610636008
+0
+1MiB Extended RAM
+Required by \"Groove on Fight\" demo.
+Super Real Mahjong P7 (Japan)
+T-16509G
+0
+1MiB Extended RAM
+
+Super Real Mahjong P7 (Japan)
+T-16510G
+0
+1MiB Extended RAM
+
+The King of Fighters '96 (Japan)
+T-3108G
+0
+1MiB Extended RAM
+Game requirement.
+The King of Fighters '97 (Japan)
+T-3121G
+0
+1MiB Extended RAM
+Game requirement.
+Waku Waku 7 (Japan)
+T-1515G
+0
+1MiB Extended RAM
+Game requirement.
+Dungeons and Dragons Collection (Japan)
+T-1245G
+0
+4MiB Extended RAM
+Game requirement(\"Shadow over Mystara\").
+Final Fight Revenge (Japan)
+T-1248G
+0
+4MiB Extended RAM
+Game requirement.
+Marvel Super Heroes vs. Street Fighter (Japan)
+T-1238G
+0
+4MiB Extended RAM
+Game requirement.
+Pocket Fighter (Japan)
+T-1230G
+0
+4MiB Extended RAM
+
+Street Fighter Zero 3 (Japan)
+T-1246G
+0
+4MiB Extended RAM
+Game requirement.
+Vampire Savior (Japan)
+T-1229G
+0
+4MiB Extended RAM
+Game requirement.
+X-Men vs. Street Fighter (Japan)
+T-1226G
+0
+4MiB Extended RAM
+Game requirement.
+Heart of Darkness (Prototype)
+4a f9 ff 30 ea 54 fe 3a 79 a7 68 69 ae de 55 bb
+1
+16MiB A-bus CS1 RAM
+Game requirement(though it's probable the original dev cart was only around 6 to 8MiB).
+Heart of Darkness (Prototype)
+f1 71 c3 e4 69 d5 99 93 94 09 05 fc 29 d3 8a 59
+1
+16MiB A-bus CS1 RAM
+Game requirement(though it's probable the original dev cart was only around 6 to 8MiB).
+Dezaemon 2 (Japan)
+T-16804G
+0
+Backup Memory
+Allows saving.
+Die Hard Trilogy (Japan)
+GS-9123
+0
+Backup Memory
+Game will crash when running with a RAM expansion cart.
+Die Hard Trilogy (Europe/USA)
+T-16103H
+0
+Backup Memory
+Game will crash when running with a RAM expansion cart.
+Kouryuu Sangoku Engi (Japan)
+T-26104G
+0
+Backup Memory
+
+Sega Ages - Galaxy Force II
+GS-9197
+0
+Backup Memory
+Allows saving replay data.
+cachemode
+Cache Mode
+This database is used to automatically select cache emulation mode, to fix various logic and timing issues in games.  The default cache mode is data-only(with no high-level bypass).\n\nThe cache mode \"Data-only, with high-level bypass\" is a hack of sorts, to work around cache coherency bugs in games.  These bugs are typically masked on a real Saturn due to the effects of instruction fetches on the cache, but become a problem when only data caching is emulated.\n\nFull cache emulation is not enabled globally primarily due to the large increase in host CPU usage.
+92
+Area 51 (USA)
+T-9705H
+0
+Data only, with high-level bypass
+Fixes game hang.
+Area 51 (Europe)
+T-25408H
+0
+Data only, with high-level bypass
+Fixes game hang.
+Clockwork Knight 2 (USA)
+MK-81036
+0
+Data only, with high-level bypass
+Fixes game hang that occurred when some FMVs were played.
+DeJig - Lassen Art Collection (Japan)
+T-30304G
+0
+Data only, with high-level bypass
+Fixes graphical glitches.
+Doraemon - Nobita to Fukkatsu no Hoshi (Japan)
+T-19801G
+0
+Data only, with high-level bypass
+Fixes blank Game Over screen.
+Dragon Force II (Japan)
+GS-9184
+0
+Data only, with high-level bypass
+Fixes math and game logic errors during battles.
+Father Christmas (Japan)
+T-18504G
+0
+Data only, with high-level bypass
+Fixes stuck music and voice acting.
+Fighting Vipers (Japan)
+GS-9101
+0
+Data only, with high-level bypass
+Fixes computer-controlled opponent turning into a ghost statue.
+Fighting Vipers (Europe/USA)
+MK-81041
+0
+Data only, with high-level bypass
+Fixes computer-controlled opponent turning into a ghost statue.
+Formula Grand Prix - Team Unei Simulation (Japan)
+T-7309G
+0
+Data only, with high-level bypass
+Fixes game hang.
+Golden Axe - The Duel (Europe/USA)
+MK-81045
+0
+Data only, with high-level bypass
+Fixes flickering title screen.
+Golden Axe - The Duel (Japan)
+GS-9041
+0
+Data only, with high-level bypass
+Fixes flickering title screen.
+House of the Dead (Japan)
+GS-9173
+0
+Data only, with high-level bypass
+Fixes game crash on lightgun calibration screen.
+Linkle Liver Story (Japan)
+GS-9055
+0
+Data only, with high-level bypass
+Fixes game crash when going to the world map.
+Mahjong Doukyuusei Special (Japan)
+T-25302G1
+0
+Data only, with high-level bypass
+Fixes missing background layer on disc 2.
+Mahjong Doukyuusei Special (Japan)
+T-25302G2
+0
+Data only, with high-level bypass
+Fixes missing background layer on disc 2.
+Mujintou Monogatari R - Futari no Love Love Island (Japan)
+T-28901G
+0
+Data only, with high-level bypass
+Fixes glitches when character graphics change.
+Ronde (Japan)
+T-14415G
+0
+Data only, with high-level bypass
+Fixes missing graphics on the title screen, main menu, and elsewhere.
+Sega Saturn Choice Cuts (USA)
+81600
+0
+Data only, with high-level bypass
+Fixes FMV playback hangs and playback failures.
+Segakore Sega Bible Mogitate SegaSaturn (Japan)
+610680501
+0
+Data only, with high-level bypass
+Fixes graphical glitch on the character select screen in the \"Zero Divide\" demo.
+Shunsai (Japan)
+T-18703G
+0
+Data only, with high-level bypass
+Fixes various graphical glitches.
+Spot Goes to Hollywood (USA)
+T-7001H
+0
+Data only, with high-level bypass
+Fixes hang at corrupted \"Burst\" logo.
+Spot Goes to Hollywood (Japan)
+T-7014G
+0
+Data only, with high-level bypass
+Fixes hang at corrupted \"Burst\" logo.
+Street Fighter Zero (Japan)
+T-1206G
+0
+Data only, with high-level bypass
+Fixes weird color/palette issues during game startup.
+Street Fighter Zero 3 (Japan)
+T-1246G
+0
+Data only, with high-level bypass
+
+Super Puzzle Fighter II Turbo (USA)
+T-1215H
+0
+Data only, with high-level bypass
+Fixes color/brightness and other graphical issues.
+Theme Park (Europe)
+T-5001H
+0
+Data only, with high-level bypass
+Fixes hang during FMV.
+Thunder Force Gold Pack 2 (Japan)
+T-1808G
+0
+Data only, with high-level bypass
+Fixes hang when pausing the game under certain conditions in \"Thunder Force AC\".
+Virtua Fighter Kids (Japan/Europe)
+GS-9079\nVF. KIDS
+0
+Data only, with high-level bypass
+Fixes FMV glitches.
+Virtua Fighter Kids (Korea/Java Tea Original)
+GS-9113\nVF. KIDS
+0
+Data only, with high-level bypass
+Fixes FMV glitches and/or malfunction of computer-controlled player.
+Virtua Fighter Kids (USA)
+MK-81049\nVF. KIDS
+0
+Data only, with high-level bypass
+Fixes FMV glitches.
+Virtual Mahjong (Japan)
+T-2206G
+0
+Data only, with high-level bypass
+Fixes graphical glitches on the character select screen.
+Virtual Volleyball (Japan)
+T-15005G
+0
+Data only, with high-level bypass
+Fixes invisible menu items and hang.
+WipEout (USA)
+T-18601H
+0
+Data only, with high-level bypass
+Fixes hang when trying to exit gameplay back to the main menu.
+WipEout (Japan)
+T-18603G
+0
+Data only, with high-level bypass
+Fixes hang when trying to exit gameplay back to the main menu.
+WipEout (Europe)
+T-11301H
+0
+Data only, with high-level bypass
+Fixes hang when trying to exit gameplay back to the main menu.
+Hideo Nomo World Series Baseball (Japan)
+GS-9061
+0
+Data only, with high-level bypass
+Fixes severe gameplay logic glitches.
+World Series Baseball (Europe/USA)
+MK-81109
+0
+Data only, with high-level bypass
+Fixes severe gameplay logic glitches.
+Zero Divide - The Final Conflict (Japan)
+T-31601G
+0
+Data only, with high-level bypass
+Fixes graphical glitch on the character select screen.
+3D Baseball (USA)
+T-15906H
+0
+Full
+Fixes minor FMV glitches.
+3D Baseball - The Majors (Japan)
+T-18003G
+0
+Full
+Fixes minor FMV glitches.
+Albert Odyssey (Japan)
+T-1507G
+0
+Full
+
+Albert Odyssey (USA)
+T-12705H
+0
+Full
+Fixes battle text truncation.
+Corpse Killer (USA)
+T-16201H
+0
+Full
+Fixes glitchy rotation-zoom effect.
+Crow, The (USA)
+T-8124H
+0
+Full
+Fixes minor FMV glitches.
+Crow, The (Europe)
+T-8124H-50
+0
+Full
+Fixes minor FMV glitches.
+Crow, The (Germany)
+T-8124H-18
+0
+Full
+Fixes minor FMV glitches.
+Dark Seed II (Japan)
+T-36101G
+0
+Full
+Fixes game hang.
+Die Hard Trilogy (Japan)
+GS-9123
+0
+Full
+Fixes game hang.
+Die Hard Trilogy (Europe/USA)
+T-16103H
+0
+Full
+Fixes game hang.
+GeGeGe no Kitarou (Japan)
+T-13310G
+0
+Full
+Fixes game hang.
+Gex (Japan)
+T-15904G
+0
+Full
+Fixes minor FMV glitches.
+Gex (USA)
+T-15904H
+0
+Full
+Fixes minor FMV glitches.
+Gex (Europe)
+T-15904H50
+0
+Full
+Fixes minor FMV glitches.
+Horror Tour (Japan)
+T-24301G
+0
+Full
+Fixes graphical glitches on the save and load screens.
+Irem Arcade Classics (Japan)
+T-22403G
+0
+Full
+Fixes hang when trying to start \"Zippy Race\".
+Kidou Senkan Nadesico - Yappari Saigo wa Ai ga Katsu
+GS-9142
+0
+Full
+Fixes game hang.
+The Lost World - Jurassic Park (Japan)
+GS-9162
+0
+Full
+Fixes most graphical glitches in rock faces.
+The Lost World - Jurassic Park (Europe/USA)
+MK-81065
+0
+Full
+Fixes most graphical glitches in rock faces.
+Lunar - Silver Star Story (Japan)
+T-27901G
+0
+Full
+Fixes FMV flickering.
+NBA Action (USA)
+MK-81103
+0
+Full
+Fixes minor FMV glitches.
+NBA Action (Europe)
+MK81103-50
+0
+Full
+Fixes minor FMV glitches.
+NFL Quarterback Club 96 (Japan)
+T-8105G
+0
+Full
+Fixes minor FMV glitches.
+NFL Quarterback Club 96 (USA)
+T-8109H
+0
+Full
+Fixes minor FMV glitches.
+NFL Quarterback Club 96 (Europe)
+T-8109H-50
+0
+Full
+Fixes minor FMV glitches.
+Nobunaga no Yabou Shouseiroku (Japan)
+T-7664G
+0
+Full
+Fixes game hang.
+Policenauts (Japan)
+T-9510G
+0
+Full
+Fixes screen flickering on disc 2.
+Rampage - World Tour (Europe)
+T-25416H50
+0
+Full
+Fixes game hang.
+Senken Kigyouden (Japan)
+T-37401G
+0
+Full
+Fixes dialogue text truncation.
+Xian Jian Qi Xia Zhuan (Taiwan)
+T-37401H
+0
+Full
+Fixes dialogue text truncation.
+Slam 'n Jam 96 (Japan)
+T-159056
+0
+Full
+Fixes minor FMV glitches.
+Slam 'n Jam 96 (USA)
+T-159028H
+0
+Full
+Fixes minor FMV glitches.
+Slam 'n Jam 96 (Europe)
+T-15902H50
+0
+Full
+Fixes minor FMV glitches.
+Space Jam (Japan)
+T-8119G
+0
+Full
+Fixes game crash.
+Space Jam (USA)
+T-8125H
+0
+Full
+Fixes game crash.
+Space Jam (Europe)
+T-8125H-50
+0
+Full
+Fixes game crash.
+Thunder Force Gold Pack 1 (Japan)
+T-1807G
+0
+Full
+In \"Thunder Force III\", fixes explosion graphic glitches throughout the game and ship sprite glitches in the ending sequence.
+Titan Wars (Japan)
+T-15903G
+0
+Full
+Fixes minor FMV glitches.
+Solar Eclipse (USA)
+T-15911H
+0
+Full
+Fixes minor FMV glitches.
+Titan Wars (Europe)
+T-15911H50
+0
+Full
+Fixes minor FMV glitches.
+Virtua Cop (Europe)
+MK-81015\n\nE
+0
+Full
+Fixes game hang.
+Virtua Cop 2 (Europe)
+MK-81043\n\nE
+0
+Full
+Fixes game hang.
+Virtua Fighter (Japan)
+GS-9001
+0
+Full
+Fixes graphical glitches.
+Virtua Fighter (USA)
+MK-81005
+0
+Full
+Fixes graphical glitches.
+Virtua Fighter (Europe)
+MK_8100550
+0
+Full
+Fixes graphical glitches.
+Virtua Fighter Remix (Japan)
+GS-9039
+0
+Full
+Fixes graphical glitches.
+Virtua Fighter Remix (USA)
+MK-81023
+0
+Full
+Fixes graphical glitches.
+Virtua Fighter Remix (Europe)
+MK-8102350
+0
+Full
+Fixes graphical glitches.
+Virtua Fighter Remix (SegaNet)
+SG-7103
+0
+Full
+Fixes graphical glitches.
+Whizz (Japan)
+T-36102G
+0
+Full
+Fixes quasi-random hangs during startup.
+Whizz (Europe)
+T-9515H-50
+0
+Full
+Fixes quasi-random hangs during startup.
+Yu-No (Japan)
+T-28004G
+0
+Full
+Fixes FMV ending too soon.
+horriblehacks
+Horrible Hacks
+This database is used to automatically enable various horrible hacks to fix issues in certain games.\n\nNote that slowing down VDP1 command execution due to SH-2 reads/writes isn't a horrible hack per-se, but it's activated on a per-game basis to avoid the likelihood of breaking some games due to overall Saturn emulation timing inaccuracies.
+31
+Fighters Megamix (Japan)
+GS-9126
+0
+Disable slowing down of SH-2 CPU reads/writes during SH-2 DMA. 
+Fixes hang after watching or aborting FMV playback.
+Fighters Megamix (Europe/USA)
+MK-81073
+0
+Disable slowing down of SH-2 CPU reads/writes during SH-2 DMA. 
+Fixes hang after watching or aborting FMV playback.
+Grandia (Japan)
+T-4507G
+0
+Patch VDP1 VRAM to break an infinite loop. 
+Fixes hang at end of first disc.
+Albert Odyssey (Japan)
+T-1507G
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Partially fixes battle text truncation.
+Albert Odyssey (USA)
+T-12705H
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Partially fixes battle text truncation.
+All-Star Baseball 97 (USA)
+T-8150H
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes texture glitches.
+Arcade's Greatest Hits (USA)
+T-9703H
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes flickering credits text.
+Arcade's Greatest Hits - Atari Collection 1 (USA)
+T-9706H
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes flickering credits text.
+Burning Rangers Taikenban (Japan)
+6106856
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes flickering rescue text.
+Burning Rangers (Japan)
+GS-9174
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes flickering rescue text.
+Burning Rangers (Europe/USA)
+MK-81803
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes flickering rescue text.
+Falcom Classics II (Japan)
+T-31505G
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes FMV tearing in \"Ys II\".
+Frank Thomas Big Hurt Baseball (Japan)
+T-8111G
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Reduces graphical glitches.
+Frank Thomas Big Hurt Baseball (USA)
+T-8138H
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Reduces graphical glitches.
+Herc's Adventures (USA)
+T-23001H
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes some sprite flickering and tearing.
+Tokimeki Memorial - Forever with You (Japan)
+T-9504G
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes glitchy frames on the Konami intro arm sprite.
+Kaitei Daisensou (Japan)
+T-15006G
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes FMV tearing.
+In The Hunt (Europe/USA)
+T-10001G
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes FMV tearing.
+Virtua Fighter (Japan)
+GS-9001
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes graphical glitches.
+Virtua Fighter (USA)
+MK-81005
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes graphical glitches.
+Virtua Fighter (Europe)
+MK_8100550
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes graphical glitches.
+Virtua Fighter Remix (Japan)
+GS-9039
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes graphical glitches.
+Virtua Fighter Remix (USA)
+MK-81023
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes graphical glitches.
+Virtua Fighter Remix (Europe)
+MK-8102350
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes graphical glitches.
+Virtua Fighter Remix (SegaNet)
+SG-7103
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes graphical glitches.
+Whizz (Japan)
+T-36102G
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes major graphical issues during gameplay.
+Whizz (Europe)
+T-9515H-50
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes major graphical issues during gameplay.
+Wolf Fang SS - Kuuga 2001 (Japan)
+T-26105G
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Fixes graphical glitches.
+Yu-No (Japan)
+T-28004G
+0
+SH-2 reads/writes from/to VDP1 slow down command execution. 
+Reduces FMV tearing.
+Thunderhawk II (Japan)
+T-6006G
+0
+Block SH-2 DMA on last line of frame. Execute VDP1 commands instantly. 
+Fixes hangs just before and during gameplay.
+Thunderstrike II (USA)
+T-11501H00
+0
+Block SH-2 DMA on last line of frame. Execute VDP1 commands instantly. 
+Fixes hangs just before and during gameplay.
+ssfplay
+Sega Saturn Sound Format Player
+480
+300
+0
+0
+vb
+Virtual Boy
+384
+224
+1
+vb.pal
+VB LED Active Time; 256 left, 256 right.  If only 256 triplets are present, then they will be used for both left and right views.  When the custom palette's right view colors are the same as the left view colors(either explicitly, or when using a 256-entry custom palette), and anaglyph 3D mode is active, then the custom palette will not be used.
+256 512 
+0
+wswan
+WonderSwan
+224
+144
+0
+0
+sms
+Sega Master System
+256
+240
+1
+sms.pal
+SMS 6-bit BGR
+64 
+0
+gg
+Sega Game Gear
+160
+144
+1
+gg.pal
+GG 12-bit BGR
+4096 
+0
+cdplay
+CD-DA Player
+192
+144
+0
+0
+demo
+Mednafen Demo/Example Module
+400
+300
+0
+0

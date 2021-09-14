@@ -18,8 +18,8 @@
 #include <mach/mach_time.h>
 #import <QuartzCore/QuartzCore.h>
 
-//#define PVTimestamp(x) (((double)mach_absolute_time(x)) * 1.0e-09  * timebase_ratio)
-#define PVTimestamp() CACurrentMediaTime()
+#define PVTimestamp(x) (((double)mach_absolute_time(x)) * 1.0e-09  * timebase_ratio)
+//#define PVTimestamp() CACurrentMediaTime()
 #define GetSecondsSince(x) (PVTimestamp() - x)
 
 static Class PVEmulatorCoreClass = Nil;
@@ -29,7 +29,7 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 // calculate this on init
 static double timebase_ratio;
 
-NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.ErrorDomain";
+NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.ErrorDomain";
 
 @interface PVEmulatorCore()
 @property (nonatomic, strong, readwrite, nonnull) NSLock  *emulationLoopThreadLock;
@@ -88,7 +88,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 - (NSError * _Nonnull)createError:(NSString * _Nonnull)message {
     NSDictionary *userInfo = @{
                                NSLocalizedDescriptionKey: message,
-                               NSLocalizedFailureReasonErrorKey: @"Core does not impliment this method.",
+                               NSLocalizedFailureReasonErrorKey: @"Core does not implement this method.",
                                NSLocalizedRecoverySuggestionErrorKey: @"Write this method."
                                };
 
@@ -105,7 +105,11 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 		if (!_isRunning) {
 #if !TARGET_OS_TV
             [self startHaptic];
-			[self setPreferredSampleRate:[self audioSampleRate]];
+            NSError *error;
+			BOOL success = [self setPreferredSampleRate:[self audioSampleRate] error:&error];
+            if(!success || error != nil) {
+                ELOG(@"%@", error.localizedDescription);
+            }
 #endif
 			self.isRunning  = YES;
 			shouldStop = NO;
@@ -129,13 +133,12 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
         return started;
     }
 
-    if (@available(iOS 10, *)) {
-        if(self.supportsRumble && !(self.controller1 != nil && !self.controller1.isAttachedToDevice)) {
-            self.rumbleGenerator = [[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleHeavy];
-            [self.rumbleGenerator prepare];
-            return YES;
-        }
+    if (self.supportsRumble && !(self.controller1 != nil && !self.controller1.isAttachedToDevice)) {
+        self.rumbleGenerator = [[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleHeavy];
+        [self.rumbleGenerator prepare];
+        return YES;
     }
+
     return NO;
 }
 
@@ -323,15 +326,11 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
         return;
     }
 
-    if (@available(iOS 10, *)) {
-        BOOL deviceHasHaptic = [[UIDevice currentDevice] valueForKey:@"_feedbackSupportLevel"] > 0;
-        if (deviceHasHaptic) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self.rumbleGenerator impactOccurred];
-            });
-        } else {
-            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
-        }
+    BOOL deviceHasHaptic = [[UIDevice currentDevice] valueForKey:@"_feedbackSupportLevel"] > 0;
+    if (deviceHasHaptic) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.rumbleGenerator impactOccurred];
+        });
     } else {
         AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
     }
@@ -359,35 +358,12 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 
 #if !TARGET_OS_TV
 - (Float64) getSampleRate {
-	Float64 sampleRate;
-	UInt32 srSize = sizeof (sampleRate);
-	OSStatus error =
-	AudioSessionGetProperty(
-							kAudioSessionProperty_CurrentHardwareSampleRate,
-							&srSize,
-							&sampleRate);
-	if (error == noErr) {
-		NSLog (@"CurrentHardwareSampleRate = %f", sampleRate);
-		return sampleRate;
-	} else {
-		return 48.0;
-	}
+    return [[AVAudioSession sharedInstance] sampleRate];
 }
 
-- (BOOL) setPreferredSampleRate:(double)preferredSampleRate {
+- (BOOL) setPreferredSampleRate:(double)preferredSampleRate error:(NSError **)error {
 	double preferredSampleRate2 = preferredSampleRate ?: 48000;
-
-	AVAudioSession* session = [AVAudioSession sharedInstance];
-	BOOL success;
-	NSError* error = nil;
-	success  = [session setPreferredSampleRate:preferredSampleRate2 error:&error];
-	if (success) {
-		NSLog (@"session.sampleRate = %f", session.sampleRate);
-	} else {
-		NSLog (@"error setting sample rate %@", error);
-	}
-
-	return success;
+    return [[AVAudioSession sharedInstance] setPreferredSampleRate:preferredSampleRate2 error:error];
 }
 #endif
 
@@ -486,9 +462,10 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 	return 1;
 }
 
-- (void)getAudioBuffer:(void *)buffer frameCount:(NSUInteger)frameCount bufferIndex:(NSUInteger)index {
+- (void)getAudioBuffer:(void *)buffer frameCount:(uint32_t)frameCount bufferIndex:(NSUInteger)index {
+    uint32_t maxLength = (uint32_t)(frameCount * [self channelCountForBuffer:index] * self.audioBitDepth);
 	[[self ringBufferAtIndex:index] read:buffer
-                               maxLength:frameCount * [self channelCountForBuffer:index] * sizeof(UInt16)];
+                               maxLength:maxLength];
 }
 
 - (NSUInteger)audioBitDepth {
@@ -527,7 +504,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 
 - (OERingBuffer *)ringBufferAtIndex:(NSUInteger)index {
 	if (ringBuffers[index] == nil) {
-        ringBuffers[index] = [[OERingBuffer alloc] initWithLength:[self audioBufferSizeForBuffer:index] * 16];
+        ringBuffers[index] = [[OERingBuffer alloc] initWithLength:(uint32_t)[self audioBufferSizeForBuffer:index] * 16];
 	}
 	
     return ringBuffers[index];
@@ -565,16 +542,20 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 // Over load to support async
 - (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
     NSError *error;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     BOOL success = [self saveStateToFileAtPath:fileName error:&error];
-
+#pragma clang diagnostic pop
     block(success, error);
 }
 
 // Over load to support async
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
     NSError *error;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     BOOL success = [self loadStateFromFileAtPath:fileName error:&error];
-
+#pragma clang diagnostic pop
     block(success, error);
 }
 

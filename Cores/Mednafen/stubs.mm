@@ -7,131 +7,51 @@
 #include <iostream>
 #include <sys/time.h>
 #include <unistd.h>
+#include <semaphore.h>
 
 #import <PVSupport/PVLogging.h>
 #import <Foundation/Foundation.h>
-
-void MDFND_Sleep(unsigned int time)
-{
-    usleep(time * 1000);
-}
-
 void MDFND_DispMessage(char *str)
 {
 	ILOG(@"Mednafen: %s", str);
 }
-
-void MDFND_Message(const char *str)
-{
-	ELOG(@"Mednafen: %s", str);
-}
-
-void MDFND_MidSync(const EmulateSpecStruct *)
-{}
 
 void MDFND_PrintError(const char* err)
 {
 	ELOG(@"Mednafen: %s", err);
 }
 
+namespace Mednafen {
+void MDFND_MidSync(EmulateSpecStruct *espec, const unsigned flags) {}
+
 void MDFND_MediaSetNotification(uint32 drive_idx, uint32 state_idx, uint32 media_idx, uint32 orientation_idx)
 {}
-
 void MDFND_NetplayText(const char* text, bool NetEcho)
 {}
-
-MDFN_Thread *MDFND_CreateThread(int (*fn)(void *), void *data)
-{
-    return (MDFN_Thread*)sthread_create((void (*)(void*))fn, data);
-}
 
 void MDFND_SetMovieStatus(StateStatusStruct *) {}
 void MDFND_SetStateStatus(StateStatusStruct *) {}
 
-void MDFND_WaitThread(MDFN_Thread *thr, int *val)
-{
-    sthread_join((sthread_t*)thr);
-
-    if(val)
-    {
-        *val = 0;
-        std::cerr << "WaitThread relies on return value." << std::endl;
-    }
-}
-
-void MDFND_KillThread(MDFN_Thread *)
-{
-    std::cerr << "Killing a thread is a BAD IDEA!" << std::endl;
-}
-
-MDFN_Mutex *MDFND_CreateMutex()
-{
-    return (MDFN_Mutex*)slock_new();
-}
-
-void MDFND_DestroyMutex(MDFN_Mutex *lock)
-{
-    slock_free((slock_t*)lock);
-}
-
-int MDFND_LockMutex(MDFN_Mutex *lock)
-{
-    slock_lock((slock_t*)lock);
-    return 0;
-}
-
-int MDFND_UnlockMutex(MDFN_Mutex *lock)
-{
-    slock_unlock((slock_t*)lock);
-    return 0;
-}
-
-MDFN_Cond* MDFND_CreateCond(void)
-{
-    return (MDFN_Cond*)scond_new();
-}
-
-void MDFND_DestroyCond(MDFN_Cond* cond)
-{
-    scond_free((scond_t*)cond);
-}
-
-int MDFND_SignalCond(MDFN_Cond* cond)
-{
-    scond_signal((scond_t*)cond);
-    return 0;
-}
-
-int MDFND_WaitCond(MDFN_Cond* cond, MDFN_Mutex* mutex)
-{
-    scond_wait((scond_t*)cond, (slock_t*)mutex);
-    return 0;
-}
-
-void MDFND_SendData(const void*, uint32) {}
-void MDFND_RecvData(void *, uint32) {}
-void MDFND_NetplayText(const uint8*, bool) {}
 void MDFND_NetplaySetHints(bool active, bool behind, uint32 local_players_mask){}
-void MDFND_NetworkClose() {}
-int MDFND_NetworkConnect() { return 0; }
 bool MDFND_CheckNeedExit(void){ return false; }
 void MDFND_OutputInfo(const char *s) noexcept {
-	ILOG(@"Mednafen: %s", s);
+    ILOG(@"Mednafen: %s", s);
 }
 void MDFND_OutputNotice(MDFN_NoticeType t, const char* s) noexcept {
-	switch(t) {
-		case MDFN_NOTICE_STATUS :
-			DLOG(@"Mednafen: %s" s);
-			break;
-		case MDFN_NOTICE_WARNING :
-			WLOG(@"Mednafen: %s", s);
-			break;
-		case MDFN_NOTICE_ERROR :
-			ELOG(@"Mednafen: %s", s);
-			break;
-		default:
-			VLOG(@"Mednafen: %s", s);
-	}
+    switch(t) {
+        case MDFN_NOTICE_STATUS :
+            DLOG(@"Mednafen: %s" s);
+            break;
+        case MDFN_NOTICE_WARNING :
+            WLOG(@"Mednafen: %s", s);
+            break;
+        case MDFN_NOTICE_ERROR :
+            ELOG(@"Mednafen: %s", s);
+            break;
+        default:
+            VLOG(@"Mednafen: %s", s);
+    }
+}
 }
 
 uint32 MDFND_GetTime()

@@ -14,7 +14,7 @@ final class CenterViewFlowLayout: UICollectionViewFlowLayout {
     }
 
     var columnCount: Int {
-        let halfMargin = minimumLineSpacing / 2.0
+//        let halfMargin = minimumLineSpacing / 2.0
         let fullMargin = minimumLineSpacing
 
         let usableWidth: CGFloat = canvasSize.width - fullMargin

@@ -1,4 +1,4 @@
-#include "snes/snes.hpp"
+#include "../snes/snes.hpp"
 #include <stdio.h>
 
 typedef struct spc_file {
@@ -25,7 +25,7 @@ typedef struct spc_file {
 
 namespace SNES {
 
-#include "dsp/blargg_endian.h"
+#include "../dsp/blargg_endian.h"
 
 void SMP::save_spc (uint8 *block) {
   spc_file out;
@@ -194,4 +194,4 @@ void SMP::load_state(uint8 **block) {
   *block = ptr;
 }
 
-} /* namespace SNES */
+} // namespace SNES

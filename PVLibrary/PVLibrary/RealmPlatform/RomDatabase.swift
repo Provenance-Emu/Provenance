@@ -11,7 +11,7 @@ import PVSupport
 import RealmSwift
 import UIKit
 
-let schemaVersion: UInt64 = 8
+let schemaVersion: UInt64 = 9
 
 public extension Notification.Name {
     static let DatabaseMigrationStarted = Notification.Name("DatabaseMigrarionStarted")
@@ -364,26 +364,19 @@ public extension RomDatabase {
     @objc
     func add(_ object: Object, update: Bool = false) throws {
         try writeTransaction {
-            realm.add(object, update: update)
+            realm.add(object, update: update ? .all : .error)
         }
     }
 
     func add<T: Object>(objects: [T], update: Bool = false) throws {
         try writeTransaction {
-            realm.add(objects, update: update)
+            realm.add(objects, update: update ? .all : .error)
         }
     }
 
-    @objc
     func deleteAll() throws {
         try writeTransaction {
             realm.deleteAll()
-        }
-    }
-
-    func deleteAll<T: Object>(_ type: T.Type) throws {
-        try writeTransaction {
-            realm.delete(realm.objects(type))
         }
     }
 
@@ -452,9 +445,7 @@ public extension RomDatabase {
 
         // Delete from Spotlight search
         #if os(iOS)
-            if #available(iOS 9.0, *) {
-                deleteFromSpotlight(game: game)
-            }
+            deleteFromSpotlight(game: game)
         #endif
 
         do {
@@ -514,7 +505,6 @@ public extension RomDatabase {
 #if os(iOS)
     import CoreSpotlight
 
-    @available(iOS 9.0, *)
     extension RomDatabase {
         private func deleteFromSpotlight(game: PVGame) {
             CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: [game.spotlightUniqueIdentifier], completionHandler: { error in

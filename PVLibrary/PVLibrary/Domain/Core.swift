@@ -12,7 +12,8 @@ import RealmSwift
 public struct Core: Codable {
     public let identifier: String
     public let principleClass: String
-    #warning("un-realm me")
+//    public let systems: [System]
+
     public var systems: [System] {
         let realm = try! Realm()
         let systems = realm.objects(PVSystem.self).filter { $0.cores.contains(where: {
@@ -22,8 +23,14 @@ public struct Core: Codable {
         }
         return systems.map { $0 }
     }
-
     public let project: CoreProject
+
+//    public init(identifier: String, principleClass: String, systems: [System], project: CoreProject) {
+//        self.identifier = identifier
+//        self.principleClass = principleClass
+//        self.systems = systems
+//        self.project = project
+//    }
 }
 
 extension Core: Equatable {

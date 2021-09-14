@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "QuickTableViewController",
+        "repositoryURL": "https://github.com/bcylin/QuickTableViewController.git",
+        "state": {
+          "branch": null,
+          "revision": "574885ec390c434f39636e2c0c68860f7f3cd168",
+          "version": "1.3.1"
+        }
+      }
+    ]
+  },
+  "version": 1
+}

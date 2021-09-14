@@ -14,9 +14,9 @@
 //#import "NSData+Base64.h"
 
     // The logging systems available
-#import "PVCocoaLumberJackLogging.h"
 #import "PVLogging.h"
 @import CocoaLumberjack;
+
 #if TARGET_OS_IOS || TARGET_OS_TV
 @import UIKit;
 #endif
@@ -47,8 +47,6 @@ userInfo:nil];
 //    }
 //}
 
-#import <CocoaLumberjack/DDLogMacros.h>
-#import <CocoaLumberjack/CocoaLumberjack.h>
 #ifdef __cplusplus
 extern "C" {
 #endif

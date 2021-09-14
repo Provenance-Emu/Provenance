@@ -28,11 +28,23 @@ blip_max_ratio = 1 << 20 };
 /** Clears entire buffer. Afterwards, blip_samples_avail() == 0. */
 void blip_clear( blip_t* );
 
+#ifndef BLIP_MONO
+
+/** Adds positive/negative deltas into stereo buffers at specified clock time. */
+void blip_add_delta( blip_t*, unsigned time, int delta_l, int delta_r );
+
+/** Same as blip_add_delta(), but uses faster, lower-quality synthesis. */
+void blip_add_delta_fast( blip_t*, unsigned int clock_time, int delta_l, int delta_r );
+
+#else
+
 /** Adds positive/negative delta into buffer at specified clock time. */
 void blip_add_delta( blip_t*, unsigned int clock_time, int delta );
 
 /** Same as blip_add_delta(), but uses faster, lower-quality synthesis. */
 void blip_add_delta_fast( blip_t*, unsigned int clock_time, int delta );
+
+#endif
 
 /** Length of time frame, in clocks, needed to make sample_count additional
 samples available. */
@@ -56,9 +68,8 @@ element of 'out', allowing easy interleaving of two buffers into a stereo sample
 stream. Outputs 16-bit signed samples. Returns number of samples actually read.  */
 int blip_read_samples( blip_t*, short out [], int count);
 
-/* Same as above function except sample is added to output buffer previous value */
-/* This allows easy mixing of different blip buffers into a single output stream */
-int blip_mix_samples( blip_t* m, short out [], int count);
+/* Same as above function except sample is mixed from three blip buffers source */
+int blip_mix_samples( blip_t* m1, blip_t* m2, blip_t* m3, short out [], int count);
 
 /** Frees buffer. No effect if NULL is passed. */
 void blip_delete( blip_t* );

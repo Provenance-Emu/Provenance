@@ -232,9 +232,10 @@ struct RenderSettings {
 
 - (void) updatePreferredFPS {
     float preferredFPS = self.emulatorCore.frameInterval;
+    WLOG(@"Pv Core frame interval (%f)", preferredFPS);
     if (preferredFPS  < 10) {
         WLOG(@"Cores frame interval (%f) too low. Setting to 60", preferredFPS);
-        preferredFPS = 30;
+        preferredFPS = 60;
     }
 
     [self setPreferredFramesPerSecond:preferredFPS];
@@ -252,7 +253,7 @@ struct RenderSettings {
     if (!CGRectIsEmpty([self.emulatorCore screenRect]))
     {
         CGSize aspectSize = [self.emulatorCore aspectSize];
-        CGFloat ratio = 0;
+        CGFloat ratio = 0.0;
         if (aspectSize.width > aspectSize.height) {
             ratio = aspectSize.width / aspectSize.height;
         } else {
@@ -269,12 +270,13 @@ struct RenderSettings {
             parentSize = [[self.view window] bounds].size;
         }
 
-
-        CGFloat height = 0;
-        CGFloat width = 0;
+        CGFloat height = 0.0;
+        CGFloat width = 0.0;
 
         if (parentSize.width > parentSize.height) {
-            height = parentSize.height;
+            if (PVSettingsModel.shared.integerScaleEnabled) { height = (floor(parentSize.height/aspectSize.height)) * aspectSize.height;}
+            else
+            {height = parentSize.height;}
             width = roundf(height * ratio);
             if (width > parentSize.width)
             {
@@ -282,7 +284,9 @@ struct RenderSettings {
                 height = roundf(width / ratio);
             }
         } else {
-            width = parentSize.width;
+            if (PVSettingsModel.shared.integerScaleEnabled) { width = (floor(parentSize.width/aspectSize.width)) * aspectSize.width;}
+            else
+            {width = parentSize.width;}
             height = roundf(width / ratio);
             if (height > parentSize.height)
             {
@@ -291,7 +295,7 @@ struct RenderSettings {
             }
         }
 
-        CGPoint origin = CGPointMake(roundf((parentSize.width - width) / 2.0), 0);
+        CGPoint origin = CGPointMake(roundf((parentSize.width - width) / 2.0), 0.0);
         if (([self.traitCollection userInterfaceIdiom] == UIUserInterfaceIdiomPhone) && (parentSize.height > parentSize.width))
         {
             origin.y = parentSafeAreaInsets.top + 40.0f; // directly below menu button at top of screen
@@ -490,10 +494,10 @@ struct RenderSettings {
     void (^renderBlock)(void) = ^()
     {
         MAKESTRONG(self);
-
+#if DEBUG
         glClearColor(1.0, 1.0, 1.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
-
+#endif
         GLuint frontBufferTex;
         if ([self.emulatorCore rendersToOpenGL])
         {

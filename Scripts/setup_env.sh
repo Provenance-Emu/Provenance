@@ -91,33 +91,6 @@ get_xcode_version() {
     "$1" -version 2>/dev/null | sed -ne 's/^Xcode \([^\b ]*\).*/\1/p'
 }
 
-rome_installed() {
-  [-x "$(command -v rome)"]
-}
-
-rome_install() {
-  if rome_installed; then
-    echo "Rome already installed"
-    brew outdated rome || brew upgrade rome
-    return 0
-  fi
-
-  if ! brew_installed; then
-    echo "warn: Cannot install Rome withouth Homebrew"
-    return 0
-  fi
-
-  echo "Rome for Carthage not installed."
-  echo "Installing..."
-  if [ brew install blender/homebrew-tap/rome ]; then
-    echo "Rome for Carthage installed."
-    return 0
-  else
-    echo "Rome for Carthage install failed."
-    return 1
-  fi
-}
-
 brew_installed() {
   [ -x "$(command -v brew)" ]
   return
@@ -248,7 +221,7 @@ brew_install() {
     read -r -d '' local MSG << EOM
 Warning Homebrew is not installed!
 
-Homebrew is a command line based software package manager and as is required to install and run 'Carthage' and 'Fastlane'.
+Homebrew is a command line based software package manager and as is required to install and run 'Fastlane'.
 
 These tools are required to build Provenance from source.
 
@@ -273,8 +246,6 @@ brew_update() {
   if brew_installed; then
     brew update
     brew outdated swiftlint || brew upgrade swiftlint
-    brew outdated carthage || brew upgrade carthage
-    #rome_install
   else
     echo "Homebrew not installed. Skipping update."
   fi
@@ -361,30 +332,6 @@ ruby_requires_root() {
     return true
   else
     return false
-  fi
-}
-
-carthage_installed() {
-  [ -x "$(command -v carthage)" ]
-  return
-}
-
-carthage_install() {
-  if carthage_installed; then
-    return 0
-  else
-    echo "Carthage not installed. Continuing to install it."
-  fi
-
-  if ! brew_installed; then
-    brew_install
-  fi
-
-  if brew_installed; then
-      echo "Installing carthage via homebrew"
-      brew install carthage
-  else
-    error_exit "Carthage is required to build this application. It can be automatically installed during the build proccess but that requires having Homebrew for OS X installed first."
   fi
 }
 

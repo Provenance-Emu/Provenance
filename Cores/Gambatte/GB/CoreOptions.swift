@@ -53,7 +53,7 @@ extension PVGBEmulatorCore: CoreOptional {
             "GameBoy Color - Pastel Mix",
             "GameBoy Color - Inverted",
             "GameBoy Color - Rom Title",
-            "GameBoy Color - Grayscale",
+            "GameBoy Color - Grayscale"
     ])
 
     static var paletteOption: CoreOption = {
@@ -66,7 +66,7 @@ extension PVGBEmulatorCore: CoreOptional {
     public func setPalette() {
         if
             let value = PVGBEmulatorCore.valueForOption(String.self, "Video.GameBoy (non color) Palette"),
-            let index = PVGBEmulatorCore.paletteValues.index(where: { $0.title == value }),
+            let index = PVGBEmulatorCore.paletteValues.firstIndex(where: { $0.title == value }),
             let enumValue = GBPalette(rawValue: index) {
             changeDisplayMode(enumValue.rawValue)
         }

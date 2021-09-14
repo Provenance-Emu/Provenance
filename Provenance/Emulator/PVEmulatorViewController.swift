@@ -13,10 +13,6 @@ import QuartzCore
 import RealmSwift
 import UIKit
 
-#if os(iOS)
-    import XLActionController
-#endif
-
 private weak var staticSelf: PVEmulatorViewController?
 
 func uncaughtExceptionHandler(exception _: NSException?) {
@@ -127,6 +123,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
     override func observeValue(forKeyPath keyPath: String?, of _: Any?, change _: [NSKeyValueChangeKey: Any]?, context _: UnsafeMutableRawPointer?) {
         if keyPath == "isRunning" {
+            #if os(tvOS)
+            PVControllerManager.shared.setSteamControllersMode(core.isRunning ? .gameController : .keyboardAndMouse)
+            #endif
             if core.isRunning {
                 if gameStartTime != nil {
                     ELOG("Didn't expect to get a KVO update of isRunning to true while we still have an unflushed gameStartTime variable")
@@ -156,9 +155,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         }
         NSSetUncaughtExceptionHandler(nil)
         staticSelf = nil
-        controllerViewController?.willMove(toParent: nil)
-        controllerViewController?.view?.removeFromSuperview()
-        controllerViewController?.removeFromParent()
         glViewController.willMove(toParent: nil)
         glViewController.view?.removeFromSuperview()
         glViewController.removeFromParent()
@@ -200,8 +196,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         core.romSerial = game.romSerial
     }
 
-    private func initMenuButton() {
-        //        controllerViewController = PVCoreFactory.controllerViewController(forSystem: game.system, core: core)
+    private func addControllerOverlay() {
         if let aController = controllerViewController {
             addChild(aController)
         }
@@ -209,8 +204,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             view.addSubview(aView)
         }
         controllerViewController?.didMove(toParent: self)
+    }
 
-        let alpha: CGFloat = PVSettingsModel.shared.controllerOpacity
+    private func initMenuButton() {
+        let alpha: CGFloat = CGFloat(PVSettingsModel.shared.controllerOpacity)
         menuButton = MenuButton(type: .custom)
         menuButton?.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin]
         menuButton?.setImage(UIImage(named: "button-menu"), for: .normal)
@@ -231,36 +228,26 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
     private func initFPSLabel() {
         fpsLabel.textColor = UIColor.yellow
-        fpsLabel.text = "\(glViewController.framesPerSecond)"
         fpsLabel.translatesAutoresizingMaskIntoConstraints = false
         fpsLabel.textAlignment = .right
+        fpsLabel.isOpaque = true
         #if os(tvOS)
-            fpsLabel.font = UIFont.systemFont(ofSize: 40, weight: .bold)
+            fpsLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 40, weight: .bold)
         #else
-            if #available(iOS 8.2, *) {
-                fpsLabel.font = UIFont.systemFont(ofSize: 20, weight: .bold)
-            }
+            fpsLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 20, weight: .bold)
         #endif
         glViewController.view.addSubview(fpsLabel)
         view.addConstraint(NSLayoutConstraint(item: fpsLabel, attribute: .top, relatedBy: .equal, toItem: glViewController.view, attribute: .top, multiplier: 1.0, constant: 30))
         view.addConstraint(NSLayoutConstraint(item: fpsLabel, attribute: .right, relatedBy: .equal, toItem: glViewController.view, attribute: .right, multiplier: 1.0, constant: -40))
 
-        if #available(iOS 10.0, tvOS 10.0, *) {
-            // Block-based NSTimer method is only available on iOS 10 and later
-            fpsTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { [weak self] (_: Timer) -> Void in
-                guard let `self` = self else { return }
+        fpsTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { [weak self] (_: Timer) -> Void in
+            guard let `self` = self else { return }
 
-                if abs(self.core.renderFPS - self.core.emulationFPS) < 1 {
-                    self.fpsLabel.text = String(format: "%2.02f", self.core.renderFPS)
-                } else {
-                    self.fpsLabel.text = String(format: "%2.02f (%2.02f)", self.core.renderFPS, self.core.emulationFPS)
-                }
-            })
-        } else {
-            // Use traditional scheduledTimerWithTimeInterval method on older version of iOS
-            fpsTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(updateFPSLabel), userInfo: nil, repeats: true)
-            fpsTimer?.fire()
-        }
+            let coreSpeed = self.core.renderFPS/self.core.frameInterval * 100
+            let drawTime =  self.glViewController.timeSinceLastDraw * 1000
+            let fps = 1000 / drawTime
+            self.fpsLabel.text = String( format: "Core speed %03.02f%% - Draw time %02.02f%ms - FPS %03.02f%", coreSpeed, drawTime, fps)
+        })
     }
 
     // TODO: This method is way too big, break it up
@@ -298,8 +285,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             let code = (error as NSError).code
             if code == PVEmulatorCoreErrorCode.missingM3U.rawValue {
                 alert.addAction(UIAlertAction(title: "View Wiki", style: .cancel, handler: { (_: UIAlertAction) -> Void in
-                    if let aString = URL(string: "https://bitly.com/provm3u") {
-                        UIApplication.shared.openURL(aString)
+                    if let url = URL(string: "https://bitly.com/provm3u") {
+                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
                     }
                 }))
             }
@@ -332,6 +319,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             glViewController.didMove(toParent: self)
         }
         #if os(iOS)
+            addControllerOverlay()
             initMenuButton()
         #endif
 
@@ -352,28 +340,16 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         gameAudio.volume = PVSettingsModel.shared.volume
         gameAudio.outputDeviceID = 0
         gameAudio.start()
-
-        // stupid bug in tvOS 9.2
-        // the controller paused handler (if implemented) seems to cause a 'back' navigation action
-        // as well as calling the pause handler itself. Which breaks the menu functionality.
-        // But of course, this isn't the case on iOS 9.3. YAY FRAGMENTATION. ¬_¬
-        // Conditionally handle the pause menu differently dependning on tvOS or iOS. FFS.
         #if os(tvOS)
-            // Adding a tap gesture recognizer for the menu type will override the default 'back' functionality of tvOS
-            if menuGestureRecognizer == nil {
-                menuGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(PVEmulatorViewController.controllerPauseButtonPressed(_:)))
-                menuGestureRecognizer?.allowedPressTypes = [.menu]
-            }
-            if let aRecognizer = menuGestureRecognizer {
-                view.addGestureRecognizer(aRecognizer)
-            }
-        #else
-            GCController.controllers().forEach { [unowned self] in
-                $0.controllerPausedHandler = { controller in
-                    self.controllerPauseButtonPressed(controller)
-                }
-            }
+        // On tvOS the siri-remotes menu-button will default to go back in the hierachy (thus dismissing the emulator), we don't want that behaviour
+        // (we'd rather pause the game), so we just install a tap-recognizer here (that doesn't do anything), and add our own logic in `setupPauseHandler`
+        if menuGestureRecognizer == nil {
+            menuGestureRecognizer = UITapGestureRecognizer()
+            menuGestureRecognizer?.allowedPressTypes = [.menu]
+            view.addGestureRecognizer(menuGestureRecognizer!)
+        }
         #endif
+        GCController.controllers().forEach { $0.setupPauseHandler(onPause: self.controllerPauseButtonPressed) }
     }
 
     public override func viewDidAppear(_: Bool) {
@@ -381,12 +357,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         // Notifies UIKit that your view controller updated its preference regarding the visual indicator
 
         #if os(iOS)
-            if #available(iOS 11.0, *) {
-                setNeedsUpdateOfHomeIndicatorAutoHidden()
-            }
-        #endif
+            setNeedsUpdateOfHomeIndicatorAutoHidden()
 
-        #if os(iOS)
             // Ignore Smart Invert
             view.ignoresInvertColors = true
         #endif
@@ -399,10 +371,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         destroyAutosaveTimer()
-    }
-
-    public override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
     }
 
     var autosaveTimer: Timer?
@@ -532,7 +500,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         gameAudio.start()
     }
 
-    func enableContorllerInput(_ enabled: Bool) {
+    func enableControllerInput(_ enabled: Bool) {
         #if os(tvOS)
             controllerUserInteractionEnabled = enabled
         #else
@@ -544,7 +512,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         #endif
     }
 
-    @objc func hideModeInfo() {
+    @objc func hideMoreInfo() {
         dismiss(animated: true, completion: { () -> Void in
             #if os(tvOS)
                 self.showMenu(nil)
@@ -555,18 +523,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     }
 
     func hideMenu() {
-        enableContorllerInput(false)
-        #if os(iOS)
-            if presentedViewController is EmulatorActionController {
-                dismiss(animated: true) { () -> Void in }
-                isShowingMenu = false
-            }
-        #elseif os(tvOS)
-            if presentedViewController is UIAlertController {
-                dismiss(animated: true) { () -> Void in }
-                isShowingMenu = false
-            }
-        #endif
+        enableControllerInput(false)
+        if presentedViewController is UIAlertController {
+            dismiss(animated: true) { () -> Void in }
+            isShowingMenu = false
+        }
         updateLastPlayedTime()
         core.setPauseEmulation(false)
     }
@@ -628,16 +589,35 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         }
         let speeds = ["Slow", "Normal", "Fast"]
         speeds.enumerated().forEach { idx, title in
-            actionSheet.addAction(UIAlertAction(title: title, style: .default, handler: { (_: UIAlertAction) -> Void in
+            let action = UIAlertAction(title: title, style: .default, handler: { (_: UIAlertAction) -> Void in
                 self.core.gameSpeed = GameSpeed(rawValue: idx) ?? .normal
                 self.core.setPauseEmulation(false)
                 self.isShowingMenu = false
-                self.enableContorllerInput(false)
-            }))
+                self.enableControllerInput(false)
+            })
+            actionSheet.addAction(action)
+            if idx == self.core.gameSpeed.rawValue {
+                actionSheet.preferredAction = action
+            }
         }
         present(actionSheet, animated: true, completion: { () -> Void in
             PVControllerManager.shared.iCadeController?.refreshListener()
         })
+    }
+
+    func showMoreInfo() {
+        guard let moreInfoViewController = UIStoryboard(name: "Provenance", bundle: nil).instantiateViewController(withIdentifier: "gameMoreInfoVC") as? PVGameMoreInfoViewController else { return }
+        moreInfoViewController.game = self.game
+        moreInfoViewController.showsPlayButton = false
+
+        #if os(iOS)
+        moreInfoViewController.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(self.hideMoreInfo))
+        #endif
+
+        let newNav = UINavigationController(rootViewController: moreInfoViewController)
+        self.present(newNav, animated: true) { () -> Void in }
+        self.isShowingMenu = false
+        self.enableControllerInput(false)
     }
 
     typealias QuitCompletion = () -> Void
@@ -661,7 +641,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         gameAudio.stop()
 
         dismiss(animated: true, completion: completion)
-        enableContorllerInput(false)
+        enableControllerInput(false)
         updatePlayedDuration()
     }
 }
@@ -678,19 +658,7 @@ extension PVEmulatorViewController {
 // MARK: - Controllers
 
 extension PVEmulatorViewController {
-    // #if os(tvOS)
-    // Ensure that override of menu gesture is caught and handled properly for tvOS
-    @available(iOS 9.0, *)
-    override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
-        if let press = presses.first, press.type == .menu, !isShowingMenu {
-            //         [self controllerPauseButtonPressed];
-        } else {
-            super.pressesBegan(presses, with: event)
-        }
-    }
-
-    // #endif
-    @objc func controllerPauseButtonPressed(_: Any?) {
+    func controllerPauseButtonPressed() {
         DispatchQueue.main.async(execute: { () -> Void in
             if !self.isShowingMenu {
                 self.showMenu(self)
@@ -706,14 +674,9 @@ extension PVEmulatorViewController {
         if !(controller is PViCade8BitdoController || controller is PViCade8BitdoZeroController) {
             menuButton?.isHidden = true
             // In instances where the controller is connected *after* the VC has been shown, we need to set the pause handler
+            controller?.setupPauseHandler(onPause: controllerPauseButtonPressed)
             #if os(iOS)
-
-                controller?.controllerPausedHandler = { [unowned self] controller in
-                    self.controllerPauseButtonPressed(controller)
-                }
-                if #available(iOS 11.0, *) {
-                    setNeedsUpdateOfHomeIndicatorAutoHidden()
-                }
+                setNeedsUpdateOfHomeIndicatorAutoHidden()
             #endif
         }
     }
@@ -721,9 +684,7 @@ extension PVEmulatorViewController {
     @objc func controllerDidDisconnect(_: Notification?) {
         menuButton?.isHidden = false
         #if os(iOS)
-            if #available(iOS 11.0, *) {
-                setNeedsUpdateOfHomeIndicatorAutoHidden()
-            }
+            setNeedsUpdateOfHomeIndicatorAutoHidden()
         #endif
     }
 
@@ -732,6 +693,9 @@ extension PVEmulatorViewController {
         core.controller2 = PVControllerManager.shared.player2
         core.controller3 = PVControllerManager.shared.player3
         core.controller4 = PVControllerManager.shared.player4
+        #if os(tvOS)
+        PVControllerManager.shared.setSteamControllersMode(core.isRunning ? .gameController : .keyboardAndMouse)
+        #endif
     }
 
     // MARK: - UIScreenNotifications
@@ -782,7 +746,7 @@ extension PVEmulatorViewController {
         guard let core = self.core as? (PVEmulatorCore & DiscSwappable) else {
             presentError("Internal error: No core found.")
             isShowingMenu = false
-            enableContorllerInput(false)
+            enableControllerInput(false)
             return
         }
 
@@ -791,7 +755,7 @@ extension PVEmulatorViewController {
             presentError("Game only supports 1 disc.")
             core.setPauseEmulation(false)
             isShowingMenu = false
-            enableContorllerInput(false)
+            enableControllerInput(false)
             return
         }
 
@@ -807,7 +771,7 @@ extension PVEmulatorViewController {
 
                 core.setPauseEmulation(false)
                 self.isShowingMenu = false
-                self.enableContorllerInput(false)
+                self.enableControllerInput(false)
             }))
         }
 
@@ -815,7 +779,7 @@ extension PVEmulatorViewController {
         actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { [unowned self] _ in
             core.setPauseEmulation(false)
             self.isShowingMenu = false
-            self.enableContorllerInput(false)
+            self.enableControllerInput(false)
         }))
 
         // Present
@@ -843,12 +807,11 @@ extension PVEmulatorViewController {
         presentedViewController?.dismiss(animated: true, completion: nil)
         core.setPauseEmulation(false)
         isShowingMenu = false
-        enableContorllerInput(false)
+        enableControllerInput(false)
     }
 }
 
 // Extension to make gesture.allowedPressTypes and gesture.allowedTouchTypes sane.
-@available(iOS 9.0, *)
 extension NSNumber {
     static var menu: NSNumber {
         return NSNumber(pressType: .menu)
@@ -885,7 +848,6 @@ extension NSNumber {
     }
 }
 
-@available(iOS 9.0, *)
 extension NSNumber {
     static var direct: NSNumber {
         return NSNumber(touchType: .direct)
@@ -899,5 +861,32 @@ extension NSNumber {
 
     private convenience init(touchType: UITouch.TouchType) {
         self.init(integerLiteral: touchType.rawValue)
+    }
+}
+
+extension GCController {
+    func setupPauseHandler(onPause: @escaping () -> Void) {
+        // Using buttonMenu is the recommended way for iOS/tvOS13 and later
+        if let buttonMenu = buttonMenu {
+            buttonMenu.pressedChangedHandler = { _, _, isPressed in
+                if isPressed {
+                    onPause()
+                }
+            }
+        } else {
+            // Fallback to the old method
+            controllerPausedHandler = { _ in onPause() }
+        }
+    }
+
+    private var buttonMenu: GCControllerButtonInput? {
+        if #available(iOS 13.0, tvOS 13.0, *) {
+            if let microGamepad = microGamepad {
+                return microGamepad.buttonMenu
+            } else if let extendedGamepad = extendedGamepad {
+                return extendedGamepad.buttonMenu
+            }
+        }
+        return nil
     }
 }

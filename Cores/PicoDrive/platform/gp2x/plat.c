@@ -179,6 +179,11 @@ void plat_video_menu_leave(void)
 {
 }
 
+void *plat_mem_get_for_drc(size_t size)
+{
+	return NULL;
+}
+
 void plat_early_init(void)
 {
 	// just use gettimeofday until plat_init()
@@ -203,6 +208,7 @@ void plat_init(void)
 
 	g_menuscreen_w = 320;
 	g_menuscreen_h = 240;
+	g_menuscreen_pp = g_menuscreen_w;
 	gp2x_memset_all_buffers(0, 0, 320*240*2);
 
 	gp2x_make_fb_bufferable(1);

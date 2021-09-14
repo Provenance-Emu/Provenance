@@ -1,0 +1,71 @@
+#
+# Copyright © 2019 Province of British Columbia
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http:#www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Created by Jason Leach
+#
+
+#
+# Use this template archive your iOS build artifacts to Azure blob storage.
+#
+# The steps in this template will copy both the `ipa` and a ZIPed `xcarchive`
+# to a storage account in Azure in case it is needed at a later date.
+#
+
+# variables:
+#   SchemaName: 'MyRangeBCManager'
+#   BuildID: ${BUILD_BUILDID}
+#   AZServiceConnectionName: 'FullboarServiceConnection'
+#   AZBlobStorageContainerName: 'artifacts'
+#   ExportOptionsFileName: 'options.plist'
+
+steps:
+    - task: CopyFiles@2
+    displayName: Copy IPA file
+    inputs:
+        contents: '$(SchemaName).ipa'
+        sourceFolder: '$(Build.SourcesDirectory)/output/$(SDK)/$(Configuration)'
+        targetFolder: '$(Build.ArtifactStagingDirectory)'
+    - task: AzureCLI@1
+    displayName: Upload IPA to Azure storage
+    timeoutInMinutes: 1
+    inputs:
+        connectedServiceNameARM: $(AZServiceConnectionName)
+        azureSubscription: '$(AzureSubscriptionID)'
+        scriptLocation: 'inlineScript'
+        inlineScript: 'az storage blob upload --account-name $(AzureStorageAccountName) --container-name "$(AZBlobStorageContainerName)" --name "$(SchemaName)-$(BuildID).ipa" --file "$(Build.ArtifactStagingDirectory)/$(SchemaName).ipa"'
+    - task: CopyFiles@2
+    displayName: Copy options (plist) file
+    timeoutInMinutes: 1
+    inputs:
+        SourceFolder: '$(Build.SourcesDirectory)'
+        Contents: $(ExportOptionsFileName)
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/pack'
+    - task: ArchiveFiles@2
+    displayName: Create archive
+    timeoutInMinutes: 1
+    inputs:
+        rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/pack'
+        includeRootFolder: false # don't include the /pack portion of the path
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(SchemaName).zip'
+        replaceExistingArchive: true
+    - task: AzureCLI@1
+    displayName: Upload archive to Azure storage
+    timeoutInMinutes: 1
+    inputs:
+        connectedServiceNameARM: $(AZServiceConnectionName)
+        azureSubscription: '$(AzureSubscriptionID)'
+        scriptLocation: 'inlineScript'
+        inlineScript: 'az storage blob upload --account-name $(AzureStorageAccountName) --container-name "$(AZBlobStorageContainerName)" --name "$(SchemaName)-$(BuildID).zip" --file "$(Build.ArtifactStagingDirectory)/$(SchemaName).zip"'

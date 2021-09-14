@@ -60,11 +60,7 @@ public extension AppearanceStyleable where Self: UIWindow {
 public extension AppearanceStyleable where Self: UIViewController {
     /// <#Description#>
     var appearanceRoot: UIWindow? {
-        if #available(iOS 9.0, *) {
-            return viewIfLoaded?.window
-        } else {
-            return isViewLoaded ? view.window : nil
-        }
+        return viewIfLoaded?.window
     }
 }
 

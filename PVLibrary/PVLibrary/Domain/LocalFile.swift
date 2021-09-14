@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import PVSupport
 
 public struct LocalFile: LocalFileProvider, Codable, Equatable {
     public let url: URL
@@ -33,11 +34,16 @@ public struct LocalFile: LocalFileProvider, Codable, Equatable {
     }
 
     public var size: UInt64 {
-        guard let s = try? url.resourceValues(forKeys: [.fileSizeKey]).fileSize else {
+        do {
+            guard let s = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize else {
+                return 0
+            }
+
+            return UInt64(s)
+        } catch {
+            ELOG("\(error.localizedDescription)")
             return 0
         }
-
-        return UInt64(s ?? 0)
     }
 
     public init?(url: URL) {

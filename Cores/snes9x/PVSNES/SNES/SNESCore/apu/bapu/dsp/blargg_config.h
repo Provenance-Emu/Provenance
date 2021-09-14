@@ -10,7 +10,9 @@
 #endif
 
 // Uncomment to enable platform-specific (and possibly non-portable) optimizations
+#if !defined(__CELLOS_LV2__)
 #define BLARGG_NONPORTABLE 1
+#endif
 
 // Uncomment if automatic byte-order determination doesn't work
 //#define BLARGG_BIG_ENDIAN 1

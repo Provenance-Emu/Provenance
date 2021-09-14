@@ -1,8 +1,8 @@
-These are all the known ports of Snes9X to other consoles/handhelds/etc as of
-2011/08/28. They are all supported and welcomed on the official Snes9X site.
+These are all the known ports of Snes9x to other consoles/handhelds/etc as of
+2011/08/28. They are all supported and welcomed on the official Snes9x site.
 
-**If you know of anyone who is currently working on a port of Snes9X, or if you
-have some interest in making a port, please have them go to the Snes9X forums
+**If you know of anyone who is currently working on a port of Snes9x, or if you
+have some interest in making a port, please have them go to the Snes9x forums
 (http://www.snes9x.com/phpbb2/) and have them register an account there. After
 that, speak to Ryan and/or Jerremy so you can be let into the devs area and the
 git so you can have access to the most current code, collaborate with the other
@@ -10,7 +10,7 @@ developers, make the port officialized, etc.**
 
 Ports and how to get them running are as follows:
 
-*PSP Version of Snes9X*
+*PSP Version of Snes9x*
 Name: Snes9X Euphoria
 Latest version: R5 Beta
 Homepage/forum: http://code.google.com/p/snes9x-euphoria/
@@ -48,7 +48,7 @@ Note: as of right now, there is no one to maintain the PSP port; I am leaving
 these instructions up just in case someone wants to take it over, and you can
 use these tips to get other homebrews going.
 
-*Wii/Gamecube version of Snes9X*
+*Wii/Gamecube version of Snes9x*
 Name: Snes9X GX
 Latest Version: 4.2.8
 Homepage/forum: http://code.google.com/p/snes9x-gx
@@ -74,7 +74,7 @@ installer from the Homebrew Channel, and you'll be good to go!
 
 Gamecube: You might need a modchip.
 
-*Android and iOS (Apple iPhone/iPod Touch) version of Snes9X*
+*Android and iOS (Apple iPhone/iPod Touch) version of Snes9x*
 Name: Snes9X EX
 Latest Version: 1.4.2 (iOS); 1.4.7.1 (Android)
 Homepage/forum: http://www.explusalpha.com/home/snes9x-ex
@@ -101,7 +101,7 @@ Hint: a more detailed description of copying your ROMs/saves/etc over to the
 iOS device can be found here:
 http://snes9x.com/phpbb2/viewtopic.php?t=5107
 
-*PS3 version of Snes9X*
+*PS3 version of Snes9x*
 Name: Snes9X PS3
 Latest Version: 4.4.9
 Homepage/forum: https://code.google.com/p/snes9x-ps3/ (although for some
@@ -118,7 +118,7 @@ upgrade or downgrade your PS3’s firmware as needed). After that, it should be
 as simple as copy the emulator, ROMs, saves, etc over to the PS3 and it should
 work :)
 
-*X-Box Version of Snes9X*
+*X-Box Version of Snes9x*
 Name: Snes9xbox
 Latest Version: V2 (V3 should be out soon)
 Homepage/forum: http://forums.xbox-scene.com/index.php?showforum=96

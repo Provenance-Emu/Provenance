@@ -12,8 +12,9 @@
 //#import <PVSupport/DebugUtils.h>
 //#import <PVSupport/PVLogging.h>
 #import <PVGenesis/libretro.h>
-#import <OpenGLES/EAGL.h>
+//#import <OpenGLES/EAGL.h>
 #import <OpenGLES/ES3/gl.h>
+#import <OpenGLES/ES3/glext.h>
 
 #include "shared.h"
 #include "libretro.h"
@@ -24,9 +25,9 @@
 
 @interface PVGenesisEmulatorCore ()
 {
-    uint16_t *videoBuffer;
-    uint16_t *videoBufferA;
-    uint16_t *videoBufferB;
+    uint32_t *videoBuffer;
+    uint32_t *videoBufferA;
+    uint32_t *videoBufferB;
 
 	int _videoWidth, _videoHeight;
 	int16_t _pad[2][12];
@@ -69,10 +70,10 @@ static void video_callback(const void *data, unsigned width, unsigned height, si
     dispatch_queue_t the_queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     
     dispatch_apply(height, the_queue, ^(size_t y){
-        const uint16_t *src = (uint16_t*)data + y * (pitch >> 1); //pitch is in bytes not pixels
-        uint16_t *dst = strongCurrent->videoBuffer + y * 320;
+        const uint32_t *src = (uint32_t*)data + y * (pitch >> 2); //pitch is in bytes not pixels
+        uint32_t *dst = strongCurrent->videoBuffer + y * 720;
         
-        memcpy(dst, src, sizeof(uint16_t)*width);
+        memcpy(dst, src, sizeof(uint32_t)*width);
     });
 	
 	strongCurrent = nil;
@@ -150,8 +151,8 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (id)init {
 	if ((self = [super init])) {
-		videoBufferA = malloc(320 * 480 * 2);
-        videoBufferB = malloc(320 * 480 * 2);
+	videoBufferA = (uint32_t *)malloc(720 * 576 * sizeof(uint32_t));
+        videoBufferB = (uint32_t *)malloc(720 * 576 * sizeof(uint32_t));
 	}
 	
 	_current = self;
@@ -194,24 +195,36 @@ static bool environment_callback(unsigned cmd, void *data)
 }
 
 - (void)executeFrame {
-    [self executeFrameSkippingFrame:false];
-}
-
-- (void)executeFrameSkippingFrame:(BOOL)skip {
     int aud;
     
-    int skipI = skip ? 1 : 0;
-    
     if (system_hw == SYSTEM_MCD)
-        system_frame_scd(skipI);
+        system_frame_scd(0);
     else if ((system_hw & SYSTEM_PBC) == SYSTEM_MD)
-        system_frame_gen(skipI);
+        system_frame_gen(0);
     else
-        system_frame_sms(skipI);
+        system_frame_sms(0);
     
     video_callback(bitmap.data, bitmap.viewport.w + (bitmap.viewport.x * 2), bitmap.viewport.h + (bitmap.viewport.y * 2), bitmap.pitch);
     
     aud = audio_update(soundbuffer) << 1;
+    audio_batch_callback(soundbuffer, aud >> 1);
+}
+
+- (void)executeFrameSkippingFrame:(BOOL)skip {
+    //int aud;
+    
+//    int skipI = skip ? 1 : 0;
+    
+    if (system_hw == SYSTEM_MCD)
+        system_frame_scd(0);
+    else if ((system_hw & SYSTEM_PBC) == SYSTEM_MD)
+        system_frame_gen(0);
+    else
+        system_frame_sms(0);
+    
+    video_callback(bitmap.data, bitmap.viewport.w + (bitmap.viewport.x * 2), bitmap.viewport.h + (bitmap.viewport.y * 2), bitmap.pitch);
+    
+    int aud = audio_update(soundbuffer) << 1;
     audio_batch_callback(soundbuffer, aud >> 1);
 }
 
@@ -256,17 +269,11 @@ static bool environment_callback(unsigned cmd, void *data)
     
     videoBuffer = NULL;
     
-#if 0
-    videoBufferA = (unsigned char *)posix_memalign((void**)&GFX.Screen, 16, GFX.Pitch * 512 * sizeof(uint16));
-    videoBufferB = (unsigned char *)posix_memalign((void**)&GFX.Screen, 16, GFX.Pitch * 512 * sizeof(uint16));
-#else
-    videoBufferA = (unsigned char *)malloc(320 * 480 * 2);
-    videoBufferB = (unsigned char *)malloc(320 * 480 * 2);
-#endif
+    videoBufferA = (uint8_t *)malloc(720 * 576 * sizeof(uint32_t));
+    videoBufferB = (uint8_t *)malloc(720 * 576 * sizeof(uint32_t));
     
-    bitmap.data = (short unsigned int *)videoBufferA;
+    bitmap.data = (uint8_t *)videoBufferA;
     videoBuffer = videoBufferB;
-    
     
     retro_set_environment(environment_callback);
 	retro_init();
@@ -366,15 +373,15 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (void)swapBuffers
 {
-    if (bitmap.data == (short unsigned int *)videoBufferA)
+    if (bitmap.data == (uint8_t*)videoBufferA)
     {
         videoBuffer = videoBufferA;
-        bitmap.data = (short unsigned int *)videoBufferB;
+        bitmap.data = (uint8_t*)videoBufferB;
     }
     else
     {
         videoBuffer = videoBufferB;
-        bitmap.data = (short unsigned int *)videoBufferA;
+        bitmap.data = (uint8_t*)videoBufferA;
     }
 }
 
@@ -389,7 +396,7 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (CGRect)screenRect
 {
-    if([[self systemIdentifier] isEqualToString:@"com.openemu.gamegear"])
+    if([[self systemIdentifier] isEqualToString:@"com.provenance.gamegear"])
     {
         return CGRectMake(0, 0, 160, 144);
     }
@@ -408,41 +415,43 @@ static bool environment_callback(unsigned cmd, void *data)
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.mastersystem"] || [[self systemIdentifier] isEqualToString:@"com.provenance.sg1000"])
     {
         return CGSizeMake(256 * (8.0/7.0), 192);
-    }else {
-        return CGSizeMake(4, 3);
+    }
+    else // is Genesis/Megadrive
+    {
+        return CGSizeMake(_videoWidth, _videoHeight);
     }
 }
 
 - (CGSize)bufferSize
 {
-	return CGSizeMake(320, 480);
+	return CGSizeMake(720, 576);
 }
 
 - (GLenum)pixelFormat
 {
-    return GL_RGB;
+    return GL_BGRA;
 }
 
 - (GLenum)pixelType
 {
-    return GL_UNSIGNED_SHORT_5_6_5;
+    return GL_UNSIGNED_BYTE;
 }
 
 - (GLenum)internalPixelFormat
 {
-    return GL_RGB;
+    return GL_RGBA;
 }
 
 - (NSTimeInterval)frameInterval
 {
-	return _frameInterval ? _frameInterval : 59.92;
+    return _frameInterval; // ? _frameInterval : 59.92;
 }
 
 #pragma mark - Audio
 
 - (double)audioSampleRate
 {
-	return _sampleRate ? _sampleRate : 48000;
+	return _sampleRate ? _sampleRate : 44100;
 }
 
 - (NSUInteger)channelCount
@@ -716,7 +725,40 @@ static bool environment_callback(unsigned cmd, void *data)
         if ([controller extendedGamepad]) {
             GCExtendedGamepad *gamepad = [controller extendedGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
-            switch (buttonID) {
+            if (PVSettingsModel.shared.use8BitdoM30) // Maps the Sega Controls to the 8BitDo M30 if enabled in Settings / Controller
+            {switch (buttonID) {
+                case PVGenesisButtonUp:
+                    return [[[gamepad leftThumbstick] up] value] > 0.1;
+                case PVGenesisButtonDown:
+                    return [[[gamepad leftThumbstick] down] value] > 0.1;
+                case PVGenesisButtonLeft:
+                    return [[[gamepad leftThumbstick] left] value] > 0.1;
+                case PVGenesisButtonRight:
+                    return [[[gamepad leftThumbstick] right] value] > 0.1;
+                case PVGenesisButtonA:
+                    return [[gamepad buttonA] isPressed];
+                case PVGenesisButtonB:
+                    return [[gamepad buttonB] isPressed];
+                case PVGenesisButtonC:
+                    return [[gamepad rightShoulder] isPressed];
+                case PVGenesisButtonX:
+                    return [[gamepad buttonX] isPressed];
+                case PVGenesisButtonY:
+                    return [[gamepad buttonY] isPressed];
+                case PVGenesisButtonZ:
+                    return [[gamepad leftShoulder] isPressed];
+                case PVGenesisButtonMode:
+                    return [[gamepad buttonOptions] isPressed];
+                case PVGenesisButtonStart:
+#if TARGET_OS_TV
+                    return [[gamepad buttonMenu] isPressed];
+#else
+                    return [[gamepad rightTrigger] isPressed];
+#endif
+                default:
+                    break;
+            }}
+            { switch (buttonID) {
                 case PVGenesisButtonUp:
                     return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] isPressed];
                 case PVGenesisButtonDown:
@@ -737,11 +779,13 @@ static bool environment_callback(unsigned cmd, void *data)
                     return [[gamepad buttonY] isPressed];
                 case PVGenesisButtonZ:
                     return [[gamepad rightShoulder] isPressed];
+                case PVGenesisButtonMode:
+                    return [[gamepad leftTrigger] isPressed];
                 case PVGenesisButtonStart:
                     return [[gamepad rightTrigger] isPressed];
                 default:
-                    break;
-            }
+                   break;
+            }}
             
         } else if ([controller gamepad]) {
             GCGamepad *gamepad = [controller gamepad];
