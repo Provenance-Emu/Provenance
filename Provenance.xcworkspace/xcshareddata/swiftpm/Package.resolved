@@ -29,7 +29,7 @@
         }
       },
       {
-        "package": "Reachability",
+        "package": "Reachability.swift",
         "repositoryURL": "https://github.com/ashleymills/Reachability.swift.git",
         "state": {
           "branch": null,
@@ -38,21 +38,21 @@
         }
       },
       {
-        "package": "Realm",
+        "package": "realm-cocoa",
         "repositoryURL": "https://github.com/realm/realm-cocoa.git",
         "state": {
           "branch": null,
-          "revision": "e7e7f072a1571435049683ca43c51501de2612fd",
-          "version": "10.14.0"
+          "revision": "c619512ed75937ed3425df9343dc592f39bd8a43",
+          "version": "10.15.0"
         }
       },
       {
-        "package": "RealmDatabase",
+        "package": "realm-core",
         "repositoryURL": "https://github.com/realm/realm-core",
         "state": {
           "branch": null,
-          "revision": "fdb2157346dcdf0c2677b3608d9a4c30315fa7f0",
-          "version": "11.3.1"
+          "revision": "23f60515a00f076a9e3f2dc672fe1ae07601ee90",
+          "version": "11.4.1"
         }
       },
       {
@@ -60,8 +60,8 @@
         "repositoryURL": "https://github.com/RxSwiftCommunity/RxRealm.git",
         "state": {
           "branch": null,
-          "revision": "73b8d93bddb5b1c012ae96f1f3858d5c720dea1b",
-          "version": "5.0.2"
+          "revision": "d9e612a1bc3788c910b307e49093dec788d102df",
+          "version": "5.0.3"
         }
       },
       {
@@ -78,7 +78,16 @@
         "repositoryURL": "https://github.com/stephencelis/SQLite.swift.git",
         "state": {
           "branch": "master",
-          "revision": "385f4350168c8154c14f82114784452f2e50001a",
+          "revision": "e191c7d04583a1fd4e0f95e73bec2161a30e4857",
+          "version": null
+        }
+      },
+      {
+        "package": "SteamController",
+        "repositoryURL": "https://github.com/Provenance-Emu/SteamController.git",
+        "state": {
+          "branch": "master",
+          "revision": "ccf7b72f620f408d938c9f0a3ad5803b484ea2c2",
           "version": null
         }
       },

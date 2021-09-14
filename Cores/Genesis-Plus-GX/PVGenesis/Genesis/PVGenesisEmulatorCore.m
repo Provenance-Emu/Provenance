@@ -240,17 +240,19 @@ static bool environment_callback(unsigned cmd, void *data)
     NSData* dataObj = [NSData dataWithContentsOfFile:[path stringByStandardizingPath]];
     if (dataObj == nil)
 	{
-        NSDictionary *userInfo = @{
-                                   NSLocalizedDescriptionKey: @"Failed to load game.",
-                                   NSLocalizedFailureReasonErrorKey: @"File was unreadble.",
-                                   NSLocalizedRecoverySuggestionErrorKey: @"Check the file isn't corrupt and exists."
-                                   };
-        
-        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
-                                            userInfo:userInfo];
-        
-        *error = newError;
+		if(error != NULL) {
+			NSDictionary *userInfo = @{
+									   NSLocalizedDescriptionKey: @"Failed to load game.",
+									   NSLocalizedFailureReasonErrorKey: @"File was unreadble.",
+									   NSLocalizedRecoverySuggestionErrorKey: @"Check the file isn't corrupt and exists."
+									   };
+
+			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+													code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+												userInfo:userInfo];
+
+			*error = newError;
+		}
 		return false;
 	}
     size = [dataObj length];
@@ -314,19 +316,21 @@ static bool environment_callback(unsigned cmd, void *data)
         
         return YES;
     }
-    
-    NSDictionary *userInfo = @{
-                               NSLocalizedDescriptionKey: @"Failed to load game.",
-                               NSLocalizedFailureReasonErrorKey: @"GenPlusGX failed to load game.",
-                               NSLocalizedRecoverySuggestionErrorKey: @"Check the file isn't corrupt and supported GenPlusGX ROM format."
-                               };
-    
-    NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                            code:PVEmulatorCoreErrorCodeCouldNotLoadRom
-                                        userInfo:userInfo];
-    
-    *error = newError;
-    
+
+	if(error != NULL) {
+		NSDictionary *userInfo = @{
+								   NSLocalizedDescriptionKey: @"Failed to load game.",
+								   NSLocalizedFailureReasonErrorKey: @"GenPlusGX failed to load game.",
+								   NSLocalizedRecoverySuggestionErrorKey: @"Check the file isn't corrupt and supported GenPlusGX ROM format."
+								   };
+
+		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+												code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+											userInfo:userInfo];
+
+		*error = newError;
+	}
+
     return NO;
 }
 
@@ -884,32 +888,36 @@ static bool environment_callback(unsigned cmd, void *data)
         NSData *saveStateData = [NSData dataWithContentsOfFile:path];
         if (!saveStateData)
         {
-			NSDictionary *userInfo = @{
-									   NSLocalizedDescriptionKey: @"Failed to load save state.",
-									   NSLocalizedFailureReasonErrorKey: @"Genesis failed to read savestate data.",
-									   NSLocalizedRecoverySuggestionErrorKey: @"Check that the path is correct and file exists."
-									   };
+			if(error != NULL) {
+				NSDictionary *userInfo = @{
+										   NSLocalizedDescriptionKey: @"Failed to load save state.",
+										   NSLocalizedFailureReasonErrorKey: @"Genesis failed to read savestate data.",
+										   NSLocalizedRecoverySuggestionErrorKey: @"Check that the path is correct and file exists."
+										   };
 
-			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-													code:PVEmulatorCoreErrorCodeCouldNotLoadState
-												userInfo:userInfo];
-			*error = newError;
+				NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+														code:PVEmulatorCoreErrorCodeCouldNotLoadState
+													userInfo:userInfo];
+				*error = newError;
+			}
             ELOG(@"Unable to load save state from path: %@", path);
             return NO;
         }
         
         if (!retro_unserialize([saveStateData bytes], [saveStateData length]))
         {
-			NSDictionary *userInfo = @{
-									   NSLocalizedDescriptionKey: @"Failed to load save state.",
-									   NSLocalizedFailureReasonErrorKey: @"Genesis failed to load savestate data.",
-									   NSLocalizedRecoverySuggestionErrorKey: @"Check that the path is correct and file exists."
-									   };
+			if(error != NULL) {
+				NSDictionary *userInfo = @{
+					NSLocalizedDescriptionKey: @"Failed to load save state.",
+					NSLocalizedFailureReasonErrorKey: @"Genesis failed to load savestate data.",
+					NSLocalizedRecoverySuggestionErrorKey: @"Check that the path is correct and file exists."
+				};
 
-			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-													code:PVEmulatorCoreErrorCodeCouldNotLoadState
-												userInfo:userInfo];
-			*error = newError;
+				NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+														code:PVEmulatorCoreErrorCodeCouldNotLoadState
+													userInfo:userInfo];
+				*error = newError;
+			}
             DLOG(@"Unable to load save state");
             return NO;
         }

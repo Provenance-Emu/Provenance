@@ -237,19 +237,20 @@ __weak static ATR800GameCore * _currentCore;
     // Open and try to automatically detect file type, not 100% accurate
     if(!AFILE_OpenFile([path UTF8String], 1, 1, FALSE))
     {
-        NSLog(@"Failed to open file");
-        NSDictionary *userInfo = @{
-                                   NSLocalizedDescriptionKey: @"Failed to load game.",
-                                   NSLocalizedFailureReasonErrorKey: @"atari800 failed to load ROM.",
-                                   NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format atari800 supports."
-                                   };
-        
-        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
-                                            userInfo:userInfo];
-        
-        *error = newError;
-        
+        ELOG(@"Failed to open file");
+		if(error != NULL) {
+			NSDictionary *userInfo = @{
+				NSLocalizedDescriptionKey: @"Failed to load game.",
+				NSLocalizedFailureReasonErrorKey: @"atari800 failed to load ROM.",
+				NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format atari800 supports."
+			};
+
+			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+													code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+												userInfo:userInfo];
+
+			*error = newError;
+		}
         return NO;
     }
 
@@ -885,8 +886,10 @@ int UI_SelectCartType(int k)
                 // Determine if 16KB cart is one-chip (NS_16) or two-chip (EE_16)
                 if([One_Chip_16KB containsObject:[_currentCore.romMD5 lowercaseString]])
                     return CARTRIDGE_5200_NS_16;
-                else
+                else if([Two_Chip_16KB containsObject:[_currentCore.romMD5 lowercaseString]])
                     return CARTRIDGE_5200_EE_16;
+				else // Maybe an error condition since it should have been in two chip?
+					return CARTRIDGE_5200_EE_16;
             case 32: return CARTRIDGE_5200_32;
             case 40: return CARTRIDGE_5200_40; // Bounty Bob Strikes Back
             default:

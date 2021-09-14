@@ -289,7 +289,7 @@ void PVLog(NSUInteger level, NSUInteger flag, const char* file, const char *func
                                                         error:&error];
         if (!myText) {
             ELOG(@"%@", [error localizedDescription]);
-            return nil;
+            return @"";
         }
 
         return myText;

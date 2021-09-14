@@ -111,6 +111,7 @@ public extension PVFile {
 
             // Lazy make MD5
             guard let calculatedMD5 = FileManager.default.md5ForFile(atPath: url.path, fromOffset: 0) else {
+				ELOG("calculatedMD5 nil")
                 return nil
             }
 
@@ -155,14 +156,15 @@ public extension PVFile {
 
     var size: UInt64 {
         let fileSize: UInt64
-        guard FileManager.default.fileExists(atPath: url.absoluteString) else {
-            ELOG("No file at path: \(url.absoluteString)")
+        guard FileManager.default.fileExists(atPath: url.path) else {
+            ELOG("No file at path: \(url.path)")
             return 0
         }
 
         if let attr = try? FileManager.default.attributesOfItem(atPath: url.path) as NSDictionary {
             fileSize = attr.fileSize()
         } else {
+			ELOG("No attributesOfItem at path: \(url.path)")
             fileSize = 0
         }
         return fileSize

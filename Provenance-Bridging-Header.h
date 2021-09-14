@@ -6,7 +6,6 @@
 #import "PVLogViewController.h"
 //#import "Provenance/Version.h"
 #import <Realm/Realm.h>
-#import "SteamController.h"
 #import "PVAltKitService.h"
 // Hack cause they can't make modules for some reason
 //#import <ProSystem/ProSystemGameCore.h>

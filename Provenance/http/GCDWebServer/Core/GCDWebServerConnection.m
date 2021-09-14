@@ -36,6 +36,7 @@
 #endif
 
 #import "GCDWebServerPrivate.h"
+#import <PVSupport/PVLogging.h>
 
 #define kHeadersReadCapacity (1 * 1024)
 #define kBodyReadCapacity (256 * 1024)
@@ -783,7 +784,11 @@ static inline NSUInteger _ScanHexNumber(const void* bytes, NSUInteger size) {
 
 - (void)processRequest:(GCDWebServerRequest*)request completion:(GCDWebServerCompletionBlock)completion {
   GWS_LOG_DEBUG(@"Connection on socket %i processing request \"%@ %@\" with %lu bytes body", _socket, _virtualHEAD ? @"HEAD" : _request.method, _request.path, (unsigned long)_totalBytesRead);
-  _handler.asyncProcessBlock(request, [completion copy]);
+	if (_handler == NULL) {
+		ELOG(@"_handler is null.");
+	} else {
+		_handler.asyncProcessBlock(request, [completion copy]);
+	}
 }
 
 // http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.25
