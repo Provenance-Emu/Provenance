@@ -121,17 +121,19 @@ static __weak PVFCEUEmulatorCore *_current;
     FCEUGameInfo = FCEUI_LoadGame([path UTF8String], 1, false);
 
     if(!FCEUGameInfo) {
-        NSDictionary *userInfo = @{
-                                   NSLocalizedDescriptionKey: @"Failed to load game.",
-                                   NSLocalizedFailureReasonErrorKey: @"FCEUI failed to load game.",
-                                   NSLocalizedRecoverySuggestionErrorKey: @"Check the file isn't corrupt and supported FCEUI ROM format."
-                                   };
-        
-        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
-                                            userInfo:userInfo];
-        
-        *error = newError;
+		if(error != NULL) {
+			NSDictionary *userInfo = @{
+				NSLocalizedDescriptionKey: @"Failed to load game.",
+				NSLocalizedFailureReasonErrorKey: @"FCEUI failed to load game.",
+				NSLocalizedRecoverySuggestionErrorKey: @"Check the file isn't corrupt and supported FCEUI ROM format."
+			};
+
+			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+													code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+												userInfo:userInfo];
+
+			*error = newError;
+		}
         return NO;
     }
 
@@ -258,17 +260,19 @@ static __weak PVFCEUEmulatorCore *_current;
     @synchronized(self) {
         BOOL success = FCEUSS_Load([fileName UTF8String], false);
 		if (!success) {
-			NSDictionary *userInfo = @{
-									   NSLocalizedDescriptionKey: @"Failed to save state.",
-									   NSLocalizedFailureReasonErrorKey: @"Core failed to load save state.",
-									   NSLocalizedRecoverySuggestionErrorKey: @""
-									   };
+			if(error != NULL) {
+				NSDictionary *userInfo = @{
+										   NSLocalizedDescriptionKey: @"Failed to save state.",
+										   NSLocalizedFailureReasonErrorKey: @"Core failed to load save state.",
+										   NSLocalizedRecoverySuggestionErrorKey: @""
+										   };
 
-			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-													code:PVEmulatorCoreErrorCodeCouldNotLoadState
-												userInfo:userInfo];
+				NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+														code:PVEmulatorCoreErrorCodeCouldNotLoadState
+													userInfo:userInfo];
 
-			*error = newError;
+				*error = newError;
+			}
 		}
 		return success;
     }
@@ -330,7 +334,8 @@ FILE *FCEUD_UTF8fopen(const char *fn, const char *mode)
 }
 EMUFILE_FILE *FCEUD_UTF8_fstream(const char *fn, const char *m)
 {
-    std::ios_base::openmode mode = std::ios_base::binary;
+#if 0
+	std::ios_base::openmode mode = std::ios_base::binary;
     if(!strcmp(m,"r") || !strcmp(m,"rb"))
         mode |= std::ios_base::in;
     else if(!strcmp(m,"w") || !strcmp(m,"wb"))
@@ -343,8 +348,10 @@ EMUFILE_FILE *FCEUD_UTF8_fstream(const char *fn, const char *m)
         mode |= std::ios_base::in | std::ios_base::out | std::ios_base::trunc;
     else if(!strcmp(m,"a+") || !strcmp(m,"a+b"))
         mode |= std::ios_base::in | std::ios_base::out | std::ios_base::app;
+	return new std::fstream(fn,mode);
+#else
     return new EMUFILE_FILE(fn, m);
-    //return new std::fstream(fn,mode);
+#endif
 }
 void FCEUD_NetplayText(uint8 *text) {}
 void FCEUD_NetworkClose(void) {}

@@ -135,7 +135,7 @@
 		B3C96E801D62C02D003F1E93 /* TIA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFACE15B4C9A100C6552F /* TIA.cpp */; };
 		B3C96E811D62C02D003F1E93 /* Booster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9B15B4C9A100C6552F /* Booster.cpp */; };
 		B3C96E861D62C1FE003F1E93 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A8494F1C70FD6C008A4D89 /* Foundation.framework */; };
-		B3C96E871D62C203003F1E93 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A8494B1C70FD63008A4D89 /* OpenGLES.framework */; };
+		B3C96E871D62C203003F1E93 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A8494B1C70FD63008A4D89 /* OpenGLES.framework */; platformFilter = ios; };
 		B3C96E881D62C20C003F1E93 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A8494D1C70FD67008A4D89 /* UIKit.framework */; };
 		B3C96E891D62C211003F1E93 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A849491C70FD5E008A4D89 /* AudioToolbox.framework */; };
 		B3C96E8A1D62C21A003F1E93 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A849471C70FD53008A4D89 /* CoreGraphics.framework */; };

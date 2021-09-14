@@ -142,20 +142,20 @@
         return YES;
     }
 
-    NSDictionary *userInfo = @{
-                               NSLocalizedDescriptionKey: @"Failed to load game.",
-                               NSLocalizedFailureReasonErrorKey: @"ProSystem failed to load ROM.",
-                               NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format ProSystem supports."
-                               };
-    
-    NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                            code:PVEmulatorCoreErrorCodeCouldNotLoadRom
-                                        userInfo:userInfo];
-    
-    *error = newError;
-    
+	if(error != NULL) {
+		NSDictionary *userInfo = @{
+			NSLocalizedDescriptionKey: @"Failed to load game.",
+			NSLocalizedFailureReasonErrorKey: @"ProSystem failed to load ROM.",
+			NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format ProSystem supports."
+		};
+
+		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+												code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+											userInfo:userInfo];
+
+		*error = newError;
+	}
     return NO;
-    
 }
 
 - (void)executeFrame {
@@ -243,37 +243,41 @@
 #pragma mark - Save States
 
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error   {
-    BOOL success = prosystem_Save(fileName.fileSystemRepresentation, false);
+	BOOL success = prosystem_Save(fileName.fileSystemRepresentation, false);
 	if (!success) {
-		NSDictionary *userInfo = @{
-								   NSLocalizedDescriptionKey: @"Failed to save state.",
-								   NSLocalizedFailureReasonErrorKey: @"Core failed to create save state.",
-								   NSLocalizedRecoverySuggestionErrorKey: @""
-								   };
+		if(error != NULL) {
+			NSDictionary *userInfo = @{
+				NSLocalizedDescriptionKey: @"Failed to save state.",
+				NSLocalizedFailureReasonErrorKey: @"Core failed to create save state.",
+				NSLocalizedRecoverySuggestionErrorKey: @""
+			};
 
-		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-												code:PVEmulatorCoreErrorCodeCouldNotSaveState
-											userInfo:userInfo];
+			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+													code:PVEmulatorCoreErrorCodeCouldNotSaveState
+												userInfo:userInfo];
 
-		*error = newError;
+			*error = newError;
+		}
 	}
 	return success;
 }
 
 - (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError *__autoreleasing *)error  {
-    BOOL success = prosystem_Load(fileName.fileSystemRepresentation);
+	BOOL success = prosystem_Load(fileName.fileSystemRepresentation);
 	if (!success) {
-		NSDictionary *userInfo = @{
-								   NSLocalizedDescriptionKey: @"Failed to save state.",
-								   NSLocalizedFailureReasonErrorKey: @"Core failed to load save state.",
-								   NSLocalizedRecoverySuggestionErrorKey: @""
-								   };
-
-		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-												code:PVEmulatorCoreErrorCodeCouldNotLoadState
-											userInfo:userInfo];
-
-		*error = newError;
+		if(error != NULL) {
+			NSDictionary *userInfo = @{
+				NSLocalizedDescriptionKey: @"Failed to save state.",
+				NSLocalizedFailureReasonErrorKey: @"Core failed to load save state.",
+				NSLocalizedRecoverySuggestionErrorKey: @""
+			};
+			
+			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+													code:PVEmulatorCoreErrorCodeCouldNotLoadState
+												userInfo:userInfo];
+			
+			*error = newError;
+		}
 	}
 	return success;
 }

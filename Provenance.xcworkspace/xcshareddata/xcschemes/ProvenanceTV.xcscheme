@@ -43,7 +43,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B372638A26EA035900E95488"
-               BuildableName = "ProSystem_tvOS.framework"
+               BuildableName = "ProSystem.framework"
                BlueprintName = "ProSystem-tvOS"
                ReferencedContainer = "container:Cores/ProSystem/PVProSystem.xcodeproj">
             </BuildableReference>

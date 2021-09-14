@@ -88,7 +88,7 @@ OSStatus RenderCallback(void                       *in,
 
 
     OEGameAudioContext *context = (OEGameAudioContext*)in;
-    int availableBytes = 0;
+    uint32_t availableBytes = 0;
     void *head = TPCircularBufferTail(context->buffer, &availableBytes);
     int bytesRequested = inNumberFrames * context->bytesPerSample * context->channelCount;
     availableBytes = MIN(availableBytes, bytesRequested);
@@ -255,9 +255,9 @@ OSStatus RenderCallback(void                       *in,
             DLOG(@"Set the render callback");
         }
         AudioStreamBasicDescription mDataFormat;
-        NSUInteger channelCount = _contexts[i].channelCount;
-        NSUInteger bytesPerSample = _contexts[i].bytesPerSample;
-        int formatFlag = (bytesPerSample == 4) ? kLinearPCMFormatFlagIsFloat : kLinearPCMFormatFlagIsSignedInteger;
+        UInt32 channelCount = _contexts[i].channelCount;
+        UInt32 bytesPerSample = _contexts[i].bytesPerSample;
+        AudioFormatFlags formatFlag = (bytesPerSample == 4) ? kLinearPCMFormatFlagIsFloat : kLinearPCMFormatFlagIsSignedInteger;
         mDataFormat.mSampleRate       = [gameCore audioSampleRateForBuffer:i];
         mDataFormat.mFormatID         = kAudioFormatLinearPCM;
         mDataFormat.mFormatFlags      = formatFlag | kAudioFormatFlagsNativeEndian;
