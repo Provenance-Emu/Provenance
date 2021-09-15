@@ -12,6 +12,7 @@ import PVLibrary
 import PVSupport
 import RealmSwift
 import RxSwift
+import SteamController
 
 @UIApplicationMain
 final class PVAppDelegate: UIResponder, UIApplicationDelegate {
@@ -125,7 +126,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         database.refresh()
 
         SteamControllerManager.listenForConnections()
-        
+
         if #available(iOS 11, tvOS 11, *) {
             PVAltKitService.shared.start()
         }

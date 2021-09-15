@@ -150,14 +150,14 @@ extern uint8 vsdip;
 
 //#define FCEUDEF_DEBUGGER //mbg merge 7/17/06 - cleaning out conditional compiles
 
-#define JOY_A   1
-#define JOY_B   2
-#define JOY_SELECT      4
-#define JOY_START       8
-#define JOY_UP  0x10
-#define JOY_DOWN        0x20
-#define JOY_LEFT        0x40
-#define JOY_RIGHT       0x80
+#define JOY_A   1u
+#define JOY_B   2u
+#define JOY_SELECT      4u
+#define JOY_START       8u
+#define JOY_UP  		0x10u
+#define JOY_DOWN        0x20u
+#define JOY_LEFT        0x40u
+#define JOY_RIGHT       0x80u
 #endif
 
 #define ARRAY_SIZE(a) (sizeof(a)/sizeof(a[0]))

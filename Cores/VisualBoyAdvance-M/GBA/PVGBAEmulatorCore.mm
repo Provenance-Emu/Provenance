@@ -89,18 +89,19 @@ static __weak PVGBAEmulatorCore *_current;
     int loaded = CPULoadRom([path UTF8String]);
 
     if(loaded == 0) {
-        NSDictionary *userInfo = @{
-                                   NSLocalizedDescriptionKey: @"Failed to load game.",
-                                   NSLocalizedFailureReasonErrorKey: @"VisualBoyAdvanced failed to load ROM.",
-                                   NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format VisualBoyAdvanced supports."
-                                   };
-        
-        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
-                                            userInfo:userInfo];
-        
-        *error = newError;
-        
+		if(error != NULL) {
+			NSDictionary *userInfo = @{
+				NSLocalizedDescriptionKey: @"Failed to load game.",
+				NSLocalizedFailureReasonErrorKey: @"VisualBoyAdvanced failed to load ROM.",
+				NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format VisualBoyAdvanced supports."
+			};
+
+			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+													code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+												userInfo:userInfo];
+
+			*error = newError;
+		}
         return NO;
     }
 
@@ -127,18 +128,19 @@ static __weak PVGBAEmulatorCore *_current;
         _useBIOS = YES;
     } else {
         if (_useBIOS) {
-            NSDictionary *userInfo = @{
-                                       NSLocalizedDescriptionKey: @"Failed to load game.",
-                                       NSLocalizedFailureReasonErrorKey: @"vba-over.ini states this ROM requires BIOS but none found at: %@.\nPlease install this bios.",
-                                       NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format VisualBoyAdvanced supports."
-                                       };
-            
-            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                                    code:PVEmulatorCoreErrorCodeCouldNotLoadRom
-                                                userInfo:userInfo];
-            
-            *error = newError;
-            
+			if(error != NULL) {
+				NSDictionary *userInfo = @{
+					NSLocalizedDescriptionKey: @"Failed to load game.",
+					NSLocalizedFailureReasonErrorKey: @"vba-over.ini states this ROM requires BIOS but none found at: %@.\nPlease install this bios.",
+					NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format VisualBoyAdvanced supports."
+				};
+
+				NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+														code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+													userInfo:userInfo];
+
+				*error = newError;
+			}
             return NO;
         }
         
@@ -280,17 +282,19 @@ static __weak PVGBAEmulatorCore *_current;
     @synchronized(self) {
         BOOL success = vba.emuWriteState([fileName UTF8String]);
 		if (!success) {
-			NSDictionary *userInfo = @{
-									   NSLocalizedDescriptionKey: @"Failed to save state.",
-									   NSLocalizedFailureReasonErrorKey: @"Core failed to create save state.",
-									   NSLocalizedRecoverySuggestionErrorKey: @""
-									   };
+			if(error != NULL) {
+				NSDictionary *userInfo = @{
+					NSLocalizedDescriptionKey: @"Failed to save state.",
+					NSLocalizedFailureReasonErrorKey: @"Core failed to create save state.",
+					NSLocalizedRecoverySuggestionErrorKey: @""
+				};
 
-			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-													code:PVEmulatorCoreErrorCodeCouldNotSaveState
-												userInfo:userInfo];
+				NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+														code:PVEmulatorCoreErrorCodeCouldNotSaveState
+													userInfo:userInfo];
 
-			*error = newError;
+				*error = newError;
+			}
 		}
 		return success;
     }
@@ -301,17 +305,19 @@ static __weak PVGBAEmulatorCore *_current;
     @synchronized(self) {
         BOOL success = vba.emuReadState([fileName UTF8String]);
 		if (!success) {
-			NSDictionary *userInfo = @{
-									   NSLocalizedDescriptionKey: @"Failed to save state.",
-									   NSLocalizedFailureReasonErrorKey: @"Core failed to load save state.",
-									   NSLocalizedRecoverySuggestionErrorKey: @""
-									   };
-
-			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-													code:PVEmulatorCoreErrorCodeCouldNotLoadState
-												userInfo:userInfo];
-
-			*error = newError;
+			if(error != NULL) {
+				NSDictionary *userInfo = @{
+					NSLocalizedDescriptionKey: @"Failed to save state.",
+					NSLocalizedFailureReasonErrorKey: @"Core failed to load save state.",
+					NSLocalizedRecoverySuggestionErrorKey: @""
+				};
+				
+				NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+														code:PVEmulatorCoreErrorCodeCouldNotLoadState
+													userInfo:userInfo];
+				
+				*error = newError;
+			}
 		}
 		return success;
     }

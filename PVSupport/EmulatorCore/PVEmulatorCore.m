@@ -523,7 +523,9 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
     }
 
     NSString *message = [NSString stringWithFormat:@"Failed to save state at path: %@", path];
-    *error = [self createError:message];
+	if (error) {
+		*error = [self createError:message];
+	}
 
 	[self doesNotImplementSelector:_cmd];
 	return NO;

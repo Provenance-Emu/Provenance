@@ -189,14 +189,20 @@ extension PVEmulatorViewController {
 
         // Add Non-Saving quit first
         let quitTitle = shouldSave ? "Quit (without saving)" : "Quit"
-        actionSheet.addAction(UIAlertAction(title: quitTitle, style: .destructive, handler: { action in
-            self.quit(optionallySave: false)
+        actionSheet.addAction(UIAlertAction(title: quitTitle, style: .destructive, handler: {[weak self] action in
+			guard let self = self else { return }
+			DispatchQueue.main.async {
+				self.quit(optionallySave: false)
+			}
         }))
 
         // If save and quit is an option, add it last with different style
         if shouldSave {
-            actionSheet.addAction(UIAlertAction(title: "Save & Quit", style: .destructive, handler: { action in
-                self.quit(optionallySave: true)
+            actionSheet.addAction(UIAlertAction(title: "Save & Quit", style: .destructive, handler: {[weak self] action in
+				guard let self = self else { return }
+				DispatchQueue.main.async {
+					self.quit(optionallySave: true)
+				}
             }))
         }
 

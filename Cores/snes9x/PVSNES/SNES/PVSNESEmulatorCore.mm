@@ -27,6 +27,7 @@
 
 #import "PVSNESEmulatorCore.h"
 #import <PVSupport/OERingBuffer.h>
+#import <PVSupport/PVLogging.h>
 #import <PVSupport/PVGameControllerUtilities.h>
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/ES3/gl.h>
@@ -232,6 +233,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     if(!Memory.Init() || !S9xInitAPU() || !S9xGraphicsInit())
     {
         ELOG(@"Couldn't init Graphics");
+		if(error != NULL) {
 		NSDictionary *userInfo = @{
 								   NSLocalizedDescriptionKey: @"Failed to load game.",
 								   NSLocalizedFailureReasonErrorKey: @"Snes9x failed init graphics.",
@@ -242,7 +244,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 												code:PVEmulatorCoreErrorCodeCouldNotStart
 											userInfo:userInfo];
 		*error = newError;
-
+		}
         return NO;
     }
 
@@ -254,6 +256,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     if(!S9xInitSound(100))
     {
 		ELOG(@"Couldn't init Graphics");
+		if(error != NULL) {
 		NSDictionary *userInfo = @{
 								   NSLocalizedDescriptionKey: @"Failed to load game.",
 								   NSLocalizedFailureReasonErrorKey: @"Snes9x failed init graphics.",
@@ -264,7 +267,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 												code:PVEmulatorCoreErrorCodeCouldNotStart
 											userInfo:userInfo];
 		*error = newError;
-
+		}
 		return NO;
     }
 
@@ -733,6 +736,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
         return YES;
     }
 
+	if(error != NULL) {
     NSDictionary *userInfo = @{
                                NSLocalizedDescriptionKey: @"Failed to load game.",
                                NSLocalizedFailureReasonErrorKey: @"Snes9x failed to load ROM.",
@@ -744,7 +748,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
                                         userInfo:userInfo];
     
     *error = newError;
-    
+	}
     return NO;
 }
 
@@ -864,6 +868,7 @@ static void FinalizeSamplesAudioCallback(void *)
 
         BOOL cheatListSuccessfull = YES;
         NSArray *multipleCodes = [[NSArray alloc] init];
+		NSMutableArray *failedCheats = [NSMutableArray new];
 
         // Apply enabled cheats found in dictionary
         for (id key in cheatList)
@@ -882,13 +887,16 @@ static void FinalizeSamplesAudioCallback(void *)
                             S9xEnableCheatGroup(Cheat.g.size () - 1);
                         } else {
                             cheatListSuccessfull = NO;
-                            [cheatList removeObjectForKey:code];
-                            NSLog(@"Code %@ failed", singleCode);
+							[failedCheats addObject:singleCode];
+
+//                            [cheatList removeObjectForKey:code];
+                            ELOG(@"Code %@ failed", singleCode);
                         }
                     }
                 }
             }
         }
+		[cheatList removeObjectsForKeys:failedCheats];
 
         S9xCheatsEnable();
         

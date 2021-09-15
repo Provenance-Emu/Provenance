@@ -287,7 +287,7 @@ int32 SOUND_FlushOutput(int16* SoundBuf, const int32 SoundBufMaxSize, const bool
   }
  }
  
- if(last_rate == 44100)
+ if(SoundBuf && last_rate == 44100)
  {
   int32 ret = IBufferCount;
 

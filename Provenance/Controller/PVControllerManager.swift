@@ -11,6 +11,7 @@ import Foundation
 import GameController
 import PVLibrary
 import PVSupport
+import SteamController
 
 extension Notification.Name {
     static let PVControllerManagerControllerReassigned = Notification.Name("PVControllerManagerControllerReassignedNotification")
