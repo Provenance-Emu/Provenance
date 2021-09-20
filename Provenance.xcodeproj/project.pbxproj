@@ -57,8 +57,8 @@
 		11BB0A2325AF7DFF004DEDC3 /* PVEmulatorViewController+PauseMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38A2A452102328600374CDD /* PVEmulatorViewController+PauseMenu.swift */; };
 		14C4C1A121EBB0040055C6DC /* PVTGBDual.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14C8EF2121D9443E001B7E37 /* PVTGBDual.framework */; };
 		14C4C1A221EBB0040055C6DC /* PVTGBDual.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 14C8EF2121D9443E001B7E37 /* PVTGBDual.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		1A19EE142080EA2000A9147B /* PVMupen64PlusVideoGlideN64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFB603BD2038B6C0001E70F1 /* PVMupen64PlusVideoGlideN64.framework */; };
-		1A19EE162080EA8000A9147B /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DFB603BD2038B6C0001E70F1 /* PVMupen64PlusVideoGlideN64.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1A19EE142080EA2000A9147B /* PVMupen64PlusVideoGlideN64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFB603BD2038B6C0001E70F1 /* PVMupen64PlusVideoGlideN64.framework */; platformFilter = ios; };
+		1A19EE162080EA8000A9147B /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DFB603BD2038B6C0001E70F1 /* PVMupen64PlusVideoGlideN64.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */; };
 		1A2A95AA17F7682400F1CB0D /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2A95A917F7682400F1CB0D /* libstdc++.dylib */; };
 		1A2B0E8C1AD187F4005FB77C /* testdata.txt in Resources */ = {isa = PBXBuildFile; fileRef = 1A2B0E8A1AD187F4005FB77C /* testdata.txt */; };
@@ -75,7 +75,7 @@
 		1A3D409C17B2DCE4004DFFFC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409B17B2DCE4004DFFFC /* CoreGraphics.framework */; };
 		1A3D40A217B2DCE4004DFFFC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A3D40A017B2DCE4004DFFFC /* InfoPlist.strings */; };
 		1A3D40A817B2DCE4004DFFFC /* PVAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */; };
-		1A3D431E17B2F01F004DFFFC /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D431D17B2F01F004DFFFC /* OpenGLES.framework */; platformFilter = ios; };
+		1A3D431E17B2F01F004DFFFC /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D431D17B2F01F004DFFFC /* OpenGLES.framework */; };
 		1A3D432C17B2FDFE004DFFFC /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D432B17B2FDFE004DFFFC /* libz.dylib */; };
 		1A3D433B17B30BA3004DFFFC /* PVGLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */; };
 		1A3FD78E1AC7744100F8C23C /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3FD78D1AC7744100F8C23C /* MBProgressHUD.m */; };
@@ -115,7 +115,7 @@
 		1AD481F61BA3549F00FDA50A /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A65D1C519917D55004E1777 /* UIImage+ImageEffects.m */; };
 		1AD482361BA35A2D00FDA50A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */; };
 		1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD4BC6E1BFD38D6007D6C7C /* AVFoundation.framework */; };
-		1ADDA5B417B30CD7008A7ADD /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ADDA5B317B30CD7008A7ADD /* GLKit.framework */; platformFilter = ios; };
+		1ADDA5B417B30CD7008A7ADD /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ADDA5B317B30CD7008A7ADD /* GLKit.framework */; };
 		1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AECF4A81966D76100F8704E /* libsqlite3.dylib */; };
 		1F8D52461D9198E000C29F90 /* PVLicensesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8D52451D9198E000C29F90 /* PVLicensesViewController.swift */; };
 		1F8D52481D91993000C29F90 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
@@ -212,7 +212,7 @@
 		B33468D320AB347300092CA6 /* CenterFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D120AB347300092CA6 /* CenterFlowLayout.swift */; };
 		B33468D620AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D520AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift */; };
 		B33468D720AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D520AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift */; };
-		B336B91926B3A21800960A81 /* QuickTableViewController in Frameworks */ = {isa = PBXBuildFile; productRef = B336B91826B3A21800960A81 /* QuickTableViewController */; };
+		B336B91926B3A21800960A81 /* QuickTableViewController in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B336B91826B3A21800960A81 /* QuickTableViewController */; };
 		B336B91B26B3A26400960A81 /* QuickTableViewController in Frameworks */ = {isa = PBXBuildFile; productRef = B336B91A26B3A26400960A81 /* QuickTableViewController */; };
 		B3447E73218B596600557ACE /* PVDreamcastControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */; };
 		B34EADAE218824C2008F52EE /* PViCadeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37F421881CDC009D9244 /* PViCadeControllerViewController.swift */; };
@@ -415,7 +415,7 @@
 		B3DDF57326E9BE8100CE47F0 /* PVAltKitService.m in Sources */ = {isa = PBXBuildFile; fileRef = B31A464E26B4C5060084A1D6 /* PVAltKitService.m */; };
 		B3DDF57526E9BE8D00CE47F0 /* AltKit in Frameworks */ = {isa = PBXBuildFile; productRef = B3DDF57426E9BE8D00CE47F0 /* AltKit */; };
 		B3E21D6E203211BE009939D3 /* IndexRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E21D6D203211BE009939D3 /* IndexRequestHandler.swift */; };
-		B3E21D72203211BE009939D3 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B3E21D72203211BE009939D3 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3E3B5D9202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */; };
 		B3E3B5DA202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */; };
 		B3E6DADC20B7AD1500454DD4 /* PVLogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E6DADB20B7AD1500454DD4 /* PVLogViewController.m */; };
@@ -2527,6 +2527,7 @@
 		};
 		B36FE831218EAAD200F858F3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = ios;
 			target = B3E21D6A203211BE009939D3 /* Spotlight */;
 			targetProxy = B36FE830218EAAD200F858F3 /* PBXContainerItemProxy */;
 		};

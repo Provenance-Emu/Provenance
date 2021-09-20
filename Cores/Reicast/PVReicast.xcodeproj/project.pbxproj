@@ -395,6 +395,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		B383226726EDAB130029D12F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B30178D2207C901D0051B93D;
+			remoteInfo = "reicast-iOS";
+		};
 		B3DDF56E26E9B90400CE47F0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3C7620720783162009950E4 /* Project object */;
@@ -3938,6 +3945,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				B383226826EDAB130029D12F /* PBXTargetDependency */,
 			);
 			name = "PVReicast-iOS";
 			productName = PVReicast;
@@ -4382,6 +4390,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		B383226826EDAB130029D12F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B30178D2207C901D0051B93D /* reicast-iOS */;
+			targetProxy = B383226726EDAB130029D12F /* PBXContainerItemProxy */;
+		};
 		B3DDF56F26E9B90400CE47F0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B3447EE8218BEE3F00557ACE /* reicast-tvOS */;

@@ -27,7 +27,7 @@
 		B3296EA226C68CCE0088AC32 /* PVCocoaLumberJackLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296EA126C68CCE0088AC32 /* PVCocoaLumberJackLogging.swift */; };
 		B3296EA326C68CCE0088AC32 /* PVCocoaLumberJackLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296EA126C68CCE0088AC32 /* PVCocoaLumberJackLogging.swift */; };
 		B336B8F126B3985B00960A81 /* CocoaLumberjackSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B336B8F026B3985B00960A81 /* CocoaLumberjackSwift */; };
-		B336B8F426B398A900960A81 /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = B336B8F326B398A900960A81 /* Reachability */; };
+		B336B8F426B398A900960A81 /* Reachability in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B336B8F326B398A900960A81 /* Reachability */; };
 		B336B8F826B3991500960A81 /* CocoaLumberjackSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B336B8F726B3991500960A81 /* CocoaLumberjackSwift */; };
 		B3447E86218B7E4B00557ACE /* CABitOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E7F218B7E4B00557ACE /* CABitOperations.h */; };
 		B3447E87218B7E4B00557ACE /* CABitOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E7F218B7E4B00557ACE /* CABitOperations.h */; };
@@ -842,6 +842,7 @@
 		};
 		B372638326EA013A00E95488 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = ios;
 			productRef = B372638226EA013A00E95488 /* Reachability */;
 		};
 /* End PBXTargetDependency section */

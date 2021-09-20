@@ -28,9 +28,16 @@
 
 #import "PVPokeMiniEmulatorCore.h"
 @import PVSupport;
+
+#if !TARGET_OS_MACCATALYST
 #import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
+#else
+@import OpenGL;
+@import GLUT;
+#endif
+
 #import <AudioToolbox/AudioToolbox.h>
 #import "PokeMini.h"
 #import "Hardware.h"

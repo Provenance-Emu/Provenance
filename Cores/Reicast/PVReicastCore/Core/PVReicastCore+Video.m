@@ -9,9 +9,18 @@
 #import "PVReicastCore+Video.h"
 #import "PVReicastCore.h"
 
-#import <OpenGLES/ES3/glext.h>
+
+#if !TARGET_OS_MACCATALYST
+#import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES3/gl.h>
+#import <OpenGLES/ES3/glext.h>
+#import <OpenGLES/EAGL.h>
 #import <GLKit/GLKit.h>
+#else
+@import OpenGL;
+@import GLUT;
+#endif
+
 
 @implementation PVReicastCore (Video)
 

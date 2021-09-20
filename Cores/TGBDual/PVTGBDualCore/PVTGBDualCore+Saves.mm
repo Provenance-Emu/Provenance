@@ -7,8 +7,6 @@
 //
 
 #import "PVTGBDualCore+Audio.h"
-//#import <OpenGLES/ES3/gl.h>
-//#include "libretro.h"
 
 @implementation PVTGBDualCore (Saves)
 
