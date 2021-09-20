@@ -6,13 +6,25 @@
 //  Copyright (c) 2013 James Addyman. All rights reserved.
 //
 
+#if !TARGET_OS_MACCATALYST
 #import <GLKit/GLKit.h>
+#define BASE_CLASS GLKViewController
+#else
+#import <Metal/Metal.h>
+#define BASE_CLASS UIViewController
+#endif
 
 @class PVEmulatorCore;
 
-@interface PVGLViewController : GLKViewController
+@interface PVGLViewController : BASE_CLASS
 
 @property (nonatomic, weak) PVEmulatorCore *emulatorCore;
+#if TARGET_OS_MACCATALYST
+@property (nonatomic, assign) BOOL isPaused;
+@property (nonatomic, assign) NSTimeInterval timeSinceLastDraw;
+@property (nonatomic, assign) NSInteger  framesPerSecond;
+#endif
+
 
 - (instancetype)initWithEmulatorCore:(PVEmulatorCore *)emulatorCore;
 

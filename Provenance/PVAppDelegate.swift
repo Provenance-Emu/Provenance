@@ -134,8 +134,10 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         let database = RomDatabase.sharedInstance
         database.refresh()
 
+        #if !targetEnvironment(macCatalyst)
         SteamControllerManager.listenForConnections()
-
+        #endif
+        
         if #available(iOS 11, tvOS 11, *) {
             PVAltKitService.shared.start()
         }
