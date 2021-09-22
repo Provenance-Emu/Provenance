@@ -7,19 +7,11 @@
 //
 
 @import UIKit;
-#if !TARGET_OS_MACCATALYST
 @import GLKit;
-#define BASE_CLASS
-#else
-@import Metal;
-@import OpenGL;
-@import GLUT;
-#define BASE_CLASS UIViewController
-#endif
 
 @class PVEmulatorCore;
 
-@interface PVGLViewController : BASE_CLASS
+@interface PVGLViewController : GLKViewController
 
 @property (nonatomic, weak) PVEmulatorCore *emulatorCore;
 #if TARGET_OS_MACCATALYST
