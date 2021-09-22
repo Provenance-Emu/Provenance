@@ -12,7 +12,7 @@ import PVLibrary
 import PVSupport
 import RealmSwift
 import RxSwift
-#if !targetEnvironment(macCatalyst)
+#if !targetEnvironment(macCatalyst) && !os(macOS)
 import SteamController
 #endif
 
