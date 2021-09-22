@@ -6831,12 +6831,6 @@
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
-				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
-					MUPENPLUSAPI,
-					TXFILTER_LIB,
-					OS_IOS,
-					GLESX,
-				);
 				GCC_UNROLL_LOOPS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -6865,17 +6859,6 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				"OTHER_CFLAGS[sdk=iphoneos*]" = (
-					"-mfpu=neon",
-					"-fno-strict-aliasing",
-					"-fvisibility=hidden",
-					"-DGCC",
-					"-pthread",
-					"-fPIC",
-					"-D__unix__",
-					"-D__VEC4_OPT",
-					"-D__NEON_OPT",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64PlusGlideN64";
 				PRODUCT_NAME = PVMupen64PlusVideoGlideN64;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -7332,6 +7315,7 @@
 		};
 		B33115921C7309C200E9AD14 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -7459,6 +7443,7 @@
 		};
 		B37EFEF51C72E63300857158 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -7622,6 +7607,7 @@
 		};
 		B37EFF3E1C72F43400857158 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -8131,6 +8117,7 @@
 		};
 		B3B3B8661DECEA9100602746 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -8248,6 +8235,7 @@
 		};
 		B3B3B9061DED130B00602746 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -8425,6 +8413,7 @@
 		};
 		B3B3B93E1DED137100602746 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -8588,6 +8577,7 @@
 		};
 		B3B3B9511DED13A200602746 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -8707,6 +8697,7 @@
 		};
 		B3B3B9711DED144100602746 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -8836,6 +8827,7 @@
 		};
 		DFB601852038AD13001E70F1 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -8890,6 +8882,7 @@
 					GLESX,
 					GL_ERROR_DEBUG,
 					GL_DEBUG,
+					"$(inherited)",
 				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -8918,17 +8911,6 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
-				"OTHER_CFLAGS[sdk=iphoneos*]" = (
-					"-mfpu=neon",
-					"-fno-strict-aliasing",
-					"-fvisibility=hidden",
-					"-DGCC",
-					"-pthread",
-					"-fPIC",
-					"-D__unix__",
-					"-D__VEC4_OPT",
-					"-D__NEON_OPT",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64PlusGlideN64";
 				PRODUCT_NAME = PVMupen64PlusVideoGlideN64;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -8989,12 +8971,6 @@
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
-				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
-					MUPENPLUSAPI,
-					TXFILTER_LIB,
-					OS_IOS,
-					GLESX,
-				);
 				GCC_UNROLL_LOOPS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -9023,17 +8999,6 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				"OTHER_CFLAGS[sdk=iphoneos*]" = (
-					"-mfpu=neon",
-					"-fno-strict-aliasing",
-					"-fvisibility=hidden",
-					"-DGCC",
-					"-pthread",
-					"-fPIC",
-					"-D__unix__",
-					"-D__VEC4_OPT",
-					"-D__NEON_OPT",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64PlusGlideN64";
 				PRODUCT_NAME = PVMupen64PlusVideoGlideN64;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -9050,6 +9015,7 @@
 		};
 		DFB603B62038B582001E70F1 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
