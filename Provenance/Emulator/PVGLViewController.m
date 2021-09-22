@@ -901,7 +901,7 @@ struct RenderSettings {
 
 #pragma mark - PVRenderDelegate protocol methods
 
-#if TARGET_OS_MACCATALYST
+#if TARGET_OS_MACCATALYST //|| TARGET_OS_MACOS
 - (void)startRenderingOnAlternateThread {
 
 }

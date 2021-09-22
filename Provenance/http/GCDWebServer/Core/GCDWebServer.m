@@ -162,7 +162,7 @@ static void _ExecuteMainThreadRunLoopSources() {
   NSString* _dnsAddress;
   NSUInteger _dnsPort;
   BOOL _bindToLocalhost;
-#if TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST
+#if TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
   BOOL _suspendInBackground;
   UIBackgroundTaskIdentifier _backgroundTask;
 #endif
@@ -180,7 +180,7 @@ static void _ExecuteMainThreadRunLoopSources() {
     _syncQueue = dispatch_queue_create([NSStringFromClass([self class]) UTF8String], DISPATCH_QUEUE_SERIAL);
     _sourceGroup = dispatch_group_create();
     _handlers = [[NSMutableArray alloc] init];
-#if TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST
+#if TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
     _backgroundTask = UIBackgroundTaskInvalid;
 #endif
   }
@@ -199,7 +199,7 @@ static void _ExecuteMainThreadRunLoopSources() {
 #endif
 }
 
-#if TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST
+#if TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 
 // Always called on main thread
 - (void)_startBackgroundTask {
@@ -226,7 +226,7 @@ static void _ExecuteMainThreadRunLoopSources() {
   _connected = YES;
   GWS_LOG_DEBUG(@"Did connect");
 
-#if TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST
+#if TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
   if ([[UIApplication sharedApplication] applicationState] != UIApplicationStateBackground) {
     [self _startBackgroundTask];
   }
@@ -258,7 +258,7 @@ static void _ExecuteMainThreadRunLoopSources() {
   });
 }
 
-#if TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST
+#if TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 
 // Always called on main thread
 - (void)_endBackgroundTask {
@@ -282,7 +282,7 @@ static void _ExecuteMainThreadRunLoopSources() {
   _connected = NO;
   GWS_LOG_DEBUG(@"Did disconnect");
 
-#if TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST
+#if TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
   [self _endBackgroundTask];
 #endif
 
@@ -713,7 +713,7 @@ static inline NSString* _EncodeBase64(NSString* string) {
   }
 }
 
-#if TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST
+#if TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 
 - (void)_didEnterBackground:(NSNotification*)notification {
   GWS_DCHECK([NSThread isMainThread]);
@@ -736,7 +736,7 @@ static inline NSString* _EncodeBase64(NSString* string) {
 - (BOOL)startWithOptions:(NSDictionary*)options error:(NSError**)error {
   if (_options == nil) {
     _options = options ? [options copy] : @{};
-#if TARGET_OS_IOS && !TARGET_OS_MACCATALYST
+#if TARGET_OS_IOS && !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
     _suspendInBackground = [_GetOption(_options, GCDWebServerOption_AutomaticallySuspendInBackground, @YES) boolValue];
     if (((_suspendInBackground == NO) || ([[UIApplication sharedApplication] applicationState] != UIApplicationStateBackground)) && ![self _start:error])
 #else
@@ -746,7 +746,7 @@ static inline NSString* _EncodeBase64(NSString* string) {
       _options = nil;
       return NO;
     }
-#if TARGET_OS_IOS && !TARGET_OS_MACCATALYST
+#if TARGET_OS_IOS && !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
     if (_suspendInBackground) {
       [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_didEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
       [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_willEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
@@ -765,7 +765,7 @@ static inline NSString* _EncodeBase64(NSString* string) {
 
 - (void)stop {
   if (_options) {
-#if TARGET_OS_IOS && !TARGET_OS_MACCATALYST
+#if TARGET_OS_IOS && !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
     if (_suspendInBackground) {
       [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
       [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];

@@ -7,14 +7,19 @@
 //
 
 @import UIKit;
-@import GLKit;
 
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
+#define BaseViewController UIViewController
+#else
+@import GLKit;
+#define BaseViewController GLKViewController
+#endif
 @class PVEmulatorCore;
 
-@interface PVGLViewController : GLKViewController
+@interface PVGLViewController : BaseViewController
 
 @property (nonatomic, weak) PVEmulatorCore *emulatorCore;
-#if TARGET_OS_MACCATALYST
+#if TARGET_OS_MACCATALYST || TARGET_OS_OSX
 @property (nonatomic, assign) BOOL isPaused;
 @property (nonatomic, assign) NSTimeInterval timeSinceLastDraw;
 @property (nonatomic, assign) NSInteger  framesPerSecond;

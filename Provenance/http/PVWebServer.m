@@ -125,7 +125,7 @@
     
     // Set start port based on target type
     // Simulator can't open ports below 1024
-#if TARGET_IPHONE_SIMULATOR || TARGET_OS_MACCATALYST
+#if TARGET_IPHONE_SIMULATOR || TARGET_OS_MACCATALYST || TARGET_OS_OSX
     NSUInteger webUploadPort = 8080;
 #else
     NSUInteger webUploadPort = 80;
@@ -154,7 +154,7 @@
         return YES;
     }
     
-#if TARGET_IPHONE_SIMULATOR || TARGET_OS_MACCATALYST
+#if TARGET_IPHONE_SIMULATOR || TARGET_OS_MACCATALYST|| TARGET_OS_OSX
     NSUInteger webDavPort = 8081;
 #else
     NSUInteger webDavPort = 81;
