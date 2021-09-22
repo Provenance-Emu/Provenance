@@ -25,7 +25,13 @@
  */
 
 #include <unistd.h>
+
+#include <TargetConditionals.h>
+#if TARGET_OS_MACCATALYST || TARGET_OS_OSX
+#import <OpenGL/OpenGL.h>
+#else
 #import <OpenGLES/ES3/gl.h>
+#endif
 
 #ifndef APIENTRY
 #define APIENTRY

@@ -6,28 +6,25 @@
 //
 //
 
-
-
-
 // All
-GCC_PREPROCESSOR_DEFINITIONS[arch=*] = $(inherited) MUPENPLUSAPI TXFILTER_LIB GLESX
-//EXCLUDED_SOURCE_FILE_NAMES[arch=*] = 3DMathNeon.cpp gSPNeon.cpp RSP_LoadMatrixNeon.cpp CRC_OPT_NEON.cpp
+GCC_PREPROCESSOR_DEFINITIONS[arch=*] = $(inherited) MUPENPLUSAPI TXFILTER_LIB
+OTHER_CFLAGS[arch=*] = $(inherited) -DGCC -pthread -fPIC -D__unix__ -DVFP_HARD=1 -DNO_ASM -DM64P_PLUGIN_PROTOTYPES -DPROVENANCE
 
-//:completeSettings = none
+	//:completeSettings = none
 
 // MacOS Catalyst
-GCC_PREPROCESSOR_DEFINITIONS[sdk=macosx*] = $(inherited) OS_MAC_OS_X=1
+GCC_PREPROCESSOR_DEFINITIONS[sdk=macosx*] = $(inherited) OS_MAC_OS_X=1 SDL_VIDEO_OPENGL=1
 OTHER_CFLAGS[sdk=macosx*] = -fno-strict-aliasing -fvisibility=hidden -DGCC -pthread -fPIC -D__unix__ -D__VEC4_OPT -DX86_ASM
 //-mfpu=neon -fno-strict-aliasing -fvisibility=hidden -DGCC -pthread -fPIC -D__unix__ -D__VEC4_OPT -D__NEON_OPT
 
 // iPhone
-GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*] = $(inherited) OS_IOS
+GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*] = $(inherited) OS_IOS GLESX USE_GLES=1 NEON=1 SDL_VIDEO_OPENGL_ES2=1
 
 // Simulator
-GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*] = $(inherited) OS_IOS
+GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*] = $(inherited) OS_IOS GLESX USE_GLES=1 NEON=1 SDL_VIDEO_OPENGL_ES2=1
 
 // tvOS Device
-GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvos*] = $(inherited) OS_IOS
+GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvos*] = $(inherited) OS_IOS GLESX USE_GLES=1 NEON=1 SDL_VIDEO_OPENGL_ES2=1
 
 // tvOS Simulator
-GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvsimulator*] = $(inherited) OS_IOS
+GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvsimulator*] = $(inherited) OS_IOS GLESX USE_GLES=1 NEON=1 SDL_VIDEO_OPENGL_ES2=1
