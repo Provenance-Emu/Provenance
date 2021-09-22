@@ -8827,7 +8827,6 @@
 		};
 		DFB601852038AD13001E70F1 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -9015,7 +9014,6 @@
 		};
 		DFB603B62038B582001E70F1 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
