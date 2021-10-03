@@ -4,6 +4,8 @@
 <dict>
 	<key>ALTDeviceID</key>
 	<string></string>
+	<key>appcenter</key>
+	<string>7d623115-99d6-439e-8e3a-9f2d0b1fbc02</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
