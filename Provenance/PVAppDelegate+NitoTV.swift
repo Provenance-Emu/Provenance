@@ -10,18 +10,16 @@ import Foundation
 import UIKit
 import PVSupport
 
-
 @objc
 extension PVAppDelegate {
-    @objc
-    public func importFil(atURL url: URL) {
-        
+    public func importFile(atURL url: URL) {
+
         let man = FileManager.default
         ILOG("[Provenance] host: \(url.host ?? "nil") path: \(url.path)")
         let cache = uploadDirectory
         do {
             let attrs = try man.attributesOfItem(atPath: cache.path)
-            ILOG("[Provenance] cache attrs: \(attrs),  cache path: \(cache)");
+            ILOG("[Provenance] cache attrs: \(attrs),  cache path: \(cache)")
             let last = url.lastPathComponent
             let newPath = cache.appendingPathComponent(last)
             let originalPath = url
