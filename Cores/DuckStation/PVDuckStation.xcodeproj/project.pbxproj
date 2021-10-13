@@ -229,7 +229,6 @@
 		B3C2924C26DEFFE8003CB9D4 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2924826DEFFE7003CB9D4 /* MetalKit.framework */; };
 		B3C2924D26DEFFE8003CB9D4 /* MetalPerformanceShaders.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2924926DEFFE8003CB9D4 /* MetalPerformanceShaders.framework */; };
 		B3C2924E26DEFFE8003CB9D4 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2924A26DEFFE8003CB9D4 /* Metal.framework */; };
-		B3C2924F26DF0004003CB9D4 /* game_settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AA1426BE55D20096A354 /* game_settings.cpp */; };
 		B3C2925026DF00AC003CB9D4 /* gpu_hw_shadergen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A99326BE55D20096A354 /* gpu_hw_shadergen.cpp */; };
 		B3C2925126DF00C0003CB9D4 /* gpu_hw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A97426BE55D20096A354 /* gpu_hw.cpp */; };
 		B3C2925226DF0129003CB9D4 /* gpu_hw_vulkan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A99226BE55D20096A354 /* gpu_hw_vulkan.cpp */; };
@@ -296,22 +295,11 @@
 		B3C292D226DF0561003CB9D4 /* shader_cache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AAC026BE55D30096A354 /* shader_cache.cpp */; };
 		B3C292D326DF0561003CB9D4 /* texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AAC326BE55D30096A354 /* texture.cpp */; };
 		B3C292D526DF0696003CB9D4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2907026DDD854003CB9D4 /* OpenGLES.framework */; };
-		B3C292D726DF08A0003CB9D4 /* context_agl.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AACE26BE55D30096A354 /* context_agl.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		B3C292D926DF0BAB003CB9D4 /* opengl_host_display.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A9FE26BE55D20096A354 /* opengl_host_display.cpp */; };
-		B3C292DA26DF0BAC003CB9D4 /* postprocessing_chain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AA0326BE55D20096A354 /* postprocessing_chain.cpp */; };
-		B3C292DB26DF0BAC003CB9D4 /* cheevos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AA2226BE55D20096A354 /* cheevos.cpp */; };
-		B3C292DC26DF0BAC003CB9D4 /* postprocessing_shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A9EE26BE55D20096A354 /* postprocessing_shader.cpp */; };
-		B3C292DD26DF0BAC003CB9D4 /* ini_settings_interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A9F226BE55D20096A354 /* ini_settings_interface.cpp */; };
-		B3C292DE26DF0BAC003CB9D4 /* vulkan_host_display.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AA3426BE55D20096A354 /* vulkan_host_display.cpp */; };
-		B3C292DF26DF0BAC003CB9D4 /* postprocessing_shadergen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AA2126BE55D20096A354 /* postprocessing_shadergen.cpp */; };
-		B3C292E026DF0BAC003CB9D4 /* cubeb_audio_stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AA1026BE55D20096A354 /* cubeb_audio_stream.cpp */; };
 		B3C292EF26DF0C31003CB9D4 /* cubeb_resampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A5E426BE55CE0096A354 /* cubeb_resampler.cpp */; };
-		B3C292F026DF0C31003CB9D4 /* cubeb_osx_run_loop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A5CC26BE55CE0096A354 /* cubeb_osx_run_loop.cpp */; };
 		B3C292F126DF0C31003CB9D4 /* cubeb_strings.c in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A5CE26BE55CE0096A354 /* cubeb_strings.c */; };
 		B3C292F226DF0C31003CB9D4 /* cubeb_mixer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A5E326BE55CE0096A354 /* cubeb_mixer.cpp */; };
 		B3C292F326DF0C31003CB9D4 /* cubeb_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A5D026BE55CE0096A354 /* cubeb_utils.cpp */; };
 		B3C292F526DF0C31003CB9D4 /* cubeb.c in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A5D226BE55CE0096A354 /* cubeb.c */; };
-		B3C292F626DF0C31003CB9D4 /* cubeb_audiounit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A5CF26BE55CE0096A354 /* cubeb_audiounit.cpp */; };
 		B3C292F726DF0C31003CB9D4 /* cubeb_log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A5F626BE55CE0096A354 /* cubeb_log.cpp */; };
 		B3C292F826DF0C3C003CB9D4 /* libcubeb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C292E526DF0BDC003CB9D4 /* libcubeb.a */; };
 		B3C2930926DF0CA6003CB9D4 /* glad.c in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A81226BE55D00096A354 /* glad.c */; };
@@ -319,6 +307,15 @@
 		B3C2931B26DF0D8F003CB9D4 /* xxh_x86dispatch.c in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A88326BE55D10096A354 /* xxh_x86dispatch.c */; };
 		B3C2931C26DF0D8F003CB9D4 /* xxhash.c in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A88226BE55D10096A354 /* xxhash.c */; };
 		B3C2931D26DF0D9E003CB9D4 /* libdxxhash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2931126DF0D83003CB9D4 /* libdxxhash.a */; };
+		B3D0140B26DF155800860FF9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D0140A26DF155800860FF9 /* UIKit.framework */; };
+		B3D0142C26DF165900860FF9 /* cubeb_audio_stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AA1026BE55D20096A354 /* cubeb_audio_stream.cpp */; };
+		B3D0142D26DF166900860FF9 /* ini_settings_interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A9F226BE55D20096A354 /* ini_settings_interface.cpp */; };
+		B3D0142E26DF166900860FF9 /* game_settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AA1426BE55D20096A354 /* game_settings.cpp */; };
+		B3D0142F26DF167600860FF9 /* postprocessing_chain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AA0326BE55D20096A354 /* postprocessing_chain.cpp */; };
+		B3D0143026DF167600860FF9 /* postprocessing_shadergen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AA2126BE55D20096A354 /* postprocessing_shadergen.cpp */; };
+		B3D0143126DF167600860FF9 /* postprocessing_shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A9EE26BE55D20096A354 /* postprocessing_shader.cpp */; };
+		B3D0143626DF190300860FF9 /* context_agl_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3D0143426DF18F600860FF9 /* context_agl_ios.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		B3D0143726DF190400860FF9 /* context_agl_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3D0143426DF18F600860FF9 /* context_agl_ios.mm */; };
 		B3D73D211E9EAF1C0023925B /* libedit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7991D6AD049002EE3ED /* libedit.tbd */; };
 		B3D73D231E9EAF1C0023925B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7841D6AB44D002EE3ED /* Foundation.framework */; };
 		B3D73D241E9EAF1C0023925B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7821D6AB43A002EE3ED /* libz.tbd */; };
@@ -651,7 +648,9 @@
 		B3C292E526DF0BDC003CB9D4 /* libcubeb.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libcubeb.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C292FF26DF0C9E003CB9D4 /* libglad.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libglad.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C2931126DF0D83003CB9D4 /* libdxxhash.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libdxxhash.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3D527C226DDCCC300991E84 /* PlayStationGameCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayStationGameCore.h; sourceTree = "<group>"; };
+		B3D0140A26DF155800860FF9 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/iOSSupport/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		B3D0143326DF18F600860FF9 /* context_agl_ios.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = context_agl_ios.h; sourceTree = "<group>"; };
+		B3D0143426DF18F600860FF9 /* context_agl_ios.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = context_agl_ios.mm; sourceTree = "<group>"; };
 		B3D527C326DDCCC300991E84 /* OpenGLHostDisplay.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenGLHostDisplay.mm; sourceTree = "<group>"; };
 		B3D527C426DDCCC300991E84 /* PlayStationGameCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlayStationGameCore.mm; sourceTree = "<group>"; };
 		B3D527C526DDCCC300991E84 /* OpenGLHostDisplay.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = OpenGLHostDisplay.hpp; sourceTree = "<group>"; };
@@ -2586,6 +2585,7 @@
 				B3C291A026DEECB8003CB9D4 /* libsamplerate.a in Frameworks */,
 				B3C2929026DF031B003CB9D4 /* libglslangd.a in Frameworks */,
 				B3D8AD4D26BE55E20096A354 /* libduckstation.a in Frameworks */,
+				B3D0140B26DF155800860FF9 /* UIKit.framework in Frameworks */,
 				B3C2931D26DF0D9E003CB9D4 /* libdxxhash.a in Frameworks */,
 				B3C2924B26DEFFE8003CB9D4 /* MetalPerformanceShadersGraph.framework in Frameworks */,
 				B3C2924126DEFEE6003CB9D4 /* libstb.a in Frameworks */,
@@ -2777,6 +2777,7 @@
 		02695363143169EB003A07D4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3D0140A26DF155800860FF9 /* UIKit.framework */,
 				B3C2924A26DEFFE8003CB9D4 /* Metal.framework */,
 				B3C2924826DEFFE7003CB9D4 /* MetalKit.framework */,
 				B3C2924926DEFFE8003CB9D4 /* MetalPerformanceShaders.framework */,
@@ -2812,7 +2813,6 @@
 				B3D8A52826BE48C90096A354 /* PVDuckStation.h */,
 				B3D8A52926BE48CA0096A354 /* PVDuckStation.mm */,
 				B3D8A53926BE4A6D0096A354 /* PVDuckStation.swift */,
-				B3D527C226DDCCC300991E84 /* PlayStationGameCore.h */,
 				B3D527C426DDCCC300991E84 /* PlayStationGameCore.mm */,
 				B3D527C626DDCCC300991E84 /* PlayStationGameHacks.m */,
 				B3D527C526DDCCC300991E84 /* OpenGLHostDisplay.hpp */,
@@ -5206,6 +5206,10 @@
 		B3D8AAB726BE55D30096A354 /* gl */ = {
 			isa = PBXGroup;
 			children = (
+				B3D0143326DF18F600860FF9 /* context_agl_ios.h */,
+				B3D0143426DF18F600860FF9 /* context_agl_ios.mm */,
+				B3D8AACC26BE55D30096A354 /* context_agl.h */,
+				B3D8AACE26BE55D30096A354 /* context_agl.mm */,
 				B3D8AABD26BE55D30096A354 /* context_egl_android.cpp */,
 				B3D8AAC826BE55D30096A354 /* context_egl_fbdev.cpp */,
 				B3D8AAC526BE55D30096A354 /* context_egl_gbm.cpp */,
@@ -5220,7 +5224,6 @@
 				B3D8AAD526BE55D30096A354 /* stream_buffer.cpp */,
 				B3D8AAC326BE55D30096A354 /* texture.cpp */,
 				B3D8AAD326BE55D30096A354 /* x11_window.cpp */,
-				B3D8AACC26BE55D30096A354 /* context_agl.h */,
 				B3D8AAD226BE55D30096A354 /* context_egl_android.h */,
 				B3D8AACD26BE55D30096A354 /* context_egl_fbdev.h */,
 				B3D8AAB826BE55D30096A354 /* context_egl_gbm.h */,
@@ -5235,7 +5238,6 @@
 				B3D8AACB26BE55D30096A354 /* stream_buffer.h */,
 				B3D8AACF26BE55D30096A354 /* texture.h */,
 				B3D8AAD426BE55D30096A354 /* x11_window.h */,
-				B3D8AACE26BE55D30096A354 /* context_agl.mm */,
 			);
 			path = gl;
 			sourceTree = "<group>";
@@ -6498,6 +6500,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3D0143626DF190300860FF9 /* context_agl_ios.mm in Sources */,
 				B3C2906226DDD28D003CB9D4 /* OpenGLHostDisplay.mm in Sources */,
 				B3C2906326DDD2AE003CB9D4 /* PlayStationGameCore.mm in Sources */,
 				B3D8A53B26BE4A6D0096A354 /* PVDuckStation.swift in Sources */,
@@ -6758,8 +6761,6 @@
 				B3C292F226DF0C31003CB9D4 /* cubeb_mixer.cpp in Sources */,
 				B3C292F526DF0C31003CB9D4 /* cubeb.c in Sources */,
 				B3C292F726DF0C31003CB9D4 /* cubeb_log.cpp in Sources */,
-				B3C292F026DF0C31003CB9D4 /* cubeb_osx_run_loop.cpp in Sources */,
-				B3C292F626DF0C31003CB9D4 /* cubeb_audiounit.cpp in Sources */,
 				B3C292F126DF0C31003CB9D4 /* cubeb_strings.c in Sources */,
 				B3C292EF26DF0C31003CB9D4 /* cubeb_resampler.cpp in Sources */,
 				B3C292F326DF0C31003CB9D4 /* cubeb_utils.cpp in Sources */,
@@ -6787,6 +6788,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3D0143726DF190400860FF9 /* context_agl_ios.mm in Sources */,
 				B3C2906126DDD28C003CB9D4 /* OpenGLHostDisplay.mm in Sources */,
 				B3C2906426DDD2AE003CB9D4 /* PlayStationGameCore.mm in Sources */,
 				B3D8A53A26BE4A6D0096A354 /* PVDuckStation.swift in Sources */,
@@ -6799,26 +6801,26 @@
 			buildActionMask = 2147483647;
 			files = (
 				B304F53126BE566700A4F549 /* bus.cpp in Sources */,
-				B3C292DD26DF0BAC003CB9D4 /* ini_settings_interface.cpp in Sources */,
 				B304F56026BE57B300A4F549 /* event.cpp in Sources */,
 				B304F52B26BE566700A4F549 /* bios.cpp in Sources */,
 				B304F53926BE566700A4F549 /* settings.cpp in Sources */,
 				B304F55D26BE57B300A4F549 /* md5_digest.cpp in Sources */,
 				B304F56526BE57B300A4F549 /* cd_image_bin.cpp in Sources */,
+				B3D0142C26DF165900860FF9 /* cubeb_audio_stream.cpp in Sources */,
 				B304F55C26BE57B300A4F549 /* memory_arena.cpp in Sources */,
 				B3203C1B26DB16A800B016C6 /* cpu_recompiler_code_generator_generic.cpp in Sources */,
 				B3203C1D26DB177C00B016C6 /* cpu_recompiler_register_cache.cpp in Sources */,
 				B304F54E26BE57B300A4F549 /* audio_stream.cpp in Sources */,
 				B3C292BE26DF043B003CB9D4 /* gpu_hw_opengl.cpp in Sources */,
-				B3C292DF26DF0BAC003CB9D4 /* postprocessing_shadergen.cpp in Sources */,
 				B304F55026BE57B300A4F549 /* shiftjis.cpp in Sources */,
 				B304F54A26BE57B300A4F549 /* file_system.cpp in Sources */,
 				B304F55626BE57B300A4F549 /* cd_image_ppf.cpp in Sources */,
-				B3C292D726DF08A0003CB9D4 /* context_agl.mm in Sources */,
+				B3D0142D26DF166900860FF9 /* ini_settings_interface.cpp in Sources */,
 				B304F55226BE57B300A4F549 /* byte_stream.cpp in Sources */,
 				B304F54826BE57B300A4F549 /* cd_image_mds.cpp in Sources */,
 				B3C2925026DF00AC003CB9D4 /* gpu_hw_shadergen.cpp in Sources */,
 				B304F52526BE566700A4F549 /* host_display.cpp in Sources */,
+				B3D0142E26DF166900860FF9 /* game_settings.cpp in Sources */,
 				B304F53726BE566700A4F549 /* playstation_mouse.cpp in Sources */,
 				B304F51E26BE566700A4F549 /* digital_controller.cpp in Sources */,
 				B304F51026BE566700A4F549 /* gte.cpp in Sources */,
@@ -6831,12 +6833,10 @@
 				B304F51226BE566700A4F549 /* cheats.cpp in Sources */,
 				B304F51D26BE566700A4F549 /* multitap.cpp in Sources */,
 				B3C2926B26DF01AC003CB9D4 /* stream_buffer.cpp in Sources */,
-				B3C2924F26DF0004003CB9D4 /* game_settings.cpp in Sources */,
 				B3C290B426DDDC06003CB9D4 /* cd_image_chd.cpp in Sources */,
 				B304F52F26BE566700A4F549 /* texture_replacements.cpp in Sources */,
 				B304F56426BE57B300A4F549 /* string_util.cpp in Sources */,
 				B304F51F26BE566700A4F549 /* analog_joystick.cpp in Sources */,
-				B3C292D926DF0BAB003CB9D4 /* opengl_host_display.cpp in Sources */,
 				B304F51526BE566700A4F549 /* gpu_backend.cpp in Sources */,
 				B304F56126BE57B300A4F549 /* cd_image_pbp.cpp in Sources */,
 				B304F50726BE566700A4F549 /* dma.cpp in Sources */,
@@ -6848,11 +6848,11 @@
 				B304F52126BE566700A4F549 /* timers.cpp in Sources */,
 				B3C2926326DF01AC003CB9D4 /* builders.cpp in Sources */,
 				B3C2926A26DF01AC003CB9D4 /* swap_chain.cpp in Sources */,
-				B3C292DA26DF0BAC003CB9D4 /* postprocessing_chain.cpp in Sources */,
 				B304F51C26BE566700A4F549 /* sio.cpp in Sources */,
 				B304F52826BE566700A4F549 /* host_interface.cpp in Sources */,
 				B304F53526BE566700A4F549 /* cpu_types.cpp in Sources */,
 				B304F51926BE566700A4F549 /* spu.cpp in Sources */,
+				B3D0143026DF167600860FF9 /* postprocessing_shadergen.cpp in Sources */,
 				B304F54526BE57B300A4F549 /* cd_image.cpp in Sources */,
 				B304F54926BE57B300A4F549 /* page_fault_handler.cpp in Sources */,
 				B304F56626BE57B300A4F549 /* cd_xa.cpp in Sources */,
@@ -6886,13 +6886,11 @@
 				B3C2926626DF01AC003CB9D4 /* shader_cache.cpp in Sources */,
 				B304F54D26BE57B300A4F549 /* cd_image_m3u.cpp in Sources */,
 				B304F53426BE566700A4F549 /* cdrom.cpp in Sources */,
-				B3C292DB26DF0BAC003CB9D4 /* cheevos.cpp in Sources */,
 				B304F53326BE566700A4F549 /* cpu_core.cpp in Sources */,
-				B3C292E026DF0BAC003CB9D4 /* cubeb_audio_stream.cpp in Sources */,
-				B3C292DE26DF0BAC003CB9D4 /* vulkan_host_display.cpp in Sources */,
 				B3C292D026DF0559003CB9D4 /* program.cpp in Sources */,
 				B304F52626BE566700A4F549 /* libcrypt_game_codes.cpp in Sources */,
 				B304F53D26BE566700A4F549 /* cpu_disasm.cpp in Sources */,
+				B3D0142F26DF167600860FF9 /* postprocessing_chain.cpp in Sources */,
 				B3C2926526DF01AC003CB9D4 /* context.cpp in Sources */,
 				B304F50C26BE566700A4F549 /* gpu_sw.cpp in Sources */,
 				B3203C2426DB1A7A00B016C6 /* cpu_recompiler_code_generator_aarch32.cpp in Sources */,
@@ -6914,7 +6912,7 @@
 				B304F55B26BE57B300A4F549 /* crash_handler.cpp in Sources */,
 				B304F53026BE566700A4F549 /* timing_event.cpp in Sources */,
 				B304F54C26BE57B300A4F549 /* cd_image_cue.cpp in Sources */,
-				B3C292DC26DF0BAC003CB9D4 /* postprocessing_shader.cpp in Sources */,
+				B3D0143126DF167600860FF9 /* postprocessing_shader.cpp in Sources */,
 				B304F55126BE57B300A4F549 /* assert.cpp in Sources */,
 				B304F52926BE566700A4F549 /* memory_card.cpp in Sources */,
 				B3203C2526DB1AA600B016C6 /* cpu_recompiler_code_generator_x64.cpp in Sources */,
@@ -7201,8 +7199,9 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/duckstation/src\"",
-					"\"$(SRCROOT)/duckstation/dep/glad/include\"",
 					"\"$(SRCROOT)/duckstation/dep/rapidjson/include\"",
+					"\"$(SRCROOT)/duckstation/dep/cubeb/include\"",
+					"\"$(SRCROOT)/duckstation/dep/glad/include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVDuckStation/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -7289,8 +7288,9 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/duckstation/src\"",
-					"\"$(SRCROOT)/duckstation/dep/glad/include\"",
 					"\"$(SRCROOT)/duckstation/dep/rapidjson/include\"",
+					"\"$(SRCROOT)/duckstation/dep/cubeb/include\"",
+					"\"$(SRCROOT)/duckstation/dep/glad/include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVDuckStation/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -7333,8 +7333,9 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/duckstation/src\"",
-					"\"$(SRCROOT)/duckstation/dep/glad/include\"",
 					"\"$(SRCROOT)/duckstation/dep/rapidjson/include\"",
+					"\"$(SRCROOT)/duckstation/dep/cubeb/include\"",
+					"\"$(SRCROOT)/duckstation/dep/glad/include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVDuckStation/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -7371,6 +7372,16 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"PACKAGE_VERSION=\\\"1.3.2\\\"",
+					"FLAC__HAS_OGG=0",
+					HAVE_LROUND,
+					HAVE_STDINT_H,
+					HAVE_STDLIB_H,
+					HAVE_STDDEF_H,
+					FLAC__NO_DLL,
+					"NDEBUG=1",
+				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
@@ -7409,6 +7420,16 @@
 				COPY_PHASE_STRIP = NO;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_NS_ASSERTIONS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"PACKAGE_VERSION=\\\"1.3.2\\\"",
+					"FLAC__HAS_OGG=0",
+					HAVE_LROUND,
+					HAVE_STDINT_H,
+					HAVE_STDLIB_H,
+					HAVE_STDDEF_H,
+					FLAC__NO_DLL,
+					"NDEBUG=1",
+				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
@@ -8743,12 +8764,14 @@
 					FLOATING_POINT,
 					OUTSIDE_SPEEX,
 					"$(inherited)",
+					"TARGET_OS_IPHONE=1",
 				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/duckstation/src\"",
 					"\"$(SRCROOT)/duckstation/dep/cubeb/include\"",
+					"\"$(SRCROOT)/duckstation/dep/cubeb/src\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -8786,6 +8809,7 @@
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/duckstation/src\"",
 					"\"$(SRCROOT)/duckstation/dep/cubeb/include\"",
+					"\"$(SRCROOT)/duckstation/dep/cubeb/src\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -8824,6 +8848,7 @@
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/duckstation/src\"",
 					"\"$(SRCROOT)/duckstation/dep/cubeb/include\"",
+					"\"$(SRCROOT)/duckstation/dep/cubeb/src\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -9106,10 +9131,18 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					SI_CONVERT_GENERIC,
+					"$(inherited)",
+					WITH_RECOMPILER,
+					GL_SILENCE_DEPRECATION,
+					WITH_FASTMEM,
+				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
@@ -9120,6 +9153,7 @@
 					"\"$(SRCROOT)/duckstation/dep/vixl/include\"",
 					"\"$(SRCROOT)/duckstation/dep/libchdr/include\"",
 					"\"$(SRCROOT)/duckstation/dep/glslang\"",
+					"\"$(SRCROOT)/duckstation/dep/cubeb/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -9150,9 +9184,17 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					SI_CONVERT_GENERIC,
+					"$(inherited)",
+					WITH_RECOMPILER,
+					GL_SILENCE_DEPRECATION,
+					WITH_FASTMEM,
+				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
@@ -9163,6 +9205,7 @@
 					"\"$(SRCROOT)/duckstation/dep/vixl/include\"",
 					"\"$(SRCROOT)/duckstation/dep/libchdr/include\"",
 					"\"$(SRCROOT)/duckstation/dep/glslang\"",
+					"\"$(SRCROOT)/duckstation/dep/cubeb/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -9194,9 +9237,17 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					SI_CONVERT_GENERIC,
+					"$(inherited)",
+					WITH_RECOMPILER,
+					GL_SILENCE_DEPRECATION,
+					WITH_FASTMEM,
+				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
@@ -9207,6 +9258,7 @@
 					"\"$(SRCROOT)/duckstation/dep/vixl/include\"",
 					"\"$(SRCROOT)/duckstation/dep/libchdr/include\"",
 					"\"$(SRCROOT)/duckstation/dep/glslang\"",
+					"\"$(SRCROOT)/duckstation/dep/cubeb/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;

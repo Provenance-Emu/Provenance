@@ -196,7 +196,7 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
     NSString *bootPath;
 	NSString *saveStatePath;
     bool isInitialized;
-	NSUInteger _maxDiscs;
+//	NSUInteger _maxDiscs;
 @package
 	NSMutableDictionary <NSString *, id> *_displayModes;
 }
@@ -282,13 +282,13 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 		
 		os_log_debug(OE_CORE_LOG, "Loading m3u containing %lu cue sheets", numberOfMatches);
 		
-		_maxDiscs = numberOfMatches;
+		self.maxDiscs = numberOfMatches;
 	} else if ([path.pathExtension.lowercaseString isEqualToString:@"pbp"]) {
 		Common::Error pbpError;
 		auto pbpImage = CDImage::OpenPBPImage(path.fileSystemRepresentation, &pbpError);
 		if (pbpImage) {
-			_maxDiscs = pbpImage->GetSubImageCount();
-			os_log_debug(OE_CORE_LOG, "Loading PBP containing %ld discs", (long)_maxDiscs);
+            self.maxDiscs = pbpImage->GetSubImageCount();
+			os_log_debug(OE_CORE_LOG, "Loading PBP containing %ld discs", (long)self.maxDiscs);
 			pbpImage.reset();
 		} else if (pbpError.GetMessage() == "Encrypted PBP images are not supported") {
 			// Error out
@@ -373,7 +373,7 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 
 - (NSUInteger)discCount
 {
-	return _maxDiscs ? _maxDiscs : 1;
+	return self.maxDiscs ?: 1;
 }
 
 - (void)setDisc:(NSUInteger)discNumber

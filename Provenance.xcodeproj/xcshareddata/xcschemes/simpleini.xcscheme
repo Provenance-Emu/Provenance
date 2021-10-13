@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C2913C26DEC91C003CB9D4"
-               BuildableName = "libsimpleini.a"
+               BuildableName = "libSimpleINI.a"
                BlueprintName = "SimpleINI"
                ReferencedContainer = "container:Cores/DuckStation/PVDuckStation.xcodeproj">
             </BuildableReference>
@@ -51,7 +51,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C2913C26DEC91C003CB9D4"
-            BuildableName = "libsimpleini.a"
+            BuildableName = "libSimpleINI.a"
             BlueprintName = "SimpleINI"
             ReferencedContainer = "container:Cores/DuckStation/PVDuckStation.xcodeproj">
          </BuildableReference>
