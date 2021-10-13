@@ -314,6 +314,8 @@
 		B3D0143126DF167600860FF9 /* postprocessing_shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A9EE26BE55D20096A354 /* postprocessing_shader.cpp */; };
 		B3D0143626DF190300860FF9 /* context_agl_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3D0143426DF18F600860FF9 /* context_agl_ios.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		B3D0143726DF190400860FF9 /* context_agl_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3D0143426DF18F600860FF9 /* context_agl_ios.mm */; };
+		B3D0143A26E05F6500860FF9 /* OEOverrides.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3D0143926E05F6500860FF9 /* OEOverrides.ini */; };
+		B3D0143B26E05F6500860FF9 /* OEOverrides.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3D0143926E05F6500860FF9 /* OEOverrides.ini */; };
 		B3D73D211E9EAF1C0023925B /* libedit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7991D6AD049002EE3ED /* libedit.tbd */; };
 		B3D73D231E9EAF1C0023925B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7841D6AB44D002EE3ED /* Foundation.framework */; };
 		B3D73D241E9EAF1C0023925B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7821D6AB43A002EE3ED /* libz.tbd */; };
@@ -649,6 +651,7 @@
 		B3D0140A26DF155800860FF9 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/iOSSupport/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		B3D0143326DF18F600860FF9 /* context_agl_ios.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = context_agl_ios.h; sourceTree = "<group>"; };
 		B3D0143426DF18F600860FF9 /* context_agl_ios.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = context_agl_ios.mm; sourceTree = "<group>"; };
+		B3D0143926E05F6500860FF9 /* OEOverrides.ini */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OEOverrides.ini; sourceTree = "<group>"; };
 		B3D527C326DDCCC300991E84 /* OpenGLHostDisplay.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenGLHostDisplay.mm; sourceTree = "<group>"; };
 		B3D527C426DDCCC300991E84 /* PlayStationGameCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlayStationGameCore.mm; sourceTree = "<group>"; };
 		B3D527C526DDCCC300991E84 /* OpenGLHostDisplay.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = OpenGLHostDisplay.hpp; sourceTree = "<group>"; };
@@ -2801,6 +2804,7 @@
 				B3D8A52626BE48C90096A354 /* DuckStation-Info.plist */,
 				B3D8A52726BE48C90096A354 /* Source */,
 				B3D8A52A26BE48CA0096A354 /* Info.plist */,
+				B3D0143926E05F6500860FF9 /* OEOverrides.ini */,
 			);
 			path = PVDuckStation;
 			sourceTree = "<group>";
@@ -6475,6 +6479,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3D0143A26E05F6500860FF9 /* OEOverrides.ini in Resources */,
 				B3D8A52B26BE48CA0096A354 /* InfoPlist.strings in Resources */,
 				B3D8A52D26BE48CA0096A354 /* Core.plist in Resources */,
 				B3D8A53126BE48CA0096A354 /* DuckStation-Info.plist in Resources */,
@@ -6485,6 +6490,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3D0143B26E05F6500860FF9 /* OEOverrides.ini in Resources */,
 				B3D8A52C26BE48CA0096A354 /* InfoPlist.strings in Resources */,
 				B3D8A52E26BE48CA0096A354 /* Core.plist in Resources */,
 				B3D8A53226BE48CA0096A354 /* DuckStation-Info.plist in Resources */,

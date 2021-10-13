@@ -209,11 +209,10 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
     NSMutableDictionary <NSString *, id> *_displayModes;
 }
 
-+ (void)initialize
-{
++ (void)initialize {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        OE_CORE_LOG = os_log_create("org.openemu.DuckStation", "");
+        OE_CORE_LOG = os_log_create("org.provenance.DuckStation", "");
     });
 }
 
@@ -355,16 +354,16 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
     return GL_RGBA;
 }
 
-- (BOOL)isDoubleBuffered {
-    return YES;
-}
-
-- (void)swapBuffers
-{
-//    Mednafen::MDFN_Surface *tempSurf = backBufferSurf;
-//    backBufferSurf = frontBufferSurf;
-//    frontBufferSurf = tempSurf;
-}
+//- (BOOL)isDoubleBuffered {
+//    return YES;
+//}
+//
+//- (void)swapBuffers
+//{
+////    Mednafen::MDFN_Surface *tempSurf = backBufferSurf;
+////    backBufferSurf = frontBufferSurf;
+////    frontBufferSurf = tempSurf;
+//}
 
 #pragma mark - Audio
 
@@ -404,9 +403,9 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 //    }
 //}
 //
-//- (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error {
-//    NSAssert(NO, @"Shouldn't be here since we overload the async version");
-//}
+- (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error {
+    NSAssert(NO, @"Shouldn't be here since we overload the async version");
+}
 //
 //- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
 //    #warning "Placeholder"
