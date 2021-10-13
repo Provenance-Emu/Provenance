@@ -60,8 +60,8 @@
         "repositoryURL": "https://github.com/realm/realm-cocoa.git",
         "state": {
           "branch": null,
-          "revision": "052f92ef8dd411616cfcfae8dd82888dcd4ecf45",
-          "version": "10.16.0"
+          "revision": "7ca0ce1dd58553d5be1ec9cc7283b068c256979d",
+          "version": "10.17.0"
         }
       },
       {
@@ -105,7 +105,7 @@
         "repositoryURL": "https://github.com/Provenance-Emu/SteamController.git",
         "state": {
           "branch": "master",
-          "revision": "1f44314c8fb6682b18d4b3c371de874d05abc6ae",
+          "revision": "4cfc66531113e8065b9eaf1065c3d258b96ec1f4",
           "version": null
         }
       },
