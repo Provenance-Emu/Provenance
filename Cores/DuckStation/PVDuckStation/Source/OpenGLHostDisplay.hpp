@@ -41,12 +41,12 @@
 #include "core/host_display.h"
 #include <memory>
 
-@class PlayStationGameCore;
+@class PVDuckStationCore;
 
 namespace OpenEmu {
 class OpenGLHostDisplay final: public HostDisplay {
 public:
-	OpenGLHostDisplay(PlayStationGameCore *core);
+	OpenGLHostDisplay(PVDuckStationCore *core);
 	virtual ~OpenGLHostDisplay();
 	virtual RenderAPI GetRenderAPI() const override;
 	virtual void* GetRenderDevice() const override;
@@ -122,7 +122,7 @@ protected:
 	u32 m_display_pixels_texture_pbo_map_size = 0;
 	
 private:
-	PlayStationGameCore *_current;
+    PVDuckStationCore *_current;
 };
 };
 

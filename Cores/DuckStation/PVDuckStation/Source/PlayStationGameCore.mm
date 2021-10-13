@@ -34,9 +34,9 @@
 #include "common/byte_stream.h"
 #include "common/cd_image.h"
 #include "common/error.h"
-#include "core/host_display.h"
+//#include "core/host_display.h"
 #include "core/host_interface.h"
-#include "core/gpu.h"
+//#include "core/gpu.h"
 #include "common/audio_stream.h"
 #include "core/digital_controller.h"
 #include "core/analog_controller.h"
@@ -406,7 +406,7 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 	if (!System::IsShutdown() && isInitialized) {
 		duckInterface->ResizeRenderWindow(size.width, size.height);
 		
-		g_gpu->UpdateResolutionScale();
+//		g_gpu->UpdateResolutionScale();
 	}
 	return YES;
 }

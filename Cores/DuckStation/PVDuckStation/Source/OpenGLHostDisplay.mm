@@ -564,7 +564,8 @@ void OpenGLHostDisplay::DestroyResources()
 
 bool OpenGLHostDisplay::Render()
 {
-	GLuint framebuffer = [[[_current renderDelegate] presentationFramebuffer] unsignedIntValue];
+#warning "fix me"
+    GLuint framebuffer = 0; //[[[_current renderDelegate] alternateThreadFramebufferFront] unsignedIntValue];
 
 	glDisable(GL_SCISSOR_TEST);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer);
