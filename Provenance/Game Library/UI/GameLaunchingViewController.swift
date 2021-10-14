@@ -557,7 +557,7 @@ extension GameLaunchingViewController where Self: UIViewController {
         let emulatorViewController = PVEmulatorViewController(game: game, core: coreInstance)
 
         // Check if Save State exists
-        if saveState == nil {
+        if saveState == nil, emulatorViewController.core.supportsSaveStates {
             checkForSaveStateThenRun(withCore: core, forGame: game) { optionallyChosenSaveState in
                 self.presentEMUVC(emulatorViewController, withGame: game, loadingSaveState: optionallyChosenSaveState)
             }
