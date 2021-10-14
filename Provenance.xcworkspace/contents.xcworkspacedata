@@ -62,7 +62,7 @@
          location = "group:Cores/Stella/PVStella.xcodeproj">
       </FileRef>
       <FileRef
-          location = "group:Cores/PPSSPP/PVPPSSPP.xcodeproj">
+         location = "group:Cores/PPSSPP/PVPPSSPP.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/TGBDual/PVTGBDual.xcodeproj">
