@@ -17,6 +17,16 @@ public enum CoreOptionValue {
     case string(String)
     case number(NSNumber)
     case notFound
+    
+    
+    public var asBool: Bool {
+        switch self {
+        case .bool(let value): return value
+        case .string(let value): return Bool(value) ?? false
+        case .number(let value): return value.boolValue
+        case .notFound: return false
+        }
+    }
 }
 
 public extension CoreOptional { // where Self:PVEmulatorCore {

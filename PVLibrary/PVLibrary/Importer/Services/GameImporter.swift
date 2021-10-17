@@ -1615,7 +1615,7 @@ extension GameImporter {
                 let systemID = PVEmulatorConfiguration.systemID(forDatabaseID: databaseID) {
                 return systemID
             } else {
-                ILOG("Could't match \(rom.filePath.lastPathComponent) based off of MD5 {md5}")
+                ILOG("Could't match \(rom.filePath.lastPathComponent) based off of MD5 {\(md5)}")
                 return nil
             }
         } catch {

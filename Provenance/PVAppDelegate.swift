@@ -28,6 +28,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         application.isIdleTimerDisabled = PVSettingsModel.shared.disableAutoLock
         _initLogging()
+        _initAppCenter()
         setDefaultsFromSettingsBundle()
 
         DispatchQueue.global(qos: .background).async {
