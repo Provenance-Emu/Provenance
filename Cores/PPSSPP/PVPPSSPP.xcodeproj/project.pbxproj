@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -13,10 +13,39 @@
 		B30C6E18271D79E60025DD88 /* libCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DCE271D792B0025DD88 /* libCommon.a */; };
 		B30C6E19271D79E60025DD88 /* libCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DD0271D792B0025DD88 /* libCore.a */; };
 		B30C6E1A271D79E60025DD88 /* libkirk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DF2271D792B0025DD88 /* libkirk.a */; };
-		B30C6E1B271D79E60025DD88 /* libnative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DFC271D792B0025DD88 /* libnative.a */; };
 		B30C6E1C271D79E60025DD88 /* libpng17.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E00271D792B0025DD88 /* libpng17.a */; };
 		B30C6E1D271D79E60025DD88 /* libsnappy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E04271D792B0025DD88 /* libsnappy.a */; };
 		B30C6E1E271D79E60025DD88 /* libudis86.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E10271D792B0025DD88 /* libudis86.a */; };
+		B30C6E24271D8B250025DD88 /* Frameworks in Resources */ = {isa = PBXBuildFile; fileRef = B30C6E23271D8B250025DD88 /* Frameworks */; };
+		B30C6E25271D8B660025DD88 /* libarmips.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DE0271D792B0025DD88 /* libarmips.a */; };
+		B30C6E26271D8B730025DD88 /* libMachineIndependent.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DD6271D792B0025DD88 /* libMachineIndependent.a */; };
+		B30C6E27271D8BBF0025DD88 /* libspirv-cross-core.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E06271D792B0025DD88 /* libspirv-cross-core.a */; };
+		B30C6E28271D8BBF0025DD88 /* libspirv-cross-glsl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E0A271D792B0025DD88 /* libspirv-cross-glsl.a */; };
+		B30C6E29271D8BBF0025DD88 /* libSPIRV.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DDE271D792B0025DD88 /* libSPIRV.a */; };
+		B30C6E2A271D8BBF0025DD88 /* libxxhash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E14271D792B0025DD88 /* libxxhash.a */; };
+		B30C6E2B271D8BBF0025DD88 /* libzstd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DF8271D792B0025DD88 /* libzstd.a */; };
+		B30C6E2C271D8BD90025DD88 /* libglslang.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DF0271D792B0025DD88 /* libglslang.a */; };
+		B30C6E2D271D8BF50025DD88 /* libgason.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DEE271D792B0025DD88 /* libgason.a */; };
+		B30C6E2E271D8BF50025DD88 /* libGenericCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DD2271D792B0025DD88 /* libGenericCodeGen.a */; };
+		B30C6E2F271D8BF50025DD88 /* libHLSL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DD4271D792B0025DD88 /* libHLSL.a */; };
+		B30C6E30271D8BF50025DD88 /* liblibzip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DF4271D792B0025DD88 /* liblibzip.a */; };
+		B30C6E31271D8BF50025DD88 /* libminiupnpc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DFA271D792B0025DD88 /* libminiupnpc.a */; };
+		B30C6E32271D8BF50025DD88 /* libnative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DFC271D792B0025DD88 /* libnative.a */; };
+		B30C6E33271D8BF50025DD88 /* libOGLCompiler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DD8271D792B0025DD88 /* libOGLCompiler.a */; };
+		B30C6E34271D8BF50025DD88 /* libOSDependent.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DDA271D792B0025DD88 /* libOSDependent.a */; };
+		B30C6E35271D8BF50025DD88 /* libsfmt19937.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E02271D792B0025DD88 /* libsfmt19937.a */; };
+		B30C6E38271D8C100025DD88 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E36271D8C100025DD88 /* AVFoundation.framework */; };
+		B30C6E39271D8C100025DD88 /* AVKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E37271D8C100025DD88 /* AVKit.framework */; };
+		B30C6E3B271D8C280025DD88 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E3A271D8C280025DD88 /* UIKit.framework */; };
+		B30C6E3E271D8C340025DD88 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E3C271D8C330025DD88 /* Foundation.framework */; };
+		B30C6E3F271D8C340025DD88 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E3D271D8C330025DD88 /* CoreFoundation.framework */; };
+		B30C6E41271D8C460025DD88 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E40271D8C450025DD88 /* CoreGraphics.framework */; };
+		B30C6E43271D8C4E0025DD88 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E42271D8C4E0025DD88 /* QuartzCore.framework */; };
+		B30C6E45271D8C700025DD88 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E44271D8C700025DD88 /* GameController.framework */; };
+		B30C6E49271D8C800025DD88 /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E46271D8C800025DD88 /* CoreAudioKit.framework */; };
+		B30C6E4A271D8C800025DD88 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E47271D8C800025DD88 /* CoreAudio.framework */; };
+		B30C6E4D271D8CA00025DD88 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E4C271D8CA00025DD88 /* CoreLocation.framework */; };
+		B30C6E4F271D8CAD0025DD88 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E4E271D8CAD0025DD88 /* GLKit.framework */; platformFilter = ios; };
 		B38C49DD201DBCC3006761ED /* PPSSPPGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8CAFC1251785B6F700647A96 /* PPSSPPGameCore.mm */; };
 		B38C4A0B201DBD75006761ED /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B38C4A0A201DBD75006761ED /* OpenGLES.framework */; };
 		B38C4A0D201DBD7E006761ED /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B38C4A0C201DBD7E006761ED /* libz.tbd */; };
@@ -308,6 +337,20 @@
 		B30C6D96271D74EB0025DD88 /* PVPPSSPP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVPPSSPP.h; sourceTree = SOURCE_ROOT; };
 		B30C6D99271D773D0025DD88 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		B30C6D9A271D792B0025DD88 /* PPSSPP.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PPSSPP.xcodeproj; path = cmake/PPSSPP.xcodeproj; sourceTree = "<group>"; };
+		B30C6E23271D8B250025DD88 /* Frameworks */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Frameworks; path = ppsspp/ext/vulkan/iOS/Frameworks; sourceTree = "<group>"; };
+		B30C6E36271D8C100025DD88 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
+		B30C6E37271D8C100025DD88 /* AVKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/iOSSupport/System/Library/Frameworks/AVKit.framework; sourceTree = DEVELOPER_DIR; };
+		B30C6E3A271D8C280025DD88 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/iOSSupport/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		B30C6E3C271D8C330025DD88 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		B30C6E3D271D8C330025DD88 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
+		B30C6E40271D8C450025DD88 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
+		B30C6E42271D8C4E0025DD88 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
+		B30C6E44271D8C700025DD88 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/iOSSupport/System/Library/Frameworks/GameController.framework; sourceTree = DEVELOPER_DIR; };
+		B30C6E46271D8C800025DD88 /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/iOSSupport/System/Library/Frameworks/CoreAudioKit.framework; sourceTree = DEVELOPER_DIR; };
+		B30C6E47271D8C800025DD88 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/CoreAudio.framework; sourceTree = DEVELOPER_DIR; };
+		B30C6E48271D8C800025DD88 /* CoreAudioTypes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioTypes.framework; path = System/Library/Frameworks/CoreAudioTypes.framework; sourceTree = SDKROOT; };
+		B30C6E4C271D8CA00025DD88 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/CoreLocation.framework; sourceTree = DEVELOPER_DIR; };
+		B30C6E4E271D8CAD0025DD88 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 		B38C49D5201DBC8C006761ED /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B38C4A0A201DBD75006761ED /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.2.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		B38C4A0C201DBD7E006761ED /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.2.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
@@ -321,18 +364,46 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B30C6E32271D8BF50025DD88 /* libnative.a in Frameworks */,
+				B30C6E2F271D8BF50025DD88 /* libHLSL.a in Frameworks */,
+				B30C6E39271D8C100025DD88 /* AVKit.framework in Frameworks */,
+				B30C6E34271D8BF50025DD88 /* libOSDependent.a in Frameworks */,
+				B30C6E49271D8C800025DD88 /* CoreAudioKit.framework in Frameworks */,
+				B30C6E41271D8C460025DD88 /* CoreGraphics.framework in Frameworks */,
+				B30C6E35271D8BF50025DD88 /* libsfmt19937.a in Frameworks */,
+				B30C6E38271D8C100025DD88 /* AVFoundation.framework in Frameworks */,
+				B30C6E2E271D8BF50025DD88 /* libGenericCodeGen.a in Frameworks */,
+				B30C6E3E271D8C340025DD88 /* Foundation.framework in Frameworks */,
+				B30C6E3F271D8C340025DD88 /* CoreFoundation.framework in Frameworks */,
+				B30C6E2C271D8BD90025DD88 /* libglslang.a in Frameworks */,
+				B30C6E27271D8BBF0025DD88 /* libspirv-cross-core.a in Frameworks */,
+				B30C6E30271D8BF50025DD88 /* liblibzip.a in Frameworks */,
 				B30C6E1A271D79E60025DD88 /* libkirk.a in Frameworks */,
+				B30C6E4D271D8CA00025DD88 /* CoreLocation.framework in Frameworks */,
+				B30C6E2B271D8BBF0025DD88 /* libzstd.a in Frameworks */,
 				B30C6E1C271D79E60025DD88 /* libpng17.a in Frameworks */,
 				B38C4A10201DBD98006761ED /* PVSupport.framework in Frameworks */,
-				B30C6E1B271D79E60025DD88 /* libnative.a in Frameworks */,
+				B30C6E29271D8BBF0025DD88 /* libSPIRV.a in Frameworks */,
+				B30C6E26271D8B730025DD88 /* libMachineIndependent.a in Frameworks */,
+				B30C6E4A271D8C800025DD88 /* CoreAudio.framework in Frameworks */,
 				B30C6E1E271D79E60025DD88 /* libudis86.a in Frameworks */,
+				B30C6E2A271D8BBF0025DD88 /* libxxhash.a in Frameworks */,
 				B30C6E19271D79E60025DD88 /* libCore.a in Frameworks */,
+				B30C6E28271D8BBF0025DD88 /* libspirv-cross-glsl.a in Frameworks */,
 				B38C4A0F201DBD8D006761ED /* CoreVideo.framework in Frameworks */,
 				B38C4A0D201DBD7E006761ED /* libz.tbd in Frameworks */,
+				B30C6E3B271D8C280025DD88 /* UIKit.framework in Frameworks */,
+				B30C6E45271D8C700025DD88 /* GameController.framework in Frameworks */,
 				B30C6E17271D79E60025DD88 /* libcityhash.a in Frameworks */,
 				B30C6E1D271D79E60025DD88 /* libsnappy.a in Frameworks */,
+				B30C6E2D271D8BF50025DD88 /* libgason.a in Frameworks */,
+				B30C6E25271D8B660025DD88 /* libarmips.a in Frameworks */,
+				B30C6E43271D8C4E0025DD88 /* QuartzCore.framework in Frameworks */,
 				B30C6E18271D79E60025DD88 /* libCommon.a in Frameworks */,
+				B30C6E33271D8BF50025DD88 /* libOGLCompiler.a in Frameworks */,
 				B38C4A0B201DBD75006761ED /* OpenGLES.framework in Frameworks */,
+				B30C6E4F271D8CAD0025DD88 /* GLKit.framework in Frameworks */,
+				B30C6E31271D8BF50025DD88 /* libminiupnpc.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -350,6 +421,7 @@
 		8CAFA78E1785AA9900647A96 = {
 			isa = PBXGroup;
 			children = (
+				B30C6E23271D8B250025DD88 /* Frameworks */,
 				B30C6D9A271D792B0025DD88 /* PPSSPP.xcodeproj */,
 				B30C6D99271D773D0025DD88 /* Config.xcconfig */,
 				8CAFC10A1785B60F00647A96 /* Classes */,
@@ -480,6 +552,19 @@
 		B38C49FB201DBD67006761ED /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B30C6E4E271D8CAD0025DD88 /* GLKit.framework */,
+				B30C6E4C271D8CA00025DD88 /* CoreLocation.framework */,
+				B30C6E47271D8C800025DD88 /* CoreAudio.framework */,
+				B30C6E46271D8C800025DD88 /* CoreAudioKit.framework */,
+				B30C6E48271D8C800025DD88 /* CoreAudioTypes.framework */,
+				B30C6E44271D8C700025DD88 /* GameController.framework */,
+				B30C6E42271D8C4E0025DD88 /* QuartzCore.framework */,
+				B30C6E40271D8C450025DD88 /* CoreGraphics.framework */,
+				B30C6E3D271D8C330025DD88 /* CoreFoundation.framework */,
+				B30C6E3C271D8C330025DD88 /* Foundation.framework */,
+				B30C6E3A271D8C280025DD88 /* UIKit.framework */,
+				B30C6E36271D8C100025DD88 /* AVFoundation.framework */,
+				B30C6E37271D8C100025DD88 /* AVKit.framework */,
 				B3E531602703DD2B00ECBC35 /* OpenGLES.framework */,
 				B38C4A11201DBD98006761ED /* PVSupport.framework */,
 				B38C4A0E201DBD8D006761ED /* CoreVideo.framework */,
@@ -836,6 +921,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B30C6E24271D8B250025DD88 /* Frameworks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1018,19 +1104,14 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MARKETING_VERSION = 1;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = (
-					"-lavformat",
-					"-lavcodec",
-					"-lavutil",
-					"-lswresample",
-					"-lswscale",
-					"-liconv",
-					"-lbz2",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVPPSSPP";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = iphoneos;
@@ -1090,18 +1171,13 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MARKETING_VERSION = 1;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = (
-					"-lavformat",
-					"-lavcodec",
-					"-lavutil",
-					"-lswresample",
-					"-lswscale",
-					"-liconv",
-					"-lbz2",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVPPSSPP";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = iphoneos;
