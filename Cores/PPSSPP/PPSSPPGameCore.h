@@ -28,5 +28,5 @@
 #import <PVSupport/PVSupport.h>
 
 __attribute__((visibility("default")))
-@interface PPSSPPGameCore : PVEmulatorCore // <PVPSXSystemResponderClient>
+@interface PVPPSSPPGameCore : PVEmulatorCore // <PVPSXSystemResponderClient>
 @end

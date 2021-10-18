@@ -24,45 +24,184 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "base/logging.h"
-#include "base/NativeApp.h"
+#include <atomic>
+#include <thread>
+#include "Thread/ThreadUtil.h"
+
+#include "Math/fast/fast_math.h"
 
 #include "Common/LogManager.h"
+#include "Common/CPUDetect.h"
 
 #include "Core/Core.h"
 #include "Core/CoreTiming.h"
 #include "Core/Host.h"
 #include "Core/System.h"
 #include "Core/HLE/__sceAudio.h"
+#include "Core/ThreadPools.h"
 
-#include "file/vfs.h"
-#include "file/zip_read.h"
+#include "File/VFS/VFS.h"
+#include "File/VFS/AssetReader.h"
 
-#include "gfx/gl_lost_manager.h"
+#include "Common/GPU/OpenGL/OpenEmuGLContext.h"
+#include "Common/GPU/OpenGL/GLCommon.h"
+#include "DataFormat.h"
 
 #include "Common/GraphicsContext.h"
-#include "gfx/GLStateCache.h"
 #include "GPU/GPUState.h"
 
-#include "input/input_state.h"
+#include "GPU/GPUState.h"
+#include "GPU/GPUInterface.h"
+
+#include "DataFormatGL.h"
+
+#include "Common/Input/InputState.h"
+#include "Common/System/System.h"
 
 #include "UI/OnScreenDisplay.h"
+
+#include <stdio.h>
+
+inline const char *removePath(const char *str) {
+    const char *slash = strrchr(str, '/');
+    return slash ? (slash + 1) : str;
+}
+
+#ifdef _DEBUG
+#define DLOG(...) {printf("D: %s:%i: ", removePath(__FILE__), __LINE__); printf("D: " __VA_ARGS__); printf("\n");}
+#else
+#define DLOG(...)
+#endif
+#define ILOG(...) {printf("I: %s:%i: ", removePath(__FILE__), __LINE__); printf(__VA_ARGS__); printf("\n");}
+#define WLOG(...) {printf("W: %s:%i: ", removePath(__FILE__), __LINE__); printf(__VA_ARGS__); printf("\n");}
+#define ELOG(...) {printf("E: %s:%i: ", removePath(__FILE__), __LINE__); printf(__VA_ARGS__); printf("\n");}
+#define FLOG(...) {printf("F: %s:%i: ", removePath(__FILE__), __LINE__); printf(__VA_ARGS__); printf("\n"); Crash();}
 
 KeyInput input_state;
 OnScreenMessages osm;
 
+namespace OpenEmuCoreThread {
+    OpenEmuGLContext *ctx;
+    
+    enum class EmuThreadState {
+        DISABLED,
+        START_REQUESTED,
+        RUNNING,
+        PAUSE_REQUESTED,
+        PAUSED,
+        QUIT_REQUESTED,
+        STOPPED,
+    };
+    
+    static std::thread emuThread;
+    static bool threadStarted = false;
+    static std::atomic<EmuThreadState> emuThreadState(EmuThreadState::DISABLED);
+    
+    static void EmuFrame() {
+        ctx->SetRenderTarget();
+        
+        if (ctx->GetDrawContext()) {
+            ctx->GetDrawContext()->BeginFrame();
+        }
+        
+        gpu->BeginHostFrame();
+        
+        coreState = CORE_RUNNING;
+        PSP_RunLoopUntil(UINT64_MAX);
+        
+        gpu->EndHostFrame();
+        
+        if (ctx->GetDrawContext()) {
+            ctx->GetDrawContext()->EndFrame();
+        }
+    }
+    
+    static void EmuThreadFunc() {
+        SetCurrentThreadName("Emu");
+        
+        while (true) {
+            switch ((EmuThreadState)emuThreadState) {
+                case EmuThreadState::START_REQUESTED:
+                    threadStarted = true;
+                    emuThreadState = EmuThreadState::RUNNING;
+                    /* fallthrough */
+                case EmuThreadState::RUNNING:
+                    EmuFrame();
+                    break;
+                case EmuThreadState::PAUSE_REQUESTED:
+                    emuThreadState = EmuThreadState::PAUSED;
+                    /* fallthrough */
+                case EmuThreadState::PAUSED:
+                    usleep(1000);
+                    break;
+                default:
+                case EmuThreadState::QUIT_REQUESTED:
+                    emuThreadState = EmuThreadState::STOPPED;
+                    ctx->StopThread();
+                    return;
+            }
+        }
+    }
+    
+    void EmuThreadStart() {
+        bool wasPaused = emuThreadState == EmuThreadState::PAUSED;
+        emuThreadState = EmuThreadState::START_REQUESTED;
+        
+        if (!wasPaused) {
+            ctx->ThreadStart();
+            emuThread = std::thread(&EmuThreadFunc);
+        }
+    }
+    
+    void EmuThreadStop() {
+        if (emuThreadState != EmuThreadState::RUNNING) {
+            return;
+        }
+
+        emuThreadState = EmuThreadState::QUIT_REQUESTED;
+        
+        while (ctx->ThreadFrame()) {
+            // Need to keep eating frames to allow the EmuThread to exit correctly.
+            continue;
+        }
+        emuThread.join();
+        emuThread = std::thread();
+        ctx->ThreadEnd();
+    }
+    
+    void EmuThreadPause() {
+        if (emuThreadState != EmuThreadState::RUNNING) {
+            return;
+        }
+        emuThreadState = EmuThreadState::PAUSE_REQUESTED;
+        
+        while (emuThreadState != EmuThreadState::PAUSED) {
+            //We need to process frames until the thread Pauses give 10 ms between loops
+            ctx->ThreadFrame();
+            emuThreadState = EmuThreadState::PAUSE_REQUESTED;
+            usleep(10000);
+        }
+    }
+
+    static void EmuThreadJoin() {
+        emuThread.join();
+        emuThread = std::thread();
+    }
+}  // namespace OpenEmuCoreThread
+
+
 // Here's where we store the OpenEmu framebuffer to bind for final rendering
-extern int framebuffer;
+int framebuffer = 0;
 
 class AndroidLogger : public LogListener
 {
 public:
     void Log(const LogMessage &msg) override{};
 
-	void Log(LogTypes::LOG_LEVELS level, const char *msg)
-	{
-		switch (level)
-		{
+    void Log(LogTypes::LOG_LEVELS level, const char *msg)
+    {
+        switch (level)
+        {
             case LogTypes::LVERBOSE:
             case LogTypes::LDEBUG:
             case LogTypes::LINFO:
@@ -78,8 +217,8 @@ public:
             default:
                 ILOG("%s", msg);
                 break;
-		}
-	}
+        }
+    }
 };
 
 static AndroidLogger *logger = 0;
@@ -116,67 +255,74 @@ int NativeMix(short *audio, int num_samples)
     int sample_rate = System_GetPropertyInt(SYSPROP_AUDIO_SAMPLE_RATE);
     num_samples = __AudioMix(audio, num_samples, sample_rate > 0 ? sample_rate : 44100);
 
-	return num_samples;
+    return num_samples;
 }
 
-void NativeInit(int argc, const char *argv[], const char *savegame_directory, const char *external_directory, const char *installID, bool fs)
+void NativeInit(int argc, const char *argv[], const char *savegame_directory, const char *external_directory, const char *cache_directory)
 {
-    host = new NativeHost();
+    VFSRegister("", new DirectoryAssetReader(Path("assets/")));
+    VFSRegister("", new DirectoryAssetReader(Path(external_directory)));
+    
+    g_threadManager.Init(cpu_info.num_cores, cpu_info.logical_cpu_count);
 
+    if (host == nullptr) {
+        host = new NativeHost();
+    }
+    
     logger = new AndroidLogger();
 
-	LogManager *logman = LogManager::GetInstance();
-	ILOG("Logman: %p", logman);
+    LogManager *logman = LogManager::GetInstance();
+    ILOG("Logman: %p", logman);
 
     LogTypes::LOG_LEVELS logLevel = LogTypes::LINFO;
-	for(int i = 0; i < LogTypes::NUMBER_OF_LOGS; i++)
-	{
-		LogTypes::LOG_TYPE type = (LogTypes::LOG_TYPE)i;
+    for(int i = 0; i < LogTypes::NUMBER_OF_LOGS; i++)
+    {
+        LogTypes::LOG_TYPE type = (LogTypes::LOG_TYPE)i;
         logman->SetLogLevel(type, logLevel);
     }
-
-    VFSRegister("", new DirectoryAssetReader(external_directory));
 }
 
-void NativeInitGraphics(GraphicsContext *graphicsContext)
+void NativeSetThreadState(OpenEmuCoreThread::EmuThreadState threadState)  {
+    if(threadState == OpenEmuCoreThread::EmuThreadState::PAUSE_REQUESTED && OpenEmuCoreThread::threadStarted)
+        OpenEmuCoreThread::EmuThreadPause();
+    else if(threadState == OpenEmuCoreThread::EmuThreadState::START_REQUESTED && !OpenEmuCoreThread::threadStarted)
+        OpenEmuCoreThread::EmuThreadStart();
+    else
+        OpenEmuCoreThread::emuThreadState = threadState;
+}
+
+bool NativeInitGraphics(GraphicsContext *graphicsContext)
 {
-    // Save framebuffer to later be bound again
+    //Set the Core Thread graphics Context
+    OpenEmuCoreThread::ctx = static_cast<OpenEmuGLContext*>(graphicsContext);
+    
+    // Save framebuffer and set ppsspp default graphics framebuffer object
     glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &framebuffer);
-
-    Core_SetGraphicsContext(graphicsContext);
-
-    gl_lost_manager_init();
+    OpenEmuCoreThread::ctx->SetRenderFBO(framebuffer);
+ 
+    Core_SetGraphicsContext(OpenEmuCoreThread::ctx);
+    
+    if (gpu)
+        gpu->DeviceRestore();
+    
+    return true;
 }
 
 void NativeResized(){}
 
-void NativeRender(GraphicsContext *graphicsContext)
+void NativeRender(GraphicsContext *ctx)
 {
-	glstate.Restore();
-
-    PSP_BeginHostFrame();
-
-    s64 blockTicks = usToCycles(1000000 / 10);
-    while(coreState == CORE_RUNNING)
-    {
-		PSP_RunLoopFor((int)blockTicks);
-	}
-
-	// Hopefully coreState is now CORE_NEXTFRAME
-	if(coreState == CORE_NEXTFRAME)
-    {
-		// set back to running for the next frame
-		coreState = CORE_RUNNING;
-    }
-
-    PSP_EndHostFrame();
+    if(OpenEmuCoreThread::emuThreadState == OpenEmuCoreThread::EmuThreadState::PAUSED)
+        return;
+    
+    OpenEmuCoreThread::ctx->ThreadFrame();
+    OpenEmuCoreThread::ctx->SwapBuffers();
 }
 
 void NativeUpdate() {}
 
 void NativeShutdownGraphics()
 {
-    gl_lost_manager_shutdown();
 }
 
 void NativeShutdown()
@@ -190,14 +336,29 @@ void NativeShutdown()
 void OnScreenMessages::Show(const std::string &text, float duration_s, uint32_t color, int icon, bool checkUnique, const char *id) {}
 
 std::string System_GetProperty(SystemProperty prop) {
-	switch (prop) {
+    switch (prop) {
         case SYSPROP_NAME:
             return "OpenEmu:";
-        case SYSPROP_LANGREGION:
-            return "en_US";
+         case SYSPROP_LANGREGION: {
+               // Get user-preferred locale from OS
+               setlocale(LC_ALL, "");
+               std::string locale(setlocale(LC_ALL, NULL));
+               // Set c and c++ strings back to POSIX
+               std::locale::global(std::locale("POSIX"));
+               if (!locale.empty()) {
+                   if (locale.find("_", 0) != std::string::npos) {
+                       if (locale.find(".", 0) != std::string::npos) {
+                           return locale.substr(0, locale.find(".",0));
+                       } else {
+                           return locale;
+                       }
+                   }
+               }
+               return "en_US";
+           }
         default:
             return "";
-	}
+    }
 }
 
 int System_GetPropertyInt(SystemProperty prop) {
@@ -211,6 +372,35 @@ int System_GetPropertyInt(SystemProperty prop) {
     }
 }
 
-void NativeMessageReceived(const char *message, const char *value) {}
+float System_GetPropertyFloat(SystemProperty prop) {
+    switch (prop) {
+    case SYSPROP_DISPLAY_REFRESH_RATE:
+            return 59.94f;
+    case SYSPROP_DISPLAY_SAFE_INSET_LEFT:
+    case SYSPROP_DISPLAY_SAFE_INSET_RIGHT:
+    case SYSPROP_DISPLAY_SAFE_INSET_TOP:
+    case SYSPROP_DISPLAY_SAFE_INSET_BOTTOM:
+        return 0.0f;
+    default:
+        return -1;
+    }
+}
 
+bool System_GetPropertyBool(SystemProperty prop) {
+    switch (prop) {
+    case SYSPROP_HAS_BACK_BUTTON:
+        return true;
+    case SYSPROP_APP_GOLD:
+#ifdef GOLD
+        return true;
+#else
+        return false;
+#endif
+    default:
+        return false;
+    }
+}
 
+void System_SendMessage(const char *command, const char *parameter) {
+    return;
+}

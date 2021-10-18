@@ -18,7 +18,6 @@
 		B30C6E1D271D79E60025DD88 /* libsnappy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E04271D792B0025DD88 /* libsnappy.a */; };
 		B30C6E1E271D79E60025DD88 /* libudis86.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E10271D792B0025DD88 /* libudis86.a */; };
 		B38C49DD201DBCC3006761ED /* PPSSPPGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8CAFC1251785B6F700647A96 /* PPSSPPGameCore.mm */; };
-		B38C49DE201DBCCA006761ED /* NativeApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CC4D25E178C7EC00094E987 /* NativeApp.cpp */; };
 		B38C4A0B201DBD75006761ED /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B38C4A0A201DBD75006761ED /* OpenGLES.framework */; };
 		B38C4A0D201DBD7E006761ED /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B38C4A0C201DBD7E006761ED /* libz.tbd */; };
 		B38C4A0F201DBD8D006761ED /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B38C4A0E201DBD8D006761ED /* CoreVideo.framework */; };
@@ -847,7 +846,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B38C49DE201DBCCA006761ED /* NativeApp.cpp in Sources */,
 				B38C49DD201DBCC3006761ED /* PPSSPPGameCore.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
