@@ -46,6 +46,12 @@
 		B30C6E4A271D8C800025DD88 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E47271D8C800025DD88 /* CoreAudio.framework */; };
 		B30C6E4D271D8CA00025DD88 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E4C271D8CA00025DD88 /* CoreLocation.framework */; };
 		B30C6E4F271D8CAD0025DD88 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E4E271D8CAD0025DD88 /* GLKit.framework */; platformFilter = ios; };
+		B30C6E51271D8D420025DD88 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E50271D8D410025DD88 /* AudioToolbox.framework */; };
+		B30C6E53271D8D610025DD88 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E52271D8D610025DD88 /* MediaPlayer.framework */; };
+		B30C6E54271D90080025DD88 /* libxbrz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E12271D792B0025DD88 /* libxbrz.a */; };
+		B30C6E56271D90A90025DD88 /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E55271D90A90025DD88 /* libMoltenVK.dylib */; platformFilter = ios; };
+		B30C6E57271D90F10025DD88 /* NativeApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CC4D25E178C7EC00094E987 /* NativeApp.cpp */; };
+		B30C6E59271D92700025DD88 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E58271D92700025DD88 /* CoreMedia.framework */; };
 		B38C49DD201DBCC3006761ED /* PPSSPPGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8CAFC1251785B6F700647A96 /* PPSSPPGameCore.mm */; };
 		B38C4A0B201DBD75006761ED /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B38C4A0A201DBD75006761ED /* OpenGLES.framework */; };
 		B38C4A0D201DBD7E006761ED /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B38C4A0C201DBD7E006761ED /* libz.tbd */; };
@@ -351,6 +357,11 @@
 		B30C6E48271D8C800025DD88 /* CoreAudioTypes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioTypes.framework; path = System/Library/Frameworks/CoreAudioTypes.framework; sourceTree = SDKROOT; };
 		B30C6E4C271D8CA00025DD88 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/CoreLocation.framework; sourceTree = DEVELOPER_DIR; };
 		B30C6E4E271D8CAD0025DD88 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
+		B30C6E50271D8D410025DD88 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
+		B30C6E52271D8D610025DD88 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/iOSSupport/System/Library/Frameworks/MediaPlayer.framework; sourceTree = DEVELOPER_DIR; };
+		B30C6E55271D90A90025DD88 /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libMoltenVK.dylib; sourceTree = "<group>"; };
+		B30C6E58271D92700025DD88 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/CoreMedia.framework; sourceTree = DEVELOPER_DIR; };
+		B30C6E5A271D92800025DD88 /* AVFAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFAudio.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/AVFAudio.framework; sourceTree = DEVELOPER_DIR; };
 		B38C49D5201DBC8C006761ED /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B38C4A0A201DBD75006761ED /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.2.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		B38C4A0C201DBD7E006761ED /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.2.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
@@ -366,6 +377,7 @@
 			files = (
 				B30C6E32271D8BF50025DD88 /* libnative.a in Frameworks */,
 				B30C6E2F271D8BF50025DD88 /* libHLSL.a in Frameworks */,
+				B30C6E56271D90A90025DD88 /* libMoltenVK.dylib in Frameworks */,
 				B30C6E39271D8C100025DD88 /* AVKit.framework in Frameworks */,
 				B30C6E34271D8BF50025DD88 /* libOSDependent.a in Frameworks */,
 				B30C6E49271D8C800025DD88 /* CoreAudioKit.framework in Frameworks */,
@@ -374,9 +386,11 @@
 				B30C6E38271D8C100025DD88 /* AVFoundation.framework in Frameworks */,
 				B30C6E2E271D8BF50025DD88 /* libGenericCodeGen.a in Frameworks */,
 				B30C6E3E271D8C340025DD88 /* Foundation.framework in Frameworks */,
+				B30C6E53271D8D610025DD88 /* MediaPlayer.framework in Frameworks */,
 				B30C6E3F271D8C340025DD88 /* CoreFoundation.framework in Frameworks */,
 				B30C6E2C271D8BD90025DD88 /* libglslang.a in Frameworks */,
 				B30C6E27271D8BBF0025DD88 /* libspirv-cross-core.a in Frameworks */,
+				B30C6E54271D90080025DD88 /* libxbrz.a in Frameworks */,
 				B30C6E30271D8BF50025DD88 /* liblibzip.a in Frameworks */,
 				B30C6E1A271D79E60025DD88 /* libkirk.a in Frameworks */,
 				B30C6E4D271D8CA00025DD88 /* CoreLocation.framework in Frameworks */,
@@ -400,10 +414,12 @@
 				B30C6E25271D8B660025DD88 /* libarmips.a in Frameworks */,
 				B30C6E43271D8C4E0025DD88 /* QuartzCore.framework in Frameworks */,
 				B30C6E18271D79E60025DD88 /* libCommon.a in Frameworks */,
+				B30C6E59271D92700025DD88 /* CoreMedia.framework in Frameworks */,
 				B30C6E33271D8BF50025DD88 /* libOGLCompiler.a in Frameworks */,
 				B38C4A0B201DBD75006761ED /* OpenGLES.framework in Frameworks */,
 				B30C6E4F271D8CAD0025DD88 /* GLKit.framework in Frameworks */,
 				B30C6E31271D8BF50025DD88 /* libminiupnpc.a in Frameworks */,
+				B30C6E51271D8D420025DD88 /* AudioToolbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -552,6 +568,11 @@
 		B38C49FB201DBD67006761ED /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B30C6E5A271D92800025DD88 /* AVFAudio.framework */,
+				B30C6E58271D92700025DD88 /* CoreMedia.framework */,
+				B30C6E55271D90A90025DD88 /* libMoltenVK.dylib */,
+				B30C6E52271D8D610025DD88 /* MediaPlayer.framework */,
+				B30C6E50271D8D410025DD88 /* AudioToolbox.framework */,
 				B30C6E4E271D8CAD0025DD88 /* GLKit.framework */,
 				B30C6E4C271D8CA00025DD88 /* CoreLocation.framework */,
 				B30C6E47271D8C800025DD88 /* CoreAudio.framework */,
@@ -932,6 +953,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B30C6E57271D90F10025DD88 /* NativeApp.cpp in Sources */,
 				B38C49DD201DBCC3006761ED /* PPSSPPGameCore.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1109,6 +1131,10 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				MARKETING_VERSION = 1;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1175,6 +1201,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
 				);
 				MARKETING_VERSION = 1;
 				MTL_ENABLE_DEBUG_INFO = NO;

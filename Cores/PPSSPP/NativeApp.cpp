@@ -43,9 +43,9 @@
 #include "File/VFS/VFS.h"
 #include "File/VFS/AssetReader.h"
 
-#include "Common/GPU/OpenGL/OpenEmuGLContext.h"
+//#include "Common/GPU/OpenGL/OpenEmuGLContext.h"
 #include "Common/GPU/OpenGL/GLCommon.h"
-#include "DataFormat.h"
+//#include "DataFormat.h"
 
 #include "Common/GraphicsContext.h"
 #include "GPU/GPUState.h"
@@ -53,7 +53,7 @@
 #include "GPU/GPUState.h"
 #include "GPU/GPUInterface.h"
 
-#include "DataFormatGL.h"
+//#include "DataFormatGL.h"
 
 #include "Common/Input/InputState.h"
 #include "Common/System/System.h"
@@ -80,148 +80,148 @@ inline const char *removePath(const char *str) {
 KeyInput input_state;
 OnScreenMessages osm;
 
-namespace OpenEmuCoreThread {
-    OpenEmuGLContext *ctx;
-    
-    enum class EmuThreadState {
-        DISABLED,
-        START_REQUESTED,
-        RUNNING,
-        PAUSE_REQUESTED,
-        PAUSED,
-        QUIT_REQUESTED,
-        STOPPED,
-    };
-    
-    static std::thread emuThread;
-    static bool threadStarted = false;
-    static std::atomic<EmuThreadState> emuThreadState(EmuThreadState::DISABLED);
-    
-    static void EmuFrame() {
-        ctx->SetRenderTarget();
-        
-        if (ctx->GetDrawContext()) {
-            ctx->GetDrawContext()->BeginFrame();
-        }
-        
-        gpu->BeginHostFrame();
-        
-        coreState = CORE_RUNNING;
-        PSP_RunLoopUntil(UINT64_MAX);
-        
-        gpu->EndHostFrame();
-        
-        if (ctx->GetDrawContext()) {
-            ctx->GetDrawContext()->EndFrame();
-        }
-    }
-    
-    static void EmuThreadFunc() {
-        SetCurrentThreadName("Emu");
-        
-        while (true) {
-            switch ((EmuThreadState)emuThreadState) {
-                case EmuThreadState::START_REQUESTED:
-                    threadStarted = true;
-                    emuThreadState = EmuThreadState::RUNNING;
-                    /* fallthrough */
-                case EmuThreadState::RUNNING:
-                    EmuFrame();
-                    break;
-                case EmuThreadState::PAUSE_REQUESTED:
-                    emuThreadState = EmuThreadState::PAUSED;
-                    /* fallthrough */
-                case EmuThreadState::PAUSED:
-                    usleep(1000);
-                    break;
-                default:
-                case EmuThreadState::QUIT_REQUESTED:
-                    emuThreadState = EmuThreadState::STOPPED;
-                    ctx->StopThread();
-                    return;
-            }
-        }
-    }
-    
-    void EmuThreadStart() {
-        bool wasPaused = emuThreadState == EmuThreadState::PAUSED;
-        emuThreadState = EmuThreadState::START_REQUESTED;
-        
-        if (!wasPaused) {
-            ctx->ThreadStart();
-            emuThread = std::thread(&EmuThreadFunc);
-        }
-    }
-    
-    void EmuThreadStop() {
-        if (emuThreadState != EmuThreadState::RUNNING) {
-            return;
-        }
-
-        emuThreadState = EmuThreadState::QUIT_REQUESTED;
-        
-        while (ctx->ThreadFrame()) {
-            // Need to keep eating frames to allow the EmuThread to exit correctly.
-            continue;
-        }
-        emuThread.join();
-        emuThread = std::thread();
-        ctx->ThreadEnd();
-    }
-    
-    void EmuThreadPause() {
-        if (emuThreadState != EmuThreadState::RUNNING) {
-            return;
-        }
-        emuThreadState = EmuThreadState::PAUSE_REQUESTED;
-        
-        while (emuThreadState != EmuThreadState::PAUSED) {
-            //We need to process frames until the thread Pauses give 10 ms between loops
-            ctx->ThreadFrame();
-            emuThreadState = EmuThreadState::PAUSE_REQUESTED;
-            usleep(10000);
-        }
-    }
-
-    static void EmuThreadJoin() {
-        emuThread.join();
-        emuThread = std::thread();
-    }
-}  // namespace OpenEmuCoreThread
+//namespace OpenEmuCoreThread {
+//    OpenEmuGLContext *ctx;
+//
+//    enum class EmuThreadState {
+//        DISABLED,
+//        START_REQUESTED,
+//        RUNNING,
+//        PAUSE_REQUESTED,
+//        PAUSED,
+//        QUIT_REQUESTED,
+//        STOPPED,
+//    };
+//
+//    static std::thread emuThread;
+//    static bool threadStarted = false;
+//    static std::atomic<EmuThreadState> emuThreadState(EmuThreadState::DISABLED);
+//
+//    static void EmuFrame() {
+//        ctx->SetRenderTarget();
+//
+//        if (ctx->GetDrawContext()) {
+//            ctx->GetDrawContext()->BeginFrame();
+//        }
+//
+//        gpu->BeginHostFrame();
+//
+//        coreState = CORE_RUNNING;
+//        PSP_RunLoopUntil(UINT64_MAX);
+//
+//        gpu->EndHostFrame();
+//
+//        if (ctx->GetDrawContext()) {
+//            ctx->GetDrawContext()->EndFrame();
+//        }
+//    }
+//
+//    static void EmuThreadFunc() {
+//        SetCurrentThreadName("Emu");
+//
+//        while (true) {
+//            switch ((EmuThreadState)emuThreadState) {
+//                case EmuThreadState::START_REQUESTED:
+//                    threadStarted = true;
+//                    emuThreadState = EmuThreadState::RUNNING;
+//                    /* fallthrough */
+//                case EmuThreadState::RUNNING:
+//                    EmuFrame();
+//                    break;
+//                case EmuThreadState::PAUSE_REQUESTED:
+//                    emuThreadState = EmuThreadState::PAUSED;
+//                    /* fallthrough */
+//                case EmuThreadState::PAUSED:
+//                    usleep(1000);
+//                    break;
+//                default:
+//                case EmuThreadState::QUIT_REQUESTED:
+//                    emuThreadState = EmuThreadState::STOPPED;
+//                    ctx->StopThread();
+//                    return;
+//            }
+//        }
+//    }
+//
+//    void EmuThreadStart() {
+//        bool wasPaused = emuThreadState == EmuThreadState::PAUSED;
+//        emuThreadState = EmuThreadState::START_REQUESTED;
+//
+//        if (!wasPaused) {
+//            ctx->ThreadStart();
+//            emuThread = std::thread(&EmuThreadFunc);
+//        }
+//    }
+//
+//    void EmuThreadStop() {
+//        if (emuThreadState != EmuThreadState::RUNNING) {
+//            return;
+//        }
+//
+//        emuThreadState = EmuThreadState::QUIT_REQUESTED;
+//
+//        while (ctx->ThreadFrame()) {
+//            // Need to keep eating frames to allow the EmuThread to exit correctly.
+//            continue;
+//        }
+//        emuThread.join();
+//        emuThread = std::thread();
+//        ctx->ThreadEnd();
+//    }
+//
+//    void EmuThreadPause() {
+//        if (emuThreadState != EmuThreadState::RUNNING) {
+//            return;
+//        }
+//        emuThreadState = EmuThreadState::PAUSE_REQUESTED;
+//
+//        while (emuThreadState != EmuThreadState::PAUSED) {
+//            //We need to process frames until the thread Pauses give 10 ms between loops
+//            ctx->ThreadFrame();
+//            emuThreadState = EmuThreadState::PAUSE_REQUESTED;
+//            usleep(10000);
+//        }
+//    }
+//
+//    static void EmuThreadJoin() {
+//        emuThread.join();
+//        emuThread = std::thread();
+//    }
+//}  // namespace OpenEmuCoreThread
 
 
 // Here's where we store the OpenEmu framebuffer to bind for final rendering
 int framebuffer = 0;
 
-class AndroidLogger : public LogListener
-{
-public:
-    void Log(const LogMessage &msg) override{};
-
-    void Log(LogTypes::LOG_LEVELS level, const char *msg)
-    {
-        switch (level)
-        {
-            case LogTypes::LVERBOSE:
-            case LogTypes::LDEBUG:
-            case LogTypes::LINFO:
-                ILOG("%s", msg);
-                break;
-            case LogTypes::LERROR:
-                ELOG("%s", msg);
-                break;
-            case LogTypes::LWARNING:
-                WLOG("%s", msg);
-                break;
-            case LogTypes::LNOTICE:
-            default:
-                ILOG("%s", msg);
-                break;
-        }
-    }
-};
-
-static AndroidLogger *logger = 0;
+//class AndroidLogger : public LogListener
+//{
+//public:
+//    void Log(const LogMessage &msg) override{};
+//
+//    void Log(LogTypes::LOG_LEVELS level, const char *msg)
+//    {
+//        switch (level)
+//        {
+//            case LogTypes::LVERBOSE:
+//            case LogTypes::LDEBUG:
+//            case LogTypes::LINFO:
+//                ILOG("%s", msg);
+//                break;
+//            case LogTypes::LERROR:
+//                ELOG("%s", msg);
+//                break;
+//            case LogTypes::LWARNING:
+//                WLOG("%s", msg);
+//                break;
+//            case LogTypes::LNOTICE:
+//            default:
+//                ILOG("%s", msg);
+//                break;
+//        }
+//    }
+//};
+//
+//static AndroidLogger *logger = 0;
 
 class NativeHost : public Host {
 public:
@@ -269,7 +269,7 @@ void NativeInit(int argc, const char *argv[], const char *savegame_directory, co
         host = new NativeHost();
     }
     
-    logger = new AndroidLogger();
+//    logger = new AndroidLogger();
 
     LogManager *logman = LogManager::GetInstance();
     ILOG("Logman: %p", logman);
@@ -282,25 +282,25 @@ void NativeInit(int argc, const char *argv[], const char *savegame_directory, co
     }
 }
 
-void NativeSetThreadState(OpenEmuCoreThread::EmuThreadState threadState)  {
-    if(threadState == OpenEmuCoreThread::EmuThreadState::PAUSE_REQUESTED && OpenEmuCoreThread::threadStarted)
-        OpenEmuCoreThread::EmuThreadPause();
-    else if(threadState == OpenEmuCoreThread::EmuThreadState::START_REQUESTED && !OpenEmuCoreThread::threadStarted)
-        OpenEmuCoreThread::EmuThreadStart();
-    else
-        OpenEmuCoreThread::emuThreadState = threadState;
-}
+//void NativeSetThreadState(OpenEmuCoreThread::EmuThreadState threadState)  {
+//    if(threadState == OpenEmuCoreThread::EmuThreadState::PAUSE_REQUESTED && OpenEmuCoreThread::threadStarted)
+//        OpenEmuCoreThread::EmuThreadPause();
+//    else if(threadState == OpenEmuCoreThread::EmuThreadState::START_REQUESTED && !OpenEmuCoreThread::threadStarted)
+//        OpenEmuCoreThread::EmuThreadStart();
+//    else
+//        OpenEmuCoreThread::emuThreadState = threadState;
+//}
 
 bool NativeInitGraphics(GraphicsContext *graphicsContext)
 {
     //Set the Core Thread graphics Context
-    OpenEmuCoreThread::ctx = static_cast<OpenEmuGLContext*>(graphicsContext);
+//    OpenEmuCoreThread::ctx = static_cast<OpenEmuGLContext*>(graphicsContext);
     
     // Save framebuffer and set ppsspp default graphics framebuffer object
-    glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &framebuffer);
-    OpenEmuCoreThread::ctx->SetRenderFBO(framebuffer);
- 
-    Core_SetGraphicsContext(OpenEmuCoreThread::ctx);
+//    glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &framebuffer);
+//    OpenEmuCoreThread::ctx->SetRenderFBO(framebuffer);
+//
+//    Core_SetGraphicsContext(OpenEmuCoreThread::ctx);
     
     if (gpu)
         gpu->DeviceRestore();
@@ -312,11 +312,11 @@ void NativeResized(){}
 
 void NativeRender(GraphicsContext *ctx)
 {
-    if(OpenEmuCoreThread::emuThreadState == OpenEmuCoreThread::EmuThreadState::PAUSED)
-        return;
-    
-    OpenEmuCoreThread::ctx->ThreadFrame();
-    OpenEmuCoreThread::ctx->SwapBuffers();
+//    if(OpenEmuCoreThread::emuThreadState == OpenEmuCoreThread::EmuThreadState::PAUSED)
+//        return;
+//
+//    OpenEmuCoreThread::ctx->ThreadFrame();
+//    OpenEmuCoreThread::ctx->SwapBuffers();
 }
 
 void NativeUpdate() {}
@@ -331,6 +331,43 @@ void NativeShutdown()
     host = 0;
 
     LogManager::Shutdown();
+}
+
+bool NativeTouch(const TouchInput &touch) {
+//    if (screenManager) {
+//        // Brute force prevent NaNs from getting into the UI system
+//        if (my_isnan(touch.x) || my_isnan(touch.y)) {
+//            return false;
+//        }
+//        screenManager->touch(touch);
+//        return true;
+//    } else {
+        return false;
+//    }
+}
+
+bool NativeKey(const KeyInput &key) {
+//    // INFO_LOG(SYSTEM, "Key code: %i flags: %i", key.keyCode, key.flags);
+//#if !defined(MOBILE_DEVICE)
+//    if (g_Config.bPauseExitsEmulator) {
+//        static std::vector<int> pspKeys;
+//        pspKeys.clear();
+//        if (KeyMap::KeyToPspButton(key.deviceId, key.keyCode, &pspKeys)) {
+//            if (std::find(pspKeys.begin(), pspKeys.end(), VIRTKEY_PAUSE) != pspKeys.end()) {
+//                System_SendMessage("finish", "");
+//                return true;
+//            }
+//        }
+//    }
+//#endif
+    bool retval = false;
+//    if (screenManager)
+//        retval = screenManager->key(key);
+    return retval;
+}
+
+bool NativeAxis(const AxisInput &axis) {
+    return false;
 }
 
 void OnScreenMessages::Show(const std::string &text, float duration_s, uint32_t color, int icon, bool checkUnique, const char *id) {}
