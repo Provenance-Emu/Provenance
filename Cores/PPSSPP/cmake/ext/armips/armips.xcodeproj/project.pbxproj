@@ -1,0 +1,1886 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		579C005AED0642C48E3D9BDA /* RUN_TESTS */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 3B2EE67AA988430E8DDB4A0B /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
+			buildPhases = (
+				003C8D08B0008F35F218E126 /* CMake PostBuild Rules */,
+			);
+			dependencies = (
+			);
+			name = RUN_TESTS;
+			productName = RUN_TESTS;
+		};
+		B2FB4C7868914CD79D8362FC /* install */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 69D841224F914FB493E7C28D /* Build configuration list for PBXAggregateTarget "install" */;
+			buildPhases = (
+				93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */,
+			);
+			dependencies = (
+				6F96DE108D474CF1B8EFB6C4 /* PBXTargetDependency */,
+			);
+			name = install;
+			productName = install;
+		};
+		BC5C1F0A95E94DF5A4A48F24 /* ZERO_CHECK */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 6CA7EB6D7B5E4421B138A8FD /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildPhases = (
+				34A8DC9EF9C28D9C83C2225A /* Generate CMakeFiles/ZERO_CHECK */,
+			);
+			dependencies = (
+			);
+			name = ZERO_CHECK;
+			productName = ZERO_CHECK;
+		};
+		D38D17A114BC46FBB4338E00 /* ALL_BUILD */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 56259F26E30040E481629917 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildPhases = (
+				933C77D2C2D0F22B3623EA91 /* Generate CMakeFiles/ALL_BUILD */,
+			);
+			dependencies = (
+				AC98163CEF7046C6BCFE8D77 /* PBXTargetDependency */,
+				0480C9EE02E74AAF8503F9B3 /* PBXTargetDependency */,
+				DEF8A8781E384934A95960E2 /* PBXTargetDependency */,
+				F928908D2BCA45BDAD74B250 /* PBXTargetDependency */,
+			);
+			name = ALL_BUILD;
+			productName = ALL_BUILD;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		01BA538716EE494EBFFC78F1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/Pool.cpp */ = {isa = PBXBuildFile; fileRef = 84FB808EF55D43D797D60FCC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/Pool.cpp */; };
+		03C7686B1D0F4707BBB25E83 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmOpcodes.h */ = {isa = PBXBuildFile; fileRef = 945D519FDBBD4EF19B9B97A6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmOpcodes.h */; };
+		05422A80F87144B19E31484C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/stdafx.h */ = {isa = PBXBuildFile; fileRef = 57C33F5AE57048FDA3A64CEC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/stdafx.h */; };
+		0A0FEAAB108042FB9AA57AB8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/Tokenizer.cpp */ = {isa = PBXBuildFile; fileRef = 33B259F576F24055862CDD08 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/Tokenizer.cpp */; };
+		0A2D6F8B7CFC43498439A542 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CommandSequence.h */ = {isa = PBXBuildFile; fileRef = A3F6075E23384424862E6DCD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CommandSequence.h */; };
+		101FEE4A62994A98BA088A1B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveMessage.h */ = {isa = PBXBuildFile; fileRef = 5F3AAEA8EBFC485F90D8CE07 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveMessage.h */; };
+		11305E2D1CDC4B62B1A65475 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Main/Tests.h */ = {isa = PBXBuildFile; fileRef = 65FB2EF17589489CB4D7E86C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Main/Tests.h */; };
+		11F041436AFA4755B60DCF03 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmOpcodes.cpp */ = {isa = PBXBuildFile; fileRef = 01F63483308B471FBB7B5FB1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmOpcodes.cpp */; };
+		14C28B0550ED45929F541E8F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsElfRelocator.cpp */ = {isa = PBXBuildFile; fileRef = EE39A9031F074BCBB650D7BD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsElfRelocator.cpp */; };
+		195AF723EE244876A691ED70 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/Parser.h */ = {isa = PBXBuildFile; fileRef = 8DFD448F740C4007958EC042 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/Parser.h */; };
+		1AC2A55A735C4690A471F806 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveFile.h */ = {isa = PBXBuildFile; fileRef = 2D034CF90DB64A51AA50EFE8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveFile.h */; };
+		1BAA6A2F06CA41268C91DA83 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/CThumbInstruction.cpp */ = {isa = PBXBuildFile; fileRef = 0A0C006A08F54A33AE3C590B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/CThumbInstruction.cpp */; };
+		1D717C706D9A40F69A949C23 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsMacros.h */ = {isa = PBXBuildFile; fileRef = E146E3BD4054479A90F4CE5C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsMacros.h */; };
+		204A548D4CBC4C62808738C0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/FileManager.h */ = {isa = PBXBuildFile; fileRef = 5001408B0AE540778AD594B0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/FileManager.h */; };
+		209B07F34BBF47C786248189 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CommandSequence.cpp */ = {isa = PBXBuildFile; fileRef = A0EBCAA6F8E1454E887C1A1A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CommandSequence.cpp */; };
+		225ABAEE41284BC89DEED114 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsExpressionFunctions.cpp */ = {isa = PBXBuildFile; fileRef = 5F67861D3CB04A8B8BA500FB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsExpressionFunctions.cpp */; };
+		23AA9491756B44D19F5665CB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ELF/ElfFile.h */ = {isa = PBXBuildFile; fileRef = 1E55AFDF59CF47D0B5EBE1DB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ELF/ElfFile.h */; };
+		2594F871C82049718D7B3002 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/CMakeFiles/armips.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 374FA7E245FF4F00991BE39A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/CMakeFiles/armips.dir/Info.plist */; };
+		26CBAFC0B7F34919977FF1CB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmElfRelocator.cpp */ = {isa = PBXBuildFile; fileRef = 7CEDE485854F4A11A95B7B5D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmElfRelocator.cpp */; };
+		2A303C5C25AC4563A47AB825 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsElfRelocator.h */ = {isa = PBXBuildFile; fileRef = F068EE8686B24859AAFF003B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsElfRelocator.h */; };
+		2D3C68E94E8B44A190083C7F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveFile.cpp */ = {isa = PBXBuildFile; fileRef = 248994BA6B0C4C33A4C04FD9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveFile.cpp */; };
+		31DBEEA242EE46E8AE7B3174 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ThumbOpcodes.h */ = {isa = PBXBuildFile; fileRef = F519BFDAC1E146A8AB51EEC5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ThumbOpcodes.h */; };
+		35CA3CEE813241A1B2694406 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/PsxRelocator.h */ = {isa = PBXBuildFile; fileRef = D92B838AA00C403CBB7549F0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/PsxRelocator.h */; };
+		360D3B812B104520BEB40105 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Main/Tests.cpp */ = {isa = PBXBuildFile; fileRef = 7AA13D2DDF8B48BF8D5B9892 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Main/Tests.cpp */; };
+		3DA4F357A3AB435190CF4F60 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CAssemblerCommand.h */ = {isa = PBXBuildFile; fileRef = C961854412044CF49E0C3D91 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CAssemblerCommand.h */; };
+		3F40E5F468254BBC965273C2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ELF/ElfFile.cpp */ = {isa = PBXBuildFile; fileRef = DE20CDB4252C447F905AF45B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ELF/ElfFile.cpp */; };
+		41F859BC621545CC91E13EE7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/CThumbInstruction.h */ = {isa = PBXBuildFile; fileRef = A6E5A209604E452685C17ECB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/CThumbInstruction.h */; };
+		456DCD61299F464FBBB8900C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Expression.cpp */ = {isa = PBXBuildFile; fileRef = 3374A20CAA24473E8FF9F20D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Expression.cpp */; };
+		4598DAEE3AEA4E4CA1D9FD8C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsElfFile.cpp */ = {isa = PBXBuildFile; fileRef = 929C9B8800314C159125A47F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsElfFile.cpp */; };
+		4669743BE60E460499546F6C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Misc.cpp */ = {isa = PBXBuildFile; fileRef = 11139411381A4C4281FA6DC6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Misc.cpp */; };
+		471276C5109C48E1BC88D8C0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/Architecture.cpp */ = {isa = PBXBuildFile; fileRef = D1D6DBCD7A47431A868C90A3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/Architecture.cpp */; };
+		484733BA1D0C4E3F8AA842E6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Misc.h */ = {isa = PBXBuildFile; fileRef = CF076A519D244B32B010BF81 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Misc.h */; };
+		4962286FDFF444DB9A222C66 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/CRC.h */ = {isa = PBXBuildFile; fileRef = 935EF9C847D54B81BD44DE8E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/CRC.h */; };
+		49C0C80127264DCD8C3AE3BA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/SymbolTable.cpp */ = {isa = PBXBuildFile; fileRef = A4E2CED0F298438B85016DE1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/SymbolTable.cpp */; };
+		4B31034B58AD4B0C9187B825 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/ByteArray.h */ = {isa = PBXBuildFile; fileRef = CEFA09FF7E104CEE9FC38CFD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/ByteArray.h */; };
+		4D8E84A47A614566B2772E0D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/ExpressionParser.cpp */ = {isa = PBXBuildFile; fileRef = AF5D1E0921984ABC947F8FFA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/ExpressionParser.cpp */; };
+		57C4C3F2861C4E178D895E30 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/Mips.cpp */ = {isa = PBXBuildFile; fileRef = 666709B9CF8C46E08B2A9A5A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/Mips.cpp */; };
+		58CBCD9F44004DF69E90D87B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/DirectivesParser.h */ = {isa = PBXBuildFile; fileRef = 7220EB09C1EF4A5FBAFDAFE0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/DirectivesParser.h */; };
+		5ADEC031113547FF88928A76 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CAssemblerLabel.h */ = {isa = PBXBuildFile; fileRef = 9B3FDD2CAE1F4330B32BD408 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CAssemblerLabel.h */; };
+		5EDD5EEAFE0142109CEF9067 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 5FB075554A8A4FF18A23796A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/CMakeLists.txt */; };
+		633FB4E061AF4814BE8E0F28 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/Arm.h */ = {isa = PBXBuildFile; fileRef = 2B7EA1D0126D471A90492A53 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/Arm.h */; };
+		63A025A3689044B4B2683BE8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/ExpressionParser.h */ = {isa = PBXBuildFile; fileRef = FAE8D7CCFC934AF78E36B56A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/ExpressionParser.h */; };
+		68C1CC559FBE4AF89E4A22A5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CAssemblerLabel.cpp */ = {isa = PBXBuildFile; fileRef = 83D024B97F2747DFB3D24BE5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CAssemblerLabel.cpp */; };
+		6925C597F7094DD6B35302F9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/CMakeFiles/armips-bin.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 37DFA15662EC4BC1B83B850D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/CMakeFiles/armips-bin.dir/Info.plist */; };
+		69401CD076A6472B8CFAED1B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/ext/tinyformat/tinyformat.h */ = {isa = PBXBuildFile; fileRef = 2243C377B6404E7AB256C2BB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/ext/tinyformat/tinyformat.h */; };
+		7B5500A3327142DF87358F5F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ThumbOpcodes.cpp */ = {isa = PBXBuildFile; fileRef = ADF9B5E51AC746B785794CC5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ThumbOpcodes.cpp */; };
+		7ED953E770B94999A2E1186D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CAssemblerCommand.cpp */ = {isa = PBXBuildFile; fileRef = 13D86121BA9F421DAC292811 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CAssemblerCommand.cpp */; };
+		7EF1867B7C6F4AE384AEC3AA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ELF/ElfRelocator.cpp */ = {isa = PBXBuildFile; fileRef = 8E8805D4823043C5919B29DE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ELF/ElfRelocator.cpp */; };
+		825E0D77F6C34EC8843C7E91 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveConditional.cpp */ = {isa = PBXBuildFile; fileRef = 9D2B6CF853944319B51E32C3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveConditional.cpp */; };
+		828D008A5CBC42CB86128FF3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveConditional.h */ = {isa = PBXBuildFile; fileRef = 7AE03B9557C64922B7E3F7AC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveConditional.h */; };
+		8515083ABD024C229E2CC9E7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ExpressionFunctions.h */ = {isa = PBXBuildFile; fileRef = 54CEBA12A9154480807646B3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ExpressionFunctions.h */; };
+		852A0FFF55C64B6891C54E6D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ELF/ElfRelocator.h */ = {isa = PBXBuildFile; fileRef = 7063D8D134A749B5908352ED /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ELF/ElfRelocator.h */; };
+		8938DDC572EF4EF5B658C57A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/CMipsInstruction.h */ = {isa = PBXBuildFile; fileRef = D9961DC90F5A48679E101282 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/CMipsInstruction.h */; };
+		8AB8ADB3A03545F19717038A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveData.cpp */ = {isa = PBXBuildFile; fileRef = DC20651D66BC48A2A1F32C1A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveData.cpp */; };
+		8D53DE27D45E4A00AA5057B5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveArea.h */ = {isa = PBXBuildFile; fileRef = 8CAAC0FEA23B4C5A846DBA7B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveArea.h */; };
+		9122420A04A7479CAC3C0CC4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmExpressionFunctions.cpp */ = {isa = PBXBuildFile; fileRef = 60C9286FCD5145AF880DFEA0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmExpressionFunctions.cpp */; };
+		91983E021CF847DFBCDD699B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/EncodingTable.cpp */ = {isa = PBXBuildFile; fileRef = BFBBEC51FC574DC685AB7752 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/EncodingTable.cpp */; };
+		9237A91E157E49F1AA3DF698 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsExpressionFunctions.h */ = {isa = PBXBuildFile; fileRef = CE4C5DB54C784D27A8A5B8B9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsExpressionFunctions.h */; };
+		9407459CAA3548EF9194522E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/FileClasses.h */ = {isa = PBXBuildFile; fileRef = 7524623AA16E4D299504850B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/FileClasses.h */; };
+		94CC465020794D2B8F024A5A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/stdafx.h */ = {isa = PBXBuildFile; fileRef = AFA3E271CDC24800BF7A2963 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/stdafx.h */; };
+		96B6063116884ECDAB58E11B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/Pool.h */ = {isa = PBXBuildFile; fileRef = 284B0A63EF6447FD92325848 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/Pool.h */; };
+		9CAF4584EF244CE5B702E01F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/FileClasses.cpp */ = {isa = PBXBuildFile; fileRef = 636C2F66860A482B930E12F8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/FileClasses.cpp */; };
+		9EE7883FA5564EB9828CC74D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/SymbolData.cpp */ = {isa = PBXBuildFile; fileRef = 59EC72A16FFC4E0391A0AAC6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/SymbolData.cpp */; };
+		9F0037831E824D439991082D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/EncodingTable.h */ = {isa = PBXBuildFile; fileRef = A7191B35171746EE83CDE08B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/EncodingTable.h */; };
+		9F46A7F1E7194AAD9849ABFA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/SymbolData.h */ = {isa = PBXBuildFile; fileRef = 9B1960A69BA14A9EA4B2CB0A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/SymbolData.h */; };
+		9FEFFD091D4B4D478AC26125 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveData.h */ = {isa = PBXBuildFile; fileRef = D553B8843DCE48BF95677B08 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveData.h */; };
+		A9D42557BD9D46458414B023 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ELF/ElfTypes.h */ = {isa = PBXBuildFile; fileRef = 35155F9C5AF244FEAB497D5F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ELF/ElfTypes.h */; };
+		AF1A6EF116424C7294F42D5F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/Parser.cpp */ = {isa = PBXBuildFile; fileRef = E126CB3313744C229DB3F960 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/Parser.cpp */; };
+		B0037D3CFAF34468B209C32C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/PsxRelocator.cpp */ = {isa = PBXBuildFile; fileRef = 1BD009EFC4774BFD840461DB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/PsxRelocator.cpp */; };
+		B272C586469E48E4830378C2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/ByteArray.cpp */ = {isa = PBXBuildFile; fileRef = 648352DA085745D4B01C7432 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/ByteArray.cpp */; };
+		BC2BC0AB21DB405EA5EB9815 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/Architecture.h */ = {isa = PBXBuildFile; fileRef = AFB3DC93D14C446A928140E3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/Architecture.h */; };
+		BC672B2103514E6CA0D72A01 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Assembler.cpp */ = {isa = PBXBuildFile; fileRef = F130B725F6DA4274A1B19A67 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Assembler.cpp */; };
+		BCBEE9EE4AA64DF18752DDCA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/stdafx.cpp */ = {isa = PBXBuildFile; fileRef = 45177D62411A40CCBBC907C1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/stdafx.cpp */; };
+		BD8B14EEACB347C491E948E8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsParser.h */ = {isa = PBXBuildFile; fileRef = 111B4DCA40D849208D654E65 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsParser.h */; };
+		BFEB0BE4807A4AC8840327E3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsParser.cpp */ = {isa = PBXBuildFile; fileRef = 5D8818F742A243AEABF58490 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsParser.cpp */; };
+		C36E74FAFE1C4D699A92B62C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveMessage.cpp */ = {isa = PBXBuildFile; fileRef = BF90D5F1A8BE421F924AC6B7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveMessage.cpp */; };
+		C49BC942CBE7498EBD296005 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Assembler.h */ = {isa = PBXBuildFile; fileRef = 911B5F53BDFC4E8689FE04AA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Assembler.h */; };
+		C89E4E13C0C84E96AA32569B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Main/Tests.h */ = {isa = PBXBuildFile; fileRef = DC7BBE783D904D02869AA237 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Main/Tests.h */; };
+		C992A15C2F594A87B55CE411 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/CArmInstruction.cpp */ = {isa = PBXBuildFile; fileRef = 0B8D012EC801441EB9F2A311 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/CArmInstruction.cpp */; };
+		CA263747166E4F4E8EDEC297 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/CMakeFiles/armipstests.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 86804D9540C948DE81704364 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/CMakeFiles/armipstests.dir/Info.plist */; };
+		CD080E316A25475580946BCF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsOpcodes.h */ = {isa = PBXBuildFile; fileRef = 15A67FC107154C7EA1F1427D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsOpcodes.h */; };
+		CED43C2A05564881BCB61594 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmElfRelocator.h */ = {isa = PBXBuildFile; fileRef = F1DE9D404DC941D198EFED8A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmElfRelocator.h */; };
+		CEE136353EF34A5FA20E752C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Main/Tests.cpp */ = {isa = PBXBuildFile; fileRef = A626AD04B22640349B55D4EE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Main/Tests.cpp */; };
+		D0105409EA144AA7BBBCE3FC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/Util.cpp */ = {isa = PBXBuildFile; fileRef = 043CBA001B844E439DC04C85 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/Util.cpp */; };
+		D6CBA536269A4BFF8A3B8DE7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ExpressionFunctions.cpp */ = {isa = PBXBuildFile; fileRef = C267230B1646495CB48FC1B0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ExpressionFunctions.cpp */; };
+		DC62F3BA352541F8A4205A19 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/FileManager.cpp */ = {isa = PBXBuildFile; fileRef = 2E21EB22CA2549BF86F917CF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/FileManager.cpp */; };
+		DCF4C25147D14F2E836D46E9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsOpcodes.cpp */ = {isa = PBXBuildFile; fileRef = 3C0A2CEB514544D19F4D3E25 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsOpcodes.cpp */; };
+		DD3F7E1162AB418D9BC07521 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/stdafx.cpp */ = {isa = PBXBuildFile; fileRef = 704D4D6E1A4046A7A6F90549 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/stdafx.cpp */; };
+		E4385DE3645242E18A9472F0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmParser.h */ = {isa = PBXBuildFile; fileRef = 137034B3D4884CC0931A8155 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmParser.h */; };
+		E4826245712243D6B5614D2B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/CRC.cpp */ = {isa = PBXBuildFile; fileRef = 8E53DA0DF57A4A5A8B6E815B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/CRC.cpp */; };
+		E66BD68920404A848FBA30DB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsElfFile.h */ = {isa = PBXBuildFile; fileRef = 197EDBB783B643AB8C9A72DC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsElfFile.h */; };
+		EA1DA50493B54635B7367C49 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Main/main.cpp */ = {isa = PBXBuildFile; fileRef = 7AB05D6290E1421492E670E0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Main/main.cpp */; };
+		EA581471000842D5AF79061B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveArea.cpp */ = {isa = PBXBuildFile; fileRef = 6CC002DF4387441394C5FBF1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveArea.cpp */; };
+		EAA9C231AD8346BB9DB459A4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Main/main.cpp */ = {isa = PBXBuildFile; fileRef = DE57DBE069B746118F583181 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Main/main.cpp */; };
+		EAC9BD7BA4494532A9D0A7A0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmParser.cpp */ = {isa = PBXBuildFile; fileRef = 0343F62CEBAA4FA5A1B68392 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmParser.cpp */; };
+		EBA776C681494A07AD679DC0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Expression.h */ = {isa = PBXBuildFile; fileRef = E71F1871EDD544B0B887DF24 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Expression.h */; };
+		ED9BCEEE26724DF898D5B9D3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Common.h */ = {isa = PBXBuildFile; fileRef = 671CD70AB94A48F48E8B9BB1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Common.h */; };
+		EF55447FF9FB42C6B57ECD82 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/Util.h */ = {isa = PBXBuildFile; fileRef = 49511AC5FE9B434D89E4DB52 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/Util.h */; };
+		F27DB82977FF410E9D998F91 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/DirectivesParser.cpp */ = {isa = PBXBuildFile; fileRef = F98697A208484059951FF561 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/DirectivesParser.cpp */; };
+		F299C4EFB9B14D4988EAA010 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 9B136297A0F14BDFA1275A63 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/CMakeLists.txt */; };
+		F2A0EC068F73487D841BE208 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Common.cpp */ = {isa = PBXBuildFile; fileRef = 72360F6960FF4C95B9571580 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Common.cpp */; };
+		F81DFA794A704AFFB330B8BC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/CArmInstruction.h */ = {isa = PBXBuildFile; fileRef = 4D99228DAF324B8C8EE10555 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/CArmInstruction.h */; };
+		F97CEFAC149C4678B0DA8710 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmExpressionFunctions.h */ = {isa = PBXBuildFile; fileRef = 369AE714EA9446BC98AB98CD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmExpressionFunctions.h */; };
+		F9999B6575A04EEAA3E33D9A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsMacros.cpp */ = {isa = PBXBuildFile; fileRef = FBA39BBFF65742AF92744E2C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsMacros.cpp */; };
+		FA066B6B4FE5454AA7BE0524 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/SymbolTable.h */ = {isa = PBXBuildFile; fileRef = F57AEB3D7D1B4907A1EAB136 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/SymbolTable.h */; };
+		FAEAA90ADEB84DC8A3BF8D8B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/CMipsInstruction.cpp */ = {isa = PBXBuildFile; fileRef = 6322C39B9D754DAD80C08DA1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/CMipsInstruction.cpp */; };
+		FBB827937B5C4DDEAE79CA79 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/Mips.h */ = {isa = PBXBuildFile; fileRef = 813D605C916A49EC924D35B5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/Mips.h */; };
+		FBCC9A5BD33F4604B6BD4980 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/Tokenizer.h */ = {isa = PBXBuildFile; fileRef = D925B89548324BD8B3D07ADF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/Tokenizer.h */; };
+		FD39C3A899C64AC8A3F88D3A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/Arm.cpp */ = {isa = PBXBuildFile; fileRef = D6365B1B81FA42DEBC97C2C1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/Arm.cpp */; };
+		FF9EF8AFC7924D5B9A3D1144 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 2450982B227F4F3881FA00F7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/CMakeLists.txt */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXBuildStyle section */
+		0E1CEB2BA39149CF97410786 /* Release */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Release;
+		};
+		3EBDDE511A9548759B8C4A38 /* Debug */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+		7E7C2EE10E6E41E29F449A04 /* MinSizeRel */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = MinSizeRel;
+		};
+		DFBD60A96B464811BFF19900 /* RelWithDebInfo */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = RelWithDebInfo;
+		};
+/* End PBXBuildStyle section */
+
+/* Begin PBXContainerItemProxy section */
+		0A3142311E824C229028573A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B12A60F8A2EA45479CA4A442 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 15E0CBC9AF4B40BA8F9C5897;
+			remoteInfo = "armips-bin";
+		};
+		45B7DF2F3E3446E697E01841 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B12A60F8A2EA45479CA4A442 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BC5C1F0A95E94DF5A4A48F24;
+			remoteInfo = ZERO_CHECK;
+		};
+		4F06E783140543918F16416A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B12A60F8A2EA45479CA4A442 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 75D2F5066BEE427FA439B440;
+			remoteInfo = armips;
+		};
+		70B91C2C9B3640068ABC2F73 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B12A60F8A2EA45479CA4A442 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 75D2F5066BEE427FA439B440;
+			remoteInfo = armips;
+		};
+		78DE6165CA1D4B739CC39503 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B12A60F8A2EA45479CA4A442 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 75D2F5066BEE427FA439B440;
+			remoteInfo = armips;
+		};
+		A86FB9A58CE949579BC4221B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B12A60F8A2EA45479CA4A442 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BC5C1F0A95E94DF5A4A48F24;
+			remoteInfo = ZERO_CHECK;
+		};
+		A95537414605463C962E1C70 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B12A60F8A2EA45479CA4A442 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BC5C1F0A95E94DF5A4A48F24;
+			remoteInfo = ZERO_CHECK;
+		};
+		B38C019CCB194EE8BC8A7DCF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B12A60F8A2EA45479CA4A442 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D38D17A114BC46FBB4338E00;
+			remoteInfo = ALL_BUILD;
+		};
+		D1A1BFA9930E4ADC9B2A2FF3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B12A60F8A2EA45479CA4A442 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BECDB8B910904693ABE3D9B4;
+			remoteInfo = armipstests;
+		};
+		D8CAFDC9FEDB4A2EAC7290DD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B12A60F8A2EA45479CA4A442 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BC5C1F0A95E94DF5A4A48F24;
+			remoteInfo = ZERO_CHECK;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		01F63483308B471FBB7B5FB1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmOpcodes.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ArmOpcodes.cpp; path = Archs/ARM/ArmOpcodes.cpp; sourceTree = SOURCE_ROOT; };
+		0343F62CEBAA4FA5A1B68392 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmParser.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ArmParser.cpp; path = Archs/ARM/ArmParser.cpp; sourceTree = SOURCE_ROOT; };
+		043CBA001B844E439DC04C85 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/Util.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Util.cpp; path = Util/Util.cpp; sourceTree = SOURCE_ROOT; };
+		0A0C006A08F54A33AE3C590B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/CThumbInstruction.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = CThumbInstruction.cpp; path = Archs/ARM/CThumbInstruction.cpp; sourceTree = SOURCE_ROOT; };
+		0B8D012EC801441EB9F2A311 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/CArmInstruction.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = CArmInstruction.cpp; path = Archs/ARM/CArmInstruction.cpp; sourceTree = SOURCE_ROOT; };
+		11139411381A4C4281FA6DC6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Misc.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Misc.cpp; path = Core/Misc.cpp; sourceTree = SOURCE_ROOT; };
+		111B4DCA40D849208D654E65 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsParser.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = MipsParser.h; path = Archs/MIPS/MipsParser.h; sourceTree = SOURCE_ROOT; };
+		137034B3D4884CC0931A8155 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmParser.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ArmParser.h; path = Archs/ARM/ArmParser.h; sourceTree = SOURCE_ROOT; };
+		13D86121BA9F421DAC292811 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CAssemblerCommand.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = CAssemblerCommand.cpp; path = Commands/CAssemblerCommand.cpp; sourceTree = SOURCE_ROOT; };
+		15A67FC107154C7EA1F1427D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsOpcodes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = MipsOpcodes.h; path = Archs/MIPS/MipsOpcodes.h; sourceTree = SOURCE_ROOT; };
+		197EDBB783B643AB8C9A72DC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsElfFile.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = MipsElfFile.h; path = Archs/MIPS/MipsElfFile.h; sourceTree = SOURCE_ROOT; };
+		1BD009EFC4774BFD840461DB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/PsxRelocator.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = PsxRelocator.cpp; path = Archs/MIPS/PsxRelocator.cpp; sourceTree = SOURCE_ROOT; };
+		1E55AFDF59CF47D0B5EBE1DB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ELF/ElfFile.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ElfFile.h; path = Core/ELF/ElfFile.h; sourceTree = SOURCE_ROOT; };
+		2243C377B6404E7AB256C2BB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/ext/tinyformat/tinyformat.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = tinyformat.h; path = ext/tinyformat/tinyformat.h; sourceTree = SOURCE_ROOT; };
+		2450982B227F4F3881FA00F7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		248994BA6B0C4C33A4C04FD9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveFile.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = CDirectiveFile.cpp; path = Commands/CDirectiveFile.cpp; sourceTree = SOURCE_ROOT; };
+		284B0A63EF6447FD92325848 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/Pool.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Pool.h; path = Archs/ARM/Pool.h; sourceTree = SOURCE_ROOT; };
+		2B7EA1D0126D471A90492A53 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/Arm.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Arm.h; path = Archs/ARM/Arm.h; sourceTree = SOURCE_ROOT; };
+		2D034CF90DB64A51AA50EFE8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveFile.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = CDirectiveFile.h; path = Commands/CDirectiveFile.h; sourceTree = SOURCE_ROOT; };
+		2E21EB22CA2549BF86F917CF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/FileManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FileManager.cpp; path = Core/FileManager.cpp; sourceTree = SOURCE_ROOT; };
+		3374A20CAA24473E8FF9F20D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Expression.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Expression.cpp; path = Core/Expression.cpp; sourceTree = SOURCE_ROOT; };
+		33B259F576F24055862CDD08 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/Tokenizer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Tokenizer.cpp; path = Parser/Tokenizer.cpp; sourceTree = SOURCE_ROOT; };
+		35155F9C5AF244FEAB497D5F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ELF/ElfTypes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ElfTypes.h; path = Core/ELF/ElfTypes.h; sourceTree = SOURCE_ROOT; };
+		369AE714EA9446BC98AB98CD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmExpressionFunctions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ArmExpressionFunctions.h; path = Archs/ARM/ArmExpressionFunctions.h; sourceTree = SOURCE_ROOT; };
+		374FA7E245FF4F00991BE39A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/CMakeFiles/armips.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../../../cmake/ext/armips/CMakeFiles/armips.dir/Info.plist; sourceTree = SOURCE_ROOT; };
+		37DFA15662EC4BC1B83B850D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/CMakeFiles/armips-bin.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "../../../cmake/ext/armips/CMakeFiles/armips-bin.dir/Info.plist"; sourceTree = SOURCE_ROOT; };
+		3C0A2CEB514544D19F4D3E25 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsOpcodes.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = MipsOpcodes.cpp; path = Archs/MIPS/MipsOpcodes.cpp; sourceTree = SOURCE_ROOT; };
+		45177D62411A40CCBBC907C1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/stdafx.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = stdafx.cpp; path = stdafx.cpp; sourceTree = SOURCE_ROOT; };
+		49511AC5FE9B434D89E4DB52 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/Util.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Util.h; path = Util/Util.h; sourceTree = SOURCE_ROOT; };
+		4D99228DAF324B8C8EE10555 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/CArmInstruction.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = CArmInstruction.h; path = Archs/ARM/CArmInstruction.h; sourceTree = SOURCE_ROOT; };
+		5001408B0AE540778AD594B0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/FileManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FileManager.h; path = Core/FileManager.h; sourceTree = SOURCE_ROOT; };
+		506267108A5545D881AB123C /* armips */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libarmips.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		54CEBA12A9154480807646B3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ExpressionFunctions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ExpressionFunctions.h; path = Core/ExpressionFunctions.h; sourceTree = SOURCE_ROOT; };
+		57C33F5AE57048FDA3A64CEC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/stdafx.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = stdafx.h; path = stdafx.h; sourceTree = SOURCE_ROOT; };
+		59EC72A16FFC4E0391A0AAC6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/SymbolData.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = SymbolData.cpp; path = Core/SymbolData.cpp; sourceTree = SOURCE_ROOT; };
+		5D8818F742A243AEABF58490 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsParser.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = MipsParser.cpp; path = Archs/MIPS/MipsParser.cpp; sourceTree = SOURCE_ROOT; };
+		5F3AAEA8EBFC485F90D8CE07 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveMessage.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = CDirectiveMessage.h; path = Commands/CDirectiveMessage.h; sourceTree = SOURCE_ROOT; };
+		5F67861D3CB04A8B8BA500FB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsExpressionFunctions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = MipsExpressionFunctions.cpp; path = Archs/MIPS/MipsExpressionFunctions.cpp; sourceTree = SOURCE_ROOT; };
+		5FB075554A8A4FF18A23796A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		60C9286FCD5145AF880DFEA0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmExpressionFunctions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ArmExpressionFunctions.cpp; path = Archs/ARM/ArmExpressionFunctions.cpp; sourceTree = SOURCE_ROOT; };
+		6322C39B9D754DAD80C08DA1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/CMipsInstruction.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = CMipsInstruction.cpp; path = Archs/MIPS/CMipsInstruction.cpp; sourceTree = SOURCE_ROOT; };
+		636C2F66860A482B930E12F8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/FileClasses.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FileClasses.cpp; path = Util/FileClasses.cpp; sourceTree = SOURCE_ROOT; };
+		648352DA085745D4B01C7432 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/ByteArray.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ByteArray.cpp; path = Util/ByteArray.cpp; sourceTree = SOURCE_ROOT; };
+		65FB2EF17589489CB4D7E86C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Main/Tests.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Tests.h; path = Main/Tests.h; sourceTree = SOURCE_ROOT; };
+		666709B9CF8C46E08B2A9A5A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/Mips.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Mips.cpp; path = Archs/MIPS/Mips.cpp; sourceTree = SOURCE_ROOT; };
+		671CD70AB94A48F48E8B9BB1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Common.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Common.h; path = Core/Common.h; sourceTree = SOURCE_ROOT; };
+		6CC002DF4387441394C5FBF1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveArea.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = CDirectiveArea.cpp; path = Commands/CDirectiveArea.cpp; sourceTree = SOURCE_ROOT; };
+		6D2EF442AF5141A99A4B3F2C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		704D4D6E1A4046A7A6F90549 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/stdafx.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = stdafx.cpp; path = stdafx.cpp; sourceTree = SOURCE_ROOT; };
+		7063D8D134A749B5908352ED /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ELF/ElfRelocator.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ElfRelocator.h; path = Core/ELF/ElfRelocator.h; sourceTree = SOURCE_ROOT; };
+		7220EB09C1EF4A5FBAFDAFE0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/DirectivesParser.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = DirectivesParser.h; path = Parser/DirectivesParser.h; sourceTree = SOURCE_ROOT; };
+		72360F6960FF4C95B9571580 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Common.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Common.cpp; path = Core/Common.cpp; sourceTree = SOURCE_ROOT; };
+		7524623AA16E4D299504850B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/FileClasses.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FileClasses.h; path = Util/FileClasses.h; sourceTree = SOURCE_ROOT; };
+		7AA13D2DDF8B48BF8D5B9892 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Main/Tests.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Tests.cpp; path = Main/Tests.cpp; sourceTree = SOURCE_ROOT; };
+		7AB05D6290E1421492E670E0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Main/main.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = main.cpp; path = Main/main.cpp; sourceTree = SOURCE_ROOT; };
+		7AE03B9557C64922B7E3F7AC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveConditional.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = CDirectiveConditional.h; path = Commands/CDirectiveConditional.h; sourceTree = SOURCE_ROOT; };
+		7CEDE485854F4A11A95B7B5D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmElfRelocator.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ArmElfRelocator.cpp; path = Archs/ARM/ArmElfRelocator.cpp; sourceTree = SOURCE_ROOT; };
+		813D605C916A49EC924D35B5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/Mips.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Mips.h; path = Archs/MIPS/Mips.h; sourceTree = SOURCE_ROOT; };
+		83D024B97F2747DFB3D24BE5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CAssemblerLabel.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = CAssemblerLabel.cpp; path = Commands/CAssemblerLabel.cpp; sourceTree = SOURCE_ROOT; };
+		84FB808EF55D43D797D60FCC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/Pool.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Pool.cpp; path = Archs/ARM/Pool.cpp; sourceTree = SOURCE_ROOT; };
+		851A271CE0474E08A1AAF0CE /* armips-bin */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = armips; sourceTree = BUILT_PRODUCTS_DIR; };
+		86804D9540C948DE81704364 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/CMakeFiles/armipstests.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../../../cmake/ext/armips/CMakeFiles/armipstests.dir/Info.plist; sourceTree = SOURCE_ROOT; };
+		8CAAC0FEA23B4C5A846DBA7B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveArea.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = CDirectiveArea.h; path = Commands/CDirectiveArea.h; sourceTree = SOURCE_ROOT; };
+		8DFD448F740C4007958EC042 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/Parser.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Parser.h; path = Parser/Parser.h; sourceTree = SOURCE_ROOT; };
+		8E53DA0DF57A4A5A8B6E815B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/CRC.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = CRC.cpp; path = Util/CRC.cpp; sourceTree = SOURCE_ROOT; };
+		8E8805D4823043C5919B29DE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ELF/ElfRelocator.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ElfRelocator.cpp; path = Core/ELF/ElfRelocator.cpp; sourceTree = SOURCE_ROOT; };
+		911B5F53BDFC4E8689FE04AA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Assembler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Assembler.h; path = Core/Assembler.h; sourceTree = SOURCE_ROOT; };
+		929C9B8800314C159125A47F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsElfFile.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = MipsElfFile.cpp; path = Archs/MIPS/MipsElfFile.cpp; sourceTree = SOURCE_ROOT; };
+		935EF9C847D54B81BD44DE8E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/CRC.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = CRC.h; path = Util/CRC.h; sourceTree = SOURCE_ROOT; };
+		945D519FDBBD4EF19B9B97A6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmOpcodes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ArmOpcodes.h; path = Archs/ARM/ArmOpcodes.h; sourceTree = SOURCE_ROOT; };
+		9B136297A0F14BDFA1275A63 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		9B1960A69BA14A9EA4B2CB0A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/SymbolData.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = SymbolData.h; path = Core/SymbolData.h; sourceTree = SOURCE_ROOT; };
+		9B3FDD2CAE1F4330B32BD408 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CAssemblerLabel.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = CAssemblerLabel.h; path = Commands/CAssemblerLabel.h; sourceTree = SOURCE_ROOT; };
+		9D2B6CF853944319B51E32C3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveConditional.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = CDirectiveConditional.cpp; path = Commands/CDirectiveConditional.cpp; sourceTree = SOURCE_ROOT; };
+		A0EBCAA6F8E1454E887C1A1A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CommandSequence.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = CommandSequence.cpp; path = Commands/CommandSequence.cpp; sourceTree = SOURCE_ROOT; };
+		A3F6075E23384424862E6DCD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CommandSequence.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = CommandSequence.h; path = Commands/CommandSequence.h; sourceTree = SOURCE_ROOT; };
+		A4E2CED0F298438B85016DE1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/SymbolTable.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = SymbolTable.cpp; path = Core/SymbolTable.cpp; sourceTree = SOURCE_ROOT; };
+		A626AD04B22640349B55D4EE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Main/Tests.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Tests.cpp; path = Main/Tests.cpp; sourceTree = SOURCE_ROOT; };
+		A6E5A209604E452685C17ECB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/CThumbInstruction.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = CThumbInstruction.h; path = Archs/ARM/CThumbInstruction.h; sourceTree = SOURCE_ROOT; };
+		A7191B35171746EE83CDE08B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/EncodingTable.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = EncodingTable.h; path = Util/EncodingTable.h; sourceTree = SOURCE_ROOT; };
+		ADF9B5E51AC746B785794CC5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ThumbOpcodes.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ThumbOpcodes.cpp; path = Archs/ARM/ThumbOpcodes.cpp; sourceTree = SOURCE_ROOT; };
+		AF5D1E0921984ABC947F8FFA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/ExpressionParser.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ExpressionParser.cpp; path = Parser/ExpressionParser.cpp; sourceTree = SOURCE_ROOT; };
+		AFA3E271CDC24800BF7A2963 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/stdafx.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = stdafx.h; path = stdafx.h; sourceTree = SOURCE_ROOT; };
+		AFB3DC93D14C446A928140E3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/Architecture.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Architecture.h; path = Archs/Architecture.h; sourceTree = SOURCE_ROOT; };
+		BF90D5F1A8BE421F924AC6B7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveMessage.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = CDirectiveMessage.cpp; path = Commands/CDirectiveMessage.cpp; sourceTree = SOURCE_ROOT; };
+		BFBBEC51FC574DC685AB7752 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/EncodingTable.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = EncodingTable.cpp; path = Util/EncodingTable.cpp; sourceTree = SOURCE_ROOT; };
+		C267230B1646495CB48FC1B0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ExpressionFunctions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ExpressionFunctions.cpp; path = Core/ExpressionFunctions.cpp; sourceTree = SOURCE_ROOT; };
+		C961854412044CF49E0C3D91 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CAssemblerCommand.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = CAssemblerCommand.h; path = Commands/CAssemblerCommand.h; sourceTree = SOURCE_ROOT; };
+		CE4C5DB54C784D27A8A5B8B9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsExpressionFunctions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = MipsExpressionFunctions.h; path = Archs/MIPS/MipsExpressionFunctions.h; sourceTree = SOURCE_ROOT; };
+		CEFA09FF7E104CEE9FC38CFD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/ByteArray.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ByteArray.h; path = Util/ByteArray.h; sourceTree = SOURCE_ROOT; };
+		CF076A519D244B32B010BF81 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Misc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Misc.h; path = Core/Misc.h; sourceTree = SOURCE_ROOT; };
+		D1D6DBCD7A47431A868C90A3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/Architecture.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Architecture.cpp; path = Archs/Architecture.cpp; sourceTree = SOURCE_ROOT; };
+		D553B8843DCE48BF95677B08 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveData.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = CDirectiveData.h; path = Commands/CDirectiveData.h; sourceTree = SOURCE_ROOT; };
+		D6365B1B81FA42DEBC97C2C1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/Arm.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Arm.cpp; path = Archs/ARM/Arm.cpp; sourceTree = SOURCE_ROOT; };
+		D925B89548324BD8B3D07ADF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/Tokenizer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Tokenizer.h; path = Parser/Tokenizer.h; sourceTree = SOURCE_ROOT; };
+		D92B838AA00C403CBB7549F0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/PsxRelocator.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = PsxRelocator.h; path = Archs/MIPS/PsxRelocator.h; sourceTree = SOURCE_ROOT; };
+		D9961DC90F5A48679E101282 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/CMipsInstruction.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = CMipsInstruction.h; path = Archs/MIPS/CMipsInstruction.h; sourceTree = SOURCE_ROOT; };
+		DC20651D66BC48A2A1F32C1A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveData.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = CDirectiveData.cpp; path = Commands/CDirectiveData.cpp; sourceTree = SOURCE_ROOT; };
+		DC7BBE783D904D02869AA237 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Main/Tests.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Tests.h; path = Main/Tests.h; sourceTree = SOURCE_ROOT; };
+		DE20CDB4252C447F905AF45B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ELF/ElfFile.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ElfFile.cpp; path = Core/ELF/ElfFile.cpp; sourceTree = SOURCE_ROOT; };
+		DE57DBE069B746118F583181 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Main/main.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = main.cpp; path = Main/main.cpp; sourceTree = SOURCE_ROOT; };
+		E126CB3313744C229DB3F960 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/Parser.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Parser.cpp; path = Parser/Parser.cpp; sourceTree = SOURCE_ROOT; };
+		E146E3BD4054479A90F4CE5C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsMacros.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = MipsMacros.h; path = Archs/MIPS/MipsMacros.h; sourceTree = SOURCE_ROOT; };
+		E47AAA35B6924BE1B0974B0F /* armipstests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = armipstests; sourceTree = BUILT_PRODUCTS_DIR; };
+		E71F1871EDD544B0B887DF24 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Expression.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Expression.h; path = Core/Expression.h; sourceTree = SOURCE_ROOT; };
+		EE39A9031F074BCBB650D7BD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsElfRelocator.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = MipsElfRelocator.cpp; path = Archs/MIPS/MipsElfRelocator.cpp; sourceTree = SOURCE_ROOT; };
+		F068EE8686B24859AAFF003B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsElfRelocator.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = MipsElfRelocator.h; path = Archs/MIPS/MipsElfRelocator.h; sourceTree = SOURCE_ROOT; };
+		F130B725F6DA4274A1B19A67 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Assembler.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Assembler.cpp; path = Core/Assembler.cpp; sourceTree = SOURCE_ROOT; };
+		F1DE9D404DC941D198EFED8A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmElfRelocator.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ArmElfRelocator.h; path = Archs/ARM/ArmElfRelocator.h; sourceTree = SOURCE_ROOT; };
+		F519BFDAC1E146A8AB51EEC5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ThumbOpcodes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ThumbOpcodes.h; path = Archs/ARM/ThumbOpcodes.h; sourceTree = SOURCE_ROOT; };
+		F57AEB3D7D1B4907A1EAB136 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/SymbolTable.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = SymbolTable.h; path = Core/SymbolTable.h; sourceTree = SOURCE_ROOT; };
+		F98697A208484059951FF561 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/DirectivesParser.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = DirectivesParser.cpp; path = Parser/DirectivesParser.cpp; sourceTree = SOURCE_ROOT; };
+		FAE8D7CCFC934AF78E36B56A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/ExpressionParser.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ExpressionParser.h; path = Parser/ExpressionParser.h; sourceTree = SOURCE_ROOT; };
+		FBA39BBFF65742AF92744E2C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsMacros.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = MipsMacros.cpp; path = Archs/MIPS/MipsMacros.cpp; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		09DD396593A64AD1844B1BE6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B09C0AFAD28D455698AB985B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D9F73D2EBEF34C63B70F34DB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2E5DB459D670462481BA3A73 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				37DFA15662EC4BC1B83B850D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/CMakeFiles/armips-bin.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		44AC2C257C774F01BD69CF1C /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				374FA7E245FF4F00991BE39A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/CMakeFiles/armips.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		55600FF0258E44F89D5AFA90 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				7AA13D2DDF8B48BF8D5B9892 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Main/Tests.cpp */,
+				7AB05D6290E1421492E670E0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Main/main.cpp */,
+				704D4D6E1A4046A7A6F90549 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/stdafx.cpp */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		5AB2A032559F47A29BE88E09 = {
+			isa = PBXGroup;
+			children = (
+				D026A2F5C1D14DA5BA7C42A0 /* armipstests */,
+				E0130CDAD4BD45D6957A387A /* armips-bin */,
+				727E740BA4084F2B929AE473 /* armips */,
+				5DE951B08CC847329D5D7E13 /* ALL_BUILD */,
+				A2586537D12546FF85F94464 /* Products */,
+				9B8B137AA96E406CA4CD181F /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		5DE951B08CC847329D5D7E13 /* ALL_BUILD */ = {
+			isa = PBXGroup;
+			children = (
+				AA59DE08F5674C5884462F55 /* CMake Rules */,
+				6D2EF442AF5141A99A4B3F2C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/CMakeLists.txt */,
+			);
+			name = ALL_BUILD;
+			sourceTree = "<group>";
+		};
+		727E740BA4084F2B929AE473 /* armips */ = {
+			isa = PBXGroup;
+			children = (
+				9EFF7D23BA8142B199600ACB /* Header Files */,
+				AB669A12D0274908A3958E94 /* Source Files */,
+				44AC2C257C774F01BD69CF1C /* Resources */,
+				9B136297A0F14BDFA1275A63 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/CMakeLists.txt */,
+			);
+			name = armips;
+			sourceTree = "<group>";
+		};
+		9149A1C98C084661A3AC7777 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				A626AD04B22640349B55D4EE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Main/Tests.cpp */,
+				DE57DBE069B746118F583181 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Main/main.cpp */,
+				45177D62411A40CCBBC907C1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/stdafx.cpp */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		9B8B137AA96E406CA4CD181F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9EFF7D23BA8142B199600ACB /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				2B7EA1D0126D471A90492A53 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/Arm.h */,
+				F1DE9D404DC941D198EFED8A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmElfRelocator.h */,
+				369AE714EA9446BC98AB98CD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmExpressionFunctions.h */,
+				945D519FDBBD4EF19B9B97A6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmOpcodes.h */,
+				137034B3D4884CC0931A8155 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmParser.h */,
+				4D99228DAF324B8C8EE10555 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/CArmInstruction.h */,
+				A6E5A209604E452685C17ECB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/CThumbInstruction.h */,
+				284B0A63EF6447FD92325848 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/Pool.h */,
+				F519BFDAC1E146A8AB51EEC5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ThumbOpcodes.h */,
+				AFB3DC93D14C446A928140E3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/Architecture.h */,
+				D9961DC90F5A48679E101282 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/CMipsInstruction.h */,
+				813D605C916A49EC924D35B5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/Mips.h */,
+				197EDBB783B643AB8C9A72DC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsElfFile.h */,
+				F068EE8686B24859AAFF003B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsElfRelocator.h */,
+				CE4C5DB54C784D27A8A5B8B9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsExpressionFunctions.h */,
+				E146E3BD4054479A90F4CE5C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsMacros.h */,
+				15A67FC107154C7EA1F1427D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsOpcodes.h */,
+				111B4DCA40D849208D654E65 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsParser.h */,
+				D92B838AA00C403CBB7549F0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/PsxRelocator.h */,
+				C961854412044CF49E0C3D91 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CAssemblerCommand.h */,
+				9B3FDD2CAE1F4330B32BD408 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CAssemblerLabel.h */,
+				8CAAC0FEA23B4C5A846DBA7B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveArea.h */,
+				7AE03B9557C64922B7E3F7AC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveConditional.h */,
+				D553B8843DCE48BF95677B08 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveData.h */,
+				2D034CF90DB64A51AA50EFE8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveFile.h */,
+				5F3AAEA8EBFC485F90D8CE07 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveMessage.h */,
+				A3F6075E23384424862E6DCD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CommandSequence.h */,
+				911B5F53BDFC4E8689FE04AA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Assembler.h */,
+				671CD70AB94A48F48E8B9BB1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Common.h */,
+				1E55AFDF59CF47D0B5EBE1DB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ELF/ElfFile.h */,
+				7063D8D134A749B5908352ED /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ELF/ElfRelocator.h */,
+				35155F9C5AF244FEAB497D5F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ELF/ElfTypes.h */,
+				E71F1871EDD544B0B887DF24 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Expression.h */,
+				54CEBA12A9154480807646B3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ExpressionFunctions.h */,
+				5001408B0AE540778AD594B0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/FileManager.h */,
+				CF076A519D244B32B010BF81 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Misc.h */,
+				9B1960A69BA14A9EA4B2CB0A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/SymbolData.h */,
+				F57AEB3D7D1B4907A1EAB136 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/SymbolTable.h */,
+				7220EB09C1EF4A5FBAFDAFE0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/DirectivesParser.h */,
+				FAE8D7CCFC934AF78E36B56A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/ExpressionParser.h */,
+				8DFD448F740C4007958EC042 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/Parser.h */,
+				D925B89548324BD8B3D07ADF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/Tokenizer.h */,
+				CEFA09FF7E104CEE9FC38CFD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/ByteArray.h */,
+				935EF9C847D54B81BD44DE8E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/CRC.h */,
+				A7191B35171746EE83CDE08B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/EncodingTable.h */,
+				7524623AA16E4D299504850B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/FileClasses.h */,
+				49511AC5FE9B434D89E4DB52 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/Util.h */,
+				2243C377B6404E7AB256C2BB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/ext/tinyformat/tinyformat.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		A2586537D12546FF85F94464 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				506267108A5545D881AB123C /* armips */,
+				851A271CE0474E08A1AAF0CE /* armips-bin */,
+				E47AAA35B6924BE1B0974B0F /* armipstests */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AA59DE08F5674C5884462F55 /* CMake Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		AB669A12D0274908A3958E94 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				D6365B1B81FA42DEBC97C2C1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/Arm.cpp */,
+				7CEDE485854F4A11A95B7B5D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmElfRelocator.cpp */,
+				60C9286FCD5145AF880DFEA0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmExpressionFunctions.cpp */,
+				01F63483308B471FBB7B5FB1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmOpcodes.cpp */,
+				0343F62CEBAA4FA5A1B68392 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmParser.cpp */,
+				0B8D012EC801441EB9F2A311 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/CArmInstruction.cpp */,
+				0A0C006A08F54A33AE3C590B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/CThumbInstruction.cpp */,
+				84FB808EF55D43D797D60FCC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/Pool.cpp */,
+				ADF9B5E51AC746B785794CC5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ThumbOpcodes.cpp */,
+				D1D6DBCD7A47431A868C90A3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/Architecture.cpp */,
+				6322C39B9D754DAD80C08DA1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/CMipsInstruction.cpp */,
+				666709B9CF8C46E08B2A9A5A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/Mips.cpp */,
+				929C9B8800314C159125A47F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsElfFile.cpp */,
+				EE39A9031F074BCBB650D7BD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsElfRelocator.cpp */,
+				5F67861D3CB04A8B8BA500FB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsExpressionFunctions.cpp */,
+				FBA39BBFF65742AF92744E2C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsMacros.cpp */,
+				3C0A2CEB514544D19F4D3E25 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsOpcodes.cpp */,
+				5D8818F742A243AEABF58490 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsParser.cpp */,
+				1BD009EFC4774BFD840461DB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/PsxRelocator.cpp */,
+				13D86121BA9F421DAC292811 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CAssemblerCommand.cpp */,
+				83D024B97F2747DFB3D24BE5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CAssemblerLabel.cpp */,
+				6CC002DF4387441394C5FBF1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveArea.cpp */,
+				9D2B6CF853944319B51E32C3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveConditional.cpp */,
+				DC20651D66BC48A2A1F32C1A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveData.cpp */,
+				248994BA6B0C4C33A4C04FD9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveFile.cpp */,
+				BF90D5F1A8BE421F924AC6B7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveMessage.cpp */,
+				A0EBCAA6F8E1454E887C1A1A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CommandSequence.cpp */,
+				F130B725F6DA4274A1B19A67 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Assembler.cpp */,
+				72360F6960FF4C95B9571580 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Common.cpp */,
+				DE20CDB4252C447F905AF45B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ELF/ElfFile.cpp */,
+				8E8805D4823043C5919B29DE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ELF/ElfRelocator.cpp */,
+				3374A20CAA24473E8FF9F20D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Expression.cpp */,
+				C267230B1646495CB48FC1B0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ExpressionFunctions.cpp */,
+				2E21EB22CA2549BF86F917CF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/FileManager.cpp */,
+				11139411381A4C4281FA6DC6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Misc.cpp */,
+				59EC72A16FFC4E0391A0AAC6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/SymbolData.cpp */,
+				A4E2CED0F298438B85016DE1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/SymbolTable.cpp */,
+				F98697A208484059951FF561 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/DirectivesParser.cpp */,
+				AF5D1E0921984ABC947F8FFA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/ExpressionParser.cpp */,
+				E126CB3313744C229DB3F960 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/Parser.cpp */,
+				33B259F576F24055862CDD08 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/Tokenizer.cpp */,
+				648352DA085745D4B01C7432 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/ByteArray.cpp */,
+				8E53DA0DF57A4A5A8B6E815B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/CRC.cpp */,
+				BFBBEC51FC574DC685AB7752 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/EncodingTable.cpp */,
+				636C2F66860A482B930E12F8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/FileClasses.cpp */,
+				043CBA001B844E439DC04C85 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/Util.cpp */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		B9D651B5C1D54932923799E1 /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				DC7BBE783D904D02869AA237 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Main/Tests.h */,
+				AFA3E271CDC24800BF7A2963 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/stdafx.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		D026A2F5C1D14DA5BA7C42A0 /* armipstests */ = {
+			isa = PBXGroup;
+			children = (
+				55600FF0258E44F89D5AFA90 /* Source Files */,
+				F9AE49735746495CB2FD9F10 /* Header Files */,
+				D2C3C275B6304F74B840E5EA /* Resources */,
+				5FB075554A8A4FF18A23796A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/CMakeLists.txt */,
+			);
+			name = armipstests;
+			sourceTree = "<group>";
+		};
+		D2C3C275B6304F74B840E5EA /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				86804D9540C948DE81704364 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/CMakeFiles/armipstests.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		E0130CDAD4BD45D6957A387A /* armips-bin */ = {
+			isa = PBXGroup;
+			children = (
+				9149A1C98C084661A3AC7777 /* Source Files */,
+				B9D651B5C1D54932923799E1 /* Header Files */,
+				2E5DB459D670462481BA3A73 /* Resources */,
+				2450982B227F4F3881FA00F7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/CMakeLists.txt */,
+			);
+			name = "armips-bin";
+			sourceTree = "<group>";
+		};
+		F9AE49735746495CB2FD9F10 /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				65FB2EF17589489CB4D7E86C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Main/Tests.h */,
+				57C33F5AE57048FDA3A64CEC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/stdafx.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		15E0CBC9AF4B40BA8F9C5897 /* armips-bin */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E4C4A47F7F0B47249BB0FEEF /* Build configuration list for PBXNativeTarget "armips-bin" */;
+			buildPhases = (
+				9B2E6DDC42594EC3AA3F2103 /* Sources */,
+				B09C0AFAD28D455698AB985B /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D9868DF6F8904904BB7998C0 /* PBXTargetDependency */,
+				A1478A899D2147ED8831A0F3 /* PBXTargetDependency */,
+			);
+			name = "armips-bin";
+			productName = "armips-bin";
+			productReference = 851A271CE0474E08A1AAF0CE /* armips-bin */;
+			productType = "com.apple.product-type.application";
+		};
+		75D2F5066BEE427FA439B440 /* armips */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EB8AFBE21A874BE58EC2C7FC /* Build configuration list for PBXNativeTarget "armips" */;
+			buildPhases = (
+				EBB5FF55F76447EB937F070E /* Sources */,
+				09DD396593A64AD1844B1BE6 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2616C19A9AFC42C3A12A1291 /* PBXTargetDependency */,
+			);
+			name = armips;
+			productName = armips;
+			productReference = 506267108A5545D881AB123C /* armips */;
+			productType = "com.apple.product-type.library.static";
+		};
+		BECDB8B910904693ABE3D9B4 /* armipstests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1EEC964AF34A4CE7AD75313F /* Build configuration list for PBXNativeTarget "armipstests" */;
+			buildPhases = (
+				75C7DB84C73644C48B887D15 /* Sources */,
+				D9F73D2EBEF34C63B70F34DB /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F0F2C120F97E45878B40D740 /* PBXTargetDependency */,
+				56BA4E1176A043FCB4AE80B0 /* PBXTargetDependency */,
+			);
+			name = armipstests;
+			productName = armipstests;
+			productReference = E47AAA35B6924BE1B0974B0F /* armipstests */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B12A60F8A2EA45479CA4A442 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1300;
+			};
+			buildConfigurationList = BF9F5EA55FBE4509B75157CD /* Build configuration list for PBXProject "armips" */;
+			buildSettings = {
+			};
+			buildStyles = (
+				3EBDDE511A9548759B8C4A38 /* Debug */,
+				0E1CEB2BA39149CF97410786 /* Release */,
+				7E7C2EE10E6E41E29F449A04 /* MinSizeRel */,
+				DFBD60A96B464811BFF19900 /* RelWithDebInfo */,
+			);
+			compatibilityVersion = "Xcode 3.2";
+			hasScannedForEncodings = 0;
+			mainGroup = 5AB2A032559F47A29BE88E09;
+			projectDirPath = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips;
+			projectRoot = "";
+			targets = (
+				D38D17A114BC46FBB4338E00 /* ALL_BUILD */,
+				579C005AED0642C48E3D9BDA /* RUN_TESTS */,
+				BC5C1F0A95E94DF5A4A48F24 /* ZERO_CHECK */,
+				75D2F5066BEE427FA439B440 /* armips */,
+				15E0CBC9AF4B40BA8F9C5897 /* armips-bin */,
+				BECDB8B910904693ABE3D9B4 /* armipstests */,
+				B2FB4C7868914CD79D8362FC /* install */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		003C8D08B0008F35F218E126 /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips
+  /opt/homebrew/Cellar/cmake/3.21.3_1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips
+  /opt/homebrew/Cellar/cmake/3.21.3_1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips
+  /opt/homebrew/Cellar/cmake/3.21.3_1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips
+  /opt/homebrew/Cellar/cmake/3.21.3_1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		34A8DC9EF9C28D9C83C2225A /* Generate CMakeFiles/ZERO_CHECK */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ZERO_CHECK";
+			outputPaths = (
+/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/CMakeFiles/ZERO_CHECK			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips
+  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips
+  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips
+  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips
+  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/CMakeScripts/ReRunCMake.make
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		3C0110FC8322DE7E50886E21 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		87AF4882E018677E2624B544 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		910A41151295C5F9742C25BD = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		933C77D2C2D0F22B3623EA91 /* Generate CMakeFiles/ALL_BUILD */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ALL_BUILD";
+			outputPaths = (
+/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/CMakeFiles/ALL_BUILD			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips
+  echo Build\\ all\\ projects
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips
+  /opt/homebrew/Cellar/cmake/3.21.3_1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips
+  /opt/homebrew/Cellar/cmake/3.21.3_1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips
+  /opt/homebrew/Cellar/cmake/3.21.3_1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips
+  /opt/homebrew/Cellar/cmake/3.21.3_1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		9B50530E35CC49C82C2FACCF = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		75C7DB84C73644C48B887D15 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				360D3B812B104520BEB40105 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Main/Tests.cpp */,
+				EA1DA50493B54635B7367C49 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Main/main.cpp */,
+				DD3F7E1162AB418D9BC07521 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/stdafx.cpp */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9B2E6DDC42594EC3AA3F2103 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CEE136353EF34A5FA20E752C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Main/Tests.cpp */,
+				EAA9C231AD8346BB9DB459A4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Main/main.cpp */,
+				BCBEE9EE4AA64DF18752DDCA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/stdafx.cpp */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EBB5FF55F76447EB937F070E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FD39C3A899C64AC8A3F88D3A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/Arm.cpp */,
+				26CBAFC0B7F34919977FF1CB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmElfRelocator.cpp */,
+				9122420A04A7479CAC3C0CC4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmExpressionFunctions.cpp */,
+				11F041436AFA4755B60DCF03 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmOpcodes.cpp */,
+				EAC9BD7BA4494532A9D0A7A0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ArmParser.cpp */,
+				C992A15C2F594A87B55CE411 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/CArmInstruction.cpp */,
+				1BAA6A2F06CA41268C91DA83 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/CThumbInstruction.cpp */,
+				01BA538716EE494EBFFC78F1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/Pool.cpp */,
+				7B5500A3327142DF87358F5F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/ARM/ThumbOpcodes.cpp */,
+				471276C5109C48E1BC88D8C0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/Architecture.cpp */,
+				FAEAA90ADEB84DC8A3BF8D8B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/CMipsInstruction.cpp */,
+				57C4C3F2861C4E178D895E30 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/Mips.cpp */,
+				4598DAEE3AEA4E4CA1D9FD8C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsElfFile.cpp */,
+				14C28B0550ED45929F541E8F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsElfRelocator.cpp */,
+				225ABAEE41284BC89DEED114 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsExpressionFunctions.cpp */,
+				F9999B6575A04EEAA3E33D9A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsMacros.cpp */,
+				DCF4C25147D14F2E836D46E9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsOpcodes.cpp */,
+				BFEB0BE4807A4AC8840327E3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/MipsParser.cpp */,
+				B0037D3CFAF34468B209C32C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Archs/MIPS/PsxRelocator.cpp */,
+				7ED953E770B94999A2E1186D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CAssemblerCommand.cpp */,
+				68C1CC559FBE4AF89E4A22A5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CAssemblerLabel.cpp */,
+				EA581471000842D5AF79061B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveArea.cpp */,
+				825E0D77F6C34EC8843C7E91 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveConditional.cpp */,
+				8AB8ADB3A03545F19717038A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveData.cpp */,
+				2D3C68E94E8B44A190083C7F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveFile.cpp */,
+				C36E74FAFE1C4D699A92B62C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CDirectiveMessage.cpp */,
+				209B07F34BBF47C786248189 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Commands/CommandSequence.cpp */,
+				BC672B2103514E6CA0D72A01 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Assembler.cpp */,
+				F2A0EC068F73487D841BE208 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Common.cpp */,
+				3F40E5F468254BBC965273C2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ELF/ElfFile.cpp */,
+				7EF1867B7C6F4AE384AEC3AA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ELF/ElfRelocator.cpp */,
+				456DCD61299F464FBBB8900C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Expression.cpp */,
+				D6CBA536269A4BFF8A3B8DE7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/ExpressionFunctions.cpp */,
+				DC62F3BA352541F8A4205A19 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/FileManager.cpp */,
+				4669743BE60E460499546F6C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/Misc.cpp */,
+				9EE7883FA5564EB9828CC74D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/SymbolData.cpp */,
+				49C0C80127264DCD8C3AE3BA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Core/SymbolTable.cpp */,
+				F27DB82977FF410E9D998F91 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/DirectivesParser.cpp */,
+				4D8E84A47A614566B2772E0D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/ExpressionParser.cpp */,
+				AF1A6EF116424C7294F42D5F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/Parser.cpp */,
+				0A0FEAAB108042FB9AA57AB8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Parser/Tokenizer.cpp */,
+				B272C586469E48E4830378C2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/ByteArray.cpp */,
+				E4826245712243D6B5614D2B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/CRC.cpp */,
+				91983E021CF847DFBCDD699B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/EncodingTable.cpp */,
+				9CAF4584EF244CE5B702E01F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/FileClasses.cpp */,
+				D0105409EA144AA7BBBCE3FC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/Util/Util.cpp */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0480C9EE02E74AAF8503F9B3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 15E0CBC9AF4B40BA8F9C5897 /* armips-bin */;
+			targetProxy = 0A3142311E824C229028573A /* PBXContainerItemProxy */;
+		};
+		2616C19A9AFC42C3A12A1291 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BC5C1F0A95E94DF5A4A48F24 /* ZERO_CHECK */;
+			targetProxy = A86FB9A58CE949579BC4221B /* PBXContainerItemProxy */;
+		};
+		56BA4E1176A043FCB4AE80B0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BC5C1F0A95E94DF5A4A48F24 /* ZERO_CHECK */;
+			targetProxy = A95537414605463C962E1C70 /* PBXContainerItemProxy */;
+		};
+		6F96DE108D474CF1B8EFB6C4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D38D17A114BC46FBB4338E00 /* ALL_BUILD */;
+			targetProxy = B38C019CCB194EE8BC8A7DCF /* PBXContainerItemProxy */;
+		};
+		A1478A899D2147ED8831A0F3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BC5C1F0A95E94DF5A4A48F24 /* ZERO_CHECK */;
+			targetProxy = D8CAFDC9FEDB4A2EAC7290DD /* PBXContainerItemProxy */;
+		};
+		AC98163CEF7046C6BCFE8D77 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BECDB8B910904693ABE3D9B4 /* armipstests */;
+			targetProxy = D1A1BFA9930E4ADC9B2A2FF3 /* PBXContainerItemProxy */;
+		};
+		D9868DF6F8904904BB7998C0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 75D2F5066BEE427FA439B440 /* armips */;
+			targetProxy = 78DE6165CA1D4B739CC39503 /* PBXContainerItemProxy */;
+		};
+		DEF8A8781E384934A95960E2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 75D2F5066BEE427FA439B440 /* armips */;
+			targetProxy = 70B91C2C9B3640068ABC2F73 /* PBXContainerItemProxy */;
+		};
+		F0F2C120F97E45878B40D740 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 75D2F5066BEE427FA439B440 /* armips */;
+			targetProxy = 4F06E783140543918F16416A /* PBXContainerItemProxy */;
+		};
+		F928908D2BCA45BDAD74B250 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BC5C1F0A95E94DF5A4A48F24 /* ZERO_CHECK */;
+			targetProxy = 45B7DF2F3E3446E697E01841 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		01D4420C350642B99951B3A9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		01F2E1A59FE741C38FC177C5 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (armv7,arm64);
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/RelWithDebInfo;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/.,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=6.0 -pthread -std=c++11 -Wno-uninitialized        -DNDEBUG        -D_NDEBUG -fno-strict-aliasing '-std=gnu++11'   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = armips;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		0CA65341A7C040D18D7E9ED0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		0DE73635235B4138BFBF4A48 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		11564632CCED444BBE218E08 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (armv7,arm64);
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",ARMIPS_TESTS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/.,"$(inherited)");
+				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/CMakeFiles/armipstests.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=6.0 -pthread -std=c++11 -Wno-uninitialized        -DNDEBUG        -D_NDEBUG -fno-strict-aliasing '-std=gnu++11'   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare";
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/RelWithDebInfo/libarmips.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = armipstests;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		138913E268314A068F59FE82 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (armv7,arm64);
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Debug;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/.,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=6.0 -pthread -std=c++11 -Wno-uninitialized       -D_DEBUG -fno-strict-aliasing '-std=gnu++11'   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = armips;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		16C6D8060B9240959574534B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		1AE378C3E9C4419787575CE0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		1F440A6D9E1C45C0BC6DAE17 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		2036F36B45204D708F99D01D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "armv7 arm64";
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/build;
+			};
+			name = Release;
+		};
+		38743E8EA0314B28ACA38725 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (armv7,arm64);
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",ARMIPS_TESTS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/.,"$(inherited)");
+				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/CMakeFiles/armipstests.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=6.0 -pthread -std=c++11 -Wno-uninitialized     -DNDEBUG     -D_NDEBUG -fno-strict-aliasing '-std=gnu++11'   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare";
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/MinSizeRel/libarmips.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = armipstests;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		3E2D54934E3D4F63A0962324 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		4620436011754048A26CA93B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (armv7,arm64);
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/.,"$(inherited)");
+				INFOPLIST_FILE = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/CMakeFiles/armips-bin.dir/Info.plist";
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=6.0 -pthread -std=c++11 -Wno-uninitialized       -D_DEBUG -fno-strict-aliasing '-std=gnu++11'   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare";
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Debug/libarmips.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = armips;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		4DA15455726F4B34881D8799 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (armv7,arm64);
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Release;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/.,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=6.0 -pthread -std=c++11 -Wno-uninitialized     -DNDEBUG     -D_NDEBUG -fno-strict-aliasing '-std=gnu++11'   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = armips;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		570946DCA16F483D802108EE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "armv7 arm64";
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/build;
+			};
+			name = Debug;
+		};
+		6691D22345664571B302F494 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		6AAB84FCE2E94CE590188038 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		6BCBF865068542799CE6AE52 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		6CE045B885E4439387D8C725 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (armv7,arm64);
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/.,"$(inherited)");
+				INFOPLIST_FILE = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/CMakeFiles/armips-bin.dir/Info.plist";
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=6.0 -pthread -std=c++11 -Wno-uninitialized     -DNDEBUG     -D_NDEBUG -fno-strict-aliasing '-std=gnu++11'   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare";
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/MinSizeRel/libarmips.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = armips;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		8432D642DC1C4AC8BEAF72B2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		85A45C888DE94231B70A22AA /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "armv7 arm64";
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/build;
+			};
+			name = MinSizeRel;
+		};
+		8B45FB49F0654F42B05607E0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (armv7,arm64);
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",ARMIPS_TESTS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/.,"$(inherited)");
+				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/CMakeFiles/armipstests.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=6.0 -pthread -std=c++11 -Wno-uninitialized       -D_DEBUG -fno-strict-aliasing '-std=gnu++11'   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare";
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Debug/libarmips.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = armipstests;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		951E5BA2DB6549EF8C1604FC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (armv7,arm64);
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",ARMIPS_TESTS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/.,"$(inherited)");
+				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/CMakeFiles/armipstests.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=6.0 -pthread -std=c++11 -Wno-uninitialized     -DNDEBUG     -D_NDEBUG -fno-strict-aliasing '-std=gnu++11'   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare";
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Release/libarmips.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = armipstests;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		98AD47AC127D4D009F046429 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		9BCCD2EF42144F47912E554A /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		9F201786306146539CDE8AB0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (armv7,arm64);
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/.,"$(inherited)");
+				INFOPLIST_FILE = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/CMakeFiles/armips-bin.dir/Info.plist";
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=6.0 -pthread -std=c++11 -Wno-uninitialized     -DNDEBUG     -D_NDEBUG -fno-strict-aliasing '-std=gnu++11'   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare";
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Release/libarmips.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = armips;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		D9523CC153444F67B124E801 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (armv7,arm64);
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/.,"$(inherited)");
+				INFOPLIST_FILE = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/CMakeFiles/armips-bin.dir/Info.plist";
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=6.0 -pthread -std=c++11 -Wno-uninitialized        -DNDEBUG        -D_NDEBUG -fno-strict-aliasing '-std=gnu++11'   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare";
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/RelWithDebInfo/libarmips.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = armips;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		E663F00010534222A7F16C5B /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		E7010B083B1844ECBFC9712D /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		EAD801F612994936B386FF66 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (armv7,arm64);
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/MinSizeRel;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/.,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=6.0 -pthread -std=c++11 -Wno-uninitialized     -DNDEBUG     -D_NDEBUG -fno-strict-aliasing '-std=gnu++11'   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = armips;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		F45A502CF7E044D1BF7171AA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		FEBF7303EA60468DAB7407CA /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "armv7 arm64";
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/build;
+			};
+			name = RelWithDebInfo;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1EEC964AF34A4CE7AD75313F /* Build configuration list for PBXNativeTarget "armipstests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8B45FB49F0654F42B05607E0 /* Debug */,
+				951E5BA2DB6549EF8C1604FC /* Release */,
+				38743E8EA0314B28ACA38725 /* MinSizeRel */,
+				11564632CCED444BBE218E08 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		3B2EE67AA988430E8DDB4A0B /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F45A502CF7E044D1BF7171AA /* Debug */,
+				8432D642DC1C4AC8BEAF72B2 /* Release */,
+				9BCCD2EF42144F47912E554A /* MinSizeRel */,
+				E7010B083B1844ECBFC9712D /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		56259F26E30040E481629917 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				98AD47AC127D4D009F046429 /* Debug */,
+				0CA65341A7C040D18D7E9ED0 /* Release */,
+				0DE73635235B4138BFBF4A48 /* MinSizeRel */,
+				6691D22345664571B302F494 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		69D841224F914FB493E7C28D /* Build configuration list for PBXAggregateTarget "install" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1AE378C3E9C4419787575CE0 /* Debug */,
+				16C6D8060B9240959574534B /* Release */,
+				E663F00010534222A7F16C5B /* MinSizeRel */,
+				6AAB84FCE2E94CE590188038 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		6CA7EB6D7B5E4421B138A8FD /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3E2D54934E3D4F63A0962324 /* Debug */,
+				01D4420C350642B99951B3A9 /* Release */,
+				1F440A6D9E1C45C0BC6DAE17 /* MinSizeRel */,
+				6BCBF865068542799CE6AE52 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		BF9F5EA55FBE4509B75157CD /* Build configuration list for PBXProject "armips" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				570946DCA16F483D802108EE /* Debug */,
+				2036F36B45204D708F99D01D /* Release */,
+				85A45C888DE94231B70A22AA /* MinSizeRel */,
+				FEBF7303EA60468DAB7407CA /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E4C4A47F7F0B47249BB0FEEF /* Build configuration list for PBXNativeTarget "armips-bin" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4620436011754048A26CA93B /* Debug */,
+				9F201786306146539CDE8AB0 /* Release */,
+				6CE045B885E4439387D8C725 /* MinSizeRel */,
+				D9523CC153444F67B124E801 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		EB8AFBE21A874BE58EC2C7FC /* Build configuration list for PBXNativeTarget "armips" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				138913E268314A068F59FE82 /* Debug */,
+				4DA15455726F4B34881D8799 /* Release */,
+				EAD801F612994936B386FF66 /* MinSizeRel */,
+				01F2E1A59FE741C38FC177C5 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B12A60F8A2EA45479CA4A442 /* Project object */;
+}

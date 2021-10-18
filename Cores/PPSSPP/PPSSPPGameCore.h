@@ -24,12 +24,9 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
-#import <OpenEmuBase/OEGameCore.h>
-#import "OEPSPSystemResponderClient.h"
+#import <Foundation/Foundation.h>
+#import <PVSupport/PVSupport.h>
 
-@class OERingBuffer;
-
-OE_EXPORTED_CLASS
-@interface PPSSPPGameCore : OEGameCore
+__attribute__((visibility("default")))
+@interface PPSSPPGameCore : PVEmulatorCore // <PVPSXSystemResponderClient>
 @end
