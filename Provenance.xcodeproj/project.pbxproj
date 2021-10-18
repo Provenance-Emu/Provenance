@@ -2881,7 +2881,7 @@
 		1AD481C51BA350A500FDA50A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				APP_DISPLAY_NAME = "Prov Debug";
+				APP_DISPLAY_NAME = "ProvenanceTV";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
