@@ -7,13 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B305431C2720225700F5257D /* libpng17.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E00271D792B0025DD88 /* libpng17.a */; };
+		B3054323272022EB00F5257D /* libavdevice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3054320272022C800F5257D /* libavdevice.a */; };
+		B3054324272022F000F5257D /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3054321272022C800F5257D /* libavutil.a */; };
+		B3054325272022F000F5257D /* libswscale.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B305431D272022C800F5257D /* libswscale.a */; };
+		B3054326272022F000F5257D /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B305431F272022C800F5257D /* libavcodec.a */; };
+		B3054327272022F000F5257D /* libavformat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3054322272022C800F5257D /* libavformat.a */; };
+		B3054328272022F000F5257D /* libswresample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B305431E272022C800F5257D /* libswresample.a */; };
 		B30C6D97271D74EB0025DD88 /* PVPPSSPP.h in Headers */ = {isa = PBXBuildFile; fileRef = B30C6D96271D74EB0025DD88 /* PVPPSSPP.h */; };
 		B30C6D98271D752A0025DD88 /* PPSSPPGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CAFC1241785B6F700647A96 /* PPSSPPGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B30C6E17271D79E60025DD88 /* libcityhash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DE6271D792B0025DD88 /* libcityhash.a */; };
 		B30C6E18271D79E60025DD88 /* libCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DCE271D792B0025DD88 /* libCommon.a */; };
 		B30C6E19271D79E60025DD88 /* libCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DD0271D792B0025DD88 /* libCore.a */; };
 		B30C6E1A271D79E60025DD88 /* libkirk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DF2271D792B0025DD88 /* libkirk.a */; };
-		B30C6E1C271D79E60025DD88 /* libpng17.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E00271D792B0025DD88 /* libpng17.a */; };
 		B30C6E1D271D79E60025DD88 /* libsnappy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E04271D792B0025DD88 /* libsnappy.a */; };
 		B30C6E1E271D79E60025DD88 /* libudis86.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E10271D792B0025DD88 /* libudis86.a */; };
 		B30C6E24271D8B250025DD88 /* Frameworks in Resources */ = {isa = PBXBuildFile; fileRef = B30C6E23271D8B250025DD88 /* Frameworks */; };
@@ -29,7 +35,6 @@
 		B30C6E2E271D8BF50025DD88 /* libGenericCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DD2271D792B0025DD88 /* libGenericCodeGen.a */; };
 		B30C6E2F271D8BF50025DD88 /* libHLSL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DD4271D792B0025DD88 /* libHLSL.a */; };
 		B30C6E30271D8BF50025DD88 /* liblibzip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DF4271D792B0025DD88 /* liblibzip.a */; };
-		B30C6E31271D8BF50025DD88 /* libminiupnpc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DFA271D792B0025DD88 /* libminiupnpc.a */; };
 		B30C6E32271D8BF50025DD88 /* libnative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DFC271D792B0025DD88 /* libnative.a */; };
 		B30C6E33271D8BF50025DD88 /* libOGLCompiler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DD8271D792B0025DD88 /* libOGLCompiler.a */; };
 		B30C6E34271D8BF50025DD88 /* libOSDependent.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DDA271D792B0025DD88 /* libOSDependent.a */; };
@@ -57,9 +62,19 @@
 		B38C4A0D201DBD7E006761ED /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B38C4A0C201DBD7E006761ED /* libz.tbd */; };
 		B38C4A0F201DBD8D006761ED /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B38C4A0E201DBD8D006761ED /* CoreVideo.framework */; };
 		B38C4A10201DBD98006761ED /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B38C4A11201DBD98006761ED /* PVSupport.framework */; };
+		B3E06AE427201A4F00AC0257 /* libspirv-cross-cpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E08271D792B0025DD88 /* libspirv-cross-cpp.a */; };
+		B3E06AE527201A4F00AC0257 /* libspirv-cross-hlsl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E0C271D792B0025DD88 /* libspirv-cross-hlsl.a */; };
+		B3E06AE627201A4F00AC0257 /* libspirv-cross-msl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E0E271D792B0025DD88 /* libspirv-cross-msl.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		B305431A2720225700F5257D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B30C6D9A271D792B0025DD88 /* PPSSPP.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 69B95682A0184B21A431DEA8;
+			remoteInfo = PPSSPPHeadless;
+		};
 		B30C6DCD271D792B0025DD88 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B30C6D9A271D792B0025DD88 /* PPSSPP.xcodeproj */;
@@ -214,13 +229,6 @@
 			remoteGlobalIDString = E3D55FD719B0404C8710DBC3;
 			remoteInfo = libzstd_static;
 		};
-		B30C6DF9271D792B0025DD88 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B30C6D9A271D792B0025DD88 /* PPSSPP.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 39DF91D43EA5439BA37DBE40;
-			remoteInfo = miniupnpc;
-		};
 		B30C6DFB271D792B0025DD88 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B30C6D9A271D792B0025DD88 /* PPSSPP.xcodeproj */;
@@ -319,6 +327,13 @@
 			remoteGlobalIDString = 9950BEC9AE9F4BB192E371E5;
 			remoteInfo = zstreamtest;
 		};
+		B3E06AE2272019E700AC0257 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B30C6D9A271D792B0025DD88 /* PPSSPP.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 03FA12CF59CD402EA55F1D50;
+			remoteInfo = ppsspp_libretro;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -340,6 +355,12 @@
 		8CB2173A17C6569400CE82F3 /* VideoDecodeAcceleration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoDecodeAcceleration.framework; path = System/Library/Frameworks/VideoDecodeAcceleration.framework; sourceTree = SDKROOT; };
 		8CC1C46C1F634296009E6B92 /* sceDisplay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sceDisplay.cpp; path = Core/HLE/sceDisplay.cpp; sourceTree = "<group>"; };
 		8CC4D25E178C7EC00094E987 /* NativeApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NativeApp.cpp; sourceTree = "<group>"; };
+		B305431D272022C800F5257D /* libswscale.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libswscale.a; path = ppsspp/ffmpeg/ios/universal/lib/libswscale.a; sourceTree = "<group>"; };
+		B305431E272022C800F5257D /* libswresample.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libswresample.a; path = ppsspp/ffmpeg/ios/universal/lib/libswresample.a; sourceTree = "<group>"; };
+		B305431F272022C800F5257D /* libavcodec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavcodec.a; path = ppsspp/ffmpeg/ios/universal/lib/libavcodec.a; sourceTree = "<group>"; };
+		B3054320272022C800F5257D /* libavdevice.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavdevice.a; path = ppsspp/ffmpeg/ios/universal/lib/libavdevice.a; sourceTree = "<group>"; };
+		B3054321272022C800F5257D /* libavutil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavutil.a; path = ppsspp/ffmpeg/ios/universal/lib/libavutil.a; sourceTree = "<group>"; };
+		B3054322272022C800F5257D /* libavformat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavformat.a; path = ppsspp/ffmpeg/ios/universal/lib/libavformat.a; sourceTree = "<group>"; };
 		B30C6D96271D74EB0025DD88 /* PVPPSSPP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVPPSSPP.h; sourceTree = SOURCE_ROOT; };
 		B30C6D99271D773D0025DD88 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		B30C6D9A271D792B0025DD88 /* PPSSPP.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PPSSPP.xcodeproj; path = cmake/PPSSPP.xcodeproj; sourceTree = "<group>"; };
@@ -379,29 +400,36 @@
 				B30C6E2F271D8BF50025DD88 /* libHLSL.a in Frameworks */,
 				B30C6E56271D90A90025DD88 /* libMoltenVK.dylib in Frameworks */,
 				B30C6E39271D8C100025DD88 /* AVKit.framework in Frameworks */,
+				B3054324272022F000F5257D /* libavutil.a in Frameworks */,
 				B30C6E34271D8BF50025DD88 /* libOSDependent.a in Frameworks */,
 				B30C6E49271D8C800025DD88 /* CoreAudioKit.framework in Frameworks */,
+				B3054327272022F000F5257D /* libavformat.a in Frameworks */,
 				B30C6E41271D8C460025DD88 /* CoreGraphics.framework in Frameworks */,
 				B30C6E35271D8BF50025DD88 /* libsfmt19937.a in Frameworks */,
 				B30C6E38271D8C100025DD88 /* AVFoundation.framework in Frameworks */,
 				B30C6E2E271D8BF50025DD88 /* libGenericCodeGen.a in Frameworks */,
+				B3054323272022EB00F5257D /* libavdevice.a in Frameworks */,
+				B3E06AE527201A4F00AC0257 /* libspirv-cross-hlsl.a in Frameworks */,
 				B30C6E3E271D8C340025DD88 /* Foundation.framework in Frameworks */,
+				B3054326272022F000F5257D /* libavcodec.a in Frameworks */,
 				B30C6E53271D8D610025DD88 /* MediaPlayer.framework in Frameworks */,
 				B30C6E3F271D8C340025DD88 /* CoreFoundation.framework in Frameworks */,
+				B3054325272022F000F5257D /* libswscale.a in Frameworks */,
 				B30C6E2C271D8BD90025DD88 /* libglslang.a in Frameworks */,
 				B30C6E27271D8BBF0025DD88 /* libspirv-cross-core.a in Frameworks */,
 				B30C6E54271D90080025DD88 /* libxbrz.a in Frameworks */,
+				B3054328272022F000F5257D /* libswresample.a in Frameworks */,
 				B30C6E30271D8BF50025DD88 /* liblibzip.a in Frameworks */,
 				B30C6E1A271D79E60025DD88 /* libkirk.a in Frameworks */,
 				B30C6E4D271D8CA00025DD88 /* CoreLocation.framework in Frameworks */,
 				B30C6E2B271D8BBF0025DD88 /* libzstd.a in Frameworks */,
-				B30C6E1C271D79E60025DD88 /* libpng17.a in Frameworks */,
 				B38C4A10201DBD98006761ED /* PVSupport.framework in Frameworks */,
 				B30C6E29271D8BBF0025DD88 /* libSPIRV.a in Frameworks */,
 				B30C6E26271D8B730025DD88 /* libMachineIndependent.a in Frameworks */,
 				B30C6E4A271D8C800025DD88 /* CoreAudio.framework in Frameworks */,
 				B30C6E1E271D79E60025DD88 /* libudis86.a in Frameworks */,
 				B30C6E2A271D8BBF0025DD88 /* libxxhash.a in Frameworks */,
+				B305431C2720225700F5257D /* libpng17.a in Frameworks */,
 				B30C6E19271D79E60025DD88 /* libCore.a in Frameworks */,
 				B30C6E28271D8BBF0025DD88 /* libspirv-cross-glsl.a in Frameworks */,
 				B38C4A0F201DBD8D006761ED /* CoreVideo.framework in Frameworks */,
@@ -410,6 +438,7 @@
 				B30C6E45271D8C700025DD88 /* GameController.framework in Frameworks */,
 				B30C6E17271D79E60025DD88 /* libcityhash.a in Frameworks */,
 				B30C6E1D271D79E60025DD88 /* libsnappy.a in Frameworks */,
+				B3E06AE427201A4F00AC0257 /* libspirv-cross-cpp.a in Frameworks */,
 				B30C6E2D271D8BF50025DD88 /* libgason.a in Frameworks */,
 				B30C6E25271D8B660025DD88 /* libarmips.a in Frameworks */,
 				B30C6E43271D8C4E0025DD88 /* QuartzCore.framework in Frameworks */,
@@ -418,7 +447,7 @@
 				B30C6E33271D8BF50025DD88 /* libOGLCompiler.a in Frameworks */,
 				B38C4A0B201DBD75006761ED /* OpenGLES.framework in Frameworks */,
 				B30C6E4F271D8CAD0025DD88 /* GLKit.framework in Frameworks */,
-				B30C6E31271D8BF50025DD88 /* libminiupnpc.a in Frameworks */,
+				B3E06AE627201A4F00AC0257 /* libspirv-cross-msl.a in Frameworks */,
 				B30C6E51271D8D420025DD88 /* AudioToolbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -532,6 +561,7 @@
 				B30C6DD8271D792B0025DD88 /* libOGLCompiler.a */,
 				B30C6DDA271D792B0025DD88 /* libOSDependent.a */,
 				B30C6DDC271D792B0025DD88 /* PPSSPP */,
+				B305431B2720225700F5257D /* PPSSPPHeadless */,
 				B30C6DDE271D792B0025DD88 /* libSPIRV.a */,
 				B30C6DE0271D792B0025DD88 /* libarmips.a */,
 				B30C6DE2271D792B0025DD88 /* armips */,
@@ -546,10 +576,10 @@
 				B30C6DF4271D792B0025DD88 /* liblibzip.a */,
 				B30C6DF6271D792B0025DD88 /* libzstd.dylib */,
 				B30C6DF8271D792B0025DD88 /* libzstd.a */,
-				B30C6DFA271D792B0025DD88 /* libminiupnpc.a */,
 				B30C6DFC271D792B0025DD88 /* libnative.a */,
 				B30C6DFE271D792B0025DD88 /* paramgrill */,
 				B30C6E00271D792B0025DD88 /* libpng17.a */,
+				B3E06AE3272019E700AC0257 /* ppsspp_libretro.dylib */,
 				B30C6E02271D792B0025DD88 /* libsfmt19937.a */,
 				B30C6E04271D792B0025DD88 /* libsnappy.a */,
 				B30C6E06271D792B0025DD88 /* libspirv-cross-core.a */,
@@ -568,6 +598,12 @@
 		B38C49FB201DBD67006761ED /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B305431F272022C800F5257D /* libavcodec.a */,
+				B3054320272022C800F5257D /* libavdevice.a */,
+				B3054322272022C800F5257D /* libavformat.a */,
+				B3054321272022C800F5257D /* libavutil.a */,
+				B305431E272022C800F5257D /* libswresample.a */,
+				B305431D272022C800F5257D /* libswscale.a */,
 				B30C6E5A271D92800025DD88 /* AVFAudio.framework */,
 				B30C6E58271D92700025DD88 /* CoreMedia.framework */,
 				B30C6E55271D90A90025DD88 /* libMoltenVK.dylib */,
@@ -667,6 +703,14 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		B305431B2720225700F5257D /* PPSSPPHeadless */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = PPSSPPHeadless;
+			path = PPSSPPHeadless.app;
+			remoteRef = B305431A2720225700F5257D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		B30C6DCE271D792B0025DD88 /* libCommon.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -828,13 +872,6 @@
 			remoteRef = B30C6DF7271D792B0025DD88 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B30C6DFA271D792B0025DD88 /* libminiupnpc.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libminiupnpc.a;
-			remoteRef = B30C6DF9271D792B0025DD88 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		B30C6DFC271D792B0025DD88 /* libnative.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -933,6 +970,13 @@
 			name = zstreamtest;
 			path = zstreamtest.app;
 			remoteRef = B30C6E15271D792B0025DD88 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3E06AE3272019E700AC0257 /* ppsspp_libretro.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = ppsspp_libretro.dylib;
+			remoteRef = B3E06AE2272019E700AC0257 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1134,6 +1178,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/ppsspp/ffmpeg/ios/universal/lib",
 				);
 				MARKETING_VERSION = 1;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -1205,6 +1250,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/ppsspp/ffmpeg/ios/universal/lib",
 				);
 				MARKETING_VERSION = 1;
 				MTL_ENABLE_DEBUG_INFO = NO;

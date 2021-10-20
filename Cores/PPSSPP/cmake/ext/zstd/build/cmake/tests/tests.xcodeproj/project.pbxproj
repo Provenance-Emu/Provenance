@@ -9,7 +9,7 @@
 /* Begin PBXAggregateTarget section */
 		579C005AED0642C48E3D9BDA /* RUN_TESTS */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 36E9C918EC57431D86E71BE2 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
+			buildConfigurationList = 5535D110A35D4921A1E64AC6 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
 			buildPhases = (
 				003C8D08B0008F35F218E126 /* CMake PostBuild Rules */,
 			);
@@ -20,19 +20,19 @@
 		};
 		B2FB4C7868914CD79D8362FC /* install */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 865E80074B824EC39B070C8A /* Build configuration list for PBXAggregateTarget "install" */;
+			buildConfigurationList = 7F5D802E65D646DAB752C9FF /* Build configuration list for PBXAggregateTarget "install" */;
 			buildPhases = (
 				93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */,
 			);
 			dependencies = (
-				654F9017882E4AB388409A7C /* PBXTargetDependency */,
+				88D9411537594FE282EDFAB6 /* PBXTargetDependency */,
 			);
 			name = install;
 			productName = install;
 		};
 		BC5C1F0A95E94DF5A4A48F24 /* ZERO_CHECK */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 56D40A927D15488694DB5A5C /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildConfigurationList = A24A264480934AA6AE738CCC /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
 			buildPhases = (
 				60BF2C398161870B909B448E /* Generate CMakeFiles/ZERO_CHECK */,
 			);
@@ -43,17 +43,17 @@
 		};
 		D38D17A114BC46FBB4338E00 /* ALL_BUILD */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = EEB8ED09DB9F47148EA52940 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildConfigurationList = D30BAFC9C5CD443C9FF00DF0 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
 			buildPhases = (
 				0B8D8F0B2F351F13B5238731 /* Generate CMakeFiles/ALL_BUILD */,
 			);
 			dependencies = (
-				5CDBCB14803744768F68349D /* PBXTargetDependency */,
-				13ED83D47BB5488EBFAC44BC /* PBXTargetDependency */,
-				FA5872EC1D5D492CACE26A9E /* PBXTargetDependency */,
-				3E4C528FC4664286808EC065 /* PBXTargetDependency */,
-				13B8484E83F940C49FC98849 /* PBXTargetDependency */,
-				5CC21B2EE46C417EBA61BF9F /* PBXTargetDependency */,
+				B8036F028EF3489CB79052FF /* PBXTargetDependency */,
+				DEF08D14E93840DB98F226F7 /* PBXTargetDependency */,
+				C667AC41727D40B7BF87969D /* PBXTargetDependency */,
+				E000B61D912D47C585E1C66C /* PBXTargetDependency */,
+				104F1B9694654B09A9066E02 /* PBXTargetDependency */,
+				C02CCC32F6AA4D4FAFEA49EB /* PBXTargetDependency */,
 			);
 			name = ALL_BUILD;
 			productName = ALL_BUILD;
@@ -61,151 +61,151 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		01FF62A962DF409EBB6CD01C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXBuildFile; fileRef = 2230E673E8BC4399A8C2AE9F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */; };
-		07A975BAA71B4FE6AA3B5404 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 1E1FBA703E1F41309DB9D49A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */; };
-		093FA59C409B48B0BB177FC3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = CBFF8C6263954C4B8898C3CB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist */; };
-		1DC69C5F6E47452DA48AFE6B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXBuildFile; fileRef = 65FE4217120945D2B18234B5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */; };
-		25A8A7ADF6FC4B11BD972876 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/zstreamtest.c */ = {isa = PBXBuildFile; fileRef = 6DFB00247D0F43AC82DB68B1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/zstreamtest.c */; };
-		2EB0F9C00D084545A983E5E5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXBuildFile; fileRef = A3181A6C3ADE405D8532F4EE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */; };
-		39886A64595D41CB90D4C1E5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = F2C7028B709744729C431693 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist */; };
-		403B7D13F1C34E8D8748816E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 2BF4B8C52162465F80E9C070 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */; };
-		4DDF3B8C80F94FF0A20DAA68 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchzstd.c */ = {isa = PBXBuildFile; fileRef = 8B8A67CC1B02471FA7FAEEE6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchzstd.c */; };
-		58FB6768011040398EF68FFC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchfn.c */ = {isa = PBXBuildFile; fileRef = 9ADA244F391E4F33A3DDA1AF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchfn.c */; };
-		602F1406852F4136BBDC18C6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */ = {isa = PBXBuildFile; fileRef = 9F109B761F444EB288176228 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */; };
-		619F2AD7488D4A9F9AD44E74 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchfn.c */ = {isa = PBXBuildFile; fileRef = BE16BBF11F5D485181A5837A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchfn.c */; };
-		65261776B5AB429FAD19C463 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchzstd.c */ = {isa = PBXBuildFile; fileRef = 734C2313EFED4E489C55746F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchzstd.c */; };
-		6942CD96A8074668A0FF1C57 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */ = {isa = PBXBuildFile; fileRef = 8B8BBD17403D4E7CA355A3A1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */; };
-		6AE45977EB1F40309A89D9E4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */ = {isa = PBXBuildFile; fileRef = 1B856497179B4ACB891C60D1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */; };
-		7707BACE6BFD43EA8F04B81C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/datagencli.c */ = {isa = PBXBuildFile; fileRef = 84FA7F2F40164AE3A9D9A6D4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/datagencli.c */; };
-		7CF757BD7A2F4C6F8EB3B3CB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXBuildFile; fileRef = 6B80BA4E46CF4F399E0E1E36 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */; };
-		91B3E7990CAF411A8BBE8A85 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/fuzzer.c */ = {isa = PBXBuildFile; fileRef = EE1E760CA354499DBE86C594 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/fuzzer.c */; };
-		A1246414F93E4A97A2455C98 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXBuildFile; fileRef = EB834B2AEA024B2E93D0768F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */; };
-		A43C991840C64C36BCD8F956 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = CCB9771478CD4F47A6F52DD9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist */; };
-		ADF455C8DA604D0592E36159 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXBuildFile; fileRef = AFDA5A6B6E8B47BD9EAD15EC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */; };
-		AF7F1E68BCD94D3EABCA5F7D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 37D2D13610C449F68F6A2EAA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist */; };
-		B6246E39135145049F438A35 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/seqgen.c */ = {isa = PBXBuildFile; fileRef = 0AE2C33960F94471988007FD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/seqgen.c */; };
-		B71763EE976F47F7A358D876 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXBuildFile; fileRef = 67DE043DEBFC4E01A35604CF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */; };
-		BBB78502DF1F41D7BB1DA6E2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXBuildFile; fileRef = 5464139C5B344F93A3316856 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */; };
-		C2E706FF52074E74A855EC43 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */ = {isa = PBXBuildFile; fileRef = 6E37F83B4BC247049DE5004F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */; };
-		C4F8F6E4810F443DBD102A9A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/fullbench.c */ = {isa = PBXBuildFile; fileRef = 061DC77A6AB44A7DAF51C8BD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/fullbench.c */; };
-		C77F13AB593C4412A14D14DA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXBuildFile; fileRef = F803F7A0B8D54F50B0BFB3C9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */; };
-		D3C8510944F549BABDBBCB33 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 4F56440CE77D432A902CA514 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */; };
-		DB50DC482A05436081654297 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/paramgrill.c */ = {isa = PBXBuildFile; fileRef = AC4B94ACC0EA44FC90D69904 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/paramgrill.c */; };
-		E230AA54C98E4E9B9FA410AB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = AF56B963CC194CF5A909A7AB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */; };
-		E2882D3684E84AAD8FD945FA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 9D7575FEB15F4C5EB31FEFCC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist */; };
-		F6E9F9CF38D04CDE934AEE47 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 27AB1FCCA1834647AA4B63D9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */; };
+		0489EF6BD74D48F5934F385B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXBuildFile; fileRef = 7C03B3DD1845498EB82B03D0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */; };
+		05D7955D51034D9CBB202DAF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/paramgrill.c */ = {isa = PBXBuildFile; fileRef = 2CE9ED584CA946B691C11137 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/paramgrill.c */; };
+		10EB6E7D5337432D9E30739F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 4CD8C8D0741447E98A123667 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist */; };
+		10F84917F1394A12AFBD3439 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/seqgen.c */ = {isa = PBXBuildFile; fileRef = 2B7817A6BE54428AB8491149 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/seqgen.c */; };
+		26E908C9D51744AAAEBA9E02 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */ = {isa = PBXBuildFile; fileRef = C3177C545C764128A7719D0C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */; };
+		285B3F28BD084B608632B41D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 08B485BEBF1D4029B0EC4DD3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */; };
+		3122F105A13D439C94D9E610 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */ = {isa = PBXBuildFile; fileRef = ACF1D6D1547C4305A7054088 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */; };
+		3918AD7491F0436F9A0C52FF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/fuzzer.c */ = {isa = PBXBuildFile; fileRef = 019DD714E3FA4247B194A086 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/fuzzer.c */; };
+		3CBB2C23EE4641E7A61D79EC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/datagencli.c */ = {isa = PBXBuildFile; fileRef = 56A97C9C2B7942A4819AB8A4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/datagencli.c */; };
+		3D6DDF037A7C4B2CBA2197C7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 9B213D3EE3A148929C83DC6F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */; };
+		3E5D38C464364E71BC5A08F4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchfn.c */ = {isa = PBXBuildFile; fileRef = A88FC18CC761450DA3023DA0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchfn.c */; };
+		46AF32A55C7F422490589F2F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 4EBC5F77B26048CD9FFAD591 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */; };
+		55A9F2E3E0234CF9B9D02D94 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXBuildFile; fileRef = 028462828C1843EA81486464 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */; };
+		5C77A4E8461E4F5FB2F31663 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXBuildFile; fileRef = 5C21E74AEC7A4762B809F9C2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */; };
+		64A70A5D36814EBFBEF17407 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchzstd.c */ = {isa = PBXBuildFile; fileRef = B424F7312B514B96AD5DD509 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchzstd.c */; };
+		699633517DAA4302A666D2D3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 52D8AE45771F43069CAFA2AF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */; };
+		71517B686B7D4B579BCFBF44 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 0FB08057905845D5A661E8B1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist */; };
+		7E333105B5254CC2963149A9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */ = {isa = PBXBuildFile; fileRef = D901A42FE80149E09800DC13 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */; };
+		87B08C02D32A4CF2BD32CC9B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchzstd.c */ = {isa = PBXBuildFile; fileRef = E2A2937E60FD44FAA810D0A0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchzstd.c */; };
+		90DF15EF68FD40DCB463D810 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXBuildFile; fileRef = 17B3D91459544CC8A5313054 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */; };
+		9243A5E8307D479DB9BD5D09 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXBuildFile; fileRef = 90E439EFCEBF423797CDDC6A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */; };
+		9B6EA88C0A7147ABA1E30662 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXBuildFile; fileRef = 40455F8F08C24C4ABFAB87A7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */; };
+		AA5062FAB01E4F42AB6EF939 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchfn.c */ = {isa = PBXBuildFile; fileRef = 1FA6E194241A473EAF02FF42 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchfn.c */; };
+		B2B2293DCE5E4E2B880519A9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/zstreamtest.c */ = {isa = PBXBuildFile; fileRef = 3AEAC23CAAF4409E8F8D0AD6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/zstreamtest.c */; };
+		B6F8CB2752454F3C8476CBF6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 7846D5DEAD2848A4B908F24E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist */; };
+		B7B3256F0BE44DB283AAFF37 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/fullbench.c */ = {isa = PBXBuildFile; fileRef = 5C25151383EF4107B4FCCB58 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/fullbench.c */; };
+		B884B85F9180499682C7BBE5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXBuildFile; fileRef = BCC1A1FE3E7E46EFBC3D4430 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */; };
+		BC77E5DC7E8B4B219D60D717 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXBuildFile; fileRef = CD1290CDA0E948AE9EE545A5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */; };
+		C68A90A4139845DDBA5F7FA1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */ = {isa = PBXBuildFile; fileRef = D12BF5ECA4B046029E52481C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */; };
+		C8B836F7BE96498BA55AD3A0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = E294F02CE68749DF81E6E927 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */; };
+		CF679A3DB62745FCB854629D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = C9043B3B76A44015A2D7CA48 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist */; };
+		D04EDE2DAE524C24A66EDF52 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 3AD2BEF5475441E889A91469 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist */; };
+		ED5CFAB8FF4A4E7FB087F13A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXBuildFile; fileRef = 14E2914C08914018A98A2D42 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
-		0D84C314B92847ACA7493E75 /* MinSizeRel */ = {
+		16C2B0C6E7EB4945BFF7A5F4 /* MinSizeRel */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = MinSizeRel;
 		};
-		346D13358FC046F095D2C2FB /* Release */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Release;
-		};
-		74D415487D4B4CE1AE6CD4CA /* Debug */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Debug;
-		};
-		ACF8D404C8DF44E2AD31C2E5 /* RelWithDebInfo */ = {
+		1A75DE4D305C48278CD57ED9 /* RelWithDebInfo */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = RelWithDebInfo;
 		};
+		3F6EFE487E934FDEB8C27821 /* Debug */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+		B7262EF48942451BA87847A1 /* Release */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Release;
+		};
 /* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
-		08B77899EE4C408B94EEA916 /* PBXContainerItemProxy */ = {
+		009EB99802D64A42A28099DA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 649CFD006D59484CA9F6A6D4 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = BC5C1F0A95E94DF5A4A48F24;
 			remoteInfo = ZERO_CHECK;
 		};
-		21132B77FBC64322AD444C36 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 649CFD006D59484CA9F6A6D4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C3F0282D58384AA59B09DCC1;
-			remoteInfo = fuzzer;
-		};
-		328D9B68555F4BB88B2316CF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 649CFD006D59484CA9F6A6D4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = BC5C1F0A95E94DF5A4A48F24;
-			remoteInfo = ZERO_CHECK;
-		};
-		3BB5D04AB61B46AA8A518774 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 649CFD006D59484CA9F6A6D4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D38D17A114BC46FBB4338E00;
-			remoteInfo = ALL_BUILD;
-		};
-		5C776232684F42688B5F870F /* PBXContainerItemProxy */ = {
+		0190CF9A418443BD899FF261 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 649CFD006D59484CA9F6A6D4 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = A0134DF4279B4872A703791F;
 			remoteInfo = paramgrill;
 		};
-		5F3C0E12512741469FA8E81E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 649CFD006D59484CA9F6A6D4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 01A4652BEE9D4FBDBCA00AC1;
-			remoteInfo = zstreamtest;
-		};
-		695AEBF1B50B46E68089CB7A /* PBXContainerItemProxy */ = {
+		0D9C6CD091F240049DCF120B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 649CFD006D59484CA9F6A6D4 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = BC5C1F0A95E94DF5A4A48F24;
 			remoteInfo = ZERO_CHECK;
 		};
-		6EA275C9F95E4D5FBCC1CCC5 /* PBXContainerItemProxy */ = {
+		8C62E17440284119A622AC22 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 649CFD006D59484CA9F6A6D4 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = BC5C1F0A95E94DF5A4A48F24;
 			remoteInfo = ZERO_CHECK;
 		};
-		78FB46A5425B447D99A0E414 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 649CFD006D59484CA9F6A6D4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = BC5C1F0A95E94DF5A4A48F24;
-			remoteInfo = ZERO_CHECK;
-		};
-		9A028D7B794F4A86BE4009FA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 649CFD006D59484CA9F6A6D4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 875E4D0DF5374C13885E82F6;
-			remoteInfo = datagen;
-		};
-		D2B2D75FD3294523B9AF9EDC /* PBXContainerItemProxy */ = {
+		969544D21A3748B7B544F26B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 649CFD006D59484CA9F6A6D4 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = CB40A8E721D04CCBA479B49F;
 			remoteInfo = fullbench;
 		};
-		E9C665D536734EF4823DE988 /* PBXContainerItemProxy */ = {
+		9B86F6580EF5455FA2568941 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 649CFD006D59484CA9F6A6D4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C3F0282D58384AA59B09DCC1;
+			remoteInfo = fuzzer;
+		};
+		9BE54B57F1CD4D9790769D21 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 649CFD006D59484CA9F6A6D4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D38D17A114BC46FBB4338E00;
+			remoteInfo = ALL_BUILD;
+		};
+		A5FC6C0CD6874EC2B0A6E710 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 649CFD006D59484CA9F6A6D4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 875E4D0DF5374C13885E82F6;
+			remoteInfo = datagen;
+		};
+		C4F0B26EFF9243C6900C4854 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 649CFD006D59484CA9F6A6D4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BC5C1F0A95E94DF5A4A48F24;
+			remoteInfo = ZERO_CHECK;
+		};
+		DF13349B760642A9B4C38CC9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 649CFD006D59484CA9F6A6D4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BC5C1F0A95E94DF5A4A48F24;
+			remoteInfo = ZERO_CHECK;
+		};
+		F761704C78484832922793BD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 649CFD006D59484CA9F6A6D4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 01A4652BEE9D4FBDBCA00AC1;
+			remoteInfo = zstreamtest;
+		};
+		FF0C1DD9E9C345CD82C6C55E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 649CFD006D59484CA9F6A6D4 /* Project object */;
 			proxyType = 1;
@@ -215,77 +215,77 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		061DC77A6AB44A7DAF51C8BD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/fullbench.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = fullbench.c; path = ../../../tests/fullbench.c; sourceTree = SOURCE_ROOT; };
-		0AE2C33960F94471988007FD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/seqgen.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = seqgen.c; path = ../../../tests/seqgen.c; sourceTree = SOURCE_ROOT; };
-		1B856497179B4ACB891C60D1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = util.c; path = ../../../programs/util.c; sourceTree = SOURCE_ROOT; };
-		1BB5493F3E274F65BBB25EB4 /* paramgrill */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = paramgrill; sourceTree = BUILT_PRODUCTS_DIR; };
-		1E1FBA703E1F41309DB9D49A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		2230E673E8BC4399A8C2AE9F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = timefn.c; path = ../../../programs/timefn.c; sourceTree = SOURCE_ROOT; };
-		27AB1FCCA1834647AA4B63D9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		2BF4B8C52162465F80E9C070 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		37D2D13610C449F68F6A2EAA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../../../../../../cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist; sourceTree = SOURCE_ROOT; };
-		4F56440CE77D432A902CA514 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		5464139C5B344F93A3316856 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = datagen.c; path = ../../../programs/datagen.c; sourceTree = SOURCE_ROOT; };
-		65FE4217120945D2B18234B5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = timefn.c; path = ../../../programs/timefn.c; sourceTree = SOURCE_ROOT; };
-		67DE043DEBFC4E01A35604CF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = timefn.c; path = ../../../programs/timefn.c; sourceTree = SOURCE_ROOT; };
-		6B80BA4E46CF4F399E0E1E36 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = datagen.c; path = ../../../programs/datagen.c; sourceTree = SOURCE_ROOT; };
-		6DFB00247D0F43AC82DB68B1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/zstreamtest.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstreamtest.c; path = ../../../tests/zstreamtest.c; sourceTree = SOURCE_ROOT; };
-		6E37F83B4BC247049DE5004F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = util.c; path = ../../../programs/util.c; sourceTree = SOURCE_ROOT; };
-		734C2313EFED4E489C55746F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchzstd.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = benchzstd.c; path = ../../../programs/benchzstd.c; sourceTree = SOURCE_ROOT; };
-		84FA7F2F40164AE3A9D9A6D4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/datagencli.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = datagencli.c; path = ../../../tests/datagencli.c; sourceTree = SOURCE_ROOT; };
-		8B8A67CC1B02471FA7FAEEE6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchzstd.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = benchzstd.c; path = ../../../programs/benchzstd.c; sourceTree = SOURCE_ROOT; };
-		8B8BBD17403D4E7CA355A3A1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = util.c; path = ../../../programs/util.c; sourceTree = SOURCE_ROOT; };
-		9619FF11AD4947068E83142E /* zstreamtest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = zstreamtest; sourceTree = BUILT_PRODUCTS_DIR; };
-		9ADA244F391E4F33A3DDA1AF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchfn.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = benchfn.c; path = ../../../programs/benchfn.c; sourceTree = SOURCE_ROOT; };
-		9D7575FEB15F4C5EB31FEFCC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../../../../../../cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist; sourceTree = SOURCE_ROOT; };
-		9F109B761F444EB288176228 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = util.c; path = ../../../programs/util.c; sourceTree = SOURCE_ROOT; };
-		A3181A6C3ADE405D8532F4EE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = datagen.c; path = ../../../programs/datagen.c; sourceTree = SOURCE_ROOT; };
-		AC4B94ACC0EA44FC90D69904 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/paramgrill.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = paramgrill.c; path = ../../../tests/paramgrill.c; sourceTree = SOURCE_ROOT; };
-		AF56B963CC194CF5A909A7AB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		AFDA5A6B6E8B47BD9EAD15EC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = datagen.c; path = ../../../programs/datagen.c; sourceTree = SOURCE_ROOT; };
-		B67BFDE1772F442393E2C0F9 /* fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
-		BB6F14FB51974E36ACA4051A /* fullbench */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = fullbench; sourceTree = BUILT_PRODUCTS_DIR; };
-		BE16BBF11F5D485181A5837A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchfn.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = benchfn.c; path = ../../../programs/benchfn.c; sourceTree = SOURCE_ROOT; };
-		C5ABFBCD85AF47E6B96E9D9C /* datagen */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = datagen; sourceTree = BUILT_PRODUCTS_DIR; };
-		CBFF8C6263954C4B8898C3CB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../../../../../../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist; sourceTree = SOURCE_ROOT; };
-		CCB9771478CD4F47A6F52DD9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../../../../../../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist; sourceTree = SOURCE_ROOT; };
-		EB834B2AEA024B2E93D0768F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = timefn.c; path = ../../../programs/timefn.c; sourceTree = SOURCE_ROOT; };
-		EE1E760CA354499DBE86C594 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/fuzzer.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = fuzzer.c; path = ../../../tests/fuzzer.c; sourceTree = SOURCE_ROOT; };
-		F23180F6C7CB449D8BF9B161 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		F2C7028B709744729C431693 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../../../../../../cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist; sourceTree = SOURCE_ROOT; };
-		F803F7A0B8D54F50B0BFB3C9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = datagen.c; path = ../../../programs/datagen.c; sourceTree = SOURCE_ROOT; };
+		019DD714E3FA4247B194A086 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/fuzzer.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = fuzzer.c; path = ../../../tests/fuzzer.c; sourceTree = SOURCE_ROOT; };
+		028462828C1843EA81486464 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = datagen.c; path = ../../../programs/datagen.c; sourceTree = SOURCE_ROOT; };
+		08B485BEBF1D4029B0EC4DD3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		0FB08057905845D5A661E8B1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../../../../../../cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist; sourceTree = SOURCE_ROOT; };
+		14E2914C08914018A98A2D42 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = timefn.c; path = ../../../programs/timefn.c; sourceTree = SOURCE_ROOT; };
+		17B3D91459544CC8A5313054 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = timefn.c; path = ../../../programs/timefn.c; sourceTree = SOURCE_ROOT; };
+		1FA6E194241A473EAF02FF42 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchfn.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = benchfn.c; path = ../../../programs/benchfn.c; sourceTree = SOURCE_ROOT; };
+		2B7817A6BE54428AB8491149 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/seqgen.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = seqgen.c; path = ../../../tests/seqgen.c; sourceTree = SOURCE_ROOT; };
+		2CE9ED584CA946B691C11137 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/paramgrill.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = paramgrill.c; path = ../../../tests/paramgrill.c; sourceTree = SOURCE_ROOT; };
+		3AD2BEF5475441E889A91469 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../../../../../../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist; sourceTree = SOURCE_ROOT; };
+		3AEAC23CAAF4409E8F8D0AD6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/zstreamtest.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstreamtest.c; path = ../../../tests/zstreamtest.c; sourceTree = SOURCE_ROOT; };
+		40455F8F08C24C4ABFAB87A7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = timefn.c; path = ../../../programs/timefn.c; sourceTree = SOURCE_ROOT; };
+		4CD8C8D0741447E98A123667 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../../../../../../cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist; sourceTree = SOURCE_ROOT; };
+		4EBC5F77B26048CD9FFAD591 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		51E71817BB1340CAA94C83E1 /* zstreamtest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = zstreamtest; sourceTree = BUILT_PRODUCTS_DIR; };
+		52D8AE45771F43069CAFA2AF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		56A97C9C2B7942A4819AB8A4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/datagencli.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = datagencli.c; path = ../../../tests/datagencli.c; sourceTree = SOURCE_ROOT; };
+		5A257E3331464564BD01E36C /* fullbench */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = fullbench; sourceTree = BUILT_PRODUCTS_DIR; };
+		5C21E74AEC7A4762B809F9C2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = datagen.c; path = ../../../programs/datagen.c; sourceTree = SOURCE_ROOT; };
+		5C25151383EF4107B4FCCB58 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/fullbench.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = fullbench.c; path = ../../../tests/fullbench.c; sourceTree = SOURCE_ROOT; };
+		77AB4B0ECCD34F15991C8165 /* fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
+		7846D5DEAD2848A4B908F24E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../../../../../../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist; sourceTree = SOURCE_ROOT; };
+		7C03B3DD1845498EB82B03D0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = datagen.c; path = ../../../programs/datagen.c; sourceTree = SOURCE_ROOT; };
+		90E439EFCEBF423797CDDC6A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = datagen.c; path = ../../../programs/datagen.c; sourceTree = SOURCE_ROOT; };
+		949D2EFA38B7424288943993 /* paramgrill */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = paramgrill; sourceTree = BUILT_PRODUCTS_DIR; };
+		9B213D3EE3A148929C83DC6F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		A4022C095914435285F59B13 /* datagen */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = datagen; sourceTree = BUILT_PRODUCTS_DIR; };
+		A88FC18CC761450DA3023DA0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchfn.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = benchfn.c; path = ../../../programs/benchfn.c; sourceTree = SOURCE_ROOT; };
+		ACF1D6D1547C4305A7054088 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = util.c; path = ../../../programs/util.c; sourceTree = SOURCE_ROOT; };
+		B424F7312B514B96AD5DD509 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchzstd.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = benchzstd.c; path = ../../../programs/benchzstd.c; sourceTree = SOURCE_ROOT; };
+		BCC1A1FE3E7E46EFBC3D4430 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = datagen.c; path = ../../../programs/datagen.c; sourceTree = SOURCE_ROOT; };
+		BEA457DA5C314754BEF9E26A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		C3177C545C764128A7719D0C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = util.c; path = ../../../programs/util.c; sourceTree = SOURCE_ROOT; };
+		C9043B3B76A44015A2D7CA48 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../../../../../../cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist; sourceTree = SOURCE_ROOT; };
+		CD1290CDA0E948AE9EE545A5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = timefn.c; path = ../../../programs/timefn.c; sourceTree = SOURCE_ROOT; };
+		D12BF5ECA4B046029E52481C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = util.c; path = ../../../programs/util.c; sourceTree = SOURCE_ROOT; };
+		D901A42FE80149E09800DC13 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = util.c; path = ../../../programs/util.c; sourceTree = SOURCE_ROOT; };
+		E294F02CE68749DF81E6E927 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		E2A2937E60FD44FAA810D0A0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchzstd.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = benchzstd.c; path = ../../../programs/benchzstd.c; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		0B5923312BF942B4A15827D4 /* Frameworks */ = {
+		167008122BA24BEAA71EF227 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		228DD179929F43139D962765 /* Frameworks */ = {
+		26BE5082126644FCBABE3A31 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		23E695DCE4DC4FEDBC9A8E2A /* Frameworks */ = {
+		308EF573040543EEB7E0A8E4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		E93A9E4BA64442E9A80C91EA /* Frameworks */ = {
+		854919F63257483286807355 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		FCA14D98653E4A189ED4C76F /* Frameworks */ = {
+		8F561681FD864C22B274C276 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -295,199 +295,199 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1960C22E996F4FED8FA9FAB4 /* Resources */ = {
+		0DE4EDB39306456D8CBCEDEC /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				CBFF8C6263954C4B8898C3CB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist */,
+				C9043B3B76A44015A2D7CA48 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
 		};
-		2284330B943C49A9B846C1F9 /* Source Files */ = {
-			isa = PBXGroup;
-			children = (
-				9ADA244F391E4F33A3DDA1AF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchfn.c */,
-				8B8A67CC1B02471FA7FAEEE6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchzstd.c */,
-				6B80BA4E46CF4F399E0E1E36 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */,
-				EB834B2AEA024B2E93D0768F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */,
-				9F109B761F444EB288176228 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */,
-				061DC77A6AB44A7DAF51C8BD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/fullbench.c */,
-			);
-			name = "Source Files";
-			sourceTree = "<group>";
-		};
-		30E5681459BF4A6AB8E81483 /* fullbench */ = {
-			isa = PBXGroup;
-			children = (
-				2284330B943C49A9B846C1F9 /* Source Files */,
-				1960C22E996F4FED8FA9FAB4 /* Resources */,
-				4F56440CE77D432A902CA514 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */,
-			);
-			name = fullbench;
-			sourceTree = "<group>";
-		};
-		3958A5F6463C4DBCA9D70CDD = {
-			isa = PBXGroup;
-			children = (
-				901D494136E5444DA9F57196 /* zstreamtest */,
-				D075660162B34333AE9F6E03 /* fuzzer */,
-				30E5681459BF4A6AB8E81483 /* fullbench */,
-				B3C8B5AEDA1049CFA98B51AE /* paramgrill */,
-				E8BCF31DC5DA408083F4D78D /* datagen */,
-				EA09938BFC134D9380C91211 /* ALL_BUILD */,
-				5BBB6E0CFE294A869C409621 /* Products */,
-				48ACAC4747E74797BEE6E786 /* Frameworks */,
-			);
-			sourceTree = "<group>";
-		};
-		48ACAC4747E74797BEE6E786 /* Frameworks */ = {
+		12383774405F4024AFBD03F2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		5898FEF611AB44D3B05F6AEA /* Source Files */ = {
+		1E7AFC944B10406DBF841E4E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				5464139C5B344F93A3316856 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */,
-				2230E673E8BC4399A8C2AE9F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */,
-				8B8BBD17403D4E7CA355A3A1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */,
-				0AE2C33960F94471988007FD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/seqgen.c */,
-				6DFB00247D0F43AC82DB68B1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/zstreamtest.c */,
-			);
-			name = "Source Files";
-			sourceTree = "<group>";
-		};
-		5BBB6E0CFE294A869C409621 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				C5ABFBCD85AF47E6B96E9D9C /* datagen */,
-				BB6F14FB51974E36ACA4051A /* fullbench */,
-				B67BFDE1772F442393E2C0F9 /* fuzzer */,
-				1BB5493F3E274F65BBB25EB4 /* paramgrill */,
-				9619FF11AD4947068E83142E /* zstreamtest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		5CEFB52B0CF4493CB4D705DA /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				F2C7028B709744729C431693 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist */,
+				0FB08057905845D5A661E8B1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
 		};
-		69068B480DD14EF19F0B2D08 /* Source Files */ = {
+		3B9476A4C2104B2CA54A13B2 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				BE16BBF11F5D485181A5837A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchfn.c */,
-				734C2313EFED4E489C55746F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchzstd.c */,
-				A3181A6C3ADE405D8532F4EE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */,
-				67DE043DEBFC4E01A35604CF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */,
-				6E37F83B4BC247049DE5004F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */,
-				AC4B94ACC0EA44FC90D69904 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/paramgrill.c */,
+				5C21E74AEC7A4762B809F9C2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */,
+				17B3D91459544CC8A5313054 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */,
+				ACF1D6D1547C4305A7054088 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */,
+				2B7817A6BE54428AB8491149 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/seqgen.c */,
+				3AEAC23CAAF4409E8F8D0AD6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/zstreamtest.c */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
 		};
-		901D494136E5444DA9F57196 /* zstreamtest */ = {
+		53C973B0FF3941E38C1D0258 /* zstreamtest */ = {
 			isa = PBXGroup;
 			children = (
-				5898FEF611AB44D3B05F6AEA /* Source Files */,
-				5CEFB52B0CF4493CB4D705DA /* Resources */,
-				AF56B963CC194CF5A909A7AB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */,
+				3B9476A4C2104B2CA54A13B2 /* Source Files */,
+				D569125E50B14AE698A0A645 /* Resources */,
+				E294F02CE68749DF81E6E927 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */,
 			);
 			name = zstreamtest;
 			sourceTree = "<group>";
 		};
-		9D2DB4CD1BC24F9BBF7818A1 /* CMake Rules */ = {
+		5762F0258EF3441894E0F1B2 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				1FA6E194241A473EAF02FF42 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchfn.c */,
+				B424F7312B514B96AD5DD509 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchzstd.c */,
+				028462828C1843EA81486464 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */,
+				14E2914C08914018A98A2D42 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */,
+				D901A42FE80149E09800DC13 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */,
+				5C25151383EF4107B4FCCB58 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/fullbench.c */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		5B0F8FE879864B45B67D2B7B /* CMake Rules */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = "CMake Rules";
 			sourceTree = "<group>";
 		};
-		9F95D0CE1A7843DFAFD7C45E /* Resources */ = {
+		5D6174BB106D4F40A92974AD /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				CCB9771478CD4F47A6F52DD9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist */,
+				3AD2BEF5475441E889A91469 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
 		};
-		B3C8B5AEDA1049CFA98B51AE /* paramgrill */ = {
+		68117B1B9F19474F806E9C1A /* fullbench */ = {
 			isa = PBXGroup;
 			children = (
-				69068B480DD14EF19F0B2D08 /* Source Files */,
-				D89C6F24CD8440EB8DA7192E /* Resources */,
-				2BF4B8C52162465F80E9C070 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */,
+				5762F0258EF3441894E0F1B2 /* Source Files */,
+				F7595635C2B5471DA4A1801F /* Resources */,
+				9B213D3EE3A148929C83DC6F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */,
 			);
-			name = paramgrill;
+			name = fullbench;
 			sourceTree = "<group>";
 		};
-		BDC36BFAAA0B47159C7A1BCC /* Source Files */ = {
+		89C525E115C14AD7A7A62E98 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				AFDA5A6B6E8B47BD9EAD15EC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */,
-				84FA7F2F40164AE3A9D9A6D4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/datagencli.c */,
+				90E439EFCEBF423797CDDC6A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */,
+				56A97C9C2B7942A4819AB8A4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/datagencli.c */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
 		};
-		D075660162B34333AE9F6E03 /* fuzzer */ = {
+		8D006E85C9FD4FBBB9AE3778 /* fuzzer */ = {
 			isa = PBXGroup;
 			children = (
-				D8A2BC8F0D354D42AB2BBD48 /* Source Files */,
-				9F95D0CE1A7843DFAFD7C45E /* Resources */,
-				1E1FBA703E1F41309DB9D49A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */,
+				E309C26D7D8C46FF964FBDCC /* Source Files */,
+				5D6174BB106D4F40A92974AD /* Resources */,
+				08B485BEBF1D4029B0EC4DD3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */,
 			);
 			name = fuzzer;
 			sourceTree = "<group>";
 		};
-		D89C6F24CD8440EB8DA7192E /* Resources */ = {
+		915308FA3E2C446C86DD15E0 = {
 			isa = PBXGroup;
 			children = (
-				9D7575FEB15F4C5EB31FEFCC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist */,
+				53C973B0FF3941E38C1D0258 /* zstreamtest */,
+				8D006E85C9FD4FBBB9AE3778 /* fuzzer */,
+				68117B1B9F19474F806E9C1A /* fullbench */,
+				C0C3E14C07F14BDE94B1AEA7 /* paramgrill */,
+				EEB9E59C8A814291BE4C25C2 /* datagen */,
+				B39E28D711154173B65B7D9C /* ALL_BUILD */,
+				C57992C185FD4A67BB273CE6 /* Products */,
+				12383774405F4024AFBD03F2 /* Frameworks */,
 			);
-			name = Resources;
 			sourceTree = "<group>";
 		};
-		D8A2BC8F0D354D42AB2BBD48 /* Source Files */ = {
+		B39E28D711154173B65B7D9C /* ALL_BUILD */ = {
 			isa = PBXGroup;
 			children = (
-				F803F7A0B8D54F50B0BFB3C9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */,
-				65FE4217120945D2B18234B5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */,
-				1B856497179B4ACB891C60D1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */,
-				EE1E760CA354499DBE86C594 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/fuzzer.c */,
-			);
-			name = "Source Files";
-			sourceTree = "<group>";
-		};
-		E8BCF31DC5DA408083F4D78D /* datagen */ = {
-			isa = PBXGroup;
-			children = (
-				BDC36BFAAA0B47159C7A1BCC /* Source Files */,
-				FE47FE5F25584A5592F8753B /* Resources */,
-				27AB1FCCA1834647AA4B63D9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */,
-			);
-			name = datagen;
-			sourceTree = "<group>";
-		};
-		EA09938BFC134D9380C91211 /* ALL_BUILD */ = {
-			isa = PBXGroup;
-			children = (
-				9D2DB4CD1BC24F9BBF7818A1 /* CMake Rules */,
-				F23180F6C7CB449D8BF9B161 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */,
+				5B0F8FE879864B45B67D2B7B /* CMake Rules */,
+				BEA457DA5C314754BEF9E26A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */,
 			);
 			name = ALL_BUILD;
 			sourceTree = "<group>";
 		};
-		FE47FE5F25584A5592F8753B /* Resources */ = {
+		C0C3E14C07F14BDE94B1AEA7 /* paramgrill */ = {
 			isa = PBXGroup;
 			children = (
-				37D2D13610C449F68F6A2EAA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist */,
+				C5744206C8814EC5822CB050 /* Source Files */,
+				1E7AFC944B10406DBF841E4E /* Resources */,
+				4EBC5F77B26048CD9FFAD591 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */,
+			);
+			name = paramgrill;
+			sourceTree = "<group>";
+		};
+		C5744206C8814EC5822CB050 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				A88FC18CC761450DA3023DA0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchfn.c */,
+				E2A2937E60FD44FAA810D0A0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchzstd.c */,
+				7C03B3DD1845498EB82B03D0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */,
+				CD1290CDA0E948AE9EE545A5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */,
+				D12BF5ECA4B046029E52481C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */,
+				2CE9ED584CA946B691C11137 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/paramgrill.c */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		C57992C185FD4A67BB273CE6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A4022C095914435285F59B13 /* datagen */,
+				5A257E3331464564BD01E36C /* fullbench */,
+				77AB4B0ECCD34F15991C8165 /* fuzzer */,
+				949D2EFA38B7424288943993 /* paramgrill */,
+				51E71817BB1340CAA94C83E1 /* zstreamtest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D569125E50B14AE698A0A645 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				4CD8C8D0741447E98A123667 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		E309C26D7D8C46FF964FBDCC /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				BCC1A1FE3E7E46EFBC3D4430 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */,
+				40455F8F08C24C4ABFAB87A7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */,
+				C3177C545C764128A7719D0C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */,
+				019DD714E3FA4247B194A086 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/fuzzer.c */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		EEB9E59C8A814291BE4C25C2 /* datagen */ = {
+			isa = PBXGroup;
+			children = (
+				89C525E115C14AD7A7A62E98 /* Source Files */,
+				0DE4EDB39306456D8CBCEDEC /* Resources */,
+				52D8AE45771F43069CAFA2AF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */,
+			);
+			name = datagen;
+			sourceTree = "<group>";
+		};
+		F7595635C2B5471DA4A1801F /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				7846D5DEAD2848A4B908F24E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -497,87 +497,87 @@
 /* Begin PBXNativeTarget section */
 		01A4652BEE9D4FBDBCA00AC1 /* zstreamtest */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 045695F8A35E4E43BC01B00C /* Build configuration list for PBXNativeTarget "zstreamtest" */;
+			buildConfigurationList = 20096FA11FBD4A5EA0C100F2 /* Build configuration list for PBXNativeTarget "zstreamtest" */;
 			buildPhases = (
-				8FE88F21DD6D46DFB66639FF /* Sources */,
-				23E695DCE4DC4FEDBC9A8E2A /* Frameworks */,
+				57CCA79FBF4442AA9A9EBB34 /* Sources */,
+				308EF573040543EEB7E0A8E4 /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				9F395107685C4C3DB98A460C /* PBXTargetDependency */,
+				1CEA5438FFA9408E93A67B74 /* PBXTargetDependency */,
 			);
 			name = zstreamtest;
 			productName = zstreamtest;
-			productReference = 9619FF11AD4947068E83142E /* zstreamtest */;
+			productReference = 51E71817BB1340CAA94C83E1 /* zstreamtest */;
 			productType = "com.apple.product-type.application";
 		};
 		875E4D0DF5374C13885E82F6 /* datagen */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EE507F1B0874463D9A03F495 /* Build configuration list for PBXNativeTarget "datagen" */;
+			buildConfigurationList = 55B2D708F8D54E8C8644768C /* Build configuration list for PBXNativeTarget "datagen" */;
 			buildPhases = (
-				08574FDB92FC464C819E454F /* Sources */,
-				0B5923312BF942B4A15827D4 /* Frameworks */,
+				B3BA1FA92BCA4D8180B9EB7A /* Sources */,
+				26BE5082126644FCBABE3A31 /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				69B72C18C71F491ABD953B99 /* PBXTargetDependency */,
+				37AC5CFD9A554AD48C53F1C0 /* PBXTargetDependency */,
 			);
 			name = datagen;
 			productName = datagen;
-			productReference = C5ABFBCD85AF47E6B96E9D9C /* datagen */;
+			productReference = A4022C095914435285F59B13 /* datagen */;
 			productType = "com.apple.product-type.application";
 		};
 		A0134DF4279B4872A703791F /* paramgrill */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5CBF84B72290451DAEC8B764 /* Build configuration list for PBXNativeTarget "paramgrill" */;
+			buildConfigurationList = DB0FED8EC56A43F9B62E90C2 /* Build configuration list for PBXNativeTarget "paramgrill" */;
 			buildPhases = (
-				6C15DDEC19DC478BA3449064 /* Sources */,
-				FCA14D98653E4A189ED4C76F /* Frameworks */,
+				F4C6959603904E9FBDAC2780 /* Sources */,
+				854919F63257483286807355 /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				EC568161B8FA45739B59BA8A /* PBXTargetDependency */,
+				A5D68219D97D4403BB85F530 /* PBXTargetDependency */,
 			);
 			name = paramgrill;
 			productName = paramgrill;
-			productReference = 1BB5493F3E274F65BBB25EB4 /* paramgrill */;
+			productReference = 949D2EFA38B7424288943993 /* paramgrill */;
 			productType = "com.apple.product-type.application";
 		};
 		C3F0282D58384AA59B09DCC1 /* fuzzer */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0F1E693A5490462DB9B2B0B4 /* Build configuration list for PBXNativeTarget "fuzzer" */;
+			buildConfigurationList = BE8E5A1F096742DF83C2A391 /* Build configuration list for PBXNativeTarget "fuzzer" */;
 			buildPhases = (
-				59DCBC6A8418478CAA0E880A /* Sources */,
-				228DD179929F43139D962765 /* Frameworks */,
+				4569692CF4B74FD2B770374F /* Sources */,
+				167008122BA24BEAA71EF227 /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				D0AD3B21F5D2488B9319408E /* PBXTargetDependency */,
+				E50EF7C022184343AEF01324 /* PBXTargetDependency */,
 			);
 			name = fuzzer;
 			productName = fuzzer;
-			productReference = B67BFDE1772F442393E2C0F9 /* fuzzer */;
+			productReference = 77AB4B0ECCD34F15991C8165 /* fuzzer */;
 			productType = "com.apple.product-type.application";
 		};
 		CB40A8E721D04CCBA479B49F /* fullbench */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BB09E52FA7F64A7BAADC6791 /* Build configuration list for PBXNativeTarget "fullbench" */;
+			buildConfigurationList = F1C1C0AECA6648C7BA0A92C8 /* Build configuration list for PBXNativeTarget "fullbench" */;
 			buildPhases = (
-				112D95E5116F4EDFA6E5468C /* Sources */,
-				E93A9E4BA64442E9A80C91EA /* Frameworks */,
+				D598689C6FAC41CFB81ED6D9 /* Sources */,
+				8F561681FD864C22B274C276 /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				351EBBB7AA744BDDAA4F082C /* PBXTargetDependency */,
+				A47CB8EB208B48FE977F0A82 /* PBXTargetDependency */,
 			);
 			name = fullbench;
 			productName = fullbench;
-			productReference = BB6F14FB51974E36ACA4051A /* fullbench */;
+			productReference = 5A257E3331464564BD01E36C /* fullbench */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -589,18 +589,18 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1300;
 			};
-			buildConfigurationList = 0F4E504D071B4CEC88847606 /* Build configuration list for PBXProject "tests" */;
+			buildConfigurationList = E9C5C8F720874D45BFA4D880 /* Build configuration list for PBXProject "tests" */;
 			buildSettings = {
 			};
 			buildStyles = (
-				74D415487D4B4CE1AE6CD4CA /* Debug */,
-				346D13358FC046F095D2C2FB /* Release */,
-				0D84C314B92847ACA7493E75 /* MinSizeRel */,
-				ACF8D404C8DF44E2AD31C2E5 /* RelWithDebInfo */,
+				3F6EFE487E934FDEB8C27821 /* Debug */,
+				B7262EF48942451BA87847A1 /* Release */,
+				16C2B0C6E7EB4945BFF7A5F4 /* MinSizeRel */,
+				1A75DE4D305C48278CD57ED9 /* RelWithDebInfo */,
 			);
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
-			mainGroup = 3958A5F6463C4DBCA9D70CDD;
+			mainGroup = 915308FA3E2C446C86DD15E0;
 			projectDirPath = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests;
 			projectRoot = "";
 			targets = (
@@ -809,265 +809,131 @@ exit 0";
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		08574FDB92FC464C819E454F /* Sources */ = {
+		4569692CF4B74FD2B770374F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ADF455C8DA604D0592E36159 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */,
-				7707BACE6BFD43EA8F04B81C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/datagencli.c */,
+				B884B85F9180499682C7BBE5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */,
+				9B6EA88C0A7147ABA1E30662 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */,
+				26E908C9D51744AAAEBA9E02 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */,
+				3918AD7491F0436F9A0C52FF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/fuzzer.c */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		112D95E5116F4EDFA6E5468C /* Sources */ = {
+		57CCA79FBF4442AA9A9EBB34 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				58FB6768011040398EF68FFC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchfn.c */,
-				4DDF3B8C80F94FF0A20DAA68 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchzstd.c */,
-				7CF757BD7A2F4C6F8EB3B3CB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */,
-				A1246414F93E4A97A2455C98 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */,
-				602F1406852F4136BBDC18C6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */,
-				C4F8F6E4810F443DBD102A9A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/fullbench.c */,
+				5C77A4E8461E4F5FB2F31663 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */,
+				90DF15EF68FD40DCB463D810 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */,
+				3122F105A13D439C94D9E610 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */,
+				10F84917F1394A12AFBD3439 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/seqgen.c */,
+				B2B2293DCE5E4E2B880519A9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/zstreamtest.c */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		59DCBC6A8418478CAA0E880A /* Sources */ = {
+		B3BA1FA92BCA4D8180B9EB7A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C77F13AB593C4412A14D14DA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */,
-				1DC69C5F6E47452DA48AFE6B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */,
-				6AE45977EB1F40309A89D9E4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */,
-				91B3E7990CAF411A8BBE8A85 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/fuzzer.c */,
+				9243A5E8307D479DB9BD5D09 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */,
+				3CBB2C23EE4641E7A61D79EC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/datagencli.c */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		6C15DDEC19DC478BA3449064 /* Sources */ = {
+		D598689C6FAC41CFB81ED6D9 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				619F2AD7488D4A9F9AD44E74 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchfn.c */,
-				65261776B5AB429FAD19C463 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchzstd.c */,
-				2EB0F9C00D084545A983E5E5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */,
-				B71763EE976F47F7A358D876 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */,
-				C2E706FF52074E74A855EC43 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */,
-				DB50DC482A05436081654297 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/paramgrill.c */,
+				AA5062FAB01E4F42AB6EF939 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchfn.c */,
+				64A70A5D36814EBFBEF17407 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchzstd.c */,
+				55A9F2E3E0234CF9B9D02D94 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */,
+				ED5CFAB8FF4A4E7FB087F13A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */,
+				7E333105B5254CC2963149A9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */,
+				B7B3256F0BE44DB283AAFF37 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/fullbench.c */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		8FE88F21DD6D46DFB66639FF /* Sources */ = {
+		F4C6959603904E9FBDAC2780 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BBB78502DF1F41D7BB1DA6E2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */,
-				01FF62A962DF409EBB6CD01C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */,
-				6942CD96A8074668A0FF1C57 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */,
-				B6246E39135145049F438A35 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/seqgen.c */,
-				25A8A7ADF6FC4B11BD972876 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/zstreamtest.c */,
+				3E5D38C464364E71BC5A08F4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchfn.c */,
+				87B08C02D32A4CF2BD32CC9B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/benchzstd.c */,
+				0489EF6BD74D48F5934F385B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/datagen.c */,
+				BC77E5DC7E8B4B219D60D717 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/timefn.c */,
+				C68A90A4139845DDBA5F7FA1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/programs/util.c */,
+				05D7955D51034D9CBB202DAF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/tests/paramgrill.c */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		13B8484E83F940C49FC98849 /* PBXTargetDependency */ = {
+		104F1B9694654B09A9066E02 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 875E4D0DF5374C13885E82F6 /* datagen */;
-			targetProxy = 9A028D7B794F4A86BE4009FA /* PBXContainerItemProxy */;
+			targetProxy = A5FC6C0CD6874EC2B0A6E710 /* PBXContainerItemProxy */;
 		};
-		13ED83D47BB5488EBFAC44BC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C3F0282D58384AA59B09DCC1 /* fuzzer */;
-			targetProxy = 21132B77FBC64322AD444C36 /* PBXContainerItemProxy */;
-		};
-		351EBBB7AA744BDDAA4F082C /* PBXTargetDependency */ = {
+		1CEA5438FFA9408E93A67B74 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = BC5C1F0A95E94DF5A4A48F24 /* ZERO_CHECK */;
-			targetProxy = 328D9B68555F4BB88B2316CF /* PBXContainerItemProxy */;
+			targetProxy = 009EB99802D64A42A28099DA /* PBXContainerItemProxy */;
 		};
-		3E4C528FC4664286808EC065 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = A0134DF4279B4872A703791F /* paramgrill */;
-			targetProxy = 5C776232684F42688B5F870F /* PBXContainerItemProxy */;
-		};
-		5CC21B2EE46C417EBA61BF9F /* PBXTargetDependency */ = {
+		37AC5CFD9A554AD48C53F1C0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = BC5C1F0A95E94DF5A4A48F24 /* ZERO_CHECK */;
-			targetProxy = 78FB46A5425B447D99A0E414 /* PBXContainerItemProxy */;
+			targetProxy = 0D9C6CD091F240049DCF120B /* PBXContainerItemProxy */;
 		};
-		5CDBCB14803744768F68349D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 01A4652BEE9D4FBDBCA00AC1 /* zstreamtest */;
-			targetProxy = 5F3C0E12512741469FA8E81E /* PBXContainerItemProxy */;
-		};
-		654F9017882E4AB388409A7C /* PBXTargetDependency */ = {
+		88D9411537594FE282EDFAB6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = D38D17A114BC46FBB4338E00 /* ALL_BUILD */;
-			targetProxy = 3BB5D04AB61B46AA8A518774 /* PBXContainerItemProxy */;
+			targetProxy = 9BE54B57F1CD4D9790769D21 /* PBXContainerItemProxy */;
 		};
-		69B72C18C71F491ABD953B99 /* PBXTargetDependency */ = {
+		A47CB8EB208B48FE977F0A82 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = BC5C1F0A95E94DF5A4A48F24 /* ZERO_CHECK */;
-			targetProxy = 08B77899EE4C408B94EEA916 /* PBXContainerItemProxy */;
+			targetProxy = 8C62E17440284119A622AC22 /* PBXContainerItemProxy */;
 		};
-		9F395107685C4C3DB98A460C /* PBXTargetDependency */ = {
+		A5D68219D97D4403BB85F530 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = BC5C1F0A95E94DF5A4A48F24 /* ZERO_CHECK */;
-			targetProxy = E9C665D536734EF4823DE988 /* PBXContainerItemProxy */;
+			targetProxy = FF0C1DD9E9C345CD82C6C55E /* PBXContainerItemProxy */;
 		};
-		D0AD3B21F5D2488B9319408E /* PBXTargetDependency */ = {
+		B8036F028EF3489CB79052FF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 01A4652BEE9D4FBDBCA00AC1 /* zstreamtest */;
+			targetProxy = F761704C78484832922793BD /* PBXContainerItemProxy */;
+		};
+		C02CCC32F6AA4D4FAFEA49EB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = BC5C1F0A95E94DF5A4A48F24 /* ZERO_CHECK */;
-			targetProxy = 695AEBF1B50B46E68089CB7A /* PBXContainerItemProxy */;
+			targetProxy = DF13349B760642A9B4C38CC9 /* PBXContainerItemProxy */;
 		};
-		EC568161B8FA45739B59BA8A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = BC5C1F0A95E94DF5A4A48F24 /* ZERO_CHECK */;
-			targetProxy = 6EA275C9F95E4D5FBCC1CCC5 /* PBXContainerItemProxy */;
-		};
-		FA5872EC1D5D492CACE26A9E /* PBXTargetDependency */ = {
+		C667AC41727D40B7BF87969D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = CB40A8E721D04CCBA479B49F /* fullbench */;
-			targetProxy = D2B2D75FD3294523B9AF9EDC /* PBXContainerItemProxy */;
+			targetProxy = 969544D21A3748B7B544F26B /* PBXContainerItemProxy */;
+		};
+		DEF08D14E93840DB98F226F7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C3F0282D58384AA59B09DCC1 /* fuzzer */;
+			targetProxy = 9B86F6580EF5455FA2568941 /* PBXContainerItemProxy */;
+		};
+		E000B61D912D47C585E1C66C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A0134DF4279B4872A703791F /* paramgrill */;
+			targetProxy = 0190CF9A418443BD899FF261 /* PBXContainerItemProxy */;
+		};
+		E50EF7C022184343AEF01324 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BC5C1F0A95E94DF5A4A48F24 /* ZERO_CHECK */;
+			targetProxy = C4F0B26EFF9243C6900C4854 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		021141DA0696452290CCF6DA /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (armv7,arm64);
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../programs,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/compress,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes        -DNDEBUG        -D_NDEBUG -fPIC -fno-strict-aliasing   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/RelWithDebInfo/libzstd.a,"-lm","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = paramgrill;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		10C5D337F2314E56A50A2AE1 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (armv7,arm64);
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../programs,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/compress,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes       -D_DEBUG -fPIC -fno-strict-aliasing   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Debug/libzstd.a,"-lm","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = paramgrill;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		1DD9EA110748411998AD002C /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		27CBBFE4FC7C402491B4A286 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		2ED3693C71F94B48B91ACA43 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		3163911A361B447096C1438A /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		35C47D81455C4B8390DC91D3 /* Release */ = {
+		009312D7D697430495958FEA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (armv7,arm64);
@@ -1080,13 +946,13 @@ exit 0";
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../programs,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/compress,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist;
+				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist;
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
+				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
 				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Release/libzstd.a,"$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = datagen;
+				PRODUCT_NAME = fullbench;
 				SECTORDER_FLAGS = "";
 				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
 				USE_HEADERMAP = NO;
@@ -1094,20 +960,7 @@ exit 0";
 			};
 			name = Release;
 		};
-		37EB9B3B7BFC411CACB2D2BC /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "armv7 arm64";
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/build;
-			};
-			name = Debug;
-		};
-		3AA3CF55EA7D4463AD6D7648 /* MinSizeRel */ = {
+		100F4A4BA7BE4B86A0FB0F8B /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (armv7,arm64);
@@ -1134,24 +987,98 @@ exit 0";
 			};
 			name = MinSizeRel;
 		};
-		4054A67179E34EA5B1F2C66B /* RelWithDebInfo */ = {
+		106ECE84AADF422585BC48A9 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		2594EE8729584B899C03E225 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (armv7,arm64);
 				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = "";
 				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../programs,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/compress,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Release/libzstd.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = fuzzer;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		2E1A9A8344FD453DB0A795C0 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (armv7,arm64);
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../programs,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/compress,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/MinSizeRel/libzstd.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = datagen;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		3362D99AF41248668BECCB8E /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (armv7,arm64);
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../programs,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/compress,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
 				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist;
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes        -DNDEBUG        -D_NDEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/RelWithDebInfo/libzstd.a,"$(inherited)");
+				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/MinSizeRel/libzstd.a,"$(inherited)");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = fullbench;
 				SECTORDER_FLAGS = "";
@@ -1159,9 +1086,9 @@ exit 0";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = RelWithDebInfo;
+			name = MinSizeRel;
 		};
-		436EF5CDDE1F47EAB354E3DA /* Debug */ = {
+		3E4B792274E1456B9D7543E5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1181,88 +1108,20 @@ exit 0";
 			};
 			name = Debug;
 		};
-		44C7C0ADAD1944708B1DD8E9 /* RelWithDebInfo */ = {
+		452C9B80F68A47DD9282877A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (armv7,arm64);
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../programs,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/compress,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes        -DNDEBUG        -D_NDEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/RelWithDebInfo/libzstd.a,"$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = fuzzer;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		4547508832274085B1CEAD15 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (armv7,arm64);
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../programs,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/compress,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes       -D_DEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Debug/libzstd.a,"$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = fuzzer;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
+				ARCHS = "armv7 arm64";
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/build;
 			};
 			name = Debug;
 		};
-		4A857B15CC1D4BCFA1EBF565 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (armv7,arm64);
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../programs,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/compress,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes       -D_DEBUG -fPIC -fno-strict-aliasing   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Debug/libzstd.a,"$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = datagen;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		4C133DA4F1AD4211A3CE400E /* Debug */ = {
+		4DC7AEF7D0A548D389CE68E6 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1280,36 +1139,9 @@ exit 0";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = Debug;
-		};
-		4D13551349A248A1928041C5 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (armv7,arm64);
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../programs,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/compress,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes        -DNDEBUG        -D_NDEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/RelWithDebInfo/libzstd.a,"$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = zstreamtest;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
 			name = RelWithDebInfo;
 		};
-		5704E78E88224F2F9BC75884 /* MinSizeRel */ = {
+		4F8D1E4BD96544BBA5AC1348 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (armv7,arm64);
@@ -1322,13 +1154,13 @@ exit 0";
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../programs,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/compress,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist;
+				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist;
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
 				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/MinSizeRel/libzstd.a,"$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = zstreamtest;
+				PRODUCT_NAME = fuzzer;
 				SECTORDER_FLAGS = "";
 				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
 				USE_HEADERMAP = NO;
@@ -1336,7 +1168,7 @@ exit 0";
 			};
 			name = MinSizeRel;
 		};
-		5AFE6EE106994D6A80415BD1 /* RelWithDebInfo */ = {
+		516545C4B04E460D9A8E18F8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1354,89 +1186,36 @@ exit 0";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = RelWithDebInfo;
-		};
-		631E1995F7DF44EAAE707B68 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "armv7 arm64";
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/build;
-			};
-			name = RelWithDebInfo;
-		};
-		645ADD40A0C44A56B5D59DE7 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "armv7 arm64";
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/build;
-			};
 			name = Release;
 		};
-		663B5436C153486BAE174054 /* Release */ = {
+		534C6969B1E84FE6807EE8C9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (armv7,arm64);
 				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = "";
 				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../programs,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/compress,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist;
+				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist;
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Release/libzstd.a,"-lm","$(inherited)");
+				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes       -D_DEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Debug/libzstd.a,"$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = paramgrill;
+				PRODUCT_NAME = fullbench;
 				SECTORDER_FLAGS = "";
 				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = Release;
+			name = Debug;
 		};
-		6A1F317800D343FEB53302BB /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (armv7,arm64);
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../programs,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/compress,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Release/libzstd.a,"$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = zstreamtest;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		7332A2B257BD490FA23C3C18 /* MinSizeRel */ = {
+		5F018EEBDE9B447C83F5F368 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1448,15 +1227,15 @@ exit 0";
 				INSTALL_PATH = "";
 				OTHER_LDFLAGS = ("","$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
+				PRODUCT_NAME = RUN_TESTS;
 				SECTORDER_FLAGS = "";
 				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = MinSizeRel;
+			name = RelWithDebInfo;
 		};
-		756470F5049E44958652CEC5 /* RelWithDebInfo */ = {
+		5FE19543C34248ED83DDB09B /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (armv7,arm64);
@@ -1483,34 +1262,7 @@ exit 0";
 			};
 			name = RelWithDebInfo;
 		};
-		78BAF55C038E40A295995CA3 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (armv7,arm64);
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../programs,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/compress,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes       -D_DEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Debug/libzstd.a,"$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = fullbench;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		7BD0A06877F142EB84792612 /* Release */ = {
+		65FB8CC1CA1D4AEEAC22547B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1522,7 +1274,7 @@ exit 0";
 				INSTALL_PATH = "";
 				OTHER_LDFLAGS = ("","$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
+				PRODUCT_NAME = ALL_BUILD;
 				SECTORDER_FLAGS = "";
 				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
 				USE_HEADERMAP = NO;
@@ -1530,27 +1282,7 @@ exit 0";
 			};
 			name = Release;
 		};
-		859A1985E8CA4AACB31DBAAA /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		8B20E52D7BF94FC290ED3B66 /* RelWithDebInfo */ = {
+		67E69F3DBD154A5584F57B62 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1570,81 +1302,34 @@ exit 0";
 			};
 			name = RelWithDebInfo;
 		};
-		8BC5FB0BDC104F30A3BB1A9A /* Release */ = {
+		729581DF766C477AA6E6A4B6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (armv7,arm64);
 				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = "";
 				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../programs,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/compress,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Release/libzstd.a,"$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = fullbench;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		9A469836B2CC40A092368A50 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (armv7,arm64);
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../programs,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/compress,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/MinSizeRel/libzstd.a,"$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = fuzzer;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		A4D1C5955EEF4B13AB773F7F /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../programs,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/compress,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist;
 				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes       -D_DEBUG -fPIC -fno-strict-aliasing   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Debug/libzstd.a,"-lm","$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
+				PRODUCT_NAME = paramgrill;
 				SECTORDER_FLAGS = "";
 				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = RelWithDebInfo;
+			name = Debug;
 		};
-		A7A8592F32CD4822AD5D9DB9 /* MinSizeRel */ = {
+		76EF24F7A65D40D294014320 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1662,9 +1347,9 @@ exit 0";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = MinSizeRel;
+			name = Release;
 		};
-		A7E8D261544E4F7E87C102B7 /* MinSizeRel */ = {
+		7A8969539BC841D682B4A729 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (armv7,arm64);
@@ -1677,13 +1362,13 @@ exit 0";
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../programs,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/compress,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist;
+				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist;
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
+				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
 				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/MinSizeRel/libzstd.a,"$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = datagen;
+				PRODUCT_NAME = zstreamtest;
 				SECTORDER_FLAGS = "";
 				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
 				USE_HEADERMAP = NO;
@@ -1691,7 +1376,155 @@ exit 0";
 			};
 			name = MinSizeRel;
 		};
-		B459818DDEAC4680BAA48A4A /* MinSizeRel */ = {
+		80BE9776C3DD45D692FE5412 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (armv7,arm64);
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../programs,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/compress,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Release/libzstd.a,"-lm","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = paramgrill;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		82B1C776BA4141AA9369C366 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		86AAFE45D4A24D9D86F2F53F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (armv7,arm64);
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../programs,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/compress,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes       -D_DEBUG -fPIC -fno-strict-aliasing   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Debug/libzstd.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = datagen;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		8AAC0A3D490C4904A270ECDB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (armv7,arm64);
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../programs,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/compress,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Release/libzstd.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = zstreamtest;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		8B0942EB48634863B313ECE1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		8E62B1A0835C4274AF7AD49B /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (armv7,arm64);
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../programs,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/compress,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes        -DNDEBUG        -D_NDEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/RelWithDebInfo/libzstd.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = fuzzer;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		A0E1516B13F74378A38D40F0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "armv7 arm64";
@@ -1702,36 +1535,9 @@ exit 0";
 				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
 				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/build;
 			};
-			name = MinSizeRel;
+			name = Release;
 		};
-		C2DDACB9DC2C46A1A8D74944 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (armv7,arm64);
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../programs,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/compress,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/MinSizeRel/libzstd.a,"$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = fullbench;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		C89C09C7C11D474E8C76AD3C /* Debug */ = {
+		A46A111BB0D842A1B375C74F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1751,24 +1557,24 @@ exit 0";
 			};
 			name = Debug;
 		};
-		D9F65DD3C85B4EB0B19EA8E3 /* Release */ = {
+		AA259C1115C14EB1AAFED6D6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (armv7,arm64);
 				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = "";
 				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../programs,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/compress,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
 				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist;
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Release/libzstd.a,"$(inherited)");
+				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes       -D_DEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Debug/libzstd.a,"$(inherited)");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = fuzzer;
 				SECTORDER_FLAGS = "";
@@ -1776,9 +1582,76 @@ exit 0";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
+			name = Debug;
+		};
+		AA2E6F9D43B849508FEDEB7C /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (armv7,arm64);
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../programs,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/compress,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes        -DNDEBUG        -D_NDEBUG -fPIC -fno-strict-aliasing   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/RelWithDebInfo/libzstd.a,"-lm","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = paramgrill;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		AAC870C1B2E1483A9F8D68E0 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		ADEBBF88138548EAAEEBC7EF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
 			name = Release;
 		};
-		EE832D7C62D445429E9EC1C3 /* MinSizeRel */ = {
+		B3D488A5EF77449592F042A5 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1798,7 +1671,114 @@ exit 0";
 			};
 			name = MinSizeRel;
 		};
-		F59A5443A89C44448202D0CD /* Debug */ = {
+		BCD3D6EF6C4244E29C55FC1F /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (armv7,arm64);
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../programs,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/compress,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes        -DNDEBUG        -D_NDEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/RelWithDebInfo/libzstd.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = zstreamtest;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		D0EF4906DA904C9DBA25533A /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "armv7 arm64";
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/build;
+			};
+			name = MinSizeRel;
+		};
+		D75A2F106B14481385152FFA /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (armv7,arm64);
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../programs,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/compress,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes        -DNDEBUG        -D_NDEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/RelWithDebInfo/libzstd.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = fullbench;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		EBB8BE07D7F34D048D7B06DF /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		F064EC33984E45C58CB8CE10 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		F245B8BC7EC546EDB5A9729D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (armv7,arm64);
@@ -1825,19 +1805,26 @@ exit 0";
 			};
 			name = Debug;
 		};
-		FF896A1DEFD2491BA4682552 /* Release */ = {
+		F26779048B9D45EEA8628C9D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (armv7,arm64);
 				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../tests,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../programs,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/compress,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist;
 				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Release/libzstd.a,"$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
+				PRODUCT_NAME = datagen;
 				SECTORDER_FLAGS = "";
 				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests;
 				USE_HEADERMAP = NO;
@@ -1845,115 +1832,128 @@ exit 0";
 			};
 			name = Release;
 		};
+		F5664E3892BF4D0E8BF12D89 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "armv7 arm64";
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/build;
+			};
+			name = RelWithDebInfo;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		045695F8A35E4E43BC01B00C /* Build configuration list for PBXNativeTarget "zstreamtest" */ = {
+		20096FA11FBD4A5EA0C100F2 /* Build configuration list for PBXNativeTarget "zstreamtest" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F59A5443A89C44448202D0CD /* Debug */,
-				6A1F317800D343FEB53302BB /* Release */,
-				5704E78E88224F2F9BC75884 /* MinSizeRel */,
-				4D13551349A248A1928041C5 /* RelWithDebInfo */,
+				F245B8BC7EC546EDB5A9729D /* Debug */,
+				8AAC0A3D490C4904A270ECDB /* Release */,
+				7A8969539BC841D682B4A729 /* MinSizeRel */,
+				BCD3D6EF6C4244E29C55FC1F /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		0F1E693A5490462DB9B2B0B4 /* Build configuration list for PBXNativeTarget "fuzzer" */ = {
+		5535D110A35D4921A1E64AC6 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				4547508832274085B1CEAD15 /* Debug */,
-				D9F65DD3C85B4EB0B19EA8E3 /* Release */,
-				9A469836B2CC40A092368A50 /* MinSizeRel */,
-				44C7C0ADAD1944708B1DD8E9 /* RelWithDebInfo */,
+				A46A111BB0D842A1B375C74F /* Debug */,
+				76EF24F7A65D40D294014320 /* Release */,
+				106ECE84AADF422585BC48A9 /* MinSizeRel */,
+				5F018EEBDE9B447C83F5F368 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		0F4E504D071B4CEC88847606 /* Build configuration list for PBXProject "tests" */ = {
+		55B2D708F8D54E8C8644768C /* Build configuration list for PBXNativeTarget "datagen" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				37EB9B3B7BFC411CACB2D2BC /* Debug */,
-				645ADD40A0C44A56B5D59DE7 /* Release */,
-				B459818DDEAC4680BAA48A4A /* MinSizeRel */,
-				631E1995F7DF44EAAE707B68 /* RelWithDebInfo */,
+				86AAFE45D4A24D9D86F2F53F /* Debug */,
+				F26779048B9D45EEA8628C9D /* Release */,
+				2E1A9A8344FD453DB0A795C0 /* MinSizeRel */,
+				5FE19543C34248ED83DDB09B /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		36E9C918EC57431D86E71BE2 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
+		7F5D802E65D646DAB752C9FF /* Build configuration list for PBXAggregateTarget "install" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C89C09C7C11D474E8C76AD3C /* Debug */,
-				2ED3693C71F94B48B91ACA43 /* Release */,
-				A7A8592F32CD4822AD5D9DB9 /* MinSizeRel */,
-				859A1985E8CA4AACB31DBAAA /* RelWithDebInfo */,
+				8B0942EB48634863B313ECE1 /* Debug */,
+				ADEBBF88138548EAAEEBC7EF /* Release */,
+				F064EC33984E45C58CB8CE10 /* MinSizeRel */,
+				4DC7AEF7D0A548D389CE68E6 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		56D40A927D15488694DB5A5C /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+		A24A264480934AA6AE738CCC /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				436EF5CDDE1F47EAB354E3DA /* Debug */,
-				3163911A361B447096C1438A /* Release */,
-				EE832D7C62D445429E9EC1C3 /* MinSizeRel */,
-				5AFE6EE106994D6A80415BD1 /* RelWithDebInfo */,
+				3E4B792274E1456B9D7543E5 /* Debug */,
+				516545C4B04E460D9A8E18F8 /* Release */,
+				B3D488A5EF77449592F042A5 /* MinSizeRel */,
+				EBB8BE07D7F34D048D7B06DF /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		5CBF84B72290451DAEC8B764 /* Build configuration list for PBXNativeTarget "paramgrill" */ = {
+		BE8E5A1F096742DF83C2A391 /* Build configuration list for PBXNativeTarget "fuzzer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				10C5D337F2314E56A50A2AE1 /* Debug */,
-				663B5436C153486BAE174054 /* Release */,
-				3AA3CF55EA7D4463AD6D7648 /* MinSizeRel */,
-				021141DA0696452290CCF6DA /* RelWithDebInfo */,
+				AA259C1115C14EB1AAFED6D6 /* Debug */,
+				2594EE8729584B899C03E225 /* Release */,
+				4F8D1E4BD96544BBA5AC1348 /* MinSizeRel */,
+				8E62B1A0835C4274AF7AD49B /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		865E80074B824EC39B070C8A /* Build configuration list for PBXAggregateTarget "install" */ = {
+		D30BAFC9C5CD443C9FF00DF0 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				4C133DA4F1AD4211A3CE400E /* Debug */,
-				7BD0A06877F142EB84792612 /* Release */,
-				1DD9EA110748411998AD002C /* MinSizeRel */,
-				A4D1C5955EEF4B13AB773F7F /* RelWithDebInfo */,
+				82B1C776BA4141AA9369C366 /* Debug */,
+				65FB8CC1CA1D4AEEAC22547B /* Release */,
+				AAC870C1B2E1483A9F8D68E0 /* MinSizeRel */,
+				67E69F3DBD154A5584F57B62 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		BB09E52FA7F64A7BAADC6791 /* Build configuration list for PBXNativeTarget "fullbench" */ = {
+		DB0FED8EC56A43F9B62E90C2 /* Build configuration list for PBXNativeTarget "paramgrill" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				78BAF55C038E40A295995CA3 /* Debug */,
-				8BC5FB0BDC104F30A3BB1A9A /* Release */,
-				C2DDACB9DC2C46A1A8D74944 /* MinSizeRel */,
-				4054A67179E34EA5B1F2C66B /* RelWithDebInfo */,
+				729581DF766C477AA6E6A4B6 /* Debug */,
+				80BE9776C3DD45D692FE5412 /* Release */,
+				100F4A4BA7BE4B86A0FB0F8B /* MinSizeRel */,
+				AA2E6F9D43B849508FEDEB7C /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		EE507F1B0874463D9A03F495 /* Build configuration list for PBXNativeTarget "datagen" */ = {
+		E9C5C8F720874D45BFA4D880 /* Build configuration list for PBXProject "tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				4A857B15CC1D4BCFA1EBF565 /* Debug */,
-				35C47D81455C4B8390DC91D3 /* Release */,
-				A7E8D261544E4F7E87C102B7 /* MinSizeRel */,
-				756470F5049E44958652CEC5 /* RelWithDebInfo */,
+				452C9B80F68A47DD9282877A /* Debug */,
+				A0E1516B13F74378A38D40F0 /* Release */,
+				D0EF4906DA904C9DBA25533A /* MinSizeRel */,
+				F5664E3892BF4D0E8BF12D89 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		EEB8ED09DB9F47148EA52940 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+		F1C1C0AECA6648C7BA0A92C8 /* Build configuration list for PBXNativeTarget "fullbench" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				27CBBFE4FC7C402491B4A286 /* Debug */,
-				FF896A1DEFD2491BA4682552 /* Release */,
-				7332A2B257BD490FA23C3C18 /* MinSizeRel */,
-				8B20E52D7BF94FC290ED3B66 /* RelWithDebInfo */,
+				534C6969B1E84FE6807EE8C9 /* Debug */,
+				009312D7D697430495958FEA /* Release */,
+				3362D99AF41248668BECCB8E /* MinSizeRel */,
+				D75A2F106B14481385152FFA /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
