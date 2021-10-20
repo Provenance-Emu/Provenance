@@ -33,7 +33,7 @@
 #import <PVLibrary/PVLibrary.h>
 #import <PVSupport/PVSupport.h>
 
-//#include "base/NativeApp.h"
+#include "Common/System/NativeApp.h"
 //#include "base/timeutil.h"
 
 #include "Core/Config.h"
@@ -45,6 +45,7 @@
 #include "Core/System.h"
 #include "Common/GraphicsContext.h"
 #include "Common/LogManager.h"
+#include "Common/GPU/thin3d_create.h"
 
 #define AUDIO_FREQ          44100
 #define AUDIO_CHANNELS      2
@@ -56,8 +57,6 @@
 
 #define RenderWidth 480
 #define RenderHeight 272
-
-extern int NativeMix(short *audio, int num_samples);
 
 @interface PVPPSSPPGameCore () <PVPSXSystemResponderClient>
 {
@@ -73,25 +72,25 @@ extern int NativeMix(short *audio, int num_samples);
 }
 @end
 
-@implementation PVPPSSPPGameCore
+class GLDummyGraphicsContext : public GraphicsContext {
+public:
+    GLDummyGraphicsContext() {
 
-//class GLDummyGraphicsContext : public DummyGraphicsContext {
-//public:
-//    GLDummyGraphicsContext() {
-//
-//        extern void CheckGLExtensions();
-//
-//        CheckGLExtensions();
-//        draw_ = Draw::T3DCreateGLContext();
-//    }
-//    ~GLDummyGraphicsContext() { delete draw_; }
-//
-//    Draw::DrawContext *GetDrawContext() override {
-//        return draw_;
-//    }
-//private:
-//    Draw::DrawContext *draw_;
-//};
+        extern void CheckGLExtensions();
+
+        CheckGLExtensions();
+        draw_ = Draw::T3DCreateGLContext();
+    }
+    ~GLDummyGraphicsContext() { delete draw_; }
+
+    Draw::DrawContext *GetDrawContext() override {
+        return draw_;
+    }
+private:
+    Draw::DrawContext *draw_;
+};
+
+@implementation PVPPSSPPGameCore
 
 - (id)init
 {
@@ -166,8 +165,8 @@ extern int NativeMix(short *audio, int num_samples);
 {
     PSP_Shutdown();
 
-//    NativeShutdownGraphics();
-//    NativeShutdown();
+    NativeShutdownGraphics();
+    NativeShutdown();
 
     [super stopEmulation];
 }
@@ -186,14 +185,14 @@ extern int NativeMix(short *audio, int num_samples);
 
         NSString *resourcePath = [[coreBundle resourcePath] stringByAppendingString:@"/"];
 
-//        graphicsContext = new GLDummyGraphicsContext;
-//
+//        graphicsContext = new GLDummyGraphicsContext();
+
 //        NativeInit(0, nil, nil, resourcePath.fileSystemRepresentation, nil, false);
-//
-//        _coreParam.graphicsContext = graphicsContext;
+
+        _coreParam.graphicsContext = graphicsContext;
 //        _coreParam.thin3d = graphicsContext ? graphicsContext->GetDrawContext() : nullptr;
-//
-//        NativeInitGraphics(graphicsContext);
+
+        NativeInitGraphics(graphicsContext);
     }
 
     if(_shouldReset)
@@ -214,7 +213,7 @@ extern int NativeMix(short *audio, int num_samples);
     u64 cyclesBefore, cyclesAfter;
     cyclesBefore = CoreTiming::GetTicks();
 
-//    NativeRender(graphicsContext);
+    NativeRender(graphicsContext);
 
     cyclesAfter = CoreTiming::GetTicks();
 
@@ -222,7 +221,7 @@ extern int NativeMix(short *audio, int num_samples);
     if (_frameInterval < 1) _frameInterval = 60;
 
     int samplesWritten = NativeMix(_soundBuffer, AUDIO_BUFFERSIZE / 4);
-//    [[self ringBufferAtIndex:0] write:_soundBuffer maxLength:AUDIO_CHANNELS * AUDIO_SAMPLESIZE * samplesWritten];
+    [[self ringBufferAtIndex:0] write:_soundBuffer maxLength:AUDIO_CHANNELS * AUDIO_SAMPLESIZE * samplesWritten];
 }
 
 # pragma mark - Video
