@@ -52,7 +52,14 @@
 #define AUDIO_SAMPLESIZE    sizeof(int16_t)
 #define AUDIO_BUFFERSIZE   (AUDIO_SAMPLESIZE * AUDIO_CHANNELS * AUDIO_SAMPLES)
 
-@interface PVPPSSPPGameCore () // <PVPSXSystemResponderClient>
+#define JIT_MODE IR_JIT // INTERPRETER, JIT, IR_JIT
+
+#define RenderWidth 480
+#define RenderHeight 272
+
+extern int NativeMix(short *audio, int num_samples);
+
+@interface PVPPSSPPGameCore () <PVPSXSystemResponderClient>
 {
     int16_t *_soundBuffer;
     CoreParameter _coreParam;
@@ -130,14 +137,15 @@
     g_Config.Load("");
 
     NSString *directoryString      = [supportDirectoryPath stringByAppendingString:@"/"];
-//    g_Config.currentDirectory      = [directoryString cStringUsingEncoding:kCFStringEncodingUTF8];
-//    g_Config.defaultCurrentDirectory = directoryString.fileSystemRepresentation;
-//    g_Config.memStickDirectory     = directoryString.fileSystemRepresentation;
-//    g_Config.flash0Directory       = directoryString.fileSystemRepresentation;
-//    g_Config.internalDataDirectory = directoryString.fileSystemRepresentation;
+    g_Config.currentDirectory      = Path([directoryString cStringUsingEncoding:kCFStringEncodingUTF8]);
+    g_Config.defaultCurrentDirectory = Path(directoryString.fileSystemRepresentation);
+    g_Config.memStickDirectory     = Path(directoryString.fileSystemRepresentation);
+    g_Config.flash0Directory       = Path(directoryString.fileSystemRepresentation);
+    g_Config.internalDataDirectory = Path(directoryString.fileSystemRepresentation);
 //    g_Config.iGPUBackend           = GPU_BACKEND_OPENGL;
+    g_Config.bHardwareTransform = true;
 
-    _coreParam.cpuCore      = CPUCore::JIT;
+    _coreParam.cpuCore      = CPUCore::JIT_MODE;
     _coreParam.gpuCore      = GPUCORE_GLES;
     _coreParam.enableSound  = true;
 //    _coreParam.fileToStart  = path.fileSystemRepresentation;
@@ -146,10 +154,10 @@
     _coreParam.printfEmuLog = false;
     _coreParam.headLess     = false;
 
-    _coreParam.renderWidth  = 480;
-    _coreParam.renderHeight = 272;
-    _coreParam.pixelWidth   = 480;
-    _coreParam.pixelHeight  = 272;
+    _coreParam.renderWidth  = RenderWidth;
+    _coreParam.renderHeight = RenderHeight;
+    _coreParam.pixelWidth   = RenderWidth;
+    _coreParam.pixelHeight  = RenderHeight;
 
     return YES;
 }
@@ -213,7 +221,7 @@
     _frameInterval = 1000000/(float)cyclesToUs(cyclesAfter-cyclesBefore);
     if (_frameInterval < 1) _frameInterval = 60;
 
-//    int samplesWritten = NativeMix(_soundBuffer, AUDIO_BUFFERSIZE / 4);
+    int samplesWritten = NativeMix(_soundBuffer, AUDIO_BUFFERSIZE / 4);
 //    [[self ringBufferAtIndex:0] write:_soundBuffer maxLength:AUDIO_CHANNELS * AUDIO_SAMPLESIZE * samplesWritten];
 }
 
@@ -222,7 +230,7 @@
 
 - (CGSize)bufferSize
 {
-    return CGSizeMake(480, 272);
+    return CGSizeMake(RenderWidth, RenderHeight);
 }
 
 - (CGSize)aspectSize
@@ -258,37 +266,37 @@ static void _PVSaveStateCallback(bool status, std::string message, void *cbUserD
 
 - (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
 {
-//    SaveState::Save(fileName.fileSystemRepresentation, _PVSaveStateCallback, (__bridge_retained void *)[block copy]);
-//    if(_isInitialized) SaveState::Process();
+//    SaveState::Save(Path(fileName.fileSystemRepresentation), _PVSaveStateCallback, (__bridge_retained void *)[block copy]);
+    if(_isInitialized) SaveState::Process();
 }
 
 
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
 {
 //    SaveState::Load(fileName.fileSystemRepresentation, _PVSaveStateCallback, (__bridge_retained void *)[block copy]);
-//    if(_isInitialized) SaveState::Process();
+    if(_isInitialized) SaveState::Process();
 }
 
 # pragma mark - Input
 
 const int buttonMap[] = { CTRL_UP, CTRL_DOWN, CTRL_LEFT, CTRL_RIGHT, 0, 0, 0, 0, CTRL_TRIANGLE, CTRL_CIRCLE, CTRL_CROSS, CTRL_SQUARE, CTRL_LTRIGGER, CTRL_RTRIGGER, CTRL_START, CTRL_SELECT };
 
-//- (oneway void)didMovePSPJoystickDirection:(PVPSPButton)button withValue:(CGFloat)value forPlayer:(NSUInteger)player
-//{
-//    if(button == PVPSPAnalogUp || button == PVPSPAnalogDown)
-//        __CtrlSetAnalogY(button == PVPSPAnalogUp ? value : -value);
+- (oneway void)didMovePSPJoystickDirection:(PVPSPButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player
+{
+//    if(button == PVPSPButtonLeftAnalogUp || button == PVPSPButtonLeftAnalogDown)
+//        __CtrlSetAnalogY(button == PVPSPButtonLeftAnalogUp ? value : -value);
 //    else
-//        __CtrlSetAnalogX(button == PVPSPAnalogRight ? value : -value);
-//}
-//
-//-(oneway void)didPushPSPButton:(PVPSPButton)button forPlayer:(NSUInteger)player
-//{
-//    __CtrlButtonDown(buttonMap[button]);
-//}
-//
-//- (oneway void)didReleasePSPButton:(PVPSPButton)button forPlayer:(NSUInteger)player
-//{
-//    __CtrlButtonUp(buttonMap[button]);
-//}
+//        __CtrlSetAnalogX(button == PVPSPButtonLeftAnalogRight ? value : -value);
+}
+
+-(oneway void)didPushPSPButton:(PVPSPButton)button forPlayer:(NSInteger)player
+{
+    __CtrlButtonDown(buttonMap[button]);
+}
+
+- (oneway void)didReleasePSPButton:(PVPSPButton)button forPlayer:(NSInteger)player
+{
+    __CtrlButtonUp(buttonMap[button]);
+}
 
 @end
