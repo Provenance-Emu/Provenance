@@ -242,8 +242,12 @@ public final class iCloudSync {
     public static func initICloudDocuments() {
         let fm = FileManager.default
         if let currentiCloudToken = fm.ubiquityIdentityToken {
-            let newTokenData = NSKeyedArchiver.archivedData(withRootObject: currentiCloudToken)
-            UserDefaults.standard.set(newTokenData, forKey: UbiquityIdentityTokenKey)
+			do {
+				let newTokenData = try NSKeyedArchiver.archivedData(withRootObject: currentiCloudToken, requiringSecureCoding: false)
+				UserDefaults.standard.set(newTokenData, forKey: UbiquityIdentityTokenKey)
+			} catch {
+				ELOG("\(error.localizedDescription)")
+			}
         } else {
             UserDefaults.standard.removeObject(forKey: UbiquityIdentityTokenKey)
         }

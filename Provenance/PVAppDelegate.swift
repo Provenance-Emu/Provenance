@@ -138,6 +138,11 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+
+        #if os(tvOS)
+        importFile(atURL: url)
+        return true
+        #else
         let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
 
         if url.isFileURL {
@@ -227,6 +232,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         return false
+        #endif
     }
 
     #if os(iOS)
