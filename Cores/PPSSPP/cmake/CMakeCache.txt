@@ -29,8 +29,8 @@ BUILD_EXTERNAL:BOOL=ON
 //Build Shared Libraries
 BUILD_SHARED_LIBS:BOOL=OFF
 
-//Build the testing tree.
-BUILD_TESTING:BOOL=ON
+//No help, variable specified on the command line.
+BUILD_TESTING:UNINITIALIZED=OFF
 
 //Path to a program.
 CCACHE_FOUND:FILEPATH=CCACHE_FOUND-NOTFOUND
@@ -334,7 +334,7 @@ Core_LIB_DEPENDS:STATIC=general;Common;general;native;general;kirk;general;cityh
 DART_TESTING_TIMEOUT:STRING=1500
 
 //Enables testing
-ENABLE_CTEST:BOOL=ON
+ENABLE_CTEST:BOOL=OFF
 
 //Enables Exceptions
 ENABLE_EXCEPTIONS:BOOL=OFF
@@ -419,7 +419,7 @@ HEADLESS:BOOL=OFF
 IOS_PLATFORM:STRING=OS
 
 //Set to ON to generate the libretro target
-LIBRETRO:BOOL=OFF
+LIBRETRO:BOOL=ON
 
 //Path to a file.
 LIBZIP_INCLUDE_DIR:PATH=LIBZIP_INCLUDE_DIR-NOTFOUND
@@ -536,7 +536,7 @@ USE_SYSTEM_LIBPNG:BOOL=ON
 USE_SYSTEM_LIBSDL2:BOOL=ON
 
 //Dynamically link against system libzip
-USE_SYSTEM_LIBZIP:BOOL=OFF
+USE_SYSTEM_LIBZIP:BOOL=ON
 
 //Dynamically link against system snappy
 USE_SYSTEM_SNAPPY:BOOL=OFF
@@ -563,7 +563,7 @@ USING_GLES2:BOOL=ON
 USING_QT_UI:BOOL=OFF
 
 //Set to OFF if target environment doesn't use X11 for Vulkan
-USING_X11_VULKAN:BOOL=ON
+USING_X11_VULKAN:BOOL=OFF
 
 //Path to a file.
 X11_ICE_INCLUDE_PATH:PATH=X11_ICE_INCLUDE_PATH-NOTFOUND
@@ -897,6 +897,9 @@ libzstd_SOURCE_DIR:STATIC=/Users/jmattiello/Workspace/Provenance/Provenance/Core
 native_LIB_DEPENDS:STATIC=general;libzip;general;png17;general;/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk/usr/lib/libz.tbd;general;gason;general;udis86;general;-framework Foundation -framework MediaPlayer -framework AudioToolbox -framework CoreGraphics -framework QuartzCore -framework UIKit -framework GLKit -framework OpenAL -framework AVFoundation -framework CoreLocation -framework CoreVideo -framework CoreMedia;general;-weak_framework GameController;general;iconv;general;Common;
 
 //Dependencies for the target
+ppsspp_libretro_LIB_DEPENDS:STATIC=general;-Wl,-Bsymbolic;general;Core;
+
+//Dependencies for the target
 spirv-cross-cpp_LIB_DEPENDS:STATIC=general;spirv-cross-glsl;
 
 //Dependencies for the target
@@ -966,8 +969,6 @@ CMAKE_CACHE_PATCH_VERSION:INTERNAL=3
 CMAKE_COMMAND:INTERNAL=/opt/homebrew/Cellar/cmake/3.21.3_1/bin/cmake
 //Path to cpack program executable.
 CMAKE_CPACK_COMMAND:INTERNAL=/opt/homebrew/Cellar/cmake/3.21.3_1/bin/cpack
-//ADVANCED property for variable: CMAKE_CTEST_COMMAND
-CMAKE_CTEST_COMMAND-ADVANCED:INTERNAL=1
 //Path to ctest program executable.
 CMAKE_CTEST_COMMAND:INTERNAL=/opt/homebrew/Cellar/cmake/3.21.3_1/bin/ctest
 //ADVANCED property for variable: CMAKE_CXX_FLAGS
@@ -1425,6 +1426,8 @@ native_GUID_CMAKE:INTERNAL=3F6523208DB04FEAB28B1E74
 paramgrill_GUID_CMAKE:INTERNAL=A0134DF4279B4872A703791F
 //Stored Xcode object GUID
 png17_GUID_CMAKE:INTERNAL=520353CC894946279A742C5C
+//Stored Xcode object GUID
+ppsspp_libretro_GUID_CMAKE:INTERNAL=EA489EDAB91A440E8C57C03A
 //Stored Xcode object GUID
 sfmt19937_GUID_CMAKE:INTERNAL=9073FBB55B0543ADB032358C
 //Stored Xcode object GUID

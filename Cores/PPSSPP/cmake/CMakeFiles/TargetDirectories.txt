@@ -27,10 +27,6 @@
 /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/armips/CMakeFiles/ZERO_CHECK.dir
 /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/glslang/CMakeFiles/install.dir
 /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/glslang/CMakeFiles/RUN_TESTS.dir
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/glslang/CMakeFiles/NightlyMemoryCheck.dir
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/glslang/CMakeFiles/Nightly.dir
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/glslang/CMakeFiles/Continuous.dir
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/glslang/CMakeFiles/Experimental.dir
 /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/glslang/CMakeFiles/ALL_BUILD.dir
 /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/glslang/CMakeFiles/ZERO_CHECK.dir
 /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/glslang/External/CMakeFiles/install.dir
@@ -52,8 +48,6 @@
 /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/glslang/hlsl/CMakeFiles/install.dir
 /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/glslang/hlsl/CMakeFiles/RUN_TESTS.dir
 /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/glslang/hlsl/CMakeFiles/HLSL.dir
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/glslang/gtests/CMakeFiles/install.dir
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/glslang/gtests/CMakeFiles/RUN_TESTS.dir
 /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/snappy/CMakeFiles/RUN_TESTS.dir
 /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/snappy/CMakeFiles/install.dir
 /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/snappy/CMakeFiles/snappy.dir
@@ -90,3 +84,6 @@
 /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir
 /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/ALL_BUILD.dir
 /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/tests/CMakeFiles/ZERO_CHECK.dir
+/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/libretro/CMakeFiles/install.dir
+/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/libretro/CMakeFiles/RUN_TESTS.dir
+/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/libretro/CMakeFiles/ppsspp_libretro.dir

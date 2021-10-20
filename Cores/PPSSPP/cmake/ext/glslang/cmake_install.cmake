@@ -64,7 +64,6 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/glslang/OGLCompilersDLL/cmake_install.cmake")
   include("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/glslang/SPIRV/cmake_install.cmake")
   include("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/glslang/hlsl/cmake_install.cmake")
-  include("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/glslang/gtests/cmake_install.cmake")
 
 endif()
 
