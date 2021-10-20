@@ -146,6 +146,8 @@
 		B30172CB274A34FA00B0E695 /* PVDuckStation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B30172C9274A34FA00B0E695 /* PVDuckStation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B302F31421713AFD000322B9 /* CenterFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D120AB347300092CA6 /* CenterFlowLayout.swift */; };
 		B302F31521713B17000322B9 /* PillPageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534EB20B001D700A83D4E /* PillPageControl.swift */; };
+		B305436E2720237400F5257D /* PVPPSSPP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305436D2720237400F5257D /* PVPPSSPP.framework */; };
+		B305436F2720237400F5257D /* PVPPSSPP.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B305436D2720237400F5257D /* PVPPSSPP.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B30C6E21271D823F0025DD88 /* PVPPSSPP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E20271D823F0025DD88 /* PVPPSSPP.framework */; };
 		B30C6E22271D823F0025DD88 /* PVPPSSPP.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E20271D823F0025DD88 /* PVPPSSPP.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B31117B0218EB3A900C495A2 /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */; };
@@ -543,6 +545,7 @@
 				B3C9D5E21DEA8A290068D057 /* PVGenesis.framework in Embed Frameworks */,
 				B3C9D4B21DEA74500068D057 /* PVGB.framework in Embed Frameworks */,
 				B37263AC26EA159400E95488 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
+				B305436F2720237400F5257D /* PVPPSSPP.framework in Embed Frameworks */,
 				B324C6232192059E009F4EDC /* PVMednafen.framework in Embed Frameworks */,
 				B37263B026EA159400E95488 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
 				14C4C1A221EBB0040055C6DC /* PVTGBDual.framework in Embed Frameworks */,
@@ -716,6 +719,7 @@
 		7556CF7919DC15C1007F8F97 /* Default.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Default.xib; sourceTree = "<group>"; };
 		B30172C9274A34FA00B0E695 /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B302BFA320825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B305436D2720237400F5257D /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B30C6E20271D823F0025DD88 /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B316B4D12192652000693472 /* PVReicast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVReicast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B316B4D62192659900693472 /* PVVirtualJaguar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVirtualJaguar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1007,6 +1011,7 @@
 				B3995E4F2058229F001D4985 /* PVFCEU.framework in Frameworks */,
 				B3CB85C21E9BFB16009155A6 /* PVPokeMini.framework in Frameworks */,
 				B316B4DC219265B700693472 /* PVVirtualJaguar.framework in Frameworks */,
+				B305436E2720237400F5257D /* PVPPSSPP.framework in Frameworks */,
 				B324C31E219197D7009F4EDC /* PicoDrive.framework in Frameworks */,
 				1180B31C2492A96700636C8A /* CoreServices.framework in Frameworks */,
 				B3DDF57526E9BE8D00CE47F0 /* AltKit in Frameworks */,
@@ -1138,6 +1143,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B305436D2720237400F5257D /* PVPPSSPP.framework */,
 				B30C6E20271D823F0025DD88 /* PVPPSSPP.framework */,
 				B30172C9274A34FA00B0E695 /* PVDuckStation.framework */,
 				B3203C2926DB1B9E00B016C6 /* PVDuckStation.framework */,
