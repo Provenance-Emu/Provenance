@@ -94,7 +94,7 @@ public final class GameImporter {
 
     public let documentsPath: URL = PVEmulatorConfiguration.documentsPath
     public let romsImportPath: URL = PVEmulatorConfiguration.Paths.romsImportPath
-    public let conflictPath: URL = PVEmulatorConfiguration.documentsPath.appendingPathComponent("Conflicts", isDirectory: true)
+	public let conflictPath: URL = PVEmulatorConfiguration.documentsPath.appendingPathComponent("Conflicts", isDirectory: true)
 
     public func path(forSystemID systemID: String) -> URL? {
         return systemToPathMap[systemID]
@@ -126,11 +126,14 @@ public final class GameImporter {
     }()
 
     public var conflictedFiles: [URL]? {
-        guard FileManager.default.fileExists(atPath: conflictPath.absoluteString),
+        guard FileManager.default.fileExists(atPath: conflictPath.path),
               let files = try? FileManager.default.contentsOfDirectory(at: conflictPath,
                                                                        includingPropertiesForKeys: nil,
                                                                        options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
-        else { return nil }
+        else {
+			DLOG("")
+			return nil
+		}
         return files
     }
 
@@ -158,6 +161,10 @@ public final class GameImporter {
 
     fileprivate init() {
         initialized.enter()
+
+		let fm = FileManager.default
+		try? fm.createDirectory(at: conflictPath, withIntermediateDirectories: true, attributes: nil)
+
         initSystemPlists()
         let systems = PVSystem.all
 
@@ -278,7 +285,7 @@ public final class GameImporter {
         return false
     }
 
-    public func startImport(forPaths paths: [URL] = [PVEmulatorConfiguration.Paths.romsImportPath]) {
+    public func startImport(forPaths paths: [URL]) {
         // Pre-sort
         let paths = PVEmulatorConfiguration.sortImportURLs(urls: paths)
         let scanOperation = BlockOperation {

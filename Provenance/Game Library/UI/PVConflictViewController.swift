@@ -43,6 +43,9 @@ final class PVConflictViewController: UITableViewController {
             tableView.separatorColor = UIColor.clear
         #endif
 
+		tableView.delegate = nil
+		tableView.dataSource = nil
+
         let cellIdentifier = "Cell"
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
 
