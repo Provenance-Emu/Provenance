@@ -121,8 +121,6 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         gameLibraryViewController.gameImporter = gameImporter
         gameLibraryViewController.gameLibrary = gameLibrary
 
-        startOptionalWebDavServer()
-
         let database = RomDatabase.sharedInstance
         database.refresh()
 
@@ -131,6 +129,10 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         if #available(iOS 11, tvOS 11, *) {
             PVAltKitService.shared.start()
         }
+
+		DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: { [unowned self] in
+			self.startOptionalWebDavServer()
+		})
 
         return true
     }

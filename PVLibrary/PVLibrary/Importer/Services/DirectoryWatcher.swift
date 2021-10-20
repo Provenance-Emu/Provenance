@@ -205,8 +205,8 @@ public final class DirectoryWatcher: NSObject {
             return
         }
 
-        DispatchQueue.main.async(execute: { () -> Void in
-            self.extractionStartedHandler?(filePath)
+        DispatchQueue.main.async(execute: { [weak self]() -> Void in
+            self?.extractionStartedHandler?(filePath)
         })
 
         if !FileManager.default.fileExists(atPath: filePath.path) {
@@ -228,11 +228,12 @@ public final class DirectoryWatcher: NSObject {
                 }
 
                 if self.extractionUpdatedHandler != nil {
-                    DispatchQueue.main.async {
-                        self.extractionUpdatedHandler?(filePath, entryNumber, total, Float(total) / Float(entryNumber))
+                    DispatchQueue.main.async { [weak self] in
+                        self?.extractionUpdatedHandler?(filePath, entryNumber, total, Float(total) / Float(entryNumber))
                     }
                 }
-            }, completionHandler: { (_: String?, succeeded: Bool, error: Error?) in
+            }, completionHandler: { [weak self] (_: String?, succeeded: Bool, error: Error?) in
+				guard let self = self else { ELOG("nil self"); return }
                 if succeeded {
                     if self.extractionCompleteHandler != nil {
                         let unzippedItems = self.unzippedFiles
@@ -272,7 +273,8 @@ public final class DirectoryWatcher: NSObject {
 
             // Array with selected items.
             // Iterate all archive items, track what items do you need & hold them in array.
-            reader.iterate(handler: { (item, error) -> Bool in
+            reader.iterate(handler: {[weak self] (item, error) -> Bool in
+				guard let self = self else { ELOG("nil self"); return false}
                 if let error = error {
                     ELOG("7z error: \(error.localizedDescription)")
                     return true // Continue to iterate, false to stop
@@ -319,8 +321,8 @@ extension DirectoryWatcher: LzmaSDKObjCReaderDelegate {
         if progress >= 1 {
             if extractionCompleteHandler != nil {
                 let unzippedItems = unzippedFiles
-                DispatchQueue.main.async(execute: { () -> Void in
-                    self.extractionCompleteHandler?(unzippedItems)
+                DispatchQueue.main.async(execute: {[weak self] () -> Void in
+                    self?.extractionCompleteHandler?(unzippedItems)
                 })
             }
 
@@ -334,9 +336,9 @@ extension DirectoryWatcher: LzmaSDKObjCReaderDelegate {
             delayedStartMonitoring()
         } else {
             if extractionUpdatedHandler != nil {
-                DispatchQueue.main.async(execute: { () -> Void in
+                DispatchQueue.main.async(execute: {[weak self]() -> Void in
                     let entryNumber = Int(floor(Float(reader.itemsCount) * progress))
-                    self.extractionUpdatedHandler?(fileURL, entryNumber, Int(reader.itemsCount), progress)
+                    self?.extractionUpdatedHandler?(fileURL, entryNumber, Int(reader.itemsCount), progress)
                 })
             }
         }
