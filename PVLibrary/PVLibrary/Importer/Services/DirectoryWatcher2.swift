@@ -58,9 +58,9 @@ public final class DirectoryWatcher2 {
         guard url.hasDirectoryPath else { throw DirectoryWatcherError.pathNotDirectory }
 
         if watchedDirectories.insert(url).inserted {
-            serialQueue.async {
+            serialQueue.async { [weak self] in
                 do {
-                    try self.initialScan(url)
+                    try self?.initialScan(url)
                 } catch {
                     ELOG("\(error)")
                 }
@@ -120,7 +120,8 @@ public final class DirectoryWatcher2 {
         dispatch_sources[url] = WatchedDir(url: url, dispatchSource: dispatch_source, previousContents: nil)
 
         dispatch_source.setRegistrationHandler {
-            dispatch_source.setEventHandler(handler: {
+            dispatch_source.setEventHandler(handler: {[weak self] in
+				guard let self = self else { ELOG("nil self"); return}
                 let contents = try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
                 let watchedDir = self.dispatch_sources[url]
                 let previousContentsSet = watchedDir?.previousContents ?? Set<URL>()
@@ -225,8 +226,8 @@ public final class DirectoryWatcher2 {
 
     // Delay start so we have a moment to move files and stuff
     fileprivate func delayedStartMonitoring() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
-            self.startMonitoring()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {[weak self] in
+            self?.startMonitoring()
         })
     }
 }
