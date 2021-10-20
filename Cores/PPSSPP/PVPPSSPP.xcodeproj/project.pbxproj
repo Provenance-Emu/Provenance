@@ -72,8 +72,9 @@
 		B30543642720232900F5257D /* PVPPSSPP.h in Headers */ = {isa = PBXBuildFile; fileRef = B30C6D96271D74EB0025DD88 /* PVPPSSPP.h */; };
 		B30543652720232900F5257D /* PPSSPPGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CAFC1241785B6F700647A96 /* PPSSPPGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B30543672720232900F5257D /* Frameworks in Resources */ = {isa = PBXBuildFile; fileRef = B30C6E23271D8B250025DD88 /* Frameworks */; };
-		B30543732720289A00F5257D /* libMoltenVK.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = B30C6E55271D90A90025DD88 /* libMoltenVK.dylib */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B30543752720289F00F5257D /* libMoltenVK.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = B30C6E55271D90A90025DD88 /* libMoltenVK.dylib */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B305437827202A7200F5257D /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B305437727202A7200F5257D /* Core.plist */; };
+		B305437927202A7200F5257D /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B305437727202A7200F5257D /* Core.plist */; };
 		B30C6D97271D74EB0025DD88 /* PVPPSSPP.h in Headers */ = {isa = PBXBuildFile; fileRef = B30C6D96271D74EB0025DD88 /* PVPPSSPP.h */; };
 		B30C6D98271D752A0025DD88 /* PPSSPPGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CAFC1241785B6F700647A96 /* PPSSPPGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B30C6E17271D79E60025DD88 /* libcityhash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DE6271D792B0025DD88 /* libcityhash.a */; };
@@ -114,7 +115,6 @@
 		B30C6E51271D8D420025DD88 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E50271D8D410025DD88 /* AudioToolbox.framework */; };
 		B30C6E53271D8D610025DD88 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E52271D8D610025DD88 /* MediaPlayer.framework */; };
 		B30C6E54271D90080025DD88 /* libxbrz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E12271D792B0025DD88 /* libxbrz.a */; };
-		B30C6E56271D90A90025DD88 /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E55271D90A90025DD88 /* libMoltenVK.dylib */; platformFilter = ios; };
 		B30C6E57271D90F10025DD88 /* NativeApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CC4D25E178C7EC00094E987 /* NativeApp.cpp */; };
 		B30C6E59271D92700025DD88 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E58271D92700025DD88 /* CoreMedia.framework */; };
 		B38C49DD201DBCC3006761ED /* PPSSPPGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8CAFC1251785B6F700647A96 /* PPSSPPGameCore.mm */; };
@@ -397,17 +397,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		B30543742720289B00F5257D /* Embed Libraries */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				B30543732720289A00F5257D /* libMoltenVK.dylib in Embed Libraries */,
-			);
-			name = "Embed Libraries";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B30543762720289F00F5257D /* Embed Libraries */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -448,6 +437,7 @@
 		B3054322272022C800F5257D /* libavformat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavformat.a; path = ppsspp/ffmpeg/ios/universal/lib/libavformat.a; sourceTree = "<group>"; };
 		B305436B2720232900F5257D /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B305436C2720232900F5257D /* PVPPSSPP copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PVPPSSPP copy-Info.plist"; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/PVPPSSPP copy-Info.plist"; sourceTree = "<absolute>"; };
+		B305437727202A7200F5257D /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B30C6D96271D74EB0025DD88 /* PVPPSSPP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVPPSSPP.h; sourceTree = SOURCE_ROOT; };
 		B30C6D99271D773D0025DD88 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		B30C6D9A271D792B0025DD88 /* PPSSPP.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PPSSPP.xcodeproj; path = cmake/PPSSPP.xcodeproj; sourceTree = "<group>"; };
@@ -545,7 +535,6 @@
 			files = (
 				B30C6E32271D8BF50025DD88 /* libnative.a in Frameworks */,
 				B30C6E2F271D8BF50025DD88 /* libHLSL.a in Frameworks */,
-				B30C6E56271D90A90025DD88 /* libMoltenVK.dylib in Frameworks */,
 				B30C6E39271D8C100025DD88 /* AVKit.framework in Frameworks */,
 				B3054324272022F000F5257D /* libavutil.a in Frameworks */,
 				B30C6E34271D8BF50025DD88 /* libOSDependent.a in Frameworks */,
@@ -667,6 +656,7 @@
 		8CAFC1181785B63900647A96 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				B305437727202A7200F5257D /* Core.plist */,
 				8CAFC1191785B63900647A96 /* Info.plist */,
 				B30C6D96271D74EB0025DD88 /* PVPPSSPP.h */,
 				8CAFC11D1785B63900647A96 /* PPSSPP-Prefix.pch */,
@@ -831,7 +821,6 @@
 				B38C49D1201DBC8C006761ED /* Frameworks */,
 				B38C49D2201DBC8C006761ED /* Headers */,
 				B38C49D3201DBC8C006761ED /* Resources */,
-				B30543742720289B00F5257D /* Embed Libraries */,
 			);
 			buildRules = (
 			);
@@ -1166,6 +1155,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B30543672720232900F5257D /* Frameworks in Resources */,
+				B305437927202A7200F5257D /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1174,6 +1164,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B30C6E24271D8B250025DD88 /* Frameworks in Resources */,
+				B305437827202A7200F5257D /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
