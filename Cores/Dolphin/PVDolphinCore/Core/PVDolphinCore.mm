@@ -7,6 +7,10 @@
 //
 
 #import "PVDolphinCore.h"
+#include "DolHost.h"
+#include "AudioCommon/SoundStream.h"
+#include "OpenEmuAudioStream.h"
+#include <stdatomic.h>
 #import "PVDolphinCore+Controls.h"
 #import "PVDolphinCore+Audio.h"
 #import "PVDolphinCore+Video.h"
@@ -15,6 +19,10 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
+
+#define SAMPLERATE 48000
+#define SIZESOUNDBUFFER 48000 / 60 * 4
+#define OpenEmu 1
 
 __weak PVDolphinCore *_current = 0;
 
@@ -28,6 +36,19 @@ __weak PVDolphinCore *_current = 0;
 #pragma mark - PVDolphinCore Begin
 
 @implementation PVDolphinCore
+{
+	DolHost *dol_host;
+
+	uint16_t *_soundBuffer;
+	bool _isWii;
+	atomic_bool _isInitialized;
+	float _frameInterval;
+
+	NSString *autoLoadStatefileName;
+	NSString *_dolphinCoreModule;
+	OEIntSize _dolphinCoreAspect;
+	OEIntSize _dolphinCoreScreen;
+}
 
 - (instancetype)init {
 	if (self = [super init]) {
@@ -42,7 +63,9 @@ __weak PVDolphinCore *_current = 0;
 
 		dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, 0);
 
-		_callbackQueue = dispatch_queue_create("org.provenance-emu.play.CallbackHandlerQueue", queueAttributes);
+		_callbackQueue = dispatch_queue_create("org.provenance-emu.dolphin.CallbackHandlerQueue", queueAttributes);
+
+		dol_host = DolHost::GetInstance();
 	}
 
 	_current = self;
@@ -75,15 +98,53 @@ __weak PVDolphinCore *_current = 0;
                                                attributes:nil
                                                     error:NULL];
 
+	self.filePath = path;
+
+	if([[self systemIdentifier] isEqualToString:@"com.provenance.gamecube"])
+	{
+		_dolphinCoreModule = @"gc";
+		_isWii = false;
+		_frameInterval = 60;
+		_dolphinCoreAspect = CGSizeMake(4, 3);
+		_dolphinCoreScreen = CGSizeMake(640, 480);
+	}
+	else
+	{
+		_dolphinCoreModule = @"Wii";
+		_isWii = true;
+		_frameInterval = 60;
+		_dolphinCoreAspect = CGSizeMake(16,9);
+		_dolphinCoreScreen = CGSizeMake(854, 480);
+	}
+
+	dol_host->Init([[self supportDirectoryPath] fileSystemRepresentation], [path fileSystemRepresentation] );
+
+	usleep(5000);
 	return YES;
 }
 
 #pragma mark - Running
 - (void)startEmulation {
-	if(!self.isRunning) {
-		[super startEmulation];
-//        [NSThread detachNewThreadSelector:@selector(runReicastRenderThread) toTarget:self withObject:nil];
+	if (!_isInitialized)
+	{
+		[self.renderDelegate willRenderFrameOnAlternateThread];
+
+		dol_host->SetPresentationFBO((int)[[self.renderDelegate presentationFramebuffer] integerValue]);
+
+		if(dol_host->LoadFileAtPath())
+			_isInitialized = true;
+
+		_frameInterval = dol_host->GetFrameInterval();
+
 	}
+	[super startEmulation];
+
+	//Disable the OE framelimiting
+	[self.renderDelegate suspendFPSLimiting];
+//	if(!self.isRunning) {
+//		[super startEmulation];
+////        [NSThread detachNewThreadSelector:@selector(runReicastRenderThread) toTarget:self withObject:nil];
+//	}
 }
 
 - (void)runReicastEmuThread {
@@ -100,26 +161,17 @@ __weak PVDolphinCore *_current = 0;
 	}
 }
 - (void)setPauseEmulation:(BOOL)flag {
-	[super setPauseEmulation:flag];
+	dol_host->Pause(flag);
 
-	if (flag)
-	{
-//        dc_stop();
-//		dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
-		[self.frontBufferCondition lock];
-		[self.frontBufferCondition signal];
-		[self.frontBufferCondition unlock];
-    } else {
-//        dc_run();
-    }
+	[super setPauseEmulation:flag];
 }
 
 - (void)stopEmulation {
-//    has_init = false;
+	_isInitialized = false;
 
-	// TODO: Call reicast stop command here
-//	dc_term();
-    self->shouldStop = YES;
+	dol_host->RequestStop();
+
+	self->shouldStop = YES;
 //	dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
 //    dispatch_semaphore_wait(coreWaitForExitSemaphore, DISPATCH_TIME_FOREVER);
 	[self.frontBufferCondition lock];
@@ -130,13 +182,20 @@ __weak PVDolphinCore *_current = 0;
 }
 
 - (void)resetEmulation {
-	// TODO: Call reicast reset command here
-//	plugins_Reset(true);
-//	dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
+	dol_host->Reset();
+	//	dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
 	[self.frontBufferCondition lock];
 	[self.frontBufferCondition signal];
 	[self.frontBufferCondition unlock];
 }
 
-@end
+# pragma mark - Cheats
+- (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled
+{
+	dol_host->SetCheat([code UTF8String], [type UTF8String], enabled);
+}
 
+- (BOOL)supportsRumble { return YES; }
+- (BOOL)supportsCheatCode@end { return YES; }
+
+@end

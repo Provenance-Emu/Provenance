@@ -139,50 +139,67 @@ s8 joyx[4], joyy[4];
     }
 }
 
--(void)didPushPS2Button:(enum PVPS2Button)button forPlayer:(NSInteger)player {
-    if (button == PVGameCubeButtonL) {
-        lt[player] |= 0xff * true;
-    } else if (button == PVGameCubeButtonR) {
-        rt[player] |= 0xff * true;
-    } else {
-        int mapped = GameCubeMap[button];
-        kcode[player] &= ~(mapped);
-    }
+-(void)didPushGameCubeButton:(enum PVGameCubeButton)button forPlayer:(NSInteger)player {
+	if(_isInitialized)
+	  {
+		  dol_host->setButtonState(button, 1, (int)player);
+	  }
 }
 
--(void)didReleasePS2Button:(enum PVPS2Button)button forPlayer:(NSInteger)player {
-    if (button == PVGameCubeButtonL) {
-        lt[player] |= 0xff * false;
-    } else if (button == PVGameCubeButtonR) {
-        rt[player] |= 0xff * false;
-    } else {
-        int mapped = GameCubeMap[button];
-        kcode[player] |= (mapped);
-    }
+-(void)didReleaseGameCubeButton:(enum PVGameCubeButton)button forPlayer:(NSInteger)player {
+	if(_isInitialized)
+	  {
+		  dol_host->setButtonState(button, 0, (int)player);
+	  }
 }
 
-- (void)didMovePS2JoystickDirection:(enum PVPS2Button)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
-    /*
-     float xvalue = gamepad.leftThumbstick.xAxis.value;
-     s8 x=(s8)(xvalue*127);
-     joyx[0] = x;
-
-     float yvalue = gamepad.leftThumbstick.yAxis.value;
-     s8 y=(s8)(yvalue*127 * - 1); //-127 ... + 127 range
-     joyy[0] = y;
-     */
+- (void)didMoveGameCubeJoystickDirection:(enum PVGameCubeButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
+	if(_isInitialized)
+	  {
+		  dol_host->SetAxis(button, value, (int)player);
+	  }
 }
 
 -(void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
-    [self didMoveGameCubeJoystickDirection:(enum PVPS2Button)button withValue:value forPlayer:player];
+    [self didMoveGameCubeJoystickDirection:(enum PVGameCubeButton)button withValue:value forPlayer:player];
 }
 
 - (void)didPush:(NSInteger)button forPlayer:(NSInteger)player {
-    [self didPushGameCubeButton:(PVPS2Button)button forPlayer:player];
+    [self didPushGameCubeButton:(PVGameCubeButton)button forPlayer:player];
 }
 
 - (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player {
-    [self didReleaseGameCubeButton:(PVPS2Button)button forPlayer:player];
+    [self didReleaseGameCubeButton:(PVGameCubeButton)button forPlayer:player];
 }
+
+
+# pragma mark - Input Wii
+//- (oneway void)didMoveWiiJoystickDirection:(OEWiiButton)button withValue:(CGFloat)value forPlayer:(NSUInteger)player
+//{
+//	if(_isInitialized)
+//	{
+//		dol_host->SetAxis(button, value, (int)player);
+//	}
+//}
+//
+//- (oneway void)didPushWiiButton:(OEWiiButton)button forPlayer:(NSUInteger)player
+//{
+//	if(_isInitialized)
+//	{
+//		if (button > OEWiiButtonCount) {
+//			dol_host->processSpecialKeys(button , (int)player);
+//		} else {
+//			dol_host->setButtonState(button, 1, (int)player);
+//		}
+//	}
+//}
+//
+//- (oneway void)didReleaseWiiButton:(OEWiiButton)button forPlayer:(NSUInteger)player
+//{
+//	if(_isInitialized && button != OEWiimoteSideways && button != OEWiimoteUpright)
+//	{
+//		dol_host->setButtonState(button, 0, (int)player);
+//	}
+//}
 
 @end

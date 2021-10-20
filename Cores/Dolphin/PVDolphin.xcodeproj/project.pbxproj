@@ -39,6 +39,13 @@
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
+		B3A3204227209ED700F338F6 /* PVDolphinCore+Controls.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E96218B809200557ACE /* PVDolphinCore+Controls.h */; };
+		B3A3204527209EE100F338F6 /* PVDolphinCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVDolphinCore+Controls.mm */; };
+		B3A3204627209EE100F338F6 /* PVDolphinCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVDolphinCore+Controls.mm */; };
+		B3A320492720A06D00F338F6 /* DolHost.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A320472720A06C00F338F6 /* DolHost.h */; };
+		B3A3204A2720A06D00F338F6 /* DolHost.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A320472720A06C00F338F6 /* DolHost.h */; };
+		B3A3204B2720A06D00F338F6 /* DolHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3A320482720A06D00F338F6 /* DolHost.mm */; };
+		B3A3204C2720A06D00F338F6 /* DolHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3A320482720A06D00F338F6 /* DolHost.mm */; };
 		B3B104AF218F26F400210C39 /* libdolphin-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3447F91218BEE3F00557ACE /* libdolphin-tvOS.a */; };
 		B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B104B8218F281B00210C39 /* PVSupport.framework */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
@@ -14723,6 +14730,8 @@
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
 		B35E6BF4207CD2740040709A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		B3A320472720A06C00F338F6 /* DolHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DolHost.h; sourceTree = "<group>"; };
+		B3A320482720A06D00F338F6 /* DolHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DolHost.mm; sourceTree = "<group>"; };
 		B3B104B8218F281B00210C39 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621020783162009950E4 /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621320783162009950E4 /* PVDolphin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVDolphin.h; sourceTree = "<group>"; };
@@ -38406,6 +38415,8 @@
 		B3C762202078327B009950E4 /* PVDolphinCore */ = {
 			isa = PBXGroup;
 			children = (
+				B3A320472720A06C00F338F6 /* DolHost.h */,
+				B3A320482720A06D00F338F6 /* DolHost.mm */,
 				B3447EB5218BCE2000557ACE /* Core */,
 				B3447EA0218B881000557ACE /* PVDolphin.mm */,
 			);
@@ -38419,7 +38430,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3A3204227209ED700F338F6 /* PVDolphinCore+Controls.h in Headers */,
 				B3135BA226E4CC650047F338 /* PVDolphin.h in Headers */,
+				B3A3204A2720A06D00F338F6 /* DolHost.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -38430,6 +38443,7 @@
 				B3135B9D26E4CC330047F338 /* PVDolphinCore+Audio.h in Headers */,
 				B3135BA026E4CC330047F338 /* PVDolphinCore+Controls.h in Headers */,
 				B3135B9C26E4CC290047F338 /* PVDolphinCore.h in Headers */,
+				B3A320492720A06D00F338F6 /* DolHost.h in Headers */,
 				B3135B9F26E4CC330047F338 /* PVDolphinCore+Saves.h in Headers */,
 				B3135BA126E4CC620047F338 /* PVDolphin.h in Headers */,
 				B3135B9E26E4CC330047F338 /* PVDolphinCore+Video.h in Headers */,
@@ -38616,7 +38630,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3135BA626E4CD5A0047F338 /* PVDolphinCore+Video.m in Sources */,
+				B3A3204C2720A06D00F338F6 /* DolHost.mm in Sources */,
 				B3135BA426E4CD500047F338 /* PVDolphinCore+Saves.m in Sources */,
+				B3A3204627209EE100F338F6 /* PVDolphinCore+Controls.mm in Sources */,
 				B3135BA326E4CD080047F338 /* PVDolphinCore.mm in Sources */,
 				B3135BA826E4CD600047F338 /* PVDolphinCore+Audio.m in Sources */,
 			);
@@ -38634,7 +38650,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3135BA726E4CD5A0047F338 /* PVDolphinCore+Video.m in Sources */,
+				B3A3204B2720A06D00F338F6 /* DolHost.mm in Sources */,
 				B3135BA526E4CD500047F338 /* PVDolphinCore+Saves.m in Sources */,
+				B3A3204527209EE100F338F6 /* PVDolphinCore+Controls.mm in Sources */,
 				B3135B9B26E4CAD40047F338 /* PVDolphinCore.mm in Sources */,
 				B3135BA926E4CD600047F338 /* PVDolphinCore+Audio.m in Sources */,
 			);
@@ -38999,6 +39017,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/PVDolphinCore/Compatibility\"",
+					"\"$(SRCROOT)/dolphin-ios/Source/Core\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -39306,6 +39326,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/PVDolphinCore/Compatibility\"",
+					"\"$(SRCROOT)/dolphin-ios/Source/Core\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -39376,6 +39398,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/PVDolphinCore/Compatibility\"",
+					"\"$(SRCROOT)/dolphin-ios/Source/Core\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;

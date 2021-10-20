@@ -35,6 +35,10 @@
 @property (nonatomic, assign) int videoHeight;
 @property (nonatomic, assign) int videoBitDepth;
 
+- (void) swapBuffers;
+- (const char *) getBundlePath;
+- (void) SetScreenSize:(int)width :(int)height;
+
 @end
 
 extern __weak PVDolphinCore *_current;
