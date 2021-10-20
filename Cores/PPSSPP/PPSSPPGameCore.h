@@ -26,7 +26,8 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
+#import <PVSupport/PVSupport-Swift.h>
 
 __attribute__((visibility("default")))
-@interface PVPPSSPPGameCore : PVEmulatorCore // <PVPSXSystemResponderClient>
+@interface PVPPSSPPGameCore : PVEmulatorCore <PVPSPSystemResponderClient>
 @end

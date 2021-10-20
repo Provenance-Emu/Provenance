@@ -72,6 +72,8 @@
 		B30543642720232900F5257D /* PVPPSSPP.h in Headers */ = {isa = PBXBuildFile; fileRef = B30C6D96271D74EB0025DD88 /* PVPPSSPP.h */; };
 		B30543652720232900F5257D /* PPSSPPGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CAFC1241785B6F700647A96 /* PPSSPPGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B30543672720232900F5257D /* Frameworks in Resources */ = {isa = PBXBuildFile; fileRef = B30C6E23271D8B250025DD88 /* Frameworks */; };
+		B30543732720289A00F5257D /* libMoltenVK.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = B30C6E55271D90A90025DD88 /* libMoltenVK.dylib */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B30543752720289F00F5257D /* libMoltenVK.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = B30C6E55271D90A90025DD88 /* libMoltenVK.dylib */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B30C6D97271D74EB0025DD88 /* PVPPSSPP.h in Headers */ = {isa = PBXBuildFile; fileRef = B30C6D96271D74EB0025DD88 /* PVPPSSPP.h */; };
 		B30C6D98271D752A0025DD88 /* PPSSPPGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CAFC1241785B6F700647A96 /* PPSSPPGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B30C6E17271D79E60025DD88 /* libcityhash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DE6271D792B0025DD88 /* libcityhash.a */; };
@@ -393,6 +395,31 @@
 			remoteInfo = ppsspp_libretro;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		B30543742720289B00F5257D /* Embed Libraries */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B30543732720289A00F5257D /* libMoltenVK.dylib in Embed Libraries */,
+			);
+			name = "Embed Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B30543762720289F00F5257D /* Embed Libraries */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B30543752720289F00F5257D /* libMoltenVK.dylib in Embed Libraries */,
+			);
+			name = "Embed Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		3DFCE40F186F64170046C035 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -785,6 +812,7 @@
 				B305432D2720232900F5257D /* Frameworks */,
 				B30543632720232900F5257D /* Headers */,
 				B30543662720232900F5257D /* Resources */,
+				B30543762720289F00F5257D /* Embed Libraries */,
 			);
 			buildRules = (
 			);
@@ -803,6 +831,7 @@
 				B38C49D1201DBC8C006761ED /* Frameworks */,
 				B38C49D2201DBC8C006761ED /* Headers */,
 				B38C49D3201DBC8C006761ED /* Resources */,
+				B30543742720289B00F5257D /* Embed Libraries */,
 			);
 			buildRules = (
 			);
