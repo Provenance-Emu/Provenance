@@ -253,6 +253,10 @@ private:
     return CGSizeMake(16, 9);
 }
 
+- (CGRect)screenRect {
+    return CGRectMake(0, 0, RenderWidth, RenderHeight);
+}
+
 - (NSTimeInterval)frameInterval
 {
     return _frameInterval ?: 60;
@@ -306,6 +310,14 @@ static void _PVSaveStateCallback(bool status, std::string message, void *cbUserD
     void (^block)(BOOL, NSError *) = (__bridge_transfer void(^)(BOOL, NSError *))cbUserData;
     
     block(status, nil);
+}
+
+- (BOOL)supportsSaveStates {
+    return NO;
+}
+
+- (BOOL)supportsRumble {
+    return YES;
 }
 
 - (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
