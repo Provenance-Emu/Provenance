@@ -227,6 +227,22 @@ extern int NativeMix(short *audio, int num_samples);
 
 # pragma mark - Video
 
+- (void)swapBuffers
+{
+    [self.renderDelegate didRenderFrameOnAlternateThread];
+}
+
+//- (void)executeFrameSkippingFrame:(BOOL)skip
+//{
+//    dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
+//
+//    dispatch_semaphore_wait(coreWaitToEndFrameSemaphore, [self frameTime]);
+//}
+
+//- (void)executeFrame
+//{
+//    [self executeFrameSkippingFrame:NO];
+//}
 
 - (CGSize)bufferSize
 {
@@ -241,6 +257,35 @@ extern int NativeMix(short *audio, int num_samples);
 - (NSTimeInterval)frameInterval
 {
     return _frameInterval ?: 60;
+}
+
+- (BOOL)rendersToOpenGL
+{
+    return YES;
+}
+
+//- (BOOL)isDoubleBuffered {
+//    return YES;
+//}
+
+- (const void *)videoBuffer
+{
+    return NULL;
+}
+
+- (GLenum)pixelFormat
+{
+    return GL_BGRA;
+}
+
+- (GLenum)pixelType
+{
+    return GL_UNSIGNED_BYTE;
+}
+
+- (GLenum)internalPixelFormat
+{
+    return GL_RGBA;
 }
 
 # pragma mark - Audio
