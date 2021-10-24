@@ -121,8 +121,6 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         gameLibraryViewController.gameImporter = gameImporter
         gameLibraryViewController.gameLibrary = gameLibrary
 
-        startOptionalWebDavServer()
-
         let database = RomDatabase.sharedInstance
         database.refresh()
 
@@ -132,10 +130,19 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             PVAltKitService.shared.start()
         }
 
+		DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: { [unowned self] in
+			self.startOptionalWebDavServer()
+		})
+
         return true
     }
 
     func application(_: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+
+        #if os(tvOS)
+        importFile(atURL: url)
+        return true
+        #else
         let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
 
         if url.isFileURL {
@@ -225,6 +232,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         return false
+        #endif
     }
 
     #if os(iOS)

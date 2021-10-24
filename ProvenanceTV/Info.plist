@@ -90,6 +90,10 @@
 	</array>
 	<key>UIUserInterfaceStyle</key>
 	<string>Dark</string>
+	<key>GCSupportsMultipleMicroGamepads</key>
+	<true/>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.games</string>
 	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>

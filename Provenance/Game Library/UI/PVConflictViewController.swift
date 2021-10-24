@@ -11,7 +11,7 @@ import PVLibrary
 import PVSupport
 import UIKit
 import RxSwift
-// import RxDataSources
+import RxDataSources
 
 final class PVConflictViewController: UITableViewController {
     let conflictsController: ConflictsController
@@ -42,6 +42,9 @@ final class PVConflictViewController: UITableViewController {
             title = "Solve Conflicts"
             tableView.separatorColor = UIColor.clear
         #endif
+
+		tableView.delegate = nil
+		tableView.dataSource = nil
 
         let cellIdentifier = "Cell"
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)

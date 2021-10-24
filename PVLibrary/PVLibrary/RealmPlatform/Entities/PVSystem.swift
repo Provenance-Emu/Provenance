@@ -72,7 +72,7 @@ public final class PVSystem: Object, SystemProtocol {
     }
 
     public var extensions: [String] {
-        return supportedExtensions.map { $0 }
+		return supportedExtensions.map { $0 }
     }
 
     // Reverse Links
@@ -146,7 +146,7 @@ public final class PVSystem: Object, SystemProtocol {
 public extension PVSystem {
     var screenType: ScreenType {
         get {
-            return ScreenType(rawValue: _screenType)!
+			return ScreenType(rawValue: _screenType) ?? .unknown
         }
         set {
             //            try? realm?.write {
@@ -233,9 +233,13 @@ extension System: RealmRepresentable {
                     if database.realm.isInWriteTransaction {
                         existingBIOS.system = object
                     } else {
-                        try! database.writeTransaction {
-                            existingBIOS.system = object
-                        }
+						do {
+							try database.writeTransaction {
+								existingBIOS.system = object
+							}
+						} catch {
+							ELOG("\(error.localizedDescription)")
+						}
                     }
                 } else {
                     let newBIOS = PVBIOS(withSystem: object, descriptionText: entry.descriptionText, optional: entry.optional, expectedMD5: entry.expectedMD5, expectedSize: entry.expectedSize, expectedFilename: entry.expectedFilename)
@@ -243,7 +247,11 @@ extension System: RealmRepresentable {
                     if database.realm.isInWriteTransaction {
                         database.realm.add(newBIOS)
                     } else {
-                        try! database.add(newBIOS)
+						do {
+							try database.add(newBIOS)
+						} catch {
+							ELOG("\(error.localizedDescription)")
+						}
                     }
                 }
             }
