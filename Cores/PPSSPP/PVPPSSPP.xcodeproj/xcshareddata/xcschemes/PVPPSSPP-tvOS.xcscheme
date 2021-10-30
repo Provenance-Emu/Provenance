@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B30543292720232900F5257D"
-               BuildableName = "PVPPSSPP tvOS.framework"
+               BuildableName = "PVPPSSPP.framework"
                BlueprintName = "PVPPSSPP-tvOS"
                ReferencedContainer = "container:PVPPSSPP.xcodeproj">
             </BuildableReference>
@@ -51,7 +51,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B30543292720232900F5257D"
-            BuildableName = "PVPPSSPP tvOS.framework"
+            BuildableName = "PVPPSSPP.framework"
             BlueprintName = "PVPPSSPP-tvOS"
             ReferencedContainer = "container:PVPPSSPP.xcodeproj">
          </BuildableReference>
