@@ -27,7 +27,9 @@
 </div>
 
 </br>
-<a href="https://www.patreon.com/bePatron?u=8537745" data-patreon-widget-type="become-patron-button">Become a Patron!</a><script async src="https://c6.patreon.com/becomePatronButton.bundle.js"></script>
+<a href="https://www.patreon.com/bePatron?u=8537745">
+  ![image-asset](https://user-images.githubusercontent.com/399864/139607496-983c7220-3aae-46f6-8369-ebd45d4c7f06.png)
+</a>
 </br>
 
 ## Installation
