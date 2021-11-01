@@ -28,7 +28,7 @@
 
 </br>
 <a href="https://www.patreon.com/bePatron?u=8537745">
-  ![image-asset](https://user-images.githubusercontent.com/399864/139607496-983c7220-3aae-46f6-8369-ebd45d4c7f06.png)
+  <img src="https://user-images.githubusercontent.com/399864/139607496-983c7220-3aae-46f6-8369-ebd45d4c7f06.png" height="50" />
 </a>
 </br>
 
