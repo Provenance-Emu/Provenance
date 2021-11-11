@@ -880,7 +880,7 @@ extension GCController {
     func setupPauseHandler(onPause: @escaping () -> Void) {
         // Using buttonMenu is the recommended way for iOS/tvOS13 and later
         if let buttonMenu = buttonMenu {
-            buttonMenu.pressedChangedHandler = {[weak self] _, _, isPressed in
+            buttonMenu.pressedChangedHandler = { _, _, isPressed in
                 if isPressed {
                     onPause()
                 }

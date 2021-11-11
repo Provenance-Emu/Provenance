@@ -81,7 +81,9 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             if let tabBarController = window?.rootViewController as? UITabBarController {
                 let searchNavigationController = PVSearchViewController.createEmbeddedInNavigationController(gameLibrary: gameLibrary)
 
-                var viewControllers = tabBarController.viewControllers!
+                guard var viewControllers = tabBarController.viewControllers else {
+                    fatalError("tabBarController.viewControllers is nil")
+                }
                 viewControllers.insert(searchNavigationController, at: 1)
                 tabBarController.viewControllers = viewControllers
             }
@@ -107,14 +109,22 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             .subscribe().disposed(by: disposeBag)
 
         #if os(iOS)
-        let rootNavigation = window!.rootViewController as! UINavigationController
+        guard let rootNavigation = window?.rootViewController as? UINavigationController else {
+            fatalError("No root nav controller")
+        }
         #else
-        let tabBarController = window!.rootViewController as! UITabBarController
-        let rootNavigation = tabBarController.viewControllers![0] as! UINavigationController
-        let settingsVC = ((tabBarController.viewControllers![2] as! PVTVSplitViewController).viewControllers[1] as! UINavigationController).topViewController as! PVSettingsViewController
+        guard let tabBarController = window?.rootViewController as? UITabBarController,
+              let rootNavigation = tabBarController.viewControllers?[0] as? UINavigationController,
+              let splitVC = tabBarController.viewControllers?[2] as? PVTVSplitViewController,
+              let navVC = splitVC.viewControllers[1] as? UINavigationController,
+              let settingsVC = navVC.topViewController as? PVSettingsViewController else {
+                  fatalError("Bad View Controller heiarchy")
+              }
         settingsVC.conflictsController = libraryUpdatesController
         #endif
-        let gameLibraryViewController = rootNavigation.viewControllers[0] as! PVGameLibraryViewController
+        guard let gameLibraryViewController = rootNavigation.viewControllers.first as? PVGameLibraryViewController else {
+            fatalError("No gameLibraryViewController")
+        }
 
         // Would be nice to inject this in a better way, so that we can be certain that it's present at viewDidLoad for PVGameLibraryViewController, but this works for now
         gameLibraryViewController.updatesController = libraryUpdatesController
