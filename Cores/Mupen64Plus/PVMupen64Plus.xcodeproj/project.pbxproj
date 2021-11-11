@@ -6245,6 +6245,8 @@
 					"\"$(SRCROOT)/Compatibility/SDL\"",
 					"\"$(SRCROOT)/Plugins/Core/src\"",
 					"\"$(SRCROOT)/Plugins/Core/src/asm_defines\"",
+					"\"$(SRCROOT)/Plugins/Core/subprojects/md5\"",
+					"\"$(SRCROOT)/Plugins/Core/subprojects/xxhash\"",
 				);
 				INFOPLIST_FILE = PVMupen64PlusDynamic/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -6334,6 +6336,8 @@
 					"\"$(SRCROOT)/Compatibility/SDL\"",
 					"\"$(SRCROOT)/Plugins/Core/src\"",
 					"\"$(SRCROOT)/Plugins/Core/src/asm_defines\"",
+					"\"$(SRCROOT)/Plugins/Core/subprojects/xxhash\"",
+					"\"$(SRCROOT)/Plugins/Core/subprojects/md5\"",
 				);
 				INFOPLIST_FILE = PVMupen64PlusDynamic/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -7656,6 +7660,8 @@
 					"\"$(SRCROOT)/Compatibility/SDL\"",
 					"\"$(SRCROOT)/Plugins/Core/src\"",
 					"\"$(SRCROOT)/Plugins/Core/src/asm_defines\"",
+					"\"$(SRCROOT)/Plugins/Core/subprojects/md5\"",
+					"\"$(SRCROOT)/Plugins/Core/subprojects/xxhash\"",
 				);
 				INFOPLIST_FILE = PVMupen64PlusDynamic/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -7738,6 +7744,8 @@
 					"\"$(SRCROOT)/Compatibility/SDL\"",
 					"\"$(SRCROOT)/Plugins/Core/src\"",
 					"\"$(SRCROOT)/Plugins/Core/src/asm_defines\"",
+					"\"$(SRCROOT)/Plugins/Core/subprojects/md5\"",
+					"\"$(SRCROOT)/Plugins/Core/subprojects/xxhash\"",
 				);
 				INFOPLIST_FILE = PVMupen64PlusDynamic/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -8284,6 +8292,8 @@
 					"\"$(SRCROOT)/Compatibility/SDL\"",
 					"\"$(SRCROOT)/Plugins/Core/src\"",
 					"\"$(SRCROOT)/Plugins/Core/src/asm_defines\"",
+					"\"$(SRCROOT)/Plugins/Core/subprojects/xxhash\"",
+					"\"$(SRCROOT)/Plugins/Core/subprojects/md5\"",
 				);
 				INFOPLIST_FILE = PVMupen64PlusDynamic/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -8371,6 +8381,8 @@
 					"\"$(SRCROOT)/Compatibility/SDL\"",
 					"\"$(SRCROOT)/Plugins/Core/src\"",
 					"\"$(SRCROOT)/Plugins/Core/src/asm_defines\"",
+					"\"$(SRCROOT)/Plugins/Core/subprojects/xxhash\"",
+					"\"$(SRCROOT)/Plugins/Core/subprojects/md5\"",
 				);
 				INFOPLIST_FILE = PVMupen64PlusDynamic/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
