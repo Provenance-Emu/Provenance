@@ -105,10 +105,10 @@
 		B39EF59F2740DD2E00EAD1F9 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = B39EF5862740DBFF00EAD1F9 /* ioapi.c */; };
 		B39EF5A02740DD2E00EAD1F9 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = B39EF5842740DBFF00EAD1F9 /* unzip.c */; };
 		B39EF5A12740DD2E00EAD1F9 /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = B39EF5852740DBFF00EAD1F9 /* zip.c */; };
-		B39EF5A22740DD3900EAD1F9 /* libminizip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B39EF5952740DD2700EAD1F9 /* libminizip.a */; };
+		B39EF5A22740DD3900EAD1F9 /* libminizip-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B39EF5952740DD2700EAD1F9 /* libminizip-iOS.a */; };
 		B39EF5AD2740DEF600EAD1F9 /* minizip.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B39EF5972740DD2700EAD1F9 /* minizip.h */; };
 		B39EF5B32740DF0B00EAD1F9 /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = B39EF57F2740DBFF00EAD1F9 /* md5.c */; };
-		B39EF5B42740DF1500EAD1F9 /* libmd5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B39EF5B22740DEF600EAD1F9 /* libmd5.a */; };
+		B39EF5B42740DF1500EAD1F9 /* libmd5-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B39EF5B22740DEF600EAD1F9 /* libmd5-iOS.a */; };
 		B39EF5BC2740DF5C00EAD1F9 /* dd_controller.h in Headers */ = {isa = PBXBuildFile; fileRef = B39EF5B82740DF5C00EAD1F9 /* dd_controller.h */; };
 		B39EF5BD2740DF5C00EAD1F9 /* dd_controller.h in Headers */ = {isa = PBXBuildFile; fileRef = B39EF5B82740DF5C00EAD1F9 /* dd_controller.h */; };
 		B39EF5BE2740DF5C00EAD1F9 /* disk.h in Headers */ = {isa = PBXBuildFile; fileRef = B39EF5B92740DF5C00EAD1F9 /* disk.h */; };
@@ -131,6 +131,16 @@
 		B39EF5D92740E23D00EAD1F9 /* video_capture_backend.h in Headers */ = {isa = PBXBuildFile; fileRef = B39EF5D52740E23D00EAD1F9 /* video_capture_backend.h */; };
 		B39EF5DC2740E29B00EAD1F9 /* dummy_video_capture.c in Sources */ = {isa = PBXBuildFile; fileRef = B39EF5DA2740E29B00EAD1F9 /* dummy_video_capture.c */; };
 		B39EF5DD2740E29B00EAD1F9 /* dummy_video_capture.c in Sources */ = {isa = PBXBuildFile; fileRef = B39EF5DA2740E29B00EAD1F9 /* dummy_video_capture.c */; };
+		B39EF5E82740EF5F00EAD1F9 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = B39EF5842740DBFF00EAD1F9 /* unzip.c */; };
+		B39EF5E92740EF5F00EAD1F9 /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = B39EF5852740DBFF00EAD1F9 /* zip.c */; };
+		B39EF5EA2740EF5F00EAD1F9 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = B39EF5862740DBFF00EAD1F9 /* ioapi.c */; };
+		B39EF5EB2740EF5F00EAD1F9 /* minizip.m in Sources */ = {isa = PBXBuildFile; fileRef = B39EF5982740DD2700EAD1F9 /* minizip.m */; };
+		B39EF5EE2740EF5F00EAD1F9 /* minizip.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B39EF5972740DD2700EAD1F9 /* minizip.h */; };
+		B39EF5F62740EF6800EAD1F9 /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = B39EF57F2740DBFF00EAD1F9 /* md5.c */; };
+		B39EF5F92740EF6800EAD1F9 /* minizip.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B39EF5972740DD2700EAD1F9 /* minizip.h */; };
+		B39EF5FF2740EF9800EAD1F9 /* libmd5-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B39EF5FE2740EF6800EAD1F9 /* libmd5-tvOS.a */; };
+		B39EF6022740EF9800EAD1F9 /* libminizip-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B39EF5F32740EF6000EAD1F9 /* libminizip-tvOS.a */; };
+		B39EF6052740EFA700EAD1F9 /* libdl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263B626EA164E00E95488 /* libdl.tbd */; };
 		B3A302F22073F2D4008C1955 /* RiceVideoLinux.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3A302912073F2AA008C1955 /* RiceVideoLinux.ini */; };
 		B3A302F32073F2F2008C1955 /* osal_dynamiclib_unix.c in Sources */ = {isa = PBXBuildFile; fileRef = B3A302C12073F2AA008C1955 /* osal_dynamiclib_unix.c */; };
 		B3A302F42073F2F2008C1955 /* osal_files_unix.c in Sources */ = {isa = PBXBuildFile; fileRef = B3A302D32073F2AA008C1955 /* osal_files_unix.c */; };
@@ -1143,6 +1153,20 @@
 			remoteGlobalIDString = B39EF5A52740DEF600EAD1F9;
 			remoteInfo = md5;
 		};
+		B39EF6002740EF9800EAD1F9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B39EF5F42740EF6800EAD1F9;
+			remoteInfo = "md5-tvOS";
+		};
+		B39EF6032740EF9800EAD1F9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B39EF5E62740EF5F00EAD1F9;
+			remoteInfo = "minizip-tvOS";
+		};
 		B3AF701921916E0F000FA7F9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
@@ -1195,6 +1219,26 @@
 			dstSubfolderSpec = 16;
 			files = (
 				B39EF5AD2740DEF600EAD1F9 /* minizip.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B39EF5ED2740EF5F00EAD1F9 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+				B39EF5EE2740EF5F00EAD1F9 /* minizip.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B39EF5F82740EF6800EAD1F9 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+				B39EF5F92740EF6800EAD1F9 /* minizip.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1551,10 +1595,10 @@
 		B39EF58E2740DC7800EAD1F9 /* osd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = osd.c; sourceTree = "<group>"; };
 		B39EF58F2740DC7800EAD1F9 /* oglft_c.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = oglft_c.h; sourceTree = "<group>"; };
 		B39EF5902740DC7800EAD1F9 /* oglft_c.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = oglft_c.cpp; sourceTree = "<group>"; };
-		B39EF5952740DD2700EAD1F9 /* libminizip.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libminizip.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B39EF5952740DD2700EAD1F9 /* libminizip-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libminizip-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39EF5972740DD2700EAD1F9 /* minizip.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = minizip.h; sourceTree = "<group>"; };
 		B39EF5982740DD2700EAD1F9 /* minizip.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = minizip.m; sourceTree = "<group>"; };
-		B39EF5B22740DEF600EAD1F9 /* libmd5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libmd5.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B39EF5B22740DEF600EAD1F9 /* libmd5-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libmd5-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39EF5B82740DF5C00EAD1F9 /* dd_controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dd_controller.h; sourceTree = "<group>"; };
 		B39EF5B92740DF5C00EAD1F9 /* disk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = disk.h; sourceTree = "<group>"; };
 		B39EF5BA2740DF5C00EAD1F9 /* dd_controller.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dd_controller.c; sourceTree = "<group>"; };
@@ -1568,6 +1612,8 @@
 		B39EF5D52740E23D00EAD1F9 /* video_capture_backend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = video_capture_backend.h; sourceTree = "<group>"; };
 		B39EF5DA2740E29B00EAD1F9 /* dummy_video_capture.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dummy_video_capture.c; sourceTree = "<group>"; };
 		B39EF5DB2740E29B00EAD1F9 /* opencv_video_capture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = opencv_video_capture.cpp; sourceTree = "<group>"; };
+		B39EF5F32740EF6000EAD1F9 /* libminizip-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libminizip-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B39EF5FE2740EF6800EAD1F9 /* libmd5-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libmd5-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A302852073F2AA008C1955 /* INSTALL */ = {isa = PBXFileReference; lastKnownFileType = text; path = INSTALL; sourceTree = "<group>"; };
 		B3A302862073F2AA008C1955 /* LICENSES */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSES; sourceTree = "<group>"; };
 		B3A302892073F2AA008C1955 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
@@ -2278,10 +2324,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B39EF5B42740DF1500EAD1F9 /* libmd5.a in Frameworks */,
+				B39EF5B42740DF1500EAD1F9 /* libmd5-iOS.a in Frameworks */,
 				B37263C626EA1EF000E95488 /* PVMupen64PlusVideoRice.framework in Frameworks */,
 				B37263BE26EA1EF000E95488 /* PVMupen64PlusRspHLE.framework in Frameworks */,
-				B39EF5A22740DD3900EAD1F9 /* libminizip.a in Frameworks */,
+				B39EF5A22740DD3900EAD1F9 /* libminizip-iOS.a in Frameworks */,
 				B3274E8B2106C19600857F52 /* PVSupport.framework in Frameworks */,
 				B324C62B21920BC2009F4EDC /* libz.tbd in Frameworks */,
 				B3AE1DD420731F2700AD06D4 /* libdl.tbd in Frameworks */,
@@ -2308,6 +2354,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B39EF5AB2740DEF600EAD1F9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B39EF5EC2740EF5F00EAD1F9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B39EF5F72740EF6800EAD1F9 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2343,10 +2403,13 @@
 			files = (
 				B37263CF26EA1F1C00E95488 /* PVMupen64PlusRspHLE.framework in Frameworks */,
 				B37263D326EA1F1C00E95488 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
+				B39EF5FF2740EF9800EAD1F9 /* libmd5-tvOS.a in Frameworks */,
 				B3AF705821916ED0000FA7F9 /* PVSupport.framework in Frameworks */,
 				B37263DB26EA1F1C00E95488 /* PVRSPCXD4.framework in Frameworks */,
 				B37263B526EA164900E95488 /* libz.tbd in Frameworks */,
+				B39EF6022740EF9800EAD1F9 /* libminizip-tvOS.a in Frameworks */,
 				B37263D726EA1F1C00E95488 /* PVMupen64PlusVideoRice.framework in Frameworks */,
+				B39EF6052740EFA700EAD1F9 /* libdl.tbd in Frameworks */,
 				B324C63021920BDA009F4EDC /* OpenGLES.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2489,8 +2552,10 @@
 				B3800FF5208522DC00FA03B8 /* libglidenhq-iOS.a */,
 				B3AF703921916E60000FA7F9 /* libpng-tvOS.a */,
 				B3AF705221916E87000FA7F9 /* libglidenhq-tvOS.a */,
-				B39EF5952740DD2700EAD1F9 /* libminizip.a */,
-				B39EF5B22740DEF600EAD1F9 /* libmd5.a */,
+				B39EF5952740DD2700EAD1F9 /* libminizip-iOS.a */,
+				B39EF5B22740DEF600EAD1F9 /* libmd5-iOS.a */,
+				B39EF5F32740EF6000EAD1F9 /* libminizip-tvOS.a */,
+				B39EF5FE2740EF6800EAD1F9 /* libmd5-tvOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -5139,9 +5204,9 @@
 			productReference = B3800FF5208522DC00FA03B8 /* libglidenhq-iOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B39EF5942740DD2700EAD1F9 /* minizip */ = {
+		B39EF5942740DD2700EAD1F9 /* minizip-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B39EF59B2740DD2700EAD1F9 /* Build configuration list for PBXNativeTarget "minizip" */;
+			buildConfigurationList = B39EF59B2740DD2700EAD1F9 /* Build configuration list for PBXNativeTarget "minizip-iOS" */;
 			buildPhases = (
 				B39EF5912740DD2700EAD1F9 /* Sources */,
 				B39EF5922740DD2700EAD1F9 /* Frameworks */,
@@ -5151,14 +5216,14 @@
 			);
 			dependencies = (
 			);
-			name = minizip;
+			name = "minizip-iOS";
 			productName = minizip;
-			productReference = B39EF5952740DD2700EAD1F9 /* libminizip.a */;
+			productReference = B39EF5952740DD2700EAD1F9 /* libminizip-iOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B39EF5A52740DEF600EAD1F9 /* md5 */ = {
+		B39EF5A52740DEF600EAD1F9 /* md5-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B39EF5AE2740DEF600EAD1F9 /* Build configuration list for PBXNativeTarget "md5" */;
+			buildConfigurationList = B39EF5AE2740DEF600EAD1F9 /* Build configuration list for PBXNativeTarget "md5-iOS" */;
 			buildPhases = (
 				B39EF5A62740DEF600EAD1F9 /* Sources */,
 				B39EF5AB2740DEF600EAD1F9 /* Frameworks */,
@@ -5168,9 +5233,43 @@
 			);
 			dependencies = (
 			);
-			name = md5;
+			name = "md5-iOS";
 			productName = minizip;
-			productReference = B39EF5B22740DEF600EAD1F9 /* libmd5.a */;
+			productReference = B39EF5B22740DEF600EAD1F9 /* libmd5-iOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B39EF5E62740EF5F00EAD1F9 /* minizip-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B39EF5EF2740EF5F00EAD1F9 /* Build configuration list for PBXNativeTarget "minizip-tvOS" */;
+			buildPhases = (
+				B39EF5E72740EF5F00EAD1F9 /* Sources */,
+				B39EF5EC2740EF5F00EAD1F9 /* Frameworks */,
+				B39EF5ED2740EF5F00EAD1F9 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "minizip-tvOS";
+			productName = minizip;
+			productReference = B39EF5F32740EF6000EAD1F9 /* libminizip-tvOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B39EF5F42740EF6800EAD1F9 /* md5-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B39EF5FA2740EF6800EAD1F9 /* Build configuration list for PBXNativeTarget "md5-tvOS" */;
+			buildPhases = (
+				B39EF5F52740EF6800EAD1F9 /* Sources */,
+				B39EF5F72740EF6800EAD1F9 /* Frameworks */,
+				B39EF5F82740EF6800EAD1F9 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "md5-tvOS";
+			productName = minizip;
+			productReference = B39EF5FE2740EF6800EAD1F9 /* libmd5-tvOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		B3AF702121916E60000FA7F9 /* png-tvOS */ = {
@@ -5241,6 +5340,8 @@
 				B37263D626EA1F1C00E95488 /* PBXTargetDependency */,
 				B37263DA26EA1F1C00E95488 /* PBXTargetDependency */,
 				B37263DE26EA1F1C00E95488 /* PBXTargetDependency */,
+				B39EF6012740EF9800EAD1F9 /* PBXTargetDependency */,
+				B39EF6042740EF9800EAD1F9 /* PBXTargetDependency */,
 			);
 			name = "PVMupen64Plus-tvOS";
 			productName = PVMupen64PlusDynamic;
@@ -5411,8 +5512,10 @@
 				B3AF702121916E60000FA7F9 /* png-tvOS */,
 				B3800FF4208522DC00FA03B8 /* glidenhq-iOS */,
 				B3AF703A21916E87000FA7F9 /* glidenhq-tvOS */,
-				B39EF5942740DD2700EAD1F9 /* minizip */,
-				B39EF5A52740DEF600EAD1F9 /* md5 */,
+				B39EF5942740DD2700EAD1F9 /* minizip-iOS */,
+				B39EF5A52740DEF600EAD1F9 /* md5-iOS */,
+				B39EF5E62740EF5F00EAD1F9 /* minizip-tvOS */,
+				B39EF5F42740EF6800EAD1F9 /* md5-tvOS */,
 			);
 		};
 /* End PBXProject section */
@@ -5710,6 +5813,25 @@
 			buildActionMask = 2147483647;
 			files = (
 				B39EF5B32740DF0B00EAD1F9 /* md5.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B39EF5E72740EF5F00EAD1F9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B39EF5E82740EF5F00EAD1F9 /* unzip.c in Sources */,
+				B39EF5E92740EF5F00EAD1F9 /* zip.c in Sources */,
+				B39EF5EA2740EF5F00EAD1F9 /* ioapi.c in Sources */,
+				B39EF5EB2740EF5F00EAD1F9 /* minizip.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B39EF5F52740EF6800EAD1F9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B39EF5F62740EF6800EAD1F9 /* md5.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6230,13 +6352,23 @@
 		};
 		B39EF5A42740DD3900EAD1F9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B39EF5942740DD2700EAD1F9 /* minizip */;
+			target = B39EF5942740DD2700EAD1F9 /* minizip-iOS */;
 			targetProxy = B39EF5A32740DD3900EAD1F9 /* PBXContainerItemProxy */;
 		};
 		B39EF5B62740DF1500EAD1F9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B39EF5A52740DEF600EAD1F9 /* md5 */;
+			target = B39EF5A52740DEF600EAD1F9 /* md5-iOS */;
 			targetProxy = B39EF5B52740DF1500EAD1F9 /* PBXContainerItemProxy */;
+		};
+		B39EF6012740EF9800EAD1F9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B39EF5F42740EF6800EAD1F9 /* md5-tvOS */;
+			targetProxy = B39EF6002740EF9800EAD1F9 /* PBXContainerItemProxy */;
+		};
+		B39EF6042740EF9800EAD1F9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B39EF5E62740EF5F00EAD1F9 /* minizip-tvOS */;
+			targetProxy = B39EF6032740EF9800EAD1F9 /* PBXContainerItemProxy */;
 		};
 		B3AF701A21916E0F000FA7F9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -8347,6 +8479,214 @@
 			};
 			name = Archive;
 		};
+		B39EF5F02740EF5F00EAD1F9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B39EF5F12740EF5F00EAD1F9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B39EF5F22740EF5F00EAD1F9 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
+		B39EF5FB2740EF6800EAD1F9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B39EF5FC2740EF6800EAD1F9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B39EF5FD2740EF6800EAD1F9 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
 		B3AF703721916E60000FA7F9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -9752,7 +10092,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B39EF59B2740DD2700EAD1F9 /* Build configuration list for PBXNativeTarget "minizip" */ = {
+		B39EF59B2740DD2700EAD1F9 /* Build configuration list for PBXNativeTarget "minizip-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B39EF59C2740DD2700EAD1F9 /* Debug */,
@@ -9762,12 +10102,32 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B39EF5AE2740DEF600EAD1F9 /* Build configuration list for PBXNativeTarget "md5" */ = {
+		B39EF5AE2740DEF600EAD1F9 /* Build configuration list for PBXNativeTarget "md5-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B39EF5AF2740DEF600EAD1F9 /* Debug */,
 				B39EF5B02740DEF600EAD1F9 /* Release */,
 				B39EF5B12740DEF600EAD1F9 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B39EF5EF2740EF5F00EAD1F9 /* Build configuration list for PBXNativeTarget "minizip-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B39EF5F02740EF5F00EAD1F9 /* Debug */,
+				B39EF5F12740EF5F00EAD1F9 /* Release */,
+				B39EF5F22740EF5F00EAD1F9 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B39EF5FA2740EF6800EAD1F9 /* Build configuration list for PBXNativeTarget "md5-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B39EF5FB2740EF6800EAD1F9 /* Debug */,
+				B39EF5FC2740EF6800EAD1F9 /* Release */,
+				B39EF5FD2740EF6800EAD1F9 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
