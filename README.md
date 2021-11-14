@@ -66,7 +66,7 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
   - PC Engine Super CD-ROM² System / TurboGrafx-CD
   - PC Engine SuperGrafx
   - PC-FX
-- Nintendo 
+- Nintendo
   - Nintendo Entertainment System / Famicom (NES/FC)
   - Famicom Disk System
   - Super Nintendo Entertainment System / Super Famicom (SNES/SFC)
@@ -87,16 +87,55 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
   - Neo Geo Pocket / Neo Geo Pocket Color
 - Sony
   - PlayStation (PSX/PS1)
-  
 ## Systems in Development:
  - Nintendo
    - DS
+   - GameCube (Dolphin)
  - Sega
-   - Dreamcast (reicast)
+   - Dreamcast (Flycast)
  - Sony
    - PSP (ppsspp)
+   - PS2 (Play!)
 
 ## Features
+
+<!--WIP | Manufacture  | System | Save States | Cheats | Up-scaling | Extras |
+|---|---|---|---|---|---|
+|Atari| | | | |
+| |2600 | X | | | |
+| |5200 | X | | | |
+| |7800 | X | | | |
+| |Lynx | X | | | |
+| |Jaguar | I | | | |
+|Bandai| | | | |
+| |WonderSwan (&Color) | X | | | |
+|NEC| | | | |
+| |PC Engine / TurboGrafx-16 (PCE/TG16)| | | | | |
+| |PC Engine Super CD-ROM² System / TurboGrafx-CD| | | | | |
+| |PC Engine SuperGrafx| | | | | |
+| |PC-FX| | | | | |
+|Nintendo| | | | |
+| |Nintendo Entertainment System / Famicom (NES/FC)| | | | | |
+| |Famicom Disk System| | | | | |
+| |Super Nintendo Entertainment System / Super Famicom (SNES/SFC)| | | | | |
+| |Game Boy / Game Boy Color (GB/GBC)| | | | | |
+| |Virtual Boy| | | | | |
+| |Nintendo 64 (N64)| | | | | |
+| |Game Boy Advance (GBA)| | | | | |
+| |Pokémon mini| | | | | |
+|Sega| | | | |
+| |SG-1000| X | | | | |
+| |Master System| X | | | | |
+| |Genesis / Mega Drive| X | | | | |
+| |Game Gear| X | | | | |
+| |CD / MegaCD| X | | | | |
+| |32X| X | | | | |
+| |Saturn (mednafen)| X | | | | |
+|SNK| | | | |
+| |Neo Geo Pocket / Neo Geo Pocket Color | X | | | |
+|Sony| | | | |
+| |PlayStation (PSX/PS1)| X | | | | | -->
+
 - Very Accurate, Full Speed Emulation
 - Stereo Sound
 - Save States (save anywhere/_game freezing_)
@@ -212,7 +251,7 @@ Provenance would not be possible without the great work of those who came before
 
 ### Contributors
 
-<!-- readme: contributors -start -->
+<!-- readme: JoeMatt/-,jasarien/-,sevdestruct/-,mrjschulte/-,contributors -start -->
 <table>
 <tr>
     <td align="center">
@@ -430,13 +469,23 @@ Provenance would not be possible without the great work of those who came before
         </a>
     </td></tr>
 </table>
-<!-- readme: contributors -end -->
+<!-- readme: JoeMatt/-,jasarien/-,sevdestruct/-,mrjschulte/-,contributors -end -->
+
+### Sponsors
+
+<!-- readme: sponsors -start -->
+<!-- readme: sponsors -end -->
+
+### Bots
+
+<!-- readme: bots -start -->
+<!-- readme: bots -end -->
 
 ----
 
 #### Provenance License
 
-<sub>Copyright © 2016, Provenance-Emu Team. All rights reserved.</sub><br>
+<sub>Copyright © 2021, Provenance-Emu Team. All rights reserved.</sub><br>
 
 <sub>**Redistribution and use in source and binary forms, with or without modification, are
 permitted provided that the following conditions are met:**<br> 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer • 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. • 3. Neither the name of the Provenance project nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.</sub><br>
