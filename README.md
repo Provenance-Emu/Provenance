@@ -4,7 +4,7 @@
 </p>
 
 <p align="center">
-  <img width="128" height="128" src="https://gblobscdn.gitbook.com/spaces%2F-LcssjTrcP7HWLfsYZCJ%2Favatar.png">
+  <img height="512" src="https://user-images.githubusercontent.com/399864/140426554-fb786580-b36b-492d-b5f9-d806ca377508.jpeg" />
 </p>
 
 <div style="align:center" align="center">
@@ -26,7 +26,16 @@
 </a>
 </div>
 
-
+</br>
+<p align="center">
+<a href="https://www.patreon.com/bePatron?u=8537745">
+  <img src="https://user-images.githubusercontent.com/399864/139607496-983c7220-3aae-46f6-8369-ebd45d4c7f06.png" height="65" />
+</a>
+<a href="https://www.amazon.com/hz/wishlist/ls/1VXOGWHIOFVMR?ref_=wl_share">
+  <img src="https://user-images.githubusercontent.com/399864/140426153-b6797d7d-c82f-4542-89ff-b29a3e70525d.jpg"  height="65" />
+</a>
+ </p>
+</br>
 
 ## Installation
 
