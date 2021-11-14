@@ -25,7 +25,7 @@
  */
 
 #import "osd/osd.h"
-#import "osd/screenshot.h"
+#import "main/screenshot.h"
 
 int event_set_core_defaults(void)
 {
