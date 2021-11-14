@@ -26,6 +26,7 @@
 
 #import "osd/osd.h"
 #import "main/screenshot.h"
+#import "../MupenGameCore.h"
 
 int event_set_core_defaults(void)
 {
@@ -46,9 +47,13 @@ void event_sdl_keyup(int keysym, int keymod)
 
 int event_gameshark_active(void)
 {
-    return 0;
+    GET_CURRENT_OR_RETURN(0);
+
+    return current.isGamesharkActive;
 }
 
 void event_set_gameshark(int active)
 {
+    GET_CURRENT_OR_RETURN();
+    current.isGamesharkActive = active;
 }
