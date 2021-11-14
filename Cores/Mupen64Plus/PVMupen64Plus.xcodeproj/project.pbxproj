@@ -135,6 +135,8 @@
 		B39EF5FF2740EF9800EAD1F9 /* libmd5-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B39EF5FE2740EF6800EAD1F9 /* libmd5-tvOS.a */; };
 		B39EF6022740EF9800EAD1F9 /* libminizip-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B39EF5F32740EF6000EAD1F9 /* libminizip-tvOS.a */; };
 		B39EF6052740EFA700EAD1F9 /* libdl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263B626EA164E00E95488 /* libdl.tbd */; };
+		B39EF6072740F38800EAD1F9 /* hvqm.c in Sources */ = {isa = PBXBuildFile; fileRef = B39EF6062740F38800EAD1F9 /* hvqm.c */; };
+		B39EF6082740F38800EAD1F9 /* hvqm.c in Sources */ = {isa = PBXBuildFile; fileRef = B39EF6062740F38800EAD1F9 /* hvqm.c */; };
 		B3A302F22073F2D4008C1955 /* RiceVideoLinux.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3A302912073F2AA008C1955 /* RiceVideoLinux.ini */; };
 		B3A302F32073F2F2008C1955 /* osal_dynamiclib_unix.c in Sources */ = {isa = PBXBuildFile; fileRef = B3A302C12073F2AA008C1955 /* osal_dynamiclib_unix.c */; };
 		B3A302F42073F2F2008C1955 /* osal_files_unix.c in Sources */ = {isa = PBXBuildFile; fileRef = B3A302D32073F2AA008C1955 /* osal_files_unix.c */; };
@@ -1602,6 +1604,7 @@
 		B39EF5DB2740E29B00EAD1F9 /* opencv_video_capture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = opencv_video_capture.cpp; sourceTree = "<group>"; };
 		B39EF5F32740EF6000EAD1F9 /* libminizip-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libminizip-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39EF5FE2740EF6800EAD1F9 /* libmd5-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libmd5-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B39EF6062740F38800EAD1F9 /* hvqm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hvqm.c; sourceTree = "<group>"; };
 		B3A302852073F2AA008C1955 /* INSTALL */ = {isa = PBXFileReference; lastKnownFileType = text; path = INSTALL; sourceTree = "<group>"; };
 		B3A302862073F2AA008C1955 /* LICENSES */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSES; sourceTree = "<group>"; };
 		B3A302892073F2AA008C1955 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
@@ -3615,28 +3618,29 @@
 				B3AE1F2220733D3500AD06D4 /* alist_naudio.c */,
 				B3AE1F1D20733D3500AD06D4 /* alist_nead.c */,
 				B3AE1F2120733D3500AD06D4 /* alist.c */,
+				B3AE1F1320733D3500AD06D4 /* alist.h */,
+				B3AE1F1420733D3500AD06D4 /* arithmetics.h */,
 				B3AE1F2920733D3500AD06D4 /* audio.c */,
+				B3AE1F1B20733D3500AD06D4 /* audio.h */,
 				B3AE1F1E20733D3500AD06D4 /* cicx105.c */,
+				B3AE1F1F20733D3500AD06D4 /* common.h */,
+				B3AE1F1520733D3500AD06D4 /* hle_external.h */,
+				B3AE1F1920733D3500AD06D4 /* hle_internal.h */,
 				B3AE1F1620733D3500AD06D4 /* hle.c */,
+				B3AE1F2520733D3500AD06D4 /* hle.h */,
+				B39EF6062740F38800EAD1F9 /* hvqm.c */,
 				B3AE1F1120733D3500AD06D4 /* jpeg.c */,
 				B3AE1F1220733D3500AD06D4 /* memory.c */,
+				B3AE1F2420733D3500AD06D4 /* memory.h */,
 				B3AE1F2720733D3500AD06D4 /* mp3.c */,
 				B3AE1F1A20733D3500AD06D4 /* musyx.c */,
 				B3AE1F1C20733D3500AD06D4 /* osal_dynamiclib_unix.c */,
 				B3AE1F2620733D3500AD06D4 /* osal_dynamiclib_win32.c */,
+				B3AE1F1720733D3500AD06D4 /* osal_dynamiclib.h */,
 				B3AE1F2320733D3500AD06D4 /* plugin.c */,
 				B3AE1F1820733D3500AD06D4 /* re2.c */,
-				B3AE1F1320733D3500AD06D4 /* alist.h */,
-				B3AE1F1420733D3500AD06D4 /* arithmetics.h */,
-				B3AE1F1B20733D3500AD06D4 /* audio.h */,
-				B3AE1F1F20733D3500AD06D4 /* common.h */,
-				B3AE1F1520733D3500AD06D4 /* hle_external.h */,
-				B3AE1F1920733D3500AD06D4 /* hle_internal.h */,
-				B3AE1F2520733D3500AD06D4 /* hle.h */,
-				B3AE1F2420733D3500AD06D4 /* memory.h */,
-				B3AE1F1720733D3500AD06D4 /* osal_dynamiclib.h */,
-				B3AE1F2820733D3500AD06D4 /* ucodes.h */,
 				B3AE1F2020733D3500AD06D4 /* rsp_api_export.ver */,
+				B3AE1F2820733D3500AD06D4 /* ucodes.h */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -5862,6 +5866,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B39EF6072740F38800EAD1F9 /* hvqm.c in Sources */,
 				B3AE1F4420733D6000AD06D4 /* alist_audio.c in Sources */,
 				B3AE1F4520733D6000AD06D4 /* alist_naudio.c in Sources */,
 				B3AE1F4620733D6000AD06D4 /* alist_nead.c in Sources */,
@@ -6007,6 +6012,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B39EF6082740F38800EAD1F9 /* hvqm.c in Sources */,
 				B3AE1F5220733D6700AD06D4 /* alist_audio.c in Sources */,
 				B3AE1F5320733D6700AD06D4 /* alist_naudio.c in Sources */,
 				B3AE1F5420733D6700AD06D4 /* alist_nead.c in Sources */,
