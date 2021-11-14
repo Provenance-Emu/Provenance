@@ -100,13 +100,10 @@
 		B39E8CB62053B53100380DCD /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B39E8CB52053B53100380DCD /* Core.plist */; };
 		B39EF5782740DB7D00EAD1F9 /* netplay.h in Headers */ = {isa = PBXBuildFile; fileRef = B39EF5752740DB7D00EAD1F9 /* netplay.h */; };
 		B39EF5792740DB7D00EAD1F9 /* netplay.h in Headers */ = {isa = PBXBuildFile; fileRef = B39EF5752740DB7D00EAD1F9 /* netplay.h */; };
-		B39EF5992740DD2700EAD1F9 /* minizip.m in Sources */ = {isa = PBXBuildFile; fileRef = B39EF5982740DD2700EAD1F9 /* minizip.m */; };
-		B39EF59A2740DD2700EAD1F9 /* minizip.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B39EF5972740DD2700EAD1F9 /* minizip.h */; };
 		B39EF59F2740DD2E00EAD1F9 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = B39EF5862740DBFF00EAD1F9 /* ioapi.c */; };
 		B39EF5A02740DD2E00EAD1F9 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = B39EF5842740DBFF00EAD1F9 /* unzip.c */; };
 		B39EF5A12740DD2E00EAD1F9 /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = B39EF5852740DBFF00EAD1F9 /* zip.c */; };
 		B39EF5A22740DD3900EAD1F9 /* libminizip-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B39EF5952740DD2700EAD1F9 /* libminizip-iOS.a */; };
-		B39EF5AD2740DEF600EAD1F9 /* minizip.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B39EF5972740DD2700EAD1F9 /* minizip.h */; };
 		B39EF5B32740DF0B00EAD1F9 /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = B39EF57F2740DBFF00EAD1F9 /* md5.c */; };
 		B39EF5B42740DF1500EAD1F9 /* libmd5-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B39EF5B22740DEF600EAD1F9 /* libmd5-iOS.a */; };
 		B39EF5BC2740DF5C00EAD1F9 /* dd_controller.h in Headers */ = {isa = PBXBuildFile; fileRef = B39EF5B82740DF5C00EAD1F9 /* dd_controller.h */; };
@@ -134,10 +131,7 @@
 		B39EF5E82740EF5F00EAD1F9 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = B39EF5842740DBFF00EAD1F9 /* unzip.c */; };
 		B39EF5E92740EF5F00EAD1F9 /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = B39EF5852740DBFF00EAD1F9 /* zip.c */; };
 		B39EF5EA2740EF5F00EAD1F9 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = B39EF5862740DBFF00EAD1F9 /* ioapi.c */; };
-		B39EF5EB2740EF5F00EAD1F9 /* minizip.m in Sources */ = {isa = PBXBuildFile; fileRef = B39EF5982740DD2700EAD1F9 /* minizip.m */; };
-		B39EF5EE2740EF5F00EAD1F9 /* minizip.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B39EF5972740DD2700EAD1F9 /* minizip.h */; };
 		B39EF5F62740EF6800EAD1F9 /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = B39EF57F2740DBFF00EAD1F9 /* md5.c */; };
-		B39EF5F92740EF6800EAD1F9 /* minizip.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B39EF5972740DD2700EAD1F9 /* minizip.h */; };
 		B39EF5FF2740EF9800EAD1F9 /* libmd5-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B39EF5FE2740EF6800EAD1F9 /* libmd5-tvOS.a */; };
 		B39EF6022740EF9800EAD1F9 /* libminizip-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B39EF5F32740EF6000EAD1F9 /* libminizip-tvOS.a */; };
 		B39EF6052740EFA700EAD1F9 /* libdl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263B626EA164E00E95488 /* libdl.tbd */; };
@@ -1208,7 +1202,6 @@
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
-				B39EF59A2740DD2700EAD1F9 /* minizip.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1218,7 +1211,6 @@
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
-				B39EF5AD2740DEF600EAD1F9 /* minizip.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1228,7 +1220,6 @@
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
-				B39EF5EE2740EF5F00EAD1F9 /* minizip.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1238,7 +1229,6 @@
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
-				B39EF5F92740EF6800EAD1F9 /* minizip.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1596,8 +1586,6 @@
 		B39EF58F2740DC7800EAD1F9 /* oglft_c.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = oglft_c.h; sourceTree = "<group>"; };
 		B39EF5902740DC7800EAD1F9 /* oglft_c.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = oglft_c.cpp; sourceTree = "<group>"; };
 		B39EF5952740DD2700EAD1F9 /* libminizip-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libminizip-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B39EF5972740DD2700EAD1F9 /* minizip.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = minizip.h; sourceTree = "<group>"; };
-		B39EF5982740DD2700EAD1F9 /* minizip.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = minizip.m; sourceTree = "<group>"; };
 		B39EF5B22740DEF600EAD1F9 /* libmd5-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libmd5-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39EF5B82740DF5C00EAD1F9 /* dd_controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dd_controller.h; sourceTree = "<group>"; };
 		B39EF5B92740DF5C00EAD1F9 /* disk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = disk.h; sourceTree = "<group>"; };
@@ -2478,7 +2466,6 @@
 				B3303E4D1DED23C600896D96 /* libpng */,
 				DFB601812038AD13001E70F1 /* PVMupen64PlusVideoGlideN64 */,
 				B30557702072FEBC001212D2 /* PVMupen64Plus-core */,
-				B39EF5962740DD2700EAD1F9 /* minizip */,
 				19C28FB8FE9D52D311CA2CBB /* Products */,
 				B3B3B8551DECE9D800602746 /* Frameworks */,
 			);
@@ -3329,15 +3316,6 @@
 				B39EF58C2740DBFF00EAD1F9 /* xxhash.h */,
 			);
 			path = xxhash;
-			sourceTree = "<group>";
-		};
-		B39EF5962740DD2700EAD1F9 /* minizip */ = {
-			isa = PBXGroup;
-			children = (
-				B39EF5972740DD2700EAD1F9 /* minizip.h */,
-				B39EF5982740DD2700EAD1F9 /* minizip.m */,
-			);
-			path = minizip;
 			sourceTree = "<group>";
 		};
 		B39EF5B72740DF5C00EAD1F9 /* dd */ = {
@@ -5804,7 +5782,6 @@
 				B39EF5A02740DD2E00EAD1F9 /* unzip.c in Sources */,
 				B39EF5A12740DD2E00EAD1F9 /* zip.c in Sources */,
 				B39EF59F2740DD2E00EAD1F9 /* ioapi.c in Sources */,
-				B39EF5992740DD2700EAD1F9 /* minizip.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5823,7 +5800,6 @@
 				B39EF5E82740EF5F00EAD1F9 /* unzip.c in Sources */,
 				B39EF5E92740EF5F00EAD1F9 /* zip.c in Sources */,
 				B39EF5EA2740EF5F00EAD1F9 /* ioapi.c in Sources */,
-				B39EF5EB2740EF5F00EAD1F9 /* minizip.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
