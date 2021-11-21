@@ -1,0 +1,42 @@
+
+/* Class = "UINavigationItem"; title = "Cores"; ObjectID = "1TV-Jh-PuG"; */
+"1TV-Jh-PuG.title" = "Cores";
+
+/* Class = "UINavigationItem"; title = "Controllers"; ObjectID = "4LS-j6-bCS"; */
+"4LS-j6-bCS.title" = "Controllers";
+
+/* Class = "UINavigationItem"; title = "Systems"; ObjectID = "4cT-Q6-yGj"; */
+"4cT-Q6-yGj.title" = "Systems";
+
+/* Class = "UIViewController"; title = "Systems"; ObjectID = "EfU-1d-EuK"; */
+"EfU-1d-EuK.title" = "Systems";
+
+/* Class = "UINavigationItem"; title = "Acknowledgements"; ObjectID = "LHP-GN-CVq"; */
+"LHP-GN-CVq.title" = "Acknowledgements";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "PAK-7c-QZ8"; */
+"PAK-7c-QZ8.text" = "Title";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "fw1-8X-P2T"; */
+"fw1-8X-P2T.text" = "Title";
+
+/* Class = "UINavigationItem"; title = "Settings"; ObjectID = "ghc-It-pGU"; */
+"ghc-It-pGU.title" = "Settings";
+
+/* Class = "UINavigationItem"; title = "iCade"; ObjectID = "iDC-Ek-3P4"; */
+"iDC-Ek-3P4.title" = "iCade";
+
+/* Class = "UIViewController"; title = "Cores"; ObjectID = "o83-ke-qBP"; */
+"o83-ke-qBP.title" = "Cores";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "rLm-i9-jlT"; */
+"rLm-i9-jlT.text" = "Title";
+
+/* Class = "UILabel"; text = "Detail"; ObjectID = "tPX-P3-bxo"; */
+"tPX-P3-bxo.text" = "Detail";
+
+/* Class = "UIBarButtonItem"; title = "i"; ObjectID = "tfB-zm-70S"; */
+"tfB-zm-70S.title" = "i";
+
+/* Class = "UINavigationItem"; title = "Appearance"; ObjectID = "xim-bo-qoF"; */
+"xim-bo-qoF.title" = "Appearance";
