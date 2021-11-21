@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - Systems.plist
 
-public struct SystemPlistBIOSEntry: Codable {
+public struct SystemPlistBIOSEntry: Codable, Equatable, Hashable {
     public private(set) var Description: String
     public private(set) var MD5: String
     public private(set) var Name: String
@@ -18,14 +18,14 @@ public struct SystemPlistBIOSEntry: Codable {
     public private(set) var Optional: Bool?
 }
 
-public struct ControlGroupButton: Codable {
+public struct ControlGroupButton: Codable, Equatable, Hashable {
     public let PVControlType: String
     public let PVControlTitle: String
     public let PVControlFrame: String
     public let PVControlTint: String?
 }
 
-public struct ControlLayoutEntry: Codable {
+public struct ControlLayoutEntry: Codable, Equatable, Hashable {
     public let PVControlType: String
     public let PVControlSize: String
     public let PVControlTitle: String?
@@ -53,7 +53,7 @@ public extension ControlLayoutEntry {
     }
 }
 
-public struct SytemPlistEntry: Codable {
+public struct SytemPlistEntry: Codable, Equatable, Hashable {
     public private(set) var PVSystemIdentifier: String
     public private(set) var PVDatabaseID: String
     public private(set) var PVRequiresBIOS: Bool?
@@ -75,7 +75,7 @@ public struct SytemPlistEntry: Codable {
 
 // MARK: Core.plist
 
-public struct CorePlistEntry: Codable {
+public struct CorePlistEntry: Codable, Equatable, Hashable {
     public let PVCoreIdentifier: String
     public let PVPrincipleClass: String
     public let PVSupportedSystems: [String]
