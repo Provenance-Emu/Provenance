@@ -82,4 +82,5 @@ public struct CorePlistEntry: Codable {
     public let PVProjectName: String
     public let PVProjectURL: String
     public let PVProjectVersion: String
+    public let PVDisabled: Bool?
 }

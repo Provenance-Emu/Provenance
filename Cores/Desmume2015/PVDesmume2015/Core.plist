@@ -16,5 +16,7 @@
 	<string>https://github.com/flyinghead/desmume2015</string>
 	<key>PVProjectVersion</key>
 	<string>1.1</string>
+	<key>PVDisabled</key>
+	<true/>
 </dict>
 </plist>
