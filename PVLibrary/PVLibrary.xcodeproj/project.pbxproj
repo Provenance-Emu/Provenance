@@ -60,8 +60,6 @@
 		B336B90C26B39ACB00960A81 /* RxRealm in Frameworks */ = {isa = PBXBuildFile; productRef = B336B90B26B39ACB00960A81 /* RxRealm */; };
 		B336B90F26B39BCF00960A81 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = B336B90E26B39BCF00960A81 /* SQLite */; };
 		B336B91126B39BDA00960A81 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = B336B91026B39BDA00960A81 /* SQLite */; };
-		B336B91426B3A0E200960A81 /* ZipArchive in Frameworks */ = {isa = PBXBuildFile; productRef = B336B91326B3A0E200960A81 /* ZipArchive */; };
-		B336B91626B3A0EB00960A81 /* ZipArchive in Frameworks */ = {isa = PBXBuildFile; productRef = B336B91526B3A0EB00960A81 /* ZipArchive */; };
 		B34AB8632106F2E900C45F09 /* PVLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D122106B11D00DDEBD6 /* PVLibrary.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B354E78E219A76C80041F971 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E785219A76C80041F971 /* Game.swift */; };
 		B354E78F219A76C80041F971 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E785219A76C80041F971 /* Game.swift */; };
@@ -111,6 +109,7 @@
 		B378228621D41E9B0077E86F /* LibrarySerializerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378228421D41E9B0077E86F /* LibrarySerializerError.swift */; };
 		B383F3BC219BB29600DB6926 /* iCloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = B383F3BB219BB29600DB6926 /* iCloudSync.swift */; };
 		B383F3BD219BB29600DB6926 /* iCloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = B383F3BB219BB29600DB6926 /* iCloudSync.swift */; };
+		B3A3204127209B4300F338F6 /* ZipArchive in Frameworks */ = {isa = PBXBuildFile; productRef = B3A3204027209B4300F338F6 /* ZipArchive */; };
 		B3AF42F42107145C002211EE /* DirectoryWatcher2.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D332106B4D700DDEBD6 /* DirectoryWatcher2.swift */; };
 		B3AF475721071CDB002211EE /* LzmaSDKObjCBufferProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474321071CA6002211EE /* LzmaSDKObjCBufferProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3AF475821071CDB002211EE /* LzmaSDKObjCExtern.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF473D21071CA6002211EE /* LzmaSDKObjCExtern.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -860,7 +859,7 @@
 				1180B31E2492A9BB00636C8A /* CoreServices.framework in Frameworks */,
 				B3067F4B2106B5A30091437F /* Foundation.framework in Frameworks */,
 				B336B90626B39ABA00960A81 /* RxRealm in Frameworks */,
-				B336B91426B3A0E200960A81 /* ZipArchive in Frameworks */,
+				B3A3204127209B4300F338F6 /* ZipArchive in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -876,7 +875,6 @@
 				B336B90126B399E200960A81 /* RxSwift in Frameworks */,
 				1180B3202492A9CB00636C8A /* CoreServices.framework in Frameworks */,
 				B3AF6FBD219160BF000FA7F9 /* CoreGraphics.framework in Frameworks */,
-				B336B91626B3A0EB00960A81 /* ZipArchive in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1692,7 +1690,7 @@
 				B336B8FE26B399B400960A81 /* RxSwift */,
 				B336B90526B39ABA00960A81 /* RxRealm */,
 				B336B90E26B39BCF00960A81 /* SQLite */,
-				B336B91326B3A0E200960A81 /* ZipArchive */,
+				B3A3204027209B4300F338F6 /* ZipArchive */,
 			);
 			productName = PVLibrary;
 			productReference = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */;
@@ -1717,7 +1715,6 @@
 				B336B90226B39A1200960A81 /* RxCocoa */,
 				B336B90B26B39ACB00960A81 /* RxRealm */,
 				B336B91026B39BDA00960A81 /* SQLite */,
-				B336B91526B3A0EB00960A81 /* ZipArchive */,
 			);
 			productName = PVLibrary;
 			productReference = B3C04B4421077B3100E7AF79 /* PVLibrary.framework */;
@@ -1778,7 +1775,7 @@
 				B336B8F926B399B400960A81 /* XCRemoteSwiftPackageReference "RxSwift" */,
 				B336B90426B39ABA00960A81 /* XCRemoteSwiftPackageReference "RxRealm" */,
 				B336B90D26B39BCF00960A81 /* XCRemoteSwiftPackageReference "SQLite.swift" */,
-				B336B91226B3A0E200960A81 /* XCRemoteSwiftPackageReference "ZipArchive" */,
+				B3A3203F27209B4300F338F6 /* XCRemoteSwiftPackageReference "ZipArchive" */,
 			);
 			productRefGroup = B3579D102106B11D00DDEBD6 /* Products */;
 			projectDirPath = "";
@@ -2775,7 +2772,7 @@
 				kind = branch;
 			};
 		};
-		B336B91226B3A0E200960A81 /* XCRemoteSwiftPackageReference "ZipArchive" */ = {
+		B3A3203F27209B4300F338F6 /* XCRemoteSwiftPackageReference "ZipArchive" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ZipArchive/ZipArchive";
 			requirement = {
@@ -2826,14 +2823,9 @@
 			package = B336B90D26B39BCF00960A81 /* XCRemoteSwiftPackageReference "SQLite.swift" */;
 			productName = SQLite;
 		};
-		B336B91326B3A0E200960A81 /* ZipArchive */ = {
+		B3A3204027209B4300F338F6 /* ZipArchive */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B336B91226B3A0E200960A81 /* XCRemoteSwiftPackageReference "ZipArchive" */;
-			productName = ZipArchive;
-		};
-		B336B91526B3A0EB00960A81 /* ZipArchive */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B336B91226B3A0E200960A81 /* XCRemoteSwiftPackageReference "ZipArchive" */;
+			package = B3A3203F27209B4300F338F6 /* XCRemoteSwiftPackageReference "ZipArchive" */;
 			productName = ZipArchive;
 		};
 /* End XCSwiftPackageProductDependency section */
