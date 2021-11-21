@@ -151,6 +151,12 @@
 		B31117B0218EB3A900C495A2 /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */; };
 		B31117B1218EB3AA00C495A2 /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */; };
 		B31117B3218EB3AE00C495A2 /* PVButtonGroupOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ED1205CD20800C273C7 /* PVButtonGroupOverlayView.swift */; };
+		B313544726E4C0F90047F338 /* PVPS2ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B313544626E4C0F90047F338 /* PVPS2ControllerViewController.swift */; };
+		B313544826E4C0F90047F338 /* PVPS2ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B313544626E4C0F90047F338 /* PVPS2ControllerViewController.swift */; };
+		B313544A26E4C3B90047F338 /* PVPlay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B313544926E4C3B90047F338 /* PVPlay.framework */; };
+		B313544B26E4C3B90047F338 /* PVPlay.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B313544926E4C3B90047F338 /* PVPlay.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B313544D26E4C3BE0047F338 /* PVPlay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B313544C26E4C3BE0047F338 /* PVPlay.framework */; };
+		B313544E26E4C3BE0047F338 /* PVPlay.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B313544C26E4C3BE0047F338 /* PVPlay.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B316B4D22192652000693472 /* PVReicast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B316B4D12192652000693472 /* PVReicast.framework */; };
 		B316B4D32192652000693472 /* PVReicast.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B316B4D12192652000693472 /* PVReicast.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B316B4D9219265AB00693472 /* PVVirtualJaguar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B316B4D62192659900693472 /* PVVirtualJaguar.framework */; };
@@ -536,6 +542,7 @@
 				B3CB85C31E9BFB16009155A6 /* PVPokeMini.framework in Embed Frameworks */,
 				B37263AE26EA159400E95488 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
 				B316B4D32192652000693472 /* PVReicast.framework in Embed Frameworks */,
+				B313544E26E4C3BE0047F338 /* PVPlay.framework in Embed Frameworks */,
 				B3C9D5E21DEA8A290068D057 /* PVGenesis.framework in Embed Frameworks */,
 				B3C9D4B21DEA74500068D057 /* PVGB.framework in Embed Frameworks */,
 				B37263AC26EA159400E95488 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
@@ -565,6 +572,7 @@
 			files = (
 				55546DF2257D6CA800616332 /* PVTGBDual.framework in Embed Frameworks */,
 				B3CB85C01E9BFB07009155A6 /* PVPokeMini.framework in Embed Frameworks */,
+				B313544B26E4C3B90047F338 /* PVPlay.framework in Embed Frameworks */,
 				B316B4E521926D7400693472 /* PVReicast.framework in Embed Frameworks */,
 				B324C6202192057E009F4EDC /* PVFCEU.framework in Embed Frameworks */,
 				B3C9D4AF1DEA74390068D057 /* PVGB.framework in Embed Frameworks */,
@@ -709,6 +717,9 @@
 		7556CF7919DC15C1007F8F97 /* Default.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Default.xib; sourceTree = "<group>"; };
 		B30172C9274A34FA00B0E695 /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B302BFA320825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B313544626E4C0F90047F338 /* PVPS2ControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVPS2ControllerViewController.swift; sourceTree = "<group>"; };
+		B313544926E4C3B90047F338 /* PVPlay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPlay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B313544C26E4C3BE0047F338 /* PVPlay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPlay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B305436D2720237400F5257D /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3054370272026E800F5257D /* PVPSPControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVPSPControllerViewController.swift; sourceTree = "<group>"; };
 		B30C6E20271D823F0025DD88 /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -951,6 +962,7 @@
 				1A19EE142080EA2000A9147B /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
 				B3B0860A1E71316A007F39E1 /* PVMednafen.framework in Frameworks */,
 				B3C9D5211DEA787D0068D057 /* PVGBA.framework in Frameworks */,
+				B313544A26E4C3B90047F338 /* PVPlay.framework in Frameworks */,
 				B3B3B8951DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Frameworks */,
 				1A3D431E17B2F01F004DFFFC /* OpenGLES.framework in Frameworks */,
 				B3F187712720B7FE00659D87 /* Differentiator in Frameworks */,
@@ -986,6 +998,7 @@
 				B324C30321919596009F4EDC /* UIKit.framework in Frameworks */,
 				B3F187772720B81100659D87 /* Differentiator in Frameworks */,
 				B324C30421919596009F4EDC /* TVUIKit.framework in Frameworks */,
+				B313544D26E4C3BE0047F338 /* PVPlay.framework in Frameworks */,
 				B37263AB26EA159400E95488 /* PVMupen64PlusRspHLE.framework in Frameworks */,
 				B37263B126EA159500E95488 /* PVRSPCXD4.framework in Frameworks */,
 				B3D30FC126F0BCE60064603F /* SteamController in Frameworks */,
@@ -1130,6 +1143,8 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B313544C26E4C3BE0047F338 /* PVPlay.framework */,
+				B313544926E4C3B90047F338 /* PVPlay.framework */,
 				B305436D2720237400F5257D /* PVPPSSPP.framework */,
 				B30C6E20271D823F0025DD88 /* PVPPSSPP.framework */,
 				B30172C9274A34FA00B0E695 /* PVDuckStation.framework */,
@@ -1579,6 +1594,7 @@
 				B3AB37292187F568009D9244 /* PVPokeMiniControllerViewController.swift */,
 				B3054370272026E800F5257D /* PVPSPControllerViewController.swift */,
 				B3AB37232187F568009D9244 /* PVPSXControllerViewController.swift */,
+				B313544626E4C0F90047F338 /* PVPS2ControllerViewController.swift */,
 				B3AB372C2187F568009D9244 /* PVSaturnControllerViewController.swift */,
 				B3AB371E2187F568009D9244 /* PVSNESControllerViewController.swift */,
 				B3AB37252187F568009D9244 /* PVVBControllerViewController.swift */,
@@ -2213,6 +2229,8 @@
 				B3AB37332187F569009D9244 /* PVAtari2600ControllerViewController.swift in Sources */,
 				B3EA0CD32070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */,
 				B3DB11AD205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */,
+				B3DFEDF92686D654005C6CF2 /* IdentifiableType.swift in Sources */,
+				B313544726E4C0F90047F338 /* PVPS2ControllerViewController.swift in Sources */,
 				B3AB373B2187F569009D9244 /* PVPCEControllerViewController.swift in Sources */,
 				B31117B1218EB3AA00C495A2 /* PVEmulatorViewController.swift in Sources */,
 				B3AB373A2187F569009D9244 /* PVPCFXControllerViewController.swift in Sources */,
@@ -2413,6 +2431,7 @@
 				B3EA0CD42070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */,
 				B3B104D2218F2EF400210C39 /* PVSNESControllerViewController.swift in Sources */,
 				B387676D20BD0F43009D8CD2 /* WebServerActivatorController.swift in Sources */,
+				B313544826E4C0F90047F338 /* PVPS2ControllerViewController.swift in Sources */,
 				B3B104D6218F2F2800210C39 /* PVButtonGroupOverlayView.swift in Sources */,
 				1180B30824924AEA00636C8A /* UICollectionView+Rx.swift in Sources */,
 				B3B104D3218F2EF400210C39 /* PVVBControllerViewController.swift in Sources */,
