@@ -2,12 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>ALTDeviceID</key>
-	<string></string>
-	<key>appcenter</key>
-	<string>7d623115-99d6-439e-8e3a-9f2d0b1fbc02</string>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>en</string>
+	<string>zh-Hans</string>
 	<key>CFBundleDisplayName</key>
 	<string>$(APP_DISPLAY_NAME)</string>
 	<key>CFBundleExecutable</key>
@@ -69,12 +65,6 @@
 	</dict>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Provenance uses Bluetooth to support game controllers.</string>
-	<key>NSBonjourServices</key>
-	<array>
-		<string>_altserver._tcp</string>
-	</array>
-	<key>NSLocalNetworkUsageDescription</key>
-	<string>Provenance uses the local network to find and communicate with AltServer.</string>
 	<key>NSUserActivityTypes</key>
 	<array>
 		<string>org.provenance-emu.webserver</string>
@@ -90,10 +80,6 @@
 	</array>
 	<key>UIUserInterfaceStyle</key>
 	<string>Dark</string>
-	<key>GCSupportsMultipleMicroGamepads</key>
-	<true/>
-	<key>LSApplicationCategoryType</key>
-	<string>public.app-category.games</string>
 	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>
