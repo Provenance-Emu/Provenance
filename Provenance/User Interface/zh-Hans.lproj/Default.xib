@@ -25,7 +25,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
-                    <navigationItem key="navigationItem" title="加载" id="WtS-co-OJ5">
+                    <navigationItem key="navigationItem" title="加载中..." id="WtS-co-OJ5">
                         <barButtonItem key="leftBarButtonItem" image="gear" id="zOf-qU-KPQ">
                             <color key="tintColor" red="0.094117647060000004" green="0.66274509800000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
                         </barButtonItem>

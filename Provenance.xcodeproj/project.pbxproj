@@ -207,6 +207,7 @@
 		B3290499270D1F95002707AC /* PVAppDelegate+NitoTV.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3290498270D1F95002707AC /* PVAppDelegate+NitoTV.swift */; };
 		B3296EDE26CAC27C0088AC32 /* PVGameLibraryCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3296EE026CAC27C0088AC32 /* PVGameLibraryCollectionViewCell.xib */; };
 		B3296EE226CAC2B10088AC32 /* Default.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3296EE426CAC2B10088AC32 /* Default.xib */; };
+		B3296EE826CAC3ED0088AC32 /* Strings.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3296EEA26CAC3ED0088AC32 /* Strings.strings */; };
 		B32D8F801EA7FDB900175FBF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409717B2DCE4004DFFFC /* UIKit.framework */; };
 		B32D8F821EA7FDBE00175FBF /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
 		B33468D320AB347300092CA6 /* CenterFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D120AB347300092CA6 /* CenterFlowLayout.swift */; };
@@ -769,6 +770,8 @@
 		B3296EE126CAC2800088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "zh-Hans"; path = "zh-Hans.lproj/PVGameLibraryCollectionViewCell.xib"; sourceTree = "<group>"; };
 		B3296EE326CAC2B10088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/Default.xib; sourceTree = "<group>"; };
 		B3296EE526CAC2CA0088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "zh-Hans"; path = "zh-Hans.lproj/Default.xib"; sourceTree = "<group>"; };
+		B3296EE926CAC3ED0088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Strings.strings; sourceTree = "<group>"; };
+		B3296EEB26CAC3F00088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Strings.strings"; sourceTree = "<group>"; };
 		B3290498270D1F95002707AC /* PVAppDelegate+NitoTV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVAppDelegate+NitoTV.swift"; sourceTree = "<group>"; };
 		B32D8F811EA7FDBE00175FBF /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		B33468D120AB347300092CA6 /* CenterFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenterFlowLayout.swift; sourceTree = "<group>"; };
@@ -1241,6 +1244,7 @@
 				B3977533219AB53F00E16AD5 /* Provenance.entitlements */,
 				1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */,
 				B3F43DCE2168075200CDD40A /* Settings.bundle */,
+				B3296EEA26CAC3ED0088AC32 /* Strings.strings */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -1995,6 +1999,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1A3D40A217B2DCE4004DFFFC /* InfoPlist.strings in Resources */,
+				B3296EE826CAC3ED0088AC32 /* Strings.strings in Resources */,
 				B3296EB226CABEE00088AC32 /* Settings.storyboard in Resources */,
 				DFCD6EBF203762AF00719289 /* shaders in Resources */,
 				1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */,
@@ -2649,6 +2654,15 @@
 				B3296EE526CAC2CA0088AC32 /* zh-Hans */,
 			);
 			name = Default.xib;
+			sourceTree = "<group>";
+		};
+		B3296EEA26CAC3ED0088AC32 /* Strings.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B3296EE926CAC3ED0088AC32 /* en */,
+				B3296EEB26CAC3F00088AC32 /* zh-Hans */,
+			);
+			name = Strings.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
