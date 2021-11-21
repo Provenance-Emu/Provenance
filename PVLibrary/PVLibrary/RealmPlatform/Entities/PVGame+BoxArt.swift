@@ -57,7 +57,7 @@ public extension PVGame {
             default:
                 return .snesUSA
             }
-        case .N64:
+		case .N64:
             return .snesUSA
         case .Genesis:
             return .genmd
@@ -68,7 +68,7 @@ public extension PVGame {
             default:
                 return .ggUSA
             }
-        case .NES, .Sega32X, .Atari2600, .Atari5200, .Atari7800, .AtariJaguar, .WonderSwan, .WonderSwanColor, .MasterSystem, .SG1000, .FDS, .PS2:
+		case .NES, .Sega32X, .Atari2600, .Atari5200, .Atari7800, .AtariJaguar, .WonderSwan, .WonderSwanColor, .MasterSystem, .SG1000, .FDS, .GameCube, .PS2:
             return .tall
         case .GBA, .GBC, .Lynx, .NGP, .NGPC, .PCECD, .PCFX, .PokemonMini, .PSX, .SegaCD, .VirtualBoy:
             return .square

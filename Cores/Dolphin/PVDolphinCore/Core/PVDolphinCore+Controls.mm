@@ -32,7 +32,7 @@
 #define DC_AXIS_X        (0X20000)
 #define DC_AXIS_Y        (0X20001)
 
-static const int DreamcastMap[]  = {
+static const int GameCubeMap[]  = {
     DC_DPAD_UP, DC_DPAD_DOWN, DC_DPAD_LEFT, DC_DPAD_RIGHT,
     DC_BTN_A, DC_BTN_B, DC_BTN_X, DC_BTN_Y,
     DC_AXIS_LT, DC_AXIS_RT,
@@ -140,23 +140,23 @@ s8 joyx[4], joyy[4];
 }
 
 -(void)didPushPS2Button:(enum PVPS2Button)button forPlayer:(NSInteger)player {
-    if (button == PVDreamcastButtonL) {
+    if (button == PVGameCubeButtonL) {
         lt[player] |= 0xff * true;
-    } else if (button == PVDreamcastButtonR) {
+    } else if (button == PVGameCubeButtonR) {
         rt[player] |= 0xff * true;
     } else {
-        int mapped = DreamcastMap[button];
+        int mapped = GameCubeMap[button];
         kcode[player] &= ~(mapped);
     }
 }
 
 -(void)didReleasePS2Button:(enum PVPS2Button)button forPlayer:(NSInteger)player {
-    if (button == PVDreamcastButtonL) {
+    if (button == PVGameCubeButtonL) {
         lt[player] |= 0xff * false;
-    } else if (button == PVDreamcastButtonR) {
+    } else if (button == PVGameCubeButtonR) {
         rt[player] |= 0xff * false;
     } else {
-        int mapped = DreamcastMap[button];
+        int mapped = GameCubeMap[button];
         kcode[player] |= (mapped);
     }
 }
@@ -174,15 +174,15 @@ s8 joyx[4], joyy[4];
 }
 
 -(void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
-    [self didMoveDreamcastJoystickDirection:(enum PVPS2Button)button withValue:value forPlayer:player];
+    [self didMoveGameCubeJoystickDirection:(enum PVPS2Button)button withValue:value forPlayer:player];
 }
 
 - (void)didPush:(NSInteger)button forPlayer:(NSInteger)player {
-    [self didPushDreamcastButton:(PVPS2Button)button forPlayer:player];
+    [self didPushGameCubeButton:(PVPS2Button)button forPlayer:player];
 }
 
 - (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player {
-    [self didReleaseDreamcastButton:(PVPS2Button)button forPlayer:player];
+    [self didReleaseGameCubeButton:(PVPS2Button)button forPlayer:player];
 }
 
 @end

@@ -10,16 +10,16 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PVDolphinCore (Controls) <PVDreamcastSystemResponderClient>
+@interface PVDolphinCore (Controls) <PVGameCubeSystemResponderClient>
 
 - (void)initControllBuffers;
 - (void)pollControllers;
 
 #pragma mark - Control
 
-- (void)didPushDreamcastButton:(enum PVDreamcastButton)button forPlayer:(NSInteger)player;
-- (void)didReleaseDreamcastButton:(enum PVDreamcastButton)button forPlayer:(NSInteger)player;
-- (void)didMoveDreamcastJoystickDirection:(enum PVDreamcastButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player;
+- (void)didPushGameCubeButton:(enum PVGameCubeButton)button forPlayer:(NSInteger)player;
+- (void)didReleaseGameCubeButton:(enum PVGameCubeButton)button forPlayer:(NSInteger)player;
+- (void)didMoveGameCubeJoystickDirection:(enum PVGameCubeButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player;
 - (void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player;
 
 - (void)didPush:(NSInteger)button forPlayer:(NSInteger)player;

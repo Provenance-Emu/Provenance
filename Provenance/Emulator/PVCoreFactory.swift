@@ -194,6 +194,12 @@ public final class PVCoreFactory: NSObject {
             } else {
                 fatalError("Core doesn't implement PVN64SystemResponderClient")
             }
+		case .GameCube:
+			if let core = core as? PVGameCubeSystemResponderClient {
+				return PVGameCubeControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+			} else {
+				fatalError("Core doesn't implement PVN64SystemResponderClient")
+			}
         case .Unknown:
             ELOG("No known system named: \(system.name) id: \(system.identifier)")
             return nil

@@ -3,18 +3,18 @@
 <plist version="1.0">
 <dict>
 	<key>PVCoreIdentifier</key>
-	<string>com.provenance.core.play</string>
+	<string>com.provenance.dolphin</string>
 	<key>PVPrincipleClass</key>
 	<string>PVDolphinCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
-		<string>com.provenance.ps2</string>
+		<string>com.provenance.gamecube</string>
 	</array>
 	<key>PVProjectName</key>
-	<string>Play</string>
+	<string>Dolphin</string>
 	<key>PVProjectURL</key>
-	<string>https://github.com/jpd002/Play-</string>
+	<string>https://github.com/OatmealDome/dolphin</string>
 	<key>PVProjectVersion</key>
-	<string>0.43</string>
+	<string>3.2.0b2 (186)</string>
 </dict>
 </plist>

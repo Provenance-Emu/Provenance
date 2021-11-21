@@ -56,6 +56,7 @@ public enum SystemIdentifier: String {
     case GB = "com.provenance.gb"
     case GBA = "com.provenance.gba"
     case GBC = "com.provenance.gbc"
+	case GameCube = "com.provenance.gamecube"
     case GameGear = "com.provenance.gamegear"
     case Genesis = "com.provenance.genesis"
     case Lynx = "com.provenance.lynx"
