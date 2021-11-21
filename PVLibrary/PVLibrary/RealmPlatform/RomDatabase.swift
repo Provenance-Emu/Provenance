@@ -11,7 +11,7 @@ import PVSupport
 import RealmSwift
 import UIKit
 
-let schemaVersion: UInt64 = 9
+let schemaVersion: UInt64 = 10
 
 public extension Notification.Name {
     static let DatabaseMigrationStarted = Notification.Name("DatabaseMigrarionStarted")
@@ -116,6 +116,11 @@ public final class RealmConfiguration {
 
                 NotificationCenter.default.post(name: NSNotification.Name.DatabaseMigrationFinished, object: nil)
                 ILOG("Migration complete of \(counter) roms. Removed \(deletions) bad entries.")
+            }
+            if oldSchemaVersion < 10 {
+                migration.enumerateObjects(ofType: PVCore.className()) { oldObject, newObject in
+                    newObject!["disabled"] = false
+                }
             }
         }
 

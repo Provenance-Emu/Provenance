@@ -457,6 +457,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         hud.isUserInteractionEnabled = false
         view.addSubview(hud)
         updatesController.hudState
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: { state in
                 switch state {
                 case .hidden:
@@ -476,6 +477,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
         updatesController.conflicts
             .map { !$0.isEmpty }
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: { hasConflicts in
                 self.updateConflictsButton(hasConflicts)
                 if hasConflicts {
@@ -791,6 +793,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         if UserDefaults.standard.bool(forKey: PVRequiresMigrationKey) {
             let hud = MBProgressHUD.showAdded(to: view, animated: true)!
             gameLibrary.migrate()
+                .observe(on: MainScheduler.instance)
                 .subscribe(onNext: { event in
                     switch event {
                     case .starting:
@@ -1047,6 +1050,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     func toggleFavorite(for game: PVGame) {
         gameLibrary.toggleFavorite(for: game)
+            .observe(on: MainScheduler.instance)
             .subscribe(onCompleted: {
                 self.collectionView?.reloadData()
             }, onError: { error in

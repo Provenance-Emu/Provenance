@@ -1,26 +1,20 @@
 //
-//  MednafenGameCore.swift
-//  PVMednafen
+//  PVDuckStationCore.swift
+//  PVDuckStation
 //
 //  Created by Joseph Mattiello on 3/8/18.
 //
 
 import PVSupport
 import UIKit
-// import PVMednafen.Private
 
-extension MednafenGameCore: DiscSwappable {
+extension PVDuckStationCore: DiscSwappable {
     public var numberOfDiscs: UInt {
         return maxDiscs
     }
 
     public var currentGameSupportsMultipleDiscs: Bool {
-        switch systemType {
-        case .PSX:
-            return numberOfDiscs > 1
-        default:
-            return false
-        }
+        return numberOfDiscs > 1
     }
 
     public func swapDisc(number: UInt) {
@@ -34,27 +28,22 @@ extension MednafenGameCore: DiscSwappable {
     }
 }
 
-extension MednafenGameCore: CoreActions {
-    public var coreActions: [CoreAction]? {
-        switch systemType {
-        case .virtualBoy:
-            return [CoreAction(title: "Change Palette", options: nil)]
-        default:
-            return nil
-        }
-    }
+//extension PVDuckStationCore: CoreActions {
+//    public var coreActions: [CoreAction]? {
+//        return nil
+//    }
+//
+//    public func selected(action: CoreAction) {
+//        switch action.title {
+//        case "Change Palette":
+//            changeDisplayMode()
+//        default:
+//            print("Unknown action: " + action.title)
+//        }
+//    }
+//}
 
-    public func selected(action: CoreAction) {
-        switch action.title {
-        case "Change Palette":
-            changeDisplayMode()
-        default:
-            print("Unknown action: " + action.title)
-        }
-    }
-}
-
-extension MednafenGameCore: GameWithCheat {
+extension PVDuckStationCore: GameWithCheat {
     public func setCheat(
         code: String,
         type: String,

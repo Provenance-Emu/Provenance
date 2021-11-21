@@ -397,7 +397,7 @@ extension GameLaunchingViewController where Self: UIViewController {
             return
         }
 
-        let cores = system.cores.sorted(byKeyPath: "projectName")
+        let cores = system.cores.sorted(byKeyPath: "projectName").filter({ return !$0.disabled })
 
         let coreChoiceAlert = UIAlertController(title: "Multiple cores found", message: "Select which core to use with this game.", preferredStyle: .actionSheet)
         if traitCollection.userInterfaceIdiom == .pad, let senderView = sender as? UIView ?? self.view {

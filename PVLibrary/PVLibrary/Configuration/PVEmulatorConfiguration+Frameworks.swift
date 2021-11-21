@@ -41,10 +41,13 @@ public extension PVEmulatorConfiguration {
                 let data = try Data(contentsOf: plist)
                 let core = try decoder.decode(CorePlistEntry.self, from: data)
                 let supportedSystems = database.all(PVSystem.self, filter: NSPredicate(format: "identifier IN %@", argumentArray: [core.PVSupportedSystems]))
-
-                let newCore = PVCore(withIdentifier: core.PVCoreIdentifier, principleClass: core.PVPrincipleClass, supportedSystems: Array(supportedSystems), name: core.PVProjectName, url: core.PVProjectURL, version: core.PVProjectVersion)
-                database.refresh()
-                try newCore.add(update: true)
+                if let disabled = core.PVDisabled, disabled {
+                    // Do nothing
+                } else {
+                    let newCore = PVCore(withIdentifier: core.PVCoreIdentifier, principleClass: core.PVPrincipleClass, supportedSystems: Array(supportedSystems), name: core.PVProjectName, url: core.PVProjectURL, version: core.PVProjectVersion)
+                    database.refresh()
+                    try newCore.add(update: true)
+                }
             } catch {
                 // Handle error
                 ELOG("Failed to parse plist \(plist.path) : \(error)")
