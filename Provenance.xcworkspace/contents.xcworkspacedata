@@ -32,6 +32,9 @@
          location = "group:Cores/FCEU/PVFCEU.xcodeproj">
       </FileRef>
       <FileRef
+         location = "group:Cores/Flycast/PVFlycast.xcodeproj">
+      </FileRef>
+      <FileRef
          location = "group:Cores/Desmume2015/PVDesmume2015.xcodeproj">
       </FileRef>
       <FileRef

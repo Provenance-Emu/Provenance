@@ -28,6 +28,9 @@
 [submodule "Cores/TGBDual/tgbdual-emulator"]
 	path = Cores/TGBDual/tgbdual-emulator
 	url = https://github.com/libretro/tgbdual-libretro.git
+[submodule "Cores/Flycast/flycast"]
+	path = Cores/Flycast/flycast
+	url = https://github.com/flyinghead/flycast.git
 [submodule "Cores/Dolphin/dolphin-ios"]
 	path = Cores/Dolphin/dolphin-ios
 	url = https://github.com/OatmealDome/dolphin.git
