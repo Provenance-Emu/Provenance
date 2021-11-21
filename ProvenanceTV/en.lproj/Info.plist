@@ -89,6 +89,11 @@
 	</array>
 	<key>Revision</key>
 	<string>f9c61252</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+		<string>processing</string>
+	</array>
 	<key>UIMainStoryboardFile</key>
 	<string>Provenance</string>
 	<key>UIRequiredDeviceCapabilities</key>
