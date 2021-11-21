@@ -255,7 +255,9 @@ public final class iCloudSync {
         let saveStateSyncer = SaveStateSyncer()
         let disposeBag = DisposeBag()
         self.disposeBag = disposeBag
-        saveStateSyncer.loadAllFromICloud().subscribe(onCompleted: {
+        saveStateSyncer.loadAllFromICloud()
+            .observe(on: MainScheduler.instance)
+            .subscribe(onCompleted: {
             importNewSaves()
             self.disposeBag = nil
         }) { error in
