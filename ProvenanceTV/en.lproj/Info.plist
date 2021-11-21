@@ -4,8 +4,6 @@
 <dict>
 	<key>ALTDeviceID</key>
 	<string></string>
-	<key>appcenter</key>
-	<string>7d623115-99d6-439e-8e3a-9f2d0b1fbc02</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -16,6 +14,11 @@
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>zh_CN</string>
+	</array>
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundlePackageType</key>
@@ -54,12 +57,16 @@
 	</array>
 	<key>GCSupportsControllerUserInteraction</key>
 	<true/>
+	<key>GCSupportsMultipleMicroGamepads</key>
+	<true/>
 	<key>GitBranch</key>
 	<string></string>
 	<key>GitDate</key>
 	<string></string>
 	<key>GitTag</key>
 	<string></string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.games</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -90,10 +97,6 @@
 	</array>
 	<key>UIUserInterfaceStyle</key>
 	<string>Dark</string>
-	<key>GCSupportsMultipleMicroGamepads</key>
-	<true/>
-	<key>LSApplicationCategoryType</key>
-	<string>public.app-category.games</string>
 	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>
@@ -107,5 +110,7 @@
 			<dict/>
 		</dict>
 	</array>
+	<key>appcenter</key>
+	<string>7d623115-99d6-439e-8e3a-9f2d0b1fbc02</string>
 </dict>
 </plist>
