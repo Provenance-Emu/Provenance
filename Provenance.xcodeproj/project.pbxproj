@@ -205,6 +205,8 @@
 		B3296EC826CABFCA0088AC32 /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ECA26CABFCA0088AC32 /* SaveStates.storyboard */; };
 		B3296ECF26CABFDE0088AC32 /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ED126CABFDE0088AC32 /* Cheats.storyboard */; };
 		B3290499270D1F95002707AC /* PVAppDelegate+NitoTV.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3290498270D1F95002707AC /* PVAppDelegate+NitoTV.swift */; };
+		B3296EDE26CAC27C0088AC32 /* PVGameLibraryCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3296EE026CAC27C0088AC32 /* PVGameLibraryCollectionViewCell.xib */; };
+		B3296EE226CAC2B10088AC32 /* Default.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3296EE426CAC2B10088AC32 /* Default.xib */; };
 		B32D8F801EA7FDB900175FBF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409717B2DCE4004DFFFC /* UIKit.framework */; };
 		B32D8F821EA7FDBE00175FBF /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
 		B33468D320AB347300092CA6 /* CenterFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D120AB347300092CA6 /* CenterFlowLayout.swift */; };
@@ -290,7 +292,6 @@
 		B3890BF520B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3890BF320B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift */; };
 		B3890BF920B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3890BF820B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib */; };
 		B3890BFA20B9E513005BB001 /* UILabel+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C125BF20B0826900DC045B /* UILabel+Theming.swift */; };
-		B38973B420AEC94800E36522 /* PVGameLibraryCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B38973B320AEC94800E36522 /* PVGameLibraryCollectionViewCell.xib */; };
 		B38A2A48210233FE00374CDD /* EmulatorActionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B38A2A47210233FE00374CDD /* EmulatorActionCell.xib */; };
 		B38D30FD202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
 		B38D30FE202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
@@ -764,6 +765,10 @@
 		B3296EDB26CAC2220088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "zh-Hans"; path = "zh-Hans.lproj/SaveStates.storyboard"; sourceTree = "<group>"; };
 		B3296EDC26CAC2220088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
 		B3296EDD26CAC2320088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "zh-Hans"; path = "zh-Hans.lproj/Cheats.storyboard"; sourceTree = "<group>"; };
+		B3296EDF26CAC27C0088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/PVGameLibraryCollectionViewCell.xib; sourceTree = "<group>"; };
+		B3296EE126CAC2800088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "zh-Hans"; path = "zh-Hans.lproj/PVGameLibraryCollectionViewCell.xib"; sourceTree = "<group>"; };
+		B3296EE326CAC2B10088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/Default.xib; sourceTree = "<group>"; };
+		B3296EE526CAC2CA0088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "zh-Hans"; path = "zh-Hans.lproj/Default.xib"; sourceTree = "<group>"; };
 		B3290498270D1F95002707AC /* PVAppDelegate+NitoTV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVAppDelegate+NitoTV.swift"; sourceTree = "<group>"; };
 		B32D8F811EA7FDBE00175FBF /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		B33468D120AB347300092CA6 /* CenterFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenterFlowLayout.swift; sourceTree = "<group>"; };
@@ -813,7 +818,6 @@
 		B3890BE320B97588005BB001 /* PVGameLibraryViewController+PeekPop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGameLibraryViewController+PeekPop.swift"; sourceTree = "<group>"; };
 		B3890BF320B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGameLibraryViewController+CollectionView.swift"; sourceTree = "<group>"; };
 		B3890BF820B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = "PVGameLibraryCollectionViewCell~tvOS.xib"; sourceTree = "<group>"; };
-		B38973B320AEC94800E36522 /* PVGameLibraryCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PVGameLibraryCollectionViewCell.xib; sourceTree = "<group>"; };
 		B38A2A452102328600374CDD /* PVEmulatorViewController+PauseMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVEmulatorViewController+PauseMenu.swift"; sourceTree = "<group>"; };
 		B38A2A47210233FE00374CDD /* EmulatorActionCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EmulatorActionCell.xib; sourceTree = "<group>"; };
 		B38D30FB202AC26500E9A068 /* GCDWebDAVServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebDAVServer.h; sourceTree = "<group>"; };
@@ -1075,7 +1079,7 @@
 				B3296EAC26CABE880088AC32 /* Provenance.storyboard */,
 				B3296EB126CABEA80088AC32 /* SaveStates.storyboard */,
 				B3296EB426CABEE00088AC32 /* Settings.storyboard */,
-				7556CF7919DC15C1007F8F97 /* Default.xib */,
+				B3296EE426CAC2B10088AC32 /* Default.xib */,
 				B3592CE42070B9DE00533593 /* PVSaveStateCollectionViewCell.xib */,
 				B3AE1F752073504400AD06D4 /* PVSaveStateCollectionViewCell~tvOS.xib */,
 				B3296EB726CABF250088AC32 /* Cheats.storyboard */,
@@ -1472,7 +1476,7 @@
 		B32746BF219BD6C700B78124 /* Reusable Views */ = {
 			isa = PBXGroup;
 			children = (
-				B38973B320AEC94800E36522 /* PVGameLibraryCollectionViewCell.xib */,
+				B3296EE026CAC27C0088AC32 /* PVGameLibraryCollectionViewCell.xib */,
 				B3890BF820B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib */,
 				1A48696F17C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.swift */,
 				42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */,
@@ -1997,14 +2001,14 @@
 				378F4A0D1B63D7CD0065FA39 /* GCDWebUploader.bundle in Resources */,
 				B3F43DCF2168075200CDD40A /* Settings.bundle in Resources */,
 				B3E6DAE120B7C2F800454DD4 /* PVLogViewController.xib in Resources */,
-				7556CF7A19DC15C1007F8F97 /* Default.xib in Resources */,
+				B3296EE226CAC2B10088AC32 /* Default.xib in Resources */,
 				B3296EAF26CABEA80088AC32 /* SaveStates.storyboard in Resources */,
 				B38A2A48210233FE00374CDD /* EmulatorActionCell.xib in Resources */,
 				1F8D52481D91993000C29F90 /* licenses.html in Resources */,
 				B3296EAA26CABE880088AC32 /* Provenance.storyboard in Resources */,
 				B3592CE52070B9DE00533593 /* PVSaveStateCollectionViewCell.xib in Resources */,
 				B3296EB526CABF250088AC32 /* Cheats.storyboard in Resources */,
-				B38973B420AEC94800E36522 /* PVGameLibraryCollectionViewCell.xib in Resources */,
+				B3296EDE26CAC27C0088AC32 /* PVGameLibraryCollectionViewCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2627,6 +2631,24 @@
 				B3296ED726CAC01E0088AC32 /* zh-Hans */,
 			);
 			name = Info.plist;
+			sourceTree = "<group>";
+		};
+		B3296EE026CAC27C0088AC32 /* PVGameLibraryCollectionViewCell.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B3296EDF26CAC27C0088AC32 /* en */,
+				B3296EE126CAC2800088AC32 /* zh-Hans */,
+			);
+			name = PVGameLibraryCollectionViewCell.xib;
+			sourceTree = "<group>";
+		};
+		B3296EE426CAC2B10088AC32 /* Default.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B3296EE326CAC2B10088AC32 /* en */,
+				B3296EE526CAC2CA0088AC32 /* zh-Hans */,
+			);
+			name = Default.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
