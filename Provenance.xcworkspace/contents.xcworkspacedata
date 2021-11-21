@@ -17,6 +17,9 @@
       location = "container:"
       name = "Cores">
       <FileRef
+         location = "group:Cores/DuckStation/PVDuckStation.xcodeproj">
+      </FileRef>
+      <FileRef
          location = "group:Cores/Atari800/PVAtari800.xcodeproj">
       </FileRef>
       <FileRef

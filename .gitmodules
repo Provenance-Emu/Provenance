@@ -28,6 +28,9 @@
 [submodule "Cores/TGBDual/tgbdual-emulator"]
 	path = Cores/TGBDual/tgbdual-emulator
 	url = https://github.com/libretro/tgbdual-libretro.git
+[submodule "Cores/DuckStation/duckstation"]
+	path = Cores/DuckStation/duckstation
+	url = https://github.com/stenzek/duckstation.git
 [submodule "Cores/Flycast/flycast"]
 	path = Cores/Desmume2015/flycast
 	url = https://github.com/flyinghead/flycast.git
