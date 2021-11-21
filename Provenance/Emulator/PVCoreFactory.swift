@@ -134,6 +134,12 @@ public final class PVCoreFactory: NSObject {
             } else {
                 fatalError("Core doesn't implement PVPSXSystemResponderClient")
             }
+        case .PSP:
+            if let core = core as? PVPSPSystemResponderClient {
+                return PVPSPControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else {
+                fatalError("Core doesn't implement PVPSPSystemResponderClient")
+            }
         case .Lynx:
             if let core = core as? PVLynxSystemResponderClient {
                 return PVLynxControllerViewController(controlLayout: controllerLayout, system: system, responder: core)

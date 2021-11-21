@@ -36,3 +36,12 @@ report.xml
 /bin
 .env
 /packages-cache
+/Cores/PPSSPP/cmake/lib/Debug/libCommon.a
+/Cores/PPSSPP/cmake/lib/Debug/libCommon.a.jk9oTD
+/Cores/PPSSPP/cmake/lib/Debug/libCore.a
+/Cores/PPSSPP/cmake/lib/Debug/libCore.a.hwCxEX
+/Cores/PPSSPP/cmake/lib/Debug/libglslang.a
+/Cores/PPSSPP/cmake/lib/Debug/libMachineIndependent.a
+/Cores/PPSSPP/cmake/lib/Debug/libnative.a
+/Cores/PPSSPP/cmake/lib/Debug/libSPIRV.a
+Cores/PPSSPP/cmake/lib/

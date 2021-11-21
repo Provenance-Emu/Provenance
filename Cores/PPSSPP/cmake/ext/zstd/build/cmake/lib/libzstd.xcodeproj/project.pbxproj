@@ -1,0 +1,1924 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		579C005AED0642C48E3D9BDA /* RUN_TESTS */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 57491897B29643E5B6F099D3 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
+			buildPhases = (
+				003C8D08B0008F35F218E126 /* CMake PostBuild Rules */,
+			);
+			dependencies = (
+			);
+			name = RUN_TESTS;
+			productName = RUN_TESTS;
+		};
+		B2FB4C7868914CD79D8362FC /* install */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = D3C904771F6C423D952CE139 /* Build configuration list for PBXAggregateTarget "install" */;
+			buildPhases = (
+				93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */,
+			);
+			dependencies = (
+				44786C5A7FBC4F159EA4229C /* PBXTargetDependency */,
+			);
+			name = install;
+			productName = install;
+		};
+		BC5C1F0A95E94DF5A4A48F24 /* ZERO_CHECK */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = C55347F925084437B69B57F5 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildPhases = (
+				10A2DB1740FD10AF0FBEF0B7 /* Generate CMakeFiles/ZERO_CHECK */,
+			);
+			dependencies = (
+			);
+			name = ZERO_CHECK;
+			productName = ZERO_CHECK;
+		};
+		D38D17A114BC46FBB4338E00 /* ALL_BUILD */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 9998D11131D74B5CB27C4345 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildPhases = (
+				E291A03D26816D06546DAB72 /* Generate CMakeFiles/ALL_BUILD */,
+			);
+			dependencies = (
+				C140BFAFBF604908964A384A /* PBXTargetDependency */,
+				D4BCC0F041784568BD2144B2 /* PBXTargetDependency */,
+				0D61CC3662A844A2A418CDB1 /* PBXTargetDependency */,
+			);
+			name = ALL_BUILD;
+			productName = ALL_BUILD;
+		};
+		FFBC75B663AC4AC3886EF56E /* uninstall */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 7560AC9880A84FE9BE218ED4 /* Build configuration list for PBXAggregateTarget "uninstall" */;
+			buildPhases = (
+				C4EFCBBC8AAB2ECF3A9F097C /* Generate CMakeFiles/uninstall */,
+			);
+			dependencies = (
+				E618937EE19649DF9FF474E5 /* PBXTargetDependency */,
+			);
+			name = uninstall;
+			productName = uninstall;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		0239D877189A4D579321F0D6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_literals.h */ = {isa = PBXBuildFile; fileRef = 958FBF8CBAF046AFBCAD6605 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_literals.h */; };
+		05DB9ED271C84366B7560BC2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstdmt_compress.h */ = {isa = PBXBuildFile; fileRef = B264300ED9B74D62B6233946 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstdmt_compress.h */; };
+		06CE2CC8EDA7479593677920 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/debug.h */ = {isa = PBXBuildFile; fileRef = 0EEBDD3F5DB940B7A6BF87DC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/debug.h */; };
+		06E7EEAEBDAE42F2A746854D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/huf.h */ = {isa = PBXBuildFile; fileRef = 61B28D73618C48FBBDE8F757 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/huf.h */; };
+		0711694F231B4DC78BFB3187 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_trace.h */ = {isa = PBXBuildFile; fileRef = 20FF7678DF2A48D2B3182227 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_trace.h */; };
+		0921E64A4D64431BBBEF4F9E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib/CMakeFiles/libzstd_shared.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = A4E0D507C19348A29D56EBB5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib/CMakeFiles/libzstd_shared.dir/Info.plist */; };
+		097783E1C3184400AE03688B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_deps.h */ = {isa = PBXBuildFile; fileRef = A446FE56EBD44889B3E805EB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_deps.h */; };
+		121AFA0D9E494D8688FECAAF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_sequences.h */ = {isa = PBXBuildFile; fileRef = FDBDC597110049F5903C613A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_sequences.h */; };
+		12B367B5964B4BF1AEE08A72 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/xxhash.c */ = {isa = PBXBuildFile; fileRef = 57C4AC09F10C47FCACEBB84A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/xxhash.c */; };
+		12EC5306AADA4C2DBE70B3BA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_cwksp.h */ = {isa = PBXBuildFile; fileRef = 653C43CC07234FFC9B05F342 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_cwksp.h */; };
+		15F1B10B57E44D0594E3BBF7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_opt.c */ = {isa = PBXBuildFile; fileRef = 2B2DAEF738384D8DBA29A39C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_opt.c */; };
+		164E5E4C7C7143448CFAC268 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/cover.c */ = {isa = PBXBuildFile; fileRef = D306E64367C4463E9733B2D5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/cover.c */; };
+		1A8251108B9F46319F5AB78C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/fse_compress.c */ = {isa = PBXBuildFile; fileRef = 0B659645686E4660A50FD050 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/fse_compress.c */; };
+		1ED29E67BB7B47C7A3BAE39A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstdmt_compress.c */ = {isa = PBXBuildFile; fileRef = C66EA8D47FB343829FE03277 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstdmt_compress.c */; };
+		1F770D867A8F4D0FB955BEEF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/pool.h */ = {isa = PBXBuildFile; fileRef = 74E7F563641C4BBD8F78235F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/pool.h */; };
+		1F89C8A6475E42D1A308F3DD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/xxhash.h */ = {isa = PBXBuildFile; fileRef = 41C5E56B788248CD8B2739E9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/xxhash.h */; };
+		2223F681E8F94C11A96E0B11 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_sequences.c */ = {isa = PBXBuildFile; fileRef = 5FE3D88AF4C64E2296099520 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_sequences.c */; };
+		2767C0E811964B5D91692D2E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_opt.h */ = {isa = PBXBuildFile; fileRef = 099791C471AF45D2B2BA63AF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_opt.h */; };
+		2884C2FC4A9F42D59FAF439D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/lib/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 0C6C8DE25CF74C46AC8EB797 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/lib/CMakeLists.txt */; };
+		292F9E327A664CC6AEE5DC6C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_sequences.h */ = {isa = PBXBuildFile; fileRef = F8FF0F96FAB74C31B620A0BE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_sequences.h */; };
+		29579D2815E044E0BAA9CA1F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_opt.c */ = {isa = PBXBuildFile; fileRef = AFA3C496949D41D68B003AEA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_opt.c */; };
+		29F864B6CE0A458DB757FEFF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/divsufsort.h */ = {isa = PBXBuildFile; fileRef = 9372E511B9954792A39A9949 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/divsufsort.h */; };
+		316356373F8F4DBB8B6BC7F6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/huf_compress.c */ = {isa = PBXBuildFile; fileRef = A79C06D4B42A496198ED3072 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/huf_compress.c */; };
+		33C9C3EA6B4C4A56BEA0D43E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/zstd.h */ = {isa = PBXBuildFile; fileRef = 12166C7CBDAF40519D3D472B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/zstd.h */; };
+		351B5DB42B5B4894A2E91BCF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress_block.h */ = {isa = PBXBuildFile; fileRef = 109CCFEC7B064984B8E345EE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress_block.h */; };
+		384DD8A2C8BC4FCB9905AC3C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/fse.h */ = {isa = PBXBuildFile; fileRef = 6BF5261DFF4842959B8FF7DD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/fse.h */; };
+		3A3514EE79874937A79FEF18 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/cover.c */ = {isa = PBXBuildFile; fileRef = 9AD8210627C348FDB01D3CBF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/cover.c */; };
+		3A538AA0B2CF4F18ABB53467 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/cpu.h */ = {isa = PBXBuildFile; fileRef = 3597F35E6DB54E75AED775CC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/cpu.h */; };
+		3B23DDAC021D4F7FB4F009BA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/hist.h */ = {isa = PBXBuildFile; fileRef = 031C2191FA9F41A28895C75D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/hist.h */; };
+		3C40A0C6AD944E1E91EB13F2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_internal.h */ = {isa = PBXBuildFile; fileRef = 0BB9454CE2B949F39909AF94 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_internal.h */; };
+		41A349153DB64FC98F439FDD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/fse_decompress.c */ = {isa = PBXBuildFile; fileRef = 78A9E22AD2EF46EAA2B20D43 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/fse_decompress.c */; };
+		44A632CF882F4EE096C3C9DF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/debug.c */ = {isa = PBXBuildFile; fileRef = 1553A1993A4E4C4289FB57E2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/debug.c */; };
+		44DD3540597347D78595DFE6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/pool.h */ = {isa = PBXBuildFile; fileRef = D2FB96FD3E6C42978A32C49E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/pool.h */; };
+		45C3112053764148ABCA7487 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_opt.h */ = {isa = PBXBuildFile; fileRef = BBF6CC9A4FFC48E580488DDA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_opt.h */; };
+		4AF1568C847D4805AEBEC01E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_ldm.h */ = {isa = PBXBuildFile; fileRef = DF0ABACBBA8D451AAA463EBE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_ldm.h */; };
+		4B388D85661C40D8B8200CB0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/entropy_common.c */ = {isa = PBXBuildFile; fileRef = 59C5CBF3B592479B82AFC298 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/entropy_common.c */; };
+		4BDA31366D614D548AB386C3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_ddict.h */ = {isa = PBXBuildFile; fileRef = 7EA2C3E7137E4FFEB09493AE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_ddict.h */; };
+		4C46C425CB3348648C9D3E79 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_ldm_geartab.h */ = {isa = PBXBuildFile; fileRef = A89B5ED94974451499B15B6B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_ldm_geartab.h */; };
+		4F0011FA1B474BDF894A6DCD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_superblock.c */ = {isa = PBXBuildFile; fileRef = 962660D7F1FD4564B0560D9D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_superblock.c */; };
+		537A66EEB5E6413BA5C9B4DE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_superblock.h */ = {isa = PBXBuildFile; fileRef = 72CC6E90D34F4969A37BBA41 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_superblock.h */; };
+		5411BB8ACC204A71AA527D21 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_lazy.c */ = {isa = PBXBuildFile; fileRef = 365938F83EA14143B45894F3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_lazy.c */; };
+		55728156E6E04F30B1DA4F5B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_double_fast.c */ = {isa = PBXBuildFile; fileRef = 14C2B0F07AE44C069E1B9C01 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_double_fast.c */; };
+		5844218FEB7C4BA2B69DD193 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_sequences.c */ = {isa = PBXBuildFile; fileRef = 6A2BC89702EB40EB959DBD38 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_sequences.c */; };
+		58640D0BBF09485CB8322FD5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress.c */ = {isa = PBXBuildFile; fileRef = A64E6730AE7748B68DD96D14 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress.c */; };
+		5A75D57A50A9463CBAD10451 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_lazy.h */ = {isa = PBXBuildFile; fileRef = B257B0088C504BB5AAD4B49C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_lazy.h */; };
+		5CC5280692D64E39AD461BB9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstdmt_compress.c */ = {isa = PBXBuildFile; fileRef = 57FCF723FD9C4BEF94F12A5C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstdmt_compress.c */; };
+		5DD455030C4C4F6B821AD507 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_ldm.c */ = {isa = PBXBuildFile; fileRef = 1ED7CC497EAE43B69A552F7D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_ldm.c */; };
+		62664665CDBD4A54A3792194 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/divsufsort.h */ = {isa = PBXBuildFile; fileRef = BF28D4115E6A4A289B4D0BDE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/divsufsort.h */; };
+		646740D9F7EE4087BA230154 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress.c */ = {isa = PBXBuildFile; fileRef = AD9A9CAB324B4D7284E57B81 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress.c */; };
+		64BF67C83D004D9887B9FA65 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress_block.h */ = {isa = PBXBuildFile; fileRef = 53F023F1BB294862AFD72B50 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress_block.h */; };
+		658A66A7A54843B184D0D5A8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress_block.c */ = {isa = PBXBuildFile; fileRef = 4E6BA8B4004B4BB885484A30 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress_block.c */; };
+		6679790CF8154922BA3961A6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/zdict.c */ = {isa = PBXBuildFile; fileRef = 147FBDC54DF44218AF4ADCF5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/zdict.c */; };
+		6DF09673776542AFAE0A6657 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/xxhash.h */ = {isa = PBXBuildFile; fileRef = 242A1FDE5F2942ECACE0ABBA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/xxhash.h */; };
+		6EEA5C51F2284FD4B05999ED /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/hist.c */ = {isa = PBXBuildFile; fileRef = 44992F6E4D074FA6970D3511 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/hist.c */; };
+		73E7A7EE12824D09A2B7846F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/bitstream.h */ = {isa = PBXBuildFile; fileRef = E101F4F8EF70499C9EAD1DD5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/bitstream.h */; };
+		7903DE082500494385248969 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/compiler.h */ = {isa = PBXBuildFile; fileRef = 9A522B56F5ED471CA8CB07ED /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/compiler.h */; };
+		7B73738D0B9C4AC5A671E48D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/fse_decompress.c */ = {isa = PBXBuildFile; fileRef = 4597E5F61C974C5187786BBE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/fse_decompress.c */; };
+		7F91859D93F147A8A3EEB1BB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_common.c */ = {isa = PBXBuildFile; fileRef = 022CCA523C4C44B98A73A601 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_common.c */; };
+		81E8C20580B34A7095D6DE7D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/debug.h */ = {isa = PBXBuildFile; fileRef = 8CC8D0C6A7A2468E865F644D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/debug.h */; };
+		85A91D613BE44B379A7CB2BB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_lazy.c */ = {isa = PBXBuildFile; fileRef = 2F8C6AFFA1A04CC2AAD7754F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_lazy.c */; };
+		86E88630ED9E4F42B577B811 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/fse_compress.c */ = {isa = PBXBuildFile; fileRef = 91C4E5F2598F4AC6AC516A86 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/fse_compress.c */; };
+		87A1369B1ACC4721BD822AF7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_double_fast.h */ = {isa = PBXBuildFile; fileRef = 11DB9BD60CBA433C8E1351ED /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_double_fast.h */; };
+		896E7AB97ADA4622A84ACC03 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/pool.c */ = {isa = PBXBuildFile; fileRef = 5FCB15BA55D94B41AB3643D3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/pool.c */; };
+		8B070E02E28F4803B4E7F24C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_cwksp.h */ = {isa = PBXBuildFile; fileRef = 24ECF4BC14BD4B6B9A7BE976 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_cwksp.h */; };
+		8DFEE4F60E304A66B6C02140 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/debug.c */ = {isa = PBXBuildFile; fileRef = 962C0CFE5F5D4C3ABAFEC22B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/debug.c */; };
+		903AE1319DD240B6A6781F86 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/cover.h */ = {isa = PBXBuildFile; fileRef = BC696342DBAD46CBB6DE9873 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/cover.h */; };
+		916E4157CA044FFC85F56497 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/cover.h */ = {isa = PBXBuildFile; fileRef = 29FAF63CC48E4342BC8DED36 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/cover.h */; };
+		94A17B3CD7E546919782CF1E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_ldm_geartab.h */ = {isa = PBXBuildFile; fileRef = 6D88E35116824ED88856EB8B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_ldm_geartab.h */; };
+		957AADE2C0B744E99C468F6C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_double_fast.h */ = {isa = PBXBuildFile; fileRef = 7003A601A6214EDCBCE6F5AA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_double_fast.h */; };
+		9726641B8FAE45B79963E3D8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress_internal.h */ = {isa = PBXBuildFile; fileRef = D0F1F7472AF14B9FBC40C531 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress_internal.h */; };
+		98FDC885D98340B0A4DF3E3E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib/CMakeFiles/libzstd_static.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 4211D0D52A38409B946C77A6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib/CMakeFiles/libzstd_static.dir/Info.plist */; };
+		9A1373D2A799421A93FF33F4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/error_private.h */ = {isa = PBXBuildFile; fileRef = B1B9E76230BF43C599714F4C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/error_private.h */; };
+		9A1DAD592993486A94E8DD78 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/divsufsort.c */ = {isa = PBXBuildFile; fileRef = 1220F046688646CC8AE9B79E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/divsufsort.c */; };
+		9A5DE8133A33418289DE8973 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_superblock.h */ = {isa = PBXBuildFile; fileRef = C94112E63A4F495F9A91D0F1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_superblock.h */; };
+		9B73E912A1EE435FAB0D3780 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/huf_decompress.c */ = {isa = PBXBuildFile; fileRef = 7ED7727AE1FC460484DC10F9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/huf_decompress.c */; };
+		9BE61A5F637F48088731A765 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/hist.c */ = {isa = PBXBuildFile; fileRef = A7FC1D157B7B475680A620AC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/hist.c */; };
+		9E1C8EF75CEC4FD7A3E33F1E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/pool.c */ = {isa = PBXBuildFile; fileRef = 1BFF0A2F006249EAB6FB88F3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/pool.c */; };
+		A1F7BC4266324228AEB68D53 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress.c */ = {isa = PBXBuildFile; fileRef = 7B4ADA9C76F441F5A677C8CF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress.c */; };
+		A343CFD6276A448E8235749A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/fastcover.c */ = {isa = PBXBuildFile; fileRef = 8EE4E16D95754BB38B136277 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/fastcover.c */; };
+		AD4ECE67D789431498A7E975 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/mem.h */ = {isa = PBXBuildFile; fileRef = 1D7444836F904C4B83D94C90 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/mem.h */; };
+		AE2E33466D1E43E4B4B21E05 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/huf_decompress.c */ = {isa = PBXBuildFile; fileRef = 2C723A0486374F29BC1EDE83 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/huf_decompress.c */; };
+		AFD38288CB874BFFBDB4A490 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress.c */ = {isa = PBXBuildFile; fileRef = 9BC9F2E565744AAD9F4B9B3F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress.c */; };
+		B078A9D6E2BB450D8537487E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/cpu.h */ = {isa = PBXBuildFile; fileRef = 5C52D6AB315145DD99BD02D9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/cpu.h */; };
+		B18891FDF8C94FD38F2CAF81 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/error_private.c */ = {isa = PBXBuildFile; fileRef = FEA0693819BA4F639D6E7602 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/error_private.c */; };
+		B35780CE55D04A569F1E0F67 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/error_private.c */ = {isa = PBXBuildFile; fileRef = 7A07B13DD3504E4782D44A1C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/error_private.c */; };
+		B3AD703C142F4231B0C6C578 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_ddict.c */ = {isa = PBXBuildFile; fileRef = 428055BBD4AE42CE8592A4C3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_ddict.c */; };
+		B59625BD2A464E4997551F9F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_ldm.h */ = {isa = PBXBuildFile; fileRef = A367FE9817C2470298600645 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_ldm.h */; };
+		B8BFDAE899424FF5BFE1A1D7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_lazy.h */ = {isa = PBXBuildFile; fileRef = 7AC4070EA81645CF8C95DF75 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_lazy.h */; };
+		B8DE5AA60BDA4BBEB5164E7C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress_internal.h */ = {isa = PBXBuildFile; fileRef = EC51637A303E4EA88CE4B707 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress_internal.h */; };
+		BBD4820063C04014BC2CB3BF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_common.c */ = {isa = PBXBuildFile; fileRef = 86DCE267DE6E4F2CB2263DE5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_common.c */; };
+		BD0BB7ABC5E94A7BA52ECA9A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/threading.h */ = {isa = PBXBuildFile; fileRef = A1E0AB3B932241519E55ED29 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/threading.h */; };
+		C19C1A41B5A9447485DBF3C5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/zstd.h */ = {isa = PBXBuildFile; fileRef = 8654F811D9E94377AD3572FE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/zstd.h */; };
+		C55B8D7F054141119692CC9E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/threading.c */ = {isa = PBXBuildFile; fileRef = FB56B778446841BBB661EF67 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/threading.c */; };
+		C593238A8D5C4132B5FEF10B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_double_fast.c */ = {isa = PBXBuildFile; fileRef = AD105ECA8F2E492697FF18EC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_double_fast.c */; };
+		C696B05EB67A459FB708E0F5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/fastcover.c */ = {isa = PBXBuildFile; fileRef = DC369AB961174115B7874D77 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/fastcover.c */; };
+		C75925B10AF2400D8E5DC37F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress_block.c */ = {isa = PBXBuildFile; fileRef = 6B01C7AE76DA49A4B6D37DEF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress_block.c */; };
+		C91FA6E930D54F8EACE3C425 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_superblock.c */ = {isa = PBXBuildFile; fileRef = 15C48D26FF184CB2A4707960 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_superblock.c */; };
+		CF170105102746CBAB941BF6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/fse.h */ = {isa = PBXBuildFile; fileRef = 7998324405104EF88543F01C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/fse.h */; };
+		D03F0AA037164BBD8675A8F2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_deps.h */ = {isa = PBXBuildFile; fileRef = 2905545B04604F398E2DC16F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_deps.h */; };
+		D0853C65976C44CB8DC03E99 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/threading.h */ = {isa = PBXBuildFile; fileRef = 6E0B137187C54EC38B468B94 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/threading.h */; };
+		D11456FEEDAA41DD9F812AE1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_literals.c */ = {isa = PBXBuildFile; fileRef = 39B63C70DD134F56A73FB4FE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_literals.c */; };
+		D83B2F864F634981A4CBB06E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/error_private.h */ = {isa = PBXBuildFile; fileRef = 01C7B234E86F45B5B4E3D556 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/error_private.h */; };
+		DC05E6184D19411EAD717ED7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/entropy_common.c */ = {isa = PBXBuildFile; fileRef = C0114513FE6A4A13A54BA11D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/entropy_common.c */; };
+		DDD7E445870142DA8E020174 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/mem.h */ = {isa = PBXBuildFile; fileRef = 34F561A3F3AC4BD3A07BDF40 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/mem.h */; };
+		DE3AE710CD8942D7BF913B5E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_literals.c */ = {isa = PBXBuildFile; fileRef = A71F8C4B29354D3EAB5F36A7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_literals.c */; };
+		E019EE63704A4EC3BD389D92 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_ldm.c */ = {isa = PBXBuildFile; fileRef = E31E2D3F0B53469B8F7D19A7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_ldm.c */; };
+		E05187D531C145FA8E42E0B7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_fast.h */ = {isa = PBXBuildFile; fileRef = CDD13B9E07C3436D95B532C7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_fast.h */; };
+		E056C027E35042CFA6FC581F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_fast.h */ = {isa = PBXBuildFile; fileRef = 52CB7195E0144C558E9F38B6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_fast.h */; };
+		E070FB1FA09C47C19085F6DA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/huf_compress.c */ = {isa = PBXBuildFile; fileRef = 84D4CEA73F2C467DB9BF10AF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/huf_compress.c */; };
+		E252880343F54EF5B94A928D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/compiler.h */ = {isa = PBXBuildFile; fileRef = D02D43EDB03745FC98AA84AB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/compiler.h */; };
+		E3E6E1E7F45345529FD2F3E0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/hist.h */ = {isa = PBXBuildFile; fileRef = A4B91B20DF3E4A80A3C7B56F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/hist.h */; };
+		E595ADFCD45849F4ABFFE9EE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/divsufsort.c */ = {isa = PBXBuildFile; fileRef = 3DDDE97C69064F898B200BB7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/divsufsort.c */; };
+		E66897C8624C43C49D061414 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/lib/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = EFC2D243FDCE468F960AE6D3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/lib/CMakeLists.txt */; };
+		E751005D6D2F4DD7A62FBBA7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_internal.h */ = {isa = PBXBuildFile; fileRef = 571F742BA9134602B5EEF883 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_internal.h */; };
+		EA4F1964F64F459A8E3E945A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/huf.h */ = {isa = PBXBuildFile; fileRef = 5067E21ECF1B4371B4228610 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/huf.h */; };
+		EB8F5C07BB4F432DB1A1002D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_internal.h */ = {isa = PBXBuildFile; fileRef = 3F1434E2986449DF92A29110 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_internal.h */; };
+		EC41BD0C737D49F0B859AB27 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_fast.c */ = {isa = PBXBuildFile; fileRef = 77405ED467B348F1BDF6045C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_fast.c */; };
+		EF1454F457F44C10BB5905A5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/bitstream.h */ = {isa = PBXBuildFile; fileRef = 34363B0031764DA49B9E6BEB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/bitstream.h */; };
+		F0D414E135594E92B6382455 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_fast.c */ = {isa = PBXBuildFile; fileRef = DB79DBE34C5743C2B0946BB0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_fast.c */; };
+		F275373F75A841FFA6EE67D1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/zdict.c */ = {isa = PBXBuildFile; fileRef = 2DAB0DD62D414658A0875F18 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/zdict.c */; };
+		F2B30313CB7C4159AD81F2CC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_trace.h */ = {isa = PBXBuildFile; fileRef = E7F4AF6ACF5A492599920FBD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_trace.h */; };
+		F5B3EED4CB6B4563BD60E2F5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_literals.h */ = {isa = PBXBuildFile; fileRef = BF3C6CBA063847AFB287C9ED /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_literals.h */; };
+		F8CAD3DC63CC4DF78AFB82E7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_internal.h */ = {isa = PBXBuildFile; fileRef = 380B29BA75E84CF2A3B4776B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_internal.h */; };
+		F928071FCAB540E49D85CEEF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/xxhash.c */ = {isa = PBXBuildFile; fileRef = 029DF87E1D2C47DAA38FEF56 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/xxhash.c */; };
+		FB43F2FEEE594F3C88513F51 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstdmt_compress.h */ = {isa = PBXBuildFile; fileRef = FE1385DEC13947FF90D81DE5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstdmt_compress.h */; };
+		FD0CD42BCF8A4A048A6591CC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/threading.c */ = {isa = PBXBuildFile; fileRef = 6BAC808FD19E43A4986915A2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/threading.c */; };
+		FD10A7D740704BCE951E4EB0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_ddict.h */ = {isa = PBXBuildFile; fileRef = AC79BE7CA7B14D889C35A3BA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_ddict.h */; };
+		FEC7A0F979F24FEFB9ECD4CE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_ddict.c */ = {isa = PBXBuildFile; fileRef = 09F3F99D82DA4FF3ACC46AC5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_ddict.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXBuildStyle section */
+		2318AD330CE842EEA1D1E6CB /* MinSizeRel */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = MinSizeRel;
+		};
+		5CBCDC7E8D05433E8DB0D947 /* Debug */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+		D74049099C834B6282C20F72 /* Release */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Release;
+		};
+		E79CDA3B0F8642178DC9C7DC /* RelWithDebInfo */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = RelWithDebInfo;
+		};
+/* End PBXBuildStyle section */
+
+/* Begin PBXContainerItemProxy section */
+		2917F2508B63456497C5C084 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3C5B09DCC3A34C08ADBF23D6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CCC5A817391E4B34AE043C5B;
+			remoteInfo = libzstd_shared;
+		};
+		2B8C5DEEDD9141729D1B350D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3C5B09DCC3A34C08ADBF23D6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BC5C1F0A95E94DF5A4A48F24;
+			remoteInfo = ZERO_CHECK;
+		};
+		2DB055E9EE7C435E92EF3F9C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3C5B09DCC3A34C08ADBF23D6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 60889D02D6BB41699069ECE4;
+			remoteInfo = libzstd_static;
+		};
+		8CF47DBD7B154B548AC27E19 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3C5B09DCC3A34C08ADBF23D6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BC5C1F0A95E94DF5A4A48F24;
+			remoteInfo = ZERO_CHECK;
+		};
+		9A684519BA6A48D3AD63445E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3C5B09DCC3A34C08ADBF23D6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D38D17A114BC46FBB4338E00;
+			remoteInfo = ALL_BUILD;
+		};
+		FA133949085B4FADBD377803 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3C5B09DCC3A34C08ADBF23D6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BC5C1F0A95E94DF5A4A48F24;
+			remoteInfo = ZERO_CHECK;
+		};
+		FCD7212945BE4E3D84915B5D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3C5B09DCC3A34C08ADBF23D6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BC5C1F0A95E94DF5A4A48F24;
+			remoteInfo = ZERO_CHECK;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		01C7B234E86F45B5B4E3D556 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/error_private.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = error_private.h; path = ../../../lib/common/error_private.h; sourceTree = SOURCE_ROOT; };
+		022CCA523C4C44B98A73A601 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_common.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_common.c; path = ../../../lib/common/zstd_common.c; sourceTree = SOURCE_ROOT; };
+		029DF87E1D2C47DAA38FEF56 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/xxhash.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = xxhash.c; path = ../../../lib/common/xxhash.c; sourceTree = SOURCE_ROOT; };
+		031C2191FA9F41A28895C75D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/hist.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = hist.h; path = ../../../lib/compress/hist.h; sourceTree = SOURCE_ROOT; };
+		099791C471AF45D2B2BA63AF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_opt.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_opt.h; path = ../../../lib/compress/zstd_opt.h; sourceTree = SOURCE_ROOT; };
+		09F3F99D82DA4FF3ACC46AC5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_ddict.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_ddict.c; path = ../../../lib/decompress/zstd_ddict.c; sourceTree = SOURCE_ROOT; };
+		0B659645686E4660A50FD050 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/fse_compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = fse_compress.c; path = ../../../lib/compress/fse_compress.c; sourceTree = SOURCE_ROOT; };
+		0BB9454CE2B949F39909AF94 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_internal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_internal.h; path = ../../../lib/common/zstd_internal.h; sourceTree = SOURCE_ROOT; };
+		0C6C8DE25CF74C46AC8EB797 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/lib/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		0EEBDD3F5DB940B7A6BF87DC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/debug.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = debug.h; path = ../../../lib/common/debug.h; sourceTree = SOURCE_ROOT; };
+		109CCFEC7B064984B8E345EE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress_block.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_decompress_block.h; path = ../../../lib/decompress/zstd_decompress_block.h; sourceTree = SOURCE_ROOT; };
+		11DB9BD60CBA433C8E1351ED /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_double_fast.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_double_fast.h; path = ../../../lib/compress/zstd_double_fast.h; sourceTree = SOURCE_ROOT; };
+		12166C7CBDAF40519D3D472B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/zstd.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd.h; path = ../../../lib/zstd.h; sourceTree = SOURCE_ROOT; };
+		1220F046688646CC8AE9B79E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/divsufsort.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = divsufsort.c; path = ../../../lib/dictBuilder/divsufsort.c; sourceTree = SOURCE_ROOT; };
+		147FBDC54DF44218AF4ADCF5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/zdict.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zdict.c; path = ../../../lib/dictBuilder/zdict.c; sourceTree = SOURCE_ROOT; };
+		14C2B0F07AE44C069E1B9C01 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_double_fast.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_double_fast.c; path = ../../../lib/compress/zstd_double_fast.c; sourceTree = SOURCE_ROOT; };
+		1553A1993A4E4C4289FB57E2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/debug.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = debug.c; path = ../../../lib/common/debug.c; sourceTree = SOURCE_ROOT; };
+		15C48D26FF184CB2A4707960 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_superblock.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_compress_superblock.c; path = ../../../lib/compress/zstd_compress_superblock.c; sourceTree = SOURCE_ROOT; };
+		1BFF0A2F006249EAB6FB88F3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/pool.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = pool.c; path = ../../../lib/common/pool.c; sourceTree = SOURCE_ROOT; };
+		1D7444836F904C4B83D94C90 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/mem.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = mem.h; path = ../../../lib/common/mem.h; sourceTree = SOURCE_ROOT; };
+		1ED7CC497EAE43B69A552F7D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_ldm.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_ldm.c; path = ../../../lib/compress/zstd_ldm.c; sourceTree = SOURCE_ROOT; };
+		20FF7678DF2A48D2B3182227 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_trace.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_trace.h; path = ../../../lib/common/zstd_trace.h; sourceTree = SOURCE_ROOT; };
+		242A1FDE5F2942ECACE0ABBA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/xxhash.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = xxhash.h; path = ../../../lib/common/xxhash.h; sourceTree = SOURCE_ROOT; };
+		24ECF4BC14BD4B6B9A7BE976 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_cwksp.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_cwksp.h; path = ../../../lib/compress/zstd_cwksp.h; sourceTree = SOURCE_ROOT; };
+		2905545B04604F398E2DC16F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_deps.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_deps.h; path = ../../../lib/common/zstd_deps.h; sourceTree = SOURCE_ROOT; };
+		29FAF63CC48E4342BC8DED36 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/cover.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = cover.h; path = ../../../lib/dictBuilder/cover.h; sourceTree = SOURCE_ROOT; };
+		2B2DAEF738384D8DBA29A39C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_opt.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_opt.c; path = ../../../lib/compress/zstd_opt.c; sourceTree = SOURCE_ROOT; };
+		2C723A0486374F29BC1EDE83 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/huf_decompress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = huf_decompress.c; path = ../../../lib/decompress/huf_decompress.c; sourceTree = SOURCE_ROOT; };
+		2DAB0DD62D414658A0875F18 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/zdict.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zdict.c; path = ../../../lib/dictBuilder/zdict.c; sourceTree = SOURCE_ROOT; };
+		2F8C6AFFA1A04CC2AAD7754F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_lazy.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_lazy.c; path = ../../../lib/compress/zstd_lazy.c; sourceTree = SOURCE_ROOT; };
+		34363B0031764DA49B9E6BEB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/bitstream.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = bitstream.h; path = ../../../lib/common/bitstream.h; sourceTree = SOURCE_ROOT; };
+		34F561A3F3AC4BD3A07BDF40 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/mem.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = mem.h; path = ../../../lib/common/mem.h; sourceTree = SOURCE_ROOT; };
+		3597F35E6DB54E75AED775CC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/cpu.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = cpu.h; path = ../../../lib/common/cpu.h; sourceTree = SOURCE_ROOT; };
+		365938F83EA14143B45894F3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_lazy.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_lazy.c; path = ../../../lib/compress/zstd_lazy.c; sourceTree = SOURCE_ROOT; };
+		380B29BA75E84CF2A3B4776B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_internal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_compress_internal.h; path = ../../../lib/compress/zstd_compress_internal.h; sourceTree = SOURCE_ROOT; };
+		39B63C70DD134F56A73FB4FE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_literals.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_compress_literals.c; path = ../../../lib/compress/zstd_compress_literals.c; sourceTree = SOURCE_ROOT; };
+		3DDDE97C69064F898B200BB7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/divsufsort.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = divsufsort.c; path = ../../../lib/dictBuilder/divsufsort.c; sourceTree = SOURCE_ROOT; };
+		3F1434E2986449DF92A29110 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_internal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_internal.h; path = ../../../lib/common/zstd_internal.h; sourceTree = SOURCE_ROOT; };
+		41C5E56B788248CD8B2739E9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/xxhash.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = xxhash.h; path = ../../../lib/common/xxhash.h; sourceTree = SOURCE_ROOT; };
+		4211D0D52A38409B946C77A6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib/CMakeFiles/libzstd_static.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../../../../../../cmake/ext/zstd/build/cmake/lib/CMakeFiles/libzstd_static.dir/Info.plist; sourceTree = SOURCE_ROOT; };
+		428055BBD4AE42CE8592A4C3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_ddict.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_ddict.c; path = ../../../lib/decompress/zstd_ddict.c; sourceTree = SOURCE_ROOT; };
+		44992F6E4D074FA6970D3511 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/hist.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = hist.c; path = ../../../lib/compress/hist.c; sourceTree = SOURCE_ROOT; };
+		4597E5F61C974C5187786BBE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/fse_decompress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = fse_decompress.c; path = ../../../lib/common/fse_decompress.c; sourceTree = SOURCE_ROOT; };
+		4AF9870CDA9444B282A554B0 /* libzstd_shared */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libzstd.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		4E6BA8B4004B4BB885484A30 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress_block.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_decompress_block.c; path = ../../../lib/decompress/zstd_decompress_block.c; sourceTree = SOURCE_ROOT; };
+		5067E21ECF1B4371B4228610 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/huf.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = huf.h; path = ../../../lib/common/huf.h; sourceTree = SOURCE_ROOT; };
+		52CB7195E0144C558E9F38B6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_fast.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_fast.h; path = ../../../lib/compress/zstd_fast.h; sourceTree = SOURCE_ROOT; };
+		53F023F1BB294862AFD72B50 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress_block.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_decompress_block.h; path = ../../../lib/decompress/zstd_decompress_block.h; sourceTree = SOURCE_ROOT; };
+		571F742BA9134602B5EEF883 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_internal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_compress_internal.h; path = ../../../lib/compress/zstd_compress_internal.h; sourceTree = SOURCE_ROOT; };
+		57C4AC09F10C47FCACEBB84A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/xxhash.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = xxhash.c; path = ../../../lib/common/xxhash.c; sourceTree = SOURCE_ROOT; };
+		57FCF723FD9C4BEF94F12A5C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstdmt_compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstdmt_compress.c; path = ../../../lib/compress/zstdmt_compress.c; sourceTree = SOURCE_ROOT; };
+		59C5CBF3B592479B82AFC298 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/entropy_common.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = entropy_common.c; path = ../../../lib/common/entropy_common.c; sourceTree = SOURCE_ROOT; };
+		5C52D6AB315145DD99BD02D9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/cpu.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = cpu.h; path = ../../../lib/common/cpu.h; sourceTree = SOURCE_ROOT; };
+		5FCB15BA55D94B41AB3643D3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/pool.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = pool.c; path = ../../../lib/common/pool.c; sourceTree = SOURCE_ROOT; };
+		5FE3D88AF4C64E2296099520 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_sequences.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_compress_sequences.c; path = ../../../lib/compress/zstd_compress_sequences.c; sourceTree = SOURCE_ROOT; };
+		61B28D73618C48FBBDE8F757 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/huf.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = huf.h; path = ../../../lib/common/huf.h; sourceTree = SOURCE_ROOT; };
+		653C43CC07234FFC9B05F342 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_cwksp.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_cwksp.h; path = ../../../lib/compress/zstd_cwksp.h; sourceTree = SOURCE_ROOT; };
+		6A2BC89702EB40EB959DBD38 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_sequences.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_compress_sequences.c; path = ../../../lib/compress/zstd_compress_sequences.c; sourceTree = SOURCE_ROOT; };
+		6B01C7AE76DA49A4B6D37DEF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress_block.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_decompress_block.c; path = ../../../lib/decompress/zstd_decompress_block.c; sourceTree = SOURCE_ROOT; };
+		6BAC808FD19E43A4986915A2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/threading.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = threading.c; path = ../../../lib/common/threading.c; sourceTree = SOURCE_ROOT; };
+		6BF5261DFF4842959B8FF7DD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/fse.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = fse.h; path = ../../../lib/common/fse.h; sourceTree = SOURCE_ROOT; };
+		6D88E35116824ED88856EB8B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_ldm_geartab.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_ldm_geartab.h; path = ../../../lib/compress/zstd_ldm_geartab.h; sourceTree = SOURCE_ROOT; };
+		6E0B137187C54EC38B468B94 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/threading.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = threading.h; path = ../../../lib/common/threading.h; sourceTree = SOURCE_ROOT; };
+		7003A601A6214EDCBCE6F5AA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_double_fast.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_double_fast.h; path = ../../../lib/compress/zstd_double_fast.h; sourceTree = SOURCE_ROOT; };
+		72CC6E90D34F4969A37BBA41 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_superblock.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_compress_superblock.h; path = ../../../lib/compress/zstd_compress_superblock.h; sourceTree = SOURCE_ROOT; };
+		74E7F563641C4BBD8F78235F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/pool.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = pool.h; path = ../../../lib/common/pool.h; sourceTree = SOURCE_ROOT; };
+		77405ED467B348F1BDF6045C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_fast.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_fast.c; path = ../../../lib/compress/zstd_fast.c; sourceTree = SOURCE_ROOT; };
+		78A9E22AD2EF46EAA2B20D43 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/fse_decompress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = fse_decompress.c; path = ../../../lib/common/fse_decompress.c; sourceTree = SOURCE_ROOT; };
+		7998324405104EF88543F01C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/fse.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = fse.h; path = ../../../lib/common/fse.h; sourceTree = SOURCE_ROOT; };
+		7A07B13DD3504E4782D44A1C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/error_private.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = error_private.c; path = ../../../lib/common/error_private.c; sourceTree = SOURCE_ROOT; };
+		7AC4070EA81645CF8C95DF75 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_lazy.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_lazy.h; path = ../../../lib/compress/zstd_lazy.h; sourceTree = SOURCE_ROOT; };
+		7B4ADA9C76F441F5A677C8CF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_compress.c; path = ../../../lib/compress/zstd_compress.c; sourceTree = SOURCE_ROOT; };
+		7EA2C3E7137E4FFEB09493AE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_ddict.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_ddict.h; path = ../../../lib/decompress/zstd_ddict.h; sourceTree = SOURCE_ROOT; };
+		7ED7727AE1FC460484DC10F9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/huf_decompress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = huf_decompress.c; path = ../../../lib/decompress/huf_decompress.c; sourceTree = SOURCE_ROOT; };
+		84D4CEA73F2C467DB9BF10AF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/huf_compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = huf_compress.c; path = ../../../lib/compress/huf_compress.c; sourceTree = SOURCE_ROOT; };
+		8654F811D9E94377AD3572FE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/zstd.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd.h; path = ../../../lib/zstd.h; sourceTree = SOURCE_ROOT; };
+		86DCE267DE6E4F2CB2263DE5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_common.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_common.c; path = ../../../lib/common/zstd_common.c; sourceTree = SOURCE_ROOT; };
+		8CC8D0C6A7A2468E865F644D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/debug.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = debug.h; path = ../../../lib/common/debug.h; sourceTree = SOURCE_ROOT; };
+		8EE4E16D95754BB38B136277 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/fastcover.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = fastcover.c; path = ../../../lib/dictBuilder/fastcover.c; sourceTree = SOURCE_ROOT; };
+		91C4E5F2598F4AC6AC516A86 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/fse_compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = fse_compress.c; path = ../../../lib/compress/fse_compress.c; sourceTree = SOURCE_ROOT; };
+		9372E511B9954792A39A9949 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/divsufsort.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = divsufsort.h; path = ../../../lib/dictBuilder/divsufsort.h; sourceTree = SOURCE_ROOT; };
+		958FBF8CBAF046AFBCAD6605 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_literals.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_compress_literals.h; path = ../../../lib/compress/zstd_compress_literals.h; sourceTree = SOURCE_ROOT; };
+		962660D7F1FD4564B0560D9D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_superblock.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_compress_superblock.c; path = ../../../lib/compress/zstd_compress_superblock.c; sourceTree = SOURCE_ROOT; };
+		962C0CFE5F5D4C3ABAFEC22B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/debug.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = debug.c; path = ../../../lib/common/debug.c; sourceTree = SOURCE_ROOT; };
+		96BBB2832ACC4D21AE08A0CC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/lib/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		9A522B56F5ED471CA8CB07ED /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/compiler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = compiler.h; path = ../../../lib/common/compiler.h; sourceTree = SOURCE_ROOT; };
+		9AD8210627C348FDB01D3CBF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/cover.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = cover.c; path = ../../../lib/dictBuilder/cover.c; sourceTree = SOURCE_ROOT; };
+		9BC9F2E565744AAD9F4B9B3F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_decompress.c; path = ../../../lib/decompress/zstd_decompress.c; sourceTree = SOURCE_ROOT; };
+		A1E0AB3B932241519E55ED29 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/threading.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = threading.h; path = ../../../lib/common/threading.h; sourceTree = SOURCE_ROOT; };
+		A27E3A0D9948411AA677E44F /* libzstd_static */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libzstd.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2EA215F3ECB48E68BF4A321 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/lib/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		A367FE9817C2470298600645 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_ldm.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_ldm.h; path = ../../../lib/compress/zstd_ldm.h; sourceTree = SOURCE_ROOT; };
+		A446FE56EBD44889B3E805EB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_deps.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_deps.h; path = ../../../lib/common/zstd_deps.h; sourceTree = SOURCE_ROOT; };
+		A4B91B20DF3E4A80A3C7B56F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/hist.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = hist.h; path = ../../../lib/compress/hist.h; sourceTree = SOURCE_ROOT; };
+		A4E0D507C19348A29D56EBB5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib/CMakeFiles/libzstd_shared.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../../../../../../cmake/ext/zstd/build/cmake/lib/CMakeFiles/libzstd_shared.dir/Info.plist; sourceTree = SOURCE_ROOT; };
+		A64E6730AE7748B68DD96D14 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_decompress.c; path = ../../../lib/decompress/zstd_decompress.c; sourceTree = SOURCE_ROOT; };
+		A71F8C4B29354D3EAB5F36A7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_literals.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_compress_literals.c; path = ../../../lib/compress/zstd_compress_literals.c; sourceTree = SOURCE_ROOT; };
+		A79C06D4B42A496198ED3072 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/huf_compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = huf_compress.c; path = ../../../lib/compress/huf_compress.c; sourceTree = SOURCE_ROOT; };
+		A7FC1D157B7B475680A620AC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/hist.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = hist.c; path = ../../../lib/compress/hist.c; sourceTree = SOURCE_ROOT; };
+		A89B5ED94974451499B15B6B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_ldm_geartab.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_ldm_geartab.h; path = ../../../lib/compress/zstd_ldm_geartab.h; sourceTree = SOURCE_ROOT; };
+		AC79BE7CA7B14D889C35A3BA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_ddict.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_ddict.h; path = ../../../lib/decompress/zstd_ddict.h; sourceTree = SOURCE_ROOT; };
+		AD105ECA8F2E492697FF18EC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_double_fast.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_double_fast.c; path = ../../../lib/compress/zstd_double_fast.c; sourceTree = SOURCE_ROOT; };
+		AD9A9CAB324B4D7284E57B81 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_compress.c; path = ../../../lib/compress/zstd_compress.c; sourceTree = SOURCE_ROOT; };
+		AFA3C496949D41D68B003AEA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_opt.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_opt.c; path = ../../../lib/compress/zstd_opt.c; sourceTree = SOURCE_ROOT; };
+		B1B9E76230BF43C599714F4C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/error_private.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = error_private.h; path = ../../../lib/common/error_private.h; sourceTree = SOURCE_ROOT; };
+		B257B0088C504BB5AAD4B49C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_lazy.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_lazy.h; path = ../../../lib/compress/zstd_lazy.h; sourceTree = SOURCE_ROOT; };
+		B264300ED9B74D62B6233946 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstdmt_compress.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstdmt_compress.h; path = ../../../lib/compress/zstdmt_compress.h; sourceTree = SOURCE_ROOT; };
+		BBF6CC9A4FFC48E580488DDA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_opt.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_opt.h; path = ../../../lib/compress/zstd_opt.h; sourceTree = SOURCE_ROOT; };
+		BC696342DBAD46CBB6DE9873 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/cover.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = cover.h; path = ../../../lib/dictBuilder/cover.h; sourceTree = SOURCE_ROOT; };
+		BF28D4115E6A4A289B4D0BDE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/divsufsort.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = divsufsort.h; path = ../../../lib/dictBuilder/divsufsort.h; sourceTree = SOURCE_ROOT; };
+		BF3C6CBA063847AFB287C9ED /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_literals.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_compress_literals.h; path = ../../../lib/compress/zstd_compress_literals.h; sourceTree = SOURCE_ROOT; };
+		C0114513FE6A4A13A54BA11D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/entropy_common.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = entropy_common.c; path = ../../../lib/common/entropy_common.c; sourceTree = SOURCE_ROOT; };
+		C66EA8D47FB343829FE03277 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstdmt_compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstdmt_compress.c; path = ../../../lib/compress/zstdmt_compress.c; sourceTree = SOURCE_ROOT; };
+		C94112E63A4F495F9A91D0F1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_superblock.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_compress_superblock.h; path = ../../../lib/compress/zstd_compress_superblock.h; sourceTree = SOURCE_ROOT; };
+		CDD13B9E07C3436D95B532C7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_fast.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_fast.h; path = ../../../lib/compress/zstd_fast.h; sourceTree = SOURCE_ROOT; };
+		D02D43EDB03745FC98AA84AB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/compiler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = compiler.h; path = ../../../lib/common/compiler.h; sourceTree = SOURCE_ROOT; };
+		D0F1F7472AF14B9FBC40C531 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress_internal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_decompress_internal.h; path = ../../../lib/decompress/zstd_decompress_internal.h; sourceTree = SOURCE_ROOT; };
+		D2FB96FD3E6C42978A32C49E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/pool.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = pool.h; path = ../../../lib/common/pool.h; sourceTree = SOURCE_ROOT; };
+		D306E64367C4463E9733B2D5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/cover.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = cover.c; path = ../../../lib/dictBuilder/cover.c; sourceTree = SOURCE_ROOT; };
+		DB79DBE34C5743C2B0946BB0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_fast.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_fast.c; path = ../../../lib/compress/zstd_fast.c; sourceTree = SOURCE_ROOT; };
+		DC369AB961174115B7874D77 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/fastcover.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = fastcover.c; path = ../../../lib/dictBuilder/fastcover.c; sourceTree = SOURCE_ROOT; };
+		DF0ABACBBA8D451AAA463EBE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_ldm.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_ldm.h; path = ../../../lib/compress/zstd_ldm.h; sourceTree = SOURCE_ROOT; };
+		E101F4F8EF70499C9EAD1DD5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/bitstream.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = bitstream.h; path = ../../../lib/common/bitstream.h; sourceTree = SOURCE_ROOT; };
+		E31E2D3F0B53469B8F7D19A7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_ldm.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_ldm.c; path = ../../../lib/compress/zstd_ldm.c; sourceTree = SOURCE_ROOT; };
+		E7F4AF6ACF5A492599920FBD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_trace.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_trace.h; path = ../../../lib/common/zstd_trace.h; sourceTree = SOURCE_ROOT; };
+		EC51637A303E4EA88CE4B707 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress_internal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_decompress_internal.h; path = ../../../lib/decompress/zstd_decompress_internal.h; sourceTree = SOURCE_ROOT; };
+		EFC2D243FDCE468F960AE6D3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/lib/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		F8FF0F96FAB74C31B620A0BE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_sequences.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_compress_sequences.h; path = ../../../lib/compress/zstd_compress_sequences.h; sourceTree = SOURCE_ROOT; };
+		FB56B778446841BBB661EF67 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/threading.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = threading.c; path = ../../../lib/common/threading.c; sourceTree = SOURCE_ROOT; };
+		FDBDC597110049F5903C613A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_sequences.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_compress_sequences.h; path = ../../../lib/compress/zstd_compress_sequences.h; sourceTree = SOURCE_ROOT; };
+		FE1385DEC13947FF90D81DE5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstdmt_compress.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstdmt_compress.h; path = ../../../lib/compress/zstdmt_compress.h; sourceTree = SOURCE_ROOT; };
+		FEA0693819BA4F639D6E7602 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/error_private.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = error_private.c; path = ../../../lib/common/error_private.c; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8AF4D90FFF2C422F99FB9ADB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EDD7F92FCBFD4935A6B8A9E6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		181BCA8C37564B0993CCC95F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4AF9870CDA9444B282A554B0 /* libzstd_shared */,
+				A27E3A0D9948411AA677E44F /* libzstd_static */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1A13B66A15E44674BFB6A607 /* libzstd_shared */ = {
+			isa = PBXGroup;
+			children = (
+				6297BB4770A848C781ED44EE /* Source Files */,
+				30DBF2B9C16549D78F3D4A13 /* Header Files */,
+				3352434FA82140AC94639DD5 /* Resources */,
+				0C6C8DE25CF74C46AC8EB797 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/lib/CMakeLists.txt */,
+			);
+			name = libzstd_shared;
+			sourceTree = "<group>";
+		};
+		224422CF72DE486899739764 /* CMake Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		30DBF2B9C16549D78F3D4A13 /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				34363B0031764DA49B9E6BEB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/bitstream.h */,
+				D02D43EDB03745FC98AA84AB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/compiler.h */,
+				5C52D6AB315145DD99BD02D9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/cpu.h */,
+				8CC8D0C6A7A2468E865F644D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/debug.h */,
+				01C7B234E86F45B5B4E3D556 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/error_private.h */,
+				7998324405104EF88543F01C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/fse.h */,
+				5067E21ECF1B4371B4228610 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/huf.h */,
+				34F561A3F3AC4BD3A07BDF40 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/mem.h */,
+				D2FB96FD3E6C42978A32C49E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/pool.h */,
+				A1E0AB3B932241519E55ED29 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/threading.h */,
+				41C5E56B788248CD8B2739E9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/xxhash.h */,
+				A446FE56EBD44889B3E805EB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_deps.h */,
+				0BB9454CE2B949F39909AF94 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_internal.h */,
+				E7F4AF6ACF5A492599920FBD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_trace.h */,
+				A4B91B20DF3E4A80A3C7B56F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/hist.h */,
+				380B29BA75E84CF2A3B4776B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_internal.h */,
+				BF3C6CBA063847AFB287C9ED /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_literals.h */,
+				FDBDC597110049F5903C613A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_sequences.h */,
+				C94112E63A4F495F9A91D0F1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_superblock.h */,
+				24ECF4BC14BD4B6B9A7BE976 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_cwksp.h */,
+				7003A601A6214EDCBCE6F5AA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_double_fast.h */,
+				CDD13B9E07C3436D95B532C7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_fast.h */,
+				7AC4070EA81645CF8C95DF75 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_lazy.h */,
+				DF0ABACBBA8D451AAA463EBE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_ldm.h */,
+				A89B5ED94974451499B15B6B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_ldm_geartab.h */,
+				099791C471AF45D2B2BA63AF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_opt.h */,
+				FE1385DEC13947FF90D81DE5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstdmt_compress.h */,
+				7EA2C3E7137E4FFEB09493AE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_ddict.h */,
+				109CCFEC7B064984B8E345EE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress_block.h */,
+				D0F1F7472AF14B9FBC40C531 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress_internal.h */,
+				29FAF63CC48E4342BC8DED36 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/cover.h */,
+				9372E511B9954792A39A9949 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/divsufsort.h */,
+				8654F811D9E94377AD3572FE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/zstd.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		3352434FA82140AC94639DD5 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A4E0D507C19348A29D56EBB5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib/CMakeFiles/libzstd_shared.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		34DBE647CFAF404D98D68885 /* ALL_BUILD */ = {
+			isa = PBXGroup;
+			children = (
+				B7F89086F44545F2ADFF797E /* CMake Rules */,
+				96BBB2832ACC4D21AE08A0CC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/lib/CMakeLists.txt */,
+			);
+			name = ALL_BUILD;
+			sourceTree = "<group>";
+		};
+		3EA1B3715D17473A83CBF6AC /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				1553A1993A4E4C4289FB57E2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/debug.c */,
+				C0114513FE6A4A13A54BA11D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/entropy_common.c */,
+				7A07B13DD3504E4782D44A1C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/error_private.c */,
+				4597E5F61C974C5187786BBE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/fse_decompress.c */,
+				5FCB15BA55D94B41AB3643D3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/pool.c */,
+				6BAC808FD19E43A4986915A2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/threading.c */,
+				57C4AC09F10C47FCACEBB84A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/xxhash.c */,
+				022CCA523C4C44B98A73A601 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_common.c */,
+				91C4E5F2598F4AC6AC516A86 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/fse_compress.c */,
+				A7FC1D157B7B475680A620AC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/hist.c */,
+				84D4CEA73F2C467DB9BF10AF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/huf_compress.c */,
+				7B4ADA9C76F441F5A677C8CF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress.c */,
+				39B63C70DD134F56A73FB4FE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_literals.c */,
+				6A2BC89702EB40EB959DBD38 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_sequences.c */,
+				15C48D26FF184CB2A4707960 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_superblock.c */,
+				AD105ECA8F2E492697FF18EC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_double_fast.c */,
+				DB79DBE34C5743C2B0946BB0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_fast.c */,
+				2F8C6AFFA1A04CC2AAD7754F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_lazy.c */,
+				1ED7CC497EAE43B69A552F7D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_ldm.c */,
+				2B2DAEF738384D8DBA29A39C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_opt.c */,
+				57FCF723FD9C4BEF94F12A5C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstdmt_compress.c */,
+				2C723A0486374F29BC1EDE83 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/huf_decompress.c */,
+				09F3F99D82DA4FF3ACC46AC5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_ddict.c */,
+				9BC9F2E565744AAD9F4B9B3F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress.c */,
+				4E6BA8B4004B4BB885484A30 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress_block.c */,
+				D306E64367C4463E9733B2D5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/cover.c */,
+				3DDDE97C69064F898B200BB7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/divsufsort.c */,
+				8EE4E16D95754BB38B136277 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/fastcover.c */,
+				2DAB0DD62D414658A0875F18 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/zdict.c */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		6297BB4770A848C781ED44EE /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				962C0CFE5F5D4C3ABAFEC22B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/debug.c */,
+				59C5CBF3B592479B82AFC298 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/entropy_common.c */,
+				FEA0693819BA4F639D6E7602 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/error_private.c */,
+				78A9E22AD2EF46EAA2B20D43 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/fse_decompress.c */,
+				1BFF0A2F006249EAB6FB88F3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/pool.c */,
+				FB56B778446841BBB661EF67 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/threading.c */,
+				029DF87E1D2C47DAA38FEF56 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/xxhash.c */,
+				86DCE267DE6E4F2CB2263DE5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_common.c */,
+				0B659645686E4660A50FD050 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/fse_compress.c */,
+				44992F6E4D074FA6970D3511 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/hist.c */,
+				A79C06D4B42A496198ED3072 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/huf_compress.c */,
+				AD9A9CAB324B4D7284E57B81 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress.c */,
+				A71F8C4B29354D3EAB5F36A7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_literals.c */,
+				5FE3D88AF4C64E2296099520 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_sequences.c */,
+				962660D7F1FD4564B0560D9D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_superblock.c */,
+				14C2B0F07AE44C069E1B9C01 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_double_fast.c */,
+				77405ED467B348F1BDF6045C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_fast.c */,
+				365938F83EA14143B45894F3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_lazy.c */,
+				E31E2D3F0B53469B8F7D19A7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_ldm.c */,
+				AFA3C496949D41D68B003AEA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_opt.c */,
+				C66EA8D47FB343829FE03277 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstdmt_compress.c */,
+				7ED7727AE1FC460484DC10F9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/huf_decompress.c */,
+				428055BBD4AE42CE8592A4C3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_ddict.c */,
+				A64E6730AE7748B68DD96D14 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress.c */,
+				6B01C7AE76DA49A4B6D37DEF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress_block.c */,
+				9AD8210627C348FDB01D3CBF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/cover.c */,
+				1220F046688646CC8AE9B79E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/divsufsort.c */,
+				DC369AB961174115B7874D77 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/fastcover.c */,
+				147FBDC54DF44218AF4ADCF5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/zdict.c */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		6DD0C3A36A8B4D16B23BA6B2 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				4211D0D52A38409B946C77A6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib/CMakeFiles/libzstd_static.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		966682D17E8F43578775B857 = {
+			isa = PBXGroup;
+			children = (
+				CD159DC828F0498B94A4822B /* libzstd_static */,
+				B94B32A06FB64C6A9A8E36C4 /* uninstall */,
+				1A13B66A15E44674BFB6A607 /* libzstd_shared */,
+				34DBE647CFAF404D98D68885 /* ALL_BUILD */,
+				181BCA8C37564B0993CCC95F /* Products */,
+				DD0A54192C9F4831BCF187BB /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		B7F89086F44545F2ADFF797E /* CMake Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		B94B32A06FB64C6A9A8E36C4 /* uninstall */ = {
+			isa = PBXGroup;
+			children = (
+				224422CF72DE486899739764 /* CMake Rules */,
+				A2EA215F3ECB48E68BF4A321 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/lib/CMakeLists.txt */,
+			);
+			name = uninstall;
+			sourceTree = "<group>";
+		};
+		CD159DC828F0498B94A4822B /* libzstd_static */ = {
+			isa = PBXGroup;
+			children = (
+				3EA1B3715D17473A83CBF6AC /* Source Files */,
+				F9F6B49E654C49528AD6860E /* Header Files */,
+				6DD0C3A36A8B4D16B23BA6B2 /* Resources */,
+				EFC2D243FDCE468F960AE6D3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/lib/CMakeLists.txt */,
+			);
+			name = libzstd_static;
+			sourceTree = "<group>";
+		};
+		DD0A54192C9F4831BCF187BB /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F9F6B49E654C49528AD6860E /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				E101F4F8EF70499C9EAD1DD5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/bitstream.h */,
+				9A522B56F5ED471CA8CB07ED /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/compiler.h */,
+				3597F35E6DB54E75AED775CC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/cpu.h */,
+				0EEBDD3F5DB940B7A6BF87DC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/debug.h */,
+				B1B9E76230BF43C599714F4C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/error_private.h */,
+				6BF5261DFF4842959B8FF7DD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/fse.h */,
+				61B28D73618C48FBBDE8F757 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/huf.h */,
+				1D7444836F904C4B83D94C90 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/mem.h */,
+				74E7F563641C4BBD8F78235F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/pool.h */,
+				6E0B137187C54EC38B468B94 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/threading.h */,
+				242A1FDE5F2942ECACE0ABBA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/xxhash.h */,
+				2905545B04604F398E2DC16F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_deps.h */,
+				3F1434E2986449DF92A29110 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_internal.h */,
+				20FF7678DF2A48D2B3182227 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_trace.h */,
+				031C2191FA9F41A28895C75D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/hist.h */,
+				571F742BA9134602B5EEF883 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_internal.h */,
+				958FBF8CBAF046AFBCAD6605 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_literals.h */,
+				F8FF0F96FAB74C31B620A0BE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_sequences.h */,
+				72CC6E90D34F4969A37BBA41 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_superblock.h */,
+				653C43CC07234FFC9B05F342 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_cwksp.h */,
+				11DB9BD60CBA433C8E1351ED /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_double_fast.h */,
+				52CB7195E0144C558E9F38B6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_fast.h */,
+				B257B0088C504BB5AAD4B49C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_lazy.h */,
+				A367FE9817C2470298600645 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_ldm.h */,
+				6D88E35116824ED88856EB8B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_ldm_geartab.h */,
+				BBF6CC9A4FFC48E580488DDA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_opt.h */,
+				B264300ED9B74D62B6233946 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstdmt_compress.h */,
+				AC79BE7CA7B14D889C35A3BA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_ddict.h */,
+				53F023F1BB294862AFD72B50 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress_block.h */,
+				EC51637A303E4EA88CE4B707 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress_internal.h */,
+				BC696342DBAD46CBB6DE9873 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/cover.h */,
+				BF28D4115E6A4A289B4D0BDE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/divsufsort.h */,
+				12166C7CBDAF40519D3D472B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/zstd.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		60889D02D6BB41699069ECE4 /* libzstd_static */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EFCBDC467160450FA0C9F001 /* Build configuration list for PBXNativeTarget "libzstd_static" */;
+			buildPhases = (
+				05C54D2B62214784922141ED /* Sources */,
+				EDD7F92FCBFD4935A6B8A9E6 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				27ACB804012244139885DDF8 /* PBXTargetDependency */,
+			);
+			name = libzstd_static;
+			productName = libzstd_static;
+			productReference = A27E3A0D9948411AA677E44F /* libzstd_static */;
+			productType = "com.apple.product-type.library.static";
+		};
+		CCC5A817391E4B34AE043C5B /* libzstd_shared */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 27954F7B80F542889509E0A8 /* Build configuration list for PBXNativeTarget "libzstd_shared" */;
+			buildPhases = (
+				CDBE247A2BB1408197824C8F /* Sources */,
+				8AF4D90FFF2C422F99FB9ADB /* Frameworks */,
+				85DAF2A820A61549808D7878 /* CMake PostBuild Rules */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E0F30AA71B0E48A3959FD28D /* PBXTargetDependency */,
+			);
+			name = libzstd_shared;
+			productName = libzstd_shared;
+			productReference = 4AF9870CDA9444B282A554B0 /* libzstd_shared */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3C5B09DCC3A34C08ADBF23D6 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1300;
+			};
+			buildConfigurationList = 93911A5458DF443586DEED8E /* Build configuration list for PBXProject "libzstd" */;
+			buildSettings = {
+			};
+			buildStyles = (
+				5CBCDC7E8D05433E8DB0D947 /* Debug */,
+				D74049099C834B6282C20F72 /* Release */,
+				2318AD330CE842EEA1D1E6CB /* MinSizeRel */,
+				E79CDA3B0F8642178DC9C7DC /* RelWithDebInfo */,
+			);
+			compatibilityVersion = "Xcode 3.2";
+			hasScannedForEncodings = 0;
+			mainGroup = 966682D17E8F43578775B857;
+			projectDirPath = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/lib;
+			projectRoot = "";
+			targets = (
+				D38D17A114BC46FBB4338E00 /* ALL_BUILD */,
+				579C005AED0642C48E3D9BDA /* RUN_TESTS */,
+				BC5C1F0A95E94DF5A4A48F24 /* ZERO_CHECK */,
+				B2FB4C7868914CD79D8362FC /* install */,
+				CCC5A817391E4B34AE043C5B /* libzstd_shared */,
+				60889D02D6BB41699069ECE4 /* libzstd_static */,
+				FFBC75B663AC4AC3886EF56E /* uninstall */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		003C8D08B0008F35F218E126 /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib
+  /opt/homebrew/Cellar/cmake/3.21.3_1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib
+  /opt/homebrew/Cellar/cmake/3.21.3_1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib
+  /opt/homebrew/Cellar/cmake/3.21.3_1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib
+  /opt/homebrew/Cellar/cmake/3.21.3_1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		10A2DB1740FD10AF0FBEF0B7 /* Generate CMakeFiles/ZERO_CHECK */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ZERO_CHECK";
+			outputPaths = (
+/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib/CMakeFiles/ZERO_CHECK			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib
+  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib
+  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib
+  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib
+  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib/CMakeScripts/ReRunCMake.make
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		3C0110FC8322DE7E50886E21 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		3C8B9B9628600475EB03CBF8 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		85DAF2A820A61549808D7878 /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib
+  /opt/homebrew/Cellar/cmake/3.21.3_1/bin/cmake -E cmake_symlink_library /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Debug/libzstd.1.5.0.dylib /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Debug/libzstd.1.dylib /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Debug/libzstd.dylib
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib
+  /opt/homebrew/Cellar/cmake/3.21.3_1/bin/cmake -E cmake_symlink_library /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Release/libzstd.1.5.0.dylib /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Release/libzstd.1.dylib /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Release/libzstd.dylib
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib
+  /opt/homebrew/Cellar/cmake/3.21.3_1/bin/cmake -E cmake_symlink_library /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/MinSizeRel/libzstd.1.5.0.dylib /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/MinSizeRel/libzstd.1.dylib /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/MinSizeRel/libzstd.dylib
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib
+  /opt/homebrew/Cellar/cmake/3.21.3_1/bin/cmake -E cmake_symlink_library /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/RelWithDebInfo/libzstd.1.5.0.dylib /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/RelWithDebInfo/libzstd.1.dylib /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/RelWithDebInfo/libzstd.dylib
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		87AF4882E018677E2624B544 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		910A41151295C5F9742C25BD = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib
+  /opt/homebrew/Cellar/cmake/3.21.3_1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib
+  /opt/homebrew/Cellar/cmake/3.21.3_1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib
+  /opt/homebrew/Cellar/cmake/3.21.3_1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib
+  /opt/homebrew/Cellar/cmake/3.21.3_1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		9B50530E35CC49C82C2FACCF = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		C4EFCBBC8AAB2ECF3A9F097C /* Generate CMakeFiles/uninstall */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/uninstall";
+			outputPaths = (
+/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib/CMakeFiles/uninstall			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib
+  /opt/homebrew/Cellar/cmake/3.21.3_1/bin/cmake -P /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib/cmake_uninstall.cmake
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib
+  /opt/homebrew/Cellar/cmake/3.21.3_1/bin/cmake -P /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib/cmake_uninstall.cmake
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib
+  /opt/homebrew/Cellar/cmake/3.21.3_1/bin/cmake -P /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib/cmake_uninstall.cmake
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib
+  /opt/homebrew/Cellar/cmake/3.21.3_1/bin/cmake -P /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib/cmake_uninstall.cmake
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		E291A03D26816D06546DAB72 /* Generate CMakeFiles/ALL_BUILD */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ALL_BUILD";
+			outputPaths = (
+/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib/CMakeFiles/ALL_BUILD			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib
+  echo Build\\ all\\ projects
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		05C54D2B62214784922141ED /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44A632CF882F4EE096C3C9DF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/debug.c */,
+				DC05E6184D19411EAD717ED7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/entropy_common.c */,
+				B35780CE55D04A569F1E0F67 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/error_private.c */,
+				7B73738D0B9C4AC5A671E48D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/fse_decompress.c */,
+				896E7AB97ADA4622A84ACC03 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/pool.c */,
+				FD0CD42BCF8A4A048A6591CC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/threading.c */,
+				12B367B5964B4BF1AEE08A72 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/xxhash.c */,
+				7F91859D93F147A8A3EEB1BB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_common.c */,
+				86E88630ED9E4F42B577B811 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/fse_compress.c */,
+				9BE61A5F637F48088731A765 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/hist.c */,
+				E070FB1FA09C47C19085F6DA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/huf_compress.c */,
+				A1F7BC4266324228AEB68D53 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress.c */,
+				D11456FEEDAA41DD9F812AE1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_literals.c */,
+				5844218FEB7C4BA2B69DD193 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_sequences.c */,
+				C91FA6E930D54F8EACE3C425 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_superblock.c */,
+				C593238A8D5C4132B5FEF10B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_double_fast.c */,
+				F0D414E135594E92B6382455 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_fast.c */,
+				85A91D613BE44B379A7CB2BB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_lazy.c */,
+				5DD455030C4C4F6B821AD507 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_ldm.c */,
+				15F1B10B57E44D0594E3BBF7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_opt.c */,
+				5CC5280692D64E39AD461BB9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstdmt_compress.c */,
+				AE2E33466D1E43E4B4B21E05 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/huf_decompress.c */,
+				FEC7A0F979F24FEFB9ECD4CE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_ddict.c */,
+				AFD38288CB874BFFBDB4A490 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress.c */,
+				658A66A7A54843B184D0D5A8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress_block.c */,
+				164E5E4C7C7143448CFAC268 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/cover.c */,
+				E595ADFCD45849F4ABFFE9EE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/divsufsort.c */,
+				A343CFD6276A448E8235749A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/fastcover.c */,
+				F275373F75A841FFA6EE67D1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/zdict.c */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CDBE247A2BB1408197824C8F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8DFEE4F60E304A66B6C02140 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/debug.c */,
+				4B388D85661C40D8B8200CB0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/entropy_common.c */,
+				B18891FDF8C94FD38F2CAF81 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/error_private.c */,
+				41A349153DB64FC98F439FDD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/fse_decompress.c */,
+				9E1C8EF75CEC4FD7A3E33F1E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/pool.c */,
+				C55B8D7F054141119692CC9E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/threading.c */,
+				F928071FCAB540E49D85CEEF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/xxhash.c */,
+				BBD4820063C04014BC2CB3BF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/common/zstd_common.c */,
+				1A8251108B9F46319F5AB78C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/fse_compress.c */,
+				6EEA5C51F2284FD4B05999ED /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/hist.c */,
+				316356373F8F4DBB8B6BC7F6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/huf_compress.c */,
+				646740D9F7EE4087BA230154 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress.c */,
+				DE3AE710CD8942D7BF913B5E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_literals.c */,
+				2223F681E8F94C11A96E0B11 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_sequences.c */,
+				4F0011FA1B474BDF894A6DCD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_compress_superblock.c */,
+				55728156E6E04F30B1DA4F5B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_double_fast.c */,
+				EC41BD0C737D49F0B859AB27 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_fast.c */,
+				5411BB8ACC204A71AA527D21 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_lazy.c */,
+				E019EE63704A4EC3BD389D92 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_ldm.c */,
+				29579D2815E044E0BAA9CA1F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstd_opt.c */,
+				1ED29E67BB7B47C7A3BAE39A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/compress/zstdmt_compress.c */,
+				9B73E912A1EE435FAB0D3780 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/huf_decompress.c */,
+				B3AD703C142F4231B0C6C578 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_ddict.c */,
+				58640D0BBF09485CB8322FD5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress.c */,
+				C75925B10AF2400D8E5DC37F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/decompress/zstd_decompress_block.c */,
+				3A3514EE79874937A79FEF18 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/cover.c */,
+				9A1DAD592993486A94E8DD78 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/divsufsort.c */,
+				C696B05EB67A459FB708E0F5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/fastcover.c */,
+				6679790CF8154922BA3961A6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/lib/dictBuilder/zdict.c */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0D61CC3662A844A2A418CDB1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BC5C1F0A95E94DF5A4A48F24 /* ZERO_CHECK */;
+			targetProxy = 8CF47DBD7B154B548AC27E19 /* PBXContainerItemProxy */;
+		};
+		27ACB804012244139885DDF8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BC5C1F0A95E94DF5A4A48F24 /* ZERO_CHECK */;
+			targetProxy = 2B8C5DEEDD9141729D1B350D /* PBXContainerItemProxy */;
+		};
+		44786C5A7FBC4F159EA4229C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D38D17A114BC46FBB4338E00 /* ALL_BUILD */;
+			targetProxy = 9A684519BA6A48D3AD63445E /* PBXContainerItemProxy */;
+		};
+		C140BFAFBF604908964A384A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 60889D02D6BB41699069ECE4 /* libzstd_static */;
+			targetProxy = 2DB055E9EE7C435E92EF3F9C /* PBXContainerItemProxy */;
+		};
+		D4BCC0F041784568BD2144B2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CCC5A817391E4B34AE043C5B /* libzstd_shared */;
+			targetProxy = 2917F2508B63456497C5C084 /* PBXContainerItemProxy */;
+		};
+		E0F30AA71B0E48A3959FD28D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BC5C1F0A95E94DF5A4A48F24 /* ZERO_CHECK */;
+			targetProxy = FCD7212945BE4E3D84915B5D /* PBXContainerItemProxy */;
+		};
+		E618937EE19649DF9FF474E5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BC5C1F0A95E94DF5A4A48F24 /* ZERO_CHECK */;
+			targetProxy = FA133949085B4FADBD377803 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0653B8DB38F543C08D023C6E /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "armv7 arm64";
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib/build;
+			};
+			name = RelWithDebInfo;
+		};
+		08C674B2DDA843CA88348656 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		0F23393FBB53428488E172E5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		113395127C18438290AF7DA2 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = uninstall;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		13AC70893A4F4F4EAFA08CA7 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (armv7,arm64);
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/MinSizeRel;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",ZSTD_MULTITHREAD,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fPIC -fno-strict-aliasing   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = zstd;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		224C92469A274CC49609BF8B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		22C750E771BF41E994123C96 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		4C3531FD7DBB4127BEE3939B /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		564E33D26CB54DE98BDEEFDF /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		5D85E5FA60614A59B525AE5C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = uninstall;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		643EE9EEFF3F4C8B875CE822 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		6552F1A2589E4856BF3B60EC /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (armv7,arm64);
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/RelWithDebInfo;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",ZSTD_MULTITHREAD,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes        -DNDEBUG        -D_NDEBUG -fPIC -fPIC -fno-strict-aliasing   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = zstd;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		6E5E7EDE53DB436C81670856 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		743D4D22CC9843B8A0EDD917 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = uninstall;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		75B1E2E6457B4D6F837740F2 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		783C3790610D4069B8C4FFF2 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (armv7,arm64);
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/RelWithDebInfo;
+				DYLIB_COMPATIBILITY_VERSION = 1.0.0;
+				DYLIB_CURRENT_VERSION = 1.5.0;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .dylib;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",libzstd_shared_EXPORTS,ZSTD_MULTITHREAD,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = DYNAMIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes        -DNDEBUG        -D_NDEBUG -fPIC -fPIC -fno-strict-aliasing   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
+				OTHER_LDFLAGS = (" -dynamiclib -Wl,-headerpad_max_install_names -install_name @rpath/libzstd.1.dylib","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = zstd.1.5.0;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		8038FEFC570D4456B5C13AEA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (armv7,arm64);
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Release;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",ZSTD_MULTITHREAD,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fPIC -fno-strict-aliasing   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = zstd;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		83EF6B4935B74407B7FF7458 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		87D4661EE76E4C49BE9FDD3B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		8E0DA74A69F6414F851EE36E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (armv7,arm64);
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Release;
+				DYLIB_COMPATIBILITY_VERSION = 1.0.0;
+				DYLIB_CURRENT_VERSION = 1.5.0;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .dylib;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",libzstd_shared_EXPORTS,ZSTD_MULTITHREAD,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = DYNAMIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fPIC -fno-strict-aliasing   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
+				OTHER_LDFLAGS = (" -dynamiclib -Wl,-headerpad_max_install_names -install_name @rpath/libzstd.1.dylib","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = zstd.1.5.0;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		98AB5455D15847DD8515D373 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		9BAB26F59FB8419C8B33386B /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (armv7,arm64);
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/MinSizeRel;
+				DYLIB_COMPATIBILITY_VERSION = 1.0.0;
+				DYLIB_CURRENT_VERSION = 1.5.0;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .dylib;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",libzstd_shared_EXPORTS,ZSTD_MULTITHREAD,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = DYNAMIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fPIC -fno-strict-aliasing   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
+				OTHER_LDFLAGS = (" -dynamiclib -Wl,-headerpad_max_install_names -install_name @rpath/libzstd.1.dylib","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = zstd.1.5.0;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		A94450B2099149F69C9D5EEB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		BBC14F465B72435A9F1010DD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		BC07EF62817A4D28B7EC9199 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "armv7 arm64";
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib/build;
+			};
+			name = Release;
+		};
+		CC24F041C4C647B0B0BB22DC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "armv7 arm64";
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib/build;
+			};
+			name = Debug;
+		};
+		D76F7C3EED1F4701B1C0934E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = uninstall;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		DBB67CB3D798440E8ECA4F97 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (armv7,arm64);
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Debug;
+				DYLIB_COMPATIBILITY_VERSION = 1.0.0;
+				DYLIB_CURRENT_VERSION = 1.5.0;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .dylib;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",libzstd_shared_EXPORTS,ZSTD_MULTITHREAD,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = DYNAMIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes       -D_DEBUG -fPIC -fPIC -fno-strict-aliasing   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
+				OTHER_LDFLAGS = (" -dynamiclib -Wl,-headerpad_max_install_names -install_name @rpath/libzstd.1.dylib","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = zstd.1.5.0;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		E1760076756D467BBA3FC38E /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "armv7 arm64";
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib/build;
+			};
+			name = MinSizeRel;
+		};
+		E666719F96154AD49C1AFD8A /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		E99AC7E7C2CE451BA663E414 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		EC2E7DB591AE49E79DC4022C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (armv7,arm64);
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Debug;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",ZSTD_MULTITHREAD,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glslang,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/glew,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/zstd/build/cmake/../../lib/common,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=6.0 -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes       -D_DEBUG -fPIC -fPIC -fno-strict-aliasing   -U__STRICT_ANSI__ -Wno-multichar -Wno-deprecated-register -Wno-tautological-pointer-compare","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = zstd;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/ext/zstd/build/cmake/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		27954F7B80F542889509E0A8 /* Build configuration list for PBXNativeTarget "libzstd_shared" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DBB67CB3D798440E8ECA4F97 /* Debug */,
+				8E0DA74A69F6414F851EE36E /* Release */,
+				9BAB26F59FB8419C8B33386B /* MinSizeRel */,
+				783C3790610D4069B8C4FFF2 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		57491897B29643E5B6F099D3 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				224C92469A274CC49609BF8B /* Debug */,
+				0F23393FBB53428488E172E5 /* Release */,
+				E666719F96154AD49C1AFD8A /* MinSizeRel */,
+				08C674B2DDA843CA88348656 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		7560AC9880A84FE9BE218ED4 /* Build configuration list for PBXAggregateTarget "uninstall" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5D85E5FA60614A59B525AE5C /* Debug */,
+				D76F7C3EED1F4701B1C0934E /* Release */,
+				113395127C18438290AF7DA2 /* MinSizeRel */,
+				743D4D22CC9843B8A0EDD917 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		93911A5458DF443586DEED8E /* Build configuration list for PBXProject "libzstd" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CC24F041C4C647B0B0BB22DC /* Debug */,
+				BC07EF62817A4D28B7EC9199 /* Release */,
+				E1760076756D467BBA3FC38E /* MinSizeRel */,
+				0653B8DB38F543C08D023C6E /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		9998D11131D74B5CB27C4345 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				87D4661EE76E4C49BE9FDD3B /* Debug */,
+				643EE9EEFF3F4C8B875CE822 /* Release */,
+				75B1E2E6457B4D6F837740F2 /* MinSizeRel */,
+				6E5E7EDE53DB436C81670856 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C55347F925084437B69B57F5 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				98AB5455D15847DD8515D373 /* Debug */,
+				A94450B2099149F69C9D5EEB /* Release */,
+				E99AC7E7C2CE451BA663E414 /* MinSizeRel */,
+				83EF6B4935B74407B7FF7458 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		D3C904771F6C423D952CE139 /* Build configuration list for PBXAggregateTarget "install" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BBC14F465B72435A9F1010DD /* Debug */,
+				22C750E771BF41E994123C96 /* Release */,
+				564E33D26CB54DE98BDEEFDF /* MinSizeRel */,
+				4C3531FD7DBB4127BEE3939B /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		EFCBDC467160450FA0C9F001 /* Build configuration list for PBXNativeTarget "libzstd_static" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EC2E7DB591AE49E79DC4022C /* Debug */,
+				8038FEFC570D4456B5C13AEA /* Release */,
+				13AC70893A4F4F4EAFA08CA7 /* MinSizeRel */,
+				6552F1A2589E4856BF3B60EC /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 3C5B09DCC3A34C08ADBF23D6 /* Project object */;
+}
