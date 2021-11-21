@@ -67,6 +67,7 @@ public enum SystemIdentifier: String {
     case PCE = "com.provenance.pce"
     case PCECD = "com.provenance.pcecd"
     case PCFX = "com.provenance.pcfx"
+    case PS2 = "com.provenance.ps2"
     case PSP = "com.provenance.psp"
     case PSX = "com.provenance.psx"
     case PokemonMini = "com.provenance.pokemonmini"

@@ -441,6 +441,48 @@ import Foundation
     func didMoveJoystick(_ button: PVPSXButton, withValue value: CGFloat, forPlayer player: Int)
 }
 
+// MARK: - PS2
+
+@objc public enum PVPS2Button: Int {
+    case up
+    case down
+    case left
+    case right
+    case triangle
+    case circle
+    case cross
+    case square
+    case l1
+    case l2
+    case l3
+    case r1
+    case r2
+    case r3
+    case start
+    case select
+    case analogMode
+    case leftAnalogUp
+    case leftAnalogDown
+    case leftAnalogLeft
+    case leftAnalogRight
+    case rightAnalogUp
+    case rightAnalogDown
+    case rightAnalogLeft
+    case rightAnalogRight
+    case count
+}
+
+@objc public protocol PVPS2SystemResponderClient: ResponderClient, ButtonResponder, JoystickResponder {
+    @objc(didPushPS2Button:forPlayer:)
+    func didPush(_ button: PVPS2Button, forPlayer player: Int)
+
+    @objc(didReleasePS2Button:forPlayer:)
+    func didRelease(_ button: PVPS2Button, forPlayer player: Int)
+
+    @objc(didMovePS2JoystickDirection:withValue:forPlayer:)
+    func didMoveJoystick(_ button: PVPS2Button, withValue value: CGFloat, forPlayer player: Int)
+}
+
 // MARK: - PSP
 
 @objc public enum PVPSPButton: Int {

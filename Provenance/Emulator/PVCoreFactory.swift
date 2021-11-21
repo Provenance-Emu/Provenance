@@ -134,6 +134,12 @@ public final class PVCoreFactory: NSObject {
             } else {
                 fatalError("Core doesn't implement PVPSXSystemResponderClient")
             }
+        case .PS2:
+            if let core = core as? PVPS2SystemResponderClient {
+                return PVPS2ControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else {
+                fatalError("Core doesn't implement PVPS2SystemResponderClient")
+            }
         case .PSP:
             if let core = core as? PVPSPSystemResponderClient {
                 return PVPSPControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
