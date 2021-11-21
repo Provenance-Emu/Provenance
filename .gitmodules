@@ -28,6 +28,9 @@
 [submodule "Cores/TGBDual/tgbdual-emulator"]
 	path = Cores/TGBDual/tgbdual-emulator
 	url = https://github.com/libretro/tgbdual-libretro.git
+[submodule "Cores/Dolphin/dolphin-ios"]
+	path = Cores/Dolphin/dolphin-ios
+	url = https://github.com/OatmealDome/dolphin.git
 [submodule "Cores/Play/Play-"]
 	path = Cores/Play/Play-
 	url = https://github.com/Provenance-Emu/Play-.git
