@@ -2829,7 +2829,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"-DGL_SILENCE_DEPRECATION",
+					"GL_SILENCE_DEPRECATION=1",
 					"$(inherited)",
 				);
 				HEADER_SEARCH_PATHS = (
@@ -2874,7 +2874,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"-DGL_SILENCE_DEPRECATION",
+					"GL_SILENCE_DEPRECATION=1",
 					"$(inherited)",
 				);
 				HEADER_SEARCH_PATHS = (
@@ -3193,7 +3193,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"-DGL_SILENCE_DEPRECATION",
+					"GL_SILENCE_DEPRECATION=1",
 					"$(inherited)",
 				);
 				HEADER_SEARCH_PATHS = (
