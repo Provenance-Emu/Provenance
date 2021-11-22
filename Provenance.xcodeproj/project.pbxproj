@@ -75,7 +75,7 @@
 		1A3D409C17B2DCE4004DFFFC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409B17B2DCE4004DFFFC /* CoreGraphics.framework */; };
 		1A3D40A217B2DCE4004DFFFC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A3D40A017B2DCE4004DFFFC /* InfoPlist.strings */; };
 		1A3D40A817B2DCE4004DFFFC /* PVAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */; };
-		1A3D431E17B2F01F004DFFFC /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D431D17B2F01F004DFFFC /* OpenGLES.framework */; };
+		1A3D431E17B2F01F004DFFFC /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D431D17B2F01F004DFFFC /* OpenGLES.framework */; platformFilter = ios; };
 		1A3D432C17B2FDFE004DFFFC /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D432B17B2FDFE004DFFFC /* libz.dylib */; };
 		1A3D433B17B30BA3004DFFFC /* PVGLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */; };
 		1A3FD78E1AC7744100F8C23C /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3FD78D1AC7744100F8C23C /* MBProgressHUD.m */; };
@@ -115,7 +115,6 @@
 		1AD481F61BA3549F00FDA50A /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A65D1C519917D55004E1777 /* UIImage+ImageEffects.m */; };
 		1AD482361BA35A2D00FDA50A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */; };
 		1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD4BC6E1BFD38D6007D6C7C /* AVFoundation.framework */; };
-		1ADDA5B417B30CD7008A7ADD /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ADDA5B317B30CD7008A7ADD /* GLKit.framework */; };
 		1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AECF4A81966D76100F8704E /* libsqlite3.dylib */; };
 		1F8D52461D9198E000C29F90 /* PVLicensesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8D52451D9198E000C29F90 /* PVLicensesViewController.swift */; };
 		1F8D52481D91993000C29F90 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
@@ -212,6 +211,10 @@
 		B33468D320AB347300092CA6 /* CenterFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D120AB347300092CA6 /* CenterFlowLayout.swift */; };
 		B33468D620AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D520AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift */; };
 		B33468D720AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D520AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift */; };
+		B33625F826EDEFF700DC41EA /* MTLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33625F726EDEFF700DC41EA /* MTLViewController.swift */; };
+		B33625F926EDEFF700DC41EA /* MTLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33625F726EDEFF700DC41EA /* MTLViewController.swift */; };
+		B33625FC26EDF88200DC41EA /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FA26EDF88200DC41EA /* MetalKit.framework */; };
+		B33625FD26EDF88200DC41EA /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FB26EDF88200DC41EA /* Metal.framework */; };
 		B336B91926B3A21800960A81 /* QuickTableViewController in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B336B91826B3A21800960A81 /* QuickTableViewController */; };
 		B336B91B26B3A26400960A81 /* QuickTableViewController in Frameworks */ = {isa = PBXBuildFile; productRef = B336B91A26B3A26400960A81 /* QuickTableViewController */; };
 		B3447E73218B596600557ACE /* PVDreamcastControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */; };
@@ -772,6 +775,9 @@
 		B32D8F811EA7FDBE00175FBF /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		B33468D120AB347300092CA6 /* CenterFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenterFlowLayout.swift; sourceTree = "<group>"; };
 		B33468D520AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewInCollectionViewCell.swift; sourceTree = "<group>"; };
+		B33625F726EDEFF700DC41EA /* MTLViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTLViewController.swift; sourceTree = "<group>"; };
+		B33625FA26EDF88200DC41EA /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/iOSSupport/System/Library/Frameworks/MetalKit.framework; sourceTree = DEVELOPER_DIR; };
+		B33625FB26EDF88200DC41EA /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/Metal.framework; sourceTree = DEVELOPER_DIR; };
 		B340E6091E088CF900AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVDreamcastControllerViewController.swift; sourceTree = "<group>"; };
 		B3532B2A21A78FB2006CDA0F /* PVSwitchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSwitchCell.swift; sourceTree = "<group>"; };
@@ -949,6 +955,7 @@
 				DF3751942026B83600EE727E /* PVRSPCXD4.framework in Frameworks */,
 				B3B3B8921DECF8BC00602746 /* PVMupen64Plus.framework in Frameworks */,
 				1A4869D817C8D54D0019F6D2 /* libxml2.dylib in Frameworks */,
+				B33625FC26EDF88200DC41EA /* MetalKit.framework in Frameworks */,
 				B3C9D4AE1DEA74390068D057 /* PVGB.framework in Frameworks */,
 				1180B3182492A94200636C8A /* CoreServices.framework in Frameworks */,
 				1A3D432C17B2FDFE004DFFFC /* libz.dylib in Frameworks */,
@@ -970,11 +977,11 @@
 				B3AF701321916C3A000FA7F9 /* PVLibrary.framework in Frameworks */,
 				B324C61D21920523009F4EDC /* ProSystem.framework in Frameworks */,
 				1A47C94417BC1BC400C27644 /* AudioToolbox.framework in Frameworks */,
-				1ADDA5B417B30CD7008A7ADD /* GLKit.framework in Frameworks */,
 				B3AF701021916C30000FA7F9 /* PVSupport.framework in Frameworks */,
 				1A19EE142080EA2000A9147B /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
 				B3B0860A1E71316A007F39E1 /* PVMednafen.framework in Frameworks */,
 				B3C9D5211DEA787D0068D057 /* PVGBA.framework in Frameworks */,
+				B33625FD26EDF88200DC41EA /* Metal.framework in Frameworks */,
 				B3B3B8951DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Frameworks */,
 				1A3D431E17B2F01F004DFFFC /* OpenGLES.framework in Frameworks */,
 				B3F187712720B7FE00659D87 /* Differentiator in Frameworks */,
@@ -1116,6 +1123,7 @@
 				B38A2A47210233FE00374CDD /* EmulatorActionCell.xib */,
 				B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */,
 				CF17107025858B5400258602 /* PVEmulatorViewController+Cheats.swift */,
+				B33625F726EDEFF700DC41EA /* MTLViewController.swift */,
 			);
 			path = Emulator;
 			sourceTree = "<group>";
@@ -1153,6 +1161,8 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B33625FB26EDF88200DC41EA /* Metal.framework */,
+				B33625FA26EDF88200DC41EA /* MetalKit.framework */,
 				B309C7A72717C4B500279529 /* PVFlycast.framework */,
 				B309C7A42717C49F00279529 /* PVFlycast.framework */,
 				B3A3203C2720992500F338F6 /* PVDolphin.framework */,
@@ -2343,6 +2353,7 @@
 				B35D26FA20337D1C00F17D58 /* GameLaunchingViewController.swift in Sources */,
 				CF17107125858B5400258602 /* PVEmulatorViewController+Cheats.swift in Sources */,
 				B354E7BF219A7D250041F971 /* SystemSettingsCell.swift in Sources */,
+				B33625F826EDEFF700DC41EA /* MTLViewController.swift in Sources */,
 				B3F64ED8205CD22000C273C7 /* PVControllerSelectionViewController.swift in Sources */,
 				B35E6C25207ED7050040709A /* UIApplicationExtensions.swift in Sources */,
 				B3E3B5D9202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */,
@@ -2420,6 +2431,8 @@
 				B3DB11AE205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */,
 				1AD481E31BA3545D00FDA50A /* GCDWebServerStreamedResponse.m in Sources */,
 				1AD481D81BA3543700FDA50A /* GCDWebServerConnection.m in Sources */,
+				B33625F926EDEFF700DC41EA /* MTLViewController.swift in Sources */,
+				B3DFEDF62686D654005C6CF2 /* SectionModelType.swift in Sources */,
 				B35E6C2C207ED7050040709A /* UITraitCollectionExtensions.swift in Sources */,
 				B35E6C22207ED7050040709A /* AppearanceScope.swift in Sources */,
 				B3B104BE218F2EAA00210C39 /* PVControllerViewController.swift in Sources */,

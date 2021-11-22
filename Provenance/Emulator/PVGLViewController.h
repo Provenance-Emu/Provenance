@@ -6,11 +6,14 @@
 //  Copyright (c) 2013 James Addyman. All rights reserved.
 //
 
+@import UIKit;
 #if !TARGET_OS_MACCATALYST
-#import <GLKit/GLKit.h>
-#define BASE_CLASS GLKViewController
+@import GLKit;
+#define BASE_CLASS
 #else
-#import <Metal/Metal.h>
+@import Metal;
+@import OpenGL;
+@import GLUT;
 #define BASE_CLASS UIViewController
 #endif
 

@@ -17,7 +17,10 @@
 #import <OpenGLES/ES3/glext.h>
 #import <OpenGLES/EAGL.h>
 #else
+@import Metal;
 @import OpenGL;
+@import MetalKit;
+@import AppKit;
 @import GLUT;
 #endif
 
@@ -62,9 +65,18 @@ struct RenderSettings {
     struct RenderSettings renderSettings;
 }
 
+#if TARGET_OS_MACCATALYST
+@property (nonatomic, strong) CIContext *glContext;
+@property (nonatomic, strong) CIContext *alternateThreadGLContext;
+@property (nonatomic, strong) CIContext *alternateThreadBufferCopyGLContext;
+@property (nonatomic, strong) id<MTLDevice> device;
+@property (nonatomic, strong) id<MTLCommandQueue> commandQueue;
+#else
 @property (nonatomic, strong) EAGLContext *glContext;
 @property (nonatomic, strong) EAGLContext *alternateThreadGLContext;
 @property (nonatomic, strong) EAGLContext *alternateThreadBufferCopyGLContext;
+
+#endif
 @property (nonatomic, assign) GLESVersion glesVersion;
 
 @end
@@ -159,6 +171,8 @@ struct RenderSettings {
 
     [self updatePreferredFPS];
 
+
+#if !TARGET_OS_MACCATALYST
     self.glContext = [self bestContext];
 
     if (self.glContext == nil) {
@@ -169,23 +183,38 @@ struct RenderSettings {
     ILOG(@"Initiated GLES version %lu", (unsigned long)self.glContext.API);
 
         // TODO: Need to benchmark this
+
     self.glContext.multiThreaded = PVSettingsModel.shared.debugOptions.multiThreadedGL;
 
 	[EAGLContext setCurrentContext:self.glContext];
 
 	GLKView *view = (GLKView *)self.view;
+    view.context = self.glContext;
+#else
+    self.device = MTLCreateSystemDefaultDevice();
+    self.commandQueue = [_device newCommandQueue];
+
+    MTKView *view = [[MTKView alloc] initWithFrame:self.view.frame device:_device];
+#endif
     view.opaque = YES;
     view.layer.opaque = YES;
-    view.context = self.glContext;
     view.userInteractionEnabled = NO;
 
     GLenum depthFormat = self.emulatorCore.depthFormat;
     switch (depthFormat) {
         case GL_DEPTH_COMPONENT16:
+#if TARGET_OS_MACCATALYST
+            view.depthStencilPixelFormat = MTLPixelFormatRG8Unorm_sRGB;
+#else
             view.drawableDepthFormat = GLKViewDrawableDepthFormat16;
+#endif
             break;
         case GL_DEPTH_COMPONENT24:
+#if TARGET_OS_MACCATALYST
+            view.depthStencilPixelFormat = MTLPixelFormatX24_Stencil8;
+#else
             view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
+#endif
             break;
 
         default:
@@ -203,15 +232,22 @@ struct RenderSettings {
 
             // Enable multisampling
         if(PVSettingsModel.shared.debugOptions.multiSampling) {
+#if TARGET_OS_MACCATALYST
+            [view setSampleCount:4];
+#else
             view.drawableMultisample = GLKViewDrawableMultisample4X;
+#endif
         }
     }
 
+#if TARGET_OS_MACCATALYST
+#else
     [self setupVBOs];
-	[self setupTexture];
+    [self setupTexture];
     defaultVertexShader = [self compileShaderResource:@"shaders/default/default_vertex" ofType:GL_VERTEX_SHADER];
     [self setupBlitShader];
     [self setupCRTShader];
+#endif
     
     alternateThreadFramebufferBack = 0;
     alternateThreadFramebufferFront = 0;
@@ -220,6 +256,7 @@ struct RenderSettings {
     alternateThreadDepthRenderbuffer = 0;
 }
 
+#if !TARGET_OS_MACCATALYST
 -(EAGLContext*)bestContext {
     EAGLContext* context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
     self.glesVersion = GLESVersion3;
@@ -235,6 +272,7 @@ struct RenderSettings {
 
     return context;
 }
+#endif
 
 - (void) updatePreferredFPS {
     float preferredFPS = self.emulatorCore.frameInterval;
@@ -244,7 +282,9 @@ struct RenderSettings {
         preferredFPS = 60;
     }
 
+#if !TARGET_OS_MACCATALYST
     [self setPreferredFramesPerSecond:preferredFPS];
+#endif
 }
 
 - (void)viewDidLayoutSubviews
@@ -317,6 +357,7 @@ struct RenderSettings {
     [self updatePreferredFPS];
 }
 
+#if !TARGET_OS_MACCATALYST
 - (GLuint)compileShaderResource:(NSString*)shaderResourceName ofType:(GLenum)shaderType
 {
     NSString* shaderPath = [[NSBundle mainBundle] pathForResource:shaderResourceName ofType:@"glsl"];
@@ -620,9 +661,34 @@ struct RenderSettings {
         }
     }
 }
+#else
+// Mac OS Stuff
+#endif
 
 #pragma mark - PVRenderDelegate protocol methods
 
+#if TARGET_OS_MACCATALYST
+- (void)startRenderingOnAlternateThread {
+
+}
+- (void)didRenderFrameOnAlternateThread {
+    [self.emulatorCore.frontBufferLock lock];
+
+ // TODO: Copy the back buffer
+    [self.emulatorCore.frontBufferLock unlock];
+
+    // Notify render thread that the front buffer is ready
+    [self.emulatorCore.frontBufferCondition lock];
+    [self.emulatorCore setIsFrontBufferReady:YES];
+    [self.emulatorCore.frontBufferCondition signal];
+    [self.emulatorCore.frontBufferCondition unlock];
+
+    // Switch context back to emulator's
+//    [EAGLContext setCurrentContext:self.alternateThreadGLContext];
+//    glBindFramebuffer(GL_FRAMEBUFFER, alternateThreadFramebufferBack);
+}
+
+#else
 - (void)startRenderingOnAlternateThread
 {
     self.emulatorCore.glesVersion = self.glesVersion;
@@ -743,5 +809,5 @@ struct RenderSettings {
     [EAGLContext setCurrentContext:self.alternateThreadGLContext];
     glBindFramebuffer(GL_FRAMEBUFFER, alternateThreadFramebufferBack);
 }
-
+#endif
 @end

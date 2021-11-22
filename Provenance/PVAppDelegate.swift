@@ -31,6 +31,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         _initAppCenter()
         setDefaultsFromSettingsBundle()
 
+		#if !targetEnvironment(macCatalyst)
         DispatchQueue.global(qos: .background).async {
             let useiCloud = PVSettingsModel.shared.debugOptions.iCloudSync && PVEmulatorConfiguration.supportsICloud
             if useiCloud {
@@ -40,6 +41,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
         }
+		#endif
 
         do {
             try RomDatabase.initDefaultDatabase()
@@ -60,7 +62,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
         let gameLibrary = PVGameLibrary(database: RomDatabase.sharedInstance)
 
-        #if os(iOS)
+        #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
             // Setup shortcuts
             Observable.combineLatest(
                 gameLibrary.favorites.mapMany { $0.asShortcut(isFavorite: true) },
@@ -96,7 +98,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         // Setup importing/updating library
         let gameImporter = GameImporter.shared
         let libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter)
-        #if os(iOS)
+        #if os(iOS) || os(macOS)
             libraryUpdatesController.addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance).disposed(by: disposeBag)
         #endif
 
@@ -108,7 +110,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             }
             .subscribe().disposed(by: disposeBag)
 
-        #if os(iOS)
+        #if os(iOS) || os(macOS)
         guard let rootNavigation = window?.rootViewController as? UINavigationController else {
             fatalError("No root nav controller")
         }
@@ -137,7 +139,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         #if !targetEnvironment(macCatalyst)
         SteamControllerManager.listenForConnections()
         #endif
-        
+
         if #available(iOS 11, tvOS 11, *) {
             PVAltKitService.shared.start()
         }
@@ -247,7 +249,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         #endif
     }
 
-    #if os(iOS)
+    #if os(iOS) || os(macOS)
         func application(_: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
             if shortcutItem.type == "kRecentGameShortcut", let md5Value = shortcutItem.userInfo?["PVGameHash"] as? String, let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
                 shortcutItemGame = matchedGame
@@ -260,7 +262,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_: UIApplication, continue userActivity: NSUserActivity, restorationHandler _: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         // Spotlight search click-through
-        #if os(iOS)
+        #if os(iOS) || os(macOS)
             if userActivity.activityType == CSSearchableItemActionType {
                 if let md5 = userActivity.userInfo?[CSSearchableItemActivityIdentifier] as? String, let md5Value = md5.components(separatedBy: ".").last, let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
                     // Comes in a format of "com....md5"
@@ -343,8 +345,8 @@ extension PVAppDelegate {
     }
 }
 
-#if os(iOS)
-@available(iOS 9.0, *)
+#if os(iOS) || os(macOS)
+@available(iOS 9.0, macOS 11.0, *)
 extension PVGame {
     func asShortcut(isFavorite: Bool) -> UIApplicationShortcutItem {
         let icon: UIApplicationShortcutIcon = isFavorite ? .init(type: .favorite) : .init(type: .play)
