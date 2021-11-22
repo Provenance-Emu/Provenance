@@ -778,7 +778,12 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             // show alert view
             showServerActiveAlert()
         } else {
-            let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or settings and free up ports: 80, 81.", preferredStyle: .alert)
+			#if targetEnvironment(simulator) || targetEnvironment(macCatalyst)
+			let message = "Check your network connection or settings and free up ports: 8080, 8081."
+			#else
+			let message = "Check your network connection or settings and free up ports: 80, 81."
+			#endif
+            let alert = UIAlertController(title: "Unable to start web server!", message: message, preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
             }))
             present(alert, animated: true) { () -> Void in }
