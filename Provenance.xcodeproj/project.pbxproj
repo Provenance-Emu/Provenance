@@ -396,8 +396,6 @@
 		B3CB85C31E9BFB16009155A6 /* PVPokeMini.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85C11E9BFB16009155A6 /* PVPokeMini.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3CCD2BA21DAA8D30031C42C /* PVEmulatorViewController+Saves.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CCD2B921DAA8D30031C42C /* PVEmulatorViewController+Saves.swift */; };
 		B3CCD2BB21DAA8D30031C42C /* PVEmulatorViewController+Saves.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CCD2B921DAA8D30031C42C /* PVEmulatorViewController+Saves.swift */; };
-		B3D30FBF26F0B4CD0064603F /* SteamController in Frameworks */ = {isa = PBXBuildFile; productRef = B3D30FBE26F0B4CD0064603F /* SteamController */; };
-		B3D30FC126F0BCE60064603F /* SteamController in Frameworks */ = {isa = PBXBuildFile; productRef = B3D30FC026F0BCE60064603F /* SteamController */; };
 		B3D534E220AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
 		B3D534E320AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
 		B3D534ED20B001D700A83D4E /* PillPageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534EB20B001D700A83D4E /* PillPageControl.swift */; };
@@ -968,7 +966,6 @@
 				B357A43827092254002C7C0F /* AppCenterAnalytics in Frameworks */,
 				B3CB85BF1E9BFB07009155A6 /* PVPokeMini.framework in Frameworks */,
 				1A4869DD17C8D60C0019F6D2 /* CFNetwork.framework in Frameworks */,
-				B3D30FBF26F0B4CD0064603F /* SteamController in Frameworks */,
 				1A4869DF17C8D60C0019F6D2 /* Security.framework in Frameworks */,
 				1A4869E017C8D60C0019F6D2 /* SystemConfiguration.framework in Frameworks */,
 				1A4869D617C8D5450019F6D2 /* CoreData.framework in Frameworks */,
@@ -1017,7 +1014,6 @@
 				B324C30421919596009F4EDC /* TVUIKit.framework in Frameworks */,
 				B37263AB26EA159400E95488 /* PVMupen64PlusRspHLE.framework in Frameworks */,
 				B37263B126EA159500E95488 /* PVRSPCXD4.framework in Frameworks */,
-				B3D30FC126F0BCE60064603F /* SteamController in Frameworks */,
 				B324C3002191958D009F4EDC /* CoreGraphics.framework in Frameworks */,
 				B37263A126EA04E700E95488 /* ProSystem.framework in Frameworks */,
 				B324C2FE21919585009F4EDC /* Foundation.framework in Frameworks */,
@@ -1996,6 +1992,7 @@
 			packageReferences = (
 				B336B91726B3A21800960A81 /* XCRemoteSwiftPackageReference "QuickTableViewController" */,
 				B3F31D2126B4A4CD003A5E09 /* XCRemoteSwiftPackageReference "AltKit" */,
+				B32DCBC826FBDFD100C04823 /* XCRemoteSwiftPackageReference "SteamController" */,
 				B3D30FBD26F0B4CD0064603F /* XCRemoteSwiftPackageReference "SteamController" */,
 				B357A43627092253002C7C0F /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */,
 				B3F1876F2720B7FE00659D87 /* XCRemoteSwiftPackageReference "RxDataSources" */,
@@ -2754,7 +2751,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.0;
-				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = "OpenGLES GLKit";
+				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = "OpenGLES GLKit SteamController";
 				VALID_ARCHS = "$(ARCHS_STANDARD)";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -2809,7 +2806,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
-				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = "OpenGLES GLKit";
+				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = "OpenGLES GLKit SteamController";
 				VALID_ARCHS = "$(ARCHS_STANDARD)";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -2831,6 +2828,10 @@
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"-DGL_SILENCE_DEPRECATION",
+					"$(inherited)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
@@ -2872,6 +2873,10 @@
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"-DGL_SILENCE_DEPRECATION",
+					"$(inherited)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
@@ -3165,7 +3170,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
-				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = "OpenGLES GLKit";
+				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = "OpenGLES GLKit SteamController";
 				VALID_ARCHS = "$(ARCHS_STANDARD)";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -3187,6 +3192,10 @@
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"-DGL_SILENCE_DEPRECATION",
+					"$(inherited)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
