@@ -874,7 +874,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     private func longPressed(item: Section.Item, at indexPath: IndexPath, point: CGPoint) {
         let cell = collectionView!.cellForItem(at: indexPath)!
-        #if os(iOS)
+        #if os(iOS) && !targetEnvironment(macCatalyst)
             presentActionSheetViewControllerForPopoverPresentation(contextMenu(for: item, cell: cell, point: point),
                                                                sourceView: cell)
         #else
@@ -883,7 +883,10 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             if traitCollection.userInterfaceIdiom == .pad {
                 actionSheet.popoverPresentationController?.sourceView = cell
                 actionSheet.popoverPresentationController?.sourceRect = (collectionView?.layoutAttributesForItem(at: indexPath)?.bounds ?? CGRect.zero)
-            }
+			} else if traitCollection.userInterfaceIdiom == .mac {
+				actionSheet.popoverPresentationController?.sourceView = cell
+				actionSheet.popoverPresentationController?.sourceRect = (collectionView?.layoutAttributesForItem(at: indexPath)?.bounds ?? CGRect.zero)
+			}
 
             present(actionSheet, animated: true)
         #endif

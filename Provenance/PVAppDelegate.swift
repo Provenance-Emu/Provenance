@@ -346,7 +346,7 @@ extension PVAppDelegate {
 }
 
 #if os(iOS) || os(macOS)
-@available(iOS 9.0, macOS 11.0, *)
+@available(iOS 9.0, macOS 11.0, macCatalyst 11.0,  *)
 extension PVGame {
     func asShortcut(isFavorite: Bool) -> UIApplicationShortcutItem {
         let icon: UIApplicationShortcutIcon = isFavorite ? .init(type: .favorite) : .init(type: .play)
