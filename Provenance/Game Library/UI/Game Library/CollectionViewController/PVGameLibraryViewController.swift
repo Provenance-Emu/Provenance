@@ -877,17 +877,21 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         #if os(iOS) && !targetEnvironment(macCatalyst)
             presentActionSheetViewControllerForPopoverPresentation(contextMenu(for: item, cell: cell, point: point),
                                                                sourceView: cell)
+        #elseif targetEnvironment(macCatalyst)
+        let actionSheet = contextMenu(for: item, cell: cell, point: point)
+        if traitCollection.userInterfaceIdiom == .mac {
+            actionSheet.popoverPresentationController?.sourceView = cell
+            actionSheet.popoverPresentationController?.sourceRect = (collectionView?.layoutAttributesForItem(at: indexPath)?.bounds ?? CGRect.zero)
+        }
+
+        present(actionSheet, animated: true)
         #else
             let actionSheet = contextMenu(for: item, cell: cell, point: point)
 
             if traitCollection.userInterfaceIdiom == .pad {
                 actionSheet.popoverPresentationController?.sourceView = cell
                 actionSheet.popoverPresentationController?.sourceRect = (collectionView?.layoutAttributesForItem(at: indexPath)?.bounds ?? CGRect.zero)
-			} else if traitCollection.userInterfaceIdiom == .mac {
-				actionSheet.popoverPresentationController?.sourceView = cell
-				actionSheet.popoverPresentationController?.sourceRect = (collectionView?.layoutAttributesForItem(at: indexPath)?.bounds ?? CGRect.zero)
 			}
-
             present(actionSheet, animated: true)
         #endif
         }
