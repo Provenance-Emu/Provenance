@@ -140,6 +140,7 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
+<<<<<<< HEAD
                BlueprintIdentifier = "B3C7620F20783162009950E4"
                BuildableName = "PVReicast.framework"
                BlueprintName = "PVReicast-iOS"
@@ -154,6 +155,8 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
+=======
+>>>>>>> 139752dc (macOS testing catalyst)
                BlueprintIdentifier = "B38FB4BF1C839BE500CD73BE"
                BuildableName = "PVStella.framework"
                BlueprintName = "PVStella-iOS"
