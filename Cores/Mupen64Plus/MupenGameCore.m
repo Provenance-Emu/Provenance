@@ -45,8 +45,13 @@
 //#import "mupen64plus-core/src/main/main.h"
 @import Dispatch;
 @import PVSupport;
+#if TARGET_OS_MACCATALYST
+@import OpenGL.GL3;
+@import GLUT;
+#else
 @import OpenGLES.ES3;
 @import GLKit;
+#endif
 
 #if TARGET_OS_TV
 #define RESIZE_TO_FULLSCREEN TRUE
@@ -64,7 +69,11 @@ NSString *MupenControlNames[] = {
 
 #define N64_ANALOG_MAX 80
 
+#if TARGET_OS_MAC
+@interface MupenGameCore () <PVN64SystemResponderClient>
+#else
 @interface MupenGameCore () <PVN64SystemResponderClient, GLKViewDelegate>
+#endif
 - (void)OE_didReceiveStateChangeForParamType:(m64p_core_param)paramType value:(int)newValue;
 
 @end
@@ -1012,7 +1021,9 @@ static void ConfigureRICE() {
 
 	BOOL success = NO;
 
+#if !TARGET_OS_MAC
 	EAGLContext* context = [self bestContext];
+#endif
 
     if(MupenGameCore.useRice) {
         success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoRice");
@@ -1116,6 +1127,7 @@ static void ConfigureRICE() {
     return YES;
 }
 
+#if !TARGET_OS_MAC
 -(EAGLContext*)bestContext {
 	EAGLContext* context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
 	self.glesVersion = GLESVersion3;
@@ -1127,6 +1139,7 @@ static void ConfigureRICE() {
 
 	return context;
 }
+#endif
 
 - (void)startEmulation
 {

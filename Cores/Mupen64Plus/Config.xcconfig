@@ -1,0 +1,32 @@
+//
+//  Config.xcconfig
+//  PVMupen64Plus
+//
+//  Created by Joseph Mattiello on 9/22/21.
+//
+//
+
+// All
+GCC_PREPROCESSOR_DEFINITIONS[arch=*] = $(inherited) MUPENPLUSAPI=1 TXFILTER_LIB=1
+OTHER_CFLAGS[arch=*] = $(inherited) -DGCC -pthread -fPIC -D__unix__ -DVFP_HARD=1 -DNO_ASM -DMUPENPLUSAPI=1 -DTXFILTER_LIB=1 -DM64P_PLUGIN_PROTOTYPES=1 -DPROVENANCE
+
+// MacOS Catalyst
+GCC_PREPROCESSOR_DEFINITIONS[sdk=macosx*] = $(inherited) OS_MAC_OS_X=1 SDL_VIDEO_OPENGL=1
+OTHER_CFLAGS[sdk=macosx*] = $(inherited) -fno-strict-aliasing -fvisibility=hidden -DGCC -pthread -fPIC -D__unix__ -D__VEC4_OPT -D__NEON_OPT -DX86_ASM
+EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = $(inherited) 3DMathNeon.cpp gSPNeon.cpp RSP_LoadMatrixNeon.cpp CRC_OPT_NEON.cpp
+
+// iPhone
+GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*] = $(inherited) OS_IOS GLESX USE_GLES=1 NEON=1 SDL_VIDEO_OPENGL_ES2=1
+OTHER_CFLAGS[sdk=iphoneos*] = $(inherited) -DOS_IOS -mfpu=neon
+
+// Simulator
+GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*] = $(inherited) OS_IOS GLESX USE_GLES=1 NEON=1 SDL_VIDEO_OPENGL_ES2=1
+OTHER_CFLAGS[sdk=iphonesimulator*] = $(inherited) -DOS_IOS
+
+// tvOS Device
+GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvos*] = $(inherited) OS_IOS GLESX USE_GLES=1 NEON=1 SDL_VIDEO_OPENGL_ES2=1
+OTHER_CFLAGS[sdk=appletvos*] = $(inherited) -DOS_IOS -mfpu=neon
+
+// tvOS Simulator
+GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvsimulator*] = $(inherited) OS_IOS GLESX USE_GLES=1 NEON=1 SDL_VIDEO_OPENGL_ES2=1
+OTHER_CFLAGS[sdk=appletvsimulator*] = $(inherited) -DOS_IOS 

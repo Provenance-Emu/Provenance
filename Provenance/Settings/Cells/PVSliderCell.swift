@@ -28,7 +28,9 @@ final class PVSliderCell: SliderCell {
             textLabel?.textColor = Theme.currentTheme.settingsCellText
             detailTextLabel?.textColor = Theme.currentTheme.defaultTintColor
             slider.tintColor = Theme.currentTheme.defaultTintColor
+		#if !targetEnvironment(macCatalyst)
             slider.thumbTintColor = Theme.currentTheme.switchThumb
+		#endif
             slider.isContinuous = false
         #else
             bg.backgroundColor = UIColor.clear

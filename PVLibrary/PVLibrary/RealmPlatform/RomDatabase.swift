@@ -20,11 +20,19 @@ public extension Notification.Name {
 
 public final class RealmConfiguration {
     public class var supportsAppGroups: Bool {
+		#if targetEnvironment(macCatalyst)
+		return false
+		#else
         return !PVAppGroupId.isEmpty && RealmConfiguration.appGroupContainer != nil
+		#endif
     }
 
     public class var appGroupContainer: URL? {
+		#if targetEnvironment(macCatalyst)
+		return nil
+		#else
         return FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId)
+		#endif
     }
 
     public class var appGroupPath: URL? {

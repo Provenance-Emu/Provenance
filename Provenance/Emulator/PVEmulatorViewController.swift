@@ -318,7 +318,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             }
             glViewController.didMove(toParent: self)
         }
-        #if os(iOS)
+        #if os(iOS) && !targetEnvironment(macCatalyst)
             addControllerOverlay()
             initMenuButton()
         #endif

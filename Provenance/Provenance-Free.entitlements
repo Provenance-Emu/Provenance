@@ -12,6 +12,8 @@
 	</array>
 	<key>com.apple.developer.kernel.extended-virtual-addressing</key>
 	<true/>
+	<key>com.apple.developer.networking.multipath</key>
+	<true/>
 	<key>com.apple.developer.siri</key>
 	<true/>
 	<key>com.apple.developer.ubiquity-container-identifiers</key>
@@ -43,6 +45,10 @@
 	<key>com.apple.security.device.camera</key>
 	<true/>
 	<key>com.apple.security.device.usb</key>
+	<true/>
+	<key>com.apple.security.files.downloads.read-only</key>
+	<true/>
+	<key>com.apple.security.files.user-selected.read-only</key>
 	<true/>
 	<key>com.apple.security.network.client</key>
 	<true/>

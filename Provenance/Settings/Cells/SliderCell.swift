@@ -103,8 +103,10 @@ extension QuickTableViewController: SliderCellDelegate {
             if let row = row as? SliderRowCompatible {
                 slider.minimumValue = row.valueLimits.min
                 slider.maximumValue = row.valueLimits.max
+				#if !targetEnvironment(macCatalyst)
                 slider.minimumValueImage = row.valueImages.min?.image
                 slider.maximumValueImage = row.valueImages.max?.image
+				#endif
                 slider.setValue(row.value, animated: false)
             }
         }
