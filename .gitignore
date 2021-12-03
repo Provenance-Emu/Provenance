@@ -45,3 +45,4 @@ report.xml
 /Cores/PPSSPP/cmake/lib/Debug/libnative.a
 /Cores/PPSSPP/cmake/lib/Debug/libSPIRV.a
 Cores/PPSSPP/cmake/lib/
+/CodeSigning.xcconfig
