@@ -20,8 +20,13 @@
 MARKETING_VERSION = 2.0.3
 CURRENT_PROJECT_VERSION = 40
 
-// Codesigning settings defined optionally, see Documentation/iOSDevelopment.md
+// Codesigning settings defined optionally, see `CodeSigning.xcconfig.example`
 #include? "CodeSigning.xcconfig"
+
+PRODUCT_BUNDLE_IDENTIFIER   = $(ORG_IDENTIFIER).$(PROJECT_NAME:lower)
+APP_GROUP_IDENTIFIER        = group.$(ORG_IDENTIFIER).$(PROJECT_NAME:lower)
+ICLOUD_CONTAINER_IDENTIFIER = iCloud.$(ORG_IDENTIFIER).$(PROJECT_NAME:lower)
+// CODE_SIGN_ENTITLEMENTS      = $(TARGET_NAME)/$(TARGET_NAME)$(ENTITLEMENTS_TYPE).entitlements
 
 // Entitlements based off of CodeSigning settings
 IOS_CODE_SIGN_ENTITLEMENTS_YES = Provenenace/Provenenace.entitlements
