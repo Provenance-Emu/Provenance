@@ -234,8 +234,8 @@
 		B354E7C7219A7D9D0041F971 /* SystemOverviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7C5219A7D9D0041F971 /* SystemOverviewViewModel.swift */; };
 		B354E7D2219A9C230041F971 /* CoreOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7D1219A9C230041F971 /* CoreOptionsViewController.swift */; };
 		B354E7D3219A9C230041F971 /* CoreOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7D1219A9C230041F971 /* CoreOptionsViewController.swift */; };
-		B357A43827092254002C7C0F /* AppCenterAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = B357A43727092254002C7C0F /* AppCenterAnalytics */; };
-		B357A43A27092254002C7C0F /* AppCenterCrashes in Frameworks */ = {isa = PBXBuildFile; productRef = B357A43927092254002C7C0F /* AppCenterCrashes */; };
+		B357A43827092254002C7C0F /* AppCenterAnalytics in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B357A43727092254002C7C0F /* AppCenterAnalytics */; };
+		B357A43A27092254002C7C0F /* AppCenterCrashes in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B357A43927092254002C7C0F /* AppCenterCrashes */; };
 		B357A43C2709228E002C7C0F /* PVAppDelegate+AppCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */; };
 		B3589E32219E8C5B001C5E12 /* LogViewable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B383F3BE219BBD8700DB6926 /* LogViewable.swift */; };
 		B3592CE52070B9DE00533593 /* PVSaveStateCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3592CE42070B9DE00533593 /* PVSaveStateCollectionViewCell.xib */; };
@@ -413,8 +413,8 @@
 		B3DB11AB205C7F7B00A6E845 /* UIView+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AA205C7F7B00A6E845 /* UIView+Theming.swift */; };
 		B3DB11AD205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */; };
 		B3DB11AE205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */; };
+		B3DB1EF127683D8600806B43 /* AltKit in Frameworks */ = {isa = PBXBuildFile; productRef = B3DB1EF027683D8600806B43 /* AltKit */; };
 		B3DDF57326E9BE8100CE47F0 /* PVAltKitService.m in Sources */ = {isa = PBXBuildFile; fileRef = B31A464E26B4C5060084A1D6 /* PVAltKitService.m */; };
-		B3DDF57526E9BE8D00CE47F0 /* AltKit in Frameworks */ = {isa = PBXBuildFile; productRef = B3DDF57426E9BE8D00CE47F0 /* AltKit */; };
 		B3E21D6E203211BE009939D3 /* IndexRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E21D6D203211BE009939D3 /* IndexRequestHandler.swift */; };
 		B3E21D72203211BE009939D3 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3E3B5D9202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */; };
@@ -427,7 +427,6 @@
 		B3F187732720B7FE00659D87 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = B3F187722720B7FE00659D87 /* RxDataSources */; };
 		B3F187752720B80C00659D87 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = B3F187742720B80C00659D87 /* RxDataSources */; };
 		B3F187772720B81100659D87 /* Differentiator in Frameworks */ = {isa = PBXBuildFile; productRef = B3F187762720B81100659D87 /* Differentiator */; };
-		B3F31D2326B4A4CD003A5E09 /* AltKit in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B3F31D2226B4A4CD003A5E09 /* AltKit */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3F43DCF2168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F43DD02168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F43DE22169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */; };
@@ -889,6 +888,8 @@
 		B3CCD2B921DAA8D30031C42C /* PVEmulatorViewController+Saves.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVEmulatorViewController+Saves.swift"; sourceTree = "<group>"; };
 		B3D534E120AFF21800A83D4E /* Version.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
 		B3D534EB20B001D700A83D4E /* PillPageControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PillPageControl.swift; sourceTree = "<group>"; };
+		B3D54EF42768306200476241 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/iOSSupport/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
+		B3D54EF62768308100476241 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.2.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
 		B3D5E2AA218EC1AB0015C690 /* RealmBindObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmBindObserver.swift; sourceTree = "<group>"; };
 		B3D5E2AB218EC1AC0015C690 /* Reactive+RxRealmDataSources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Reactive+RxRealmDataSources.swift"; sourceTree = "<group>"; };
 		B3D5E2AC218EC1AD0015C690 /* RxTableViewRealmDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxTableViewRealmDataSource.swift; sourceTree = "<group>"; };
@@ -961,7 +962,6 @@
 				1A2B0E8E1AD18961005FB77C /* libc++.dylib in Frameworks */,
 				1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */,
 				B3C9D4331DEA1B340068D057 /* PVGenesis.framework in Frameworks */,
-				B3F31D2326B4A4CD003A5E09 /* AltKit in Frameworks */,
 				B354693C1DECDA710018B6F3 /* PVAtari800.framework in Frameworks */,
 				1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */,
 				B3F187732720B7FE00659D87 /* RxDataSources in Frameworks */,
@@ -990,6 +990,7 @@
 				B312805E274C60EC00550720 /* SteamController in Frameworks */,
 				B3C9D5E71DEAA7E80068D057 /* PVStella.framework in Frameworks */,
 				1A3D409C17B2DCE4004DFFFC /* CoreGraphics.framework in Frameworks */,
+				B3DB1EF127683D8600806B43 /* AltKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1031,7 +1032,6 @@
 				B316B4DC219265B700693472 /* PVVirtualJaguar.framework in Frameworks */,
 				B324C31E219197D7009F4EDC /* PicoDrive.framework in Frameworks */,
 				1180B31C2492A96700636C8A /* CoreServices.framework in Frameworks */,
-				B3DDF57526E9BE8D00CE47F0 /* AltKit in Frameworks */,
 				B324C60B2191FFBB009F4EDC /* PVGBA.framework in Frameworks */,
 				B37263AD26EA159400E95488 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
 				B3C9D5E11DEA8A290068D057 /* PVGenesis.framework in Frameworks */,
@@ -1159,6 +1159,8 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3D54EF42768306200476241 /* SwiftUI.framework */,
+				B3D54EF62768308100476241 /* SwiftUI.framework */,
 				B33625FB26EDF88200DC41EA /* Metal.framework */,
 				B33625FA26EDF88200DC41EA /* MetalKit.framework */,
 				B309C7A72717C4B500279529 /* PVFlycast.framework */,
@@ -1800,12 +1802,12 @@
 			name = Provenance;
 			packageProductDependencies = (
 				B336B91826B3A21800960A81 /* QuickTableViewController */,
-				B3F31D2226B4A4CD003A5E09 /* AltKit */,
 				B3D30FBE26F0B4CD0064603F /* SteamController */,
 				B357A43727092254002C7C0F /* AppCenterAnalytics */,
 				B357A43927092254002C7C0F /* AppCenterCrashes */,
 				B3F187702720B7FE00659D87 /* Differentiator */,
 				B3F187722720B7FE00659D87 /* RxDataSources */,
+				B3DB1EF027683D8600806B43 /* AltKit */,
 			);
 			productName = Provenance;
 			productReference = 1A3D409417B2DCE4004DFFFC /* Provenance.app */;
@@ -1830,7 +1832,6 @@
 			name = ProvenanceTV;
 			packageProductDependencies = (
 				B336B91A26B3A26400960A81 /* QuickTableViewController */,
-				B3DDF57426E9BE8D00CE47F0 /* AltKit */,
 				B3D30FC026F0BCE60064603F /* SteamController */,
 				B3F94A4D27093ABC002A71EF /* AppCenterAnalytics */,
 				B3F94A4F27093ABC002A71EF /* AppCenterCrashes */,
@@ -1995,10 +1996,10 @@
 			mainGroup = 1A3D408B17B2DCE4004DFFFC;
 			packageReferences = (
 				B336B91726B3A21800960A81 /* XCRemoteSwiftPackageReference "QuickTableViewController" */,
-				B3F31D2126B4A4CD003A5E09 /* XCRemoteSwiftPackageReference "AltKit" */,
 				B3D30FBD26F0B4CD0064603F /* XCRemoteSwiftPackageReference "SteamController" */,
 				B357A43627092253002C7C0F /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */,
 				B3F1876F2720B7FE00659D87 /* XCRemoteSwiftPackageReference "RxDataSources" */,
+				B3DB1EEF27683D8600806B43 /* XCRemoteSwiftPackageReference "AltKit" */,
 			);
 			productRefGroup = 1A3D409517B2DCE4004DFFFC /* Products */;
 			projectDirPath = "";
@@ -3764,7 +3765,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/bcylin/QuickTableViewController.git";
 			requirement = {
-				kind = upToNextMajorVersion;
+				kind = upToNextMinorVersion;
 				minimumVersion = 1.3.0;
 			};
 		};
@@ -3772,8 +3773,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/microsoft/appcenter-sdk-apple.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.0.0;
+				kind = upToNextMinorVersion;
+				minimumVersion = 4.3.0;
 			};
 		};
 		B3D30FBD26F0B4CD0064603F /* XCRemoteSwiftPackageReference "SteamController" */ = {
@@ -3784,20 +3785,20 @@
 				kind = branch;
 			};
 		};
+		B3DB1EEF27683D8600806B43 /* XCRemoteSwiftPackageReference "AltKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/rileytestut/AltKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.0.2;
+			};
+		};
 		B3F1876F2720B7FE00659D87 /* XCRemoteSwiftPackageReference "RxDataSources" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/RxSwiftCommunity/RxDataSources.git";
 			requirement = {
-				kind = upToNextMajorVersion;
+				kind = upToNextMinorVersion;
 				minimumVersion = 5.0.0;
-			};
-		};
-		B3F31D2126B4A4CD003A5E09 /* XCRemoteSwiftPackageReference "AltKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Provenance-Emu/AltKit.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.0.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -3833,9 +3834,9 @@
 			package = B3D30FBD26F0B4CD0064603F /* XCRemoteSwiftPackageReference "SteamController" */;
 			productName = SteamController;
 		};
-		B3DDF57426E9BE8D00CE47F0 /* AltKit */ = {
+		B3DB1EF027683D8600806B43 /* AltKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3F31D2126B4A4CD003A5E09 /* XCRemoteSwiftPackageReference "AltKit" */;
+			package = B3DB1EEF27683D8600806B43 /* XCRemoteSwiftPackageReference "AltKit" */;
 			productName = AltKit;
 		};
 		B3F187702720B7FE00659D87 /* Differentiator */ = {
@@ -3857,11 +3858,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B3F1876F2720B7FE00659D87 /* XCRemoteSwiftPackageReference "RxDataSources" */;
 			productName = Differentiator;
-		};
-		B3F31D2226B4A4CD003A5E09 /* AltKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3F31D2126B4A4CD003A5E09 /* XCRemoteSwiftPackageReference "AltKit" */;
-			productName = AltKit;
 		};
 		B3F94A4D27093ABC002A71EF /* AppCenterAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
