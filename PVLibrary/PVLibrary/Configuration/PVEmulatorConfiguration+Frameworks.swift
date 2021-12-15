@@ -97,7 +97,7 @@ public extension PVEmulatorConfiguration {
     }
 
     class func setPropertiesTo(pvSystem: PVSystem, fromSystemPlistEntry system: SytemPlistEntry) {
-        pvSystem.openvgDatabaseID = Int(system.PVDatabaseID)!
+        pvSystem.openvgDatabaseID = Int(system.PVDatabaseID) ?? -1
         pvSystem.requiresBIOS = system.PVRequiresBIOS ?? false
         pvSystem.manufacturer = system.PVManufacturer
         pvSystem.bit = Int(system.PVBit) ?? 0

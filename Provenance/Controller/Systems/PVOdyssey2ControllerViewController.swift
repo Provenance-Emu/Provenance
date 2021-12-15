@@ -9,7 +9,7 @@
 import PVSupport
 
 private extension JSButton {
-    var buttonTag: POdyssey2Button {
+    var buttonTag: PVOdyssey2Button {
         get {
             return PVOdyssey2Button(rawValue: tag)!
         }
@@ -19,7 +19,7 @@ private extension JSButton {
     }
 }
 
-final class PVOdyssey2ControllerViewController: PVControllerViewController<PVJaguarSystemResponderClient> {
+final class PVOdyssey2ControllerViewController: PVControllerViewController<PVOdyssey2SystemResponderClient> {
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
@@ -83,18 +83,18 @@ final class PVOdyssey2ControllerViewController: PVControllerViewController<PVJag
     }
 
     override func pressStart(forPlayer player: Int) {
-        emulatorCore.didPush(.pause, forPlayer: player)
+//        emulatorCore.didPush(.pause, forPlayer: player)
     }
 
     override func releaseStart(forPlayer player: Int) {
-        emulatorCore.didRelease(.pause, forPlayer: player)
+//        emulatorCore.didRelease(.pause, forPlayer: player)
     }
 
     override func pressSelect(forPlayer player: Int) {
-        emulatorCore.didPush(.option, forPlayer: player)
+//        emulatorCore.didPush(.option, forPlayer: player)
     }
 
     override func releaseSelect(forPlayer player: Int) {
-        emulatorCore.didRelease(.option, forPlayer: player)
+//        emulatorCore.didRelease(.option, forPlayer: player)
     }
 }

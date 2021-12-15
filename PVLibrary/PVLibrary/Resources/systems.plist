@@ -3364,6 +3364,21 @@
 		</array>
 	</dict>
 	<dict>
+		<key>PVBIOSNames</key>
+		<array>
+			<dict>
+				<key>Description</key>
+				<string>Magnox Odyssey2 BIOS</string>
+				<key>MD5</key>
+				<string>562d5ebf9e030a40d6fabfc2f33139fd</string>
+				<key>Name</key>
+				<string>o2rom.bin</string>
+				<key>Size</key>
+				<integer>1024</integer>
+			</dict>
+		</array>
+		<key>PVRequiresBIOS</key>
+		<true/>
 		<key>PVManufacturer</key>
 		<string>Magnavox</string>
 		<key>PVSystemName</key>
@@ -3379,7 +3394,7 @@
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.odyssey2</string>
 		<key>PVDatabaseID</key>
-		<string></string>
+		<string>-1</string>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>bin</string>
