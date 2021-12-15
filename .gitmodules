@@ -49,3 +49,6 @@
 [submodule "Cores/Desmume2015/desmume2015"]
 	path = Cores/Desmume2015/desmume2015
 	url = https://github.com/libretro/desmume2015.git
+[submodule "Cores/O2EM"]
+	path = Cores/O2EM
+	url = https://github.com/Provenance-Emu/O2EM-Core.git

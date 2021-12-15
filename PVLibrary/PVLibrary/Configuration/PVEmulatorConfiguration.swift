@@ -65,6 +65,7 @@ public enum SystemIdentifier: String {
     case NES = "com.provenance.nes"
     case NGP = "com.provenance.ngp"
     case NGPC = "com.provenance.ngpc"
+    case Odyssey2 = "com.provenance.odyssey2"
     case PCE = "com.provenance.pce"
     case PCECD = "com.provenance.pcecd"
     case PCFX = "com.provenance.pcfx"

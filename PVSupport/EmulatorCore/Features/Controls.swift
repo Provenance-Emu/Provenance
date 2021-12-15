@@ -802,3 +802,22 @@ import Foundation
     @objc(didReleaseSSButton:forPlayer:)
     func didRelease(_ button: PVSaturnButton, forPlayer player: Int)
 }
+
+
+// MARK: - Magnavox Odyssey2/Videopac+
+
+@objc public enum PVOdyssey2Button: Int {
+    case up
+    case down
+    case left
+    case right
+    case action
+    case count
+}
+
+@objc public protocol PVOdyssey2SystemResponderClient: ResponderClient, ButtonResponder {
+    @objc(didPushOdyssey2Button:forPlayer:)
+    func didPush(_ button: PVOdyssey2Button, forPlayer player: Int)
+    @objc(didReleaseOdyssey2Button:forPlayer:)
+    func didRelease(_ button: PVOdyssey2Button, forPlayer player: Int)
+}

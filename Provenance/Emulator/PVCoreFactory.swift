@@ -116,6 +116,12 @@ public final class PVCoreFactory: NSObject {
             } else {
                 fatalError("Core doesn't implement PVJaguarSystemResponderClient")
             }
+        case .Odyssey2:
+            if let core = core as? PVOdyssey2SystemResponderClient {
+                return PVOdyssey2ControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else {
+                fatalError("Core doesn't implement PVOdyssey2SystemResponderClient")
+            }
         case .Sega32X:
             if let core = core as? PVSega32XSystemResponderClient {
                 return PVSega32XControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
