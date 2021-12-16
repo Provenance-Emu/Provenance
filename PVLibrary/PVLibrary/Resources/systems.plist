@@ -3386,7 +3386,7 @@
 		<string>-1</string>
 		<key>PVSupportedExtensions</key>
 		<array>
-			<string>bin</string>
+			<string>ody</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
