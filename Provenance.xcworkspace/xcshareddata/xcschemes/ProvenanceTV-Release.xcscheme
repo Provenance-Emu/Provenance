@@ -238,20 +238,6 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3447EC0218BEDD200557ACE"
-               BuildableName = "PVReicast.framework"
-               BlueprintName = "PVReicast-tvOS"
-               ReferencedContainer = "container:Cores/Reicast/PVReicast.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "1AD481B31BA350A400FDA50A"
                BuildableName = "Provenance.app"
                BlueprintName = "ProvenanceTV"
