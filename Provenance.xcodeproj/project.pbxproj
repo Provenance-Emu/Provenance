@@ -424,7 +424,6 @@
 		B3DB11AD205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */; };
 		B3DB11AE205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */; };
 		B3DB1EF127683D8600806B43 /* AltKit in Frameworks */ = {isa = PBXBuildFile; productRef = B3DB1EF027683D8600806B43 /* AltKit */; };
-		B3DDF57326E9BE8100CE47F0 /* PVAltKitService.m in Sources */ = {isa = PBXBuildFile; fileRef = B31A464E26B4C5060084A1D6 /* PVAltKitService.m */; };
 		B3E21D6E203211BE009939D3 /* IndexRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E21D6D203211BE009939D3 /* IndexRequestHandler.swift */; };
 		B3E21D72203211BE009939D3 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3E3B5D9202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */; };
@@ -2500,7 +2499,6 @@
 				1AD481E11BA3545800FDA50A /* GCDWebServerErrorResponse.m in Sources */,
 				B3F43DE32169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */,
 				1AD481D71BA3543500FDA50A /* GCDWebServer.m in Sources */,
-				B3DDF57326E9BE8100CE47F0 /* PVAltKitService.m in Sources */,
 				1A2FB10A206EE8A700A1F942 /* PVSaveStatesViewController.swift in Sources */,
 				1AD481DE1BA3544A00FDA50A /* GCDWebServerMultiPartFormRequest.m in Sources */,
 				1AD481DA1BA3543E00FDA50A /* GCDWebServerRequest.m in Sources */,

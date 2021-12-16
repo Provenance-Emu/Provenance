@@ -2,7 +2,7 @@
 //  Use this file to import your target's public headers that you would like to expose to Swift.
 //
 #import "PVLogViewController.h"
-#import "PVAltKitService.h"
+//#import "PVAltKitService.h"
 
 // -----------------------------------------------------------------------------
 // Begin Swiftify generated imports
