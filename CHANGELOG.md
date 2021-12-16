@@ -9,9 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Odyssey2 core
+- Mac Catalyst early support (M1 and Intel) (not for public use yet)
+- SNES FAST and PCE FAST core options for Mednafen
+
 ### Fixed
 
+- #1621 GBC palette options crashed gambatte
+- #1414 smarter expecptions in PVSystem
+- Fixed rare crash in OERingBuffer
+- Cores that don't support saves no loner display save actions in menu
+- OpenVGDB Update (fixes artwork and metadata not loading)
+- Fixed strong self refs in some classes, closures
+
 ### Updated
+
+- Jaguar core upstream & custom performance hacks
+- Mupen/GlideN64/Rice... updated to latest upstream
+- All SPM packages to upstream
 
 ## [2.0.2] - 2021-09-14
 
