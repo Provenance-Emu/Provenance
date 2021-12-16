@@ -12017,7 +12017,7 @@
 				);
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/RelWithDebInfo;
+				CONFIGURATION_BUILD_DIR = cmake/lib/RelWithDebInfo;
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -12078,7 +12078,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = Core;
 				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake;
+				SYMROOT = cmake;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -18236,7 +18236,7 @@
 				);
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Release;
+				CONFIGURATION_BUILD_DIR = cmake/lib/Release;
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -18297,7 +18297,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = Core;
 				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake;
+				SYMROOT = cmake;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -19146,7 +19146,7 @@
 				);
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Debug;
+				CONFIGURATION_BUILD_DIR = cmake/lib/Debug;
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -19206,7 +19206,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = Core;
 				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake;
+				SYMROOT = cmake;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -21508,7 +21508,7 @@
 				);
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/MinSizeRel;
+				CONFIGURATION_BUILD_DIR = cmake/lib/MinSizeRel;
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -21569,7 +21569,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = Core;
 				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake;
+				SYMROOT = cmake;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
