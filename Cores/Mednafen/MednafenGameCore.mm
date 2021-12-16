@@ -51,11 +51,9 @@
 #import <UIKit/UIKit.h>
 #import <PVSupport/OERingBuffer.h>
 #import <PVSupport/PVSupport-Swift.h>
+#import <PVSupport/PVEmulatorCore.h>
 
 #import <mednafen/mempatcher.h>
-
-#define USE_PCE_FAST 0
-#define USE_SNES_FAUST 1
 
 #define GET_CURRENT_OR_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 
@@ -67,39 +65,6 @@
 + (NSDictionary<NSString*,NSNumber*>*_Nonnull)multiTapPSXGames;
 + (NSArray<NSString*>*_Nonnull)multiTap5PlayerPort2;
 @end
-
-typedef struct OEIntPoint {
-    int x;
-    int y;
-} OEIntPoint;
-
-typedef struct OEIntSize {
-    int width;
-    int height;
-} OEIntSize;
-
-typedef struct OEIntRect {
-    OEIntPoint origin;
-    OEIntSize size;
-} OEIntRect;
-
-static inline OEIntSize OEIntSizeMake(int width, int height)
-{
-    return (OEIntSize){ width, height };
-}
-static inline BOOL OEIntSizeEqualToSize(OEIntSize size1, OEIntSize size2)
-{
-    return size1.width == size2.width && size1.height == size2.height;
-}
-static inline BOOL OEIntSizeIsEmpty(OEIntSize size)
-{
-    return size.width == 0 || size.height == 0;
-}
-
-static inline OEIntRect OEIntRectMake(int x, int y, int width, int height)
-{
-    return (OEIntRect){ (OEIntPoint){ x, y }, (OEIntSize){ width, height } };
-}
 
 static Mednafen::MDFNGI *game;
 static Mednafen::MDFN_Surface *backBufferSurf;
@@ -505,11 +470,8 @@ static void emulation_run(BOOL skipFrame) {
 	{
 		self.systemType = MednaSystemSNES;
 
-#if USE_SNES_FAUST
-		mednafenCoreModule = @"snes_faust";
-#else
-		mednafenCoreModule = @"snes";
-#endif
+        mednafenCoreModule = self.mednafen_snesFast ? @"snes_faust" : @"snes";
+
 		//mednafenCoreAspect = OEIntSizeMake(4, 3);
 		//mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
 		sampleRate         = 48000;
@@ -563,11 +525,8 @@ static void emulation_run(BOOL skipFrame) {
     {
         self.systemType = MednaSystemPCE;
 
-#if USE_PCE_FAST
-		mednafenCoreModule = @"pce_fast";
-#else
-		mednafenCoreModule = @"pce";
-#endif
+
+        mednafenCoreModule = self.mednafen_pceFast ? @"pce_fast" : @"pce";
         //mednafenCoreAspect = OEIntSizeMake(256 * (8.0/7.0), 240);
         //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
         sampleRate         = 48000;

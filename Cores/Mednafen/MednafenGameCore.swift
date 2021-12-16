@@ -75,3 +75,41 @@ extension MednafenGameCore: GameWithCheat {
         return self.getCheatSupport();
     }
 }
+
+extension MednafenGameCore: CoreOptional {
+    public static var options: [CoreOption] = {
+        var options = [CoreOption]()
+
+        let fastGroup = CoreOption.group(display: CoreOptionValueDisplay(title: "Fast Cores",
+                                                                         description: "Alternative versions of cores that trade accuracy for speed"),
+                                         subOptions: [pceFastOption, snesFastOption])
+        
+
+        options.append(fastGroup)
+
+        return options
+    }()
+
+
+    static var pceFastOption: CoreOption = {
+        let pceFastOption = CoreOption.bool(display: .init(
+            title: "PCE Fast",
+            description: "Use a faster but possibly buggy PCEngine version.",
+            requiresRestart: true),
+                                         defaultValue: false)
+        return pceFastOption
+    }()
+
+    static var snesFastOption: CoreOption = {
+        let snesFastOption = CoreOption.bool(display: .init(
+            title: "SNES Fast",
+            description: "Use faster but maybe more buggy SNES core (default)",
+            requiresRestart: true), defaultValue: true)
+        return snesFastOption
+    }()
+}
+
+@objc public extension MednafenGameCore {
+    @objc var mednafen_pceFast: Bool { MednafenGameCore.valueForOption(MednafenGameCore.pceFastOption).asBool }
+    @objc var mednafen_snesFast: Bool { MednafenGameCore.valueForOption(MednafenGameCore.snesFastOption).asBool }
+}
