@@ -170,7 +170,7 @@
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.gamecube</string>
 		<key>PVDatabaseID</key>
-		<string>23</string>
+		<string>-1</string>
 		<key>PVSupportsRumble</key>
 		<true/>
 		<key>PVPortable</key>
