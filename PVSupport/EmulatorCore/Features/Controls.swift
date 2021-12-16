@@ -821,3 +821,135 @@ import Foundation
     @objc(didReleaseOdyssey2Button:forPlayer:)
     func didRelease(_ button: PVOdyssey2Button, forPlayer player: Int)
 }
+
+// MARK: - Vectrex
+
+@objc public enum PVVectrexButton: Int {
+    case up
+    case down
+    case left
+    case right
+    @objc(PVVectrexButton1)
+    case button1
+    @objc(PVVectrexButton2)
+    case button2
+    @objc(PVVectrexButton3)
+    case button3
+    @objc(PVVectrexButton4)
+    case button4
+    case count
+}
+
+@objc public protocol PVVectrexSystemResponderClient: ResponderClient, ButtonResponder {
+    @objc(didPushVectrexButton:forPlayer:)
+    func didPush(_ button: PVVectrexButton, forPlayer player: Int)
+    @objc(didReleaseVectrexButton:forPlayer:)
+    func didRelease(_ button: PVVectrexButton, forPlayer player: Int)
+}
+
+// MARK: - 3DO
+
+@objc public enum PV3DOButton: Int {
+    case up
+    case down
+    case left
+    case right
+    case a
+    case b
+    case c
+    case L
+    case R
+    case P
+    case X
+    case count
+}
+
+@objc public protocol PV3DOSystemResponderClient: ResponderClient, ButtonResponder {
+    @objc(didPush3DOButton:forPlayer:)
+    func didPush(_ button: PV3DOButton, forPlayer player: Int)
+    @objc(didRelease3DOButton:forPlayer:)
+    func didRelease(_ button: PV3DOButton, forPlayer player: Int)
+}
+
+// MARK: - ColecoVision
+
+@objc public enum PVColecoVisionButton: Int {
+    case up
+    case down
+    case left
+    case right
+    case leftAction
+    case rightAction
+    @objc(PVColecoVisionButton1)
+    case button1
+    @objc(PVColecoVisionButton2)
+    case button2
+    @objc(PVColecoVisionButton3)
+    case button3
+    @objc(PVColecoVisionButton4)
+    case button4
+    @objc(PVColecoVisionButton5)
+    case button5
+    @objc(PVColecoVisionButton6)
+    case button6
+    @objc(PVColecoVisionButton7)
+    case button7
+    @objc(PVColecoVisionButton8)
+    case button8
+    @objc(PVColecoVisionButton9)
+    case button9
+    @objc(PVColecoVisionButton0)
+    case button0
+    case asterisk
+    case pound
+    case count
+}
+
+@objc public protocol PVColecoVisionSystemResponderClient: ResponderClient, ButtonResponder {
+    @objc(didPushColecoVisionButton:forPlayer:)
+    func didPush(_ button: PVColecoVisionButton, forPlayer player: Int)
+    @objc(didReleaseColecoVisionButton:forPlayer:)
+    func didRelease(_ button: PVColecoVisionButton, forPlayer player: Int)
+}
+
+// MARK: - Intellivision
+
+@objc public enum PVIntellivisionButton: Int {
+    case up
+    case down
+    case left
+    case right
+    case topAction
+    case bottomLeftAction
+    case bottomRightAction
+    @objc(PVIntellivisionButton1)
+    case button1
+    @objc(PVIntellivisionButton2)
+    case button2
+    @objc(PVIntellivisionButton3)
+    case button3
+    @objc(PVIntellivisionButton4)
+    case button4
+    @objc(PVIntellivisionButton5)
+    case button5
+    @objc(PVIntellivisionButton6)
+    case button6
+    @objc(PVIntellivisionButton7)
+    case button7
+    @objc(PVIntellivisionButton8)
+    case button8
+    @objc(PVIntellivisionButton9)
+    case button9
+    @objc(PVIntellivisionButton0)
+    case button0
+    case clear
+    case enter
+    case count
+}
+
+@objc public protocol PVIntellivisionSystemResponderClient: ResponderClient, ButtonResponder {
+    @objc(didPushIntellivisionButton:forPlayer:)
+    func didPush(_ button: PVIntellivisionButton, forPlayer player: Int)
+    @objc(didReleaseIntellivisionButton:forPlayer:)
+    func didRelease(_ button: PVIntellivisionButton, forPlayer player: Int)
+}
