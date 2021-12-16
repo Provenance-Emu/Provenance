@@ -641,18 +641,7 @@
 		<key>PVRequiresBIOS</key>
 		<false/>
 		<key>PVBIOSNames</key>
-		<array>
-			<dict>
-				<key>Description</key>
-				<string>PlayStation (JP) SCPH-5500 BIOS</string>
-				<key>MD5</key>
-				<string>8dd7d5296a650fac7319bce665a6a53c</string>
-				<key>Name</key>
-				<string>scph5500.bin</string>
-				<key>Size</key>
-				<integer>524288</integer>
-			</dict>
-		</array>
+		<array/>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>cue</string>
