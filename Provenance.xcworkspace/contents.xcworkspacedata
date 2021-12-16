@@ -69,7 +69,19 @@
       location = "container:"
       name = "Cores Development">
       <FileRef
+         location = "group:Cores/4DO/4DO.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/Bliss/Bliss.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/CrabEMU/CrabEmu.xcodeproj">
+      </FileRef>
+      <FileRef
          location = "group:Cores/O2EM/O2EM.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/VecXGL/VecXGL.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/Play/PVPlayCore.xcodeproj">

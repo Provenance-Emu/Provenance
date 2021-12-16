@@ -52,3 +52,15 @@
 [submodule "Cores/O2EM"]
 	path = Cores/O2EM
 	url = https://github.com/Provenance-Emu/O2EM-Core.git
+[submodule "Cores/VecXGL"]
+	path = Cores/VecXGL
+	url = https://github.com/Provenance-Emu/VecXGL-Core.git
+[submodule "Cores/CrabEMU"]
+	path = Cores/CrabEMU
+	url = https://github.com/Provenance-Emu/CrabEmu-Core.git
+[submodule "Cores/Bliss"]
+	path = Cores/Bliss
+	url = https://github.com/Provenance-Emu/Bliss-Core.git
+[submodule "Cores/4DO"]
+	path = Cores/4DO
+	url = https://github.com/Provenance-Emu/4DO-Core.git
