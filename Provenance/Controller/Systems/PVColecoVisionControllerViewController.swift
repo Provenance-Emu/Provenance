@@ -25,10 +25,11 @@ final class PVColecoVisionControllerViewController: PVControllerViewController<P
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
                 return
             }
-//            if title == "Fire" || title == "" {
-//                button.buttonTag = .fire1
-//            } else if title == "Select" {
-//                button.buttonTag = .select
+            if title == "L" || title == "" {
+                button.buttonTag = .leftAction
+            } else if title == "R" {
+                button.buttonTag = .rightAction
+            }
 //            } else if title == "Reset" {
 //                button.buttonTag = .reset
 //            }

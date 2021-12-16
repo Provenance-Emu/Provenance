@@ -25,13 +25,15 @@ final class PVVectrexControllerViewController: PVControllerViewController<PVVect
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
                 return
             }
-//            if title == "Fire" || title == "" {
-//                button.buttonTag = .fire1
-//            } else if title == "Select" {
-//                button.buttonTag = .select
-//            } else if title == "Reset" {
-//                button.buttonTag = .reset
-//            }
+            if title == "1" || title == "" {
+                button.buttonTag = .button1
+            } else if title == "2" {
+                button.buttonTag = .button2
+            } else if title == "3" {
+                button.buttonTag = .button3
+            } else if title == "4" {
+                button.buttonTag = .button4
+            }
         }
 
 //        startButton?.buttonTag = .reset
@@ -39,31 +41,31 @@ final class PVVectrexControllerViewController: PVControllerViewController<PVVect
     }
 
     override func dPad(_: JSDPad, didPress direction: JSDPadDirection) {
-        emulatorCore.didRelease(.up, forPlayer: 0)
-        emulatorCore.didRelease(.down, forPlayer: 0)
-        emulatorCore.didRelease(.left, forPlayer: 0)
-        emulatorCore.didRelease(.right, forPlayer: 0)
+        emulatorCore.didRelease(.analogUp, forPlayer: 0)
+        emulatorCore.didRelease(.analogDown, forPlayer: 0)
+        emulatorCore.didRelease(.analogLeft, forPlayer: 0)
+        emulatorCore.didRelease(.analogRight, forPlayer: 0)
         switch direction {
         case .upLeft:
-            emulatorCore.didPush(.up, forPlayer: 0)
-            emulatorCore.didPush(.left, forPlayer: 0)
+            emulatorCore.didPush(.analogUp, forPlayer: 0)
+            emulatorCore.didPush(.analogLeft, forPlayer: 0)
         case .up:
-            emulatorCore.didPush(.up, forPlayer: 0)
+            emulatorCore.didPush(.analogUp, forPlayer: 0)
         case .upRight:
-            emulatorCore.didPush(.up, forPlayer: 0)
-            emulatorCore.didPush(.right, forPlayer: 0)
+            emulatorCore.didPush(.analogUp, forPlayer: 0)
+            emulatorCore.didPush(.analogRight, forPlayer: 0)
         case .left:
-            emulatorCore.didPush(.left, forPlayer: 0)
+            emulatorCore.didPush(.analogLeft, forPlayer: 0)
         case .right:
-            emulatorCore.didPush(.right, forPlayer: 0)
+            emulatorCore.didPush(.analogRight, forPlayer: 0)
         case .downLeft:
-            emulatorCore.didPush(.down, forPlayer: 0)
-            emulatorCore.didPush(.left, forPlayer: 0)
+            emulatorCore.didPush(.analogDown, forPlayer: 0)
+            emulatorCore.didPush(.analogLeft, forPlayer: 0)
         case .down:
-            emulatorCore.didPush(.down, forPlayer: 0)
+            emulatorCore.didPush(.analogDown, forPlayer: 0)
         case .downRight:
-            emulatorCore.didPush(.down, forPlayer: 0)
-            emulatorCore.didPush(.right, forPlayer: 0)
+            emulatorCore.didPush(.analogDown, forPlayer: 0)
+            emulatorCore.didPush(.analogRight, forPlayer: 0)
         default:
             break
         }
@@ -71,10 +73,10 @@ final class PVVectrexControllerViewController: PVControllerViewController<PVVect
     }
 
     override func dPadDidReleaseDirection(_: JSDPad) {
-        emulatorCore.didRelease(.up, forPlayer: 0)
-        emulatorCore.didRelease(.down, forPlayer: 0)
-        emulatorCore.didRelease(.left, forPlayer: 0)
-        emulatorCore.didRelease(.right, forPlayer: 0)
+        emulatorCore.didRelease(.analogUp, forPlayer: 0)
+        emulatorCore.didRelease(.analogDown, forPlayer: 0)
+        emulatorCore.didRelease(.analogLeft, forPlayer: 0)
+        emulatorCore.didRelease(.analogRight, forPlayer: 0)
     }
 
     override func buttonPressed(_ button: JSButton) {

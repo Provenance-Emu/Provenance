@@ -3357,11 +3357,41 @@
 		<array>
 			<dict>
 				<key>Description</key>
-				<string>Magnox Odyssey2 BIOS</string>
+				<string>Odyssey2 BIOS - G7000 model BIOS</string>
 				<key>MD5</key>
 				<string>562d5ebf9e030a40d6fabfc2f33139fd</string>
 				<key>Name</key>
 				<string>o2rom.bin</string>
+				<key>Size</key>
+				<integer>1024</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>Videopac+ French BIOS - G7000 model</string>
+				<key>MD5</key>
+				<string>f1071cdb0b6b10dde94d3bc8a6146387</string>
+				<key>Name</key>
+				<string>c52.bin</string>
+				<key>Size</key>
+				<integer>1024</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>Videopac+ European BIOS - G7400 model</string>
+				<key>MD5</key>
+				<string>c500ff71236068e0dc0d0603d265ae76</string>
+				<key>Name</key>
+				<string>g7400.bin</string>
+				<key>Size</key>
+				<integer>1024</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>Videopac+ French BIOS - G7400 model</string>
+				<key>MD5</key>
+				<string>279008e4a0db2dc5f1c048853b033828</string>
+				<key>Name</key>
+				<string>jopac.bin</string>
 				<key>Size</key>
 				<integer>1024</integer>
 			</dict>
@@ -3409,6 +3439,183 @@
 						<string>#f96763</string>
 					</dict>
 				</array>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVDPad</string>
+				<key>PVControlSize</key>
+				<string>{180,180}</string>
+			</dict>
+		</array>
+	</dict>
+	<dict>
+		<key>PVControlLayout</key>
+		<array>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVButtonGroup</string>
+				<key>PVControlSize</key>
+				<string>{180, 180}</string>
+				<key>PVGroupedButtons</key>
+				<array>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>1</string>
+						<key>PVControlFrame</key>
+						<string>{{116,60},{60,60}}</string>
+						<key>PVControlTint</key>
+						<string>#c82522</string>
+					</dict>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>2</string>
+						<key>PVControlFrame</key>
+						<string>{{60,116},{60,60}}</string>
+						<key>PVControlTint</key>
+						<string>#eeb944</string>
+					</dict>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>3</string>
+						<key>PVControlFrame</key>
+						<string>{{60,4},{60,60}}</string>
+						<key>PVControlTint</key>
+						<string>#07236e</string>
+					</dict>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>4</string>
+						<key>PVControlFrame</key>
+						<string>{{4,60},{60,60}}</string>
+						<key>PVControlTint</key>
+						<string>#1d703a</string>
+					</dict>
+				</array>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVDPad</string>
+				<key>PVControlSize</key>
+				<string>{180,180}</string>
+			</dict>
+		</array>
+		<key>PVRequiresBIOS</key>
+		<false/>
+		<key>PVManufacturer</key>
+		<string>Smith Engineering</string>
+		<key>PVSystemName</key>
+		<string>Smith Engineering Vectrex</string>
+		<key>PVSystemShortName</key>
+		<string>Vectrex</string>
+		<key>PVReleaseYear</key>
+		<string>1982</string>
+		<key>PVBit</key>
+		<string>8</string>
+		<key>PVPortable</key>
+		<false/>
+		<key>PVSystemIdentifier</key>
+		<string>com.provenance.vectrex</string>
+		<key>PVDatabaseID</key>
+		<string>-1</string>
+		<key>PVSupportedExtensions</key>
+		<array>
+			<string>vec</string>
+		</array>
+	</dict>
+	<dict>
+		<key>PVRequiresBIOS</key>
+		<true/>
+		<key>PVBIOSNames</key>
+		<array>
+			<dict>
+				<key>Description</key>
+				<string>ColecoVision BIOS</string>
+				<key>MD5</key>
+				<string>2c66f5911e5b42b8ebe113403548eee7</string>
+				<key>Name</key>
+				<string>colecovision.rom</string>
+				<key>Size</key>
+				<integer>8192</integer>
+				<key>Optional</key>
+				<false/>
+			</dict>
+		</array>
+		<key>PVManufacturer</key>
+		<string>CBS</string>
+		<key>PVSystemName</key>
+		<string>CBS ColecoVision</string>
+		<key>PVSystemShortName</key>
+		<string>ColecoVision</string>
+		<key>PVReleaseYear</key>
+		<string>1982</string>
+		<key>PVBit</key>
+		<string>8</string>
+		<key>PVPortable</key>
+		<false/>
+		<key>PVSystemIdentifier</key>
+		<string>com.provenance.colecovision</string>
+		<key>PVDatabaseID</key>
+		<string>-1</string>
+		<key>PVSupportedExtensions</key>
+		<array>
+			<string>col</string>
+			<string>cv</string>
+			<string>rom</string>
+		</array>
+		<key>PVControlLayout</key>
+		<array>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVButtonGroup</string>
+				<key>PVControlSize</key>
+				<string>{200,180}</string>
+				<key>PVGroupedButtons</key>
+				<array>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>L</string>
+						<key>PVControlFrame</key>
+						<string>{{8,24},{60,60}}</string>
+						<key>PVControlTint</key>
+						<string>#f96763</string>
+					</dict>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>R</string>
+						<key>PVControlFrame</key>
+						<string>{{76,16},{60,60}}</string>
+						<key>PVControlTint</key>
+						<string>#f96763</string>
+					</dict>
+				</array>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVStartButton</string>
+				<key>PVControlTitle</key>
+				<string>Pause</string>
+				<key>PVControlSize</key>
+				<string>{62,22}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVSelectButton</string>
+				<key>PVControlTitle</key>
+				<string>Option</string>
+				<key>PVControlSize</key>
+				<string>{62,22}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>

@@ -850,10 +850,14 @@ import Foundation
 // MARK: - Vectrex
 
 @objc public enum PVVectrexButton: Int {
-    case up
-    case down
-    case left
-    case right
+    @objc(PVVectrexAnalogUp)
+    case analogUp
+    @objc(PVVectrexAnalogDown)
+    case analogDown
+    @objc(PVVectrexAnalogLeft)
+    case analogLeft
+    @objc(PVVectrexAnalogRight)
+    case analogRight
     @objc(PVVectrexButton1)
     case button1
     @objc(PVVectrexButton2)
@@ -865,7 +869,9 @@ import Foundation
     case count
 }
 
-@objc public protocol PVVectrexSystemResponderClient: ResponderClient, ButtonResponder {
+@objc public protocol PVVectrexSystemResponderClient: ResponderClient, ButtonResponder, JoystickResponder {
+    @objc(didMoveVectrexJoystickDirection:withValue:forPlayer:)
+    func didMoveJoystick(_ button: PVVectrexButton, withValue value: CGFloat, forPlayer player: Int)
     @objc(didPushVectrexButton:forPlayer:)
     func didPush(_ button: PVVectrexButton, forPlayer player: Int)
     @objc(didReleaseVectrexButton:forPlayer:)
