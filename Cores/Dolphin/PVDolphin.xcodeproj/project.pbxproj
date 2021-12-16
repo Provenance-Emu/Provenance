@@ -53,23 +53,6 @@
 		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		B316F86626E5C6BE0077FE46 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B316C4AE26E5C6740077FE46 /* DolphiniOS.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = B945A3702362908500B21680;
-			remoteInfo = DolphiniOS;
-		};
-		B316F86826E5C6BE0077FE46 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B316C4AE26E5C6740077FE46 /* DolphiniOS.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = B97DDCDA2666035A0083896C;
-			remoteInfo = DolphinATV;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		B30178D1207C901D0051B93D /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -2390,7 +2373,6 @@
 		B316C4AB26E5C6740077FE46 /* JitAcquisitionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JitAcquisitionService.swift; sourceTree = "<group>"; };
 		B316C4AC26E5C6740077FE46 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
 		B316C4AD26E5C6740077FE46 /* .bartycrouch.toml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .bartycrouch.toml; sourceTree = "<group>"; };
-		B316C4AE26E5C6740077FE46 /* DolphiniOS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = DolphiniOS.xcodeproj; sourceTree = "<group>"; };
 		B316C4B126E5C6740077FE46 /* Podfile.lock */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile.lock; sourceTree = "<group>"; };
 		B316C4B426E5C6740077FE46 /* preinst.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = preinst.sh; sourceTree = "<group>"; };
 		B316C4B526E5C6740077FE46 /* postinst.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = postinst.sh; sourceTree = "<group>"; };
@@ -17833,7 +17815,6 @@
 				B316C44B26E5C6730077FE46 /* Common */,
 				B316C4AC26E5C6740077FE46 /* Podfile */,
 				B316C4AD26E5C6740077FE46 /* .bartycrouch.toml */,
-				B316C4AE26E5C6740077FE46 /* DolphiniOS.xcodeproj */,
 				B316C4B126E5C6740077FE46 /* Podfile.lock */,
 			);
 			path = DolphiniOS;
@@ -18707,15 +18688,6 @@
 				B316C4AB26E5C6740077FE46 /* JitAcquisitionService.swift */,
 			);
 			path = Services;
-			sourceTree = "<group>";
-		};
-		B316C4AF26E5C6740077FE46 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				B316F86726E5C6BE0077FE46 /* DolphiniOS.app */,
-				B316F86926E5C6BE0077FE46 /* DolphinATV.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		B316C4B226E5C6740077FE46 /* csdbgd */ = {
@@ -38565,12 +38537,6 @@
 			mainGroup = B3C7620620783162009950E4;
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = B316C4AF26E5C6740077FE46 /* Products */;
-					ProjectRef = B316C4AE26E5C6740077FE46 /* DolphiniOS.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				B3C7620F20783162009950E4 /* PVDolphin-iOS */,
@@ -38580,23 +38546,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		B316F86726E5C6BE0077FE46 /* DolphiniOS.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = DolphiniOS.app;
-			remoteRef = B316F86626E5C6BE0077FE46 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B316F86926E5C6BE0077FE46 /* DolphinATV.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = DolphinATV.app;
-			remoteRef = B316F86826E5C6BE0077FE46 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		B3447EDF218BEDD200557ACE /* Resources */ = {
