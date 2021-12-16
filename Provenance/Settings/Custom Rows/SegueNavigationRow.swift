@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import QuickTableViewController
+
 
 final class SegueNavigationRow: NavigationRow<SystemSettingsCell> {
     weak var viewController: UIViewController?

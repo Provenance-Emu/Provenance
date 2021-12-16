@@ -24,7 +24,7 @@
 //  SOFTWARE.
 //
 
-import QuickTableViewController
+
 import UIKit
 
 public protocol SliderRowCompatible: Row, RowStyle {

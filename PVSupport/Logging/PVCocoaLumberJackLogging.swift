@@ -7,7 +7,7 @@
 //  Copyright (c) 2014 Joe Mattiello. All rights reserved.
 //
 
-import CocoaLumberjack
+@_exported import CocoaLumberjack
 import Foundation
 
 @objc

@@ -6,7 +6,6 @@
 //  Copyright © 2018 Provenance Emu. All rights reserved.
 //
 
-import QuickTableViewController
 import UIKit
 
 final class PVSliderCell: SliderCell {

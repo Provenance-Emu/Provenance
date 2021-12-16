@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import QuickTableViewController
+
 import UIKit
 
 public enum Themes: String {

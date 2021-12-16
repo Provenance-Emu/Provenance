@@ -10,8 +10,8 @@
 import CoreSpotlight
 import Foundation
 @_exported import PVSupport
-import RealmSwift
-import SQLite
+@_exported import RealmSwift
+@_exported import SQLite
 
 struct Constants {
     struct iCloud {

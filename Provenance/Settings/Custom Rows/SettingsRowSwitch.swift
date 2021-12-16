@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import QuickTableViewController
 
 final class PVSettingsSwitchRow: SwitchRow<PVSwitchCell> {
     let keyPath: ReferenceWritableKeyPath<PVSettingsModel, Bool>

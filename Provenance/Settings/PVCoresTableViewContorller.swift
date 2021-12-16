@@ -7,7 +7,7 @@
 //
 
 import PVLibrary
-import QuickTableViewController
+
 import RealmSwift
 import UIKit
 
