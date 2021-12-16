@@ -143,6 +143,20 @@
 		B302F31521713B17000322B9 /* PillPageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534EB20B001D700A83D4E /* PillPageControl.swift */; };
 		B3054371272026E800F5257D /* PVPSPControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3054370272026E800F5257D /* PVPSPControllerViewController.swift */; };
 		B3054372272026E800F5257D /* PVPSPControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3054370272026E800F5257D /* PVPSPControllerViewController.swift */; };
+		B305EEFB276B4C71003AE510 /* Provenance Watch WatchKit App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = B305EEFA276B4C71003AE510 /* Provenance Watch WatchKit App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B305EF00276B4C72003AE510 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B305EEFF276B4C72003AE510 /* Assets.xcassets */; };
+		B305EF06276B4C73003AE510 /* Provenance Watch WatchKit Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B305EF05276B4C73003AE510 /* Provenance Watch WatchKit Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B305EF0B276B4C73003AE510 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B305EF0A276B4C73003AE510 /* ContentView.swift */; };
+		B305EF0D276B4C73003AE510 /* ProvenanceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B305EF0C276B4C73003AE510 /* ProvenanceApp.swift */; };
+		B305EF0F276B4C73003AE510 /* ComplicationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B305EF0E276B4C73003AE510 /* ComplicationController.swift */; };
+		B305EF11276B4C73003AE510 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B305EF10276B4C73003AE510 /* Assets.xcassets */; };
+		B305EF14276B4C73003AE510 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B305EF13276B4C73003AE510 /* Preview Assets.xcassets */; };
+		B305EF25276B4C7E003AE510 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF24276B4C7E003AE510 /* PVLibrary.framework */; };
+		B305EF26276B4C7E003AE510 /* PVLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF24276B4C7E003AE510 /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B305EF29276B4C83003AE510 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF28276B4C83003AE510 /* PVSupport.framework */; };
+		B305EF2A276B4C83003AE510 /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF28276B4C83003AE510 /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B305EF2F276B4CB0003AE510 /* PVStella.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF2E276B4CB0003AE510 /* PVStella.framework */; };
+		B305EF30276B4CB0003AE510 /* PVStella.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF2E276B4CB0003AE510 /* PVStella.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B306E0CF2769F2C2001DC52E /* PVOdyssey2ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B306E0CE2769F2C2001DC52E /* PVOdyssey2ControllerViewController.swift */; };
 		B306E0D02769F2C2001DC52E /* PVOdyssey2ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B306E0CE2769F2C2001DC52E /* PVOdyssey2ControllerViewController.swift */; };
 		B31117B0218EB3A900C495A2 /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */; };
@@ -519,6 +533,20 @@
 			remoteGlobalIDString = 1A3D409317B2DCE4004DFFFC;
 			remoteInfo = Provenance;
 		};
+		B305EEFC276B4C71003AE510 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B305EEF9276B4C71003AE510;
+			remoteInfo = "Provenance Watch WatchKit App";
+		};
+		B305EF07276B4C73003AE510 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B305EF04276B4C73003AE510;
+			remoteInfo = "Provenance Watch WatchKit Extension";
+		};
 		B36FE830218EAAD200F858F3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
@@ -628,6 +656,41 @@
 				B3C9D4341DEA1B340068D057 /* PVGenesis.framework in Embed Frameworks */,
 				B3B3B8961DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
 				B3B3B8931DECF8BC00602746 /* PVMupen64Plus.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B305EF19276B4C74003AE510 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				B305EEFB276B4C71003AE510 /* Provenance Watch WatchKit App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B305EF1D276B4C74003AE510 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				B305EF06276B4C73003AE510 /* Provenance Watch WatchKit Extension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B305EF27276B4C7E003AE510 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B305EF2A276B4C83003AE510 /* PVSupport.framework in Embed Frameworks */,
+				B305EF30276B4CB0003AE510 /* PVStella.framework in Embed Frameworks */,
+				B305EF26276B4C7E003AE510 /* PVLibrary.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -752,6 +815,20 @@
 		B302BFA320825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B305436D2720237400F5257D /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3054370272026E800F5257D /* PVPSPControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVPSPControllerViewController.swift; sourceTree = "<group>"; };
+		B305EEF7276B4C71003AE510 /* Provenance Watch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance Watch.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B305EEFA276B4C71003AE510 /* Provenance Watch WatchKit App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance Watch WatchKit App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B305EEFF276B4C72003AE510 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B305EF05276B4C73003AE510 /* Provenance Watch WatchKit Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Provenance Watch WatchKit Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B305EF0A276B4C73003AE510 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		B305EF0C276B4C73003AE510 /* ProvenanceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvenanceApp.swift; sourceTree = "<group>"; };
+		B305EF0E276B4C73003AE510 /* ComplicationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComplicationController.swift; sourceTree = "<group>"; };
+		B305EF10276B4C73003AE510 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B305EF13276B4C73003AE510 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		B305EF15276B4C73003AE510 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B305EF24276B4C7E003AE510 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B305EF28276B4C83003AE510 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B305EF2B276B4C89003AE510 /* PVStella.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVStella.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B305EF2E276B4CB0003AE510 /* PVStella.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVStella.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B306E0CE2769F2C2001DC52E /* PVOdyssey2ControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVOdyssey2ControllerViewController.swift; sourceTree = "<group>"; };
 		B306E1412769FE65001DC52E /* PVO2EM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVO2EM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B309C7A42717C49F00279529 /* PVFlycast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFlycast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1118,6 +1195,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B305EF02276B4C73003AE510 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B305EF29276B4C83003AE510 /* PVSupport.framework in Frameworks */,
+				B305EF2F276B4CB0003AE510 /* PVStella.framework in Frameworks */,
+				B305EF25276B4C7E003AE510 /* PVLibrary.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3E21D68203211BE009939D3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1202,6 +1289,8 @@
 				BE9FDCBA1C210B9E0046DF0E /* TopShelf */,
 				1AD9AA361ACC988F00EC87A0 /* Provenance Tests */,
 				B3E0A580215647BD004B4322 /* Scripts */,
+				B305EEFE276B4C71003AE510 /* Provenance Watch WatchKit App */,
+				B305EF09276B4C73003AE510 /* Provenance Watch WatchKit Extension */,
 				1A3D409617B2DCE4004DFFFC /* Frameworks */,
 				1A3D409517B2DCE4004DFFFC /* Products */,
 				B3F43DDA2169BC9C00CDD40A /* Bridging Headers */,
@@ -1216,6 +1305,9 @@
 				1AD481B41BA350A400FDA50A /* Provenance.app */,
 				BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */,
 				B3E21D6B203211BE009939D3 /* Spotlight.appex */,
+				B305EEF7276B4C71003AE510 /* Provenance Watch.app */,
+				B305EEFA276B4C71003AE510 /* Provenance Watch WatchKit App.app */,
+				B305EF05276B4C73003AE510 /* Provenance Watch WatchKit Extension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1223,6 +1315,10 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B305EF2E276B4CB0003AE510 /* PVStella.framework */,
+				B305EF2B276B4C89003AE510 /* PVStella.framework */,
+				B305EF28276B4C83003AE510 /* PVSupport.framework */,
+				B305EF24276B4C7E003AE510 /* PVLibrary.framework */,
 				B306E1412769FE65001DC52E /* PVO2EM.framework */,
 				B3D54EF42768306200476241 /* SwiftUI.framework */,
 				B3D54EF62768308100476241 /* SwiftUI.framework */,
@@ -1549,6 +1645,35 @@
 				378F49FF1B63D7CD0065FA39 /* GCDWebUploader.m */,
 			);
 			path = GCDWebUploader;
+			sourceTree = "<group>";
+		};
+		B305EEFE276B4C71003AE510 /* Provenance Watch WatchKit App */ = {
+			isa = PBXGroup;
+			children = (
+				B305EEFF276B4C72003AE510 /* Assets.xcassets */,
+			);
+			path = "Provenance Watch WatchKit App";
+			sourceTree = "<group>";
+		};
+		B305EF09276B4C73003AE510 /* Provenance Watch WatchKit Extension */ = {
+			isa = PBXGroup;
+			children = (
+				B305EF0A276B4C73003AE510 /* ContentView.swift */,
+				B305EF0C276B4C73003AE510 /* ProvenanceApp.swift */,
+				B305EF0E276B4C73003AE510 /* ComplicationController.swift */,
+				B305EF10276B4C73003AE510 /* Assets.xcassets */,
+				B305EF15276B4C73003AE510 /* Info.plist */,
+				B305EF12276B4C73003AE510 /* Preview Content */,
+			);
+			path = "Provenance Watch WatchKit Extension";
+			sourceTree = "<group>";
+		};
+		B305EF12276B4C73003AE510 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				B305EF13276B4C73003AE510 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
 			sourceTree = "<group>";
 		};
 		B32746BF219BD6C700B78124 /* Reusable Views */ = {
@@ -1988,6 +2113,58 @@
 			productReference = 1AD9AA351ACC988F00EC87A0 /* Provenance Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		B305EEF6276B4C71003AE510 /* Provenance Watch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B305EF23276B4C74003AE510 /* Build configuration list for PBXNativeTarget "Provenance Watch" */;
+			buildPhases = (
+				B305EEF5276B4C71003AE510 /* Resources */,
+				B305EF19276B4C74003AE510 /* Embed Watch Content */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B305EEFD276B4C71003AE510 /* PBXTargetDependency */,
+			);
+			name = "Provenance Watch";
+			productName = "Provenance Watch";
+			productReference = B305EEF7276B4C71003AE510 /* Provenance Watch.app */;
+			productType = "com.apple.product-type.application.watchapp2-container";
+		};
+		B305EEF9276B4C71003AE510 /* Provenance Watch WatchKit App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B305EF22276B4C74003AE510 /* Build configuration list for PBXNativeTarget "Provenance Watch WatchKit App" */;
+			buildPhases = (
+				B305EEF8276B4C71003AE510 /* Resources */,
+				B305EF1D276B4C74003AE510 /* Embed App Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B305EF08276B4C73003AE510 /* PBXTargetDependency */,
+			);
+			name = "Provenance Watch WatchKit App";
+			productName = "Provenance Watch WatchKit App";
+			productReference = B305EEFA276B4C71003AE510 /* Provenance Watch WatchKit App.app */;
+			productType = "com.apple.product-type.application.watchapp2";
+		};
+		B305EF04276B4C73003AE510 /* Provenance Watch WatchKit Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B305EF21276B4C74003AE510 /* Build configuration list for PBXNativeTarget "Provenance Watch WatchKit Extension" */;
+			buildPhases = (
+				B305EF01276B4C73003AE510 /* Sources */,
+				B305EF02276B4C73003AE510 /* Frameworks */,
+				B305EF03276B4C73003AE510 /* Resources */,
+				B305EF27276B4C7E003AE510 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Provenance Watch WatchKit Extension";
+			productName = "Provenance Watch WatchKit Extension";
+			productReference = B305EF05276B4C73003AE510 /* Provenance Watch WatchKit Extension.appex */;
+			productType = "com.apple.product-type.watchkit2-extension";
+		};
 		B3E21D6A203211BE009939D3 /* Spotlight */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3E21D73203211BE009939D3 /* Build configuration list for PBXNativeTarget "Spotlight" */;
@@ -2034,7 +2211,7 @@
 				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = PV;
 				DefaultBuildSystemTypeForWorkspace = Latest;
-				LastSwiftUpdateCheck = 1010;
+				LastSwiftUpdateCheck = 1320;
 				LastUpgradeCheck = 1300;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
@@ -2080,6 +2257,15 @@
 						CreatedOnToolsVersion = 6.2;
 						LastSwiftMigration = 1000;
 						TestTargetID = 1A3D409317B2DCE4004DFFFC;
+					};
+					B305EEF6276B4C71003AE510 = {
+						CreatedOnToolsVersion = 13.2;
+					};
+					B305EEF9276B4C71003AE510 = {
+						CreatedOnToolsVersion = 13.2;
+					};
+					B305EF04276B4C73003AE510 = {
+						CreatedOnToolsVersion = 13.2;
 					};
 					B383225D26ED9C530029D12F = {
 						CreatedOnToolsVersion = 13.0;
@@ -2139,6 +2325,9 @@
 				B3B29D3F2156177100903290 /* Create Version files */,
 				B3B29D4D21561F0600903290 /* Setup Code-Signing */,
 				B383225D26ED9C530029D12F /* Check Git Submodules */,
+				B305EEF6276B4C71003AE510 /* Provenance Watch */,
+				B305EEF9276B4C71003AE510 /* Provenance Watch WatchKit App */,
+				B305EF04276B4C73003AE510 /* Provenance Watch WatchKit Extension */,
 			);
 		};
 /* End PBXProject section */
@@ -2191,6 +2380,30 @@
 			buildActionMask = 2147483647;
 			files = (
 				1A2B0E8C1AD187F4005FB77C /* testdata.txt in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B305EEF5276B4C71003AE510 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B305EEF8276B4C71003AE510 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B305EF00276B4C72003AE510 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B305EF03276B4C73003AE510 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B305EF14276B4C73003AE510 /* Preview Assets.xcassets in Resources */,
+				B305EF11276B4C73003AE510 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2681,6 +2894,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B305EF01276B4C73003AE510 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B305EF0D276B4C73003AE510 /* ProvenanceApp.swift in Sources */,
+				B305EF0B276B4C73003AE510 /* ContentView.swift in Sources */,
+				B305EF0F276B4C73003AE510 /* ComplicationController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3E21D67203211BE009939D3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2706,6 +2929,16 @@
 			isa = PBXTargetDependency;
 			target = 1A3D409317B2DCE4004DFFFC /* Provenance */;
 			targetProxy = 1AD9AA511ACC9FA800EC87A0 /* PBXContainerItemProxy */;
+		};
+		B305EEFD276B4C71003AE510 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B305EEF9276B4C71003AE510 /* Provenance Watch WatchKit App */;
+			targetProxy = B305EEFC276B4C71003AE510 /* PBXContainerItemProxy */;
+		};
+		B305EF08276B4C73003AE510 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B305EF04276B4C73003AE510 /* Provenance Watch WatchKit Extension */;
+			targetProxy = B305EF07276B4C73003AE510 /* PBXContainerItemProxy */;
 		};
 		B36FE831218EAAD200F858F3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -3298,6 +3531,375 @@
 			};
 			name = Release;
 		};
+		B305EF16276B4C74003AE510 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Watch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		B305EF17276B4C74003AE510 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Watch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		B305EF18276B4C74003AE510 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Watch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Archive;
+		};
+		B305EF1A276B4C74003AE510 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				IBSC_MODULE = Provenance_Watch_WatchKit_Extension;
+				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit App";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Watch.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 8.3;
+			};
+			name = Debug;
+		};
+		B305EF1B276B4C74003AE510 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				IBSC_MODULE = Provenance_Watch_WatchKit_Extension;
+				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit App";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Watch.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 8.3;
+			};
+			name = Release;
+		};
+		B305EF1C276B4C74003AE510 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				IBSC_MODULE = Provenance_Watch_WatchKit_Extension;
+				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit App";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Watch.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 8.3;
+			};
+			name = Archive;
+		};
+		B305EF1E276B4C74003AE510 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_ASSET_PATHS = "\"Provenance Watch WatchKit Extension/Preview Content\"";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_PREVIEWS = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Provenance Watch WatchKit Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit Extension";
+				INFOPLIST_KEY_CLKComplicationPrincipalClass = "$(PRODUCT_MODULE_NAME).ComplicationController";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Provenance Emu. All rights reserved.";
+				INFOPLIST_KEY_WKWatchOnly = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Watch.watchkitapp.watchkitextension";
+				PRODUCT_NAME = "${TARGET_NAME}";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 8.3;
+			};
+			name = Debug;
+		};
+		B305EF1F276B4C74003AE510 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_ASSET_PATHS = "\"Provenance Watch WatchKit Extension/Preview Content\"";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_PREVIEWS = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Provenance Watch WatchKit Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit Extension";
+				INFOPLIST_KEY_CLKComplicationPrincipalClass = "$(PRODUCT_MODULE_NAME).ComplicationController";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Provenance Emu. All rights reserved.";
+				INFOPLIST_KEY_WKWatchOnly = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Watch.watchkitapp.watchkitextension";
+				PRODUCT_NAME = "${TARGET_NAME}";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 8.3;
+			};
+			name = Release;
+		};
+		B305EF20276B4C74003AE510 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_ASSET_PATHS = "\"Provenance Watch WatchKit Extension/Preview Content\"";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_PREVIEWS = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Provenance Watch WatchKit Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit Extension";
+				INFOPLIST_KEY_CLKComplicationPrincipalClass = "$(PRODUCT_MODULE_NAME).ComplicationController";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Provenance Emu. All rights reserved.";
+				INFOPLIST_KEY_WKWatchOnly = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Watch.watchkitapp.watchkitextension";
+				PRODUCT_NAME = "${TARGET_NAME}";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 8.3;
+			};
+			name = Archive;
+		};
 		B3721CEB21912B7400433E4C /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3876,6 +4478,36 @@
 				1AD9AA3E1ACC988F00EC87A0 /* Debug */,
 				1AD9AA3F1ACC988F00EC87A0 /* Release */,
 				B3721CEE21912B7400433E4C /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B305EF21276B4C74003AE510 /* Build configuration list for PBXNativeTarget "Provenance Watch WatchKit Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B305EF1E276B4C74003AE510 /* Debug */,
+				B305EF1F276B4C74003AE510 /* Release */,
+				B305EF20276B4C74003AE510 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B305EF22276B4C74003AE510 /* Build configuration list for PBXNativeTarget "Provenance Watch WatchKit App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B305EF1A276B4C74003AE510 /* Debug */,
+				B305EF1B276B4C74003AE510 /* Release */,
+				B305EF1C276B4C74003AE510 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B305EF23276B4C74003AE510 /* Build configuration list for PBXNativeTarget "Provenance Watch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B305EF16276B4C74003AE510 /* Debug */,
+				B305EF17276B4C74003AE510 /* Release */,
+				B305EF18276B4C74003AE510 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

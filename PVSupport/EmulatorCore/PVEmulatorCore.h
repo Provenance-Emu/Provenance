@@ -11,7 +11,9 @@
 #import <GameController/GameController.h>
 #else
 @import Foundation;
+#if !TARGET_OS_WATCH
 @import GameController;
+#endif
 #endif
 
 #pragma mark -

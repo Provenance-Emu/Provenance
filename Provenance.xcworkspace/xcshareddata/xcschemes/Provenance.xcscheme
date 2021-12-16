@@ -85,7 +85,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B37937AB1D6BCF8100EBAE81"
-               BuildableName = "PVPicoDrive.framework"
+               BuildableName = "PicoDrive.framework"
                BlueprintName = "PVPicoDrive-iOS"
                ReferencedContainer = "container:Cores/PicoDrive/PVPicoDrive.xcodeproj">
             </BuildableReference>
