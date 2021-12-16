@@ -146,8 +146,8 @@ volatile bool has_init = false;
 #define LIST_OF_VARIABLES \
 X(dynarec.Enable) \
 X(dynarec.idleskip) \
-X(dreamcast.region) \
-X(dreamcast.region) \
+X(DS.region) \
+X(DS.region) \
 X(aica.LimitFPS) \
 X(aica.NoSound) \
 X(aica.NoBatch) \

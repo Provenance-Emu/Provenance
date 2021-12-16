@@ -10,11 +10,9 @@
 		B324C64321921519009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C64221921519009F4EDC /* PVSupport.framework */; };
 		B324C64921921577009F4EDC /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C64821921577009F4EDC /* libz.tbd */; };
 		B3411B4C276B2FBB00D85327 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3411B4B276B2FBB00D85327 /* PVLibrary.framework */; };
-		B3411B4D276B2FBB00D85327 /* PVLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3411B4B276B2FBB00D85327 /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3411B50276B2FC000D85327 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3411B4F276B2FC000D85327 /* Foundation.framework */; };
 		B3411B52276B2FD600D85327 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3411B51276B2FD600D85327 /* Foundation.framework */; };
 		B3411B54276B2FE200D85327 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3411B53276B2FE200D85327 /* PVSupport.framework */; };
-		B3411B55276B2FE200D85327 /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3411B53276B2FE200D85327 /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3547B5A205858B700CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B59205858B600CFF7D8 /* Core.plist */; };
 		B36DE7A31D6B7558002EE3ED /* ProSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE7A21D6B7558002EE3ED /* ProSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B36DE7AE1D6B759C002EE3ED /* ProSystem.dat in Resources */ = {isa = PBXBuildFile; fileRef = 941F59FB17A77CC90005D7EA /* ProSystem.dat */; };
@@ -86,28 +84,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		B3411B4E276B2FBB00D85327 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				B3411B4D276B2FBB00D85327 /* PVLibrary.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3411B56276B2FE200D85327 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				B3411B55276B2FE200D85327 /* PVSupport.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3CA5B0826E9E3D700687B27 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -451,7 +427,6 @@
 				B36DE79B1D6B7558002EE3ED /* Sources */,
 				B36DE79C1D6B7558002EE3ED /* Frameworks */,
 				B36DE79E1D6B7558002EE3ED /* Resources */,
-				B3411B4E276B2FBB00D85327 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -471,7 +446,6 @@
 				B372638726EA035900E95488 /* Sources */,
 				B372638826EA035900E95488 /* Frameworks */,
 				B372638926EA035900E95488 /* Resources */,
-				B3411B56276B2FE200D85327 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
