@@ -720,7 +720,6 @@
 		B305436D2720237400F5257D /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3054370272026E800F5257D /* PVPSPControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVPSPControllerViewController.swift; sourceTree = "<group>"; };
 		B306E0CE2769F2C2001DC52E /* PVOdyssey2ControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVOdyssey2ControllerViewController.swift; sourceTree = "<group>"; };
-		B306E0F62769F6D9001DC52E /* PVO2EM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVO2EM.h; sourceTree = "<group>"; };
 		B306E1412769FE65001DC52E /* PVO2EM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVO2EM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B309C7A42717C49F00279529 /* PVFlycast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFlycast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B309C7A72717C4B500279529 /* PVFlycast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFlycast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -814,8 +813,6 @@
 		B35E6C1E207ED7040040709A /* UIWindowExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIWindowExtensions.swift; sourceTree = "<group>"; };
 		B35E6C1F207ED7040040709A /* AppearanceStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppearanceStyle.swift; sourceTree = "<group>"; };
 		B35E6C20207ED7050040709A /* AppearanceStyleHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppearanceStyleHelpers.swift; sourceTree = "<group>"; };
-		B360FDE6276AF6A6009A0EB0 /* VecXGL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VecXGL.h; sourceTree = "<group>"; };
-		B360FDE7276AF6A6009A0EB0 /* VecXGL.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VecXGL.m; sourceTree = "<group>"; };
 		B361938F221FB93B00F73875 /* Provenance-Free.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Provenance-Free.entitlements"; path = "Provenance/Provenance-Free.entitlements"; sourceTree = SOURCE_ROOT; };
 		B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVControllerViewController.swift; sourceTree = "<group>"; };
 		B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVCoreFactory.swift; sourceTree = "<group>"; };
@@ -1156,8 +1153,6 @@
 				BE9FDCBA1C210B9E0046DF0E /* TopShelf */,
 				1AD9AA361ACC988F00EC87A0 /* Provenance Tests */,
 				B3E0A580215647BD004B4322 /* Scripts */,
-				B306E0F52769F6D9001DC52E /* PVO2EM */,
-				B360FDE5276AF6A6009A0EB0 /* VecXGL */,
 				1A3D409617B2DCE4004DFFFC /* Frameworks */,
 				1A3D409517B2DCE4004DFFFC /* Products */,
 				B3F43DDA2169BC9C00CDD40A /* Bridging Headers */,
@@ -1507,14 +1502,6 @@
 			path = GCDWebUploader;
 			sourceTree = "<group>";
 		};
-		B306E0F52769F6D9001DC52E /* PVO2EM */ = {
-			isa = PBXGroup;
-			children = (
-				B306E0F62769F6D9001DC52E /* PVO2EM.h */,
-			);
-			path = PVO2EM;
-			sourceTree = "<group>";
-		};
 		B32746BF219BD6C700B78124 /* Reusable Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -1606,15 +1593,6 @@
 				B3296ED126CABFDE0088AC32 /* Cheats.storyboard */,
 			);
 			path = "Story Boards";
-			sourceTree = "<group>";
-		};
-		B360FDE5276AF6A6009A0EB0 /* VecXGL */ = {
-			isa = PBXGroup;
-			children = (
-				B360FDE6276AF6A6009A0EB0 /* VecXGL.h */,
-				B360FDE7276AF6A6009A0EB0 /* VecXGL.m */,
-			);
-			path = VecXGL;
 			sourceTree = "<group>";
 		};
 		B378224C21D32A080077E86F /* Custom Rows */ = {
