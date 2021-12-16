@@ -7,6 +7,136 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B3411B66276B314200D85327 /* cz80.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94B017829B4400A212AC /* cz80.c */; };
+		B3411B67276B314200D85327 /* cd_image.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AAC1183C815E009F8B71 /* cd_image.c */; };
+		B3411B68276B314200D85327 /* gfx_dma.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AAC9183C81BA009F8B71 /* gfx_dma.c */; };
+		B3411B69276B314200D85327 /* mp3_dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B954717829B4500A212AC /* mp3_dummy.c */; };
+		B3411B6A276B314200D85327 /* mode4.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951D17829B4500A212AC /* mode4.c */; };
+		B3411B6B276B314200D85327 /* mix.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952B17829B4500A212AC /* mix.c */; };
+		B3411B6C276B314200D85327 /* sn76496.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952E17829B4500A212AC /* sn76496.c */; };
+		B3411B6D276B314200D85327 /* sek.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950A17829B4500A212AC /* sek.c */; };
+		B3411B6E276B314200D85327 /* 32x.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E017829B4400A212AC /* 32x.c */; };
+		B3411B6F276B314200D85327 /* famec.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94C817829B4400A212AC /* famec.c */; };
+		B3411B70276B314200D85327 /* media.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951517829B4500A212AC /* media.c */; };
+		B3411B71276B314200D85327 /* carthw.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E817829B4400A212AC /* carthw.c */; };
+		B3411B72276B314200D85327 /* patch.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951E17829B4500A212AC /* patch.c */; };
+		B3411B73276B314200D85327 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952117829B4500A212AC /* memory.c */; };
+		B3411B74276B314200D85327 /* sound.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953017829B4500A212AC /* sound.c */; };
+		B3411B75276B314200D85327 /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963817829B4600A212AC /* crc32.c */; };
+		B3411B76276B314200D85327 /* inffast.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964117829B4600A212AC /* inffast.c */; };
+		B3411B77276B314200D85327 /* uncompr.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964D17829B4600A212AC /* uncompr.c */; };
+		B3411B78276B314200D85327 /* gfx.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AACA183C81BA009F8B71 /* gfx.c */; };
+		B3411B79276B314200D85327 /* sek.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952817829B4500A212AC /* sek.c */; };
+		B3411B7A276B314200D85327 /* sh2soc.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E45B9E17E67C630079D59E /* sh2soc.c */; };
+		B3411B7B276B314200D85327 /* compress.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963717829B4600A212AC /* compress.c */; };
+		B3411B7C276B314200D85327 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = C604DF7425C7CB6B00E1FBE5 /* libretro.c */; };
+		B3411B7D276B314200D85327 /* sms.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952917829B4500A212AC /* sms.c */; };
+		B3411B7E276B314200D85327 /* state.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953417829B4500A212AC /* state.c */; };
+		B3411B7F276B314200D85327 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950217829B4400A212AC /* memory.c */; };
+		B3411B80276B314200D85327 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951617829B4500A212AC /* memory.c */; };
+		B3411B81276B314200D85327 /* deflate.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963A17829B4600A212AC /* deflate.c */; };
+		B3411B82276B314200D85327 /* sh2.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94DC17829B4400A212AC /* sh2.c */; };
+		B3411B83276B314200D85327 /* trees.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964B17829B4600A212AC /* trees.c */; };
+		B3411B84276B314200D85327 /* cdd.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AAC3183C815E009F8B71 /* cdd.c */; };
+		B3411B85276B314200D85327 /* cart.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E617829B4400A212AC /* cart.c */; };
+		B3411B86276B314200D85327 /* sh2pico.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94DB17829B4400A212AC /* sh2pico.c */; };
+		B3411B87276B314200D85327 /* xpcm.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952317829B4500A212AC /* xpcm.c */; };
+		B3411B88276B314200D85327 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94EE17829B4400A212AC /* memory.c */; };
+		B3411B89276B314200D85327 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963017829B4600A212AC /* unzip.c */; };
+		B3411B8A276B314200D85327 /* svp.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94F217829B4400A212AC /* svp.c */; };
+		B3411B8B276B314200D85327 /* cue.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94FC17829B4400A212AC /* cue.c */; };
+		B3411B8C276B314200D85327 /* inftrees.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964617829B4600A212AC /* inftrees.c */; };
+		B3411B8D276B314200D85327 /* adler32.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963517829B4600A212AC /* adler32.c */; };
+		B3411B8E276B314200D85327 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E317829B4400A212AC /* memory.c */; };
+		B3411B8F276B314200D85327 /* pwm.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E417829B4400A212AC /* pwm.c */; };
+		B3411B90276B314200D85327 /* ssp16.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94EF17829B4400A212AC /* ssp16.c */; };
+		B3411B91276B314200D85327 /* videoport.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953517829B4500A212AC /* videoport.c */; };
+		B3411B92276B314200D85327 /* z80if.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953617829B4500A212AC /* z80if.c */; };
+		B3411B93276B314200D85327 /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B965017829B4600A212AC /* zutil.c */; };
+		B3411B94276B314200D85327 /* pcm.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950617829B4500A212AC /* pcm.c */; };
+		B3411B95276B314200D85327 /* mcd.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E45B9B17E67B560079D59E /* mcd.c */; };
+		B3411B96276B314200D85327 /* debug.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950B17829B4500A212AC /* debug.c */; };
+		B3411B97276B314200D85327 /* pico.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952217829B4500A212AC /* pico.c */; };
+		B3411B98276B314200D85327 /* eeprom.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951317829B4500A212AC /* eeprom.c */; };
+		B3411B99276B314200D85327 /* ym2612.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953117829B4500A212AC /* ym2612.c */; };
+		B3411B9A276B314200D85327 /* draw.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950E17829B4500A212AC /* draw.c */; };
+		B3411B9B276B314200D85327 /* mp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B954517829B4500A212AC /* mp3.c */; };
+		B3411B9C276B314200D85327 /* gzio.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963D17829B4600A212AC /* gzio.c */; };
+		B3411B9D276B314200D85327 /* misc.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951A17829B4500A212AC /* misc.c */; };
+		B3411B9E276B314200D85327 /* draw.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E117829B4400A212AC /* draw.c */; };
+		B3411B9F276B314200D85327 /* misc.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950417829B4400A212AC /* misc.c */; };
+		B3411BA0276B314200D85327 /* eeprom_spi.c in Sources */ = {isa = PBXBuildFile; fileRef = C604DF5125C7C7E500E1FBE5 /* eeprom_spi.c */; };
+		B3411BA1276B314200D85327 /* cdc.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AAC2183C815E009F8B71 /* cdc.c */; };
+		B3411BA2276B314200D85327 /* inflate.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964417829B4600A212AC /* inflate.c */; };
+		B3411BA3276B314200D85327 /* pico.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952417829B4500A212AC /* pico.c */; };
+		B3411BA4276B314200D85327 /* cmn.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94BE17829B4400A212AC /* cmn.c */; };
+		B3411BA5276B314200D85327 /* draw2.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950F17829B4500A212AC /* draw2.c */; };
+		B3411BA6276B315E00D85327 /* libpicodrive-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3411B5C276B312C00D85327 /* libpicodrive-iOS.a */; };
+		B3411BAB276B316200D85327 /* mp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B954517829B4500A212AC /* mp3.c */; };
+		B3411BAC276B316200D85327 /* trees.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964B17829B4600A212AC /* trees.c */; };
+		B3411BAD276B316200D85327 /* draw2.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950F17829B4500A212AC /* draw2.c */; };
+		B3411BAE276B316200D85327 /* z80if.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953617829B4500A212AC /* z80if.c */; };
+		B3411BAF276B316200D85327 /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B965017829B4600A212AC /* zutil.c */; };
+		B3411BB0276B316200D85327 /* cdd.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AAC3183C815E009F8B71 /* cdd.c */; };
+		B3411BB1276B316200D85327 /* uncompr.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964D17829B4600A212AC /* uncompr.c */; };
+		B3411BB2276B316200D85327 /* patch.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951E17829B4500A212AC /* patch.c */; };
+		B3411BB3276B316200D85327 /* pcm.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950617829B4500A212AC /* pcm.c */; };
+		B3411BB4276B316200D85327 /* gzio.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963D17829B4600A212AC /* gzio.c */; };
+		B3411BB5276B316200D85327 /* sound.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953017829B4500A212AC /* sound.c */; };
+		B3411BB6276B316200D85327 /* media.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951517829B4500A212AC /* media.c */; };
+		B3411BB7276B316200D85327 /* inflate.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964417829B4600A212AC /* inflate.c */; };
+		B3411BB8276B316200D85327 /* eeprom.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951317829B4500A212AC /* eeprom.c */; };
+		B3411BB9276B316200D85327 /* compress.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963717829B4600A212AC /* compress.c */; };
+		B3411BBA276B316200D85327 /* sek.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950A17829B4500A212AC /* sek.c */; };
+		B3411BBB276B316200D85327 /* debug.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950B17829B4500A212AC /* debug.c */; };
+		B3411BBC276B316200D85327 /* misc.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951A17829B4500A212AC /* misc.c */; };
+		B3411BBD276B316200D85327 /* sh2pico.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94DB17829B4400A212AC /* sh2pico.c */; };
+		B3411BBE276B316200D85327 /* 32x.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E017829B4400A212AC /* 32x.c */; };
+		B3411BBF276B316200D85327 /* xpcm.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952317829B4500A212AC /* xpcm.c */; };
+		B3411BC0276B316200D85327 /* cmn.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94BE17829B4400A212AC /* cmn.c */; };
+		B3411BC1276B316200D85327 /* videoport.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953517829B4500A212AC /* videoport.c */; };
+		B3411BC2276B316200D85327 /* famec.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94C817829B4400A212AC /* famec.c */; };
+		B3411BC3276B316200D85327 /* ym2612.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953117829B4500A212AC /* ym2612.c */; };
+		B3411BC4276B316200D85327 /* deflate.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963A17829B4600A212AC /* deflate.c */; };
+		B3411BC5276B316200D85327 /* sh2.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94DC17829B4400A212AC /* sh2.c */; };
+		B3411BC6276B316200D85327 /* cdc.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AAC2183C815E009F8B71 /* cdc.c */; };
+		B3411BC7276B316200D85327 /* gfx_dma.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AAC9183C81BA009F8B71 /* gfx_dma.c */; };
+		B3411BC8276B316200D85327 /* cd_image.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AAC1183C815E009F8B71 /* cd_image.c */; };
+		B3411BC9276B316200D85327 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952117829B4500A212AC /* memory.c */; };
+		B3411BCA276B316200D85327 /* state.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953417829B4500A212AC /* state.c */; };
+		B3411BCB276B316200D85327 /* cz80.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94B017829B4400A212AC /* cz80.c */; };
+		B3411BCC276B316200D85327 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963017829B4600A212AC /* unzip.c */; };
+		B3411BCD276B316200D85327 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950217829B4400A212AC /* memory.c */; };
+		B3411BCE276B316200D85327 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951617829B4500A212AC /* memory.c */; };
+		B3411BCF276B316200D85327 /* eeprom_spi.c in Sources */ = {isa = PBXBuildFile; fileRef = C604DF5125C7C7E500E1FBE5 /* eeprom_spi.c */; };
+		B3411BD0276B316200D85327 /* pwm.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E417829B4400A212AC /* pwm.c */; };
+		B3411BD1276B316200D85327 /* draw.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E117829B4400A212AC /* draw.c */; };
+		B3411BD2276B316200D85327 /* sn76496.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952E17829B4500A212AC /* sn76496.c */; };
+		B3411BD3276B316200D85327 /* pico.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952217829B4500A212AC /* pico.c */; };
+		B3411BD4276B316200D85327 /* mcd.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E45B9B17E67B560079D59E /* mcd.c */; };
+		B3411BD5276B316200D85327 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94EE17829B4400A212AC /* memory.c */; };
+		B3411BD6276B316200D85327 /* cue.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94FC17829B4400A212AC /* cue.c */; };
+		B3411BD7276B316200D85327 /* mode4.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951D17829B4500A212AC /* mode4.c */; };
+		B3411BD8276B316200D85327 /* svp.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94F217829B4400A212AC /* svp.c */; };
+		B3411BD9276B316200D85327 /* sms.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952917829B4500A212AC /* sms.c */; };
+		B3411BDA276B316200D85327 /* misc.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950417829B4400A212AC /* misc.c */; };
+		B3411BDB276B316200D85327 /* ssp16.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94EF17829B4400A212AC /* ssp16.c */; };
+		B3411BDC276B316200D85327 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E317829B4400A212AC /* memory.c */; };
+		B3411BDD276B316200D85327 /* sh2soc.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E45B9E17E67C630079D59E /* sh2soc.c */; };
+		B3411BDE276B316200D85327 /* carthw.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E817829B4400A212AC /* carthw.c */; };
+		B3411BDF276B316200D85327 /* mp3_dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B954717829B4500A212AC /* mp3_dummy.c */; };
+		B3411BE0276B316200D85327 /* sek.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952817829B4500A212AC /* sek.c */; };
+		B3411BE1276B316200D85327 /* gfx.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AACA183C81BA009F8B71 /* gfx.c */; };
+		B3411BE2276B316200D85327 /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963817829B4600A212AC /* crc32.c */; };
+		B3411BE3276B316200D85327 /* cart.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E617829B4400A212AC /* cart.c */; };
+		B3411BE4276B316200D85327 /* inftrees.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964617829B4600A212AC /* inftrees.c */; };
+		B3411BE6276B316200D85327 /* draw.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950E17829B4500A212AC /* draw.c */; };
+		B3411BE7276B316200D85327 /* mix.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952B17829B4500A212AC /* mix.c */; };
+		B3411BE8276B316200D85327 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = C604DF7425C7CB6B00E1FBE5 /* libretro.c */; };
+		B3411BE9276B316200D85327 /* inffast.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964117829B4600A212AC /* inffast.c */; };
+		B3411BEA276B316200D85327 /* adler32.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963517829B4600A212AC /* adler32.c */; };
+		B3411BEB276B316200D85327 /* pico.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952417829B4500A212AC /* pico.c */; };
+		B3411BF4276B317400D85327 /* libpicodrive-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3411BF3276B316200D85327 /* libpicodrive-tvOS.a */; };
 		B3547B5D205858D800CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B5C205858D800CFF7D8 /* Core.plist */; };
 		B3547B5E205858D800CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B5C205858D800CFF7D8 /* Core.plist */; };
 		B371709E1D6CB559005D1EFF /* carthw.cfg in Resources */ = {isa = PBXBuildFile; fileRef = 946B94F317829B4400A212AC /* carthw.cfg */; };
@@ -22,140 +152,50 @@
 		B3A3E9CF1D6BFF6F00CCD7C8 /* PicodriveGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 82287C33101E9DB40072172D /* PicodriveGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3D2E38A1D6E7E5C0058544D /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D2E3891D6E7E5C0058544D /* PVSupport.framework */; };
 		B3D2E38B1D6E7E650058544D /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3E9D61D6BFFEC00CCD7C8 /* PVSupport.framework */; };
-		C604DF2C25C7C52200E1FBE5 /* cart.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E617829B4400A212AC /* cart.c */; };
-		C604DF2D25C7C52200E1FBE5 /* pico.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952417829B4500A212AC /* pico.c */; };
-		C604DF2E25C7C52200E1FBE5 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963017829B4600A212AC /* unzip.c */; };
-		C604DF2F25C7C52200E1FBE5 /* adler32.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963517829B4600A212AC /* adler32.c */; };
-		C604DF3025C7C52200E1FBE5 /* compress.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963717829B4600A212AC /* compress.c */; };
-		C604DF3125C7C52200E1FBE5 /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963817829B4600A212AC /* crc32.c */; };
-		C604DF3225C7C52200E1FBE5 /* deflate.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963A17829B4600A212AC /* deflate.c */; };
-		C604DF3325C7C52200E1FBE5 /* gzio.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963D17829B4600A212AC /* gzio.c */; };
-		C604DF3425C7C52200E1FBE5 /* inffast.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964117829B4600A212AC /* inffast.c */; };
-		C604DF3525C7C52200E1FBE5 /* inflate.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964417829B4600A212AC /* inflate.c */; };
-		C604DF3625C7C52200E1FBE5 /* inftrees.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964617829B4600A212AC /* inftrees.c */; };
-		C604DF3725C7C52200E1FBE5 /* trees.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964B17829B4600A212AC /* trees.c */; };
-		C604DF3825C7C52200E1FBE5 /* uncompr.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964D17829B4600A212AC /* uncompr.c */; };
-		C604DF3925C7C52200E1FBE5 /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B965017829B4600A212AC /* zutil.c */; };
-		C604DF3A25C7C55B00E1FBE5 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951617829B4500A212AC /* memory.c */; };
-		C604DF3B25C7C55B00E1FBE5 /* sek.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952817829B4500A212AC /* sek.c */; };
-		C604DF3C25C7C55B00E1FBE5 /* state.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953417829B4500A212AC /* state.c */; };
-		C604DF3D25C7C55B00E1FBE5 /* videoport.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953517829B4500A212AC /* videoport.c */; };
-		C604DF3E25C7C55B00E1FBE5 /* z80if.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953617829B4500A212AC /* z80if.c */; };
-		C604DF3F25C7C70600E1FBE5 /* draw.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E117829B4400A212AC /* draw.c */; };
-		C604DF4025C7C70600E1FBE5 /* draw2.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950F17829B4500A212AC /* draw2.c */; };
-		C604DF4125C7C70D00E1FBE5 /* mode4.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951D17829B4500A212AC /* mode4.c */; };
-		C604DF4225C7C71500E1FBE5 /* cdc.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AAC2183C815E009F8B71 /* cdc.c */; };
-		C604DF4325C7C71E00E1FBE5 /* misc.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951A17829B4500A212AC /* misc.c */; };
-		C604DF4425C7C72B00E1FBE5 /* eeprom.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951317829B4500A212AC /* eeprom.c */; };
-		C604DF4525C7C78300E1FBE5 /* cdd.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AAC3183C815E009F8B71 /* cdd.c */; };
-		C604DF4625C7C78300E1FBE5 /* cue.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94FC17829B4400A212AC /* cue.c */; };
-		C604DF4725C7C78300E1FBE5 /* mcd.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E45B9B17E67B560079D59E /* mcd.c */; };
-		C604DF4825C7C78300E1FBE5 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950217829B4400A212AC /* memory.c */; };
-		C604DF4925C7C78300E1FBE5 /* sek.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950A17829B4500A212AC /* sek.c */; };
-		C604DF4A25C7C78300E1FBE5 /* debug.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950B17829B4500A212AC /* debug.c */; };
-		C604DF4B25C7C78300E1FBE5 /* media.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951517829B4500A212AC /* media.c */; };
-		C604DF4C25C7C78300E1FBE5 /* patch.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951E17829B4500A212AC /* patch.c */; };
-		C604DF4D25C7C78300E1FBE5 /* sms.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952917829B4500A212AC /* sms.c */; };
-		C604DF4E25C7C79300E1FBE5 /* misc.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950417829B4400A212AC /* misc.c */; };
-		C604DF4F25C7C7BA00E1FBE5 /* pcm.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950617829B4500A212AC /* pcm.c */; };
 		C604DF5225C7C7E500E1FBE5 /* eeprom_spi.h in Headers */ = {isa = PBXBuildFile; fileRef = C604DF5025C7C7E500E1FBE5 /* eeprom_spi.h */; };
 		C604DF5325C7C7E500E1FBE5 /* eeprom_spi.h in Headers */ = {isa = PBXBuildFile; fileRef = C604DF5025C7C7E500E1FBE5 /* eeprom_spi.h */; };
-		C604DF5525C7C7E500E1FBE5 /* eeprom_spi.c in Sources */ = {isa = PBXBuildFile; fileRef = C604DF5125C7C7E500E1FBE5 /* eeprom_spi.c */; };
-		C604DF5625C7C7FB00E1FBE5 /* 32x.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E017829B4400A212AC /* 32x.c */; };
-		C604DF5725C7C80500E1FBE5 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E317829B4400A212AC /* memory.c */; };
-		C604DF5825C7C80E00E1FBE5 /* draw.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950E17829B4500A212AC /* draw.c */; };
-		C604DF5925C7C81600E1FBE5 /* pwm.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E417829B4400A212AC /* pwm.c */; };
-		C604DF5A25C7C81F00E1FBE5 /* sh2soc.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E45B9E17E67C630079D59E /* sh2soc.c */; };
-		C604DF5B25C7C83600E1FBE5 /* gfx.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AACA183C81BA009F8B71 /* gfx.c */; };
-		C604DF5C25C7C84200E1FBE5 /* pico.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952217829B4500A212AC /* pico.c */; };
-		C604DF5D25C7C85300E1FBE5 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952117829B4500A212AC /* memory.c */; };
-		C604DF5E25C7C85A00E1FBE5 /* ssp16.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94EF17829B4400A212AC /* ssp16.c */; };
-		C604DF5F25C7C86700E1FBE5 /* sn76496.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952E17829B4500A212AC /* sn76496.c */; };
-		C604DF6025C7C86F00E1FBE5 /* sound.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953017829B4500A212AC /* sound.c */; };
-		C604DF6125C7C87800E1FBE5 /* ym2612.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953117829B4500A212AC /* ym2612.c */; };
-		C604DF6225C7C87D00E1FBE5 /* mix.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952B17829B4500A212AC /* mix.c */; };
-		C604DF6325C7C88900E1FBE5 /* famec.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94C817829B4400A212AC /* famec.c */; };
-		C604DF6425C7C88F00E1FBE5 /* cd_image.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AAC1183C815E009F8B71 /* cd_image.c */; };
-		C604DF6525C7C89B00E1FBE5 /* cz80.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94B017829B4400A212AC /* cz80.c */; };
-		C604DF6625C7C8A500E1FBE5 /* cmn.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94BE17829B4400A212AC /* cmn.c */; };
-		C604DF6725C7C8B800E1FBE5 /* sh2.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94DC17829B4400A212AC /* sh2.c */; };
-		C604DF6825C7C8BF00E1FBE5 /* sh2pico.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94DB17829B4400A212AC /* sh2pico.c */; };
-		C604DF6925C7C8C800E1FBE5 /* mp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B954517829B4500A212AC /* mp3.c */; };
-		C604DF6A25C7C8DF00E1FBE5 /* mp3_dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B954717829B4500A212AC /* mp3_dummy.c */; };
-		C604DF6B25C7CAA700E1FBE5 /* xpcm.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952317829B4500A212AC /* xpcm.c */; };
-		C604DF6C25C7CABF00E1FBE5 /* gfx_dma.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AAC9183C81BA009F8B71 /* gfx_dma.c */; };
-		C604DF6D25C7CACE00E1FBE5 /* carthw.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E817829B4400A212AC /* carthw.c */; };
-		C604DF6E25C7CAD500E1FBE5 /* svp.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94F217829B4400A212AC /* svp.c */; };
-		C604DF6F25C7CAF700E1FBE5 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94EE17829B4400A212AC /* memory.c */; };
-		C604DF8425C7CB6B00E1FBE5 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = C604DF7425C7CB6B00E1FBE5 /* libretro.c */; };
 		C604DF8525C7CB6B00E1FBE5 /* libretro.h in Headers */ = {isa = PBXBuildFile; fileRef = C604DF7525C7CB6B00E1FBE5 /* libretro.h */; };
 		C604DF8625C7CB6B00E1FBE5 /* libretro.h in Headers */ = {isa = PBXBuildFile; fileRef = C604DF7525C7CB6B00E1FBE5 /* libretro.h */; };
-		C610F16F25CF2A0A006D4A63 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94EE17829B4400A212AC /* memory.c */; };
-		C610F17025CF2A0A006D4A63 /* svp.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94F217829B4400A212AC /* svp.c */; };
-		C610F17125CF2A0A006D4A63 /* carthw.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E817829B4400A212AC /* carthw.c */; };
-		C610F17225CF2A0A006D4A63 /* gfx_dma.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AAC9183C81BA009F8B71 /* gfx_dma.c */; };
-		C610F17325CF2A0A006D4A63 /* xpcm.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952317829B4500A212AC /* xpcm.c */; };
-		C610F17425CF2A0A006D4A63 /* mp3_dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B954717829B4500A212AC /* mp3_dummy.c */; };
-		C610F17525CF2A0A006D4A63 /* mp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B954517829B4500A212AC /* mp3.c */; };
-		C610F17625CF2A0A006D4A63 /* sh2pico.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94DB17829B4400A212AC /* sh2pico.c */; };
-		C610F17725CF2A0A006D4A63 /* sh2.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94DC17829B4400A212AC /* sh2.c */; };
-		C610F17825CF2A0A006D4A63 /* cmn.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94BE17829B4400A212AC /* cmn.c */; };
-		C610F17925CF2A0A006D4A63 /* cz80.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94B017829B4400A212AC /* cz80.c */; };
-		C610F17A25CF2A0A006D4A63 /* cd_image.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AAC1183C815E009F8B71 /* cd_image.c */; };
-		C610F17B25CF2A0A006D4A63 /* famec.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94C817829B4400A212AC /* famec.c */; };
-		C610F17C25CF2A0A006D4A63 /* mix.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952B17829B4500A212AC /* mix.c */; };
-		C610F17D25CF2A0A006D4A63 /* ym2612.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953117829B4500A212AC /* ym2612.c */; };
-		C610F17E25CF2A0A006D4A63 /* sound.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953017829B4500A212AC /* sound.c */; };
-		C610F17F25CF2A0A006D4A63 /* sn76496.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952E17829B4500A212AC /* sn76496.c */; };
-		C610F18025CF2A0A006D4A63 /* ssp16.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94EF17829B4400A212AC /* ssp16.c */; };
-		C610F18125CF2A0A006D4A63 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952117829B4500A212AC /* memory.c */; };
-		C610F18225CF2A0A006D4A63 /* pico.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952217829B4500A212AC /* pico.c */; };
-		C610F18325CF2A0A006D4A63 /* gfx.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AACA183C81BA009F8B71 /* gfx.c */; };
-		C610F18425CF2A0A006D4A63 /* sh2soc.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E45B9E17E67C630079D59E /* sh2soc.c */; };
-		C610F18525CF2A0A006D4A63 /* pwm.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E417829B4400A212AC /* pwm.c */; };
-		C610F18625CF2A0A006D4A63 /* draw.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950E17829B4500A212AC /* draw.c */; };
-		C610F18725CF2A0A006D4A63 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E317829B4400A212AC /* memory.c */; };
-		C610F18825CF2A0A006D4A63 /* 32x.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E017829B4400A212AC /* 32x.c */; };
-		C610F18925CF2A0A006D4A63 /* pcm.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950617829B4500A212AC /* pcm.c */; };
-		C610F18A25CF2A0A006D4A63 /* misc.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950417829B4400A212AC /* misc.c */; };
-		C610F18B25CF2A0A006D4A63 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = C604DF7425C7CB6B00E1FBE5 /* libretro.c */; };
-		C610F18C25CF2A0A006D4A63 /* cdd.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AAC3183C815E009F8B71 /* cdd.c */; };
-		C610F18D25CF2A0A006D4A63 /* cue.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94FC17829B4400A212AC /* cue.c */; };
-		C610F18E25CF2A0A006D4A63 /* mcd.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E45B9B17E67B560079D59E /* mcd.c */; };
-		C610F18F25CF2A0A006D4A63 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950217829B4400A212AC /* memory.c */; };
-		C610F19025CF2A0A006D4A63 /* sek.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950A17829B4500A212AC /* sek.c */; };
-		C610F19125CF2A0A006D4A63 /* debug.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950B17829B4500A212AC /* debug.c */; };
-		C610F19225CF2A0A006D4A63 /* media.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951517829B4500A212AC /* media.c */; };
-		C610F19325CF2A0A006D4A63 /* patch.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951E17829B4500A212AC /* patch.c */; };
-		C610F19425CF2A0A006D4A63 /* sms.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952917829B4500A212AC /* sms.c */; };
-		C610F19525CF2A0A006D4A63 /* eeprom.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951317829B4500A212AC /* eeprom.c */; };
-		C610F19625CF2A0A006D4A63 /* misc.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951A17829B4500A212AC /* misc.c */; };
-		C610F19725CF2A0A006D4A63 /* cdc.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AAC2183C815E009F8B71 /* cdc.c */; };
-		C610F19825CF2A0A006D4A63 /* mode4.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951D17829B4500A212AC /* mode4.c */; };
-		C610F19925CF2A0A006D4A63 /* draw.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E117829B4400A212AC /* draw.c */; };
-		C610F19A25CF2A0A006D4A63 /* draw2.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950F17829B4500A212AC /* draw2.c */; };
-		C610F19B25CF2A0A006D4A63 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951617829B4500A212AC /* memory.c */; };
-		C610F19C25CF2A0A006D4A63 /* sek.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952817829B4500A212AC /* sek.c */; };
-		C610F19D25CF2A0A006D4A63 /* state.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953417829B4500A212AC /* state.c */; };
-		C610F19E25CF2A0A006D4A63 /* eeprom_spi.c in Sources */ = {isa = PBXBuildFile; fileRef = C604DF5125C7C7E500E1FBE5 /* eeprom_spi.c */; };
-		C610F19F25CF2A0A006D4A63 /* videoport.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953517829B4500A212AC /* videoport.c */; };
-		C610F1A025CF2A0A006D4A63 /* z80if.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953617829B4500A212AC /* z80if.c */; };
-		C610F1A125CF2A0A006D4A63 /* cart.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E617829B4400A212AC /* cart.c */; };
-		C610F1A225CF2A0A006D4A63 /* pico.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952417829B4500A212AC /* pico.c */; };
-		C610F1A325CF2A0A006D4A63 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963017829B4600A212AC /* unzip.c */; };
-		C610F1A425CF2A0A006D4A63 /* adler32.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963517829B4600A212AC /* adler32.c */; };
-		C610F1A525CF2A0A006D4A63 /* compress.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963717829B4600A212AC /* compress.c */; };
-		C610F1A625CF2A0A006D4A63 /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963817829B4600A212AC /* crc32.c */; };
-		C610F1A725CF2A0A006D4A63 /* deflate.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963A17829B4600A212AC /* deflate.c */; };
-		C610F1A825CF2A0A006D4A63 /* gzio.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963D17829B4600A212AC /* gzio.c */; };
-		C610F1A925CF2A0A006D4A63 /* inffast.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964117829B4600A212AC /* inffast.c */; };
-		C610F1AA25CF2A0A006D4A63 /* inflate.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964417829B4600A212AC /* inflate.c */; };
-		C610F1AB25CF2A0A006D4A63 /* inftrees.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964617829B4600A212AC /* inftrees.c */; };
-		C610F1AC25CF2A0A006D4A63 /* trees.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964B17829B4600A212AC /* trees.c */; };
-		C610F1AD25CF2A0A006D4A63 /* uncompr.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964D17829B4600A212AC /* uncompr.c */; };
-		C610F1AE25CF2A0A006D4A63 /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B965017829B4600A212AC /* zutil.c */; };
 		C610F1AF25CF2A0A006D4A63 /* PicodriveGameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 82287C34101E9DB40072172D /* PicodriveGameCore.m */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B3411BA7276B315E00D85327 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3411B5B276B312C00D85327;
+			remoteInfo = "picodrive-iOS";
+		};
+		B3411BF5276B317400D85327 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3411BA9276B316200D85327;
+			remoteInfo = "picodrive-tvOS";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		B3411B5A276B312C00D85327 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3411BED276B316200D85327 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		82287C33101E9DB40072172D /* PicodriveGameCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PicodriveGameCore.h; sourceTree = "<group>"; };
@@ -567,6 +607,9 @@
 		94E45B9A17E67B560079D59E /* mcd_arm.s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = mcd_arm.s; sourceTree = "<group>"; };
 		94E45B9B17E67B560079D59E /* mcd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mcd.c; sourceTree = "<group>"; };
 		94E45B9E17E67C630079D59E /* sh2soc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sh2soc.c; sourceTree = "<group>"; };
+		B3411B57276B30AC00D85327 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3411B5C276B312C00D85327 /* libpicodrive-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libpicodrive-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3411BF3276B316200D85327 /* libpicodrive-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libpicodrive-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B34CB0EB2274B173009134B4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B3547B5C205858D800CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B37937AC1D6BCF8100EBAE81 /* PicoDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PicoDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -586,11 +629,26 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		B3411B59276B312C00D85327 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3411BEC276B316200D85327 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B37937A81D6BCF8100EBAE81 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				B3D2E38A1D6E7E5C0058544D /* PVSupport.framework in Frameworks */,
+				B3411BA6276B315E00D85327 /* libpicodrive-iOS.a in Frameworks */,
 				B37937FD1D6BDF5F00EBAE81 /* libz.tbd in Frameworks */,
 				B37937FB1D6BDF5A00EBAE81 /* Foundation.framework in Frameworks */,
 			);
@@ -603,6 +661,7 @@
 				B3D2E38B1D6E7E650058544D /* PVSupport.framework in Frameworks */,
 				B3A3E9C91D6BFF6F00CCD7C8 /* libz.tbd in Frameworks */,
 				B3A3E9CA1D6BFF6F00CCD7C8 /* Foundation.framework in Frameworks */,
+				B3411BF4276B317400D85327 /* libpicodrive-tvOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -654,6 +713,8 @@
 			children = (
 				B37937AC1D6BCF8100EBAE81 /* PicoDrive.framework */,
 				B3A3E9D41D6BFF6F00CCD7C8 /* PicoDrive.framework */,
+				B3411B5C276B312C00D85327 /* libpicodrive-iOS.a */,
+				B3411BF3276B316200D85327 /* libpicodrive-tvOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1439,6 +1500,7 @@
 		B37937F71D6BDF4E00EBAE81 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3411B57276B30AC00D85327 /* PVSupport.framework */,
 				B3D2E3891D6E7E5C0058544D /* PVSupport.framework */,
 				B3A3E9D61D6BFFEC00CCD7C8 /* PVSupport.framework */,
 				B37937FC1D6BDF5F00EBAE81 /* libz.tbd */,
@@ -1485,9 +1547,43 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		B37937AB1D6BCF8100EBAE81 /* PicoDrive-iOS */ = {
+		B3411B5B276B312C00D85327 /* picodrive-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B37937B11D6BCF8100EBAE81 /* Build configuration list for PBXNativeTarget "PicoDrive-iOS" */;
+			buildConfigurationList = B3411B62276B312C00D85327 /* Build configuration list for PBXNativeTarget "picodrive-iOS" */;
+			buildPhases = (
+				B3411B58276B312C00D85327 /* Sources */,
+				B3411B59276B312C00D85327 /* Frameworks */,
+				B3411B5A276B312C00D85327 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "picodrive-iOS";
+			productName = picodrive;
+			productReference = B3411B5C276B312C00D85327 /* libpicodrive-iOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B3411BA9276B316200D85327 /* picodrive-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3411BEF276B316200D85327 /* Build configuration list for PBXNativeTarget "picodrive-tvOS" */;
+			buildPhases = (
+				B3411BAA276B316200D85327 /* Sources */,
+				B3411BEC276B316200D85327 /* Frameworks */,
+				B3411BED276B316200D85327 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "picodrive-tvOS";
+			productName = picodrive;
+			productReference = B3411BF3276B316200D85327 /* libpicodrive-tvOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B37937AB1D6BCF8100EBAE81 /* PVPicoDrive-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B37937B11D6BCF8100EBAE81 /* Build configuration list for PBXNativeTarget "PVPicoDrive-iOS" */;
 			buildPhases = (
 				B37937A91D6BCF8100EBAE81 /* Headers */,
 				B37937A71D6BCF8100EBAE81 /* Sources */,
@@ -1497,15 +1593,16 @@
 			buildRules = (
 			);
 			dependencies = (
+				B3411BA8276B315E00D85327 /* PBXTargetDependency */,
 			);
-			name = "PicoDrive-iOS";
+			name = "PVPicoDrive-iOS";
 			productName = PicoDrive;
 			productReference = B37937AC1D6BCF8100EBAE81 /* PicoDrive.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		B3A3E9851D6BFF6F00CCD7C8 /* PicoDrive-tvOS */ = {
+		B3A3E9851D6BFF6F00CCD7C8 /* PVPicoDrive-tvOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3A3E9D11D6BFF6F00CCD7C8 /* Build configuration list for PBXNativeTarget "PicoDrive-tvOS" */;
+			buildConfigurationList = B3A3E9D11D6BFF6F00CCD7C8 /* Build configuration list for PBXNativeTarget "PVPicoDrive-tvOS" */;
 			buildPhases = (
 				B3A3E9CC1D6BFF6F00CCD7C8 /* Headers */,
 				B3A3E9861D6BFF6F00CCD7C8 /* Sources */,
@@ -1515,8 +1612,9 @@
 			buildRules = (
 			);
 			dependencies = (
+				B3411BF6276B317400D85327 /* PBXTargetDependency */,
 			);
-			name = "PicoDrive-tvOS";
+			name = "PVPicoDrive-tvOS";
 			productName = PicoDrive;
 			productReference = B3A3E9D41D6BFF6F00CCD7C8 /* PicoDrive.framework */;
 			productType = "com.apple.product-type.framework";
@@ -1532,6 +1630,9 @@
 				LastUpgradeCheck = 1300;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
+					B3411B5B276B312C00D85327 = {
+						CreatedOnToolsVersion = 13.2;
+					};
 					B37937AB1D6BCF8100EBAE81 = {
 						CreatedOnToolsVersion = 8.0;
 						ProvisioningStyle = Manual;
@@ -1553,8 +1654,10 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B37937AB1D6BCF8100EBAE81 /* PicoDrive-iOS */,
-				B3A3E9851D6BFF6F00CCD7C8 /* PicoDrive-tvOS */,
+				B37937AB1D6BCF8100EBAE81 /* PVPicoDrive-iOS */,
+				B3A3E9851D6BFF6F00CCD7C8 /* PVPicoDrive-tvOS */,
+				B3411B5B276B312C00D85327 /* picodrive-iOS */,
+				B3411BA9276B316200D85327 /* picodrive-tvOS */,
 			);
 		};
 /* End PBXProject section */
@@ -1581,74 +1684,152 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		B3411B58276B312C00D85327 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3411B9B276B314200D85327 /* mp3.c in Sources */,
+				B3411B83276B314200D85327 /* trees.c in Sources */,
+				B3411BA5276B314200D85327 /* draw2.c in Sources */,
+				B3411B92276B314200D85327 /* z80if.c in Sources */,
+				B3411B93276B314200D85327 /* zutil.c in Sources */,
+				B3411B84276B314200D85327 /* cdd.c in Sources */,
+				B3411B77276B314200D85327 /* uncompr.c in Sources */,
+				B3411B72276B314200D85327 /* patch.c in Sources */,
+				B3411B94276B314200D85327 /* pcm.c in Sources */,
+				B3411B9C276B314200D85327 /* gzio.c in Sources */,
+				B3411B74276B314200D85327 /* sound.c in Sources */,
+				B3411B70276B314200D85327 /* media.c in Sources */,
+				B3411BA2276B314200D85327 /* inflate.c in Sources */,
+				B3411B98276B314200D85327 /* eeprom.c in Sources */,
+				B3411B7B276B314200D85327 /* compress.c in Sources */,
+				B3411B6D276B314200D85327 /* sek.c in Sources */,
+				B3411B96276B314200D85327 /* debug.c in Sources */,
+				B3411B9D276B314200D85327 /* misc.c in Sources */,
+				B3411B86276B314200D85327 /* sh2pico.c in Sources */,
+				B3411B6E276B314200D85327 /* 32x.c in Sources */,
+				B3411B87276B314200D85327 /* xpcm.c in Sources */,
+				B3411BA4276B314200D85327 /* cmn.c in Sources */,
+				B3411B91276B314200D85327 /* videoport.c in Sources */,
+				B3411B6F276B314200D85327 /* famec.c in Sources */,
+				B3411B99276B314200D85327 /* ym2612.c in Sources */,
+				B3411B81276B314200D85327 /* deflate.c in Sources */,
+				B3411B82276B314200D85327 /* sh2.c in Sources */,
+				B3411BA1276B314200D85327 /* cdc.c in Sources */,
+				B3411B68276B314200D85327 /* gfx_dma.c in Sources */,
+				B3411B67276B314200D85327 /* cd_image.c in Sources */,
+				B3411B73276B314200D85327 /* memory.c in Sources */,
+				B3411B7E276B314200D85327 /* state.c in Sources */,
+				B3411B66276B314200D85327 /* cz80.c in Sources */,
+				B3411B89276B314200D85327 /* unzip.c in Sources */,
+				B3411B7F276B314200D85327 /* memory.c in Sources */,
+				B3411B80276B314200D85327 /* memory.c in Sources */,
+				B3411BA0276B314200D85327 /* eeprom_spi.c in Sources */,
+				B3411B8F276B314200D85327 /* pwm.c in Sources */,
+				B3411B9E276B314200D85327 /* draw.c in Sources */,
+				B3411B6C276B314200D85327 /* sn76496.c in Sources */,
+				B3411B97276B314200D85327 /* pico.c in Sources */,
+				B3411B95276B314200D85327 /* mcd.c in Sources */,
+				B3411B88276B314200D85327 /* memory.c in Sources */,
+				B3411B8B276B314200D85327 /* cue.c in Sources */,
+				B3411B6A276B314200D85327 /* mode4.c in Sources */,
+				B3411B8A276B314200D85327 /* svp.c in Sources */,
+				B3411B7D276B314200D85327 /* sms.c in Sources */,
+				B3411B9F276B314200D85327 /* misc.c in Sources */,
+				B3411B90276B314200D85327 /* ssp16.c in Sources */,
+				B3411B8E276B314200D85327 /* memory.c in Sources */,
+				B3411B7A276B314200D85327 /* sh2soc.c in Sources */,
+				B3411B71276B314200D85327 /* carthw.c in Sources */,
+				B3411B69276B314200D85327 /* mp3_dummy.c in Sources */,
+				B3411B79276B314200D85327 /* sek.c in Sources */,
+				B3411B78276B314200D85327 /* gfx.c in Sources */,
+				B3411B75276B314200D85327 /* crc32.c in Sources */,
+				B3411B85276B314200D85327 /* cart.c in Sources */,
+				B3411B8C276B314200D85327 /* inftrees.c in Sources */,
+				B3411B9A276B314200D85327 /* draw.c in Sources */,
+				B3411B6B276B314200D85327 /* mix.c in Sources */,
+				B3411B7C276B314200D85327 /* libretro.c in Sources */,
+				B3411B76276B314200D85327 /* inffast.c in Sources */,
+				B3411B8D276B314200D85327 /* adler32.c in Sources */,
+				B3411BA3276B314200D85327 /* pico.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3411BAA276B316200D85327 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3411BAB276B316200D85327 /* mp3.c in Sources */,
+				B3411BAC276B316200D85327 /* trees.c in Sources */,
+				B3411BAD276B316200D85327 /* draw2.c in Sources */,
+				B3411BAE276B316200D85327 /* z80if.c in Sources */,
+				B3411BAF276B316200D85327 /* zutil.c in Sources */,
+				B3411BB0276B316200D85327 /* cdd.c in Sources */,
+				B3411BB1276B316200D85327 /* uncompr.c in Sources */,
+				B3411BB2276B316200D85327 /* patch.c in Sources */,
+				B3411BB3276B316200D85327 /* pcm.c in Sources */,
+				B3411BB4276B316200D85327 /* gzio.c in Sources */,
+				B3411BB5276B316200D85327 /* sound.c in Sources */,
+				B3411BB6276B316200D85327 /* media.c in Sources */,
+				B3411BB7276B316200D85327 /* inflate.c in Sources */,
+				B3411BB8276B316200D85327 /* eeprom.c in Sources */,
+				B3411BB9276B316200D85327 /* compress.c in Sources */,
+				B3411BBA276B316200D85327 /* sek.c in Sources */,
+				B3411BBB276B316200D85327 /* debug.c in Sources */,
+				B3411BBC276B316200D85327 /* misc.c in Sources */,
+				B3411BBD276B316200D85327 /* sh2pico.c in Sources */,
+				B3411BBE276B316200D85327 /* 32x.c in Sources */,
+				B3411BBF276B316200D85327 /* xpcm.c in Sources */,
+				B3411BC0276B316200D85327 /* cmn.c in Sources */,
+				B3411BC1276B316200D85327 /* videoport.c in Sources */,
+				B3411BC2276B316200D85327 /* famec.c in Sources */,
+				B3411BC3276B316200D85327 /* ym2612.c in Sources */,
+				B3411BC4276B316200D85327 /* deflate.c in Sources */,
+				B3411BC5276B316200D85327 /* sh2.c in Sources */,
+				B3411BC6276B316200D85327 /* cdc.c in Sources */,
+				B3411BC7276B316200D85327 /* gfx_dma.c in Sources */,
+				B3411BC8276B316200D85327 /* cd_image.c in Sources */,
+				B3411BC9276B316200D85327 /* memory.c in Sources */,
+				B3411BCA276B316200D85327 /* state.c in Sources */,
+				B3411BCB276B316200D85327 /* cz80.c in Sources */,
+				B3411BCC276B316200D85327 /* unzip.c in Sources */,
+				B3411BCD276B316200D85327 /* memory.c in Sources */,
+				B3411BCE276B316200D85327 /* memory.c in Sources */,
+				B3411BCF276B316200D85327 /* eeprom_spi.c in Sources */,
+				B3411BD0276B316200D85327 /* pwm.c in Sources */,
+				B3411BD1276B316200D85327 /* draw.c in Sources */,
+				B3411BD2276B316200D85327 /* sn76496.c in Sources */,
+				B3411BD3276B316200D85327 /* pico.c in Sources */,
+				B3411BD4276B316200D85327 /* mcd.c in Sources */,
+				B3411BD5276B316200D85327 /* memory.c in Sources */,
+				B3411BD6276B316200D85327 /* cue.c in Sources */,
+				B3411BD7276B316200D85327 /* mode4.c in Sources */,
+				B3411BD8276B316200D85327 /* svp.c in Sources */,
+				B3411BD9276B316200D85327 /* sms.c in Sources */,
+				B3411BDA276B316200D85327 /* misc.c in Sources */,
+				B3411BDB276B316200D85327 /* ssp16.c in Sources */,
+				B3411BDC276B316200D85327 /* memory.c in Sources */,
+				B3411BDD276B316200D85327 /* sh2soc.c in Sources */,
+				B3411BDE276B316200D85327 /* carthw.c in Sources */,
+				B3411BDF276B316200D85327 /* mp3_dummy.c in Sources */,
+				B3411BE0276B316200D85327 /* sek.c in Sources */,
+				B3411BE1276B316200D85327 /* gfx.c in Sources */,
+				B3411BE2276B316200D85327 /* crc32.c in Sources */,
+				B3411BE3276B316200D85327 /* cart.c in Sources */,
+				B3411BE4276B316200D85327 /* inftrees.c in Sources */,
+				B3411BE6276B316200D85327 /* draw.c in Sources */,
+				B3411BE7276B316200D85327 /* mix.c in Sources */,
+				B3411BE8276B316200D85327 /* libretro.c in Sources */,
+				B3411BE9276B316200D85327 /* inffast.c in Sources */,
+				B3411BEA276B316200D85327 /* adler32.c in Sources */,
+				B3411BEB276B316200D85327 /* pico.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B37937A71D6BCF8100EBAE81 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C604DF6F25C7CAF700E1FBE5 /* memory.c in Sources */,
-				C604DF6E25C7CAD500E1FBE5 /* svp.c in Sources */,
-				C604DF6D25C7CACE00E1FBE5 /* carthw.c in Sources */,
-				C604DF6C25C7CABF00E1FBE5 /* gfx_dma.c in Sources */,
-				C604DF6B25C7CAA700E1FBE5 /* xpcm.c in Sources */,
-				C604DF6A25C7C8DF00E1FBE5 /* mp3_dummy.c in Sources */,
-				C604DF6925C7C8C800E1FBE5 /* mp3.c in Sources */,
-				C604DF6825C7C8BF00E1FBE5 /* sh2pico.c in Sources */,
-				C604DF6725C7C8B800E1FBE5 /* sh2.c in Sources */,
-				C604DF6625C7C8A500E1FBE5 /* cmn.c in Sources */,
-				C604DF6525C7C89B00E1FBE5 /* cz80.c in Sources */,
-				C604DF6425C7C88F00E1FBE5 /* cd_image.c in Sources */,
-				C604DF6325C7C88900E1FBE5 /* famec.c in Sources */,
-				C604DF6225C7C87D00E1FBE5 /* mix.c in Sources */,
-				C604DF6125C7C87800E1FBE5 /* ym2612.c in Sources */,
-				C604DF6025C7C86F00E1FBE5 /* sound.c in Sources */,
-				C604DF5F25C7C86700E1FBE5 /* sn76496.c in Sources */,
-				C604DF5E25C7C85A00E1FBE5 /* ssp16.c in Sources */,
-				C604DF5D25C7C85300E1FBE5 /* memory.c in Sources */,
-				C604DF5C25C7C84200E1FBE5 /* pico.c in Sources */,
-				C604DF5B25C7C83600E1FBE5 /* gfx.c in Sources */,
-				C604DF5A25C7C81F00E1FBE5 /* sh2soc.c in Sources */,
-				C604DF5925C7C81600E1FBE5 /* pwm.c in Sources */,
-				C604DF5825C7C80E00E1FBE5 /* draw.c in Sources */,
-				C604DF5725C7C80500E1FBE5 /* memory.c in Sources */,
-				C604DF5625C7C7FB00E1FBE5 /* 32x.c in Sources */,
-				C604DF4F25C7C7BA00E1FBE5 /* pcm.c in Sources */,
-				C604DF4E25C7C79300E1FBE5 /* misc.c in Sources */,
-				C604DF8425C7CB6B00E1FBE5 /* libretro.c in Sources */,
-				C604DF4525C7C78300E1FBE5 /* cdd.c in Sources */,
-				C604DF4625C7C78300E1FBE5 /* cue.c in Sources */,
-				C604DF4725C7C78300E1FBE5 /* mcd.c in Sources */,
-				C604DF4825C7C78300E1FBE5 /* memory.c in Sources */,
-				C604DF4925C7C78300E1FBE5 /* sek.c in Sources */,
-				C604DF4A25C7C78300E1FBE5 /* debug.c in Sources */,
-				C604DF4B25C7C78300E1FBE5 /* media.c in Sources */,
-				C604DF4C25C7C78300E1FBE5 /* patch.c in Sources */,
-				C604DF4D25C7C78300E1FBE5 /* sms.c in Sources */,
-				C604DF4425C7C72B00E1FBE5 /* eeprom.c in Sources */,
-				C604DF4325C7C71E00E1FBE5 /* misc.c in Sources */,
-				C604DF4225C7C71500E1FBE5 /* cdc.c in Sources */,
-				C604DF4125C7C70D00E1FBE5 /* mode4.c in Sources */,
-				C604DF3F25C7C70600E1FBE5 /* draw.c in Sources */,
-				C604DF4025C7C70600E1FBE5 /* draw2.c in Sources */,
-				C604DF3A25C7C55B00E1FBE5 /* memory.c in Sources */,
-				C604DF3B25C7C55B00E1FBE5 /* sek.c in Sources */,
-				C604DF3C25C7C55B00E1FBE5 /* state.c in Sources */,
-				C604DF5525C7C7E500E1FBE5 /* eeprom_spi.c in Sources */,
-				C604DF3D25C7C55B00E1FBE5 /* videoport.c in Sources */,
-				C604DF3E25C7C55B00E1FBE5 /* z80if.c in Sources */,
-				C604DF2C25C7C52200E1FBE5 /* cart.c in Sources */,
-				C604DF2D25C7C52200E1FBE5 /* pico.c in Sources */,
-				C604DF2E25C7C52200E1FBE5 /* unzip.c in Sources */,
-				C604DF2F25C7C52200E1FBE5 /* adler32.c in Sources */,
-				C604DF3025C7C52200E1FBE5 /* compress.c in Sources */,
-				C604DF3125C7C52200E1FBE5 /* crc32.c in Sources */,
-				C604DF3225C7C52200E1FBE5 /* deflate.c in Sources */,
-				C604DF3325C7C52200E1FBE5 /* gzio.c in Sources */,
-				C604DF3425C7C52200E1FBE5 /* inffast.c in Sources */,
-				C604DF3525C7C52200E1FBE5 /* inflate.c in Sources */,
-				C604DF3625C7C52200E1FBE5 /* inftrees.c in Sources */,
-				C604DF3725C7C52200E1FBE5 /* trees.c in Sources */,
-				C604DF3825C7C52200E1FBE5 /* uncompr.c in Sources */,
-				C604DF3925C7C52200E1FBE5 /* zutil.c in Sources */,
 				B3A3E9871D6BFF6F00CCD7C8 /* PicodriveGameCore.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1657,75 +1838,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C610F16F25CF2A0A006D4A63 /* memory.c in Sources */,
-				C610F17025CF2A0A006D4A63 /* svp.c in Sources */,
-				C610F17125CF2A0A006D4A63 /* carthw.c in Sources */,
-				C610F17225CF2A0A006D4A63 /* gfx_dma.c in Sources */,
-				C610F17325CF2A0A006D4A63 /* xpcm.c in Sources */,
-				C610F17425CF2A0A006D4A63 /* mp3_dummy.c in Sources */,
-				C610F17525CF2A0A006D4A63 /* mp3.c in Sources */,
-				C610F17625CF2A0A006D4A63 /* sh2pico.c in Sources */,
-				C610F17725CF2A0A006D4A63 /* sh2.c in Sources */,
-				C610F17825CF2A0A006D4A63 /* cmn.c in Sources */,
-				C610F17925CF2A0A006D4A63 /* cz80.c in Sources */,
-				C610F17A25CF2A0A006D4A63 /* cd_image.c in Sources */,
-				C610F17B25CF2A0A006D4A63 /* famec.c in Sources */,
-				C610F17C25CF2A0A006D4A63 /* mix.c in Sources */,
-				C610F17D25CF2A0A006D4A63 /* ym2612.c in Sources */,
-				C610F17E25CF2A0A006D4A63 /* sound.c in Sources */,
-				C610F17F25CF2A0A006D4A63 /* sn76496.c in Sources */,
-				C610F18025CF2A0A006D4A63 /* ssp16.c in Sources */,
-				C610F18125CF2A0A006D4A63 /* memory.c in Sources */,
-				C610F18225CF2A0A006D4A63 /* pico.c in Sources */,
-				C610F18325CF2A0A006D4A63 /* gfx.c in Sources */,
-				C610F18425CF2A0A006D4A63 /* sh2soc.c in Sources */,
-				C610F18525CF2A0A006D4A63 /* pwm.c in Sources */,
-				C610F18625CF2A0A006D4A63 /* draw.c in Sources */,
-				C610F18725CF2A0A006D4A63 /* memory.c in Sources */,
-				C610F18825CF2A0A006D4A63 /* 32x.c in Sources */,
-				C610F18925CF2A0A006D4A63 /* pcm.c in Sources */,
-				C610F18A25CF2A0A006D4A63 /* misc.c in Sources */,
-				C610F18B25CF2A0A006D4A63 /* libretro.c in Sources */,
-				C610F18C25CF2A0A006D4A63 /* cdd.c in Sources */,
-				C610F18D25CF2A0A006D4A63 /* cue.c in Sources */,
-				C610F18E25CF2A0A006D4A63 /* mcd.c in Sources */,
-				C610F18F25CF2A0A006D4A63 /* memory.c in Sources */,
-				C610F19025CF2A0A006D4A63 /* sek.c in Sources */,
-				C610F19125CF2A0A006D4A63 /* debug.c in Sources */,
-				C610F19225CF2A0A006D4A63 /* media.c in Sources */,
-				C610F19325CF2A0A006D4A63 /* patch.c in Sources */,
-				C610F19425CF2A0A006D4A63 /* sms.c in Sources */,
-				C610F19525CF2A0A006D4A63 /* eeprom.c in Sources */,
-				C610F19625CF2A0A006D4A63 /* misc.c in Sources */,
-				C610F19725CF2A0A006D4A63 /* cdc.c in Sources */,
-				C610F19825CF2A0A006D4A63 /* mode4.c in Sources */,
-				C610F19925CF2A0A006D4A63 /* draw.c in Sources */,
-				C610F19A25CF2A0A006D4A63 /* draw2.c in Sources */,
-				C610F19B25CF2A0A006D4A63 /* memory.c in Sources */,
-				C610F19C25CF2A0A006D4A63 /* sek.c in Sources */,
-				C610F19D25CF2A0A006D4A63 /* state.c in Sources */,
-				C610F19E25CF2A0A006D4A63 /* eeprom_spi.c in Sources */,
-				C610F19F25CF2A0A006D4A63 /* videoport.c in Sources */,
-				C610F1A025CF2A0A006D4A63 /* z80if.c in Sources */,
-				C610F1A125CF2A0A006D4A63 /* cart.c in Sources */,
-				C610F1A225CF2A0A006D4A63 /* pico.c in Sources */,
-				C610F1A325CF2A0A006D4A63 /* unzip.c in Sources */,
-				C610F1A425CF2A0A006D4A63 /* adler32.c in Sources */,
-				C610F1A525CF2A0A006D4A63 /* compress.c in Sources */,
-				C610F1A625CF2A0A006D4A63 /* crc32.c in Sources */,
-				C610F1A725CF2A0A006D4A63 /* deflate.c in Sources */,
-				C610F1A825CF2A0A006D4A63 /* gzio.c in Sources */,
-				C610F1A925CF2A0A006D4A63 /* inffast.c in Sources */,
-				C610F1AA25CF2A0A006D4A63 /* inflate.c in Sources */,
-				C610F1AB25CF2A0A006D4A63 /* inftrees.c in Sources */,
-				C610F1AC25CF2A0A006D4A63 /* trees.c in Sources */,
-				C610F1AD25CF2A0A006D4A63 /* uncompr.c in Sources */,
-				C610F1AE25CF2A0A006D4A63 /* zutil.c in Sources */,
 				C610F1AF25CF2A0A006D4A63 /* PicodriveGameCore.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B3411BA8276B315E00D85327 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3411B5B276B312C00D85327 /* picodrive-iOS */;
+			targetProxy = B3411BA7276B315E00D85327 /* PBXContainerItemProxy */;
+		};
+		B3411BF6276B317400D85327 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3411BA9276B316200D85327 /* picodrive-tvOS */;
+			targetProxy = B3411BF5276B317400D85327 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		089C167DFE841241C02AAC07 /* InfoPlist.strings */ = {
@@ -1780,6 +1910,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				SDKROOT = iphoneos;
@@ -1827,6 +1958,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				SDKROOT = iphoneos;
@@ -1874,6 +2006,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				OTHER_CFLAGS = "";
 				SDKROOT = iphoneos;
 			};
@@ -1996,6 +2129,299 @@
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
+			};
+			name = Archive;
+		};
+		B3411B63276B312C00D85327 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../OpenEmu\"/**",
+					"\"$(SRCROOT)/openemu\"/**",
+					"\"$(SRCROOT)/platform/linux\"",
+					"\"$(SRCROOT)/pico\"",
+					"\"$(SRCROOT)\"",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = (
+					"-fPIC",
+					"-DEMU_F68K",
+					"-D_USE_CZ80",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,6";
+				USER_HEADER_SEARCH_PATHS = "\"$(PROJECT_DIR)\"";
+			};
+			name = Debug;
+		};
+		B3411B64276B312C00D85327 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../OpenEmu\"/**",
+					"\"$(SRCROOT)/openemu\"/**",
+					"\"$(SRCROOT)/platform/linux\"",
+					"\"$(SRCROOT)/pico\"",
+					"\"$(SRCROOT)\"",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = (
+					"-fPIC",
+					"-DNDEBUG",
+					"-DEMU_F68K",
+					"-D_USE_CZ80",
+					"-falign-functions=2",
+					"-Wall",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,6";
+				USER_HEADER_SEARCH_PATHS = "\"$(PROJECT_DIR)\"";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B3411B65276B312C00D85327 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../OpenEmu\"/**",
+					"\"$(SRCROOT)/openemu\"/**",
+					"\"$(SRCROOT)/platform/linux\"",
+					"\"$(SRCROOT)/pico\"",
+					"\"$(SRCROOT)\"",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = (
+					"-fPIC",
+					"-DNDEBUG",
+					"-DEMU_F68K",
+					"-D_USE_CZ80",
+					"-falign-functions=2",
+					"-Wall",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,6";
+				USER_HEADER_SEARCH_PATHS = "\"$(PROJECT_DIR)\"";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
+		B3411BF0276B316200D85327 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../OpenEmu\"/**",
+					"\"$(SRCROOT)/openemu\"/**",
+					"\"$(SRCROOT)/platform/linux\"",
+					"\"$(SRCROOT)/pico\"",
+					"\"$(SRCROOT)\"",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = (
+					"-fPIC",
+					"-DEMU_F68K",
+					"-D_USE_CZ80",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 3;
+				USER_HEADER_SEARCH_PATHS = "\"$(PROJECT_DIR)\"";
+			};
+			name = Debug;
+		};
+		B3411BF1276B316200D85327 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../OpenEmu\"/**",
+					"\"$(SRCROOT)/openemu\"/**",
+					"\"$(SRCROOT)/platform/linux\"",
+					"\"$(SRCROOT)/pico\"",
+					"\"$(SRCROOT)\"",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = (
+					"-fPIC",
+					"-DNDEBUG",
+					"-DEMU_F68K",
+					"-D_USE_CZ80",
+					"-falign-functions=2",
+					"-Wall",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 3;
+				USER_HEADER_SEARCH_PATHS = "\"$(PROJECT_DIR)\"";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B3411BF2276B316200D85327 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../OpenEmu\"/**",
+					"\"$(SRCROOT)/openemu\"/**",
+					"\"$(SRCROOT)/platform/linux\"",
+					"\"$(SRCROOT)/pico\"",
+					"\"$(SRCROOT)\"",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = (
+					"-fPIC",
+					"-DNDEBUG",
+					"-DEMU_F68K",
+					"-D_USE_CZ80",
+					"-falign-functions=2",
+					"-Wall",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 3;
+				USER_HEADER_SEARCH_PATHS = "\"$(PROJECT_DIR)\"";
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Archive;
 		};
@@ -2258,7 +2684,27 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B37937B11D6BCF8100EBAE81 /* Build configuration list for PBXNativeTarget "PicoDrive-iOS" */ = {
+		B3411B62276B312C00D85327 /* Build configuration list for PBXNativeTarget "picodrive-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3411B63276B312C00D85327 /* Debug */,
+				B3411B64276B312C00D85327 /* Release */,
+				B3411B65276B312C00D85327 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3411BEF276B316200D85327 /* Build configuration list for PBXNativeTarget "picodrive-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3411BF0276B316200D85327 /* Debug */,
+				B3411BF1276B316200D85327 /* Release */,
+				B3411BF2276B316200D85327 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B37937B11D6BCF8100EBAE81 /* Build configuration list for PBXNativeTarget "PVPicoDrive-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B37937B21D6BCF8100EBAE81 /* Debug */,
@@ -2268,7 +2714,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3A3E9D11D6BFF6F00CCD7C8 /* Build configuration list for PBXNativeTarget "PicoDrive-tvOS" */ = {
+		B3A3E9D11D6BFF6F00CCD7C8 /* Build configuration list for PBXNativeTarget "PVPicoDrive-tvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3A3E9D21D6BFF6F00CCD7C8 /* Debug */,

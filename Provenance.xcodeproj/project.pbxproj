@@ -219,6 +219,8 @@
 		B33625FD26EDF88200DC41EA /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FB26EDF88200DC41EA /* Metal.framework */; };
 		B336B91926B3A21800960A81 /* QuickTableViewController in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B336B91826B3A21800960A81 /* QuickTableViewController */; };
 		B336B91B26B3A26400960A81 /* QuickTableViewController in Frameworks */ = {isa = PBXBuildFile; productRef = B336B91A26B3A26400960A81 /* QuickTableViewController */; };
+		B3411BF8276B37DE00D85327 /* PVDSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411BF7276B37DE00D85327 /* PVDSControllerViewController.swift */; };
+		B3411BF9276B37DE00D85327 /* PVDSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411BF7276B37DE00D85327 /* PVDSControllerViewController.swift */; };
 		B3437176276B0B650014F87C /* PVIntellivisionControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3437173276B0B650014F87C /* PVIntellivisionControllerViewController.swift */; };
 		B3437177276B0B650014F87C /* PVIntellivisionControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3437173276B0B650014F87C /* PVIntellivisionControllerViewController.swift */; };
 		B3437178276B0B650014F87C /* PV3DOControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3437174276B0B650014F87C /* PV3DOControllerViewController.swift */; };
@@ -308,6 +310,7 @@
 		B38A2A48210233FE00374CDD /* EmulatorActionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B38A2A47210233FE00374CDD /* EmulatorActionCell.xib */; };
 		B38D30FD202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
 		B38D30FE202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
+		B390B0EA276B2DB20018E065 /* AltKit in Frameworks */ = {isa = PBXBuildFile; productRef = B390B0E9276B2DB20018E065 /* AltKit */; };
 		B394C98A20609E180014A65D /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = B394C98920609E180014A65D /* UIColor+Hex.swift */; };
 		B394C98B20609E180014A65D /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = B394C98920609E180014A65D /* UIColor+Hex.swift */; };
 		B3995E4F2058229F001D4985 /* PVFCEU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3995E4E2058229F001D4985 /* PVFCEU.framework */; };
@@ -423,7 +426,6 @@
 		B3DB11AB205C7F7B00A6E845 /* UIView+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AA205C7F7B00A6E845 /* UIView+Theming.swift */; };
 		B3DB11AD205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */; };
 		B3DB11AE205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */; };
-		B3DB1EF127683D8600806B43 /* AltKit in Frameworks */ = {isa = PBXBuildFile; productRef = B3DB1EF027683D8600806B43 /* AltKit */; };
 		B3E21D6E203211BE009939D3 /* IndexRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E21D6D203211BE009939D3 /* IndexRequestHandler.swift */; };
 		B3E21D72203211BE009939D3 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3E3B5D9202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */; };
@@ -787,6 +789,7 @@
 		B33625FA26EDF88200DC41EA /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/iOSSupport/System/Library/Frameworks/MetalKit.framework; sourceTree = DEVELOPER_DIR; };
 		B33625FB26EDF88200DC41EA /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/Metal.framework; sourceTree = DEVELOPER_DIR; };
 		B340E6091E088CF900AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3411BF7276B37DE00D85327 /* PVDSControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVDSControllerViewController.swift; sourceTree = "<group>"; };
 		B3437173276B0B650014F87C /* PVIntellivisionControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVIntellivisionControllerViewController.swift; sourceTree = "<group>"; };
 		B3437174276B0B650014F87C /* PV3DOControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PV3DOControllerViewController.swift; sourceTree = "<group>"; };
 		B3437175276B0B650014F87C /* PVColecoVisionControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVColecoVisionControllerViewController.swift; sourceTree = "<group>"; };
@@ -1005,7 +1008,7 @@
 				B312805E274C60EC00550720 /* SteamController in Frameworks */,
 				B3C9D5E71DEAA7E80068D057 /* PVStella.framework in Frameworks */,
 				1A3D409C17B2DCE4004DFFFC /* CoreGraphics.framework in Frameworks */,
-				B3DB1EF127683D8600806B43 /* AltKit in Frameworks */,
+				B390B0EA276B2DB20018E065 /* AltKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1641,6 +1644,7 @@
 				B3AB37312187F568009D9244 /* PVAtari7800ControllerViewController.swift */,
 				B3AB37222187F568009D9244 /* PVAtariJaguarControllerViewController.swift */,
 				B3437175276B0B650014F87C /* PVColecoVisionControllerViewController.swift */,
+				B3411BF7276B37DE00D85327 /* PVDSControllerViewController.swift */,
 				B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */,
 				B3A320362720974F00F338F6 /* PVGameCubeControllerViewController.swift */,
 				B3AB37242187F568009D9244 /* PVGBAControllerViewController.swift */,
@@ -1828,7 +1832,7 @@
 				B357A43927092254002C7C0F /* AppCenterCrashes */,
 				B3F187702720B7FE00659D87 /* Differentiator */,
 				B3F187722720B7FE00659D87 /* RxDataSources */,
-				B3DB1EF027683D8600806B43 /* AltKit */,
+				B390B0E9276B2DB20018E065 /* AltKit */,
 			);
 			productName = Provenance;
 			productReference = 1A3D409417B2DCE4004DFFFC /* Provenance.app */;
@@ -2020,7 +2024,7 @@
 				B3D30FBD26F0B4CD0064603F /* XCRemoteSwiftPackageReference "SteamController" */,
 				B357A43627092253002C7C0F /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */,
 				B3F1876F2720B7FE00659D87 /* XCRemoteSwiftPackageReference "RxDataSources" */,
-				B3DB1EEF27683D8600806B43 /* XCRemoteSwiftPackageReference "AltKit" */,
+				B390B0E8276B2DB20018E065 /* XCRemoteSwiftPackageReference "AltKit" */,
 			);
 			productRefGroup = 1A3D409517B2DCE4004DFFFC /* Products */;
 			projectDirPath = "";
@@ -2383,6 +2387,7 @@
 				C6E8F64D2095CAE4003CC2D9 /* SubtleVolume.swift in Sources */,
 				B3AB373F2187F569009D9244 /* PV32XControllerViewController.swift in Sources */,
 				B3D5E2BF218EC62E0015C690 /* Sections.swift in Sources */,
+				B3411BF8276B37DE00D85327 /* PVDSControllerViewController.swift in Sources */,
 				1FB125961D93E57F00D045D0 /* PVAppearanceViewController.swift in Sources */,
 				B33468D620AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift in Sources */,
 				B302F31521713B17000322B9 /* PillPageControl.swift in Sources */,
@@ -2447,6 +2452,7 @@
 				B3CCD2BB21DAA8D30031C42C /* PVEmulatorViewController+Saves.swift in Sources */,
 				B378224B21D329FB0077E86F /* SettingsRowSwitch.swift in Sources */,
 				B343717E276B0FA40014F87C /* PVVectrexControllerViewController.swift in Sources */,
+				B3411BF9276B37DE00D85327 /* PVDSControllerViewController.swift in Sources */,
 				1AD481EE1BA3548800FDA50A /* MBProgressHUD.m in Sources */,
 				B3B104CD218F2EF400210C39 /* PVPCEControllerViewController.swift in Sources */,
 				B3B104C4218F2EF400210C39 /* PVAtariJaguarControllerViewController.swift in Sources */,
@@ -3807,20 +3813,20 @@
 				minimumVersion = 4.3.0;
 			};
 		};
-		B3D30FBD26F0B4CD0064603F /* XCRemoteSwiftPackageReference "SteamController" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Provenance-Emu/SteamController.git";
-			requirement = {
-				branch = master;
-				kind = branch;
-			};
-		};
-		B3DB1EEF27683D8600806B43 /* XCRemoteSwiftPackageReference "AltKit" */ = {
+		B390B0E8276B2DB20018E065 /* XCRemoteSwiftPackageReference "AltKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/rileytestut/AltKit";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 0.0.2;
+			};
+		};
+		B3D30FBD26F0B4CD0064603F /* XCRemoteSwiftPackageReference "SteamController" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Provenance-Emu/SteamController.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.3.1;
 			};
 		};
 		B3F1876F2720B7FE00659D87 /* XCRemoteSwiftPackageReference "RxDataSources" */ = {
@@ -3854,6 +3860,11 @@
 			package = B357A43627092253002C7C0F /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */;
 			productName = AppCenterCrashes;
 		};
+		B390B0E9276B2DB20018E065 /* AltKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B390B0E8276B2DB20018E065 /* XCRemoteSwiftPackageReference "AltKit" */;
+			productName = AltKit;
+		};
 		B3D30FBE26F0B4CD0064603F /* SteamController */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B3D30FBD26F0B4CD0064603F /* XCRemoteSwiftPackageReference "SteamController" */;
@@ -3863,11 +3874,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B3D30FBD26F0B4CD0064603F /* XCRemoteSwiftPackageReference "SteamController" */;
 			productName = SteamController;
-		};
-		B3DB1EF027683D8600806B43 /* AltKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3DB1EEF27683D8600806B43 /* XCRemoteSwiftPackageReference "AltKit" */;
-			productName = AltKit;
 		};
 		B3F187702720B7FE00659D87 /* Differentiator */ = {
 			isa = XCSwiftPackageProductDependency;

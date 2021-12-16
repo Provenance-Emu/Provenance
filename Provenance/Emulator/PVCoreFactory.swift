@@ -230,7 +230,16 @@ public final class PVCoreFactory: NSObject {
             } else {
                 fatalError("Core doesn't implement PVVectrexSystemResponderClient")
             }
+        case .DS:
+            if let core = core as? PVDSSystemResponderClient {
+                return PVDSControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else {
+                fatalError("Core doesn't implement PVDSSystemResponderClient")
+            }
         case .Unknown:
+            ELOG("No known system named: \(system.name) id: \(system.identifier)")
+            return nil
+        @unknown default:
             ELOG("No known system named: \(system.name) id: \(system.identifier)")
             return nil
         }

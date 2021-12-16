@@ -23,9 +23,6 @@
          location = "group:Cores/FCEU/PVFCEU.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Cores/Desmume2015/PVDesmume2015.xcodeproj">
-      </FileRef>
-      <FileRef
          location = "group:Cores/Gambatte/PVGB.xcodeproj">
       </FileRef>
       <FileRef
@@ -79,6 +76,9 @@
       </FileRef>
       <FileRef
          location = "group:Cores/O2EM/O2EM.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/Desmume2015/PVDesmume2015.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/VecXGL/VecXGL.xcodeproj">

@@ -381,6 +381,31 @@ import Foundation
     func didRelease(_ button: PVGBAButton, forPlayer player: Int)
 }
 
+// MARK: - Game Boy DS
+
+@objc public enum PVDSButton: Int {
+    case up
+    case down
+    case left
+    case right
+    case a
+    case b
+    case x
+    case y
+    case l
+    case r
+    case start
+    case select
+    case count
+}
+
+@objc public protocol PVDSSystemResponderClient: ResponderClient, ButtonResponder {
+    @objc(didPushDSButton:forPlayer:)
+    func didPush(_ button: PVDSButton, forPlayer player: Int)
+    @objc(didReleaseDSButton:forPlayer:)
+    func didRelease(_ button: PVDSButton, forPlayer player: Int)
+}
+
 // MARK: - Atari 5200
 
 @objc public enum PV5200Button: Int {

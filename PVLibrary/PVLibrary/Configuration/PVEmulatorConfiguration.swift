@@ -53,6 +53,7 @@ public enum SystemIdentifier: String {
     case Atari7800 = "com.provenance.7800"
     case AtariJaguar = "com.provenance.jaguar"
     case ColecoVision = "com.provenance.colecovision"
+    case DS = "com.provenance.ds"
     case Dreamcast = "com.provenance.dreamcast"
     case FDS = "com.provenance.fds"
     case GameCube = "com.provenance.gamecube"
@@ -319,7 +320,8 @@ public final class PVEmulatorConfiguration: NSObject {
 
     @objc
     public class func systemIDWantsStartAndSelectInMenu(_ systemID: String) -> Bool {
-        if systemID == SystemIdentifier.PSX.rawValue {
+        let systems: [String] = [SystemIdentifier.PSX.rawValue, SystemIdentifier.PS2.rawValue, SystemIdentifier.PSP.rawValue]
+        if systems.contains(systemID) {
             return true
         }
         return false
