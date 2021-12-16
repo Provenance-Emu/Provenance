@@ -3387,6 +3387,7 @@
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>ody</string>
+			<string>od2</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
