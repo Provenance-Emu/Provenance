@@ -5,7 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.2] - 2020-09-14
+## [2.0.3] - 2021-12-16
+
+### Added
+
+### Fixed
+
+### Updated
+
+## [2.0.2] - 2021-09-14
 
 More Bug fixes mostly.
 
@@ -27,7 +35,7 @@ More Bug fixes mostly.
 - RxRealm updated from 5.0.2 to 5.0.3
 - realm-cocoa updated from 10.14.0 to 10.15.0
 
-## [2.0.1] - 2020-09-09
+## [2.0.1] - 2021-09-09
 
 Bug fixes mostly.
 Special thanks to contributors on this release;
@@ -53,7 +61,7 @@ Special thanks to contributors on this release;
 - #1556 Fix VirtualBoy Crash
 - #1568 On screen buttons do not work with mednafen core
 
-## [2.0.0] - 2020-08-02
+## [2.0.0] - 2021-08-02
 
 Special thanks and shout-outs to @braindx, @error404-na, @zydeco, @mrjschulte, @yoshisuga, the Mupen team and all of the additional contributors.
 
