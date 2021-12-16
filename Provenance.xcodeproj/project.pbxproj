@@ -358,7 +358,7 @@
 		B38A2A48210233FE00374CDD /* EmulatorActionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B38A2A47210233FE00374CDD /* EmulatorActionCell.xib */; };
 		B38D30FD202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
 		B38D30FE202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
-		B390B0EA276B2DB20018E065 /* AltKit in Frameworks */ = {isa = PBXBuildFile; productRef = B390B0E9276B2DB20018E065 /* AltKit */; };
+		B390B0EA276B2DB20018E065 /* AltKit in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B390B0E9276B2DB20018E065 /* AltKit */; };
 		B394C98A20609E180014A65D /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = B394C98920609E180014A65D /* UIColor+Hex.swift */; };
 		B394C98B20609E180014A65D /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = B394C98920609E180014A65D /* UIColor+Hex.swift */; };
 		B3995E4F2058229F001D4985 /* PVFCEU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3995E4E2058229F001D4985 /* PVFCEU.framework */; };
