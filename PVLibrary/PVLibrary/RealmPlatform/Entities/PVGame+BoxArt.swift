@@ -68,7 +68,8 @@ public extension PVGame {
             default:
                 return .ggUSA
             }
-		case .NES, .Sega32X, .Atari2600, .Atari5200, .Atari7800, .AtariJaguar, .WonderSwan, .WonderSwanColor, .MasterSystem, .SG1000, .FDS, .GameCube, .PS2:
+		case    .NES, .Sega32X, .Atari2600, .Atari5200, .Atari7800, .AtariJaguar, .WonderSwan, .WonderSwanColor,
+                .MasterSystem, .SG1000, .FDS, .GameCube, .PS2, .Intellivision, .ColecoVision, ._3DO, .Odyssey2:
             return .tall
         case .GBA, .GBC, .Lynx, .NGP, .NGPC, .PCECD, .PCFX, .PokemonMini, .PSX, .SegaCD, .VirtualBoy:
             return .square

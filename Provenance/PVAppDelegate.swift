@@ -142,9 +142,11 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         SteamControllerManager.listenForConnections()
         #endif
 
-        if #available(iOS 11, tvOS 11, *) {
+        #if os(iOS)
+        if #available(iOS 11, *) {
             PVAltKitService.shared.start()
         }
+        #endif
 
 		DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: { [unowned self] in
 			self.startOptionalWebDavServer()

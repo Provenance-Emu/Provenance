@@ -140,7 +140,7 @@ public final class PVCoreFactory: NSObject {
             } else {
                 fatalError("Core doesn't implement PVPSXSystemResponderClient")
             }
-        case .PS2:
+        case .PS2, .PS3:
             if let core = core as? PVPS2SystemResponderClient {
                 return PVPS2ControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else {
@@ -206,6 +206,30 @@ public final class PVCoreFactory: NSObject {
 			} else {
 				fatalError("Core doesn't implement PVN64SystemResponderClient")
 			}
+        case ._3DO:
+            if let core = core as? PV3DOSystemResponderClient {
+                return PV3DOControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else {
+                fatalError("Core doesn't implement PV3DOSystemResponderClient")
+            }
+        case .ColecoVision:
+            if let core = core as? PVColecoVisionSystemResponderClient {
+                return PVColecoVisionControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else {
+                fatalError("Core doesn't implement PVColecoVisionSystemResponderClient")
+            }
+        case .Intellivision:
+            if let core = core as? PVIntellivisionSystemResponderClient {
+                return PVIntellivisionControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else {
+                fatalError("Core doesn't implement PVIntellivisionSystemResponderClient")
+            }
+        case .Vectrex:
+            if let core = core as? PVVectrexSystemResponderClient {
+                return PVVectrexControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else {
+                fatalError("Core doesn't implement PVVectrexSystemResponderClient")
+            }
         case .Unknown:
             ELOG("No known system named: \(system.name) id: \(system.identifier)")
             return nil

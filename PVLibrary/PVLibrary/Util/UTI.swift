@@ -260,12 +260,8 @@ public final class UTI: RawRepresentable, Equatable {
         guard let identifiers = unmanagedIdentifiers?.takeRetainedValue() as? [CFString] else {
             return []
         }
-
-        #if swift(>=4.1)
-            return identifiers.compactMap { UTI(rawValue: $0 as String) }
-        #else
-            return identifiers.flatMap { UTI(rawValue: $0 as String) }
-        #endif
+        
+        return identifiers.compactMap { UTI(rawValue: $0 as String) }
     }
 
     // MARK: Equality and Conformance to other UTIs

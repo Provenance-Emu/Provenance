@@ -6,7 +6,9 @@
 #import "PVLogViewController.h"
 //#import "Provenance/Version.h"
 #import <Realm/Realm.h>
+#if !TARGET_OS_TV
 #import "PVAltKitService.h"
+#endif
 // Hack cause they can't make modules for some reason
 //#import <ProSystem/ProSystemGameCore.h>
 //#import <PicoDrive/PicodriveGameCore.h>

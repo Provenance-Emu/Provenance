@@ -144,15 +144,9 @@ public final class GameImporter {
         // Scane all subclasses of  PVEmulator core, and get their metadata
         // like their subclass name and the bundle the belong to
         let coreClasses = PVEmulatorConfiguration.coreClasses
-        #if swift(>=4.1)
-            let corePlists = coreClasses.compactMap { (classInfo) -> URL? in
-                classInfo.bundle.url(forResource: "Core", withExtension: "plist")
-            }
-        #else
-            let corePlists = coreClasses.flatMap { (classInfo) -> URL? in
-                classInfo.bundle.url(forResource: "Core", withExtension: "plist")
-            }
-        #endif
+        let corePlists = coreClasses.compactMap { (classInfo) -> URL? in
+            classInfo.bundle.url(forResource: "Core", withExtension: "plist")
+        }
 
         let bundle = Bundle(identifier: "org.provenance-emu.PVLibrary")!
         PVEmulatorConfiguration.updateSystems(fromPlists: [bundle.url(forResource: "systems", withExtension: "plist")!])
