@@ -504,6 +504,7 @@
 		B3F94A4C27093794002A71EF /* PVAppDelegate+AppCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */; };
 		B3F94A4E27093ABC002A71EF /* AppCenterAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = B3F94A4D27093ABC002A71EF /* AppCenterAnalytics */; };
 		B3F94A5027093ABC002A71EF /* AppCenterCrashes in Frameworks */ = {isa = PBXBuildFile; productRef = B3F94A4F27093ABC002A71EF /* AppCenterCrashes */; };
+		B3FB9679276DD7F600F7EDEE /* SteamController in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B3FB9678276DD7F600F7EDEE /* SteamController */; };
 		BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */; };
 		BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */; };
 		C13CC82923CABE2800463EDD /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13CC82823CABE2800463EDD /* Photos.framework */; };
@@ -1133,6 +1134,7 @@
 				1A47C94417BC1BC400C27644 /* AudioToolbox.framework in Frameworks */,
 				B3AF701021916C30000FA7F9 /* PVSupport.framework in Frameworks */,
 				1A19EE142080EA2000A9147B /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
+				B3FB9679276DD7F600F7EDEE /* SteamController in Frameworks */,
 				B3B0860A1E71316A007F39E1 /* PVMednafen.framework in Frameworks */,
 				B3C9D5211DEA787D0068D057 /* PVGBA.framework in Frameworks */,
 				B33625FD26EDF88200DC41EA /* Metal.framework in Frameworks */,
@@ -2082,6 +2084,7 @@
 				B3F187702720B7FE00659D87 /* Differentiator */,
 				B3F187722720B7FE00659D87 /* RxDataSources */,
 				B390B0E9276B2DB20018E065 /* AltKit */,
+				B3FB9678276DD7F600F7EDEE /* SteamController */,
 			);
 			productName = Provenance;
 			productReference = 1A3D409417B2DCE4004DFFFC /* Provenance.app */;
@@ -4678,6 +4681,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B357A43627092253002C7C0F /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */;
 			productName = AppCenterCrashes;
+		};
+		B3FB9678276DD7F600F7EDEE /* SteamController */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3D30FBD26F0B4CD0064603F /* XCRemoteSwiftPackageReference "SteamController" */;
+			productName = SteamController;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

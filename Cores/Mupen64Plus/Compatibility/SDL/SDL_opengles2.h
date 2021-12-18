@@ -27,15 +27,15 @@
 #ifndef _MSC_VER
 
 //#ifdef __IPHONEOS__
-#import <TargetConditionals.h>
+#include <TargetConditionals.h>
 #if !TARGET_OS_MACCATALYST
-#import <OpenGLES/gltypes.h>
-#import <OpenGLES/ES3/gl.h>
-#import <OpenGLES/ES3/glext.h>
-#import <OpenGLES/EAGL.h>
+//#import <OpenGLES/gltypes.h>
+#include <OpenGLES/ES3/gl.h>
+#include <OpenGLES/ES3/glext.h>
+//#import <OpenGLES/EAGL.h>
 #else
-#import <OpenGL/OpenGL.h>
-#import <GLUT/GLUT.h>
+#include <OpenGL/OpenGL.h>
+#include <GLUT/GLUT.h>
 #endif
 //#else
 //#include <GLES2/gl2platform.h>
