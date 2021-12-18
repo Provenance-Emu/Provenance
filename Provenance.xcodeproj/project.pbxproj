@@ -157,10 +157,6 @@
 		B305F089276B5243003AE510 /* PVLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B305F087276B5242003AE510 /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B305F08B276B5248003AE510 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305F08A276B5248003AE510 /* PVSupport.framework */; };
 		B305F08C276B5248003AE510 /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B305F08A276B5248003AE510 /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B305F08E276B52C8003AE510 /* PVO2EM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305F08D276B52C7003AE510 /* PVO2EM.framework */; };
-		B305F08F276B52C8003AE510 /* PVO2EM.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B305F08D276B52C7003AE510 /* PVO2EM.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B305F091276B5BEB003AE510 /* PVO2EM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305F090276B5BEB003AE510 /* PVO2EM.framework */; };
-		B305F092276B5BEB003AE510 /* PVO2EM.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B305F090276B5BEB003AE510 /* PVO2EM.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B306E0CF2769F2C2001DC52E /* PVOdyssey2ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B306E0CE2769F2C2001DC52E /* PVOdyssey2ControllerViewController.swift */; };
 		B306E0D02769F2C2001DC52E /* PVOdyssey2ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B306E0CE2769F2C2001DC52E /* PVOdyssey2ControllerViewController.swift */; };
 		B31117B0218EB3A900C495A2 /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */; };
@@ -610,7 +606,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				B3AF701D21916E38000FA7F9 /* PVSupport.framework in Embed Frameworks */,
-				B305F092276B5BEB003AE510 /* PVO2EM.framework in Embed Frameworks */,
 				B324C650219216DD009F4EDC /* PVLibrary.framework in Embed Frameworks */,
 				B3CB85C31E9BFB16009155A6 /* PVPokeMini.framework in Embed Frameworks */,
 				B37263AE26EA159400E95488 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
@@ -644,7 +639,6 @@
 				B3CB85C01E9BFB07009155A6 /* PVPokeMini.framework in Embed Frameworks */,
 				B324C6202192057E009F4EDC /* PVFCEU.framework in Embed Frameworks */,
 				B3C9D4AF1DEA74390068D057 /* PVGB.framework in Embed Frameworks */,
-				B305F08F276B52C8003AE510 /* PVO2EM.framework in Embed Frameworks */,
 				B3AF701121916C30000FA7F9 /* PVSupport.framework in Embed Frameworks */,
 				B3B0860B1E71316A007F39E1 /* PVMednafen.framework in Embed Frameworks */,
 				1A19EE162080EA8000A9147B /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
@@ -1100,7 +1094,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B305F08E276B52C8003AE510 /* PVO2EM.framework in Frameworks */,
 				B357A43A27092254002C7C0F /* AppCenterCrashes in Frameworks */,
 				55546DF1257D6CA800616332 /* PVTGBDual.framework in Frameworks */,
 				B316B4D9219265AB00693472 /* PVVirtualJaguar.framework in Frameworks */,
@@ -1157,7 +1150,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B324C61B219203AF009F4EDC /* libc++.tbd in Frameworks */,
-				B305F091276B5BEB003AE510 /* PVO2EM.framework in Frameworks */,
 				B324C619219203A5009F4EDC /* libsqlite3.tbd in Frameworks */,
 				B324C6172192038C009F4EDC /* libxml2.tbd in Frameworks */,
 				B312805F274C60EC00550720 /* SteamController in Frameworks */,
