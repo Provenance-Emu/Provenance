@@ -65,7 +65,7 @@
 		B37263B726EA168500E95488 /* libpng-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF703921916E60000FA7F9 /* libpng-tvOS.a */; };
 		B37263BE26EA1EF000E95488 /* PVMupen64PlusRspHLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8601DECEA9100602746 /* PVMupen64PlusRspHLE.framework */; };
 		B37263C226EA1EF000E95488 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFB601802038AD13001E70F1 /* PVMupen64PlusVideoGlideN64.framework */; };
-		B37263C626EA1EF000E95488 /* PVMupen64PlusVideoRice.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37EFEF01C72E63300857158 /* PVMupen64PlusVideoRice.framework */; };
+		B37263C626EA1EF000E95488 /* PVMupen64PlusVideoRice.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37EFEF01C72E63300857158 /* PVMupen64PlusVideoRice.framework */; platformFilter = ios; };
 		B37263CA26EA1EF000E95488 /* PVRSPCXD4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B331158C1C7309C200E9AD14 /* PVRSPCXD4.framework */; };
 		B37263CF26EA1F1C00E95488 /* PVMupen64PlusRspHLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B9531DED13A200602746 /* PVMupen64PlusRspHLE.framework */; };
 		B37263D326EA1F1C00E95488 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFB603B82038B582001E70F1 /* PVMupen64PlusVideoGlideN64.framework */; };
@@ -5958,6 +5958,7 @@
 		};
 		B37263C926EA1EF000E95488 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = ios;
 			target = B37EFEEF1C72E63300857158 /* PVMupen64PlusVideoRice-iOS */;
 			targetProxy = B37263C826EA1EF000E95488 /* PBXContainerItemProxy */;
 		};
@@ -6451,7 +6452,7 @@
 				PRODUCT_NAME = PVMupen64PlusVideoRice;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-                SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -6590,7 +6591,7 @@
 				PRODUCT_NAME = PVMupen64PlusRspHLE;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-                SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -6712,7 +6713,7 @@
 				PRODUCT_NAME = PVRSPCXD4;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-                SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -6864,9 +6865,9 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SKIP_INSTALL = YES;
-                SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
-                USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Plugins/Video/gliden64/src\"";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Plugins/Video/gliden64/src\"";
 				USE_HEADERMAP = NO;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";

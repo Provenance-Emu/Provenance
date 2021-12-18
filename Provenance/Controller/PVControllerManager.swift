@@ -11,7 +11,7 @@ import Foundation
 import GameController
 import PVLibrary
 import PVSupport
-#if !targetEnvironment(macCatalyst) && !os(macOS)
+#if !targetEnvironment(macCatalyst) && !os(macOS) && canImport(SteamController)
 import SteamController
 #endif
 

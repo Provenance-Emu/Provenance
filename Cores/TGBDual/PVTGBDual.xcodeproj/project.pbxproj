@@ -48,6 +48,7 @@
 		149019E321C8466700C35ECE /* op_normal.h in Headers */ = {isa = PBXBuildFile; fileRef = 149019A621C8466700C35ECE /* op_normal.h */; };
 		149019E421C8466700C35ECE /* op_normal.h in Headers */ = {isa = PBXBuildFile; fileRef = 149019A621C8466700C35ECE /* op_normal.h */; };
 		B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C31B2191964F009F4EDC /* AVFoundation.framework */; };
+		B3271BE1276B8C730031AECC /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BE0276B8C730031AECC /* OpenGL.framework */; platformFilter = maccatalyst; };
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
@@ -176,6 +177,7 @@
 		149019A921C8466700C35ECE /* cpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cpu.cpp; sourceTree = "<group>"; };
 		149019AA21C8466700C35ECE /* cheat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cheat.cpp; sourceTree = "<group>"; };
 		B324C31B2191964F009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
+		B3271BE0276B8C730031AECC /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
 		B339468820783F41008DBAB4 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = usr/lib/libpthread.tbd; sourceTree = SDKROOT; };
 		B339468A20783F48008DBAB4 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		B3411B47276B2F9C00D85327 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -220,6 +222,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3271BE1276B8C730031AECC /* OpenGL.framework in Frameworks */,
 				B3411B48276B2F9C00D85327 /* PVLibrary.framework in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
@@ -397,6 +400,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3271BE0276B8C730031AECC /* OpenGL.framework */,
 				B3411B47276B2F9C00D85327 /* PVLibrary.framework */,
 				B3D275DB26E9D8A000543CFE /* PVSupport.framework */,
 				B35E6BF1207CD2670040709A /* AudioToolbox.framework */,

@@ -91,11 +91,11 @@
 		</dict>
 		<dict>
 			<key>ProfileName</key>
-			<string>MicroGamepad</string>
+			<string>DirectionalGamepad</string>
 		</dict>
 		<dict>
 			<key>ProfileName</key>
-			<string>DirectionalGamepad</string>
+			<string>MicroGamepad</string>
 		</dict>
 	</array>
 	<key>GCSupportsControllerUserInteraction</key>
