@@ -240,6 +240,8 @@ static void mednafen_init(MednafenGameCore* current)
     Mednafen::MDFNI_SetSetting("pce.slend", "239"); // PCE: Last rendered scanline 235 default, 241 max
     Mednafen::MDFNI_SetSetting("pce.h_overscan", "1"); // PCE: Show horizontal overscan are, default 0. Needed for correctly displaying the system aspect ratio.
     Mednafen::MDFNI_SetSetting("pce.resamp_quality", "5"); // PCE: Audio resampler quality, default 3 Higher values correspond to better SNR and better preservation of higher frequencies("brightness"), at the cost of increased computational complexity and a negligible increase in latency. Higher values will also slightly increase the probability of sample clipping(relevant if Mednafen's volume control settings are set too high), due to increased (time-domain) ringing.
+    Mednafen::MDFNI_SetSetting("pce.resamp_rate_error", "0.0000001"); // PCE: Sound output rate tolerance. Lower values correspond to better matching of the output rate of the resampler to the actual desired output rate, at the expense of increased RAM usage and poorer CPU cache utilization. default 0.0000009
+    Mednafen::MDFNI_SetSetting("pce.cdpsgvolume", "62"); // PCE: PSG volume when playing a CD game. Setting this volume control too high may cause sample clipping. default 100
 
 	// PCE_Fast settings
 

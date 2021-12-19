@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - #1414 smarter expecptions in PVSystem
 - #1645 PCE Audio setting tweaks to match real hardware
 - #1637 Cheats label name cut off fixed
+- #1649 two PCE module audio related setting tweaks that enable Provenance's PCE Audio output to match much closer to the measured MDFourier output of a real system, as tested with @artemio from the MDFourier project.
 - Fixed rare crash in OERingBuffer
 - Cores that don't support saves no loner display save actions in menu
 - OpenVGDB Update (fixes artwork and metadata not loading)
