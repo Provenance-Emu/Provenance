@@ -59,7 +59,7 @@ uniform vec2 FinalRes;
 #define SCANLINE_MIN_BRIGHTNESS vec3( 0.25, 0.25, 0.25 )
 #define SHADOW_MASK_HARDNESS 16.0
 
-#define TVL 350.0
+#define TVL 800.0
 
 #define WARP_EDGE_HARDNESS 256.0
 #define WARP_X ( 1.0 / 96.0 )
