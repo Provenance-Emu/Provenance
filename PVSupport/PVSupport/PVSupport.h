@@ -7,7 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
+#if !TARGET_OS_WATCH
 #import <GameController/GameController.h>
+#endif
 #import <libkern/OSAtomic.h>
 #import <string.h>
 

@@ -11,6 +11,7 @@
 #import "OERingBuffer.h"
 #import "RealTimeThread.h"
 #import "PVLogging.h"
+#import "DebugUtils.h"
 @import AVFoundation;
 @import UIKit;
 
@@ -144,8 +145,10 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 
 -(void)stopHaptic {
     if (!NSThread.isMainThread) {
+        MAKEWEAK(self);
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self stopHaptic];
+            MAKESTRONG(self);
+            [strongself stopHaptic];
         });
         return;
     }

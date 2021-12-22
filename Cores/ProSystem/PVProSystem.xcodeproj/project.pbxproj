@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		B324C64321921519009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C64221921519009F4EDC /* PVSupport.framework */; };
 		B324C64921921577009F4EDC /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C64821921577009F4EDC /* libz.tbd */; };
+		B3411B4C276B2FBB00D85327 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3411B4B276B2FBB00D85327 /* PVLibrary.framework */; };
+		B3411B50276B2FC000D85327 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3411B4F276B2FC000D85327 /* Foundation.framework */; };
+		B3411B52276B2FD600D85327 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3411B51276B2FD600D85327 /* Foundation.framework */; };
+		B3411B54276B2FE200D85327 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3411B53276B2FE200D85327 /* PVSupport.framework */; };
 		B3547B5A205858B700CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B59205858B600CFF7D8 /* Core.plist */; };
 		B36DE7A31D6B7558002EE3ED /* ProSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE7A21D6B7558002EE3ED /* ProSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B36DE7AE1D6B759C002EE3ED /* ProSystem.dat in Resources */ = {isa = PBXBuildFile; fileRef = 941F59FB17A77CC90005D7EA /* ProSystem.dat */; };
@@ -16,7 +20,6 @@
 		B372639326EA037900E95488 /* ProSystemGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 941DFB2615B6425200C6552F /* ProSystemGameCore.mm */; };
 		B372639426EA037C00E95488 /* ProSystemGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B5008DAD0E8BFB3E005AECAF /* ProSystemGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B372639526EA039800E95488 /* libprosystem-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CA5B2C26E9E40500687B27 /* libprosystem-tvOS.a */; };
-		B372639926EA039D00E95488 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B372639826EA039D00E95488 /* PVSupport.framework */; };
 		B372639D26EA03B300E95488 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B372639C26EA03A600E95488 /* libz.tbd */; };
 		B372639E26EA046000E95488 /* Logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F599B17A6189D0005D7EA /* Logger.cpp */; };
 		B372639F26EA047B00E95488 /* ProSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE7A21D6B7558002EE3ED /* ProSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -165,6 +168,10 @@
 		B324C6442192151F009F4EDC /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B324C64621921561009F4EDC /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		B324C64821921577009F4EDC /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		B3411B4B276B2FBB00D85327 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3411B4F276B2FC000D85327 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		B3411B51276B2FD600D85327 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		B3411B53276B2FE200D85327 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B34CB0EA2274B16A009134B4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B3547B59205858B600CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Core.plist; path = ProSystem/Core.plist; sourceTree = "<group>"; };
 		B36DE7A01D6B7558002EE3ED /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -185,8 +192,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3411B50276B2FC000D85327 /* Foundation.framework in Frameworks */,
 				B324C64921921577009F4EDC /* libz.tbd in Frameworks */,
 				B3CA5B4A26E9E42400687B27 /* libprosystem-iOS.a in Frameworks */,
+				B3411B4C276B2FBB00D85327 /* PVLibrary.framework in Frameworks */,
 				B324C64321921519009F4EDC /* PVSupport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -195,9 +204,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B372639926EA039D00E95488 /* PVSupport.framework in Frameworks */,
 				B372639D26EA03B300E95488 /* libz.tbd in Frameworks */,
 				B372639526EA039800E95488 /* libprosystem-tvOS.a in Frameworks */,
+				B3411B54276B2FE200D85327 /* PVSupport.framework in Frameworks */,
+				B3411B52276B2FD600D85327 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -360,6 +370,10 @@
 		B324C64121921519009F4EDC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3411B53276B2FE200D85327 /* PVSupport.framework */,
+				B3411B4F276B2FC000D85327 /* Foundation.framework */,
+				B3411B51276B2FD600D85327 /* Foundation.framework */,
+				B3411B4B276B2FBB00D85327 /* PVLibrary.framework */,
 				B372639C26EA03A600E95488 /* libz.tbd */,
 				B372639826EA039D00E95488 /* PVSupport.framework */,
 				B372637026E9FC7700E95488 /* PVSupport.framework */,
@@ -820,6 +834,7 @@
 				INFOPLIST_FILE = ProSystem/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -830,7 +845,7 @@
 				PRODUCT_NAME = ProSystem;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -866,6 +881,7 @@
 				INFOPLIST_FILE = ProSystem/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -877,7 +893,7 @@
 				PRODUCT_NAME = ProSystem;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -906,6 +922,7 @@
 				INFOPLIST_FILE = ProSystem/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -916,7 +933,7 @@
 				PRODUCT_NAME = ProSystem;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -962,13 +979,13 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.ProSystem";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProSystem";
 				PRODUCT_NAME = ProSystem;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 11.0;
+				TVOS_DEPLOYMENT_TARGET = 12.1;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1008,13 +1025,13 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.ProSystem";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProSystem";
 				PRODUCT_NAME = ProSystem;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 11.0;
+				TVOS_DEPLOYMENT_TARGET = 12.1;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -1055,13 +1072,13 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.ProSystem";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProSystem";
 				PRODUCT_NAME = ProSystem;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 11.0;
+				TVOS_DEPLOYMENT_TARGET = 12.1;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -1098,7 +1115,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
 		};
@@ -1127,7 +1144,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -1157,7 +1174,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Archive;
@@ -1194,6 +1211,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 12.1;
 			};
 			name = Debug;
 		};
@@ -1224,6 +1242,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 12.1;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -1255,6 +1274,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 12.1;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Archive;

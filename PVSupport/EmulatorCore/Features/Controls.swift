@@ -83,6 +83,43 @@ import Foundation
     func didRelease(_ button: PVN64Button, forPlayer player: Int)
 }
 
+// MARK: - GameCube
+
+@objc public enum PVGameCubeButton: Int {
+	// D-Pad
+	case dPadUp
+	case dPadDown
+	case dPadLeft
+	case dPadRight
+	// C buttons
+	case cUp
+	case cDown
+	case cLeft
+	case cRight
+	case a
+	case b
+	// Shoulder buttons
+	case l
+	case r
+	case z
+	case start
+	case analogUp
+	case analogDown
+	case analogLeft
+	case analogRight
+	case count
+}
+
+// FIXME: analog stick (x,y), memory pack, rumble pack
+@objc public protocol PVGameCubeSystemResponderClient: ResponderClient, ButtonResponder, JoystickResponder {
+	@objc(didMoveGameCubeJoystickDirection:withValue:forPlayer:)
+	func didMoveJoystick(_ button: PVGameCubeButton, withValue value: CGFloat, forPlayer player: Int)
+	@objc(didPushGameCubeButton:forPlayer:)
+	func didPush(_ button: PVGameCubeButton, forPlayer player: Int)
+	@objc(didReleaseGameCubeButton:forPlayer:)
+	func didRelease(_ button: PVGameCubeButton, forPlayer player: Int)
+}
+
 // MARK: - Atari 2600
 
 @objc public enum PV2600Button: Int {
@@ -344,6 +381,31 @@ import Foundation
     func didRelease(_ button: PVGBAButton, forPlayer player: Int)
 }
 
+// MARK: - Game Boy DS
+
+@objc public enum PVDSButton: Int {
+    case up
+    case down
+    case left
+    case right
+    case a
+    case b
+    case x
+    case y
+    case l
+    case r
+    case start
+    case select
+    case count
+}
+
+@objc public protocol PVDSSystemResponderClient: ResponderClient, ButtonResponder {
+    @objc(didPushDSButton:forPlayer:)
+    func didPush(_ button: PVDSButton, forPlayer player: Int)
+    @objc(didReleaseDSButton:forPlayer:)
+    func didRelease(_ button: PVDSButton, forPlayer player: Int)
+}
+
 // MARK: - Atari 5200
 
 @objc public enum PV5200Button: Int {
@@ -439,6 +501,86 @@ import Foundation
 
     @objc(didMovePSXJoystickDirection:withValue:forPlayer:)
     func didMoveJoystick(_ button: PVPSXButton, withValue value: CGFloat, forPlayer player: Int)
+}
+
+// MARK: - PS2
+
+@objc public enum PVPS2Button: Int {
+    case up
+    case down
+    case left
+    case right
+    case triangle
+    case circle
+    case cross
+    case square
+    case l1
+    case l2
+    case l3
+    case r1
+    case r2
+    case r3
+    case start
+    case select
+    case analogMode
+    case leftAnalogUp
+    case leftAnalogDown
+    case leftAnalogLeft
+    case leftAnalogRight
+    case rightAnalogUp
+    case rightAnalogDown
+    case rightAnalogLeft
+    case rightAnalogRight
+    case count
+}
+
+@objc public protocol PVPS2SystemResponderClient: ResponderClient, ButtonResponder, JoystickResponder {
+    @objc(didPushPS2Button:forPlayer:)
+    func didPush(_ button: PVPS2Button, forPlayer player: Int)
+
+    @objc(didReleasePS2Button:forPlayer:)
+    func didRelease(_ button: PVPS2Button, forPlayer player: Int)
+
+    @objc(didMovePS2JoystickDirection:withValue:forPlayer:)
+    func didMoveJoystick(_ button: PVPS2Button, withValue value: CGFloat, forPlayer player: Int)
+}
+
+// MARK: - PSP
+
+@objc public enum PVPSPButton: Int {
+    case up
+    case down
+    case left
+    case right
+    case triangle
+    case circle
+    case cross
+    case square
+    case l1
+    case l2
+    case l3
+    case r1
+    case r2
+    case r3
+    case start
+    case select
+    case analogMode
+    case leftAnalogUp
+    case leftAnalogDown
+    case leftAnalogLeft
+    case leftAnalogRight
+    case count
+}
+
+@objc public protocol PVPSPSystemResponderClient: ResponderClient, ButtonResponder, JoystickResponder {
+    @objc(didPushPSPButton:forPlayer:)
+    func didPush(_ button: PVPSPButton, forPlayer player: Int)
+
+    @objc(didReleasePSPButton:forPlayer:)
+    func didRelease(_ button: PVPSPButton, forPlayer player: Int)
+
+    @objc(didMovePSPJoystickDirection:withValue:forPlayer:)
+    func didMoveJoystick(_ button: PVPSPButton, withValue value: CGFloat, forPlayer player: Int)
 }
 
 // MARK: - WonderSwan
@@ -684,4 +826,161 @@ import Foundation
     func didPush(_ button: PVSaturnButton, forPlayer player: Int)
     @objc(didReleaseSSButton:forPlayer:)
     func didRelease(_ button: PVSaturnButton, forPlayer player: Int)
+}
+
+
+// MARK: - Magnavox Odyssey2/Videopac+
+
+@objc public enum PVOdyssey2Button: Int {
+    case up
+    case down
+    case left
+    case right
+    case action
+    case count
+}
+
+@objc public protocol PVOdyssey2SystemResponderClient: ResponderClient, ButtonResponder {
+    @objc(didPushOdyssey2Button:forPlayer:)
+    func didPush(_ button: PVOdyssey2Button, forPlayer player: Int)
+    @objc(didReleaseOdyssey2Button:forPlayer:)
+    func didRelease(_ button: PVOdyssey2Button, forPlayer player: Int)
+}
+
+// MARK: - Vectrex
+
+@objc public enum PVVectrexButton: Int {
+    @objc(PVVectrexAnalogUp)
+    case analogUp
+    @objc(PVVectrexAnalogDown)
+    case analogDown
+    @objc(PVVectrexAnalogLeft)
+    case analogLeft
+    @objc(PVVectrexAnalogRight)
+    case analogRight
+    @objc(PVVectrexButton1)
+    case button1
+    @objc(PVVectrexButton2)
+    case button2
+    @objc(PVVectrexButton3)
+    case button3
+    @objc(PVVectrexButton4)
+    case button4
+    case count
+}
+
+@objc public protocol PVVectrexSystemResponderClient: ResponderClient, ButtonResponder, JoystickResponder {
+    @objc(didMoveVectrexJoystickDirection:withValue:forPlayer:)
+    func didMoveJoystick(_ button: PVVectrexButton, withValue value: CGFloat, forPlayer player: Int)
+    @objc(didPushVectrexButton:forPlayer:)
+    func didPush(_ button: PVVectrexButton, forPlayer player: Int)
+    @objc(didReleaseVectrexButton:forPlayer:)
+    func didRelease(_ button: PVVectrexButton, forPlayer player: Int)
+}
+
+// MARK: - 3DO
+
+@objc public enum PV3DOButton: Int {
+    case up
+    case down
+    case left
+    case right
+    case a
+    case b
+    case c
+    case L
+    case R
+    case P
+    case X
+    case count
+}
+
+@objc public protocol PV3DOSystemResponderClient: ResponderClient, ButtonResponder {
+    @objc(didPush3DOButton:forPlayer:)
+    func didPush(_ button: PV3DOButton, forPlayer player: Int)
+    @objc(didRelease3DOButton:forPlayer:)
+    func didRelease(_ button: PV3DOButton, forPlayer player: Int)
+}
+
+// MARK: - ColecoVision
+
+@objc public enum PVColecoVisionButton: Int {
+    case up
+    case down
+    case left
+    case right
+    case leftAction
+    case rightAction
+    @objc(PVColecoVisionButton1)
+    case button1
+    @objc(PVColecoVisionButton2)
+    case button2
+    @objc(PVColecoVisionButton3)
+    case button3
+    @objc(PVColecoVisionButton4)
+    case button4
+    @objc(PVColecoVisionButton5)
+    case button5
+    @objc(PVColecoVisionButton6)
+    case button6
+    @objc(PVColecoVisionButton7)
+    case button7
+    @objc(PVColecoVisionButton8)
+    case button8
+    @objc(PVColecoVisionButton9)
+    case button9
+    @objc(PVColecoVisionButton0)
+    case button0
+    case asterisk
+    case pound
+    case count
+}
+
+@objc public protocol PVColecoVisionSystemResponderClient: ResponderClient, ButtonResponder {
+    @objc(didPushColecoVisionButton:forPlayer:)
+    func didPush(_ button: PVColecoVisionButton, forPlayer player: Int)
+    @objc(didReleaseColecoVisionButton:forPlayer:)
+    func didRelease(_ button: PVColecoVisionButton, forPlayer player: Int)
+}
+
+// MARK: - Intellivision
+
+@objc public enum PVIntellivisionButton: Int {
+    case up
+    case down
+    case left
+    case right
+    case topAction
+    case bottomLeftAction
+    case bottomRightAction
+    @objc(PVIntellivisionButton1)
+    case button1
+    @objc(PVIntellivisionButton2)
+    case button2
+    @objc(PVIntellivisionButton3)
+    case button3
+    @objc(PVIntellivisionButton4)
+    case button4
+    @objc(PVIntellivisionButton5)
+    case button5
+    @objc(PVIntellivisionButton6)
+    case button6
+    @objc(PVIntellivisionButton7)
+    case button7
+    @objc(PVIntellivisionButton8)
+    case button8
+    @objc(PVIntellivisionButton9)
+    case button9
+    @objc(PVIntellivisionButton0)
+    case button0
+    case clear
+    case enter
+    case count
+}
+
+@objc public protocol PVIntellivisionSystemResponderClient: ResponderClient, ButtonResponder {
+    @objc(didPushIntellivisionButton:forPlayer:)
+    func didPush(_ button: PVIntellivisionButton, forPlayer player: Int)
+    @objc(didReleaseIntellivisionButton:forPlayer:)
+    func didRelease(_ button: PVIntellivisionButton, forPlayer player: Int)
 }

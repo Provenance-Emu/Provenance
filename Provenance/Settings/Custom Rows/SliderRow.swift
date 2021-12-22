@@ -24,7 +24,7 @@
 //  SOFTWARE.
 //
 
-import QuickTableViewController
+
 import UIKit
 
 /// A class that represents a row with a switch.

@@ -27,11 +27,15 @@ import PVSupport
     case grayscale
 }
 
+extension GBPalette: CaseIterable { }
+
 extension PVGBEmulatorCore: CoreOptional {
     public static var options: [CoreOption] = {
         var options = [CoreOption]()
 
-        let videoGroup = CoreOption.group(display: CoreOptionValueDisplay(title: "Video", description: nil), subOptions: [paletteOption])
+        let videoGroup = CoreOption.group(display: CoreOptionValueDisplay(title: "Video",
+																		  description: "Change the way Gambatte renders games."),
+										  subOptions: [paletteOption])
 
         options.append(videoGroup)
         return options
@@ -57,18 +61,35 @@ extension PVGBEmulatorCore: CoreOptional {
     ])
 
     static var paletteOption: CoreOption = {
-        let palletteOption = CoreOption.multi(display: CoreOptionValueDisplay(title: "GameBoy (non color) Palette", description: "The drawing palette to use"), values: paletteValues)
+        let palletteOption = CoreOption.multi(display:
+												CoreOptionValueDisplay(
+													title: "GameBoy (non color) Palette",
+													description: "The drawing palette to use"),
+											  values: paletteValues)
         return palletteOption
     }()
 }
 
 @objc extension PVGBEmulatorCore {
-    public func setPalette() {
-        if
-            let value = PVGBEmulatorCore.valueForOption(String.self, "Video.GameBoy (non color) Palette"),
-            let index = PVGBEmulatorCore.paletteValues.firstIndex(where: { $0.title == value }),
-            let enumValue = GBPalette(rawValue: index) {
-            changeDisplayMode(enumValue.rawValue)
-        }
-    }
+	public func setPalette() {
+		let value = PVGBEmulatorCore.valueForOption(PVGBEmulatorCore.paletteOption)
+		let index: Int
+		switch value {
+		case .bool(let bool):
+			index = bool ? 0 : 1
+			return
+		case .string(let sstring):
+			index = PVGBEmulatorCore.paletteValues.firstIndex(where: { $0.title.lowercased() == sstring }) ?? 0
+		case .number(let nSNumber):
+			index = nSNumber.intValue
+		case .notFound:
+			ELOG("Not found")
+			return
+		}
+		guard index > 0, index <= GBPalette.allCases.count, let enumValue = GBPalette(rawValue: index) else {
+			ELOG("Invalid index \(index)")
+			return
+		}
+		changeDisplayMode(enumValue.rawValue)
+	}
 }

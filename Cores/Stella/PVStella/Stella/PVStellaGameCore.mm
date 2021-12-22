@@ -29,8 +29,16 @@
 
 #import <PVSupport/OERingBuffer.h>
 #import <PVSupport/DebugUtils.h>
+
+#if !TARGET_OS_MACCATALYST
+#import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
+#import <OpenGLES/EAGL.h>
+#else
+#import <OpenGL/OpenGL.h>
+#import <GLUT/GLUT.h>
+#endif
 
 #include "libretro.h"
 
@@ -236,6 +244,9 @@ static void writeSaveFile(const char* path, int type)
 
 - (void)executeFrameSkippingFrame: (BOOL) skip
 {
+    if (!skip && (self.controller1 || self.controller2)) {
+        [self pollControllers];
+    }
     stella_retro_run();
 }
 

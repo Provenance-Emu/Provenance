@@ -53,6 +53,11 @@
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>zh_CN</string>
+	</array>
 	<key>CFBundleName</key>
 	<string>${PRODUCT_NAME}</string>
 	<key>CFBundlePackageType</key>
@@ -86,11 +91,11 @@
 		</dict>
 		<dict>
 			<key>ProfileName</key>
-			<string>MicroGamepad</string>
+			<string>DirectionalGamepad</string>
 		</dict>
 		<dict>
 			<key>ProfileName</key>
-			<string>DirectionalGamepad</string>
+			<string>MicroGamepad</string>
 		</dict>
 	</array>
 	<key>GCSupportsControllerUserInteraction</key>
@@ -115,6 +120,16 @@
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>localhost</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+		</dict>
 	</dict>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Provenance uses Bluetooth to support game controllers.</string>
@@ -373,5 +388,7 @@
 			<string>com.provenance.savestate</string>
 		</dict>
 	</array>
+	<key>appcenter</key>
+	<string>862ca352-4607-4f8e-8c77-1248fa68ca3a</string>
 </dict>
 </plist>

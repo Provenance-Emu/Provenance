@@ -116,6 +116,12 @@ public final class PVCoreFactory: NSObject {
             } else {
                 fatalError("Core doesn't implement PVJaguarSystemResponderClient")
             }
+        case .Odyssey2:
+            if let core = core as? PVOdyssey2SystemResponderClient {
+                return PVOdyssey2ControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else {
+                fatalError("Core doesn't implement PVOdyssey2SystemResponderClient")
+            }
         case .Sega32X:
             if let core = core as? PVSega32XSystemResponderClient {
                 return PVSega32XControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
@@ -133,6 +139,18 @@ public final class PVCoreFactory: NSObject {
                 return PVPSXControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else {
                 fatalError("Core doesn't implement PVPSXSystemResponderClient")
+            }
+        case .PS2, .PS3:
+            if let core = core as? PVPS2SystemResponderClient {
+                return PVPS2ControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else {
+                fatalError("Core doesn't implement PVPS2SystemResponderClient")
+            }
+        case .PSP:
+            if let core = core as? PVPSPSystemResponderClient {
+                return PVPSPControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else {
+                fatalError("Core doesn't implement PVPSPSystemResponderClient")
             }
         case .Lynx:
             if let core = core as? PVLynxSystemResponderClient {
@@ -182,7 +200,46 @@ public final class PVCoreFactory: NSObject {
             } else {
                 fatalError("Core doesn't implement PVN64SystemResponderClient")
             }
+		case .GameCube:
+			if let core = core as? PVGameCubeSystemResponderClient {
+				return PVGameCubeControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+			} else {
+				fatalError("Core doesn't implement PVN64SystemResponderClient")
+			}
+        case ._3DO:
+            if let core = core as? PV3DOSystemResponderClient {
+                return PV3DOControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else {
+                fatalError("Core doesn't implement PV3DOSystemResponderClient")
+            }
+        case .ColecoVision:
+            if let core = core as? PVColecoVisionSystemResponderClient {
+                return PVColecoVisionControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else {
+                fatalError("Core doesn't implement PVColecoVisionSystemResponderClient")
+            }
+        case .Intellivision:
+            if let core = core as? PVIntellivisionSystemResponderClient {
+                return PVIntellivisionControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else {
+                fatalError("Core doesn't implement PVIntellivisionSystemResponderClient")
+            }
+        case .Vectrex:
+            if let core = core as? PVVectrexSystemResponderClient {
+                return PVVectrexControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else {
+                fatalError("Core doesn't implement PVVectrexSystemResponderClient")
+            }
+        case .DS:
+            if let core = core as? PVDSSystemResponderClient {
+                return PVDSControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else {
+                fatalError("Core doesn't implement PVDSSystemResponderClient")
+            }
         case .Unknown:
+            ELOG("No known system named: \(system.name) id: \(system.identifier)")
+            return nil
+        @unknown default:
             ELOG("No known system named: \(system.name) id: \(system.identifier)")
             return nil
         }

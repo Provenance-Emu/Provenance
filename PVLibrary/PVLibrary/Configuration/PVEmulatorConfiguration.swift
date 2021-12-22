@@ -47,37 +47,48 @@ public struct SystemDictionaryKeys {
 }
 
 public enum SystemIdentifier: String {
+    case _3DO = "com.provenance.3DO"
     case Atari2600 = "com.provenance.2600"
     case Atari5200 = "com.provenance.5200"
     case Atari7800 = "com.provenance.7800"
     case AtariJaguar = "com.provenance.jaguar"
+    case ColecoVision = "com.provenance.colecovision"
+    case DS = "com.provenance.ds"
     case Dreamcast = "com.provenance.dreamcast"
     case FDS = "com.provenance.fds"
+    case GameCube = "com.provenance.gamecube"
+    case GameGear = "com.provenance.gamegear"
     case GB = "com.provenance.gb"
     case GBA = "com.provenance.gba"
     case GBC = "com.provenance.gbc"
-    case GameGear = "com.provenance.gamegear"
     case Genesis = "com.provenance.genesis"
+    case Intellivision = "com.provenance.intellivision"
     case Lynx = "com.provenance.lynx"
     case MasterSystem = "com.provenance.mastersystem"
     case N64 = "com.provenance.n64"
     case NES = "com.provenance.nes"
     case NGP = "com.provenance.ngp"
     case NGPC = "com.provenance.ngpc"
+    case Odyssey2 = "com.provenance.odyssey2"
     case PCE = "com.provenance.pce"
     case PCECD = "com.provenance.pcecd"
     case PCFX = "com.provenance.pcfx"
-    case PSX = "com.provenance.psx"
     case PokemonMini = "com.provenance.pokemonmini"
+    case PS2 = "com.provenance.ps2"
+    case PS3 = "com.provenance.ps3"
+    case PSP = "com.provenance.psp"
+    case PSX = "com.provenance.psx"
     case Saturn = "com.provenance.saturn"
+    case Sega32X = "com.provenance.32X"
+    case SegaCD = "com.provenance.segacd"
     case SG1000 = "com.provenance.sg1000"
     case SGFX = "com.provenance.sgfx"
     case SNES = "com.provenance.snes"
-    case Sega32X = "com.provenance.32X"
-    case SegaCD = "com.provenance.segacd"
+    case Vectrex = "com.provenance.vectrex"
     case VirtualBoy = "com.provenance.vb"
     case WonderSwan = "com.provenance.ws"
     case WonderSwanColor = "com.provenance.wsc"
+
     case Unknown
 
     // MARK: Assistance accessors for properties
@@ -176,41 +187,22 @@ public final class PVEmulatorConfiguration: NSObject {
     }()
 
     public static let supportedCDFileExtensions: Set<String> = {
-        #if swift(>=4.1)
-            return Set(systems.compactMap({ (system) -> [String]? in
-                guard system.usesCDs else {
-                    return nil
-                }
+        return Set(systems.compactMap({ (system) -> [String]? in
+            guard system.usesCDs else {
+                return nil
+            }
 
-                return Array(system.supportedExtensions)
-            }).joined())
-        #else
-            return Set(systems.flatMap({ (system) -> [String]? in
-                guard system.usesCDs else {
-                    return nil
-                }
-
-                return Array(system.supportedExtensions)
-            }).joined())
-        #endif
+            return Array(system.supportedExtensions)
+        }).joined())
     }()
 
     public static var cdBasedSystems: [PVSystem] {
-        #if swift(>=4.1)
-            return systems.compactMap({ (system) -> PVSystem? in
-                guard system.usesCDs else {
-                    return nil
-                }
-                return system
-            })
-        #else
-            return systems.flatMap({ (system) -> PVSystem? in
-                guard system.usesCDs else {
-                    return nil
-                }
-                return system
-            })
-        #endif
+        return systems.compactMap({ (system) -> PVSystem? in
+            guard system.usesCDs else {
+                return nil
+            }
+            return system
+        })
     }
 
     // MARK: BIOS
@@ -328,7 +320,8 @@ public final class PVEmulatorConfiguration: NSObject {
 
     @objc
     public class func systemIDWantsStartAndSelectInMenu(_ systemID: String) -> Bool {
-        if systemID == SystemIdentifier.PSX.rawValue {
+        let systems: [String] = [SystemIdentifier.PSX.rawValue, SystemIdentifier.PS2.rawValue, SystemIdentifier.PSP.rawValue]
+        if systems.contains(systemID) {
             return true
         }
         return false
@@ -344,15 +337,9 @@ public final class PVEmulatorConfiguration: NSObject {
 
     @objc
     public class func systemIdentifiers(forFileExtension fileExtension: String) -> [String]? {
-        #if swift(>=4.1)
-            return systems(forFileExtension: fileExtension)?.compactMap({ (system) -> String? in
-                system.identifier
-            })
-        #else
-            return systems(forFileExtension: fileExtension)?.flatMap({ (system) -> String? in
-                system.identifier
-            })
-        #endif
+        return systems(forFileExtension: fileExtension)?.compactMap({ (system) -> String? in
+            system.identifier
+        })
     }
 
     public class func systems(forFileExtension fileExtension: String) -> [PVSystem]? {

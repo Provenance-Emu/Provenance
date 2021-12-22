@@ -17,6 +17,15 @@ public enum CoreOptionValue {
     case string(String)
     case number(NSNumber)
     case notFound
+
+    public var asBool: Bool {
+        switch self {
+        case .bool(let value): return value
+        case .string(let value): return Bool(value) ?? false
+        case .number(let value): return value.boolValue
+        case .notFound: return false
+        }
+    }
 }
 
 public extension CoreOptional { // where Self:PVEmulatorCore {
@@ -28,8 +37,11 @@ public extension CoreOptional { // where Self:PVEmulatorCore {
             return savedOption
         } else {
             let currentOptions: [CoreOption] = options
-            let foundOption = findOption(forKey: option, options: currentOptions)
-            return UserDefaults.standard.object(forKey: "\(className).\(foundOption!)") as? T
+			guard let foundOption = findOption(forKey: option, options: currentOptions) else {
+				ELOG("No option for key: \(option)")
+				return nil
+			}
+            return UserDefaults.standard.object(forKey: "\(className).\(foundOption)") as? T
         }
     }
 

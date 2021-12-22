@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>${EXECUTABLE_NAME}</string>
+	<key>CFBundleIconFile</key>
+	<string></string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>3.1.1</string>
+	<key>NSPrincipalClass</key>
+	<string>OEGameCoreController</string>
+	<key>OEGameCoreClass</key>
+	<string>PVDuckStationCore</string>
+	<key>OEGameCoreOptions</key>
+	<dict>
+		<key>openemu.system.5200</key>
+		<dict>
+			<key>OEGameCoreRequiresFiles</key>
+			<true/>
+			<key>OERequiredFiles</key>
+			<array>
+				<dict>
+					<key>Description</key>
+					<string>Atari 5200 BIOS</string>
+					<key>MD5</key>
+					<string>281f20ea4320404ec820fb7ec0693b38</string>
+					<key>Name</key>
+					<string>5200.rom</string>
+					<key>Size</key>
+					<integer>2048</integer>
+				</dict>
+			</array>
+		</dict>
+		<key>openemu.system.atari8bit</key>
+		<dict>
+			<key>OEGameCoreRequiresFiles</key>
+			<true/>
+			<key>OERequiredFiles</key>
+			<array>
+				<dict>
+					<key>Description</key>
+					<string>Atari XL/XE BASIC rev. C ROM</string>
+					<key>MD5</key>
+					<string>0bac0c6a50104045d902df4503a4c30b</string>
+					<key>Name</key>
+					<string>ataribas.rom</string>
+					<key>Size</key>
+					<integer>8192</integer>
+				</dict>
+				<dict>
+					<key>Description</key>
+					<string>Atari 400/800 OS rev. B ROM (known incorrect dump)</string>
+					<key>MD5</key>
+					<string>a3e8d617c95d08031fe1b20d541434b2</string>
+					<key>Name</key>
+					<string>atariosb.rom</string>
+					<key>Size</key>
+					<integer>10240</integer>
+				</dict>
+				<dict>
+					<key>Description</key>
+					<string>Atari XL/XE OS rev. 2 ROM</string>
+					<key>MD5</key>
+					<string>06daac977823773a3eea3422fd26a703</string>
+					<key>Name</key>
+					<string>atarixl.rom</string>
+					<key>Size</key>
+					<integer>16384</integer>
+				</dict>
+			</array>
+		</dict>
+	</dict>
+	<key>OEGameCorePlayerCount</key>
+	<string>1</string>
+	<key>OEProjectURL</key>
+	<string>https://github.com/stenzek/duckstation/</string>
+	<key>OESystemIdentifiers</key>
+	<array>
+		<string>openemu.system.5200</string>
+		<string>openemu.system.atari8bit</string>
+	</array>
+</dict>
+</plist>

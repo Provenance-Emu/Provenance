@@ -1,10 +1,10 @@
 <p align="center" style="text-align: center; align: center">
-<h1 align="center"><a href="http://www.provenance-emu.com" style="color:black;text-decoration:none;visited-color:black">Provenance</a></h1>
+<h1 align="center"><a href="http://www.provenance-emu.com" style="text-decoration:none;color:inherit;">Provenance</a></h1>
 <h4 align="center" style="text-align: center; align: center">An iOS & tvOS Frontend for Multiple Emulators</h4>
 </p>
 
 <p align="center">
-  <img width="128" height="128" src="https://gblobscdn.gitbook.com/spaces%2F-LcssjTrcP7HWLfsYZCJ%2Favatar.png">
+  <img height="512" src="https://user-images.githubusercontent.com/399864/140426554-fb786580-b36b-492d-b5f9-d806ca377508.jpeg" />
 </p>
 
 <div style="align:center" align="center">
@@ -26,7 +26,16 @@
 </a>
 </div>
 
-
+</br>
+<p align="center">
+<a href="https://www.patreon.com/bePatron?u=8537745">
+  <img src="https://user-images.githubusercontent.com/399864/139607496-983c7220-3aae-46f6-8369-ebd45d4c7f06.png" height="65" />
+</a>
+<a href="https://www.amazon.com/hz/wishlist/ls/1VXOGWHIOFVMR?ref_=wl_share">
+  <img src="https://user-images.githubusercontent.com/399864/140426153-b6797d7d-c82f-4542-89ff-b29a3e70525d.jpg"  height="65" />
+</a>
+ </p>
+</br>
 
 ## Installation
 
@@ -57,7 +66,7 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
   - PC Engine Super CD-ROM² System / TurboGrafx-CD
   - PC Engine SuperGrafx
   - PC-FX
-- Nintendo 
+- Nintendo
   - Nintendo Entertainment System / Famicom (NES/FC)
   - Famicom Disk System
   - Super Nintendo Entertainment System / Super Famicom (SNES/SFC)
@@ -78,16 +87,55 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
   - Neo Geo Pocket / Neo Geo Pocket Color
 - Sony
   - PlayStation (PSX/PS1)
-  
 ## Systems in Development:
  - Nintendo
    - DS
+   - GameCube (Dolphin)
  - Sega
-   - Dreamcast (reicast)
+   - Dreamcast (Flycast)
  - Sony
    - PSP (ppsspp)
+   - PS2 (Play!)
 
 ## Features
+
+<!--WIP | Manufacture  | System | Save States | Cheats | Up-scaling | Extras |
+|---|---|---|---|---|---|
+|Atari| | | | |
+| |2600 | X | | | |
+| |5200 | X | | | |
+| |7800 | X | | | |
+| |Lynx | X | | | |
+| |Jaguar | I | | | |
+|Bandai| | | | |
+| |WonderSwan (&Color) | X | | | |
+|NEC| | | | |
+| |PC Engine / TurboGrafx-16 (PCE/TG16)| | | | | |
+| |PC Engine Super CD-ROM² System / TurboGrafx-CD| | | | | |
+| |PC Engine SuperGrafx| | | | | |
+| |PC-FX| | | | | |
+|Nintendo| | | | |
+| |Nintendo Entertainment System / Famicom (NES/FC)| | | | | |
+| |Famicom Disk System| | | | | |
+| |Super Nintendo Entertainment System / Super Famicom (SNES/SFC)| | | | | |
+| |Game Boy / Game Boy Color (GB/GBC)| | | | | |
+| |Virtual Boy| | | | | |
+| |Nintendo 64 (N64)| | | | | |
+| |Game Boy Advance (GBA)| | | | | |
+| |Pokémon mini| | | | | |
+|Sega| | | | |
+| |SG-1000| X | | | | |
+| |Master System| X | | | | |
+| |Genesis / Mega Drive| X | | | | |
+| |Game Gear| X | | | | |
+| |CD / MegaCD| X | | | | |
+| |32X| X | | | | |
+| |Saturn (mednafen)| X | | | | |
+|SNK| | | | |
+| |Neo Geo Pocket / Neo Geo Pocket Color | X | | | |
+|Sony| | | | |
+| |PlayStation (PSX/PS1)| X | | | | | -->
+
 - Very Accurate, Full Speed Emulation
 - Stereo Sound
 - Save States (save anywhere/_game freezing_)
@@ -168,18 +216,280 @@ Provenance would not be possible without the great work of those who came before
 ### Collaborators
 
 <!-- readme: collaborators -start -->
+<table>
+<tr>
+    <td align="center">
+        <a href="https://github.com/jasarien">
+            <img src="https://avatars.githubusercontent.com/u/104444?v=4" width="100;" alt="jasarien"/>
+            <br />
+            <sub><b>James Addyman</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/JoeMatt">
+            <img src="https://avatars.githubusercontent.com/u/399864?v=4" width="100;" alt="JoeMatt"/>
+            <br />
+            <sub><b>Joe Mattiello</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/sevdestruct">
+            <img src="https://avatars.githubusercontent.com/u/3118097?v=4" width="100;" alt="sevdestruct"/>
+            <br />
+            <sub><b>Sev</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/mrjschulte">
+            <img src="https://avatars.githubusercontent.com/u/30782821?v=4" width="100;" alt="mrjschulte"/>
+            <br />
+            <sub><b>MrJs</b></sub>
+        </a>
+    </td></tr>
+</table>
 <!-- readme: collaborators -end -->
 
 ### Contributors
 
-<!-- readme: contributors -start -->
-<!-- readme: contributors -end -->
+<!-- readme: JoeMatt/-,jasarien/-,sevdestruct/-,mrjschulte/-,contributors -start -->
+<table>
+<tr>
+    <td align="center">
+        <a href="https://github.com/JoeMatt">
+            <img src="https://avatars.githubusercontent.com/u/399864?v=4" width="100;" alt="JoeMatt"/>
+            <br />
+            <sub><b>Joe Mattiello</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/jasarien">
+            <img src="https://avatars.githubusercontent.com/u/104444?v=4" width="100;" alt="jasarien"/>
+            <br />
+            <sub><b>James Addyman</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/sevdestruct">
+            <img src="https://avatars.githubusercontent.com/u/3118097?v=4" width="100;" alt="sevdestruct"/>
+            <br />
+            <sub><b>Sev</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/dnicolson">
+            <img src="https://avatars.githubusercontent.com/u/2276355?v=4" width="100;" alt="dnicolson"/>
+            <br />
+            <sub><b>Dave Nicolson</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/mrjschulte">
+            <img src="https://avatars.githubusercontent.com/u/30782821?v=4" width="100;" alt="mrjschulte"/>
+            <br />
+            <sub><b>MrJs</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/cheif">
+            <img src="https://avatars.githubusercontent.com/u/678919?v=4" width="100;" alt="cheif"/>
+            <br />
+            <sub><b>Dan Berglund</b></sub>
+        </a>
+    </td></tr>
+<tr>
+    <td align="center">
+        <a href="https://github.com/braindx">
+            <img src="https://avatars.githubusercontent.com/u/2925848?v=4" width="100;" alt="braindx"/>
+            <br />
+            <sub><b>Jay Mattis</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/marcelvoss">
+            <img src="https://avatars.githubusercontent.com/u/5435925?v=4" width="100;" alt="marcelvoss"/>
+            <br />
+            <sub><b>Marcel Voss</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/josejulio">
+            <img src="https://avatars.githubusercontent.com/u/3845764?v=4" width="100;" alt="josejulio"/>
+            <br />
+            <sub><b>Josejulio Martínez</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/davidmuzi">
+            <img src="https://avatars.githubusercontent.com/u/1058176?v=4" width="100;" alt="davidmuzi"/>
+            <br />
+            <sub><b>David Muzi</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/rafcabezas">
+            <img src="https://avatars.githubusercontent.com/u/1199743?v=4" width="100;" alt="rafcabezas"/>
+            <br />
+            <sub><b>Raf Cabezas</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/leolobato">
+            <img src="https://avatars.githubusercontent.com/u/134285?v=4" width="100;" alt="leolobato"/>
+            <br />
+            <sub><b>Leo Lobato</b></sub>
+        </a>
+    </td></tr>
+<tr>
+    <td align="center">
+        <a href="https://github.com/willco007">
+            <img src="https://avatars.githubusercontent.com/u/4294739?v=4" width="100;" alt="willco007"/>
+            <br />
+            <sub><b>Will Cosgrove</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/apexad">
+            <img src="https://avatars.githubusercontent.com/u/1437332?v=4" width="100;" alt="apexad"/>
+            <br />
+            <sub><b>Alex Martin</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/error404-na">
+            <img src="https://avatars.githubusercontent.com/u/1178084?v=4" width="100;" alt="error404-na"/>
+            <br />
+            <sub><b>Error404-na</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/zydeco">
+            <img src="https://avatars.githubusercontent.com/u/158216?v=4" width="100;" alt="zydeco"/>
+            <br />
+            <sub><b>Jesús A. Álvarez</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/DanielFontes">
+            <img src="https://avatars.githubusercontent.com/u/3082083?v=4" width="100;" alt="DanielFontes"/>
+            <br />
+            <sub><b>Daniel Fontes</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/stuartjmoore">
+            <img src="https://avatars.githubusercontent.com/u/642708?v=4" width="100;" alt="stuartjmoore"/>
+            <br />
+            <sub><b>Stuart Moore</b></sub>
+        </a>
+    </td></tr>
+<tr>
+    <td align="center">
+        <a href="https://github.com/yoshisuga">
+            <img src="https://avatars.githubusercontent.com/u/564774?v=4" width="100;" alt="yoshisuga"/>
+            <br />
+            <sub><b>Yoshisuga</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/cplr">
+            <img src="https://avatars.githubusercontent.com/u/10874576?v=4" width="100;" alt="cplr"/>
+            <br />
+            <sub><b>Cplr</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/SteveBarnegren">
+            <img src="https://avatars.githubusercontent.com/u/6288713?v=4" width="100;" alt="SteveBarnegren"/>
+            <br />
+            <sub><b>Steve Barnegren</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/jabwd">
+            <img src="https://avatars.githubusercontent.com/u/160014?v=4" width="100;" alt="jabwd"/>
+            <br />
+            <sub><b>Antwan Van Houdt</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/james-richards-privitar">
+            <img src="https://avatars.githubusercontent.com/u/61580341?v=4" width="100;" alt="james-richards-privitar"/>
+            <br />
+            <sub><b>James Richards</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/drakkhen">
+            <img src="https://avatars.githubusercontent.com/u/1428488?v=4" width="100;" alt="drakkhen"/>
+            <br />
+            <sub><b>Drakkhen</b></sub>
+        </a>
+    </td></tr>
+<tr>
+    <td align="center">
+        <a href="https://github.com/thales17">
+            <img src="https://avatars.githubusercontent.com/u/782602?v=4" width="100;" alt="thales17"/>
+            <br />
+            <sub><b>Adam Richardson</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/stefz">
+            <img src="https://avatars.githubusercontent.com/u/573472?v=4" width="100;" alt="stefz"/>
+            <br />
+            <sub><b>Stefano Zanetti</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/thedrick">
+            <img src="https://avatars.githubusercontent.com/u/796488?v=4" width="100;" alt="thedrick"/>
+            <br />
+            <sub><b>Tyler Hedrick</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/entourloop">
+            <img src="https://avatars.githubusercontent.com/u/1938273?v=4" width="100;" alt="entourloop"/>
+            <br />
+            <sub><b>Entourloop</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/getaaron">
+            <img src="https://avatars.githubusercontent.com/u/789577?v=4" width="100;" alt="getaaron"/>
+            <br />
+            <sub><b>Aaron Brager</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/kckd-geocaching">
+            <img src="https://avatars.githubusercontent.com/u/18198902?v=4" width="100;" alt="kckd-geocaching"/>
+            <br />
+            <sub><b>Kckd-geocaching</b></sub>
+        </a>
+    </td></tr>
+</table>
+<!-- readme: JoeMatt/-,jasarien/-,sevdestruct/-,mrjschulte/-,contributors -end -->
+
+### Sponsors
+
+<!-- readme: sponsors -start -->
+<table>
+</table>
+<!-- readme: sponsors -end -->
+
+### Bots
+
+<!-- readme: bots -start -->
+<table>
+</table>
+<!-- readme: bots -end -->
 
 ----
 
 #### Provenance License
 
-<sub>Copyright © 2016, Provenance-Emu Team. All rights reserved.</sub><br>
+<sub>Copyright © 2021, Provenance-Emu Team. All rights reserved.</sub><br>
 
 <sub>**Redistribution and use in source and binary forms, with or without modification, are
 permitted provided that the following conditions are met:**<br> 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer • 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. • 3. Neither the name of the Provenance project nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.</sub><br>

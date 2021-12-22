@@ -58,18 +58,10 @@ import UIKit
             let AlertContentViews: [UIView?] = [FirstSubview?.subviews.first, FirstSubview?.subviews.last]
 
             // Find the titles of UIAlertActions that are .cancel type
-            #if swift(>=4.1)
-                let cancelTitles: [String] = actions.filter { $0.style == .cancel }.compactMap { $0.title }
-            #else
-                let cancelTitles: [String] = actions.filter { $0.style == .cancel }.flatMap { $0.title }
-            #endif
-
+            let cancelTitles: [String] = actions.filter { $0.style == .cancel }.compactMap { $0.title }
+            
             // Find the titles of UIAlertActions that are .destructive type
-            #if swift(>=4.1)
-                let destructiveTitles: [String] = actions.filter { $0.style == .destructive }.compactMap { $0.title }
-            #else
-                let destructiveTitles: [String] = actions.filter { $0.style == .destructive }.flatMap { $0.title }
-            #endif
+            let destructiveTitles: [String] = actions.filter { $0.style == .destructive }.compactMap { $0.title }
 
             // TODO: Could do the same for 'destructive' types
 
@@ -143,25 +135,14 @@ import UIKit
 
         // Assistance function to recursively get all subviews of a type
         func getAllSubviews<T: UIView>(ofType _: T.Type, forView view: UIView?) -> [T]? {
-            #if swift(>=4.1)
-                let mapped = view?.subviews.compactMap { subView -> [T]? in
-                    var result = getAllSubviews(ofType: T.self, forView: subView)
-                    if let view = subView as? T {
-                        result = result ?? [T]()
-                        result!.append(view)
-                    }
-                    return result
+            let mapped = view?.subviews.compactMap { subView -> [T]? in
+                var result = getAllSubviews(ofType: T.self, forView: subView)
+                if let view = subView as? T {
+                    result = result ?? [T]()
+                    result!.append(view)
                 }
-            #else
-                let mapped = view?.subviews.flatMap { subView -> [T]? in
-                    var result = getAllSubviews(ofType: T.self, forView: subView)
-                    if let view = subView as? T {
-                        result = result ?? [T]()
-                        result!.append(view)
-                    }
-                    return result
-                }
-            #endif
+                return result
+            }
 
             return mapped != nil ? Array(mapped!.joined()) : nil
         }

@@ -19,7 +19,7 @@ import QuartzCore
 import Reachability
 import RealmSwift
 import RxCocoa
-// import RxDataSources
+import RxDataSources
 import RxSwift
 import UIKit
 
@@ -457,6 +457,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         hud.isUserInteractionEnabled = false
         view.addSubview(hud)
         updatesController.hudState
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: { state in
                 switch state {
                 case .hidden:
@@ -476,6 +477,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
         updatesController.conflicts
             .map { !$0.isEmpty }
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: { hasConflicts in
                 self.updateConflictsButton(hasConflicts)
                 if hasConflicts {
@@ -637,17 +639,22 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     #if os(iOS)
         // Show web server (stays on)
         func showServer() {
-            let ipURL = URL(string: PVWebServer.shared.urlString)!
-
-            let config = SFSafariViewController.Configuration()
-            config.barCollapsingEnabled = true
-            config.entersReaderIfAvailable = true
-
-            let safariVC = SFSafariViewController(url: ipURL, configuration: config)
-            safariVC.delegate = self
-            present(safariVC, animated: true) { () -> Void in }
+			let ipURL: String = PVWebServer.shared.urlString
+			let url = URL(string: ipURL)!
+			#if targetEnvironment(macCatalyst)
+			UIApplication.shared.open(url, options: [:]) { completed in
+				ILOG("Completed: \(completed ? "Yes":"No")")
+			}
+			#else
+			let config = SFSafariViewController.Configuration()
+			config.entersReaderIfAvailable = false
+			let safariVC = SFSafariViewController(url: url, configuration: config)
+			safariVC.delegate = self
+			present(safariVC, animated: true) { () -> Void in }
+			#endif // targetEnvironment(macCatalyst)
         }
 
+		#if !targetEnvironment(macCatalyst)
         func safariViewController(_: SFSafariViewController, didCompleteInitialLoad _: Bool) {
             // Load finished
         }
@@ -658,8 +665,8 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             navigationController?.popViewController(animated: true)
             PVWebServer.shared.stopServers()
         }
-
-    #endif
+		#endif // !targetEnvironment(macCatalyst)
+    #endif // os(iOS)
 
     @IBAction func conflictsButtonTapped(_: Any) {
         displayConflictVC()
@@ -776,7 +783,12 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             // show alert view
             showServerActiveAlert()
         } else {
-            let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or settings and free up ports: 80, 81.", preferredStyle: .alert)
+			#if targetEnvironment(simulator) || targetEnvironment(macCatalyst)
+			let message = "Check your network connection or settings and free up ports: 8080, 8081."
+			#else
+			let message = "Check your network connection or settings and free up ports: 80, 81."
+			#endif
+            let alert = UIAlertController(title: "Unable to start web server!", message: message, preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
             }))
             present(alert, animated: true) { () -> Void in }
@@ -791,6 +803,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         if UserDefaults.standard.bool(forKey: PVRequiresMigrationKey) {
             let hud = MBProgressHUD.showAdded(to: view, animated: true)!
             gameLibrary.migrate()
+                .observe(on: MainScheduler.instance)
                 .subscribe(onNext: { event in
                     switch event {
                     case .starting:
@@ -861,17 +874,24 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     private func longPressed(item: Section.Item, at indexPath: IndexPath, point: CGPoint) {
         let cell = collectionView!.cellForItem(at: indexPath)!
-        #if os(iOS)
+        #if os(iOS) && !targetEnvironment(macCatalyst)
             presentActionSheetViewControllerForPopoverPresentation(contextMenu(for: item, cell: cell, point: point),
                                                                sourceView: cell)
+        #elseif targetEnvironment(macCatalyst)
+        let actionSheet = contextMenu(for: item, cell: cell, point: point)
+        if traitCollection.userInterfaceIdiom == .mac {
+            actionSheet.popoverPresentationController?.sourceView = cell
+            actionSheet.popoverPresentationController?.sourceRect = (collectionView?.layoutAttributesForItem(at: indexPath)?.bounds ?? CGRect.zero)
+        }
+
+        present(actionSheet, animated: true)
         #else
             let actionSheet = contextMenu(for: item, cell: cell, point: point)
 
             if traitCollection.userInterfaceIdiom == .pad {
                 actionSheet.popoverPresentationController?.sourceView = cell
                 actionSheet.popoverPresentationController?.sourceRect = (collectionView?.layoutAttributesForItem(at: indexPath)?.bounds ?? CGRect.zero)
-            }
-
+			}
             present(actionSheet, animated: true)
         #endif
         }
@@ -1047,6 +1067,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     func toggleFavorite(for game: PVGame) {
         gameLibrary.toggleFavorite(for: game)
+            .observe(on: MainScheduler.instance)
             .subscribe(onCompleted: {
                 self.collectionView?.reloadData()
             }, onError: { error in

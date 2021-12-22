@@ -11,7 +11,9 @@
 #import <GameController/GameController.h>
 #else
 @import Foundation;
+#if !TARGET_OS_WATCH
 @import GameController;
+#endif
 #endif
 
 #pragma mark -
@@ -36,6 +38,39 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
     PVEmulatorCoreErrorCodeDoesNotSupportSaveStates = -6,
     PVEmulatorCoreErrorCodeMissingM3U               = -7,
 };
+
+typedef struct OEIntPoint {
+    int x;
+    int y;
+} OEIntPoint;
+
+typedef struct OEIntSize {
+    int width;
+    int height;
+} OEIntSize;
+
+typedef struct OEIntRect {
+    OEIntPoint origin;
+    OEIntSize size;
+} OEIntRect;
+
+static inline OEIntSize OEIntSizeMake(int width, int height)
+{
+    return (OEIntSize){ width, height };
+}
+static inline BOOL OEIntSizeEqualToSize(OEIntSize size1, OEIntSize size2)
+{
+    return size1.width == size2.width && size1.height == size2.height;
+}
+static inline BOOL OEIntSizeIsEmpty(OEIntSize size)
+{
+    return size.width == 0 || size.height == 0;
+}
+
+static inline OEIntRect OEIntRectMake(int x, int y, int width, int height)
+{
+    return (OEIntRect){ (OEIntPoint){ x, y }, (OEIntSize){ width, height } };
+}
 
 @protocol PVAudioDelegate
 @required
@@ -91,6 +126,7 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
 	GLESVersion2,
 	GLESVersion3
 };
+
 
 @property (nonatomic, assign) GameSpeed gameSpeed;
 @property (nonatomic, readonly, getter=isSpeedModified) BOOL speedModified;

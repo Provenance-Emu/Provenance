@@ -3,11 +3,20 @@
     "pins": [
       {
         "package": "AltKit",
-        "repositoryURL": "https://github.com/Provenance-Emu/AltKit.git",
+        "repositoryURL": "https://github.com/rileytestut/AltKit",
         "state": {
           "branch": null,
-          "revision": "23bee561948f7ede8c499a0bd2ba3a2ae1ba1112",
-          "version": "0.0.1"
+          "revision": "f799f60ef6fa8b9676b4102b7dfa169fb40b6c92",
+          "version": "0.0.2"
+        }
+      },
+      {
+        "package": "AppCenter",
+        "repositoryURL": "https://github.com/microsoft/appcenter-sdk-apple.git",
+        "state": {
+          "branch": null,
+          "revision": "25f64229373de97ff3920941cd52203193e5d8be",
+          "version": "4.3.0"
         }
       },
       {
@@ -20,16 +29,16 @@
         }
       },
       {
-        "package": "QuickTableViewController",
-        "repositoryURL": "https://github.com/bcylin/QuickTableViewController.git",
+        "package": "PLCrashReporter",
+        "repositoryURL": "https://github.com/microsoft/PLCrashReporter.git",
         "state": {
           "branch": null,
-          "revision": "574885ec390c434f39636e2c0c68860f7f3cd168",
-          "version": "1.3.1"
+          "revision": "6b27393cad517c067dceea85fadf050e70c4ceaa",
+          "version": "1.10.1"
         }
       },
       {
-        "package": "Reachability.swift",
+        "package": "Reachability",
         "repositoryURL": "https://github.com/ashleymills/Reachability.swift.git",
         "state": {
           "branch": null,
@@ -38,21 +47,30 @@
         }
       },
       {
-        "package": "realm-cocoa",
+        "package": "Realm",
         "repositoryURL": "https://github.com/realm/realm-cocoa.git",
         "state": {
           "branch": null,
-          "revision": "c619512ed75937ed3425df9343dc592f39bd8a43",
-          "version": "10.15.0"
+          "revision": "328425bfc372ce77ec1f4f2701f61ececbb97d84",
+          "version": "10.19.0"
         }
       },
       {
-        "package": "realm-core",
+        "package": "RealmDatabase",
         "repositoryURL": "https://github.com/realm/realm-core",
         "state": {
           "branch": null,
-          "revision": "23f60515a00f076a9e3f2dc672fe1ae07601ee90",
-          "version": "11.4.1"
+          "revision": "b170db6a47789ff5f2fbc3eeed0220b4b0a3f6b7",
+          "version": "11.6.0"
+        }
+      },
+      {
+        "package": "RxDataSources",
+        "repositoryURL": "https://github.com/RxSwiftCommunity/RxDataSources.git",
+        "state": {
+          "branch": null,
+          "revision": "90c29b48b628479097fe775ed1966d75ac374518",
+          "version": "5.0.2"
         }
       },
       {
@@ -77,18 +95,18 @@
         "package": "SQLite.swift",
         "repositoryURL": "https://github.com/stephencelis/SQLite.swift.git",
         "state": {
-          "branch": "master",
-          "revision": "e191c7d04583a1fd4e0f95e73bec2161a30e4857",
-          "version": null
+          "branch": null,
+          "revision": "0a9893ec030501a3956bee572d6b4fdd3ae158a1",
+          "version": "0.12.2"
         }
       },
       {
         "package": "SteamController",
         "repositoryURL": "https://github.com/Provenance-Emu/SteamController.git",
         "state": {
-          "branch": "master",
-          "revision": "ccf7b72f620f408d938c9f0a3ad5803b484ea2c2",
-          "version": null
+          "branch": null,
+          "revision": "59d257823a422da57c5acf57d56f740b4b8eb8dd",
+          "version": "1.3.1"
         }
       },
       {
@@ -105,8 +123,8 @@
         "repositoryURL": "https://github.com/ZipArchive/ZipArchive",
         "state": {
           "branch": null,
-          "revision": "825ff12a74a94c54e737e279604c27e6740e8a2c",
-          "version": "2.4.2"
+          "revision": "a6f9d8ffa18c6d562554d0b305696d4de1a0d161",
+          "version": "2.3.0"
         }
       }
     ]

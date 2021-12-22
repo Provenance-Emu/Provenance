@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import QuickTableViewController
 
 final class PVSettingsSliderRow<T>: SliderRow<PVSliderCell> where T: BinaryFloatingPoint {
     let keyPath: ReferenceWritableKeyPath<PVSettingsModel, T>

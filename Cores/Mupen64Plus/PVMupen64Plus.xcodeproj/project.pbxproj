@@ -65,7 +65,7 @@
 		B37263B726EA168500E95488 /* libpng-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF703921916E60000FA7F9 /* libpng-tvOS.a */; };
 		B37263BE26EA1EF000E95488 /* PVMupen64PlusRspHLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8601DECEA9100602746 /* PVMupen64PlusRspHLE.framework */; };
 		B37263C226EA1EF000E95488 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFB601802038AD13001E70F1 /* PVMupen64PlusVideoGlideN64.framework */; };
-		B37263C626EA1EF000E95488 /* PVMupen64PlusVideoRice.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37EFEF01C72E63300857158 /* PVMupen64PlusVideoRice.framework */; };
+		B37263C626EA1EF000E95488 /* PVMupen64PlusVideoRice.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37EFEF01C72E63300857158 /* PVMupen64PlusVideoRice.framework */; platformFilter = ios; };
 		B37263CA26EA1EF000E95488 /* PVRSPCXD4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B331158C1C7309C200E9AD14 /* PVRSPCXD4.framework */; };
 		B37263CF26EA1F1C00E95488 /* PVMupen64PlusRspHLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B9531DED13A200602746 /* PVMupen64PlusRspHLE.framework */; };
 		B37263D326EA1F1C00E95488 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFB603B82038B582001E70F1 /* PVMupen64PlusVideoGlideN64.framework */; };
@@ -93,6 +93,9 @@
 		B380101420854EAA00FA03B8 /* TxDbg_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = B380101320854EAA00FA03B8 /* TxDbg_ios.mm */; };
 		B38010152085586900FA03B8 /* libglidenhq-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3800FF5208522DC00FA03B8 /* libglidenhq-iOS.a */; };
 		B3882C141DED279C007183B6 /* libpng-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E4C1DED23C600896D96 /* libpng-iOS.a */; };
+		B3962AEC26FBD89A00FAEFC0 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */; platformFilter = maccatalyst; };
+		B3962AED26FBD8A500FAEFC0 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */; platformFilter = maccatalyst; };
+		B3962AEE26FBD8F100FAEFC0 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */; platformFilter = maccatalyst; };
 		B39E8CB62053B53100380DCD /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B39E8CB52053B53100380DCD /* Core.plist */; };
 		B3A302F22073F2D4008C1955 /* RiceVideoLinux.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3A302912073F2AA008C1955 /* RiceVideoLinux.ini */; };
 		B3A302F32073F2F2008C1955 /* osal_dynamiclib_unix.c in Sources */ = {isa = PBXBuildFile; fileRef = B3A302C12073F2AA008C1955 /* osal_dynamiclib_unix.c */; };
@@ -515,6 +518,7 @@
 		B3EA448E206E473400E608F6 /* CRC_OPT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603912038AE7D001E70F1 /* CRC_OPT.cpp */; };
 		B3EA448F206E473F00E608F6 /* 3DMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603292038AE7B001E70F1 /* 3DMath.cpp */; };
 		B3EA4490206E474000E608F6 /* 3DMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603292038AE7B001E70F1 /* 3DMath.cpp */; };
+		B3F2058326FBCBC600A4196B /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F2058226FBCBC600A4196B /* OpenGL.framework */; platformFilter = maccatalyst; };
 		DF0035C0203C8F6E00F63831 /* GLideN64.custom.ini in Resources */ = {isa = PBXBuildFile; fileRef = DFB601CA2038AE78001E70F1 /* GLideN64.custom.ini */; };
 		DF0035C1203C8F6E00F63831 /* GLideN64.ini in Resources */ = {isa = PBXBuildFile; fileRef = DFB601CB2038AE78001E70F1 /* GLideN64.ini */; };
 		DF0035C2203C8F6F00F63831 /* GLideN64.custom.ini in Resources */ = {isa = PBXBuildFile; fileRef = DFB601CA2038AE78001E70F1 /* GLideN64.custom.ini */; };
@@ -1482,6 +1486,8 @@
 		B37EFF3C1C72F43400857158 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3800FF5208522DC00FA03B8 /* libglidenhq-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libglidenhq-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B380101320854EAA00FA03B8 /* TxDbg_ios.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TxDbg_ios.mm; sourceTree = "<group>"; };
+		B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
 		B39E8CB52053B53100380DCD /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B3A302852073F2AA008C1955 /* INSTALL */ = {isa = PBXFileReference; lastKnownFileType = text; path = INSTALL; sourceTree = "<group>"; };
 		B3A302862073F2AA008C1955 /* LICENSES */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSES; sourceTree = "<group>"; };
@@ -1721,6 +1727,7 @@
 		B3CB4B20206E54D10074706B /* Log_ios.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Log_ios.mm; sourceTree = "<group>"; };
 		B3EA447B206E10C700E608F6 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		B3EA4488206E372400E608F6 /* TextDrawerStub.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextDrawerStub.cpp; sourceTree = "<group>"; };
+		B3F2058226FBCBC600A4196B /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		DF0035BD203C77D900F63831 /* Revision.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Revision.h; sourceTree = "<group>"; };
 		DFB601802038AD13001E70F1 /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2181,6 +2188,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3882C141DED279C007183B6 /* libpng-iOS.a in Frameworks */,
+				B3962AEE26FBD8F100FAEFC0 /* OpenGL.framework in Frameworks */,
 				B3303E821DED272E00896D96 /* libz.tbd in Frameworks */,
 				B324C62F21920BDA009F4EDC /* OpenGLES.framework in Frameworks */,
 			);
@@ -2195,6 +2203,7 @@
 				B3274E8B2106C19600857F52 /* PVSupport.framework in Frameworks */,
 				B324C62B21920BC2009F4EDC /* libz.tbd in Frameworks */,
 				B3AE1DD420731F2700AD06D4 /* libdl.tbd in Frameworks */,
+				B3962AED26FBD8A500FAEFC0 /* OpenGL.framework in Frameworks */,
 				B37263CA26EA1EF000E95488 /* PVRSPCXD4.framework in Frameworks */,
 				B324C63121920BDB009F4EDC /* OpenGLES.framework in Frameworks */,
 				B37263C226EA1EF000E95488 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
@@ -2228,6 +2237,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3962AEC26FBD89A00FAEFC0 /* OpenGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2274,6 +2284,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B38010152085586900FA03B8 /* libglidenhq-iOS.a in Frameworks */,
+				B3F2058326FBCBC600A4196B /* OpenGL.framework in Frameworks */,
 				B3EA4483206E309A00E608F6 /* libz.tbd in Frameworks */,
 				B3EA447C206E10C700E608F6 /* OpenGLES.framework in Frameworks */,
 			);
@@ -2296,6 +2307,7 @@
 		089C166AFE841209C02AAC07 /* Mupen64Plus */ = {
 			isa = PBXGroup;
 			children = (
+				B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */,
 				08FB77AFFE84173DC02AAC07 /* Classes */,
 				32C88E010371C26100C91783 /* Other Sources */,
 				089C167CFE841241C02AAC07 /* Resources */,
@@ -3451,6 +3463,8 @@
 		B3B3B8551DECE9D800602746 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3F2058226FBCBC600A4196B /* OpenGL.framework */,
+				B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */,
 				B37263B626EA164E00E95488 /* libdl.tbd */,
 				B37263A326EA0D6700E95488 /* libz.tbd */,
 				B3AE1DD320731F2700AD06D4 /* libdl.tbd */,
@@ -5944,6 +5958,7 @@
 		};
 		B37263C926EA1EF000E95488 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = ios;
 			target = B37EFEEF1C72E63300857158 /* PVMupen64PlusVideoRice-iOS */;
 			targetProxy = B37263C826EA1EF000E95488 /* PBXContainerItemProxy */;
 		};
@@ -6008,6 +6023,7 @@
 /* Begin XCBuildConfiguration section */
 		1DEB913F08733D840010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = NO;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -6068,6 +6084,7 @@
 		};
 		1DEB914008733D840010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = NO;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -6126,6 +6143,7 @@
 		};
 		B324C51D2191A3FE009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = NO;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -6226,6 +6244,7 @@
 				INFOPLIST_FILE = PVMupen64PlusDynamic/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -6255,8 +6274,9 @@
 				PRODUCT_NAME = PVMupen64Plus;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 				USER_HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/Plugins/Core/src\"",
 					"\"$(SRCROOT)/Compatibility/SDL\"",
@@ -6343,6 +6363,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				TARGETED_DEVICE_FAMILY = 3;
 				USER_HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/Plugins/Core/src\"",
@@ -6396,6 +6417,7 @@
 				);
 				INFOPLIST_FILE = "PVMupen64PlusVideoRice-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -6430,7 +6452,8 @@
 				PRODUCT_NAME = PVMupen64PlusVideoRice;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -6510,6 +6533,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				TARGETED_DEVICE_FAMILY = 3;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -6556,6 +6580,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = PVMupen64PlusRspHLE/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -6566,7 +6591,8 @@
 				PRODUCT_NAME = PVMupen64PlusRspHLE;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -6624,6 +6650,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				TARGETED_DEVICE_FAMILY = 3;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -6665,6 +6692,7 @@
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Plugins/Core/src/api\"";
 				INFOPLIST_FILE = PVRSPCXD4/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -6685,7 +6713,8 @@
 				PRODUCT_NAME = PVRSPCXD4;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -6748,6 +6777,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				TARGETED_DEVICE_FAMILY = 3;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -6802,12 +6832,6 @@
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
-				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
-					MUPENPLUSAPI,
-					TXFILTER_LIB,
-					OS_IOS,
-					GLESX,
-				);
 				GCC_UNROLL_LOOPS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -6829,29 +6853,20 @@
 				);
 				INFOPLIST_FILE = PVMupen64PlusVideoGlideN64/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				"OTHER_CFLAGS[sdk=iphoneos*]" = (
-					"-mfpu=neon",
-					"-fno-strict-aliasing",
-					"-fvisibility=hidden",
-					"-DGCC",
-					"-pthread",
-					"-fPIC",
-					"-D__unix__",
-					"-D__VEC4_OPT",
-					"-D__NEON_OPT",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64PlusGlideN64";
 				PRODUCT_NAME = PVMupen64PlusVideoGlideN64;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Plugins/Video/gliden64/src\"";
 				USE_HEADERMAP = NO;
 				VALIDATE_PRODUCT = YES;
@@ -6957,6 +6972,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				TARGETED_DEVICE_FAMILY = 3;
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Plugins/Video/gliden64/src\"";
 				USE_HEADERMAP = NO;
@@ -7015,7 +7031,7 @@
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Archive;
@@ -7071,7 +7087,7 @@
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Archive;
@@ -7240,7 +7256,7 @@
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
 		};
@@ -7293,13 +7309,14 @@
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
 		B33115921C7309C200E9AD14 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -7336,6 +7353,7 @@
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Plugins/Core/src/api\"";
 				INFOPLIST_FILE = PVRSPCXD4/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -7356,7 +7374,7 @@
 				PRODUCT_NAME = PVRSPCXD4;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -7396,6 +7414,7 @@
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Plugins/Core/src/api\"";
 				INFOPLIST_FILE = PVRSPCXD4/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -7416,7 +7435,7 @@
 				PRODUCT_NAME = PVRSPCXD4;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -7425,6 +7444,7 @@
 		};
 		B37EFEF51C72E63300857158 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -7468,6 +7488,7 @@
 				);
 				INFOPLIST_FILE = "PVMupen64PlusVideoRice-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -7496,7 +7517,7 @@
 				PRODUCT_NAME = PVMupen64PlusVideoRice;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -7543,6 +7564,7 @@
 				);
 				INFOPLIST_FILE = "PVMupen64PlusVideoRice-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -7577,7 +7599,7 @@
 				PRODUCT_NAME = PVMupen64PlusVideoRice;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -7586,6 +7608,7 @@
 		};
 		B37EFF3E1C72F43400857158 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -7632,6 +7655,7 @@
 				INFOPLIST_FILE = PVMupen64PlusDynamic/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -7657,7 +7681,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 				USER_HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/Plugins/Core/src\"",
 					"\"$(SRCROOT)/Compatibility/SDL\"",
@@ -7713,6 +7737,7 @@
 				INFOPLIST_FILE = PVMupen64PlusDynamic/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -7743,7 +7768,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 				USER_HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/Plugins/Core/src\"",
 					"\"$(SRCROOT)/Compatibility/SDL\"",
@@ -7806,7 +7831,7 @@
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
 		};
@@ -7861,7 +7886,7 @@
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -8093,6 +8118,7 @@
 		};
 		B3B3B8661DECEA9100602746 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -8134,6 +8160,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = PVMupen64PlusRspHLE/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -8144,7 +8171,7 @@
 				PRODUCT_NAME = PVMupen64PlusRspHLE;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -8189,6 +8216,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = PVMupen64PlusRspHLE/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -8199,7 +8227,7 @@
 				PRODUCT_NAME = PVMupen64PlusRspHLE;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -8208,6 +8236,7 @@
 		};
 		B3B3B9061DED130B00602746 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -8385,6 +8414,7 @@
 		};
 		B3B3B93E1DED137100602746 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -8548,6 +8578,7 @@
 		};
 		B3B3B9511DED13A200602746 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -8667,6 +8698,7 @@
 		};
 		B3B3B9711DED144100602746 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -8847,10 +8879,10 @@
 					"DEBUG=1",
 					MUPENPLUSAPI,
 					TXFILTER_LIB,
-					OS_IOS,
 					GLESX,
 					GL_ERROR_DEBUG,
 					GL_DEBUG,
+					"$(inherited)",
 				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -8872,29 +8904,19 @@
 				);
 				INFOPLIST_FILE = PVMupen64PlusVideoGlideN64/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
-				"OTHER_CFLAGS[sdk=iphoneos*]" = (
-					"-mfpu=neon",
-					"-fno-strict-aliasing",
-					"-fvisibility=hidden",
-					"-DGCC",
-					"-pthread",
-					"-fPIC",
-					"-D__unix__",
-					"-D__VEC4_OPT",
-					"-D__NEON_OPT",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64PlusGlideN64";
 				PRODUCT_NAME = PVMupen64PlusVideoGlideN64;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Plugins/Video/gliden64/src\"";
 				USE_HEADERMAP = NO;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -8949,12 +8971,6 @@
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
-				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
-					MUPENPLUSAPI,
-					TXFILTER_LIB,
-					OS_IOS,
-					GLESX,
-				);
 				GCC_UNROLL_LOOPS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -8976,29 +8992,19 @@
 				);
 				INFOPLIST_FILE = PVMupen64PlusVideoGlideN64/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				"OTHER_CFLAGS[sdk=iphoneos*]" = (
-					"-mfpu=neon",
-					"-fno-strict-aliasing",
-					"-fvisibility=hidden",
-					"-DGCC",
-					"-pthread",
-					"-fPIC",
-					"-D__unix__",
-					"-D__VEC4_OPT",
-					"-D__NEON_OPT",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64PlusGlideN64";
 				PRODUCT_NAME = PVMupen64PlusVideoGlideN64;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Plugins/Video/gliden64/src\"";
 				USE_HEADERMAP = NO;
 				VALIDATE_PRODUCT = YES;

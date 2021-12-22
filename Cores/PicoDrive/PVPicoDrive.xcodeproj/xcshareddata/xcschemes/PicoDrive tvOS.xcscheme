@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3A3E9851D6BFF6F00CCD7C8"
                BuildableName = "PicoDrive.framework"
-               BlueprintName = "PicoDrive-tvOS"
+               BlueprintName = "PVPicoDrive-tvOS"
                ReferencedContainer = "container:PVPicoDrive.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -59,7 +59,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3A3E9851D6BFF6F00CCD7C8"
             BuildableName = "PicoDrive.framework"
-            BlueprintName = "PicoDrive-tvOS"
+            BlueprintName = "PVPicoDrive-tvOS"
             ReferencedContainer = "container:PVPicoDrive.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -75,7 +75,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3A3E9851D6BFF6F00CCD7C8"
             BuildableName = "PicoDrive.framework"
-            BlueprintName = "PicoDrive-tvOS"
+            BlueprintName = "PVPicoDrive-tvOS"
             ReferencedContainer = "container:PVPicoDrive.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

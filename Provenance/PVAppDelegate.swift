@@ -12,7 +12,9 @@ import PVLibrary
 import PVSupport
 import RealmSwift
 import RxSwift
+#if !targetEnvironment(macCatalyst) && !os(macOS)
 import SteamController
+#endif
 
 @UIApplicationMain
 final class PVAppDelegate: UIResponder, UIApplicationDelegate {
@@ -28,8 +30,10 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         application.isIdleTimerDisabled = PVSettingsModel.shared.disableAutoLock
         _initLogging()
+        _initAppCenter()
         setDefaultsFromSettingsBundle()
 
+		#if !targetEnvironment(macCatalyst)
         DispatchQueue.global(qos: .background).async {
             let useiCloud = PVSettingsModel.shared.debugOptions.iCloudSync && PVEmulatorConfiguration.supportsICloud
             if useiCloud {
@@ -39,6 +43,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
         }
+		#endif
 
         do {
             try RomDatabase.initDefaultDatabase()
@@ -59,7 +64,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
         let gameLibrary = PVGameLibrary(database: RomDatabase.sharedInstance)
 
-        #if os(iOS)
+        #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
             // Setup shortcuts
             Observable.combineLatest(
                 gameLibrary.favorites.mapMany { $0.asShortcut(isFavorite: true) },
@@ -80,7 +85,9 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             if let tabBarController = window?.rootViewController as? UITabBarController {
                 let searchNavigationController = PVSearchViewController.createEmbeddedInNavigationController(gameLibrary: gameLibrary)
 
-                var viewControllers = tabBarController.viewControllers!
+                guard var viewControllers = tabBarController.viewControllers else {
+                    fatalError("tabBarController.viewControllers is nil")
+                }
                 viewControllers.insert(searchNavigationController, at: 1)
                 tabBarController.viewControllers = viewControllers
             }
@@ -93,7 +100,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         // Setup importing/updating library
         let gameImporter = GameImporter.shared
         let libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter)
-        #if os(iOS)
+        #if os(iOS) || os(macOS)
             libraryUpdatesController.addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance).disposed(by: disposeBag)
         #endif
 
@@ -105,36 +112,55 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             }
             .subscribe().disposed(by: disposeBag)
 
-        #if os(iOS)
-        let rootNavigation = window!.rootViewController as! UINavigationController
+        #if os(iOS) || os(macOS)
+        guard let rootNavigation = window?.rootViewController as? UINavigationController else {
+            fatalError("No root nav controller")
+        }
         #else
-        let tabBarController = window!.rootViewController as! UITabBarController
-        let rootNavigation = tabBarController.viewControllers![0] as! UINavigationController
-        let settingsVC = ((tabBarController.viewControllers![2] as! PVTVSplitViewController).viewControllers[1] as! UINavigationController).topViewController as! PVSettingsViewController
+        guard let tabBarController = window?.rootViewController as? UITabBarController,
+              let rootNavigation = tabBarController.viewControllers?[0] as? UINavigationController,
+              let splitVC = tabBarController.viewControllers?[2] as? PVTVSplitViewController,
+              let navVC = splitVC.viewControllers[1] as? UINavigationController,
+              let settingsVC = navVC.topViewController as? PVSettingsViewController else {
+                  fatalError("Bad View Controller heiarchy")
+              }
         settingsVC.conflictsController = libraryUpdatesController
         #endif
-        let gameLibraryViewController = rootNavigation.viewControllers[0] as! PVGameLibraryViewController
+        guard let gameLibraryViewController = rootNavigation.viewControllers.first as? PVGameLibraryViewController else {
+            fatalError("No gameLibraryViewController")
+        }
 
         // Would be nice to inject this in a better way, so that we can be certain that it's present at viewDidLoad for PVGameLibraryViewController, but this works for now
         gameLibraryViewController.updatesController = libraryUpdatesController
         gameLibraryViewController.gameImporter = gameImporter
         gameLibraryViewController.gameLibrary = gameLibrary
 
-        startOptionalWebDavServer()
-
         let database = RomDatabase.sharedInstance
         database.refresh()
 
+        #if !targetEnvironment(macCatalyst)
         SteamControllerManager.listenForConnections()
+        #endif
 
-        if #available(iOS 11, tvOS 11, *) {
+        #if os(iOS)
+        if #available(iOS 11, *) {
             PVAltKitService.shared.start()
         }
+        #endif
+
+		DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: { [unowned self] in
+			self.startOptionalWebDavServer()
+		})
 
         return true
     }
 
     func application(_: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+
+        #if os(tvOS)
+        importFile(atURL: url)
+        return true
+        #else
         let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
 
         if url.isFileURL {
@@ -224,9 +250,10 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         return false
+        #endif
     }
 
-    #if os(iOS)
+    #if os(iOS) || os(macOS)
         func application(_: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
             if shortcutItem.type == "kRecentGameShortcut", let md5Value = shortcutItem.userInfo?["PVGameHash"] as? String, let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
                 shortcutItemGame = matchedGame
@@ -239,7 +266,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_: UIApplication, continue userActivity: NSUserActivity, restorationHandler _: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         // Spotlight search click-through
-        #if os(iOS)
+        #if os(iOS) || os(macOS)
             if userActivity.activityType == CSSearchableItemActionType {
                 if let md5 = userActivity.userInfo?[CSSearchableItemActivityIdentifier] as? String, let md5Value = md5.components(separatedBy: ".").last, let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
                     // Comes in a format of "com....md5"
@@ -322,8 +349,8 @@ extension PVAppDelegate {
     }
 }
 
-#if os(iOS)
-@available(iOS 9.0, *)
+#if os(iOS) || os(macOS)
+@available(iOS 9.0, macOS 11.0, macCatalyst 11.0, *)
 extension PVGame {
     func asShortcut(isFavorite: Bool) -> UIApplicationShortcutItem {
         let icon: UIApplicationShortcutIcon = isFavorite ? .init(type: .favorite) : .init(type: .play)

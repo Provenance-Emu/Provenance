@@ -56,6 +56,9 @@
 }
 
 - (uint32_t)write:(const void *)inBuffer maxLength:(uint32_t)length {
+    if (inBuffer == nil) {
+        return 0;
+    }
     bytesWritten += length;
     return TPCircularBufferProduceBytes(&buffer, inBuffer, length);
 }

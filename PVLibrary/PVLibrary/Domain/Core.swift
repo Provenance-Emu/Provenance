@@ -13,6 +13,7 @@ public struct Core: Codable {
     public let identifier: String
     public let principleClass: String
 //    public let systems: [System]
+    public let disabled: Bool
 
     public var systems: [System] {
         let realm = try! Realm()

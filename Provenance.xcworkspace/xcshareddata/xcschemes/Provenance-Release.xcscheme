@@ -8,20 +8,6 @@
       <BuildActionEntries>
          <BuildActionEntry
             buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1A3D409317B2DCE4004DFFFC"
-               BuildableName = "Provenance.app"
-               BlueprintName = "Provenance"
-               ReferencedContainer = "container:Provenance.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
             buildForRunning = "NO"
             buildForProfiling = "NO"
             buildForArchiving = "NO"
@@ -210,6 +196,20 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3C9D4B71DEA77DF0068D057"
+               BuildableName = "PVGBA.framework"
+               BlueprintName = "PVGBA-iOS"
+               ReferencedContainer = "container:Cores/VisualBoyAdvance-M/PVGBA.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "B38FB4BF1C839BE500CD73BE"
                BuildableName = "PVStella.framework"
                BlueprintName = "PVStella-iOS"
@@ -254,7 +254,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B37937AB1D6BCF8100EBAE81"
                BuildableName = "PicoDrive.framework"
-               BlueprintName = "PicoDrive-iOS"
+               BlueprintName = "PVPicoDrive-iOS"
                ReferencedContainer = "container:Cores/PicoDrive/PVPicoDrive.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -294,44 +294,30 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3C7620F20783162009950E4"
-               BuildableName = "PVReicast.framework"
-               BlueprintName = "PVReicast-iOS"
-               ReferencedContainer = "container:Cores/Reicast/PVReicast.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3C9D4B71DEA77DF0068D057"
-               BuildableName = "PVGBA.framework"
-               BlueprintName = "PVGBA-iOS"
-               ReferencedContainer = "container:Cores/VisualBoyAdvance-M/PVGBA.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "B36DE7471D6AB19C002EE3ED"
                BuildableName = "PVAtari800.framework"
                BlueprintName = "PVAtari800-iOS"
                ReferencedContainer = "container:Cores/Atari800/PVAtari800.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1A3D409317B2DCE4004DFFFC"
+               BuildableName = "Provenance.app"
+               BlueprintName = "Provenance"
+               ReferencedContainer = "container:Provenance.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
@@ -408,7 +394,7 @@
       </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
-      buildConfiguration = "Debug">
+      buildConfiguration = "Release">
    </AnalyzeAction>
    <ArchiveAction
       buildConfiguration = "Archive"

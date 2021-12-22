@@ -11,7 +11,9 @@ import Foundation
 import GameController
 import PVLibrary
 import PVSupport
+#if !targetEnvironment(macCatalyst) && !os(macOS) && canImport(SteamController)
 import SteamController
+#endif
 
 extension Notification.Name {
     static let PVControllerManagerControllerReassigned = Notification.Name("PVControllerManagerControllerReassignedNotification")
@@ -202,6 +204,7 @@ final class PVControllerManager: NSObject {
             return
         }
 
+#if !targetEnvironment(macCatalyst)
         if let steamController = controller as? SteamController {
             #if os(tvOS)
             // PVEmulatorViewController will set to controller mode if game is running
@@ -214,7 +217,7 @@ final class PVControllerManager: NSObject {
                 }
             }
         }
-
+#endif
         ILOG("Controller connected: \(controller.vendorName ?? "No Vendor")")
         assign(controller)
     }
@@ -266,6 +269,7 @@ final class PVControllerManager: NSObject {
         listenForICadeControllers(window: nil) { () -> Void in }
     }
 
+#if !targetEnvironment(macCatalyst)
     func handleSteamControllerCombination(controller: SteamController, button: SteamControllerButton) {
         switch button {
         case .leftTrackpadClick:
@@ -287,7 +291,7 @@ final class PVControllerManager: NSObject {
             return
         }
     }
-
+#endif
     // MARK: - Controllers assignment
 
     func setController(_ controller: GCController?, toPlayer player: Int) {
@@ -376,9 +380,11 @@ final class PVControllerManager: NSObject {
         return false
     }
 
+#if !targetEnvironment(macCatalyst)
     func setSteamControllersMode(_ mode: SteamControllerMode) {
         for controller in SteamControllerManager.shared().controllers {
             controller.steamControllerMode = mode
         }
     }
+#endif
 }

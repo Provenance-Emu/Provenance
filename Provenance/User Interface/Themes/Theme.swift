@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import QuickTableViewController
+
 import UIKit
 
 public enum Themes: String {
@@ -180,7 +180,9 @@ public final class Theme {
 
         UISwitch.appearance {
             $0.onTintColor = theme.switchON
+			#if !targetEnvironment(macCatalyst)
             $0.thumbTintColor = theme.switchThumb
+			#endif
         }
 
         UITableView.appearance {

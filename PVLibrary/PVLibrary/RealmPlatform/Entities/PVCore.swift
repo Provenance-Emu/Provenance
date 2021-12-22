@@ -18,11 +18,12 @@ public final class PVCore: Object {
     public dynamic var projectName = ""
     public dynamic var projectURL = ""
     public dynamic var projectVersion = ""
+    public dynamic var disabled = false
 
     // Reverse links
     public var saveStates = LinkingObjects(fromType: PVSaveState.self, property: "core")
 
-    public convenience init(withIdentifier identifier: String, principleClass: String, supportedSystems: [PVSystem], name: String, url: String, version: String) {
+    public convenience init(withIdentifier identifier: String, principleClass: String, supportedSystems: [PVSystem], name: String, url: String, version: String, disabled: Bool =  false) {
         self.init()
         self.identifier = identifier
         self.principleClass = principleClass
@@ -31,6 +32,7 @@ public final class PVCore: Object {
         projectName = name
         projectURL = url
         projectVersion = version
+        self.disabled = disabled
     }
 
     public override static func primaryKey() -> String? {
@@ -61,6 +63,7 @@ internal extension Core {
     init(with core: PVCore) {
         identifier = core.identifier
         principleClass = core.principleClass
+        disabled = core.disabled
         // TODO: Supported systems
         project = CoreProject(name: core.projectName, url: URL(string: core.projectURL)!, version: core.projectVersion)
     }
@@ -94,6 +97,7 @@ extension Core: RealmRepresentable {
             object.projectName = project.name
             object.projectVersion = project.version
             object.projectURL = project.url.absoluteString
+            object.disabled = disabled
         })
     }
 }

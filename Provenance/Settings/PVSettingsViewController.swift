@@ -12,7 +12,7 @@
 #endif
 import PVLibrary
 import PVSupport
-import QuickTableViewController
+
 import Reachability
 import RealmSwift
 import UIKit

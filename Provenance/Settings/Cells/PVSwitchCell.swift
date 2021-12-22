@@ -6,7 +6,7 @@
 //  Copyright © 2018 Provenance Emu. All rights reserved.
 //
 
-import QuickTableViewController
+
 import UIKit
 
 final class PVSwitchCell: SwitchCell {
@@ -28,8 +28,9 @@ final class PVSwitchCell: SwitchCell {
             textLabel?.textColor = Theme.currentTheme.settingsCellText
             detailTextLabel?.textColor = Theme.currentTheme.defaultTintColor
             switchControl.onTintColor = Theme.currentTheme.switchON
+		#if !targetEnvironment(macCatalyst)
             switchControl.thumbTintColor = Theme.currentTheme.switchThumb
-
+		#endif
         #else
             bg.backgroundColor = UIColor.clear
             self.textLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.white : UIColor.black

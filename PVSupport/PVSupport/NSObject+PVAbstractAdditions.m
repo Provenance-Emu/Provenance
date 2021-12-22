@@ -20,8 +20,10 @@
 
 - (void)doesNotImplementSelector:(SEL)aSel
 {
+    NSString* reason = [NSString stringWithFormat:@"*** -%s cannot be sent to an abstract object of class %@: Create a concrete instance!", sel_getName(aSel), [self class]];
+    ELOG(@"%@", reason);
     @throw [NSException exceptionWithName:NSInvalidArgumentException
-                                   reason:[NSString stringWithFormat:@"*** -%s cannot be sent to an abstract object of class %@: Create a concrete instance!", sel_getName(aSel), [self class]]
+                                   reason:reason
                                  userInfo:nil];
 }
 

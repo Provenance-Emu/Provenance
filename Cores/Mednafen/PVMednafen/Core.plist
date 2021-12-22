@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>PVCoreIdentifier</key>
-	<string>com.provenane.core.mednafen</string>
+	<string>com.provenance.core.mednafen</string>
 	<key>PVPrincipleClass</key>
 	<string>MednafenGameCore</string>
 	<key>PVProjectName</key>

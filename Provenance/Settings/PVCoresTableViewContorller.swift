@@ -7,7 +7,7 @@
 //
 
 import PVLibrary
-import QuickTableViewController
+
 import RealmSwift
 import UIKit
 
@@ -88,7 +88,7 @@ final class PVCoresTableViewController: QuickTableViewController {
             hud.isUserInteractionEnabled = false
             hud.mode = .determinateHorizontalBar
             hud.progress = 0
-            hud.labelText = "Loading…"
+            hud.labelText = NSLocalizedString("Loading", comment: "Loading") + "…"
 
             self.hud = hud
             webView.addSubview(hud)

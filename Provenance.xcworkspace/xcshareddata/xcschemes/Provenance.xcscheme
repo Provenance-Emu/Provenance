@@ -11,27 +11,27 @@
             buildForRunning = "YES"
             buildForProfiling = "YES"
             buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
+            buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1A3D409317B2DCE4004DFFFC"
-               BuildableName = "Provenance.app"
-               BlueprintName = "Provenance"
-               ReferencedContainer = "container:Provenance.xcodeproj">
+               BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
+               BuildableName = "PVSupport.framework"
+               BlueprintName = "PVSupport-iOS"
+               ReferencedContainer = "container:PVSupport/PVSupport.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
             buildForTesting = "YES"
-            buildForRunning = "NO"
-            buildForProfiling = "NO"
-            buildForArchiving = "NO"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1AD9AA341ACC988F00EC87A0"
-               BuildableName = "Provenance Tests.xctest"
-               BlueprintName = "Provenance Tests"
-               ReferencedContainer = "container:Provenance.xcodeproj">
+               BlueprintIdentifier = "B3579D0E2106B11D00DDEBD6"
+               BuildableName = "PVLibrary.framework"
+               BlueprintName = "PVLibrary-iOS"
+               ReferencedContainer = "container:PVLibrary/PVLibrary.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -84,23 +84,9 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3579D0E2106B11D00DDEBD6"
-               BuildableName = "PVLibrary.framework"
-               BlueprintName = "PVLibrary-iOS"
-               ReferencedContainer = "container:PVLibrary/PVLibrary.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "B37937AB1D6BCF8100EBAE81"
                BuildableName = "PicoDrive.framework"
-               BlueprintName = "PicoDrive-iOS"
+               BlueprintName = "PVPicoDrive-iOS"
                ReferencedContainer = "container:Cores/PicoDrive/PVPicoDrive.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -130,20 +116,6 @@
                BuildableName = "PVMednafen.framework"
                BlueprintName = "PVMednafen-iOS"
                ReferencedContainer = "container:Cores/Mednafen/PVMednafen.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3C7620F20783162009950E4"
-               BuildableName = "PVReicast.framework"
-               BlueprintName = "PVReicast-iOS"
-               ReferencedContainer = "container:Cores/Reicast/PVReicast.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -210,20 +182,6 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
-               BuildableName = "PVSupport.framework"
-               BlueprintName = "PVSupport-iOS"
-               ReferencedContainer = "container:PVSupport/PVSupport.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "B37EFF371C72F43300857158"
                BuildableName = "PVMupen64Plus.framework"
                BlueprintName = "PVMupen64Plus-iOS"
@@ -270,6 +228,34 @@
                BuildableName = "PVFCEU.framework"
                BlueprintName = "PVFCEU-iOS"
                ReferencedContainer = "container:Cores/FCEU/PVFCEU.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1A3D409317B2DCE4004DFFFC"
+               BuildableName = "Provenance.app"
+               BlueprintName = "Provenance"
+               ReferencedContainer = "container:Provenance.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1AD9AA341ACC988F00EC87A0"
+               BuildableName = "Provenance Tests.xctest"
+               BlueprintName = "Provenance Tests"
+               ReferencedContainer = "container:Provenance.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

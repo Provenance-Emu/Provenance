@@ -290,11 +290,7 @@ extension GameLaunchingViewController where Self: UIViewController {
 
         let biosPathContents: [String]
         do {
-            #if swift(>=4.1)
-                biosPathContents = try FileManager.default.contentsOfDirectory(at: system.biosDirectory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants]).compactMap { $0.isFileURL ? $0.lastPathComponent : nil }
-            #else
-                biosPathContents = try FileManager.default.contentsOfDirectory(at: system.biosDirectory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants]).flatMap { $0.isFileURL ? $0.lastPathComponent : nil }
-            #endif
+            biosPathContents = try FileManager.default.contentsOfDirectory(at: system.biosDirectory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants]).compactMap { $0.isFileURL ? $0.lastPathComponent : nil }
         } catch {
             try? FileManager.default.createDirectory(at: system.biosDirectory, withIntermediateDirectories: true, attributes: nil)
             let biosFiles = biosEntries.map { $0.expectedFilename }.joined(separator: ", ")
@@ -397,7 +393,7 @@ extension GameLaunchingViewController where Self: UIViewController {
             return
         }
 
-        let cores = system.cores.sorted(byKeyPath: "projectName")
+        let cores = system.cores.sorted(byKeyPath: "projectName").filter({ return !$0.disabled })
 
         let coreChoiceAlert = UIAlertController(title: "Multiple cores found", message: "Select which core to use with this game.", preferredStyle: .actionSheet)
         if traitCollection.userInterfaceIdiom == .pad, let senderView = sender as? UIView ?? self.view {
@@ -557,7 +553,7 @@ extension GameLaunchingViewController where Self: UIViewController {
         let emulatorViewController = PVEmulatorViewController(game: game, core: coreInstance)
 
         // Check if Save State exists
-        if saveState == nil {
+        if saveState == nil, emulatorViewController.core.supportsSaveStates {
             checkForSaveStateThenRun(withCore: core, forGame: game) { optionallyChosenSaveState in
                 self.presentEMUVC(emulatorViewController, withGame: game, loadingSaveState: optionallyChosenSaveState)
             }

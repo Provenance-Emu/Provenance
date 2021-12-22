@@ -3,7 +3,7 @@ name: Bug Report
 about: Create a report to help us improve
 title: 'Bug Report'
 labels: bug
-assignees: 'JoeMatt'
+assignees: ''
 tag: bug
 ---
 
@@ -51,109 +51,31 @@ replaceWithActualResults
 
 replaceWithNotesOrDelete
 
-
-
-
 #
 <!--- ☑️ REQUIRED: Check the detail boxes after posting! ------------------------>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #### APP VERSION
-- [ ] 1.5 *beta*
-- [ ] 1.4
+<!-- 2.0.X -->
+
 
 #### APP SOURCE
-- [ ] Provenance-Emu GitHub  *&nbsp;(Official)*
-- [ ] Other  *&nbsp;(Unofficial)*
+<!--
+- Provenance-Emu GitHub  *&nbsp;(Official)*
+- Other  *&nbsp;(Unofficial)*
+-->
 
 #### INSTALLED BY 
-- [ ] [Side-Loading](https://git.io/vpYzf)
-- [ ] [Building](https://git.io/vpYzv) *from Source*
+
+<!-- 
+[Side-Loading](https://wiki.provenance-emu.com/installation-and-usage/installing-provenance/sideloading)
+[Building](https://wiki.provenance-emu.com/installation-and-usage/installing-provenance/building-from-source) *from Source*
+-->
 
 #### PLATFORM
-- [ ] iPhone
-- [ ] iPad
-- [ ] Apple TV
+<!-- iOS/iPad/tvOS/Mac (Catalyst) -->
 
 #### iOS/tvOS VERSION
-- [ ] 14.x
-- [ ] 13.x
-- [ ] 12.x
-- [ ] 11.x
-- [ ] 10.x
+<!-- 14.2 -->
 
 -------------------------------------------
-<sup> 🚫 We **DO NOT** support unofficial builds installed from 3rd-party sites. ([Official Install](https://git.io/vxABg)) </sup><br><sup> ❓ **Need help or have a suggestion?** Join our [Official Discord](https://discord.gg/4TK7PU5) </sup><br>
+<sup> 🚫 We **DO NOT** support unofficial builds installed from 3rd-party sites. ([Official Install](https://wiki.provenance-emu.com/installation-and-usage/installing-provenance)) </sup><br><sup> ❓ **Need help or have a suggestion?** Join our [Official Discord](https://discord.gg/4TK7PU5) </sup><br>

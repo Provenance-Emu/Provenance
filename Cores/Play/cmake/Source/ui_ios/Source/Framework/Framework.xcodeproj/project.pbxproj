@@ -1,0 +1,1391 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		0285C8420FCC45EA8D71FBC5 /* install */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 75FAA84A0BA541AEB5ACAD98 /* Build configuration list for PBXAggregateTarget "install" */;
+			buildPhases = (
+				93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */,
+			);
+			dependencies = (
+				2F1743C0E39B40D5B2F5D811 /* PBXTargetDependency */,
+			);
+			name = install;
+			productName = install;
+		};
+		3EBABC1ED902418AB5132579 /* ZERO_CHECK */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 01B1AB69560446949EC6CA97 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildPhases = (
+				0A019C05CCE5F2C46D999EA8 /* Generate CMakeFiles/ZERO_CHECK */,
+			);
+			dependencies = (
+			);
+			name = ZERO_CHECK;
+			productName = ZERO_CHECK;
+		};
+		6B9C69E5DB214681B2A5C976 /* ALL_BUILD */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = F72EBAA5B32344D598093D89 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildPhases = (
+				3EFBBB38E556D2BFFDCDFD29 /* Generate CMakeFiles/ALL_BUILD */,
+			);
+			dependencies = (
+				7F236C49D7CD4190A5F65B77 /* PBXTargetDependency */,
+				C119CA0DE5514BD19B1FC1A8 /* PBXTargetDependency */,
+			);
+			name = ALL_BUILD;
+			productName = ALL_BUILD;
+		};
+		B7A566E4767340588D653807 /* RUN_TESTS */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = FFB8C454131A4399AEAA0E6A /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
+			buildPhases = (
+				003C8D08B0008F35F218E126 /* CMake PostBuild Rules */,
+			);
+			dependencies = (
+			);
+			name = RUN_TESTS;
+			productName = RUN_TESTS;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		01CC94613F1F414C85877652 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/VerticalLayout.h */ = {isa = PBXBuildFile; fileRef = C7CAD906B9DC4BFAA1F9DBD7 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/VerticalLayout.h */; };
+		067F53F8C31E44588FC7D0B0 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/xml/FilteringNodeIterator.cpp */ = {isa = PBXBuildFile; fileRef = 0C8B0C10D30842A9B45EDD0F /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/xml/FilteringNodeIterator.cpp */; };
+		07BF0B6C1F0C4AA9B46928E5 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/filesystem_def.h */ = {isa = PBXBuildFile; fileRef = 8C3BD8749FC445A98F82BDF2 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/filesystem_def.h */; };
+		094CAC7BA7A04F7183364D8B /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/LayoutStretch.cpp */ = {isa = PBXBuildFile; fileRef = FC5336D7E0974406BDDB138F /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/LayoutStretch.cpp */; };
+		0B4A6FC2D4184F01B499E96C /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/CodedBlockPatternTable.cpp */ = {isa = PBXBuildFile; fileRef = D30697A413E94625A39866DB /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/CodedBlockPatternTable.cpp */; };
+		0D0DC581F8C04C3D97C63ADD /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipFile.cpp */ = {isa = PBXBuildFile; fileRef = A131BB80D03A48CF9D9EB91D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipFile.cpp */; };
+		124F0C40450D43078848B2D5 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/StringUtils.cpp */ = {isa = PBXBuildFile; fileRef = 02CF7B552EE74C4191DB12C9 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/StringUtils.cpp */; };
+		13AB07020A354478AAC9C2FE /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/signal/Signal.h */ = {isa = PBXBuildFile; fileRef = F3CB5E9BD0C045BFB943F12B /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/signal/Signal.h */; };
+		1424CBD717324D8DA6201B6A /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/QuantiserScaleTable.cpp */ = {isa = PBXBuildFile; fileRef = AC9EED52C9B244039E11D9F5 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/QuantiserScaleTable.cpp */; };
+		14C0493133D94526B81F9DFB /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/zip/ZipInflateStream.h */ = {isa = PBXBuildFile; fileRef = 8E79BAB6AD6E4351A1AF6888 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/zip/ZipInflateStream.h */; };
+		15D2E724FFE244348B1CF127 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/GridLayout.h */ = {isa = PBXBuildFile; fileRef = C54822ADE03A4B57BB0F61D5 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/GridLayout.h */; };
+		1657928BD77141F085F37396 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/StreamBitStream.cpp */ = {isa = PBXBuildFile; fileRef = 77A4C4CC98CD452696DC8592 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/StreamBitStream.cpp */; };
+		18220BD849DC49C28A639032 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/FlatLayout.h */ = {isa = PBXBuildFile; fileRef = 7C7901C3596D40F8A8056AEE /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/FlatLayout.h */; };
+		1853DA3233414009AA37C21A /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/StringUtils.h */ = {isa = PBXBuildFile; fileRef = 6074430A0C6F49E9A8A07751 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/StringUtils.h */; };
+		2C779D78233E4666A5B68F4F /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Stream.cpp */ = {isa = PBXBuildFile; fileRef = E8AA2D42F6834698A721F762 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Stream.cpp */; };
+		2C9763C88500455CADC5A78F /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/math/MathStringUtils.cpp */ = {isa = PBXBuildFile; fileRef = A9F08D051B7940FC8C400E9E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/math/MathStringUtils.cpp */; };
+		2E5F469845D34A418E79915A /* /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/CMakeFiles/Framework.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 18073079B9194CC287B8BCAF /* /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/CMakeFiles/Framework.dir/Info.plist */; };
+		2F33F340B88E425D8FD808A9 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/string_cast.cpp */ = {isa = PBXBuildFile; fileRef = 6EC5A999DD6345AFBA3C4693 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/string_cast.cpp */; };
+		307E9097A6DD4FC18F7B8E68 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/xml/Utils.cpp */ = {isa = PBXBuildFile; fileRef = 48D62F341D954D5BBEC382A2 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/xml/Utils.cpp */; };
+		380A1AE441874BD99429B56E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/MotionCodeTable.cpp */ = {isa = PBXBuildFile; fileRef = 43ABCA5A66224C1190BE6803 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/MotionCodeTable.cpp */; };
+		38C55CFBC39D4349832B3632 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/ThreadPool.h */ = {isa = PBXBuildFile; fileRef = 7D253010C520405F9C934E1C /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/ThreadPool.h */; };
+		3B99B3C2C757495596578A1D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/xml/Node.cpp */ = {isa = PBXBuildFile; fileRef = 0217FBA874B54669B30E4A5E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/xml/Node.cpp */; };
+		3D966C04FC044690A4E6C143 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/LayoutBase.h */ = {isa = PBXBuildFile; fileRef = 31EBB18120414EEDAE065C9F /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/LayoutBase.h */; };
+		3EB90CF0811C4D33901FCE62 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/zip/ZipArchiveReader.h */ = {isa = PBXBuildFile; fileRef = DD79DCAD9BE14EE093600568 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/zip/ZipArchiveReader.h */; };
+		3F84AF45FF614217BCF80141 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/FlatLayout.cpp */ = {isa = PBXBuildFile; fileRef = 85C66D3202344475AB0403B8 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/FlatLayout.cpp */; };
+		3F9D6B02364544F7A70182F4 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/HashUtils.h */ = {isa = PBXBuildFile; fileRef = E686F640EBB84E5281AD65F2 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/HashUtils.h */; };
+		414C4E675B444F7E90BFAA8F /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/bitmap/TGA.cpp */ = {isa = PBXBuildFile; fileRef = EE78799225884534B1DA323B /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/bitmap/TGA.cpp */; };
+		44A1DD15B34E4C878F37A4F8 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/VerticalLayout.cpp */ = {isa = PBXBuildFile; fileRef = EF7C8B6C82944294805D0722 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/VerticalLayout.cpp */; };
+		44CB9D4A35924776879174CE /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Utf8.cpp */ = {isa = PBXBuildFile; fileRef = 3202EC028572431CAEA86686 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Utf8.cpp */; };
+		455F78DB855E43FE982AF783 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/bitmap/Bitmap.cpp */ = {isa = PBXBuildFile; fileRef = 8AA772114345416E8A594C2F /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/bitmap/Bitmap.cpp */; };
+		46506FF70CC245E6BA6B6423 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/LayoutBaseItem.cpp */ = {isa = PBXBuildFile; fileRef = 7C1DEE49BAF842518698EA6E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/LayoutBaseItem.cpp */; };
+		4C6C3AAD93CA4F61A51F4A66 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/xml/Parser.cpp */ = {isa = PBXBuildFile; fileRef = 3F96F3EA58414055BEA7DA13 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/xml/Parser.cpp */; };
+		4DB2A5AF10C0465A815A6F9D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/bitmap/PNG.cpp */ = {isa = PBXBuildFile; fileRef = C5B1CC5062C842FBA7439472 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/bitmap/PNG.cpp */; };
+		50AE9D7D8292489ABBFB9ECE /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/zip/ZipFile.h */ = {isa = PBXBuildFile; fileRef = 61F42F8DF3D849469E691BC6 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/zip/ZipFile.h */; };
+		522FBDDEDC0F456E89B06083 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/Utf8.h */ = {isa = PBXBuildFile; fileRef = 59C39A91C4FF4C46B00A7F26 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/Utf8.h */; };
+		52DCA33F1C884287ACD8E206 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/zip/ZipStoreStream.h */ = {isa = PBXBuildFile; fileRef = 4D684433574C4E8885347825 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/zip/ZipStoreStream.h */; };
+		5697E380E2B04D989C373531 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/DcSizeLuminanceTable.cpp */ = {isa = PBXBuildFile; fileRef = D4770B634D444DE58F2C1889 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/DcSizeLuminanceTable.cpp */; };
+		5E13C54F27FE47118BCED0A6 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/HorizontalLayout.h */ = {isa = PBXBuildFile; fileRef = 32D574F7B20D41098758EAE7 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/HorizontalLayout.h */; };
+		5F36AF13504B4911AD7D3B7B /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/std_experimental_map.h */ = {isa = PBXBuildFile; fileRef = 934A944B11C8492381631568 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/std_experimental_map.h */; };
+		666B2DCF95734097ABB237DA /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/MacroblockAddressIncrementTable.cpp */ = {isa = PBXBuildFile; fileRef = 958F8110CB5F466294D719EF /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/MacroblockAddressIncrementTable.cpp */; };
+		6805A3EB6CA145A9AF177072 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/HashUtils.cpp */ = {isa = PBXBuildFile; fileRef = AADD98D0E5924371ADF3F4BA /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/HashUtils.cpp */; };
+		687343F1B6B444EFBA62FD53 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/BitStream.cpp */ = {isa = PBXBuildFile; fileRef = 767BAA79F0A64F85BBD6484D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/BitStream.cpp */; };
+		693FD0CFAEEE4D33A98845D6 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/idct/IEEE1180.cpp */ = {isa = PBXBuildFile; fileRef = 681E00E92BA24225AEC072F1 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/idct/IEEE1180.cpp */; };
+		70172732E1874D61BB704614 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/StdStreamUtils.cpp */ = {isa = PBXBuildFile; fileRef = 4D4A02583FEF43B39ECACC54 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/StdStreamUtils.cpp */; };
+		74E4CE65D9514DCFACAB5127 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/std_experimental_set.h */ = {isa = PBXBuildFile; fileRef = AD689FE0C01049308306C354 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/std_experimental_set.h */; };
+		7AD7D4AAB63341B7A4B45A78 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/MacroblockTypePTable.cpp */ = {isa = PBXBuildFile; fileRef = FD5B651479674172A19CE330 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/MacroblockTypePTable.cpp */; };
+		7D40E637E18043128FBCF3A6 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/maybe_unused.h */ = {isa = PBXBuildFile; fileRef = D1176305CF5740DFB207DF56 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/maybe_unused.h */; };
+		7E2DF4999B92424F906DBAD2 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Endian.cpp */ = {isa = PBXBuildFile; fileRef = 3BDD0D445A97435185C8DF6D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Endian.cpp */; };
+		7F32AE5C2310445F9CA092BB /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/FilesystemUtils.h */ = {isa = PBXBuildFile; fileRef = 34740F20CAB04429BE06B939 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/FilesystemUtils.h */; };
+		801FA67540A84A45879AF6AC /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 3DB9F2A6375F4AF5B158B078 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/CMakeLists.txt */; };
+		81F47049075C4000916F1EDB /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/LzAri.cpp */ = {isa = PBXBuildFile; fileRef = 1F7A59EE3C6D4841A7CDAB1D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/LzAri.cpp */; };
+		81FBBC97D41A4268AB48E792 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/LayoutObject.cpp */ = {isa = PBXBuildFile; fileRef = 45F7CDB4D4B54DEBA7936792 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/LayoutObject.cpp */; };
+		82A72A637ED44BF0B4CCAE67 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipStoreStream.cpp */ = {isa = PBXBuildFile; fileRef = 297EA3FBC2704225986FBC19 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipStoreStream.cpp */; };
+		8377AE0BCD014F539D3A8015 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/FilesystemUtils.cpp */ = {isa = PBXBuildFile; fileRef = A5529C6EE7754C6DA48E2D8E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/FilesystemUtils.cpp */; };
+		83EA902F92DF40E5AAEFF345 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/DctCoefficientTable.cpp */ = {isa = PBXBuildFile; fileRef = 8EA66A93EE924EC78E4CF682 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/DctCoefficientTable.cpp */; };
+		868037BC83D44C9282686FD9 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/bitmap/JPEG.cpp */ = {isa = PBXBuildFile; fileRef = 8A2DBFFC66CD4C509F8A6F10 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/bitmap/JPEG.cpp */; };
+		8B3731E97C5F4C948D172CD9 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/zip/ZipArchiveWriter.h */ = {isa = PBXBuildFile; fileRef = A448215D109446A98AFC4C26 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/zip/ZipArchiveWriter.h */; };
+		918415AC70954706839F16C3 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/DcSizeChrominanceTable.cpp */ = {isa = PBXBuildFile; fileRef = 61BC2F721CAD402E999489B3 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/DcSizeChrominanceTable.cpp */; };
+		93EBA89D22D3410DB5539C71 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/Url.h */ = {isa = PBXBuildFile; fileRef = 85739814060C4313AAE61F24 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/Url.h */; };
+		964E30A6C77A4FF9A1364F35 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/DctCoefficientTable1.cpp */ = {isa = PBXBuildFile; fileRef = 4E4268FCDEDC4D6C80425838 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/DctCoefficientTable1.cpp */; };
+		99106EB6C699455595AAE677 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/Csv.h */ = {isa = PBXBuildFile; fileRef = 4A053DC2D6E246069B28E169 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/Csv.h */; };
+		9FB05BA5C0AD4F929090C121 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Config.cpp */ = {isa = PBXBuildFile; fileRef = FCD28CF2D0B644FC82B41D70 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Config.cpp */; };
+		A032CBB6170E414B86424062 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/BitManip.h */ = {isa = PBXBuildFile; fileRef = 4DD93C9A0DE244ED904DE851 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/BitManip.h */; };
+		A76E5377F8314B3485DB4471 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/string_cast_sjis.cpp */ = {isa = PBXBuildFile; fileRef = 8169B3E8B7804E4CBB77BB39 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/string_cast_sjis.cpp */; };
+		A7B6A913E029449A81C17746 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Url.cpp */ = {isa = PBXBuildFile; fileRef = E7645E1DE3E9435A8B9C46C3 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Url.cpp */; };
+		AB8432664FAE4C9198403894 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipArchiveReader.cpp */ = {isa = PBXBuildFile; fileRef = 22E89C3266B04CF1B80C23A8 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipArchiveReader.cpp */; };
+		B5A4764F118049988DB19A4B /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Csv.cpp */ = {isa = PBXBuildFile; fileRef = 7F49644C97BB4EFE98BBF76A /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Csv.cpp */; };
+		B5DF9645A1D442FA8382A8A3 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipInflateStream.cpp */ = {isa = PBXBuildFile; fileRef = F6084821C0884B51AFDAA910 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipInflateStream.cpp */; };
+		BA78C83D779B4078920F97D1 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Base64.cpp */ = {isa = PBXBuildFile; fileRef = 025BE6643ED845EAA4604C28 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Base64.cpp */; };
+		C2E2AEB794FE4E9A879FB6DB /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/ThreadPool.cpp */ = {isa = PBXBuildFile; fileRef = DA4DA4BCF460498A977C4612 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/ThreadPool.cpp */; };
+		C5A38D742A8D4B15AE92183F /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/StdStream.cpp */ = {isa = PBXBuildFile; fileRef = 10F7A185C798450CB93C5929 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/StdStream.cpp */; };
+		C61F5DAA4799407AB7CD7E64 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/string_cast_win1252.cpp */ = {isa = PBXBuildFile; fileRef = 15B741A82A684DA58C61A722 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/string_cast_win1252.cpp */; };
+		C6A7CBBB0FBD450782F53326 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/LayoutBase.cpp */ = {isa = PBXBuildFile; fileRef = 6AEFE2330CB245878CB6C585 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/LayoutBase.cpp */; };
+		C83719335AAF403B9FE42BEF /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/zip/ZipDeflateStream.h */ = {isa = PBXBuildFile; fileRef = 36DD350DC1344498A502BB35 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/zip/ZipDeflateStream.h */; };
+		C9A1E12C33CE4553BCEB0CBC /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/PtrStream.cpp */ = {isa = PBXBuildFile; fileRef = 25652E407F554BB48DFF2AEC /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/PtrStream.cpp */; };
+		D75FFAF53D054B3ABD2086A8 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/VLCTable.cpp */ = {isa = PBXBuildFile; fileRef = C0C903D472B74A9287B1E7F8 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/VLCTable.cpp */; };
+		DA4098952E70427E9D6F68B5 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipArchiveWriter.cpp */ = {isa = PBXBuildFile; fileRef = D0D4DD5066D545E5B1488C16 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipArchiveWriter.cpp */; };
+		DAD3B8B7C2114DD7A839F533 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/LayoutStretch.h */ = {isa = PBXBuildFile; fileRef = 3F999C095A69442CBFF6303D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/LayoutStretch.h */; };
+		DCD45497E8AC42D38EFAEBBF /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/LayoutObject.h */ = {isa = PBXBuildFile; fileRef = 3971228DE82E418AA8798058 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/LayoutObject.h */; };
+		DE2AB49D3F3143F08F0F1FB0 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/MacroblockTypeBTable.cpp */ = {isa = PBXBuildFile; fileRef = 3E7A290FB7894A6799716CD3 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/MacroblockTypeBTable.cpp */; };
+		E567DA174C6C47859BE9FA7B /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/MacroblockTypeITable.cpp */ = {isa = PBXBuildFile; fileRef = 08534C5381894EA98A5830CA /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/MacroblockTypeITable.cpp */; };
+		EC82EAE2567943638F22C310 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/InverseScanTable.cpp */ = {isa = PBXBuildFile; fileRef = BF908FF4DD384893A6D10C39 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/InverseScanTable.cpp */; };
+		EDB2FF2B6D6A487E9ACA899E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/MemStream.cpp */ = {isa = PBXBuildFile; fileRef = 4126F513CDA84DC3BCBF576D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/MemStream.cpp */; };
+		EFB277C13C7D4B0E9C51B556 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/nodiscard.h */ = {isa = PBXBuildFile; fileRef = 316675CDC9044216A72FC0E2 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/nodiscard.h */; };
+		F1C874913FA74B449DC61898 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipDeflateStream.cpp */ = {isa = PBXBuildFile; fileRef = 378A26E1F854463E9D54D987 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipDeflateStream.cpp */; };
+		F230D43BE363413C96C60BA8 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/HorizontalLayout.cpp */ = {isa = PBXBuildFile; fileRef = ACB2834E672A4D7E827F9298 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/HorizontalLayout.cpp */; };
+		F3EF8E5038474801BBAB3665 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/Singleton.h */ = {isa = PBXBuildFile; fileRef = FE44046030684280A732AECC /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/Singleton.h */; };
+		FA09F49547D943DAA50EEF03 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/bitmap/BMP.cpp */ = {isa = PBXBuildFile; fileRef = 504BE6F5FC8E4EE49EEBFE59 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/bitmap/BMP.cpp */; };
+		FCAF19B23E4641F6B30EA627 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/GridLayout.cpp */ = {isa = PBXBuildFile; fileRef = 53A5E8B19B934AF9BB46DEC4 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/GridLayout.cpp */; };
+		FCC973C156E740EFAB1EFBC1 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/PathUtils.cpp */ = {isa = PBXBuildFile; fileRef = F746AD2E89C04D2B8FB06241 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/PathUtils.cpp */; };
+		FD16EC522A2040E0A3C93C17 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/xml/Writer.cpp */ = {isa = PBXBuildFile; fileRef = DB8AD5A06CB64ACDB0A66A8E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/xml/Writer.cpp */; };
+		FEEF151888DB42409C1D0DC9 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/DctCoefficientTable0.cpp */ = {isa = PBXBuildFile; fileRef = 97206A5D3D71491B80F8192E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/DctCoefficientTable0.cpp */; };
+		FF1B5D3BD7EF41A28734DDD6 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/LayoutBaseItem.h */ = {isa = PBXBuildFile; fileRef = 153F9462A58C44D8B212B4F3 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/LayoutBaseItem.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXBuildStyle section */
+		0EBC15752F694AB6B40DA30E /* Release */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Release;
+		};
+		21357335A8A64584BF21508D /* MinSizeRel */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = MinSizeRel;
+		};
+		BDE8A384869D49E78EFEA9C3 /* RelWithDebInfo */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = RelWithDebInfo;
+		};
+		F3335B7E5BA44B50BB9C5386 /* Debug */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+/* End PBXBuildStyle section */
+
+/* Begin PBXContainerItemProxy section */
+		48FB8BB178014A8AACEC2B26 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 16F2C55802A04AD3A0514D75 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3EBABC1ED902418AB5132579;
+			remoteInfo = ZERO_CHECK;
+		};
+		A2161B23E7F64209B7D6E78F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 16F2C55802A04AD3A0514D75 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 78A6B39821F84D46BC18A2F1;
+			remoteInfo = Framework;
+		};
+		A9D2BD90E8E54E8F95670123 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 16F2C55802A04AD3A0514D75 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6B9C69E5DB214681B2A5C976;
+			remoteInfo = ALL_BUILD;
+		};
+		D3D97BE48AAA424DA8339223 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 16F2C55802A04AD3A0514D75 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3EBABC1ED902418AB5132579;
+			remoteInfo = ZERO_CHECK;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0217FBA874B54669B30E4A5E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/xml/Node.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Node.cpp; path = ../../src/xml/Node.cpp; sourceTree = SOURCE_ROOT; };
+		025BE6643ED845EAA4604C28 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Base64.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Base64.cpp; path = ../../src/Base64.cpp; sourceTree = SOURCE_ROOT; };
+		02CF7B552EE74C4191DB12C9 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/StringUtils.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StringUtils.cpp; path = ../../src/StringUtils.cpp; sourceTree = SOURCE_ROOT; };
+		08534C5381894EA98A5830CA /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/MacroblockTypeITable.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = MacroblockTypeITable.cpp; path = ../../src/mpeg2/MacroblockTypeITable.cpp; sourceTree = SOURCE_ROOT; };
+		0C8B0C10D30842A9B45EDD0F /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/xml/FilteringNodeIterator.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FilteringNodeIterator.cpp; path = ../../src/xml/FilteringNodeIterator.cpp; sourceTree = SOURCE_ROOT; };
+		10F7A185C798450CB93C5929 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/StdStream.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StdStream.cpp; path = ../../src/StdStream.cpp; sourceTree = SOURCE_ROOT; };
+		153F9462A58C44D8B212B4F3 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/LayoutBaseItem.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LayoutBaseItem.h; path = ../../include/layout/LayoutBaseItem.h; sourceTree = SOURCE_ROOT; };
+		15B741A82A684DA58C61A722 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/string_cast_win1252.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = string_cast_win1252.cpp; path = ../../src/string_cast_win1252.cpp; sourceTree = SOURCE_ROOT; };
+		18073079B9194CC287B8BCAF /* /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/CMakeFiles/Framework.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../../../../../cmake/Source/ui_ios/Source/Framework/CMakeFiles/Framework.dir/Info.plist; sourceTree = SOURCE_ROOT; };
+		1F7A59EE3C6D4841A7CDAB1D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/LzAri.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = LzAri.cpp; path = ../../src/LzAri.cpp; sourceTree = SOURCE_ROOT; };
+		22E89C3266B04CF1B80C23A8 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipArchiveReader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ZipArchiveReader.cpp; path = ../../src/zip/ZipArchiveReader.cpp; sourceTree = SOURCE_ROOT; };
+		25652E407F554BB48DFF2AEC /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/PtrStream.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = PtrStream.cpp; path = ../../src/PtrStream.cpp; sourceTree = SOURCE_ROOT; };
+		297EA3FBC2704225986FBC19 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipStoreStream.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ZipStoreStream.cpp; path = ../../src/zip/ZipStoreStream.cpp; sourceTree = SOURCE_ROOT; };
+		316675CDC9044216A72FC0E2 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/nodiscard.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = nodiscard.h; path = ../../include/nodiscard.h; sourceTree = SOURCE_ROOT; };
+		31EBB18120414EEDAE065C9F /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/LayoutBase.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LayoutBase.h; path = ../../include/layout/LayoutBase.h; sourceTree = SOURCE_ROOT; };
+		3202EC028572431CAEA86686 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Utf8.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Utf8.cpp; path = ../../src/Utf8.cpp; sourceTree = SOURCE_ROOT; };
+		32D574F7B20D41098758EAE7 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/HorizontalLayout.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = HorizontalLayout.h; path = ../../include/layout/HorizontalLayout.h; sourceTree = SOURCE_ROOT; };
+		34740F20CAB04429BE06B939 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/FilesystemUtils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FilesystemUtils.h; path = ../../include/FilesystemUtils.h; sourceTree = SOURCE_ROOT; };
+		36DD350DC1344498A502BB35 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/zip/ZipDeflateStream.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ZipDeflateStream.h; path = ../../include/zip/ZipDeflateStream.h; sourceTree = SOURCE_ROOT; };
+		378A26E1F854463E9D54D987 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipDeflateStream.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ZipDeflateStream.cpp; path = ../../src/zip/ZipDeflateStream.cpp; sourceTree = SOURCE_ROOT; };
+		3971228DE82E418AA8798058 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/LayoutObject.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LayoutObject.h; path = ../../include/layout/LayoutObject.h; sourceTree = SOURCE_ROOT; };
+		3BDD0D445A97435185C8DF6D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Endian.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Endian.cpp; path = ../../src/Endian.cpp; sourceTree = SOURCE_ROOT; };
+		3DB9F2A6375F4AF5B158B078 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		3E7A290FB7894A6799716CD3 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/MacroblockTypeBTable.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = MacroblockTypeBTable.cpp; path = ../../src/mpeg2/MacroblockTypeBTable.cpp; sourceTree = SOURCE_ROOT; };
+		3E94EE03C77E45A883F2F84E /* Framework */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libFramework.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		3F96F3EA58414055BEA7DA13 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/xml/Parser.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Parser.cpp; path = ../../src/xml/Parser.cpp; sourceTree = SOURCE_ROOT; };
+		3F999C095A69442CBFF6303D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/LayoutStretch.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LayoutStretch.h; path = ../../include/layout/LayoutStretch.h; sourceTree = SOURCE_ROOT; };
+		4126F513CDA84DC3BCBF576D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/MemStream.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = MemStream.cpp; path = ../../src/MemStream.cpp; sourceTree = SOURCE_ROOT; };
+		43ABCA5A66224C1190BE6803 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/MotionCodeTable.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = MotionCodeTable.cpp; path = ../../src/mpeg2/MotionCodeTable.cpp; sourceTree = SOURCE_ROOT; };
+		45F7CDB4D4B54DEBA7936792 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/LayoutObject.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = LayoutObject.cpp; path = ../../src/layout/LayoutObject.cpp; sourceTree = SOURCE_ROOT; };
+		48D62F341D954D5BBEC382A2 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/xml/Utils.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Utils.cpp; path = ../../src/xml/Utils.cpp; sourceTree = SOURCE_ROOT; };
+		4A053DC2D6E246069B28E169 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/Csv.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Csv.h; path = ../../include/Csv.h; sourceTree = SOURCE_ROOT; };
+		4D4A02583FEF43B39ECACC54 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/StdStreamUtils.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StdStreamUtils.cpp; path = ../../src/StdStreamUtils.cpp; sourceTree = SOURCE_ROOT; };
+		4D684433574C4E8885347825 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/zip/ZipStoreStream.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ZipStoreStream.h; path = ../../include/zip/ZipStoreStream.h; sourceTree = SOURCE_ROOT; };
+		4DD93C9A0DE244ED904DE851 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/BitManip.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = BitManip.h; path = ../../include/BitManip.h; sourceTree = SOURCE_ROOT; };
+		4E4268FCDEDC4D6C80425838 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/DctCoefficientTable1.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = DctCoefficientTable1.cpp; path = ../../src/mpeg2/DctCoefficientTable1.cpp; sourceTree = SOURCE_ROOT; };
+		504BE6F5FC8E4EE49EEBFE59 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/bitmap/BMP.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = BMP.cpp; path = ../../src/bitmap/BMP.cpp; sourceTree = SOURCE_ROOT; };
+		53A5E8B19B934AF9BB46DEC4 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/GridLayout.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GridLayout.cpp; path = ../../src/layout/GridLayout.cpp; sourceTree = SOURCE_ROOT; };
+		59C39A91C4FF4C46B00A7F26 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/Utf8.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Utf8.h; path = ../../include/Utf8.h; sourceTree = SOURCE_ROOT; };
+		6074430A0C6F49E9A8A07751 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/StringUtils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StringUtils.h; path = ../../include/StringUtils.h; sourceTree = SOURCE_ROOT; };
+		61BC2F721CAD402E999489B3 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/DcSizeChrominanceTable.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = DcSizeChrominanceTable.cpp; path = ../../src/mpeg2/DcSizeChrominanceTable.cpp; sourceTree = SOURCE_ROOT; };
+		61F42F8DF3D849469E691BC6 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/zip/ZipFile.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ZipFile.h; path = ../../include/zip/ZipFile.h; sourceTree = SOURCE_ROOT; };
+		681E00E92BA24225AEC072F1 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/idct/IEEE1180.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = IEEE1180.cpp; path = ../../src/idct/IEEE1180.cpp; sourceTree = SOURCE_ROOT; };
+		6AEFE2330CB245878CB6C585 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/LayoutBase.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = LayoutBase.cpp; path = ../../src/layout/LayoutBase.cpp; sourceTree = SOURCE_ROOT; };
+		6EC5A999DD6345AFBA3C4693 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/string_cast.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = string_cast.cpp; path = ../../src/string_cast.cpp; sourceTree = SOURCE_ROOT; };
+		767BAA79F0A64F85BBD6484D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/BitStream.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = BitStream.cpp; path = ../../src/BitStream.cpp; sourceTree = SOURCE_ROOT; };
+		77A4C4CC98CD452696DC8592 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/StreamBitStream.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StreamBitStream.cpp; path = ../../src/StreamBitStream.cpp; sourceTree = SOURCE_ROOT; };
+		7C1DEE49BAF842518698EA6E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/LayoutBaseItem.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = LayoutBaseItem.cpp; path = ../../src/layout/LayoutBaseItem.cpp; sourceTree = SOURCE_ROOT; };
+		7C7901C3596D40F8A8056AEE /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/FlatLayout.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FlatLayout.h; path = ../../include/layout/FlatLayout.h; sourceTree = SOURCE_ROOT; };
+		7D253010C520405F9C934E1C /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/ThreadPool.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ThreadPool.h; path = ../../include/ThreadPool.h; sourceTree = SOURCE_ROOT; };
+		7F49644C97BB4EFE98BBF76A /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Csv.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Csv.cpp; path = ../../src/Csv.cpp; sourceTree = SOURCE_ROOT; };
+		8169B3E8B7804E4CBB77BB39 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/string_cast_sjis.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = string_cast_sjis.cpp; path = ../../src/string_cast_sjis.cpp; sourceTree = SOURCE_ROOT; };
+		85739814060C4313AAE61F24 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/Url.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Url.h; path = ../../include/Url.h; sourceTree = SOURCE_ROOT; };
+		85C66D3202344475AB0403B8 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/FlatLayout.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FlatLayout.cpp; path = ../../src/layout/FlatLayout.cpp; sourceTree = SOURCE_ROOT; };
+		8A2DBFFC66CD4C509F8A6F10 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/bitmap/JPEG.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = JPEG.cpp; path = ../../src/bitmap/JPEG.cpp; sourceTree = SOURCE_ROOT; };
+		8AA772114345416E8A594C2F /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/bitmap/Bitmap.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Bitmap.cpp; path = ../../src/bitmap/Bitmap.cpp; sourceTree = SOURCE_ROOT; };
+		8C3BD8749FC445A98F82BDF2 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/filesystem_def.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = filesystem_def.h; path = ../../include/filesystem_def.h; sourceTree = SOURCE_ROOT; };
+		8E79BAB6AD6E4351A1AF6888 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/zip/ZipInflateStream.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ZipInflateStream.h; path = ../../include/zip/ZipInflateStream.h; sourceTree = SOURCE_ROOT; };
+		8EA66A93EE924EC78E4CF682 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/DctCoefficientTable.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = DctCoefficientTable.cpp; path = ../../src/mpeg2/DctCoefficientTable.cpp; sourceTree = SOURCE_ROOT; };
+		934A944B11C8492381631568 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/std_experimental_map.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = std_experimental_map.h; path = ../../include/std_experimental_map.h; sourceTree = SOURCE_ROOT; };
+		958F8110CB5F466294D719EF /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/MacroblockAddressIncrementTable.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = MacroblockAddressIncrementTable.cpp; path = ../../src/mpeg2/MacroblockAddressIncrementTable.cpp; sourceTree = SOURCE_ROOT; };
+		97206A5D3D71491B80F8192E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/DctCoefficientTable0.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = DctCoefficientTable0.cpp; path = ../../src/mpeg2/DctCoefficientTable0.cpp; sourceTree = SOURCE_ROOT; };
+		A131BB80D03A48CF9D9EB91D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipFile.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ZipFile.cpp; path = ../../src/zip/ZipFile.cpp; sourceTree = SOURCE_ROOT; };
+		A448215D109446A98AFC4C26 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/zip/ZipArchiveWriter.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ZipArchiveWriter.h; path = ../../include/zip/ZipArchiveWriter.h; sourceTree = SOURCE_ROOT; };
+		A5529C6EE7754C6DA48E2D8E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/FilesystemUtils.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FilesystemUtils.cpp; path = ../../src/FilesystemUtils.cpp; sourceTree = SOURCE_ROOT; };
+		A5A19E4F999446ADBE393493 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		A9F08D051B7940FC8C400E9E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/math/MathStringUtils.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = MathStringUtils.cpp; path = ../../src/math/MathStringUtils.cpp; sourceTree = SOURCE_ROOT; };
+		AADD98D0E5924371ADF3F4BA /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/HashUtils.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = HashUtils.cpp; path = ../../src/HashUtils.cpp; sourceTree = SOURCE_ROOT; };
+		AC9EED52C9B244039E11D9F5 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/QuantiserScaleTable.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = QuantiserScaleTable.cpp; path = ../../src/mpeg2/QuantiserScaleTable.cpp; sourceTree = SOURCE_ROOT; };
+		ACB2834E672A4D7E827F9298 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/HorizontalLayout.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = HorizontalLayout.cpp; path = ../../src/layout/HorizontalLayout.cpp; sourceTree = SOURCE_ROOT; };
+		AD689FE0C01049308306C354 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/std_experimental_set.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = std_experimental_set.h; path = ../../include/std_experimental_set.h; sourceTree = SOURCE_ROOT; };
+		BF908FF4DD384893A6D10C39 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/InverseScanTable.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = InverseScanTable.cpp; path = ../../src/mpeg2/InverseScanTable.cpp; sourceTree = SOURCE_ROOT; };
+		C0C903D472B74A9287B1E7F8 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/VLCTable.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = VLCTable.cpp; path = ../../src/mpeg2/VLCTable.cpp; sourceTree = SOURCE_ROOT; };
+		C54822ADE03A4B57BB0F61D5 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/GridLayout.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GridLayout.h; path = ../../include/layout/GridLayout.h; sourceTree = SOURCE_ROOT; };
+		C5B1CC5062C842FBA7439472 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/bitmap/PNG.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = PNG.cpp; path = ../../src/bitmap/PNG.cpp; sourceTree = SOURCE_ROOT; };
+		C7CAD906B9DC4BFAA1F9DBD7 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/VerticalLayout.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = VerticalLayout.h; path = ../../include/layout/VerticalLayout.h; sourceTree = SOURCE_ROOT; };
+		D0D4DD5066D545E5B1488C16 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipArchiveWriter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ZipArchiveWriter.cpp; path = ../../src/zip/ZipArchiveWriter.cpp; sourceTree = SOURCE_ROOT; };
+		D1176305CF5740DFB207DF56 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/maybe_unused.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = maybe_unused.h; path = ../../include/maybe_unused.h; sourceTree = SOURCE_ROOT; };
+		D30697A413E94625A39866DB /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/CodedBlockPatternTable.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = CodedBlockPatternTable.cpp; path = ../../src/mpeg2/CodedBlockPatternTable.cpp; sourceTree = SOURCE_ROOT; };
+		D4770B634D444DE58F2C1889 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/DcSizeLuminanceTable.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = DcSizeLuminanceTable.cpp; path = ../../src/mpeg2/DcSizeLuminanceTable.cpp; sourceTree = SOURCE_ROOT; };
+		DA4DA4BCF460498A977C4612 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/ThreadPool.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ThreadPool.cpp; path = ../../src/ThreadPool.cpp; sourceTree = SOURCE_ROOT; };
+		DB8AD5A06CB64ACDB0A66A8E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/xml/Writer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Writer.cpp; path = ../../src/xml/Writer.cpp; sourceTree = SOURCE_ROOT; };
+		DD79DCAD9BE14EE093600568 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/zip/ZipArchiveReader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ZipArchiveReader.h; path = ../../include/zip/ZipArchiveReader.h; sourceTree = SOURCE_ROOT; };
+		E686F640EBB84E5281AD65F2 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/HashUtils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = HashUtils.h; path = ../../include/HashUtils.h; sourceTree = SOURCE_ROOT; };
+		E7645E1DE3E9435A8B9C46C3 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Url.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Url.cpp; path = ../../src/Url.cpp; sourceTree = SOURCE_ROOT; };
+		E8AA2D42F6834698A721F762 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Stream.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Stream.cpp; path = ../../src/Stream.cpp; sourceTree = SOURCE_ROOT; };
+		EE78799225884534B1DA323B /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/bitmap/TGA.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = TGA.cpp; path = ../../src/bitmap/TGA.cpp; sourceTree = SOURCE_ROOT; };
+		EF7C8B6C82944294805D0722 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/VerticalLayout.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = VerticalLayout.cpp; path = ../../src/layout/VerticalLayout.cpp; sourceTree = SOURCE_ROOT; };
+		F3CB5E9BD0C045BFB943F12B /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/signal/Signal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Signal.h; path = ../../include/signal/Signal.h; sourceTree = SOURCE_ROOT; };
+		F6084821C0884B51AFDAA910 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipInflateStream.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ZipInflateStream.cpp; path = ../../src/zip/ZipInflateStream.cpp; sourceTree = SOURCE_ROOT; };
+		F746AD2E89C04D2B8FB06241 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/PathUtils.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = PathUtils.cpp; path = ../../src/PathUtils.cpp; sourceTree = SOURCE_ROOT; };
+		FC5336D7E0974406BDDB138F /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/LayoutStretch.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = LayoutStretch.cpp; path = ../../src/layout/LayoutStretch.cpp; sourceTree = SOURCE_ROOT; };
+		FCD28CF2D0B644FC82B41D70 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Config.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Config.cpp; path = ../../src/Config.cpp; sourceTree = SOURCE_ROOT; };
+		FD5B651479674172A19CE330 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/MacroblockTypePTable.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = MacroblockTypePTable.cpp; path = ../../src/mpeg2/MacroblockTypePTable.cpp; sourceTree = SOURCE_ROOT; };
+		FE44046030684280A732AECC /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/Singleton.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Singleton.h; path = ../../include/Singleton.h; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0FF34A63BE024C7A8FA4E602 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		3EEB7FC0B6B940D3998422E4 /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				4DD93C9A0DE244ED904DE851 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/BitManip.h */,
+				4A053DC2D6E246069B28E169 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/Csv.h */,
+				34740F20CAB04429BE06B939 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/FilesystemUtils.h */,
+				E686F640EBB84E5281AD65F2 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/HashUtils.h */,
+				FE44046030684280A732AECC /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/Singleton.h */,
+				6074430A0C6F49E9A8A07751 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/StringUtils.h */,
+				7D253010C520405F9C934E1C /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/ThreadPool.h */,
+				85739814060C4313AAE61F24 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/Url.h */,
+				59C39A91C4FF4C46B00A7F26 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/Utf8.h */,
+				8C3BD8749FC445A98F82BDF2 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/filesystem_def.h */,
+				7C7901C3596D40F8A8056AEE /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/FlatLayout.h */,
+				C54822ADE03A4B57BB0F61D5 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/GridLayout.h */,
+				32D574F7B20D41098758EAE7 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/HorizontalLayout.h */,
+				31EBB18120414EEDAE065C9F /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/LayoutBase.h */,
+				153F9462A58C44D8B212B4F3 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/LayoutBaseItem.h */,
+				3971228DE82E418AA8798058 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/LayoutObject.h */,
+				3F999C095A69442CBFF6303D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/LayoutStretch.h */,
+				C7CAD906B9DC4BFAA1F9DBD7 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/layout/VerticalLayout.h */,
+				D1176305CF5740DFB207DF56 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/maybe_unused.h */,
+				316675CDC9044216A72FC0E2 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/nodiscard.h */,
+				F3CB5E9BD0C045BFB943F12B /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/signal/Signal.h */,
+				934A944B11C8492381631568 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/std_experimental_map.h */,
+				AD689FE0C01049308306C354 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/std_experimental_set.h */,
+				DD79DCAD9BE14EE093600568 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/zip/ZipArchiveReader.h */,
+				A448215D109446A98AFC4C26 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/zip/ZipArchiveWriter.h */,
+				36DD350DC1344498A502BB35 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/zip/ZipDeflateStream.h */,
+				61F42F8DF3D849469E691BC6 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/zip/ZipFile.h */,
+				8E79BAB6AD6E4351A1AF6888 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/zip/ZipInflateStream.h */,
+				4D684433574C4E8885347825 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/zip/ZipStoreStream.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		473CB7ABC1904701ACDE9C03 /* ALL_BUILD */ = {
+			isa = PBXGroup;
+			children = (
+				B9E54478844E49FA8D31EA27 /* CMake Rules */,
+				A5A19E4F999446ADBE393493 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/CMakeLists.txt */,
+			);
+			name = ALL_BUILD;
+			sourceTree = "<group>";
+		};
+		4D7A8CA9D2A24A5DB56EFB6E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				18073079B9194CC287B8BCAF /* /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/CMakeFiles/Framework.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		587064442F7E4F4BA3236A3C /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				025BE6643ED845EAA4604C28 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Base64.cpp */,
+				767BAA79F0A64F85BBD6484D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/BitStream.cpp */,
+				FCD28CF2D0B644FC82B41D70 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Config.cpp */,
+				7F49644C97BB4EFE98BBF76A /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Csv.cpp */,
+				3BDD0D445A97435185C8DF6D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Endian.cpp */,
+				A5529C6EE7754C6DA48E2D8E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/FilesystemUtils.cpp */,
+				AADD98D0E5924371ADF3F4BA /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/HashUtils.cpp */,
+				1F7A59EE3C6D4841A7CDAB1D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/LzAri.cpp */,
+				4126F513CDA84DC3BCBF576D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/MemStream.cpp */,
+				F746AD2E89C04D2B8FB06241 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/PathUtils.cpp */,
+				25652E407F554BB48DFF2AEC /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/PtrStream.cpp */,
+				10F7A185C798450CB93C5929 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/StdStream.cpp */,
+				4D4A02583FEF43B39ECACC54 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/StdStreamUtils.cpp */,
+				E8AA2D42F6834698A721F762 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Stream.cpp */,
+				77A4C4CC98CD452696DC8592 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/StreamBitStream.cpp */,
+				02CF7B552EE74C4191DB12C9 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/StringUtils.cpp */,
+				DA4DA4BCF460498A977C4612 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/ThreadPool.cpp */,
+				E7645E1DE3E9435A8B9C46C3 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Url.cpp */,
+				3202EC028572431CAEA86686 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Utf8.cpp */,
+				504BE6F5FC8E4EE49EEBFE59 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/bitmap/BMP.cpp */,
+				8AA772114345416E8A594C2F /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/bitmap/Bitmap.cpp */,
+				8A2DBFFC66CD4C509F8A6F10 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/bitmap/JPEG.cpp */,
+				C5B1CC5062C842FBA7439472 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/bitmap/PNG.cpp */,
+				EE78799225884534B1DA323B /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/bitmap/TGA.cpp */,
+				681E00E92BA24225AEC072F1 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/idct/IEEE1180.cpp */,
+				85C66D3202344475AB0403B8 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/FlatLayout.cpp */,
+				53A5E8B19B934AF9BB46DEC4 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/GridLayout.cpp */,
+				ACB2834E672A4D7E827F9298 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/HorizontalLayout.cpp */,
+				6AEFE2330CB245878CB6C585 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/LayoutBase.cpp */,
+				7C1DEE49BAF842518698EA6E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/LayoutBaseItem.cpp */,
+				45F7CDB4D4B54DEBA7936792 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/LayoutObject.cpp */,
+				FC5336D7E0974406BDDB138F /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/LayoutStretch.cpp */,
+				EF7C8B6C82944294805D0722 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/VerticalLayout.cpp */,
+				A9F08D051B7940FC8C400E9E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/math/MathStringUtils.cpp */,
+				D30697A413E94625A39866DB /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/CodedBlockPatternTable.cpp */,
+				61BC2F721CAD402E999489B3 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/DcSizeChrominanceTable.cpp */,
+				D4770B634D444DE58F2C1889 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/DcSizeLuminanceTable.cpp */,
+				8EA66A93EE924EC78E4CF682 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/DctCoefficientTable.cpp */,
+				97206A5D3D71491B80F8192E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/DctCoefficientTable0.cpp */,
+				4E4268FCDEDC4D6C80425838 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/DctCoefficientTable1.cpp */,
+				BF908FF4DD384893A6D10C39 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/InverseScanTable.cpp */,
+				958F8110CB5F466294D719EF /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/MacroblockAddressIncrementTable.cpp */,
+				3E7A290FB7894A6799716CD3 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/MacroblockTypeBTable.cpp */,
+				08534C5381894EA98A5830CA /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/MacroblockTypeITable.cpp */,
+				FD5B651479674172A19CE330 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/MacroblockTypePTable.cpp */,
+				43ABCA5A66224C1190BE6803 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/MotionCodeTable.cpp */,
+				AC9EED52C9B244039E11D9F5 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/QuantiserScaleTable.cpp */,
+				C0C903D472B74A9287B1E7F8 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/VLCTable.cpp */,
+				6EC5A999DD6345AFBA3C4693 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/string_cast.cpp */,
+				8169B3E8B7804E4CBB77BB39 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/string_cast_sjis.cpp */,
+				15B741A82A684DA58C61A722 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/string_cast_win1252.cpp */,
+				0C8B0C10D30842A9B45EDD0F /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/xml/FilteringNodeIterator.cpp */,
+				0217FBA874B54669B30E4A5E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/xml/Node.cpp */,
+				3F96F3EA58414055BEA7DA13 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/xml/Parser.cpp */,
+				48D62F341D954D5BBEC382A2 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/xml/Utils.cpp */,
+				DB8AD5A06CB64ACDB0A66A8E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/xml/Writer.cpp */,
+				22E89C3266B04CF1B80C23A8 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipArchiveReader.cpp */,
+				D0D4DD5066D545E5B1488C16 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipArchiveWriter.cpp */,
+				378A26E1F854463E9D54D987 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipDeflateStream.cpp */,
+				A131BB80D03A48CF9D9EB91D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipFile.cpp */,
+				F6084821C0884B51AFDAA910 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipInflateStream.cpp */,
+				297EA3FBC2704225986FBC19 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipStoreStream.cpp */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		5C8D46401A574CAE997ACC55 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3E94EE03C77E45A883F2F84E /* Framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		72CD7E68A5A043CEBB16763E = {
+			isa = PBXGroup;
+			children = (
+				E85DC9861A0D4DF587B9B434 /* Framework */,
+				473CB7ABC1904701ACDE9C03 /* ALL_BUILD */,
+				5C8D46401A574CAE997ACC55 /* Products */,
+				E9E00C45E4324F52A7C296C5 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		B9E54478844E49FA8D31EA27 /* CMake Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		E85DC9861A0D4DF587B9B434 /* Framework */ = {
+			isa = PBXGroup;
+			children = (
+				587064442F7E4F4BA3236A3C /* Source Files */,
+				3EEB7FC0B6B940D3998422E4 /* Header Files */,
+				4D7A8CA9D2A24A5DB56EFB6E /* Resources */,
+				3DB9F2A6375F4AF5B158B078 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/CMakeLists.txt */,
+			);
+			name = Framework;
+			sourceTree = "<group>";
+		};
+		E9E00C45E4324F52A7C296C5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		78A6B39821F84D46BC18A2F1 /* Framework */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 87192896804A498D8E0B1A2C /* Build configuration list for PBXNativeTarget "Framework" */;
+			buildPhases = (
+				5D41E34A0B53474594E2920A /* Sources */,
+				0FF34A63BE024C7A8FA4E602 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E6EAF6CDDFDB4411A11AF295 /* PBXTargetDependency */,
+			);
+			name = Framework;
+			productName = Framework;
+			productReference = 3E94EE03C77E45A883F2F84E /* Framework */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		16F2C55802A04AD3A0514D75 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1300;
+			};
+			buildConfigurationList = 3D7F854D1330437D846C373E /* Build configuration list for PBXProject "Framework" */;
+			buildSettings = {
+			};
+			buildStyles = (
+				F3335B7E5BA44B50BB9C5386 /* Debug */,
+				0EBC15752F694AB6B40DA30E /* Release */,
+				21357335A8A64584BF21508D /* MinSizeRel */,
+				BDE8A384869D49E78EFEA9C3 /* RelWithDebInfo */,
+			);
+			compatibilityVersion = "Xcode 3.2";
+			hasScannedForEncodings = 0;
+			mainGroup = 72CD7E68A5A043CEBB16763E;
+			projectDirPath = "/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework";
+			projectRoot = "";
+			targets = (
+				6B9C69E5DB214681B2A5C976 /* ALL_BUILD */,
+				78A6B39821F84D46BC18A2F1 /* Framework */,
+				B7A566E4767340588D653807 /* RUN_TESTS */,
+				3EBABC1ED902418AB5132579 /* ZERO_CHECK */,
+				0285C8420FCC45EA8D71FBC5 /* install */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		003C8D08B0008F35F218E126 /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework
+  /usr/local/Cellar/cmake/3.21.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework
+  /usr/local/Cellar/cmake/3.21.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework
+  /usr/local/Cellar/cmake/3.21.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework
+  /usr/local/Cellar/cmake/3.21.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		0A019C05CCE5F2C46D999EA8 /* Generate CMakeFiles/ZERO_CHECK */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ZERO_CHECK";
+			outputPaths = (
+/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/CMakeFiles/ZERO_CHECK			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework
+  make -f /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework
+  make -f /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework
+  make -f /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework
+  make -f /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/CMakeScripts/ReRunCMake.make
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		3C0110FC8322DE7E50886E21 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		3EFBBB38E556D2BFFDCDFD29 /* Generate CMakeFiles/ALL_BUILD */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ALL_BUILD";
+			outputPaths = (
+/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/CMakeFiles/ALL_BUILD			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework
+  echo Build\\ all\\ projects
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		87AF4882E018677E2624B544 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		910A41151295C5F9742C25BD = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework
+  /usr/local/Cellar/cmake/3.21.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework
+  /usr/local/Cellar/cmake/3.21.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework
+  /usr/local/Cellar/cmake/3.21.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework
+  /usr/local/Cellar/cmake/3.21.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		9B50530E35CC49C82C2FACCF = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5D41E34A0B53474594E2920A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BA78C83D779B4078920F97D1 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Base64.cpp */,
+				687343F1B6B444EFBA62FD53 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/BitStream.cpp */,
+				9FB05BA5C0AD4F929090C121 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Config.cpp */,
+				B5A4764F118049988DB19A4B /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Csv.cpp */,
+				7E2DF4999B92424F906DBAD2 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Endian.cpp */,
+				8377AE0BCD014F539D3A8015 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/FilesystemUtils.cpp */,
+				6805A3EB6CA145A9AF177072 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/HashUtils.cpp */,
+				81F47049075C4000916F1EDB /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/LzAri.cpp */,
+				EDB2FF2B6D6A487E9ACA899E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/MemStream.cpp */,
+				FCC973C156E740EFAB1EFBC1 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/PathUtils.cpp */,
+				C9A1E12C33CE4553BCEB0CBC /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/PtrStream.cpp */,
+				C5A38D742A8D4B15AE92183F /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/StdStream.cpp */,
+				70172732E1874D61BB704614 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/StdStreamUtils.cpp */,
+				2C779D78233E4666A5B68F4F /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Stream.cpp */,
+				1657928BD77141F085F37396 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/StreamBitStream.cpp */,
+				124F0C40450D43078848B2D5 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/StringUtils.cpp */,
+				C2E2AEB794FE4E9A879FB6DB /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/ThreadPool.cpp */,
+				A7B6A913E029449A81C17746 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Url.cpp */,
+				44CB9D4A35924776879174CE /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/Utf8.cpp */,
+				FA09F49547D943DAA50EEF03 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/bitmap/BMP.cpp */,
+				455F78DB855E43FE982AF783 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/bitmap/Bitmap.cpp */,
+				868037BC83D44C9282686FD9 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/bitmap/JPEG.cpp */,
+				4DB2A5AF10C0465A815A6F9D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/bitmap/PNG.cpp */,
+				414C4E675B444F7E90BFAA8F /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/bitmap/TGA.cpp */,
+				693FD0CFAEEE4D33A98845D6 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/idct/IEEE1180.cpp */,
+				3F84AF45FF614217BCF80141 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/FlatLayout.cpp */,
+				FCAF19B23E4641F6B30EA627 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/GridLayout.cpp */,
+				F230D43BE363413C96C60BA8 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/HorizontalLayout.cpp */,
+				C6A7CBBB0FBD450782F53326 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/LayoutBase.cpp */,
+				46506FF70CC245E6BA6B6423 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/LayoutBaseItem.cpp */,
+				81FBBC97D41A4268AB48E792 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/LayoutObject.cpp */,
+				094CAC7BA7A04F7183364D8B /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/LayoutStretch.cpp */,
+				44A1DD15B34E4C878F37A4F8 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/layout/VerticalLayout.cpp */,
+				2C9763C88500455CADC5A78F /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/math/MathStringUtils.cpp */,
+				0B4A6FC2D4184F01B499E96C /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/CodedBlockPatternTable.cpp */,
+				918415AC70954706839F16C3 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/DcSizeChrominanceTable.cpp */,
+				5697E380E2B04D989C373531 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/DcSizeLuminanceTable.cpp */,
+				83EA902F92DF40E5AAEFF345 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/DctCoefficientTable.cpp */,
+				FEEF151888DB42409C1D0DC9 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/DctCoefficientTable0.cpp */,
+				964E30A6C77A4FF9A1364F35 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/DctCoefficientTable1.cpp */,
+				EC82EAE2567943638F22C310 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/InverseScanTable.cpp */,
+				666B2DCF95734097ABB237DA /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/MacroblockAddressIncrementTable.cpp */,
+				DE2AB49D3F3143F08F0F1FB0 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/MacroblockTypeBTable.cpp */,
+				E567DA174C6C47859BE9FA7B /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/MacroblockTypeITable.cpp */,
+				7AD7D4AAB63341B7A4B45A78 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/MacroblockTypePTable.cpp */,
+				380A1AE441874BD99429B56E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/MotionCodeTable.cpp */,
+				1424CBD717324D8DA6201B6A /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/QuantiserScaleTable.cpp */,
+				D75FFAF53D054B3ABD2086A8 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/mpeg2/VLCTable.cpp */,
+				2F33F340B88E425D8FD808A9 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/string_cast.cpp */,
+				A76E5377F8314B3485DB4471 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/string_cast_sjis.cpp */,
+				C61F5DAA4799407AB7CD7E64 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/string_cast_win1252.cpp */,
+				067F53F8C31E44588FC7D0B0 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/xml/FilteringNodeIterator.cpp */,
+				3B99B3C2C757495596578A1D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/xml/Node.cpp */,
+				4C6C3AAD93CA4F61A51F4A66 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/xml/Parser.cpp */,
+				307E9097A6DD4FC18F7B8E68 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/xml/Utils.cpp */,
+				FD16EC522A2040E0A3C93C17 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/xml/Writer.cpp */,
+				AB8432664FAE4C9198403894 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipArchiveReader.cpp */,
+				DA4098952E70427E9D6F68B5 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipArchiveWriter.cpp */,
+				F1C874913FA74B449DC61898 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipDeflateStream.cpp */,
+				0D0DC581F8C04C3D97C63ADD /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipFile.cpp */,
+				B5DF9645A1D442FA8382A8A3 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipInflateStream.cpp */,
+				82A72A637ED44BF0B4CCAE67 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/zip/ZipStoreStream.cpp */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2F1743C0E39B40D5B2F5D811 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6B9C69E5DB214681B2A5C976 /* ALL_BUILD */;
+			targetProxy = A9D2BD90E8E54E8F95670123 /* PBXContainerItemProxy */;
+		};
+		7F236C49D7CD4190A5F65B77 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 78A6B39821F84D46BC18A2F1 /* Framework */;
+			targetProxy = A2161B23E7F64209B7D6E78F /* PBXContainerItemProxy */;
+		};
+		C119CA0DE5514BD19B1FC1A8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3EBABC1ED902418AB5132579 /* ZERO_CHECK */;
+			targetProxy = D3D97BE48AAA424DA8339223 /* PBXContainerItemProxy */;
+		};
+		E6EAF6CDDFDB4411A11AF295 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3EBABC1ED902418AB5132579 /* ZERO_CHECK */;
+			targetProxy = 48FB8BB178014A8AACEC2B26 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		04053F0727394B48B7E71FD5 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		0CB06422F4EA41059D6365EE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		10EB85AF5FC34FF4A27ECD4A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		16206B1572034C1796CEB782 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/build;
+			};
+			name = MinSizeRel;
+		};
+		16C51B0DF91A41099470FC2B /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		1A7A7C792F9E4132A9E6D39B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		1E55F570280848E6BA6BBEF2 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		1E72D2AE418A4FB8ADEDACD7 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"1.3-2331-g0b8742f68\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0                -mios-version-min=11.0 -x objective-c++        -DNDEBUG '-std=gnu++17' ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = Framework;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		554DD754E64D45F6B3F808A0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		67519A6C94AA40A28378A9CC /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"1.3-2331-g0b8742f68\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0                -mios-version-min=11.0 -x objective-c++     -DNDEBUG '-std=gnu++17' ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = Framework;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		866E23B0235B4EC78AD9B557 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		87C44287C1CB4599A7C4EC21 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/build;
+			};
+			name = RelWithDebInfo;
+		};
+		8D732D4EDC1A46869D717E8F /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		8E8052FDB0C044BC93B2E576 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		934BDDDC04DF4DFFB21E9C9D /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		967790E800624007A8A1B515 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		AB3C3BB3B913460685106C8A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"1.3-2331-g0b8742f68\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0                -mios-version-min=11.0 -x objective-c++     -DNDEBUG -DNDEBUG -DNDEBUG '-std=gnu++17' ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = Framework;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		C6D7C2AEFA0B40EFB37C7243 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"1.3-2331-g0b8742f68\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0                -mios-version-min=11.0 -x objective-c++    -D_DEBUG -D_DEBUG '-std=gnu++17' ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = Framework;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		D18A34D30EEC48E88CB85219 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		DB67E5819BB44FFABF796ECC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		E6329C5C806444B898074DDA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/build;
+			};
+			name = Debug;
+		};
+		E868D924094A4DB482C54959 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/build;
+			};
+			name = Release;
+		};
+		F159AD4EB4334B818777C902 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		FD6AB4FB16534914A307A9DA /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		01B1AB69560446949EC6CA97 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D18A34D30EEC48E88CB85219 /* Debug */,
+				10EB85AF5FC34FF4A27ECD4A /* Release */,
+				8E8052FDB0C044BC93B2E576 /* MinSizeRel */,
+				8D732D4EDC1A46869D717E8F /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		3D7F854D1330437D846C373E /* Build configuration list for PBXProject "Framework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E6329C5C806444B898074DDA /* Debug */,
+				E868D924094A4DB482C54959 /* Release */,
+				16206B1572034C1796CEB782 /* MinSizeRel */,
+				87C44287C1CB4599A7C4EC21 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		75FAA84A0BA541AEB5ACAD98 /* Build configuration list for PBXAggregateTarget "install" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1A7A7C792F9E4132A9E6D39B /* Debug */,
+				967790E800624007A8A1B515 /* Release */,
+				F159AD4EB4334B818777C902 /* MinSizeRel */,
+				16C51B0DF91A41099470FC2B /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		87192896804A498D8E0B1A2C /* Build configuration list for PBXNativeTarget "Framework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C6D7C2AEFA0B40EFB37C7243 /* Debug */,
+				AB3C3BB3B913460685106C8A /* Release */,
+				67519A6C94AA40A28378A9CC /* MinSizeRel */,
+				1E72D2AE418A4FB8ADEDACD7 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		F72EBAA5B32344D598093D89 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DB67E5819BB44FFABF796ECC /* Debug */,
+				866E23B0235B4EC78AD9B557 /* Release */,
+				934BDDDC04DF4DFFB21E9C9D /* MinSizeRel */,
+				04053F0727394B48B7E71FD5 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		FFB8C454131A4399AEAA0E6A /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0CB06422F4EA41059D6365EE /* Debug */,
+				554DD754E64D45F6B3F808A0 /* Release */,
+				1E55F570280848E6BA6BBEF2 /* MinSizeRel */,
+				FD6AB4FB16534914A307A9DA /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 16F2C55802A04AD3A0514D75 /* Project object */;
+}

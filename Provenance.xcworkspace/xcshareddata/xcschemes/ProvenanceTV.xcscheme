@@ -3,8 +3,8 @@
    LastUpgradeVersion = "1300"
    version = "1.3">
    <BuildAction
-      parallelizeBuildables = "NO"
-      buildImplicitDependencies = "NO">
+      parallelizeBuildables = "YES"
+      buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry
             buildForTesting = "YES"
@@ -100,7 +100,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3A3E9851D6BFF6F00CCD7C8"
                BuildableName = "PicoDrive.framework"
-               BlueprintName = "PicoDrive-tvOS"
+               BlueprintName = "PVPicoDrive-tvOS"
                ReferencedContainer = "container:Cores/PicoDrive/PVPicoDrive.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

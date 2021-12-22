@@ -28,3 +28,39 @@
 [submodule "Cores/TGBDual/tgbdual-emulator"]
 	path = Cores/TGBDual/tgbdual-emulator
 	url = https://github.com/libretro/tgbdual-libretro.git
+[submodule "Cores/Flycast/flycast"]
+	path = Cores/Flycast/flycast
+	url = https://github.com/flyinghead/flycast.git
+[submodule "Cores/Dolphin/dolphin-ios"]
+	path = Cores/Dolphin/dolphin-ios
+	url = https://github.com/OatmealDome/dolphin.git
+[submodule "Cores/Play/Play-"]
+	path = Cores/Play/Play-
+	url = https://github.com/Provenance-Emu/Play-.git
+[submodule "Cores/PPSSPP/ppsspp"]
+	path = Cores/PPSSPP/ppsspp
+	url = https://github.com/Provenance-Emu/ppsspp.git
+[submodule "Cores/DuckStation/duckstation"]
+	path = Cores/DuckStation/duckstation
+	url = https://github.com/stenzek/duckstation.git
+[submodule "Cores/Flycast/flycast"]
+	path = Cores/Desmume2015/flycast
+	url = https://github.com/flyinghead/flycast.git
+[submodule "Cores/Desmume2015/desmume2015"]
+	path = Cores/Desmume2015/desmume2015
+	url = https://github.com/libretro/desmume2015.git
+[submodule "Cores/O2EM"]
+	path = Cores/O2EM
+	url = https://github.com/Provenance-Emu/O2EM-Core.git
+[submodule "Cores/VecXGL"]
+	path = Cores/VecXGL
+	url = https://github.com/Provenance-Emu/VecXGL-Core.git
+[submodule "Cores/CrabEMU"]
+	path = Cores/CrabEMU
+	url = https://github.com/Provenance-Emu/CrabEmu-Core.git
+[submodule "Cores/Bliss"]
+	path = Cores/Bliss
+	url = https://github.com/Provenance-Emu/Bliss-Core.git
+[submodule "Cores/4DO"]
+	path = Cores/4DO
+	url = https://github.com/Provenance-Emu/4DO-Core.git

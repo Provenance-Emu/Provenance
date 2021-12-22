@@ -9,7 +9,7 @@
 #if canImport(NSLogger)
 import Foundation
 import NSLogger
-import CocoaLumberjack
+@_exported import CocoaLumberjackSwift
 
 internal class JMLumberjackNSLogger: DDAbstractLogger {
     var logger: PVSupport.Logger { return PVSupport.Logger.shared }

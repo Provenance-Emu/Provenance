@@ -9,9 +9,10 @@
 
 import PVSupport
 import UIKit
+import Darwin
 
 final class PVLicensesViewController: UIViewController {
-    #if os(tvOS)
+    #if os(tvOS) || targetEnvironment(macCatalyst)
         @IBOutlet var textView: UITextView!
     #endif
 
@@ -20,11 +21,10 @@ final class PVLicensesViewController: UIViewController {
         // Do any additional setup after loading the view.
         title = "Acknowledgements"
 
-        #if os(iOS)
+        #if os(iOS) && !targetEnvironment(macCatalyst)
             view.backgroundColor = UIColor.black
             let filesystemPath: String? = Bundle.main.path(forResource: "licenses", ofType: "html")
             let htmlContent = try? String(contentsOfFile: filesystemPath ?? "", encoding: .utf8)
-
             let webView = UIWebView(frame: view.bounds)
             webView.isOpaque = false
             webView.backgroundColor = UIColor.black

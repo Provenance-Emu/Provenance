@@ -7,7 +7,17 @@
 //
 
 #import "PVTGBDualCore+Video.h"
+
+#if !TARGET_OS_MACCATALYST
+#import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES3/gl.h>
+#import <OpenGLES/ES3/glext.h>
+#import <OpenGLES/EAGL.h>
+#else
+#import <OpenGL/OpenGL.h>
+#import <GLUT/GLUT.h>
+#endif
+
 #include "libretro.h"
 
 #define TGBDUAL_PIXEL_TYPE       GL_UNSIGNED_SHORT_5_6_5

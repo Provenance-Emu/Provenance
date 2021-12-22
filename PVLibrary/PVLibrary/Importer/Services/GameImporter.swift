@@ -10,8 +10,8 @@
 import CoreSpotlight
 import Foundation
 @_exported import PVSupport
-import RealmSwift
-import SQLite
+@_exported import RealmSwift
+@_exported import SQLite
 
 struct Constants {
     struct iCloud {
@@ -94,7 +94,7 @@ public final class GameImporter {
 
     public let documentsPath: URL = PVEmulatorConfiguration.documentsPath
     public let romsImportPath: URL = PVEmulatorConfiguration.Paths.romsImportPath
-    public let conflictPath: URL = PVEmulatorConfiguration.documentsPath.appendingPathComponent("Conflicts", isDirectory: true)
+	public let conflictPath: URL = PVEmulatorConfiguration.documentsPath.appendingPathComponent("Conflicts", isDirectory: true)
 
     public func path(forSystemID systemID: String) -> URL? {
         return systemToPathMap[systemID]
@@ -126,11 +126,14 @@ public final class GameImporter {
     }()
 
     public var conflictedFiles: [URL]? {
-        guard FileManager.default.fileExists(atPath: conflictPath.absoluteString),
+        guard FileManager.default.fileExists(atPath: conflictPath.path),
               let files = try? FileManager.default.contentsOfDirectory(at: conflictPath,
                                                                        includingPropertiesForKeys: nil,
                                                                        options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
-        else { return nil }
+        else {
+			DLOG("")
+			return nil
+		}
         return files
     }
 
@@ -141,15 +144,9 @@ public final class GameImporter {
         // Scane all subclasses of  PVEmulator core, and get their metadata
         // like their subclass name and the bundle the belong to
         let coreClasses = PVEmulatorConfiguration.coreClasses
-        #if swift(>=4.1)
-            let corePlists = coreClasses.compactMap { (classInfo) -> URL? in
-                classInfo.bundle.url(forResource: "Core", withExtension: "plist")
-            }
-        #else
-            let corePlists = coreClasses.flatMap { (classInfo) -> URL? in
-                classInfo.bundle.url(forResource: "Core", withExtension: "plist")
-            }
-        #endif
+        let corePlists = coreClasses.compactMap { (classInfo) -> URL? in
+            classInfo.bundle.url(forResource: "Core", withExtension: "plist")
+        }
 
         let bundle = Bundle(identifier: "org.provenance-emu.PVLibrary")!
         PVEmulatorConfiguration.updateSystems(fromPlists: [bundle.url(forResource: "systems", withExtension: "plist")!])
@@ -158,6 +155,10 @@ public final class GameImporter {
 
     fileprivate init() {
         initialized.enter()
+
+		let fm = FileManager.default
+		try? fm.createDirectory(at: conflictPath, withIntermediateDirectories: true, attributes: nil)
+
         initSystemPlists()
         let systems = PVSystem.all
 
@@ -278,7 +279,7 @@ public final class GameImporter {
         return false
     }
 
-    public func startImport(forPaths paths: [URL] = [PVEmulatorConfiguration.Paths.romsImportPath]) {
+    public func startImport(forPaths paths: [URL]) {
         // Pre-sort
         let paths = PVEmulatorConfiguration.sortImportURLs(urls: paths)
         let scanOperation = BlockOperation {
@@ -1615,7 +1616,7 @@ extension GameImporter {
                 let systemID = PVEmulatorConfiguration.systemID(forDatabaseID: databaseID) {
                 return systemID
             } else {
-                ILOG("Could't match \(rom.filePath.lastPathComponent) based off of MD5 {md5}")
+                ILOG("Could't match \(rom.filePath.lastPathComponent) based off of MD5 {\(md5)}")
                 return nil
             }
         } catch {
