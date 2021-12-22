@@ -17,11 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - #1621 GBC palette options crashed gambatte
 - #1414 smarter expecptions in PVSystem
+- #1645 PCE Audio setting tweaks to match real hardware
+- #1637 Cheats label name cut off fixed
 - Fixed rare crash in OERingBuffer
 - Cores that don't support saves no loner display save actions in menu
 - OpenVGDB Update (fixes artwork and metadata not loading)
 - Fixed strong self refs in some classes, closures
-
 ### Updated
 
 - Jaguar core upstream & custom performance hacks
