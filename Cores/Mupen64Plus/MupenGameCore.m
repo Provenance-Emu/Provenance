@@ -1021,7 +1021,7 @@ static void ConfigureRICE() {
 
 	BOOL success = NO;
 
-#if !TARGET_OS_MAC
+#if !TARGET_OS_MACCATALYST
 	EAGLContext* context = [self bestContext];
 #endif
 
@@ -1127,7 +1127,7 @@ static void ConfigureRICE() {
     return YES;
 }
 
-#if !TARGET_OS_MAC
+#if !TARGET_OS_MACCATALYST
 -(EAGLContext*)bestContext {
 	EAGLContext* context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
 	self.glesVersion = GLESVersion3;
