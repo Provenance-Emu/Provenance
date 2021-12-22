@@ -198,7 +198,6 @@ struct RenderSettings {
 	[EAGLContext setCurrentContext:self.glContext];
 
 	GLKView *view = (GLKView *)self.view;
-    view.context = self.glContext;
 #else
     self.device = MTLCreateSystemDefaultDevice();
 
@@ -224,6 +223,7 @@ struct RenderSettings {
 #endif
     view.opaque = YES;
     view.layer.opaque = YES;
+    view.context = self.glContext;
     view.userInteractionEnabled = NO;
 
     GLenum depthFormat = self.emulatorCore.depthFormat;
