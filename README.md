@@ -66,7 +66,7 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
   - PC Engine Super CD-ROM² System / TurboGrafx-CD
   - PC Engine SuperGrafx
   - PC-FX
-- Nintendo
+- Nintendo 
   - Nintendo Entertainment System / Famicom (NES/FC)
   - Famicom Disk System
   - Super Nintendo Entertainment System / Super Famicom (SNES/SFC)
