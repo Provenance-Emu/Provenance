@@ -436,7 +436,7 @@
 		B3054321272022C800F5257D /* libavutil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavutil.a; path = ppsspp/ffmpeg/ios/universal/lib/libavutil.a; sourceTree = "<group>"; };
 		B3054322272022C800F5257D /* libavformat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavformat.a; path = ppsspp/ffmpeg/ios/universal/lib/libavformat.a; sourceTree = "<group>"; };
 		B305436B2720232900F5257D /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B305436C2720232900F5257D /* PVPPSSPP copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PVPPSSPP copy-Info.plist"; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/PVPPSSPP copy-Info.plist"; sourceTree = "<absolute>"; };
+		B305436C2720232900F5257D /* PVPPSSPP copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PVPPSSPP copy-Info.plist"; sourceTree = "<group>"; };
 		B305437727202A7200F5257D /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B30C6D96271D74EB0025DD88 /* PVPPSSPP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVPPSSPP.h; sourceTree = SOURCE_ROOT; };
 		B30C6D99271D773D0025DD88 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
