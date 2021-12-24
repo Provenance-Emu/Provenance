@@ -134,6 +134,11 @@ static NSString* const kGITTag                  = @"${GIT_TAG}";
 static NSString* const kGITDate                 = @"${GIT_DATE}";
 static NSString* const kGITBranch               = @"${GIT_BRANCH}";
 static NSString* const kAppBuildConfiguration   = @"${CONFIGURATION}";
+static NSString* const kOrgIdentifier           = @"${ORG_IDENTIFIER}";
+static NSString* const kOrgPrefix               = @"${ORG_PREFIX}";
+static NSString* const kProductBundleIdentifier = @"${PRODUCT_BUNDLE_IDENTIFIER}";
+static NSString* const kAppGroupIdentifier      = @"${APP_GROUP_IDENTIFIER}";
+static NSString* const kiCloudContainerIdenfitier = @"${ICLOUD_CONTAINER_IDENTIFIER}";
 
 // Suppress warnings incase you choose not to use these variables
 #pragma GCC diagnostic push
@@ -146,6 +151,11 @@ static const char* gitbranch            = "${GIT_BRANCH}";
 static const char* appversion           = "${appversion}";
 static const char* buildconfiguration   = "${CONFIGURATION}";
 static const char* builtByUser          = "${USER}";
+static const char* kOrgIdentifier           = "${ORG_IDENTIFIER}";
+static const char* kOrgPrefix               = "${ORG_PREFIX}";
+static const char* kProductBundleIdentifier = "${PRODUCT_BUNDLE_IDENTIFIER}";
+static const char* kAppGroupIdentifier      = "${APP_GROUP_IDENTIFIER}";
+static const char* kiCloudContainerIdenfitier = "${ICLOUD_CONTAINER_IDENTIFIER}";
 
 // static const char* compiletime          = __TIME__;
 // static const char* compiledate          = __DATE__;
@@ -187,6 +197,11 @@ public let gitbranch            = "${GIT_BRANCH}"
 public let appversion           = "${appversion}"
 public let buildconfiguration   = "${CONFIGURATION}"
 public let builtByUser          = "${USER}"
+public let kOrgIdentifier               = "${ORG_IDENTIFIER}"
+public let kOrgPrefix                   = "${ORG_PREFIX}"
+public let kProductBundleIdentifier     = "${PRODUCT_BUNDLE_IDENTIFIER}"
+public let kAppGroupIdentifier          = "${APP_GROUP_IDENTIFIER}"
+public let kiCloudContainerIdenfitier   = "${ICLOUD_CONTAINER_IDENTIFIER}"
 // public let compiletime          = __TIME__
 // public let compiledate          = __DATE__
 

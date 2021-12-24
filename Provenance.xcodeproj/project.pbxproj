@@ -3378,7 +3378,7 @@
 				);
 				MARKETING_VERSION = 2.0.4;
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance";
+				PRODUCT_BUNDLE_IDENTIFIER = org.replaceme;
 				PRODUCT_NAME = Provenance;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -3430,7 +3430,7 @@
 				);
 				MARKETING_VERSION = 2.0.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance";
+				PRODUCT_BUNDLE_IDENTIFIER = org.replaceme;
 				PRODUCT_NAME = Provenance;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -4072,7 +4072,7 @@
 				);
 				MARKETING_VERSION = 2.0.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance";
+				PRODUCT_BUNDLE_IDENTIFIER = org.replaceme;
 				PRODUCT_NAME = Provenance;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
