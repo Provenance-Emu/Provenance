@@ -53,6 +53,12 @@
 @import GLKit;
 #endif
 
+#define WIDTH 640
+#define HEIGHT 480
+#define WIDTHf 640.0f
+#define HEIGHTf 480.0f
+
+
 #if TARGET_OS_TV
 #define RESIZE_TO_FULLSCREEN TRUE
 #else
@@ -135,15 +141,15 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
         coreWaitToEndFrameSemaphore    = dispatch_semaphore_create(0);
         if(RESIZE_TO_FULLSCREEN) {
             CGSize size = UIApplication.sharedApplication.keyWindow.bounds.size;
-            float widthScale = floor(size.height / 640.0);
-            float heightScale = floor(size.height / 480.0);
+            float widthScale = floor(size.height / WIDTHf);
+            float heightScale = floor(size.height / HEIGHTf);
             float scale = MAX(MIN(widthScale, heightScale), 1);
-            _videoWidth =  scale * 640.0;
-            _videoHeight = scale * 480.0;
+            _videoWidth =  scale * WIDTHf;
+            _videoHeight = scale * HEIGHTf;
             DLOG(@"Upscaling on: scale rounded to (%f)",scale);
         } else {
-            _videoWidth  = 640;
-            _videoHeight = 480;
+            _videoWidth  = WIDTH;
+            _videoHeight = HEIGHT;
         }
 
         _videoBitDepth = 32; // ignored
@@ -639,15 +645,15 @@ static void ConfigureVideoGeneral() {
 	int useFullscreen = 1;
 	ConfigSetParameter(general, "Fullscreen", M64TYPE_BOOL, &useFullscreen);
 
-    int screenWidth = 640;
-    int screenHeight = 480;
+    int screenWidth = WIDTH;
+    int screenHeight = HEIGHT;
     if(RESIZE_TO_FULLSCREEN) {
         CGSize size = UIApplication.sharedApplication.keyWindow.bounds.size;
-        float widthScale = floor(size.height / 640.0);
-        float heightScale = floor(size.height / 480.0);
+        float widthScale = floor(size.height / WIDTHf);
+        float heightScale = floor(size.height / HEIGHTf);
         float scale = MAX(MIN(widthScale, heightScale), 1);
-        screenWidth =  scale * 640.0;
-        screenHeight = scale * 480.0;
+        screenWidth =  scale * WIDTHf;
+        screenHeight = scale * HEIGHTf;
     }
 
 	// Screen width
@@ -1111,11 +1117,11 @@ static void ConfigureRICE() {
         UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
         if(keyWindow != nil) {
             CGSize fullScreenSize = keyWindow.bounds.size;
-            float widthScale = floor(fullScreenSize.height / 640.0);
-            float heightScale = floor(fullScreenSize.height / 480.0);
+            float widthScale = floor(fullScreenSize.height / WIDTHf);
+            float heightScale = floor(fullScreenSize.height / WIDTHf);
             float scale = MAX(MIN(widthScale, heightScale), 1);
-            float widthScaled =  scale * 640.0;
-            float heightScaled = scale * 480.0;
+            float widthScaled =  scale * WIDTHf;
+            float heightScaled = scale * HEIGHTf;
 
             [self tryToResizeVideoTo:CGSizeMake(widthScaled, heightScaled)];
         }
