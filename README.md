@@ -97,6 +97,36 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
    - PSP (ppsspp)
    - PS2 (Play!)
 
+## Upstream projects:
+
+Provenance would be nothing without these projects.
+Please consider supporting those you love or want to see improved!
+
+### Cores
+
+- Atari800 : https://atari800.github.io
+- CrabEMU : http://crabemu.sourceforge.net
+- Desume2015 : https://github.com/flyinghead/desmume2015
+- FCEUX : http://sourceforge.net/projects/fceultra/
+- Gambatte : https://github.com/sinamas/gambatte
+- GenesisPlusGX : https://github.com/ekeeke/Genesis-Plus-GX
+- GLideN64 : https://github.com/gonetz/GLideN64
+- Mednafen : https://mednafen.github.io
+- Mupen64Plus : https://github.com/mupen64plus
+- O2EM : https://github.com/OpenEmu/O2EM-Core
+- PicoDrive : https://github.com/notaz/picodrive
+- PokeMini: http://sourceforge.net/projects/pokemini/
+- ProSystem : https://gstanton.github.io/ProSystem1_3/
+- Reicast : https://github.com/reicast/reicast-emulator
+- SNES9X : http://www.snes9x.com
+- Stella : https://stella-emu.github.io
+- VirtualJaguar : https://github.com/libretro/virtualjaguar-libretro
+- VisualBoyAdvance : https://sourceforge.net/projects/vba/
+
+### Additinal Code
+
+- libretro : https://www.libretro.com
+- OpenEMU : https://openemu.org
 ## Features
 
 <!--WIP | Manufacture  | System | Save States | Cheats | Up-scaling | Extras |
