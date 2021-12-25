@@ -130,6 +130,8 @@ namespace MDFN_IEN_VB
 static __weak MednafenGameCore *_current;
 
 @implementation MednafenGameCore
+@dynamic mednafen_pceFast;
+@dynamic mednafen_snesFast;
 
 -(uint32_t*) getInputBuffer:(int)bufferId
 {

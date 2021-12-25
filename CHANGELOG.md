@@ -5,7 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.3] - 2021-12-16
+## [2.0.4] - 2021-12-24
+
+### Fixed
+
+- #1651 Fixed N64 / Mupen blank video @mrjschulte
+- #1652 Update TVL in crt_fragment.glsl to reduce moirée effects at UHD @mrjschulte
+- #1654 Remove absolute path to file from .xcodeproj @davidmuzi
+- mupen replace consts with define, whole module for archive builds @JoeMatt
+
+## [2.0.3] - 2021-12-22
 
 ### Added
 
