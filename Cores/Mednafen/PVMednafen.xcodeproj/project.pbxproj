@@ -1241,7 +1241,7 @@
 		C6E1B64C25AAA042007C3CF1 /* rom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1E720736EEA0097D86F /* rom.cpp */; };
 		C6E1B64F25AAA24A007C3CF1 /* DSPUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2CC24880BF3000A3922 /* DSPUtility.cpp */; };
 		C6E1B65125AAA24A007C3CF1 /* SwiftResampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2CD24880BF3000A3922 /* SwiftResampler.cpp */; };
-		C6E1B65225AAA3EA007C3CF1 /* m68k.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADEB20736EE90097D86F /* m68k.cpp */; };
+		C6E1B65225AAA3EA007C3CF1 /* m68k.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADEB20736EE90097D86F /* m68k.cpp */; settings = {COMPILER_FLAGS = "-O0"; }; };
 		C6E1B66F25AAC1B1007C3CF1 /* scu_dsp_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB17B20736EEA0097D86F /* scu_dsp_misc.cpp */; };
 		C6E1B67025AAC1B1007C3CF1 /* scu_dsp_jmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB18020736EEA0097D86F /* scu_dsp_jmp.cpp */; };
 		C6E1B67125AAC1B1007C3CF1 /* 3dpad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB18920736EEA0097D86F /* 3dpad.cpp */; };
@@ -1275,7 +1275,7 @@
 		C6E1B68D25AAC1B2007C3CF1 /* cart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB21520736EEB0097D86F /* cart.cpp */; };
 		C6E1B68E25AAC1B2007C3CF1 /* vdp1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB21620736EEB0097D86F /* vdp1.cpp */; };
 		C6E1B68F25AAC1B2007C3CF1 /* scu_dsp_gen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB21820736EEB0097D86F /* scu_dsp_gen.cpp */; };
-		C6E1B69225AAC1FC007C3CF1 /* m68k.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADEB20736EE90097D86F /* m68k.cpp */; };
+		C6E1B69225AAC1FC007C3CF1 /* m68k.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADEB20736EE90097D86F /* m68k.cpp */; settings = {COMPILER_FLAGS = "-O0"; }; };
 		C6E1B69325AAC243007C3CF1 /* DSPUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2CC24880BF3000A3922 /* DSPUtility.cpp */; };
 		C6E1B69425AAC243007C3CF1 /* SwiftResampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2CD24880BF3000A3922 /* SwiftResampler.cpp */; };
 		C6E1B69525AAC5A3007C3CF1 /* libsaturn-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C6E1B66E25AAC123007C3CF1 /* libsaturn-iOS.a */; };
