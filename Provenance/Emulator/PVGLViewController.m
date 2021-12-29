@@ -640,7 +640,9 @@ struct RenderSettings {
     
     if (UNLIKELY(rendersToOpenGL))
     {
-        if ((!self.emulatorCore.isSpeedModified && ![self.emulatorCore isEmulationPaused]) || self.emulatorCore.isFrontBufferReady)
+        // TODO: should isEmulationPaused be the always &&, not before the | ? @JoeMatt
+        // if (LIKELY(!self.emulatorCore.isSpeedModified) && LIKELY(!self.emulatorCore.isEmulationPaused) && LIKELY(self.emulatorCore.isFrontBufferReady))
+        if ((LIKELY(!self.emulatorCore.isSpeedModified) && LIKELY(!self.emulatorCore.isEmulationPaused)) || LIKELY(self.emulatorCore.isFrontBufferReady))
         {
             [self.emulatorCore.frontBufferCondition lock];
             while (UNLIKELY(!self.emulatorCore.isFrontBufferReady) && LIKELY(!self.emulatorCore.isEmulationPaused))
