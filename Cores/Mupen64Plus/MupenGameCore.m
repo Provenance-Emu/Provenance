@@ -120,7 +120,8 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
 @implementation MupenGameCore
 {
     NSData *romData;
-    
+    NSOperationQueue *_inputQueue;
+
     dispatch_semaphore_t mupenWaitToBeginFrameSemaphore;
     dispatch_semaphore_t coreWaitToEndFrameSemaphore;
 
@@ -161,6 +162,11 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
 
         _callbackQueue = dispatch_queue_create("org.openemu.MupenGameCore.CallbackHandlerQueue", DISPATCH_QUEUE_SERIAL);
         _callbackHandlers = [[NSMutableDictionary alloc] init];
+        
+        _inputQueue = [[NSOperationQueue alloc] init];
+        _inputQueue.name = @"mupen.input";
+        _inputQueue.qualityOfService = NSOperationQueuePriorityHigh;
+        _inputQueue.maxConcurrentOperationCount = 4;
     }
     _current = self;
     return self;
@@ -170,6 +176,8 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
 {
     SetStateCallback(NULL, NULL);
     SetDebugCallback(NULL, NULL);
+    
+    [_inputQueue cancelAllOperations];
     
     [self pluginsUnload];
     [self detachCoreLib];
@@ -499,23 +507,39 @@ static void MupenControllerCommand(int Control, unsigned char *Command)
 }
 
 - (void)pollControllers {
+#define con(num) [self.controller##num capture]
+//#define con(num) self.controller##num
+
+#if 0
+    [self pollController:con(1) forIndedx:0];
+    [self pollController:con(2) forIndedx:1];
+    [self pollController:con(3) forIndedx:2];
+    [self pollController:con(4) forIndedx:3];
+#else
 //    const NSOperationQueue *queue = [NSOperationQueue currentQueue];
-//
-//    NSArray<NSBlockOperation*>* ops = @[
-//    [NSBlockOperation blockOperationWithBlock:^{
-        [self pollController:self.controller1 forIndedx:0];
-//    }],
-//    [NSBlockOperation blockOperationWithBlock:^{
-        [self pollController:self.controller2 forIndedx:1];
-//    }],
-//    [NSBlockOperation blockOperationWithBlock:^{
-        [self pollController:self.controller3 forIndedx:2];
-//    }],
-//    [NSBlockOperation blockOperationWithBlock:^{
-        [self pollController:self.controller4 forIndedx:3];
-//    }]
-//    ];
-//    [queue addOperations:ops waitUntilFinished:false];
+    [_inputQueue cancelAllOperations];
+    NSArray<NSBlockOperation*>* ops = @[
+    [NSBlockOperation blockOperationWithBlock:^{
+        if(!self.controller1) { return; }
+        [self pollController:con(1)  forIndedx:0];
+    }],
+    [NSBlockOperation blockOperationWithBlock:^{
+        if(!self.controller2) { return; }
+        [self pollController:con(2) forIndedx:1];
+    }],
+    [NSBlockOperation blockOperationWithBlock:^{
+        if(!self.controller3) { return; }
+        [self pollController:con(3) forIndedx:2];
+    }],
+    [NSBlockOperation blockOperationWithBlock:^{
+        if(!self.controller4) { return; }
+        [self pollController:con(4) forIndedx:3];
+    }]
+    ];
+//    [[NSOperationQueue currentQueue] addOperations:ops waitUntilFinished:NO];
+    [_inputQueue addOperations:ops waitUntilFinished:NO];
+#endif
+#undef con
 }
 
 static AUDIO_INFO AudioInfo;
@@ -1278,8 +1302,9 @@ static void ConfigureRICE() {
     }
 }
 
-- (void)stopEmulation
-{
+- (void)stopEmulation {
+    [_inputQueue cancelAllOperations];
+
     CoreDoCommand(M64CMD_STOP, 0, NULL);
     
     dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
@@ -1290,8 +1315,7 @@ static void ConfigureRICE() {
     [super stopEmulation];
 }
 
-- (void)resetEmulation
-{
+- (void)resetEmulation {
     // FIXME: do we want/need soft reset? It doesn’t seem to work well with sending M64CMD_RESET alone
     // FIXME: (astrange) should this method worry about this instance’s dispatch semaphores?
     CoreDoCommand(M64CMD_RESET, 1 /* hard reset */, NULL);
@@ -1363,6 +1387,8 @@ static void ConfigureRICE() {
 
          return !scheduleSaveState();
      }];
+    
+    [super saveStateToFileAtPath:fileName completionHandler:block];
 }
 
 
