@@ -48,7 +48,7 @@ extension MupenGameCore: CoreOptional {
 		#warning("Maybe make an enum type for core options?")
 			// MARK: AspectRatio <Enum>
 			// 0 = stretch, 1 = 4:3, 2 = 16:9, 3 = adjust
-		glidenOptions.append(.multi(.init(title: "Aspect Ratio",
+		glidenOptions.append(.enumeration(.init(title: "Aspect Ratio",
 										description: nil,
 										requiresRestart: true),
 						 values:[
@@ -65,6 +65,15 @@ extension MupenGameCore: CoreOptional {
 			// MARK: MultiSampling <Enum=0>
 			// "Enable/Disable MultiSampling (0=off, 2,4,8,16=quality
 			// WARNING: anything other than 0 crashes shader compilation
+		glidenOptions.append(.enumeration(.init(title: "Multi Sampling",
+										description: "Anything other than Off will probably crash. You've been warned.",
+										requiresRestart: true),
+						 values:[
+							.init(title: "Off", description: ""),
+							.init(title: "2x", description: ""),
+							.init(title: "4x", description: ""),
+							.init(title: "8x", description: ""),
+							.init(title: "16x", description: "")]))
 
 			// MARK: ForceGammaCorrection <Bool=0>
 		glidenOptions.append(.bool(.init(title: "Force Gamma Correction", description: nil, requiresRestart: true), defaultValue: false))
@@ -75,15 +84,50 @@ extension MupenGameCore: CoreOptional {
 		// MARK: --- Textures
 
 			// MARK: txSaveCache <Bool=1>
-		glidenOptions.append(.bool(.init(title: "Save Texture Cache", description: "Save textures to cache for faster loading later", requiresRestart: true), defaultValue: true))
+		glidenOptions.append(.bool(.init(title: "Save texture cache", description: "Save textures to cache for faster loading later", requiresRestart: true), defaultValue: true))
 
 			// MARK: txCacheCompression <Bool=0>
-		glidenOptions.append(.bool(.init(title: "Compress texture cache", description: "Compress Texture Cache", requiresRestart: true), defaultValue: false))
+		glidenOptions.append(.bool(.init(title: "Compress texture cache", description: "Compress Texture Cache", requiresRestart: true), defaultValue: true))
 
 			// MARK: txEnhancementMode <Enum=11>
 			// 0=none, 1=store as is, 2=X2, 3=X2SAI, 4=HQ2X, 5=HQ2XS, 6=LQ2X, 7=LQ2XS, 8=HQ4X, 9=2xBRZ, 10=3xBRZ, 11=4xBRZ, 12=5xBRZ), 13=6xBRZ
+		glidenOptions.append(.enumeration(.init(title: "Texture Enhancement Mode",
+										description: nil,
+										requiresRestart: true),
+						 values:[
+							.init(title: "None", description: ""),
+							.init(title: "Store as-is", description: ""),
+							.init(title: "X2", description: ""),
+							.init(title: "X2SAI", description: ""),
+							.init(title: "HQ2X", description: ""),
+							.init(title: "HQ2XS", description: ""),
+							.init(title: "LQ2X", description: ""),
+							.init(title: "LQXS", description: ""),
+							.init(title: "HQ4X", description: ""),
+							.init(title: "2xBRZ", description: ""),
+							.init(title: "3xBZ", description: ""),
+							.init(title: "4xBRZ", description: ""),
+							.init(title: "5xBRZ", description: ""),
+							.init(title: "6xBRZ", description: ""),
+
+						 ]))
+
 			// MARK: txFilterMode <Enum=0>
 			// Texture filter (0=none, 1=Smooth filtering 1, 2=Smooth filtering 2, 3=Smooth filtering 3, 4=Smooth filtering 4, 5=Sharp filtering 1, 6=Sharp filtering 2)
+		glidenOptions.append(.enumeration(.init(title: "Texture Filter Mode",
+										description: nil,
+										requiresRestart: true),
+						 values:[
+							.init(title: "None", description: ""),
+							.init(title: "Smooth 1", description: ""),
+							.init(title: "Smooth 2", description: ""),
+							.init(title: "Smooth 3", description: ""),
+							.init(title: "Smooth 4", description: ""),
+							.init(title: "Sharp 1", description: ""),
+							.init(title: "Sharp 2", description: ""),
+						 ]))
+
+
 
 			// MARK: txFilterIgnoreBG <Bool=0>
 			// "Don't filter background textures."
@@ -104,16 +148,20 @@ extension MupenGameCore: CoreOptional {
 
 			// MARK: txHresAltCRC <Bool=0>
 			// "Use alternative method of paletted textures CRC calculation."
-		glidenOptions.append(.bool(.init(title: "HiRes Alternative CRC Texture Method", description: "Use alternative method of paletted textures CRC calculation.", requiresRestart: true), defaultValue: false))
+		glidenOptions.append(.bool(.init(title: "HiRes Alt CRC", description: "Use alternative method of paletted textures CRC calculation.", requiresRestart: true), defaultValue: false))
 
 			// MARK: txHiresFullAlphaChannel <Bool=0>
 		// "Allow to use alpha channel of high-res texture fully."
-		glidenOptions.append(.bool(.init(title: "HiRes Full Alpha", description: "Allow to use alpha channel of high-res texture fully.", requiresRestart: true), defaultValue: false))
+		glidenOptions.append(.bool(.init(title: "HiRes Full Alpha", description: "Allow to use alpha channel of high-res texture fully.", requiresRestart: true), defaultValue: true))
 
 		// MARK: --- DEBUG
 			// MARK: OSD <Bool=0>
 		// Draw on-screen display if True, otherwise don't draw OSD
 		glidenOptions.append(.bool(.init(title: "Debug OSD", description: "Draw on-screen display if True, otherwise don't draw OSD", requiresRestart: true), defaultValue: false))
+
+		// MARK: --- Bloom
+		glidenOptions.append(.bool(.init(title: "Bloom filter", description: nil, requiresRestart: true), defaultValue: false))
+		// TODO: Add another sub-group, auto disable if off (maybe more work than worth)
 
 //		[bloomFilter]
 //		enable=0
@@ -170,6 +218,15 @@ extension MupenGameCore: CoreOptional {
  int colorQuality = 0;
  ConfigSetParameter(rice, "ColorQuality", M64TYPE_INT, &colorQuality);
  */
+			// MARK: ColorQuality <Enum=>
+			// 0 = 32 bits, 1 = 16 bits
+		riceOptions.append(.multi(.init(title: "Color Quality",
+										description: "Color bit depth for rendering window",
+										requiresRestart: true),
+						 values:[
+							.init(title: "32 Bits", description: ""),
+							.init(title: "16 Bits", description: "")]))
+
 		let riceGroup:CoreOption = .group(.init(title: "RICE", description: "Options specific to the RICE video plugin"),
 											subOptions: riceOptions)
 
@@ -186,6 +243,18 @@ extension MupenGameCore: CoreOptional {
 
 @objc
 extension MupenGameCore {
+	// TODO: move these generall accessors somewhere global, maybe use dynamicC
+	@objc
+	static public func bool(forOption option: String) -> Bool {
+		return valueForOption(Bool.self, option) ?? false
+	}
+
+	@objc
+	static public func int(forOption option: String) -> Int {
+		let value = valueForOption(Int.self, option)
+		return value ?? 0
+	}
+
     public static var useRice: Bool {
         return valueForOption(String.self, "GFX Plugin") == "Rice Video"
     }
@@ -195,6 +264,6 @@ extension MupenGameCore {
     }
 
     public static var perPixelLighting: Bool {
-        return valueForOption(Bool.self, "HW Lighting") ?? false
+        return valueForOption(Bool.self, "Hardware Lighting") ?? false
     }
 }

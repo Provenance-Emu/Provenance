@@ -404,7 +404,7 @@ static void MupenControllerCommand(int Control, unsigned char *Command)
     }
 }
 
-- (void)pollController:(GCController* _Nullable)controller forIndedx:(NSInteger)playerIndex {
+- (void)pollController:(GCController* _Nullable)controller forIndex:(NSInteger)playerIndex {
     if (!controller) {
         return;
     }
@@ -507,39 +507,38 @@ static void MupenControllerCommand(int Control, unsigned char *Command)
 }
 
 - (void)pollControllers {
-#define con(num) [self.controller##num capture]
-//#define con(num) self.controller##num
+#define USE_CAPTURE 1
+#define USE_QUEUE 1
 
-#if 0
-    [self pollController:con(1) forIndedx:0];
-    [self pollController:con(2) forIndedx:1];
-    [self pollController:con(3) forIndedx:2];
-    [self pollController:con(4) forIndedx:3];
+#if USE_CAPTURE
+#define controllerForNum(num) [self.controller##num capture]
 #else
-//    const NSOperationQueue *queue = [NSOperationQueue currentQueue];
-    [_inputQueue cancelAllOperations];
-    NSArray<NSBlockOperation*>* ops = @[
-    [NSBlockOperation blockOperationWithBlock:^{
-        if(!self.controller1) { return; }
-        [self pollController:con(1)  forIndedx:0];
-    }],
-    [NSBlockOperation blockOperationWithBlock:^{
-        if(!self.controller2) { return; }
-        [self pollController:con(2) forIndedx:1];
-    }],
-    [NSBlockOperation blockOperationWithBlock:^{
-        if(!self.controller3) { return; }
-        [self pollController:con(3) forIndedx:2];
-    }],
-    [NSBlockOperation blockOperationWithBlock:^{
-        if(!self.controller4) { return; }
-        [self pollController:con(4) forIndedx:3];
-    }]
-    ];
-//    [[NSOperationQueue currentQueue] addOperations:ops waitUntilFinished:NO];
-    [_inputQueue addOperations:ops waitUntilFinished:NO];
+#define controllerForNum(num) self.controller##num
 #endif
-#undef con
+
+#if USE_QUEUE
+		//    const NSOperationQueue *queue = [NSOperationQueue currentQueue];
+			[_inputQueue cancelAllOperations];
+			NSMutableArray<NSBlockOperation*>* ops = [NSMutableArray arrayWithCapacity:4];
+		#define CHECK_CONTROLLER(num) \
+			if(self.controller##num) [ops addObject:[NSBlockOperation blockOperationWithBlock:^{[self pollController:controllerForNum(num) forIndex:(num - 1)];}]]
+
+			CHECK_CONTROLLER(1);
+			CHECK_CONTROLLER(2);
+			CHECK_CONTROLLER(3);
+			CHECK_CONTROLLER(4);
+
+			[_inputQueue addOperations:ops waitUntilFinished:NO];
+#else
+#define CHECK_CONTROLLER(num) if(self.controller##num) [self pollController:controllerForNum(num) forIndex:(num - 1)]
+
+	CHECK_CONTROLLER(1);
+	CHECK_CONTROLLER(2);
+	CHECK_CONTROLLER(3);
+	CHECK_CONTROLLER(4);
+#endif
+#undef CHECK_CONTROLLER
+#undef controllerForNum
 }
 
 static AUDIO_INFO AudioInfo;
@@ -569,7 +568,7 @@ static void MupenAudioLenChanged()
 {
     GET_CURRENT_AND_RETURN();
 
-    int LenReg = *AudioInfo.AI_LEN_REG;
+    const int LenReg = *AudioInfo.AI_LEN_REG;
     uint8_t *ptr = (uint8_t*)(AudioInfo.RDRAM + (*AudioInfo.AI_DRAM_ADDR_REG & 0xFFFFFF));
     
     // Swap channels
@@ -651,7 +650,7 @@ static void ConfigureCore(NSString *romFolder) {
 	ConfigSetParameter(config, "SharedDataPath", M64TYPE_STRING, romFolder.fileSystemRepresentation);
 
 	// Use Pure Interpreter if 0, Cached Interpreter if 1, or Dynamic Recompiler if 2 or more"
-	int emulator = 1;
+	int emulator = [MupenGameCore intForOption:@"CPU Mode"];
 	ConfigSetParameter(config, "R4300Emulator", M64TYPE_INT, &emulator);
 
 	ConfigSaveSection("Core");
@@ -697,15 +696,15 @@ static void ConfigureGLideN64(NSString *romFolder) {
 	ConfigOpenSection("Video-GLideN64", &gliden64);
 
         // 0 = stretch, 1 = 4:3, 2 = 16:9, 3 = adjust
-    int aspectRatio = 1;
+	int aspectRatio = [MupenGameCore boolForOption:@"Aspect Ratio"];
 
-    if(RESIZE_TO_FULLSCREEN) {
-        #if TARGET_OS_TV
-            aspectRatio = 1;
-        #else
-            aspectRatio = 3;
-        #endif
-    }
+//    if(RESIZE_TO_FULLSCREEN) {
+//        #if TARGET_OS_TV
+//            aspectRatio = 1;
+//        #else
+//            aspectRatio = 3;
+//        #endif
+//    }
 
     ConfigSetParameter(gliden64, "AspectRatio", M64TYPE_INT, &aspectRatio);
 
@@ -715,7 +714,7 @@ static void ConfigureGLideN64(NSString *romFolder) {
 
 	// HiRez & texture options
 	//  txHiresEnable, "Use high-resolution texture packs if available."
-    int txHiresEnable = 1; //RESIZE_TO_FULLSCREEN ? 1 : 0;
+	int txHiresEnable = [MupenGameCore boolForOption:@"Enable HiRes Texture packs"];
 	ConfigSetParameter(gliden64, "txHiresEnable", M64TYPE_BOOL, &txHiresEnable);
 
     // Path to folder with hi-res texture packs.
@@ -725,31 +724,31 @@ static void ConfigureGLideN64(NSString *romFolder) {
     // Path to folder where plugin saves dumped textures.
 	ConfigSetParameter(gliden64, "txDumpPath", M64TYPE_STRING, [romFolder stringByAppendingPathComponent:@"/texture_dump/"].fileSystemRepresentation);
 
-    if(RESIZE_TO_FULLSCREEN) {
-        // "txFilterMode",
-        // "Texture filter (0=none, 1=Smooth filtering 1, 2=Smooth filtering 2, 3=Smooth filtering 3, 4=Smooth filtering 4, 5=Sharp filtering 1, 6=Sharp filtering 2)"
-        int txFilterMode = 6;
-        ConfigSetParameter(gliden64, "txFilterMode", M64TYPE_INT, &txFilterMode);
+//    if(RESIZE_TO_FULLSCREEN) {
+	// "txFilterMode",
+	// "Texture filter (0=none, 1=Smooth filtering 1, 2=Smooth filtering 2, 3=Smooth filtering 3, 4=Smooth filtering 4, 5=Sharp filtering 1, 6=Sharp filtering 2)"
+	int txFilterMode = [MupenGameCore intForOption:@"Texture Filter Mode"];
+	ConfigSetParameter(gliden64, "txFilterMode", M64TYPE_INT, &txFilterMode);
 
-        // "txEnhancementMode", config.textureFilter.txEnhancementMode,
-        // "Texture Enhancement (0=none, 1=store as is, 2=X2, 3=X2SAI, 4=HQ2X, 5=HQ2XS, 6=LQ2X, 7=LQ2XS, 8=HQ4X, 9=2xBRZ, 10=3xBRZ, 11=4xBRZ, 12=5xBRZ), 13=6xBRZ"
-        int txEnhancementMode = 11;
-        ConfigSetParameter(gliden64, "txEnhancementMode", M64TYPE_INT, &txEnhancementMode);
+	// "txEnhancementMode", config.textureFilter.txEnhancementMode,
+	// "Texture Enhancement (0=none, 1=store as is, 2=X2, 3=X2SAI, 4=HQ2X, 5=HQ2XS, 6=LQ2X, 7=LQ2XS, 8=HQ4X, 9=2xBRZ, 10=3xBRZ, 11=4xBRZ, 12=5xBRZ), 13=6xBRZ"
+	int txEnhancementMode = [MupenGameCore intForOption:@"Texture Enhancement Mode"];
+	ConfigSetParameter(gliden64, "txEnhancementMode", M64TYPE_INT, &txEnhancementMode);
 
-        // "txCacheCompression", config.textureFilter.txCacheCompression, "Zip textures cache."
-        int txCacheCompression = 0;
-        ConfigSetParameter(gliden64, "txCacheCompression", M64TYPE_BOOL, &txCacheCompression);
+	// "txCacheCompression", config.textureFilter.txCacheCompression, "Zip textures cache."
+	int txCacheCompression = [MupenGameCore boolForOption:@"Compress texture cache"];
+	ConfigSetParameter(gliden64, "txCacheCompression", M64TYPE_BOOL, &txCacheCompression);
 
-        // "txSaveCache", config.textureFilter.txSaveCache,
-        // "Save texture cache to hard disk."
-        int txSaveCache = 1;
-        ConfigSetParameter(gliden64, "txSaveCache", M64TYPE_BOOL, &txSaveCache);
+	// "txSaveCache", config.textureFilter.txSaveCache,
+	// "Save texture cache to hard disk."
+	int txSaveCache = [MupenGameCore boolForOption:@"Save texture cache"];
+	ConfigSetParameter(gliden64, "txSaveCache", M64TYPE_BOOL, &txSaveCache);
 
-        // Warning, anything other than 0 crashes shader compilation
-        // "MultiSampling", config.video.multisampling, "Enable/Disable MultiSampling (0=off, 2,4,8,16=quality)"
-        int MultiSampling = 0;
-        ConfigSetParameter(gliden64, "MultiSampling", M64TYPE_INT, &MultiSampling);
-    }
+	// Warning, anything other than 0 crashes shader compilation
+	// "MultiSampling", config.video.multisampling, "Enable/Disable MultiSampling (0=off, 2,4,8,16=quality)"
+	int MultiSampling = [MupenGameCore intForOption:@"Multi Sampling"];
+	ConfigSetParameter(gliden64, "MultiSampling", M64TYPE_INT, &MultiSampling);
+//    }
 
 
         //#Gamma correction settings
@@ -759,24 +758,30 @@ static void ConfigureGLideN64(NSString *romFolder) {
 //    assert(res == M64ERR_SUCCESS);
 
     /*
-	 "txDeposterize", config.textureFilter.txDeposterize, "Deposterize texture before enhancement."
-	 "txFilterIgnoreBG", config.textureFilter.txFilterIgnoreBG, "Don't filter background textures."
 	 "txCacheSize", config.textureFilter.txCacheSize/ gc_uMegabyte, "Size of filtered textures cache in megabytes."
-	 "txDump", config.textureFilter.txDump, "Enable dump of loaded N64 textures."
-	 "txForce16bpp", config.textureFilter.txForce16bpp, "Force use 16bit texture formats for HD textures."
 	*/
+	int txDump = [MupenGameCore boolForOption:@"Texture Dump"];
+	ConfigSetParameter(gliden64, "txDump", M64TYPE_BOOL, &txDump);
+
+	int txFilterIgnoreBG = [MupenGameCore boolForOption:@"Ignore BG Textures"];
+	ConfigSetParameter(gliden64, "txFilterIgnoreBG", M64TYPE_BOOL, &txFilterIgnoreBG);
+
+
+	int txForce16bpp = [MupenGameCore boolForOption:@"Force 16bpp textures"];
+	ConfigSetParameter(gliden64, "txForce16bpp", M64TYPE_BOOL, &txForce16bpp);
+
 
 	// "txHresAltCRC", config.textureFilter.txHresAltCRC, "Use alternative method of paletted textures CRC calculation."
-	int txHresAltCRC = 0;
+	int txHresAltCRC = [MupenGameCore boolForOption:@"HiRes Alt CRC"];
 	ConfigSetParameter(gliden64, "txHresAltCRC", M64TYPE_BOOL, &txHresAltCRC);
 
 
 	// "txHiresFullAlphaChannel", "Allow to use alpha channel of high-res texture fully."
-	int txHiresFullAlphaChannel = 1;
+	int txHiresFullAlphaChannel = [MupenGameCore boolForOption:@"HiRes Full Alpha"];;
 	ConfigSetParameter(gliden64, "txHiresFullAlphaChannel", M64TYPE_BOOL, &txHiresFullAlphaChannel);
 
 	// Draw on-screen display if True, otherwise don't draw OSD
-	int osd = 0;
+	int osd = [MupenGameCore boolForOption:@"Debug OSD"];
 	ConfigSetParameter(gliden64, "OnScreenDisplay", M64TYPE_BOOL, &osd);
 	ConfigSetParameter(gliden64, "ShowFPS", M64TYPE_BOOL, &osd);			// Show FPS counter.
 	ConfigSetParameter(gliden64, "ShowVIS", M64TYPE_BOOL, &osd);			// Show VI/S counter.
