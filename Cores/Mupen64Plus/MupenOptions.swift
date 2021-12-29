@@ -176,10 +176,10 @@ extension MupenGameCore: CoreOptional {
 
 
 		// MARK: -- Video (Globa)
-        let videoGroup = CoreOption.group(.init(title: "Video"),
-										  subOptions: [glidenGroup, riceGroup])
+//        let videoGroup = CoreOption.group(.init(title: "Video"),
+//										  subOptions: [glidenGroup, riceGroup])
 
-		options.append(contentsOf: [plugins, videoGroup])
+		options.append(contentsOf: [plugins, /*videoGroup,*/ glidenGroup, riceGroup])
         return options
     }
 }
