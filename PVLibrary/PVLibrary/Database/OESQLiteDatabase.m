@@ -88,7 +88,7 @@ NSString * const OESQLiteErrorDomain = @"OESQLiteErrorDomain";
 
         result = [NSMutableArray array];
 
-        while(sqlite3_step(stmt) == SQLITE_ROW)
+        while(LIKELY(sqlite3_step(stmt) == SQLITE_ROW))
         {
             int columnCount = sqlite3_column_count(stmt);
             NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:columnCount];

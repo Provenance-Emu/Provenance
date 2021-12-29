@@ -118,7 +118,7 @@ protected:
 	} TimeBounds;
 	
 	CARingBuffer::TimeBounds mTimeBoundsQueue[kGeneralRingTimeBoundsQueueSize];
-	UInt32 mTimeBoundsQueuePtr;
+    volatile UInt32 mTimeBoundsQueuePtr;
 };
 
 

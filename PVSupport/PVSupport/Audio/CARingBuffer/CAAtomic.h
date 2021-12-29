@@ -267,35 +267,58 @@ inline bool CAAtomicCompareAndSwapPtrBarrier(void *__oldValue, void *__newValue,
  */
 #define	CA_SPINLOCK_INIT    0
 
+#define USE_OS_UNFAIR_LOCK 1
+#if USE_OS_UNFAIR_LOCK
+#import <os/lock.h>
+#endif
+
 typedef int32_t CASpinLock;
 
-bool    CASpinLockTry( volatile CASpinLock *__lock );
-void    CASpinLockLock( volatile CASpinLock *__lock );
-void    CASpinLockUnlock( volatile CASpinLock *__lock );
+#if USE_OS_UNFAIR_LOCK
+#define LOCK_T os_unfair_lock_t
+#else
+#define LOCK_T CASpinLock *
+#endif
 
-inline void    CASpinLockLock( volatile CASpinLock *__lock )
+bool    CASpinLockTry( volatile LOCK_T __lock );
+void    CASpinLockLock( volatile LOCK_T __lock );
+void    CASpinLockUnlock( volatile LOCK_T __lock );
+
+inline void    CASpinLockLock( volatile LOCK_T __lock )
 {
 #if TARGET_OS_MAC
-	OSSpinLockLock(__lock);
+#if USE_OS_UNFAIR_LOCK
+    os_unfair_lock_lock(__lock);
+#else
+    OSSpinLockLock(__lock);
+#endif
 #else
 	while (CAAtomicTestAndSetBarrier(0, (void*)__lock))
 		usleep(1000); // ???
 #endif
 }
 
-inline void    CASpinLockUnlock( volatile CASpinLock *__lock )
+inline void    CASpinLockUnlock( volatile LOCK_T __lock )
 {
 #if TARGET_OS_MAC
-	OSSpinLockUnlock(__lock);
+#if USE_OS_UNFAIR_LOCK
+    os_unfair_lock_unlock(__lock);
+#else
+    OSSpinLockUnlock(__lock);
+#endif
 #else
 	CAAtomicTestAndClearBarrier(0, (void*)__lock);
 #endif
 }
 
-inline bool    CASpinLockTry( volatile CASpinLock *__lock )
+inline bool    CASpinLockTry( volatile LOCK_T __lock )
 {
 #if TARGET_OS_MAC
-	return OSSpinLockTry(__lock);
+#if USE_OS_UNFAIR_LOCK
+    return os_unfair_lock_trylock(__lock);
+#else
+    return OSSpinLockTry(__lock);
+#endif
 #else
 	return (CAAtomicTestAndSetBarrier(0, (void*)__lock) == 0);
 #endif

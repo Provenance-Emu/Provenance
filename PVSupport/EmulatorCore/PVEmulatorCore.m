@@ -217,7 +217,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
     MakeCurrentThreadRealTime();
 
     //Emulation loop
-    while (!shouldStop) {
+    while (UNLIKELY(!shouldStop)) {
 
         [self updateControllers];
         

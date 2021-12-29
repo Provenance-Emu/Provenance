@@ -26,7 +26,7 @@
 
 #import "NSFileManager+OEHashingAdditions.h"
 #import <CommonCrypto/CommonDigest.h>
-
+#import "DebugUtils.h"
 #define HASH_READ_CHUNK_SIZE (1024 * 32)
 
 @implementation NSFileManager (OEHashingAdditions)
@@ -63,7 +63,7 @@
             
             if(data == nil || length < HASH_READ_CHUNK_SIZE) break;
         }
-    } while(YES);
+    } while(LIKELY(YES));
     
     [handle closeFile];
     

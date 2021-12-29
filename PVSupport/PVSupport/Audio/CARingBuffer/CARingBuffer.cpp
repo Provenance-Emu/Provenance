@@ -47,7 +47,7 @@
 #include "CARingBuffer.h"
 #include "CABitOperations.h"
 #include "CAAutoDisposer.h"
-#include "CAAtomic.h"
+//#include "CAAtomic.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -220,7 +220,7 @@ CARingBufferError	CARingBuffer::Store(const AudioBufferList *abl, UInt32 framesT
 	
 	return kCARingBufferError_OK;	// success
 }
-
+#include <atomic>
 void	CARingBuffer::SetTimeBounds(SampleTime startTime, SampleTime endTime)
 {
 	UInt32 nextPtr = mTimeBoundsQueuePtr + 1;
@@ -229,7 +229,9 @@ void	CARingBuffer::SetTimeBounds(SampleTime startTime, SampleTime endTime)
 	mTimeBoundsQueue[index].mStartTime = startTime;
 	mTimeBoundsQueue[index].mEndTime = endTime;
 	mTimeBoundsQueue[index].mUpdateCounter = nextPtr;
-	CAAtomicCompareAndSwap32Barrier(mTimeBoundsQueuePtr, mTimeBoundsQueuePtr + 1, (SInt32*)&mTimeBoundsQueuePtr);
+//    std::atomic_compare_exchange_strong((volatile int32_t *)&mTimeBoundsQueuePtr, mTimeBoundsQueuePtr, mTimeBoundsQueuePtr + 1);
+    OSAtomicCompareAndSwap32Barrier(mTimeBoundsQueuePtr, mTimeBoundsQueuePtr + 1, (volatile int32_t *)&mTimeBoundsQueuePtr);
+//	CAAtomicCompareAndSwap32Barrier(mTimeBoundsQueuePtr, mTimeBoundsQueuePtr + 1, (SInt32*)&mTimeBoundsQueuePtr);
 }
 
 CARingBufferError	CARingBuffer::GetTimeBounds(SampleTime &startTime, SampleTime &endTime)
