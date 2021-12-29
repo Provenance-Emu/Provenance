@@ -120,7 +120,8 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
 @implementation MupenGameCore
 {
     NSData *romData;
-    
+    NSOperationQueue *_inputQueue;
+
     dispatch_semaphore_t mupenWaitToBeginFrameSemaphore;
     dispatch_semaphore_t coreWaitToEndFrameSemaphore;
 
@@ -161,6 +162,11 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
 
         _callbackQueue = dispatch_queue_create("org.openemu.MupenGameCore.CallbackHandlerQueue", DISPATCH_QUEUE_SERIAL);
         _callbackHandlers = [[NSMutableDictionary alloc] init];
+        
+        _inputQueue = [[NSOperationQueue alloc] init];
+        _inputQueue.name = @"mupen.input";
+        _inputQueue.qualityOfService = NSOperationQueuePriorityHigh;
+        _inputQueue.maxConcurrentOperationCount = 4;
     }
     _current = self;
     return self;
@@ -170,6 +176,8 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
 {
     SetStateCallback(NULL, NULL);
     SetDebugCallback(NULL, NULL);
+    
+    [_inputQueue cancelAllOperations];
     
     [self pluginsUnload];
     [self detachCoreLib];
@@ -396,128 +404,142 @@ static void MupenControllerCommand(int Control, unsigned char *Command)
     }
 }
 
-- (void)pollControllers
-{
-    for (NSInteger playerIndex = 0; playerIndex < 4; playerIndex++)
-    {
-        GCController *controller = nil;
-        
-        if (self.controller1 && playerIndex == 0)
-        {
-            controller = self.controller1;
-        }
-        else if (self.controller2 && playerIndex == 1)
-        {
-            controller = self.controller2;
-        }
-        else if (self.controller3 && playerIndex == 2)
-        {
-            controller = self.controller3;
-        }
-        else if (self.controller4 && playerIndex == 3)
-        {
-            controller = self.controller4;
-        }
-        
-        if ([controller extendedGamepad])
-        {
-            GCExtendedGamepad *gamepad     = [controller extendedGamepad];
-            GCControllerDirectionPad *dpad = [gamepad dpad];
+- (void)pollController:(GCController* _Nullable)controller forIndedx:(NSInteger)playerIndex {
+    if (!controller) {
+        return;
+    }
+    if (LIKELY(controller.extendedGamepad)) {
+        GCExtendedGamepad *gamepad     = [controller extendedGamepad];
+        GCControllerDirectionPad *dpad = [gamepad dpad];
 
-			// Left Joystick → Joystick
-            xAxis[playerIndex] = gamepad.leftThumbstick.xAxis.value * N64_ANALOG_MAX;
-            yAxis[playerIndex] = gamepad.leftThumbstick.yAxis.value * N64_ANALOG_MAX;
+        // Left Joystick → Joystick
+        xAxis[playerIndex] = gamepad.leftThumbstick.xAxis.value * N64_ANALOG_MAX;
+        yAxis[playerIndex] = gamepad.leftThumbstick.yAxis.value * N64_ANALOG_MAX;
 
-			// MFi-D-Pad → D-Pad
+        // MFi-D-Pad → D-Pad
+        padData[playerIndex][PVN64ButtonDPadUp] = dpad.up.isPressed;
+        padData[playerIndex][PVN64ButtonDPadDown] = dpad.down.isPressed;
+        padData[playerIndex][PVN64ButtonDPadLeft] = dpad.left.isPressed;
+        padData[playerIndex][PVN64ButtonDPadRight] = dpad.right.isPressed;
+
+        // MFi-R2 → Start
+        padData[playerIndex][PVN64ButtonStart] = gamepad.rightTrigger.isPressed;
+        
+        // MFi-L2 → Z
+        padData[playerIndex][PVN64ButtonZ] = gamepad.leftTrigger.isPressed;
+        
+        // If MFi-L2 is not pressed… MFi-L1 → L
+        if (!gamepad.rightShoulder.isPressed) {
+            padData[playerIndex][PVN64ButtonL] = gamepad.leftShoulder.isPressed;
+        }
+        
+        // If MFi-L1 is not pressed… MFi-R1 → R
+        if (!gamepad.leftShoulder.isPressed) {
+            padData[playerIndex][PVN64ButtonR] = gamepad.rightShoulder.isPressed;
+        }
+        // If not C-Mode… MFi-X,A → A,B MFi-Y,B → C←,C↓
+        if (!(gamepad.leftShoulder.isPressed && gamepad.rightShoulder.isPressed)) {
+            padData[playerIndex][PVN64ButtonA] = gamepad.buttonA.isPressed;
+            padData[playerIndex][PVN64ButtonB] = gamepad.buttonX.isPressed;
+            padData[playerIndex][PVN64ButtonCLeft] = gamepad.buttonY.isPressed;
+            padData[playerIndex][PVN64ButtonCDown] = gamepad.buttonB.isPressed;
+        }
+        
+        //C-Mode: MFi-X,Y,A,B -> C←,C↑,C↓,C→
+        if (gamepad.leftShoulder.isPressed && gamepad.rightShoulder.isPressed) {
+            padData[playerIndex][PVN64ButtonCLeft] = gamepad.buttonX.isPressed;
+            padData[playerIndex][PVN64ButtonCUp] = gamepad.buttonY.isPressed;
+            padData[playerIndex][PVN64ButtonCDown] = gamepad.buttonA.isPressed;
+            padData[playerIndex][PVN64ButtonCRight] = gamepad.buttonB.isPressed;
+        }
+
+        // Right Joystick → C Buttons
+        float rightJoystickDeadZone = 0.45;
+        if (!(gamepad.leftShoulder.isPressed && gamepad.rightShoulder.isPressed) && !(gamepad.buttonY.isPressed || gamepad.buttonB.isPressed)) {
+            padData[playerIndex][PVN64ButtonCUp] = gamepad.rightThumbstick.up.value > rightJoystickDeadZone;
+            padData[playerIndex][PVN64ButtonCDown] = gamepad.rightThumbstick.down.value > rightJoystickDeadZone;
+            padData[playerIndex][PVN64ButtonCLeft] = gamepad.rightThumbstick.left.value > rightJoystickDeadZone;
+            padData[playerIndex][PVN64ButtonCRight] = gamepad.rightThumbstick.right.value > rightJoystickDeadZone;
+        }
+    } else if ([controller gamepad]) {
+        GCGamepad *gamepad = [controller gamepad];
+        GCControllerDirectionPad *dpad = [gamepad dpad];
+        
+        if (!gamepad.rightShoulder.isPressed) {
+            // Default
+            xAxis[playerIndex] = (dpad.left.value > 0.5 ? -N64_ANALOG_MAX : 0) + (dpad.right.value > 0.5 ? N64_ANALOG_MAX : 0);
+            yAxis[playerIndex] = (dpad.down.value > 0.5 ? -N64_ANALOG_MAX : 0) + (dpad.up.value > 0.5 ? N64_ANALOG_MAX : 0);
+            
+            padData[playerIndex][PVN64ButtonA] = gamepad.buttonA.isPressed;
+            padData[playerIndex][PVN64ButtonB] = gamepad.buttonX.isPressed;
+            
+            padData[playerIndex][PVN64ButtonCLeft] = gamepad.buttonY.isPressed;
+            padData[playerIndex][PVN64ButtonCDown] = gamepad.buttonB.isPressed;
+        } else {
+            // Alt-Mode
             padData[playerIndex][PVN64ButtonDPadUp] = dpad.up.isPressed;
             padData[playerIndex][PVN64ButtonDPadDown] = dpad.down.isPressed;
             padData[playerIndex][PVN64ButtonDPadLeft] = dpad.left.isPressed;
             padData[playerIndex][PVN64ButtonDPadRight] = dpad.right.isPressed;
-
-			// MFi-R2 → Start
-            padData[playerIndex][PVN64ButtonStart] = gamepad.rightTrigger.isPressed;
             
-            // MFi-L2 → Z
-            padData[playerIndex][PVN64ButtonZ] = gamepad.leftTrigger.isPressed;
-            
-            // If MFi-L2 is not pressed… MFi-L1 → L
-            if (!gamepad.rightShoulder.isPressed) {
-                padData[playerIndex][PVN64ButtonL] = gamepad.leftShoulder.isPressed;
-            }
-            
-            // If MFi-L1 is not pressed… MFi-R1 → R
-            if (!gamepad.leftShoulder.isPressed) {
-                padData[playerIndex][PVN64ButtonR] = gamepad.rightShoulder.isPressed;
-            }
-            // If not C-Mode… MFi-X,A → A,B MFi-Y,B → C←,C↓
-            if (!(gamepad.leftShoulder.isPressed && gamepad.rightShoulder.isPressed)) {
-                padData[playerIndex][PVN64ButtonA] = gamepad.buttonA.isPressed;
-                padData[playerIndex][PVN64ButtonB] = gamepad.buttonX.isPressed;
-                padData[playerIndex][PVN64ButtonCLeft] = gamepad.buttonY.isPressed;
-                padData[playerIndex][PVN64ButtonCDown] = gamepad.buttonB.isPressed;
-            }
-            
-            //C-Mode: MFi-X,Y,A,B -> C←,C↑,C↓,C→
-            if (gamepad.leftShoulder.isPressed && gamepad.rightShoulder.isPressed) {
-                padData[playerIndex][PVN64ButtonCLeft] = gamepad.buttonX.isPressed;
-                padData[playerIndex][PVN64ButtonCUp] = gamepad.buttonY.isPressed;
-                padData[playerIndex][PVN64ButtonCDown] = gamepad.buttonA.isPressed;
-                padData[playerIndex][PVN64ButtonCRight] = gamepad.buttonB.isPressed;
-            }
-   
-			// Right Joystick → C Buttons
-            float rightJoystickDeadZone = 0.45;
-            if (!(gamepad.leftShoulder.isPressed && gamepad.rightShoulder.isPressed) && !(gamepad.buttonY.isPressed || gamepad.buttonB.isPressed)) {
-                padData[playerIndex][PVN64ButtonCUp] = gamepad.rightThumbstick.up.value > rightJoystickDeadZone;
-                padData[playerIndex][PVN64ButtonCDown] = gamepad.rightThumbstick.down.value > rightJoystickDeadZone;
-                padData[playerIndex][PVN64ButtonCLeft] = gamepad.rightThumbstick.left.value > rightJoystickDeadZone;
-                padData[playerIndex][PVN64ButtonCRight] = gamepad.rightThumbstick.right.value > rightJoystickDeadZone;
-            }
-            
-        } else if ([controller gamepad]) {
-            GCGamepad *gamepad = [controller gamepad];
-            GCControllerDirectionPad *dpad = [gamepad dpad];
-            
-            if (!gamepad.rightShoulder.isPressed) {
-                // Default
-                xAxis[playerIndex] = (dpad.left.value > 0.5 ? -N64_ANALOG_MAX : 0) + (dpad.right.value > 0.5 ? N64_ANALOG_MAX : 0);
-                yAxis[playerIndex] = (dpad.down.value > 0.5 ? -N64_ANALOG_MAX : 0) + (dpad.up.value > 0.5 ? N64_ANALOG_MAX : 0);
-                
-                padData[playerIndex][PVN64ButtonA] = gamepad.buttonA.isPressed;
-                padData[playerIndex][PVN64ButtonB] = gamepad.buttonX.isPressed;
-                
-                padData[playerIndex][PVN64ButtonCLeft] = gamepad.buttonY.isPressed;
-                padData[playerIndex][PVN64ButtonCDown] = gamepad.buttonB.isPressed;
-            } else {
-                // Alt-Mode
-                padData[playerIndex][PVN64ButtonDPadUp] = dpad.up.isPressed;
-                padData[playerIndex][PVN64ButtonDPadDown] = dpad.down.isPressed;
-                padData[playerIndex][PVN64ButtonDPadLeft] = dpad.left.isPressed;
-                padData[playerIndex][PVN64ButtonDPadRight] = dpad.right.isPressed;
-                
-                padData[playerIndex][PVN64ButtonCLeft] = gamepad.buttonX.isPressed;
-                padData[playerIndex][PVN64ButtonCUp] = gamepad.buttonY.isPressed;
-                padData[playerIndex][PVN64ButtonCDown] = gamepad.buttonA.isPressed;
-                padData[playerIndex][PVN64ButtonCRight] = gamepad.buttonB.isPressed;
-            }
-            
-            padData[playerIndex][PVN64ButtonZ] = gamepad.leftShoulder.isPressed;
-            padData[playerIndex][PVN64ButtonR] = gamepad.rightShoulder.isPressed;
-            
+            padData[playerIndex][PVN64ButtonCLeft] = gamepad.buttonX.isPressed;
+            padData[playerIndex][PVN64ButtonCUp] = gamepad.buttonY.isPressed;
+            padData[playerIndex][PVN64ButtonCDown] = gamepad.buttonA.isPressed;
+            padData[playerIndex][PVN64ButtonCRight] = gamepad.buttonB.isPressed;
         }
-#if TARGET_OS_TV
-        else if ([controller microGamepad]) {
-            GCMicroGamepad *gamepad = [controller microGamepad];
-            GCControllerDirectionPad *dpad = [gamepad dpad];
-            
-            xAxis[playerIndex] = (dpad.left.value > 0.5 ? -N64_ANALOG_MAX : 0) + (dpad.right.value > 0.5 ? N64_ANALOG_MAX : 0);
-            yAxis[playerIndex] = (dpad.down.value > 0.5 ? -N64_ANALOG_MAX : 0) + (dpad.up.value > 0.5 ? N64_ANALOG_MAX : 0);
-            
-            padData[playerIndex][PVN64ButtonB] = gamepad.buttonA.isPressed;
-            padData[playerIndex][PVN64ButtonA] = gamepad.buttonX.isPressed;
-        }
-#endif
+        
+        padData[playerIndex][PVN64ButtonZ] = gamepad.leftShoulder.isPressed;
+        padData[playerIndex][PVN64ButtonR] = gamepad.rightShoulder.isPressed;
+        
     }
+#if TARGET_OS_TV
+    else if ([controller microGamepad]) {
+        GCMicroGamepad *gamepad = [controller microGamepad];
+        GCControllerDirectionPad *dpad = [gamepad dpad];
+        
+        xAxis[playerIndex] = (dpad.left.value > 0.5 ? -N64_ANALOG_MAX : 0) + (dpad.right.value > 0.5 ? N64_ANALOG_MAX : 0);
+        yAxis[playerIndex] = (dpad.down.value > 0.5 ? -N64_ANALOG_MAX : 0) + (dpad.up.value > 0.5 ? N64_ANALOG_MAX : 0);
+        
+        padData[playerIndex][PVN64ButtonB] = gamepad.buttonA.isPressed;
+        padData[playerIndex][PVN64ButtonA] = gamepad.buttonX.isPressed;
+    }
+#endif
+}
+
+- (void)pollControllers {
+#define con(num) [self.controller##num capture]
+//#define con(num) self.controller##num
+
+#if 0
+    [self pollController:con(1) forIndedx:0];
+    [self pollController:con(2) forIndedx:1];
+    [self pollController:con(3) forIndedx:2];
+    [self pollController:con(4) forIndedx:3];
+#else
+//    const NSOperationQueue *queue = [NSOperationQueue currentQueue];
+    [_inputQueue cancelAllOperations];
+    NSArray<NSBlockOperation*>* ops = @[
+    [NSBlockOperation blockOperationWithBlock:^{
+        if(!self.controller1) { return; }
+        [self pollController:con(1)  forIndedx:0];
+    }],
+    [NSBlockOperation blockOperationWithBlock:^{
+        if(!self.controller2) { return; }
+        [self pollController:con(2) forIndedx:1];
+    }],
+    [NSBlockOperation blockOperationWithBlock:^{
+        if(!self.controller3) { return; }
+        [self pollController:con(3) forIndedx:2];
+    }],
+    [NSBlockOperation blockOperationWithBlock:^{
+        if(!self.controller4) { return; }
+        [self pollController:con(4) forIndedx:3];
+    }]
+    ];
+//    [[NSOperationQueue currentQueue] addOperations:ops waitUntilFinished:NO];
+    [_inputQueue addOperations:ops waitUntilFinished:NO];
+#endif
+#undef con
 }
 
 static AUDIO_INFO AudioInfo;
@@ -1280,8 +1302,9 @@ static void ConfigureRICE() {
     }
 }
 
-- (void)stopEmulation
-{
+- (void)stopEmulation {
+    [_inputQueue cancelAllOperations];
+
     CoreDoCommand(M64CMD_STOP, 0, NULL);
     
     dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
@@ -1292,8 +1315,7 @@ static void ConfigureRICE() {
     [super stopEmulation];
 }
 
-- (void)resetEmulation
-{
+- (void)resetEmulation {
     // FIXME: do we want/need soft reset? It doesn’t seem to work well with sending M64CMD_RESET alone
     // FIXME: (astrange) should this method worry about this instance’s dispatch semaphores?
     CoreDoCommand(M64CMD_RESET, 1 /* hard reset */, NULL);
@@ -1365,6 +1387,8 @@ static void ConfigureRICE() {
 
          return !scheduleSaveState();
      }];
+    
+    [super saveStateToFileAtPath:fileName completionHandler:block];
 }
 
 

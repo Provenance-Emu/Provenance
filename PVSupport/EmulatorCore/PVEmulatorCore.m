@@ -217,7 +217,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
     MakeCurrentThreadRealTime();
 
     //Emulation loop
-    while (!shouldStop) {
+    while (UNLIKELY(!shouldStop)) {
 
         [self updateControllers];
         
@@ -324,7 +324,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
         return;
     }
 
-    if (self.controller1 && self.controller1.isAttachedToDevice == NO) {
+    if (self.controller1 && !self.controller1.isAttachedToDevice) {
         // Don't rumble if using a controller and it's not an attached type.
         return;
     }

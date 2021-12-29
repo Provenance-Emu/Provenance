@@ -571,8 +571,11 @@ struct RenderSettings {
         glClearColor(1.0, 1.0, 1.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
 #endif
+        const BOOL rendersToOpenGL = strongself->_emulatorCore.rendersToOpenGL;
+        const BOOL crtEnabled = strongself->renderSettings.crtFilterEnabled;
+
         GLuint frontBufferTex;
-        if ([self.emulatorCore rendersToOpenGL])
+        if (UNLIKELY(rendersToOpenGL))
         {
             frontBufferTex = strongself->alternateThreadColorTextureFront;
             [self.emulatorCore.frontBufferLock lock];
@@ -590,7 +593,7 @@ struct RenderSettings {
             glBindTexture(GL_TEXTURE_2D, frontBufferTex);
         }
         
-        if (strongself->renderSettings.crtFilterEnabled)
+        if (crtEnabled)
         {
             glUseProgram(strongself->crtShaderProgram);
             glUniform4f(strongself->crtUniform_DisplayRect, screenRect.origin.x, screenRect.origin.y, screenRect.size.width, screenRect.size.height);
@@ -630,19 +633,22 @@ struct RenderSettings {
         
         glBindTexture(GL_TEXTURE_2D, 0);
         
-        if ([strongself->_emulatorCore rendersToOpenGL])
-        {
+        if (UNLIKELY(rendersToOpenGL)) {
             glFlush();
             [strongself->_emulatorCore.frontBufferLock unlock];
         }
     };
     
-    if ([self.emulatorCore rendersToOpenGL])
-    {
-        if ((!self.emulatorCore.isSpeedModified && ![self.emulatorCore isEmulationPaused]) || self.emulatorCore.isFrontBufferReady)
+    if (UNLIKELY(self.emulatorCore.rendersToOpenGL)) {
+        // TODO: should isEmulationPaused be the always &&, not before the | ? @JoeMatt
+        // if (LIKELY(!self.emulatorCore.isSpeedModified) && LIKELY(!self.emulatorCore.isEmulationPaused) && LIKELY(self.emulatorCore.isFrontBufferReady))
+        if ((LIKELY(!self.emulatorCore.isSpeedModified) && LIKELY(!self.emulatorCore.isEmulationPaused)) || LIKELY(self.emulatorCore.isFrontBufferReady))
         {
             [self.emulatorCore.frontBufferCondition lock];
-            while (!self.emulatorCore.isFrontBufferReady && ![self.emulatorCore isEmulationPaused]) [self.emulatorCore.frontBufferCondition wait];
+            while (UNLIKELY(!self.emulatorCore.isFrontBufferReady) && LIKELY(!self.emulatorCore.isEmulationPaused))
+            {
+                [self.emulatorCore.frontBufferCondition wait];
+            }
             BOOL isFrontBufferReady = self.emulatorCore.isFrontBufferReady;
             [self.emulatorCore.frontBufferCondition unlock];
             if (isFrontBufferReady)
@@ -656,19 +662,21 @@ struct RenderSettings {
             }
         }
     }
-    else
-    {
-        if (self.emulatorCore.isSpeedModified)
+    else {
+        if (UNLIKELY(self.emulatorCore.isSpeedModified))
         {
             fetchVideoBuffer();
             renderBlock();
         }
         else
         {
-            if (self.emulatorCore.isDoubleBuffered)
+            if (UNLIKELY(self.emulatorCore.isDoubleBuffered))
             {
                 [self.emulatorCore.frontBufferCondition lock];
-                while (!self.emulatorCore.isFrontBufferReady && ![self.emulatorCore isEmulationPaused]) [self.emulatorCore.frontBufferCondition wait];
+                while (UNLIKELY(!self.emulatorCore.isFrontBufferReady) && LIKELY(!self.emulatorCore.isEmulationPaused))
+                {
+                    [self.emulatorCore.frontBufferCondition wait];
+                }
                 _emulatorCore.isFrontBufferReady = NO;
                 [_emulatorCore.frontBufferLock lock];
                 fetchVideoBuffer();
@@ -676,8 +684,7 @@ struct RenderSettings {
                 [_emulatorCore.frontBufferLock unlock];
                 [_emulatorCore.frontBufferCondition unlock];
             }
-            else
-            {
+            else {
                 @synchronized(self.emulatorCore)
                 {
                     fetchVideoBuffer();
@@ -833,10 +840,13 @@ struct RenderSettings {
 
     if ([self.emulatorCore rendersToOpenGL])
     {
-        if ((!self.emulatorCore.isSpeedModified && ![self.emulatorCore isEmulationPaused]) || self.emulatorCore.isFrontBufferReady)
+        if ((!self.emulatorCore.isSpeedModified && !self.emulatorCore.isEmulationPaused) || self.emulatorCore.isFrontBufferReady)
         {
             [self.emulatorCore.frontBufferCondition lock];
-            while (!self.emulatorCore.isFrontBufferReady && ![self.emulatorCore isEmulationPaused]) [self.emulatorCore.frontBufferCondition wait];
+            while (UNLIKELY(!self.emulatorCore.isFrontBufferReady) && LIKELY(!self.emulatorCore.isEmulationPaused))
+            {
+                [self.emulatorCore.frontBufferCondition wait];
+            }
             BOOL isFrontBufferReady = self.emulatorCore.isFrontBufferReady;
             [self.emulatorCore.frontBufferCondition unlock];
             if (isFrontBufferReady)
@@ -859,10 +869,13 @@ struct RenderSettings {
         }
         else
         {
-            if (self.emulatorCore.isDoubleBuffered)
+            if (UNLIKELY(self.emulatorCore.isDoubleBuffered))
             {
                 [self.emulatorCore.frontBufferCondition lock];
-                while (!self.emulatorCore.isFrontBufferReady && ![self.emulatorCore isEmulationPaused]) [self.emulatorCore.frontBufferCondition wait];
+                while (UNLIKELY(!self.emulatorCore.isFrontBufferReady) && LIKELY(!self.emulatorCore.isEmulationPaused))
+                {
+                    [self.emulatorCore.frontBufferCondition wait];
+                }
                 _emulatorCore.isFrontBufferReady = NO;
                 [_emulatorCore.frontBufferLock lock];
                 fetchVideoBuffer();

@@ -219,7 +219,7 @@
                                   0,                    0,                    0,  1,
             };
             const int32_t divisor = 256;
-            NSUInteger matrixSize = sizeof(floatingPointSaturationMatrix)/sizeof(floatingPointSaturationMatrix[0]);
+            const NSUInteger matrixSize = sizeof(floatingPointSaturationMatrix)/sizeof(floatingPointSaturationMatrix[0]);
             int16_t saturationMatrix[matrixSize];
             for (NSUInteger i = 0; i < matrixSize; ++i) {
                 saturationMatrix[i] = (int16_t)roundf(floatingPointSaturationMatrix[i] * divisor);

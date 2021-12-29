@@ -8,6 +8,7 @@
 
 #import "NSFileManager+Hashing.h"
 #import <CommonCrypto/CommonDigest.h>
+#import <PVSupport/DebugUtils.h>
 
 #define HASH_READ_CHUNK_SIZE (1024 * 32)
 
@@ -48,7 +49,7 @@
                 break;
             }
         }
-    } while (YES);
+    } while (LIKELY(YES));
     
     [handle closeFile];
     
