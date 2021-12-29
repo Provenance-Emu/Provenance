@@ -563,8 +563,6 @@ struct RenderSettings {
     };
 
     MAKEWEAK(self);
-    const BOOL rendersToOpenGL = [self.emulatorCore rendersToOpenGL];
-    const BOOL crtEnabled = self->renderSettings.crtFilterEnabled;
 
     void (^renderBlock)(void) = ^()
     {
@@ -573,6 +571,9 @@ struct RenderSettings {
         glClearColor(1.0, 1.0, 1.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
 #endif
+        const BOOL rendersToOpenGL = strongself->_emulatorCore.rendersToOpenGL;
+        const BOOL crtEnabled = strongself->renderSettings.crtFilterEnabled;
+
         GLuint frontBufferTex;
         if (UNLIKELY(rendersToOpenGL))
         {
@@ -638,8 +639,7 @@ struct RenderSettings {
         }
     };
     
-    if (UNLIKELY(rendersToOpenGL))
-    {
+    if (UNLIKELY(self.emulatorCore.rendersToOpenGL)) {
         // TODO: should isEmulationPaused be the always &&, not before the | ? @JoeMatt
         // if (LIKELY(!self.emulatorCore.isSpeedModified) && LIKELY(!self.emulatorCore.isEmulationPaused) && LIKELY(self.emulatorCore.isFrontBufferReady))
         if ((LIKELY(!self.emulatorCore.isSpeedModified) && LIKELY(!self.emulatorCore.isEmulationPaused)) || LIKELY(self.emulatorCore.isFrontBufferReady))
@@ -662,8 +662,7 @@ struct RenderSettings {
             }
         }
     }
-    else
-    {
+    else {
         if (UNLIKELY(self.emulatorCore.isSpeedModified))
         {
             fetchVideoBuffer();
@@ -685,8 +684,7 @@ struct RenderSettings {
                 [_emulatorCore.frontBufferLock unlock];
                 [_emulatorCore.frontBufferCondition unlock];
             }
-            else
-            {
+            else {
                 @synchronized(self.emulatorCore)
                 {
                     fetchVideoBuffer();
