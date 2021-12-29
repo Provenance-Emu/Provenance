@@ -33,7 +33,7 @@ extension PVGBEmulatorCore: CoreOptional {
     public static var options: [CoreOption] = {
         var options = [CoreOption]()
 
-        let videoGroup = CoreOption.group(display: CoreOptionValueDisplay(title: "Video",
+		let videoGroup = CoreOption.group(.init(title: "Video",
 																		  description: "Change the way Gambatte renders games."),
 										  subOptions: [paletteOption])
 
@@ -60,14 +60,12 @@ extension PVGBEmulatorCore: CoreOptional {
             "GameBoy Color - Grayscale"
     ])
 
-    static var paletteOption: CoreOption = {
-        let palletteOption = CoreOption.multi(display:
-												CoreOptionValueDisplay(
-													title: "GameBoy (non color) Palette",
-													description: "The drawing palette to use"),
-											  values: paletteValues)
-        return palletteOption
-    }()
+	static var paletteOption: CoreOption = {
+		.multi(.init(
+				title: "GameBoy (non color) Palette",
+				description: "The drawing palette to use"),
+			values: paletteValues)
+	}()
 }
 
 @objc extension PVGBEmulatorCore {
