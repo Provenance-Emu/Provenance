@@ -651,6 +651,7 @@ static void ConfigureCore(NSString *romFolder) {
 
 	// Use Pure Interpreter if 0, Cached Interpreter if 1, or Dynamic Recompiler if 2 or more"
 	int emulator = [MupenGameCore intForOption:@"CPU Mode"];
+	printf("emulator %i", emulator);
 	ConfigSetParameter(config, "R4300Emulator", M64TYPE_INT, &emulator);
 
 	ConfigSaveSection("Core");
