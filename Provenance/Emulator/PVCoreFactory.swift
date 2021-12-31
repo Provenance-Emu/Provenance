@@ -196,7 +196,7 @@ public final class PVCoreFactory: NSObject {
             }
         case .N64:
             if let core = core as? PVN64SystemResponderClient {
-                return PVN64ControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+				return PVN64ControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else {
                 fatalError("Core doesn't implement PVN64SystemResponderClient")
             }
