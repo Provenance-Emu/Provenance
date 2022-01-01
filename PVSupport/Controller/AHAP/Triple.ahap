@@ -1,0 +1,46 @@
+{
+  "Version" : 1,
+  "Metadata" : {
+    "Project" : "Haptic Controllers",
+    "Created" : "9 June 2020",
+    "Description" : "A triple hit pattern at full intensity"
+  },
+  "Pattern" : [
+    {
+      "Event" : {
+        "EventType" : "HapticTransient",
+        "EventParameters" : [
+          {
+            "ParameterID" : "HapticIntensity",
+            "ParameterValue" : 1
+          }
+        ],
+        "Time" : 0
+      }
+    },
+    {
+      "Event" : {
+        "EventType" : "HapticTransient",
+        "EventParameters" : [
+          {
+            "ParameterID" : "HapticIntensity",
+            "ParameterValue" : 1
+          }
+        ],
+        "Time" : 0.25
+      }
+    },
+    {
+      "Event" : {
+        "EventType" : "HapticTransient",
+        "EventParameters" : [
+          {
+            "ParameterID" : "HapticIntensity",
+            "ParameterValue" : 1
+          }
+        ],
+        "Time" : 0.5
+      }
+    }
+  ]
+}

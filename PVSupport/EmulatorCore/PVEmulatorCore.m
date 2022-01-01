@@ -317,33 +317,6 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
     gameInterval = 1.0 / ([self frameInterval] * framerateMultiplier);
 }
 
-- (void)rumble {
-#if TARGET_OS_IOS
-    if (!self.supportsRumble) {
-        WLOG(@"Rumble called on core that doesn't support it");
-        return;
-    }
-
-    if (self.controller1 && !self.controller1.isAttachedToDevice) {
-        // Don't rumble if using a controller and it's not an attached type.
-        return;
-    }
-
-    BOOL deviceHasHaptic = [[UIDevice currentDevice] valueForKey:@"_feedbackSupportLevel"] > 0;
-    if (deviceHasHaptic) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.rumbleGenerator impactOccurred];
-        });
-    } else {
-        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
-    }
-#endif
-}
-
-- (BOOL)supportsRumble {
-    return NO;
-}
-
 -(void)setController1:(GCController *)controller1 {
     if(![controller1 isEqual:_controller1]) {
         _controller1 = controller1;

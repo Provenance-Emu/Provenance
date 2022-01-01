@@ -189,6 +189,4 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
             completionHandler:(nonnull SaveStateCompletion)block;
 - (void)loadStateFromFileAtPath:(NSString *_Nonnull )fileName
               completionHandler:(nonnull SaveStateCompletion)block;
-
-- (void)rumble;
 @end
