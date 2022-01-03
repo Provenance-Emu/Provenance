@@ -440,30 +440,83 @@ struct RenderSettings {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
+- (void)createShadersDirs {
+    // TODO: This is a hack, dir should come from arg
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSError *error;
+    NSString *docsPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, true).firstObject;
+    
+    [fm createDirectoryAtPath:[docsPath stringByAppendingPathComponent:@"shaders/default/"] withIntermediateDirectories:true attributes:nil error:&error];
+    if (error) {
+        ELOG(@"%@", error.localizedDescription);
+    }
+    [fm createDirectoryAtPath:[docsPath stringByAppendingPathComponent:@"shaders/blit/"] withIntermediateDirectories:true attributes:nil error:&error];
+    if (error) {
+        ELOG(@"%@", error.localizedDescription);
+    }
+    [fm createDirectoryAtPath:[docsPath stringByAppendingPathComponent:@"shaders/crt/"] withIntermediateDirectories:true attributes:nil error:&error];
+    if (error) {
+        ELOG(@"%@", error.localizedDescription);
+    }
+}
+
 #if !TARGET_OS_MACCATALYST
 - (GLuint)compileShaderResource:(NSString*)shaderResourceName ofType:(GLenum)shaderType
 {
-    NSString* shaderPath = [[NSBundle mainBundle] pathForResource:shaderResourceName ofType:@"glsl"];
+    // TODO: check shaderType == GL_VERTEX_SHADER
+    NSString *fileName = [shaderResourceName stringByAppendingPathExtension:@"glsl"];
+
+    NSString *docsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, true).firstObject stringByAppendingPathComponent:fileName];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    NSString* shaderPath;
+    NSString* bundleShaderPath = [[NSBundle mainBundle] pathForResource:shaderResourceName
+                                                                 ofType:@"glsl"];
+    
+    if(![fm fileExistsAtPath:docsPath]) {
+        [self createShadersDirs];
+        NSError *error;
+
+        [fm copyItemAtPath:bundleShaderPath
+                    toPath:docsPath
+                     error:&error];
+        if (error) {
+            ELOG(@"%@", error.localizedDescription);
+        }
+    }
+    
+    if([fm fileExistsAtPath:docsPath]) {
+        shaderPath = docsPath;
+    } else {
+        shaderPath = bundleShaderPath;
+    }
     if ( shaderPath == NULL )
     {
+        ELOG(@"Nil shaderPath");
         return 0;
     }
     
-    NSString* shaderSource = [NSString stringWithContentsOfFile:shaderPath encoding:NSASCIIStringEncoding error:nil];
+    NSError *error;
+    NSString* shaderSource = [NSString stringWithContentsOfFile:shaderPath
+                                                       encoding:NSASCIIStringEncoding
+                                                          error:&error];
     if ( shaderSource == NULL )
     {
+        ELOG(@"Nil shaderSource: %@ %@", shaderPath, error.localizedDescription);
         return 0;
     }
     
     const char* shaderSourceCString = [shaderSource cStringUsingEncoding:NSASCIIStringEncoding];
     if ( shaderSourceCString == NULL )
     {
+        ELOG(@"Nil shaderSourceCString");
         return 0;
     }
     
     GLuint shader = glCreateShader( shaderType );
     if ( shader == 0 )
     {
+        ELOG(@"Nil shader");
         return 0;
     }
     
