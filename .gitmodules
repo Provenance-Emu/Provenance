@@ -43,9 +43,6 @@
 [submodule "Cores/DuckStation/duckstation"]
 	path = Cores/DuckStation/duckstation
 	url = https://github.com/stenzek/duckstation.git
-[submodule "Cores/Flycast/flycast"]
-	path = Cores/Desmume2015/flycast
-	url = https://github.com/flyinghead/flycast.git
 [submodule "Cores/Desmume2015/desmume2015"]
 	path = Cores/Desmume2015/desmume2015
 	url = https://github.com/libretro/desmume2015.git
