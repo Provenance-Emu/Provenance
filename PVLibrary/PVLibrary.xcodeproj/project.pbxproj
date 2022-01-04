@@ -678,6 +678,7 @@
 		B3067F4A2106B5A20091437F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B3067F732106B9130091437F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		B30E7AEA26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BehaviorRelay+RangeReplaceableCollection.swift"; sourceTree = "<group>"; };
+		B317380127841959002D3ACD /* Build.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Build.xcconfig; path = ../Build.xcconfig; sourceTree = "<group>"; };
 		B324C2EC219192FF009F4EDC /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3274E5D2106BA1200857F52 /* PVEmulatorConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVEmulatorConfiguration.swift; sourceTree = "<group>"; };
 		B3274E5E2106BA1200857F52 /* PVAppConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVAppConstants.swift; sourceTree = "<group>"; };
@@ -1266,6 +1267,7 @@
 		B3579D052106B11D00DDEBD6 = {
 			isa = PBXGroup;
 			children = (
+				B317380127841959002D3ACD /* Build.xcconfig */,
 				B3579D112106B11D00DDEBD6 /* PVLibrary */,
 				B3C04B622107867200E7AF79 /* PVLibraryTests */,
 				B3579D102106B11D00DDEBD6 /* Products */,
@@ -2745,7 +2747,7 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.0.4;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibrary";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PVLIBRARY_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = PVLibrary;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
@@ -2786,7 +2788,7 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.0.4;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibrary";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PVLIBRARY_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = PVLibrary;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
@@ -2827,7 +2829,7 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.0.4;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibrary";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PVLIBRARY_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = PVLibrary;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
@@ -2839,6 +2841,7 @@
 		};
 		B324C5352191A78D009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B317380127841959002D3ACD /* Build.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -2931,7 +2934,7 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.0.4;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibrary";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PVLIBRARY_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = PVLibrary;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
@@ -2974,7 +2977,7 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.0.4;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibrary";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PVLIBRARY_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = PVLibrary;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -3008,6 +3011,7 @@
 		};
 		B3579D152106B11D00DDEBD6 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B317380127841959002D3ACD /* Build.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -3075,6 +3079,7 @@
 		};
 		B3579D162106B11D00DDEBD6 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B317380127841959002D3ACD /* Build.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -3168,7 +3173,7 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.0.4;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibrary";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PVLIBRARY_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = PVLibrary;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
@@ -3213,7 +3218,7 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.0.4;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibrary";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PVLIBRARY_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = PVLibrary;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
@@ -3255,7 +3260,7 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.0.4;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibrary";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PVLIBRARY_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = PVLibrary;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -3296,7 +3301,7 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.0.4;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibrary";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PVLIBRARY_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = PVLibrary;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;

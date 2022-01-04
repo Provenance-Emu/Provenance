@@ -236,6 +236,7 @@
 		B305EF92276B4E4B003AE510 /* PVSupport-iOS copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PVSupport-iOS copy-Info.plist"; path = "/Users/jmattiello/Workspace/Provenance/Provenance/PVSupport/PVSupport-iOS copy-Info.plist"; sourceTree = "<absolute>"; };
 		B305EF99276B4F0A003AE510 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.3.sdk/System/Library/Frameworks/GameKit.framework; sourceTree = DEVELOPER_DIR; };
 		B305EF9B276B4FDC003AE510 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.3.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
+		B3173802278419A2002D3ACD /* Build.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Build.xcconfig; path = ../Build.xcconfig; sourceTree = "<group>"; };
 		B324C3152191963B009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3296E8026C67EF90088AC32 /* CocoaLumberjack+NSLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CocoaLumberjack+NSLogger.swift"; sourceTree = "<group>"; };
 		B3296E8326C67F420088AC32 /* CocoaLumberjack+swift-log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CocoaLumberjack+swift-log.swift"; sourceTree = "<group>"; };
@@ -360,6 +361,7 @@
 		1ACEA63B17F7467D0031B1C9 = {
 			isa = PBXGroup;
 			children = (
+				B3173802278419A2002D3ACD /* Build.xcconfig */,
 				B3CDEEB821D4C394000C55F7 /* EmulatorCore */,
 				B3447F99218C1CBE00557ACE /* Settings */,
 				B3AB37F721882119009D9244 /* CoreOptions */,
@@ -766,6 +768,7 @@
 		1ACEA63C17F7467D0031B1C9 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = PV;
 				DefaultBuildSystemTypeForWorkspace = Latest;
 				LastSwiftUpdateCheck = 1010;
@@ -1053,6 +1056,7 @@
 /* Begin XCBuildConfiguration section */
 		1ACEA66517F7467D0031B1C9 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3173802278419A2002D3ACD /* Build.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -1109,6 +1113,7 @@
 		};
 		1ACEA66617F7467D0031B1C9 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3173802278419A2002D3ACD /* Build.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -1190,7 +1195,7 @@
 				MARKETING_VERSION = 2.0.4;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVSupport";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PVSUPPORT_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = PVSupport;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -1234,7 +1239,7 @@
 				MARKETING_VERSION = 2.0.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVSupport";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PVSUPPORT_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = PVSupport;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -1276,7 +1281,7 @@
 				MARKETING_VERSION = 2.0.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVSupport";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PVSUPPORT_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = PVSupport;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -1288,6 +1293,7 @@
 		};
 		B324C5392191A7A8009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3173802278419A2002D3ACD /* Build.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -1373,7 +1379,7 @@
 				MARKETING_VERSION = 2.0.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVSupport";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PVSUPPORT_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = PVSupport;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
@@ -1414,7 +1420,7 @@
 				MARKETING_VERSION = 2.0.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVSupport";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PVSUPPORT_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = PVSupport;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -1563,7 +1569,7 @@
 				MARKETING_VERSION = 2.0.4;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVSupport";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PVSUPPORT_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = PVSupport;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -1606,7 +1612,7 @@
 				MARKETING_VERSION = 2.0.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVSupport";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PVSUPPORT_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = PVSupport;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -1652,7 +1658,7 @@
 				MARKETING_VERSION = 2.0.4;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVSupport";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PVSUPPORT_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = PVSupport;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
@@ -1701,7 +1707,7 @@
 				MARKETING_VERSION = 2.0.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVSupport";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PVSUPPORT_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = PVSupport;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
