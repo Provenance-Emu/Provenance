@@ -24,6 +24,8 @@
 @import GLUT;
 #endif
 
+#define USE_METAL TARGET_OS_MACCATALYST
+
 struct PVVertex
 {
     GLfloat x, y, z;
@@ -37,7 +39,7 @@ struct RenderSettings {
     BOOL smoothingEnabled;
 } RenderSettings;
 
-#if TARGET_OS_MACCATALYST
+#if USE_METAL
 @interface PVGLViewController () <PVRenderDelegate, MTKViewDelegate>
 #else
 @interface PVGLViewController () <PVRenderDelegate>
@@ -68,12 +70,12 @@ struct RenderSettings {
     
     struct RenderSettings renderSettings;
 
-#if TARGET_OS_MACCATALYST
+#if USE_METAL
 //    CADisplayLink displayLink;
 #endif
 }
 
-#if TARGET_OS_MACCATALYST
+#if USE_METAL
 @property (nonatomic, strong) CIContext *glContext;
 @property (nonatomic, strong) CIContext *alternateThreadGLContext;
 @property (nonatomic, strong) CIContext *alternateThreadBufferCopyGLContext;
@@ -181,7 +183,7 @@ struct RenderSettings {
     [self updatePreferredFPS];
 
 
-#if !TARGET_OS_MACCATALYST
+#if !USE_METAL
     self.glContext = [self bestContext];
 
     if (self.glContext == nil) {
@@ -223,20 +225,23 @@ struct RenderSettings {
 #endif
     view.opaque = YES;
     view.layer.opaque = YES;
+#if !USE_METAL
     view.context = self.glContext;
+#else
+#endif
     view.userInteractionEnabled = NO;
 
     GLenum depthFormat = self.emulatorCore.depthFormat;
     switch (depthFormat) {
         case GL_DEPTH_COMPONENT16:
-#if TARGET_OS_MACCATALYST
+#if USE_METAL
             view.depthStencilPixelFormat = MTLPixelFormatRG8Unorm_sRGB;
 #else
             view.drawableDepthFormat = GLKViewDrawableDepthFormat16;
 #endif
             break;
         case GL_DEPTH_COMPONENT24:
-#if TARGET_OS_MACCATALYST
+#if USE_METAL
             view.depthStencilPixelFormat = MTLPixelFormatX24_Stencil8;
 #else
             view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
@@ -258,7 +263,7 @@ struct RenderSettings {
 
             // Enable multisampling
         if(PVSettingsModel.shared.debugOptions.multiSampling) {
-#if TARGET_OS_MACCATALYST
+#if USE_METAL
             [view setSampleCount:4];
 #else
             view.drawableMultisample = GLKViewDrawableMultisample4X;
@@ -268,7 +273,7 @@ struct RenderSettings {
 
     [self setupVBOs];
     [self setupTexture];
-#if TARGET_OS_MACCATALYST
+#if USE_METAL
 #else
     defaultVertexShader = [self compileShaderResource:@"shaders/default/default_vertex" ofType:GL_VERTEX_SHADER];
     [self setupBlitShader];
@@ -282,7 +287,7 @@ struct RenderSettings {
     alternateThreadDepthRenderbuffer = 0;
 }
 
-#if !TARGET_OS_MACCATALYST
+#if !USE_METAL
 -(EAGLContext*)bestContext {
     EAGLContext* context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
     self.glesVersion = GLESVersion3;
@@ -307,7 +312,7 @@ struct RenderSettings {
         WLOG(@"Cores frame interval (%f) too low. Setting to 60", preferredFPS);
         preferredFPS = 60;
     }
-#if !TARGET_OS_MACCATALYST
+#if !USE_METAL
     [self setPreferredFramesPerSecond:preferredFPS];
     WLOG(@"Actual FPS: %f", self.framesPerSecond);
 #endif
@@ -460,7 +465,7 @@ struct RenderSettings {
     }
 }
 
-#if !TARGET_OS_MACCATALYST
+#if !USE_METAL
 - (GLuint)compileShaderResource:(NSString*)shaderResourceName ofType:(GLenum)shaderType
 {
     // TODO: check shaderType == GL_VERTEX_SHADER
@@ -967,7 +972,7 @@ struct RenderSettings {
 
 #pragma mark - PVRenderDelegate protocol methods
 
-#if TARGET_OS_MACCATALYST //|| TARGET_OS_MACOS
+#if USE_METAL //|| TARGET_OS_MACOS
 - (void)startRenderingOnAlternateThread {
 
 }

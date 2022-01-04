@@ -1022,6 +1022,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		B31737FF2783F925002D3ACD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3303E4B1DED23C600896D96;
+			remoteInfo = "png-iOS";
+		};
 		B34AB5FF2106DFFE00C45F09 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
@@ -4966,6 +4973,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				B31738002783F925002D3ACD /* PBXTargetDependency */,
 			);
 			name = "glidenhq-iOS";
 			productName = glidenhq;
@@ -5940,6 +5948,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		B31738002783F925002D3ACD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3303E4B1DED23C600896D96 /* png-iOS */;
+			targetProxy = B31737FF2783F925002D3ACD /* PBXContainerItemProxy */;
+		};
 		B34AB6002106DFFE00C45F09 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B3800FF4208522DC00FA03B8 /* glidenhq-iOS */;
@@ -7011,6 +7024,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/png\"",
 				);
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CFLAGS = (
 					"-ffast-math",
@@ -7086,6 +7100,7 @@
 					"\"$(SRCROOT)/Plugins/Video/gliden64/src/windows\"",
 					"\"$(SRCROOT)/Plugins/Video/gliden64/src/xxHash\"",
 				);
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -7236,6 +7251,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/png\"",
 				);
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_CFLAGS = (
 					"-ffast-math",
@@ -7830,6 +7846,7 @@
 					"\"$(SRCROOT)/Plugins/Video/gliden64/src/windows\"",
 					"\"$(SRCROOT)/Plugins/Video/gliden64/src/xxHash\"",
 				);
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
