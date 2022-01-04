@@ -7,7 +7,7 @@
 		<key>NSExtensionAttributes</key>
 		<dict>
 			<key>WKAppBundleIdentifier</key>
-			<string>org.provenance-emu.Provenance-Watch.watchkitapp</string>
+			<string>$(WATCH_APP_PRODUCT_BUNDLE_IDENTIFIER)</string>
 		</dict>
 		<key>NSExtensionPointIdentifier</key>
 		<string>com.apple.watchkit</string>

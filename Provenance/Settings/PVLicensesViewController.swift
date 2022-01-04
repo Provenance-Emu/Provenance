@@ -19,7 +19,7 @@ final class PVLicensesViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        title = "Acknowledgements"
+        title = NSLocalizedString("Acknowledgements", comment: "")
 
         #if os(iOS) && !targetEnvironment(macCatalyst)
             view.backgroundColor = UIColor.black

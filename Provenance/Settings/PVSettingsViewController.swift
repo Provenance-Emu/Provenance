@@ -85,8 +85,8 @@ final class PVSettingsViewController: PVQuickTableViewController {
         typealias TableRow = Row & RowStyle
 
         // -- Section : App
-        let autolockRow = PVSettingsSwitchRow(text: "Disable Auto Lock", key: \PVSettingsModel.disableAutoLock)
-        let systemsRow = SegueNavigationRow(text: "Systems", viewController: self, segue: "pushSystemSettings")
+        let autolockRow = PVSettingsSwitchRow(text: NSLocalizedString("Disable Auto Lock", comment: "Disable Auto Lock"), key: \PVSettingsModel.disableAutoLock)
+        let systemsRow = SegueNavigationRow(text: NSLocalizedString("Systems", comment: "Systems"), viewController: self, segue: "pushSystemSettings")
 
         #if os(tvOS)
             let appRows: [TableRow] = [systemsRow]
@@ -94,7 +94,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
             let appRows: [TableRow] = [autolockRow, systemsRow]
         #endif
 
-        let appSection = Section(title: "App", rows: appRows)
+        let appSection = Section(title: NSLocalizedString("App", comment: "App"), rows: appRows)
 
         // -- Core Options
         let realm = try! Realm()
@@ -111,70 +111,70 @@ final class PVSettingsViewController: PVQuickTableViewController {
             })
         }
 
-        let coreOptionsSection = Section(title: "Core Options", rows: cores)
+        let coreOptionsSection = Section(title: NSLocalizedString("Core Options", comment: "Core Options"), rows: cores)
 
         // -- Section : Saves
         #if os(iOS)
         let saveRows: [TableRow] = [
-            PVSettingsSwitchRow(text: "Auto Save", key: \PVSettingsModel.autoSave),
-            PVSettingsSwitchRow(text: "Timed Auto Saves", key: \PVSettingsModel.timedAutoSaves),
-            PVSettingsSwitchRow(text: "Auto Load Saves", key: \PVSettingsModel.autoLoadSaves),
-            PVSettingsSwitchRow(text: "Ask to Load Saves", key: \PVSettingsModel.askToAutoLoad)
+            PVSettingsSwitchRow(text: NSLocalizedString("Auto Save", comment: "Auto Save"), key: \PVSettingsModel.autoSave),
+            PVSettingsSwitchRow(text: NSLocalizedString("Timed Auto Saves", comment: "Timed Auto Saves"), key: \PVSettingsModel.timedAutoSaves),
+            PVSettingsSwitchRow(text: NSLocalizedString("Auto Load Saves", comment: "Auto Load Saves"), key: \PVSettingsModel.autoLoadSaves),
+            PVSettingsSwitchRow(text: NSLocalizedString("Ask to Load Saves", comment: "Ask to Load Saves"), key: \PVSettingsModel.askToAutoLoad)
         ]
         #else
         let saveRows: [TableRow] = [
-            PVSettingsSwitchRow(text: "Auto Save", key: \PVSettingsModel.autoSave,
+            PVSettingsSwitchRow(text: NSLocalizedString("Auto Save", comment: "Auto Save"), key: \PVSettingsModel.autoSave,
                     customization: { cell, _ in
                     cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
                     }),
-            PVSettingsSwitchRow(text: "Timed Auto Saves", key: \PVSettingsModel.timedAutoSaves,
+            PVSettingsSwitchRow(text: NSLocalizedString("Timed Auto Saves", comment: "Timed Auto Saves"), key: \PVSettingsModel.timedAutoSaves,
                     customization: { cell, _ in
                     cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
                     }),
-            PVSettingsSwitchRow(text: "Auto Load Saves", key: \PVSettingsModel.autoLoadSaves,
+            PVSettingsSwitchRow(text: NSLocalizedString("Auto Load Saves", comment: "Auto Load Saves"), key: \PVSettingsModel.autoLoadSaves,
                     customization: { cell, _ in
                     cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
                     }),
-            PVSettingsSwitchRow(text: "Ask to Load Saves", key: \PVSettingsModel.askToAutoLoad,
+            PVSettingsSwitchRow(text: NSLocalizedString("Ask to Load Saves", comment: "Ask to Load Saves"), key: \PVSettingsModel.askToAutoLoad,
                     customization: { cell, _ in
                     cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
                     })
         ]
         #endif
 
-        let savesSection = Section(title: "Saves", rows: saveRows)
+        let savesSection = Section(title: NSLocalizedString("Saves", comment: "Saves"), rows: saveRows)
 
         // -- Section : Audio/Video
         var avRows = [TableRow]()
         #if os(iOS)
-            avRows.append(contentsOf: [PVSettingsSwitchRow(text: "Volume HUD", key: \PVSettingsModel.volumeHUD)])
-            avRows.append(PVSettingsSliderRow(text: "Volume", detailText: nil, valueLimits: (min: 0.0, max: 1.0), key: \PVSettingsModel.volume))
+            avRows.append(contentsOf: [PVSettingsSwitchRow(text: NSLocalizedString("Volume HUD", comment: "Volume HUD"), key: \PVSettingsModel.volumeHUD)])
+            avRows.append(PVSettingsSliderRow(text: NSLocalizedString("Volume", comment: "Volume"), detailText: nil, valueLimits: (min: 0.0, max: 1.0), key: \PVSettingsModel.volume))
         avRows.append(contentsOf: [
-            PVSettingsSwitchRow(text: "Native Scale", key: \PVSettingsModel.nativeScaleEnabled),
-            PVSettingsSwitchRow(text: "Integer Scaling", key: \PVSettingsModel.integerScaleEnabled),
-            PVSettingsSwitchRow(text: "CRT Filter", key: \PVSettingsModel.crtFilterEnabled),
-            PVSettingsSwitchRow(text: "Image Smoothing", key: \PVSettingsModel.imageSmoothing),
-            PVSettingsSwitchRow(text: "FPS Counter", key: \PVSettingsModel.showFPSCount)
+            PVSettingsSwitchRow(text: NSLocalizedString("Native Scale", comment: "Native Scale"), key: \PVSettingsModel.nativeScaleEnabled),
+            PVSettingsSwitchRow(text: NSLocalizedString("Integer Scaling", comment: "Integer Scaling"), key: \PVSettingsModel.integerScaleEnabled),
+            PVSettingsSwitchRow(text: NSLocalizedString("CRT Filter", comment: "CRT Filter"), key: \PVSettingsModel.crtFilterEnabled),
+            PVSettingsSwitchRow(text: NSLocalizedString("Image Smoothing", comment: "Image Smoothing"), key: \PVSettingsModel.imageSmoothing),
+            PVSettingsSwitchRow(text: NSLocalizedString("FPS Counter", comment: "FPS Counter"), key: \PVSettingsModel.showFPSCount)
         ])
         #else
         avRows.append(contentsOf: [
-            PVSettingsSwitchRow(text: "Native Scale", key: \PVSettingsModel.nativeScaleEnabled,
+            PVSettingsSwitchRow(text: NSLocalizedString("Native Scale", comment: "Native Scale"), key: \PVSettingsModel.nativeScaleEnabled,
                 customization: { cell, _ in
                 cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
                 }),
-            PVSettingsSwitchRow(text: "Integer Scaling", key: \PVSettingsModel.integerScaleEnabled,
+            PVSettingsSwitchRow(text: NSLocalizedString("Integer Scaling", comment: "Integer Scaling"), key: \PVSettingsModel.integerScaleEnabled,
                 customization: { cell, _ in
                 cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
                 }),
-            PVSettingsSwitchRow(text: "CRT Filter", key: \PVSettingsModel.crtFilterEnabled,
+            PVSettingsSwitchRow(text: NSLocalizedString("CRT Filter", comment: "CRT Filter"), key: \PVSettingsModel.crtFilterEnabled,
                 customization: { cell, _ in
                 cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
                 }),
-            PVSettingsSwitchRow(text: "Image Smoothing", key: \PVSettingsModel.imageSmoothing,
+            PVSettingsSwitchRow(text: NSLocalizedString("Image Smoothing", comment: "Image Smoothing"), key: \PVSettingsModel.imageSmoothing,
                 customization: { cell, _ in
                 cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
                 }),
-            PVSettingsSwitchRow(text: "FPS Counter", key: \PVSettingsModel.showFPSCount,
+            PVSettingsSwitchRow(text: NSLocalizedString("FPS Counter", comment: "FPS Counter"), key: \PVSettingsModel.showFPSCount,
                 customization: { cell, _ in
                 cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
                 })
@@ -182,33 +182,33 @@ final class PVSettingsViewController: PVQuickTableViewController {
         )
         #endif
 
-        let avSection = Section(title: "Video Options", rows: avRows)
+        let avSection = Section(title: NSLocalizedString("Video Options", comment: "Video Options"), rows: avRows)
 
         // -- Section : Controler
 
         var controllerRows = [TableRow]()
 
         #if os(iOS)
-            controllerRows.append(PVSettingsSliderRow(text: "Opacity", detailText: nil, valueLimits: (min: 0.5, max: 1.0), key: \PVSettingsModel.controllerOpacity))
+            controllerRows.append(PVSettingsSliderRow(text: NSLocalizedString("Opacity", comment: "Opacity"), detailText: nil, valueLimits: (min: 0.5, max: 1.0), key: \PVSettingsModel.controllerOpacity))
 
             controllerRows.append(contentsOf: [
-                PVSettingsSwitchRow(text: "Button Colors", key: \PVSettingsModel.buttonTints),
-                PVSettingsSwitchRow(text: "All-Right Shoulders", detailText: .subtitle("Moves L1, L2 & Z to right side"), key: \PVSettingsModel.allRightShoulders),
-                PVSettingsSwitchRow(text: "Haptic Feedback", key: \PVSettingsModel.buttonVibration),
-                PVSettingsSwitchRow(text: "Enable 8BitDo M30 Mapping", detailText: .subtitle("For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X and the PC Engine."), key: \PVSettingsModel.use8BitdoM30)
+                PVSettingsSwitchRow(text: NSLocalizedString("Button Colors", comment: "Button Colors"), key: \PVSettingsModel.buttonTints),
+                PVSettingsSwitchRow(text: NSLocalizedString("All-Right Shoulders", comment: "All-Right Shoulders"), detailText: .subtitle("Moves L1, L2 & Z to right side"), key: \PVSettingsModel.allRightShoulders),
+                PVSettingsSwitchRow(text: NSLocalizedString("Haptic Feedback", comment: "Haptic Feedback"), key: \PVSettingsModel.buttonVibration),
+                PVSettingsSwitchRow(text: NSLocalizedString("Enable 8BitDo M30 Mapping", comment: "Enable 8BitDo M30 Mapping"), detailText: .subtitle("For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X and the PC Engine."), key: \PVSettingsModel.use8BitdoM30)
             ]
 
         )
         #endif
         controllerRows.append(contentsOf: [
-            SegueNavigationRow(text: "Controllers", detailText: .subtitle("Assign players"), viewController: self, segue: "controllersSegue"),
-            SegueNavigationRow(text: "iCade Controller", detailText: .subtitle(PVSettingsModel.shared.myiCadeControllerSetting.description), viewController: self, segue: "iCadeSegue", customization: { cell, _ in
+            SegueNavigationRow(text: NSLocalizedString("Controllers", comment: "Controllers"), detailText: .subtitle("Assign players"), viewController: self, segue: "controllersSegue"),
+            SegueNavigationRow(text: NSLocalizedString("iCade Controller", comment: "iCade Controller"), detailText: .subtitle(PVSettingsModel.shared.myiCadeControllerSetting.description), viewController: self, segue: "iCadeSegue", customization: { cell, _ in
                 cell.detailTextLabel?.text = PVSettingsModel.shared.myiCadeControllerSetting.description
             })
         ])
         #if os(tvOS)
         controllerRows.append(contentsOf: [
-            PVSettingsSwitchRow(text: "Enable 8BitDo M30 Mapping", detailText: .subtitle("For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X and the PC Engine."), key: \PVSettingsModel.use8BitdoM30,
+            PVSettingsSwitchRow(text: NSLocalizedString("Enable 8BitDo M30 Mapping", comment: "Enable 8BitDo M30 Mapping"), detailText: .subtitle("For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X and the PC Engine."), key: \PVSettingsModel.use8BitdoM30,
             customization: { cell, _ in
             cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
             cell.detailTextLabel?.font =  UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
@@ -216,13 +216,13 @@ final class PVSettingsViewController: PVQuickTableViewController {
         ])
         #endif
 
-        let controllerSection = Section(title: "Controller", rows: controllerRows, footer: "Check the wiki for controls per systems.")
+        let controllerSection = Section(title: NSLocalizedString("Controllers", comment: "Controllers"), rows: controllerRows, footer: "Check the wiki for controls per systems.")
 
         // Game Library
 
         var libraryRows: [TableRow] = [
             NavigationRow<SystemSettingsCell>(
-                text: "Launch Web Server",
+                text: NSLocalizedString("Launch Web Server", comment: "Launch Web Server"),
                 detailText: .subtitle("Import/Export ROMs, saves, cover art…"),
                 icon: nil,
                 customization: nil,
@@ -254,12 +254,12 @@ final class PVSettingsViewController: PVQuickTableViewController {
             libraryRows.append(webServerAlwaysOn)
         #endif
 
-        let librarySection = Section(title: "Game Library", rows: libraryRows, footer: "Check the wiki about importing ROMs.")
+        let librarySection = Section(title: NSLocalizedString("Game Library", comment: "Game Library"), rows: libraryRows, footer: "Check the wiki about importing ROMs.")
 
         // Game Library 2
         let library2Rows: [TableRow] = [
             NavigationRow<SystemSettingsCell>(
-                text: "Refresh Game Library",
+                text: NSLocalizedString("Refresh Game Library", comment: ""),
                 detailText: .subtitle("Re-import ROMs ⚠️ Slow"),
                 icon: nil,
                 customization: nil,
@@ -268,7 +268,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
                 }
             ),
             NavigationRow<SystemSettingsCell>(
-                text: "Empty Image Cache",
+                text: NSLocalizedString("Empty Image Cache", comment: "Empty Image Cache"),
                 detailText: .subtitle("Re-download covers"),
                 icon: nil,
                 customization: nil,
@@ -277,12 +277,12 @@ final class PVSettingsViewController: PVQuickTableViewController {
                 }
             ),
             NavigationRow<SystemSettingsCell>(
-                text: "Manage Conflicts",
+                text: NSLocalizedString("Manage Conflicts", comment: ""),
                 detailText: .subtitle(numberOfConflicts > 0 ? "Manually resolve conflicted imports: \(numberOfConflicts) detected" : "None detected"),
                 icon: nil,
                 action: numberOfConflicts > 0 ? { [weak self] _ in self?.manageConflictsAction() } : nil
             ),
-            SegueNavigationRow(text: "Appearance", detailText: .subtitle("Visual options for Game Library"), viewController: self, segue: "appearanceSegue")
+            SegueNavigationRow(text: NSLocalizedString("Appearance", comment: "Appearance"), detailText: .subtitle("Visual options for Game Library"), viewController: self, segue: "appearanceSegue")
         ]
 
         let librarySection2 = Section(title: nil, rows: library2Rows)
@@ -290,29 +290,29 @@ final class PVSettingsViewController: PVQuickTableViewController {
          // Beta options
         #if os(iOS)
         let betaRows: [TableRow] = [
-            PVSettingsSwitchRow(text: "Missing Buttons Always On-Screen",
+            PVSettingsSwitchRow(text: NSLocalizedString("Missing Buttons Always On-Screen", comment: "Missing Buttons Always On-Screen"),
                                 detailText: .subtitle("Supports: SNES, SMS, SG, GG, SCD, PSX."),
                                 key: \PVSettingsModel.missingButtonsAlwaysOn),
 
-            PVSettingsSwitchRow(text: "iCloud Sync",
+            PVSettingsSwitchRow(text: NSLocalizedString("iCloud Sync", comment: "iCloud Sync"),
                                 detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
                                 key: \PVSettingsModel.debugOptions.iCloudSync),
 
-            PVSettingsSwitchRow(text: "Multi-threaded GL",
+            PVSettingsSwitchRow(text: NSLocalizedString("Multi-threaded GL", comment: "Multi-threaded GL"),
                                 detailText: .subtitle("Use iOS's EAGLContext multiThreaded. May improve or slow down GL performance."),
                                 key: \PVSettingsModel.debugOptions.multiThreadedGL),
 
-            PVSettingsSwitchRow(text: "4X Multisampling GL",
+            PVSettingsSwitchRow(text: NSLocalizedString("4X Multisampling GL", comment: "4X Multisampling GL"),
                                 detailText: .subtitle("Use iOS's EAGLContext multisampling. Slower speed (slightly), smoother edges."),
                                 key: \PVSettingsModel.debugOptions.multiSampling)
 
-//            PVSettingsSwitchRow(text: "Unsupported Cores",
+//            PVSettingsSwitchRow(text: NSLocalizedString("Unsupported Cores", comment: "Unsupported Cores"),
 //                                detailText: .subtitle("Cores that are in development"),
 //                                key: \PVSettingsModel.debugOptions.unsupportedCores)
         ]
         #else
          let betaRows: [TableRow] = [
-             PVSettingsSwitchRow(text: "iCloud Sync",
+             PVSettingsSwitchRow(text: NSLocalizedString("iCloud Sync", comment: "iCloud Sync"),
                                 detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
                                 key: \PVSettingsModel.debugOptions.iCloudSync,
                                     customization: { cell, _ in
@@ -321,7 +321,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
                             }
             ),
 
-             PVSettingsSwitchRow(text: "Multi-threaded GL",
+             PVSettingsSwitchRow(text: NSLocalizedString("Multi-threaded GL", comment: "Multi-threaded GL"),
                                 detailText: .subtitle("Use tvOS's EAGLContext multiThreaded. May improve or slow down GL performance."),
                                 key: \PVSettingsModel.debugOptions.multiThreadedGL,
                                     customization: { cell, _ in
@@ -330,7 +330,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
                             }
             ),
 
-             PVSettingsSwitchRow(text: "4X Multisampling GL",
+             PVSettingsSwitchRow(text: NSLocalizedString("4X Multisampling GL", comment: "4X Multisampling GL"),
                                 detailText: .subtitle("Use tvOS's EAGLContext multisampling. Slower speed (slightly), smoother edges."),
                                 key: \PVSettingsModel.debugOptions.multiSampling,
                                     customization: { cell, _ in
@@ -342,7 +342,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
         #endif
 
         let betaSection = Section(
-            title: "Beta Features",
+            title: NSLocalizedString("Beta Features", comment: ""),
             rows: betaRows,
             footer: "Untested, unsupported, work in progress features. Use at your own risk. May result in crashes and data loss."
         )
@@ -366,7 +366,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
         }
 
         // Git Revision (branch/hash)
-        var revisionString = "Unknown"
+        var revisionString = NSLocalizedString("Unknown", comment: "")
         if var bundleRevision = Bundle.main.infoDictionary?["Revision"] as? String, !revisionString.isEmpty {
             if !masterBranch {
                 bundleRevision = "\(kGITBranch)/\(bundleRevision)"
@@ -398,8 +398,8 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
         let buildInformationRows: [TableRow] = [
             NavigationRow<SystemSettingsCell>(
-                text: "Version",
-                detailText: .value2(versionText ?? "Unknown"),
+                text: NSLocalizedString("Version", comment: ""),
+                detailText: .value2(versionText ?? NSLocalizedString("Unknown", comment: "")),
                 icon: nil,
                 customization: { cell, _ in
                     if !masterBranch {
@@ -408,32 +408,32 @@ final class PVSettingsViewController: PVQuickTableViewController {
                 },
                 action: nil
             ),
-            NavigationRow<SystemSettingsCell>(text: "Build", detailText: .value2(bundleVersion)),
-            NavigationRow<SystemSettingsCell>(text: "Mode", detailText: .value2(modeLabel)),
-            NavigationRow<SystemSettingsCell>(text: "Git Revision", detailText: .value2(revisionString)),
-            NavigationRow<SystemSettingsCell>(text: "Build Date", detailText: .value2(buildDateString)),
-            NavigationRow<SystemSettingsCell>(text: "Builder", detailText: .value2(builtByUser)),
-            NavigationRow<SystemSettingsCell>(text: "Bundle ID", detailText: .value2(Bundle.main.bundleIdentifier ?? "Unknown"))
+            NavigationRow<SystemSettingsCell>(text: NSLocalizedString("Build", comment: "Build"), detailText: .value2(bundleVersion)),
+            NavigationRow<SystemSettingsCell>(text: NSLocalizedString("Mode", comment: "Mode"), detailText: .value2(modeLabel)),
+            NavigationRow<SystemSettingsCell>(text: NSLocalizedString("Git Revision", comment: "Git Revision"), detailText: .value2(revisionString)),
+            NavigationRow<SystemSettingsCell>(text: NSLocalizedString("Build Date", comment: "Build Date"), detailText: .value2(buildDateString)),
+            NavigationRow<SystemSettingsCell>(text: NSLocalizedString("Builder", comment: "Builder"), detailText: .value2(builtByUser)),
+            NavigationRow<SystemSettingsCell>(text: NSLocalizedString("Bundle ID", comment: "Bundle ID"), detailText: .value2(Bundle.main.bundleIdentifier ?? "Unknown"))
         ]
 
-        let buildSection = Section(title: "Build Information", rows: buildInformationRows)
+        let buildSection = Section(title: NSLocalizedString("Build Information", comment: ""), rows: buildInformationRows)
 
         // Extra Info Section
         let extraInfoRows: [TableRow] = [
-            SegueNavigationRow(text: "Cores", detailText: .subtitle("Emulator cores provided by these projects"), viewController: self, segue: "coresSegue", customization: nil),
-            SegueNavigationRow(text: "Licenses", detailText: .none, viewController: self, segue: "licensesSegue", customization: nil)
+            SegueNavigationRow(text: NSLocalizedString("Cores", comment: "Cores"), detailText: .subtitle("Emulator cores provided by these projects"), viewController: self, segue: "coresSegue", customization: nil),
+            SegueNavigationRow(text: NSLocalizedString("Licenses", comment: "Licenses"), detailText: .none, viewController: self, segue: "licensesSegue", customization: nil)
         ]
 
-        let extraInfoSection = Section(title: "3rd Party & Legal", rows: extraInfoRows)
+        let extraInfoSection = Section(title: NSLocalizedString("3rd Party & Legal", comment: ""), rows: extraInfoRows)
 
         // Debug section
         let debugRows: [TableRow] = [
-            NavigationRow<SystemSettingsCell>(text: "Logs", detailText: .subtitle("Live logging information"), icon: nil, customization: nil, action: { _ in
+            NavigationRow<SystemSettingsCell>(text: NSLocalizedString("Logs", comment: "Logs"), detailText: .subtitle("Live logging information"), icon: nil, customization: nil, action: { _ in
                 self.logsActions()
             })
         ]
 
-        let debugSection = Section(title: "Debug", rows: debugRows)
+        let debugSection = Section(title: NSLocalizedString("Debug", comment: ""), rows: debugRows)
 
         // Set table data
         tableContents = [appSection, coreOptionsSection, savesSection, avSection, controllerSection, librarySection, librarySection2, betaSection, buildSection, extraInfoSection]
@@ -478,11 +478,11 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
     func emptyImageCacheAction() {
         tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
-        let alert = UIAlertController(title: "Empty Image Cache?", message: "Empty the image cache to free up disk space. Images will be redownloaded on demand.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (_: UIAlertAction) -> Void in
+        let alert = UIAlertController(title: NSLocalizedString("Empty Image Cache?", comment: ""), message: "Empty the image cache to free up disk space. Images will be redownloaded on demand.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Yes", comment: ""), style: .default, handler: { (_: UIAlertAction) -> Void in
             try? PVMediaCache.empty()
         }))
-        alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("No", comment: ""), style: .cancel, handler: nil))
         present(alert, animated: true) { () -> Void in }
     }
 
