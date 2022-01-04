@@ -1457,6 +1457,13 @@
 			remoteGlobalIDString = B324C5E02191AD13009F4EDC;
 			remoteInfo = "wonderswan-tvOS";
 		};
+		B31737FD2783F8AF002D3ACD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B393F245277C0BF70097F71C;
+			remoteInfo = "hwcpu-m68k-iOS";
+		};
 		B34AB5872106DF8400C45F09 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
@@ -8368,6 +8375,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				B31737FE2783F8AF002D3ACD /* PBXTargetDependency */,
 			);
 			name = "hwcpu-iOS";
 			productName = hwcpu;
@@ -10712,6 +10720,11 @@
 			isa = PBXTargetDependency;
 			target = B324C5E02191AD13009F4EDC /* wonderswan-tvOS */;
 			targetProxy = 11389FC8248D4F6B0089CBFF /* PBXContainerItemProxy */;
+		};
+		B31737FE2783F8AF002D3ACD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B393F245277C0BF70097F71C /* hwcpu-m68k-iOS */;
+			targetProxy = B31737FD2783F8AF002D3ACD /* PBXContainerItemProxy */;
 		};
 		B34AB5882106DF8400C45F09 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -16429,6 +16442,7 @@
 				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -16456,6 +16470,7 @@
 				GCC_OPTIMIZATION_LEVEL = 1;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -16484,6 +16499,7 @@
 				GCC_OPTIMIZATION_LEVEL = 1;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
