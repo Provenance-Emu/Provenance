@@ -75,7 +75,7 @@ NSString *MupenControlNames[] = {
 
 #define N64_ANALOG_MAX 80
 
-#if TARGET_OS_MAC
+#if TARGET_OS_MACCATALYST
 @interface MupenGameCore () <PVN64SystemResponderClient>
 #else
 @interface MupenGameCore () <PVN64SystemResponderClient, GLKViewDelegate>
