@@ -201,12 +201,20 @@
 	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>Used for album artwork</string>
+	<key>NSExtensionFileProviderSupportsEnumeration</key>
+	<true/>
+	<key>NSFileProviderDomainUsageDescription</key>
+	<string>Provenance uses file provider for loading roms.</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Provenance uses the local network to find and communicate with AltServer.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Provenance uses the Microphone for systems that support audio input (eg; Famicom)</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Provenance can set custom artworks from your photos or save screenshots to your photos library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Provenance can set custom artworks from your photos or save screenshots to your photos library.</string>
+	<key>NSSupportsPurgeableLocalStorage</key>
+	<true/>
 	<key>NSUbiquitousContainers</key>
 	<dict>
 		<key>iCloud.org.provenance-emu.provenance</key>
