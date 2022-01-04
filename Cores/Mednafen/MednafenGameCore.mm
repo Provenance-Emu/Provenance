@@ -727,7 +727,7 @@ static void emulation_run(BOOL skipFrame) {
             NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@".cue|.ccd" options:NSRegularExpressionCaseInsensitive error:nil];
             NSUInteger numberOfMatches = [regex numberOfMatchesInString:m3uString options:0 range:NSMakeRange(0, [m3uString length])];
             
-            NSLog(@"Loaded m3u containing %lu cue sheets or ccd",numberOfMatches);
+            ILOG(@"Loaded m3u containing %lu cue sheets or ccd",numberOfMatches);
         }
     }
     else
@@ -736,8 +736,24 @@ static void emulation_run(BOOL skipFrame) {
         game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[0]);
     }
 
-    Mednafen::MDFNI_SetMedia(0, 2, 0, 0); // Disc selection API
+    BOOL success = Mednafen::MDFNI_SetMedia(0, 2, 0, 0); // Disc selection API
+    if (!success) {
+        NSString *message = [NSString stringWithFormat:@"MDFNI_SetMedia returned 0. Check your m3u or other file paths."];
 
+        NSDictionary *userInfo = @{
+                                   NSLocalizedDescriptionKey: @"Failed to load game.",
+                                   NSLocalizedFailureReasonErrorKey: @"MDFNI_SetMedia returned 0",
+                                   NSLocalizedRecoverySuggestionErrorKey: message
+                                   };
+
+        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                code:PVEmulatorCoreErrorCodeMissingM3U
+                                            userInfo:userInfo];
+
+        *error = newError;
+        return NO;
+    }
+    
     emulation_run(NO);
 
     return YES;
