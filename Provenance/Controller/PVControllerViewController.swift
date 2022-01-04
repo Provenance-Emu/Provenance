@@ -358,7 +358,7 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
             startButton?.isHidden = true
             leftAnalogButton?.isHidden = true
             rightAnalogButton?.isHidden = true
-        } else if controller.supportsThumbstickButtons() {
+        } else if controller.supportsThumbstickButtons {
             leftAnalogButton?.isHidden = true
             rightAnalogButton?.isHidden = true
         }

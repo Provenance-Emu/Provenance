@@ -971,8 +971,8 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             })
         }))
 
-        actionSheet.addAction(UIAlertAction(title: "Choose Cover", style: .default) { [self] _ in
-            self.chooseCustomArtwork(for: game, sourceView: sender)
+        actionSheet.addAction(UIAlertAction(title: "Choose Cover", style: .default) { [weak self] _ in
+            self?.chooseCustomArtwork(for: game, sourceView: sender)
         })
 
         actionSheet.addAction(UIAlertAction(title: "Paste Cover", style: .default, handler: { (_: UIAlertAction) -> Void in
