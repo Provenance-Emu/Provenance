@@ -998,6 +998,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 
 - (NSUInteger)channelCount
 {
+    if(game == nil) { return 2; }
     return game->soundchan;
 }
 
