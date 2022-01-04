@@ -911,6 +911,16 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             return contextMenu(for: game.game, sender: cell)
         }
     }
+    
+    private func showCoreOptions(forCore core: CoreOptional.Type) {
+        let optionsVC = CoreOptionsViewController(withCore: core)
+        
+//        let nav = UINavigationController(rootViewController: optionsVC)
+//        coreOptionsVC.title = row.text
+//        optionsVC.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissNav))
+        self.navigationController?.pushViewController(optionsVC, animated: true)
+//        present(nav, animated: true, completion: nil)
+    }
 
     private func contextMenu(for game: PVGame, sender: UIView) -> UIAlertController {
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
@@ -941,6 +951,13 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             // Action to Open with...
             actionSheet.addAction(UIAlertAction(title: "Open with…", style: .default, handler: { [unowned self] _ in
                 self.presentCoreSelection(forGame: game, sender: sender)
+            }))
+        }
+        
+        if let system = game.system, system.cores.count == 1, let pvcore = system.cores.first, let coreClass = NSClassFromString(pvcore.principleClass) as? CoreOptional.Type {
+
+            actionSheet.addAction(UIAlertAction(title: "\(pvcore.projectName) options", style: .default, handler: { (_: UIAlertAction) -> Void in
+                self.showCoreOptions(forCore: coreClass)
             }))
         }
 
