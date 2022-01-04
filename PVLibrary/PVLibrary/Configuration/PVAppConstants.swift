@@ -9,12 +9,12 @@
 import Foundation
 
 public let PVMaxRecentsShortcutCount: Int = 4
-public let PVAppGroupId = "group.org.provenance-emu.provenance"
+public let PVAppGroupId = Bundle.main.infoDictionary?["APP_GROUP_IDENTIFIER"] as? String ?? "group.org.provenance-emu.provenance"
 public let kInterfaceDidChangeNotification = "kInterfaceDidChangeNotification"
 public let PVGameControllerKey = "PlayController"
 public let PVGameMD5Key = "md5"
 public let PVAppURLKey = "provenance"
-public let UbiquityIdentityTokenKey = "org.provenance-emu.provenenace.UbiquityIdentityToken"
+public let UbiquityIdentityTokenKey = (Bundle.main.bundleIdentifier ?? "org.provenance-emu.provenance")  + ".UbiquityIdentityToken"
 
 #if os(tvOS)
     public let PVThumbnailMaxResolution: Float = 800.0

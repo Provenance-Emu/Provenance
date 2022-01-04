@@ -12,7 +12,7 @@ import PVLibrary
 import PVSupport
 import RealmSwift
 import RxSwift
-#if !targetEnvironment(macCatalyst) && !os(macOS) //&& canImport(SteamController)
+#if !targetEnvironment(macCatalyst) && !os(macOS) // && canImport(SteamController)
 import SteamController
 #endif
 
@@ -138,7 +138,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         let database = RomDatabase.sharedInstance
         database.refresh()
 
-        #if !targetEnvironment(macCatalyst) && canImport(SteamController)
+        #if !targetEnvironment(macCatalyst) && canImport(SteamController) && !targetEnvironment(simulator)
         SteamControllerManager.listenForConnections()
         #endif
 

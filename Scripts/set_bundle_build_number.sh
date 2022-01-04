@@ -24,6 +24,7 @@ GIT_DATE=`git log -1 --format="%cd" --date="local"`
 GIT_BRANCH=`git name-rev --name-only HEAD`
 
 PLISTBUDDY="/usr/libexec/PlistBuddy"
+PLUTIL="/usr/bin/PlistBuddy"
 
 # plist_buddy_installed() {
 #   [-x "$(command -v "$PLISTBUDDY")"]
@@ -49,6 +50,8 @@ revision=$(git rev-parse --short HEAD)
 #$PLISTBUDDY -c "Set :Revision $revision" "${PROJECT_DIR}/${INFOPLIST_FILE}"
 # Use the built products dir so GIT doesn't want to constantly upload a changed Info.plist in the code directory - jm
 $PLISTBUDDY -c "Set :Revision $revision" "${plistPath}"
+
+$PLUTIL -replace "ICLOUD_CONTAINER_IDENTIFIER" -string "DICK" "${plistPath}"
 
 echo "Updated app plist with git data."
 echo "TAG: ${GIT_TAG}, DATE: ${GIT_DATE}, BRANCH: ${GIT_BRANCH}, REVISION: $revision"

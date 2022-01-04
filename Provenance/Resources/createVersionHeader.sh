@@ -139,6 +139,7 @@ static NSString* const kOrgPrefix               = @"${ORG_PREFIX}";
 static NSString* const kProductBundleIdentifier = @"${PRODUCT_BUNDLE_IDENTIFIER}";
 static NSString* const kAppGroupIdentifier      = @"${APP_GROUP_IDENTIFIER}";
 static NSString* const kiCloudContainerIdenfitier = @"${ICLOUD_CONTAINER_IDENTIFIER}";
+static NSString* const kUbiquityIdentityTokenKey  = @"${PRODUCT_BUNDLE_IDENTIFIER}.UbiquityIdentityToken";
 
 // Suppress warnings incase you choose not to use these variables
 #pragma GCC diagnostic push
@@ -156,6 +157,8 @@ static const char* kOrgPrefix               = "${ORG_PREFIX}";
 static const char* kProductBundleIdentifier = "${PRODUCT_BUNDLE_IDENTIFIER}";
 static const char* kAppGroupIdentifier      = "${APP_GROUP_IDENTIFIER}";
 static const char* kiCloudContainerIdenfitier = "${ICLOUD_CONTAINER_IDENTIFIER}";
+static const char* kUbiquityIdentityTokenKey     = "${PRODUCT_BUNDLE_IDENTIFIER}.UbiquityIdentityToken";
+
 
 // static const char* compiletime          = __TIME__;
 // static const char* compiledate          = __DATE__;
@@ -202,6 +205,8 @@ public let kOrgPrefix                   = "${ORG_PREFIX}"
 public let kProductBundleIdentifier     = "${PRODUCT_BUNDLE_IDENTIFIER}"
 public let kAppGroupIdentifier          = "${APP_GROUP_IDENTIFIER}"
 public let kiCloudContainerIdenfitier   = "${ICLOUD_CONTAINER_IDENTIFIER}"
+public let kUbiquityIdentityTokenKey     = "${PRODUCT_BUNDLE_IDENTIFIER}.UbiquityIdentityToken"
+
 // public let compiletime          = __TIME__
 // public let compiledate          = __DATE__
 

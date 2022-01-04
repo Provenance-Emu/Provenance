@@ -15,9 +15,9 @@ import Foundation
 
 struct Constants {
     struct iCloud {
-        static let containerIdentifier = "iCloud.org.provenance-emu.provenance"
+//        static let containerIdentifier = "iCloud.org.provenance-emu.provenance"
         // Dynamic version based off of bundle Identifier
-        //        static let documentsContainerIdentifier = "iCloud." + (Bundle.main.bundleIdentifier ?? "")
+		static let containerIdentifier =  (Bundle.main.infoDictionary?["NSUbiquitousContainers"] as? [String: AnyObject])?.keys.first ?? "iCloud.org.provenance-emu.provenance"
     }
 }
 
