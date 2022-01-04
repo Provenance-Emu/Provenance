@@ -104,9 +104,9 @@
         "package": "SteamController",
         "repositoryURL": "https://github.com/Provenance-Emu/SteamController.git",
         "state": {
-          "branch": null,
-          "revision": "59d257823a422da57c5acf57d56f740b4b8eb8dd",
-          "version": "1.3.1"
+          "branch": "master",
+          "revision": "55d2fe0484f4cc5ed3535033af6b0218621e37b2",
+          "version": null
         }
       },
       {
