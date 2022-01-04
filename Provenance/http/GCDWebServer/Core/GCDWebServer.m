@@ -43,7 +43,7 @@
 #import "GCDWebServerPrivate.h"
 @import PVSupport;
 
-#if TARGET_OS_IPHONE && !TARGET_IPHONE_SIMULATOR
+#if TARGET_OS_IPHONE && !TARGET_IPHONE_SIMULATOR && !TARGET_OS_MACCATALYST
 #define kDefaultPort 80
 #else
 #define kDefaultPort 8080
