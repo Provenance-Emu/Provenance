@@ -8272,7 +8272,7 @@
 				Base,
 			);
 			mainGroup = 708FC5E019574B56839721A6;
-			projectDirPath = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp;
+			projectDirPath = ./../ppsspp;
 			projectRoot = "";
 			targets = (
 				D38D17A114BC46FBB4338E00 /* ALL_BUILD */,

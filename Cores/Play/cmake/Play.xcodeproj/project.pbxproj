@@ -4440,7 +4440,7 @@
 				Base,
 			);
 			mainGroup = 4CB0540758734232B095E0B9;
-			projectDirPath = "/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-";
+			projectDirPath = "./../Play-";
 			projectRoot = "";
 			targets = (
 				6B9C69E5DB214681B2A5C976 /* ALL_BUILD */,
