@@ -5851,13 +5851,13 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -5911,10 +5911,10 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ./cmake/Source/ui_ios/Source/CodeGen/CMakeFiles/CodeGenTestSuite.dir/Info.plist;
@@ -5966,7 +5966,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/libchdr/deps/lzma-19.00/include",
+					"$(SRCROOT)/deps/libchdr/deps/lzma-19.00/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -6010,20 +6010,20 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL",
-					"./Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",
+					"$(SRCROOT)/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkOpenAl/../../include",
 					/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk/System/Library/Frameworks/OpenAL.framework/Headers,
-					"./Play-/deps/Dependencies/build_cmake/iCade-iOS/../../iCade-iOS",
-					"./Play-/deps/Dependencies/build_cmake/SDWebImage/../../SDWebImage",
-					"./Play-/deps/Framework/build_cmake/FrameworkSqlite/../../include",
-					"./Play-/deps/Dependencies/nlohmann_json/single_include",
+					"$(SRCROOT)/deps/Dependencies/build_cmake/iCade-iOS/../../iCade-iOS",
+					"$(SRCROOT)/deps/Dependencies/build_cmake/SDWebImage/../../SDWebImage",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkSqlite/../../include",
+					"$(SRCROOT)/deps/Dependencies/nlohmann_json/single_include",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ./cmake/Source/ui_ios/CMakeFiles/Play.dir/Info.plist;
@@ -6120,9 +6120,9 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -6166,8 +6166,8 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -6214,15 +6214,15 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL",
-					"./Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",
+					"$(SRCROOT)/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkOpenAl/../../include",
 					/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk/System/Library/Frameworks/OpenAL.framework/Headers,
 					"$(inherited)",
 				);
@@ -6267,13 +6267,13 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -6312,7 +6312,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/Dependencies/build_cmake/SDWebImage/../../SDWebImage",
+					"$(SRCROOT)/deps/Dependencies/build_cmake/SDWebImage/../../SDWebImage",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -6358,12 +6358,12 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ./cmake/tools/GsAreaTest/CMakeFiles/GsAreaTest.dir/Info.plist;
@@ -6441,7 +6441,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/libchdr/deps/zlib-1.2.11",
+					"$(SRCROOT)/deps/libchdr/deps/zlib-1.2.11",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -6479,7 +6479,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/Dependencies/build_cmake/SDWebImage/../../SDWebImage",
+					"$(SRCROOT)/deps/Dependencies/build_cmake/SDWebImage/../../SDWebImage",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -6521,7 +6521,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/libchdr/deps/zlib-1.2.11",
+					"$(SRCROOT)/deps/libchdr/deps/zlib-1.2.11",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -6564,12 +6564,12 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ./cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist;
@@ -6625,9 +6625,9 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -6674,10 +6674,10 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ./cmake/Source/ui_ios/Source/CodeGen/CMakeFiles/CodeGenTestSuite.dir/Info.plist;
@@ -6767,10 +6767,10 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -6815,12 +6815,12 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ./cmake/tools/SpuTest/CMakeFiles/SpuTest.dir/Info.plist;
@@ -6880,12 +6880,12 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ./cmake/tools/SpuTest/CMakeFiles/SpuTest.dir/Info.plist;
@@ -6941,9 +6941,9 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -6988,12 +6988,12 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ./cmake/tools/SpuTest/CMakeFiles/SpuTest.dir/Info.plist;
@@ -7052,15 +7052,15 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source/ui_shared/..",
-					"./Play-/deps/Framework/build_cmake/FrameworkSqlite/../../include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Dependencies/nlohmann_json/single_include",
-					"./Play-/Source",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source/ui_shared/..",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkSqlite/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Dependencies/nlohmann_json/single_include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7100,9 +7100,9 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7145,8 +7145,8 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7188,10 +7188,10 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7234,12 +7234,12 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ./cmake/tools/GsAreaTest/CMakeFiles/GsAreaTest.dir/Info.plist;
@@ -7295,7 +7295,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/Dependencies/build_cmake/iCade-iOS/../../iCade-iOS",
+					"$(SRCROOT)/deps/Dependencies/build_cmake/iCade-iOS/../../iCade-iOS",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7363,12 +7363,12 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ./cmake/tools/McServTest/CMakeFiles/McServTest.dir/Info.plist;
@@ -7427,15 +7427,15 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source/ui_shared/..",
-					"./Play-/deps/Framework/build_cmake/FrameworkSqlite/../../include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Dependencies/nlohmann_json/single_include",
-					"./Play-/Source",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source/ui_shared/..",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkSqlite/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Dependencies/nlohmann_json/single_include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7475,12 +7475,12 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/libchdr/lzma",
-					"./Play-/deps/libchdr/zlib",
+					"$(SRCROOT)/deps/libchdr/lzma",
+					"$(SRCROOT)/deps/libchdr/zlib",
 					./cmake/Source/ui_ios/Source/libchdr/include,
-					"./Play-/deps/libchdr/include",
-					"./Play-/deps/libchdr/deps/lzma-19.00/include",
-					"./Play-/deps/libchdr/deps/zlib-1.2.11",
+					"$(SRCROOT)/deps/libchdr/include",
+					"$(SRCROOT)/deps/libchdr/deps/lzma-19.00/include",
+					"$(SRCROOT)/deps/libchdr/deps/zlib-1.2.11",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7519,7 +7519,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/Dependencies/build_cmake/SDWebImage/../../SDWebImage",
+					"$(SRCROOT)/deps/Dependencies/build_cmake/SDWebImage/../../SDWebImage",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7564,12 +7564,12 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ./cmake/tools/AutoTest/CMakeFiles/autotest.dir/Info.plist;
@@ -7626,9 +7626,9 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7671,7 +7671,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/Dependencies/build_cmake/iCade-iOS/../../iCade-iOS",
+					"$(SRCROOT)/deps/Dependencies/build_cmake/iCade-iOS/../../iCade-iOS",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7716,12 +7716,12 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ./cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist;
@@ -7804,14 +7804,14 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL",
-					"./Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7851,7 +7851,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkOpenAl/../../include",
 					/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk/System/Library/Frameworks/OpenAL.framework/Headers,
 					"$(inherited)",
 				);
@@ -7898,14 +7898,14 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source",
-					"./Play-/Source/../deps/Framework/include",
-					"./Play-/Source/../deps/CodeGen/include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/Source/../deps/Framework/include",
+					"$(SRCROOT)/Source/../deps/CodeGen/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7945,7 +7945,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/Dependencies/build_cmake/iCade-iOS/../../iCade-iOS",
+					"$(SRCROOT)/deps/Dependencies/build_cmake/iCade-iOS/../../iCade-iOS",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7985,7 +7985,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/libchdr/deps/zlib-1.2.11",
+					"$(SRCROOT)/deps/libchdr/deps/zlib-1.2.11",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -8024,7 +8024,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/libchdr/deps/zlib-1.2.11",
+					"$(SRCROOT)/deps/libchdr/deps/zlib-1.2.11",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -8101,7 +8101,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkOpenAl/../../include",
 					/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk/System/Library/Frameworks/OpenAL.framework/Headers,
 					"$(inherited)",
 				);
@@ -8168,12 +8168,12 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/libchdr/lzma",
-					"./Play-/deps/libchdr/zlib",
+					"$(SRCROOT)/deps/libchdr/lzma",
+					"$(SRCROOT)/deps/libchdr/zlib",
 					./cmake/Source/ui_ios/Source/libchdr/include,
-					"./Play-/deps/libchdr/include",
-					"./Play-/deps/libchdr/deps/lzma-19.00/include",
-					"./Play-/deps/libchdr/deps/zlib-1.2.11",
+					"$(SRCROOT)/deps/libchdr/include",
+					"$(SRCROOT)/deps/libchdr/deps/lzma-19.00/include",
+					"$(SRCROOT)/deps/libchdr/deps/zlib-1.2.11",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -8217,13 +8217,13 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -8262,7 +8262,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/Dependencies/build_cmake/SDWebImage/../../SDWebImage",
+					"$(SRCROOT)/deps/Dependencies/build_cmake/SDWebImage/../../SDWebImage",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -8305,7 +8305,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/libchdr/deps/lzma-19.00/include",
+					"$(SRCROOT)/deps/libchdr/deps/lzma-19.00/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -8349,20 +8349,20 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL",
-					"./Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",
+					"$(SRCROOT)/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkOpenAl/../../include",
 					/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk/System/Library/Frameworks/OpenAL.framework/Headers,
-					"./Play-/deps/Dependencies/build_cmake/iCade-iOS/../../iCade-iOS",
-					"./Play-/deps/Dependencies/build_cmake/SDWebImage/../../SDWebImage",
-					"./Play-/deps/Framework/build_cmake/FrameworkSqlite/../../include",
-					"./Play-/deps/Dependencies/nlohmann_json/single_include",
+					"$(SRCROOT)/deps/Dependencies/build_cmake/iCade-iOS/../../iCade-iOS",
+					"$(SRCROOT)/deps/Dependencies/build_cmake/SDWebImage/../../SDWebImage",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkSqlite/../../include",
+					"$(SRCROOT)/deps/Dependencies/nlohmann_json/single_include",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ./cmake/Source/ui_ios/CMakeFiles/Play.dir/Info.plist;
@@ -8463,12 +8463,12 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ./cmake/tools/McServTest/CMakeFiles/McServTest.dir/Info.plist;
@@ -8523,12 +8523,12 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/libchdr/lzma",
-					"./Play-/deps/libchdr/zlib",
+					"$(SRCROOT)/deps/libchdr/lzma",
+					"$(SRCROOT)/deps/libchdr/zlib",
 					./cmake/Source/ui_ios/Source/libchdr/include,
-					"./Play-/deps/libchdr/include",
-					"./Play-/deps/libchdr/deps/lzma-19.00/include",
-					"./Play-/deps/libchdr/deps/zlib-1.2.11",
+					"$(SRCROOT)/deps/libchdr/include",
+					"$(SRCROOT)/deps/libchdr/deps/lzma-19.00/include",
+					"$(SRCROOT)/deps/libchdr/deps/zlib-1.2.11",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -8585,12 +8585,12 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ./cmake/tools/GsAreaTest/CMakeFiles/GsAreaTest.dir/Info.plist;
@@ -8650,15 +8650,15 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL",
-					"./Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",
+					"$(SRCROOT)/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkOpenAl/../../include",
 					/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk/System/Library/Frameworks/OpenAL.framework/Headers,
 					"$(inherited)",
 				);
@@ -8702,12 +8702,12 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ./cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist;
@@ -8767,15 +8767,15 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source/ui_shared/..",
-					"./Play-/deps/Framework/build_cmake/FrameworkSqlite/../../include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Dependencies/nlohmann_json/single_include",
-					"./Play-/Source",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source/ui_shared/..",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkSqlite/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Dependencies/nlohmann_json/single_include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -8814,7 +8814,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/Dependencies/build_cmake/iCade-iOS/../../iCade-iOS",
+					"$(SRCROOT)/deps/Dependencies/build_cmake/iCade-iOS/../../iCade-iOS",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -8860,20 +8860,20 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL",
-					"./Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",
+					"$(SRCROOT)/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkOpenAl/../../include",
 					/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk/System/Library/Frameworks/OpenAL.framework/Headers,
-					"./Play-/deps/Dependencies/build_cmake/iCade-iOS/../../iCade-iOS",
-					"./Play-/deps/Dependencies/build_cmake/SDWebImage/../../SDWebImage",
-					"./Play-/deps/Framework/build_cmake/FrameworkSqlite/../../include",
-					"./Play-/deps/Dependencies/nlohmann_json/single_include",
+					"$(SRCROOT)/deps/Dependencies/build_cmake/iCade-iOS/../../iCade-iOS",
+					"$(SRCROOT)/deps/Dependencies/build_cmake/SDWebImage/../../SDWebImage",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkSqlite/../../include",
+					"$(SRCROOT)/deps/Dependencies/nlohmann_json/single_include",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ./cmake/Source/ui_ios/CMakeFiles/Play.dir/Info.plist;
@@ -8970,8 +8970,8 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -9042,13 +9042,13 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -9089,10 +9089,10 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -9132,7 +9132,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/libchdr/deps/lzma-19.00/include",
+					"$(SRCROOT)/deps/libchdr/deps/lzma-19.00/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -9175,12 +9175,12 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ./cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist;
@@ -9236,10 +9236,10 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ./cmake/Source/ui_ios/Source/CodeGen/CMakeFiles/CodeGenTestSuite.dir/Info.plist;
@@ -9297,14 +9297,14 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL",
-					"./Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -9345,7 +9345,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkOpenAl/../../include",
 					/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk/System/Library/Frameworks/OpenAL.framework/Headers,
 					"$(inherited)",
 				);
@@ -9414,15 +9414,15 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source/ui_shared/..",
-					"./Play-/deps/Framework/build_cmake/FrameworkSqlite/../../include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Dependencies/nlohmann_json/single_include",
-					"./Play-/Source",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source/ui_shared/..",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkSqlite/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Dependencies/nlohmann_json/single_include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -9465,12 +9465,12 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ./cmake/tools/AutoTest/CMakeFiles/autotest.dir/Info.plist;
@@ -9526,10 +9526,10 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -9573,12 +9573,12 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ./cmake/tools/AutoTest/CMakeFiles/autotest.dir/Info.plist;
@@ -9634,9 +9634,9 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -9685,12 +9685,12 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ./cmake/tools/SpuTest/CMakeFiles/SpuTest.dir/Info.plist;
@@ -9746,7 +9746,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkOpenAl/../../include",
 					/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk/System/Library/Frameworks/OpenAL.framework/Headers,
 					"$(inherited)",
 				);
@@ -9793,20 +9793,20 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL",
-					"./Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",
+					"$(SRCROOT)/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkOpenAl/../../include",
 					/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk/System/Library/Frameworks/OpenAL.framework/Headers,
-					"./Play-/deps/Dependencies/build_cmake/iCade-iOS/../../iCade-iOS",
-					"./Play-/deps/Dependencies/build_cmake/SDWebImage/../../SDWebImage",
-					"./Play-/deps/Framework/build_cmake/FrameworkSqlite/../../include",
-					"./Play-/deps/Dependencies/nlohmann_json/single_include",
+					"$(SRCROOT)/deps/Dependencies/build_cmake/iCade-iOS/../../iCade-iOS",
+					"$(SRCROOT)/deps/Dependencies/build_cmake/SDWebImage/../../SDWebImage",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkSqlite/../../include",
+					"$(SRCROOT)/deps/Dependencies/nlohmann_json/single_include",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ./cmake/Source/ui_ios/CMakeFiles/Play.dir/Info.plist;
@@ -9902,10 +9902,10 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ./cmake/Source/ui_ios/Source/CodeGen/CMakeFiles/CodeGenTestSuite.dir/Info.plist;
@@ -9961,15 +9961,15 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL",
-					"./Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",
+					"$(SRCROOT)/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkOpenAl/../../include",
 					/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk/System/Library/Frameworks/OpenAL.framework/Headers,
 					"$(inherited)",
 				);
@@ -10015,15 +10015,15 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL",
-					"./Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",
+					"$(SRCROOT)/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkOpenAl/../../include",
 					/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk/System/Library/Frameworks/OpenAL.framework/Headers,
 					"$(inherited)",
 				);
@@ -10067,12 +10067,12 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ./cmake/tools/McServTest/CMakeFiles/McServTest.dir/Info.plist;
@@ -10128,9 +10128,9 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -10177,12 +10177,12 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ./cmake/tools/GsAreaTest/CMakeFiles/GsAreaTest.dir/Info.plist;
@@ -10238,8 +10238,8 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -10330,14 +10330,14 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source",
-					"./Play-/Source/../deps/Framework/include",
-					"./Play-/Source/../deps/CodeGen/include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/Source/../deps/Framework/include",
+					"$(SRCROOT)/Source/../deps/CodeGen/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -10381,14 +10381,14 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source",
-					"./Play-/Source/../deps/Framework/include",
-					"./Play-/Source/../deps/CodeGen/include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/Source/../deps/Framework/include",
+					"$(SRCROOT)/Source/../deps/CodeGen/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -10434,14 +10434,14 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL",
-					"./Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -10484,12 +10484,12 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ./cmake/tools/AutoTest/CMakeFiles/autotest.dir/Info.plist;
@@ -10572,14 +10572,14 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL",
-					"./Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkOpenGl/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -10642,7 +10642,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/libchdr/deps/lzma-19.00/include",
+					"$(SRCROOT)/deps/libchdr/deps/lzma-19.00/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -10684,14 +10684,14 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source",
-					"./Play-/Source/../deps/Framework/include",
-					"./Play-/Source/../deps/CodeGen/include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/Source/../deps/Framework/include",
+					"$(SRCROOT)/Source/../deps/CodeGen/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -10732,9 +10732,9 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -10798,12 +10798,12 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/deps/libchdr/lzma",
-					"./Play-/deps/libchdr/zlib",
+					"$(SRCROOT)/deps/libchdr/lzma",
+					"$(SRCROOT)/deps/libchdr/zlib",
 					./cmake/Source/ui_ios/Source/libchdr/include,
-					"./Play-/deps/libchdr/include",
-					"./Play-/deps/libchdr/deps/lzma-19.00/include",
-					"./Play-/deps/libchdr/deps/zlib-1.2.11",
+					"$(SRCROOT)/deps/libchdr/include",
+					"$(SRCROOT)/deps/libchdr/deps/lzma-19.00/include",
+					"$(SRCROOT)/deps/libchdr/deps/zlib-1.2.11",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -10868,12 +10868,12 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"./Play-/Source",
-					"./Play-/deps/Framework/build_cmake/Framework/../../include",
-					"./Play-/deps/Dependencies/ghc_filesystem/include",
-					"./Play-/deps/Framework/build_cmake/FrameworkHttp/../../include",
-					"./Play-/deps/CodeGen/build_cmake/../include",
-					"./Play-/deps/libchdr/include",
+					"$(SRCROOT)/Source",
+					"$(SRCROOT)/deps/Framework/build_cmake/Framework/../../include",
+					"$(SRCROOT)/deps/Dependencies/ghc_filesystem/include",
+					"$(SRCROOT)/deps/Framework/build_cmake/FrameworkHttp/../../include",
+					"$(SRCROOT)/deps/CodeGen/build_cmake/../include",
+					"$(SRCROOT)/deps/libchdr/include",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = ./cmake/tools/McServTest/CMakeFiles/McServTest.dir/Info.plist;

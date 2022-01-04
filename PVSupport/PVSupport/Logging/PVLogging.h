@@ -68,7 +68,7 @@
 #define LOGGING_LEVEL_FILE		1
 #endif
 
-#define stackSize 4096
+#define LOGGING_STACK_SIZE 4096
 
     // Set this switch to set whether or not to include class, method and line information in the log entries.
 #ifndef LOGGING_INCLUDE_CODE_LOCATION

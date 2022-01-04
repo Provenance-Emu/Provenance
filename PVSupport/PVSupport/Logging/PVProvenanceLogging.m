@@ -141,7 +141,7 @@
 
         // check if the FIFO stack is over quota
         // save the history event
-    if (_history.count >= stackSize) {
+    if (_history.count >= LOGGING_STACK_SIZE) {
         [_history removeLastObject];
     }
 

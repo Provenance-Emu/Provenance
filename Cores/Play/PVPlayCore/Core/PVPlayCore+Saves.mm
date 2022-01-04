@@ -23,7 +23,10 @@
 }
 
 - (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
-    block(NO, nil);
+//	const fs::path fsName(fileName.fileSystemRepresentation);
+//	  auto success = _ps2VM.SaveState(fsName);
+//	  success.wait();
+//	  block(success.get(), nil);
 }
 
 - (BOOL)loadStateFromFileAtPath:(NSString *)fileName {
@@ -31,7 +34,11 @@
 }
 
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
-    block(NO, nil);
+//	//FIXME: load save state at launch fails.
+//	const fs::path fsName(fileName.fileSystemRepresentation);
+//	auto success = _ps2VM.LoadState(fsName);
+//	success.wait();
+//	block(success.get(), nil)
 }
 
 @end

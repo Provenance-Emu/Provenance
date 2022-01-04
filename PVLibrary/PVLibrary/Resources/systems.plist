@@ -627,7 +627,7 @@
 		<key>PVReleaseYear</key>
 		<string>2000</string>
 		<key>PVBit</key>
-		<string>64</string>
+		<string>128</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.ps2</string>
 		<key>PVDatabaseID</key>
@@ -648,6 +648,9 @@
 			<string>ccd</string>
 			<string>chd</string>
 			<string>cso</string>
+			<string>elf</string>
+			<string>iso</string>
+			<string>isz</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>

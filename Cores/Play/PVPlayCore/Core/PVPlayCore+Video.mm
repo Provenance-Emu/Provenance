@@ -13,9 +13,18 @@
 #import <OpenGLES/ES3/gl.h>
 #import <GLKit/GLKit.h>
 
+//#import "PS2VM.h"
+//#import "gs/GSH_OpenGL/GSH_OpenGL.h"
+//#import "PadHandler.h"
+//#import "SoundHandler.h"
+//#import "PS2VM_Preferences.h"
+//#import "AppConfig.h"
+//#import "StdStream.h"
+
 @implementation PVPlayCore (Video)
 
 # pragma mark - Methods
+
 
 - (void)videoInterrupt {
         //dispatch_semaphore_signal(coreWaitToEndFrameSemaphore);
@@ -40,7 +49,7 @@
 # pragma mark - Properties
 
 - (CGSize)bufferSize {
-    return CGSizeMake(1024, 512);
+    return CGSizeMake(640, 480);
 }
 
 - (CGRect)screenRect {
@@ -80,3 +89,39 @@
     return GL_DEPTH_COMPONENT24;
 }
 @end
+
+#pragma mark - Graphics callbacks
+
+//static CGSHandler *GSHandlerFactory()
+//{
+//	return new CGSH_OpenEmu();
+//}
+//
+//CGSHandler::FactoryFunction CGSH_OpenEmu::GetFactoryFunction()
+//{
+//	return GSHandlerFactory;
+//}
+//
+//void CGSH_OpenEmu::InitializeImpl()
+//{
+//	GET_CURRENT_OR_RETURN();
+//
+//	[current.renderDelegate willRenderFrameOnAlternateThread];
+//	CGSH_OpenGL::InitializeImpl();
+//
+//	this->m_presentFramebuffer = [current.renderDelegate.presentationFramebuffer intValue];
+//
+//	glClearColor(0,0,0,0);
+//	glClear(GL_COLOR_BUFFER_BIT);
+//}
+//
+//void CGSH_OpenEmu::PresentBackbuffer()
+//{
+//	GET_CURRENT_OR_RETURN();
+//
+//	[current.renderDelegate didRenderFrameOnAlternateThread];
+//
+//	// Start the next one.
+//	[current.renderDelegate willRenderFrameOnAlternateThread];
+//}
+
