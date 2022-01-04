@@ -49,7 +49,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             try RomDatabase.initDefaultDatabase()
         } catch {
             let appName: String = Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "the application"
-            let alert = UIAlertController(title: "Database Error", message: error.localizedDescription + "\nDelete and reinstall " + appName + ".", preferredStyle: .alert)
+            let alert = UIAlertController(title: NSLocalizedString("Database Error", comment: ""), message: error.localizedDescription + "\nDelete and reinstall " + appName + ".", preferredStyle: .alert)
             ELOG(error.localizedDescription)
             alert.addAction(UIAlertAction(title: "Exit", style: .destructive, handler: { _ in
                 fatalError(error.localizedDescription)

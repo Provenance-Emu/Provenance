@@ -8,3 +8,69 @@
 
 /* Loading and item */
 "Loading" = "Loading";
+
+"App" = "App";
+"Core Options" = "Core Options";
+"Auto Save" = "Auto Save";
+"Timed Auto Saves" = "Timed Auto Saves";
+"Auto Load Saves" = "Auto Load Saves";
+"Ask to Load Saves" = "Ask to Load Saves";
+"Opacity" = "Opacity";
+"Saves" = "Saves";
+"Video Options" = "Video Options";
+
+"Button Colors" = "Button Colors";
+
+"All-Right Shoulders" = "All-Right Shoulders";
+
+"Haptic Feedback" = "Haptic Feedback";
+
+"Enable 8BitDo M30 Mapping" = "Enable 8BitDo M30 Mapping";
+
+"Controllers" = "Controllers";
+"Controller" = "Controller";
+
+"iCade Controller" = "iCade Controller";
+
+"Appearance" = "Appearance";
+
+"Build" = "Build";
+
+"Mode" = "Mode";
+
+"Git Revision" = "Git Revision";
+"Build Data" = "Build Data";
+"Builder" = "Builder";
+"Bundle ID" = "Bundle ID";
+"Unknown" = "Unknown";
+"Cores" = "Cores";
+"Licenses" = "Licenses";
+"Logs" = "Logs";
+"Systems" = "Systems";
+"Volume HUD" = "Volume HUD";
+"Native Scale" = "Native Scale";
+"Integer Scaling" = "Integer Scaling";
+"CRT Filter" = "CRT Filter";
+"Image Smoothing" = "Image Smoothing";
+"FPS Counter" = "FPS Counter";
+"Missing Buttons Always On-Screen" = "Missing Buttons Always On-Screen";
+"iCloud Sync" = "iCloud Sync";
+"Multi-threaded GL" = "Multi-threaded GL";
+"4X Multisampling GL" = "4X Multisampling GL";
+"Disable Auto Lock" = "Disable Auto Lock";
+"Launch Web Server" = "Launch Web Server";
+"Game Library" = "Game Library";
+"Refresh Game Library" = "Refresh Game Library";
+"Empty Image Cache" = "Empty Image Cache";
+"Manage Conflicts" = "Manage Conflicts";
+"Beta Features" = "Beta Features";
+"Unknown" = "Unknown";
+"Version" = "Version";
+"Build Information" = "Build Information";
+"3rd Party & Legal" = "3rd Party & Legal";
+"Debug" = "Debug";
+"No" = "No";
+"Empty Image Cache?" = "Empty Image Cache?";
+"Yes" = "Yes";
+"Acknowledgements" = "Acknowledgements";
+"Database Error" = "Database Error";
