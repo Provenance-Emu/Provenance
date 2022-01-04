@@ -33,5 +33,9 @@ void osd_message_set_corner(osd_message_t *, enum osd_corner);
 
 osd_message_t * osd_message_valid(osd_message_t *m)
 {
+#if DEBUG
     return m;
+#else
+    return nil;
+#endif
 }
