@@ -139,7 +139,8 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         database.refresh()
 
         #if !targetEnvironment(macCatalyst) && canImport(SteamController) && !targetEnvironment(simulator)
-        SteamControllerManager.listenForConnections()
+        // SteamController is build with STEAMCONTROLLER_NO_PRIVATE_API, so dont call this! ??
+        // SteamControllerManager.listenForConnections()
         #endif
 
         #if os(iOS)

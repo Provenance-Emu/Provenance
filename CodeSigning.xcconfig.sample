@@ -6,7 +6,7 @@ DEVELOPMENT_TEAM = XYZ0123456
 //   - com.myuniquename.provenance
 //   - com.myuniquename.provenance.spotlight
 //   - com.myuniquename.provenance.topshelf
-PRODUCT_BUNDLE_PREFIX = com.myuniquename
+ORG_IDENTIFIER = com.myuniquename
 
 // Set to YES if you have a valid paid Apple Developer account
 DEVELOPER_ACCOUNT_PAID = NO
