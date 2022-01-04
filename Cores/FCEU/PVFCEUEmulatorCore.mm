@@ -50,6 +50,9 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic error "-Wall"
 
+#define WIDTH 256
+#define HEIGHT 240
+
 extern uint8 *XBuf;
 static uint32_t palette[256];
 
@@ -73,7 +76,11 @@ static __weak PVFCEUEmulatorCore *_current;
 {
     if((self = [super init]))
     {
-        videoBuffer = (uint32_t *)malloc(256 * 240 * 4);
+        soundBuffer = nil;
+        pXBuf = nil;
+        soundSize = 0;
+        
+        videoBuffer = (uint32_t *)malloc(WIDTH * HEIGHT * 4);
         currentDisc = 1;
     }
 
@@ -176,9 +183,9 @@ static __weak PVFCEUEmulatorCore *_current;
     FCEUI_Emulate(&pXBuf, &soundBuffer, &soundSize, 0);
 
     pXBuf = XBuf;
-    for (unsigned y = 0; y < 240; y++)
-        for (unsigned x = 0; x < 256; x++, pXBuf++)
-            videoBuffer[y * 256 + x] = palette[*pXBuf];
+    for (unsigned y = 0; y < HEIGHT; y++)
+        for (unsigned x = 0; x < WIDTH; x++, pXBuf++)
+            videoBuffer[y * WIDTH + x] = palette[*pXBuf];
 
     for (int i = 0; i < soundSize; i++)
         soundBuffer[i] = (soundBuffer[i] << 16) | (soundBuffer[i] & 0xffff);
@@ -213,7 +220,7 @@ static __weak PVFCEUEmulatorCore *_current;
 
 - (CGRect)screenRect
 {
-    return CGRectMake(0, 0, 256, 240);
+    return CGRectMake(0, 0, WIDTH, HEIGHT);
 }
 
 - (CGSize)aspectSize
@@ -223,7 +230,7 @@ static __weak PVFCEUEmulatorCore *_current;
 
 - (CGSize)bufferSize
 {
-    return CGSizeMake(256, 240);
+    return CGSizeMake(WIDTH, HEIGHT);
 }
 
 - (GLenum)pixelFormat
