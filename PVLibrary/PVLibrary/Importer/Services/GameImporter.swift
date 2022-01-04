@@ -113,17 +113,19 @@ public final class GameImporter {
     }
 
     lazy var openVGDB: OESQLiteDatabase = {
-        let bundle = Bundle(identifier: "org.provenance-emu.PVLibrary")!
+		let bundle = ThisBundle
         let _openVGDB = try! OESQLiteDatabase(url: bundle.url(forResource: "openvgdb", withExtension: "sqlite")!)
         return _openVGDB
     }()
 
     lazy var sqldb: Connection = {
-        let bundle = Bundle(identifier: "org.provenance-emu.PVLibrary")!
-        let sqlFile = bundle.url(forResource: "openvgdb", withExtension: "sqlite")!
+        let bundle = ThisBundle
+		let sqlFile = bundle.url(forResource: "openvgdb", withExtension: "sqlite")!
         let sqldb = try! Connection(sqlFile.path, readonly: true)
         return sqldb
     }()
+
+	fileprivate let ThisBundle: Bundle = Bundle(for: GameImporter.self)
 
     public var conflictedFiles: [URL]? {
         guard FileManager.default.fileExists(atPath: conflictPath.path),
@@ -148,7 +150,7 @@ public final class GameImporter {
             classInfo.bundle.url(forResource: "Core", withExtension: "plist")
         }
 
-        let bundle = Bundle(identifier: "org.provenance-emu.PVLibrary")!
+        let bundle = ThisBundle
         PVEmulatorConfiguration.updateSystems(fromPlists: [bundle.url(forResource: "systems", withExtension: "plist")!])
         PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
     }
