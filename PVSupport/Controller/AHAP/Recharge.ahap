@@ -1,0 +1,193 @@
+{
+  "Version" : 1,
+  "Metadata" : {
+      "Project" : "Haptic Controllers",
+      "Created" : "9 June 2020",
+      "Description" : "Charge up sequence, with three cycle of incresing intensity curves"
+  },
+  "Pattern" : [
+    {
+      "Event" : {
+        "EventParameters" : [
+          {
+            "ParameterID" : "HapticIntensity",
+            "ParameterValue" : 1.000000
+          }
+        ],
+        "EventType" : "HapticContinuous",
+        "Time" : 0,
+        "EventDuration" : 2.4
+      }
+    },
+    {
+      "Parameter" : {
+        "ParameterValue" : 0.0,
+        "ParameterID" : "HapticIntensityControl",
+        "Time" : 0.0001
+      }
+    },
+    {
+      "Parameter" : {
+        "ParameterValue" : 0.03,
+        "ParameterID" : "HapticIntensityControl",
+        "Time" : 0.100
+      }
+    },
+    {
+      "Parameter" : {
+        "ParameterValue" : 0.0915,
+        "ParameterID" : "HapticIntensityControl",
+        "Time" : 0.200
+      }
+    },
+    {
+      "Parameter" : {
+        "ParameterValue" : 0.216,
+        "ParameterID" : "HapticIntensityControl",
+        "Time" : 0.300
+      }
+    },
+    {
+      "Parameter" : {
+        "ParameterValue" : 0.3345,
+        "ParameterID" : "HapticIntensityControl",
+        "Time" : 0.400
+      }
+    },
+    {
+      "Parameter" : {
+        "ParameterValue" : 0.5,
+        "ParameterID" : "HapticIntensityControl",
+        "Time" : 0.5
+      }
+    },
+    {
+      "Parameter" : {
+        "ParameterValue" : 0.02025,
+        "ParameterID" : "HapticIntensityControl",
+        "Time" : 0.600
+      }
+    },
+    {
+      "Parameter" : {
+        "ParameterValue" : 0.048,
+        "ParameterID" : "HapticIntensityControl",
+        "Time" : 0.700
+      }
+    },
+    
+    {
+      "Parameter" : {
+        "ParameterValue" : 0.09375,
+        "ParameterID" : "HapticIntensityControl",
+        "Time" : 0.800
+      }
+    },
+    {
+      "Parameter" : {
+        "ParameterValue" : 0.162,
+        "ParameterID" : "HapticIntensityControl",
+        "Time" : 0.900
+      }
+    },
+    {
+      "Parameter" : {
+        "ParameterValue" : 0.25725,
+        "ParameterID" : "HapticIntensityControl",
+        "Time" : 1.000
+      }
+    },
+    {
+      "Parameter" : {
+        "ParameterValue" : 0.384,
+        "ParameterID" : "HapticIntensityControl",
+        "Time" : 1.100
+      }
+    },
+    {
+      "Parameter" : {
+        "ParameterValue" : 0.54675,
+        "ParameterID" : "HapticIntensityControl",
+        "Time" : 1.200
+      }
+    },
+    {
+      "Parameter" : {
+        "ParameterValue" : 0.75,
+        "ParameterID" : "HapticIntensityControl",
+        "Time" : 1.3
+      }
+    },
+    {
+      "Parameter" : {
+        "ParameterValue" : 0.001,
+        "ParameterID" : "HapticIntensityControl",
+        "Time" : 1.400
+      }
+    },
+    {
+      "Parameter" : {
+        "ParameterValue" : 0.008,
+        "ParameterID" : "HapticIntensityControl",
+        "Time" : 1.500
+      }
+    },
+    {
+      "Parameter" : {
+        "ParameterValue" : 0.027,
+        "ParameterID" : "HapticIntensityControl",
+        "Time" : 1.600
+      }
+    },
+    {
+      "Parameter" : {
+        "ParameterValue" : 0.064,
+        "ParameterID" : "HapticIntensityControl",
+        "Time" : 1.700
+      }
+    },
+    
+    {
+      "Parameter" : {
+        "ParameterValue" : 0.125,
+        "ParameterID" : "HapticIntensityControl",
+        "Time" : 1.800
+      }
+    },
+    {
+      "Parameter" : {
+        "ParameterValue" : 0.216,
+        "ParameterID" : "HapticIntensityControl",
+        "Time" : 1.900
+      }
+    },
+    {
+      "Parameter" : {
+        "ParameterValue" : 0.343,
+        "ParameterID" : "HapticIntensityControl",
+        "Time" : 2.000
+      }
+    },
+    {
+      "Parameter" : {
+        "ParameterValue" : 0.512,
+        "ParameterID" : "HapticIntensityControl",
+        "Time" : 2.100
+      }
+    },
+    {
+      "Parameter" : {
+        "ParameterValue" : 0.729,
+        "ParameterID" : "HapticIntensityControl",
+        "Time" : 2.200
+      }
+    },
+    {
+      "Parameter" : {
+        "ParameterValue" : 1,
+        "ParameterID" : "HapticIntensityControl",
+        "Time" : 2.300
+      }
+    },
+  ]
+}
