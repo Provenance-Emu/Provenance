@@ -591,7 +591,7 @@
 {
 	MAKEWEAK(self);
     dispatch_async(dispatch_get_main_queue(), ^{
-		MAKESTRONG(self);
+        MAKESTRONG_RETURN_IF_NIL(self);
         [strongself.messages addObject:logMessage];
         
         BOOL scroll = NO;

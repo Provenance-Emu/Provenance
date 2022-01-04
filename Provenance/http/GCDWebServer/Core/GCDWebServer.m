@@ -294,7 +294,7 @@ static void _ExecuteMainThreadRunLoopSources() {
 - (void)didEndConnection:(GCDWebServerConnection*)connection {
 	MAKEWEAK(self);
   dispatch_sync(_syncQueue, ^{
-	  MAKESTRONG(self);
+      MAKESTRONG_RETURN_IF_NIL(self);
     GWS_DCHECK(strongself->_activeConnections > 0);
     strongself->_activeConnections -= 1;
     if (strongself->_activeConnections == 0) {
@@ -473,7 +473,7 @@ static inline NSString* _EncodeBase64(NSString* string) {
   dispatch_source_t source = dispatch_source_create(DISPATCH_SOURCE_TYPE_READ, listeningSocket, 0, dispatch_get_global_queue(_dispatchQueuePriority, 0));
 	MAKEWEAK(self);
   dispatch_source_set_cancel_handler(source, ^{
-	  MAKESTRONG(self);
+      MAKESTRONG_RETURN_IF_NIL(self);
     @autoreleasepool {
       int result = close(listeningSocket);
       if (result != 0) {
@@ -486,7 +486,7 @@ static inline NSString* _EncodeBase64(NSString* string) {
 
   });
   dispatch_source_set_event_handler(source, ^{
-	  MAKESTRONG(self);
+      MAKESTRONG_RETURN_IF_NIL(self);
     @autoreleasepool {
       struct sockaddr_storage remoteSockAddr;
       socklen_t remoteAddrLen = sizeof(remoteSockAddr);

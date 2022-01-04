@@ -619,7 +619,7 @@ struct RenderSettings {
 
     void (^renderBlock)(void) = ^()
     {
-        MAKESTRONG(self);
+        MAKESTRONG_RETURN_IF_NIL(self);
 #if DEBUG
         glClearColor(1.0, 1.0, 1.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -820,7 +820,7 @@ struct RenderSettings {
 
     void (^renderBlock)(void) = ^()
     {
-        MAKESTRONG(self);
+        MAKESTRONG_RETURN_IF_NIL(self);
 //#if DEBUG
 //        glClearColor(1.0, 1.0, 1.0, 1.0);
 //        glClear(GL_COLOR_BUFFER_BIT);

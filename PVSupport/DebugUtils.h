@@ -16,6 +16,11 @@ __weak __typeof(x)weak##x = x
 #define MAKESTRONG(x)\
 __strong __typeof(weak##x) strong##x = weak##x;
 
+#define MAKESTRONG_RETURN_IF_NIL(x)\
+if (weak##x == nil) return; \
+__strong __typeof(weak##x) strong##x = weak##x;
+
+
 //MARK: System Version
 #define SYSTEM_VERSION_EQUAL_TO(v)                  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedSame)
 #define SYSTEM_VERSION_GREATER_THAN(v)              ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedDescending)
