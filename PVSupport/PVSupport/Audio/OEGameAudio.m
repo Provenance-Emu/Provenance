@@ -93,6 +93,7 @@ OSStatus RenderCallback(void                       *in,
     int bytesRequested = inNumberFrames * context->bytesPerSample * context->channelCount;
     availableBytes = MIN(availableBytes, bytesRequested);
     char *outBuffer = ioData->mBuffers[0].mData;
+    if(outBuffer == nil) { return noErr; }
 
     if (availableBytes) {
         memcpy(outBuffer, head, availableBytes);
