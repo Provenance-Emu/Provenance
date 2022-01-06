@@ -1,0 +1,22 @@
+{
+  "Version" : 1,
+  "Metadata" : {
+    "Project" : "Haptic Controllers",
+    "Created" : "9 June 2020",
+    "Description" : "A single hit at full intensity"
+  },
+  "Pattern" : [
+    {
+      "Event" : {
+        "EventType" : "HapticTransient",
+        "EventParameters" : [
+          {
+            "ParameterID" : "HapticIntensity",
+            "ParameterValue" : 1.000000
+          }
+        ],
+        "Time" : 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+    "Version": 1.0,
+    "Metadata":
+        {
+            "Project" : "Haptic Sampler",
+            "Created" : "5 June 2019",
+            "Description" : "An effect that builds in sharpness and intensity."
+        },
+    "Pattern":
+    [
+        {
+            "Event":
+            {
+                "Time": 0.0,
+                "EventType": "HapticContinuous",
+                "EventDuration": 1.7,
+                "EventParameters":
+                [
+                    { "ParameterID": "HapticIntensity", "ParameterValue": 1.0 },
+                    { "ParameterID": "HapticSharpness", "ParameterValue": 0.5 }
+                ]
+            }
+        },
+        {
+            "ParameterCurve":
+            {
+                "ParameterID": "HapticIntensityControl",
+                "Time": 0.0,
+                "ParameterCurveControlPoints":
+                [
+                    { "Time": 0, "ParameterValue": 0.0 },
+                    { "Time": 1.1, "ParameterValue": 0.5 },
+                    { "Time": 1.7, "ParameterValue": 0.0 }
+                ]
+            }
+        },
+        {
+            "ParameterCurve":
+            {
+                "ParameterID": "HapticSharpnessControl",
+                "Time": 0.0,
+                "ParameterCurveControlPoints":
+                [
+                    { "Time": 0, "ParameterValue": -0.8 },
+                    { "Time": 1.7, "ParameterValue": 0.8 }
+                ]
+            }
+        }
+    ]
+}

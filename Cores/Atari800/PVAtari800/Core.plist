@@ -9,6 +9,7 @@
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.5200</string>
+		<string>com.provenance.8bit</string>
 	</array>
 	<key>PVProjectName</key>
 	<string>Atari 800</string>

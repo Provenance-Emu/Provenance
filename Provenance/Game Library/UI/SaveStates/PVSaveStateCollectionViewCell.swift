@@ -41,7 +41,7 @@ final class PVSaveStateCollectionViewCell: UICollectionViewCell {
 
     weak var saveState: PVSaveState? {
         didSet {
-            if let saveState = saveState {
+            if let saveState = saveState, !saveState.isInvalidated {
                 if let image = saveState.image {
                     imageView.image = UIImage(contentsOfFile: image.url.path)
                 }

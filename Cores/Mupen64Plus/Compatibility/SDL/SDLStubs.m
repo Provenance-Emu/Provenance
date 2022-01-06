@@ -84,6 +84,11 @@ Uint32 SDL_GetTicks(void)
     return MupenOEMonotonicTime();
 }
 
+void SDL_WasInit(UInt32 flags)
+{
+    NSLog(@"SDL_WasInit: %i", flags);
+}
+
 void SDL_Quit(void)
 {
 }

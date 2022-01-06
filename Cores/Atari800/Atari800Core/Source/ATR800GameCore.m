@@ -816,6 +816,27 @@ int UI_SelectCartType(int k)
         }
     }
 
+	if([[_currentCore systemIdentifier] isEqualToString:@"com.provenance.atari8bit"])
+	{
+		// TODO: improve detection using MD5 lookup
+		switch (k)
+		{
+			case 2:    return CARTRIDGE_STD_2;
+			case 4:    return CARTRIDGE_STD_4;
+			case 8:    return CARTRIDGE_STD_8;
+			case 16:   return CARTRIDGE_STD_16;
+			case 32:   return CARTRIDGE_XEGS_32;
+			case 40:   return CARTRIDGE_BBSB_40;
+			case 64:   return CARTRIDGE_XEGS_07_64;
+			case 128:  return CARTRIDGE_XEGS_128;
+			case 256:  return CARTRIDGE_XEGS_256;
+			case 512:  return CARTRIDGE_XEGS_512;
+			case 1024: return CARTRIDGE_ATMAX_1024;
+			default:
+				return CARTRIDGE_NONE;
+		}
+	}
+
     if([[_currentCore systemIdentifier] isEqualToString:@"com.provenance.5200"])
     {
         NSArray *One_Chip_16KB = @[@"a47fcb4eedab9418ea098bb431a407aa", // A.E. (Proto)

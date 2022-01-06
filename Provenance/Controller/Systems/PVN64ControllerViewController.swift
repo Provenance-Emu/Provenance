@@ -8,6 +8,7 @@
 //
 
 import PVSupport
+import GameController
 
 private extension JSButton {
     var buttonTag: PVN64Button {
@@ -20,6 +21,8 @@ private extension JSButton {
     }
 }
 
+// TODO: Make VirtualGC a protocol that calls different methods if iOS 15+, rather than seperate classes, or a factory or something more dynamic
+
 // These should override the default protocol but theyu're not.
 // I made a test Workspace with the same protocl inheritance with assoicated type
 // and the extension overrides in this format overrode the default extension implimentations.
@@ -27,6 +30,83 @@ private extension JSButton {
 
 // extension ControllerVC where Self == PVN64ControllerViewController {
 // extension ControllerVC where ResponderType : PVN64SystemResponderClient {
+
+@available(iOS 15.0, *)
+let createVirtualController = { (elements: Set<String>) -> GCVirtualController in
+
+  // Earlier I used `fullScreenCover` for games in MenuScreen,
+  // but GCVirtualController was BELOW it.
+  // So keep GCVirtualController in View, not Overlay/Modal/Sheet containers
+  // https://developer.apple.com/forums/thread/682138
+  let virtualConfiguration = GCVirtualController.Configuration()
+  virtualConfiguration.elements = elements
+  let virtualController = GCVirtualController(configuration: virtualConfiguration)
+
+  return virtualController
+}
+
+@available(iOS 15.0, *)
+final class PVN64ControllerViewController2: PVControllerViewController<PVN64SystemResponderClient> {
+	let cPadAsThumbstick: Bool = true
+	lazy var elements: Set<String> = {
+		var elements: Set<String> = [
+			GCInputLeftThumbstick,
+			GCInputButtonA,
+			GCInputButtonB,
+			GCInputLeftShoulder,
+			GCInputRightShoulder,
+			GCInputLeftTrigger,
+			GCInputDirectionPad,
+			GCInputDirectionalCardinalDpad]
+
+		if cPadAsThumbstick {
+			elements.insert(GCInputRightShoulder)
+		}
+		return elements
+	}()
+
+	var virtualController: GCVirtualController? {
+		didSet {
+			if let virtualController = virtualController {
+				virtualController.connect { maybeError in
+					guard maybeError == nil else {
+						ELOG("\(maybeError!.localizedDescription)")
+						return
+					}
+				}
+			}
+		}
+		willSet {
+			if newValue == nil, let virtualController = virtualController {
+				virtualController.disconnect()
+			}
+		}
+	}
+
+	override func setupTouchControls() {
+		guard virtualController == nil else { return }
+		let isKeyboardConnected = GCKeyboard.coalesced != nil
+		if isKeyboardConnected {
+		  print("Keyboard is connected")
+		}
+
+		let isGamepadConnected = GCController.controllers().count > 0
+
+		if isGamepadConnected {
+		  print("Gamepad is connected")
+		}
+// TODO: Hookup / check keyboard
+//		if !isGamepadConnected {
+//		  print("There is no keyboard or gamepad so just create Virtual one")
+			virtualController = createVirtualController(elements)
+//		}
+	}
+
+	override func viewWillDisappear(_ animated: Bool) {
+		virtualController?.disconnect()
+		super.viewWillDisappear(animated)
+	}
+}
 
 final class PVN64ControllerViewController: PVControllerViewController<PVN64SystemResponderClient> {
     override func layoutViews() {

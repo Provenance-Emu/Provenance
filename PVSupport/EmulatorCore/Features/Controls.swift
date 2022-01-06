@@ -11,12 +11,66 @@ import Foundation
 @objc public protocol ResponderClient: AnyObject {}
 
 @objc public protocol ButtonResponder {
+	var valueChangedHandler: GCExtendedGamepadValueChangedHandler? { get }
+
     func didPush(_ button: Int, forPlayer player: Int)
     func didRelease(_ button: Int, forPlayer player: Int)
 }
 
 @objc public protocol JoystickResponder {
     func didMoveJoystick(_ button: Int, withValue value: CGFloat, forPlayer player: Int)
+}
+
+@objc public protocol KeyboardResponder {
+	var gameSupportsKeyboard: Bool { get }
+	var requiresKeyboard: Bool { get }
+
+	var keyChangedHandler: GCKeyboardValueChangedHandler? { get }
+
+	@available(iOS 14.0, *)
+	func keyDown(_ key: GCKeyCode)
+//	func keyDown(_ key: GCKeyCode, chararacters: String, charactersIgnoringModifiers: String)
+
+	@available(iOS 14.0, *)
+	func keyUp(_ key: GCKeyCode)
+//	func keyUp(_ key: GCKeyCode, chararacters: String, charactersIgnoringModifiers: String)
+}
+
+@objc public enum MouseButton: Int {
+	case left
+	case right
+	case middle
+	case auxiliary
+}
+
+@objc public protocol MouseResponder {
+	var gameSupportsMouse: Bool { get }
+	var requiresMouse: Bool { get }
+
+	@available(iOS 14.0, *)
+	func didScroll(_ cursor: GCDeviceCursor)
+
+	var mouseMovedHandler: GCMouseMoved? { get }
+	func mouseMoved(atPoint point: CGPoint)
+
+	func leftMouseDown(atPoint point: CGPoint)
+	func leftMouseUp()
+
+	func rightMouseDown(atPoint point: CGPoint)
+	func rightMouseUp()
+}
+
+@objc public enum Touchpad: Int {
+	case primary
+	case secondary
+}
+
+@objc public protocol TouchPadResponder {
+	var touchedChangedHandler: GCControllerButtonTouchedChangedHandler? { get }
+	var pressedChangedHandler: GCControllerButtonValueChangedHandler? { get }
+	var valueChangedHandler: GCControllerButtonValueChangedHandler? { get }
+
+	var gameSupportsTouchpad: Bool { get }
 }
 
 @objc extension PVEmulatorCore: ResponderClient {}
@@ -449,7 +503,7 @@ import Foundation
     case count
 }
 
-@objc public protocol PVA8SystemResponderClient: ResponderClient, ButtonResponder {
+@objc public protocol PVA8SystemResponderClient: ResponderClient, ButtonResponder, KeyboardResponder, MouseResponder {
     func mouseMoved(at point: CGPoint)
     func leftMouseDown(at point: CGPoint)
     func leftMouseUp()
@@ -827,7 +881,6 @@ import Foundation
     @objc(didReleaseSSButton:forPlayer:)
     func didRelease(_ button: PVSaturnButton, forPlayer player: Int)
 }
-
 
 // MARK: - Magnavox Odyssey2/Videopac+
 

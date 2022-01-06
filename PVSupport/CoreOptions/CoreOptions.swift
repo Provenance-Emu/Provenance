@@ -72,6 +72,12 @@ public extension CoreOptional { // where Self:PVEmulatorCore {
             } else {
                 return .notFound
             }
+		case .rangef:
+			if let value = valueForOption(NSNumber.self, option.key) {
+				return .number(value)
+			} else {
+				return .notFound
+			}
         case .multi:
             if let value = valueForOption(NSNumber.self, option.key) {
                 return .number(value)
@@ -80,6 +86,14 @@ public extension CoreOptional { // where Self:PVEmulatorCore {
             } else {
                 return .notFound
             }
+		case .enumeration:
+			if let value = valueForOption(NSNumber.self, option.key) {
+				return .number(value)
+			} else if let value = valueForOption(String.self, option.key) {
+				return .string(value)
+			} else {
+				return .notFound
+			}
         case .group:
             assertionFailure("Feature unfinished")
             return .notFound
@@ -110,13 +124,21 @@ public extension CoreOptional { // where Self:PVEmulatorCore {
 //	public let max : T
 // }
 
-public struct CoreOptionRange {
-    public let defaultValue: Int
-    public let min: Int
-    public let max: Int
+public struct CoreOptionRange<T:Numeric> {
+    public let defaultValue: T
+    public let min: T
+    public let max: T
+
+	public init(defaultValue: T, min: T, max: T) {
+		self.defaultValue = defaultValue
+		self.min = min
+		self.max = max
+	}
 }
 
-extension CoreOptionRange: Codable, Equatable, Hashable {}
+extension CoreOptionRange: Codable where T:Codable {}
+extension CoreOptionRange: Equatable where T:Equatable {}
+extension CoreOptionRange: Hashable where T:Hashable {}
 
 public struct CoreOptionMultiValue {
     public let title: String
@@ -125,9 +147,9 @@ public struct CoreOptionMultiValue {
     public static func values(fromArray a: [[String]]) -> [CoreOptionMultiValue] {
         return a.compactMap {
             if $0.count == 1 {
-                return CoreOptionMultiValue(title: $0[0], description: nil)
+				return .init(title: $0[0], description: nil)
             } else if $0.count >= 2 {
-                return CoreOptionMultiValue(title: $0[0], description: $0[1])
+				return .init(title: $0[0], description: $0[1])
             } else {
                 return nil
             }
@@ -136,7 +158,7 @@ public struct CoreOptionMultiValue {
 
     public static func values(fromArray a: [String]) -> [CoreOptionMultiValue] {
         return a.map {
-            CoreOptionMultiValue(title: $0, description: nil)
+			.init(title: $0, description: nil)
         }
     }
 }
@@ -209,11 +231,13 @@ public protocol MultiCOption: COption {
 // }
 
 public enum CoreOption {
-    case bool(display: CoreOptionValueDisplay, defaultValue: Bool)
-    case range(display: CoreOptionValueDisplay, range: CoreOptionRange, defaultValue: Int)
-    case multi(display: CoreOptionValueDisplay, values: [CoreOptionMultiValue])
-    case string(display: CoreOptionValueDisplay, defaultValue: String)
-    case group(display: CoreOptionValueDisplay, subOptions: [CoreOption])
+    case bool(_ display: CoreOptionValueDisplay, defaultValue: Bool = false)
+    case range(_ display: CoreOptionValueDisplay, range: CoreOptionRange<Int>, defaultValue: Int)
+	case rangef(_ display: CoreOptionValueDisplay, range: CoreOptionRange<Float>, defaultValue: Float)
+    case multi(_ display: CoreOptionValueDisplay, values: [CoreOptionMultiValue])
+	case enumeration(_ display: CoreOptionValueDisplay, values: [CoreOptionMultiValue])
+    case string(_ display: CoreOptionValueDisplay, defaultValue: String = "")
+    case group(_ display: CoreOptionValueDisplay, subOptions: [CoreOption])
 
     public var defaultValue: Any? {
         switch self {
@@ -221,8 +245,12 @@ public enum CoreOption {
             return defaultValue
         case let .range(_, _, defaultValue):
             return defaultValue
+		case let .rangef(_, _, defaultValue):
+			return defaultValue
         case let .multi(_, values):
             return values.first?.title
+		case let .enumeration(_, values):
+			return values.first?.title
         case let .string(_, defaultValue):
             return defaultValue
         case .group:
@@ -236,13 +264,17 @@ public enum CoreOption {
             return display.title
         case .range(let display, _, _):
             return display.title
+		case .rangef(let display, _, _):
+			return display.title
         case .multi(let display, _):
             return display.title
         case .string(let display, _):
             return display.title
         case .group(let display, _):
             return display.title
-        }
+		case .enumeration(let display, _):
+			return display.title
+		}
     }
 
     func subOptionForKey(_ key: String) -> CoreOption? {
@@ -257,7 +289,7 @@ public enum CoreOption {
 
 extension CoreOption: Codable {
     public enum CodingError: Error { case decoding(String) }
-    enum CodableKeys: String, CodingKey { case display, defaultValue, range, values, subOptions }
+    enum CodableKeys: String, CodingKey { case display, defaultValue, range, rangef, values, subOptions }
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodableKeys.self)
@@ -269,31 +301,37 @@ extension CoreOption: Codable {
 
         // Bool
         if let defaultValue = try? values.decode(Bool.self, forKey: .defaultValue) {
-            self = .bool(display: display, defaultValue: defaultValue)
+            self = .bool(display, defaultValue: defaultValue)
             return
         }
 
         // Range
-        if let range = try? values.decode(CoreOptionRange.self, forKey: .range), let defaultValue = try? values.decode(Int.self, forKey: .defaultValue) {
-            self = .range(display: display, range: range, defaultValue: defaultValue)
+        if let range = try? values.decode(CoreOptionRange<Int>.self, forKey: .range), let defaultValue = try? values.decode(Int.self, forKey: .defaultValue) {
+            self = .range(display, range: range, defaultValue: defaultValue)
             return
         }
 
+		// Rangef
+		if let rangef = try? values.decode(CoreOptionRange<Float>.self, forKey: .rangef), let defaultValue = try? values.decode(Float.self, forKey: .defaultValue) {
+			self = .rangef(display, range: rangef, defaultValue: defaultValue)
+			return
+		}
+
         // multi
         if let values = try? values.decode([CoreOptionMultiValue].self, forKey: .values) {
-            self = .multi(display: display, values: values)
+            self = .multi(display, values: values)
             return
         }
 
         // string
         if let defaultValue = try? values.decode(String.self, forKey: .defaultValue) {
-            self = .string(display: display, defaultValue: defaultValue)
+            self = .string(display, defaultValue: defaultValue)
             return
         }
 
         // group
         if let subOptions = try? values.decode([CoreOption].self, forKey: CodableKeys.subOptions) {
-            self = .group(display: display, subOptions: subOptions)
+            self = .group(display, subOptions: subOptions)
             return
         }
 
@@ -311,9 +349,16 @@ extension CoreOption: Codable {
             try container.encode(display, forKey: .display)
             try container.encode(range, forKey: .range)
             try container.encode(defaultValue, forKey: .defaultValue)
+		case let .rangef(display, range, defaultValue):
+			try container.encode(display, forKey: .display)
+			try container.encode(range, forKey: .range)
+			try container.encode(defaultValue, forKey: .defaultValue)
         case let .multi(display, values):
             try container.encode(display, forKey: .display)
             try container.encode(values, forKey: .values)
+		case let .enumeration(display, values):
+			try container.encode(display, forKey: .display)
+			try container.encode(values, forKey: .values)
         case let .string(display, defaultValue):
             try container.encode(display, forKey: .display)
             try container.encode(defaultValue, forKey: .defaultValue)
@@ -331,6 +376,11 @@ extension CoreOptionMultiValue {
         self.title = title
         self.description = description
     }
+
+	public init(_ title: String, _ description: String) {
+		self.title = title
+		self.description = description
+	}
 }
 
 // public protocol CoreOptionP {

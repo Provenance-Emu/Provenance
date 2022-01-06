@@ -51,6 +51,7 @@ __attribute__((visibility("default")))
 @property (nonatomic, assign) int videoWidth;
 @property (nonatomic, assign) int videoHeight;
 @property (nonatomic, assign) int videoBitDepth;
+@property (nonatomic, assign) BOOL isGamesharkActive;
 
 - (void) videoInterrupt;
 - (void) swapBuffers;

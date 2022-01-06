@@ -187,6 +187,14 @@
 		B3CDEEC621D4C490000C55F7 /* CoreActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEC421D4C490000C55F7 /* CoreActions.swift */; };
 		B3CDEEC821D4C4E5000C55F7 /* SaveStateSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEC721D4C4E5000C55F7 /* SaveStateSupport.swift */; };
 		B3CDEEC921D4C4E5000C55F7 /* SaveStateSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEC721D4C4E5000C55F7 /* SaveStateSupport.swift */; };
+		B3D0EE20277FE85F002DC0A5 /* HapticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D0EE1F277FE85F002DC0A5 /* HapticsManager.swift */; };
+		B3D0EE21277FE85F002DC0A5 /* HapticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D0EE1F277FE85F002DC0A5 /* HapticsManager.swift */; };
+		B3D0EE23277FE87A002DC0A5 /* AHAP in Resources */ = {isa = PBXBuildFile; fileRef = B3D0EE22277FE879002DC0A5 /* AHAP */; };
+		B3D0EE24277FE87A002DC0A5 /* AHAP in Resources */ = {isa = PBXBuildFile; fileRef = B3D0EE22277FE879002DC0A5 /* AHAP */; };
+		B3D0EE25277FE87A002DC0A5 /* AHAP in Resources */ = {isa = PBXBuildFile; fileRef = B3D0EE22277FE879002DC0A5 /* AHAP */; };
+		B3D0EE26277FE880002DC0A5 /* HapticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D0EE1F277FE85F002DC0A5 /* HapticsManager.swift */; };
+		B3D0EE28277FE8C9002DC0A5 /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D0EE27277FE8C9002DC0A5 /* CoreHaptics.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		B3D0EE2A277FE8E1002DC0A5 /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D0EE29277FE8E0002DC0A5 /* CoreHaptics.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3D73D3D1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D73D3B1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3D73D3E1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D73D3B1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3D73D401EA15BB20023925B /* NSFileManager+OEHashingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D73D3C1EA15BB20023925B /* NSFileManager+OEHashingAdditions.m */; };
@@ -281,6 +289,10 @@
 		B3CDEEC121D4C454000C55F7 /* Controls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controls.swift; sourceTree = "<group>"; };
 		B3CDEEC421D4C490000C55F7 /* CoreActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreActions.swift; sourceTree = "<group>"; };
 		B3CDEEC721D4C4E5000C55F7 /* SaveStateSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveStateSupport.swift; sourceTree = "<group>"; };
+		B3D0EE1F277FE85F002DC0A5 /* HapticsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HapticsManager.swift; sourceTree = "<group>"; };
+		B3D0EE22277FE879002DC0A5 /* AHAP */ = {isa = PBXFileReference; lastKnownFileType = folder; path = AHAP; sourceTree = "<group>"; };
+		B3D0EE27277FE8C9002DC0A5 /* CoreHaptics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreHaptics.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.2.sdk/System/Library/Frameworks/CoreHaptics.framework; sourceTree = DEVELOPER_DIR; };
+		B3D0EE29277FE8E0002DC0A5 /* CoreHaptics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreHaptics.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/CoreHaptics.framework; sourceTree = DEVELOPER_DIR; };
 		B3D73D3B1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+OEHashingAdditions.h"; sourceTree = "<group>"; };
 		B3D73D3C1EA15BB20023925B /* NSFileManager+OEHashingAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+OEHashingAdditions.m"; sourceTree = "<group>"; };
 		B3E6DADD20B7BF8600454DD4 /* UIDeviceExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIDeviceExtension.swift; sourceTree = "<group>"; };
@@ -328,6 +340,7 @@
 				B3296E8926C67F6B0088AC32 /* CocoaLumberjackSwiftLogBackend in Frameworks */,
 				B3AF6FDF219161C0000FA7F9 /* GameController.framework in Frameworks */,
 				B3AF6FDD219161BC000FA7F9 /* Foundation.framework in Frameworks */,
+				B3D0EE28277FE8C9002DC0A5 /* CoreHaptics.framework in Frameworks */,
 				B336B8F826B3991500960A81 /* CocoaLumberjackSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -336,6 +349,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3D0EE2A277FE8E1002DC0A5 /* CoreHaptics.framework in Frameworks */,
 				B3CA5B5326E9E4DC00687B27 /* CocoaLumberjack in Frameworks */,
 				B336B8F426B398A900960A81 /* Reachability in Frameworks */,
 				B3AF6FDA2191616C000FA7F9 /* Foundation.framework in Frameworks */,
@@ -391,6 +405,8 @@
 		1ACEA64617F7467D0031B1C9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3D0EE27277FE8C9002DC0A5 /* CoreHaptics.framework */,
+				B3D0EE29277FE8E0002DC0A5 /* CoreHaptics.framework */,
 				B305EF9B276B4FDC003AE510 /* CoreGraphics.framework */,
 				B305EF99276B4F0A003AE510 /* GameKit.framework */,
 				B3FFF02C26E9E65800A33143 /* AVFoundation.framework */,
@@ -502,6 +518,8 @@
 		B3AB36DC2187F4C4009D9244 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				B3D0EE22277FE879002DC0A5 /* AHAP */,
+				B3D0EE1F277FE85F002DC0A5 /* HapticsManager.swift */,
 				B3AB37462187F57A009D9244 /* iCade */,
 			);
 			path = Controller;
@@ -818,6 +836,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3D0EE25277FE87A002DC0A5 /* AHAP in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -832,6 +851,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3D0EE24277FE87A002DC0A5 /* AHAP in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -839,6 +859,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3D0EE23277FE87A002DC0A5 /* AHAP in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -879,6 +900,7 @@
 				B305EF76276B4E41003AE510 /* RealTimeThread.m in Sources */,
 				B305EF77276B4E41003AE510 /* DiscSwappable.swift in Sources */,
 				B305EF78276B4E41003AE510 /* NSObject+PVAbstractAdditions.m in Sources */,
+				B3D0EE26277FE880002DC0A5 /* HapticsManager.swift in Sources */,
 				B305EF79276B4E41003AE510 /* PVEmulatorCore.m in Sources */,
 				B305EF7A276B4E41003AE510 /* PVLogEntry.m in Sources */,
 				B305EF7B276B4E41003AE510 /* TPCircularBuffer.c in Sources */,
@@ -935,6 +957,7 @@
 				B3D73D401EA15BB20023925B /* NSFileManager+OEHashingAdditions.m in Sources */,
 				B3CDEEC021D4C41D000C55F7 /* DiscSwappable.swift in Sources */,
 				B3F0846D2188CA7A00FF39EE /* CocoaLumberExtensions.swift in Sources */,
+				B3D0EE21277FE85F002DC0A5 /* HapticsManager.swift in Sources */,
 				B302F8AD20B73D6500C5E502 /* PVLogging.m in Sources */,
 				B3447E91218B7E4B00557ACE /* CAAudioTimeStamp.cpp in Sources */,
 				B3C96EA91D62C3C3003F1E93 /* OEGameAudio.m in Sources */,
@@ -983,6 +1006,7 @@
 				B34AB57D2106DC6100C45F09 /* RealTimeThread.m in Sources */,
 				B3CDEEBF21D4C41D000C55F7 /* DiscSwappable.swift in Sources */,
 				B34AB57B2106DC6100C45F09 /* NSObject+PVAbstractAdditions.m in Sources */,
+				B3D0EE20277FE85F002DC0A5 /* HapticsManager.swift in Sources */,
 				B34AB57E2106DC6100C45F09 /* PVEmulatorCore.m in Sources */,
 				B34AB5742106DC4100C45F09 /* PVLogEntry.m in Sources */,
 				B34AB5792106DC5300C45F09 /* TPCircularBuffer.c in Sources */,
