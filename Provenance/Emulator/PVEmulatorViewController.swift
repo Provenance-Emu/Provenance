@@ -878,6 +878,14 @@ extension NSNumber {
 
 extension GCController {
     func setupPauseHandler(onPause: @escaping () -> Void) {
+        // Use buttonHome for iOS/tvOS14 and later
+        if let buttonHome = buttonHome {
+            buttonHome.pressedChangedHandler = { _, _, isPressed in
+                if isPressed {
+                    onPause()
+                }
+            }
+        }
         // Using buttonMenu is the recommended way for iOS/tvOS13 and later
         if let buttonMenu = buttonMenu {
             buttonMenu.pressedChangedHandler = { _, _, isPressed in
@@ -887,7 +895,8 @@ extension GCController {
             }
         } else {
             // Fallback to the old method
-            controllerPausedHandler = { _ in onPause()
+            controllerPausedHandler = { _ in
+                onPause()
 			}
         }
     }
@@ -899,6 +908,13 @@ extension GCController {
             } else if let extendedGamepad = extendedGamepad {
                 return extendedGamepad.buttonMenu
             }
+        }
+        return nil
+    }
+    
+    private var buttonHome: GCControllerButtonInput? {
+        if #available(iOS 14.0, tvOS 14.0, *) {
+            return extendedGamepad?.buttonHome
         }
         return nil
     }
