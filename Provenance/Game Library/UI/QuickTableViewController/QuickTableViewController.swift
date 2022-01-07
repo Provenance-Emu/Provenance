@@ -33,13 +33,17 @@ open class QuickTableViewController: UIViewController, UITableViewDataSource, UI
   open var clearsSelectionOnViewWillAppear = true
 
   /// Returns the table view managed by the controller object.
-    open var tableView: UITableView = {
-        if #available(iOS 13.0, tvOS 13.0, *) {
-            return UITableView(frame: .zero, style: .insetGrouped)
-        } else {
-            return UITableView(frame: .zero, style: .grouped)
-        }
-    }()
+    #if os(iOS) || os(macOS)
+        open var tableView: UITableView = {
+            if #available(iOS 13.0, *) {
+                return UITableView(frame: .zero, style: .insetGrouped)
+            } else {
+                return UITableView(frame: .zero, style: .grouped)
+            }
+        }()
+    #else
+        open var tableView: UITableView = UITableView(frame: .zero, style: .grouped)
+    #endif
 
   /// The layout of sections and rows to display in the table view.
   open var tableContents: [Section] = [] {
