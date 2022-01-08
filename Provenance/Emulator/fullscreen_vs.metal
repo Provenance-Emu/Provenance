@@ -10,7 +10,7 @@ struct Outputs
 vertex Outputs fullscreen_vs(uint base [[base_vertex]], uint vid [[vertex_id]])
 {
     uint in_vid = (vid - base);
-    float2 uv = float2(float(((in_vid << uint(1)) & 2u)), float((in_vid & 2u)));
+    float2 uv = float2(float(((in_vid << 1u) & 2u)), float((in_vid & 2u)));
     float2 pos = ((uv * float2(2.0f, -2.0f)) + float2(-1.0f, 1.0f));
     
     Outputs O;
