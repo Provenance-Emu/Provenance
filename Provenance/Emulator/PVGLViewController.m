@@ -17,20 +17,36 @@
 #import <OpenGLES/ES3/glext.h>
 #import <OpenGLES/EAGL.h>
 #else
-@import Metal;
 @import OpenGL;
-@import MetalKit;
 @import AppKit;
 @import GLUT;
 #endif
 
-#define USE_METAL TARGET_OS_MACCATALYST
+#define USE_METAL 1//TARGET_OS_MACCATALYST
+#define BUFFER_COUNT 3
+
+#if USE_METAL
+@import Metal;
+@import MetalKit;
+
+struct float2{ float x; float y; };
+struct float4 { float x; float y; float z; float w; };
+
+struct CRT_Data
+{
+    struct float4 DisplayRect;
+    struct float2 EmulatedImageSize;
+    struct float2 FinalRes;
+};
+
+#else
 
 struct PVVertex
 {
     GLfloat x, y, z;
     GLfloat u, v;
 };
+#endif
 
 #define BUFFER_OFFSET(x) ((char *)NULL + (x))
 
@@ -45,6 +61,10 @@ struct RenderSettings {
 @interface PVGLViewController () <PVRenderDelegate>
 #endif
 {
+#if USE_METAL
+    id<MTLBuffer> _uploadBuffer[BUFFER_COUNT];
+    uint _frameCount;
+#else
     GLuint alternateThreadFramebufferBack;
     GLuint alternateThreadFramebufferFront;
     GLuint alternateThreadColorTextureBack;
@@ -66,13 +86,10 @@ struct RenderSettings {
     
     GLuint indexVBO, vertexVBO;
     
-	GLuint texture;
+    GLuint texture;
+#endif
     
     struct RenderSettings renderSettings;
-
-#if USE_METAL
-//    CADisplayLink displayLink;
-#endif
 }
 
 #if USE_METAL
@@ -82,6 +99,12 @@ struct RenderSettings {
 @property (nonatomic, strong) MTKView *mtlview;
 @property (nonatomic, strong) id<MTLDevice> device;
 @property (nonatomic, strong) id<MTLCommandQueue> commandQueue;
+@property (nonatomic, strong) id<MTLRenderPipelineState> blitPipeline;
+@property (nonatomic, strong) id<MTLRenderPipelineState> crtFilterPipeline;
+@property (nonatomic, strong) id<MTLSamplerState> pointSampler;
+@property (nonatomic, strong) id<MTLSamplerState> linearSampler;
+@property (nonatomic, strong) id<MTLTexture> inputTexture;
+
 #else
 @property (nonatomic, strong) EAGLContext *glContext;
 @property (nonatomic, strong) EAGLContext *alternateThreadGLContext;
@@ -100,6 +123,7 @@ struct RenderSettings {
 
 - (void)dealloc
 {
+#if !USE_METAL
     if (alternateThreadDepthRenderbuffer > 0)
     {
         glDeleteRenderbuffers(1, &alternateThreadDepthRenderbuffer);
@@ -141,6 +165,7 @@ struct RenderSettings {
         glDeleteShader(defaultVertexShader);
     }
     glDeleteTextures(1, &texture);
+#endif
     
     [[PVSettingsModel shared] removeObserver:self forKeyPath:@"crtFilterEnabled"];
     [[PVSettingsModel shared] removeObserver:self forKeyPath:@"imageSmoothing"];
@@ -201,6 +226,7 @@ struct RenderSettings {
 
 	GLKView *view = (GLKView *)self.view;
 #else
+    _frameCount = 0;
     self.device = MTLCreateSystemDefaultDevice();
 
     MTKView *view = [[MTKView alloc] initWithFrame:self.view.bounds device:self.device];
@@ -209,7 +235,7 @@ struct RenderSettings {
     view.device = self.device;
     view.clearColor = MTLClearColorMake(0.0, 0.0, 0.0, 0.0);
     view.depthStencilPixelFormat = MTLPixelFormatDepth32Float_Stencil8;
-    view.sampleCount = 4;
+    view.sampleCount = 1;
     view.delegate = self;
     self.commandQueue = [_device newCommandQueue];
 
@@ -235,14 +261,25 @@ struct RenderSettings {
     switch (depthFormat) {
         case GL_DEPTH_COMPONENT16:
 #if USE_METAL
-            view.depthStencilPixelFormat = MTLPixelFormatRG8Unorm_sRGB;
+            if (@available(macOS 10.12, iOS 13.0, *))
+            {
+                view.depthStencilPixelFormat = MTLPixelFormatDepth16Unorm;
+            }
+            else
+            {
+                view.depthStencilPixelFormat = MTLPixelFormatDepth32Float;
+            }
 #else
             view.drawableDepthFormat = GLKViewDrawableDepthFormat16;
 #endif
             break;
         case GL_DEPTH_COMPONENT24:
 #if USE_METAL
-            view.depthStencilPixelFormat = MTLPixelFormatX24_Stencil8;
+            view.depthStencilPixelFormat = MTLPixelFormatX32_Stencil8; // fallback to D32 if D24 isn't supported
+    #if !TARGET_OS_IPHONE
+            if (_device.isDepth24Stencil8PixelFormatSupported)
+                view.depthStencilPixelFormat = MTLPixelFormatX24_Stencil8;
+    #endif
 #else
             view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
 #endif
@@ -264,27 +301,29 @@ struct RenderSettings {
             // Enable multisampling
         if(PVSettingsModel.shared.debugOptions.multiSampling) {
 #if USE_METAL
-            [view setSampleCount:4];
+            //[view setSampleCount:4]; // Having the view multi-sampled doesn't make sense to me. We need to resolve the MSAA before presenting it
 #else
             view.drawableMultisample = GLKViewDrawableMultisample4X;
 #endif
         }
     }
 
-    [self setupVBOs];
     [self setupTexture];
-#if USE_METAL
-#else
+#if !USE_METAL
     defaultVertexShader = [self compileShaderResource:@"shaders/default/default_vertex" ofType:GL_VERTEX_SHADER];
-    [self setupBlitShader];
-    [self setupCRTShader];
+    [self setupVBOs];
 #endif
     
+    [self setupBlitShader];
+    [self setupCRTShader];
+
+#if !USE_METAL
     alternateThreadFramebufferBack = 0;
     alternateThreadFramebufferFront = 0;
     alternateThreadColorTextureBack = 0;
     alternateThreadColorTextureFront = 0;
     alternateThreadDepthRenderbuffer = 0;
+#endif
 }
 
 #if !USE_METAL
@@ -390,6 +429,54 @@ struct RenderSettings {
 
 - (void)setupTexture
 {
+#if USE_METAL
+    {
+        uint formatByteWidth = [self getByteWidthForPixelFormat:[self.emulatorCore pixelFormat] type:[self.emulatorCore pixelType]];
+        
+        for (int i = 0; i < BUFFER_COUNT; ++i)
+        {
+            _uploadBuffer[i] = [_device newBufferWithLength:self.emulatorCore.bufferSize.width * self.emulatorCore.bufferSize.height * formatByteWidth options:MTLResourceStorageModeShared];
+        }
+        
+        MTLTextureDescriptor* desc = [MTLTextureDescriptor new];
+        desc.textureType = MTLTextureType2D;
+        desc.pixelFormat = [self getMTLPixelFormatFromGLPixelFormat:[self.emulatorCore pixelFormat] type:[self.emulatorCore pixelType]];
+        desc.width = self.emulatorCore.bufferSize.width;
+        desc.height = self.emulatorCore.bufferSize.height;
+        desc.storageMode = MTLStorageModePrivate;
+        desc.usage = MTLTextureUsageShaderRead;
+        #if DEBUG
+            desc.usage |= MTLTextureUsageRenderTarget; // needed for debug clear
+        #endif
+        
+        _inputTexture = [_device newTextureWithDescriptor:desc];
+    }
+    
+    {
+        MTLSamplerDescriptor* desc = [MTLSamplerDescriptor new];
+        desc.minFilter = MTLSamplerMinMagFilterNearest;
+        desc.magFilter = MTLSamplerMinMagFilterNearest;
+        desc.mipFilter = MTLSamplerMipFilterNearest;
+        desc.sAddressMode = MTLSamplerAddressModeClampToEdge;
+        desc.tAddressMode = MTLSamplerAddressModeClampToEdge;
+        desc.rAddressMode = MTLSamplerAddressModeClampToEdge;
+        
+        _pointSampler = [_device newSamplerStateWithDescriptor:desc];
+    }
+    
+    {
+        MTLSamplerDescriptor* desc = [MTLSamplerDescriptor new];
+        desc.minFilter = MTLSamplerMinMagFilterLinear;
+        desc.magFilter = MTLSamplerMinMagFilterLinear;
+        desc.mipFilter = MTLSamplerMipFilterNearest;
+        desc.sAddressMode = MTLSamplerAddressModeClampToEdge;
+        desc.tAddressMode = MTLSamplerAddressModeClampToEdge;
+        desc.rAddressMode = MTLSamplerAddressModeClampToEdge;
+        
+        _linearSampler = [_device newSamplerStateWithDescriptor:desc];
+    }
+#else
+    
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
     glTexImage2D(GL_TEXTURE_2D, 0, [self.emulatorCore internalPixelFormat], self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, 0, [self.emulatorCore pixelFormat], [self.emulatorCore pixelType], self.emulatorCore.videoBuffer);
@@ -405,8 +492,11 @@ struct RenderSettings {
     }
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+#endif
 }
 
+
+#if !USE_METAL
 - (void)setupVBOs
 {
     glGenBuffers(1, &vertexVBO);
@@ -465,7 +555,6 @@ struct RenderSettings {
     }
 }
 
-#if !USE_METAL
 - (GLuint)compileShaderResource:(NSString*)shaderResourceName ofType:(GLenum)shaderType
 {
     // TODO: check shaderType == GL_VERTEX_SHADER
@@ -753,6 +842,102 @@ struct RenderSettings {
     }
 }
 #else
+
+// these helper functions getByteWidthForPixelFormat and getMTLPixelFormatFromGLPixelFormat are not great
+// ideally we'd take in API agnostic data rather than remapping GL to MTL but this will work for now even though it's a bit fragile
+- (uint)getByteWidthForPixelFormat:(GLenum)pixelFormat type:(GLenum)pixelType
+{
+    uint typeWidth = 0;
+    switch (pixelType)
+    {
+        case GL_BYTE:
+        case GL_UNSIGNED_BYTE:
+            typeWidth = 1;
+            break;
+        case GL_SHORT:
+        case GL_UNSIGNED_SHORT:
+        case GL_UNSIGNED_SHORT_5_6_5:
+            typeWidth = 2;
+            break;
+        case GL_INT:
+        case GL_UNSIGNED_INT:
+        case GL_FLOAT:
+        case 0x8367: // GL_UNSIGNED_INT_8_8_8_8_REV:
+            typeWidth = 4;
+            break;
+        default:
+            assert(!"Unknown GL pixelType. Add me");
+    }
+    
+    switch (pixelFormat)
+    {
+        case GL_BGRA:
+        case GL_RGBA:
+            return 4 * typeWidth;
+            
+        case GL_RGB:
+            if (pixelType == GL_UNSIGNED_SHORT_5_6_5)
+                return typeWidth;
+            break;
+        default:
+            break;
+    }
+    
+    assert(!"Unknown GL pixelFormat. Add me");
+    return 1;
+}
+
+- (MTLPixelFormat)getMTLPixelFormatFromGLPixelFormat:(GLenum)pixelFormat type:(GLenum)pixelType
+{
+    if (pixelFormat == GL_BGRA && (pixelType == GL_UNSIGNED_BYTE || pixelType == 0x8367 /* GL_UNSIGNED_INT_8_8_8_8_REV */))
+    {
+        return MTLPixelFormatBGRA8Unorm;
+    }
+    else if (pixelFormat == GL_RGBA && pixelType == GL_UNSIGNED_BYTE)
+    {
+        return MTLPixelFormatRGBA8Unorm;
+    }
+    else if (pixelFormat == GL_RGBA && pixelType == GL_BYTE)
+    {
+        return MTLPixelFormatRGBA8Snorm;
+    }
+    else if (pixelFormat == GL_RGB && pixelType == GL_UNSIGNED_SHORT_5_6_5)
+    {
+        return MTLPixelFormatB5G6R5Unorm;
+    }
+    
+    assert(!"Unknown GL pixelFormat. Add me");
+    return MTLPixelFormatInvalid;
+}
+
+- (void)setupBlitShader
+{
+    NSError* error;
+    
+    id<MTLLibrary> lib = [_device newDefaultLibrary];
+    
+    MTLRenderPipelineDescriptor* desc = [MTLRenderPipelineDescriptor new];
+    desc.vertexFunction = [lib newFunctionWithName:@"fullscreen_vs"];
+    desc.fragmentFunction = [lib newFunctionWithName:@"blit_ps"];
+    desc.colorAttachments[0].pixelFormat = [self getMTLPixelFormatFromGLPixelFormat:[self.emulatorCore pixelFormat] type:[self.emulatorCore pixelType]];
+    
+    _blitPipeline = [_device newRenderPipelineStateWithDescriptor:desc error:&error];
+}
+
+- (void)setupCRTShader
+{
+    NSError* error;
+    
+    id<MTLLibrary> lib = [_device newDefaultLibrary];
+    
+    MTLRenderPipelineDescriptor* desc = [MTLRenderPipelineDescriptor new];
+    desc.vertexFunction = [lib newFunctionWithName:@"fullscreen_vs"];
+    desc.fragmentFunction = [lib newFunctionWithName:@"crt_filter_ps"];
+    desc.colorAttachments[0].pixelFormat = [self getMTLPixelFormatFromGLPixelFormat:[self.emulatorCore pixelFormat] type:[self.emulatorCore pixelType]];
+    
+    _crtFilterPipeline = [_device newRenderPipelineStateWithDescriptor:desc error:&error];
+}
+
 // Mac OS Stuff
 // MARK: - MTKViewDelegate
 
@@ -773,76 +958,125 @@ struct RenderSettings {
  @discussion Called on the delegate when it is asked to render into the view
  */
 - (void)drawInMTKView:(nonnull MTKView *)view {
-        //guard let safeCurrentDrawable = self.currentDrawable,
-        //      let safeCommandBuffer = self.commandQueue.makeCommandBuffer()
-        //else {
-        //    return
-        //}
-        //
-        //let image: CIImage
-        //let baseImage: CIImage = CIImage(bitmapData: NSData(bytes: &self.buffer, length: 640 * 480 * PVMTLView.elementLength) as Data, bytesPerRow: 640 * PVMTLView.elementLength, size: PVMTLView.imageSize, format: CIFormat.ARGB8, colorSpace: self.rgbColorSpace)
-        //
-        //if self.nearestNeighborRendering {
-        //    image = baseImage.samplingNearest().transformed(by: self.tNesScreen)
-        //} else {
-        //    image = baseImage.transformed(by: self.tNesScreen)
-        //}
-        //
-        //let renderDestination = CIRenderDestination(width: Int(self.drawableSize.width), height: Int(self.drawableSize.height), pixelFormat: self.colorPixelFormat, commandBuffer: safeCommandBuffer) {
-        //    () -> MTLTexture in return safeCurrentDrawable.texture
-        //}
-        //
-        //do {
-        //    _ = try self.context.startTask(toRender: image, to: renderDestination)
-        //} catch {
-        //    os_log("%@", error.localizedDescription)
-        //}
-        //
-        //safeCommandBuffer.present(safeCurrentDrawable)
-        //safeCommandBuffer.commit()
-        //
-        //self.lastDrawableSize = self.drawableSizeview
-        id<CAMetalDrawable> safeCurrentDrawable = view.currentDrawable;
-        id<MTLCommandBuffer> safeCommandBuffer = [self.commandQueue commandBuffer];
-
-
-    __block CGRect screenRect;
-    __block const void* videoBuffer;
-    __block GLenum videoBufferPixelFormat;
-    __block GLenum videoBufferPixelType;
-    __block CGSize videoBufferSize;
-
-    void (^fetchVideoBuffer)(void) = ^()
-    {
-        screenRect = [self.emulatorCore screenRect];
-        videoBufferPixelFormat = [self.emulatorCore pixelFormat];
-        videoBufferPixelType = [self.emulatorCore pixelType];
-        videoBufferSize = [self.emulatorCore bufferSize];
-        videoBuffer = [self.emulatorCore videoBuffer];
-    };
 
     MAKEWEAK(self);
 
     void (^renderBlock)(void) = ^()
     {
         MAKESTRONG_RETURN_IF_NIL(self);
-//#if DEBUG
-//        glClearColor(1.0, 1.0, 1.0, 1.0);
-//        glClear(GL_COLOR_BUFFER_BIT);
-//#endif
-        GLuint frontBufferTex;
+        
+        id<MTLCommandBuffer> commandBuffer = [self.commandQueue commandBufferWithUnretainedReferences];
+        
+        CGRect screenRect = [self.emulatorCore screenRect];
+        const void* videoBuffer = [self.emulatorCore videoBuffer];
+        CGSize videoBufferSize = [self.emulatorCore bufferSize];
+        
+#if DEBUG
+        // clear texture
+        {
+            MTLRenderPassDescriptor* desc = [MTLRenderPassDescriptor new];
+            desc.colorAttachments[0].texture = self.inputTexture;
+            desc.colorAttachments[0].loadAction = MTLLoadActionClear;
+            desc.colorAttachments[0].storeAction = MTLStoreActionStore;
+            desc.colorAttachments[0].clearColor = MTLClearColorMake(1.0, 1.0, 1.0, 1.0);
+            desc.colorAttachments[0].level = 0;
+            desc.colorAttachments[0].slice = 0;
+            
+            id<MTLRenderCommandEncoder> encoder = [commandBuffer renderCommandEncoderWithDescriptor:desc];
+            encoder.label = @"Debug Clear";
+            [encoder endEncoding];
+        }
+#endif
+        
         if ([self.emulatorCore rendersToOpenGL])
         {
-            frontBufferTex = strongself->alternateThreadColorTextureFront;
+            //GLuint frontBufferTex = strongself->alternateThreadColorTextureFront;
             [self.emulatorCore.frontBufferLock lock];
         }
         else
         {
-            glBindTexture(GL_TEXTURE_2D, strongself->texture);
-            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, videoBufferSize.width, videoBufferSize.height, videoBufferPixelFormat, videoBufferPixelType, videoBuffer);
-            frontBufferTex = strongself->texture;
+            uint formatByteWidth = [self getByteWidthForPixelFormat:[self.emulatorCore pixelFormat] type:[self.emulatorCore pixelType]];
+            
+            id<MTLBuffer> uploadBuffer = self->_uploadBuffer[++self->_frameCount % BUFFER_COUNT];
+            memcpy(uploadBuffer.contents, videoBuffer, videoBufferSize.width * videoBufferSize.height * formatByteWidth);
+            
+            id<MTLBlitCommandEncoder> encoder = [commandBuffer blitCommandEncoder];
+            
+            [encoder copyFromBuffer:uploadBuffer
+                       sourceOffset:0
+                  sourceBytesPerRow:videoBufferSize.width * formatByteWidth
+                sourceBytesPerImage:0
+                         sourceSize:MTLSizeMake(videoBufferSize.width, videoBufferSize.height, 1)
+                           toTexture:self.inputTexture
+                   destinationSlice:0
+                   destinationLevel:0
+                  destinationOrigin:MTLOriginMake(0, 0, 0)];
+            
+            [encoder endEncoding];
         }
 
+        id<MTLTexture> outputTex = view.currentDrawable.texture;
+        
+        MTLRenderPassDescriptor* desc = [MTLRenderPassDescriptor new];
+        desc.colorAttachments[0].texture = outputTex;
+        desc.colorAttachments[0].loadAction = MTLLoadActionClear;
+        desc.colorAttachments[0].storeAction = MTLStoreActionStore;
+        desc.colorAttachments[0].clearColor = MTLClearColorMake(0.0, 0.0, 0.0, 0.0);
+        desc.colorAttachments[0].level = 0;
+        desc.colorAttachments[0].slice = 0;
+        
+        id<MTLRenderCommandEncoder> encoder = [commandBuffer renderCommandEncoderWithDescriptor:desc];
+        
+        float aspect = screenRect.size.width / screenRect.size.height;
+        
+        MTLViewport viewport;
+        viewport.originX = 0;
+        viewport.originY = 0;
+        if (outputTex.width * aspect <= outputTex.height)
+        {
+            viewport.width = outputTex.width;
+            viewport.height = outputTex.width * aspect;
+        }
+        else
+        {
+            viewport.width = outputTex.height * aspect;
+            viewport.height = outputTex.height;
+        }
+        viewport.znear = 0.0f;
+        viewport.zfar = 1.0f;
+        [encoder setViewport:viewport];
+        
+        if (strongself->renderSettings.crtFilterEnabled)
+        {
+            struct CRT_Data cbData;
+            cbData.DisplayRect.x = screenRect.origin.x;
+            cbData.DisplayRect.y = screenRect.origin.y;
+            cbData.DisplayRect.z = screenRect.size.width;
+            cbData.DisplayRect.w = screenRect.size.height;
+            
+            cbData.EmulatedImageSize.x = videoBufferSize.width;
+            cbData.EmulatedImageSize.y = videoBufferSize.height;
+            
+            cbData.FinalRes.x = view.drawableSize.width;
+            cbData.FinalRes.y = view.drawableSize.height;
+            
+            [encoder setFragmentBytes:&cbData length:sizeof(cbData) atIndex:0];
+            
+            [encoder setRenderPipelineState:self.crtFilterPipeline];
+        }
+        else
+        {
+            [encoder setRenderPipelineState:self.blitPipeline];
+        }
+        
+        [encoder setFragmentTexture:self.inputTexture atIndex:0];
+        [encoder setFragmentSamplerState:strongself->renderSettings.smoothingEnabled ? self.linearSampler : self.pointSampler atIndex:0];
+        [encoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:3];
+        [encoder endEncoding];
+        [commandBuffer presentDrawable:view.currentDrawable];
+        [commandBuffer commit];
+        
+#if 0
         if (frontBufferTex)
         {
             glActiveTexture(GL_TEXTURE0);
@@ -888,6 +1122,7 @@ struct RenderSettings {
 //        glDisableVertexAttribArray(GLKVertexAttribPosition);
 
         glBindTexture(GL_TEXTURE_2D, 0);
+#endif
 
         if ([strongself->_emulatorCore rendersToOpenGL])
         {
@@ -909,7 +1144,6 @@ struct RenderSettings {
             [self.emulatorCore.frontBufferCondition unlock];
             if (isFrontBufferReady)
             {
-                fetchVideoBuffer();
                 renderBlock();
                 [_emulatorCore.frontBufferCondition lock];
                 _emulatorCore.isFrontBufferReady = NO;
@@ -922,7 +1156,6 @@ struct RenderSettings {
     {
         if (self.emulatorCore.isSpeedModified)
         {
-            fetchVideoBuffer();
             renderBlock();
         }
         else
@@ -936,7 +1169,6 @@ struct RenderSettings {
                 }
                 _emulatorCore.isFrontBufferReady = NO;
                 [_emulatorCore.frontBufferLock lock];
-                fetchVideoBuffer();
                 renderBlock();
                 [_emulatorCore.frontBufferLock unlock];
                 [_emulatorCore.frontBufferCondition unlock];
@@ -945,16 +1177,11 @@ struct RenderSettings {
             {
                 @synchronized(self.emulatorCore)
                 {
-                    fetchVideoBuffer();
                     renderBlock();
                 }
             }
         }
     }
-
-
-        [safeCommandBuffer presentDrawable:safeCurrentDrawable];
-        [safeCommandBuffer commit];
 }
 
 //@objc private func appResignedActive() {
