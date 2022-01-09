@@ -141,7 +141,10 @@ struct RenderSettings {
         glDeleteFramebuffers(1, &alternateThreadFramebufferBack);
     }
 
-#if !USE_METAL
+#if USE_METAL
+    backingMTLTexture = nil;
+    CFRelease(backingIOSurface);
+#else
     if (alternateThreadColorTextureFront > 0)
     {
         glDeleteTextures(1, &alternateThreadColorTextureFront);
@@ -1266,8 +1269,10 @@ struct RenderSettings {
 
 - (void)didRenderFrameOnAlternateThread
 {
+#if !USE_METAL
     // Release back buffer
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+#endif
     glFlush();
     
     // Blit back buffer to front buffer
@@ -1340,8 +1345,10 @@ struct RenderSettings {
     [self.emulatorCore.frontBufferCondition signal];
     [self.emulatorCore.frontBufferCondition unlock];
     
+#if !USE_METAL
     // Switch context back to emulator's
     [EAGLContext setCurrentContext:self.alternateThreadGLContext];
     glBindFramebuffer(GL_FRAMEBUFFER, alternateThreadFramebufferBack);
+#endif
 }
 @end
