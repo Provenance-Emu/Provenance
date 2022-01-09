@@ -143,7 +143,8 @@ struct RenderSettings {
 
 #if USE_METAL
     backingMTLTexture = nil;
-    CFRelease(backingIOSurface);
+    if (backingIOSurface)
+        CFRelease(backingIOSurface);
 #else
     if (alternateThreadColorTextureFront > 0)
     {
@@ -432,6 +433,9 @@ struct RenderSettings {
         }
 
         [[self view] setFrame:CGRectMake(origin.x, origin.y, width, height)];
+#if USE_METAL
+        [self.mtlview setFrame:CGRectMake(0, 0, width, height)];
+#endif
     }
 
     [self updatePreferredFPS];
@@ -1024,6 +1028,16 @@ struct RenderSettings {
 
         id<MTLTexture> outputTex = view.currentDrawable.texture;
         
+        if (outputTex == nil)
+        {
+            // MTKView is set up wrong. Skip a frame and hope things fix themselves
+            if (self.emulatorCore.rendersToOpenGL)
+            {
+                [strongself->_emulatorCore.frontBufferLock unlock];
+                return;
+            }
+        }
+        
         MTLRenderPassDescriptor* desc = [MTLRenderPassDescriptor new];
         desc.colorAttachments[0].texture = outputTex;
         desc.colorAttachments[0].loadAction = MTLLoadActionClear;
@@ -1033,28 +1047,6 @@ struct RenderSettings {
         desc.colorAttachments[0].slice = 0;
         
         id<MTLRenderCommandEncoder> encoder = [commandBuffer renderCommandEncoderWithDescriptor:desc];
-        
-        float aspect = screenRect.size.width / screenRect.size.height;
-        
-        float drawableWidth = outputTex.width;
-        float drawableHeight = outputTex.height;
-        
-        MTLViewport viewport;
-        viewport.originX = 0;
-        viewport.originY = 0;
-        if (drawableWidth / aspect <= drawableHeight)
-        {
-            viewport.width = drawableWidth;
-            viewport.height = drawableWidth / aspect;
-        }
-        else
-        {
-            viewport.width = drawableHeight * aspect;
-            viewport.height = drawableHeight;
-        }
-        viewport.znear = 0.0f;
-        viewport.zfar = 1.0f;
-        [encoder setViewport:viewport];
         
         if (strongself->renderSettings.crtFilterEnabled)
         {
@@ -1226,6 +1218,7 @@ struct RenderSettings {
         
         glGenTextures(1, &alternateThreadColorTextureBack);
         glBindTexture(GL_TEXTURE_2D, alternateThreadColorTextureBack);
+        // use CGLTexImageIOSurface2D instead of texImageIOSurface for macOS
         [[EAGLContext currentContext] texImageIOSurface:backingIOSurface
                                    target:GL_TEXTURE_2D
                            internalFormat:GL_RGBA
