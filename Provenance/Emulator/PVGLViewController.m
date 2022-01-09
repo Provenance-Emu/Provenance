@@ -22,6 +22,11 @@
 @import GLUT;
 #endif
 
+// Add SPI https://developer.apple.com/documentation/opengles/eaglcontext/2890259-teximageiosurface?language=objc
+@interface EAGLContext()
+- (BOOL)texImageIOSurface:(IOSurfaceRef)ioSurface target:(NSUInteger)target internalFormat:(NSUInteger)internalFormat width:(uint32_t)width height:(uint32_t)height format:(NSUInteger)format type:(NSUInteger)type plane:(uint32_t)plane;
+@end
+
 #define USE_METAL 1//TARGET_OS_MACCATALYST
 #define BUFFER_COUNT 3
 
@@ -38,15 +43,13 @@ struct CRT_Data
     struct float2 EmulatedImageSize;
     struct float2 FinalRes;
 };
-
-#else
+#endif
 
 struct PVVertex
 {
     GLfloat x, y, z;
     GLfloat u, v;
 };
-#endif
 
 #define BUFFER_OFFSET(x) ((char *)NULL + (x))
 
@@ -61,16 +64,21 @@ struct RenderSettings {
 @interface PVGLViewController () <PVRenderDelegate>
 #endif
 {
+    GLuint alternateThreadFramebufferBack;
+    GLuint alternateThreadColorTextureBack;
+    GLuint alternateThreadDepthRenderbuffer;
+    
 #if USE_METAL
+    IOSurfaceRef backingIOSurface;      // for OpenGL core support
+    id<MTLTexture> backingMTLTexture;   // for OpenGL core support
+
     id<MTLBuffer> _uploadBuffer[BUFFER_COUNT];
     uint _frameCount;
 #else
-    GLuint alternateThreadFramebufferBack;
-    GLuint alternateThreadFramebufferFront;
-    GLuint alternateThreadColorTextureBack;
-    GLuint alternateThreadColorTextureFront;
-    GLuint alternateThreadDepthRenderbuffer;
     
+    GLuint alternateThreadColorTextureFront;
+    GLuint alternateThreadFramebufferFront;
+
     GLuint blitFragmentShader;
     GLuint blitShaderProgram;
     int blitUniform_EmulatedImage;
@@ -93,9 +101,6 @@ struct RenderSettings {
 }
 
 #if USE_METAL
-@property (nonatomic, strong) CIContext *glContext;
-@property (nonatomic, strong) CIContext *alternateThreadGLContext;
-@property (nonatomic, strong) CIContext *alternateThreadBufferCopyGLContext;
 @property (nonatomic, strong) MTKView *mtlview;
 @property (nonatomic, strong) id<MTLDevice> device;
 @property (nonatomic, strong) id<MTLCommandQueue> commandQueue;
@@ -104,13 +109,13 @@ struct RenderSettings {
 @property (nonatomic, strong) id<MTLSamplerState> pointSampler;
 @property (nonatomic, strong) id<MTLSamplerState> linearSampler;
 @property (nonatomic, strong) id<MTLTexture> inputTexture;
-
-#else
+@property (nonatomic, strong) id<MTLCommandBuffer> previousCommandBuffer; // used for scheduling with OpenGL context
+#endif
 @property (nonatomic, strong) EAGLContext *glContext;
 @property (nonatomic, strong) EAGLContext *alternateThreadGLContext;
 @property (nonatomic, strong) EAGLContext *alternateThreadBufferCopyGLContext;
 
-#endif
+
 @property (nonatomic, assign) GLESVersion glesVersion;
 
 @end
@@ -123,14 +128,9 @@ struct RenderSettings {
 
 - (void)dealloc
 {
-#if !USE_METAL
     if (alternateThreadDepthRenderbuffer > 0)
     {
         glDeleteRenderbuffers(1, &alternateThreadDepthRenderbuffer);
-    }
-    if (alternateThreadColorTextureFront > 0)
-    {
-        glDeleteTextures(1, &alternateThreadColorTextureFront);
     }
     if (alternateThreadColorTextureBack > 0)
     {
@@ -139,6 +139,12 @@ struct RenderSettings {
     if (alternateThreadFramebufferBack > 0)
     {
         glDeleteFramebuffers(1, &alternateThreadFramebufferBack);
+    }
+
+#if !USE_METAL
+    if (alternateThreadColorTextureFront > 0)
+    {
+        glDeleteTextures(1, &alternateThreadColorTextureFront);
     }
     if (alternateThreadFramebufferFront > 0)
     {
@@ -208,13 +214,14 @@ struct RenderSettings {
     [self updatePreferredFPS];
 
 
-#if !USE_METAL
     self.glContext = [self bestContext];
 
+#if !USE_METAL
     if (self.glContext == nil) {
         // TODO: Alert NO gl here
         return;
     }
+#endif
 
     ILOG(@"Initiated GLES version %lu", (unsigned long)self.glContext.API);
 
@@ -224,6 +231,7 @@ struct RenderSettings {
 
 	[EAGLContext setCurrentContext:self.glContext];
 
+#if !USE_METAL
 	GLKView *view = (GLKView *)self.view;
 #else
     _frameCount = 0;
@@ -237,6 +245,7 @@ struct RenderSettings {
     view.depthStencilPixelFormat = MTLPixelFormatDepth32Float_Stencil8;
     view.sampleCount = 1;
     view.delegate = self;
+    view.autoResizeDrawable = YES;
     self.commandQueue = [_device newCommandQueue];
 
 
@@ -317,16 +326,15 @@ struct RenderSettings {
     [self setupBlitShader];
     [self setupCRTShader];
 
-#if !USE_METAL
     alternateThreadFramebufferBack = 0;
-    alternateThreadFramebufferFront = 0;
     alternateThreadColorTextureBack = 0;
-    alternateThreadColorTextureFront = 0;
     alternateThreadDepthRenderbuffer = 0;
+#if !USE_METAL
+    alternateThreadFramebufferFront = 0;
+    alternateThreadColorTextureFront = 0;
 #endif
 }
 
-#if !USE_METAL
 -(EAGLContext*)bestContext {
     EAGLContext* context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
     self.glesVersion = GLESVersion3;
@@ -342,7 +350,6 @@ struct RenderSettings {
 
     return context;
 }
-#endif
 
 - (void) updatePreferredFPS {
     float preferredFPS = self.emulatorCore.frameInterval;
@@ -431,18 +438,23 @@ struct RenderSettings {
 {
 #if USE_METAL
     {
-        uint formatByteWidth = [self getByteWidthForPixelFormat:[self.emulatorCore pixelFormat] type:[self.emulatorCore pixelType]];
+        CGRect screenRect = self.emulatorCore.screenRect;
         
-        for (int i = 0; i < BUFFER_COUNT; ++i)
+        if (!self.emulatorCore.rendersToOpenGL)
         {
-            _uploadBuffer[i] = [_device newBufferWithLength:self.emulatorCore.bufferSize.width * self.emulatorCore.bufferSize.height * formatByteWidth options:MTLResourceStorageModeShared];
+            uint formatByteWidth = [self getByteWidthForPixelFormat:[self.emulatorCore pixelFormat] type:[self.emulatorCore pixelType]];
+            
+            for (int i = 0; i < BUFFER_COUNT; ++i)
+            {
+                _uploadBuffer[i] = [_device newBufferWithLength:self.emulatorCore.bufferSize.width * self.emulatorCore.bufferSize.height * formatByteWidth options:MTLResourceStorageModeShared];
+            }
         }
         
         MTLTextureDescriptor* desc = [MTLTextureDescriptor new];
         desc.textureType = MTLTextureType2D;
         desc.pixelFormat = [self getMTLPixelFormatFromGLPixelFormat:[self.emulatorCore pixelFormat] type:[self.emulatorCore pixelType]];
-        desc.width = self.emulatorCore.bufferSize.width;
-        desc.height = self.emulatorCore.bufferSize.height;
+        desc.width = self.emulatorCore.rendersToOpenGL ? screenRect.size.width : self.emulatorCore.bufferSize.width;
+        desc.height = self.emulatorCore.rendersToOpenGL ? screenRect.size.height : self.emulatorCore.bufferSize.height;
         desc.storageMode = MTLStorageModePrivate;
         desc.usage = MTLTextureUsageShaderRead;
         #if DEBUG
@@ -914,10 +926,14 @@ struct RenderSettings {
 {
     NSError* error;
     
+    MTLFunctionConstantValues* constants = [MTLFunctionConstantValues new];
+    bool FlipY = self.emulatorCore.rendersToOpenGL;
+    [constants setConstantValue:&FlipY type:MTLDataTypeBool withName:@"FlipY"];
+    
     id<MTLLibrary> lib = [_device newDefaultLibrary];
     
     MTLRenderPipelineDescriptor* desc = [MTLRenderPipelineDescriptor new];
-    desc.vertexFunction = [lib newFunctionWithName:@"fullscreen_vs"];
+    desc.vertexFunction = [lib newFunctionWithName:@"fullscreen_vs" constantValues:constants error:&error];
     desc.fragmentFunction = [lib newFunctionWithName:@"blit_ps"];
     desc.colorAttachments[0].pixelFormat = [self getMTLPixelFormatFromGLPixelFormat:[self.emulatorCore pixelFormat] type:[self.emulatorCore pixelType]];
     
@@ -928,10 +944,14 @@ struct RenderSettings {
 {
     NSError* error;
     
+    MTLFunctionConstantValues* constants = [MTLFunctionConstantValues new];
+    bool FlipY = self.emulatorCore.rendersToOpenGL;
+    [constants setConstantValue:&FlipY type:MTLDataTypeBool withName:@"FlipY"];
+    
     id<MTLLibrary> lib = [_device newDefaultLibrary];
     
     MTLRenderPipelineDescriptor* desc = [MTLRenderPipelineDescriptor new];
-    desc.vertexFunction = [lib newFunctionWithName:@"fullscreen_vs"];
+    desc.vertexFunction = [lib newFunctionWithName:@"fullscreen_vs" constantValues:constants error:&error];
     desc.fragmentFunction = [lib newFunctionWithName:@"crt_filter_ps"];
     desc.colorAttachments[0].pixelFormat = [self getMTLPixelFormatFromGLPixelFormat:[self.emulatorCore pixelFormat] type:[self.emulatorCore pixelType]];
     
@@ -965,36 +985,20 @@ struct RenderSettings {
     {
         MAKESTRONG_RETURN_IF_NIL(self);
         
-        id<MTLCommandBuffer> commandBuffer = [self.commandQueue commandBufferWithUnretainedReferences];
-        
-        CGRect screenRect = [self.emulatorCore screenRect];
-        const void* videoBuffer = [self.emulatorCore videoBuffer];
-        CGSize videoBufferSize = [self.emulatorCore bufferSize];
-        
-#if DEBUG
-        // clear texture
+        if (self.emulatorCore.rendersToOpenGL)
         {
-            MTLRenderPassDescriptor* desc = [MTLRenderPassDescriptor new];
-            desc.colorAttachments[0].texture = self.inputTexture;
-            desc.colorAttachments[0].loadAction = MTLLoadActionClear;
-            desc.colorAttachments[0].storeAction = MTLStoreActionStore;
-            desc.colorAttachments[0].clearColor = MTLClearColorMake(1.0, 1.0, 1.0, 1.0);
-            desc.colorAttachments[0].level = 0;
-            desc.colorAttachments[0].slice = 0;
-            
-            id<MTLRenderCommandEncoder> encoder = [commandBuffer renderCommandEncoderWithDescriptor:desc];
-            encoder.label = @"Debug Clear";
-            [encoder endEncoding];
-        }
-#endif
-        
-        if ([self.emulatorCore rendersToOpenGL])
-        {
-            //GLuint frontBufferTex = strongself->alternateThreadColorTextureFront;
             [self.emulatorCore.frontBufferLock lock];
         }
-        else
+        
+        id<MTLCommandBuffer> commandBuffer = [self.commandQueue commandBufferWithUnretainedReferences];
+        self.previousCommandBuffer = commandBuffer;
+        
+        CGRect screenRect = [self.emulatorCore screenRect];
+        
+        if (!self.emulatorCore.rendersToOpenGL)
         {
+            const void* videoBuffer = [self.emulatorCore videoBuffer];
+            CGSize videoBufferSize = [self.emulatorCore bufferSize];
             uint formatByteWidth = [self getByteWidthForPixelFormat:[self.emulatorCore pixelFormat] type:[self.emulatorCore pixelType]];
             
             id<MTLBuffer> uploadBuffer = self->_uploadBuffer[++self->_frameCount % BUFFER_COUNT];
@@ -1029,18 +1033,21 @@ struct RenderSettings {
         
         float aspect = screenRect.size.width / screenRect.size.height;
         
+        float drawableWidth = outputTex.width;
+        float drawableHeight = outputTex.height;
+        
         MTLViewport viewport;
         viewport.originX = 0;
         viewport.originY = 0;
-        if (outputTex.width * aspect <= outputTex.height)
+        if (drawableWidth / aspect <= drawableHeight)
         {
-            viewport.width = outputTex.width;
-            viewport.height = outputTex.width * aspect;
+            viewport.width = drawableWidth;
+            viewport.height = drawableWidth / aspect;
         }
         else
         {
-            viewport.width = outputTex.height * aspect;
-            viewport.height = outputTex.height;
+            viewport.width = drawableHeight * aspect;
+            viewport.height = drawableHeight;
         }
         viewport.znear = 0.0f;
         viewport.zfar = 1.0f;
@@ -1054,8 +1061,8 @@ struct RenderSettings {
             cbData.DisplayRect.z = screenRect.size.width;
             cbData.DisplayRect.w = screenRect.size.height;
             
-            cbData.EmulatedImageSize.x = videoBufferSize.width;
-            cbData.EmulatedImageSize.y = videoBufferSize.height;
+            cbData.EmulatedImageSize.x = self.inputTexture.width;
+            cbData.EmulatedImageSize.y = self.inputTexture.height;
             
             cbData.FinalRes.x = view.drawableSize.width;
             cbData.FinalRes.y = view.drawableSize.height;
@@ -1075,58 +1082,12 @@ struct RenderSettings {
         [encoder endEncoding];
         [commandBuffer presentDrawable:view.currentDrawable];
         [commandBuffer commit];
-        
-#if 0
-        if (frontBufferTex)
-        {
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, frontBufferTex);
-        }
-
-        if (strongself->renderSettings.crtFilterEnabled)
-        {
-            glUseProgram(strongself->crtShaderProgram);
-            glUniform4f(strongself->crtUniform_DisplayRect, screenRect.origin.x, screenRect.origin.y, screenRect.size.width, screenRect.size.height);
-            glUniform1i(strongself->crtUniform_EmulatedImage, 0);
-            glUniform2f(strongself->crtUniform_EmulatedImageSize, videoBufferSize.width, videoBufferSize.height);
-            float finalResWidth = view.drawableSize.width;
-            float finalResHeight = view.drawableSize.height;
-            glUniform2f(strongself->crtUniform_FinalRes, finalResWidth, finalResHeight);
-        }
-        else
-        {
-            glUseProgram(strongself->blitShaderProgram);
-            glUniform1i(strongself->blitUniform_EmulatedImage, 0);
-        }
-
-        glDisable(GL_DEPTH_TEST);
-        glDisable(GL_CULL_FACE);
-
-//        [self updateVBOWithScreenRect:screenRect andVideoBufferSize:videoBufferSize];
-
-        glBindBuffer(GL_ARRAY_BUFFER, strongself->vertexVBO);
-
-//        glEnableVertexAttribArray(GLKVertexAttribPosition);
-//        glVertexAttribPointer(GLKVertexAttribPosition, 3, GL_FLOAT, GL_FALSE, sizeof(struct PVVertex), BUFFER_OFFSET(0));
-//
-//        glEnableVertexAttribArray(GLKVertexAttribTexCoord0);
-//        glVertexAttribPointer(GLKVertexAttribTexCoord0, 2, GL_FLOAT, GL_FALSE, sizeof(struct PVVertex), BUFFER_OFFSET(12));
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, strongself->indexVBO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-//        glDisableVertexAttribArray(GLKVertexAttribTexCoord0);
-//        glDisableVertexAttribArray(GLKVertexAttribPosition);
-
-        glBindTexture(GL_TEXTURE_2D, 0);
-#endif
 
         if ([strongself->_emulatorCore rendersToOpenGL])
         {
+#if !USE_METAL
             glFlush();
+#endif
             [strongself->_emulatorCore.frontBufferLock unlock];
         }
     };
@@ -1199,32 +1160,12 @@ struct RenderSettings {
 
 #pragma mark - PVRenderDelegate protocol methods
 
-#if USE_METAL //|| TARGET_OS_MACOS
-- (void)startRenderingOnAlternateThread {
-
-}
-- (void)didRenderFrameOnAlternateThread {
-    [self.emulatorCore.frontBufferLock lock];
-
- // TODO: Copy the back buffer
-    [self.emulatorCore.frontBufferLock unlock];
-
-    // Notify render thread that the front buffer is ready
-    [self.emulatorCore.frontBufferCondition lock];
-    [self.emulatorCore setIsFrontBufferReady:YES];
-    [self.emulatorCore.frontBufferCondition signal];
-    [self.emulatorCore.frontBufferCondition unlock];
-
-    // Switch context back to emulator's
-//    [EAGLContext setCurrentContext:self.alternateThreadGLContext];
-//    glBindFramebuffer(GL_FRAMEBUFFER, alternateThreadFramebufferBack);
-}
-
-#else
 - (void)startRenderingOnAlternateThread
 {
     self.emulatorCore.glesVersion = self.glesVersion;
     self.alternateThreadBufferCopyGLContext = [[EAGLContext alloc] initWithAPI:[self.glContext API] sharegroup:[self.glContext sharegroup]];
+    
+#if !USE_METAL
     [EAGLContext setCurrentContext:self.alternateThreadBufferCopyGLContext];
     
     if (alternateThreadFramebufferFront == 0)
@@ -1250,6 +1191,7 @@ struct RenderSettings {
     glEnable(GL_TEXTURE_2D);
     glUseProgram(blitShaderProgram);
     glUniform1i(blitUniform_EmulatedImage, 0);
+#endif
     
     self.alternateThreadGLContext = [[EAGLContext alloc] initWithAPI:[self.glContext API] sharegroup:[self.glContext sharegroup]];
     [EAGLContext setCurrentContext:self.alternateThreadGLContext];
@@ -1264,6 +1206,40 @@ struct RenderSettings {
     // Setup color textures to render into
     if (alternateThreadColorTextureBack == 0)
     {
+#if USE_METAL
+        CGFloat width = self.emulatorCore.bufferSize.width;
+        CGFloat height = self.emulatorCore.bufferSize.height;
+        
+        {
+            NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
+                                  [NSNumber numberWithInt:width], kIOSurfaceWidth,
+                                  [NSNumber numberWithInt:height], kIOSurfaceHeight,
+                                  [NSNumber numberWithInt:4], kIOSurfaceBytesPerElement,
+                                  nil];
+
+            backingIOSurface = IOSurfaceCreate((CFDictionaryRef)dict);
+        }
+        IOSurfaceLock(backingIOSurface, 0, NULL);
+        
+        glGenTextures(1, &alternateThreadColorTextureBack);
+        glBindTexture(GL_TEXTURE_2D, alternateThreadColorTextureBack);
+        [[EAGLContext currentContext] texImageIOSurface:backingIOSurface
+                                   target:GL_TEXTURE_2D
+                           internalFormat:GL_RGBA
+                                    width:width
+                                   height:height
+                                   format:GL_RGBA
+                                     type:GL_UNSIGNED_BYTE
+                                    plane:0];
+        glBindTexture(GL_TEXTURE_2D, 0);
+        
+
+        IOSurfaceUnlock(backingIOSurface, 0, NULL);
+        
+        MTLTextureDescriptor* mtlDesc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatRGBA8Unorm width:width height:height mipmapped:NO];
+        backingMTLTexture = [_device newTextureWithDescriptor:mtlDesc iosurface:backingIOSurface plane:0];
+
+#else
         glGenTextures(1, &alternateThreadColorTextureBack);
         glBindTexture(GL_TEXTURE_2D, alternateThreadColorTextureBack);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -1271,6 +1247,8 @@ struct RenderSettings {
         NSAssert( !((unsigned int)self.emulatorCore.bufferSize.height & ((unsigned int)self.emulatorCore.bufferSize.height - 1)), @"Emulator buffer height is not a power of two!" );
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
         glBindTexture(GL_TEXTURE_2D, 0);
+#endif
+
     }
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, alternateThreadColorTextureBack, 0);
     
@@ -1294,6 +1272,30 @@ struct RenderSettings {
     
     // Blit back buffer to front buffer
     [self.emulatorCore.frontBufferLock lock];
+    
+#if USE_METAL
+    // glFlush + waitUntilScheduled is how we coordinate texture access between OpenGL and Metal
+    // There might be a more performant solution using MTLFences or MTLEvents but this is an ok first impl
+    [self.previousCommandBuffer waitUntilScheduled];
+    
+    id<MTLCommandBuffer> commandBuffer = [_commandQueue commandBufferWithUnretainedReferences];
+    id<MTLBlitCommandEncoder> encoder = [commandBuffer blitCommandEncoder];
+    
+    CGRect screenRect = self.emulatorCore.screenRect;
+    
+    [encoder copyFromTexture:backingMTLTexture
+                 sourceSlice:0
+                 sourceLevel:0
+                sourceOrigin:MTLOriginMake(0, 0, 0)
+                  sourceSize:MTLSizeMake(screenRect.size.width, screenRect.size.height, 1)
+                   toTexture:_inputTexture
+            destinationSlice:0
+            destinationLevel:0
+           destinationOrigin:MTLOriginMake(0, 0, 0)];
+    
+    [encoder endEncoding];
+    [commandBuffer commit];
+#else
     
     // NOTE: We switch contexts here because we don't know what state
     // the emulator core might have OpenGL in and we need to avoid
@@ -1328,6 +1330,7 @@ struct RenderSettings {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     
     glFlush();
+#endif
     
     [self.emulatorCore.frontBufferLock unlock];
     
@@ -1341,5 +1344,4 @@ struct RenderSettings {
     [EAGLContext setCurrentContext:self.alternateThreadGLContext];
     glBindFramebuffer(GL_FRAMEBUFFER, alternateThreadFramebufferBack);
 }
-#endif
 @end
