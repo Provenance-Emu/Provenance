@@ -992,6 +992,14 @@ struct RenderSettings {
     {
         MAKESTRONG_RETURN_IF_NIL(self);
         
+        id<MTLTexture> outputTex = view.currentDrawable.texture;
+        
+        if (outputTex == nil)
+        {
+            // MTKView is set up wrong. Skip a frame and hope things fix themselves
+            return;
+        }
+        
         if (self.emulatorCore.rendersToOpenGL)
         {
             [self.emulatorCore.frontBufferLock lock];
@@ -1024,18 +1032,6 @@ struct RenderSettings {
                   destinationOrigin:MTLOriginMake(0, 0, 0)];
             
             [encoder endEncoding];
-        }
-
-        id<MTLTexture> outputTex = view.currentDrawable.texture;
-        
-        if (outputTex == nil)
-        {
-            // MTKView is set up wrong. Skip a frame and hope things fix themselves
-            if (self.emulatorCore.rendersToOpenGL)
-            {
-                [strongself->_emulatorCore.frontBufferLock unlock];
-                return;
-            }
         }
         
         MTLRenderPassDescriptor* desc = [MTLRenderPassDescriptor new];
