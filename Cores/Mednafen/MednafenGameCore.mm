@@ -736,23 +736,24 @@ static void emulation_run(BOOL skipFrame) {
         game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[0]);
     }
 
-    BOOL success = Mednafen::MDFNI_SetMedia(0, 2, 0, 0); // Disc selection API
-    if (!success) {
-        NSString *message = [NSString stringWithFormat:@"MDFNI_SetMedia returned 0. Check your m3u or other file paths."];
-
-        NSDictionary *userInfo = @{
-                                   NSLocalizedDescriptionKey: @"Failed to load game.",
-                                   NSLocalizedFailureReasonErrorKey: @"MDFNI_SetMedia returned 0",
-                                   NSLocalizedRecoverySuggestionErrorKey: message
-                                   };
-
-        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                                code:PVEmulatorCoreErrorCodeMissingM3U
-                                            userInfo:userInfo];
-
-        *error = newError;
-        return NO;
-    }
+//    BOOL success =
+    Mednafen::MDFNI_SetMedia(0, 2, 0, 0); // Disc selection API
+//    if (!success) {
+//        NSString *message = [NSString stringWithFormat:@"MDFNI_SetMedia returned 0. Check your m3u or other file paths."];
+//
+//        NSDictionary *userInfo = @{
+//                                   NSLocalizedDescriptionKey: @"Failed to load game.",
+//                                   NSLocalizedFailureReasonErrorKey: @"MDFNI_SetMedia returned 0",
+//                                   NSLocalizedRecoverySuggestionErrorKey: message
+//                                   };
+//
+//        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+//                                                code:PVEmulatorCoreErrorCodeMissingM3U
+//                                            userInfo:userInfo];
+//
+//        *error = newError;
+//        return NO;
+//    }
     
     emulation_run(NO);
 
