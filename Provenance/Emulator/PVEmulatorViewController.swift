@@ -34,37 +34,6 @@ func uncaughtExceptionHandler(exception _: NSException?) {
     typealias PVEmulatorViewControllerRootClass = UIViewController
 #endif
 
-class MenuButton: UIButton, HitAreaEnlarger {
-    var hitAreaInset: UIEdgeInsets = UIEdgeInsets(top: -5, left: -5, bottom: -5, right: -5)
-}
-
-extension UIViewController {
-    func presentMessage(_ message: String, title: String, completion _: (() -> Swift.Void)? = nil) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-
-        let presentingVC = presentedViewController ?? self
-
-        if presentingVC.isBeingDismissed || presentingVC.isBeingPresented {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                presentingVC.present(alert, animated: true, completion: nil)
-            }
-        } else {
-            presentingVC.present(alert, animated: true, completion: nil)
-        }
-    }
-
-    func presentError(_ message: String, completion: (() -> Swift.Void)? = nil) {
-        ELOG("\(message)")
-        presentMessage(message, title: "Error", completion: completion)
-    }
-
-    func presentWarning(_ message: String, completion: (() -> Swift.Void)? = nil) {
-        WLOG("\(message)")
-        presentMessage(message, title: "Warning", completion: completion)
-    }
-}
-
 final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelegate, PVSaveStatesViewControllerDelegate {
     let core: PVEmulatorCore
     let game: PVGame
