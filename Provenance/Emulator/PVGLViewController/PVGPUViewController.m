@@ -12,6 +12,7 @@
 
 @end
 
+PV_OBJC_DIRECT_MEMBERS
 @implementation PVGPUViewController
 
 - (void)viewDidLoad {

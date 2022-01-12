@@ -56,3 +56,20 @@ NSAssert([NSThread isMainThread], @"Not main thread");
 #define LIKELY(n) __builtin_expect((n) != 0, 1)
 
 #endif
+
+//MARK: Direct OBJC
+
+// Direct method and property calls with Xcode 12 and above.
+#if defined(__IPHONE_14_0) || defined(__MAC_10_16) || defined(__TVOS_14_0) || defined(__WATCHOS_7_0)
+#define PV_OBJC_DIRECT_MEMBERS __attribute__((objc_direct_members))
+#define PV_OBJC_DIRECT __attribute__((objc_direct))
+#define PV_DIRECT ,direct
+#else
+#define PV_OBJC_DIRECT_MEMBERS
+#define PV_OBJC_DIRECT
+#define PV_DIRECT
+#endif
+
+#define VISIBLE_DEFAULT __attribute__((visibility("default")))
+
+#define PVCORE VISIBLE_DEFAULT PV_OBJC_DIRECT_MEMBERS

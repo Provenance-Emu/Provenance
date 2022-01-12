@@ -45,6 +45,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 #endif
 @end
 
+__attribute__((objc_direct_members))
 @implementation PVEmulatorCore
 
 + (void)initialize {
@@ -115,7 +116,11 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 			self.isRunning  = YES;
 			shouldStop = NO;
             self.gameSpeed = GameSpeedNormal;
-            [NSThread detachNewThreadSelector:@selector(emulationLoopThread) toTarget:self withObject:nil];
+			MAKEWEAK(self);
+			[NSThread detachNewThreadWithBlock:^{
+				MAKESTRONG(self);
+				[strongself emulationLoopThread];
+			}];
 		}
 	}
 }

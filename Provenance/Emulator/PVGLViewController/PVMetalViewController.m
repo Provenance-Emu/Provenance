@@ -65,6 +65,7 @@
 
 @end
 
+__attribute__((objc_direct_members))
 @implementation PVMetalViewController
 
 + (void)initialize
@@ -581,7 +582,10 @@
         [encoder setFragmentSamplerState:strongself->renderSettings.smoothingEnabled ? self.linearSampler : self.pointSampler atIndex:0];
         [encoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:3];
         [encoder endEncoding];
-        [commandBuffer presentDrawable:view.currentDrawable afterMinimumDuration:1.0/view.preferredFramesPerSecond];
+
+		[commandBuffer presentDrawable:view.currentDrawable];
+		// This should exist, but fails on some xcode's?! -jm
+//        [commandBuffer presentDrawable:view.currentDrawable afterMinimumDuration:1.0/view.preferredFramesPerSecond];
         [commandBuffer commit];
 
         if ([strongself->_emulatorCore rendersToOpenGL])
@@ -704,9 +708,15 @@
         
 
         IOSurfaceUnlock(backingIOSurface, 0, NULL);
-        
-        MTLTextureDescriptor* mtlDesc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatRGBA8Unorm width:width height:height mipmapped:NO];
-        backingMTLTexture = [_device newTextureWithDescriptor:mtlDesc iosurface:backingIOSurface plane:0];
+
+		MTLPixelFormat pixelFormat = [self getMTLPixelFormatFromGLPixelFormat:[self.emulatorCore pixelFormat] type:[self.emulatorCore pixelType]];
+        MTLTextureDescriptor* mtlDesc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:pixelFormat
+																						   width:width
+																						  height:height
+																					   mipmapped:NO];
+        backingMTLTexture = [_device newTextureWithDescriptor:mtlDesc
+													iosurface:backingIOSurface
+														plane:0];
     }
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, alternateThreadColorTextureBack, 0);
     

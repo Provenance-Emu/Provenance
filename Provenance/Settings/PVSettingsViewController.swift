@@ -291,7 +291,9 @@ final class PVSettingsViewController: PVQuickTableViewController {
          // Beta options
         #if os(iOS)
         let betaRows: [TableRow] = [
-            PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"), detailText: .subtitle("Use experimental Metal backend instead of OpenGL"), key: \PVSettingsModel.useMetal),
+			PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"),
+								detailText: .subtitle("Use experimental Metal backend instead of OpenGL"),
+								key: \PVSettingsModel.debugOptions.useMetal),
 
             PVSettingsSwitchRow(text: NSLocalizedString("Missing Buttons Always On-Screen", comment: "Missing Buttons Always On-Screen"),
                                 detailText: .subtitle("Supports: SNES, SMS, SG, GG, SCD, PSX."),
@@ -315,7 +317,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
         ]
         #else
          let betaRows: [TableRow] = [
-            PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"), detailText: .subtitle("Use experimental Metal backend instead of OpenGL"), key: \PVSettingsModel.useMetal),
+			PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"), detailText: .subtitle("Use experimental Metal backend instead of OpenGL"), key: \PVSettingsModel.debugOptions.useMetal),
 
              PVSettingsSwitchRow(text: NSLocalizedString("iCloud Sync", comment: "iCloud Sync"),
                                 detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),

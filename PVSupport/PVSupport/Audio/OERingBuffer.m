@@ -26,6 +26,7 @@
 
 #import "OERingBuffer.h"
 
+__attribute__((objc_direct_members))
 @implementation OERingBuffer
 @synthesize bytesWritten;
 @synthesize bytesRead;

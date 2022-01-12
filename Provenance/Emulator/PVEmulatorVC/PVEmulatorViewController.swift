@@ -42,7 +42,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     var BIOSPath: URL { return PVEmulatorConfiguration.biosPath(forGame: game) }
     var menuButton: MenuButton?
 
-    let use_metal: Bool = PVSettingsModel.shared.useMetal
+	let use_metal: Bool = PVSettingsModel.shared.debugOptions.useMetal
     private(set) lazy var gpuViewController: PVGPUViewController = use_metal ? PVMetalViewController(emulatorCore: core) : PVGLViewController(emulatorCore: core)
     private(set) lazy var controllerViewController: (UIViewController & StartSelectDelegate)? = PVCoreFactory.controllerViewController(forSystem: game.system, core: core)
 

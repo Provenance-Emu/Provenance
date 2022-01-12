@@ -227,6 +227,8 @@ extension MirroredSettings {
     public static let shared = PVSettingsModel()
 
     @objc public class DebugOptions: NSObject {
+		@objc public dynamic var useMetal = false
+		@objc public dynamic var experimentalCores = false
         @objc public dynamic var iCloudSync = false
 //        @objc public dynamic var unsupportedCores = false
 //        @objc public dynamic var multiThreadedGL = BoolSetting(false, title: "Multi-threaded GL", info: "Use threaded GLES calls.")
@@ -274,8 +276,6 @@ extension MirroredSettings {
     public dynamic var controllerOpacity: Double = 0.8
     public dynamic var buttonTints = true
     public dynamic var use8BitdoM30 = false
-    
-    public dynamic var useMetal = false
 
     #if os(tvOS)
         public dynamic var missingButtonsAlwaysOn = true

@@ -8,8 +8,8 @@
 
 #import "PVGLViewController.h"
 @import PVSupport;
+@import QuartzCore;
 #import "Provenance-Swift.h"
-#import <QuartzCore/QuartzCore.h>
 
 #if !TARGET_OS_MACCATALYST
 #import <OpenGLES/gltypes.h>
@@ -60,6 +60,7 @@
 
 @end
 
+__attribute__((objc_direct_members))
 @implementation PVGLViewController
 
 + (void)initialize
