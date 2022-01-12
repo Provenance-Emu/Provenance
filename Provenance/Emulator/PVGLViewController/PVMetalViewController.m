@@ -27,34 +27,10 @@
 - (BOOL)texImageIOSurface:(IOSurfaceRef)ioSurface target:(NSUInteger)target internalFormat:(NSUInteger)internalFormat width:(uint32_t)width height:(uint32_t)height format:(NSUInteger)format type:(NSUInteger)type plane:(uint32_t)plane;
 @end
 
-#define USE_METAL 1//TARGET_OS_MACCATALYST
 #define BUFFER_COUNT 3
 
 @import Metal;
 @import MetalKit;
-
-struct float2{ float x; float y; };
-struct float4 { float x; float y; float z; float w; };
-
-struct CRT_Data
-{
-    struct float4 DisplayRect;
-    struct float2 EmulatedImageSize;
-    struct float2 FinalRes;
-};
-
-struct PVVertex
-{
-    GLfloat x, y, z;
-    GLfloat u, v;
-};
-
-#define BUFFER_OFFSET(x) ((char *)NULL + (x))
-
-struct RenderSettings {
-    BOOL crtFilterEnabled;
-    BOOL smoothingEnabled;
-} RenderSettings;
 
 @interface PVMetalViewController () <PVRenderDelegate, MTKViewDelegate>
 {

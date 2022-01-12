@@ -363,6 +363,8 @@
 		B382C63E278E514A007E61FE /* PVEmulatorViewController+CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B382C63C278E514A007E61FE /* PVEmulatorViewController+CoreOptions.swift */; };
 		B382C642278E55C9007E61FE /* PVMetalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B382C641278E55C9007E61FE /* PVMetalViewController.m */; };
 		B382C643278E55C9007E61FE /* PVMetalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B382C641278E55C9007E61FE /* PVMetalViewController.m */; };
+		B382C649278E626D007E61FE /* PVGPUViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B382C648278E626D007E61FE /* PVGPUViewController.m */; };
+		B382C64A278E626D007E61FE /* PVGPUViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B382C648278E626D007E61FE /* PVGPUViewController.m */; };
 		B383F3BF219BBD8700DB6926 /* LogViewable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B383F3BE219BBD8700DB6926 /* LogViewable.swift */; };
 		B385542E20336D02006CA50B /* PVGameMoreInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */; };
 		B387676C20BD0F43009D8CD2 /* WebServerActivatorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B387676B20BD0F43009D8CD2 /* WebServerActivatorController.swift */; };
@@ -1001,6 +1003,8 @@
 		B382C63C278E514A007E61FE /* PVEmulatorViewController+CoreOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVEmulatorViewController+CoreOptions.swift"; sourceTree = "<group>"; };
 		B382C640278E55C9007E61FE /* PVMetalViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVMetalViewController.h; sourceTree = "<group>"; };
 		B382C641278E55C9007E61FE /* PVMetalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVMetalViewController.m; sourceTree = "<group>"; };
+		B382C647278E626C007E61FE /* PVGPUViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVGPUViewController.h; sourceTree = "<group>"; };
+		B382C648278E626D007E61FE /* PVGPUViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PVGPUViewController.m; sourceTree = "<group>"; };
 		B383F3BE219BBD8700DB6926 /* LogViewable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogViewable.swift; sourceTree = "<group>"; };
 		B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameMoreInfoViewController.swift; sourceTree = "<group>"; };
 		B387676B20BD0F43009D8CD2 /* WebServerActivatorController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebServerActivatorController.swift; sourceTree = "<group>"; };
@@ -1929,6 +1933,8 @@
 				B382C641278E55C9007E61FE /* PVMetalViewController.m */,
 				1A3D433917B30BA2004DFFFC /* PVGLViewController.h */,
 				1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */,
+				B382C647278E626C007E61FE /* PVGPUViewController.h */,
+				B382C648278E626D007E61FE /* PVGPUViewController.m */,
 			);
 			path = PVGLViewController;
 			sourceTree = "<group>";
@@ -2716,6 +2722,7 @@
 				B3890BE420B97588005BB001 /* PVGameLibraryViewController+PeekPop.swift in Sources */,
 				B3447E73218B596600557ACE /* PVDreamcastControllerViewController.swift in Sources */,
 				B3E6DADC20B7AD1500454DD4 /* PVLogViewController.m in Sources */,
+				B382C649278E626D007E61FE /* PVGPUViewController.m in Sources */,
 				C665CD8421FEC68E00C834C6 /* GCControllerExtensions.swift in Sources */,
 				378F4A0A1B63D7CD0065FA39 /* GCDWebServerErrorResponse.m in Sources */,
 				B34EADAE218824C2008F52EE /* PViCadeControllerViewController.swift in Sources */,
@@ -2890,6 +2897,7 @@
 				B3B104CD218F2EF400210C39 /* PVPCEControllerViewController.swift in Sources */,
 				6D959729278AA201004659EB /* fullscreen_vs.metal in Sources */,
 				B3B104C4218F2EF400210C39 /* PVAtariJaguarControllerViewController.swift in Sources */,
+				B382C64A278E626D007E61FE /* PVGPUViewController.m in Sources */,
 				B3B104C6218F2EF400210C39 /* PVGBAControllerViewController.swift in Sources */,
 				B3F64EC9205CBC6100C273C7 /* PVLicensesViewController.swift in Sources */,
 				1AD481C91BA3530B00FDA50A /* PVAppDelegate.swift in Sources */,

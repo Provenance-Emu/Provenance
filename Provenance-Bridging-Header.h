@@ -30,6 +30,7 @@
 //#import <PVSupport/DebugUtils.h>
 #import "PVAvailability.h"
 #import "PVGLViewController.h"
+#import "PVMetalViewController.h"
 #import "MBProgressHUD.h"
 #import "PVWebServer.h"
 #import "UIDevice+Hardware.h"

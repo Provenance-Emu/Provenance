@@ -7,16 +7,11 @@
 //
 
 @import UIKit;
+#import "PVGPUViewController.h"
 
-#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-#define BaseViewController UIViewController
-#else
-@import GLKit;
-#define BaseViewController GLKViewController
-#endif
 @class PVEmulatorCore;
 
-@interface PVMetalViewController : BaseViewController
+@interface PVMetalViewController : PVGPUViewController
 
 @property (nonatomic, weak) PVEmulatorCore *emulatorCore;
 #if TARGET_OS_MACCATALYST || TARGET_OS_OSX
