@@ -243,6 +243,8 @@
         WLOG(@"Cores frame interval (%f) too low. Setting to 60", preferredFPS);
         preferredFPS = 60;
     }
+    self.mtlview.preferredFramesPerSecond = preferredFPS;
+    [self setPreferredFramesPerSecond:preferredFPS];
 }
 
 - (void)viewDidLayoutSubviews
@@ -579,7 +581,7 @@
         [encoder setFragmentSamplerState:strongself->renderSettings.smoothingEnabled ? self.linearSampler : self.pointSampler atIndex:0];
         [encoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:3];
         [encoder endEncoding];
-        [commandBuffer presentDrawable:view.currentDrawable];
+        [commandBuffer presentDrawable:view.currentDrawable afterMinimumDuration:1.0/view.preferredFramesPerSecond];
         [commandBuffer commit];
 
         if ([strongself->_emulatorCore rendersToOpenGL])
