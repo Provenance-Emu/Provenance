@@ -81,17 +81,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             }
         #endif
 
-        #if os(tvOS)
-            if let tabBarController = window?.rootViewController as? UITabBarController {
-                let searchNavigationController = PVSearchViewController.createEmbeddedInNavigationController(gameLibrary: gameLibrary)
-
-                guard var viewControllers = tabBarController.viewControllers else {
-                    fatalError("tabBarController.viewControllers is nil")
-                }
-                viewControllers.insert(searchNavigationController, at: 1)
-                tabBarController.viewControllers = viewControllers
-            }
-        #else
+        #if os(iOS)
 //        let currentTheme = PVSettingsModel.shared.theme
 //        Theme.currentTheme = currentTheme.theme
             Theme.currentTheme = Theme.darkTheme
@@ -112,20 +102,9 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             }
             .subscribe().disposed(by: disposeBag)
 
-        #if os(iOS) || os(macOS)
         guard let rootNavigation = window?.rootViewController as? UINavigationController else {
             fatalError("No root nav controller")
         }
-        #else
-        guard let tabBarController = window?.rootViewController as? UITabBarController,
-              let rootNavigation = tabBarController.viewControllers?[0] as? UINavigationController,
-              let splitVC = tabBarController.viewControllers?[2] as? PVTVSplitViewController,
-              let navVC = splitVC.viewControllers[1] as? UINavigationController,
-              let settingsVC = navVC.topViewController as? PVSettingsViewController else {
-                  fatalError("Bad View Controller heiarchy")
-              }
-        settingsVC.conflictsController = libraryUpdatesController
-        #endif
         guard let gameLibraryViewController = rootNavigation.viewControllers.first as? PVGameLibraryViewController else {
             fatalError("No gameLibraryViewController")
         }

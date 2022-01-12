@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder.AppleTV.Storyboard" version="3.0" toolsVersion="19158" targetRuntime="AppleTV" propertyAccessControl="none" useAutolayout="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="0zH-nB-KZk">
+<document type="com.apple.InterfaceBuilder.AppleTV.Storyboard" version="3.0" toolsVersion="19529" targetRuntime="AppleTV" propertyAccessControl="none" useAutolayout="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="7Iz-AI-QKl">
     <device id="appleTV" appearance="dark"/>
     <dependencies>
         <deployment identifier="tvOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19141"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -362,25 +364,6 @@
             </objects>
             <point key="canvasLocation" x="7047" y="-3999"/>
         </scene>
-        <!--Tab Bar Controller-->
-        <scene sceneID="TS7-Pk-5Ou">
-            <objects>
-                <tabBarController storyboardIdentifier="rootTabBarVC" modalPresentationStyle="fullScreen" useStoryboardIdentifierAsRestorationIdentifier="YES" id="0zH-nB-KZk" customClass="PVTVTabBarController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBar key="tabBar" contentMode="scaleToFill" barStyle="black" itemPositioning="centered" id="n5P-zL-sta">
-                        <rect key="frame" x="0.0" y="0.0" width="1920" height="0.0"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <color key="tintColor" red="0.10980392160000001" green="0.51372549020000002" blue="0.96078431369999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <color key="barTintColor" systemColor="tableCellGroupedBackgroundColor"/>
-                    </tabBar>
-                    <connections>
-                        <segue destination="7Iz-AI-QKl" kind="relationship" relationship="viewControllers" id="Yra-to-P3B"/>
-                        <segue destination="LQv-GI-W6u" kind="relationship" relationship="viewControllers" id="Ajb-HV-qcq"/>
-                    </connections>
-                </tabBarController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Z29-zc-uxI" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1244" y="-1380"/>
-        </scene>
         <!--Game Library View Controller-->
         <scene sceneID="Cw2-p7-hai">
             <objects>
@@ -397,16 +380,17 @@
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="YeI-bH-0RW">
                         <leftBarButtonItems>
-                            <barButtonItem image="sort" id="d9C-DJ-Fuv">
-                                <color key="tintColor" red="0.11" green="0.51400000000000001" blue="0.96099999999999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <barButtonItem id="d3P-nN-WL5" userLabel="Settings">
+                                <imageReference key="image" image="gear" renderingMode="template"/>
+                                <color key="tintColor" systemColor="linkColor"/>
                                 <connections>
-                                    <action selector="sortButtonTapped:" destination="In9-6L-5FX" id="Ncy-G2-J4k"/>
+                                    <segue destination="LQv-GI-W6u" kind="presentation" identifier="SplitSettingsSegue" modalPresentationStyle="fullScreen" id="c3G-jH-C8F"/>
                                 </connections>
                             </barButtonItem>
-                            <barButtonItem systemItem="add" id="qjY-qw-buq">
-                                <color key="tintColor" red="0.11" green="0.51400000000000001" blue="0.96099999999999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <barButtonItem systemItem="search" id="hPG-1V-noK">
+                                <color key="tintColor" systemColor="linkColor"/>
                                 <connections>
-                                    <action selector="getMoreROMs:" destination="In9-6L-5FX" id="Pje-W7-Ltl"/>
+                                    <action selector="searchButtonTapped:" destination="In9-6L-5FX" id="1Tm-PH-MVd"/>
                                 </connections>
                             </barButtonItem>
                             <barButtonItem image="caution-icon" id="Dsv-oR-lbw">
@@ -416,12 +400,24 @@
                                 </connections>
                             </barButtonItem>
                         </leftBarButtonItems>
+                        <rightBarButtonItems>
+                            <barButtonItem systemItem="add" id="qjY-qw-buq">
+                                <color key="tintColor" red="0.11" green="0.51400000000000001" blue="0.96099999999999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <connections>
+                                    <action selector="getMoreROMs:" destination="In9-6L-5FX" id="Pje-W7-Ltl"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem image="sort" id="d9C-DJ-Fuv" userLabel="Sort">
+                                <color key="tintColor" red="0.11" green="0.51400000000000001" blue="0.96099999999999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <connections>
+                                    <action selector="sortButtonTapped:" destination="In9-6L-5FX" id="Ncy-G2-J4k"/>
+                                </connections>
+                            </barButtonItem>
+                        </rightBarButtonItems>
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="conflictsBarButtonItem" destination="Dsv-oR-lbw" id="Ztu-t8-0xP"/>
-                        <outlet property="getMoreRomsBarButtonItem" destination="qjY-qw-buq" id="ZuE-Gx-cbW"/>
-                        <outlet property="sortOptionBarButtonItem" destination="d9C-DJ-Fuv" id="EF0-PD-HQW"/>
                         <outlet property="sortOptionsTableView" destination="YhY-ua-og3" id="hcg-6Z-b08"/>
                         <outlet property="view" destination="gzA-0Q-J61" id="3uu-VO-m35"/>
                         <segue destination="rRL-5Z-sl7" kind="showDetail" identifier="gameMoreInfoSegue" id="7da-Wx-yg7"/>
@@ -437,11 +433,11 @@
                             <rect key="frame" x="96" y="187.5" width="128" height="66"/>
                             <autoresizingMask key="autoresizingMask"/>
                             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="5lv-A6-HuR" id="y0R-gN-gry">
-                                <rect key="frame" x="0.0" y="0.0" width="63" height="66"/>
+                                <rect key="frame" x="0.0" y="0.0" width="85" height="66"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <subviews>
-                                    <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="dFB-G1-4da">
-                                        <rect key="frame" x="30" y="0.0" width="13" height="66"/>
+                                    <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" ambiguous="YES" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="dFB-G1-4da">
+                                        <rect key="frame" x="8" y="0.0" width="57" height="66"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="38"/>
                                         <nil key="textColor"/>
@@ -454,11 +450,11 @@
                             <rect key="frame" x="96" y="267.5" width="128" height="66"/>
                             <autoresizingMask key="autoresizingMask"/>
                             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Pb0-Xg-I7c" id="hAZ-OV-5Zy">
-                                <rect key="frame" x="0.0" y="0.0" width="63" height="66"/>
+                                <rect key="frame" x="0.0" y="0.0" width="85" height="66"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <subviews>
-                                    <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="D2e-Wn-qWZ">
-                                        <rect key="frame" x="30" y="0.0" width="13" height="66"/>
+                                    <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" ambiguous="YES" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="D2e-Wn-qWZ">
+                                        <rect key="frame" x="8" y="0.0" width="57" height="66"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="38"/>
                                         <nil key="textColor"/>
@@ -483,7 +479,7 @@
                     <tabBarItem key="tabBarItem" title="Library" id="MDp-Vh-3fS"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="fuf-Dv-b6x">
-                        <rect key="frame" x="0.0" y="157" width="1920" height="145"/>
+                        <rect key="frame" x="0.0" y="60" width="1920" height="145"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -500,10 +496,11 @@
             <objects>
                 <viewControllerPlaceholder storyboardIdentifier="settingsSplitVC" storyboardName="Settings" referencedIdentifier="settingsSplitVC" id="LQv-GI-W6u" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Item" id="lLs-zv-OPp"/>
+                    <navigationItem key="navigationItem" id="jPS-rY-4hU"/>
                 </viewControllerPlaceholder>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FHs-9y-Br1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3841" y="-1746"/>
+            <point key="canvasLocation" x="4562" y="-2899"/>
         </scene>
         <!--controllerSelectionVC-->
         <scene sceneID="lbj-K6-mWC">
@@ -516,9 +513,13 @@
     </scenes>
     <resources>
         <image name="caution-icon" width="42" height="36"/>
+        <image name="gear" width="20" height="20"/>
         <image name="sort" width="42" height="42"/>
         <systemColor name="groupTableViewBackgroundColor">
             <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="linkColor">
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="tableCellGroupedBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
