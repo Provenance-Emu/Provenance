@@ -205,6 +205,10 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
     NSString *saveStatePath;
     bool isInitialized;
     NSUInteger _maxDiscs;
+
+	dispatch_semaphore_t mupenWaitToBeginFrameSemaphore;
+	dispatch_semaphore_t coreWaitToEndFrameSemaphore;
+
 @package
     NSMutableDictionary <NSString *, id> *_displayModes;
 }
@@ -219,6 +223,10 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 - (instancetype)init {
     if (self = [super init]) {
         _current = self;
+
+		mupenWaitToBeginFrameSemaphore = dispatch_semaphore_create(0);
+		coreWaitToEndFrameSemaphore    = dispatch_semaphore_create(0);
+
 //        Log::SetFilterLevel(LOGLEVEL_TRACE);
         Log::RegisterCallback(OELogFunc, NULL);
         g_settings.gpu_renderer = GPURenderer::HardwareOpenGL;
@@ -355,9 +363,26 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
     return YES;
 }
 
-- (BOOL)isDoubleBuffered {
-    return YES;
+//- (BOOL)isDoubleBuffered {
+//    return YES;
+//}
+
+
+- (dispatch_time_t)frameTime {
+	float frameTime = 1.0/[self frameInterval];
+	__block BOOL expired = NO;
+	dispatch_time_t killTime = dispatch_time(DISPATCH_TIME_NOW, frameTime * NSEC_PER_SEC);
+	return killTime;
 }
+
+
+- (void)videoInterrupt
+{
+	dispatch_semaphore_signal(coreWaitToEndFrameSemaphore);
+
+	dispatch_semaphore_wait(mupenWaitToBeginFrameSemaphore, [self frameTime]);
+}
+
 
 - (void)swapBuffers {
     [self.renderDelegate didRenderFrameOnAlternateThread];
@@ -953,17 +978,75 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
     return (CGSize){ 640, 480 };
 }
 
+- (void)startEmulation
+{
+	if(!self.isRunning)
+	{
+		[super startEmulation];
+		[NSThread detachNewThreadSelector:@selector(runDuckstationEmuThread) toTarget:self withObject:nil];
+	}
+}
+
+
+- (void)runDuckstationEmuThread
+{
+	@autoreleasepool
+	{
+		if (!isInitialized){
+			auto params = std::make_shared<SystemBootParameters>(bootPath.fileSystemRepresentation);
+			duckInterface->Initialize();
+			isInitialized = duckInterface->BootSystem(params);
+			if (saveStatePath) {
+				duckInterface->LoadState(saveStatePath.fileSystemRepresentation);
+				saveStatePath = nil;
+			}
+		}
+		[self.renderDelegate startRenderingOnAlternateThread];
+//		if(CoreDoCommand(M64CMD_EXECUTE, 0, NULL) != M64ERR_SUCCESS) {
+//			ELOG(@"Core execture did not exit correctly");
+//		} else {
+//			ILOG(@"Core finished executing main");
+//		}
+//
+//		if(CoreDetachPlugin(M64PLUGIN_GFX) != M64ERR_SUCCESS) {
+//			ELOG(@"Failed to detach GFX plugin");
+//		} else {
+//			ILOG(@"Detached GFX plugin");
+//		}
+//
+//		if(CoreDetachPlugin(M64PLUGIN_RSP) != M64ERR_SUCCESS) {
+//			ELOG(@"Failed to detach RSP plugin");
+//		} else {
+//			ILOG(@"Detached RSP plugin");
+//		}
+//
+//		[self pluginsUnload];
+
+//		if(CoreDoCommand(M64CMD_ROM_CLOSE, 0, NULL) != M64ERR_SUCCESS) {
+//			ELOG(@"Failed to close ROM");
+//		} else {
+//			ILOG(@"ROM closed");
+//		}
+
+		// Unlock rendering thread
+		dispatch_semaphore_signal(coreWaitToEndFrameSemaphore);
+
+		[super stopEmulation];
+
+//		if(CoreShutdown() != M64ERR_SUCCESS) {
+//			ELOG(@"Core shutdown failed");
+//		}else {
+//			ILOG(@"Core shutdown successfully");
+//		}
+	}
+}
+
+
 - (void)executeFrameSkippingFrame:(BOOL)skip {
-    if (!isInitialized){
-        auto params = std::make_shared<SystemBootParameters>(bootPath.fileSystemRepresentation);
-        duckInterface->Initialize();
-        isInitialized = duckInterface->BootSystem(params);
-        if (saveStatePath) {
-            duckInterface->LoadState(saveStatePath.fileSystemRepresentation);
-            saveStatePath = nil;
-        }
-    }
-    
+	dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
+
+	dispatch_semaphore_wait(coreWaitToEndFrameSemaphore, [self frameTime]);
+
     System::RunFrame();
     
     if (!skip) {
