@@ -53,15 +53,15 @@ extension PVEmulatorViewController {
             if let aScreen = secondaryScreen {
                 secondaryWindow?.screen = aScreen
             }
-            glViewController.view?.removeFromSuperview()
-            glViewController.removeFromParent()
-            secondaryWindow?.rootViewController = glViewController
-            glViewController.view?.frame = secondaryWindow?.bounds ?? .zero
-            if let aView = glViewController.view {
+            gpuViewController.view?.removeFromSuperview()
+            gpuViewController.removeFromParent()
+            secondaryWindow?.rootViewController = gpuViewController
+            gpuViewController.view?.frame = secondaryWindow?.bounds ?? .zero
+            if let aView = gpuViewController.view {
                 secondaryWindow?.addSubview(aView)
             }
             secondaryWindow?.isHidden = false
-            glViewController.view?.setNeedsLayout()
+            gpuViewController.view?.setNeedsLayout()
         }
     }
 
@@ -69,15 +69,15 @@ extension PVEmulatorViewController {
         ILOG("Screen did disconnect: \(note?.object ?? "")")
         let screen = note?.object as? UIScreen
         if secondaryScreen == screen {
-            glViewController.view?.removeFromSuperview()
-            glViewController.removeFromParent()
-            addChild(glViewController)
+            gpuViewController.view?.removeFromSuperview()
+            gpuViewController.removeFromParent()
+            addChild(gpuViewController)
 
-            if let aView = glViewController.view, let aView1 = controllerViewController?.view {
+            if let aView = gpuViewController.view, let aView1 = controllerViewController?.view {
                 view.insertSubview(aView, belowSubview: aView1)
             }
 
-            glViewController.view?.setNeedsLayout()
+            gpuViewController.view?.setNeedsLayout()
             secondaryWindow = nil
             secondaryScreen = nil
         }

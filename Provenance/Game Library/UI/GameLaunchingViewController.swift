@@ -572,7 +572,7 @@ extension GameLaunchingViewController where Self: UIViewController {
             // Open the save state after a bootup delay if the user selected one
             // Use a timer loop on ios 10+ to check if the emulator has started running
             if let saveState = saveState {
-                emulatorViewController.glViewController.view.isHidden = true
+                emulatorViewController.gpuViewController.view.isHidden = true
                 _ = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true, block: {[weak self] timer in
 					guard let self = self else {
 						timer.invalidate()
@@ -581,7 +581,7 @@ extension GameLaunchingViewController where Self: UIViewController {
                     if !emulatorViewController.core.isEmulationPaused {
                         timer.invalidate()
                         self.openSaveState(saveState)
-                        emulatorViewController.glViewController.view.isHidden = false
+                        emulatorViewController.gpuViewController.view.isHidden = false
                     }
                 })
             }

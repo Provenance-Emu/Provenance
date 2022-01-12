@@ -146,6 +146,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
         // -- Section : Audio/Video
         var avRows = [TableRow]()
+
         #if os(iOS)
             avRows.append(contentsOf: [PVSettingsSwitchRow(text: NSLocalizedString("Volume HUD", comment: "Volume HUD"), key: \PVSettingsModel.volumeHUD)])
             avRows.append(PVSettingsSliderRow(text: NSLocalizedString("Volume", comment: "Volume"), detailText: nil, valueLimits: (min: 0.0, max: 1.0), key: \PVSettingsModel.volume))
@@ -290,6 +291,8 @@ final class PVSettingsViewController: PVQuickTableViewController {
          // Beta options
         #if os(iOS)
         let betaRows: [TableRow] = [
+            PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"), detailText: .subtitle("Use experimental Metal backend instead of OpenGL"), key: \PVSettingsModel.useMetal),
+
             PVSettingsSwitchRow(text: NSLocalizedString("Missing Buttons Always On-Screen", comment: "Missing Buttons Always On-Screen"),
                                 detailText: .subtitle("Supports: SNES, SMS, SG, GG, SCD, PSX."),
                                 key: \PVSettingsModel.missingButtonsAlwaysOn),
@@ -312,6 +315,8 @@ final class PVSettingsViewController: PVQuickTableViewController {
         ]
         #else
          let betaRows: [TableRow] = [
+            PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"), detailText: .subtitle("Use experimental Metal backend instead of OpenGL"), key: \PVSettingsModel.useMetal),
+
              PVSettingsSwitchRow(text: NSLocalizedString("iCloud Sync", comment: "iCloud Sync"),
                                 detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
                                 key: \PVSettingsModel.debugOptions.iCloudSync,

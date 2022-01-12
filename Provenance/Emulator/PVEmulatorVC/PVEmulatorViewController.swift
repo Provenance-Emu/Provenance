@@ -42,8 +42,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     var BIOSPath: URL { return PVEmulatorConfiguration.biosPath(forGame: game) }
     var menuButton: MenuButton?
 
-    let use_metal: Bool = true
-    private(set) lazy var glViewController: PVGPUViewController = use_metal ? PVMetalViewController(emulatorCore: core) : PVGLViewController(emulatorCore: core)
+    let use_metal: Bool = PVSettingsModel.shared.useMetal
+    private(set) lazy var gpuViewController: PVGPUViewController = use_metal ? PVMetalViewController(emulatorCore: core) : PVGLViewController(emulatorCore: core)
     private(set) lazy var controllerViewController: (UIViewController & StartSelectDelegate)? = PVCoreFactory.controllerViewController(forSystem: game.system, core: core)
 
     var audioInited: Bool = false
@@ -61,12 +61,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     var isShowingMenu: Bool = false {
         willSet {
             if newValue == true {
-                glViewController.isPaused = true
+                gpuViewController.isPaused = true
             }
         }
         didSet {
             if isShowingMenu == false {
-                glViewController.isPaused = false
+                gpuViewController.isPaused = false
             }
         }
     }
@@ -125,9 +125,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         }
         NSSetUncaughtExceptionHandler(nil)
         staticSelf = nil
-        glViewController.willMove(toParent: nil)
-        glViewController.view?.removeFromSuperview()
-        glViewController.removeFromParent()
+        gpuViewController.willMove(toParent: nil)
+        gpuViewController.view?.removeFromSuperview()
+        gpuViewController.removeFromParent()
         #if os(iOS)
             GCController.controllers().forEach { $0.controllerPausedHandler = nil }
         #endif
@@ -206,15 +206,15 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         #else
             fpsLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 20, weight: .bold)
         #endif
-        glViewController.view.addSubview(fpsLabel)
-        view.addConstraint(NSLayoutConstraint(item: fpsLabel, attribute: .top, relatedBy: .equal, toItem: glViewController.view, attribute: .top, multiplier: 1.0, constant: 30))
-        view.addConstraint(NSLayoutConstraint(item: fpsLabel, attribute: .right, relatedBy: .equal, toItem: glViewController.view, attribute: .right, multiplier: 1.0, constant: -40))
+        gpuViewController.view.addSubview(fpsLabel)
+        view.addConstraint(NSLayoutConstraint(item: fpsLabel, attribute: .top, relatedBy: .equal, toItem: gpuViewController.view, attribute: .top, multiplier: 1.0, constant: 30))
+        view.addConstraint(NSLayoutConstraint(item: fpsLabel, attribute: .right, relatedBy: .equal, toItem: gpuViewController.view, attribute: .right, multiplier: 1.0, constant: -40))
 
         fpsTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { [weak self] (_: Timer) -> Void in
             guard let `self` = self else { return }
 
             let coreSpeed = self.core.renderFPS/self.core.frameInterval * 100
-            let drawTime =  self.glViewController.timeSinceLastDraw * 1000
+            let drawTime =  self.gpuViewController.timeSinceLastDraw * 1000
             let fps = 1000 / drawTime
             self.fpsLabel.text = String( format: "Core speed %03.02f%% - Draw time %02.02f%ms - FPS %03.02f%", coreSpeed, drawTime, fps)
         })
@@ -275,18 +275,18 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             if let aScreen = secondaryScreen {
                 secondaryWindow?.screen = aScreen
             }
-            secondaryWindow?.rootViewController = glViewController
-            glViewController.view?.frame = secondaryWindow?.bounds ?? .zero
-            if let aView = glViewController.view {
+            secondaryWindow?.rootViewController = gpuViewController
+            gpuViewController.view?.frame = secondaryWindow?.bounds ?? .zero
+            if let aView = gpuViewController.view {
                 secondaryWindow?.addSubview(aView)
             }
             secondaryWindow?.isHidden = false
         } else {
-            addChild(glViewController)
-            if let aView = glViewController.view {
+            addChild(gpuViewController)
+            if let aView = gpuViewController.view {
                 view.addSubview(aView)
             }
-            glViewController.didMove(toParent: self)
+            gpuViewController.didMove(toParent: self)
         }
         #if os(iOS) && !targetEnvironment(macCatalyst)
             addControllerOverlay()
@@ -509,19 +509,19 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
     @objc func updateFPSLabel() {
         #if DEBUG
-            print("FPS: \(glViewController.framesPerSecond)")
+            print("FPS: \(gpuViewController.framesPerSecond)")
         #endif
         fpsLabel.text = String(format: "%2.02f", core.emulationFPS)
     }
 
     func captureScreenshot() -> UIImage? {
         fpsLabel.alpha = 0.0
-        let width: CGFloat? = glViewController.view.frame.size.width
-        let height: CGFloat? = glViewController.view.frame.size.height
+        let width: CGFloat? = gpuViewController.view.frame.size.width
+        let height: CGFloat? = gpuViewController.view.frame.size.height
         let size = CGSize(width: width ?? 0.0, height: height ?? 0.0)
         UIGraphicsBeginImageContextWithOptions(size, false, UIScreen.main.scale)
         let rec = CGRect(x: 0, y: 0, width: width ?? 0.0, height: height ?? 0.0)
-        glViewController.view.drawHierarchy(in: rec, afterScreenUpdates: true)
+        gpuViewController.view.drawHierarchy(in: rec, afterScreenUpdates: true)
         let image: UIImage? = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         fpsLabel.alpha = 1.0
