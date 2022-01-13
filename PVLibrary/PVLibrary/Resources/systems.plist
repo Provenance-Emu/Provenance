@@ -3035,7 +3035,7 @@
 				<key>PVControlTitle</key>
 				<string>Pause</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -3043,7 +3043,7 @@
 				<key>PVControlTitle</key>
 				<string>Option</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
