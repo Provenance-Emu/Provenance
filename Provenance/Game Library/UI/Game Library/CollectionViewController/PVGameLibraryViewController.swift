@@ -81,14 +81,15 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     var isInitialAppearance = false
 
+    // add or remove the conflict button (iff it is in the storyboard)
     func updateConflictsButton(_ hasConflicts: Bool) {
-        #if os(tvOS)
-            var items = [sortOptionBarButtonItem!, getMoreRomsBarButtonItem!]
-            if hasConflicts, let conflictsBarButtonItem = conflictsBarButtonItem {
-                items.append(conflictsBarButtonItem)
+        if let conflictsBarButtonItem = conflictsBarButtonItem {
+            var items = navigationItem.leftBarButtonItems?.filter({$0 !== conflictsBarButtonItem})
+            if hasConflicts {
+                items?.append(conflictsBarButtonItem)
             }
             navigationItem.leftBarButtonItems = items
-        #endif
+        }
     }
 
     @IBOutlet var sortOptionsTableView: UITableView!
@@ -621,6 +622,13 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         if segue.identifier == "SettingsSegue" {
             let settingsVC = (segue.destination as! UINavigationController).topViewController as! PVSettingsViewController
             settingsVC.conflictsController = updatesController
+        } else if segue.identifier == "SplitSettingsSegue" {
+            #if os(tvOS)
+                let splitVC = segue.destination as! PVTVSplitViewController
+                let navVC = splitVC.viewControllers[1] as! UINavigationController
+                let settingsVC = navVC.topViewController as! PVSettingsViewController
+                settingsVC.conflictsController = updatesController
+            #endif
         } else if segue.identifier == "gameMoreInfoSegue" {
             let game = sender as! PVGame
             let moreInfoVC = segue.destination as! PVGameMoreInfoViewController
@@ -671,8 +679,15 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     @IBAction func conflictsButtonTapped(_: Any) {
         displayConflictVC()
     }
-
-    @IBAction func sortButtonTapped(_: Any) {
+    
+    #if os(tvOS)
+    @IBAction func searchButtonTapped(_ sender: Any) {
+        let searchNavigationController = PVSearchViewController.createEmbeddedInNavigationController(gameLibrary: gameLibrary)
+        present(searchNavigationController, animated: true) { () -> Void in }
+    }
+    #endif
+    
+    @IBAction func sortButtonTapped(_ sender: Any) {
         #if os(iOS)
             // Add done button to iPhone
             // iPad is a popover do no done button needed
@@ -683,7 +698,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                 present(navController, animated: true, completion: nil)
                 return
             } else {
-                sortOptionsTableViewController.popoverPresentationController?.barButtonItem = sortOptionBarButtonItem
+                sortOptionsTableViewController.popoverPresentationController?.barButtonItem = sender as? UIBarButtonItem
                 sortOptionsTableViewController.popoverPresentationController?.sourceView = collectionView
                 sortOptionsTableView.reloadData()
                 present(sortOptionsTableViewController, animated: true, completion: nil)
