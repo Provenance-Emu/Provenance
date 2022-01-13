@@ -309,11 +309,11 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
             PVSettingsSwitchRow(text: NSLocalizedString("4X Multisampling GL", comment: "4X Multisampling GL"),
                                 detailText: .subtitle("Use iOS's EAGLContext multisampling. Slower speed (slightly), smoother edges."),
-                                key: \PVSettingsModel.debugOptions.multiSampling)
+                                key: \PVSettingsModel.debugOptions.multiSampling),
 
-//            PVSettingsSwitchRow(text: NSLocalizedString("Unsupported Cores", comment: "Unsupported Cores"),
-//                                detailText: .subtitle("Cores that are in development"),
-//                                key: \PVSettingsModel.debugOptions.unsupportedCores)
+            PVSettingsSwitchRow(text: NSLocalizedString("Unsupported Cores", comment: "Unsupported Cores"),
+                                detailText: .subtitle("Cores that are in development"),
+                                key: \PVSettingsModel.debugOptions.unsupportedCores)
         ]
         #else
          let betaRows: [TableRow] = [

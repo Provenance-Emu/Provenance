@@ -14,6 +14,7 @@ import RealmSwift
 import RxSwift
 #if !targetEnvironment(macCatalyst) && !os(macOS) // && canImport(SteamController)
 import SteamController
+import UIKit
 #endif
 
 @UIApplicationMain
@@ -26,6 +27,22 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     #if os(iOS)
         var _logViewController: PVLogViewController?
     #endif
+    
+    func _initUI() {
+        if PVSettingsModel.shared.debugOptions.useSwiftUI {
+            
+        } else {
+            let storyboard = UIStoryboard.init(name: "Provenance", bundle: Bundle.main)
+            let vc = storyboard.instantiateInitialViewController()
+     
+            
+              // Set root view controller and make windows visible
+            let window = UIWindow.init(frame: UIScreen.main.bounds)
+            self.window = window
+            window.rootViewController = vc
+            window.makeKeyAndVisible()
+        }
+    }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         application.isIdleTimerDisabled = PVSettingsModel.shared.disableAutoLock
@@ -125,6 +142,10 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         #if os(iOS)
         if #available(iOS 11, *) {
             PVAltKitService.shared.start()
+        }
+        
+        if #available(iOS 13, *) {
+            ApplicationMonitor.shared.start()
         }
         #endif
 

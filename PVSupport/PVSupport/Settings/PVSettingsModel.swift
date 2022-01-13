@@ -228,9 +228,10 @@ extension MirroredSettings {
 
     @objc public class DebugOptions: NSObject {
 		@objc public dynamic var useMetal = false
+        @objc public dynamic var useSwiftUI = false
 		@objc public dynamic var experimentalCores = false
         @objc public dynamic var iCloudSync = false
-//        @objc public dynamic var unsupportedCores = false
+        @objc public dynamic var unsupportedCores = false
 //        @objc public dynamic var multiThreadedGL = BoolSetting(false, title: "Multi-threaded GL", info: "Use threaded GLES calls.")
         @objc public dynamic var multiThreadedGL = true
         @objc public dynamic var multiSampling = true
