@@ -189,7 +189,14 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                     self.collectionView?.reloadData()
                 }
             })
-        #endif
+#else
+            navigationController?.navigationBar.isTranslucent = false
+            navigationController?.navigationBar.backgroundColor =  UIColor.black.withAlphaComponent(0.8)
+            // ironicaly BarButtons look better when forced to LightMode
+            if #available(tvOS 13.0, *) {
+                navigationController?.overrideUserInterfaceStyle = .light
+            }
+#endif
 
         // Handle migrating library
         DispatchQueue.main.async {
@@ -1262,7 +1269,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, referenceSizeForHeaderInSection _: Int) -> CGSize {
         #if os(tvOS)
-            return CGSize(width: view.bounds.size.width, height: 40)
+            return CGSize(width: view.bounds.size.width, height: 64)
         #else
             return CGSize(width: view.bounds.size.width, height: 40)
         #endif

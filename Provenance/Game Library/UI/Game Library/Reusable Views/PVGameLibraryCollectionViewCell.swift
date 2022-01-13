@@ -926,7 +926,12 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
             coordinator.addCoordinatedAnimations({ () -> Void in
                 if self.isFocused {
                     let transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
-                    self.superview?.bringSubviewToFront(self)
+                    if let header = self.superview?.subviews.filter({$0 is PVGameLibrarySectionHeaderView}).first {
+                        self.superview?.insertSubview(self, belowSubview: header)
+                    }
+                    else {
+                        self.superview?.bringSubviewToFront(self)
+                    }
                     if PVSettingsModel.shared.showGameBadges {
                         if #available(tvOS 11, *) {} else {
                             // Hide for non os 11 since we don't have the auto contentLayerView
