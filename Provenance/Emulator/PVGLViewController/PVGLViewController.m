@@ -46,8 +46,8 @@
     
     GLuint indexVBO, vertexVBO;
     
-    GLuint texture;
-
+	GLuint texture;
+    
     struct RenderSettings renderSettings;
 }
 
@@ -209,7 +209,7 @@ __attribute__((objc_direct_members))
     
     [self setupBlitShader];
     [self setupCRTShader];
-
+    
     alternateThreadFramebufferBack = 0;
     alternateThreadColorTextureBack = 0;
     alternateThreadDepthRenderbuffer = 0;
@@ -236,14 +236,14 @@ __attribute__((objc_direct_members))
 
 - (void) updatePreferredFPS {
     float preferredFPS = self.emulatorCore.frameInterval;
-    WLOG(@"updatePreferredFPS (%f)", preferredFPS);
+    VLOG(@"updatePreferredFPS (%f)", preferredFPS);
     if (preferredFPS  < 10) {
-        WLOG(@"Cores frame interval (%f) too low. Setting to 60", preferredFPS);
+        VLOG(@"Cores frame interval (%f) too low. Setting to 60", preferredFPS);
         preferredFPS = 60;
     }
 
     [self setPreferredFramesPerSecond:preferredFPS];
-    WLOG(@"Actual FPS: %f", self.framesPerSecond);
+    VLOG(@"Actual FPS: %f", self.framesPerSecond);
 }
 
 - (void)viewDidLayoutSubviews
