@@ -166,6 +166,9 @@
 		B3AF6FDA2191616C000FA7F9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FD92191616C000FA7F9 /* Foundation.framework */; };
 		B3AF6FDD219161BC000FA7F9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FDC219161BC000FA7F9 /* Foundation.framework */; };
 		B3AF6FDF219161C0000FA7F9 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FDE219161C0000FA7F9 /* GameController.framework */; };
+		B3B1A740279021C4004D1EF2 /* AHAP in Resources */ = {isa = PBXBuildFile; fileRef = B3B1A73F279021C4004D1EF2 /* AHAP */; };
+		B3B1A741279021C4004D1EF2 /* AHAP in Resources */ = {isa = PBXBuildFile; fileRef = B3B1A73F279021C4004D1EF2 /* AHAP */; };
+		B3B1A742279021C4004D1EF2 /* AHAP in Resources */ = {isa = PBXBuildFile; fileRef = B3B1A73F279021C4004D1EF2 /* AHAP */; };
 		B3B492CB26B3A96B000B426B /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = B3B492CA26B3A96B000B426B /* Reachability */; };
 		B3C96EA71D62C3BE003F1E93 /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4E718C1A6C699F005CA80F /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EA81D62C3C3003F1E93 /* OEGameAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69117F748F80031B1C9 /* OEGameAudio.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -192,9 +195,6 @@
 		B3CDEEC921D4C4E5000C55F7 /* SaveStateSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEC721D4C4E5000C55F7 /* SaveStateSupport.swift */; };
 		B3D0EE20277FE85F002DC0A5 /* HapticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D0EE1F277FE85F002DC0A5 /* HapticsManager.swift */; };
 		B3D0EE21277FE85F002DC0A5 /* HapticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D0EE1F277FE85F002DC0A5 /* HapticsManager.swift */; };
-		B3D0EE23277FE87A002DC0A5 /* AHAP in Resources */ = {isa = PBXBuildFile; fileRef = B3D0EE22277FE879002DC0A5 /* AHAP */; };
-		B3D0EE24277FE87A002DC0A5 /* AHAP in Resources */ = {isa = PBXBuildFile; fileRef = B3D0EE22277FE879002DC0A5 /* AHAP */; };
-		B3D0EE25277FE87A002DC0A5 /* AHAP in Resources */ = {isa = PBXBuildFile; fileRef = B3D0EE22277FE879002DC0A5 /* AHAP */; };
 		B3D0EE26277FE880002DC0A5 /* HapticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D0EE1F277FE85F002DC0A5 /* HapticsManager.swift */; };
 		B3D0EE28277FE8C9002DC0A5 /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D0EE27277FE8C9002DC0A5 /* CoreHaptics.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3D0EE2A277FE8E1002DC0A5 /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D0EE29277FE8E0002DC0A5 /* CoreHaptics.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -283,6 +283,7 @@
 		B3AF6FD92191616C000FA7F9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B3AF6FDC219161BC000FA7F9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3AF6FDE219161C0000FA7F9 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/GameController.framework; sourceTree = DEVELOPER_DIR; };
+		B3B1A73F279021C4004D1EF2 /* AHAP */ = {isa = PBXFileReference; lastKnownFileType = folder; path = AHAP; sourceTree = "<group>"; };
 		B3C96E9E1D62C3A3003F1E93 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C96EBA1D62C54D003F1E93 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3C96EBB1D62C54D003F1E93 /* PVSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVSupport.h; sourceTree = "<group>"; };
@@ -293,7 +294,6 @@
 		B3CDEEC421D4C490000C55F7 /* CoreActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreActions.swift; sourceTree = "<group>"; };
 		B3CDEEC721D4C4E5000C55F7 /* SaveStateSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveStateSupport.swift; sourceTree = "<group>"; };
 		B3D0EE1F277FE85F002DC0A5 /* HapticsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HapticsManager.swift; sourceTree = "<group>"; };
-		B3D0EE22277FE879002DC0A5 /* AHAP */ = {isa = PBXFileReference; lastKnownFileType = folder; path = AHAP; sourceTree = "<group>"; };
 		B3D0EE27277FE8C9002DC0A5 /* CoreHaptics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreHaptics.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.2.sdk/System/Library/Frameworks/CoreHaptics.framework; sourceTree = DEVELOPER_DIR; };
 		B3D0EE29277FE8E0002DC0A5 /* CoreHaptics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreHaptics.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/CoreHaptics.framework; sourceTree = DEVELOPER_DIR; };
 		B3D73D3B1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+OEHashingAdditions.h"; sourceTree = "<group>"; };
@@ -535,9 +535,9 @@
 		B3AB36DC2187F4C4009D9244 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				B3B1A73F279021C4004D1EF2 /* AHAP */,
 				B3FA5D611D6B90BD00060D71 /* PVGameControllerUtilities.h */,
 				B3FA5D621D6B90BD00060D71 /* PVGameControllerUtilities.m */,
-				B3D0EE22277FE879002DC0A5 /* AHAP */,
 				B3D0EE1F277FE85F002DC0A5 /* HapticsManager.swift */,
 				B3AB37462187F57A009D9244 /* iCade */,
 			);
@@ -858,7 +858,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3D0EE25277FE87A002DC0A5 /* AHAP in Resources */,
+				B3B1A742279021C4004D1EF2 /* AHAP in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -873,7 +873,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3D0EE24277FE87A002DC0A5 /* AHAP in Resources */,
+				B3B1A741279021C4004D1EF2 /* AHAP in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -881,7 +881,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3D0EE23277FE87A002DC0A5 /* AHAP in Resources */,
+				B3B1A740279021C4004D1EF2 /* AHAP in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
