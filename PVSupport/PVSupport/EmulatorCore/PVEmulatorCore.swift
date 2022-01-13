@@ -8,6 +8,13 @@
 
 import Foundation
 
+@_silgen_name("AudioServicesStopSystemSound")
+func AudioServicesStopSystemSound(_ soundID: SystemSoundID)
+
+	// vibrationPattern parameter must be NSDictionary to prevent crash when bridging from Swift.Dictionary.
+@_silgen_name("AudioServicesPlaySystemSoundWithVibration")
+func AudioServicesPlaySystemSoundWithVibration(_ soundID: SystemSoundID, _ idk: Any?, _ vibrationPattern: NSDictionary)
+
 @objc
 public extension PVEmulatorCore {
 	var supportsRumble: Bool { false }
@@ -49,10 +56,41 @@ public extension PVEmulatorCore {
 
 		DispatchQueue.main.async {
 			if deviceHasHaptic {
-//				self?.rumbleGenerator.impactOccurred()
+				AudioServicesStopSystemSound(kSystemSoundID_Vibrate)
+
+				var vibrationLength = 30
+
+				if UIDevice.current.modelGeneration.hasPrefix("iPhone6") {
+						// iPhone 5S has a weaker vibration motor, so we vibrate for 10ms longer to compensate
+					vibrationLength = 40
+				}
+
+					// Must use NSArray/NSDictionary to prevent crash.
+				let pattern: [Any] = [false, 0, true, vibrationLength]
+				let dictionary: [String: Any] = ["VibePattern": pattern, "Intensity": 1]
+
+				AudioServicesPlaySystemSoundWithVibration(kSystemSoundID_Vibrate, nil, dictionary as NSDictionary)
+					//				self?.rumbleGenerator.impactOccurred()
 			} else {
 				AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
 			}
 		}
+	}
+}
+
+private extension UIDevice {
+	var modelGeneration: String {
+		var sysinfo = utsname()
+		uname(&sysinfo)
+
+		var modelGeneration: String!
+
+		withUnsafePointer(to: &sysinfo.machine) { pointer in
+			pointer.withMemoryRebound(to: UInt8.self, capacity: Int(Mirror(reflecting: pointer.pointee).children.count), { (pointer) in
+				modelGeneration = String(cString: pointer)
+			})
+		}
+
+		return modelGeneration
 	}
 }
