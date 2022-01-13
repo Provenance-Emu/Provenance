@@ -9,6 +9,7 @@
 #import "PVGameControllerUtilities.h"
 #import <GameController/GameController.h>
 
+__attribute__((objc_direct_members))
 @implementation PVGameControllerUtilities
 
 + (PVControllerAxisDirection)axisDirectionForThumbstick:(GCControllerDirectionPad *)thumbstick {

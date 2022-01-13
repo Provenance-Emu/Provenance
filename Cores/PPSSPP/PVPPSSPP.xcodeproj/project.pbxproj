@@ -117,6 +117,8 @@
 		B30C6E54271D90080025DD88 /* libxbrz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E12271D792B0025DD88 /* libxbrz.a */; };
 		B30C6E57271D90F10025DD88 /* NativeApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CC4D25E178C7EC00094E987 /* NativeApp.cpp */; };
 		B30C6E59271D92700025DD88 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E58271D92700025DD88 /* CoreMedia.framework */; };
+		B36455B9278E7E3D00B6E87A /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36455B8278E7E3D00B6E87A /* PVLibrary.framework */; };
+		B36455BA278E7E3D00B6E87A /* PVLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B36455B8278E7E3D00B6E87A /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B38C49DD201DBCC3006761ED /* PPSSPPGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8CAFC1251785B6F700647A96 /* PPSSPPGameCore.mm */; };
 		B38C4A0B201DBD75006761ED /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B38C4A0A201DBD75006761ED /* OpenGLES.framework */; };
 		B38C4A0D201DBD7E006761ED /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B38C4A0C201DBD7E006761ED /* libz.tbd */; };
@@ -408,6 +410,17 @@
 			name = "Embed Libraries";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B36455BB278E7E3E00B6E87A /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B36455BA278E7E3D00B6E87A /* PVLibrary.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -460,6 +473,7 @@
 		B30C6E55271D90A90025DD88 /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libMoltenVK.dylib; sourceTree = "<group>"; };
 		B30C6E58271D92700025DD88 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/CoreMedia.framework; sourceTree = DEVELOPER_DIR; };
 		B30C6E5A271D92800025DD88 /* AVFAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFAudio.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/AVFAudio.framework; sourceTree = DEVELOPER_DIR; };
+		B36455B8278E7E3D00B6E87A /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B38C49D5201DBC8C006761ED /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B38C4A0A201DBD75006761ED /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.2.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		B38C4A0C201DBD7E006761ED /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.2.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
@@ -571,6 +585,7 @@
 				B38C4A0F201DBD8D006761ED /* CoreVideo.framework in Frameworks */,
 				B38C4A0D201DBD7E006761ED /* libz.tbd in Frameworks */,
 				B30C6E3B271D8C280025DD88 /* UIKit.framework in Frameworks */,
+				B36455B9278E7E3D00B6E87A /* PVLibrary.framework in Frameworks */,
 				B30C6E45271D8C700025DD88 /* GameController.framework in Frameworks */,
 				B30C6E17271D79E60025DD88 /* libcityhash.a in Frameworks */,
 				B30C6E1D271D79E60025DD88 /* libsnappy.a in Frameworks */,
@@ -737,6 +752,7 @@
 		B38C49FB201DBD67006761ED /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B36455B8278E7E3D00B6E87A /* PVLibrary.framework */,
 				B305431F272022C800F5257D /* libavcodec.a */,
 				B3054320272022C800F5257D /* libavdevice.a */,
 				B3054322272022C800F5257D /* libavformat.a */,
@@ -821,6 +837,7 @@
 				B38C49D1201DBC8C006761ED /* Frameworks */,
 				B38C49D2201DBC8C006761ED /* Headers */,
 				B38C49D3201DBC8C006761ED /* Resources */,
+				B36455BB278E7E3E00B6E87A /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1356,7 +1373,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1428,7 +1444,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1506,7 +1521,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1578,7 +1592,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

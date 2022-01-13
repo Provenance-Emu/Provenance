@@ -50,7 +50,7 @@ EmulatedSystem vba;
 int emulating = 0;
 uint32_t pad[PVGBAButtonCount];
 
-@interface PVGBAEmulatorCore ()
+@interface PVGBAEmulatorCore () <GameWithCheat>
 {
     uint8_t *videoBuffer;
     int32_t *soundBuffer;
@@ -276,7 +276,11 @@ static __weak PVGBAEmulatorCore *_current;
 
 - (double)audioSampleRate
 {
-    return soundGetSampleRate();
+    double samplerate = soundGetSampleRate();
+    if(samplerate < 32768) {
+        samplerate = 32768;
+    }
+    return samplerate;
 }
 
 - (NSUInteger)channelCount
@@ -440,9 +444,9 @@ bool systemReadJoypads()
 #pragma mark - Cheats
 
 NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
+extern bool cheatsVerifyCheatCode(const char *code, const char *desc);
 
-- (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled
-{
+- (BOOL)setCheatWithCode:(NSString *)code type:(NSString *)type enabled:(BOOL)enabled {
     // Sanitize
     code = [code stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 
@@ -460,6 +464,10 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
     cheatsDeleteAll(false); // Old values not restored by default. Dunno if matters much to cheaters
 
     NSArray *multipleCodes = [[NSArray alloc] init];
+    
+    // Quick and dirty cheat check
+    BOOL valid = cheatsVerifyCheatCode(code.UTF8String, nil);
+    if(!valid) {  return NO; }
 
     // Apply enabled cheats found in dictionary
     for (id key in cheatList)
@@ -502,6 +510,8 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
             }
         }
     }
+    // TODO: Make this a real return
+    return YES;
 }
 
 # pragma mark - Misc Helper Methods
@@ -974,5 +984,11 @@ void systemMessage(int, const char * str, ...)
 {
     DLOG(@"VBA message: %s", str);
 }
+
+@end
+
+@implementation PVGBAEmulatorCore (GameWithCheat)
+
+-(BOOL)supportsCheatCode { return YES; }
 
 @end

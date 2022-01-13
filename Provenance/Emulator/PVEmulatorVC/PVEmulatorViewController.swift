@@ -34,37 +34,6 @@ func uncaughtExceptionHandler(exception _: NSException?) {
     typealias PVEmulatorViewControllerRootClass = UIViewController
 #endif
 
-class MenuButton: UIButton, HitAreaEnlarger {
-    var hitAreaInset: UIEdgeInsets = UIEdgeInsets(top: -5, left: -5, bottom: -5, right: -5)
-}
-
-extension UIViewController {
-    func presentMessage(_ message: String, title: String, completion _: (() -> Swift.Void)? = nil) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-
-        let presentingVC = presentedViewController ?? self
-
-        if presentingVC.isBeingDismissed || presentingVC.isBeingPresented {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                presentingVC.present(alert, animated: true, completion: nil)
-            }
-        } else {
-            presentingVC.present(alert, animated: true, completion: nil)
-        }
-    }
-
-    func presentError(_ message: String, completion: (() -> Swift.Void)? = nil) {
-        ELOG("\(message)")
-        presentMessage(message, title: "Error", completion: completion)
-    }
-
-    func presentWarning(_ message: String, completion: (() -> Swift.Void)? = nil) {
-        WLOG("\(message)")
-        presentMessage(message, title: "Warning", completion: completion)
-    }
-}
-
 final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelegate, PVSaveStatesViewControllerDelegate {
     let core: PVEmulatorCore
     let game: PVGame
@@ -73,7 +42,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     var BIOSPath: URL { return PVEmulatorConfiguration.biosPath(forGame: game) }
     var menuButton: MenuButton?
 
-    private(set) lazy var glViewController: PVGLViewController = PVGLViewController(emulatorCore: core)
+	let use_metal: Bool = PVSettingsModel.shared.debugOptions.useMetal
+    private(set) lazy var gpuViewController: PVGPUViewController = use_metal ? PVMetalViewController(emulatorCore: core) : PVGLViewController(emulatorCore: core)
     private(set) lazy var controllerViewController: (UIViewController & StartSelectDelegate)? = PVCoreFactory.controllerViewController(forSystem: game.system, core: core)
 
     var audioInited: Bool = false
@@ -91,12 +61,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     var isShowingMenu: Bool = false {
         willSet {
             if newValue == true {
-                glViewController.isPaused = true
+                gpuViewController.isPaused = true
             }
         }
         didSet {
             if isShowingMenu == false {
-                glViewController.isPaused = false
+                gpuViewController.isPaused = false
             }
         }
     }
@@ -155,9 +125,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         }
         NSSetUncaughtExceptionHandler(nil)
         staticSelf = nil
-        glViewController.willMove(toParent: nil)
-        glViewController.view?.removeFromSuperview()
-        glViewController.removeFromParent()
+        gpuViewController.willMove(toParent: nil)
+        gpuViewController.view?.removeFromSuperview()
+        gpuViewController.removeFromParent()
         #if os(iOS)
             GCController.controllers().forEach { $0.controllerPausedHandler = nil }
         #endif
@@ -236,15 +206,15 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         #else
             fpsLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 20, weight: .bold)
         #endif
-        glViewController.view.addSubview(fpsLabel)
-        view.addConstraint(NSLayoutConstraint(item: fpsLabel, attribute: .top, relatedBy: .equal, toItem: glViewController.view, attribute: .top, multiplier: 1.0, constant: 30))
-        view.addConstraint(NSLayoutConstraint(item: fpsLabel, attribute: .right, relatedBy: .equal, toItem: glViewController.view, attribute: .right, multiplier: 1.0, constant: -40))
+        gpuViewController.view.addSubview(fpsLabel)
+        view.addConstraint(NSLayoutConstraint(item: fpsLabel, attribute: .top, relatedBy: .equal, toItem: gpuViewController.view, attribute: .top, multiplier: 1.0, constant: 30))
+        view.addConstraint(NSLayoutConstraint(item: fpsLabel, attribute: .right, relatedBy: .equal, toItem: gpuViewController.view, attribute: .right, multiplier: 1.0, constant: -40))
 
         fpsTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { [weak self] (_: Timer) -> Void in
             guard let `self` = self else { return }
 
             let coreSpeed = self.core.renderFPS/self.core.frameInterval * 100
-            let drawTime =  self.glViewController.timeSinceLastDraw * 1000
+            let drawTime =  self.gpuViewController.timeSinceLastDraw * 1000
             let fps = 1000 / drawTime
             self.fpsLabel.text = String( format: "Core speed %03.02f%% - Draw time %02.02f%ms - FPS %03.02f%", coreSpeed, drawTime, fps)
         })
@@ -305,18 +275,18 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             if let aScreen = secondaryScreen {
                 secondaryWindow?.screen = aScreen
             }
-            secondaryWindow?.rootViewController = glViewController
-            glViewController.view?.frame = secondaryWindow?.bounds ?? .zero
-            if let aView = glViewController.view {
+            secondaryWindow?.rootViewController = gpuViewController
+            gpuViewController.view?.frame = secondaryWindow?.bounds ?? .zero
+            if let aView = gpuViewController.view {
                 secondaryWindow?.addSubview(aView)
             }
             secondaryWindow?.isHidden = false
         } else {
-            addChild(glViewController)
-            if let aView = glViewController.view {
+            addChild(gpuViewController)
+            if let aView = gpuViewController.view {
                 view.addSubview(aView)
             }
-            glViewController.didMove(toParent: self)
+            gpuViewController.didMove(toParent: self)
         }
         #if os(iOS) && !targetEnvironment(macCatalyst)
             addControllerOverlay()
@@ -539,19 +509,19 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
     @objc func updateFPSLabel() {
         #if DEBUG
-            print("FPS: \(glViewController.framesPerSecond)")
+            print("FPS: \(gpuViewController.framesPerSecond)")
         #endif
         fpsLabel.text = String(format: "%2.02f", core.emulationFPS)
     }
 
     func captureScreenshot() -> UIImage? {
         fpsLabel.alpha = 0.0
-        let width: CGFloat? = glViewController.view.frame.size.width
-        let height: CGFloat? = glViewController.view.frame.size.height
+        let width: CGFloat? = gpuViewController.view.frame.size.width
+        let height: CGFloat? = gpuViewController.view.frame.size.height
         let size = CGSize(width: width ?? 0.0, height: height ?? 0.0)
         UIGraphicsBeginImageContextWithOptions(size, false, UIScreen.main.scale)
         let rec = CGRect(x: 0, y: 0, width: width ?? 0.0, height: height ?? 0.0)
-        glViewController.view.drawHierarchy(in: rec, afterScreenUpdates: true)
+        gpuViewController.view.drawHierarchy(in: rec, afterScreenUpdates: true)
         let image: UIImage? = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         fpsLabel.alpha = 1.0
@@ -656,164 +626,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         updatePlayedDuration()
 		staticSelf = nil
     }
-}
-
-// MARK: - PVAudioDelegate
-
-extension PVEmulatorViewController {
-    func audioSampleRateDidChange() {
-        gameAudio.stop()
-        gameAudio.start()
-    }
-}
-
-// MARK: - Controllers
-
-extension PVEmulatorViewController {
-    func controllerPauseButtonPressed() {
-        DispatchQueue.main.async(execute: { () -> Void in
-            if !self.isShowingMenu {
-                self.showMenu(self)
-            } else {
-                self.hideMenu()
-            }
-        })
-    }
-
-    @objc func controllerDidConnect(_ note: Notification?) {
-        let controller = note?.object as? GCController
-        // 8Bitdo controllers don't have a pause button, so don't hide the menu
-        if !(controller is PViCade8BitdoController || controller is PViCade8BitdoZeroController) {
-            menuButton?.isHidden = true
-            // In instances where the controller is connected *after* the VC has been shown, we need to set the pause handler
-            controller?.setupPauseHandler(onPause: controllerPauseButtonPressed)
-            #if os(iOS)
-                setNeedsUpdateOfHomeIndicatorAutoHidden()
-            #endif
-        }
-    }
-
-    @objc func controllerDidDisconnect(_: Notification?) {
-        menuButton?.isHidden = false
-        #if os(iOS)
-            setNeedsUpdateOfHomeIndicatorAutoHidden()
-        #endif
-    }
-
-    @objc func handleControllerManagerControllerReassigned(_: Notification?) {
-        core.controller1 = PVControllerManager.shared.player1
-        core.controller2 = PVControllerManager.shared.player2
-        core.controller3 = PVControllerManager.shared.player3
-        core.controller4 = PVControllerManager.shared.player4
-        #if os(tvOS)
-        PVControllerManager.shared.setSteamControllersMode(core.isRunning ? .gameController : .keyboardAndMouse)
-        #endif
-    }
-
-    // MARK: - UIScreenNotifications
-
-    @objc func screenDidConnect(_ note: Notification?) {
-        ILOG("Screen did connect: \(note?.object ?? "")")
-        if secondaryScreen == nil {
-            secondaryScreen = UIScreen.screens[1]
-            if let aBounds = secondaryScreen?.bounds {
-                secondaryWindow = UIWindow(frame: aBounds)
-            }
-            if let aScreen = secondaryScreen {
-                secondaryWindow?.screen = aScreen
-            }
-            glViewController.view?.removeFromSuperview()
-            glViewController.removeFromParent()
-            secondaryWindow?.rootViewController = glViewController
-            glViewController.view?.frame = secondaryWindow?.bounds ?? .zero
-            if let aView = glViewController.view {
-                secondaryWindow?.addSubview(aView)
-            }
-            secondaryWindow?.isHidden = false
-            glViewController.view?.setNeedsLayout()
-        }
-    }
-
-    @objc func screenDidDisconnect(_ note: Notification?) {
-        ILOG("Screen did disconnect: \(note?.object ?? "")")
-        let screen = note?.object as? UIScreen
-        if secondaryScreen == screen {
-            glViewController.view?.removeFromSuperview()
-            glViewController.removeFromParent()
-            addChild(glViewController)
-
-            if let aView = glViewController.view, let aView1 = controllerViewController?.view {
-                view.insertSubview(aView, belowSubview: aView1)
-            }
-
-            glViewController.view?.setNeedsLayout()
-            secondaryWindow = nil
-            secondaryScreen = nil
-        }
-    }
-}
-
-extension PVEmulatorViewController {
-    func showSwapDiscsMenu() {
-        guard let core = self.core as? (PVEmulatorCore & DiscSwappable) else {
-            presentError("Internal error: No core found.")
-            isShowingMenu = false
-            enableControllerInput(false)
-            return
-        }
-
-        let numberOfDiscs = core.numberOfDiscs
-        guard numberOfDiscs > 1 else {
-            presentError("Game only supports 1 disc.")
-            core.setPauseEmulation(false)
-            isShowingMenu = false
-            enableControllerInput(false)
-            return
-        }
-
-        // Add action for each disc
-        let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-
-        for index in 1 ... numberOfDiscs {
-            actionSheet.addAction(UIAlertAction(title: "\(index)", style: .default, handler: { [unowned self] _ in
-
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
-                    core.swapDisc(number: index)
-                })
-
-                core.setPauseEmulation(false)
-                self.isShowingMenu = false
-                self.enableControllerInput(false)
-            }))
-        }
-
-        // Add cancel action
-        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { [unowned self] _ in
-            core.setPauseEmulation(false)
-            self.isShowingMenu = false
-            self.enableControllerInput(false)
-        }))
-
-        // Present
-        if traitCollection.userInterfaceIdiom == .pad {
-            actionSheet.popoverPresentationController?.sourceView = menuButton
-            actionSheet.popoverPresentationController?.sourceRect = menuButton?.bounds ?? .zero
-        }
-
-        present(actionSheet, animated: true) {
-            PVControllerManager.shared.iCadeController?.refreshListener()
-        }
-    }
-}
-
-extension PVEmulatorViewController {
-    func showCoreOptions() {
-        let optionsVC = CoreOptionsViewController(withCore: type(of: core) as! CoreOptional.Type)
-        let nav = UINavigationController(rootViewController: optionsVC)
-        optionsVC.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissNav))
-        present(nav, animated: true, completion: nil)
-    }
-
+    
     @objc
     func dismissNav() {
         presentedViewController?.dismiss(animated: true, completion: nil)
@@ -873,49 +686,5 @@ extension NSNumber {
 
     private convenience init(touchType: UITouch.TouchType) {
         self.init(integerLiteral: touchType.rawValue)
-    }
-}
-
-extension GCController {
-    func setupPauseHandler(onPause: @escaping () -> Void) {
-        // Use buttonHome for iOS/tvOS14 and later
-        if let buttonHome = buttonHome {
-            buttonHome.pressedChangedHandler = { _, _, isPressed in
-                if isPressed {
-                    onPause()
-                }
-            }
-        }
-        // Using buttonMenu is the recommended way for iOS/tvOS13 and later
-        if let buttonMenu = buttonMenu {
-            buttonMenu.pressedChangedHandler = { _, _, isPressed in
-                if isPressed {
-                    onPause()
-                }
-            }
-        } else {
-            // Fallback to the old method
-            controllerPausedHandler = { _ in
-                onPause()
-			}
-        }
-    }
-
-    private var buttonMenu: GCControllerButtonInput? {
-        if #available(iOS 13.0, tvOS 13.0, *) {
-            if let microGamepad = microGamepad {
-                return microGamepad.buttonMenu
-            } else if let extendedGamepad = extendedGamepad {
-                return extendedGamepad.buttonMenu
-            }
-        }
-        return nil
-    }
-    
-    private var buttonHome: GCControllerButtonInput? {
-        if #available(iOS 14.0, tvOS 14.0, *) {
-            return extendedGamepad?.buttonHome
-        }
-        return nil
     }
 }

@@ -55,6 +55,7 @@
 "FPS Counter" = "FPS Counter";
 "Missing Buttons Always On-Screen" = "Missing Buttons Always On-Screen";
 "iCloud Sync" = "iCloud Sync";
+"Use Metal" = "Use Metal";
 "Multi-threaded GL" = "Multi-threaded GL";
 "4X Multisampling GL" = "4X Multisampling GL";
 "Disable Auto Lock" = "Disable Auto Lock";

@@ -69,7 +69,9 @@ public final class RealmConfiguration {
             if fm.fileExists(atPath: nonGroupPath.path) {
                 do {
                     ILOG("Found realm database at non-group path location. Will attempt to move to group path location")
-                    try fm.removeItem(at: realmURL)
+                    if fm.fileExists(atPath: realmURL.path) {
+                        try fm.removeItem(at: realmURL)
+                    }
                     try fm.moveItem(at: nonGroupPath, to: realmURL)
                     ILOG("Moved old database to group path location.")
                 } catch {

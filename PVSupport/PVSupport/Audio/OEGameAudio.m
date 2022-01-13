@@ -112,6 +112,7 @@ OSStatus RenderCallback(void                       *in,
 @property (readwrite, nonatomic, assign) BOOL running;
 @end
 
+__attribute__((objc_direct_members))
 @implementation OEGameAudio
 
 // No default version for this class

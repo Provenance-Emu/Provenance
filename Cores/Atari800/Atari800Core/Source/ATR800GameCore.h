@@ -31,6 +31,6 @@
 
 @class OERingBuffer;
 
-__attribute__((visibility("default")))
+PVCORE
 @interface ATR800GameCore : PVEmulatorCore <PV5200SystemResponderClient>
 @end

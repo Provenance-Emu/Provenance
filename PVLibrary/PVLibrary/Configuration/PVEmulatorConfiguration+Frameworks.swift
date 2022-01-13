@@ -41,10 +41,10 @@ public extension PVEmulatorConfiguration {
                 let data = try Data(contentsOf: plist)
                 let core = try decoder.decode(CorePlistEntry.self, from: data)
                 let supportedSystems = database.all(PVSystem.self, filter: NSPredicate(format: "identifier IN %@", argumentArray: [core.PVSupportedSystems]))
-                if let disabled = core.PVDisabled, disabled {
+				if let disabled = core.PVDisabled, disabled, PVSettingsModel.shared.debugOptions.experimentalCores {
                     // Do nothing
                 } else {
-                    let newCore = PVCore(withIdentifier: core.PVCoreIdentifier, principleClass: core.PVPrincipleClass, supportedSystems: Array(supportedSystems), name: core.PVProjectName, url: core.PVProjectURL, version: core.PVProjectVersion)
+                    let newCore = PVCore(withIdentifier: core.PVCoreIdentifier, principleClass: core.PVPrincipleClass, supportedSystems: Array(supportedSystems), name: core.PVProjectName, url: core.PVProjectURL, version: core.PVProjectVersion, disabled: core.PVDisabled ?? false)
                     database.refresh()
                     try newCore.add(update: true)
                 }

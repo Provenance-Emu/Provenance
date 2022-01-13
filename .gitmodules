@@ -61,3 +61,6 @@
 [submodule "Cores/4DO"]
 	path = Cores/4DO
 	url = https://github.com/Provenance-Emu/4DO-Core.git
+[submodule "Cores/mGBA/mGBA-Core"]
+	path = Cores/mGBA/mGBA-Core
+	url = https://github.com/Provenance-Emu/mGBA-Core.git
