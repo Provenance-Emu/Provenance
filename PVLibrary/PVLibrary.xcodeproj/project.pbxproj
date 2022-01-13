@@ -1301,8 +1301,6 @@
 				B3579D232106B4D600DDEBD6 /* Util */,
 				B3AF460A21071CA5002211EE /* LzmaSDKObjC */,
 				B3AF47DB21072AD3002211EE /* Resources */,
-				112E7E2E247EF3840050431C /* PVGameLibrary.swift */,
-				11AFB2B224867482000A3922 /* PVGameLibrary+Migration.swift */,
 				B3579D122106B11D00DDEBD6 /* PVLibrary.h */,
 				B3579D132106B11D00DDEBD6 /* Info.plist */,
 			);
@@ -1312,6 +1310,8 @@
 		B3579D1D2106B4D600DDEBD6 /* Database */ = {
 			isa = PBXGroup;
 			children = (
+				112E7E2E247EF3840050431C /* PVGameLibrary.swift */,
+				11AFB2B224867482000A3922 /* PVGameLibrary+Migration.swift */,
 				B3579D1E2106B4D600DDEBD6 /* OESQLiteDatabase.h */,
 				B3579D202106B4D600DDEBD6 /* OESQLiteDatabase.m */,
 			);
