@@ -40,7 +40,7 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         didSet {
             #if os(tvOS)
                 titleLabel.text = viewModel.title
-                titleLabel.font = UIFont.boldSystemFont(ofSize: 32)
+                titleLabel.font = UIFont.boldSystemFont(ofSize: 48)
             #else
                 titleLabel.text = viewModel.title.uppercased()
                 titleLabel.font = UIFont.boldSystemFont(ofSize: 12)
