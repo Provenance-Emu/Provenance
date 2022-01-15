@@ -243,7 +243,14 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             stack.frame = CGRect(origin:.zero, size:stack.systemLayoutSizeFitting(.zero))
             navigationItem.titleView = stack
         }
-
+        
+        #if os(tvOS)
+        // we cant use a SF Symbol in the Storyboard cuz of back version support, so change it here in code.
+        if #available(tvOS 13.0, *) {
+            navigationItem.rightBarButtonItems?.first?.image = UIImage(systemName:"gear", withConfiguration:UIImage.SymbolConfiguration(pointSize:40))
+        }
+        #endif
+        
         // Persist some settings, could probably be done in a better way
         collapsedSystems.bind(onNext: { PVSettingsModel.shared.collapsedSystems = $0 }).disposed(by: disposeBag)
         currentSort.bind(onNext: { PVSettingsModel.shared.sort = $0 }).disposed(by: disposeBag)
