@@ -73,11 +73,12 @@ let package = Package(
                 // "LzmaSDKObjC/src/LzmaSDKObjCReader.mm",
                 // "LzmaSDKObjC/src/LzmaSDKObjCUpdateCallback.mm",
                 // "LzmaSDKObjC/src/LzmaSDKObjCWriter.mm",
-            ]),
+            ],
+            publicHeadersPath: "Public Headers"),
 
         .target(
             name: "LzmaSDKObjC",
-            path: "LzmaSDKObjC" 
+            path: "LzmaSDKObjC"
         ),
 
         .target(

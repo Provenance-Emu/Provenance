@@ -48,7 +48,8 @@ let package = Package(
                 "Logging/PVLogging.m",
                 "NSExtensions/NSObject+PVAbstractAdditions.m",
                 "NSExtensions/NSFileManager+OEHashingAdditions.m",
-                "Threads/RealTimeThread.m"]),
+                "Threads/RealTimeThread.m"],
+            publicHeadersPath: "Public Headers"),
 
         .target(
             name: "PVSupport",
