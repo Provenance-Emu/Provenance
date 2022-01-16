@@ -379,8 +379,8 @@
 			isa = PBXGroup;
 			children = (
 				B3173802278419A2002D3ACD /* Build.xcconfig */,
-				B3A4FB58278FE2F200A65248 /* PVSupport */,
-				B3532B3321A7B736006CDA0F /* PVSupportTests */,
+				B3A4FB58278FE2F200A65248 /* Sources */,
+				B3532B3321A7B736006CDA0F /* Tests */,
 				1ACEA64A17F7467D0031B1C9 /* Supporting Files */,
 				1ACEA64617F7467D0031B1C9 /* Frameworks */,
 				1ACEA64517F7467D0031B1C9 /* Products */,
@@ -419,8 +419,7 @@
 				B3C96EBA1D62C54D003F1E93 /* Info.plist */,
 				1ACEA64B17F7467D0031B1C9 /* PVSupport-Prefix.pch */,
 			);
-			name = "Supporting Files";
-			path = PVSupport;
+			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		1ACEA69017F748F80031B1C9 /* Audio */ = {
@@ -455,6 +454,30 @@
 			path = Logging;
 			sourceTree = "<group>";
 		};
+		B30E94892793C77700871E57 /* PVSupport */ = {
+			isa = PBXGroup;
+			children = (
+				1ACEA69017F748F80031B1C9 /* Audio */,
+				B3AB36DC2187F4C4009D9244 /* Controller */,
+				B3AB37F721882119009D9244 /* CoreOptions */,
+				1A4E718B1A6C693A005CA80F /* Utilities */,
+				B3CDEEB821D4C394000C55F7 /* EmulatorCore */,
+				B302F89420B71C2300C5E502 /* Logging */,
+				B3A4FB57278FE2B700A65248 /* NSExtensions */,
+				B3447F99218C1CBE00557ACE /* Settings */,
+				B3A4FB56278FE2A700A65248 /* Threads */,
+			);
+			path = PVSupport;
+			sourceTree = "<group>";
+		};
+		B30E948B2793CBC800871E57 /* PVSupportTests */ = {
+			isa = PBXGroup;
+			children = (
+				B3532B3E21A7B753006CDA0F /* PVSettingsTests.swift */,
+			);
+			path = PVSupportTests;
+			sourceTree = "<group>";
+		};
 		B3296E8D26C680EA0088AC32 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
@@ -486,13 +509,13 @@
 			path = Settings;
 			sourceTree = "<group>";
 		};
-		B3532B3321A7B736006CDA0F /* PVSupportTests */ = {
+		B3532B3321A7B736006CDA0F /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				B30E948B2793CBC800871E57 /* PVSupportTests */,
 				B3532B3621A7B736006CDA0F /* Info.plist */,
-				B3532B3E21A7B753006CDA0F /* PVSettingsTests.swift */,
 			);
-			path = PVSupportTests;
+			path = Tests;
 			sourceTree = "<group>";
 		};
 		B3A4FB56278FE2A700A65248 /* Threads */ = {
@@ -516,20 +539,12 @@
 			path = NSExtensions;
 			sourceTree = "<group>";
 		};
-		B3A4FB58278FE2F200A65248 /* PVSupport */ = {
+		B3A4FB58278FE2F200A65248 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				1ACEA69017F748F80031B1C9 /* Audio */,
-				B3AB36DC2187F4C4009D9244 /* Controller */,
-				B3AB37F721882119009D9244 /* CoreOptions */,
-				1A4E718B1A6C693A005CA80F /* Utilities */,
-				B3CDEEB821D4C394000C55F7 /* EmulatorCore */,
-				B302F89420B71C2300C5E502 /* Logging */,
-				B3A4FB57278FE2B700A65248 /* NSExtensions */,
-				B3447F99218C1CBE00557ACE /* Settings */,
-				B3A4FB56278FE2A700A65248 /* Threads */,
+				B30E94892793C77700871E57 /* PVSupport */,
 			);
-			path = PVSupport;
+			path = Sources;
 			sourceTree = "<group>";
 		};
 		B3AB36DC2187F4C4009D9244 /* Controller */ = {

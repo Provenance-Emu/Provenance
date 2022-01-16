@@ -1269,7 +1269,7 @@
 			children = (
 				B317380127841959002D3ACD /* Build.xcconfig */,
 				B3579D112106B11D00DDEBD6 /* PVLibrary */,
-				B3C04B622107867200E7AF79 /* PVLibraryTests */,
+				B3C04B622107867200E7AF79 /* Tests */,
 				B3579D102106B11D00DDEBD6 /* Products */,
 				B3067F492106B5A20091437F /* Frameworks */,
 				B305F082276B5152003AE510 /* PVLibrary-tvOS copy-Info.plist */,
@@ -1876,13 +1876,13 @@
 			path = iOS;
 			sourceTree = "<group>";
 		};
-		B3C04B622107867200E7AF79 /* PVLibraryTests */ = {
+		B3C04B622107867200E7AF79 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
 				B3C04B632107867200E7AF79 /* PVLibraryTests.swift */,
 				B3C04B652107867200E7AF79 /* Info.plist */,
 			);
-			path = PVLibraryTests;
+			path = Tests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
