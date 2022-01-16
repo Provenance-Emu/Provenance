@@ -417,6 +417,7 @@
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="conflictsBarButtonItem" destination="Dsv-oR-lbw" id="Ztu-t8-0xP"/>
+                        <outlet property="settingsBarButtonItem" destination="d3P-nN-WL5" id="J6I-TX-4u5"/>
                         <outlet property="sortOptionsTableView" destination="YhY-ua-og3" id="hcg-6Z-b08"/>
                         <outlet property="view" destination="gzA-0Q-J61" id="3uu-VO-m35"/>
                         <segue destination="rRL-5Z-sl7" kind="showDetail" identifier="gameMoreInfoSegue" id="7da-Wx-yg7"/>
