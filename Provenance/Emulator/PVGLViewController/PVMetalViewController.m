@@ -320,33 +320,40 @@ __attribute__((objc_direct_members))
     [self updatePreferredFPS];
 }
 
-- (void)setupTexture
+- (void)updateInputTexture
 {
+    CGRect screenRect = self.emulatorCore.screenRect;
+    MTLPixelFormat pixelFormat = [self getMTLPixelFormatFromGLPixelFormat:self.emulatorCore.pixelFormat type:self.emulatorCore.pixelType];
+    
+    if (self.inputTexture == nil ||
+        self.inputTexture.width != screenRect.size.width ||
+        self.inputTexture.height != screenRect.size.height ||
+        self.inputTexture.pixelFormat != pixelFormat)
     {
-        CGRect screenRect = self.emulatorCore.screenRect;
-        
-        if (!self.emulatorCore.rendersToOpenGL)
-        {
-            uint formatByteWidth = [self getByteWidthForPixelFormat:[self.emulatorCore pixelFormat] type:[self.emulatorCore pixelType]];
-            
-            for (int i = 0; i < BUFFER_COUNT; ++i)
-            {
-                _uploadBuffer[i] = [_device newBufferWithLength:self.emulatorCore.bufferSize.width * self.emulatorCore.bufferSize.height * formatByteWidth options:MTLResourceStorageModeShared];
-            }
-        }
-        
         MTLTextureDescriptor* desc = [MTLTextureDescriptor new];
         desc.textureType = MTLTextureType2D;
-        desc.pixelFormat = [self getMTLPixelFormatFromGLPixelFormat:[self.emulatorCore pixelFormat] type:[self.emulatorCore pixelType]];
-        desc.width = self.emulatorCore.rendersToOpenGL ? screenRect.size.width : self.emulatorCore.bufferSize.width;
-        desc.height = self.emulatorCore.rendersToOpenGL ? screenRect.size.height : self.emulatorCore.bufferSize.height;
+        desc.pixelFormat = pixelFormat;
+        desc.width = screenRect.size.width;
+        desc.height = screenRect.size.height;
         desc.storageMode = MTLStorageModePrivate;
         desc.usage = MTLTextureUsageShaderRead;
-        #if DEBUG
-            desc.usage |= MTLTextureUsageRenderTarget; // needed for debug clear
-        #endif
         
-        _inputTexture = [_device newTextureWithDescriptor:desc];
+        self.inputTexture = [self.device newTextureWithDescriptor:desc];
+    }
+}
+
+- (void)setupTexture
+{
+    [self updateInputTexture];
+    
+    if (!self.emulatorCore.rendersToOpenGL)
+    {
+        uint formatByteWidth = [self getByteWidthForPixelFormat:self.emulatorCore.pixelFormat type:self.emulatorCore.pixelType];
+        
+        for (int i = 0; i < BUFFER_COUNT; ++i)
+        {
+            _uploadBuffer[i] = [_device newBufferWithLength:self.emulatorCore.bufferSize.width * self.emulatorCore.bufferSize.height * formatByteWidth options:MTLResourceStorageModeShared];
+        }
     }
     
     {
@@ -517,19 +524,22 @@ __attribute__((objc_direct_members))
             [self.emulatorCore.frontBufferLock lock];
         }
         
-        id<MTLCommandBuffer> commandBuffer = [self.commandQueue commandBufferWithUnretainedReferences];
+        id<MTLCommandBuffer> commandBuffer = [self.commandQueue commandBuffer];
         self.previousCommandBuffer = commandBuffer;
         
-        CGRect screenRect = [self.emulatorCore screenRect];
+        CGRect screenRect = self.emulatorCore.screenRect;
+        
+        [self updateInputTexture];
         
         if (!self.emulatorCore.rendersToOpenGL)
         {
-            const void* videoBuffer = [self.emulatorCore videoBuffer];
-            CGSize videoBufferSize = [self.emulatorCore bufferSize];
+            const void* videoBuffer = self.emulatorCore.videoBuffer;
+            CGSize videoBufferSize = self.emulatorCore.bufferSize;
             uint formatByteWidth = [self getByteWidthForPixelFormat:[self.emulatorCore pixelFormat] type:[self.emulatorCore pixelType]];
             
             id<MTLBuffer> uploadBuffer = self->_uploadBuffer[++self->_frameCount % BUFFER_COUNT];
-            memcpy(uploadBuffer.contents, videoBuffer, videoBufferSize.width * videoBufferSize.height * formatByteWidth);
+            
+            memcpy(uploadBuffer.contents, videoBuffer, videoBufferSize.width * screenRect.size.height * formatByteWidth);
             
             id<MTLBlitCommandEncoder> encoder = [commandBuffer blitCommandEncoder];
             
@@ -537,7 +547,7 @@ __attribute__((objc_direct_members))
                        sourceOffset:0
                   sourceBytesPerRow:videoBufferSize.width * formatByteWidth
                 sourceBytesPerImage:0
-                         sourceSize:MTLSizeMake(videoBufferSize.width, videoBufferSize.height, 1)
+                         sourceSize:MTLSizeMake(screenRect.size.width, screenRect.size.height, 1)
                            toTexture:self.inputTexture
                    destinationSlice:0
                    destinationLevel:0
@@ -743,7 +753,7 @@ __attribute__((objc_direct_members))
     // There might be a more performant solution using MTLFences or MTLEvents but this is an ok first impl
     [self.previousCommandBuffer waitUntilScheduled];
     
-    id<MTLCommandBuffer> commandBuffer = [_commandQueue commandBufferWithUnretainedReferences];
+    id<MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
     id<MTLBlitCommandEncoder> encoder = [commandBuffer blitCommandEncoder];
     
     CGRect screenRect = self.emulatorCore.screenRect;
