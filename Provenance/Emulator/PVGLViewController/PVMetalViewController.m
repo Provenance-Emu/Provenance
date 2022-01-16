@@ -519,25 +519,25 @@ __attribute__((objc_direct_members))
             return;
         }
         
-        if (self.emulatorCore.rendersToOpenGL)
+        if (strongself.emulatorCore.rendersToOpenGL)
         {
-            [self.emulatorCore.frontBufferLock lock];
+            [strongself.emulatorCore.frontBufferLock lock];
         }
         
-        id<MTLCommandBuffer> commandBuffer = [self.commandQueue commandBuffer];
+        id<MTLCommandBuffer> commandBuffer = [strongself.commandQueue commandBuffer];
         self.previousCommandBuffer = commandBuffer;
         
-        CGRect screenRect = self.emulatorCore.screenRect;
+        CGRect screenRect = strongself.emulatorCore.screenRect;
         
         [self updateInputTexture];
         
-        if (!self.emulatorCore.rendersToOpenGL)
+        if (!strongself.emulatorCore.rendersToOpenGL)
         {
-            const void* videoBuffer = self.emulatorCore.videoBuffer;
-            CGSize videoBufferSize = self.emulatorCore.bufferSize;
-            uint formatByteWidth = [self getByteWidthForPixelFormat:self.emulatorCore.pixelFormat type:self.emulatorCore.pixelType];
+            const void* videoBuffer = strongself.emulatorCore.videoBuffer;
+            CGSize videoBufferSize = strongself.emulatorCore.bufferSize;
+            uint formatByteWidth = [strongself getByteWidthForPixelFormat:strongself.emulatorCore.pixelFormat type:strongself.emulatorCore.pixelType];
             
-            id<MTLBuffer> uploadBuffer = self->_uploadBuffer[++self->_frameCount % BUFFER_COUNT];
+            id<MTLBuffer> uploadBuffer = strongself->_uploadBuffer[++strongself->_frameCount % BUFFER_COUNT];
             
             memcpy(uploadBuffer.contents, videoBuffer, videoBufferSize.width * screenRect.size.height * formatByteWidth);
             
@@ -548,7 +548,7 @@ __attribute__((objc_direct_members))
                   sourceBytesPerRow:videoBufferSize.width * formatByteWidth
                 sourceBytesPerImage:0
                          sourceSize:MTLSizeMake(screenRect.size.width, screenRect.size.height, 1)
-                           toTexture:self.inputTexture
+                           toTexture:strongself.inputTexture
                    destinationSlice:0
                    destinationLevel:0
                   destinationOrigin:MTLOriginMake(0, 0, 0)];
@@ -574,23 +574,23 @@ __attribute__((objc_direct_members))
             cbData.DisplayRect.z = screenRect.size.width;
             cbData.DisplayRect.w = screenRect.size.height;
             
-            cbData.EmulatedImageSize.x = self.inputTexture.width;
-            cbData.EmulatedImageSize.y = self.inputTexture.height;
+            cbData.EmulatedImageSize.x = strongself.inputTexture.width;
+            cbData.EmulatedImageSize.y = strongself.inputTexture.height;
             
             cbData.FinalRes.x = view.drawableSize.width;
             cbData.FinalRes.y = view.drawableSize.height;
             
             [encoder setFragmentBytes:&cbData length:sizeof(cbData) atIndex:0];
             
-            [encoder setRenderPipelineState:self.crtFilterPipeline];
+            [encoder setRenderPipelineState:strongself.crtFilterPipeline];
         }
         else
         {
-            [encoder setRenderPipelineState:self.blitPipeline];
+            [encoder setRenderPipelineState:strongself.blitPipeline];
         }
         
-        [encoder setFragmentTexture:self.inputTexture atIndex:0];
-        [encoder setFragmentSamplerState:strongself->renderSettings.smoothingEnabled ? self.linearSampler : self.pointSampler atIndex:0];
+        [encoder setFragmentTexture:strongself.inputTexture atIndex:0];
+        [encoder setFragmentSamplerState:strongself->renderSettings.smoothingEnabled ? strongself.linearSampler : strongself.pointSampler atIndex:0];
         [encoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:3];
         [encoder endEncoding];
 
