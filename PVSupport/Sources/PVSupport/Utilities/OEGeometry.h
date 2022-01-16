@@ -25,6 +25,8 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef _OEGeometry_
+#define _OEGeometry_
 typedef struct OEIntPoint {
     int x;
     int y;
@@ -119,3 +121,4 @@ static inline BOOL CGPointInTriangle(CGPoint p, CGPoint A, CGPoint B, CGPoint C)
 
     return 0 <= a && a <= 1 && 0 <= b && b <= 1 && 0 <= c && c <= 1;
 }
+#endif

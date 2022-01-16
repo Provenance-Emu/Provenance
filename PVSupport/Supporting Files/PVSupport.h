@@ -38,3 +38,4 @@ FOUNDATION_EXPORT const unsigned char PVSupport_FrameworkVersionString[];
 //#import <PVSupport/CAAtomic.h>
 #import <PVSupport/CAAudioTimeStamp.h>
 #endif
+#import <PVSupport/OEGeometry.h>
