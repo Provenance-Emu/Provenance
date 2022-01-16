@@ -221,15 +221,16 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         
         // create a Logo as the title
         #if os(iOS)
-            let icon = UIImage(named: "AppIcon")?.resize(to:CGSize(width:0,height:32))
             let font = UIFont.boldSystemFont(ofSize: 20)
+            let icon = "AppIcon"
         #else
-            let icon = UIImage(named: "pv_dark_logo")?.resize(to:CGSize(width:0,height:64))
             let font = UIFont.boldSystemFont(ofSize: 48)
+            let icon = "pv_dark_logo"
         #endif
-        if let icon = icon {
+        if let icon = UIImage(named:icon)?.resize(to:CGSize(width:0,height:font.pointSize))
+        {
             let logo = UIImageView(image:icon)
-            logo.layer.cornerRadius = icon.size.height / 16.0;
+            logo.layer.cornerRadius = 4.0;
             logo.layer.masksToBounds = true
             let name = UILabel()
             name.text = " Provenance"
@@ -237,6 +238,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             name.textColor = .white
             name.sizeToFit()
             let stack =  UIStackView(arrangedSubviews:[logo,name])
+            stack.alignment = .center
             stack.frame = CGRect(origin:.zero, size:stack.systemLayoutSizeFitting(.zero))
             navigationItem.titleView = stack
         }
@@ -1730,8 +1732,8 @@ extension PVGameLibraryViewController: GameLibraryCollectionViewDelegate {
 private extension UIImage {
     func resize(to size:CGSize) -> UIImage {
         var size = size
-        if size.height == 0 {size.height = size.width * self.size.height / self.size.width}
-        if size.width == 0 {size.width = size.height * self.size.width / self.size.height}
+        if size.height == 0 {size.height = floor(size.width  * self.size.height / self.size.width)}
+        if size.width  == 0 {size.width  = floor(size.height * self.size.width  / self.size.height)}
         return UIGraphicsImageRenderer(size:size).image { (context) in
             self.draw(in: CGRect(origin:.zero, size:size))
         }
