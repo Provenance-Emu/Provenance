@@ -710,8 +710,7 @@ __attribute__((objc_direct_members))
 
         IOSurfaceUnlock(backingIOSurface, 0, NULL);
 
-		MTLPixelFormat pixelFormat = [self getMTLPixelFormatFromGLPixelFormat:[self.emulatorCore pixelFormat] type:[self.emulatorCore pixelType]];
-        MTLTextureDescriptor* mtlDesc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:pixelFormat
+        MTLTextureDescriptor* mtlDesc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatRGBA8Unorm
 																						   width:width
 																						  height:height
 																					   mipmapped:NO];
