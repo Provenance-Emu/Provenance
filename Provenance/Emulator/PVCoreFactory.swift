@@ -104,6 +104,12 @@ public final class PVCoreFactory: NSObject {
             } else {
                 fatalError("Core doesn't implement PV5200SystemResponderClient")
             }
+        case .Atari8bit:
+            if let core = core as? PV5200SystemResponderClient {
+                return PVAtari5200ControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else {
+                fatalError("Core doesn't implement PV5200SystemResponderClient")
+            }
         case .Atari7800:
             if let core = core as? PV7800SystemResponderClient {
                 return PVAtari7800ControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
