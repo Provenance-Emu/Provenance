@@ -570,8 +570,26 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
     }
     bootPath = [path copy];
 
+#if !TARGET_OS_MACCATALYST
+    EAGLContext* context = [self bestContext];
+#endif
+    
     return true;
 }
+
+#if !TARGET_OS_MACCATALYST
+-(EAGLContext*)bestContext {
+    EAGLContext* context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
+    self.glesVersion = GLESVersion3;
+    if (context == nil)
+    {
+        context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+        self.glesVersion = GLESVersion2;
+    }
+
+    return context;
+}
+#endif
 
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
 {
@@ -1002,6 +1020,18 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 			}
 		}
 		[self.renderDelegate startRenderingOnAlternateThread];
+        //#error either this, or emuThread
+        do {
+            System::RunFrames();
+//            if (!skip) {
+                duckInterface->Render();
+//          }
+        }while(!shouldStop);
+//        System::RunFrame();
+//
+//        if (!skip) {
+//            duckInterface->Render();
+//        }
 //		if(CoreDoCommand(M64CMD_EXECUTE, 0, NULL) != M64ERR_SUCCESS) {
 //			ELOG(@"Core execture did not exit correctly");
 //		} else {
@@ -1046,12 +1076,12 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 	dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
 
 	dispatch_semaphore_wait(coreWaitToEndFrameSemaphore, [self frameTime]);
-#error either this, or emuThread
-    System::RunFrame();
-    
-    if (!skip) {
-        duckInterface->Render();
-    }
+//#error either this, or emuThread
+//    System::RunFrame();
+//
+//    if (!skip) {
+//        duckInterface->Render();
+//    }
 }
 
 - (void)executeFrame {
