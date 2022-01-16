@@ -31,6 +31,8 @@ private extension JSButton {
 // extension ControllerVC where Self == PVN64ControllerViewController {
 // extension ControllerVC where ResponderType : PVN64SystemResponderClient {
 
+#if os(iOS)
+
 @available(iOS 15.0, *)
 let createVirtualController = { (elements: Set<String>) -> GCVirtualController in
 
@@ -107,6 +109,7 @@ final class PVN64ControllerViewController2: PVControllerViewController<PVN64Syst
 		super.viewWillDisappear(animated)
 	}
 }
+#endif
 
 final class PVN64ControllerViewController: PVControllerViewController<PVN64SystemResponderClient> {
     override func layoutViews() {
