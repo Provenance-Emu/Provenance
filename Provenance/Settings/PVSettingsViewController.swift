@@ -317,8 +317,13 @@ final class PVSettingsViewController: PVQuickTableViewController {
         ]
         #else
          let betaRows: [TableRow] = [
-			PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"), detailText: .subtitle("Use experimental Metal backend instead of OpenGL"), key: \PVSettingsModel.debugOptions.useMetal),
-
+	     	PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"), detailText: .subtitle("Use experimental Metal backend instead of OpenGL"),
+                                key: \PVSettingsModel.debugOptions.useMetal,
+                                    customization: { cell, _ in
+                                    	cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+                                    	cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
+                                    }
+                               ),
              PVSettingsSwitchRow(text: NSLocalizedString("iCloud Sync", comment: "iCloud Sync"),
                                 detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
                                 key: \PVSettingsModel.debugOptions.iCloudSync,
