@@ -27,12 +27,12 @@ import Foundation
 
 	var keyChangedHandler: GCKeyboardValueChangedHandler? { get }
 
-	@available(iOS 14.0, *)
+    @available(iOS 14.0, tvOS 14.0, *)
 	func keyDown(_ key: GCKeyCode)
 //	func keyDown(_ key: GCKeyCode, chararacters: String, charactersIgnoringModifiers: String)
 
-	@available(iOS 14.0, *)
-	func keyUp(_ key: GCKeyCode)
+    @available(iOS 14.0, tvOS 14.0, *)
+    func keyUp(_ key: GCKeyCode)
 //	func keyUp(_ key: GCKeyCode, chararacters: String, charactersIgnoringModifiers: String)
 }
 
@@ -47,8 +47,8 @@ import Foundation
 	var gameSupportsMouse: Bool { get }
 	var requiresMouse: Bool { get }
 
-	@available(iOS 14.0, *)
-	func didScroll(_ cursor: GCDeviceCursor)
+    @available(iOS 14.0, tvOS 14.0, *)
+    func didScroll(_ cursor: GCDeviceCursor)
 
 	var mouseMovedHandler: GCMouseMoved? { get }
 	func mouseMoved(atPoint point: CGPoint)
