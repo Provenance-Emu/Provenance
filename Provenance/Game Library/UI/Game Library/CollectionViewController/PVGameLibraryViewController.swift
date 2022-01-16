@@ -70,6 +70,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     #endif
     var gameForCustomArt: PVGame?
 
+    @IBOutlet var settingsBarButtonItem: UIBarButtonItem!
     @IBOutlet var getMoreRomsBarButtonItem: UIBarButtonItem!
     @IBOutlet var sortOptionBarButtonItem: UIBarButtonItem!
     @IBOutlet var conflictsBarButtonItem: UIBarButtonItem!
@@ -192,10 +193,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 #else
             navigationController?.navigationBar.isTranslucent = false
             navigationController?.navigationBar.backgroundColor =  UIColor.black.withAlphaComponent(0.8)
-            // ironicaly BarButtons look better when forced to LightMode
-            if #available(tvOS 13.0, *) {
-                navigationController?.overrideUserInterfaceStyle = .light
-            }
 #endif
 
         // Handle migrating library
@@ -224,10 +221,10 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         
         // create a Logo as the title
         #if os(iOS)
-            let icon = UIImage(named: "AppIcon")?.resize(to:CGSize(width:32,height:32))
+            let icon = UIImage(named: "AppIcon")?.resize(to:CGSize(width:0,height:32))
             let font = UIFont.boldSystemFont(ofSize: 20)
         #else
-            let icon = UIImage(named: "LaunchImage")?.resize(to:CGSize(width:114,height:64))
+            let icon = UIImage(named: "pv_dark_logo")?.resize(to:CGSize(width:0,height:64))
             let font = UIFont.boldSystemFont(ofSize: 48)
         #endif
         if let icon = icon {
@@ -244,12 +241,12 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             navigationItem.titleView = stack
         }
         
-        #if os(tvOS)
         // we cant use a SF Symbol in the Storyboard cuz of back version support, so change it here in code.
-        if #available(tvOS 13.0, *) {
-            navigationItem.rightBarButtonItems?.first?.image = UIImage(systemName:"gear", withConfiguration:UIImage.SymbolConfiguration(pointSize:40))
+        if #available(iOS 13.0, tvOS 13.0, *) {
+            if let bbi = settingsBarButtonItem {
+                bbi.image = UIImage(systemName:"gear", withConfiguration:UIImage.SymbolConfiguration(font:font))
+            }
         }
-        #endif
         
         // Persist some settings, could probably be done in a better way
         collapsedSystems.bind(onNext: { PVSettingsModel.shared.collapsedSystems = $0 }).disposed(by: disposeBag)
@@ -1732,6 +1729,9 @@ extension PVGameLibraryViewController: GameLibraryCollectionViewDelegate {
 
 private extension UIImage {
     func resize(to size:CGSize) -> UIImage {
+        var size = size
+        if size.height == 0 {size.height = size.width * self.size.height / self.size.width}
+        if size.width == 0 {size.width = size.height * self.size.width / self.size.height}
         return UIGraphicsImageRenderer(size:size).image { (context) in
             self.draw(in: CGRect(origin:.zero, size:size))
         }
