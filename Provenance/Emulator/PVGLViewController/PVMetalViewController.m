@@ -535,7 +535,7 @@ __attribute__((objc_direct_members))
         {
             const void* videoBuffer = self.emulatorCore.videoBuffer;
             CGSize videoBufferSize = self.emulatorCore.bufferSize;
-            uint formatByteWidth = [self getByteWidthForPixelFormat:[self.emulatorCore pixelFormat] type:[self.emulatorCore pixelType]];
+            uint formatByteWidth = [self getByteWidthForPixelFormat:self.emulatorCore.pixelFormat type:self.emulatorCore.pixelType];
             
             id<MTLBuffer> uploadBuffer = self->_uploadBuffer[++self->_frameCount % BUFFER_COUNT];
             
