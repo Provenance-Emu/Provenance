@@ -509,6 +509,7 @@
 		B3CB85C31E9BFB16009155A6 /* PVPokeMini.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85C11E9BFB16009155A6 /* PVPokeMini.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3CCD2BA21DAA8D30031C42C /* PVEmulatorViewController+Saves.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CCD2B921DAA8D30031C42C /* PVEmulatorViewController+Saves.swift */; };
 		B3CCD2BB21DAA8D30031C42C /* PVEmulatorViewController+Saves.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CCD2B921DAA8D30031C42C /* PVEmulatorViewController+Saves.swift */; };
+		B3CEC5B22794D8DD004A7CC1 /* Strings.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3296EEA26CAC3ED0088AC32 /* Strings.strings */; };
 		B3D534E220AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
 		B3D534E320AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
 		B3D534ED20B001D700A83D4E /* PillPageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534EB20B001D700A83D4E /* PillPageControl.swift */; };
@@ -950,8 +951,8 @@
 		B3296EE126CAC2800088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "zh-Hans"; path = "zh-Hans.lproj/PVGameLibraryCollectionViewCell.xib"; sourceTree = "<group>"; };
 		B3296EE326CAC2B10088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/Default.xib; sourceTree = "<group>"; };
 		B3296EE526CAC2CA0088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "zh-Hans"; path = "zh-Hans.lproj/Default.xib"; sourceTree = "<group>"; };
-		B3296EE926CAC3ED0088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Strings.strings; sourceTree = "<group>"; };
-		B3296EEB26CAC3F00088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Strings.strings"; sourceTree = "<group>"; };
+		B3296EE926CAC3ED0088AC32 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Strings.strings; sourceTree = "<group>"; };
+		B3296EEB26CAC3F00088AC32 /* zh-Hans */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Strings.strings"; sourceTree = "<group>"; };
 		B32D8F811EA7FDBE00175FBF /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		B33468D120AB347300092CA6 /* CenterFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenterFlowLayout.swift; sourceTree = "<group>"; };
 		B33468D520AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewInCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -1120,6 +1121,19 @@
 		B3CB85BE1E9BFB07009155A6 /* PVPokeMini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPokeMini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3CB85C11E9BFB16009155A6 /* PVPokeMini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPokeMini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3CCD2B921DAA8D30031C42C /* PVEmulatorViewController+Saves.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVEmulatorViewController+Saves.swift"; sourceTree = "<group>"; };
+		B3CEC5A52794CD8B004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = es; path = es.lproj/PVGameLibraryCollectionViewCell.xib; sourceTree = "<group>"; };
+		B3CEC5A62794CD8C004A7CC1 /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Strings.strings; sourceTree = "<group>"; };
+		B3CEC5A72794CD8D004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B3CEC5A82794CD8E004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = es; path = es.lproj/Provenance.storyboard; sourceTree = "<group>"; };
+		B3CEC5A92794CD8E004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = es; path = es.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
+		B3CEC5AA2794CD8F004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = es; path = es.lproj/Settings.storyboard; sourceTree = "<group>"; };
+		B3CEC5AB2794CD90004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = es; path = es.lproj/Default.xib; sourceTree = "<group>"; };
+		B3CEC5AC2794CD91004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = es; path = es.lproj/Cheats.storyboard; sourceTree = "<group>"; };
+		B3CEC5AD2794CD92004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = es; path = es.lproj/Provenance.storyboard; sourceTree = "<group>"; };
+		B3CEC5AE2794CD92004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = es; path = es.lproj/Settings.storyboard; sourceTree = "<group>"; };
+		B3CEC5AF2794CD93004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = es; path = es.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
+		B3CEC5B02794CD94004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = es; path = es.lproj/Cheats.storyboard; sourceTree = "<group>"; };
+		B3CEC5B12794CD94004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = es; path = ../es.lproj/Info.plist; sourceTree = "<group>"; };
 		B3D534E120AFF21800A83D4E /* Version.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
 		B3D534EB20B001D700A83D4E /* PillPageControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PillPageControl.swift; sourceTree = "<group>"; };
 		B3D54EF42768306200476241 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/iOSSupport/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
@@ -2458,6 +2472,7 @@
 			knownRegions = (
 				en,
 				"zh-Hans",
+				es,
 			);
 			mainGroup = 1A3D408B17B2DCE4004DFFFC;
 			packageReferences = (
@@ -2520,6 +2535,7 @@
 				B3F64ECA205CBD1200C273C7 /* licenses.html in Resources */,
 				B3296ECF26CABFDE0088AC32 /* Cheats.storyboard in Resources */,
 				B3296EBE26CABF9F0088AC32 /* Provenance.storyboard in Resources */,
+				B3CEC5B22794D8DD004A7CC1 /* Strings.strings in Resources */,
 				B3296EC826CABFCA0088AC32 /* SaveStates.storyboard in Resources */,
 				1AD481C31BA350A400FDA50A /* TVAssets.xcassets in Resources */,
 				1AD482361BA35A2D00FDA50A /* Assets.xcassets in Resources */,
@@ -3192,6 +3208,7 @@
 			children = (
 				1A3D40A117B2DCE4004DFFFC /* en */,
 				B3296EA926CABE760088AC32 /* zh-Hans */,
+				B3CEC5A72794CD8D004A7CC1 /* es */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -3201,6 +3218,7 @@
 			children = (
 				B3296EAB26CABE880088AC32 /* en */,
 				B3296EAE26CABE950088AC32 /* zh-Hans */,
+				B3CEC5A82794CD8E004A7CC1 /* es */,
 			);
 			name = Provenance.storyboard;
 			sourceTree = "<group>";
@@ -3210,6 +3228,7 @@
 			children = (
 				B3296EB026CABEA80088AC32 /* en */,
 				B3296EBD26CABF6D0088AC32 /* zh-Hans */,
+				B3CEC5A92794CD8E004A7CC1 /* es */,
 			);
 			name = SaveStates.storyboard;
 			sourceTree = "<group>";
@@ -3219,6 +3238,7 @@
 			children = (
 				B3296EB326CABEE00088AC32 /* en */,
 				B3296EB926CABF300088AC32 /* zh-Hans */,
+				B3CEC5AA2794CD8F004A7CC1 /* es */,
 			);
 			name = Settings.storyboard;
 			sourceTree = "<group>";
@@ -3228,6 +3248,7 @@
 			children = (
 				B3296EB626CABF250088AC32 /* en */,
 				B3296EBB26CABF340088AC32 /* zh-Hans */,
+				B3CEC5AC2794CD91004A7CC1 /* es */,
 			);
 			name = Cheats.storyboard;
 			sourceTree = "<group>";
@@ -3237,6 +3258,7 @@
 			children = (
 				B3296EBF26CABF9F0088AC32 /* en */,
 				B3296EC226CABFA70088AC32 /* zh-Hans */,
+				B3CEC5AD2794CD92004A7CC1 /* es */,
 			);
 			name = Provenance.storyboard;
 			sourceTree = "<group>";
@@ -3246,6 +3268,7 @@
 			children = (
 				B3296EC426CABFB00088AC32 /* en */,
 				B3296EC726CABFB90088AC32 /* zh-Hans */,
+				B3CEC5AE2794CD92004A7CC1 /* es */,
 			);
 			name = Settings.storyboard;
 			sourceTree = "<group>";
@@ -3255,6 +3278,7 @@
 			children = (
 				B3296EDB26CAC2220088AC32 /* zh-Hans */,
 				B3296EDC26CAC2220088AC32 /* en */,
+				B3CEC5AF2794CD93004A7CC1 /* es */,
 			);
 			name = SaveStates.storyboard;
 			sourceTree = "<group>";
@@ -3264,6 +3288,7 @@
 			children = (
 				B3296ED026CABFDE0088AC32 /* en */,
 				B3296EDD26CAC2320088AC32 /* zh-Hans */,
+				B3CEC5B02794CD94004A7CC1 /* es */,
 			);
 			name = Cheats.storyboard;
 			sourceTree = "<group>";
@@ -3273,6 +3298,7 @@
 			children = (
 				B3296EDF26CAC27C0088AC32 /* en */,
 				B3296EE126CAC2800088AC32 /* zh-Hans */,
+				B3CEC5A52794CD8B004A7CC1 /* es */,
 			);
 			name = PVGameLibraryCollectionViewCell.xib;
 			sourceTree = "<group>";
@@ -3282,6 +3308,7 @@
 			children = (
 				B3296EE326CAC2B10088AC32 /* en */,
 				B3296EE526CAC2CA0088AC32 /* zh-Hans */,
+				B3CEC5AB2794CD90004A7CC1 /* es */,
 			);
 			name = Default.xib;
 			sourceTree = "<group>";
@@ -3291,6 +3318,7 @@
 			children = (
 				B3296EE926CAC3ED0088AC32 /* en */,
 				B3296EEB26CAC3F00088AC32 /* zh-Hans */,
+				B3CEC5A62794CD8C004A7CC1 /* es */,
 			);
 			name = Strings.strings;
 			sourceTree = "<group>";
@@ -3299,6 +3327,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				B37D31C9274A57F000D635E0 /* en */,
+				B3CEC5B12794CD94004A7CC1 /* es */,
 			);
 			name = Info.plist;
 			sourceTree = "<group>";

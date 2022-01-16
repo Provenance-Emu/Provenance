@@ -17,7 +17,6 @@
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>en</string>
-		<string>Spanish</string>
 		<string>zh_CN</string>
 	</array>
 	<key>CFBundleName</key>
