@@ -1046,7 +1046,7 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 	dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
 
 	dispatch_semaphore_wait(coreWaitToEndFrameSemaphore, [self frameTime]);
-
+#error either this, or emuThread
     System::RunFrame();
     
     if (!skip) {
@@ -1469,7 +1469,7 @@ std::string OpenEmuHostInterface::GetGameMemoryCardPath(const char* game_code, u
 
 std::string OpenEmuHostInterface::GetShaderCacheBasePath() const
 {
-    GET_CURRENT_OR_RETURN([NSHomeDirectory() stringByAppendingPathComponent:@"ShaderCache.nobackup"].fileSystemRepresentation);
+    GET_CURRENT_OR_RETURN([current.BIOSPath stringByAppendingPathComponent:@"ShaderCache.nobackup"].fileSystemRepresentation);
     NSString *path = [current.BIOSPath stringByAppendingPathComponent:@"ShaderCache.nobackup"];
     if (![[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:NULL]) {
         [[NSFileManager defaultManager] createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:NULL];
