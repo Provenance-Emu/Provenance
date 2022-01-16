@@ -461,7 +461,7 @@ __attribute__((objc_direct_members))
     MTLRenderPipelineDescriptor* desc = [MTLRenderPipelineDescriptor new];
     desc.vertexFunction = [lib newFunctionWithName:@"fullscreen_vs" constantValues:constants error:&error];
     desc.fragmentFunction = [lib newFunctionWithName:@"blit_ps"];
-    desc.colorAttachments[0].pixelFormat = [self getMTLPixelFormatFromGLPixelFormat:[self.emulatorCore pixelFormat] type:[self.emulatorCore pixelType]];
+    desc.colorAttachments[0].pixelFormat = self.mtlview.currentDrawable.layer.pixelFormat;
     
     _blitPipeline = [_device newRenderPipelineStateWithDescriptor:desc error:&error];
 }
@@ -479,7 +479,7 @@ __attribute__((objc_direct_members))
     MTLRenderPipelineDescriptor* desc = [MTLRenderPipelineDescriptor new];
     desc.vertexFunction = [lib newFunctionWithName:@"fullscreen_vs" constantValues:constants error:&error];
     desc.fragmentFunction = [lib newFunctionWithName:@"crt_filter_ps"];
-    desc.colorAttachments[0].pixelFormat = [self getMTLPixelFormatFromGLPixelFormat:[self.emulatorCore pixelFormat] type:[self.emulatorCore pixelType]];
+    desc.colorAttachments[0].pixelFormat = self.mtlview.currentDrawable.layer.pixelFormat;
     
     _crtFilterPipeline = [_device newRenderPipelineStateWithDescriptor:desc error:&error];
 }
