@@ -193,6 +193,11 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         #else
             navigationController?.navigationBar.isTranslucent = false
             navigationController?.navigationBar.backgroundColor =  UIColor.black.withAlphaComponent(0.8)
+            // ironicaly BarButtonItems (unselected background) look better when forced to LightMode
+            if #available(tvOS 13.0, *) {
+                navigationController?.overrideUserInterfaceStyle = .light
+                self.overrideUserInterfaceStyle = .dark
+            }
         #endif
 
         // Handle migrating library
