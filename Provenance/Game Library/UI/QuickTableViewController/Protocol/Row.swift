@@ -27,7 +27,7 @@
 import Foundation
 
 /// Any type that conforms to this protocol is capable of representing a row in a table view.
-public protocol Row: class {
+public protocol Row: AnyObject {
 
   /// The text of the row.
   var text: String { get }
