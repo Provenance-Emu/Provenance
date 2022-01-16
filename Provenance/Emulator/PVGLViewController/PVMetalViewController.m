@@ -131,17 +131,18 @@ __attribute__((objc_direct_members))
 
     [self updatePreferredFPS];
 
+    if (self.emulatorCore.rendersToOpenGL)
+    {
+        self.glContext = [self bestContext];
 
-    self.glContext = [self bestContext];
-
-
-    ILOG(@"Initiated GLES version %lu", (unsigned long)self.glContext.API);
+        ILOG(@"Initiated GLES version %lu", (unsigned long)self.glContext.API);
 
         // TODO: Need to benchmark this
 
-    self.glContext.multiThreaded = PVSettingsModel.shared.debugOptions.multiThreadedGL;
+        self.glContext.multiThreaded = PVSettingsModel.shared.debugOptions.multiThreadedGL;
 
-	[EAGLContext setCurrentContext:self.glContext];
+        [EAGLContext setCurrentContext:self.glContext];
+    }
 
     _frameCount = 0;
     self.device = MTLCreateSystemDefaultDevice();
