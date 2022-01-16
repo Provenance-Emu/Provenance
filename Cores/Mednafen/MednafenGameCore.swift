@@ -80,9 +80,9 @@ extension MednafenGameCore: CoreOptional {
     public static var options: [CoreOption] = {
         var options = [CoreOption]()
 
-        let fastGroup = CoreOption.group(display: CoreOptionValueDisplay(title: "Fast Cores",
-                                                                         description: "Alternative versions of cores that trade accuracy for speed"),
-                                         subOptions: [pceFastOption, snesFastOption])
+		let fastGroup:CoreOption = .group(.init(title: "Fast Cores",
+												description: "Alternative versions of cores that trade accuracy for speed"),
+										  subOptions: [pceFastOption, snesFastOption])
         
 
         options.append(fastGroup)
@@ -92,20 +92,18 @@ extension MednafenGameCore: CoreOptional {
 
 
     static var pceFastOption: CoreOption = {
-        let pceFastOption = CoreOption.bool(display: .init(
+		.bool(.init(
             title: "PCE Fast",
             description: "Use a faster but possibly buggy PCEngine version.",
             requiresRestart: true),
                                          defaultValue: false)
-        return pceFastOption
     }()
 
     static var snesFastOption: CoreOption = {
-        let snesFastOption = CoreOption.bool(display: .init(
+		.bool(.init(
             title: "SNES Fast",
             description: "Use faster but maybe more buggy SNES core (default)",
             requiresRestart: true), defaultValue: true)
-        return snesFastOption
     }()
 }
 

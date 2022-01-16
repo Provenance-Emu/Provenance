@@ -29,17 +29,16 @@
 		B3135BA126E4CC620047F338 /* PVPlay.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVPlay.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3135BA226E4CC650047F338 /* PVPlay.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVPlay.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3135BA326E4CD080047F338 /* PVPlayCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVPlayCore.mm */; };
-		B3135BA426E4CD500047F338 /* PVPlayCore+Saves.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAA218BC59D00557ACE /* PVPlayCore+Saves.m */; };
-		B3135BA526E4CD500047F338 /* PVPlayCore+Saves.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAA218BC59D00557ACE /* PVPlayCore+Saves.m */; };
-		B3135BA626E4CD5A0047F338 /* PVPlayCore+Video.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVPlayCore+Video.m */; };
-		B3135BA726E4CD5A0047F338 /* PVPlayCore+Video.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVPlayCore+Video.m */; };
-		B3135BA826E4CD600047F338 /* PVPlayCore+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVPlayCore+Audio.m */; };
-		B3135BA926E4CD600047F338 /* PVPlayCore+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVPlayCore+Audio.m */; };
+		B3135BA426E4CD500047F338 /* PVPlayCore+Saves.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAA218BC59D00557ACE /* PVPlayCore+Saves.mm */; };
+		B3135BA526E4CD500047F338 /* PVPlayCore+Saves.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAA218BC59D00557ACE /* PVPlayCore+Saves.mm */; };
+		B3135BA626E4CD5A0047F338 /* PVPlayCore+Video.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVPlayCore+Video.mm */; };
+		B3135BA726E4CD5A0047F338 /* PVPlayCore+Video.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVPlayCore+Video.mm */; };
+		B3135BA826E4CD600047F338 /* PVPlayCore+Audio.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVPlayCore+Audio.mm */; };
+		B3135BA926E4CD600047F338 /* PVPlayCore+Audio.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVPlayCore+Audio.mm */; };
 		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
 		B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C31B2191964F009F4EDC /* AVFoundation.framework */; };
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
-		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
 		B3447ECD218BEDD200557ACE /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B3447ECE218BEDD200557ACE /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		B3447ED0218BEDD200557ACE /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
@@ -47,6 +46,25 @@
 		B3447ED3218BEDD200557ACE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3447ED4218BEDD200557ACE /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B3447EE2218BEDD200557ACE /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
+		B351223A27843318001C4B83 /* PVPlay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA0218B881000557ACE /* PVPlay.mm */; };
+		B351223B27843319001C4B83 /* PVPlay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA0218B881000557ACE /* PVPlay.mm */; };
+		B3512240278433E4001C4B83 /* libFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B4C26E4C6860047F338 /* libFramework.a */; };
+		B351224227843430001C4B83 /* libFramework_Amazon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B4E26E4C6860047F338 /* libFramework_Amazon.a */; };
+		B351224327843430001C4B83 /* libFramework_Http.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B5026E4C6860047F338 /* libFramework_Http.a */; };
+		B351224427843430001C4B83 /* libFramework_OpenAl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B5226E4C6860047F338 /* libFramework_OpenAl.a */; };
+		B351224527843430001C4B83 /* libFramework_OpenGl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B5426E4C6860047F338 /* libFramework_OpenGl.a */; };
+		B3512246278434B9001C4B83 /* libCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B4826E4C6860047F338 /* libCodeGen.a */; };
+		B3512247278434D7001C4B83 /* libchdr-static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B6626E4C6860047F338 /* libchdr-static.a */; };
+		B3512248278434D7001C4B83 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B6C26E4C6860047F338 /* liblzma.a */; };
+		B3512249278434D7001C4B83 /* libSDWebImage_Static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B5E26E4C6860047F338 /* libSDWebImage_Static.a */; };
+		B3512262278435B1001C4B83 /* decompress.c in Sources */ = {isa = PBXBuildFile; fileRef = B35122572784355F001C4B83 /* decompress.c */; };
+		B3512263278435B1001C4B83 /* blocksort.c in Sources */ = {isa = PBXBuildFile; fileRef = B35122502784355E001C4B83 /* blocksort.c */; };
+		B3512264278435B1001C4B83 /* huffman.c in Sources */ = {isa = PBXBuildFile; fileRef = B35122532784355E001C4B83 /* huffman.c */; };
+		B3512265278435B1001C4B83 /* crctable.c in Sources */ = {isa = PBXBuildFile; fileRef = B35122562784355F001C4B83 /* crctable.c */; };
+		B3512266278435B1001C4B83 /* compress.c in Sources */ = {isa = PBXBuildFile; fileRef = B35122512784355E001C4B83 /* compress.c */; };
+		B3512267278435B1001C4B83 /* randtable.c in Sources */ = {isa = PBXBuildFile; fileRef = B35122522784355E001C4B83 /* randtable.c */; };
+		B3512268278435B1001C4B83 /* bzlib.c in Sources */ = {isa = PBXBuildFile; fileRef = B351224B27843535001C4B83 /* bzlib.c */; };
+		B3512269278435B1001C4B83 /* bzip2.c in Sources */ = {isa = PBXBuildFile; fileRef = B351224F2784355E001C4B83 /* bzip2.c */; };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
@@ -289,6 +307,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 180B5733882C4138BCCC205A;
 			remoteInfo = zlib;
+		};
+		B3B2546B27842B7B00F97E55 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B30178D2207C901D0051B93D;
+			remoteInfo = "play-iOS";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -1498,14 +1523,26 @@
 		B3447E97218B809300557ACE /* PVPlayCore+Controls.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVPlayCore+Controls.mm"; sourceTree = "<group>"; };
 		B3447EA0218B881000557ACE /* PVPlay.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVPlay.mm; sourceTree = "<group>"; };
 		B3447EA9218BC59D00557ACE /* PVPlayCore+Saves.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVPlayCore+Saves.h"; sourceTree = "<group>"; };
-		B3447EAA218BC59D00557ACE /* PVPlayCore+Saves.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVPlayCore+Saves.m"; sourceTree = "<group>"; };
+		B3447EAA218BC59D00557ACE /* PVPlayCore+Saves.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVPlayCore+Saves.mm"; sourceTree = "<group>"; };
 		B3447EAD218BC5C500557ACE /* PVPlayCore+Video.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVPlayCore+Video.h"; sourceTree = "<group>"; };
-		B3447EAE218BC5C500557ACE /* PVPlayCore+Video.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVPlayCore+Video.m"; sourceTree = "<group>"; };
+		B3447EAE218BC5C500557ACE /* PVPlayCore+Video.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVPlayCore+Video.mm"; sourceTree = "<group>"; };
 		B3447EB1218BC69700557ACE /* PVPlayCore+Audio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVPlayCore+Audio.h"; sourceTree = "<group>"; };
-		B3447EB2218BC69700557ACE /* PVPlayCore+Audio.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVPlayCore+Audio.m"; sourceTree = "<group>"; };
+		B3447EB2218BC69700557ACE /* PVPlayCore+Audio.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVPlayCore+Audio.mm"; sourceTree = "<group>"; };
 		B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
 		B3447EE6218BEDD200557ACE /* PVPlay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVPlay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3447F91218BEE3F00557ACE /* libplay-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libplay-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B351224B27843535001C4B83 /* bzlib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = bzlib.c; path = "Play-/deps/Dependencies/bzip2-1.0.6/bzlib.c"; sourceTree = "<group>"; };
+		B351224D2784355E001C4B83 /* mk251.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mk251.c; path = "Play-/deps/Dependencies/bzip2-1.0.6/mk251.c"; sourceTree = "<group>"; };
+		B351224E2784355E001C4B83 /* unzcrash.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = unzcrash.c; path = "Play-/deps/Dependencies/bzip2-1.0.6/unzcrash.c"; sourceTree = "<group>"; };
+		B351224F2784355E001C4B83 /* bzip2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = bzip2.c; path = "Play-/deps/Dependencies/bzip2-1.0.6/bzip2.c"; sourceTree = "<group>"; };
+		B35122502784355E001C4B83 /* blocksort.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = blocksort.c; path = "Play-/deps/Dependencies/bzip2-1.0.6/blocksort.c"; sourceTree = "<group>"; };
+		B35122512784355E001C4B83 /* compress.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = compress.c; path = "Play-/deps/Dependencies/bzip2-1.0.6/compress.c"; sourceTree = "<group>"; };
+		B35122522784355E001C4B83 /* randtable.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = randtable.c; path = "Play-/deps/Dependencies/bzip2-1.0.6/randtable.c"; sourceTree = "<group>"; };
+		B35122532784355E001C4B83 /* huffman.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = huffman.c; path = "Play-/deps/Dependencies/bzip2-1.0.6/huffman.c"; sourceTree = "<group>"; };
+		B35122542784355F001C4B83 /* bzip2recover.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = bzip2recover.c; path = "Play-/deps/Dependencies/bzip2-1.0.6/bzip2recover.c"; sourceTree = "<group>"; };
+		B35122552784355F001C4B83 /* bzlib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = bzlib.c; path = "Play-/deps/Dependencies/bzip2-1.0.6/bzlib.c"; sourceTree = "<group>"; };
+		B35122562784355F001C4B83 /* crctable.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = crctable.c; path = "Play-/deps/Dependencies/bzip2-1.0.6/crctable.c"; sourceTree = "<group>"; };
+		B35122572784355F001C4B83 /* decompress.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = decompress.c; path = "Play-/deps/Dependencies/bzip2-1.0.6/decompress.c"; sourceTree = "<group>"; };
 		B35E6BEF207CD2610040709A /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		B35E6BF1207CD2670040709A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
@@ -1569,13 +1606,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3512247278434D7001C4B83 /* libchdr-static.a in Frameworks */,
+				B3512248278434D7001C4B83 /* liblzma.a in Frameworks */,
+				B3512249278434D7001C4B83 /* libSDWebImage_Static.a in Frameworks */,
+				B3512246278434B9001C4B83 /* libCodeGen.a in Frameworks */,
+				B351224227843430001C4B83 /* libFramework_Amazon.a in Frameworks */,
+				B351224327843430001C4B83 /* libFramework_Http.a in Frameworks */,
+				B351224427843430001C4B83 /* libFramework_OpenAl.a in Frameworks */,
+				B351224527843430001C4B83 /* libFramework_OpenGl.a in Frameworks */,
+				B3512240278433E4001C4B83 /* libFramework.a in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B301797F207C909E0051B93D /* libplay-iOS.a in Frameworks */,
-				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
 				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
@@ -3730,11 +3775,11 @@
 				B3C76223207833DE009950E4 /* PVPlayCore.h */,
 				B3C76224207833DE009950E4 /* PVPlayCore.mm */,
 				B3447EB1218BC69700557ACE /* PVPlayCore+Audio.h */,
-				B3447EB2218BC69700557ACE /* PVPlayCore+Audio.m */,
+				B3447EB2218BC69700557ACE /* PVPlayCore+Audio.mm */,
 				B3447EAD218BC5C500557ACE /* PVPlayCore+Video.h */,
-				B3447EAE218BC5C500557ACE /* PVPlayCore+Video.m */,
+				B3447EAE218BC5C500557ACE /* PVPlayCore+Video.mm */,
 				B3447EA9218BC59D00557ACE /* PVPlayCore+Saves.h */,
-				B3447EAA218BC59D00557ACE /* PVPlayCore+Saves.m */,
+				B3447EAA218BC59D00557ACE /* PVPlayCore+Saves.mm */,
 				B3447E96218B809200557ACE /* PVPlayCore+Controls.h */,
 				B3447E97218B809300557ACE /* PVPlayCore+Controls.mm */,
 			);
@@ -3744,6 +3789,18 @@
 		B3C7620620783162009950E4 = {
 			isa = PBXGroup;
 			children = (
+				B351224B27843535001C4B83 /* bzlib.c */,
+				B35122502784355E001C4B83 /* blocksort.c */,
+				B351224F2784355E001C4B83 /* bzip2.c */,
+				B35122542784355F001C4B83 /* bzip2recover.c */,
+				B35122552784355F001C4B83 /* bzlib.c */,
+				B35122512784355E001C4B83 /* compress.c */,
+				B35122562784355F001C4B83 /* crctable.c */,
+				B35122572784355F001C4B83 /* decompress.c */,
+				B35122532784355E001C4B83 /* huffman.c */,
+				B351224D2784355E001C4B83 /* mk251.c */,
+				B35122522784355E001C4B83 /* randtable.c */,
+				B351224E2784355E001C4B83 /* unzcrash.c */,
 				B3135B2A26E4C6850047F338 /* Play.xcodeproj */,
 				B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */,
 				B313544F26E4C4920047F338 /* Play- */,
@@ -3905,6 +3962,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				B3B2546C27842B7B00F97E55 /* PBXTargetDependency */,
 			);
 			name = "PVPlay-iOS";
 			productName = PVReicast;
@@ -4157,6 +4215,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3512262278435B1001C4B83 /* decompress.c in Sources */,
+				B3512264278435B1001C4B83 /* huffman.c in Sources */,
+				B3512263278435B1001C4B83 /* blocksort.c in Sources */,
+				B3512268278435B1001C4B83 /* bzlib.c in Sources */,
+				B3512267278435B1001C4B83 /* randtable.c in Sources */,
+				B3512265278435B1001C4B83 /* crctable.c in Sources */,
+				B3512266278435B1001C4B83 /* compress.c in Sources */,
+				B3512269278435B1001C4B83 /* bzip2.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4164,11 +4230,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3135BA626E4CD5A0047F338 /* PVPlayCore+Video.m in Sources */,
-				B3135BA426E4CD500047F338 /* PVPlayCore+Saves.m in Sources */,
+				B3135BA626E4CD5A0047F338 /* PVPlayCore+Video.mm in Sources */,
+				B3135BA426E4CD500047F338 /* PVPlayCore+Saves.mm in Sources */,
 				B3135BA326E4CD080047F338 /* PVPlayCore.mm in Sources */,
+				B351223B27843319001C4B83 /* PVPlay.mm in Sources */,
 				B3135B8626E4C9DB0047F338 /* GSH_OpenGLiOS.cpp in Sources */,
-				B3135BA826E4CD600047F338 /* PVPlayCore+Audio.m in Sources */,
+				B3135BA826E4CD600047F338 /* PVPlayCore+Audio.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4183,10 +4250,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3135BA726E4CD5A0047F338 /* PVPlayCore+Video.m in Sources */,
-				B3135BA526E4CD500047F338 /* PVPlayCore+Saves.m in Sources */,
+				B3135BA726E4CD5A0047F338 /* PVPlayCore+Video.mm in Sources */,
+				B3135BA526E4CD500047F338 /* PVPlayCore+Saves.mm in Sources */,
+				B351223A27843318001C4B83 /* PVPlay.mm in Sources */,
 				B3135B9B26E4CAD40047F338 /* PVPlayCore.mm in Sources */,
-				B3135BA926E4CD600047F338 /* PVPlayCore+Audio.m in Sources */,
+				B3135BA926E4CD600047F338 /* PVPlayCore+Audio.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4242,6 +4310,11 @@
 			isa = PBXTargetDependency;
 			name = zlib;
 			targetProxy = B3135B9926E4CA1A0047F338 /* PBXContainerItemProxy */;
+		};
+		B3B2546C27842B7B00F97E55 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B30178D2207C901D0051B93D /* play-iOS */;
+			targetProxy = B3B2546B27842B7B00F97E55 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -4395,6 +4468,7 @@
 		B324C5022191A2A2009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -4402,13 +4476,16 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
 					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
 					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/Play-/deps/CodeGen/include\"",
+					"\"$(SRCROOT)/Play-/Source\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVPlay/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -4773,6 +4850,7 @@
 		B3C7621920783162009950E4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -4780,13 +4858,16 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
 					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
 					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/Play-/deps/CodeGen/include\"",
+					"\"$(SRCROOT)/Play-/Source\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVPlay/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -4807,6 +4888,7 @@
 		B3C7621A20783162009950E4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -4814,13 +4896,16 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
 					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
 					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/Play-/deps/CodeGen/include\"",
+					"\"$(SRCROOT)/Play-/Source\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVPlay/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";

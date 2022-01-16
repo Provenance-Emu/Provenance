@@ -7,6 +7,17 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		B30E94832793B8BE00871E57 /* Check CodeSigning */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = B30E94852793B8BE00871E57 /* Build configuration list for PBXAggregateTarget "Check CodeSigning" */;
+			buildPhases = (
+				B30E94842793B8BE00871E57 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "Check CodeSigning";
+			productName = "Check Git Submodules";
+		};
 		B383225D26ED9C530029D12F /* Check Git Submodules */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = B383225E26ED9C530029D12F /* Build configuration list for PBXAggregateTarget "Check Git Submodules" */;
@@ -2467,9 +2478,10 @@
 				B3B29D3F2156177100903290 /* Create Version files */,
 				B3B29D4D21561F0600903290 /* Setup Code-Signing */,
 				B383225D26ED9C530029D12F /* Check Git Submodules */,
+				B30E94832793B8BE00871E57 /* Check CodeSigning */,
+				B305EF04276B4C73003AE510 /* Provenance Watch WatchKit Extension */,
 				B305EEF6276B4C71003AE510 /* Provenance Watch */,
 				B305EEF9276B4C71003AE510 /* Provenance Watch WatchKit App */,
-				B305EF04276B4C73003AE510 /* Provenance Watch WatchKit Extension */,
 			);
 		};
 /* End PBXProject section */
@@ -2614,6 +2626,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = ./Provenance/Resources/createVersionHeader.sh;
+		};
+		B30E94842793B8BE00871E57 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "FILE=\"${SRCROOT}/CodeSigning.xcconfig\"\nif [ -e \"${FILE}\" ]\nthen\n\techo \"CodeSigning OK!\"\nelse\n    osascript -e 'display notification \"Copy CodeSigning.xcconfig.sample to CodeSigning.xcconfig and edit with your Apple Developer Account info for proper signing.\" with title \"Code Signing not Configured!\"'\n    echo \"warning: Missing CodeSigning.xcconfig\"\nfi\n";
 		};
 		B383226226ED9C590029D12F /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -4073,6 +4102,30 @@
 			};
 			name = Archive;
 		};
+		B30E94862793B8BE00871E57 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B30E94872793B8BE00871E57 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		B30E94882793B8BE00871E57 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Archive;
+		};
 		B3721CEB21912B7400433E4C /* Archive */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B380EAC12759D689001B8532 /* Build.xcconfig */;
@@ -4674,6 +4727,16 @@
 				B305EF16276B4C74003AE510 /* Debug */,
 				B305EF17276B4C74003AE510 /* Release */,
 				B305EF18276B4C74003AE510 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B30E94852793B8BE00871E57 /* Build configuration list for PBXAggregateTarget "Check CodeSigning" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B30E94862793B8BE00871E57 /* Debug */,
+				B30E94872793B8BE00871E57 /* Release */,
+				B30E94882793B8BE00871E57 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

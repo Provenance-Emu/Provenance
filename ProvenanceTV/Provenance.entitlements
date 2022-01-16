@@ -4,8 +4,6 @@
 <dict>
 	<key>aps-environment</key>
 	<string>development</string>
-	<key>com.apple.developer.group-session</key>
-	<true/>
 	<key>com.apple.developer.icloud-container-identifiers</key>
 	<array/>
 	<key>com.apple.developer.kernel.extended-virtual-addressing</key>

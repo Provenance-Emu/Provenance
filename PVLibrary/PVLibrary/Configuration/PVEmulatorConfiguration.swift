@@ -51,6 +51,7 @@ public enum SystemIdentifier: String {
     case Atari2600 = "com.provenance.2600"
     case Atari5200 = "com.provenance.5200"
     case Atari7800 = "com.provenance.7800"
+	case Atari8bit = "com.provenance.atari8bit"
     case AtariJaguar = "com.provenance.jaguar"
     case ColecoVision = "com.provenance.colecovision"
     case DS = "com.provenance.ds"
