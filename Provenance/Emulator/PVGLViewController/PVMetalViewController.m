@@ -131,17 +131,18 @@ __attribute__((objc_direct_members))
 
     [self updatePreferredFPS];
 
+    if (self.emulatorCore.rendersToOpenGL)
+    {
+        self.glContext = [self bestContext];
 
-    self.glContext = [self bestContext];
-
-
-    ILOG(@"Initiated GLES version %lu", (unsigned long)self.glContext.API);
+        ILOG(@"Initiated GLES version %lu", (unsigned long)self.glContext.API);
 
         // TODO: Need to benchmark this
 
-    self.glContext.multiThreaded = PVSettingsModel.shared.debugOptions.multiThreadedGL;
+        self.glContext.multiThreaded = PVSettingsModel.shared.debugOptions.multiThreadedGL;
 
-	[EAGLContext setCurrentContext:self.glContext];
+        [EAGLContext setCurrentContext:self.glContext];
+    }
 
     _frameCount = 0;
     self.device = MTLCreateSystemDefaultDevice();
@@ -319,33 +320,40 @@ __attribute__((objc_direct_members))
     [self updatePreferredFPS];
 }
 
-- (void)setupTexture
+- (void)updateInputTexture
 {
+    CGRect screenRect = self.emulatorCore.screenRect;
+    MTLPixelFormat pixelFormat = [self getMTLPixelFormatFromGLPixelFormat:self.emulatorCore.pixelFormat type:self.emulatorCore.pixelType];
+    
+    if (self.inputTexture == nil ||
+        self.inputTexture.width != screenRect.size.width ||
+        self.inputTexture.height != screenRect.size.height ||
+        self.inputTexture.pixelFormat != pixelFormat)
     {
-        CGRect screenRect = self.emulatorCore.screenRect;
-        
-        if (!self.emulatorCore.rendersToOpenGL)
-        {
-            uint formatByteWidth = [self getByteWidthForPixelFormat:[self.emulatorCore pixelFormat] type:[self.emulatorCore pixelType]];
-            
-            for (int i = 0; i < BUFFER_COUNT; ++i)
-            {
-                _uploadBuffer[i] = [_device newBufferWithLength:self.emulatorCore.bufferSize.width * self.emulatorCore.bufferSize.height * formatByteWidth options:MTLResourceStorageModeShared];
-            }
-        }
-        
         MTLTextureDescriptor* desc = [MTLTextureDescriptor new];
         desc.textureType = MTLTextureType2D;
-        desc.pixelFormat = [self getMTLPixelFormatFromGLPixelFormat:[self.emulatorCore pixelFormat] type:[self.emulatorCore pixelType]];
-        desc.width = self.emulatorCore.rendersToOpenGL ? screenRect.size.width : self.emulatorCore.bufferSize.width;
-        desc.height = self.emulatorCore.rendersToOpenGL ? screenRect.size.height : self.emulatorCore.bufferSize.height;
+        desc.pixelFormat = pixelFormat;
+        desc.width = screenRect.size.width;
+        desc.height = screenRect.size.height;
         desc.storageMode = MTLStorageModePrivate;
         desc.usage = MTLTextureUsageShaderRead;
-        #if DEBUG
-            desc.usage |= MTLTextureUsageRenderTarget; // needed for debug clear
-        #endif
         
-        _inputTexture = [_device newTextureWithDescriptor:desc];
+        self.inputTexture = [self.device newTextureWithDescriptor:desc];
+    }
+}
+
+- (void)setupTexture
+{
+    [self updateInputTexture];
+    
+    if (!self.emulatorCore.rendersToOpenGL)
+    {
+        uint formatByteWidth = [self getByteWidthForPixelFormat:self.emulatorCore.pixelFormat type:self.emulatorCore.pixelType];
+        
+        for (int i = 0; i < BUFFER_COUNT; ++i)
+        {
+            _uploadBuffer[i] = [_device newBufferWithLength:self.emulatorCore.bufferSize.width * self.emulatorCore.bufferSize.height * formatByteWidth options:MTLResourceStorageModeShared];
+        }
     }
     
     {
@@ -453,7 +461,7 @@ __attribute__((objc_direct_members))
     MTLRenderPipelineDescriptor* desc = [MTLRenderPipelineDescriptor new];
     desc.vertexFunction = [lib newFunctionWithName:@"fullscreen_vs" constantValues:constants error:&error];
     desc.fragmentFunction = [lib newFunctionWithName:@"blit_ps"];
-    desc.colorAttachments[0].pixelFormat = [self getMTLPixelFormatFromGLPixelFormat:[self.emulatorCore pixelFormat] type:[self.emulatorCore pixelType]];
+    desc.colorAttachments[0].pixelFormat = self.mtlview.currentDrawable.layer.pixelFormat;
     
     _blitPipeline = [_device newRenderPipelineStateWithDescriptor:desc error:&error];
 }
@@ -471,7 +479,7 @@ __attribute__((objc_direct_members))
     MTLRenderPipelineDescriptor* desc = [MTLRenderPipelineDescriptor new];
     desc.vertexFunction = [lib newFunctionWithName:@"fullscreen_vs" constantValues:constants error:&error];
     desc.fragmentFunction = [lib newFunctionWithName:@"crt_filter_ps"];
-    desc.colorAttachments[0].pixelFormat = [self getMTLPixelFormatFromGLPixelFormat:[self.emulatorCore pixelFormat] type:[self.emulatorCore pixelType]];
+    desc.colorAttachments[0].pixelFormat = self.mtlview.currentDrawable.layer.pixelFormat;
     
     _crtFilterPipeline = [_device newRenderPipelineStateWithDescriptor:desc error:&error];
 }
@@ -516,19 +524,22 @@ __attribute__((objc_direct_members))
             [self.emulatorCore.frontBufferLock lock];
         }
         
-        id<MTLCommandBuffer> commandBuffer = [self.commandQueue commandBufferWithUnretainedReferences];
+        id<MTLCommandBuffer> commandBuffer = [self.commandQueue commandBuffer];
         self.previousCommandBuffer = commandBuffer;
         
-        CGRect screenRect = [self.emulatorCore screenRect];
+        CGRect screenRect = self.emulatorCore.screenRect;
+        
+        [self updateInputTexture];
         
         if (!self.emulatorCore.rendersToOpenGL)
         {
-            const void* videoBuffer = [self.emulatorCore videoBuffer];
-            CGSize videoBufferSize = [self.emulatorCore bufferSize];
-            uint formatByteWidth = [self getByteWidthForPixelFormat:[self.emulatorCore pixelFormat] type:[self.emulatorCore pixelType]];
+            const void* videoBuffer = self.emulatorCore.videoBuffer;
+            CGSize videoBufferSize = self.emulatorCore.bufferSize;
+            uint formatByteWidth = [self getByteWidthForPixelFormat:self.emulatorCore.pixelFormat type:self.emulatorCore.pixelType];
             
             id<MTLBuffer> uploadBuffer = self->_uploadBuffer[++self->_frameCount % BUFFER_COUNT];
-            memcpy(uploadBuffer.contents, videoBuffer, videoBufferSize.width * videoBufferSize.height * formatByteWidth);
+            
+            memcpy(uploadBuffer.contents, videoBuffer, videoBufferSize.width * screenRect.size.height * formatByteWidth);
             
             id<MTLBlitCommandEncoder> encoder = [commandBuffer blitCommandEncoder];
             
@@ -536,7 +547,7 @@ __attribute__((objc_direct_members))
                        sourceOffset:0
                   sourceBytesPerRow:videoBufferSize.width * formatByteWidth
                 sourceBytesPerImage:0
-                         sourceSize:MTLSizeMake(videoBufferSize.width, videoBufferSize.height, 1)
+                         sourceSize:MTLSizeMake(screenRect.size.width, screenRect.size.height, 1)
                            toTexture:self.inputTexture
                    destinationSlice:0
                    destinationLevel:0
@@ -709,8 +720,7 @@ __attribute__((objc_direct_members))
 
         IOSurfaceUnlock(backingIOSurface, 0, NULL);
 
-		MTLPixelFormat pixelFormat = [self getMTLPixelFormatFromGLPixelFormat:[self.emulatorCore pixelFormat] type:[self.emulatorCore pixelType]];
-        MTLTextureDescriptor* mtlDesc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:pixelFormat
+        MTLTextureDescriptor* mtlDesc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatRGBA8Unorm
 																						   width:width
 																						  height:height
 																					   mipmapped:NO];
@@ -743,7 +753,7 @@ __attribute__((objc_direct_members))
     // There might be a more performant solution using MTLFences or MTLEvents but this is an ok first impl
     [self.previousCommandBuffer waitUntilScheduled];
     
-    id<MTLCommandBuffer> commandBuffer = [_commandQueue commandBufferWithUnretainedReferences];
+    id<MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
     id<MTLBlitCommandEncoder> encoder = [commandBuffer blitCommandEncoder];
     
     CGRect screenRect = self.emulatorCore.screenRect;
