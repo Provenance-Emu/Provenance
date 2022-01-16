@@ -167,7 +167,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             self.init(header: original.header, items: items, collapsable: original.collapsable)
         }
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         isInitialAppearance = true
@@ -190,10 +190,10 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                     self.collectionView?.reloadData()
                 }
             })
-#else
+        #else
             navigationController?.navigationBar.isTranslucent = false
             navigationController?.navigationBar.backgroundColor =  UIColor.black.withAlphaComponent(0.8)
-#endif
+        #endif
 
         // Handle migrating library
         DispatchQueue.main.async {
