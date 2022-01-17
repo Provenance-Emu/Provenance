@@ -509,6 +509,16 @@
 		B3C3F47021A9CBFB00EFB09C /* glsl_FXAA.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F46D21A9CBFB00EFB09C /* glsl_FXAA.h */; };
 		B3C3F47121A9CBFB00EFB09C /* glsl_FXAA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F46E21A9CBFB00EFB09C /* glsl_FXAA.cpp */; };
 		B3C3F47221A9CBFB00EFB09C /* glsl_FXAA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F46E21A9CBFB00EFB09C /* glsl_FXAA.cpp */; };
+		B3C83E1727960C0F0020824C /* mupencheat.txt in Resources */ = {isa = PBXBuildFile; fileRef = B30559E22072FEE9001212D2 /* mupencheat.txt */; };
+		B3C83E1827960C100020824C /* mupencheat.txt in Resources */ = {isa = PBXBuildFile; fileRef = B30559E22072FEE9001212D2 /* mupencheat.txt */; };
+		B3C83E1B279617760020824C /* assem_arm.h in Headers */ = {isa = PBXBuildFile; fileRef = B3055A852072FEE9001212D2 /* assem_arm.h */; };
+		B3C83E1C279617780020824C /* assem_arm.h in Headers */ = {isa = PBXBuildFile; fileRef = B3055A852072FEE9001212D2 /* assem_arm.h */; };
+		B3C83E1D2796177C0020824C /* assem_x86.h in Headers */ = {isa = PBXBuildFile; fileRef = B3055A812072FEE9001212D2 /* assem_x86.h */; };
+		B3C83E1F2796177E0020824C /* assem_x86.h in Headers */ = {isa = PBXBuildFile; fileRef = B3055A812072FEE9001212D2 /* assem_x86.h */; };
+		B3C83E21279618AD0020824C /* hvqm.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C83E20279618A30020824C /* hvqm.c */; };
+		B3C83E22279618AD0020824C /* hvqm.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C83E20279618A30020824C /* hvqm.c */; };
+		B3C83E23279619400020824C /* ucodes.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AE1F2820733D3500AD06D4 /* ucodes.h */; };
+		B3C83E24279619420020824C /* ucodes.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AE1F2820733D3500AD06D4 /* ucodes.h */; };
 		B3CB4B21206E54D20074706B /* Log_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3CB4B20206E54D10074706B /* Log_ios.mm */; };
 		B3CB4B22206E54D20074706B /* Log_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3CB4B20206E54D10074706B /* Log_ios.mm */; };
 		B3EA447C206E10C700E608F6 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EA447B206E10C700E608F6 /* OpenGLES.framework */; platformFilter = ios; };
@@ -1733,6 +1743,7 @@
 		B3C3F40821A9CBAA00EFB09C /* F3DBETA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = F3DBETA.cpp; sourceTree = "<group>"; };
 		B3C3F46D21A9CBFB00EFB09C /* glsl_FXAA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glsl_FXAA.h; sourceTree = "<group>"; };
 		B3C3F46E21A9CBFB00EFB09C /* glsl_FXAA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = glsl_FXAA.cpp; sourceTree = "<group>"; };
+		B3C83E20279618A30020824C /* hvqm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hvqm.c; sourceTree = "<group>"; };
 		B3CB4B20206E54D10074706B /* Log_ios.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Log_ios.mm; sourceTree = "<group>"; };
 		B3EA447B206E10C700E608F6 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		B3EA4488206E372400E608F6 /* TextDrawerStub.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextDrawerStub.cpp; sourceTree = "<group>"; };
@@ -3429,6 +3440,7 @@
 				B3AE1F2920733D3500AD06D4 /* audio.c */,
 				B3AE1F1E20733D3500AD06D4 /* cicx105.c */,
 				B3AE1F1620733D3500AD06D4 /* hle.c */,
+				B3C83E20279618A30020824C /* hvqm.c */,
 				B3AE1F1120733D3500AD06D4 /* jpeg.c */,
 				B3AE1F1220733D3500AD06D4 /* memory.c */,
 				B3AE1F2720733D3500AD06D4 /* mp3.c */,
@@ -4411,7 +4423,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3B3B8581DECE9E100602746 /* MupenGameCore.h in Headers */,
+				B3C83E1B279617760020824C /* assem_arm.h in Headers */,
 				B3B3B8A01DED04CE00602746 /* PVMupen64Plus.h in Headers */,
+				B3C83E1D2796177C0020824C /* assem_x86.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4420,6 +4434,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3B3B8641DECEA9100602746 /* PVMupen64PlusRspHLE.h in Headers */,
+				B3C83E23279619400020824C /* ucodes.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4428,7 +4443,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3B3B9001DED130B00602746 /* MupenGameCore.h in Headers */,
+				B3C83E1C279617780020824C /* assem_arm.h in Headers */,
 				B3B3B9021DED130B00602746 /* PVMupen64Plus.h in Headers */,
+				B3C83E1F2796177E0020824C /* assem_x86.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4445,6 +4462,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3B3B94E1DED13A200602746 /* PVMupen64PlusRspHLE.h in Headers */,
+				B3C83E24279619420020824C /* ucodes.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5241,6 +5259,7 @@
 			files = (
 				B316B4E9219275A800693472 /* GLideN64.custom.ini in Resources */,
 				B316B4EB219275A800693472 /* RiceVideoLinux.ini in Resources */,
+				B3C83E1727960C0F0020824C /* mupencheat.txt in Resources */,
 				B3AF47E321072BCB002211EE /* mupen64plus.ini in Resources */,
 				B39E8CB62053B53100380DCD /* Core.plist in Resources */,
 				B316B4EA219275A800693472 /* GLideN64.ini in Resources */,
@@ -5260,6 +5279,7 @@
 			files = (
 				B316B4EC219275A900693472 /* GLideN64.custom.ini in Resources */,
 				B316B4EE219275A900693472 /* RiceVideoLinux.ini in Resources */,
+				B3C83E1827960C100020824C /* mupencheat.txt in Resources */,
 				B3AF47E421072BCC002211EE /* mupen64plus.ini in Resources */,
 				B3547B462058531200CFF7D8 /* Core.plist in Resources */,
 				B316B4ED219275A900693472 /* GLideN64.ini in Resources */,
@@ -5546,6 +5566,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3C83E21279618AD0020824C /* hvqm.c in Sources */,
 				B3AE1F4420733D6000AD06D4 /* alist_audio.c in Sources */,
 				B3AE1F4520733D6000AD06D4 /* alist_naudio.c in Sources */,
 				B3AE1F4620733D6000AD06D4 /* alist_nead.c in Sources */,
@@ -5690,6 +5711,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3C83E22279618AD0020824C /* hvqm.c in Sources */,
 				B3AE1F5220733D6700AD06D4 /* alist_audio.c in Sources */,
 				B3AE1F5320733D6700AD06D4 /* alist_naudio.c in Sources */,
 				B3AE1F5420733D6700AD06D4 /* alist_nead.c in Sources */,
