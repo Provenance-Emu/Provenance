@@ -1158,6 +1158,10 @@ static void ConfigureRICE() {
 	// Setup configs
 	ConfigureAll(romFolder);
 
+#ifdef DEBUG
+    NSString *defaults = [[NSUserDefaults standardUserDefaults].dictionaryRepresentation debugDescription];
+    DLOG(@"defaults: \n%@", defaults);
+#endif
     return YES;
 }
 

@@ -19,7 +19,7 @@ extension MupenGameCore: CoreOptional {
 
 		// MARK: -- Plugins
 
-		let glidenOption = CoreOption.multi(.init(title: "GFX Plugin",
+		let videoPluginOption = CoreOption.multi(.init(title: "GFX Plugin",
 														   description: "GlideN64 is newer but slower. Try Rice for older devices."), values: [
 												.init(title: "GlideN64", description: "Newer, GLES3 GFX Driver"),
 												.init(title: "Rice Video", description: "Older, faster, less feature rich GFX Driver.")])
@@ -28,15 +28,15 @@ extension MupenGameCore: CoreOptional {
 											.init(title: "RSPHLE", description: "Faster, default RSP"),
 											.init(title: "CXD4", description: "Slower. More features for some games, breaks others.")])
 
-		let plugins = CoreOption.group(.init(title: "Plugins", description: nil),
-									   subOptions: [glidenOption, rspOptions])
+		let pluginsGroup = CoreOption.group(.init(title: "Plugins", description: nil),
+									   subOptions: [videoPluginOption, rspOptions])
 
 		// MARK: -- Core
-		var glidenOptions = [CoreOption]()
+		var coreOptions = [CoreOption]()
 
 		// MARK: R4300Emulator <Enum=1>
 		// Use Pure Interpreter if 0, Cached Interpreter if 1, or Dynamic Recompiler if 2 or more
-		glidenOptions.append(.enumeration(.init(title: "CPU Mode",
+        coreOptions.append(.enumeration(.init(title: "CPU Mode",
 										description: nil,
 										requiresRestart: true),
 						 values:[
@@ -44,7 +44,12 @@ extension MupenGameCore: CoreOptional {
 							.init(title: "Cached Interpreter", description: "Default", value: 1),
 							.init(title: "Dynamic Recompiler", description: "Fastest but bequires JIT or will crash", value: 2)]))
 
+        let coreGroup:CoreOption = .group(.init(title: "Mupen Core", description: "Global options for Mupen"),
+                                            subOptions: coreOptions)
+
 		// MARK: -- GLideN64
+        var glidenOptions = [CoreOption]()
+
 		#warning("Maybe make an enum type for core options?")
 			// MARK: AspectRatio <Enum>
 			// 0 = stretch, 1 = 4:3, 2 = 16:9, 3 = adjust
@@ -236,7 +241,7 @@ extension MupenGameCore: CoreOptional {
 //        let videoGroup = CoreOption.group(.init(title: "Video"),
 //										  subOptions: [glidenGroup, riceGroup])
 
-		options.append(contentsOf: [plugins, /*videoGroup,*/ glidenGroup, riceGroup])
+		options.append(contentsOf: [coreGroup, pluginsGroup, /*videoGroup,*/ glidenGroup, riceGroup])
         return options
     }
 }
