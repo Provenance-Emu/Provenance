@@ -54,11 +54,13 @@
 #import <PVSupport/PVEmulatorCore.h>
 
 #import <mednafen/mempatcher.h>
+#import <PVMednafen/PVMednafen-Swift.h>
 
 #define GET_CURRENT_OR_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 
 @interface MednafenGameCore (MultiDisc)
 + (NSDictionary<NSString*,NSNumber*>*_Nonnull)multiDiscPSXGames;
++ (NSDictionary<NSString*,NSNumber*>*_Nonnull)sbiRequiredGames;
 @end
 
 @interface MednafenGameCore (MultiTap)
@@ -117,6 +119,8 @@ namespace MDFN_IEN_VB
     NSString *romName;
     double sampleRate;
     double masterClock;
+    
+    BOOL _isSBIRequired;
 
     NSString *mednafenCoreModule;
     NSTimeInterval mednafenCoreTiming;
@@ -130,8 +134,6 @@ namespace MDFN_IEN_VB
 static __weak MednafenGameCore *_current;
 
 @implementation MednafenGameCore
-@dynamic mednafen_pceFast;
-@dynamic mednafen_snesFast;
 
 -(uint32_t*) getInputBuffer:(int)bufferId
 {
@@ -169,26 +171,43 @@ static void mednafen_init(MednafenGameCore* current)
 
     Mednafen::MDFNI_SetSetting("filesys.path_sav", [batterySavesDirectory UTF8String]); // Memcards
 
-	// Global settings
+	// MARK: Global settings
 
 	// Enable time synchronization(waiting) for frame blitting.
 	// Disable to reduce latency, at the cost of potentially increased video "juddering", with the maximum reduction in latency being about 1 video frame's time.
 	// Will work best with emulated systems that are not very computationally expensive to emulate, combined with running on a relatively fast CPU.
 	// Default: 1
-//	MDFNI_SetSettingB("video.blit_timesync", false);
-//	MDFNI_SetSettingB("video.fs", false); // Enable fullscreen mode. Default: 0
+    BOOL video_blit_timesync = current.video_blit_timesync;
+    Mednafen::MDFNI_SetSettingB("video.blit_timesync", video_blit_timesync);
+    
+    BOOL video_fs = current.video_fs;
+    Mednafen::MDFNI_SetSettingB("video.fs", video_fs); // Enable fullscreen mode. Default: 0
+
+    const char* video_opengl = current.video_opengl ? "opengl" : "default";
+    Mednafen::MDFNI_SetSetting("video.driver", video_opengl);
+    
+    // MARK: VirtualBoy
 
     // VB defaults. dox http://mednafen.sourceforge.net/documentation/09x/vb.html
-	// VirtualBoy
     Mednafen::MDFNI_SetSetting("vb.disable_parallax", "1");       // Disable parallax for BG and OBJ rendering
     Mednafen::MDFNI_SetSetting("vb.anaglyph.preset", "disabled"); // Disable anaglyph preset
     Mednafen::MDFNI_SetSetting("vb.anaglyph.lcolor", "0xFF0000"); // Anaglyph l color
     Mednafen::MDFNI_SetSetting("vb.anaglyph.rcolor", "0x000000"); // Anaglyph r color
     //MDFNI_SetSetting("vb.allow_draw_skip", "1");      // Allow draw skipping
-    //MDFNI_SetSetting("vb.instant_display_hack", "1"); // Display latency reduction hack
-
-	// SNES Faust settings
-    Mednafen::MDFNI_SetSettingB("snes_faust.spex", false);
+   
+    // Display latency reduction hack.
+    // Reduces latency in games by displaying the framebuffer 20ms earlier. This hack has some potential of causing graphical glitches, so it is disabled by default.
+    BOOL vb_instant_display_hack = current.vb_instant_display_hack;
+    Mednafen::MDFNI_SetSettingB("vb.instant_display_hack", vb_instant_display_hack); // Display latency reduction hack
+    
+    const char* vb_sidebyside = current.vb_sidebyside ? "sidebyside" : "anaglyph";
+    Mednafen::MDFNI_SetSetting("vb.3dmode", vb_sidebyside);
+    //MDFNI_SetSetting("vb.sidebyside.separation", "0"); // This setting refers to pixels before vb.xscale(fs) scaling is taken into consideration. For example, a value of "100" here will result in a separation of 300 screen pixels if vb.xscale(fs) is set to "3".
+    
+    
+	// MARK: SNES Faust settings
+    BOOL snes_faust_spex = current.mednafen_snesFast_spex;
+    Mednafen::MDFNI_SetSettingB("snes_faust.spex", snes_faust_spex);
 	// Enable 1-frame speculative execution for video output.
 	// Hack to reduce input->output video latency by 1 frame. Enabling will increase CPU usage,
 	// and may cause video glitches(such as "jerkiness") in some oddball games, but most commercially-released games should be fine.
@@ -196,16 +215,19 @@ static void mednafen_init(MednafenGameCore* current)
 
 //	MDFNI_SetSetting("snes_faust.special", "nn2x");
 
+    // MARK: Sega Saturn Settings
+    Mednafen::MDFNI_SetSetting("ss.region_default", "na"); // Used if region autodetection fails or is disabled.
+    
 
-
-	// NES Settings
+	// MARK: NES Settings
 
     Mednafen::MDFNI_SetSettingUI("nes.clipsides", 1); // Clip left+right 8 pixel columns. 0 default
     Mednafen::MDFNI_SetSettingB("nes.correct_aspect", true); // Correct the aspect ratio. 0 default
 
 
-	// PSX Settings
-    Mednafen::MDFNI_SetSettingB("psx.h_overscan", true); // Show horizontal overscan area. 1 default
+	// MARK: PSX Settings
+    BOOL psx_h_overscan = current.psx_h_overscan;
+    Mednafen::MDFNI_SetSettingB("psx.h_overscan", psx_h_overscan); // Show horizontal overscan area. 1 default
     Mednafen::MDFNI_SetSetting("psx.region_default", "na"); // Set default region to North America if auto detect fails, default: jp
 
     Mednafen::MDFNI_SetSettingB("psx.input.analog_mode_ct", false); // Enable Analog mode toggle
@@ -233,7 +255,7 @@ static void mednafen_init(MednafenGameCore* current)
     ((1 << PSXMap[PVPSXButtonL1]) | (1 << PSXMap[PVPSXButtonR1]) | (1 << PSXMap[PVPSXButtonCircle]));
     Mednafen::MDFNI_SetSettingUI("psx.input.analog_mode_ct.compare", amct);
 
-	// PCE Settings
+	// MARK: PCE Settings
 //	MDFNI_SetSetting("pce.disable_softreset", "1"); // PCE: To prevent soft resets due to accidentally hitting RUN and SEL at the same time.
 //	MDFNI_SetSetting("pce.adpcmextraprec", "1"); // PCE: Enabling this option causes the MSM5205 ADPCM predictor to be outputted with full precision of 12-bits,
 //												 // rather than only outputting 10-bits of precision(as an actual MSM5205 does).
@@ -245,25 +267,29 @@ static void mednafen_init(MednafenGameCore* current)
     Mednafen::MDFNI_SetSetting("pce.resamp_rate_error", "0.0000001"); // PCE: Sound output rate tolerance. Lower values correspond to better matching of the output rate of the resampler to the actual desired output rate, at the expense of increased RAM usage and poorer CPU cache utilization. default 0.0000009
     Mednafen::MDFNI_SetSetting("pce.cdpsgvolume", "62"); // PCE: PSG volume when playing a CD game. Setting this volume control too high may cause sample clipping. default 100
 
-	// PCE_Fast settings
+	// MARK: PCE_Fast settings
 
     Mednafen::MDFNI_SetSetting("pce_fast.cdspeed", "4"); // PCE: CD-ROM data transfer speed multiplier. Default is 1
 //      MDFNI_SetSetting("pce_fast.disable_softreset", "1"); // PCE: To prevent soft resets due to accidentally hitting RUN and SEL at the same time
     Mednafen::MDFNI_SetSetting("pce_fast.slstart", "0"); // PCE: First rendered scanline
     Mednafen::MDFNI_SetSetting("pce_fast.slend", "239"); // PCE: Last rendered scanline
 
-	// PC-FX Settings
+	// MARK: PC-FX Settings
     Mednafen::MDFNI_SetSetting("pcfx.cdspeed", "8"); // PCFX: Emulated CD-ROM speed. Setting the value higher than 2, the default, will decrease loading times in most games by some degree.
 //	MDFNI_SetSetting("pcfx.input.port1.multitap", "1"); // PCFX: EXPERIMENTAL emulation of the unreleased multitap. Enables ports 3 4 5.
     Mednafen::MDFNI_SetSetting("pcfx.nospritelimit", "1"); // PCFX: Remove 16-sprites-per-scanline hardware limit.
     Mednafen::MDFNI_SetSetting("pcfx.slstart", "4"); // PCFX: First rendered scanline 4 default
     Mednafen::MDFNI_SetSetting("pcfx.slend", "235"); // PCFX: Last rendered scanline 235 default, 239max
     Mednafen::MDFNI_SetSetting("cheats", "1");       //
+    
+    // MARK: HUD
     // Enable FPS
-//    Mednafen::MDFNI_SetSetting("fps.autoenable", "1");
+#if DEBUG
+    Mednafen::MDFNI_SetSetting("fps.autoenable", "1");
+#endif
 
 //	NSString *cfgPath = [[current BIOSPath] stringByAppendingPathComponent:@"mednafen-export.cfg"];
-//	MDFN_SaveSettings(cfgPath.UTF8String);
+//    Mednafen::MDFN_SaveSettings(cfgPath.UTF8String);
 }
 
 - (id)init {
@@ -695,6 +721,49 @@ static void emulation_run(BOOL skipFrame) {
 //                }
 //            }
 //        }
+        // PSX: Check if SBI file is required
+         if ([MednafenGameCore sbiRequiredGames][self.romSerial])
+         {
+             _isSBIRequired = YES;
+         }
+        
+        // Handle required SBI files for games
+        // TODO: Handle SBI Games
+//        if(_isSBIRequired && _allCueSheetFiles.count && ([path.pathExtension.lowercaseString isEqualToString:@"cue"] || [path.pathExtension.lowercaseString isEqualToString:@"m3u"]))
+//        {
+//            NSURL *romPath = [NSURL fileURLWithPath:path.stringByDeletingLastPathComponent];
+//
+//            BOOL missingFileStatus = NO;
+//            NSUInteger missingFileCount = 0;
+//            NSMutableString *missingFilesList = [NSMutableString string];
+//
+//            // Build a path to SBI file and check if it exists
+//            for(NSString *cueSheetFile in _allCueSheetFiles)
+//            {
+//                NSString *extensionlessFilename = cueSheetFile.stringByDeletingPathExtension;
+//                NSURL *sbiFile = [romPath URLByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sbi"]];
+//
+//                // Check if the required SBI files exist
+//                if(![sbiFile checkResourceIsReachableAndReturnError:nil])
+//                {
+//                    missingFileStatus = YES;
+//                    missingFileCount++;
+//                    [missingFilesList appendString:[NSString stringWithFormat:@"\"%@\"\n\n", extensionlessFilename]];
+//                }
+//            }
+//            // Alert the user of missing SBI files that are required for the game
+//            if(missingFileStatus)
+//            {
+//                NSError *outErr = [NSError errorWithDomain:OEGameCoreErrorDomain code:OEGameCoreCouldNotLoadROMError userInfo:@{
+//                    NSLocalizedDescriptionKey : missingFileCount > 1 ? @"Required SBI files missing." : @"Required SBI file missing.",
+//                    NSLocalizedRecoverySuggestionErrorKey : missingFileCount > 1 ? [NSString stringWithFormat:@"To run this game you need SBI files for the discs:\n\n%@Drag and drop the required files onto the game library window and try again.\n\nFor more information, visit:\nhttps://github.com/OpenEmu/OpenEmu/wiki/User-guide:-CD-based-games#q-i-have-a-sbi-file", missingFilesList] : [NSString stringWithFormat:@"To run this game you need a SBI file for the disc:\n\n%@Drag and drop the required file onto the game library window and try again.\n\nFor more information, visit:\nhttps://github.com/OpenEmu/OpenEmu/wiki/User-guide:-CD-based-games#q-i-have-a-sbi-file", missingFilesList],
+//                    }];
+//
+//                *error = outErr;
+//
+//                return NO;
+//            }
+//        }
         
         if (multiDiscGame && ![path.pathExtension.lowercaseString isEqualToString:@"m3u"]) {
             NSString *m3uPath = [path.stringByDeletingPathExtension stringByAppendingPathExtension:@"m3u"];
@@ -754,7 +823,7 @@ static void emulation_run(BOOL skipFrame) {
 //        *error = newError;
 //        return NO;
 //    }
-    
+
     emulation_run(NO);
 
     return YES;
@@ -996,6 +1065,10 @@ static void emulation_run(BOOL skipFrame) {
     Mednafen::MDFN_Surface *tempSurf = backBufferSurf;
     backBufferSurf = frontBufferSurf;
     frontBufferSurf = tempSurf;
+}
+
+- (BOOL)rendersToOpenGL {
+    return self.video_opengl;
 }
 
 #pragma mark - Audio

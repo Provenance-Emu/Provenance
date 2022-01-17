@@ -70,7 +70,4 @@ __attribute__((visibility("default")))
 - (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled error:(NSError**)error;
 - (BOOL)getCheatSupport;
 
-#pragma mark - Options
-@property (nonatomic, readonly) BOOL mednafen_pceFast;
-@property (nonatomic, readonly) BOOL mednafen_snesFast;
 @end
