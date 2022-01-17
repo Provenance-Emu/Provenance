@@ -165,6 +165,20 @@ public struct CoreOptionMultiValue {
 
 extension CoreOptionMultiValue: Codable, Equatable, Hashable {}
 
+public struct CoreOptionEnumValue {
+    public let title: String
+    public let description: String?
+    public let value: UInt
+    
+    public init(title: String, description: String? = nil, value: UInt) {
+        self.title = title
+        self.description = description
+        self.value = value
+    }
+}
+
+extension CoreOptionEnumValue: Codable, Equatable, Hashable {}
+
 public struct CoreOptionValueDisplay {
     public let title: String
     public let description: String?
@@ -210,6 +224,10 @@ public protocol MultiCOption: COption {
     var options: [(key: String, title: String, description: String?)] { get }
 }
 
+public protocol EnumCOption: COption {
+    var options: [(key: String, title: String, description: String?)] { get }
+}
+
 // public struct CoreOptionModel : COption {
 //
 //    let key : String
@@ -235,7 +253,7 @@ public enum CoreOption {
     case range(_ display: CoreOptionValueDisplay, range: CoreOptionRange<Int>, defaultValue: Int)
 	case rangef(_ display: CoreOptionValueDisplay, range: CoreOptionRange<Float>, defaultValue: Float)
     case multi(_ display: CoreOptionValueDisplay, values: [CoreOptionMultiValue])
-	case enumeration(_ display: CoreOptionValueDisplay, values: [CoreOptionMultiValue])
+	case enumeration(_ display: CoreOptionValueDisplay, values: [CoreOptionEnumValue])
     case string(_ display: CoreOptionValueDisplay, defaultValue: String = "")
     case group(_ display: CoreOptionValueDisplay, subOptions: [CoreOption])
 
@@ -250,7 +268,7 @@ public enum CoreOption {
         case let .multi(_, values):
             return values.first?.title
 		case let .enumeration(_, values):
-			return values.first?.title
+			return values.first?.value
         case let .string(_, defaultValue):
             return defaultValue
         case .group:

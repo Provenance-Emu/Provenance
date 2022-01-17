@@ -36,13 +36,13 @@ extension MupenGameCore: CoreOptional {
 
 		// MARK: R4300Emulator <Enum=1>
 		// Use Pure Interpreter if 0, Cached Interpreter if 1, or Dynamic Recompiler if 2 or more
-		glidenOptions.append(.multi(.init(title: "CPU Mode",
+		glidenOptions.append(.enumeration(.init(title: "CPU Mode",
 										description: nil,
 										requiresRestart: true),
 						 values:[
-							.init(title: "Pure Interpreter", description: "Slowest"),
-							.init(title: "Cached Interpreter", description: "Default"),
-							.init(title: "Dynamic Recompiler", description: "Fastest but bequires JIT or will crash")]))
+                            .init(title: "Pure Interpreter", description: "Slowest", value: 0),
+							.init(title: "Cached Interpreter", description: "Default", value: 1),
+							.init(title: "Dynamic Recompiler", description: "Fastest but bequires JIT or will crash", value: 2)]))
 
 		// MARK: -- GLideN64
 		#warning("Maybe make an enum type for core options?")
@@ -52,10 +52,10 @@ extension MupenGameCore: CoreOptional {
 										description: nil,
 										requiresRestart: true),
 						 values:[
-							.init(title: "Stretch", description: "Slowest"),
-							.init(title: "4:3", description: "Default"),
-							.init(title: "16:9", description: "Fastest but bequires JIT or will crash"),
-							.init(title: "Adjust", description: "Default")]))
+                            .init(title: "Stretch", description: "Slowest", value: 0),
+							.init(title: "4:3", description: "Default", value: 1),
+							.init(title: "16:9", description: "Fastest but bequires JIT or will crash", value: 2),
+							.init(title: "Adjust", description: "Default", value: 3)]))
 
 
 			// MARK: EnableHWLighting <Bool=0>
@@ -69,11 +69,11 @@ extension MupenGameCore: CoreOptional {
 										description: "Anything other than Off will probably crash. You've been warned.",
 										requiresRestart: true),
 						 values:[
-							.init(title: "Off", description: ""),
-							.init(title: "2x", description: ""),
-							.init(title: "4x", description: ""),
-							.init(title: "8x", description: ""),
-							.init(title: "16x", description: "")]))
+                            .init(title: "Off", description: "", value: 0),
+							.init(title: "2x", description: "", value: 2),
+							.init(title: "4x", description: "", value: 4),
+							.init(title: "8x", description: "", value: 8),
+							.init(title: "16x", description: "", value: 16)]))
 
 			// MARK: ForceGammaCorrection <Bool=0>
 		glidenOptions.append(.bool(.init(title: "Force Gamma Correction", description: nil, requiresRestart: true), defaultValue: false))
@@ -95,20 +95,20 @@ extension MupenGameCore: CoreOptional {
 										description: nil,
 										requiresRestart: true),
 						 values:[
-							.init(title: "None", description: ""),
-							.init(title: "Store as-is", description: ""),
-							.init(title: "X2", description: ""),
-							.init(title: "X2SAI", description: ""),
-							.init(title: "HQ2X", description: ""),
-							.init(title: "HQ2XS", description: ""),
-							.init(title: "LQ2X", description: ""),
-							.init(title: "LQXS", description: ""),
-							.init(title: "HQ4X", description: ""),
-							.init(title: "2xBRZ", description: ""),
-							.init(title: "3xBZ", description: ""),
-							.init(title: "4xBRZ", description: ""),
-							.init(title: "5xBRZ", description: ""),
-							.init(title: "6xBRZ", description: ""),
+							.init(title: "None", description: "", value: 0),
+							.init(title: "Store as-is", description: "", value: 1),
+							.init(title: "X2", description: "", value: 2),
+							.init(title: "X2SAI", description: "", value: 3),
+							.init(title: "HQ2X", description: "", value: 4),
+							.init(title: "HQ2XS", description: "", value: 5),
+							.init(title: "LQ2X", description: "", value: 6),
+							.init(title: "LQXS", description: "", value: 7),
+							.init(title: "HQ4X", description: "", value: 8),
+							.init(title: "2xBRZ", description: "", value: 9),
+							.init(title: "3xBZ", description: "", value: 10),
+							.init(title: "4xBRZ", description: "", value: 11),
+							.init(title: "5xBRZ", description: "", value: 12),
+							.init(title: "6xBRZ", description: "", value: 13),
 
 						 ]))
 
@@ -118,13 +118,13 @@ extension MupenGameCore: CoreOptional {
 										description: nil,
 										requiresRestart: true),
 						 values:[
-							.init(title: "None", description: ""),
-							.init(title: "Smooth 1", description: ""),
-							.init(title: "Smooth 2", description: ""),
-							.init(title: "Smooth 3", description: ""),
-							.init(title: "Smooth 4", description: ""),
-							.init(title: "Sharp 1", description: ""),
-							.init(title: "Sharp 2", description: ""),
+							.init(title: "None", description: "", value: 0),
+							.init(title: "Smooth 1", description: "", value: 1),
+							.init(title: "Smooth 2", description: "", value: 2),
+							.init(title: "Smooth 3", description: "", value: 3),
+							.init(title: "Smooth 4", description: "", value: 4),
+							.init(title: "Sharp 1", description: "", value: 5),
+							.init(title: "Sharp 2", description: "", value: 6),
 						 ]))
 
 

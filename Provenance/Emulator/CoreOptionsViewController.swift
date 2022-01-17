@@ -74,7 +74,7 @@ final class CoreOptionsViewController: QuickTableViewController {
 						let value = self.core.valueForOption(Bool.self, option.key) ?? defaultValue
 						self.core.setValue(!value, forOption: option)
 					})
-				case let .multi(display, values), let .enumeration(display, values: values):
+				case let .multi(display, values):
 					let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
 					return NavigationRow<SystemSettingsCell>(text: display.title,
 															 detailText: detailText,
@@ -108,6 +108,40 @@ final class CoreOptionsViewController: QuickTableViewController {
 																	 self.tableView.deselectRow(at: indexPath, animated: false)
 																 }
 					})
+                case let .enumeration(display, values: values):
+                    let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
+                    return NavigationRow<SystemSettingsCell>(text: display.title,
+                                                             detailText: detailText,
+                                                             icon: nil,
+                                                             customization: { _, _ in
+                                                             },
+                                                             action: { _ in
+                                                                 let currentSelection: String? = self.core.valueForOption(String.self, option.key) ?? option.defaultValue as? String
+                                                                 let actionController = UIAlertController(title: display.title, message: nil, preferredStyle: .actionSheet)
+
+                                                                 if let popoverPresentationController = actionController.popoverPresentationController {
+                                                                    let cellRect = self.tableView.rectForRow(at: IndexPath(row: rowIndex, section: 0))
+                                                                    popoverPresentationController.sourceView = self.tableView
+                                                                    popoverPresentationController.sourceRect = cellRect
+                                                                 }
+
+                                                                 values.forEach { value in
+                                                                     var title = value.title
+                                                                     if currentSelection == value.title {
+                                                                         title += " ✔︎"
+                                                                     }
+                                                                     let action = UIAlertAction(title: title, style: .default, handler: { _ in
+                                                                         self.core.setValue(value.title, forOption: option)
+                                                                     })
+                                                                     actionController.addAction(action)
+                                                                 }
+                                                                 actionController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+                                                                 self.present(actionController, animated: true)
+
+                                                                 if let indexPath = self.tableView.indexPathForSelectedRow {
+                                                                     self.tableView.deselectRow(at: indexPath, animated: false)
+                                                                 }
+                    })
 				case let .range(display, range: range, defaultValue: defaultValue):
 					let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
 					return NavigationRow<SystemSettingsCell>(text: display.title,
