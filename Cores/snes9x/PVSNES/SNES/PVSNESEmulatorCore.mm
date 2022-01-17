@@ -28,7 +28,9 @@
 #import "PVSNESEmulatorCore.h"
 #import <PVSupport/OERingBuffer.h>
 #import <PVSupport/PVLogging.h>
-#import <PVSupport/PVGameControllerUtilities.h>
+#import <PVSupport/PVSupport-Swift.h>
+
+//#import <PVSupport/PVGameControllerUtilities.h>
 
 #if !TARGET_OS_MACCATALYST
 #import <OpenGLES/gltypes.h>

@@ -9,7 +9,13 @@
 #import "PVLogging.h"
 #import <sys/utsname.h>
 #import "PVLogEntry.h"
+
+#if SWIFT_PACKAGE
+@import Foundation;
+#else
 #import <PVSupport/PVSupport-Swift.h>
+#endif
+
 //#import "NSData+HexEnc.h"
 //#import "NSData+Base64.h"
 

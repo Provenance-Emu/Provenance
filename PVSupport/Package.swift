@@ -7,8 +7,8 @@ let package = Package(
     platforms: [
         .iOS(.v11),
         .tvOS(.v11),
-        .watchOS(.v7),
-        .macOS(.v11)
+        // .watchOS(.v7),
+        // .macOS(.v11)
     ],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
@@ -41,7 +41,6 @@ let package = Package(
                 "Audio/TPCircularBuffer.c",
                 "Audio/CARingBuffer/CAAudioTimeStamp.cpp",
                 "Audio/CARingBuffer/CARingBuffer.cpp",
-                "Controller/PVGameControllerUtilities.m",
                 "EmulatorCore/PVEmulatorCore.m",
                 "Logging/PVProvenanceLogging.m",
                 "Logging/PVLogEntry.m",
@@ -65,7 +64,6 @@ let package = Package(
                 "Audio/TPCircularBuffer.c",
                 "Audio/CARingBuffer/CAAudioTimeStamp.cpp",
                 "Audio/CARingBuffer/CARingBuffer.cpp",
-                "Controller/PVGameControllerUtilities.m",
                 "EmulatorCore/PVEmulatorCore.m",
                 "Logging/PVProvenanceLogging.m",
                 "Logging/PVLogEntry.m",

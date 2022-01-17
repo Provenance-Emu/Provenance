@@ -6,7 +6,11 @@
 //  Copyright (c) 2014 Joe Mattiello. All rights reserved.
 //
 
+#if SWIFT_PACKAGE
+#import <PVLogging.h>
+#else
 #import <PVSupport/PVLogging.h>
+#endif
 
 #define PVLogEntryMake(loglevel, format, ...) \
 { \

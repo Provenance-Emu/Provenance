@@ -25,7 +25,11 @@
  */
 
 #import <Foundation/Foundation.h>
+#if SWIFT_PACKAGE
+#import <TPCircularBuffer.h>
+#else
 #import <PVSupport/TPCircularBuffer.h>
+#endif
 
 @interface OERingBuffer : NSObject
 {

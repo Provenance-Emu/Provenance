@@ -31,7 +31,11 @@
 #include <mach/mach.h>
 #include <stdio.h>
 #include <stdlib.h>
+#if SWIFT_PACKAGE
+#import <DebugUtils.h>
+#else
 #import <PVSupport/DebugUtils.h>
+#endif
 
 #define reportResult(result,operation) (_reportResult((result),(operation),strrchr(__FILE__, '/')+1,__LINE__))
 static inline bool _reportResult(kern_return_t result, const char *operation, const char* file, int line) {
