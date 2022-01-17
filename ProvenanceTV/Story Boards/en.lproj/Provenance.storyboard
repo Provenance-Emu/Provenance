@@ -379,17 +379,10 @@
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="YeI-bH-0RW">
                         <leftBarButtonItems>
-                            <barButtonItem id="d3P-nN-WL5" userLabel="Settings">
-                                <imageReference key="image" image="gear" renderingMode="template"/>
-                                <color key="tintColor" red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <barButtonItem systemItem="add" id="qjY-qw-buq">
+                                <color key="tintColor" red="0.11" green="0.51400000000000001" blue="0.96099999999999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
-                                    <segue destination="LQv-GI-W6u" kind="presentation" identifier="SplitSettingsSegue" modalPresentationStyle="fullScreen" id="c3G-jH-C8F"/>
-                                </connections>
-                            </barButtonItem>
-                            <barButtonItem systemItem="search" id="hPG-1V-noK">
-                                <color key="tintColor" red="0.21456373720729596" green="0.49190431932824918" blue="0.96611279249191284" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                                <connections>
-                                    <action selector="searchButtonTapped:" destination="In9-6L-5FX" id="1Tm-PH-MVd"/>
+                                    <action selector="getMoreROMs:" destination="In9-6L-5FX" id="Pje-W7-Ltl"/>
                                 </connections>
                             </barButtonItem>
                             <barButtonItem image="caution-icon" id="Dsv-oR-lbw">
@@ -400,10 +393,11 @@
                             </barButtonItem>
                         </leftBarButtonItems>
                         <rightBarButtonItems>
-                            <barButtonItem systemItem="add" id="qjY-qw-buq">
-                                <color key="tintColor" red="0.11" green="0.51400000000000001" blue="0.96099999999999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <barButtonItem id="d3P-nN-WL5" userLabel="Settings">
+                                <imageReference key="image" image="gear" symbolScale="large" renderingMode="template"/>
+                                <color key="tintColor" red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
-                                    <action selector="getMoreROMs:" destination="In9-6L-5FX" id="Pje-W7-Ltl"/>
+                                    <segue destination="LQv-GI-W6u" kind="presentation" identifier="SplitSettingsSegue" modalPresentationStyle="fullScreen" id="c3G-jH-C8F"/>
                                 </connections>
                             </barButtonItem>
                             <barButtonItem image="sort" id="d9C-DJ-Fuv" userLabel="Sort">
@@ -412,11 +406,18 @@
                                     <action selector="sortButtonTapped:" destination="In9-6L-5FX" id="Ncy-G2-J4k"/>
                                 </connections>
                             </barButtonItem>
+                            <barButtonItem systemItem="search" id="hPG-1V-noK">
+                                <color key="tintColor" red="0.21456373720729596" green="0.49190431932824918" blue="0.96611279249191284" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <connections>
+                                    <action selector="searchButtonTapped:" destination="In9-6L-5FX" id="1Tm-PH-MVd"/>
+                                </connections>
+                            </barButtonItem>
                         </rightBarButtonItems>
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="conflictsBarButtonItem" destination="Dsv-oR-lbw" id="Ztu-t8-0xP"/>
+                        <outlet property="settingsBarButtonItem" destination="d3P-nN-WL5" id="J6I-TX-4u5"/>
                         <outlet property="sortOptionsTableView" destination="YhY-ua-og3" id="hcg-6Z-b08"/>
                         <outlet property="view" destination="gzA-0Q-J61" id="3uu-VO-m35"/>
                         <segue destination="rRL-5Z-sl7" kind="showDetail" identifier="gameMoreInfoSegue" id="7da-Wx-yg7"/>
@@ -469,7 +470,7 @@
                     </connections>
                 </tableView>
             </objects>
-            <point key="canvasLocation" x="4561" y="-3999"/>
+            <point key="canvasLocation" x="4314" y="-4474"/>
         </scene>
         <!--Library-->
         <scene sceneID="7uv-N8-CjJ">

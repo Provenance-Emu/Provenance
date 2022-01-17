@@ -70,6 +70,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     #endif
     var gameForCustomArt: PVGame?
 
+    @IBOutlet var settingsBarButtonItem: UIBarButtonItem!
     @IBOutlet var getMoreRomsBarButtonItem: UIBarButtonItem!
     @IBOutlet var sortOptionBarButtonItem: UIBarButtonItem!
     @IBOutlet var conflictsBarButtonItem: UIBarButtonItem!
@@ -166,7 +167,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             self.init(header: original.header, items: items, collapsable: original.collapsable)
         }
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         isInitialAppearance = true
@@ -189,14 +190,15 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                     self.collectionView?.reloadData()
                 }
             })
-#else
+        #else
             navigationController?.navigationBar.isTranslucent = false
             navigationController?.navigationBar.backgroundColor =  UIColor.black.withAlphaComponent(0.8)
-            // ironicaly BarButtons look better when forced to LightMode
+            // ironicaly BarButtonItems (unselected background) look better when forced to LightMode
             if #available(tvOS 13.0, *) {
                 navigationController?.overrideUserInterfaceStyle = .light
+                self.overrideUserInterfaceStyle = .dark
             }
-#endif
+        #endif
 
         // Handle migrating library
         DispatchQueue.main.async {
@@ -221,10 +223,38 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         #else
             searchText = .never()
         #endif
-
-        // load the config file
-        title = nil
-
+        
+        // create a Logo as the title
+        #if os(iOS)
+            let font = UIFont.boldSystemFont(ofSize: 20)
+            let icon = "AppIcon"
+        #else
+            let font = UIFont.boldSystemFont(ofSize: 48)
+            let icon = "pv_dark_logo"
+        #endif
+        if let icon = UIImage(named:icon)?.resize(to:CGSize(width:0,height:font.pointSize))
+        {
+            let logo = UIImageView(image:icon)
+            logo.layer.cornerRadius = 4.0;
+            logo.layer.masksToBounds = true
+            let name = UILabel()
+            name.text = " Provenance"
+            name.font = font
+            name.textColor = .white
+            name.sizeToFit()
+            let stack =  UIStackView(arrangedSubviews:[logo,name])
+            stack.alignment = .center
+            stack.frame = CGRect(origin:.zero, size:stack.systemLayoutSizeFitting(.zero))
+            navigationItem.titleView = stack
+        }
+        
+        // we cant use a SF Symbol in the Storyboard cuz of back version support, so change it here in code.
+        if #available(iOS 13.0, tvOS 13.0, *) {
+            if let bbi = settingsBarButtonItem {
+                bbi.image = UIImage(systemName:"gear", withConfiguration:UIImage.SymbolConfiguration(font:font))
+            }
+        }
+        
         // Persist some settings, could probably be done in a better way
         collapsedSystems.bind(onNext: { PVSettingsModel.shared.collapsedSystems = $0 }).disposed(by: disposeBag)
         currentSort.bind(onNext: { PVSettingsModel.shared.sort = $0 }).disposed(by: disposeBag)
@@ -1269,7 +1299,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, referenceSizeForHeaderInSection _: Int) -> CGSize {
         #if os(tvOS)
-            return CGSize(width: view.bounds.size.width, height: 64)
+            return CGSize(width: view.bounds.size.width, height: 40)
         #else
             return CGSize(width: view.bounds.size.width, height: 40)
         #endif
@@ -1703,3 +1733,14 @@ extension PVGameLibraryViewController: GameLibraryCollectionViewDelegate {
         return input.rawValue
     }
 #endif
+
+private extension UIImage {
+    func resize(to size:CGSize) -> UIImage {
+        var size = size
+        if size.height == 0 {size.height = floor(size.width  * self.size.height / self.size.width)}
+        if size.width  == 0 {size.width  = floor(size.height * self.size.width  / self.size.height)}
+        return UIGraphicsImageRenderer(size:size).image { (context) in
+            self.draw(in: CGRect(origin:.zero, size:size))
+        }
+    }
+}
