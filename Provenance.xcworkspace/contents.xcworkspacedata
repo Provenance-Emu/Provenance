@@ -2,9 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Provenance.xctestplan">
-   </FileRef>
-   <FileRef
       location = "container:Provenance.xcodeproj">
    </FileRef>
    <FileRef

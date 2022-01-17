@@ -1467,6 +1467,7 @@
 		1A3D409D17B2DCE4004DFFFC /* Provenance */ = {
 			isa = PBXGroup;
 			children = (
+				B3B9239C202D054B00580FFC /* Provenance-Bridging-Header.h */,
 				1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */,
 				B3290498270D1F95002707AC /* PVAppDelegate+NitoTV.swift */,
 				B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */,
@@ -1651,6 +1652,7 @@
 				11ADB31E2471A34E001C7B27 /* PVTVTabBarController.swift */,
 				1AACCAEC1BB61D5600DC21AE /* PVTVSplitViewController.swift */,
 				1A2B13CC1D0DFF5100D0B863 /* PVSearchViewController.swift */,
+				B3B9239D202D054B00580FFC /* ProvenanceTV-Bridging-Header.h */,
 				1AD481C21BA350A400FDA50A /* TVAssets.xcassets */,
 				1AD481B61BA350A400FDA50A /* Supporting Files */,
 			);
@@ -2142,6 +2144,7 @@
 		B3E21D6C203211BE009939D3 /* Spotlight */ = {
 			isa = PBXGroup;
 			children = (
+				B3E21D7E20321EE0009939D3 /* Spotlight-Bridging-Header.h */,
 				B3579D0221069B4E00DDEBD6 /* Spotlight.entitlements */,
 				B3E21D6D203211BE009939D3 /* IndexRequestHandler.swift */,
 				B3E21D6F203211BE009939D3 /* Info.plist */,
@@ -2168,10 +2171,6 @@
 		B3F43DDA2169BC9C00CDD40A /* Bridging Headers */ = {
 			isa = PBXGroup;
 			children = (
-				B3B9239C202D054B00580FFC /* Provenance-Bridging-Header.h */,
-				B3B9239D202D054B00580FFC /* ProvenanceTV-Bridging-Header.h */,
-				B3E21D7E20321EE0009939D3 /* Spotlight-Bridging-Header.h */,
-				B3E3B5C7202E3AB700A11871 /* TopShelf-Bridging-Header.h */,
 			);
 			name = "Bridging Headers";
 			sourceTree = "<group>";
@@ -2183,6 +2182,7 @@
 				BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */,
 				BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */,
 				DA5EB009206C4DEB000B5F30 /* PVGame+TopShelf.swift */,
+				B3E3B5C7202E3AB700A11871 /* TopShelf-Bridging-Header.h */,
 				BE9FDCBE1C210B9F0046DF0E /* Info.plist */,
 			);
 			path = TopShelf;
@@ -3500,7 +3500,7 @@
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_COMPILATION_MODE = singlefile;
-				SWIFT_OBJC_BRIDGING_HEADER = "Provenance-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Provenance/Provenance-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_VERSION = 5.0;
@@ -3546,7 +3546,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SUPPORTS_MACCATALYST = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "Provenance-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Provenance/Provenance-Bridging-Header.h";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
@@ -3597,7 +3597,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SWIFT_COMPILATION_MODE = singlefile;
-				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV/ProvenanceTV-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 12.1;
@@ -3647,7 +3647,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV/ProvenanceTV-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 12.1;
@@ -4245,7 +4245,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SUPPORTS_MACCATALYST = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "Provenance-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Provenance/Provenance-Bridging-Header.h";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
@@ -4298,7 +4298,7 @@
 				PRODUCT_NAME = Provenance;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
-				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV/ProvenanceTV-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 12.1;
 			};
@@ -4396,7 +4396,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "TopShelf-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "TopShelf/TopShelf-Bridging-Header.h";
 				TVOS_DEPLOYMENT_TARGET = 12.1;
 			};
 			name = Archive;
@@ -4439,7 +4439,7 @@
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = EXTENSION;
-				SWIFT_OBJC_BRIDGING_HEADER = "Spotlight-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Spotlight/Spotlight-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
@@ -4559,7 +4559,7 @@
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG EXTENSION";
 				SWIFT_COMPILATION_MODE = singlefile;
-				SWIFT_OBJC_BRIDGING_HEADER = "Spotlight-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Spotlight/Spotlight-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
@@ -4603,7 +4603,7 @@
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = EXTENSION;
-				SWIFT_OBJC_BRIDGING_HEADER = "Spotlight-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Spotlight/Spotlight-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
@@ -4642,7 +4642,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "TopShelf-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "TopShelf/TopShelf-Bridging-Header.h";
 				TVOS_DEPLOYMENT_TARGET = 12.1;
 			};
 			name = Debug;
@@ -4682,7 +4682,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "TopShelf-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "TopShelf/TopShelf-Bridging-Header.h";
 				TVOS_DEPLOYMENT_TARGET = 12.1;
 			};
 			name = Release;
