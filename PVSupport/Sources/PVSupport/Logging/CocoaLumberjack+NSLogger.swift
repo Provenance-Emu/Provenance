@@ -6,13 +6,13 @@
 //  Copyright © 2021 Provenance Emu. All rights reserved.
 //
 
-#if canImport(NSLogger)
+//#if canImport(NSLogger)
 import Foundation
 import NSLogger
 @_exported import CocoaLumberjackSwift
 
 internal class JMLumberjackNSLogger: DDAbstractLogger {
-    var logger: PVSupport.Logger { return PVSupport.Logger.shared }
+    var logger: NSLogger.Logger { return NSLogger.Logger.shared }
     var tags = [Int: String]()
 
     public func set(tag: String, for context: Int) {
@@ -223,4 +223,4 @@ extension JMLumberjackNSLogger {
         return debugDescription
     }
 }
-#endif
+//#endif

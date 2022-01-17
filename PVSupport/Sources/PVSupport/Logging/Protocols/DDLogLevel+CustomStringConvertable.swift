@@ -9,11 +9,11 @@
 import Foundation
 @_exported import CocoaLumberjackSwift
 
-#if canImport(NSLogger)
+//#if canImport(NSLogger)
 import NSLogger
 
 extension DDLogLevel {
-    var nsloggerLevel: PVSupport.Logger.Level {
+    var nsloggerLevel: NSLogger.Logger.Level {
         switch self {
         case .error: return .error
         case .warning: return .warning
@@ -26,11 +26,11 @@ extension DDLogLevel {
 }
 
 extension DDLogFlag {
-    var nsloggerLevel: PVSupport.Logger.Level {
+    var nsloggerLevel: NSLogger.Logger.Level {
         return self.toLogLevel().nsloggerLevel
     }
 }
-#endif
+//#endif
 
 extension DDLogLevel: CustomStringConvertible {
     public var description: String {

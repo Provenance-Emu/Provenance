@@ -192,6 +192,8 @@
 		B3CEC5BC2794E9FD004A7CC1 /* PVGameControllerUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CEC5BB2794E9FD004A7CC1 /* PVGameControllerUtilities.swift */; };
 		B3CEC5BD2794E9FD004A7CC1 /* PVGameControllerUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CEC5BB2794E9FD004A7CC1 /* PVGameControllerUtilities.swift */; };
 		B3CEC5BE2794E9FD004A7CC1 /* PVGameControllerUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CEC5BB2794E9FD004A7CC1 /* PVGameControllerUtilities.swift */; };
+		B3CEC5C127952165004A7CC1 /* NSLogger in Frameworks */ = {isa = PBXBuildFile; productRef = B3CEC5C027952165004A7CC1 /* NSLogger */; };
+		B3CEC5C3279521EC004A7CC1 /* NSLogger in Frameworks */ = {isa = PBXBuildFile; productRef = B3CEC5C2279521EC004A7CC1 /* NSLogger */; };
 		B3D0EE20277FE85F002DC0A5 /* HapticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D0EE1F277FE85F002DC0A5 /* HapticsManager.swift */; };
 		B3D0EE21277FE85F002DC0A5 /* HapticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D0EE1F277FE85F002DC0A5 /* HapticsManager.swift */; };
 		B3D0EE26277FE880002DC0A5 /* HapticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D0EE1F277FE85F002DC0A5 /* HapticsManager.swift */; };
@@ -338,6 +340,7 @@
 				B324C3162191963B009F4EDC /* AVFoundation.framework in Frameworks */,
 				B3CA5B5126E9E4D500687B27 /* CocoaLumberjack in Frameworks */,
 				B3296E8926C67F6B0088AC32 /* CocoaLumberjackSwiftLogBackend in Frameworks */,
+				B3CEC5C3279521EC004A7CC1 /* NSLogger in Frameworks */,
 				B3AF6FDF219161C0000FA7F9 /* GameController.framework in Frameworks */,
 				B3AF6FDD219161BC000FA7F9 /* Foundation.framework in Frameworks */,
 				B3D0EE28277FE8C9002DC0A5 /* CoreHaptics.framework in Frameworks */,
@@ -353,6 +356,7 @@
 				B3CA5B5326E9E4DC00687B27 /* CocoaLumberjack in Frameworks */,
 				B336B8F426B398A900960A81 /* Reachability in Frameworks */,
 				B3AF6FDA2191616C000FA7F9 /* Foundation.framework in Frameworks */,
+				B3CEC5C127952165004A7CC1 /* NSLogger in Frameworks */,
 				B3AF6FD821916168000FA7F9 /* GameController.framework in Frameworks */,
 				B3296E8726C67F660088AC32 /* CocoaLumberjackSwiftLogBackend in Frameworks */,
 				B3FFF02D26E9E65800A33143 /* AVFoundation.framework in Frameworks */,
@@ -778,6 +782,7 @@
 				B3B492CA26B3A96B000B426B /* Reachability */,
 				B3296E8826C67F6B0088AC32 /* CocoaLumberjackSwiftLogBackend */,
 				B3CA5B5026E9E4D500687B27 /* CocoaLumberjack */,
+				B3CEC5C2279521EC004A7CC1 /* NSLogger */,
 			);
 			productName = "PVSupportTV Framework";
 			productReference = B3C96E9E1D62C3A3003F1E93 /* PVSupport.framework */;
@@ -806,6 +811,7 @@
 				B336B8F326B398A900960A81 /* Reachability */,
 				B3296E8626C67F660088AC32 /* CocoaLumberjackSwiftLogBackend */,
 				B3CA5B5226E9E4DC00687B27 /* CocoaLumberjack */,
+				B3CEC5C027952165004A7CC1 /* NSLogger */,
 			);
 			productName = "PVSupportTV Framework";
 			productReference = B3C96ED81D62C5E7003F1E93 /* PVSupport.framework */;
@@ -849,6 +855,7 @@
 			packageReferences = (
 				B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */,
 				B336B8F226B398A900960A81 /* XCRemoteSwiftPackageReference "Reachability.swift" */,
+				B3CEC5BF27952163004A7CC1 /* XCRemoteSwiftPackageReference "NSLogger" */,
 			);
 			productRefGroup = 1ACEA64517F7467D0031B1C9 /* Products */;
 			projectDirPath = "";
@@ -1847,6 +1854,14 @@
 				minimumVersion = 5.1.0;
 			};
 		};
+		B3CEC5BF27952163004A7CC1 /* XCRemoteSwiftPackageReference "NSLogger" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/fpillet/NSLogger";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1944,6 +1959,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
 			productName = CocoaLumberjack;
+		};
+		B3CEC5C027952165004A7CC1 /* NSLogger */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3CEC5BF27952163004A7CC1 /* XCRemoteSwiftPackageReference "NSLogger" */;
+			productName = NSLogger;
+		};
+		B3CEC5C2279521EC004A7CC1 /* NSLogger */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3CEC5BF27952163004A7CC1 /* XCRemoteSwiftPackageReference "NSLogger" */;
+			productName = NSLogger;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
