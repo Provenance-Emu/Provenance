@@ -221,9 +221,28 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         #else
             searchText = .never()
         #endif
-
-        // load the config file
-        title = nil
+        
+        // create a Logo as the title
+        #if os(iOS)
+            let icon = UIImage(named: "AppIcon")?.resize(to:CGSize(width:32,height:32))
+            let font = UIFont.boldSystemFont(ofSize: 20)
+        #else
+            let icon = UIImage(named: "LaunchImage")?.resize(to:CGSize(width:114,height:64))
+            let font = UIFont.boldSystemFont(ofSize: 48)
+        #endif
+        if let icon = icon {
+            let logo = UIImageView(image:icon)
+            logo.layer.cornerRadius = icon.size.height / 16.0;
+            logo.layer.masksToBounds = true
+            let name = UILabel()
+            name.text = " Provenance"
+            name.font = font
+            name.textColor = .white
+            name.sizeToFit()
+            let stack =  UIStackView(arrangedSubviews:[logo,name])
+            stack.frame = CGRect(origin:.zero, size:stack.systemLayoutSizeFitting(.zero))
+            navigationItem.titleView = stack
+        }
 
         // Persist some settings, could probably be done in a better way
         collapsedSystems.bind(onNext: { PVSettingsModel.shared.collapsedSystems = $0 }).disposed(by: disposeBag)
@@ -1269,7 +1288,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, referenceSizeForHeaderInSection _: Int) -> CGSize {
         #if os(tvOS)
-            return CGSize(width: view.bounds.size.width, height: 64)
+            return CGSize(width: view.bounds.size.width, height: 40)
         #else
             return CGSize(width: view.bounds.size.width, height: 40)
         #endif
@@ -1703,3 +1722,11 @@ extension PVGameLibraryViewController: GameLibraryCollectionViewDelegate {
         return input.rawValue
     }
 #endif
+
+private extension UIImage {
+    func resize(to size:CGSize) -> UIImage {
+        return UIGraphicsImageRenderer(size:size).image { (context) in
+            self.draw(in: CGRect(origin:.zero, size:size))
+        }
+    }
+}
