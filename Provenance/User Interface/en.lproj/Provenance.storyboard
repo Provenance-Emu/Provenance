@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="PpW-xz-Ouo">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="PpW-xz-Ouo">
     <device id="retina5_9" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -12,11 +12,14 @@
         <!--Navigation Controller-->
         <scene sceneID="9Nl-1J-rrm">
             <objects>
-                <navigationController storyboardIdentifier="rootNavigationController" definesPresentationContext="YES" useStoryboardIdentifierAsRestorationIdentifier="YES" id="PpW-xz-Ouo" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="rootNavigationController" definesPresentationContext="YES" useStoryboardIdentifierAsRestorationIdentifier="YES" hidesBarsWhenKeyboardAppears="YES" id="PpW-xz-Ouo" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" id="iLh-mO-joj">
                         <rect key="frame" x="0.0" y="44" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="nEd-Yc-NCf">
+                        <autoresizingMask key="autoresizingMask"/>
+                    </toolbar>
                     <connections>
                         <segue destination="40z-oi-2L6" kind="relationship" relationship="rootViewController" id="YL9-iM-GSd"/>
                     </connections>
@@ -440,7 +443,7 @@
         <!--Game Library View Controller-->
         <scene sceneID="SSZ-SN-hMc">
             <objects>
-                <viewController restorationIdentifier="gameLibrary" storyboardIdentifier="PVGameLibraryViewController" id="40z-oi-2L6" customClass="PVGameLibraryViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController restorationIdentifier="gameLibrary" storyboardIdentifier="PVGameLibraryViewController" definesPresentationContext="YES" providesPresentationContextTransitionStyle="YES" id="40z-oi-2L6" customClass="PVGameLibraryViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="ooJ-sW-pgf">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
