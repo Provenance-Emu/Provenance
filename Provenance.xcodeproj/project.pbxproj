@@ -1048,6 +1048,7 @@
 		B382C647278E626C007E61FE /* PVGPUViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVGPUViewController.h; sourceTree = "<group>"; };
 		B382C648278E626D007E61FE /* PVGPUViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PVGPUViewController.m; sourceTree = "<group>"; };
 		B383F3BE219BBD8700DB6926 /* LogViewable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogViewable.swift; sourceTree = "<group>"; };
+		B3843BD327966171005C36F5 /* GameLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameLibraryView.swift; sourceTree = "<group>"; };
 		B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameMoreInfoViewController.swift; sourceTree = "<group>"; };
 		B387676B20BD0F43009D8CD2 /* WebServerActivatorController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebServerActivatorController.swift; sourceTree = "<group>"; };
 		B3890BE320B97588005BB001 /* PVGameLibraryViewController+PeekPop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGameLibraryViewController+PeekPop.swift"; sourceTree = "<group>"; };
@@ -1339,6 +1340,7 @@
 		1A1237F217CA279900CEC788 /* User Interface */ = {
 			isa = PBXGroup;
 			children = (
+				B3843BCF2796606B005C36F5 /* SwiftUI */,
 				B3B923A1202D2EAE00580FFC /* Themes */,
 				B3296EAC26CABE880088AC32 /* Provenance.storyboard */,
 				B3296EB126CABEA80088AC32 /* SaveStates.storyboard */,
@@ -2020,6 +2022,14 @@
 				B382C648278E626D007E61FE /* PVGPUViewController.m */,
 			);
 			path = PVGLViewController;
+			sourceTree = "<group>";
+		};
+		B3843BCF2796606B005C36F5 /* SwiftUI */ = {
+			isa = PBXGroup;
+			children = (
+				B3843BD327966171005C36F5 /* GameLibraryView.swift */,
+			);
+			path = SwiftUI;
 			sourceTree = "<group>";
 		};
 		B38D30FA202AC26500E9A068 /* GCDWebDAVServer */ = {
