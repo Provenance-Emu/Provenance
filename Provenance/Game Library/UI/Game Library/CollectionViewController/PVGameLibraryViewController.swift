@@ -898,7 +898,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     }
 
     @objc func handleCacheEmptied(_: NotificationCenter) {
-        DispatchQueue.global(qos: .default).async(execute: { () -> Void in
+        DispatchQueue.global(qos: .userInitiated).async(execute: { () -> Void in
             let database = RomDatabase.sharedInstance
             database.refresh()
 
@@ -1088,7 +1088,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
                 let gameRef = ThreadSafeReference(to: game)
 
-                DispatchQueue.global(qos: .default).async {
+                DispatchQueue.global(qos: .userInitiated).async {
                     let realm = try! Realm()
                     guard let game = realm.resolve(gameRef) else {
                         return // person was deleted

@@ -55,7 +55,7 @@ public extension LocalFileProvider {
     }
 
     func fetchData(completion: @escaping FileProviderFetch) {
-        DispatchQueue.global(qos: .background).async {
+        DispatchQueue.global(qos: .userInitiated).async {
             completion(self.readData)
         }
     }

@@ -611,7 +611,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     #if os(iOS)
         @objc func takeScreenshot() {
             if let screenshot = captureScreenshot() {
-                DispatchQueue.global(qos: .default).async(execute: { () -> Void in
+                DispatchQueue.global(qos: .utility).async(execute: { () -> Void in
                     UIImageWriteToSavedPhotosAlbum(screenshot, nil, nil, nil)
                 })
 
