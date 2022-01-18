@@ -69,29 +69,39 @@ extension CoreOptionValue: Codable {
 }
 
 public extension CoreOptional { // where Self:PVEmulatorCore {
-    static func valueForOption<T>(_: T.Type, _ option: String) -> T? {
+    static func valueForOption<T>(_: T.Type, _ option: String, andMD5 md5: String? = nil) -> T? {
         let className = NSStringFromClass(Self.self)
         let key = "\(className).\(option)"
+        let md5Key: String = [className, md5, option].compactMap{$0}.joined(separator: ".")
 
-        if let savedOption = UserDefaults.standard.object(forKey: key) as? T {
+        DLOG("Looking for either key's `\(key)` or \(md5Key)")
+
+        if let savedOption = UserDefaults.standard.object(forKey: md5Key) as? T {
+            DLOG("Read key `\(md5Key)` option: \(savedOption)")
+            return savedOption
+        } else if let savedOption = UserDefaults.standard.object(forKey: key) as? T {
+            DLOG("Read key `\(key)` option: \(savedOption)")
             return savedOption
         } else {
+            DLOG("need to find options for key `\(option)`")
             let currentOptions: [CoreOption] = options
 			guard let foundOption = findOption(forKey: option, options: currentOptions) else {
-				ELOG("No option for key: \(option)")
+				ELOG("No option for key: `\(option)`")
 				return nil
 			}
+            DLOG("Found option `\(foundOption)`")
             return UserDefaults.standard.object(forKey: "\(className).\(foundOption)") as? T
         }
     }
 
-    static func setValue(_ value: Any?, forOption option: CoreOption) {
+    static func setValue(_ value: Encodable?, forOption option: CoreOption, andMD5 md5: String? = nil) {
         let className = NSStringFromClass(Self.self)
-        let key = "\(className).\(option)"
-
+        let key = option.key
+        let classedKey: String = [className, md5, key].compactMap{$0}.joined(separator: ".")
+ 
         // TODO: Make sure the value matches the option type
-
-        UserDefaults.standard.set(value, forKey: key)
+        DLOG("Options: Setting key: \(classedKey) to value: \(value ?? "nil")")
+        UserDefaults.standard.set(value, forKey: classedKey)
         UserDefaults.standard.synchronize()
     }
 
