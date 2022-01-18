@@ -131,7 +131,7 @@ final class CoreOptionsViewController: QuickTableViewController {
                                                                          title += " ✔︎"
                                                                      }
                                                                      let action = UIAlertAction(title: title, style: .default, handler: { _ in
-                                                                         self.core.setValue(value.title, forOption: option)
+                                                                         self.core.setValue(value.value, forOption: option)
                                                                      })
                                                                      actionController.addAction(action)
                                                                  }
