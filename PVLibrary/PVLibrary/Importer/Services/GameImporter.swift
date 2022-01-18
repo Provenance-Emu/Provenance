@@ -245,7 +245,9 @@ public final class GameImporter {
                 if !["bin", "iso", "img", "sub"].contains(candidate.filePath.pathExtension) {
                     WLOG("File should have existed at \(candidate.filePath) but it might have been moved")
                 }
-                self.deleteIfJunk(candidate.filePath)
+                DispatchQueue.global(qos: .utility).async {
+                    self.deleteIfJunk(candidate.filePath)
+                }
 
                 return nil
             }
@@ -270,8 +272,10 @@ public final class GameImporter {
         if filePath.lastPathComponent != "0", filePath.path.contains(PVEmulatorConfiguration.Paths.romsImportPath.lastPathComponent), !PVEmulatorConfiguration.allKnownExtensions.contains(filePath.pathExtension.lowercased()) {
             ILOG("\(filePath.lastPathComponent) doesn't matching any known possible extensions and is in \(PVEmulatorConfiguration.Paths.romsImportPath.lastPathComponent) directory. Deleting.")
             do {
-                try FileManager.default.removeItem(at: filePath)
-                ILOG("Deleted \(filePath.path).")
+                if FileManager.default.fileExists(atPath: filePath.path) {
+                    try FileManager.default.removeItem(at: filePath)
+                    ILOG("Deleted \(filePath.path).")
+                }
                 return true
             } catch {
                 ELOG("Deletion error: \(error.localizedDescription)")
