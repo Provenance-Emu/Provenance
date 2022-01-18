@@ -313,7 +313,11 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
             PVSettingsSwitchRow(text: NSLocalizedString("Unsupported Cores", comment: "Unsupported Cores"),
                                 detailText: .subtitle("Cores that are in development"),
-                                key: \PVSettingsModel.debugOptions.unsupportedCores)
+                                key: \PVSettingsModel.debugOptions.unsupportedCores),
+            
+            PVSettingsSwitchRow(text: NSLocalizedString("Use Swift UI", comment: "Use Swift UI"),
+                                detailText: .subtitle("Swift UI placeholder. Don't use unless you're a developer."),
+                                key: \PVSettingsModel.debugOptions.useSwiftUI),
         ]
         #else
          let betaRows: [TableRow] = [
@@ -349,7 +353,16 @@ final class PVSettingsViewController: PVQuickTableViewController {
                                         cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
                                         cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
                                 }
-            )
+            ),
+            
+            PVSettingsSwitchRow(text: NSLocalizedString("Use SwiftUI", comment: "Use SwiftUI"),
+                               detailText: .subtitle("Don't use unless you enjoy empty windows."),
+                               key: \PVSettingsModel.debugOptions.multiSampling,
+                                   customization: { cell, _ in
+                                       cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+                                       cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
+                               }
+           )
                 ]
         #endif
 
