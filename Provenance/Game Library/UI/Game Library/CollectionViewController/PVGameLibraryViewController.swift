@@ -228,11 +228,13 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         #if os(iOS)
             let font = UIFont.boldSystemFont(ofSize: 20)
             let icon = "AppIcon"
+			let icon_size = font.pointSize
         #else
             let font = UIFont.boldSystemFont(ofSize: 48)
             let icon = "pv_dark_logo"
+            let icon_size = font.capHeight
         #endif
-        if let icon = UIImage(named:icon)?.resize(to:CGSize(width:0,height:font.pointSize))
+        if let icon = UIImage(named:icon)?.resize(to:CGSize(width:0,height:icon_size))
         {
             let logo = UIImageView(image:icon)
             logo.layer.cornerRadius = 4.0;
