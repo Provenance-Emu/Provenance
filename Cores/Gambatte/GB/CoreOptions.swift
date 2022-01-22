@@ -78,8 +78,10 @@ extension PVGBEmulatorCore: CoreOptional {
 			return
 		case .string(let sstring):
 			index = PVGBEmulatorCore.paletteValues.firstIndex(where: { $0.title.lowercased() == sstring }) ?? 0
-		case .number(let nSNumber):
-			index = nSNumber.intValue
+		case .int(let numbert):
+			index = numbert
+        case .float(let numbert):
+            index = Int(numbert.rounded(.towardZero))
 		case .notFound:
 			ELOG("Not found")
 			return

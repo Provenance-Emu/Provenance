@@ -14,13 +14,13 @@ public extension CoreOptional { // where Self:PVEmulatorCore {
         let key = "\(className).\(option)"
         let md5Key: String = [className, md5, option].compactMap{$0}.joined(separator: ".")
 
-        DLOG("Looking for either key's `\(key)` or \(md5Key)")
+        DLOG("Looking for either key's `\(key)` or \(md5Key) with type \(T.self)")
 
-        if let savedOption = UserDefaults.standard.object(forKey: md5Key) as? T {
+        let savedOption = UserDefaults.standard.object(forKey: md5Key) ??  UserDefaults.standard.object(forKey: key)
+        DLOG("savedOption found?: \(String(describing: savedOption)) isIt type: \(T.self), \(savedOption as? T)")
+
+        if let savedOption = savedOption as? T {
             DLOG("Read key `\(md5Key)` option: \(savedOption)")
-            return savedOption
-        } else if let savedOption = UserDefaults.standard.object(forKey: key) as? T {
-            DLOG("Read key `\(key)` option: \(savedOption)")
             return savedOption
         } else {
             DLOG("need to find options for key `\(option)`")
@@ -30,7 +30,8 @@ public extension CoreOptional { // where Self:PVEmulatorCore {
                 return nil
             }
             DLOG("Found option `\(foundOption)`")
-            return UserDefaults.standard.object(forKey: "\(className).\(foundOption)") as? T
+            return foundOption.defaultValue as? T
+            //return UserDefaults.standard.object(forKey: "\(className).\(foundOption)") as? T
         }
     }
 
@@ -57,28 +58,28 @@ public extension CoreOptional { // where Self:PVEmulatorCore {
                 return .notFound
             }
         case .range:
-            if let value = valueForOption(NSNumber.self, option.key) {
-                return .number(value)
+            if let value = valueForOption(Int.self, option.key) {
+                return .int(value)
             } else {
                 return .notFound
             }
         case .rangef:
-            if let value = valueForOption(NSNumber.self, option.key) {
-                return .number(value)
+            if let value = valueForOption(Float.self, option.key) {
+                return .float(value)
             } else {
                 return .notFound
             }
         case .multi:
-            if let value = valueForOption(NSNumber.self, option.key) {
-                return .number(value)
+            if let value = valueForOption(Int.self, option.key) {
+                return .int(value)
             } else if let value = valueForOption(String.self, option.key) {
                 return .string(value)
             } else {
                 return .notFound
             }
         case .enumeration:
-            if let value = valueForOption(NSNumber.self, option.key) {
-                return .number(value)
+            if let value = valueForOption(Int.self, option.key) {
+                return .int(value)
             } else if let value = valueForOption(String.self, option.key) {
                 return .string(value)
             } else {
