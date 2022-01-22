@@ -30,8 +30,9 @@ public extension CoreOptional { // where Self:PVEmulatorCore {
                 return nil
             }
             DLOG("Found option `\(foundOption)`")
-            return foundOption.defaultValue as? T
-            //return UserDefaults.standard.object(forKey: "\(className).\(foundOption)") as? T
+			let key = "\(className).\(foundOption.key)"
+			let object = UserDefaults.standard.object(forKey: key)
+			return object as? T ?? foundOption.defaultValue as? T
         }
     }
 
