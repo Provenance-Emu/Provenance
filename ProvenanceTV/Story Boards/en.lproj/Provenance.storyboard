@@ -380,7 +380,7 @@
                     <navigationItem key="navigationItem" id="YeI-bH-0RW">
                         <leftBarButtonItems>
                             <barButtonItem systemItem="add" id="qjY-qw-buq">
-                                <color key="tintColor" red="0.11" green="0.51400000000000001" blue="0.96099999999999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="tintColor" red="0.1" green="0.5" blue="0.95" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
                                     <action selector="getMoreROMs:" destination="In9-6L-5FX" id="Pje-W7-Ltl"/>
                                 </connections>
@@ -395,19 +395,19 @@
                         <rightBarButtonItems>
                             <barButtonItem id="d3P-nN-WL5" userLabel="Settings">
                                 <imageReference key="image" image="gear" symbolScale="large" renderingMode="template"/>
-                                <color key="tintColor" red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="tintColor" red="0.1" green="0.5" blue="0.95" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
                                     <segue destination="LQv-GI-W6u" kind="presentation" identifier="SplitSettingsSegue" modalPresentationStyle="fullScreen" id="c3G-jH-C8F"/>
                                 </connections>
                             </barButtonItem>
                             <barButtonItem image="sort" id="d9C-DJ-Fuv" userLabel="Sort">
-                                <color key="tintColor" red="0.11" green="0.51400000000000001" blue="0.96099999999999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="tintColor" red="0.1" green="0.5" blue="0.95" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
                                     <action selector="sortButtonTapped:" destination="In9-6L-5FX" id="Ncy-G2-J4k"/>
                                 </connections>
                             </barButtonItem>
                             <barButtonItem systemItem="search" id="hPG-1V-noK">
-                                <color key="tintColor" red="0.21456373720729596" green="0.49190431932824918" blue="0.96611279249191284" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <color key="tintColor" red="0.1" green="0.5" blue="0.95" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
                                     <action selector="searchButtonTapped:" destination="In9-6L-5FX" id="1Tm-PH-MVd"/>
                                 </connections>
