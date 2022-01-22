@@ -130,6 +130,13 @@
 		1F8D52481D91993000C29F90 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
 		1FB125961D93E57F00D045D0 /* PVAppearanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB125951D93E57F00D045D0 /* PVAppearanceViewController.swift */; };
 		1FE10F291D94ECC600A20D1A /* PVAppearanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB125951D93E57F00D045D0 /* PVAppearanceViewController.swift */; };
+		3759CAE7279C375800E9267B /* SideMenu in Frameworks */ = {isa = PBXBuildFile; productRef = 3759CAE6279C375800E9267B /* SideMenu */; };
+		3759CAEA279C379700E9267B /* PVSideMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3759CAE9279C379700E9267B /* PVSideMenu.swift */; };
+		3759CAEC279C37B100E9267B /* SideMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3759CAEB279C37B100E9267B /* SideMenuView.swift */; };
+		3759CAF1279C381800E9267B /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3759CAF0279C381800E9267B /* HomeView.swift */; };
+		3759CAF3279C389300E9267B /* ConsoleGamesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3759CAF2279C389300E9267B /* ConsoleGamesView.swift */; };
+		3759CAF5279C38AA00E9267B /* GameItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3759CAF4279C38AA00E9267B /* GameItemView.swift */; };
+		3759CAF8279C38DF00E9267B /* NewUIHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3759CAF7279C38DF00E9267B /* NewUIHelpers.swift */; };
 		378F4A001B63D7CD0065FA39 /* GCDWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49DF1B63D7CD0065FA39 /* GCDWebServer.m */; };
 		378F4A011B63D7CD0065FA39 /* GCDWebServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49E11B63D7CD0065FA39 /* GCDWebServerConnection.m */; };
 		378F4A021B63D7CD0065FA39 /* GCDWebServerFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49E31B63D7CD0065FA39 /* GCDWebServerFunctions.m */; };
@@ -146,6 +153,7 @@
 		378F4A0D1B63D7CD0065FA39 /* GCDWebUploader.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 378F49FD1B63D7CD0065FA39 /* GCDWebUploader.bundle */; };
 		378F4A0E1B63D7CD0065FA39 /* GCDWebUploader.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49FF1B63D7CD0065FA39 /* GCDWebUploader.m */; };
 		378F4A111B63DCF00065FA39 /* PVWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F4A101B63DCF00065FA39 /* PVWebServer.m */; };
+		37CFD802279C350C007B5FC7 /* PVRootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37CFD801279C350C007B5FC7 /* PVRootViewController.swift */; };
 		42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */; };
 		55546DF1257D6CA800616332 /* PVTGBDual.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5525388625574D48004B00B6 /* PVTGBDual.framework */; };
 		55546DF2257D6CA800616332 /* PVTGBDual.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5525388625574D48004B00B6 /* PVTGBDual.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -848,6 +856,12 @@
 		1F8D52451D9198E000C29F90 /* PVLicensesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVLicensesViewController.swift; sourceTree = "<group>"; };
 		1F8D52471D91993000C29F90 /* licenses.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = licenses.html; sourceTree = "<group>"; };
 		1FB125951D93E57F00D045D0 /* PVAppearanceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVAppearanceViewController.swift; sourceTree = "<group>"; };
+		3759CAE9279C379700E9267B /* PVSideMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSideMenu.swift; sourceTree = "<group>"; };
+		3759CAEB279C37B100E9267B /* SideMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuView.swift; sourceTree = "<group>"; };
+		3759CAF0279C381800E9267B /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		3759CAF2279C389300E9267B /* ConsoleGamesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleGamesView.swift; sourceTree = "<group>"; };
+		3759CAF4279C38AA00E9267B /* GameItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameItemView.swift; sourceTree = "<group>"; };
+		3759CAF7279C38DF00E9267B /* NewUIHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewUIHelpers.swift; sourceTree = "<group>"; };
 		378F49DE1B63D7CD0065FA39 /* GCDWebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServer.h; sourceTree = "<group>"; };
 		378F49DF1B63D7CD0065FA39 /* GCDWebServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServer.m; sourceTree = "<group>"; };
 		378F49E01B63D7CD0065FA39 /* GCDWebServerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerConnection.h; sourceTree = "<group>"; };
@@ -881,6 +895,8 @@
 		378F49FF1B63D7CD0065FA39 /* GCDWebUploader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebUploader.m; sourceTree = "<group>"; };
 		378F4A0F1B63DCF00065FA39 /* PVWebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVWebServer.h; sourceTree = "<group>"; };
 		378F4A101B63DCF00065FA39 /* PVWebServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVWebServer.m; sourceTree = "<group>"; };
+		37CFD7FF279C34C1007B5FC7 /* CodeSigning.xcconfig copy.sample */ = {isa = PBXFileReference; lastKnownFileType = text; path = "CodeSigning.xcconfig copy.sample"; sourceTree = "<group>"; };
+		37CFD801279C350C007B5FC7 /* PVRootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVRootViewController.swift; sourceTree = "<group>"; };
 		423BB97A17DD35B10048F457 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVGameLibrarySectionHeaderView.swift; sourceTree = "<group>"; };
 		5525388625574D48004B00B6 /* PVTGBDual.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PVTGBDual.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1117,7 +1133,6 @@
 		B37D31CC274A57F000D635E0 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "zh-Hans"; path = Info.plist; sourceTree = "<group>"; };
 		B380EAC12759D689001B8532 /* Build.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Build.xcconfig; sourceTree = "<group>"; };
 		B380EAC22759D692001B8532 /* CodeSigning.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CodeSigning.xcconfig; sourceTree = "<group>"; };
-		B380EAC32759D69A001B8532 /* CodeSigning.xcconfig.sample */ = {isa = PBXFileReference; lastKnownFileType = text; path = CodeSigning.xcconfig.sample; sourceTree = "<group>"; };
 		B382C632278E5054007E61FE /* PVEmulatorViewController+Audio.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVEmulatorViewController+Audio.swift"; sourceTree = "<group>"; };
 		B382C633278E5055007E61FE /* PVEmulatorViewController+MultiDisc.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVEmulatorViewController+MultiDisc.swift"; sourceTree = "<group>"; };
 		B382C634278E5055007E61FE /* PVEmulatorViewController+Controllers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVEmulatorViewController+Controllers.swift"; sourceTree = "<group>"; };
@@ -1314,6 +1329,7 @@
 				B3B0860A1E71316A007F39E1 /* PVMednafen.framework in Frameworks */,
 				B3C9D5211DEA787D0068D057 /* PVGBA.framework in Frameworks */,
 				B33625FD26EDF88200DC41EA /* Metal.framework in Frameworks */,
+				3759CAE7279C375800E9267B /* SideMenu in Frameworks */,
 				B3B3B8951DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Frameworks */,
 				1A3D431E17B2F01F004DFFFC /* OpenGLES.framework in Frameworks */,
 				B3B3B8981DECF8C700602746 /* PVMupen64PlusRspHLE.framework in Frameworks */,
@@ -1468,12 +1484,9 @@
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
-				B380EAC32759D69A001B8532 /* CodeSigning.xcconfig.sample */,
-				B380EAC22759D692001B8532 /* CodeSigning.xcconfig */,
 				B380EAC12759D689001B8532 /* Build.xcconfig */,
-				B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */,
-				B326758627B1E0BC0033C5D1 /* Build-tvOS.xcconfig */,
-				B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */,
+				B380EAC22759D692001B8532 /* CodeSigning.xcconfig */,
+				37CFD7FF279C34C1007B5FC7 /* CodeSigning.xcconfig copy.sample */,
 				B399119326C0F41300E54426 /* CHANGELOG.md */,
 				B399119126C0F41300E54426 /* LICENSE.md */,
 				B399119226C0F41300E54426 /* README.md */,
@@ -1565,6 +1578,7 @@
 				1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */,
 				B3290498270D1F95002707AC /* PVAppDelegate+NitoTV.swift */,
 				B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */,
+				37CFD800279C34F2007B5FC7 /* NewUI */,
 				1AADCDB117BD997500F53CFE /* Categories */,
 				1A47C94A17BC310700C27644 /* Controller */,
 				1A1237F417CA27B700CEC788 /* Emulator */,
@@ -1781,6 +1795,47 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		3759CAE8279C378500E9267B /* SideMenu */ = {
+			isa = PBXGroup;
+			children = (
+				3759CAE9279C379700E9267B /* PVSideMenu.swift */,
+				3759CAEB279C37B100E9267B /* SideMenuView.swift */,
+			);
+			path = SideMenu;
+			sourceTree = "<group>";
+		};
+		3759CAED279C37FB00E9267B /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				3759CAF4279C38AA00E9267B /* GameItemView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		3759CAEE279C380100E9267B /* Consoles */ = {
+			isa = PBXGroup;
+			children = (
+				3759CAF2279C389300E9267B /* ConsoleGamesView.swift */,
+			);
+			path = Consoles;
+			sourceTree = "<group>";
+		};
+		3759CAEF279C380800E9267B /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				3759CAF0279C381800E9267B /* HomeView.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		3759CAF6279C38D600E9267B /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				3759CAF7279C38DF00E9267B /* NewUIHelpers.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
 		378F49DB1B63D7CD0065FA39 /* http */ = {
 			isa = PBXGroup;
 			children = (
@@ -1860,6 +1915,19 @@
 				378F49FF1B63D7CD0065FA39 /* GCDWebUploader.m */,
 			);
 			path = GCDWebUploader;
+			sourceTree = "<group>";
+		};
+		37CFD800279C34F2007B5FC7 /* NewUI */ = {
+			isa = PBXGroup;
+			children = (
+				37CFD801279C350C007B5FC7 /* PVRootViewController.swift */,
+				3759CAF6279C38D600E9267B /* Utils */,
+				3759CAEF279C380800E9267B /* Home */,
+				3759CAEE279C380100E9267B /* Consoles */,
+				3759CAED279C37FB00E9267B /* Components */,
+				3759CAE8279C378500E9267B /* SideMenu */,
+			);
+			path = NewUI;
 			sourceTree = "<group>";
 		};
 		B305EEFE276B4C71003AE510 /* Provenance Watch WatchKit App */ = {
@@ -2340,6 +2408,7 @@
 				B357A43927092254002C7C0F /* AppCenterCrashes */,
 				B390B0E9276B2DB20018E065 /* AltKit */,
 				B3FB9678276DD7F600F7EDEE /* SteamController */,
+				3759CAE6279C375800E9267B /* SideMenu */,
 			);
 			productName = Provenance;
 			productReference = 1A3D409417B2DCE4004DFFFC /* Provenance.app */;
@@ -2596,6 +2665,7 @@
 				B3D30FBD26F0B4CD0064603F /* XCRemoteSwiftPackageReference "SteamController" */,
 				B357A43627092253002C7C0F /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */,
 				B390B0E8276B2DB20018E065 /* XCRemoteSwiftPackageReference "AltKit" */,
+				3759CAE5279C375800E9267B /* XCRemoteSwiftPackageReference "SideMenu" */,
 			);
 			productRefGroup = 1A3D409517B2DCE4004DFFFC /* Products */;
 			projectDirPath = "";
@@ -2913,6 +2983,7 @@
 				B382C637278E5055007E61FE /* PVEmulatorViewController+MultiDisc.swift in Sources */,
 				B3A40C7121A67C7800544C20 /* PVGameLibrarySectionFooterView.swift in Sources */,
 				B3AB37452187F569009D9244 /* PVAtari7800ControllerViewController.swift in Sources */,
+				37CFD802279C350C007B5FC7 /* PVRootViewController.swift in Sources */,
 				B354E7C6219A7D9D0041F971 /* SystemOverviewViewModel.swift in Sources */,
 				B3375EBE278EA28E004B0DC0 /* ulTron.metal in Sources */,
 				B3411C15276B470B00D85327 /* RowStyle.swift in Sources */,
@@ -2930,6 +3001,7 @@
 				B3AB373A2187F569009D9244 /* PVPCFXControllerViewController.swift in Sources */,
 				CF1710B5258610DE00258602 /* PVCheatsInfoViewController.swift in Sources */,
 				B3F64ED5205CD21400C273C7 /* PVControllerManager.swift in Sources */,
+				3759CAF3279C389300E9267B /* ConsoleGamesView.swift in Sources */,
 				B32746BD219BD65F00B78124 /* PVGameLibraryCollectionFlowLayout.swift in Sources */,
 				B3411C14276B470B00D85327 /* Row.swift in Sources */,
 				B3411C12276B470B00D85327 /* Configurable.swift in Sources */,
@@ -2953,6 +3025,7 @@
 				B378224A21D329EC0077E86F /* SettingsRowSwitch.swift in Sources */,
 				B382C635278E5055007E61FE /* PVEmulatorViewController+Audio.swift in Sources */,
 				B382C63D278E514A007E61FE /* PVEmulatorViewController+CoreOptions.swift in Sources */,
+				3759CAF8279C38DF00E9267B /* NewUIHelpers.swift in Sources */,
 				B3AB37392187F569009D9244 /* PVVBControllerViewController.swift in Sources */,
 				B3437178276B0B650014F87C /* PV3DOControllerViewController.swift in Sources */,
 				B354E7D2219A9C230041F971 /* CoreOptionsViewController.swift in Sources */,
@@ -2988,8 +3061,10 @@
 				B343717A276B0B650014F87C /* PVColecoVisionControllerViewController.swift in Sources */,
 				B3375ECC278EA28E004B0DC0 /* lineTron.metal in Sources */,
 				B35E6C23207ED7050040709A /* UIAppearanceExtensions.swift in Sources */,
+				3759CAF1279C381800E9267B /* HomeView.swift in Sources */,
 				B35E6C29207ED7050040709A /* AppearanceStyleExtensions.swift in Sources */,
 				B3AB37442187F569009D9244 /* PVNESControllerViewController.swift in Sources */,
+				3759CAEC279C37B100E9267B /* SideMenuView.swift in Sources */,
 				B354E7C2219A7D630041F971 /* SystemSettingsHeaderCell.swift in Sources */,
 				B3411C1F276B470C00D85327 /* Section.swift in Sources */,
 				B378225421D32AD60077E86F /* SliderCell.swift in Sources */,
@@ -2998,6 +3073,7 @@
 				B387676C20BD0F43009D8CD2 /* WebServerActivatorController.swift in Sources */,
 				B35E6C31207ED7050040709A /* AppearanceStyleHelpers.swift in Sources */,
 				B3D5E2B0218EC1AE0015C690 /* Reactive+RxRealmDataSources.swift in Sources */,
+				3759CAF5279C38AA00E9267B /* GameItemView.swift in Sources */,
 				B3DB11AB205C7F7B00A6E845 /* UIView+Theming.swift in Sources */,
 				378F4A011B63D7CD0065FA39 /* GCDWebServerConnection.m in Sources */,
 				B3411C20276B470C00D85327 /* DetailText.swift in Sources */,
@@ -3060,6 +3136,7 @@
 				B3411C21276B470C00D85327 /* TapActionCell.swift in Sources */,
 				B302F31421713AFD000322B9 /* CenterFlowLayout.swift in Sources */,
 				B3411C22276B470C00D85327 /* SwitchCell.swift in Sources */,
+				3759CAEA279C379700E9267B /* PVSideMenu.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5018,6 +5095,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		3759CAE5279C375800E9267B /* XCRemoteSwiftPackageReference "SideMenu" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/jonkykong/SideMenu.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.0.0;
+			};
+		};
 		B357A43627092253002C7C0F /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/microsoft/appcenter-sdk-apple.git";
@@ -5045,6 +5130,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		3759CAE6279C375800E9267B /* SideMenu */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3759CAE5279C375800E9267B /* XCRemoteSwiftPackageReference "SideMenu" */;
+			productName = SideMenu;
+		};
 		B357A43727092254002C7C0F /* AppCenterAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B357A43627092253002C7C0F /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */;
