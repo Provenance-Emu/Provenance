@@ -13,7 +13,7 @@ import SwiftUI
 import RealmSwift
 
 @available(iOS 13.0.0, *)
-struct ConsoleGamesView: View {
+struct ConsoleGamesView: SwiftUI.View {
     
     var console: PVSystem!
     
@@ -45,7 +45,7 @@ struct ConsoleGamesView: View {
     }
     
     
-    var body: some View {
+    var body: some SwiftUI.View {
         ScrollView {
             VStack {
                 ForEach(games, id: \.self) { game in
@@ -64,7 +64,7 @@ struct ConsoleGamesView: View {
 
 //@available(iOS 13.0.0, *)
 //struct HomeView_Previews: PreviewProvider {
-//    static var previews: some View {
+//    static var previews: some SwiftUI.View {
 //        HomeView()
 //    }
 //}
