@@ -92,6 +92,33 @@
 		B336B8F126B3985B00960A81 /* CocoaLumberjackSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B336B8F026B3985B00960A81 /* CocoaLumberjackSwift */; };
 		B336B8F426B398A900960A81 /* Reachability in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B336B8F326B398A900960A81 /* Reachability */; };
 		B336B8F826B3991500960A81 /* CocoaLumberjackSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B336B8F726B3991500960A81 /* CocoaLumberjackSwift */; };
+		B33FB2EB279BE0CC0013AAD8 /* CoreOptions+Serialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2EA279BE0CC0013AAD8 /* CoreOptions+Serialization.swift */; };
+		B33FB2EC279BE0CC0013AAD8 /* CoreOptions+Serialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2EA279BE0CC0013AAD8 /* CoreOptions+Serialization.swift */; };
+		B33FB2ED279BE0CC0013AAD8 /* CoreOptions+Serialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2EA279BE0CC0013AAD8 /* CoreOptions+Serialization.swift */; };
+		B33FB2EF279BE0F50013AAD8 /* CoreOptionValueDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2EE279BE0F50013AAD8 /* CoreOptionValueDisplay.swift */; };
+		B33FB2F0279BE0F50013AAD8 /* CoreOptionValueDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2EE279BE0F50013AAD8 /* CoreOptionValueDisplay.swift */; };
+		B33FB2F1279BE0F50013AAD8 /* CoreOptionValueDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2EE279BE0F50013AAD8 /* CoreOptionValueDisplay.swift */; };
+		B33FB2F3279BE1320013AAD8 /* CoreOptions+Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2F2279BE1320013AAD8 /* CoreOptions+Protocols.swift */; };
+		B33FB2F4279BE1330013AAD8 /* CoreOptions+Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2F2279BE1320013AAD8 /* CoreOptions+Protocols.swift */; };
+		B33FB2F5279BE1330013AAD8 /* CoreOptions+Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2F2279BE1320013AAD8 /* CoreOptions+Protocols.swift */; };
+		B33FB2F8279BE1730013AAD8 /* CoreOptionMultiValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2F7279BE1730013AAD8 /* CoreOptionMultiValue.swift */; };
+		B33FB2F9279BE1730013AAD8 /* CoreOptionMultiValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2F7279BE1730013AAD8 /* CoreOptionMultiValue.swift */; };
+		B33FB2FA279BE1730013AAD8 /* CoreOptionMultiValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2F7279BE1730013AAD8 /* CoreOptionMultiValue.swift */; };
+		B33FB2FC279BE18F0013AAD8 /* CoreOptionEnumValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2FB279BE18F0013AAD8 /* CoreOptionEnumValue.swift */; };
+		B33FB2FD279BE18F0013AAD8 /* CoreOptionEnumValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2FB279BE18F0013AAD8 /* CoreOptionEnumValue.swift */; };
+		B33FB2FE279BE18F0013AAD8 /* CoreOptionEnumValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2FB279BE18F0013AAD8 /* CoreOptionEnumValue.swift */; };
+		B33FB300279BE1E40013AAD8 /* OptionDependency.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2FF279BE1E40013AAD8 /* OptionDependency.swift */; };
+		B33FB301279BE1E40013AAD8 /* OptionDependency.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2FF279BE1E40013AAD8 /* OptionDependency.swift */; };
+		B33FB302279BE1E40013AAD8 /* OptionDependency.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2FF279BE1E40013AAD8 /* OptionDependency.swift */; };
+		B33FB304279BE21C0013AAD8 /* CoreOptionRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB303279BE21C0013AAD8 /* CoreOptionRange.swift */; };
+		B33FB305279BE21C0013AAD8 /* CoreOptionRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB303279BE21C0013AAD8 /* CoreOptionRange.swift */; };
+		B33FB306279BE21C0013AAD8 /* CoreOptionRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB303279BE21C0013AAD8 /* CoreOptionRange.swift */; };
+		B33FB308279BE2460013AAD8 /* CoreOptionValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB307279BE2460013AAD8 /* CoreOptionValue.swift */; };
+		B33FB309279BE2460013AAD8 /* CoreOptionValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB307279BE2460013AAD8 /* CoreOptionValue.swift */; };
+		B33FB30A279BE2460013AAD8 /* CoreOptionValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB307279BE2460013AAD8 /* CoreOptionValue.swift */; };
+		B33FB30D279BE2710013AAD8 /* CoreOptional.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB30C279BE2710013AAD8 /* CoreOptional.swift */; };
+		B33FB30E279BE2710013AAD8 /* CoreOptional.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB30C279BE2710013AAD8 /* CoreOptional.swift */; };
+		B33FB30F279BE2710013AAD8 /* CoreOptional.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB30C279BE2710013AAD8 /* CoreOptional.swift */; };
 		B3447E86218B7E4B00557ACE /* CABitOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E7F218B7E4B00557ACE /* CABitOperations.h */; };
 		B3447E87218B7E4B00557ACE /* CABitOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E7F218B7E4B00557ACE /* CABitOperations.h */; };
 		B3447E88218B7E4B00557ACE /* CAAudioTimeStamp.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E80218B7E4B00557ACE /* CAAudioTimeStamp.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -252,6 +279,15 @@
 		B3296E8326C67F420088AC32 /* CocoaLumberjack+swift-log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CocoaLumberjack+swift-log.swift"; sourceTree = "<group>"; };
 		B3296E9E26C685450088AC32 /* DDLogLevel+CustomStringConvertable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DDLogLevel+CustomStringConvertable.swift"; sourceTree = "<group>"; };
 		B3296EA126C68CCE0088AC32 /* PVCocoaLumberJackLogging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVCocoaLumberJackLogging.swift; sourceTree = "<group>"; };
+		B33FB2EA279BE0CC0013AAD8 /* CoreOptions+Serialization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CoreOptions+Serialization.swift"; sourceTree = "<group>"; };
+		B33FB2EE279BE0F50013AAD8 /* CoreOptionValueDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreOptionValueDisplay.swift; sourceTree = "<group>"; };
+		B33FB2F2279BE1320013AAD8 /* CoreOptions+Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CoreOptions+Protocols.swift"; sourceTree = "<group>"; };
+		B33FB2F7279BE1730013AAD8 /* CoreOptionMultiValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreOptionMultiValue.swift; sourceTree = "<group>"; };
+		B33FB2FB279BE18F0013AAD8 /* CoreOptionEnumValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreOptionEnumValue.swift; sourceTree = "<group>"; };
+		B33FB2FF279BE1E40013AAD8 /* OptionDependency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionDependency.swift; sourceTree = "<group>"; };
+		B33FB303279BE21C0013AAD8 /* CoreOptionRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreOptionRange.swift; sourceTree = "<group>"; };
+		B33FB307279BE2460013AAD8 /* CoreOptionValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreOptionValue.swift; sourceTree = "<group>"; };
+		B33FB30C279BE2710013AAD8 /* CoreOptional.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreOptional.swift; sourceTree = "<group>"; };
 		B3447E7F218B7E4B00557ACE /* CABitOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CABitOperations.h; sourceTree = "<group>"; };
 		B3447E80218B7E4B00557ACE /* CAAudioTimeStamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAAudioTimeStamp.h; sourceTree = "<group>"; };
 		B3447E81218B7E4B00557ACE /* CARingBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CARingBuffer.cpp; sourceTree = "<group>"; };
@@ -490,6 +526,26 @@
 			path = Protocols;
 			sourceTree = "<group>";
 		};
+		B33FB2F6279BE1640013AAD8 /* Types */ = {
+			isa = PBXGroup;
+			children = (
+				B33FB2F7279BE1730013AAD8 /* CoreOptionMultiValue.swift */,
+				B33FB2FF279BE1E40013AAD8 /* OptionDependency.swift */,
+				B33FB2FB279BE18F0013AAD8 /* CoreOptionEnumValue.swift */,
+				B33FB303279BE21C0013AAD8 /* CoreOptionRange.swift */,
+				B33FB307279BE2460013AAD8 /* CoreOptionValue.swift */,
+			);
+			path = Types;
+			sourceTree = "<group>";
+		};
+		B33FB30B279BE2650013AAD8 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				B33FB30C279BE2710013AAD8 /* CoreOptional.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
 		B3447E7E218B7E2C00557ACE /* CARingBuffer */ = {
 			isa = PBXGroup;
 			children = (
@@ -592,7 +648,12 @@
 		B3AB37F721882119009D9244 /* CoreOptions */ = {
 			isa = PBXGroup;
 			children = (
+				B33FB30B279BE2650013AAD8 /* Protocols */,
+				B33FB2F6279BE1640013AAD8 /* Types */,
 				B35E6C36207EE15D0040709A /* CoreOptions.swift */,
+				B33FB2EA279BE0CC0013AAD8 /* CoreOptions+Serialization.swift */,
+				B33FB2EE279BE0F50013AAD8 /* CoreOptionValueDisplay.swift */,
+				B33FB2F2279BE1320013AAD8 /* CoreOptions+Protocols.swift */,
 			);
 			path = CoreOptions;
 			sourceTree = "<group>";
@@ -923,13 +984,16 @@
 				B305EF5B276B4E41003AE510 /* PVEmulatorCore.swift in Sources */,
 				B305EF5C276B4E41003AE510 /* PViCadeSteelSeriesController.swift in Sources */,
 				B305EF5D276B4E41003AE510 /* ArchiveSupport.swift in Sources */,
+				B33FB30F279BE2710013AAD8 /* CoreOptional.swift in Sources */,
 				B305EF5E276B4E41003AE510 /* OERingBuffer.m in Sources */,
 				B305EF5F276B4E41003AE510 /* OEGameAudio.m in Sources */,
 				B305EF60276B4E41003AE510 /* PViCade8BitdoController.swift in Sources */,
 				B305EF61276B4E41003AE510 /* PViCadeInputAxis.swift in Sources */,
 				B305EF62276B4E41003AE510 /* DDLogLevel+CustomStringConvertable.swift in Sources */,
+				B33FB306279BE21C0013AAD8 /* CoreOptionRange.swift in Sources */,
 				B305EF63276B4E41003AE510 /* iCadeState.swift in Sources */,
 				B305EF64276B4E41003AE510 /* CoreOptions.swift in Sources */,
+				B33FB2F5279BE1330013AAD8 /* CoreOptions+Protocols.swift in Sources */,
 				B305EF65276B4E41003AE510 /* UIDeviceExtension.swift in Sources */,
 				B305EF66276B4E41003AE510 /* SaveStateSupport.swift in Sources */,
 				B305EF67276B4E41003AE510 /* iCadeControllerSetting.swift in Sources */,
@@ -939,12 +1003,16 @@
 				B305EF6B276B4E41003AE510 /* CocoaLumberjack+NSLogger.swift in Sources */,
 				B305EF6C276B4E41003AE510 /* Controls.swift in Sources */,
 				B305EF6D276B4E41003AE510 /* PViCadeGamepadDirectionPad.swift in Sources */,
+				B33FB30A279BE2460013AAD8 /* CoreOptionValue.swift in Sources */,
+				B33FB2F1279BE0F50013AAD8 /* CoreOptionValueDisplay.swift in Sources */,
+				B33FB2FA279BE1730013AAD8 /* CoreOptionMultiValue.swift in Sources */,
 				B305EF6E276B4E41003AE510 /* NSFileManager+OEHashingAdditions.m in Sources */,
 				B305EF6F276B4E41003AE510 /* PViCadeGamepadButtonInput.swift in Sources */,
 				B305EF70276B4E41003AE510 /* SortOption.swift in Sources */,
 				B305EF71276B4E41003AE510 /* GameWithCheat.swift in Sources */,
 				B305EF72276B4E41003AE510 /* CoreActions.swift in Sources */,
 				B3CEC5BE2794E9FD004A7CC1 /* PVGameControllerUtilities.swift in Sources */,
+				B33FB2ED279BE0CC0013AAD8 /* CoreOptions+Serialization.swift in Sources */,
 				B305EF73276B4E41003AE510 /* CAAudioTimeStamp.cpp in Sources */,
 				B305EF74276B4E41003AE510 /* PVProvenanceLogging.m in Sources */,
 				B305EF75276B4E41003AE510 /* PViCadeReader.swift in Sources */,
@@ -956,6 +1024,8 @@
 				B305EF7A276B4E41003AE510 /* PVLogEntry.m in Sources */,
 				B305EF7B276B4E41003AE510 /* TPCircularBuffer.c in Sources */,
 				B305EF7D276B4E41003AE510 /* PVLogging.m in Sources */,
+				B33FB2FE279BE18F0013AAD8 /* CoreOptionEnumValue.swift in Sources */,
+				B33FB302279BE1E40013AAD8 /* OptionDependency.swift in Sources */,
 				B305EF7E276B4E41003AE510 /* PViCadeMocuteController.swift in Sources */,
 				B305EF7F276B4E41003AE510 /* CocoaLumberExtensions.swift in Sources */,
 				B305EF80276B4E41003AE510 /* iCadeReaderView.swift in Sources */,
@@ -980,13 +1050,16 @@
 				B3FA5D5E1D6B908300060D71 /* OERingBuffer.m in Sources */,
 				B3AB37EE21881B7B009D9244 /* PViCadeSteelSeriesController.swift in Sources */,
 				B3CDEEBD21D4C3E6000C55F7 /* ArchiveSupport.swift in Sources */,
+				B33FB30E279BE2710013AAD8 /* CoreOptional.swift in Sources */,
 				B3AB37E421881A83009D9244 /* PViCadeGamepad.swift in Sources */,
 				B35E6C38207EE15D0040709A /* CoreOptions.swift in Sources */,
 				B3AB37EC21881B7B009D9244 /* PViCade8BitdoController.swift in Sources */,
 				B3AB37DD21881869009D9244 /* PViCadeInputAxis.swift in Sources */,
 				B3296EA026C685450088AC32 /* DDLogLevel+CustomStringConvertable.swift in Sources */,
+				B33FB305279BE21C0013AAD8 /* CoreOptionRange.swift in Sources */,
 				B3AB37B421880FA6009D9244 /* iCadeState.swift in Sources */,
 				B3A74C8B20522B04001D3D2E /* PVEmulatorCore.swift in Sources */,
+				B33FB2F4279BE1330013AAD8 /* CoreOptions+Protocols.swift in Sources */,
 				B3CDEEC921D4C4E5000C55F7 /* SaveStateSupport.swift in Sources */,
 				B3AB37E821881B6E009D9244 /* iCadeControllerSetting.swift in Sources */,
 				B3AB37E121881956009D9244 /* PViCadeController.swift in Sources */,
@@ -996,12 +1069,16 @@
 				B3CDEEC321D4C454000C55F7 /* Controls.swift in Sources */,
 				B3C96EAC1D62C3C3003F1E93 /* TPCircularBuffer.c in Sources */,
 				B3AB37DB21881671009D9244 /* PViCadeGamepadButtonInput.swift in Sources */,
+				B33FB309279BE2460013AAD8 /* CoreOptionValue.swift in Sources */,
+				B33FB2F0279BE0F50013AAD8 /* CoreOptionValueDisplay.swift in Sources */,
+				B33FB2F9279BE1730013AAD8 /* CoreOptionMultiValue.swift in Sources */,
 				B3C96EAF1D62C3C7003F1E93 /* NSObject+PVAbstractAdditions.m in Sources */,
 				B3532C3721A925C2006CDA0F /* SortOption.swift in Sources */,
 				CF87D334258AB6B300838AF8 /* GameWithCheat.swift in Sources */,
 				B3CDEEC621D4C490000C55F7 /* CoreActions.swift in Sources */,
 				B3AB37C0218814A8009D9244 /* PViCadeReader.swift in Sources */,
 				B3CEC5BD2794E9FD004A7CC1 /* PVGameControllerUtilities.swift in Sources */,
+				B33FB2EC279BE0CC0013AAD8 /* CoreOptions+Serialization.swift in Sources */,
 				B3FA5D661D6B90BD00060D71 /* PVEmulatorCore.m in Sources */,
 				B3447E8B218B7E4B00557ACE /* CARingBuffer.cpp in Sources */,
 				B3D73D401EA15BB20023925B /* NSFileManager+OEHashingAdditions.m in Sources */,
@@ -1013,6 +1090,8 @@
 				B3C96EA91D62C3C3003F1E93 /* OEGameAudio.m in Sources */,
 				B3447F9C218C1CD200557ACE /* PVSettingsModel.swift in Sources */,
 				0592894F1DC194FD0012644D /* RealTimeThread.m in Sources */,
+				B33FB2FD279BE18F0013AAD8 /* CoreOptionEnumValue.swift in Sources */,
+				B33FB301279BE1E40013AAD8 /* OptionDependency.swift in Sources */,
 				B302F8A320B73D6500C5E502 /* PVLogEntry.m in Sources */,
 				B3AB37ED21881B7B009D9244 /* PViCadeMocuteController.swift in Sources */,
 				B3AB37BE218812BC009D9244 /* iCadeReaderView.swift in Sources */,
@@ -1029,13 +1108,16 @@
 				B34AB57F2106DC6100C45F09 /* PVEmulatorCore.swift in Sources */,
 				B3AB37EB21881B7A009D9244 /* PViCadeSteelSeriesController.swift in Sources */,
 				B3CDEEBC21D4C3E6000C55F7 /* ArchiveSupport.swift in Sources */,
+				B33FB30D279BE2710013AAD8 /* CoreOptional.swift in Sources */,
 				B34AB5782106DC5300C45F09 /* OERingBuffer.m in Sources */,
 				B34AB5772106DC5300C45F09 /* OEGameAudio.m in Sources */,
 				B3AB37E921881B7A009D9244 /* PViCade8BitdoController.swift in Sources */,
 				B3AB37DC21881869009D9244 /* PViCadeInputAxis.swift in Sources */,
 				B3296E9F26C685450088AC32 /* DDLogLevel+CustomStringConvertable.swift in Sources */,
+				B33FB304279BE21C0013AAD8 /* CoreOptionRange.swift in Sources */,
 				B3AB37B321880FA5009D9244 /* iCadeState.swift in Sources */,
 				B34AB57A2106DC6100C45F09 /* CoreOptions.swift in Sources */,
+				B33FB2F3279BE1320013AAD8 /* CoreOptions+Protocols.swift in Sources */,
 				B34AB5762106DC4C00C45F09 /* UIDeviceExtension.swift in Sources */,
 				B3CDEEC821D4C4E5000C55F7 /* SaveStateSupport.swift in Sources */,
 				B3AB37E721881B6D009D9244 /* iCadeControllerSetting.swift in Sources */,
@@ -1045,12 +1127,16 @@
 				B3296E8126C67EFA0088AC32 /* CocoaLumberjack+NSLogger.swift in Sources */,
 				B3CDEEC221D4C454000C55F7 /* Controls.swift in Sources */,
 				B3AB37DE21881873009D9244 /* PViCadeGamepadDirectionPad.swift in Sources */,
+				B33FB308279BE2460013AAD8 /* CoreOptionValue.swift in Sources */,
+				B33FB2EF279BE0F50013AAD8 /* CoreOptionValueDisplay.swift in Sources */,
+				B33FB2F8279BE1730013AAD8 /* CoreOptionMultiValue.swift in Sources */,
 				B34AB57C2106DC6100C45F09 /* NSFileManager+OEHashingAdditions.m in Sources */,
 				B3AB37DA21881670009D9244 /* PViCadeGamepadButtonInput.swift in Sources */,
 				B3532C3621A925C2006CDA0F /* SortOption.swift in Sources */,
 				CF87D333258AB6B300838AF8 /* GameWithCheat.swift in Sources */,
 				B3CDEEC521D4C490000C55F7 /* CoreActions.swift in Sources */,
 				B3CEC5BC2794E9FD004A7CC1 /* PVGameControllerUtilities.swift in Sources */,
+				B33FB2EB279BE0CC0013AAD8 /* CoreOptions+Serialization.swift in Sources */,
 				B3447E90218B7E4B00557ACE /* CAAudioTimeStamp.cpp in Sources */,
 				B34AB5732106DC3700C45F09 /* PVProvenanceLogging.m in Sources */,
 				B3AB37BF218814A7009D9244 /* PViCadeReader.swift in Sources */,
@@ -1062,6 +1148,8 @@
 				B34AB5742106DC4100C45F09 /* PVLogEntry.m in Sources */,
 				B34AB5792106DC5300C45F09 /* TPCircularBuffer.c in Sources */,
 				B34AB5752106DC4100C45F09 /* PVLogging.m in Sources */,
+				B33FB2FC279BE18F0013AAD8 /* CoreOptionEnumValue.swift in Sources */,
+				B33FB300279BE1E40013AAD8 /* OptionDependency.swift in Sources */,
 				B3AB37EA21881B7A009D9244 /* PViCadeMocuteController.swift in Sources */,
 				B3F0846C2188CA7A00FF39EE /* CocoaLumberExtensions.swift in Sources */,
 				B3AB37BD218812BB009D9244 /* iCadeReaderView.swift in Sources */,

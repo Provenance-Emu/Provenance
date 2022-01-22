@@ -8,296 +8,6 @@
 
 import Foundation
 
-public protocol CoreOptional: AnyObject {
-    static var options: [CoreOption] { get }
-}
-
-public enum CoreOptionValue {
-    case bool(Bool)
-    case string(String)
-    case number(NSNumber)
-    case notFound
-
-    public var asBool: Bool {
-        switch self {
-        case .bool(let value): return value
-        case .string(let value): return Bool(value) ?? false
-        case .number(let value): return value.boolValue
-        case .notFound: return false
-        }
-    }
-}
-
-extension CoreOptionValue: Codable {
-    enum CodableKeys: String, CodingKey { case value }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodableKeys.self)
-        switch self {
-        case let .bool(value):
-            try container.encode(value, forKey: .value)
-        case let .string(value):
-            try container.encode(value, forKey: .value)
-        case let .number(value):
-            try container.encode(value.doubleValue, forKey: .value)
-        case .notFound:
-            break
-        }
-    }
-        
-    public init(from decoder: Decoder) throws {
-        let values = try decoder.container(keyedBy: CodableKeys.self)
-        // Bool
-        if let value = try? values.decode(Bool.self, forKey: .value) {
-            self = .bool(value)
-            return
-        }
-        // string
-        else if let value = try? values.decode(String.self, forKey: .value) {
-            self = .string(value)
-            return
-        }
-        // number
-        else if let value = try? values.decode(Double.self, forKey: .value) {
-            self = .number(NSNumber(value: value))
-            return
-        } else {
-            self = .notFound
-            return
-        }
-    }
-}
-
-public extension CoreOptional { // where Self:PVEmulatorCore {
-    static func valueForOption<T>(_: T.Type, _ option: String, andMD5 md5: String? = nil) -> T? {
-        let className = NSStringFromClass(Self.self)
-        let key = "\(className).\(option)"
-        let md5Key: String = [className, md5, option].compactMap{$0}.joined(separator: ".")
-
-        DLOG("Looking for either key's `\(key)` or \(md5Key)")
-
-        if let savedOption = UserDefaults.standard.object(forKey: md5Key) as? T {
-            DLOG("Read key `\(md5Key)` option: \(savedOption)")
-            return savedOption
-        } else if let savedOption = UserDefaults.standard.object(forKey: key) as? T {
-            DLOG("Read key `\(key)` option: \(savedOption)")
-            return savedOption
-        } else {
-            DLOG("need to find options for key `\(option)`")
-            let currentOptions: [CoreOption] = options
-			guard let foundOption = findOption(forKey: option, options: currentOptions) else {
-				ELOG("No option for key: `\(option)`")
-				return nil
-			}
-            DLOG("Found option `\(foundOption)`")
-            return UserDefaults.standard.object(forKey: "\(className).\(foundOption)") as? T
-        }
-    }
-
-    static func setValue(_ value: Encodable?, forOption option: CoreOption, andMD5 md5: String? = nil) {
-        let className = NSStringFromClass(Self.self)
-        let key = option.key
-        let classedKey: String = [className, md5, key].compactMap{$0}.joined(separator: ".")
- 
-        // TODO: Make sure the value matches the option type
-        DLOG("Options: Setting key: \(classedKey) to value: \(value ?? "nil")")
-        UserDefaults.standard.set(value, forKey: classedKey)
-        UserDefaults.standard.synchronize()
-    }
-
-    static func valueForOption(_ option: CoreOption) -> CoreOptionValue {
-        switch option {
-        case .bool:
-            let value = valueForOption(Bool.self, option.key) ?? false
-            return .bool(value)
-        case .string:
-            if let value = valueForOption(String.self, option.key) {
-                return .string(value)
-            } else {
-                return .notFound
-            }
-        case .range:
-            if let value = valueForOption(NSNumber.self, option.key) {
-                return .number(value)
-            } else {
-                return .notFound
-            }
-		case .rangef:
-			if let value = valueForOption(NSNumber.self, option.key) {
-				return .number(value)
-			} else {
-				return .notFound
-			}
-        case .multi:
-            if let value = valueForOption(NSNumber.self, option.key) {
-                return .number(value)
-            } else if let value = valueForOption(String.self, option.key) {
-                return .string(value)
-            } else {
-                return .notFound
-            }
-		case .enumeration:
-			if let value = valueForOption(NSNumber.self, option.key) {
-				return .number(value)
-			} else if let value = valueForOption(String.self, option.key) {
-				return .string(value)
-			} else {
-				return .notFound
-			}
-        case .group:
-            assertionFailure("Feature unfinished")
-            return .notFound
-        }
-    }
-
-    static func findOption(forKey key: String, options: [CoreOption]) -> CoreOption? {
-        var foundOption: CoreOption?
-        for option in options {
-            let subOption = option.subOptionForKey(key)
-            if subOption != nil {
-                foundOption = subOption
-            }
-        }
-        return foundOption
-    }
-}
-
-// public protocol Rangable {
-//	var defaultValue : Codable {get}
-//	var min : Codable {get}
-//	var max : Codable {get}
-// }
-//
-// public struct CoreOptionRange<T:Codable> : Rangable {
-//	public let defaultValue : T
-//	public let min : T
-//	public let max : T
-// }
-
-public struct CoreOptionRange<T:Numeric> {
-    public let defaultValue: T
-    public let min: T
-    public let max: T
-
-	public init(defaultValue: T, min: T, max: T) {
-		self.defaultValue = defaultValue
-		self.min = min
-		self.max = max
-	}
-}
-
-extension CoreOptionRange: Codable where T:Codable {}
-extension CoreOptionRange: Equatable where T:Equatable {}
-extension CoreOptionRange: Hashable where T:Hashable {}
-
-public struct CoreOptionMultiValue {
-    public let title: String
-    public let description: String?
-
-    public static func values(fromArray a: [[String]]) -> [CoreOptionMultiValue] {
-        return a.compactMap {
-            if $0.count == 1 {
-				return .init(title: $0[0], description: nil)
-            } else if $0.count >= 2 {
-				return .init(title: $0[0], description: $0[1])
-            } else {
-                return nil
-            }
-        }
-    }
-
-    public static func values(fromArray a: [String]) -> [CoreOptionMultiValue] {
-        return a.map {
-			.init(title: $0, description: nil)
-        }
-    }
-}
-
-extension CoreOptionMultiValue: Codable, Equatable, Hashable {}
-
-public struct CoreOptionEnumValue {
-    public let title: String
-    public let description: String?
-    public let value: UInt
-    
-    public init(title: String, description: String? = nil, value: UInt) {
-        self.title = title
-        self.description = description
-        self.value = value
-    }
-}
-
-extension CoreOptionEnumValue: Codable, Equatable, Hashable {}
-
-public struct CoreOptionValueDisplay {
-    public let title: String
-    public let description: String?
-    public let requiresRestart: Bool
-
-    public init(title: String, description: String? = nil, requiresRestart: Bool = false) {
-        self.title = title
-        self.description = description
-        self.requiresRestart = requiresRestart
-    }
-}
-
-extension CoreOptionValueDisplay: Codable, Equatable, Hashable {}
-
-public protocol OptionValueRepresentable: Codable {}
-
-extension Int: OptionValueRepresentable {}
-extension Bool: OptionValueRepresentable {}
-extension String: OptionValueRepresentable {}
-extension Float: OptionValueRepresentable {}
-
-public struct OptionDependency<OptionType: COption> {
-    let option: OptionType
-    let mustBe: OptionType.Type?
-    let mustNotBe: OptionType.Type?
-}
-
-public protocol COption {
-    associatedtype ValueType: OptionValueRepresentable
-
-    var key: String { get }
-    var title: String { get }
-    var description: String? { get }
-
-//    associatedtype Dependencies : COption
-//    var dependsOn : [OptionDependency<Dependencies>]? {get set}
-
-    var defaultValue: ValueType { get }
-    var value: ValueType { get }
-}
-
-public protocol MultiCOption: COption {
-    var options: [(key: String, title: String, description: String?)] { get }
-}
-
-public protocol EnumCOption: COption {
-    var options: [(key: String, title: String, description: String?)] { get }
-}
-
-// public struct CoreOptionModel : COption {
-//
-//    let key : String
-//    let title : String
-//    let description: String?
-//
-//    let defaultValue : ValueType
-//
-//    var value : ValueType {
-//        return UserDefaults.standard.value(forKey: key) as? ValueType ?? defaultValue
-//    }
-//
-//    public init<ValueType:OptionValueRepresentable>(key: String, title: String, description: String? = nil, defaultValue: ValueType) {
-//        self.key = key
-//        self.title = title
-//        self.description = description
-//        self.defaultValue = defaultValue
-//    }
-// }
-
 public enum CoreOption {
     case bool(_ display: CoreOptionValueDisplay, defaultValue: Bool = false)
     case range(_ display: CoreOptionValueDisplay, range: CoreOptionRange<Int>, defaultValue: Int)
@@ -439,17 +149,26 @@ extension CoreOption: Codable {
 
 public typealias OptionAvailable = (() -> (available: Bool, reasonNotAvailable: String?))
 
-extension CoreOptionMultiValue {
-    public init(title: String, description: String) {
-        self.title = title
-        self.description = description
-    }
+// public struct CoreOptionModel : COption {
+//
+//    let key : String
+//    let title : String
+//    let description: String?
+//
+//    let defaultValue : ValueType
+//
+//    var value : ValueType {
+//        return UserDefaults.standard.value(forKey: key) as? ValueType ?? defaultValue
+//    }
+//
+//    public init<ValueType:OptionValueRepresentable>(key: String, title: String, description: String? = nil, defaultValue: ValueType) {
+//        self.key = key
+//        self.title = title
+//        self.description = description
+//        self.defaultValue = defaultValue
+//    }
+// }
 
-	public init(_ title: String, _ description: String) {
-		self.title = title
-		self.description = description
-	}
-}
 
 // public protocol CoreOptionP {
 //	var defaultValue : ValueType {get}
