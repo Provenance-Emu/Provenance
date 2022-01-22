@@ -28,19 +28,29 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         var _logViewController: PVLogViewController?
     #endif
     
-    func _initUI() {
-        if PVSettingsModel.shared.debugOptions.useSwiftUI {
-            
+    func _initUI(
+        libraryUpdatesController: PVGameLibraryUpdatesController,
+        gameImporter: GameImporter,
+        gameLibrary: PVGameLibrary
+    ) {
+        guard let rootNavigation = window?.rootViewController as? UINavigationController else {
+            fatalError("No root nav controller")
+        }
+        if #available(iOS 13.0.0, *), PVSettingsModel.shared.debugOptions.useSwiftUI {
+            let rootViewController = PVRootViewController.instantiate(
+                updatesController: libraryUpdatesController,
+                gameLibrary: gameLibrary,
+                gameImporter: gameImporter)
+            rootNavigation.viewControllers.append(rootViewController)
         } else {
-            let storyboard = UIStoryboard.init(name: "Provenance", bundle: Bundle.main)
-            let vc = storyboard.instantiateInitialViewController()
-     
-            
-              // Set root view controller and make windows visible
-            let window = UIWindow.init(frame: UIScreen.main.bounds)
-            self.window = window
-            window.rootViewController = vc
-            window.makeKeyAndVisible()
+            guard let gameLibraryViewController = rootNavigation.viewControllers.first as? PVGameLibraryViewController else {
+                fatalError("No gameLibraryViewController")
+            }
+
+            // Would be nice to inject this in a better way, so that we can be certain that it's present at viewDidLoad for PVGameLibraryViewController, but this works for now
+            gameLibraryViewController.updatesController = libraryUpdatesController
+            gameLibraryViewController.gameImporter = gameImporter
+            gameLibraryViewController.gameLibrary = gameLibrary
         }
     }
 
@@ -119,18 +129,8 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             }
             .subscribe().disposed(by: disposeBag)
 
-        guard let rootNavigation = window?.rootViewController as? UINavigationController else {
-            fatalError("No root nav controller")
-        }
-        guard let gameLibraryViewController = rootNavigation.viewControllers.first as? PVGameLibraryViewController else {
-            fatalError("No gameLibraryViewController")
-        }
-
-        // Would be nice to inject this in a better way, so that we can be certain that it's present at viewDidLoad for PVGameLibraryViewController, but this works for now
-        gameLibraryViewController.updatesController = libraryUpdatesController
-        gameLibraryViewController.gameImporter = gameImporter
-        gameLibraryViewController.gameLibrary = gameLibrary
-
+        _initUI(libraryUpdatesController: libraryUpdatesController, gameImporter: gameImporter, gameLibrary: gameLibrary)
+        
         let database = RomDatabase.sharedInstance
         database.refresh()
 

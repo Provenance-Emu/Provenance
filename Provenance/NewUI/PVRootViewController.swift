@@ -15,6 +15,13 @@ import SwiftUI
 import SideMenu
 import RealmSwift
 
+// PVRootViewController serves as a UIKit parent for child SwiftUI menu views.
+
+// The goal one day may be to move entirely to a SwiftUI app life cycle, but under
+// current circumstances (iOS 11 deployment target, some critical logic being coupled
+// to UIViewControllers, etc.) it will be more easier to integrate by starting here
+// and porting the remaining views/logic over to as conditions change moving forward.
+  
 @available(iOS 13.0.0, *)
 class PVRootViewController: UIViewController, GameLaunchingViewController, GameSharingViewController {
     
@@ -89,10 +96,14 @@ protocol PVMenuDelegate {
 @available(iOS 13.0.0, *)
 extension PVRootViewController: PVMenuDelegate {
     func didTapSettings() {
-        menu.dismiss(animated: true, completion: nil)
-        self.present(
-            UINavigationController(rootViewController: PVSettingsViewController()),
-            animated: true)
+        guard
+            let settingsNav = UIStoryboard(name: "Provenance", bundle: nil).instantiateViewController(withIdentifier: "settingsNavigationController") as? UINavigationController,
+            let settingsVC = settingsNav.topViewController as? PVSettingsViewController
+        else { return }
+        settingsVC.conflictsController = updatesController
+        menu.dismiss(animated: true, completion: {
+            self.present(settingsNav, animated: true)
+        })
     }
 
     func didTapHome() {
