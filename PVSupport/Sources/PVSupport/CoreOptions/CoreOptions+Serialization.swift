@@ -12,7 +12,7 @@ public extension CoreOptional { // where Self:PVEmulatorCore {
     static func valueForOption<T>(_: T.Type, _ option: String, andMD5 md5: String? = nil) -> T? {
         let className = NSStringFromClass(Self.self)
         let key = "\(className).\(option)"
-        let md5Key: String = [className, md5, option].compactMap{$0}.joined(separator: ".")
+        let md5Key: String = [className, md5, option].compactMap {$0}.joined(separator: ".")
 
         DLOG("Looking for either key's `\(key)` or \(md5Key) with type \(T.self)")
 
@@ -39,8 +39,8 @@ public extension CoreOptional { // where Self:PVEmulatorCore {
     static func setValue(_ value: Encodable?, forOption option: CoreOption, andMD5 md5: String? = nil) {
         let className = NSStringFromClass(Self.self)
         let key = option.key
-        let classedKey: String = [className, md5, key].compactMap{$0}.joined(separator: ".")
- 
+        let classedKey: String = [className, md5, key].compactMap {$0}.joined(separator: ".")
+
         // TODO: Make sure the value matches the option type
         DLOG("Options: Setting key: \(classedKey) to value: \(value ?? "nil")")
         UserDefaults.standard.set(value, forKey: classedKey)
