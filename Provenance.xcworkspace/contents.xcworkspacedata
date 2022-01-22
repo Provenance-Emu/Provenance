@@ -66,6 +66,9 @@
       location = "container:"
       name = "Cores Development">
       <FileRef
+         location = "group:Cores/snesticle/PVSnesticle.xcodeproj">
+      </FileRef>
+      <FileRef
          location = "group:Cores/4DO/4DO.xcodeproj">
       </FileRef>
       <FileRef

@@ -141,7 +141,7 @@ public final class PVMediaCache: NSObject {
     public class func empty() throws {
         DLOG("Emptying Cache")
 
-        DispatchQueue.global(qos: .background).async {
+        DispatchQueue.global(qos: .utility).async {
             let cachePath = self.cachePath.path
             if FileManager.default.fileExists(atPath: cachePath) {
                 try? FileManager.default.removeItem(atPath: cachePath)

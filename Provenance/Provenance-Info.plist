@@ -185,8 +185,6 @@
 	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>Default</string>
-	<key>UIMainStoryboardFile</key>
-	<string>Provenance</string>
 	<key>UIPrerenderedIcon</key>
 	<true/>
 	<key>UIRequiredDeviceCapabilities</key>

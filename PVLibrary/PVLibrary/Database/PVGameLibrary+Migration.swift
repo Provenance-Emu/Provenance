@@ -107,7 +107,9 @@ private extension Reactive where Base: FileManager {
     func removeItem(at path: URL) -> Completable {
         Completable.create { observer in
             do {
-                try self.base.removeItem(at: path)
+                if self.base.fileExists(atPath: path.path) {
+                    try self.base.removeItem(at: path)
+                }
                 observer(.completed)
             } catch {
                 observer(.error(error))
@@ -119,7 +121,10 @@ private extension Reactive where Base: FileManager {
     func createDirectory(at path: URL, withIntermediateDirectories: Bool, attributes: [FileAttributeKey: Any]?) -> Completable {
         Completable.create { observer in
             do {
-                try self.base.createDirectory(at: path, withIntermediateDirectories: withIntermediateDirectories, attributes: attributes)
+                if !self.base.fileExists(atPath: path.path) {
+                    try self.base.createDirectory(at: path, withIntermediateDirectories: withIntermediateDirectories, attributes: attributes)
+                }
+
                 observer(.completed)
             } catch {
                 observer(.error(error))

@@ -116,7 +116,7 @@ final class CoreOptionsViewController: QuickTableViewController {
                                                              customization: { _, _ in
                                                              },
                                                              action: { _ in
-                                                                 let currentSelection: String? = self.core.valueForOption(String.self, option.key) ?? option.defaultValue as? String
+                                                                 let currentSelection: Int = self.core.valueForOption(Int.self, option.key) ?? option.defaultValue as? Int ?? 0
                                                                  let actionController = UIAlertController(title: display.title, message: nil, preferredStyle: .actionSheet)
 
                                                                  if let popoverPresentationController = actionController.popoverPresentationController {
@@ -127,11 +127,11 @@ final class CoreOptionsViewController: QuickTableViewController {
 
                                                                  values.forEach { value in
                                                                      var title = value.title
-                                                                     if currentSelection == value.title {
+                                                                     if currentSelection == value.value {
                                                                          title += " ✔︎"
                                                                      }
                                                                      let action = UIAlertAction(title: title, style: .default, handler: { _ in
-                                                                         self.core.setValue(value.title, forOption: option)
+                                                                         self.core.setValue(value.value, forOption: option)
                                                                      })
                                                                      actionController.addAction(action)
                                                                  }

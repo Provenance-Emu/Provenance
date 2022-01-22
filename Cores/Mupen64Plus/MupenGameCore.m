@@ -697,7 +697,7 @@ static void ConfigureGLideN64(NSString *romFolder) {
 	ConfigOpenSection("Video-GLideN64", &gliden64);
 
         // 0 = stretch, 1 = 4:3, 2 = 16:9, 3 = adjust
-	int aspectRatio = [MupenGameCore boolForOption:@"Aspect Ratio"];
+	int aspectRatio = [MupenGameCore intForOption:@"Aspect Ratio"];
 
 //    if(RESIZE_TO_FULLSCREEN) {
 //        #if TARGET_OS_TV
@@ -800,15 +800,16 @@ static void ConfigureRICE() {
 	ConfigOpenSection("Video-Rice", &rice);
 
 	// Use a faster algorithm to speed up texture loading and CRC computation
-	int fastTextureLoading = 0;
+	int fastTextureLoading = [MupenGameCore boolForOption:@"Fast Texture Loading"];
+;
 	ConfigSetParameter(rice, "FastTextureLoading", M64TYPE_BOOL, &fastTextureLoading);
 
 	// Enable this option to have better render-to-texture quality
-	int doubleSizeForSmallTextureBuffer = 0;
+	int doubleSizeForSmallTextureBuffer = [MupenGameCore boolForOption:@"DoubleSizeForSmallTxtrBuf"];
 	ConfigSetParameter(rice, "DoubleSizeForSmallTxtrBuf", M64TYPE_BOOL, &doubleSizeForSmallTextureBuffer);
 
 	// N64 Texture Memory Full Emulation (may fix some games, may break others)
-	int fullTEMEmulation = 0;
+	int fullTEMEmulation = [MupenGameCore boolForOption:@"FullTMEMEmulation"];
 	ConfigSetParameter(rice, "FullTMEMEmulation", M64TYPE_BOOL, &fullTEMEmulation);
 
 	// Use fullscreen mode if True, or windowed mode if False
@@ -817,11 +818,11 @@ static void ConfigureRICE() {
 
 	// If this option is enabled, the plugin will skip every other frame
 	// Breaks some games in my testing -jm
-	int skipFrame = 0;
+	int skipFrame = [MupenGameCore boolForOption:@"SkipFrame"];
 	ConfigSetParameter(rice, "SkipFrame", M64TYPE_BOOL, &skipFrame);
 
 	// Enable hi-resolution texture file loading
-	int hiResTextures = 1;
+	int hiResTextures = [MupenGameCore boolForOption:@"LoadHiResTextures"];
 	ConfigSetParameter(rice, "LoadHiResTextures", M64TYPE_BOOL, &hiResTextures);
 
 	// Use Mipmapping? 0=no, 1=nearest, 2=bilinear, 3=trilinear
@@ -834,12 +835,12 @@ static void ConfigureRICE() {
 	ConfigSetParameter(rice, "AnisotropicFiltering", M64TYPE_INT, &anisotropicFiltering);
 
 	// Enable, Disable or Force fog generation (0=Disable, 1=Enable n64 choose, 2=Force Fog)
-	int fogMethod = 0;
+	int fogMethod = 1;
 	ConfigSetParameter(rice, "FogMethod", M64TYPE_INT, &fogMethod);
 
 	// Color bit depth to use for textures (0=default, 1=32 bits, 2=16 bits)
 	// 16 bit breaks some games like GoldenEye
-	int textureQuality = 0;
+	int textureQuality = 1;
 	ConfigSetParameter(rice, "TextureQuality", M64TYPE_INT, &textureQuality);
 
 	// Enable/Disable MultiSampling (0=off, 2,4,8,16=quality)

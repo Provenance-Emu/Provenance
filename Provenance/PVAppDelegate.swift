@@ -29,19 +29,19 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     #endif
     
     func _initUI() {
+        // Set root view controller and make windows visible
+        let window = UIWindow.init(frame: UIScreen.main.bounds)
+        self.window = window
+        
         if PVSettingsModel.shared.debugOptions.useSwiftUI {
             
         } else {
             let storyboard = UIStoryboard.init(name: "Provenance", bundle: Bundle.main)
             let vc = storyboard.instantiateInitialViewController()
-     
             
-              // Set root view controller and make windows visible
-            let window = UIWindow.init(frame: UIScreen.main.bounds)
-            self.window = window
             window.rootViewController = vc
-            window.makeKeyAndVisible()
         }
+        window.makeKeyAndVisible()
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
@@ -49,6 +49,8 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         _initLogging()
         _initAppCenter()
         setDefaultsFromSettingsBundle()
+        
+        _initUI()
 
 		#if !targetEnvironment(macCatalyst)
         DispatchQueue.global(qos: .background).async {
@@ -96,12 +98,6 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             if let shortcut = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem, shortcut.type == "kRecentGameShortcut", let md5Value = shortcut.userInfo?["PVGameHash"] as? String, let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
                 shortcutItemGame = matchedGame
             }
-        #endif
-
-        #if os(iOS)
-//        let currentTheme = PVSettingsModel.shared.theme
-//        Theme.currentTheme = currentTheme.theme
-            Theme.currentTheme = Theme.darkTheme
         #endif
 
         // Setup importing/updating library
@@ -152,6 +148,14 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 		DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: { [unowned self] in
 			self.startOptionalWebDavServer()
 		})
+        
+        #if os(iOS)
+        //        let currentTheme = PVSettingsModel.shared.theme
+        //        Theme.currentTheme = currentTheme.theme
+        DispatchQueue.main.async {
+            Theme.currentTheme = Theme.darkTheme
+        }
+        #endif
 
         return true
     }

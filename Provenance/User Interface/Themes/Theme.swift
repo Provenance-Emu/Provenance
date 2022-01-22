@@ -54,6 +54,7 @@ public protocol iOSTheme {
     var switchThumb: UIColor? { get }
 
     var statusBarStyle: UIStatusBarStyle { get }
+    var statusBarColor: UIColor? { get }
 
     var settingsHeaderBackground: UIColor? { get }
     var settingsSeperator: UIColor? { get }
@@ -84,6 +85,7 @@ extension iOSTheme {
     var settingsSeperator: UIColor? { return nil }
 
     var navigationBarStyle: UIBarStyle { return .default }
+    var statusBarColor: UIColor? { return nil }
 
     // Default to default tint (which defaults to nil)
     var barButtonItemTint: UIColor? { return defaultTintColor }
@@ -161,6 +163,33 @@ public final class Theme {
     //	class func test() {
     //		let light = AppearanceStyle("light")
     //	}
+    static weak var statusBarView: UIView?
+    private class func styleStatusBar(withColor color: UIColor? = nil) {
+        guard let color = color else {
+            if let statusBarView = statusBarView {
+                statusBarView.removeFromSuperview()
+            }
+            return
+        }
+        if #available(iOS 13.0, *) {
+            guard
+                let window = UIApplication.shared.keyWindow,
+                let scene = window.windowScene,
+                let manager = scene.statusBarManager else {
+                ELOG("check your tcp/ip's")
+                return
+            }
+            let statusBar1 = statusBarView ?? UIView()
+            statusBar1.frame = manager.statusBarFrame
+            statusBar1.backgroundColor = color
+            statusBarView = statusBar1
+            window.addSubview(statusBar1)
+        } else {
+            if let statusBar1: UIView = UIApplication.shared.value(forKey: "statusBar") as? UIView {
+                statusBar1.backgroundColor = color
+            }
+        }
+    }
 
     private class func setTheme(_ theme: iOSTheme) {
         UINavigationBar.appearance {
@@ -288,6 +317,9 @@ public final class Theme {
                 }
             }
         }
+        
+        // Status bar
+        styleStatusBar(withColor: theme.statusBarColor)
     }
 }
 
