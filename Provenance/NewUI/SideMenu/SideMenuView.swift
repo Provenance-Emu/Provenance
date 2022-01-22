@@ -37,6 +37,8 @@ struct SideMenuView: SwiftUI.View {
                 Group {
                     if let consoles = consoles, consoles.count > 0 {
                         MenuSectionHeaderView(sectionTitle: "CONSOLES", sortable: consoles.count > 1)
+                        // TODO: Group inside VStack may not scale to all consoles
+                        // TODO: if that's the case, bump req up to iOS 14 and use LazyVStack
                         ForEach(consoles, id: \.self) { console in
                             Divider()
                             MenuItemView(imageName: "prov_snes_icon", rowTitle: console.name) {
@@ -45,18 +47,18 @@ struct SideMenuView: SwiftUI.View {
                         }
                     }
                 }
-                Group {
-                    MenuSectionHeaderView(sectionTitle: "COLLECTIONS", sortable: false)
-                    Divider()
-                    MenuItemView(imageName: "empty_icon", rowTitle: "Favorites") {
-                        delegate?.didTapCollection(with: 0)
-                    }
-                    Divider()
-                    MenuItemView(imageName: "prov_add_games_icon", rowTitle: "Add Collection") {
-                        delegate?.didTapCollection(with: 0)
-                    }
-                    Divider()
-                }
+//                Group {
+//                    MenuSectionHeaderView(sectionTitle: "COLLECTIONS", sortable: false)
+//                    Divider()
+//                    MenuItemView(imageName: "empty_icon", rowTitle: "Favorites") {
+//                        delegate?.didTapCollection(with: 0)
+//                    }
+//                    Divider()
+//                    MenuItemView(imageName: "prov_add_games_icon", rowTitle: "Add Collection") {
+//                        delegate?.didTapCollection(with: 0)
+//                    }
+//                    Divider()
+//                }
                 Group {
                     MenuSectionHeaderView(sectionTitle: "Quick Settings", sortable: false) // TODO: move into settings screen when that's set up
                     Divider()

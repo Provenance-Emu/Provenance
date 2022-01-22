@@ -14,7 +14,7 @@ class PVSideMenu: SideMenuNavigationController {
      override init(rootViewController: UIViewController, settings: SideMenuSettings = SideMenuSettings()) {
          super.init(rootViewController: rootViewController, settings: settings)
 
-         menuWidth = 325
+         menuWidth = 265 // TOOD: make this dynamic to screen width?
          isNavigationBarHidden = false
      }
 
