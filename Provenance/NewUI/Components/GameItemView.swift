@@ -12,7 +12,7 @@ import Foundation
 import SwiftUI
 
 @available(iOS 13.0.0, *)
-struct DynamicWidthGameItemView: View {
+struct DynamicWidthGameItemView: SwiftUI.View {
     
     var artworkURL: String?
     @State var artwork: UIImage?
@@ -25,7 +25,7 @@ struct DynamicWidthGameItemView: View {
     
     var action: () -> Void
     
-    var body: some View {
+    var body: some SwiftUI.View {
         
         Button {
             action()
@@ -81,9 +81,9 @@ struct DynamicWidthGameItemView: View {
 
 
 @available(iOS 13.0.0, *)
-struct GameItemTitle: View {
+struct GameItemTitle: SwiftUI.View {
     var text: String
-    var body: some View {
+    var body: some SwiftUI.View {
         Text(text)
             .font(.headline)
             .lineLimit(1)
@@ -92,9 +92,9 @@ struct GameItemTitle: View {
 }
 
 @available(iOS 13.0.0, *)
-struct GameItemSubtitle: View {
+struct GameItemSubtitle: SwiftUI.View {
     var text: String
-    var body: some View {
+    var body: some SwiftUI.View {
         Text(text)
             .font(.subheadline)
             .lineLimit(1)
@@ -115,9 +115,9 @@ private extension DynamicWidthGameItemView {
 }
 
 @available(iOS 13.0.0, *)
-struct GameItemRow: View {
+struct GameItemRow: SwiftUI.View {
     
-    var body: some View {
+    var body: some SwiftUI.View {
         ScrollView(.horizontal) {
             HStack(spacing: 10) {
                 DynamicWidthGameItemView(
@@ -154,7 +154,7 @@ struct GameItemRow: View {
 
 @available(iOS 13.0.0, *)
 struct GameItemView_Previews: PreviewProvider {
-    static var previews: some View {
+    static var previews: some SwiftUI.View {
         if #available(iOS 15.0, *) {
             GameItemRow()
                 .previewInterfaceOrientation(.landscapeLeft)

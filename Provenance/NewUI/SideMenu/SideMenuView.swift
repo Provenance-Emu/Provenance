@@ -12,12 +12,12 @@ import SwiftUI
 import RealmSwift
 
 @available(iOS 13.0.0, *)
-struct SideMenuView: View {
+struct SideMenuView: SwiftUI.View {
     
     @State var consoles: Results<PVSystem>?
     var delegate: PVMenuDelegate?
     
-    var body: some View {
+    var body: some SwiftUI.View {
         // should pull consoles list into a lazyvstack at some point
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
@@ -79,12 +79,12 @@ struct SideMenuView: View {
 }
 
 @available(iOS 13.0.0, *)
-struct MenuSectionHeaderView: View {
+struct MenuSectionHeaderView: SwiftUI.View {
     
     var sectionTitle: String
     var sortable: Bool
     
-    var body: some View {
+    var body: some SwiftUI.View {
         VStack(spacing: 0) {
             Divider().frame(height: 4).background(Color.gray)
             Spacer()
@@ -107,13 +107,13 @@ struct MenuSectionHeaderView: View {
 }
 
 @available(iOS 13.0.0, *)
-struct MenuItemView: View {
+struct MenuItemView: SwiftUI.View {
     
     var imageName: String
     var rowTitle: String
     var action: () -> Void
     
-    var body: some View {
+    var body: some SwiftUI.View {
         Button {
             action()
         } label: {
@@ -130,7 +130,7 @@ struct MenuItemView: View {
 
 @available(iOS 13.0.0, *)
 struct SideMenuView_Previews: PreviewProvider {
-    static var previews: some View {
+    static var previews: some SwiftUI.View {
         SideMenuView()
     }
 }

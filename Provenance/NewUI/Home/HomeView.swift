@@ -19,7 +19,7 @@ enum PVHomeSection: Int, CaseIterable {
 }
 
 @available(iOS 13.0.0, *)
-struct HomeView: View {
+struct HomeView: SwiftUI.View {
     
     var gameLibrary: PVGameLibrary!
     
@@ -58,7 +58,7 @@ struct HomeView: View {
     }
     
     
-    var body: some View {
+    var body: some SwiftUI.View {
         ScrollView {
             VStack {
                 if let recentSaveStates = recentSaveStates {
@@ -118,12 +118,12 @@ struct HomeView: View {
 
 
 @available(iOS 13.0.0, *)
-struct HomeItemView: View {
+struct HomeItemView: SwiftUI.View {
     
     var imageName: String
     var rowTitle: String
     
-    var body: some View {
+    var body: some SwiftUI.View {
         HStack(spacing: 0) {
             Image(imageName).resizable().scaledToFit().cornerRadius(4).padding(8)
             Text(rowTitle).foregroundColor(Color.white)
@@ -133,12 +133,5 @@ struct HomeItemView: View {
         .background(Color.black)
     }
 }
-
-//@available(iOS 13.0.0, *)
-//struct HomeView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        HomeView()
-//    }
-//}
 
 #endif
