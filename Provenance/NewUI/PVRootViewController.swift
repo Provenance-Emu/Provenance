@@ -83,7 +83,6 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
 
 // MARK: - Menu Delegate
 
-
 protocol PVMenuDelegate {
     func didTapSettings()
     func didTapHome()
