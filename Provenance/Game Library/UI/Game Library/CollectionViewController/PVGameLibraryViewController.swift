@@ -553,7 +553,10 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             case .began:
                 Holder.scaleStart = collectionViewZoom
                 collectionView.isScrollEnabled = false
-
+                guard collectionView.collectionViewLayout.collectionViewContentSize.height != 0 else {
+                    ELOG("collectionView.collectionViewLayout.collectionViewContentSize.height is 0")
+                    return
+                }
                 Holder.normalisedY = gesture.location(in: collectionView).y / collectionView.collectionViewLayout.collectionViewContentSize.height
             case .changed:
                 var newScale = Holder.scaleStart * gesture.scale
