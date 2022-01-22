@@ -60,6 +60,12 @@
 		B35B31CF206CA72A00AEAF88 /* xxhash.c in Sources */ = {isa = PBXBuildFile; fileRef = DFB6032F2038AE7B001E70F1 /* xxhash.c */; };
 		B369B0DF21A3D7F90064EDCA /* MupenOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C3B207EE3750040709A /* MupenOptions.swift */; };
 		B369B0E021A3D7FB0064EDCA /* MupenOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C3B207EE3750040709A /* MupenOptions.swift */; };
+		B36EF42F279C5284005C7ED4 /* r4300_core.h in Headers */ = {isa = PBXBuildFile; fileRef = B3055A712072FEE9001212D2 /* r4300_core.h */; };
+		B36EF430279C5286005C7ED4 /* r4300_core.h in Headers */ = {isa = PBXBuildFile; fileRef = B3055A712072FEE9001212D2 /* r4300_core.h */; };
+		B36EF436279C559A005C7ED4 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = B30559C42072FEE9001212D2 /* Makefile */; };
+		B36EF437279C559B005C7ED4 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = B30559C42072FEE9001212D2 /* Makefile */; };
+		B36EF438279C55A4005C7ED4 /* asm_defines.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A092072FEE9001212D2 /* asm_defines.c */; };
+		B36EF439279C55A4005C7ED4 /* asm_defines.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A092072FEE9001212D2 /* asm_defines.c */; };
 		B37263B326EA161100E95488 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A326EA0D6700E95488 /* libz.tbd */; };
 		B37263B426EA163600E95488 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A326EA0D6700E95488 /* libz.tbd */; };
 		B37263B526EA164900E95488 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A326EA0D6700E95488 /* libz.tbd */; };
@@ -1495,6 +1501,12 @@
 		B34CB0ED2274BA8C009134B4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B35B31CB206CA65900AEAF88 /* CRC_OPT_NEON.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CRC_OPT_NEON.cpp; sourceTree = "<group>"; };
 		B35E6C3B207EE3750040709A /* MupenOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MupenOptions.swift; sourceTree = "<group>"; };
+		B36EF440279C5AB1005C7ED4 /* assem_arm64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = assem_arm64.h; sourceTree = "<group>"; };
+		B36EF441279C5AB1005C7ED4 /* linkage_arm64.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = linkage_arm64.S; sourceTree = "<group>"; };
+		B36EF442279C5AB1005C7ED4 /* assem_arm64.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = assem_arm64.c; sourceTree = "<group>"; };
+		B36EF444279C5AB1005C7ED4 /* linkage_x64.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = linkage_x64.asm; sourceTree = "<group>"; };
+		B36EF445279C5AB1005C7ED4 /* assem_x64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = assem_x64.h; sourceTree = "<group>"; };
+		B36EF446279C5AB1005C7ED4 /* assem_x64.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = assem_x64.c; sourceTree = "<group>"; };
 		B37263A326EA0D6700E95488 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.0.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		B37263B626EA164E00E95488 /* libdl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libdl.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.0.sdk/usr/lib/libdl.tbd; sourceTree = DEVELOPER_DIR; };
 		B37EFEF01C72E63300857158 /* PVMupen64PlusVideoRice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMupen64PlusVideoRice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2934,6 +2946,8 @@
 		B3055A7B2072FEE9001212D2 /* new_dynarec */ = {
 			isa = PBXGroup;
 			children = (
+				B36EF43F279C5AB1005C7ED4 /* arm64 */,
+				B36EF443279C5AB1005C7ED4 /* x64 */,
 				B3055A7C2072FEE9001212D2 /* new_dynarec.h */,
 				B3055A7D2072FEE9001212D2 /* new_dynarec.c */,
 				B3055A7E2072FEE9001212D2 /* x86 */,
@@ -3129,6 +3143,26 @@
 				B33115901C7309C200E9AD14 /* Info.plist */,
 			);
 			path = PVRSPCXD4;
+			sourceTree = "<group>";
+		};
+		B36EF43F279C5AB1005C7ED4 /* arm64 */ = {
+			isa = PBXGroup;
+			children = (
+				B36EF440279C5AB1005C7ED4 /* assem_arm64.h */,
+				B36EF441279C5AB1005C7ED4 /* linkage_arm64.S */,
+				B36EF442279C5AB1005C7ED4 /* assem_arm64.c */,
+			);
+			path = arm64;
+			sourceTree = "<group>";
+		};
+		B36EF443279C5AB1005C7ED4 /* x64 */ = {
+			isa = PBXGroup;
+			children = (
+				B36EF444279C5AB1005C7ED4 /* linkage_x64.asm */,
+				B36EF445279C5AB1005C7ED4 /* assem_x64.h */,
+				B36EF446279C5AB1005C7ED4 /* assem_x64.c */,
+			);
+			path = x64;
 			sourceTree = "<group>";
 		};
 		B37EFEF11C72E63300857158 /* PVMupen64PlusVideoRice */ = {
@@ -4422,6 +4456,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B36EF42F279C5284005C7ED4 /* r4300_core.h in Headers */,
 				B3B3B8581DECE9E100602746 /* MupenGameCore.h in Headers */,
 				B3C83E1B279617760020824C /* assem_arm.h in Headers */,
 				B3B3B8A01DED04CE00602746 /* PVMupen64Plus.h in Headers */,
@@ -4442,6 +4477,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B36EF430279C5286005C7ED4 /* r4300_core.h in Headers */,
 				B3B3B9001DED130B00602746 /* MupenGameCore.h in Headers */,
 				B3C83E1C279617780020824C /* assem_arm.h in Headers */,
 				B3B3B9021DED130B00602746 /* PVMupen64Plus.h in Headers */,
@@ -5457,11 +5493,13 @@
 				B3AE1DD520732E5200AD06D4 /* unzip.c in Sources */,
 				B3AE1DB8207311E900AD06D4 /* rumblepak.c in Sources */,
 				B3AE1DA7207311E900AD06D4 /* input_plugin_compat.c in Sources */,
+				B36EF438279C55A4005C7ED4 /* asm_defines.c in Sources */,
 				B3AE1D84207311E900AD06D4 /* dynamiclib_unix.c in Sources */,
 				B3AE1DAE207311E900AD06D4 /* sram.c in Sources */,
 				B3AE1DD720732E5200AD06D4 /* ioapi.c in Sources */,
 				B3AE1D94207311E900AD06D4 /* files_macos.c in Sources */,
 				B3AE1D83207311E900AD06D4 /* savestates.c in Sources */,
+				B36EF436279C559A005C7ED4 /* Makefile in Sources */,
 				B3AE1DAB207311E900AD06D4 /* dummy_input.c in Sources */,
 				B3AE1D81207311E900AD06D4 /* bootrom_hle.c in Sources */,
 				B3AE1DBF207311E900AD06D4 /* ri_controller.c in Sources */,
@@ -5629,10 +5667,12 @@
 				B3AE1DFB2073378600AD06D4 /* rsp_core.c in Sources */,
 				B3AE1DDB2073378600AD06D4 /* main.m in Sources */,
 				B3AE1DF12073378600AD06D4 /* ai_controller.c in Sources */,
+				B36EF437279C559B005C7ED4 /* Makefile in Sources */,
 				B3AE1E062073378600AD06D4 /* bootrom_hle.c in Sources */,
 				B3AE1E0E2073378600AD06D4 /* mi_controller.c in Sources */,
 				B3AE1E152073378600AD06D4 /* sdl_key_converter.c in Sources */,
 				B3AE1DEE2073378600AD06D4 /* device.c in Sources */,
+				B36EF439279C55A4005C7ED4 /* asm_defines.c in Sources */,
 				B3AE1E0B2073378600AD06D4 /* mbc3_rtc.c in Sources */,
 				B3AE1DDA2073378600AD06D4 /* eventloop.m in Sources */,
 				B3AE1DE52073378600AD06D4 /* common.c in Sources */,

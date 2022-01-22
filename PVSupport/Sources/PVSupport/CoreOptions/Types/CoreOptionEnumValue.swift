@@ -11,9 +11,9 @@ import Foundation
 public struct CoreOptionEnumValue {
     public let title: String
     public let description: String?
-    public let value: UInt
-    
-    public init(title: String, description: String? = nil, value: UInt) {
+    public let value: Int
+
+    public init(title: String, description: String? = nil, value: Int) {
         self.title = title
         self.description = description
         self.value = value

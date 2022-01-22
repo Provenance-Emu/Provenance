@@ -260,6 +260,18 @@ extension MupenGameCore {
 		return value ?? 0
 	}
 
+	@objc
+	static public func float(forOption option: String) -> Float {
+		let value = valueForOption(Float.self, option)
+		return value ?? 0
+	}
+
+	@objc
+	static public func string(forOption option: String) -> String? {
+		let value = valueForOption(String.self, option)
+		return value
+	}
+
 	public static var useRice: Bool {
 		return valueForOption(String.self, "GFX Plugin") == "Rice Video"
 	}

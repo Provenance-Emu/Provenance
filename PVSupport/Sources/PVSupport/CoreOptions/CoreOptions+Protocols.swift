@@ -8,7 +8,6 @@
 
 import Foundation
 
-
 public protocol COption {
     associatedtype ValueType: OptionValueRepresentable
 
@@ -34,6 +33,10 @@ public protocol EnumCOption: COption {
 public protocol OptionValueRepresentable: Codable {}
 
 extension Int: OptionValueRepresentable {}
+extension UInt: OptionValueRepresentable {}
+extension UInt64: OptionValueRepresentable {}
+extension Int64: OptionValueRepresentable {}
 extension Bool: OptionValueRepresentable {}
 extension String: OptionValueRepresentable {}
 extension Float: OptionValueRepresentable {}
+extension Double: OptionValueRepresentable {}

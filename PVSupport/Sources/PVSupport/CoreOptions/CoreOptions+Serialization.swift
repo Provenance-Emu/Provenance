@@ -38,12 +38,16 @@ public extension CoreOptional { // where Self:PVEmulatorCore {
 
     static func setValue(_ value: Encodable?, forOption option: CoreOption, andMD5 md5: String? = nil) {
         let className = NSStringFromClass(Self.self)
-        let key = option.key
-        let classedKey: String = [className, md5, key].compactMap {$0}.joined(separator: ".")
+		let key: String
+		if let md5 = md5, !md5.isEmpty {
+			key = "\(className.utf8).\(md5).\(option.key)"
+		} else {
+			key = "\(className.utf8).\(option.key)"
+		}
 
         // TODO: Make sure the value matches the option type
-        DLOG("Options: Setting key: \(classedKey) to value: \(value ?? "nil")")
-        UserDefaults.standard.set(value, forKey: classedKey)
+        DLOG("Options: Setting key: \(key) to value: \(value ?? "nil")")
+        UserDefaults.standard.set(value, forKey: key)
         UserDefaults.standard.synchronize()
     }
 

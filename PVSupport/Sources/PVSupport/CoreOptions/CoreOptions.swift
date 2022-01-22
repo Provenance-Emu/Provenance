@@ -17,7 +17,7 @@ public enum CoreOption {
     case string(_ display: CoreOptionValueDisplay, defaultValue: String = "")
     case group(_ display: CoreOptionValueDisplay, subOptions: [CoreOption])
 
-    public var defaultValue: Any? {
+    public var defaultValue: OptionValueRepresentable? {
         switch self {
         case let .bool(_, defaultValue):
             return defaultValue
@@ -168,7 +168,6 @@ public typealias OptionAvailable = (() -> (available: Bool, reasonNotAvailable: 
 //        self.defaultValue = defaultValue
 //    }
 // }
-
 
 // public protocol CoreOptionP {
 //	var defaultValue : ValueType {get}
