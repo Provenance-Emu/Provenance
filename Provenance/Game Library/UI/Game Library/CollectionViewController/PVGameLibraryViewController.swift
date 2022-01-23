@@ -99,14 +99,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         let avc = UIViewController()
         avc.view = optionsTableView
         avc.title = "Library Options"
-
-        #if os(iOS)
-            avc.modalPresentationStyle = .popover
-            //        avc.popoverPresentationController?.delegate = self
-            avc.popoverPresentationController?.barButtonItem = sortOptionBarButtonItem
-            avc.popoverPresentationController?.sourceView = collectionView
-        #endif
-
         return avc
     }()
 
@@ -734,6 +726,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                 sortOptionsTableViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(PVGameLibraryViewController.dismissVC))
                 present(navController, animated: true, completion: nil)
             } else {
+                sortOptionsTableViewController.modalPresentationStyle = .popover
                 sortOptionsTableViewController.popoverPresentationController?.barButtonItem = sender as? UIBarButtonItem
                 sortOptionsTableViewController.popoverPresentationController?.sourceView = collectionView
                 sortOptionsTableViewController.preferredContentSize = CGSize(width:300, height:sortOptionsTableView.contentSize.height);
@@ -742,6 +735,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         #else
             // on tvOS use a custom popup controller
             let navController = TVPopupController(rootViewController: sortOptionsTableViewController)
+            sortOptionsTableView.layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
             sortOptionsTableViewController.preferredContentSize = CGSize(width:800, height:sortOptionsTableView.contentSize.height);
             navController.modalPresentationStyle = .blurOverFullScreen // .blurOverFullScreen OR .fullscreen
             present(navController, animated: true, completion: nil)
@@ -1477,9 +1471,24 @@ extension PVGameLibraryViewController: UITableViewDataSource {
         return section == 0 ? SortOptions.count : 4
     }
     
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // NOTE: cell setup is done in willDisplayCell
+        if indexPath.section == 0 {
+            return tableView.dequeueReusableCell(withIdentifier: "sortCell", for: indexPath)
+        } else if indexPath.section == 1 {
+            return tableView.dequeueReusableCell(withIdentifier: "viewOptionsCell", for: indexPath)
+        }
+        else {
+            fatalError("Invalid section")
+        }
+    }
+}
+
+extension PVGameLibraryViewController: UITableViewDelegate {
+    
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
 
-        cell.selectionStyle = .none     // prevent cell flashing
+        cell.selectionStyle = .none     // prevent cell flashing when selected
         
         #if os(tvOS)
             cell.layer.cornerRadius = 12
@@ -1511,20 +1520,6 @@ extension PVGameLibraryViewController: UITableViewDataSource {
             fatalError("Invalid section")
         }
     }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.section == 0 {
-            return tableView.dequeueReusableCell(withIdentifier: "sortCell", for: indexPath)
-        } else if indexPath.section == 1 {
-            return tableView.dequeueReusableCell(withIdentifier: "viewOptionsCell", for: indexPath)
-        }
-        else {
-            fatalError("Invalid section")
-        }
-    }
-}
-
-extension PVGameLibraryViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 {
