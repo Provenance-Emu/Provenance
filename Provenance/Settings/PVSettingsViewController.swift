@@ -19,11 +19,32 @@ import UIKit
 import RxSwift
 
 class PVQuickTableViewController: QuickTableViewController {
+    
+    #if os(tvOS)
+    var _selected:IndexPath?
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        tableView.contentInset = UIEdgeInsets(top:0, left:16, bottom:0, right:16)
+    }
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        _selected = indexPath
+        super.tableView(tableView, didSelectRowAt:indexPath)
+    }
+    func indexPathForPreferredFocusedView(in tableView: UITableView) -> IndexPath? {
+        return _selected ?? tableView.indexPathForSelectedRow ?? IndexPath(row:0, section:0)
+    }
+    #endif
+    
     open override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
 
         #if os(iOS)
             (cell as? SliderCell)?.delegate = self
+        #endif
+        
+        #if os(tvOS)
+            cell.layer.cornerRadius = 12
         #endif
 
         return cell
@@ -44,11 +65,8 @@ final class PVSettingsViewController: PVQuickTableViewController {
         tableView.reloadData()
 
         #if os(tvOS)
-            tableView.backgroundColor = .black
             tableView.rowHeight = 80
             splitViewController?.view.backgroundColor = .black
-            tableView.sectionHeaderHeight = 0
-            tableView.sectionFooterHeight = 0
         #endif
 
         conflictsController.conflicts
