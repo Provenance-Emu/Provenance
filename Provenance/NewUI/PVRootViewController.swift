@@ -34,6 +34,8 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
     var gameLibrary: PVGameLibrary!
     var gameImporter: GameImporter!
     
+    let disposeBag = DisposeBag()
+    
     static func instantiate(updatesController: PVGameLibraryUpdatesController, gameLibrary: PVGameLibrary, gameImporter: GameImporter) -> PVRootViewController {
         let controller = PVRootViewController()
         controller.updatesController = updatesController
@@ -56,6 +58,39 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
         self.loadIntoContainer(newVC: UIHostingController(rootView: homeView))
         
         self.navigationItem.leftBarButtonItem = menuButton
+        
+        let hud = MBProgressHUD(view: view)!
+        hud.isUserInteractionEnabled = false
+        view.addSubview(hud)
+        updatesController.hudState
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { state in
+                switch state {
+                case .hidden:
+                    hud.hide(true)
+                case .title(let title):
+                    hud.show(true)
+                    hud.mode = .indeterminate
+                    hud.labelText = title
+                case .titleAndProgress(let title, let progress):
+                    hud.show(true)
+                    hud.mode = .annularDeterminate
+                    hud.progress = progress
+                    hud.labelText = title
+                }
+            })
+            .disposed(by: disposeBag)
+
+//        updatesController.conflicts
+//            .map { !$0.isEmpty }
+//            .observe(on: MainScheduler.instance)
+//            .subscribe(onNext: { hasConflicts in
+//                self.updateConflictsButton(hasConflicts)
+//                if hasConflicts {
+//                    self.showConflictsAlert()
+//                }
+//            })
+//            .disposed(by: disposeBag)
     }
     
     @objc func showMenu() {
@@ -99,14 +134,23 @@ extension PVRootViewController: PVMenuDelegate {
             let settingsNav = UIStoryboard(name: "Provenance", bundle: nil).instantiateViewController(withIdentifier: "settingsNavigationController") as? UINavigationController,
             let settingsVC = settingsNav.topViewController as? PVSettingsViewController
         else { return }
+        
+        
+        
         settingsVC.conflictsController = updatesController
-        menu.dismiss(animated: true, completion: {
-            self.present(settingsNav, animated: true)
-        })
+        menu.dismiss(animated: true, completion: nil)
+        // modal
+//        menu.dismiss(animated: true, completion: {
+//            self.present(settingsNav, animated: true)
+//        })
+        // inline (still doesn't show all bar button items)
+        self.navigationItem.title = "Settings"
+        self.loadIntoContainer(newVC: settingsVC)
     }
 
     func didTapHome() {
         menu.dismiss(animated: true, completion: nil)
+        self.navigationItem.title = "Home"
         let homeView = HomeView(gameLibrary: self.gameLibrary, delegate: self)
         self.loadIntoContainer(newVC: UIHostingController(rootView: homeView))
     }
@@ -114,9 +158,40 @@ extension PVRootViewController: PVMenuDelegate {
     func didTapAddGames() {
         menu.dismiss(animated: true, completion: nil)
 
-#if os(iOS)
-#else // tvOS
-#endif
+        // TODO: look at PVGameLibraryViewController#getMoreROMs
+        let actionSheet = UIAlertController(title: "Select Import Source", message: nil, preferredStyle: .actionSheet)
+        actionSheet.addAction(UIAlertAction(title: "Cloud & Local Files", style: .default, handler: { _ in
+            let extensions = [UTI.rom, UTI.artwork, UTI.savestate, UTI.zipArchive, UTI.sevenZipArchive, UTI.gnuZipArchive, UTI.image, UTI.jpeg, UTI.png, UTI.bios, UTI.data].map { $0.rawValue }
+
+            //        let documentMenu = UIDocumentMenuViewController(documentTypes: extensions, in: .import)
+            //        documentMenu.delegate = self
+            //        present(documentMenu, animated: true, completion: nil)
+
+            let documentPicker = PVDocumentPickerViewController(documentTypes: extensions, in: .import)
+            documentPicker.allowsMultipleSelection = true
+            documentPicker.delegate = self
+            self.present(documentPicker, animated: true, completion: nil)
+        }))
+
+        let webServerAction = UIAlertAction(title: "Web Server", style: .default, handler: { _ in
+//            self.startWebServer() // TODO: this
+        })
+
+        actionSheet.addAction(webServerAction)
+
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        
+//        if let barButtonItem = sender as? UIBarButtonItem {
+//            actionSheet.popoverPresentationController?.barButtonItem = barButtonItem
+//            actionSheet.popoverPresentationController?.sourceView = collectionView
+//        } else if let button = sender as? UIButton {
+//            actionSheet.popoverPresentationController?.sourceView = collectionView
+//            actionSheet.popoverPresentationController?.sourceRect = view.convert(libraryInfoContainerView.convert(button.frame, to: view), to: collectionView)
+//        }
+
+        actionSheet.preferredContentSize = CGSize(width: 300, height: 150)
+
+        present(actionSheet, animated: true, completion: nil)
     }
 
     func didTapConsole(with consoleId: String) {
@@ -145,49 +220,10 @@ extension PVRootViewController: PVMenuDelegate {
     
 }
 
-// MARK: - Helpers
-
-@available(iOS 13.0.0, *)
-extension PVRootViewController {
-    
-    func addChildViewController(_ child: UIViewController, toContainerView containerView: UIView) {
-        addChild(child)
-        containerView.addSubview(child.view)
-        child.didMove(toParent: self)
-    }
-    
-    func fillParentView(child: UIView, parent: UIView) {
-        child.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            child.topAnchor.constraint(equalTo: parent.topAnchor),
-            child.bottomAnchor.constraint(equalTo: parent.bottomAnchor),
-            child.leadingAnchor.constraint(equalTo: parent.leadingAnchor),
-            child.trailingAnchor.constraint(equalTo: parent.trailingAnchor),
-        ])
-    }
-    
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // MARK: - UIDocumentPickerDelegate
-
 @available(iOS 13.0.0, *)
 extension PVRootViewController: UIDocumentPickerDelegate {
-    // from PVGameLibraryViewController#documentPicker()
+    // copied from PVGameLibraryViewController#documentPicker()
     func documentPicker(_: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         // If directory, map out sub directories if folder
         let urls: [URL] = urls.compactMap { (url) -> [URL]? in
@@ -260,6 +296,29 @@ extension PVRootViewController: UIDocumentPickerDelegate {
     func documentPickerWasCancelled(_: UIDocumentPickerViewController) {
         ILOG("Document picker was cancelled")
     }
+}
+
+// MARK: - Helpers
+
+@available(iOS 13.0.0, *)
+extension PVRootViewController {
+    
+    func addChildViewController(_ child: UIViewController, toContainerView containerView: UIView) {
+        addChild(child)
+        containerView.addSubview(child.view)
+        child.didMove(toParent: self)
+    }
+    
+    func fillParentView(child: UIView, parent: UIView) {
+        child.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            child.topAnchor.constraint(equalTo: parent.topAnchor),
+            child.bottomAnchor.constraint(equalTo: parent.bottomAnchor),
+            child.leadingAnchor.constraint(equalTo: parent.leadingAnchor),
+            child.trailingAnchor.constraint(equalTo: parent.trailingAnchor),
+        ])
+    }
+    
 }
 
 #endif
