@@ -313,7 +313,12 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
             PVSettingsSwitchRow(text: NSLocalizedString("Unsupported Cores", comment: "Unsupported Cores"),
                                 detailText: .subtitle("Cores that are in development"),
-                                key: \PVSettingsModel.debugOptions.unsupportedCores)
+                                key: \PVSettingsModel.debugOptions.unsupportedCores),
+            
+            PVSettingsSwitchRow(text: NSLocalizedString("Use Swift UI", comment: "Use Swift UI"),
+                                            detailText: .subtitle("Swift UI placeholder. Don't use unless you're a developer."),
+                                            key: \PVSettingsModel.debugOptions.useSwiftUI),
+            
         ]
         #else
          let betaRows: [TableRow] = [

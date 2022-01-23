@@ -21,38 +21,16 @@ struct DynamicWidthGameItemView: SwiftUI.View {
     
     var thing = true
     
-    @State private var textMaxWidth: CGFloat?
+    @State private var textMaxWidth: CGFloat = 150
     
     var action: () -> Void
     
     var body: some SwiftUI.View {
-        
         Button {
             action()
         } label: {
             VStack(alignment: .leading, spacing: 0) {
-                if let artwork = artwork {
-                    Image(uiImage: artwork)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .background(GeometryReader { geometry in
-                            Color.clear.preference(
-                                key: ArtworkWidthPreferenceKey.self,
-                                value: geometry.size.width
-                            )
-                        })
-                } else {
-                    Image("empty_icon")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .background(GeometryReader { geometry in
-                            Color.clear.preference(
-                                key: ArtworkWidthPreferenceKey.self,
-                                value: geometry.size.width
-                            )
-                        })
-                }
-                
+                GameItemThumbnail(artwork: artwork)
                 VStack(alignment: .leading, spacing: 0) {
                     GameItemTitle(text: name)
                     if let yearReleased = yearReleased {
@@ -60,10 +38,9 @@ struct DynamicWidthGameItemView: SwiftUI.View {
                     }
                 }
                 .frame(width: textMaxWidth)
-               
             }
             .frame(height: 150.0) // TODO: will likely want to make this platform-specific
-            .onPreferenceChange(ArtworkWidthPreferenceKey.self) {
+            .onPreferenceChange(ArtworkDynamicWidthPreferenceKey.self) {
                 textMaxWidth = $0
             }
             .onAppear {
@@ -78,7 +55,42 @@ struct DynamicWidthGameItemView: SwiftUI.View {
     }
 }
 
+@available(iOS 13.0.0, *)
+struct ArtworkImageBaseView: SwiftUI.View {
 
+    var artwork: UIImage?
+    var placeholder: String = "prov_game_ff3"
+
+    init(artwork: UIImage?) {
+        self.artwork = artwork
+    }
+    
+    var body: some SwiftUI.View {
+        if let artwork = artwork {
+            Image(uiImage: artwork)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+        } else {
+            Image("prov_game_ff3")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+        }
+    }
+}
+
+@available(iOS 13.0.0, *)
+struct GameItemThumbnail: SwiftUI.View {
+    var artwork: UIImage?
+    var body: some SwiftUI.View {
+        ArtworkImageBaseView(artwork: artwork)
+            .background(GeometryReader { geometry in
+                Color.clear.preference(
+                    key: ArtworkDynamicWidthPreferenceKey.self,
+                    value: geometry.size.width
+                )
+            })
+    }
+}
 
 @available(iOS 13.0.0, *)
 struct GameItemTitle: SwiftUI.View {
@@ -86,6 +98,7 @@ struct GameItemTitle: SwiftUI.View {
     var body: some SwiftUI.View {
         Text(text)
             .font(.headline)
+            .foregroundColor(Color.white) // TOOD: theme colors
             .lineLimit(1)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -97,20 +110,19 @@ struct GameItemSubtitle: SwiftUI.View {
     var body: some SwiftUI.View {
         Text(text)
             .font(.subheadline)
+            .foregroundColor(Color.gray) // TOOD: theme colors
             .lineLimit(1)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
 @available(iOS 13.0.0, *)
-private extension DynamicWidthGameItemView {
-    struct ArtworkWidthPreferenceKey: PreferenceKey {
-        static let defaultValue: CGFloat = 0
+struct ArtworkDynamicWidthPreferenceKey: PreferenceKey {
+    static let defaultValue: CGFloat = 0
 
-        static func reduce(value: inout CGFloat,
-                           nextValue: () -> CGFloat) {
-            value = max(value, nextValue())
-        }
+    static func reduce(value: inout CGFloat,
+                       nextValue: () -> CGFloat) {
+        value = max(value, nextValue())
     }
 }
 
