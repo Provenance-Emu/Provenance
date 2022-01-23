@@ -642,7 +642,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             actionSheet.popoverPresentationController?.sourceView = menuButton
             actionSheet.popoverPresentationController?.sourceRect = menuButton.bounds
         }
-        let speeds = ["Slow", "Normal", "Fast"]
+        let speeds = ["Slow (20%)", "Normal (100%)", "Fast (500%)"]
         speeds.enumerated().forEach { idx, title in
             let action = UIAlertAction(title: title, style: .default, handler: { (_: UIAlertAction) -> Void in
                 self.core.gameSpeed = GameSpeed(rawValue: idx) ?? .normal
