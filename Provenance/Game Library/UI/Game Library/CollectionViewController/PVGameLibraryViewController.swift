@@ -737,7 +737,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             let navController = TVPopupController(rootViewController: sortOptionsTableViewController)
             sortOptionsTableView.layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
             sortOptionsTableViewController.preferredContentSize = CGSize(width:800, height:sortOptionsTableView.contentSize.height);
-            navController.modalPresentationStyle = .blurOverFullScreen // .blurOverFullScreen OR .fullscreen
+            navController.modalPresentationStyle = .overFullScreen // .blurOverFullScreen OR .overFullScreen
             present(navController, animated: true, completion: nil)
         #endif
     }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder.AppleTV.Storyboard" version="3.0" toolsVersion="19158" targetRuntime="AppleTV" propertyAccessControl="none" useAutolayout="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder.AppleTV.Storyboard" version="3.0" toolsVersion="19529" targetRuntime="AppleTV" propertyAccessControl="none" useAutolayout="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="appleTV" appearance="dark"/>
     <dependencies>
         <deployment identifier="tvOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19141"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -67,10 +67,10 @@
             </objects>
             <point key="canvasLocation" x="2424" y="-1023"/>
         </scene>
-        <!--Settings View Controller-->
+        <!--Settings-->
         <scene sceneID="ZAr-9t-7TY">
             <objects>
-                <viewController storyboardIdentifier="tvSettingsTableVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="eXg-vZ-MQ5" customClass="PVSettingsViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="tvSettingsTableVC" title="Settings" useStoryboardIdentifierAsRestorationIdentifier="YES" id="eXg-vZ-MQ5" customClass="PVSettingsViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Jnd-E9-IU2"/>
                         <viewControllerLayoutGuide type="bottom" id="eqf-Dz-hUi"/>
@@ -81,7 +81,7 @@
                         <viewLayoutGuide key="safeArea" id="yQQ-Fm-hyI"/>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </view>
-                    <navigationItem key="navigationItem" id="NPZ-J9-DvN"/>
+                    <navigationItem key="navigationItem" title="Settings" id="NPZ-J9-DvN"/>
                     <connections>
                         <segue destination="NeS-ym-mJX" kind="show" identifier="pushSystemSettings" id="1cD-q4-Qzk"/>
                         <segue destination="zvw-rB-bmT" kind="show" identifier="iCadeSegue" id="WvV-hz-DaQ"/>
@@ -95,10 +95,10 @@
             </objects>
             <point key="canvasLocation" x="4891" y="-1023"/>
         </scene>
-        <!--Systems Settings Table View Controller-->
+        <!--Systems-->
         <scene sceneID="g59-ds-OFK">
             <objects>
-                <viewController storyboardIdentifier="SystemsSettingsTableViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="NeS-ym-mJX" customClass="SystemsSettingsTableViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SystemsSettingsTableViewController" title="Systems" useStoryboardIdentifierAsRestorationIdentifier="YES" id="NeS-ym-mJX" customClass="SystemsSettingsTableViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="hYz-Fw-VnR"/>
                         <viewControllerLayoutGuide type="bottom" id="9qz-o4-xq0"/>
@@ -114,10 +114,10 @@
             </objects>
             <point key="canvasLocation" x="-259" y="2132"/>
         </scene>
-        <!--Controller Selection View Controller-->
+        <!--Controllers-->
         <scene sceneID="rf3-j3-Qnd">
             <objects>
-                <tableViewController storyboardIdentifier="controllerSelectionVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="fjc-Kp-2ru" customClass="PVControllerSelectionViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="controllerSelectionVC" title="Controllers" useStoryboardIdentifierAsRestorationIdentifier="YES" id="fjc-Kp-2ru" customClass="PVControllerSelectionViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="66" sectionHeaderHeight="40" sectionFooterHeight="40" id="0Cx-LN-DBW">
                         <rect key="frame" x="0.0" y="0.0" width="1285.5" height="1080"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -159,10 +159,10 @@
             </objects>
             <point key="canvasLocation" x="10147" y="2132"/>
         </scene>
-        <!--Appearance View Controller-->
+        <!--Appearance-->
         <scene sceneID="H1R-55-1vb">
             <objects>
-                <tableViewController storyboardIdentifier="appearanceSettingsVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Fqw-ef-HBA" customClass="PVAppearanceViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="appearanceSettingsVC" title="Appearance" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Fqw-ef-HBA" customClass="PVAppearanceViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="66" sectionHeaderHeight="7" sectionFooterHeight="7" id="h2F-Su-JkG">
                         <rect key="frame" x="0.0" y="0.0" width="1285.5" height="1080"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -204,10 +204,10 @@
             </objects>
             <point key="canvasLocation" x="8063" y="2132"/>
         </scene>
-        <!--Licenses View Controller-->
+        <!--Licenses-->
         <scene sceneID="pZS-N1-R1w">
             <objects>
-                <viewController storyboardIdentifier="licensesVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="SMk-xH-ePE" customClass="PVLicensesViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="licensesVC" title="Licenses" useStoryboardIdentifierAsRestorationIdentifier="YES" id="SMk-xH-ePE" customClass="PVLicensesViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="ob3-po-ya2"/>
                         <viewControllerLayoutGuide type="bottom" id="zQW-IX-Sua"/>
@@ -241,10 +241,10 @@
             </objects>
             <point key="canvasLocation" x="5950" y="2132"/>
         </scene>
-        <!--Vi Cade Controller View Controller-->
+        <!--iCade-->
         <scene sceneID="tdE-E6-bVa">
             <objects>
-                <tableViewController storyboardIdentifier="icadeVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="zvw-rB-bmT" customClass="PViCadeControllerViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="icadeVC" title="iCade" useStoryboardIdentifierAsRestorationIdentifier="YES" id="zvw-rB-bmT" customClass="PViCadeControllerViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="66" sectionHeaderHeight="40" sectionFooterHeight="40" id="Cmj-nd-Q5z">
                         <rect key="frame" x="0.0" y="0.0" width="1285.5" height="1080"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -279,10 +279,10 @@
             </objects>
             <point key="canvasLocation" x="1831" y="2132"/>
         </scene>
-        <!--Cores Table View Controller-->
+        <!--Cores-->
         <scene sceneID="KRZ-bK-PC9">
             <objects>
-                <viewController storyboardIdentifier="coresTablewView" id="O9R-Hg-gnu" customClass="PVCoresTableViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="coresTablewView" title="Cores" id="O9R-Hg-gnu" customClass="PVCoresTableViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Ssg-Zd-eVQ"/>
                         <viewControllerLayoutGuide type="bottom" id="gMm-cE-tza"/>
