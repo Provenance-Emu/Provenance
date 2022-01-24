@@ -192,7 +192,12 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             })
         #else
             navigationController?.navigationBar.isTranslucent = false
-            navigationController?.navigationBar.backgroundColor =  UIColor.black.withAlphaComponent(0.8)
+	    let blurEffect = UIBlurEffect(style: UIBlurEffect.Style.dark)
+            let blurEffectView = UIVisualEffectView(effect: blurEffect)
+            blurEffectView.frame = (self.navigationController?.navigationBar.bounds)!
+            self.navigationController?.navigationBar.addSubview(blurEffectView)
+            self.navigationController?.navigationBar.sendSubviewToBack(blurEffectView)
+            navigationController?.navigationBar.backgroundColor = UIColor.black.withAlphaComponent(0.5)
             // ironicaly BarButtonItems (unselected background) look better when forced to LightMode
             if #available(tvOS 13.0, *) {
                 navigationController?.overrideUserInterfaceStyle = .light
