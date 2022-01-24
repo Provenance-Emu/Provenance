@@ -202,7 +202,10 @@ static void mednafen_init(MednafenGameCore* current)
     
     const char* vb_sidebyside = current.vb_sidebyside ? "sidebyside" : "anaglyph";
     Mednafen::MDFNI_SetSetting("vb.3dmode", vb_sidebyside);
-    //MDFNI_SetSetting("vb.sidebyside.separation", "0"); // This setting refers to pixels before vb.xscale(fs) scaling is taken into consideration. For example, a value of "100" here will result in a separation of 300 screen pixels if vb.xscale(fs) is set to "3".
+    
+    // This setting refers to pixels before vb.xscale(fs) scaling is taken into consideration. For example, a value of "100" here will result in a separation of 300 screen pixels if vb.xscale(fs) is set to "3".
+    int seperation = [MednafenGameCore intForOption:@"FullTMEMEmulation"];
+    Mednafen::MDFNI_SetSetting("vb.sidebyside.separation", [NSString stringWithFormat:@"%i", seperation].UTF8String);
     
     
 	// MARK: SNES Faust settings

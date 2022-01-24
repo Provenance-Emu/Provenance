@@ -108,9 +108,17 @@ extension MednafenGameCore: CoreOptional {
 
         options.append(psxGroup)
         
+        var vbOptions = [vb_instant_display_hack, vb_sidebyside]
+        vbOptions.append(.range(.init(
+            title: "Side-by-side separation",
+            description: "How many pixels (to VB scale) to seperate left and right images.",
+            requiresRestart: true), range: .init(defaultValue: 0, min: 0, max: 100),
+                               defaultValue: 0))
+
+        
         let vbGroup:CoreOption = .group(.init(title: "VirtualBoy",
                                                      description: ""),
-                                          subOptions: [vb_instant_display_hack, vb_sidebyside])
+                                          subOptions: vbOptions)
         
 
         options.append(vbGroup)
@@ -202,4 +210,22 @@ extension MednafenGameCore: CoreOptional {
     
     @objc(vb_sidebyside) var vb_sidebyside: Bool { MednafenGameCore.valueForOption(MednafenGameCore.vb_sidebyside).asBool }
 
+    static func bool(forOption option: String) -> Bool {
+        return valueForOption(Bool.self, option) ?? false
+    }
+
+    static func int(forOption option: String) -> Int {
+        let value = valueForOption(Int.self, option)
+        return value ?? 0
+    }
+
+    static func float(forOption option: String) -> Float {
+        let value = valueForOption(Float.self, option)
+        return value ?? 0
+    }
+
+    static func string(forOption option: String) -> String? {
+        let value = valueForOption(String.self, option)
+        return value
+    }
 }
