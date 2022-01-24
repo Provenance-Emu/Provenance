@@ -45,7 +45,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 #endif
 @end
 
-__attribute__((objc_direct_members))
+//PV_OBJC_DIRECT_MEMBERS
 @implementation PVEmulatorCore
 
 + (void)initialize {
