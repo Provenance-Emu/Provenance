@@ -12,7 +12,7 @@ import Foundation
 import SwiftUI
 
 @available(iOS 14.0.0, *)
-struct DynamicWidthGameItemView: SwiftUI.View {
+struct GameItemView: SwiftUI.View {
     
     var artworkURL: String?
     @State var artwork: UIImage?
@@ -49,7 +49,6 @@ struct DynamicWidthGameItemView: SwiftUI.View {
                         self.artwork = image
                     })
                 }
-
             }
         }
     }
@@ -132,27 +131,27 @@ struct GameItemRow: SwiftUI.View {
     var body: some SwiftUI.View {
         ScrollView(.horizontal) {
             HStack(spacing: 10) {
-                DynamicWidthGameItemView(
+                GameItemView(
                     artworkURL: "",
                     artwork: UIImage(named: "prov_game_ff") ?? UIImage(),
                     name: "Final Fantasy",
                     yearReleased: "2019") {}
-                DynamicWidthGameItemView(
+                GameItemView(
                     artworkURL: "",
                     artwork: UIImage(named: "prov_game_ff3") ?? UIImage(),
                     name: "Final Fantasy III",
                     yearReleased: "2019") {}
-                DynamicWidthGameItemView(
+                GameItemView(
                     artworkURL: "",
                     artwork: UIImage(named: "prov_game_ff7s") ?? UIImage(),
                     name: "Final Fantasy III",
                     yearReleased: "2019") {}
-                DynamicWidthGameItemView(
+                GameItemView(
                     artworkURL: "",
                     artwork: UIImage(named: "prov_game_linktothepast") ?? UIImage(),
                     name: "The Legend of Zelda: A Link to The Past",
                     yearReleased: "2019") {}
-                DynamicWidthGameItemView(
+                GameItemView(
                     artworkURL: "",
                     artwork: UIImage(named: "prov_game_fft") ?? UIImage(),
                     name: "Final Fantasy Tactics Advance",

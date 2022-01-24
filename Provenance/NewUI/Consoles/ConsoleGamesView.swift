@@ -37,7 +37,7 @@ struct ConsoleGamesView: SwiftUI.View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: 20) {
                 ForEach(games, id: \.self) { game in
-                    DynamicWidthGameItemView(
+                    GameItemView(
                         artwork: nil,
                         name: game.title,
                         yearReleased: game.publishDate) {
