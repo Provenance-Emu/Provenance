@@ -1463,21 +1463,6 @@ static void ConfigureRICE() {
      }];
 }
 
-- (CGSize)bufferSize
-{
-    return CGSizeMake(1024, 512);
-}
-
-- (CGRect)screenRect
-{
-    return CGRectMake(0, 0, _videoWidth, _videoHeight);
-}
-
-- (CGSize)aspectSize
-{
-    return CGSizeMake(_videoWidth, _videoHeight);
-}
-
 - (void) tryToResizeVideoTo:(CGSize)size {
     DLOG(@"Calling set video mode size to (%f,%f)", screenWidth, screenHeight);
 
@@ -1487,52 +1472,7 @@ static void ConfigureRICE() {
 	}
 }
 
-- (BOOL)rendersToOpenGL
-{
-    return YES;
-}
-
-//- (BOOL)isDoubleBuffered {
-//    return YES;
-//}
-
-- (const void *)videoBuffer
-{
-    return NULL;
-}
-
-- (GLenum)pixelFormat
-{
-    return GL_BGRA;
-}
-
-- (GLenum)pixelType
-{
-    return GL_UNSIGNED_BYTE;
-}
-
-- (GLenum)internalPixelFormat
-{
-    return GL_RGBA;
-}
-
-#pragma mark Mupen Audio
-
-- (NSTimeInterval)frameInterval
-{
-    // Mupen uses 60 but it's probably wrong
-    return isNTSC ? 60 : 50;
-}
-
-- (NSUInteger)channelCount
-{
-    return 2;
-}
-
-- (double)audioSampleRate
-{
-    return sampleRate;
-}
+#pragma mark = Controllers
 
 - (void)didMoveN64JoystickDirection:(PVN64Button)button withValue:(CGFloat)value forPlayer:(NSUInteger)player
 {

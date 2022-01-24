@@ -38,19 +38,15 @@ __attribute__((visibility("default")))
     uint8_t padData[4][PVN64ButtonCount];
     int8_t xAxis[4];
     int8_t yAxis[4];
-//    int videoWidth;
-//    int videoHeight;
-//    int videoBitDepth;
-    int videoDepthBitDepth; // eh
-    
-    float sampleRate;
-    
-    BOOL isNTSC;
 }
 
 @property (nonatomic, assign) int videoWidth;
 @property (nonatomic, assign) int videoHeight;
 @property (nonatomic, assign) int videoBitDepth;
+
+@property (nonatomic, assign) double sampleRate;
+@property (nonatomic, assign) int videoDepthBitDepth;
+@property (nonatomic, assign) BOOL isNTSC;
 
 - (void) videoInterrupt;
 - (void) swapBuffers;
