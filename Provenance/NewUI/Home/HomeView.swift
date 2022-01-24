@@ -64,7 +64,7 @@ struct HomeView: SwiftUI.View {
                 if let recentSaveStates = recentSaveStates {
                     HStack {
                         ForEach(recentSaveStates, id: \.self) { recentSaveState in
-                            DynamicWidthGameItemView(
+                            GameItemView(
                                 artwork: nil,
                                 name: recentSaveState.game.title,
                                 yearReleased: recentSaveState.game.publishDate) {
@@ -76,7 +76,7 @@ struct HomeView: SwiftUI.View {
                 if let recentlyPlayedGames = recentlyPlayedGames {
                     HStack {
                         ForEach(recentlyPlayedGames, id: \.self) { recentlyPlayedGame in
-                            DynamicWidthGameItemView(
+                            GameItemView(
                                 artwork: nil,
                                 name: recentlyPlayedGame.game.title,
                                 yearReleased: recentlyPlayedGame.game.publishDate) {
@@ -88,7 +88,7 @@ struct HomeView: SwiftUI.View {
                 if let favorites = favorites {
                     HStack {
                         ForEach(favorites, id: \.self) { favorite in
-                            DynamicWidthGameItemView(
+                            GameItemView(
                                 artwork: nil,
                                 name: favorite.title,
                                 yearReleased: favorite.publishDate) {
@@ -100,7 +100,7 @@ struct HomeView: SwiftUI.View {
                 if let mostPlayed = mostPlayed {
                     HStack {
                         ForEach(mostPlayed, id: \.self) { playedGame in
-                            DynamicWidthGameItemView(
+                            GameItemView(
                                 artwork: nil,
                                 name: playedGame.title,
                                 yearReleased: playedGame.publishDate) {

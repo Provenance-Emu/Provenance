@@ -47,7 +47,7 @@ struct SideMenuView: SwiftUI.View {
                         }
                     }
                 }
-//                Group {
+//                Group { // TODO: flesh out collections later
 //                    MenuSectionHeaderView(sectionTitle: "COLLECTIONS", sortable: false)
 //                    Divider()
 //                    MenuItemView(imageName: "empty_icon", rowTitle: "Favorites") {
