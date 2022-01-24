@@ -98,24 +98,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         let optionsTableView = sortOptionsTableView
         let avc = UIViewController()
         avc.view = optionsTableView
-
-        #if os(iOS)
-            avc.modalPresentationStyle = .popover
-            //        avc.popoverPresentationController?.delegate = self
-            avc.popoverPresentationController?.barButtonItem = sortOptionBarButtonItem
-            avc.popoverPresentationController?.sourceView = collectionView
-            avc.preferredContentSize = CGSize(width: 300, height: 500)
-            avc.title = "Library Options"
-        #else
-            //		providesPresentationContextTransitionStyle = true
-            //		definesPresentationContext = true
-            if #available(tvOS 11.0, *) {
-                avc.modalPresentationStyle = .blurOverFullScreen
-            } else {
-                avc.modalPresentationStyle = .currentContext
-            }
-            avc.modalTransitionStyle = .coverVertical
-        #endif
+        avc.title = "Library Options"
         return avc
     }()
 
@@ -735,24 +718,32 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     #endif
     
     @IBAction func sortButtonTapped(_ sender: Any) {
+        if self.presentedViewController != nil {
+            return;
+        }
+        sortOptionsTableView.reloadData()
+        
         #if os(iOS)
             // Add done button to iPhone
             // iPad is a popover do no done button needed
             if traitCollection.horizontalSizeClass == .compact {
                 let navController = UINavigationController(rootViewController: sortOptionsTableViewController)
                 sortOptionsTableViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(PVGameLibraryViewController.dismissVC))
-                sortOptionsTableView.reloadData()
                 present(navController, animated: true, completion: nil)
-                return
             } else {
+                sortOptionsTableViewController.modalPresentationStyle = .popover
                 sortOptionsTableViewController.popoverPresentationController?.barButtonItem = sender as? UIBarButtonItem
                 sortOptionsTableViewController.popoverPresentationController?.sourceView = collectionView
-                sortOptionsTableView.reloadData()
+                sortOptionsTableViewController.preferredContentSize = CGSize(width:300, height:sortOptionsTableView.contentSize.height);
                 present(sortOptionsTableViewController, animated: true, completion: nil)
             }
         #else
-            sortOptionsTableView.reloadData()
-            present(sortOptionsTableViewController, animated: true, completion: nil)
+            // on tvOS use a custom popup controller
+            let navController = TVPopupController(rootViewController: sortOptionsTableViewController)
+            sortOptionsTableView.layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+            sortOptionsTableViewController.preferredContentSize = CGSize(width:800, height:sortOptionsTableView.contentSize.height);
+            navController.modalPresentationStyle = .overFullScreen // .blurOverFullScreen OR .overFullScreen
+            present(navController, animated: true, completion: nil)
         #endif
     }
 
@@ -1484,19 +1475,35 @@ extension PVGameLibraryViewController: UITableViewDataSource {
     func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
         return section == 0 ? SortOptions.count : 4
     }
-
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // NOTE: cell setup is done in willDisplayCell
         if indexPath.section == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "sortCell", for: indexPath)
+            return tableView.dequeueReusableCell(withIdentifier: "sortCell", for: indexPath)
+        } else if indexPath.section == 1 {
+            return tableView.dequeueReusableCell(withIdentifier: "viewOptionsCell", for: indexPath)
+        }
+        else {
+            fatalError("Invalid section")
+        }
+    }
+}
 
+extension PVGameLibraryViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+
+        cell.selectionStyle = .none     // prevent cell flashing when selected
+        
+        #if os(tvOS)
+            cell.layer.cornerRadius = 12
+        #endif
+
+        if indexPath.section == 0 {
             let sortOption = SortOptions.allCases[indexPath.row]
-
             cell.textLabel?.text = sortOption.description
             cell.accessoryType = indexPath.row == (try! currentSort.value()).row ? .checkmark : .none
-            return cell
         } else if indexPath.section == 1 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "viewOptionsCell", for: indexPath)
-
             switch indexPath.row {
             case 0:
                 cell.textLabel?.text = "Show Game Titles"
@@ -1513,18 +1520,22 @@ extension PVGameLibraryViewController: UITableViewDataSource {
             default:
                 fatalError("Invalid row")
             }
-
-            return cell
         }
-        fatalError("Invalid section")
+        else {
+            fatalError("Invalid section")
+        }
     }
-}
-
-extension PVGameLibraryViewController: UITableViewDelegate {
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 {
             currentSort.onNext(SortOptions.optionForRow(UInt(indexPath.row)))
-            dismiss(animated: true, completion: nil)
+            //dont call reloadSections or we will loose focus on tvOS
+            //tableView.reloadSections([indexPath.section], with: .automatic)
+            for row in 0..<(self.tableView(tableView, numberOfRowsInSection: indexPath.section)) {
+                let indexPath = IndexPath(row:row, section:indexPath.section)
+                self.tableView(tableView, willDisplay:tableView.cellForRow(at:indexPath)!, forRowAt:indexPath)
+            }
+            //dismiss(animated: true, completion: nil)
         } else if indexPath.section == 1 {
             switch indexPath.row {
             case 0:
@@ -1538,8 +1549,9 @@ extension PVGameLibraryViewController: UITableViewDelegate {
             default:
                 fatalError("Invalid row")
             }
-
-            tableView.reloadRows(at: [indexPath], with: .automatic)
+            //dont call reloadRows or we will loose focus on tvOS
+            //tableView.reloadRows(at: [indexPath], with:.automatic)
+            self.tableView(tableView, willDisplay:tableView.cellForRow(at:indexPath)!, forRowAt:indexPath)
             collectionView?.reloadData()
         }
     }

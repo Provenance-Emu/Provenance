@@ -62,7 +62,6 @@
 		1180B31C2492A96700636C8A /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B31B2492A95400636C8A /* CoreServices.framework */; };
 		1180B3242492AFC900636C8A /* PVGameLibraryUpdatesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1180B3232492AFC900636C8A /* PVGameLibraryUpdatesController.swift */; };
 		11A8A9E72496A3E500C1C6B4 /* PVGameLibraryUpdatesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1180B3232492AFC900636C8A /* PVGameLibraryUpdatesController.swift */; };
-		11ADB31F2471A34E001C7B27 /* PVTVTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ADB31E2471A34E001C7B27 /* PVTVTabBarController.swift */; };
 		11AFB2B72487C120000A3922 /* UISearchController+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2B62487C120000A3922 /* UISearchController+Rx.swift */; };
 		11BB0A2225AF7DFE004DEDC3 /* PVEmulatorViewController+PauseMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38A2A452102328600374CDD /* PVEmulatorViewController+PauseMenu.swift */; };
 		11BB0A2325AF7DFF004DEDC3 /* PVEmulatorViewController+PauseMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38A2A452102328600374CDD /* PVEmulatorViewController+PauseMenu.swift */; };
@@ -577,6 +576,7 @@
 		DF3751952026B83600EE727E /* PVRSPCXD4.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B97B1DED14AE00602746 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DFCD6EBF203762AF00719289 /* shaders in Resources */ = {isa = PBXBuildFile; fileRef = DFCD6EBE203762AE00719289 /* shaders */; };
 		DFCD6EC0203762AF00719289 /* shaders in Resources */ = {isa = PBXBuildFile; fileRef = DFCD6EBE203762AE00719289 /* shaders */; };
+		EF474BA8279CCDD200578663 /* TVPopupController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF474BA7279CCDD100578663 /* TVPopupController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -778,7 +778,6 @@
 		1180B3172492A93F00636C8A /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		1180B31B2492A95400636C8A /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS13.4.sdk/System/Library/Frameworks/CoreServices.framework; sourceTree = DEVELOPER_DIR; };
 		1180B3232492AFC900636C8A /* PVGameLibraryUpdatesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameLibraryUpdatesController.swift; sourceTree = "<group>"; };
-		11ADB31E2471A34E001C7B27 /* PVTVTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVTVTabBarController.swift; sourceTree = "<group>"; };
 		11AFB2B62487C120000A3922 /* UISearchController+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UISearchController+Rx.swift"; sourceTree = "<group>"; };
 		14C8EF2121D9443E001B7E37 /* PVTGBDual.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVTGBDual.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVEmulatorViewController.swift; sourceTree = "<group>"; };
@@ -1185,6 +1184,7 @@
 		DA5EB009206C4DEB000B5F30 /* PVGame+TopShelf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGame+TopShelf.swift"; sourceTree = "<group>"; };
 		DFB603BD2038B6C0001E70F1 /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DFCD6EBE203762AE00719289 /* shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = shaders; sourceTree = "<group>"; };
+		EF474BA7279CCDD100578663 /* TVPopupController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TVPopupController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1651,7 +1651,7 @@
 			children = (
 				B35D667D21814EAB0005A992 /* Story Boards */,
 				BE9FDCCC1C21109B0046DF0E /* Provenance.entitlements */,
-				11ADB31E2471A34E001C7B27 /* PVTVTabBarController.swift */,
+				EF474BA7279CCDD100578663 /* TVPopupController.swift */,
 				1AACCAEC1BB61D5600DC21AE /* PVTVSplitViewController.swift */,
 				1A2B13CC1D0DFF5100D0B863 /* PVSearchViewController.swift */,
 				B3B9239D202D054B00580FFC /* ProvenanceTV-Bridging-Header.h */,
@@ -3075,7 +3075,7 @@
 				B3A40C7221A67C7800544C20 /* PVGameLibrarySectionFooterView.swift in Sources */,
 				B3589E32219E8C5B001C5E12 /* LogViewable.swift in Sources */,
 				B3D5E2B1218EC1AE0015C690 /* Reactive+RxRealmDataSources.swift in Sources */,
-				11ADB31F2471A34E001C7B27 /* PVTVTabBarController.swift in Sources */,
+				EF474BA8279CCDD200578663 /* TVPopupController.swift in Sources */,
 				11AFB2B72487C120000A3922 /* UISearchController+Rx.swift in Sources */,
 				B37B71B1278E33B9005FB278 /* MenuButton.swift in Sources */,
 				B3B104C5218F2EF400210C39 /* PVDreamcastControllerViewController.swift in Sources */,

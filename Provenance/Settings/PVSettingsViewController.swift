@@ -19,13 +19,14 @@ import UIKit
 import RxSwift
 
 class PVQuickTableViewController: QuickTableViewController {
+    
     open override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
 
         #if os(iOS)
             (cell as? SliderCell)?.delegate = self
         #endif
-
+        
         return cell
     }
 }
@@ -44,11 +45,10 @@ final class PVSettingsViewController: PVQuickTableViewController {
         tableView.reloadData()
 
         #if os(tvOS)
-            tableView.backgroundColor = .black
             tableView.rowHeight = 80
             splitViewController?.view.backgroundColor = .black
-            tableView.sectionHeaderHeight = 0
-            tableView.sectionFooterHeight = 0
+            navigationController?.navigationBar.isTranslucent = false
+            navigationController?.navigationBar.backgroundColor =  UIColor.black.withAlphaComponent(0.8)
         #endif
 
         conflictsController.conflicts
