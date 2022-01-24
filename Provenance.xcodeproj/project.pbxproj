@@ -351,7 +351,6 @@
 		B369B0DE21A3C1C40064EDCA /* PVLogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E6DADB20B7AD1500454DD4 /* PVLogViewController.m */; };
 		B36D9DF8203562E000D583C4 /* PVControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */; };
 		B36D9DFD203605BC00D583C4 /* PVCoreFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */; };
-		B37263A126EA04E700E95488 /* ProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A026EA04E700E95488 /* ProSystem.framework */; };
 		B37263A926EA159400E95488 /* PVMupen64Plus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A426EA159400E95488 /* PVMupen64Plus.framework */; };
 		B37263AA26EA159400E95488 /* PVMupen64Plus.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A426EA159400E95488 /* PVMupen64Plus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B37263AB26EA159400E95488 /* PVMupen64PlusRspHLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A526EA159400E95488 /* PVMupen64PlusRspHLE.framework */; };
@@ -406,6 +405,7 @@
 		B394C98B20609E180014A65D /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = B394C98920609E180014A65D /* UIColor+Hex.swift */; };
 		B3995E4F2058229F001D4985 /* PVFCEU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3995E4E2058229F001D4985 /* PVFCEU.framework */; };
 		B3995E502058229F001D4985 /* PVFCEU.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3995E4E2058229F001D4985 /* PVFCEU.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B39DC77D279E79D40017E28D /* TopShelf.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3A320372720974F00F338F6 /* PVGameCubeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A320362720974F00F338F6 /* PVGameCubeControllerViewController.swift */; };
 		B3A320382720974F00F338F6 /* PVGameCubeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A320362720974F00F338F6 /* PVGameCubeControllerViewController.swift */; };
 		B3A32150218EB4D700BD7DA2 /* UIView+FrameAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.swift */; };
@@ -483,6 +483,8 @@
 		B3B3B8961DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8941DECF8C200602746 /* PVMupen64PlusVideoRice.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3B3B8981DECF8C700602746 /* PVMupen64PlusRspHLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8971DECF8C700602746 /* PVMupen64PlusRspHLE.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3B3B8991DECF8C700602746 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8971DECF8C700602746 /* PVMupen64PlusRspHLE.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3B4C956279E6BAB00505424 /* ProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B4C955279E6BAA00505424 /* ProSystem.framework */; };
+		B3B4C957279E6BAB00505424 /* ProSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B4C955279E6BAA00505424 /* ProSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3B923B0202D2EAE00580FFC /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A9202D2EAE00580FFC /* Theme.swift */; };
 		B3C9D4331DEA1B340068D057 /* PVGenesis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; };
 		B3C9D4341DEA1B340068D057 /* PVGenesis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -622,6 +624,13 @@
 			remoteGlobalIDString = B383225D26ED9C530029D12F;
 			remoteInfo = "Check Git Submodules";
 		};
+		B39DC77E279E79D40017E28D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BE9FDCB61C210B9E0046DF0E;
+			remoteInfo = TopShelf;
+		};
 		B3B29D452156183D00903290 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
@@ -649,6 +658,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = B3B29D3F2156177100903290;
 			remoteInfo = "Create Version files";
+		};
+		B3B4C953279E69AD00505424 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BE9FDCB61C210B9E0046DF0E;
+			remoteInfo = TopShelf;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -678,6 +694,7 @@
 				B37263B226EA159500E95488 /* PVRSPCXD4.framework in Embed Frameworks */,
 				B324C61221920037009F4EDC /* ProSystem.framework in Embed Frameworks */,
 				B324C60C2191FFBB009F4EDC /* PVGBA.framework in Embed Frameworks */,
+				B3B4C957279E6BAB00505424 /* ProSystem.framework in Embed Frameworks */,
 				B37263AA26EA159400E95488 /* PVMupen64Plus.framework in Embed Frameworks */,
 				B324C6092191FF9A009F4EDC /* PVAtari800.framework in Embed Frameworks */,
 			);
@@ -748,6 +765,17 @@
 				B305EF30276B4CB0003AE510 /* PVStella.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B39DC780279E79D40017E28D /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				B39DC77D279E79D40017E28D /* TopShelf.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B3DFEE132686D848005C6CF2 /* Embed Frameworks */ = {
@@ -1063,6 +1091,8 @@
 		B399119226C0F41300E54426 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		B399119326C0F41300E54426 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		B3995E4E2058229F001D4985 /* PVFCEU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFCEU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B39DC77A279E77200017E28D /* PVGCVRViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVGCVRViewController.h; sourceTree = "<group>"; };
+		B39DC77B279E77230017E28D /* PVGCVRViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVGCVRViewController.m; sourceTree = "<group>"; };
 		B3A320362720974F00F338F6 /* PVGameCubeControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVGameCubeControllerViewController.swift; sourceTree = "<group>"; };
 		B3A320392720991B00F338F6 /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A3203C2720992500F338F6 /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1106,6 +1136,7 @@
 		B3B3B9781DED14A100602746 /* PVMupen64PlusVideoRice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoRice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B3B97B1DED14AE00602746 /* PVRSPCXD4.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVRSPCXD4.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B3B97E1DED169100602746 /* PVRSPCXD4.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVRSPCXD4.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3B4C955279E6BAA00505424 /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B9239C202D054B00580FFC /* Provenance-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Provenance-Bridging-Header.h"; sourceTree = "<group>"; };
 		B3B9239D202D054B00580FFC /* ProvenanceTV-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ProvenanceTV-Bridging-Header.h"; sourceTree = "<group>"; };
 		B3B923A9202D2EAE00580FFC /* Theme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
@@ -1253,6 +1284,7 @@
 				B324C6172192038C009F4EDC /* libxml2.tbd in Frameworks */,
 				B312805F274C60EC00550720 /* SteamController in Frameworks */,
 				B324C61521920384009F4EDC /* libz.tbd in Frameworks */,
+				B3B4C956279E6BAB00505424 /* ProSystem.framework in Frameworks */,
 				B3F187752720B80C00659D87 /* RxDataSources in Frameworks */,
 				B324C312219195CE009F4EDC /* CFNetwork.framework in Frameworks */,
 				B324C30C219195BB009F4EDC /* SystemConfiguration.framework in Frameworks */,
@@ -1269,7 +1301,6 @@
 				B37263AB26EA159400E95488 /* PVMupen64PlusRspHLE.framework in Frameworks */,
 				B37263B126EA159500E95488 /* PVRSPCXD4.framework in Frameworks */,
 				B324C3002191958D009F4EDC /* CoreGraphics.framework in Frameworks */,
-				B37263A126EA04E700E95488 /* ProSystem.framework in Frameworks */,
 				B324C2FE21919585009F4EDC /* Foundation.framework in Frameworks */,
 				B324C2FD21919568009F4EDC /* AVFoundation.framework in Frameworks */,
 				B3AF70662191733D000FA7F9 /* GameController.framework in Frameworks */,
@@ -1424,6 +1455,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3B4C955279E6BAA00505424 /* ProSystem.framework */,
 				B36455EB278E919500B6E87A /* PVDuckStation.framework */,
 				B3271BDC276B8B660031AECC /* CoreTelephony.framework */,
 				B3271BDA276B8B2E0031AECC /* OpenGL.framework */,
@@ -2014,6 +2046,8 @@
 		B382C63F278E5288007E61FE /* PVGLViewController */ = {
 			isa = PBXGroup;
 			children = (
+				B39DC77A279E77200017E28D /* PVGCVRViewController.h */,
+				B39DC77B279E77230017E28D /* PVGCVRViewController.m */,
 				B382C640278E55C9007E61FE /* PVMetalViewController.h */,
 				B382C641278E55C9007E61FE /* PVMetalViewController.m */,
 				1A3D433917B30BA2004DFFFC /* PVGLViewController.h */,
@@ -2252,12 +2286,15 @@
 				1AD481B21BA350A400FDA50A /* Resources */,
 				1A44C0AE1D0A1E730018751A /* Script: Set Build Number */,
 				1AACCAE61BB60DB500DC21AE /* Embed Frameworks */,
+				B39DC780279E79D40017E28D /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				B383226626ED9F0C0029D12F /* PBXTargetDependency */,
 				B3B29D4C2156185700903290 /* PBXTargetDependency */,
+				B3B4C954279E69AD00505424 /* PBXTargetDependency */,
+				B39DC77F279E79D40017E28D /* PBXTargetDependency */,
 			);
 			name = ProvenanceTV;
 			packageProductDependencies = (
@@ -3190,6 +3227,11 @@
 			target = B383225D26ED9C530029D12F /* Check Git Submodules */;
 			targetProxy = B383226526ED9F0C0029D12F /* PBXContainerItemProxy */;
 		};
+		B39DC77F279E79D40017E28D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BE9FDCB61C210B9E0046DF0E /* TopShelf */;
+			targetProxy = B39DC77E279E79D40017E28D /* PBXContainerItemProxy */;
+		};
 		B3B29D462156183D00903290 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B3B29D3F2156177100903290 /* Create Version files */;
@@ -3209,6 +3251,11 @@
 			isa = PBXTargetDependency;
 			target = B3B29D3F2156177100903290 /* Create Version files */;
 			targetProxy = B3B29D4B2156185700903290 /* PBXContainerItemProxy */;
+		};
+		B3B4C954279E69AD00505424 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BE9FDCB61C210B9E0046DF0E /* TopShelf */;
+			targetProxy = B3B4C953279E69AD00505424 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -4020,7 +4067,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Provenance Watch WatchKit Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit Extension";
-				INFOPLIST_KEY_CLKComplicationPrincipalClass = "$(PRODUCT_MODULE_NAME).ComplicationController";
+				INFOPLIST_KEY_CLKComplicationPrincipalClass = Provenance_Watch_WatchKit_Extension.ComplicationController;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Provenance Emu. All rights reserved.";
 				INFOPLIST_KEY_WKWatchOnly = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -4070,7 +4117,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Provenance Watch WatchKit Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit Extension";
-				INFOPLIST_KEY_CLKComplicationPrincipalClass = "$(PRODUCT_MODULE_NAME).ComplicationController";
+				INFOPLIST_KEY_CLKComplicationPrincipalClass = Provenance_Watch_WatchKit_Extension.ComplicationController;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Provenance Emu. All rights reserved.";
 				INFOPLIST_KEY_WKWatchOnly = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -4119,7 +4166,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Provenance Watch WatchKit Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit Extension";
-				INFOPLIST_KEY_CLKComplicationPrincipalClass = "$(PRODUCT_MODULE_NAME).ComplicationController";
+				INFOPLIST_KEY_CLKComplicationPrincipalClass = Provenance_Watch_WatchKit_Extension.ComplicationController;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Provenance Emu. All rights reserved.";
 				INFOPLIST_KEY_WKWatchOnly = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -4401,7 +4448,7 @@
 				);
 				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "${TOPSHELF_PRODUCT_BUNDLE_IDENTIFIER}";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.topshelf";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -4647,7 +4694,7 @@
 				);
 				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "${TOPSHELF_PRODUCT_BUNDLE_IDENTIFIER}";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.topshelf";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -4687,7 +4734,7 @@
 				);
 				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "${TOPSHELF_PRODUCT_BUNDLE_IDENTIFIER}";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.topshelf";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
