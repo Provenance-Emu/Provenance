@@ -18,9 +18,8 @@ struct SideMenuView: SwiftUI.View {
     var delegate: PVMenuDelegate?
     
     var body: some SwiftUI.View {
-        // should pull consoles list into a lazyvstack at some point
         ScrollView {
-            VStack(alignment: .leading, spacing: 0) {
+            LazyVStack(alignment: .leading, spacing: 0) {
                 Group {
                     MenuItemView(imageName: "prov_settings_gear", rowTitle: "Settings") {
                         delegate?.didTapSettings()
@@ -37,8 +36,6 @@ struct SideMenuView: SwiftUI.View {
                 Group {
                     if let consoles = consoles, consoles.count > 0 {
                         MenuSectionHeaderView(sectionTitle: "CONSOLES", sortable: consoles.count > 1)
-                        // TODO: Group inside VStack may not scale to all consoles
-                        // TODO: if that's the case, bump req up to iOS 14 and use LazyVStack
                         ForEach(consoles, id: \.self) { console in
                             Divider()
                             MenuItemView(imageName: "prov_snes_icon", rowTitle: console.name) {
