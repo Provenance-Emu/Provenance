@@ -33,8 +33,10 @@ struct ConsoleGamesView: SwiftUI.View {
         games = gameLibrary.gamesForSystem(systemIdentifier: self.console.identifier)
     }
     
+    // TODO: nest inside page view
     var body: some SwiftUI.View {
         ScrollView {
+            // TODO: sort options view
             LazyVGrid(columns: columns, spacing: 20) {
                 ForEach(games, id: \.self) { game in
                     GameItemView(
@@ -47,6 +49,7 @@ struct ConsoleGamesView: SwiftUI.View {
                 }
             }
             .padding(.horizontal, 10)
+            // TODO: bios if applicable
         }
         .background(Color.black)
     }
