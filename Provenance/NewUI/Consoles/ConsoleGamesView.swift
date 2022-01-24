@@ -12,31 +12,20 @@ import Foundation
 import SwiftUI
 import RealmSwift
 
-@available(iOS 13.0.0, *)
+@available(iOS 14.0.0, *)
 struct ConsoleGamesView: SwiftUI.View {
     
     var console: PVSystem!
     
     var gameLaunchDelegate: GameLaunchingViewController?
     
+    let columns = [
+        GridItem(.flexible()),
+        GridItem(.flexible()),
+        GridItem(.flexible()),
+    ]
+    
     @State var games: Results<PVGame>
-    
-//    collectionView.rx.itemSelected
-//        .map { indexPath in (try! collectionView.rx.model(at: indexPath) as Section.Item, collectionView.cellForItem(at: indexPath)) }
-//        .compactMap({ item, cell -> Playable? in
-//            switch item {
-//            case .game(let game):
-//                return (game, cell, nil, nil)
-//            case .saves, .favorites, .recents:
-//                // Handled in another place libVC.load(self.saveState!.game, sender: sender, core: nil, saveState: saveState)
-//                return nil
-//            }
-//        })
-//        .bind(to: selectedPlayable)
-//        .disposed(by: disposeBag)
-//
-//    selectedPlayable.bind(onNext: self.load).disposed(by: disposeBag)
-    
     
     init(gameLibrary: PVGameLibrary, console: PVSystem, delegate: GameLaunchingViewController) {
         self.console = console
@@ -44,10 +33,9 @@ struct ConsoleGamesView: SwiftUI.View {
         games = gameLibrary.gamesForSystem(systemIdentifier: self.console.identifier)
     }
     
-    
     var body: some SwiftUI.View {
         ScrollView {
-            VStack {
+            LazyVGrid(columns: columns, spacing: 20) {
                 ForEach(games, id: \.self) { game in
                     DynamicWidthGameItemView(
                         artwork: nil,
@@ -55,14 +43,16 @@ struct ConsoleGamesView: SwiftUI.View {
                         yearReleased: game.publishDate) {
                             gameLaunchDelegate?.load(game, sender: self, core: nil, saveState: nil)
                         }
+                    // TODO: add context menu instead of button
                 }
             }
+            .padding(.horizontal, 10)
         }
         .background(Color.black)
     }
 }
 
-//@available(iOS 13.0.0, *)
+//@available(iOS 14.0.0, *)
 //struct HomeView_Previews: PreviewProvider {
 //    static var previews: some SwiftUI.View {
 //        HomeView()

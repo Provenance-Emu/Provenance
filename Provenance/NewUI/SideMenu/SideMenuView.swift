@@ -11,7 +11,7 @@ import Foundation
 import SwiftUI
 import RealmSwift
 
-@available(iOS 13.0.0, *)
+@available(iOS 14.0.0, *)
 struct SideMenuView: SwiftUI.View {
     
     @State var consoles: Results<PVSystem>?
@@ -60,15 +60,7 @@ struct SideMenuView: SwiftUI.View {
 //                    Divider()
 //                }
                 Group {
-                    MenuSectionHeaderView(sectionTitle: "Quick Settings", sortable: false) // TODO: move into settings screen when that's set up
-                    Divider()
-                    MenuItemView(imageName: "empty_icon", rowTitle: "Toggle New UI") {
-                        delegate?.didTapToggleNewUI()
-                    }
-                    Divider()
-                }
-                Group {
-                    MenuSectionHeaderView(sectionTitle: "Provenance 2.whatever", sortable: false)
+                    MenuSectionHeaderView(sectionTitle: "Provenance 2.something", sortable: false)
                 }
                 Spacer()
             }
@@ -80,7 +72,7 @@ struct SideMenuView: SwiftUI.View {
     }
 }
 
-@available(iOS 13.0.0, *)
+@available(iOS 14.0.0, *)
 struct MenuSectionHeaderView: SwiftUI.View {
     
     var sectionTitle: String
@@ -108,7 +100,7 @@ struct MenuSectionHeaderView: SwiftUI.View {
     }
 }
 
-@available(iOS 13.0.0, *)
+@available(iOS 14.0.0, *)
 struct MenuItemView: SwiftUI.View {
     
     var imageName: String
@@ -130,7 +122,7 @@ struct MenuItemView: SwiftUI.View {
     }
 }
 
-@available(iOS 13.0.0, *)
+@available(iOS 14.0.0, *)
 struct SideMenuView_Previews: PreviewProvider {
     static var previews: some SwiftUI.View {
         SideMenuView()

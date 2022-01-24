@@ -36,7 +36,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         guard let rootNavigation = window?.rootViewController as? UINavigationController else {
             fatalError("No root nav controller")
         }
-        if #available(iOS 13.0.0, *), PVSettingsModel.shared.debugOptions.useSwiftUI {
+        if #available(iOS 14.0.0, *), PVSettingsModel.shared.debugOptions.useSwiftUI {
             let rootViewController = PVRootViewController.instantiate(
                 updatesController: libraryUpdatesController,
                 gameLibrary: gameLibrary,
