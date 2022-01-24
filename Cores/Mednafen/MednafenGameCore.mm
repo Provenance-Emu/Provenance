@@ -193,6 +193,9 @@ static void mednafen_init(MednafenGameCore* current)
     Mednafen::MDFNI_SetSetting("vb.anaglyph.preset", "disabled"); // Disable anaglyph preset
     Mednafen::MDFNI_SetSetting("vb.anaglyph.lcolor", "0xFF0000"); // Anaglyph l color
     Mednafen::MDFNI_SetSetting("vb.anaglyph.rcolor", "0x000000"); // Anaglyph r color
+    
+    Mednafen::MDFNI_SetSetting("vb.default_color", "0xFF0000"); // Anaglyph r color
+
     //MDFNI_SetSetting("vb.allow_draw_skip", "1");      // Allow draw skipping
    
     // Display latency reduction hack.
@@ -205,8 +208,8 @@ static void mednafen_init(MednafenGameCore* current)
     
     // This setting refers to pixels before vb.xscale(fs) scaling is taken into consideration. For example, a value of "100" here will result in a separation of 300 screen pixels if vb.xscale(fs) is set to "3".
     int seperation = [MednafenGameCore intForOption:@"FullTMEMEmulation"];
-    Mednafen::MDFNI_SetSetting("vb.sidebyside.separation", [NSString stringWithFormat:@"%i", seperation].UTF8String);
-    
+    Mednafen::MDFNI_SetSettingUI("vb.sidebyside.separation", seperation);
+    // Mednafen::MDFNI_SetSetting("vb.sidebyside.separation", [NSString stringWithFormat:@"%i", seperation].UTF8String);
     
 	// MARK: SNES Faust settings
     BOOL snes_faust_spex = current.mednafen_snesFast_spex;
