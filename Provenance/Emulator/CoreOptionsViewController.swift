@@ -8,6 +8,7 @@
 
 import Foundation
 import PVSupport
+import UIKit
 
 final class CoreOptionsViewController: QuickTableViewController {
     let core: CoreOptional.Type
@@ -144,25 +145,78 @@ final class CoreOptionsViewController: QuickTableViewController {
                     })
 				case let .range(display, range: range, defaultValue: defaultValue):
 					let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
-					return NavigationRow<SystemSettingsCell>(text: display.title,
-															 detailText: detailText,
-															 icon: nil,
-															 customization: { _, _ in
-															 },
-															 action: { _ in
-					})
+                    let value = core.valueForOption(Int.self, option.key) ?? defaultValue
+                    
+                    #if os(tvOS)
+                    fatalError("Unfinished feature")
+                    #else
+                    return SliderRow<PVSliderCell>(
+                        text: display.title,
+                        detailText: detailText,
+                        value: Float(value),
+                        valueLimits: (min: Float(range.min), max: Float(range.max)),
+                        valueImages: (min: nil, max: nil),
+                        customization: nil)
+                    { _ in
+                        let value = self.core.valueForOption(Int.self, option.key) ?? defaultValue
+                        self.core.setValue(value, forOption: option)
+                    }
+                    #endif
 				case let .rangef(display, range: range, defaultValue: defaultValue):
-					let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
-					return NavigationRow<SystemSettingsCell>(text: display.title,
-															 detailText: detailText,
-															 icon: nil,
-															 customization: { _, _ in
-															 },
-															 action: { _ in
-					})
-				case .string:
-					fatalError("Unfinished feature")
-				case let .group(display, subOptions: subOptions):
+                    let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
+                    let value = core.valueForOption(Float.self, option.key) ?? defaultValue
+                    #if os(tvOS)
+                    fatalError("Unfinished feature")
+                    #else
+                    return SliderRow<PVSliderCell>(
+                        text: display.title,
+                        detailText: detailText,
+                        value: value,
+                        valueLimits: (min: range.min, max: range.max),
+                        valueImages: (min: nil, max: nil),
+                        customization: nil)
+                    { _ in
+                        let value = self.core.valueForOption(Float.self, option.key) ?? defaultValue
+                        self.core.setValue(value, forOption: option)
+                    }
+                    #endif
+                case let .string(display, defaultValue: defaultValue):
+                    let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
+                    let value = core.valueForOption(String.self, option.key) ?? defaultValue
+                    
+                    return NavigationRow<SystemSettingsCell>(text: display.title,
+                                                             detailText: detailText,
+                                                             icon: nil,
+                                                             customization: { _, _ in
+                                                             },
+                                                             action: { _ in
+                                                                 let currentValue: String = self.core.valueForOption(String.self, option.key) ?? option.defaultValue as? String ?? ""
+                                                                 let actionController = UIAlertController(title: display.title, message: nil, preferredStyle: .actionSheet)
+
+                                                                 if let popoverPresentationController = actionController.popoverPresentationController {
+                                                                    let cellRect = self.tableView.rectForRow(at: IndexPath(row: rowIndex, section: 0))
+                                                                    popoverPresentationController.sourceView = self.tableView
+                                                                    popoverPresentationController.sourceRect = cellRect
+                                                                 }
+
+//                                                                 values.forEach { value in
+//                                                                     var title = value.title
+//                                                                     if currentSelection == value.value {
+//                                                                         title += " ✔︎"
+//                                                                     }
+//                                                                     let action = UIAlertAction(title: title, style: .default, handler: { _ in
+//                                                                         self.core.setValue(value.value, forOption: option)
+//                                                                     })
+//                                                                     actionController.addAction(action)
+//                                                                 }
+                                                                 actionController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+                                                                 self.present(actionController, animated: true)
+
+                                                                 if let indexPath = self.tableView.indexPathForSelectedRow {
+                                                                     self.tableView.deselectRow(at: indexPath, animated: false)
+                                                                 }
+                    })
+                case let .group(display, subOptions: subOptions):
 					let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
 //					return self.sections(forGroups: subOptions)
 					return NavigationRow<SystemSettingsCell>(text: display.title,
