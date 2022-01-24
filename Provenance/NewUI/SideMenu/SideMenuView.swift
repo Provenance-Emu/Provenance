@@ -34,7 +34,7 @@ struct SideMenuView: SwiftUI.View {
                     }
                 }
                 Group {
-                    if let consoles = consoles, consoles.count > 0 {
+                    if let consoles = consoles, consoles.count > 0 { // TODO: handle sorting
                         MenuSectionHeaderView(sectionTitle: "CONSOLES", sortable: consoles.count > 1)
                         ForEach(consoles, id: \.self) { console in
                             Divider()
