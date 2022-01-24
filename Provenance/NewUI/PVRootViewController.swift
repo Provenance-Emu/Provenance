@@ -21,8 +21,22 @@ import RealmSwift
 // current circumstances (iOS 11 deployment target, some critical logic being coupled
 // to UIViewControllers, etc.) it will be more easier to integrate by starting here
 // and porting the remaining views/logic over to as conditions change moving forward.
+
+enum PVNavOption {
+    case settings
+    case home
+    case console(title: String)
+    
+    var title: String {
+        switch self {
+        case .settings: return "Settings"
+        case .home: return "Home"
+        case .console(let title):  return title
+        }
+    }
+}
   
-@available(iOS 13.0.0, *)
+@available(iOS 14.0.0, *)
 class PVRootViewController: UIViewController, GameLaunchingViewController, GameSharingViewController {
     
     var menu: PVSideMenu!
@@ -55,7 +69,7 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
         
         let homeView = HomeView(gameLibrary: self.gameLibrary, delegate: self)
         
-        self.loadIntoContainer(newVC: UIHostingController(rootView: homeView))
+        self.loadIntoContainer(.home, newVC: UIHostingController(rootView: homeView))
         
         self.navigationItem.leftBarButtonItem = menuButton
         
@@ -98,14 +112,6 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
         present(menu, animated: true, completion: nil)
     }
     
-    func loadIntoContainer(newVC: UIViewController) {
-        self.containerView.subviews.forEach { $0.removeFromSuperview() }
-        self.children.forEach { $0.removeFromParent() }
-        
-        self.addChildViewController(newVC, toContainerView: self.containerView)
-        self.fillParentView(child: newVC.view, parent: self.containerView)
-    }
-    
     func loadSideMenu() -> PVSideMenu {
         let hostingController = UIHostingController(rootView: SideMenuView(consoles: nil, delegate: self))
         let menu = PVSideMenu(rootViewController: hostingController)
@@ -114,6 +120,23 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
         return menu
     }
     
+    func loadIntoContainer(_ navItem: PVNavOption, newVC: UIViewController) {
+        // remove old view
+        self.containerView.subviews.forEach { $0.removeFromSuperview() }
+        self.children.forEach { $0.removeFromParent() }
+        
+        // set title
+        self.navigationItem.title = navItem.title
+        
+        // set bar button items (if any)
+        switch navItem {
+        case .settings, .home, .console: break
+        }
+        
+        // load new view
+        self.addChildViewController(newVC, toContainerView: self.containerView)
+        self.fillParentView(child: newVC.view, parent: self.containerView)
+    }
 }
 
 // MARK: - Menu Delegate
@@ -127,15 +150,13 @@ protocol PVMenuDelegate {
     func didTapToggleNewUI()
 }
 
-@available(iOS 13.0.0, *)
+@available(iOS 14.0.0, *)
 extension PVRootViewController: PVMenuDelegate {
     func didTapSettings() {
         guard
             let settingsNav = UIStoryboard(name: "Provenance", bundle: nil).instantiateViewController(withIdentifier: "settingsNavigationController") as? UINavigationController,
             let settingsVC = settingsNav.topViewController as? PVSettingsViewController
         else { return }
-        
-        
         
         settingsVC.conflictsController = updatesController
         menu.dismiss(animated: true, completion: nil)
@@ -144,29 +165,24 @@ extension PVRootViewController: PVMenuDelegate {
 //            self.present(settingsNav, animated: true)
 //        })
         // inline (still doesn't show all bar button items)
-        self.navigationItem.title = "Settings"
-        self.loadIntoContainer(newVC: settingsVC)
+        self.loadIntoContainer(.settings, newVC: settingsVC)
     }
 
     func didTapHome() {
         menu.dismiss(animated: true, completion: nil)
         self.navigationItem.title = "Home"
         let homeView = HomeView(gameLibrary: self.gameLibrary, delegate: self)
-        self.loadIntoContainer(newVC: UIHostingController(rootView: homeView))
+        self.loadIntoContainer(.home, newVC: UIHostingController(rootView: homeView))
     }
 
     func didTapAddGames() {
         menu.dismiss(animated: true, completion: nil)
 
-        // TODO: look at PVGameLibraryViewController#getMoreROMs
+        /// from PVGameLibraryViewController#getMoreROMs
         let actionSheet = UIAlertController(title: "Select Import Source", message: nil, preferredStyle: .actionSheet)
         actionSheet.addAction(UIAlertAction(title: "Cloud & Local Files", style: .default, handler: { _ in
             let extensions = [UTI.rom, UTI.artwork, UTI.savestate, UTI.zipArchive, UTI.sevenZipArchive, UTI.gnuZipArchive, UTI.image, UTI.jpeg, UTI.png, UTI.bios, UTI.data].map { $0.rawValue }
-
-            //        let documentMenu = UIDocumentMenuViewController(documentTypes: extensions, in: .import)
-            //        documentMenu.delegate = self
-            //        present(documentMenu, animated: true, completion: nil)
-
+            
             let documentPicker = PVDocumentPickerViewController(documentTypes: extensions, in: .import)
             documentPicker.allowsMultipleSelection = true
             documentPicker.delegate = self
@@ -178,17 +194,7 @@ extension PVRootViewController: PVMenuDelegate {
         })
 
         actionSheet.addAction(webServerAction)
-
         actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        
-//        if let barButtonItem = sender as? UIBarButtonItem {
-//            actionSheet.popoverPresentationController?.barButtonItem = barButtonItem
-//            actionSheet.popoverPresentationController?.sourceView = collectionView
-//        } else if let button = sender as? UIButton {
-//            actionSheet.popoverPresentationController?.sourceView = collectionView
-//            actionSheet.popoverPresentationController?.sourceRect = view.convert(libraryInfoContainerView.convert(button.frame, to: view), to: collectionView)
-//        }
-
         actionSheet.preferredContentSize = CGSize(width: 300, height: 150)
 
         present(actionSheet, animated: true, completion: nil)
@@ -197,11 +203,10 @@ extension PVRootViewController: PVMenuDelegate {
     func didTapConsole(with consoleId: String) {
         menu.dismiss(animated: true, completion: nil)
         guard let console = try? Realm().object(ofType: PVSystem.self, forPrimaryKey: consoleId) else {
-            print("didn't work saddd")
             return
         }
         let consoleGamesView = ConsoleGamesView(gameLibrary: self.gameLibrary, console: console, delegate: self)
-        self.loadIntoContainer(newVC: UIHostingController(rootView: consoleGamesView))
+        self.loadIntoContainer(.console(title: console.name), newVC: UIHostingController(rootView: consoleGamesView))
     }
 
     func didTapCollection(with collection: Int) {
@@ -221,7 +226,7 @@ extension PVRootViewController: PVMenuDelegate {
 }
 
 // MARK: - UIDocumentPickerDelegate
-@available(iOS 13.0.0, *)
+@available(iOS 14.0.0, *)
 extension PVRootViewController: UIDocumentPickerDelegate {
     // copied from PVGameLibraryViewController#documentPicker()
     func documentPicker(_: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
@@ -300,7 +305,7 @@ extension PVRootViewController: UIDocumentPickerDelegate {
 
 // MARK: - Helpers
 
-@available(iOS 13.0.0, *)
+@available(iOS 14.0.0, *)
 extension PVRootViewController {
     
     func addChildViewController(_ child: UIViewController, toContainerView containerView: UIView) {

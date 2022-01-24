@@ -11,7 +11,7 @@
 import Foundation
 import SwiftUI
 
-@available(iOS 13.0.0, *)
+@available(iOS 14.0.0, *)
 struct DynamicWidthGameItemView: SwiftUI.View {
     
     var artworkURL: String?
@@ -29,7 +29,7 @@ struct DynamicWidthGameItemView: SwiftUI.View {
         Button {
             action()
         } label: {
-            VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: 3) {
                 GameItemThumbnail(artwork: artwork)
                 VStack(alignment: .leading, spacing: 0) {
                     GameItemTitle(text: name)
@@ -55,11 +55,11 @@ struct DynamicWidthGameItemView: SwiftUI.View {
     }
 }
 
-@available(iOS 13.0.0, *)
+@available(iOS 14.0.0, *)
 struct ArtworkImageBaseView: SwiftUI.View {
 
     var artwork: UIImage?
-    var placeholder: String = "prov_game_ff3"
+    var placeholder: String = "prov_game_ff3"  // TODO: replace with console-based pref (square for PSX, etc.)
 
     init(artwork: UIImage?) {
         self.artwork = artwork
@@ -78,7 +78,7 @@ struct ArtworkImageBaseView: SwiftUI.View {
     }
 }
 
-@available(iOS 13.0.0, *)
+@available(iOS 14.0.0, *)
 struct GameItemThumbnail: SwiftUI.View {
     var artwork: UIImage?
     var body: some SwiftUI.View {
@@ -92,31 +92,31 @@ struct GameItemThumbnail: SwiftUI.View {
     }
 }
 
-@available(iOS 13.0.0, *)
+@available(iOS 14.0.0, *)
 struct GameItemTitle: SwiftUI.View {
     var text: String
     var body: some SwiftUI.View {
         Text(text)
-            .font(.headline)
+            .font(.system(size: 11))
             .foregroundColor(Color.white) // TOOD: theme colors
             .lineLimit(1)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
-@available(iOS 13.0.0, *)
+@available(iOS 14.0.0, *)
 struct GameItemSubtitle: SwiftUI.View {
     var text: String
     var body: some SwiftUI.View {
         Text(text)
-            .font(.subheadline)
+            .font(.system(size: 8))
             .foregroundColor(Color.gray) // TOOD: theme colors
             .lineLimit(1)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
-@available(iOS 13.0.0, *)
+@available(iOS 14.0.0, *)
 struct ArtworkDynamicWidthPreferenceKey: PreferenceKey {
     static let defaultValue: CGFloat = 0
 
@@ -126,7 +126,7 @@ struct ArtworkDynamicWidthPreferenceKey: PreferenceKey {
     }
 }
 
-@available(iOS 13.0.0, *)
+@available(iOS 14.0.0, *)
 struct GameItemRow: SwiftUI.View {
     
     var body: some SwiftUI.View {
@@ -163,8 +163,7 @@ struct GameItemRow: SwiftUI.View {
 }
 
 // previews
-
-@available(iOS 13.0.0, *)
+@available(iOS 14.0.0, *)
 struct GameItemView_Previews: PreviewProvider {
     static var previews: some SwiftUI.View {
         if #available(iOS 15.0, *) {
