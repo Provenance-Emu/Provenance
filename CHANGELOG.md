@@ -5,6 +5,72 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.5] - 2022-01-26
+
+### Added
+
+- Code Signing is now managed with an XCConfig file. See `CodeSigning.xcconfig.example` for instructions. (Only applies to developers/xcode source installs)
+- Native Metal renderer option [WIP/Buggy]
+- Metal Shaders (CRT, LCD, etc.)
+- Sega Saturn Mutli-CD support
+- N64: Dual Shock 4 touchpad as pause
+- N64: option for Dual Joysticks on DualShock4 as dual controllers (allows Goldeneye dual controller joystock layout from 1 physical dualshock)
+- enumeration options
+- radio selection options
+- per-game option overrides
+- Jaguar options exposed
+- N64 mupen/gliden/rice options exposed
+- Swift UI/UIKit optional code paths at app start (SwiftUI currernly empty, for easier development in future)
+- Mednafen: SNESFaust 1 frame render ahead option (on by default. VERY SNAPPY!)
+- Mednafen : many more sub-core options added
+- Localizations : Chinese Simplifed, Spanish (Only Partially translated WIP)
+- Support new Apple TV Siri remote (MicroGamepad and DirectionalGamepad)
+- NSLocalizedString for most strings in main app source
+- Long press a ROM for quick access to Core Options
+- FPS debug label now includes total CPU and Memory usage.
+- GameBoy Advanced cheat code support
+- APIs for keyboard, mouse, rumble, on-screen joystick. (coming in future release)
+- VirtualBoy side by side mode (for 3D tv's with Side by Side mode. Google Cardboard coming later)
+- XCode will present a warning message if it detects a device build but CodeSigning.xcconfig isn't setup.
+
+### Improved
+
+- If multiple cores support a system, cores are listed in recommended order.
+- Improved logo/header bar for iOS & tvOS
+- Branch prediction compiler hints for tight loops, possibly faster.
+- Fix some excessive thread blocks
+- Replace all spinlocks with atomic operations for better thread performance
+- mupen faster controller polling, various other code speedup tweaks.
+- mupen llvm optimization flags improved (was incorrectly -O2, now -Os)
+- replaced some sloppy force unwraps with proper nil checks and logging
+- Shaders are copied to Documents at load and read from thereafter. This allows locally editing / developing shaders without rebuilding.
+- Catalyst: All cores build now for Intel and M1.
+- Dark Mode UI always on, fixes some color issues
+- Mupen wrapper code organized, refactored
+- Jaguar button layout tweaks
+- Converted more app code from ObjC to Swift
+- check if file exists before attempt to delete, reduces superfulous throws trapping in the debugger
+- Mark various ObjC classes `objc_direct_members`. Should improve Swift to ObjC calls bypassing dynamic dispatch for function pointers (in theory)
+### Fixed
+
+- Conflicts better detected
+- tvOS top buttons sometimes couldn't be selected
+- Faster compile times (improved header imports, compiler flags)
+- Fixed some improper retain cycles in ObjC blocks
+- Fixed rare audio engine nil reference race condition crash
+- Cheat entry UI fixes
+
+### Updated
+
+- N64: Swap left and right triggers to L:Start R:Z Button from other way around prior
+- Updated Swift Packages (RxRealm, Realm, Cocoalumberjack)
+- Improved tvOS UI (top buttons, search, icons, more consistant styling)
+- mupen cxd4 plugin to latest upstream version
+- mupen rsp-hle pluring to latest upstream version
+### Removed
+
+- Removed SteamController support (no one used it and the code caused too many compilations, plus steam controllers are kind of trash, sorry.)
+
 ## [2.0.4] - 2021-12-24
 
 ### Fixed
