@@ -44,7 +44,7 @@ __attribute__((visibility("default")))
 @property (nonatomic, assign) int videoHeight;
 @property (nonatomic, assign) int videoBitDepth;
 
-@property (nonatomic, assign) double sampleRate;
+@property (nonatomic, assign) double mupenSampleRate;
 @property (nonatomic, assign) int videoDepthBitDepth;
 @property (nonatomic, assign) BOOL isNTSC;
 

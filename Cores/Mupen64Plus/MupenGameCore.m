@@ -154,11 +154,11 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
         }
 
         _videoBitDepth = 32; // ignored
-        videoDepthBitDepth = 0; // TODO
+        _videoDepthBitDepth = 0; // TODO
         
-        sampleRate = 33600;
+        _sampleRate = 33600;
         
-        isNTSC = YES;
+        _isNTSC = YES;
 
         _callbackQueue = dispatch_queue_create("org.openemu.MupenGameCore.CallbackHandlerQueue", DISPATCH_QUEUE_SERIAL);
         _callbackHandlers = [[NSMutableDictionary alloc] init];
@@ -547,21 +547,21 @@ static void MupenAudioSampleRateChanged(int SystemType)
 {
     GET_CURRENT_AND_RETURN();
 
-    float currentRate = current->sampleRate;
+    float currentRate = current->_sampleRate;
     
     switch (SystemType)
     {
         default:
         case SYSTEM_NTSC:
-            current->sampleRate = 48681812 / (*AudioInfo.AI_DACRATE_REG + 1);
+            current->_sampleRate = 48681812 / (*AudioInfo.AI_DACRATE_REG + 1);
             break;
         case SYSTEM_PAL:
-            current->sampleRate = 49656530 / (*AudioInfo.AI_DACRATE_REG + 1);
+            current->_sampleRate = 49656530 / (*AudioInfo.AI_DACRATE_REG + 1);
             break;
     }
 
     [[current audioDelegate] audioSampleRateDidChange];
-    ILOG(@"Mupen rate changed %f -> %f\n", currentRate, current->sampleRate);
+    ILOG(@"Mupen rate changed %f -> %f\n", currentRate, current->_sampleRate);
 }
 
 static void MupenAudioLenChanged()
@@ -600,13 +600,13 @@ static void SetIsNTSC()
         case 0x55:
         case 0x58:
         case 0x59:
-            current->isNTSC = NO;
+            current->_isNTSC = NO;
             break;
         case 0x37:
         case 0x41:
         case 0x45:
         case 0x4a:
-            current->isNTSC = YES;
+            current->_isNTSC = YES;
             break;
     }
 }
