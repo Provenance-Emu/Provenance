@@ -17,7 +17,7 @@ extension PVEmulatorViewController {
         core.setPauseEmulation(true)
         isShowingMenu = true
 
-        let actionSheet: UIAlertController = UIAlertController(title: "Game Options", message: nil, preferredStyle: .actionSheet)
+        let actionSheet = UIAlertController(title: "Game Options", message: nil, preferredStyle: .actionSheet)
 
         if traitCollection.userInterfaceIdiom == .pad {
             actionSheet.popoverPresentationController?.sourceView = menuButton
@@ -207,7 +207,8 @@ extension PVEmulatorViewController {
             }))
         }
 
-        let resumeAction = UIAlertAction(title: "Resume", style: .default, handler: { action in
+        // make sure this item is marked .cancel so it will be called even if user dismises popup
+        let resumeAction = UIAlertAction(title: "Resume", style: .cancel, handler: { action in
             self.core.setPauseEmulation(false)
             self.isShowingMenu = false
             self.enableControllerInput(false)

@@ -131,10 +131,12 @@ final class PVConflictViewController: UITableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        #if os(iOS)
         if navigationController == nil || navigationController!.viewControllers.count <= 1 {
             navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(showEditing))
             navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissMe))
         }
+        #endif
     }
 
     @objc func dismissMe() {

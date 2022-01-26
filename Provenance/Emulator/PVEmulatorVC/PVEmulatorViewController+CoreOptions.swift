@@ -11,8 +11,17 @@ import Foundation
 extension PVEmulatorViewController {
     func showCoreOptions() {
         let optionsVC = CoreOptionsViewController(withCore: type(of: core) as! CoreOptional.Type)
+        optionsVC.title = "Core Options"
         let nav = self.navigationController ?? UINavigationController(rootViewController: optionsVC)
-        optionsVC.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissNav))
+        #if os(iOS)
+            optionsVC.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissNav))
+        #else
+            let tap = UITapGestureRecognizer(target: self, action: #selector(self.dismissNav))
+            tap.allowedPressTypes = [.menu]
+            optionsVC.view.addGestureRecognizer(tap)
+            nav.navigationBar.isTranslucent = false
+            nav.navigationBar.backgroundColor =  UIColor.black.withAlphaComponent(0.8)
+        #endif
         present(nav, animated: true, completion: nil)
     }
 }
