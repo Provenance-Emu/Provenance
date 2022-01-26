@@ -113,7 +113,7 @@ OSStatus RenderCallback(void                       *in,
 @property (readwrite, nonatomic, assign) BOOL running;
 @end
 
-__attribute__((objc_direct_members))
+PV_OBJC_DIRECT_MEMBERS
 @implementation OEGameAudio
 
 // No default version for this class
@@ -123,8 +123,7 @@ __attribute__((objc_direct_members))
 }
 
 // Designated Initializer
-- (id)initWithCore:(PVEmulatorCore *)core
-{
+- (id)initWithCore:(PVEmulatorCore *)core {
     self = [super init];
     if(self != nil)
     {
@@ -135,10 +134,6 @@ __attribute__((objc_direct_members))
         } else {
             ILOG(@"Successfully set audio session to ambient");
         }
-
-		// You can adjust the latency of RemoteIO (and, in fact, any other audio framework) by setting the kAudioSessionProperty_PreferredHardwareIOBufferDuration property
-//		float aBufferLength = 0.005; // In seconds
-//		AudioSessionSetProperty(kAudioSessionProperty_PreferredHardwareIOBufferDuration, sizeof(aBufferLength), &aBufferLength);
 
 		_outputDeviceID = 0;
 		volume = 1;
@@ -228,11 +223,10 @@ __attribute__((objc_direct_members))
     desc.componentManufacturer = kAudioUnitManufacturer_Apple;
     
     NSUInteger bufferCount = [gameCore audioBufferCount];
-    if (_contexts)
-        free(_contexts);
+    if (_contexts) { free(_contexts); }
     _contexts = malloc(sizeof(OEGameAudioContext) * bufferCount);
-    for (int i = 0; i < bufferCount; ++i)
-    {
+    
+    for (int i = 0; i < bufferCount; ++i) {
 		TPCircularBufferClear(&([gameCore ringBufferAtIndex:i]->buffer));
 		_contexts[i] = (OEGameAudioContext){&([gameCore ringBufferAtIndex:i]->buffer), (int)[gameCore channelCountForBuffer:i], (int)([gameCore audioBitDepth] /8)};
         

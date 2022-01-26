@@ -60,7 +60,7 @@
 
 @end
 
-__attribute__((objc_direct_members))
+PV_OBJC_DIRECT_MEMBERS
 @implementation PVGLViewController
 
 + (void)initialize

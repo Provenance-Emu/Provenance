@@ -82,7 +82,7 @@ extension MednafenGameCore: CoreOptional {
         
         let videoGroup:CoreOption = .group(.init(title: "Video",
                                                 description: "Video options for all Mednafen cores."),
-                                          subOptions: [video_blit_timesync, video_fs, video_opengl])
+                                          subOptions: [video_blit_timesync, video_fs, video_openglOption])
         
 
         options.append(videoGroup)
@@ -108,9 +108,17 @@ extension MednafenGameCore: CoreOptional {
 
         options.append(psxGroup)
         
+        var vbOptions = [vb_instant_display_hack, vb_sidebyside]
+        vbOptions.append(.range(.init(
+            title: "Side-by-side separation",
+            description: "How many pixels (to VB scale) to seperate left and right images.",
+            requiresRestart: true), range: .init(defaultValue: 0, min: 0, max: 100),
+                               defaultValue: 0))
+
+        
         let vbGroup:CoreOption = .group(.init(title: "VirtualBoy",
                                                      description: ""),
-                                          subOptions: [vb_instant_display_hack, vb_sidebyside])
+                                          subOptions: vbOptions)
         
 
         options.append(vbGroup)
@@ -134,7 +142,7 @@ extension MednafenGameCore: CoreOptional {
                                          defaultValue: false)
     }()
     
-    static var video_opengl: CoreOption = {
+    static var video_openglOption: CoreOption = {
         .bool(.init(
             title: "Use OpenGL",
             description: "Experimental OpenGL mode.",
@@ -189,7 +197,6 @@ extension MednafenGameCore: CoreOptional {
 @objc public extension MednafenGameCore {
     @objc(video_blit_timesync) var video_blit_timesync: Bool { MednafenGameCore.valueForOption(MednafenGameCore.video_blit_timesync).asBool }
     @objc(video_fs) var video_fs: Bool { MednafenGameCore.valueForOption(MednafenGameCore.video_fs).asBool }
-    @objc(video_opengl) var video_opengl: Bool { MednafenGameCore.valueForOption(MednafenGameCore.video_opengl).asBool }
     
     @objc(mednafen_pceFast) var mednafen_pceFast: Bool { MednafenGameCore.valueForOption(MednafenGameCore.pceFastOption).asBool }
     @objc(mednafen_snesFast) var mednafen_snesFast: Bool { MednafenGameCore.valueForOption(MednafenGameCore.snesFastOption).asBool }
@@ -202,4 +209,26 @@ extension MednafenGameCore: CoreOptional {
     
     @objc(vb_sidebyside) var vb_sidebyside: Bool { MednafenGameCore.valueForOption(MednafenGameCore.vb_sidebyside).asBool }
 
+    static func bool(forOption option: String) -> Bool {
+        return valueForOption(Bool.self, option) ?? false
+    }
+
+    static func int(forOption option: String) -> Int {
+        let value = valueForOption(Int.self, option)
+        return value ?? 0
+    }
+
+    static func float(forOption option: String) -> Float {
+        let value = valueForOption(Float.self, option)
+        return value ?? 0
+    }
+
+    static func string(forOption option: String) -> String? {
+        let value = valueForOption(String.self, option)
+        return value
+    }
+    
+    func parseOptions() {
+        self.video_opengl = MednafenGameCore.valueForOption(MednafenGameCore.video_openglOption).asBool;
+    }
 }

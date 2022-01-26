@@ -193,6 +193,9 @@ static void mednafen_init(MednafenGameCore* current)
     Mednafen::MDFNI_SetSetting("vb.anaglyph.preset", "disabled"); // Disable anaglyph preset
     Mednafen::MDFNI_SetSetting("vb.anaglyph.lcolor", "0xFF0000"); // Anaglyph l color
     Mednafen::MDFNI_SetSetting("vb.anaglyph.rcolor", "0x000000"); // Anaglyph r color
+    
+    Mednafen::MDFNI_SetSetting("vb.default_color", "0xFF0000"); // Anaglyph r color
+
     //MDFNI_SetSetting("vb.allow_draw_skip", "1");      // Allow draw skipping
    
     // Display latency reduction hack.
@@ -202,8 +205,11 @@ static void mednafen_init(MednafenGameCore* current)
     
     const char* vb_sidebyside = current.vb_sidebyside ? "sidebyside" : "anaglyph";
     Mednafen::MDFNI_SetSetting("vb.3dmode", vb_sidebyside);
-    //MDFNI_SetSetting("vb.sidebyside.separation", "0"); // This setting refers to pixels before vb.xscale(fs) scaling is taken into consideration. For example, a value of "100" here will result in a separation of 300 screen pixels if vb.xscale(fs) is set to "3".
     
+    // This setting refers to pixels before vb.xscale(fs) scaling is taken into consideration. For example, a value of "100" here will result in a separation of 300 screen pixels if vb.xscale(fs) is set to "3".
+    int seperation = [MednafenGameCore intForOption:@"FullTMEMEmulation"];
+    Mednafen::MDFNI_SetSettingUI("vb.sidebyside.separation", seperation);
+    // Mednafen::MDFNI_SetSetting("vb.sidebyside.separation", [NSString stringWithFormat:@"%i", seperation].UTF8String);
     
 	// MARK: SNES Faust settings
     BOOL snes_faust_spex = current.mednafen_snesFast_spex;
@@ -393,6 +399,7 @@ static void mednafen_init(MednafenGameCore* current)
     }
 
     cheatList = [[NSMutableDictionary alloc] init];
+    [self parseOptions];
 
     return self;
 }
@@ -476,6 +483,7 @@ static void emulation_run(BOOL skipFrame) {
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error
 {
+    [self parseOptions];
     [[NSFileManager defaultManager] createDirectoryAtPath:[self batterySavesPath] withIntermediateDirectories:YES attributes:nil error:NULL];
 
     if([[self systemIdentifier] isEqualToString:@"com.provenance.lynx"])
@@ -647,6 +655,7 @@ static void emulation_run(BOOL skipFrame) {
     frontBufferSurf = new Mednafen::MDFN_Surface(NULL, game->fb_width, game->fb_height, game->fb_width, pix_fmt);
 
     masterClock = game->MasterClock >> 32;
+    BOOL multiDiscGame = NO;
 
     if (self.systemType == MednaSystemPCE)
     {
@@ -666,6 +675,19 @@ static void emulation_run(BOOL skipFrame) {
         game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
         game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
     }
+    else if (self.systemType == MednaSystemSS) {
+        BOOL hasM3u = [path.pathExtension.lowercaseString isEqualToString:@"m3u"];
+        if (hasM3u) {
+            multiDiscGame = YES;
+            
+            // TODO: Make this real
+            // https://gamicus.fandom.com/wiki/List_of_Saturn_video_games_with_multiple_discs
+            self.maxDiscs = 4;
+        }
+        
+        game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
+        game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
+    }
     else if (self.systemType == MednaSystemPSX)
     {
         for(unsigned i = 0; i < multiTapPlayerCount; i++) {
@@ -680,7 +702,6 @@ static void emulation_run(BOOL skipFrame) {
         }
         
         // Multi-Disc check
-        BOOL multiDiscGame = NO;
         NSNumber *discCount = [MednafenGameCore multiDiscPSXGames][self.romSerial];
         if (discCount) {
             self.maxDiscs = [discCount intValue];
@@ -764,45 +785,45 @@ static void emulation_run(BOOL skipFrame) {
 //                return NO;
 //            }
 //        }
-        
-        if (multiDiscGame && ![path.pathExtension.lowercaseString isEqualToString:@"m3u"]) {
-            NSString *m3uPath = [path.stringByDeletingPathExtension stringByAppendingPathExtension:@"m3u"];
-            NSRange rangeOfDocuments = [m3uPath rangeOfString:@"/Documents/" options:NSCaseInsensitiveSearch];
-            if (rangeOfDocuments.location != NSNotFound) {
-                m3uPath = [m3uPath substringFromIndex:rangeOfDocuments.location + 11];
-            }
-
-            if (error) {
-                NSString *message = [NSString stringWithFormat:@"This game requires multiple discs and must be loaded using a m3u file with all %lu discs.\n\nTo enable disc switching and ensure save files load across discs, it cannot be loaded as a single disc.\n\nPlease install a .m3u file with the filename %@.\nSee https://bitly.com/provm3u", self.maxDiscs, m3uPath];
-
-                NSDictionary *userInfo = @{
-                                           NSLocalizedDescriptionKey: @"Failed to load game.",
-                                           NSLocalizedFailureReasonErrorKey: @"Missing required m3u file.",
-                                           NSLocalizedRecoverySuggestionErrorKey: message
-                                           };
-
-                NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                                        code:PVEmulatorCoreErrorCodeMissingM3U
-                                                    userInfo:userInfo];
-
-                *error = newError;
-            }
-            return NO;
-        }
-        
-        if (self.maxDiscs > 1) {
-            // Parse number of discs in m3u
-            NSString *m3uString = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
-            NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@".cue|.ccd" options:NSRegularExpressionCaseInsensitive error:nil];
-            NSUInteger numberOfMatches = [regex numberOfMatchesInString:m3uString options:0 range:NSMakeRange(0, [m3uString length])];
-            
-            ILOG(@"Loaded m3u containing %lu cue sheets or ccd",numberOfMatches);
-        }
     }
     else
     {
         game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
         game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[0]);
+    }
+    
+    if (multiDiscGame && ![path.pathExtension.lowercaseString isEqualToString:@"m3u"]) {
+        NSString *m3uPath = [path.stringByDeletingPathExtension stringByAppendingPathExtension:@"m3u"];
+        NSRange rangeOfDocuments = [m3uPath rangeOfString:@"/Documents/" options:NSCaseInsensitiveSearch];
+        if (rangeOfDocuments.location != NSNotFound) {
+            m3uPath = [m3uPath substringFromIndex:rangeOfDocuments.location + 11];
+        }
+
+        if (error) {
+            NSString *message = [NSString stringWithFormat:@"This game requires multiple discs and must be loaded using a m3u file with all %lu discs.\n\nTo enable disc switching and ensure save files load across discs, it cannot be loaded as a single disc.\n\nPlease install a .m3u file with the filename %@.\nSee https://bitly.com/provm3u", self.maxDiscs, m3uPath];
+
+            NSDictionary *userInfo = @{
+                                       NSLocalizedDescriptionKey: @"Failed to load game.",
+                                       NSLocalizedFailureReasonErrorKey: @"Missing required m3u file.",
+                                       NSLocalizedRecoverySuggestionErrorKey: message
+                                       };
+
+            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                    code:PVEmulatorCoreErrorCodeMissingM3U
+                                                userInfo:userInfo];
+
+            *error = newError;
+        }
+        return NO;
+    }
+    
+    if (self.maxDiscs > 1) {
+        // Parse number of discs in m3u
+        NSString *m3uString = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
+        NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@".cue|.ccd" options:NSRegularExpressionCaseInsensitive error:nil];
+        NSUInteger numberOfMatches = [regex numberOfMatchesInString:m3uString options:0 range:NSMakeRange(0, [m3uString length])];
+        
+        ILOG(@"Loaded m3u containing %lu cue sheets or ccd",numberOfMatches);
     }
 
 //    BOOL success =
