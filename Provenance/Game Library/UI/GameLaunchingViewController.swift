@@ -398,15 +398,16 @@ extension GameLaunchingViewController where Self: UIViewController {
             .filter({ PVSettingsModel.shared.debugOptions.experimentalCores || !$0.disabled })
             .sorted { $0.supportedSystems.count <= $1.supportedSystems.count }
 
-        let coreChoiceAlert = UIAlertController(title: "Multiple cores found", message: "Select which core to use with this game.", preferredStyle: .actionSheet)
+        let coreChoiceAlert = UIAlertController(title: "Multiple cores found", message: "Select which core to use with this game. If not sure, select the 1st option.", preferredStyle: .actionSheet)
         if traitCollection.userInterfaceIdiom == .pad, let senderView = sender as? UIView ?? self.view {
             coreChoiceAlert.popoverPresentationController?.sourceView = senderView
             coreChoiceAlert.popoverPresentationController?.sourceRect = senderView.bounds
         }
 
         for core in cores {
-            let action = UIAlertAction(title: core.projectName, style: .default) { [unowned self] _ in
-                let alwaysUseAlert = UIAlertController(title: nil, message: "Open with \(core.projectName)…", preferredStyle: .actionSheet)
+            let action = UIAlertAction(title: title, style: .default) { [unowned self] _ in
+                let message = "Open with \(core.projectName)…"
+                let alwaysUseAlert = UIAlertController(title: nil, message: message, preferredStyle: .actionSheet)
                 if self.traitCollection.userInterfaceIdiom == .pad, let senderView = sender as? UIView ?? self.view {
                     alwaysUseAlert.popoverPresentationController?.sourceView = senderView
                     alwaysUseAlert.popoverPresentationController?.sourceRect = senderView.bounds
