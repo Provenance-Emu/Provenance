@@ -30,6 +30,10 @@
 //#import "MupenGameCore.h"
 #import <PVMupen64Plus/PVMupen64Plus-Swift.h>
 
+#import "MupenGameCore+Controls.h"
+#import "MupenGameCore+Cheats.h"
+#import "MupenGameCore+Mupen.h"
+
 #import "api/config.h"
 #import "api/m64p_common.h"
 #import "api/m64p_config.h"
@@ -52,28 +56,6 @@
 @import OpenGLES.ES3;
 @import GLKit;
 #endif
-
-#define WIDTH 640
-#define HEIGHT 480
-#define WIDTHf 640.0f
-#define HEIGHTf 480.0f
-
-
-#if TARGET_OS_TV
-#define RESIZE_TO_FULLSCREEN TRUE
-#else
-#define RESIZE_TO_FULLSCREEN [PVSettingsModel.shared nativeScaleEnabled]
-#endif
-
-#import <dlfcn.h>
-
-NSString *MupenControlNames[] = {
-    @"N64_DPadU", @"N64_DPadD", @"N64_DPadL", @"N64_DPadR",
-    @"N64_CU", @"N64_CD", @"N64_CL", @"N64_CR",
-    @"N64_B", @"N64_A", @"N64_R", @"N64_L", @"N64_Z", @"N64_Start"
-}; // FIXME: missing: joypad X, joypad Y, mempak switch, rumble switch
-
-#define N64_ANALOG_MAX 80
 
 #if TARGET_OS_MAC
 @interface MupenGameCore () <PVN64SystemResponderClient>
@@ -120,7 +102,6 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
 @implementation MupenGameCore
 {
     NSData *romData;
-    NSOperationQueue *_inputQueue;
 
     dispatch_semaphore_t mupenWaitToBeginFrameSemaphore;
     dispatch_semaphore_t coreWaitToEndFrameSemaphore;
@@ -153,10 +134,12 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
             _videoHeight = HEIGHT;
         }
 
+//        controllerMode = {PLUGIN_MEMPAK, PLUGIN_MEMPAK, PLUGIN_MEMPAK, PLUGIN_MEMPAK};
+        
         _videoBitDepth = 32; // ignored
         _videoDepthBitDepth = 0; // TODO
         
-        _sampleRate = 33600;
+        _mupenSampleRate = 33600;
         
         _isNTSC = YES;
 
@@ -172,8 +155,7 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
     return self;
 }
 
-- (void)dealloc
-{
+- (void)dealloc {
     SetStateCallback(NULL, NULL);
     SetDebugCallback(NULL, NULL);
     
@@ -254,606 +236,6 @@ static void *dlopen_myself()
     return dlopen(info.dli_fname, RTLD_LAZY | RTLD_GLOBAL);
 }
 
-static void MupenGetKeys(int Control, BUTTONS *Keys)
-{
-    GET_CURRENT_AND_RETURN();
-    
-    [current pollControllers];
-
-    Keys->R_DPAD = current->padData[Control][PVN64ButtonDPadRight];
-    Keys->L_DPAD = current->padData[Control][PVN64ButtonDPadLeft];
-    Keys->D_DPAD = current->padData[Control][PVN64ButtonDPadDown];
-    Keys->U_DPAD = current->padData[Control][PVN64ButtonDPadUp];
-    Keys->START_BUTTON = current->padData[Control][PVN64ButtonStart];
-    Keys->Z_TRIG = current->padData[Control][PVN64ButtonZ];
-    Keys->B_BUTTON = current->padData[Control][PVN64ButtonB];
-    Keys->A_BUTTON = current->padData[Control][PVN64ButtonA];
-    Keys->R_CBUTTON = current->padData[Control][PVN64ButtonCRight];
-    Keys->L_CBUTTON = current->padData[Control][PVN64ButtonCLeft];
-    Keys->D_CBUTTON = current->padData[Control][PVN64ButtonCDown];
-    Keys->U_CBUTTON = current->padData[Control][PVN64ButtonCUp];
-    Keys->R_TRIG = current->padData[Control][PVN64ButtonR];
-    Keys->L_TRIG = current->padData[Control][PVN64ButtonL];
-    Keys->X_AXIS = current->xAxis[Control];
-    Keys->Y_AXIS = current->yAxis[Control];
-}
-
-static void MupenInitiateControllers (CONTROL_INFO ControlInfo)
-{
-    GET_CURRENT_OR_RETURN();
-
-    ControlInfo.Controls[0].Present = 1;
-    ControlInfo.Controls[0].Plugin = PLUGIN_RAW;
-    ControlInfo.Controls[1].Present = current.controller2 != nil;
-    ControlInfo.Controls[1].Plugin = PLUGIN_MEMPAK;
-    ControlInfo.Controls[2].Present = current.controller3 != nil;
-    ControlInfo.Controls[2].Plugin = PLUGIN_MEMPAK;
-    ControlInfo.Controls[3].Present = current.controller4 != nil;
-    ControlInfo.Controls[3].Plugin = PLUGIN_MEMPAK;
-}
-
-static unsigned char DataCRC( unsigned char *Data, int iLenght )
-{
-    unsigned char Remainder = Data[0];
-
-    int iByte = 1;
-    unsigned char bBit = 0;
-
-    while( iByte <= iLenght )
-    {
-        int HighBit = ((Remainder & 0x80) != 0);
-        Remainder = Remainder << 1;
-
-        Remainder += ( iByte < iLenght && Data[iByte] & (0x80 >> bBit )) ? 1 : 0;
-
-        Remainder ^= (HighBit) ? 0x85 : 0;
-
-        bBit++;
-        iByte += bBit/8;
-        bBit %= 8;
-    }
-
-    return Remainder;
-}
-
-/******************************************************************
- Function: ControllerCommand
- Purpose:  To process the raw data that has just been sent to a
- specific controller.
- input:    - Controller Number (0 to 3) and -1 signalling end of
- processing the pif ram.
- - Pointer of data to be processed.
- output:   none
- note:     This function is only needed if the DLL is allowing raw
- data, or the plugin is set to raw
- the data that is being processed looks like this:
- initilize controller: 01 03 00 FF FF FF
- read controller:      01 04 01 FF FF FF FF
- *******************************************************************/
-static void MupenControllerCommand(int Control, unsigned char *Command)
-{
-        // Some stuff from n-rage plugin
-#define RD_GETSTATUS        0x00        // get status
-#define RD_READKEYS         0x01        // read button values
-#define RD_READPAK          0x02        // read from controllerpack
-#define RD_WRITEPAK         0x03        // write to controllerpack
-#define RD_RESETCONTROLLER  0xff        // reset controller
-#define RD_READEEPROM       0x04        // read eeprom
-#define RD_WRITEEPROM       0x05        // write eeprom
-
-#define PAK_IO_RUMBLE       0xC000      // the address where rumble-commands are sent to
-
-    GET_CURRENT_OR_RETURN();
-
-    unsigned char *Data = &Command[5];
-
-    if (Control == -1)
-    return;
-
-    switch (Command[2])
-    {
-        case RD_GETSTATUS:
-        break;
-        case RD_READKEYS:
-        break;
-        case RD_READPAK: {
-//        if (controller[Control].control->Plugin == PLUGIN_RAW)
-//        {
-            unsigned int dwAddress = (Command[3] << 8) + (Command[4] & 0xE0);
-
-            if(( dwAddress >= 0x8000 ) && ( dwAddress < 0x9000 ) )
-            memset( Data, 0x80, 32 );
-            else
-            memset( Data, 0x00, 32 );
-
-            Data[32] = DataCRC( Data, 32 );
-//        }
-        break;
-        }
-        case RD_WRITEPAK: {
-//        if (controller[Control].control->Plugin == PLUGIN_RAW)
-//        {
-            unsigned int dwAddress = (Command[3] << 8) + (Command[4] & 0xE0);
-//            Data[32] = DataCRC( Data, 32 );
-//
-            if ((dwAddress == PAK_IO_RUMBLE) )//&& (rumble.set_rumble_state))
-            {
-                if (*Data)
-                {
-                    [current rumble];
-//                    AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
-//                    rumble.set_rumble_state(Control, RETRO_RUMBLE_WEAK, 0xFFFF);
-//                    rumble.set_rumble_state(Control, RETRO_RUMBLE_STRONG, 0xFFFF);
-                }
-                else
-                {
-//                    rumble.set_rumble_state(Control, RETRO_RUMBLE_WEAK, 0);
-//                    rumble.set_rumble_state(Control, RETRO_RUMBLE_STRONG, 0);
-                }
-            }
-//        }
-
-        break;
-        }
-        case RD_RESETCONTROLLER:
-        break;
-        case RD_READEEPROM:
-        break;
-        case RD_WRITEEPROM:
-        break;
-    }
-}
-
-- (void)pollController:(GCController* _Nullable)controller forIndex:(NSInteger)playerIndex {
-    if (!controller) {
-        return;
-    }
-    if (LIKELY(controller.extendedGamepad)) {
-        GCExtendedGamepad *gamepad     = [controller extendedGamepad];
-        GCControllerDirectionPad *dpad = [gamepad dpad];
-
-        // Left Joystick → Joystick
-        xAxis[playerIndex] = gamepad.leftThumbstick.xAxis.value * N64_ANALOG_MAX;
-        yAxis[playerIndex] = gamepad.leftThumbstick.yAxis.value * N64_ANALOG_MAX;
-
-        // MFi-D-Pad → D-Pad
-        padData[playerIndex][PVN64ButtonDPadUp] = dpad.up.isPressed;
-        padData[playerIndex][PVN64ButtonDPadDown] = dpad.down.isPressed;
-        padData[playerIndex][PVN64ButtonDPadLeft] = dpad.left.isPressed;
-        padData[playerIndex][PVN64ButtonDPadRight] = dpad.right.isPressed;
-
-        // MFi-R2 → Start
-        padData[playerIndex][PVN64ButtonStart] = gamepad.rightTrigger.isPressed;
-        
-        // MFi-L2 → Z
-        padData[playerIndex][PVN64ButtonZ] = gamepad.leftTrigger.isPressed;
-        
-        // If MFi-L2 is not pressed… MFi-L1 → L
-        if (!gamepad.rightShoulder.isPressed) {
-            padData[playerIndex][PVN64ButtonL] = gamepad.leftShoulder.isPressed;
-        }
-        
-        // If MFi-L1 is not pressed… MFi-R1 → R
-        if (!gamepad.leftShoulder.isPressed) {
-            padData[playerIndex][PVN64ButtonR] = gamepad.rightShoulder.isPressed;
-        }
-        // If not C-Mode… MFi-X,A → A,B MFi-Y,B → C←,C↓
-        if (!(gamepad.leftShoulder.isPressed && gamepad.rightShoulder.isPressed)) {
-            padData[playerIndex][PVN64ButtonA] = gamepad.buttonA.isPressed;
-            padData[playerIndex][PVN64ButtonB] = gamepad.buttonX.isPressed;
-            padData[playerIndex][PVN64ButtonCLeft] = gamepad.buttonY.isPressed;
-            padData[playerIndex][PVN64ButtonCDown] = gamepad.buttonB.isPressed;
-        }
-        
-        //C-Mode: MFi-X,Y,A,B -> C←,C↑,C↓,C→
-        if (gamepad.leftShoulder.isPressed && gamepad.rightShoulder.isPressed) {
-            padData[playerIndex][PVN64ButtonCLeft] = gamepad.buttonX.isPressed;
-            padData[playerIndex][PVN64ButtonCUp] = gamepad.buttonY.isPressed;
-            padData[playerIndex][PVN64ButtonCDown] = gamepad.buttonA.isPressed;
-            padData[playerIndex][PVN64ButtonCRight] = gamepad.buttonB.isPressed;
-        }
-
-        // Right Joystick → C Buttons
-        float rightJoystickDeadZone = 0.45;
-        if (!(gamepad.leftShoulder.isPressed && gamepad.rightShoulder.isPressed) && !(gamepad.buttonY.isPressed || gamepad.buttonB.isPressed)) {
-            padData[playerIndex][PVN64ButtonCUp] = gamepad.rightThumbstick.up.value > rightJoystickDeadZone;
-            padData[playerIndex][PVN64ButtonCDown] = gamepad.rightThumbstick.down.value > rightJoystickDeadZone;
-            padData[playerIndex][PVN64ButtonCLeft] = gamepad.rightThumbstick.left.value > rightJoystickDeadZone;
-            padData[playerIndex][PVN64ButtonCRight] = gamepad.rightThumbstick.right.value > rightJoystickDeadZone;
-        }
-    } else if ([controller gamepad]) {
-        GCGamepad *gamepad = [controller gamepad];
-        GCControllerDirectionPad *dpad = [gamepad dpad];
-        
-        if (!gamepad.rightShoulder.isPressed) {
-            // Default
-            xAxis[playerIndex] = (dpad.left.value > 0.5 ? -N64_ANALOG_MAX : 0) + (dpad.right.value > 0.5 ? N64_ANALOG_MAX : 0);
-            yAxis[playerIndex] = (dpad.down.value > 0.5 ? -N64_ANALOG_MAX : 0) + (dpad.up.value > 0.5 ? N64_ANALOG_MAX : 0);
-            
-            padData[playerIndex][PVN64ButtonA] = gamepad.buttonA.isPressed;
-            padData[playerIndex][PVN64ButtonB] = gamepad.buttonX.isPressed;
-            
-            padData[playerIndex][PVN64ButtonCLeft] = gamepad.buttonY.isPressed;
-            padData[playerIndex][PVN64ButtonCDown] = gamepad.buttonB.isPressed;
-        } else {
-            // Alt-Mode
-            padData[playerIndex][PVN64ButtonDPadUp] = dpad.up.isPressed;
-            padData[playerIndex][PVN64ButtonDPadDown] = dpad.down.isPressed;
-            padData[playerIndex][PVN64ButtonDPadLeft] = dpad.left.isPressed;
-            padData[playerIndex][PVN64ButtonDPadRight] = dpad.right.isPressed;
-            
-            padData[playerIndex][PVN64ButtonCLeft] = gamepad.buttonX.isPressed;
-            padData[playerIndex][PVN64ButtonCUp] = gamepad.buttonY.isPressed;
-            padData[playerIndex][PVN64ButtonCDown] = gamepad.buttonA.isPressed;
-            padData[playerIndex][PVN64ButtonCRight] = gamepad.buttonB.isPressed;
-        }
-        
-        padData[playerIndex][PVN64ButtonZ] = gamepad.leftShoulder.isPressed;
-        padData[playerIndex][PVN64ButtonR] = gamepad.rightShoulder.isPressed;
-        
-    }
-#if TARGET_OS_TV
-    else if ([controller microGamepad]) {
-        GCMicroGamepad *gamepad = [controller microGamepad];
-        GCControllerDirectionPad *dpad = [gamepad dpad];
-        
-        xAxis[playerIndex] = (dpad.left.value > 0.5 ? -N64_ANALOG_MAX : 0) + (dpad.right.value > 0.5 ? N64_ANALOG_MAX : 0);
-        yAxis[playerIndex] = (dpad.down.value > 0.5 ? -N64_ANALOG_MAX : 0) + (dpad.up.value > 0.5 ? N64_ANALOG_MAX : 0);
-        
-        padData[playerIndex][PVN64ButtonB] = gamepad.buttonA.isPressed;
-        padData[playerIndex][PVN64ButtonA] = gamepad.buttonX.isPressed;
-    }
-#endif
-}
-
-- (void)pollControllers {
-#define USE_CAPTURE 1
-#define USE_QUEUE 1
-
-#if USE_CAPTURE
-#define controllerForNum(num) [self.controller##num capture]
-#else
-#define controllerForNum(num) self.controller##num
-#endif
-
-#if USE_QUEUE
-		//    const NSOperationQueue *queue = [NSOperationQueue currentQueue];
-			[_inputQueue cancelAllOperations];
-			NSMutableArray<NSBlockOperation*>* ops = [NSMutableArray arrayWithCapacity:4];
-		#define CHECK_CONTROLLER(num) \
-			if(self.controller##num) [ops addObject:[NSBlockOperation blockOperationWithBlock:^{[self pollController:controllerForNum(num) forIndex:(num - 1)];}]]
-
-			CHECK_CONTROLLER(1);
-			CHECK_CONTROLLER(2);
-			CHECK_CONTROLLER(3);
-			CHECK_CONTROLLER(4);
-
-			[_inputQueue addOperations:ops waitUntilFinished:NO];
-#else
-#define CHECK_CONTROLLER(num) if(self.controller##num) [self pollController:controllerForNum(num) forIndex:(num - 1)]
-
-	CHECK_CONTROLLER(1);
-	CHECK_CONTROLLER(2);
-	CHECK_CONTROLLER(3);
-	CHECK_CONTROLLER(4);
-#endif
-#undef CHECK_CONTROLLER
-#undef controllerForNum
-}
-
-static AUDIO_INFO AudioInfo;
-
-static void MupenAudioSampleRateChanged(int SystemType)
-{
-    GET_CURRENT_AND_RETURN();
-
-    float currentRate = current->_sampleRate;
-    
-    switch (SystemType)
-    {
-        default:
-        case SYSTEM_NTSC:
-            current->_sampleRate = 48681812 / (*AudioInfo.AI_DACRATE_REG + 1);
-            break;
-        case SYSTEM_PAL:
-            current->_sampleRate = 49656530 / (*AudioInfo.AI_DACRATE_REG + 1);
-            break;
-    }
-
-    [[current audioDelegate] audioSampleRateDidChange];
-    ILOG(@"Mupen rate changed %f -> %f\n", currentRate, current->_sampleRate);
-}
-
-static void MupenAudioLenChanged()
-{
-    GET_CURRENT_AND_RETURN();
-
-    const int LenReg = *AudioInfo.AI_LEN_REG;
-    uint8_t *ptr = (uint8_t*)(AudioInfo.RDRAM + (*AudioInfo.AI_DRAM_ADDR_REG & 0xFFFFFF));
-    
-    // Swap channels
-    for (uint32_t i = 0; i < LenReg; i += 4)
-    {
-        ptr[i] ^= ptr[i + 2];
-        ptr[i + 2] ^= ptr[i];
-        ptr[i] ^= ptr[i + 2];
-        ptr[i + 1] ^= ptr[i + 3];
-        ptr[i + 3] ^= ptr[i + 1];
-        ptr[i + 1] ^= ptr[i + 3];
-    }
-    
-    [[current ringBufferAtIndex:0] write:ptr maxLength:LenReg];
-}
-
-static void SetIsNTSC()
-{
-    GET_CURRENT_AND_RETURN();
-
-    extern m64p_rom_header ROM_HEADER;
-    switch (ROM_HEADER.Country_code&0xFF)
-    {
-        case 0x44:
-        case 0x46:
-        case 0x49:
-        case 0x50:
-        case 0x53:
-        case 0x55:
-        case 0x58:
-        case 0x59:
-            current->_isNTSC = NO;
-            break;
-        case 0x37:
-        case 0x41:
-        case 0x45:
-        case 0x4a:
-            current->_isNTSC = YES;
-            break;
-    }
-}
-
-static int MupenOpenAudio(AUDIO_INFO info)
-{
-    AudioInfo = info;
-    
-    SetIsNTSC();
-    
-    return M64ERR_SUCCESS;
-}
-
-static void MupenSetAudioSpeed(int percent)
-{
-    // do we need this?
-}
-
-static void ConfigureAll(NSString *romFolder) {
-	ConfigureCore(romFolder);
-	ConfigureVideoGeneral();
-	ConfigureGLideN64(romFolder);
-	ConfigureRICE();
-}
-
-static void ConfigureCore(NSString *romFolder) {
-	GET_CURRENT_AND_RETURN();
-
-	// TODO: Proper path
-	NSBundle *coreBundle = [NSBundle mainBundle];
-	const char *dataPath;
-	dataPath = [[coreBundle resourcePath] fileSystemRepresentation];
-
-	/** Core Config **/
-	m64p_handle config;
-	ConfigOpenSection("Core", &config);
-
-	// set SRAM path
-	ConfigSetParameter(config, "SaveSRAMPath", M64TYPE_STRING, current.batterySavesPath.fileSystemRepresentation);
-	// set data path
-	ConfigSetParameter(config, "SharedDataPath", M64TYPE_STRING, romFolder.fileSystemRepresentation);
-
-	// Use Pure Interpreter if 0, Cached Interpreter if 1, or Dynamic Recompiler if 2 or more"
-	int emulator = [MupenGameCore intForOption:@"CPU Mode"];
-	printf("emulator %i", emulator);
-	ConfigSetParameter(config, "R4300Emulator", M64TYPE_INT, &emulator);
-
-	ConfigSaveSection("Core");
-	/** End Core Config **/
-}
-
-static void ConfigureVideoGeneral() {
-	/** Begin General Video Config **/
-	m64p_handle general;
-	ConfigOpenSection("Video-General", &general);
-
-	// Use fullscreen mode
-	int useFullscreen = 1;
-	ConfigSetParameter(general, "Fullscreen", M64TYPE_BOOL, &useFullscreen);
-
-    int screenWidth = WIDTH;
-    int screenHeight = HEIGHT;
-    if(RESIZE_TO_FULLSCREEN) {
-        CGSize size = UIApplication.sharedApplication.keyWindow.bounds.size;
-        float widthScale = floor(size.height / WIDTHf);
-        float heightScale = floor(size.height / HEIGHTf);
-        float scale = MAX(MIN(widthScale, heightScale), 1);
-        screenWidth =  scale * WIDTHf;
-        screenHeight = scale * HEIGHTf;
-    }
-
-	// Screen width
-	ConfigSetParameter(general, "ScreenWidth", M64TYPE_INT, &screenWidth);
-
-	// Screen height
-	ConfigSetParameter(general, "ScreenHeight", M64TYPE_INT, &screenHeight);
-
-
-    DLOG(@"Setting size to (%i,%i)", screenWidth, screenHeight);
-
-	ConfigSaveSection("Video-General");
-	/** End General Video Config **/
-}
-
-static void ConfigureGLideN64(NSString *romFolder) {
-	/** Begin GLideN64 Config **/
-	m64p_handle gliden64;
-	ConfigOpenSection("Video-GLideN64", &gliden64);
-
-        // 0 = stretch, 1 = 4:3, 2 = 16:9, 3 = adjust
-	int aspectRatio = [MupenGameCore intForOption:@"Aspect Ratio"];
-
-//    if(RESIZE_TO_FULLSCREEN) {
-//        #if TARGET_OS_TV
-//            aspectRatio = 1;
-//        #else
-//            aspectRatio = 3;
-//        #endif
-//    }
-
-    ConfigSetParameter(gliden64, "AspectRatio", M64TYPE_INT, &aspectRatio);
-
-	// Per-pixel lighting
-    int enableHWLighting = MupenGameCore.perPixelLighting ? 1 : 0;
-	ConfigSetParameter(gliden64, "EnableHWLighting", M64TYPE_BOOL, &enableHWLighting);
-
-	// HiRez & texture options
-	//  txHiresEnable, "Use high-resolution texture packs if available."
-	int txHiresEnable = [MupenGameCore boolForOption:@"Enable HiRes Texture packs"];
-	ConfigSetParameter(gliden64, "txHiresEnable", M64TYPE_BOOL, &txHiresEnable);
-
-    // Path to folder with hi-res texture packs.
-	ConfigSetParameter(gliden64, "txPath", M64TYPE_STRING, [romFolder stringByAppendingPathComponent:@"/"].fileSystemRepresentation);
-    // Path to folder where plugin saves texture cache files.
-	ConfigSetParameter(gliden64, "txCachePath", M64TYPE_STRING, [romFolder stringByAppendingPathComponent:@"/cache/"].fileSystemRepresentation);
-    // Path to folder where plugin saves dumped textures.
-	ConfigSetParameter(gliden64, "txDumpPath", M64TYPE_STRING, [romFolder stringByAppendingPathComponent:@"/texture_dump/"].fileSystemRepresentation);
-
-//    if(RESIZE_TO_FULLSCREEN) {
-	// "txFilterMode",
-	// "Texture filter (0=none, 1=Smooth filtering 1, 2=Smooth filtering 2, 3=Smooth filtering 3, 4=Smooth filtering 4, 5=Sharp filtering 1, 6=Sharp filtering 2)"
-	int txFilterMode = [MupenGameCore intForOption:@"Texture Filter Mode"];
-	ConfigSetParameter(gliden64, "txFilterMode", M64TYPE_INT, &txFilterMode);
-
-	// "txEnhancementMode", config.textureFilter.txEnhancementMode,
-	// "Texture Enhancement (0=none, 1=store as is, 2=X2, 3=X2SAI, 4=HQ2X, 5=HQ2XS, 6=LQ2X, 7=LQ2XS, 8=HQ4X, 9=2xBRZ, 10=3xBRZ, 11=4xBRZ, 12=5xBRZ), 13=6xBRZ"
-	int txEnhancementMode = [MupenGameCore intForOption:@"Texture Enhancement Mode"];
-	ConfigSetParameter(gliden64, "txEnhancementMode", M64TYPE_INT, &txEnhancementMode);
-
-	// "txCacheCompression", config.textureFilter.txCacheCompression, "Zip textures cache."
-	int txCacheCompression = [MupenGameCore boolForOption:@"Compress texture cache"];
-	ConfigSetParameter(gliden64, "txCacheCompression", M64TYPE_BOOL, &txCacheCompression);
-
-	// "txSaveCache", config.textureFilter.txSaveCache,
-	// "Save texture cache to hard disk."
-	int txSaveCache = [MupenGameCore boolForOption:@"Save texture cache"];
-	ConfigSetParameter(gliden64, "txSaveCache", M64TYPE_BOOL, &txSaveCache);
-
-	// Warning, anything other than 0 crashes shader compilation
-	// "MultiSampling", config.video.multisampling, "Enable/Disable MultiSampling (0=off, 2,4,8,16=quality)"
-	int MultiSampling = [MupenGameCore intForOption:@"Multi Sampling"];
-	ConfigSetParameter(gliden64, "MultiSampling", M64TYPE_INT, &MultiSampling);
-//    }
-
-
-        //#Gamma correction settings
-//    res = ConfigSetDefaultBool(g_configVideoGliden64, "ForceGammaCorrection", config.gammaCorrection.force, "Force gamma correction.");
-//    assert(res == M64ERR_SUCCESS);
-//    res = ConfigSetDefaultFloat(g_configVideoGliden64, "GammaCorrectionLevel", config.gammaCorrection.level, "Gamma correction level.");
-//    assert(res == M64ERR_SUCCESS);
-
-    /*
-	 "txCacheSize", config.textureFilter.txCacheSize/ gc_uMegabyte, "Size of filtered textures cache in megabytes."
-	*/
-	int txDump = [MupenGameCore boolForOption:@"Texture Dump"];
-	ConfigSetParameter(gliden64, "txDump", M64TYPE_BOOL, &txDump);
-
-	int txFilterIgnoreBG = [MupenGameCore boolForOption:@"Ignore BG Textures"];
-	ConfigSetParameter(gliden64, "txFilterIgnoreBG", M64TYPE_BOOL, &txFilterIgnoreBG);
-
-
-	int txForce16bpp = [MupenGameCore boolForOption:@"Force 16bpp textures"];
-	ConfigSetParameter(gliden64, "txForce16bpp", M64TYPE_BOOL, &txForce16bpp);
-
-
-	// "txHresAltCRC", config.textureFilter.txHresAltCRC, "Use alternative method of paletted textures CRC calculation."
-	int txHresAltCRC = [MupenGameCore boolForOption:@"HiRes Alt CRC"];
-	ConfigSetParameter(gliden64, "txHresAltCRC", M64TYPE_BOOL, &txHresAltCRC);
-
-
-	// "txHiresFullAlphaChannel", "Allow to use alpha channel of high-res texture fully."
-	int txHiresFullAlphaChannel = [MupenGameCore boolForOption:@"HiRes Full Alpha"];;
-	ConfigSetParameter(gliden64, "txHiresFullAlphaChannel", M64TYPE_BOOL, &txHiresFullAlphaChannel);
-
-	// Draw on-screen display if True, otherwise don't draw OSD
-	int osd = [MupenGameCore boolForOption:@"Debug OSD"];
-	ConfigSetParameter(gliden64, "OnScreenDisplay", M64TYPE_BOOL, &osd);
-	ConfigSetParameter(gliden64, "ShowFPS", M64TYPE_BOOL, &osd);			// Show FPS counter.
-	ConfigSetParameter(gliden64, "ShowVIS", M64TYPE_BOOL, &osd);			// Show VI/S counter.
-	ConfigSetParameter(gliden64, "ShowPercent", M64TYPE_BOOL, &osd);		// Show percent counter.
-	ConfigSetParameter(gliden64, "ShowInternalResolution", M64TYPE_BOOL, &osd);	// Show internal resolution.
-	ConfigSetParameter(gliden64, "ShowRenderingResolution", M64TYPE_BOOL, &osd);	// Show rendering resolution.
-
-	ConfigSaveSection("Video-GLideN64");
-	/** End GLideN64 Config **/
-}
-
-static void ConfigureRICE() {
-	/** RICE CONFIG **/
-	m64p_handle rice;
-	ConfigOpenSection("Video-Rice", &rice);
-
-	// Use a faster algorithm to speed up texture loading and CRC computation
-	int fastTextureLoading = [MupenGameCore boolForOption:@"Fast Texture Loading"];
-;
-	ConfigSetParameter(rice, "FastTextureLoading", M64TYPE_BOOL, &fastTextureLoading);
-
-	// Enable this option to have better render-to-texture quality
-	int doubleSizeForSmallTextureBuffer = [MupenGameCore boolForOption:@"DoubleSizeForSmallTxtrBuf"];
-	ConfigSetParameter(rice, "DoubleSizeForSmallTxtrBuf", M64TYPE_BOOL, &doubleSizeForSmallTextureBuffer);
-
-	// N64 Texture Memory Full Emulation (may fix some games, may break others)
-	int fullTEMEmulation = [MupenGameCore boolForOption:@"FullTMEMEmulation"];
-	ConfigSetParameter(rice, "FullTMEMEmulation", M64TYPE_BOOL, &fullTEMEmulation);
-
-	// Use fullscreen mode if True, or windowed mode if False
-	int fullscreen = 1;
-	ConfigSetParameter(rice, "Fullscreen", M64TYPE_BOOL, &fullscreen);
-
-	// If this option is enabled, the plugin will skip every other frame
-	// Breaks some games in my testing -jm
-	int skipFrame = [MupenGameCore boolForOption:@"SkipFrame"];
-	ConfigSetParameter(rice, "SkipFrame", M64TYPE_BOOL, &skipFrame);
-
-	// Enable hi-resolution texture file loading
-	int hiResTextures = [MupenGameCore boolForOption:@"LoadHiResTextures"];
-	ConfigSetParameter(rice, "LoadHiResTextures", M64TYPE_BOOL, &hiResTextures);
-
-	// Use Mipmapping? 0=no, 1=nearest, 2=bilinear, 3=trilinear
-	int mipmapping = 0;
-	ConfigSetParameter(rice, "Mipmapping", M64TYPE_INT, &mipmapping);
-
-	// Enable/Disable Anisotropic Filtering for Mipmapping (0=no filtering, 2-16=quality).
-	// This is uneffective if Mipmapping is 0. If the given value is to high to be supported by your graphic card, the value will be the highest value your graphic card can support. Better result with Trilinear filtering
-	int anisotropicFiltering = 16;
-	ConfigSetParameter(rice, "AnisotropicFiltering", M64TYPE_INT, &anisotropicFiltering);
-
-	// Enable, Disable or Force fog generation (0=Disable, 1=Enable n64 choose, 2=Force Fog)
-	int fogMethod = 1;
-	ConfigSetParameter(rice, "FogMethod", M64TYPE_INT, &fogMethod);
-
-	// Color bit depth to use for textures (0=default, 1=32 bits, 2=16 bits)
-	// 16 bit breaks some games like GoldenEye
-	int textureQuality = 1;
-	ConfigSetParameter(rice, "TextureQuality", M64TYPE_INT, &textureQuality);
-
-	// Enable/Disable MultiSampling (0=off, 2,4,8,16=quality)
-    int multiSampling = RESIZE_TO_FULLSCREEN ? 4 : 0;
-	ConfigSetParameter(rice, "MultiSampling", M64TYPE_INT, &multiSampling);
-
-	// Color bit depth for rendering window (0=32 bits, 1=16 bits)
-	int colorQuality = 0;
-	ConfigSetParameter(rice, "ColorQuality", M64TYPE_INT, &colorQuality);
-
-	/** End RICE CONFIG **/
-	ConfigSaveSection("Video-Rice");
-}
 
 - (void)copyIniFiles:(NSString*)romFolder {
 	NSBundle *coreBundle = [NSBundle mainBundle];
@@ -943,6 +325,8 @@ static void ConfigureRICE() {
 			}
 		}
 	}
+    
+    [self parseOptions];
 
 	// Create hires folder placement
 	[self createHiResFolder:romFolder];
@@ -1180,17 +564,16 @@ static void ConfigureRICE() {
 }
 #endif
 
-- (void)startEmulation
-{
-    if(!self.isRunning)
-    {
+- (void)startEmulation {
+    [self parseOptions];
+
+    if(!self.isRunning) {
         [super startEmulation];
         [NSThread detachNewThreadSelector:@selector(runMupenEmuThread) toTarget:self withObject:nil];
     }
 }
 
-- (void)runMupenEmuThread
-{
+- (void)runMupenEmuThread {
     @autoreleasepool
     {
         [self.renderDelegate startRenderingOnAlternateThread];
@@ -1233,8 +616,7 @@ static void ConfigureRICE() {
     }
 }
 
-- (m64p_error)pluginsUnload
-{
+- (m64p_error)pluginsUnload {
     // shutdown and unload frameworks for plugins
     
     typedef m64p_error (*ptr_PluginShutdown)(void);
@@ -1275,35 +657,31 @@ static void ConfigureRICE() {
     return killTime;
 }
 
-- (void)videoInterrupt
-{
-
-
+- (void)videoInterrupt {
     dispatch_semaphore_signal(coreWaitToEndFrameSemaphore);
     
     dispatch_semaphore_wait(mupenWaitToBeginFrameSemaphore, [self frameTime]);
 }
 
-- (void)swapBuffers
-{
+- (void)swapBuffers {
     [self.renderDelegate didRenderFrameOnAlternateThread];
 }
 
-- (void)executeFrameSkippingFrame:(BOOL)skip
-{
+- (void)executeFrameSkippingFrame:(BOOL)skip {
     dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
     
     dispatch_semaphore_wait(coreWaitToEndFrameSemaphore, [self frameTime]);
 }
 
-- (void)executeFrame
-{
+- (void)executeFrame {
     [self executeFrameSkippingFrame:NO];
 }
 
 - (void)setPauseEmulation:(BOOL)flag
 {
     [super setPauseEmulation:flag];
+    [self parseOptions];
+
     if (flag)
     {
         dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
@@ -1336,133 +714,6 @@ static void ConfigureRICE() {
     [self.frontBufferCondition unlock];
 }
 
-- (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error   {
-    NSAssert(NO, @"Shouldn't be here since we overwrite the async call");
-}
-
-- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
-{
-    __block BOOL wasPaused = [self isEmulationPaused];
-    [self OE_addHandlerForType:M64CORE_STATE_SAVECOMPLETE usingBlock:
-     ^ BOOL (m64p_core_param paramType, int newValue)
-     {
-         [self setPauseEmulation:wasPaused];
-         NSAssert(paramType == M64CORE_STATE_SAVECOMPLETE, @"This block should only be called for save completion!");
-         if(newValue == 0)
-         {
-
-             if (block) {
-                 NSError *error = [NSError errorWithDomain:@"org.openemu.GameCore.ErrorDomain"
-                                                      code:-5
-                                                  userInfo:@{
-                                                             NSLocalizedDescriptionKey : @"Mupen Could not save the current state.",
-                                                             NSFilePathErrorKey : fileName
-                                                             }];
-
-                 dispatch_async(dispatch_get_main_queue(), ^{
-                     block(YES, nil);
-                 });
-
-             }
-             return NO;
-         }
-
-         if (block) {
-             dispatch_async(dispatch_get_main_queue(), ^{
-                 block(YES, nil);
-             });
-         }
-         return NO;
-     }];
-
-    BOOL (^scheduleSaveState)(void) =
-    ^ BOOL {
-        if(CoreDoCommand(M64CMD_STATE_SAVE, 1, (void *)[fileName fileSystemRepresentation]) == M64ERR_SUCCESS)
-        {
-            // Mupen needs to run for a bit for the state saving to take place.
-            [self setPauseEmulation:NO];
-            return YES;
-        }
-
-        return NO;
-    };
-
-    if(scheduleSaveState()) return;
-
-    [self OE_addHandlerForType:M64CORE_EMU_STATE usingBlock:
-     ^ BOOL (m64p_core_param paramType, int newValue)
-     {
-         NSAssert(paramType == M64CORE_EMU_STATE, @"This block should only be called for load completion!");
-         if(newValue != M64EMU_RUNNING && newValue != M64EMU_PAUSED)
-             return YES;
-
-         return !scheduleSaveState();
-     }];
-    
-    [super saveStateToFileAtPath:fileName completionHandler:block];
-}
-
-
-- (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error   {
-    NSAssert(NO, @"Shouldn't be here since we overwrite the async call");
-}
-
-- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
-{
-    __block BOOL wasPaused = [self isEmulationPaused];
-    [self OE_addHandlerForType:M64CORE_STATE_LOADCOMPLETE usingBlock:
-     ^ BOOL (m64p_core_param paramType, int newValue)
-     {
-         NSAssert(paramType == M64CORE_STATE_LOADCOMPLETE, @"This block should only be called for load completion!");
-
-         [self setPauseEmulation:wasPaused];
-         if(newValue == 0)
-         {
-             dispatch_async(dispatch_get_main_queue(), ^{
-                 NSError *error = [NSError errorWithDomain:@"org.openemu.GameCore.ErrorDomain"
-                                                      code:-3
-                                                  userInfo:@{
-                                                             NSLocalizedDescriptionKey : @"Mupen Could not load the save state",
-                                                             NSLocalizedRecoverySuggestionErrorKey : @"The loaded file is probably corrupted.",
-                                                             NSFilePathErrorKey : fileName
-                                                             }];
-                 block(NO, error);
-             });
-             return NO;
-         }
-
-         dispatch_async(dispatch_get_main_queue(), ^{
-             block(YES, nil);
-         });
-
-         return NO;
-     }];
-
-    BOOL (^scheduleLoadState)(void) =
-    ^ BOOL {
-        if(CoreDoCommand(M64CMD_STATE_LOAD, 1, (void *)[fileName fileSystemRepresentation]) == M64ERR_SUCCESS)
-        {
-            // Mupen needs to run for a bit for the state loading to take place.
-            [self setPauseEmulation:NO];
-            return YES;
-        }
-
-        return NO;
-    };
-
-    if(scheduleLoadState()) return;
-
-    [self OE_addHandlerForType:M64CORE_EMU_STATE usingBlock:
-     ^ BOOL (m64p_core_param paramType, int newValue)
-     {
-         NSAssert(paramType == M64CORE_EMU_STATE, @"This block should only be called for load completion!");
-         if(newValue != M64EMU_RUNNING && newValue != M64EMU_PAUSED)
-             return YES;
-
-         return !scheduleLoadState();
-     }];
-}
-
 - (void) tryToResizeVideoTo:(CGSize)size {
     DLOG(@"Calling set video mode size to (%f,%f)", screenWidth, screenHeight);
 
@@ -1470,99 +721,6 @@ static void ConfigureRICE() {
 	if (ptr_PV_ForceUpdateWindowSize != nil) {
 		ptr_PV_ForceUpdateWindowSize(size.width, size.height);
 	}
-}
-
-#pragma mark = Controllers
-
-- (void)didMoveN64JoystickDirection:(PVN64Button)button withValue:(CGFloat)value forPlayer:(NSUInteger)player
-{
-    switch (button)
-    {
-        case PVN64ButtonAnalogUp:
-            yAxis[player] = value * N64_ANALOG_MAX;
-            break;
-        case PVN64ButtonAnalogDown:
-            yAxis[player] = value * -N64_ANALOG_MAX;
-            break;
-        case PVN64ButtonAnalogLeft:
-            xAxis[player] = value * -N64_ANALOG_MAX;
-            break;
-        case PVN64ButtonAnalogRight:
-            xAxis[player] = value * N64_ANALOG_MAX;
-            break;
-        default:
-            break;
-    }
-}
-
-- (void)didPushN64Button:(PVN64Button)button forPlayer:(NSUInteger)player
-{
-    padData[player][button] = 1;
-}
-
-- (void)didReleaseN64Button:(PVN64Button)button forPlayer:(NSUInteger)player
-{
-    padData[player][button] = 0;
-}
-
-- (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled
-{
-// Need to fix ambigious main.h inclusion
-//    // Sanitize
-//    code = [code stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-//    
-//    // Remove any spaces
-//    code = [code stringByReplacingOccurrencesOfString:@" " withString:@""];
-//    
-//    NSString *singleCode;
-//    NSArray *multipleCodes = [code componentsSeparatedByString:@"+"];
-//    m64p_cheat_code *gsCode = (m64p_cheat_code*) calloc([multipleCodes count], sizeof(m64p_cheat_code));
-//    int codeCounter = 0;
-//    
-//    for (singleCode in multipleCodes)
-//    {
-//        if ([singleCode length] == 12) // GameShark
-//        {
-//            // GameShark N64 format: XXXXXXXX YYYY
-//            NSString *address = [singleCode substringWithRange:NSMakeRange(0, 8)];
-//            NSString *value = [singleCode substringWithRange:NSMakeRange(8, 4)];
-//            
-//            // Convert GS hex to int
-//            unsigned int outAddress, outValue;
-//            NSScanner* scanAddress = [NSScanner scannerWithString:address];
-//            NSScanner* scanValue = [NSScanner scannerWithString:value];
-//            [scanAddress scanHexInt:&outAddress];
-//            [scanValue scanHexInt:&outValue];
-//            
-//            gsCode[codeCounter].address = outAddress;
-//            gsCode[codeCounter].value = outValue;
-//            codeCounter++;
-//        }
-//    }
-//    
-//    // Update address directly if code needs GS button pressed
-//    if ((gsCode[0].address & 0xFF000000) == 0x88000000 || (gsCode[0].address & 0xFF000000) == 0xA8000000)
-//    {
-//        *(unsigned char *)((g_rdram + ((gsCode[0].address & 0xFFFFFF)^S8))) = (unsigned char)gsCode[0].value; // Update 8-bit address
-//    }
-//    else if ((gsCode[0].address & 0xFF000000) == 0x89000000 || (gsCode[0].address & 0xFF000000) == 0xA9000000)
-//    {
-//        *(unsigned short *)((g_rdram + ((gsCode[0].address & 0xFFFFFF)^S16))) = (unsigned short)gsCode[0].value; // Update 16-bit address
-//    }
-//    // Else add code as normal
-//    else
-//    {
-//        enabled ? CoreAddCheat([code UTF8String], gsCode, codeCounter+1) : CoreCheatEnabled([code UTF8String], 0);
-//    }
-}
-
-
-@end
-
-@implementation MupenGameCore (Rumble)
-
-- (BOOL)supportsRumble {
-    return TRUE;
 }
 
 @end

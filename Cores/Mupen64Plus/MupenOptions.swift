@@ -13,6 +13,41 @@ extension MupenGameCore: CoreOptional {
 		//    public func valueForOption<T>(_ option: CoreOption<T>) -> T where T : Decodable, T : Encodable {
 		//
 		//    }
+    
+    // MARK: Dual-Joystick
+    // Use Pure Interpreter if 0, Cached Interpreter if 1, or Dynamic Recompiler if 2 or more
+    static var dualJoystickOption: CoreOption = {
+        .bool(.init(
+            title: "Dual joystick on first player",
+            description: "If 1st player controller has dual joysticks, use the right joystick as player 2. For games, such as GoldenEye, that support using 2 N64 controllers for single player input.",
+            requiresRestart: false))
+    }()
+    
+    static func controllerPakOption(forController index: Int) -> CoreOption {
+        /*
+         #define PLUGIN_NONE                 1
+         #define PLUGIN_MEMPAK               2
+         #define PLUGIN_RUMBLE_PAK           3 /* not implemented for non raw data */
+         #define PLUGIN_TRANSFER_PAK         4 /* not implemented for non raw data */
+         #define PLUGIN_RAW                  5 /* the controller plugin is passed in raw data */
+         */
+
+        .enumeration(.init(title: "Controller Pak \(index)",
+                                                description: nil,
+                                                requiresRestart: true),
+                                          values:[
+                                            .init(title: "None", description: "", value: 1),
+                                            .init(title: "Memory Pak", description: "", value: 2),
+//                                            .init(title: "Rumble Pak, description: "", value: 3),
+//                                            .init(title: "Transer Pak", description: "", value: 4),
+                                            .init(title: "Raw Data", description: "Used for Rumble or Transer Pak", value: 5),
+                                          ])
+    }
+    
+    static var controllerPak1: CoreOption = controllerPakOption(forController: 1)
+    static var controllerPak2: CoreOption = controllerPakOption(forController: 2)
+    static var controllerPak3: CoreOption = controllerPakOption(forController: 3)
+    static var controllerPak4: CoreOption = controllerPakOption(forController: 4)
 
 	public static var options: [CoreOption] {
 		var options = [CoreOption]()
@@ -30,6 +65,11 @@ extension MupenGameCore: CoreOptional {
 
 		let pluginsGroup = CoreOption.group(.init(title: "Plugins", description: nil),
 											subOptions: [videoPluginOption, rspOptions])
+        
+        // MARK: -- Controls
+        let controlOptions: [CoreOption] = [dualJoystickOption, controllerPak1, controllerPak2, controllerPak3, controllerPak4]
+        let controlGroup:CoreOption = .group(.init(title: "Controls", description: ""),
+                                             subOptions: controlOptions)
 
 			// MARK: -- Core
 		var coreOptions = [CoreOption]()
@@ -114,7 +154,6 @@ extension MupenGameCore: CoreOptional {
 											.init(title: "4xBRZ", description: "", value: 11),
 											.init(title: "5xBRZ", description: "", value: 12),
 											.init(title: "6xBRZ", description: "", value: 13),
-
 										  ]))
 
 			// MARK: txFilterMode <Enum=0>
@@ -241,7 +280,7 @@ extension MupenGameCore: CoreOptional {
 			//        let videoGroup = CoreOption.group(.init(title: "Video"),
 			//										  subOptions: [glidenGroup, riceGroup])
 		
-		options.append(contentsOf: [coreGroup, pluginsGroup, /*videoGroup,*/ glidenGroup, riceGroup])
+		options.append(contentsOf: [coreGroup, pluginsGroup, controlGroup, /*videoGroup,*/ glidenGroup, riceGroup])
 		return options
 	}
 }
@@ -283,4 +322,21 @@ extension MupenGameCore {
 	public static var perPixelLighting: Bool {
 		return valueForOption(Bool.self, "Hardware Lighting") ?? false
 	}
+}
+
+@objc public extension MupenGameCore {
+  @objc var dualJoystickOption: Bool { MupenGameCore.valueForOption(MupenGameCore.dualJoystickOption).asBool }
+    
+    @objc var controllerPak1Option: Int { MupenGameCore.valueForOption(MupenGameCore.controllerPak1).asInt ?? 1 }
+    @objc var controllerPak2Option: Int { MupenGameCore.valueForOption(MupenGameCore.controllerPak2).asInt ?? 1 }
+    @objc var controllerPak3Option: Int { MupenGameCore.valueForOption(MupenGameCore.controllerPak3).asInt ?? 1 }
+    @objc var controllerPak4Option: Int { MupenGameCore.valueForOption(MupenGameCore.controllerPak4).asInt ?? 1 }
+
+    func parseOptions() {
+        self.dualJoystick = dualJoystickOption
+        self.setMode(controllerPak1Option, forController: 0)
+        self.setMode(controllerPak2Option, forController: 1)
+        self.setMode(controllerPak3Option, forController: 2)
+        self.setMode(controllerPak4Option, forController: 3)
+    }
 }
