@@ -61,7 +61,7 @@ final class PVConflictViewController: UITableViewController {
         rows.bind(to: tableView.rx.items(cellIdentifier: cellIdentifier, cellType: UITableViewCell.self)) { _, row, cell in
             switch row {
             case .conflict(let conflict):
-                cell.textLabel?.text = conflict.path.deletingPathExtension().lastPathComponent
+                cell.textLabel?.text = conflict.path.lastPathComponent
                 cell.accessoryType = .disclosureIndicator
             case .empty(let title):
                 cell.textLabel?.text = title
