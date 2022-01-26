@@ -45,7 +45,9 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             
             window.rootViewController = vc
         }
-        window.makeKeyAndVisible()
+        
+        //do this later, after we got the gameLibrary
+        //window.makeKeyAndVisible()
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
@@ -130,6 +132,8 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         gameLibraryViewController.updatesController = libraryUpdatesController
         gameLibraryViewController.gameImporter = gameImporter
         gameLibraryViewController.gameLibrary = gameLibrary
+        
+        window?.makeKeyAndVisible()
 
         let database = RomDatabase.sharedInstance
         database.refresh()
