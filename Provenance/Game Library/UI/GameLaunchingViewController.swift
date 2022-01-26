@@ -405,7 +405,7 @@ extension GameLaunchingViewController where Self: UIViewController {
         }
 
         for core in cores {
-            let action = UIAlertAction(title: title, style: .default) { [unowned self] _ in
+            let action = UIAlertAction(title: core.projectName, style: .default) { [unowned self] _ in
                 let message = "Open with \(core.projectName)…"
                 let alwaysUseAlert = UIAlertController(title: nil, message: message, preferredStyle: .actionSheet)
                 if self.traitCollection.userInterfaceIdiom == .pad, let senderView = sender as? UIView ?? self.view {
