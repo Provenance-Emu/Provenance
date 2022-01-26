@@ -82,7 +82,7 @@ extension MednafenGameCore: CoreOptional {
         
         let videoGroup:CoreOption = .group(.init(title: "Video",
                                                 description: "Video options for all Mednafen cores."),
-                                          subOptions: [video_blit_timesync, video_fs, video_opengl])
+                                          subOptions: [video_blit_timesync, video_fs, video_openglOption])
         
 
         options.append(videoGroup)
@@ -142,7 +142,7 @@ extension MednafenGameCore: CoreOptional {
                                          defaultValue: false)
     }()
     
-    static var video_opengl: CoreOption = {
+    static var video_openglOption: CoreOption = {
         .bool(.init(
             title: "Use OpenGL",
             description: "Experimental OpenGL mode.",
@@ -197,7 +197,6 @@ extension MednafenGameCore: CoreOptional {
 @objc public extension MednafenGameCore {
     @objc(video_blit_timesync) var video_blit_timesync: Bool { MednafenGameCore.valueForOption(MednafenGameCore.video_blit_timesync).asBool }
     @objc(video_fs) var video_fs: Bool { MednafenGameCore.valueForOption(MednafenGameCore.video_fs).asBool }
-    @objc(video_opengl) var video_opengl: Bool { MednafenGameCore.valueForOption(MednafenGameCore.video_opengl).asBool }
     
     @objc(mednafen_pceFast) var mednafen_pceFast: Bool { MednafenGameCore.valueForOption(MednafenGameCore.pceFastOption).asBool }
     @objc(mednafen_snesFast) var mednafen_snesFast: Bool { MednafenGameCore.valueForOption(MednafenGameCore.snesFastOption).asBool }
@@ -227,5 +226,9 @@ extension MednafenGameCore: CoreOptional {
     static func string(forOption option: String) -> String? {
         let value = valueForOption(String.self, option)
         return value
+    }
+    
+    func parseOptions() {
+        self.video_opengl = MednafenGameCore.valueForOption(MednafenGameCore.video_openglOption).asBool;
     }
 }

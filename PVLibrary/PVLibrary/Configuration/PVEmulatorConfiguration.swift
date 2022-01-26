@@ -587,7 +587,12 @@ public extension PVEmulatorConfiguration {
     @objc
     class func m3uFile(forGame game: PVGame) -> URL? {
         let gamePath = path(forGame: game)
-        let gameDirectory = romDirectory(forSystemIdentifier: game.system.identifier)
+        return m3uFile(forURL: gamePath, indentifier: game.system.identifier)
+    }
+    
+    @objc
+    class func m3uFile(forURL gamePath: URL, indentifier: String) -> URL? {
+        let gameDirectory = romDirectory(forSystemIdentifier: indentifier)
         let filenameWithoutExtension = stripDiscNames(fromFilename: gamePath.deletingPathExtension().lastPathComponent)
 
         do {
