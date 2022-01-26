@@ -95,9 +95,8 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     @IBOutlet var sortOptionsTableView: UITableView!
     lazy var sortOptionsTableViewController: UIViewController = {
-        let optionsTableView = sortOptionsTableView
         let avc = UIViewController()
-        avc.view = optionsTableView
+        avc.view = sortOptionsTableView
         avc.title = "Library Options"
         return avc
     }()
@@ -175,7 +174,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             })
         #else
             navigationController?.navigationBar.isTranslucent = false
-	    let blurEffect = UIBlurEffect(style: UIBlurEffect.Style.dark)
+            let blurEffect = UIBlurEffect(style: UIBlurEffect.Style.dark)
             let blurEffectView = UIVisualEffectView(effect: blurEffect)
             blurEffectView.frame = (self.navigationController?.navigationBar.bounds)!
             self.navigationController?.navigationBar.addSubview(blurEffectView)
@@ -738,12 +737,10 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                 present(sortOptionsTableViewController, animated: true, completion: nil)
             }
         #else
-            // on tvOS use a custom popup controller
-            let navController = TVPopupController(rootViewController: sortOptionsTableViewController)
             sortOptionsTableView.layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
             sortOptionsTableViewController.preferredContentSize = CGSize(width:800, height:sortOptionsTableView.contentSize.height);
-            navController.modalPresentationStyle = .overFullScreen // .blurOverFullScreen OR .overFullScreen
-            present(navController, animated: true, completion: nil)
+            let pvc = TVPopupController(rootViewController:sortOptionsTableViewController)
+            present(pvc, animated: true, completion: nil)
         #endif
     }
 
@@ -927,29 +924,14 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     private func longPressed(item: Section.Item, at indexPath: IndexPath, point: CGPoint) {
         let cell = collectionView!.cellForItem(at: indexPath)!
-        #if os(iOS) && !targetEnvironment(macCatalyst)
-            presentActionSheetViewControllerForPopoverPresentation(contextMenu(for: item, cell: cell, point: point),
-                                                               sourceView: cell)
-        #elseif targetEnvironment(macCatalyst)
         let actionSheet = contextMenu(for: item, cell: cell, point: point)
-        if traitCollection.userInterfaceIdiom == .mac {
-            actionSheet.popoverPresentationController?.sourceView = cell
-            actionSheet.popoverPresentationController?.sourceRect = (collectionView?.layoutAttributesForItem(at: indexPath)?.bounds ?? CGRect.zero)
-        }
 
+        actionSheet.popoverPresentationController?.sourceView = cell
+        actionSheet.popoverPresentationController?.sourceRect = cell.bounds
         present(actionSheet, animated: true)
-        #else
-            let actionSheet = contextMenu(for: item, cell: cell, point: point)
+    }
 
-            if traitCollection.userInterfaceIdiom == .pad {
-                actionSheet.popoverPresentationController?.sourceView = cell
-                actionSheet.popoverPresentationController?.sourceRect = (collectionView?.layoutAttributesForItem(at: indexPath)?.bounds ?? CGRect.zero)
-			}
-            present(actionSheet, animated: true)
-        #endif
-        }
-
-    private func contextMenu(for item: Section.Item, cell: UICollectionViewCell, point: CGPoint) -> UIAlertController {
+    private func contextMenu(for item: Section.Item, cell: UICollectionViewCell, point: CGPoint) -> UIViewController {
         switch item {
         case .game(let game):
             return contextMenu(for: game, sender: cell)
@@ -965,20 +947,23 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         }
     }
     
-    private func showCoreOptions(forCore core: CoreOptional.Type) {
+    private func showCoreOptions(forCore core: CoreOptional.Type, withTitle title:String) {
         let optionsVC = CoreOptionsViewController(withCore: core)
-        
-//        let nav = UINavigationController(rootViewController: optionsVC)
-//        coreOptionsVC.title = row.text
-//        optionsVC.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissNav))
-        self.navigationController?.pushViewController(optionsVC, animated: true)
-//        present(nav, animated: true, completion: nil)
+        optionsVC.title = title
+        #if os(iOS)
+            self.navigationController?.pushViewController(optionsVC, animated: true)
+        #else
+            let nav = UINavigationController(rootViewController: optionsVC)
+            nav.navigationBar.isTranslucent = false
+            nav.navigationBar.backgroundColor =  UIColor.black.withAlphaComponent(0.8)
+            present(nav, animated: true, completion: nil)
+        #endif
     }
 
-    private func contextMenu(for game: PVGame, sender: UIView) -> UIAlertController {
+    private func contextMenu(for game: PVGame, sender: UIView) -> UIViewController {
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         #if os(tvOS)
-        actionSheet.message = "Options for \(game.title)"
+        actionSheet.title = "Options for \(game.title)"
         #endif
         // If game.system has multiple cores, add actions to manage
         if let system = game.system, system.cores.count > 1 {
@@ -991,7 +976,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                 actionSheet.addAction(UIAlertAction(title: "Reset default core selection (\(coreName))", style: .default, handler: { [unowned self] _ in
 
                     let resetAlert = UIAlertController(title: "Reset core?", message: "Are you sure you want to reset \(game.title) to no longer default to use \(coreName)?", preferredStyle: .alert)
-                    resetAlert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+                    resetAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
                     resetAlert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { _ in
                         try! RomDatabase.sharedInstance.writeTransaction {
                             game.userPreferredCoreID = nil
@@ -1010,7 +995,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         if let system = game.system, system.cores.count == 1, let pvcore = system.cores.first, let coreClass = NSClassFromString(pvcore.principleClass) as? CoreOptional.Type {
 
             actionSheet.addAction(UIAlertAction(title: "\(pvcore.projectName) options", style: .default, handler: { (_: UIAlertAction) -> Void in
-                self.showCoreOptions(forCore: coreClass)
+                self.showCoreOptions(forCore: coreClass, withTitle:pvcore.projectName)
             }))
         }
 
@@ -1121,8 +1106,8 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         return actionSheet
     }
 
-    private func contextMenu(for saveState: PVSaveState) -> UIAlertController {
-        let actionSheet = UIAlertController(title: "Delete this save state?", message: nil, preferredStyle: .actionSheet)
+    private func contextMenu(for saveState: PVSaveState) -> UIViewController {
+        let actionSheet = UIAlertController(title: "Delete this save state?", message: nil, preferredStyle: .alert)
 
         actionSheet.addAction(UIAlertAction(title: "Yes", style: .destructive) { [unowned self] _ in
             do {
@@ -1247,6 +1232,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         }
 
         private func presentActionSheetViewControllerForPopoverPresentation(_ alertController: UIAlertController, sourceView: UIView) {
+            
             if traitCollection.userInterfaceIdiom == .pad {
                 alertController.popoverPresentationController?.sourceView = sourceView
                 alertController.popoverPresentationController?.sourceRect = sourceView.bounds

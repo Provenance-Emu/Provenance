@@ -252,7 +252,7 @@
                             </stackView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="GjV-Kx-6VO"/>
-                        <color key="backgroundColor" systemColor="tableCellGroupedBackgroundColor"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="8Rk-2X-23P" firstAttribute="leading" secondItem="GjV-Kx-6VO" secondAttribute="leading" constant="20" id="5My-XJ-KLX"/>
                             <constraint firstItem="GjV-Kx-6VO" firstAttribute="top" secondItem="8Rk-2X-23P" secondAttribute="top" constant="11" id="9M4-Ph-zhF"/>

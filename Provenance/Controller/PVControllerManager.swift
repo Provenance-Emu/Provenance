@@ -79,6 +79,7 @@ final class PVControllerManager: NSObject {
     }
 
     var iCadeController: PViCadeController?
+    var keyboardController: GCController?
     var hasControllers: Bool {
         return player1 != nil || player2 != nil || player3 != nil || player4 != nil
     }
@@ -144,10 +145,10 @@ final class PVControllerManager: NSObject {
 
     override init() {
         super.init()
-
-        //
-        if isSimulator {
-            return
+        
+        if #available(iOS 14.0, tvOS 14.0, *) {
+            NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleKeyboardConnect(_:)), name: .GCKeyboardDidConnect, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleKeyboardDisconnect(_:)), name: .GCKeyboardDidDisconnect, object: nil)
         }
 
         NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleControllerDidConnect(_:)), name: .GCControllerDidConnect, object: nil)
@@ -203,6 +204,10 @@ final class PVControllerManager: NSObject {
             ELOG("Object wasn't a GCController")
             return
         }
+        // ignore the bogus controller in the simulator
+        if isSimulator && controller.vendorName == nil {
+            return
+        }
 
 #if !targetEnvironment(macCatalyst) && canImport(SteamController)
         if let steamController = controller as? SteamController {
@@ -254,6 +259,22 @@ final class PVControllerManager: NSObject {
         }
         if !assigned {
             NotificationCenter.default.post(name: NSNotification.Name.PVControllerManagerControllerReassigned, object: self)
+        }
+    }
+    
+    @available(tvOS 14.0, *)
+    @objc func handleKeyboardConnect(_ note: Notification?) {
+        if let controller = GCKeyboard.coalesced?.createController() {
+            keyboardController = controller
+            NotificationCenter.default.post(name:.GCControllerDidConnect, object: controller)
+        }
+    }
+    
+    @available(tvOS 14.0, *)
+    @objc func handleKeyboardDisconnect(_ note: Notification?) {
+        if let controller = keyboardController {
+            keyboardController = nil
+            NotificationCenter.default.post(name:.GCControllerDidDisconnect, object:controller)
         }
     }
 
@@ -326,17 +347,27 @@ final class PVControllerManager: NSObject {
     func controller(forPlayer player: Int) -> GCController? {
         return allLiveControllers[player]
     }
+    
+    // a filtered and augmented version of CGControllers.controllers()
+    func controllers() -> [GCController] {
+        var controllers = GCController.controllers()
+        if let aController = iCadeController {
+            controllers.append(aController)
+        }
+        else if let aController = keyboardController {
+            controllers.append(aController)
+        }
+        // ignore the bogus controller in the simulator
+        if isSimulator {
+            controllers = controllers.filter({$0.vendorName != nil})
+        }
+        return controllers
+    }
 
     @discardableResult
     func assignControllers() -> Bool {
-        var controllers = GCController.controllers()
-        if iCadeController != nil {
-            if let aController = iCadeController {
-                controllers.append(aController)
-            }
-        }
         var assigned = false
-        controllers.forEach { controller in
+        controllers().forEach { controller in
             if !allLiveControllers.contains(where: { (_, existingController) -> Bool in
                 controller == existingController
             }) {
@@ -358,8 +389,8 @@ final class PVControllerManager: NSObject {
         // if this is an extended controller, replace the first controller which is not extended (the Siri remote on tvOS).
         for i in 1 ... 4 {
             let previouslyAssignedController: GCController? = self.controller(forPlayer: i)
-            let newGamepadNotRemote = controller.extendedGamepad != nil
-            let previousGamepadNotRemote = previouslyAssignedController?.extendedGamepad != nil
+            let newGamepadNotRemote = !(controller.isRemote || controller.isKeyboard)
+            let previousGamepadNotRemote = !((previouslyAssignedController?.isRemote == true) || (previouslyAssignedController?.isKeyboard == true))
 
             // Skip making duplicate
             if let previouslyAssignedController = previouslyAssignedController, previouslyAssignedController == controller {
@@ -387,4 +418,81 @@ final class PVControllerManager: NSObject {
         }
     }
 #endif
+}
+
+// MARK: - Controller type detection
+
+extension GCController {
+    var isRemote: Bool {
+        return self.extendedGamepad == nil && self.microGamepad != nil
+    }
+    var isKeyboard: Bool {
+        if #available(iOS 14.0, tvOS 14.0, *) {
+            return isSnapshot && vendorName?.contains("Keyboard") == true
+        } else {
+            return false
+        }
+    }
+}
+
+// MARK: - Keyboard Controller
+
+//
+// create a GCController that turns a keyboard into a controller
+//
+// [TILDE:MENU] [1:OPTIONS]
+//
+// [TAB:L1]    [Q:X]     [W:UP]   [E:Y]     [R:R1]
+//             [A:LEFT]  [S:DOWN] [D:RIGHT] [F:B]    [RETURN:A]
+// [LSHIFT:L2]                              [V:R2]                     [UP]
+//                       [SPACE:A]                             [LEFT] [DOWN] [RIGHT]
+//
+@available(tvOS 14.0, *)
+extension GCKeyboard {
+    func createController() -> GCController? {
+        guard let keyboard = self.keyboardInput else {return nil}
+        
+        let controller = GCController.withExtendedGamepad()
+        let gamepad = controller.extendedGamepad!
+        
+        controller.setValue(self.vendorName ?? "Keyboard", forKey: "vendorName")
+
+        keyboard.keyChangedHandler = {(keyboard, button, key, pressed) -> Void in
+            //print("\(button) \(key) \(pressed)")
+            
+            func isPressed(_ code:GCKeyCode) -> Bool {
+                return keyboard.button(forKeyCode:code)?.isPressed ?? false
+            }
+            
+            // DPAD
+            let dpad_x:Float = isPressed(.rightArrow) ? 1.0 : isPressed(.leftArrow) ? -1.0 : 0.0
+            let dpad_y:Float = isPressed(.upArrow)    ? 1.0 : isPressed(.downArrow) ? -1.0 : 0.0
+            gamepad.dpad.setValueForXAxis(dpad_x, yAxis:dpad_y)
+
+            // WASD
+            let left_x:Float = isPressed(.keyD) ? 1.0 : isPressed(.keyA) ? -1.0 : 0.0
+            let left_y:Float = isPressed(.keyW) ? 1.0 : isPressed(.keyS) ? -1.0 : 0.0
+            gamepad.leftThumbstick.setValueForXAxis(left_x, yAxis:left_y)
+
+            // ABXY
+            gamepad.buttonA.setValue(isPressed(.spacebar) || isPressed(.returnOrEnter) ? 1.0 : 0.0)
+            gamepad.buttonB.setValue(isPressed(.keyF) ? 1.0 : 0.0)
+            gamepad.buttonX.setValue(isPressed(.keyQ) ? 1.0 : 0.0)
+            gamepad.buttonY.setValue(isPressed(.keyE) ? 1.0 : 0.0)
+
+            // L1, L2
+            gamepad.leftShoulder.setValue(isPressed(.tab) ? 1.0 : 0.0)
+            gamepad.leftTrigger.setValue(isPressed(.leftShift) ? 1.0 : 0.0)
+
+            // R1, R2
+            gamepad.rightShoulder.setValue(isPressed(.keyR) ? 1.0 : 0.0)
+            gamepad.rightTrigger.setValue(isPressed(.keyV) ? 1.0 : 0.0)
+
+            // MENU, OPTIONS
+            gamepad.buttonMenu.setValue(isPressed(.graveAccentAndTilde) ? 1.0 : 0.0)
+            gamepad.buttonOptions?.setValue(isPressed(.one) ? 1.0 : 0.0)
+        }
+        
+        return controller
+    }
 }
