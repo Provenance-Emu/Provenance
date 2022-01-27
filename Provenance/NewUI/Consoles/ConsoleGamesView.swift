@@ -33,7 +33,6 @@ struct ConsoleGamesView: SwiftUI.View {
         games = gameLibrary.gamesForSystem(systemIdentifier: self.console.identifier)
     }
     
-    // TODO: nest inside page view
     var body: some SwiftUI.View {
         ScrollView {
             // TODO: sort options view
@@ -41,11 +40,12 @@ struct ConsoleGamesView: SwiftUI.View {
                 ForEach(games, id: \.self) { game in
                     GameItemView(
                         artwork: nil,
+                        artworkType: console.gameArtworkType,
                         name: game.title,
                         yearReleased: game.publishDate) {
                             gameLaunchDelegate?.load(game, sender: self, core: nil, saveState: nil)
                         }
-                    // TODO: add context menu instead of button
+                    // TODO: add context menu in addition to button
                 }
             }
             .padding(.horizontal, 10)
