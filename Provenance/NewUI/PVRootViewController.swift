@@ -205,12 +205,12 @@ extension PVRootViewController: PVMenuDelegate {
         guard let console = try? Realm().object(ofType: PVSystem.self, forPrimaryKey: consoleId) else {
             return
         }
-        let consoleGamesView = ConsoleGamesView(gameLibrary: self.gameLibrary, console: console, delegate: self)
-        self.loadIntoContainer(.console(title: console.name), newVC: UIHostingController(rootView: consoleGamesView))
+//        let consoleGamesView = ConsoleGamesView(gameLibrary: self.gameLibrary, console: console, delegate: self)
+        let consolesView = ConsolesWrapperView(gameLibrary: self.gameLibrary, delegate: self, selectedTab: console.identifier)
+        self.loadIntoContainer(.console(title: console.name), newVC: UIHostingController(rootView: consolesView))
     }
 
-    func didTapCollection(with collection: Int) {
-//        self.loadIntoContainer(newVC: PVConsoleGamesViewController())
+    func didTapCollection(with collection: Int) { // TODO: collection at a future date
     }
     
     func didTapToggleNewUI() {

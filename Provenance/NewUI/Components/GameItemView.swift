@@ -16,6 +16,7 @@ struct GameItemView: SwiftUI.View {
     
     var artworkURL: String?
     @State var artwork: UIImage?
+    var artworkType: GameArtworkType
     var name: String
     var yearReleased: String?
     
@@ -30,7 +31,7 @@ struct GameItemView: SwiftUI.View {
             action()
         } label: {
             VStack(alignment: .leading, spacing: 3) {
-                GameItemThumbnail(artwork: artwork)
+                GameItemThumbnail(artwork: artwork, artworkType: artworkType)
                 VStack(alignment: .leading, spacing: 0) {
                     GameItemTitle(text: name)
                     if let yearReleased = yearReleased {
@@ -39,7 +40,7 @@ struct GameItemView: SwiftUI.View {
                 }
                 .frame(width: textMaxWidth)
             }
-            .frame(height: 150.0) // TODO: will likely want to make this platform-specific
+            .frame(height: 150.0)
             .onPreferenceChange(ArtworkDynamicWidthPreferenceKey.self) {
                 textMaxWidth = $0
             }
@@ -58,10 +59,11 @@ struct GameItemView: SwiftUI.View {
 struct ArtworkImageBaseView: SwiftUI.View {
 
     var artwork: UIImage?
-    var placeholder: String = "prov_game_ff3"  // TODO: replace with console-based pref (square for PSX, etc.)
+    var artworkType: GameArtworkType
 
-    init(artwork: UIImage?) {
+    init(artwork: UIImage?, artworkType: GameArtworkType) {
         self.artwork = artwork
+        self.artworkType = artworkType
     }
     
     var body: some SwiftUI.View {
@@ -70,7 +72,7 @@ struct ArtworkImageBaseView: SwiftUI.View {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
         } else {
-            Image("prov_game_ff3")
+            Image(artworkType.emptyViewName)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
         }
@@ -80,8 +82,9 @@ struct ArtworkImageBaseView: SwiftUI.View {
 @available(iOS 14.0.0, *)
 struct GameItemThumbnail: SwiftUI.View {
     var artwork: UIImage?
+    var artworkType: GameArtworkType
     var body: some SwiftUI.View {
-        ArtworkImageBaseView(artwork: artwork)
+        ArtworkImageBaseView(artwork: artwork, artworkType: artworkType)
             .background(GeometryReader { geometry in
                 Color.clear.preference(
                     key: ArtworkDynamicWidthPreferenceKey.self,
@@ -134,26 +137,31 @@ struct GameItemRow: SwiftUI.View {
                 GameItemView(
                     artworkURL: "",
                     artwork: UIImage(named: "prov_game_ff") ?? UIImage(),
+                    artworkType: .tall,
                     name: "Final Fantasy",
                     yearReleased: "2019") {}
                 GameItemView(
                     artworkURL: "",
                     artwork: UIImage(named: "prov_game_ff3") ?? UIImage(),
+                    artworkType: .wide,
                     name: "Final Fantasy III",
                     yearReleased: "2019") {}
                 GameItemView(
                     artworkURL: "",
                     artwork: UIImage(named: "prov_game_ff7s") ?? UIImage(),
+                    artworkType: .square,
                     name: "Final Fantasy III",
                     yearReleased: "2019") {}
                 GameItemView(
                     artworkURL: "",
                     artwork: UIImage(named: "prov_game_linktothepast") ?? UIImage(),
+                    artworkType: .wide,
                     name: "The Legend of Zelda: A Link to The Past",
                     yearReleased: "2019") {}
                 GameItemView(
                     artworkURL: "",
                     artwork: UIImage(named: "prov_game_fft") ?? UIImage(),
+                    artworkType: .square,
                     name: "Final Fantasy Tactics Advance",
                     yearReleased: "2019") {}
             }

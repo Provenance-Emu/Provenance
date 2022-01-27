@@ -66,6 +66,7 @@ struct HomeView: SwiftUI.View {
                         ForEach(recentSaveStates, id: \.self) { recentSaveState in
                             GameItemView(
                                 artwork: nil,
+                                artworkType: recentSaveState.game.system.gameArtworkType,
                                 name: recentSaveState.game.title,
                                 yearReleased: recentSaveState.game.publishDate) {
                                     gameLaunchDelegate?.load(recentSaveState.game, sender: self, core: nil, saveState: recentSaveState)
@@ -78,6 +79,7 @@ struct HomeView: SwiftUI.View {
                         ForEach(recentlyPlayedGames, id: \.self) { recentlyPlayedGame in
                             GameItemView(
                                 artwork: nil,
+                                artworkType: recentlyPlayedGame.game.system.gameArtworkType,
                                 name: recentlyPlayedGame.game.title,
                                 yearReleased: recentlyPlayedGame.game.publishDate) {
                                     gameLaunchDelegate?.load(recentlyPlayedGame.game, sender: self, core: nil, saveState: nil)
@@ -90,6 +92,7 @@ struct HomeView: SwiftUI.View {
                         ForEach(favorites, id: \.self) { favorite in
                             GameItemView(
                                 artwork: nil,
+                                artworkType: favorite.system.gameArtworkType,
                                 name: favorite.title,
                                 yearReleased: favorite.publishDate) {
                                     gameLaunchDelegate?.load(favorite, sender: self, core: nil, saveState: nil)
@@ -102,6 +105,7 @@ struct HomeView: SwiftUI.View {
                         ForEach(mostPlayed, id: \.self) { playedGame in
                             GameItemView(
                                 artwork: nil,
+                                artworkType: playedGame.system.gameArtworkType,
                                 name: playedGame.title,
                                 yearReleased: playedGame.publishDate) {
                                     gameLaunchDelegate?.load(playedGame, sender: self, core: nil, saveState: nil)
