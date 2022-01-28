@@ -16,13 +16,13 @@ struct GameContextMenu: SwiftUI.View {
     
     @ObservedObject var game: PVGame
     
-    var gameLaunchDelegate: GameLaunchingViewController?
+    var rootDelegate: PVRootDelegate?
     
     var body: some SwiftUI.View {
         Group {
             // Open with...
             Button {
-                gameLaunchDelegate?.load(game, sender: self, core: nil, saveState: nil)
+                rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
             } label: {
                 Text("Open with...")
             }
@@ -33,7 +33,17 @@ struct GameContextMenu: SwiftUI.View {
             // Choose Cover
             // Paste Cover
             // Share
+            Divider()
             // Delete
+            if #available(iOS 15.0, *) {
+                Button(role: .destructive) {
+                    rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                } label: { Label("Delete", systemImage: "trash") }
+            } else {
+                Button {
+                    rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                } label: { Label("Delete", systemImage: "trash") }
+            }
         }
     }
 }

@@ -17,7 +17,7 @@ struct ConsoleGamesView: SwiftUI.View {
     
     var console: PVSystem!
     
-    var gameLaunchDelegate: GameLaunchingViewController?
+    var rootDelegate: PVRootDelegate?
     
     let columns = [
         GridItem(.flexible()),
@@ -27,10 +27,10 @@ struct ConsoleGamesView: SwiftUI.View {
     
     @State var games: Results<PVGame>
     
-    init(gameLibrary: PVGameLibrary, console: PVSystem, delegate: GameLaunchingViewController) {
+    init(gameLibrary: PVGameLibrary, console: PVSystem, rootDelegate: PVRootDelegate) {
         self.console = console
-        self.gameLaunchDelegate = delegate
-        games = gameLibrary.gamesForSystem(systemIdentifier: self.console.identifier)
+        self.rootDelegate = rootDelegate
+        self.games = gameLibrary.gamesForSystem(systemIdentifier: self.console.identifier)
     }
     
     var body: some SwiftUI.View {
@@ -43,9 +43,9 @@ struct ConsoleGamesView: SwiftUI.View {
                         artworkType: console.gameArtworkType,
                         name: game.title,
                         yearReleased: game.publishDate) {
-                            gameLaunchDelegate?.load(game, sender: self, core: nil, saveState: nil)
+                            rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
                         }
-                        .contextMenu { GameContextMenu(game: game, gameLaunchDelegate: gameLaunchDelegate) }
+                        .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
                 }
             }
             .padding(.horizontal, 10)

@@ -13,26 +13,37 @@ import SwiftUI
 import RealmSwift
 
 @available(iOS 14.0.0, *)
+class ConsolesWrapperViewDelegate: ObservableObject {
+    @Published var selectedTab = ""
+}
+
+@available(iOS 14.0.0, *)
 struct ConsolesWrapperView: SwiftUI.View {
     
+    @ObservedObject var delegate: ConsolesWrapperViewDelegate
+    
     var gameLibrary: PVGameLibrary!
-    var gameLaunchDelegate: GameLaunchingViewController!
+    var rootDelegate: PVRootDelegate!
     
     @State var consoles: Results<PVSystem>
-    @State var selectedTab = ""
     
-    init(gameLibrary: PVGameLibrary, delegate: GameLaunchingViewController, consoles: Results<PVSystem>, selectedTab: String?) {
+    init(
+        consolesWrapperViewDelegate: ConsolesWrapperViewDelegate,
+        gameLibrary: PVGameLibrary,
+        rootDelegate: PVRootDelegate,
+        consoles: Results<PVSystem>
+    ) {
+        self.delegate = consolesWrapperViewDelegate
         self.gameLibrary = gameLibrary
-        self.gameLaunchDelegate = delegate
-        self.selectedTab = selectedTab ?? ""
         self.consoles = consoles
+        self.rootDelegate = rootDelegate
     }
     
     var body: some SwiftUI.View {
-        TabView(selection: $selectedTab) {
+        TabView(selection: $delegate.selectedTab) {
             if consoles.count > 0 { // TODO: handle sorting
                 ForEach(0..<consoles.count, id: \.self) { index in
-                    ConsoleGamesView(gameLibrary: self.gameLibrary, console: consoles[index], delegate: gameLaunchDelegate)
+                    ConsoleGamesView(gameLibrary: self.gameLibrary, console: consoles[index], rootDelegate: rootDelegate)
                         .tag(consoles[index].identifier)
                 }
             } else {
