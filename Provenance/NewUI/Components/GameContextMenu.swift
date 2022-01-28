@@ -37,11 +37,11 @@ struct GameContextMenu: SwiftUI.View {
             // Delete
             if #available(iOS 15.0, *) {
                 Button(role: .destructive) {
-                    rootDelegate?.load(game, sender: self, core: nil, saveState: nil)
+                    rootDelegate?.attemptToDelete(game: game)
                 } label: { Label("Delete", systemImage: "trash") }
             } else {
                 Button {
-                    rootDelegate?.load(game, sender: self, core: nil, saveState: nil)
+                    rootDelegate?.attemptToDelete(game: game)
                 } label: { Label("Delete", systemImage: "trash") }
             }
         }
