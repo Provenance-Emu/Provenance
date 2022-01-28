@@ -130,6 +130,7 @@
 		1F8D52481D91993000C29F90 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
 		1FB125961D93E57F00D045D0 /* PVAppearanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB125951D93E57F00D045D0 /* PVAppearanceViewController.swift */; };
 		1FE10F291D94ECC600A20D1A /* PVAppearanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB125951D93E57F00D045D0 /* PVAppearanceViewController.swift */; };
+		37255D1827A3D2DC00F6DAAD /* GameContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37255D1727A3D2DC00F6DAAD /* GameContextMenu.swift */; };
 		374D488727A25E1900F0B1D7 /* PVSystem+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374D488627A25E1900F0B1D7 /* PVSystem+Ext.swift */; };
 		374D488927A2628000F0B1D7 /* ConsolesWrapperView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374D488827A2628000F0B1D7 /* ConsolesWrapperView.swift */; };
 		3759CAE7279C375800E9267B /* SideMenu in Frameworks */ = {isa = PBXBuildFile; productRef = 3759CAE6279C375800E9267B /* SideMenu */; };
@@ -858,6 +859,7 @@
 		1F8D52451D9198E000C29F90 /* PVLicensesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVLicensesViewController.swift; sourceTree = "<group>"; };
 		1F8D52471D91993000C29F90 /* licenses.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = licenses.html; sourceTree = "<group>"; };
 		1FB125951D93E57F00D045D0 /* PVAppearanceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVAppearanceViewController.swift; sourceTree = "<group>"; };
+		37255D1727A3D2DC00F6DAAD /* GameContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameContextMenu.swift; sourceTree = "<group>"; };
 		374D488627A25E1900F0B1D7 /* PVSystem+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVSystem+Ext.swift"; sourceTree = "<group>"; };
 		374D488827A2628000F0B1D7 /* ConsolesWrapperView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsolesWrapperView.swift; sourceTree = "<group>"; };
 		3759CAE9279C379700E9267B /* PVSideMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSideMenu.swift; sourceTree = "<group>"; };
@@ -1812,6 +1814,7 @@
 			isa = PBXGroup;
 			children = (
 				3759CAF4279C38AA00E9267B /* GameItemView.swift */,
+				37255D1727A3D2DC00F6DAAD /* GameContextMenu.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -3121,6 +3124,7 @@
 				B3AB373F2187F569009D9244 /* PV32XControllerViewController.swift in Sources */,
 				B3D5E2BF218EC62E0015C690 /* Sections.swift in Sources */,
 				B3411BF8276B37DE00D85327 /* PVDSControllerViewController.swift in Sources */,
+				37255D1827A3D2DC00F6DAAD /* GameContextMenu.swift in Sources */,
 				1FB125961D93E57F00D045D0 /* PVAppearanceViewController.swift in Sources */,
 				B3411C19276B470C00D85327 /* SwitchRow.swift in Sources */,
 				B33468D620AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift in Sources */,

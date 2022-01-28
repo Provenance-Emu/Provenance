@@ -8,7 +8,6 @@
 
 import Foundation
 
-
 #if canImport(SwiftUI)
 import SwiftUI
 import RealmSwift
@@ -19,18 +18,19 @@ struct ConsolesWrapperView: SwiftUI.View {
     var gameLibrary: PVGameLibrary!
     var gameLaunchDelegate: GameLaunchingViewController!
     
-    @State var consoles: Results<PVSystem>?
+    @State var consoles: Results<PVSystem>
     @State var selectedTab = ""
     
-    init(gameLibrary: PVGameLibrary, delegate: GameLaunchingViewController, selectedTab: String?) {
+    init(gameLibrary: PVGameLibrary, delegate: GameLaunchingViewController, consoles: Results<PVSystem>, selectedTab: String?) {
         self.gameLibrary = gameLibrary
         self.gameLaunchDelegate = delegate
         self.selectedTab = selectedTab ?? ""
+        self.consoles = consoles
     }
     
     var body: some SwiftUI.View {
         TabView(selection: $selectedTab) {
-            if let consoles = consoles, consoles.count > 0 { // TODO: handle sorting
+            if consoles.count > 0 { // TODO: handle sorting
                 ForEach(0..<consoles.count, id: \.self) { index in
                     ConsoleGamesView(gameLibrary: self.gameLibrary, console: consoles[index], delegate: gameLaunchDelegate)
                         .tag(consoles[index].identifier)
@@ -42,10 +42,7 @@ struct ConsolesWrapperView: SwiftUI.View {
         }
         .tabViewStyle(.page)
         .indexViewStyle(.page(backgroundDisplayMode: .always))
-        .id(consoles?.count ?? -1)
-        .onAppear {
-            consoles = try? Realm().objects(PVSystem.self).filter("games.@count > 0").sorted(byKeyPath: "name") // TODO: the async nature of this call is causing some bugs
-        }
+        .id(consoles.count)
     }
 }
 
