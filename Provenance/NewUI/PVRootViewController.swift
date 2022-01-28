@@ -124,15 +124,12 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
         // remove old view
         self.containerView.subviews.forEach { $0.removeFromSuperview() }
         self.children.forEach { $0.removeFromParent() }
-        
         // set title
         self.navigationItem.title = navItem.title
-        
         // set bar button items (if any)
         switch navItem {
         case .settings, .home, .console: break
         }
-        
         // load new view
         self.addChildViewController(newVC, toContainerView: self.containerView)
         self.fillParentView(child: newVC.view, parent: self.containerView)
@@ -202,16 +199,14 @@ extension PVRootViewController: PVMenuDelegate {
 
     func didTapConsole(with consoleId: String) {
         menu.dismiss(animated: true, completion: nil)
-        guard let console = try? Realm().object(ofType: PVSystem.self, forPrimaryKey: consoleId) else {
-            return
-        }
-//        let consoleGamesView = ConsoleGamesView(gameLibrary: self.gameLibrary, console: console, delegate: self)
-        let consolesView = ConsolesWrapperView(gameLibrary: self.gameLibrary, delegate: self, selectedTab: console.identifier)
+        guard let console = try? Realm().object(ofType: PVSystem.self, forPrimaryKey: consoleId) else { return }
+        let consoles = try? Realm().objects(PVSystem.self).filter("games.@count > 0").sorted(byKeyPath: "name")
+        guard let consoles = consoles else { return }
+        let consolesView = ConsolesWrapperView(gameLibrary: self.gameLibrary, delegate: self, consoles: consoles, selectedTab: console.identifier)
         self.loadIntoContainer(.console(title: console.name), newVC: UIHostingController(rootView: consolesView))
     }
 
-    func didTapCollection(with collection: Int) { // TODO: collection at a future date
-    }
+    func didTapCollection(with collection: Int) { /* TODO: collections */ }
     
     func didTapToggleNewUI() {
         menu.dismiss(animated: true, completion: nil)

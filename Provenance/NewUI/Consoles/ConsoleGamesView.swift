@@ -35,7 +35,7 @@ struct ConsoleGamesView: SwiftUI.View {
     
     var body: some SwiftUI.View {
         ScrollView {
-            // TODO: sort options view
+            // TODO: sort options view. This includes replacing the grid with a list
             LazyVGrid(columns: columns, spacing: 20) {
                 ForEach(games, id: \.self) { game in
                     GameItemView(
@@ -45,7 +45,7 @@ struct ConsoleGamesView: SwiftUI.View {
                         yearReleased: game.publishDate) {
                             gameLaunchDelegate?.load(game, sender: self, core: nil, saveState: nil)
                         }
-                    // TODO: add context menu in addition to button
+                        .contextMenu { GameContextMenu(game: game, gameLaunchDelegate: gameLaunchDelegate) }
                 }
             }
             .padding(.horizontal, 10)
