@@ -22,7 +22,7 @@ struct GameContextMenu: SwiftUI.View {
         Group {
             // Open with...
             Button {
-                rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                rootDelegate?.load(game, sender: self, core: nil, saveState: nil)
             } label: {
                 Text("Open with...")
             }
@@ -37,11 +37,11 @@ struct GameContextMenu: SwiftUI.View {
             // Delete
             if #available(iOS 15.0, *) {
                 Button(role: .destructive) {
-                    rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                    rootDelegate?.load(game, sender: self, core: nil, saveState: nil)
                 } label: { Label("Delete", systemImage: "trash") }
             } else {
                 Button {
-                    rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                    rootDelegate?.load(game, sender: self, core: nil, saveState: nil)
                 } label: { Label("Delete", systemImage: "trash") }
             }
         }

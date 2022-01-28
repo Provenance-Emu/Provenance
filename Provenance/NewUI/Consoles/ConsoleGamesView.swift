@@ -43,7 +43,7 @@ struct ConsoleGamesView: SwiftUI.View {
                         artworkType: console.gameArtworkType,
                         name: game.title,
                         yearReleased: game.publishDate) {
-                            rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                            rootDelegate?.load(game, sender: self, core: nil, saveState: nil)
                         }
                         .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
                 }

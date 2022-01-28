@@ -38,14 +38,7 @@ enum PVNavOption {
     }
 }
 
-public protocol PVRootDelegate: AnyObject {
-    // maps to and is handled by GameLaunchingViewController conformance
-    func root_canLoad(_ game: PVGame) throws
-    func root_load(_ game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?)
-    func root_openSaveState(_ saveState: PVSaveState)
-    func root_updateRecentGames(_ game: PVGame)
-    func root_presentCoreSelection(forGame game: PVGame, sender: Any?)
-    // other
+public protocol PVRootDelegate: GameLaunchingViewController {
     func attemptToDelete(game: PVGame)
 }
   
@@ -270,26 +263,6 @@ extension PVRootViewController {
 
 @available(iOS 14.0.0, *)
 extension PVRootViewController: PVRootDelegate {
-    func root_canLoad(_ game: PVGame) throws {
-        
-    }
-    
-    func root_load(_ game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?) {
-        
-    }
-    
-    func root_openSaveState(_ saveState: PVSaveState) {
-        
-    }
-    
-    func root_updateRecentGames(_ game: PVGame) {
-        
-    }
-    
-    func root_presentCoreSelection(forGame game: PVGame, sender: Any?) {
-        
-    }
-    
     func attemptToDelete(game: PVGame) {
         do {
             try self.delete(game: game)

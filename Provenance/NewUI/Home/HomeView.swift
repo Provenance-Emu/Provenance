@@ -69,7 +69,7 @@ struct HomeView: SwiftUI.View {
                                 artworkType: recentSaveState.game.system.gameArtworkType,
                                 name: recentSaveState.game.title,
                                 yearReleased: recentSaveState.game.publishDate) {
-                                    rootDelegate?.root_load(recentSaveState.game, sender: self, core: nil, saveState: recentSaveState)
+                                    rootDelegate?.load(recentSaveState.game, sender: self, core: nil, saveState: recentSaveState)
                                 }
                         }
                     }
@@ -82,7 +82,7 @@ struct HomeView: SwiftUI.View {
                                 artworkType: recentlyPlayedGame.game.system.gameArtworkType,
                                 name: recentlyPlayedGame.game.title,
                                 yearReleased: recentlyPlayedGame.game.publishDate) {
-                                    rootDelegate?.root_load(recentlyPlayedGame.game, sender: self, core: nil, saveState: nil)
+                                    rootDelegate?.load(recentlyPlayedGame.game, sender: self, core: nil, saveState: nil)
                                 }
                         }
                     }
@@ -95,7 +95,7 @@ struct HomeView: SwiftUI.View {
                                 artworkType: favorite.system.gameArtworkType,
                                 name: favorite.title,
                                 yearReleased: favorite.publishDate) {
-                                    rootDelegate?.root_load(favorite, sender: self, core: nil, saveState: nil)
+                                    rootDelegate?.load(favorite, sender: self, core: nil, saveState: nil)
                                 }
                         }
                     }
@@ -108,7 +108,7 @@ struct HomeView: SwiftUI.View {
                                 artworkType: playedGame.system.gameArtworkType,
                                 name: playedGame.title,
                                 yearReleased: playedGame.publishDate) {
-                                    rootDelegate?.root_load(playedGame, sender: self, core: nil, saveState: nil)
+                                    rootDelegate?.load(playedGame, sender: self, core: nil, saveState: nil)
                                 }
                         }
                     }
