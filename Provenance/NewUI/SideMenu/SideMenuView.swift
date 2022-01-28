@@ -44,18 +44,7 @@ struct SideMenuView: SwiftUI.View {
                         }
                     }
                 }
-//                Group { // TODO: flesh out collections later
-//                    MenuSectionHeaderView(sectionTitle: "COLLECTIONS", sortable: false)
-//                    Divider()
-//                    MenuItemView(imageName: "empty_icon", rowTitle: "Favorites") {
-//                        delegate?.didTapCollection(with: 0)
-//                    }
-//                    Divider()
-//                    MenuItemView(imageName: "prov_add_games_icon", rowTitle: "Add Collection") {
-//                        delegate?.didTapCollection(with: 0)
-//                    }
-//                    Divider()
-//                }
+                // TODO: flesh out collections later
                 Group {
                     MenuSectionHeaderView(sectionTitle: "Provenance 2.something", sortable: false)
                 }

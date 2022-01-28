@@ -27,13 +27,13 @@ import Combine
 enum PVNavOption {
     case settings
     case home
-    case console(title: String)
+    case console(consoleId: String, title: String)
     
     var title: String {
         switch self {
         case .settings: return "Settings"
         case .home: return "Home"
-        case .console(let title):  return title
+        case .console(_, let title):  return title
         }
     }
 }
@@ -58,6 +58,8 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
     var selectedTabCancellable: AnyCancellable?
     
     lazy var consolesWrapperViewDelegate = ConsolesWrapperViewDelegate()
+    
+    var lastNavOptionLoaded: PVNavOption? = nil
     
     static func instantiate(updatesController: PVGameLibraryUpdatesController, gameLibrary: PVGameLibrary, gameImporter: GameImporter) -> PVRootViewController {
         let controller = PVRootViewController()
@@ -132,6 +134,7 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
     }
     
     func loadIntoContainer(_ navItem: PVNavOption, newVC: UIViewController) {
+        self.lastNavOptionLoaded = navItem
         // remove old view
         self.containerView.subviews.forEach { $0.removeFromSuperview() }
         self.children.forEach { $0.removeFromParent() }
@@ -144,6 +147,19 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
         // load new view
         self.addChildViewController(newVC, toContainerView: self.containerView)
         self.fillParentView(child: newVC.view, parent: self.containerView)
+    }
+    
+    func loadLastKnownNavOption() {
+        if let lastNavOptionLoaded = lastNavOptionLoaded {
+            switch lastNavOptionLoaded {
+            case .settings:
+                self.didTapSettings()
+            case .home:
+                self.didTapHome()
+            case .console(let consoleId, _):
+                self.didTapConsole(with: consoleId)
+            }
+        }
     }
 }
 
@@ -219,7 +235,7 @@ extension PVRootViewController: PVMenuDelegate {
             guard let self = self else { return }
             self.navigationItem.title = tab // TODO: map PVSystem identifier to console name
         }
-        self.loadIntoContainer(.console(title: console.name), newVC: UIHostingController(rootView: consolesView))
+        self.loadIntoContainer(.console(consoleId: consoleId, title: console.name), newVC: UIHostingController(rootView: consolesView))
     }
 
     func didTapCollection(with collection: Int) { /* TODO: collections */ }
@@ -278,6 +294,8 @@ extension PVRootViewController: PVRootDelegate {
 extension PVRootViewController {
     func delete(game: PVGame) throws {
         try RomDatabase.sharedInstance.delete(game: game)
+//        loadLastKnownNavOption()
+        // we're still retaining a refernce to the removed game, causing a realm crash. Need to reload the view
     }
 }
 
