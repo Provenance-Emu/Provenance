@@ -23,7 +23,7 @@ struct HomeView: SwiftUI.View {
     
     var gameLibrary: PVGameLibrary!
     
-    var gameLaunchDelegate: GameLaunchingViewController?
+    var rootDelegate: PVRootDelegate?
     
     @State var recentSaveStates: Results<PVSaveState>?
     @State var recentlyPlayedGames: Results<PVRecentGame>?
@@ -47,9 +47,9 @@ struct HomeView: SwiftUI.View {
 //    selectedPlayable.bind(onNext: self.load).disposed(by: disposeBag)
     
     
-    init(gameLibrary: PVGameLibrary, delegate: GameLaunchingViewController) {
+    init(gameLibrary: PVGameLibrary, delegate: PVRootDelegate) {
         self.gameLibrary = gameLibrary
-        self.gameLaunchDelegate = delegate
+        self.rootDelegate = delegate
         
         self.recentSaveStates = self.gameLibrary.saveStatesResults
         self.recentlyPlayedGames = self.gameLibrary.recentsResults
@@ -69,7 +69,7 @@ struct HomeView: SwiftUI.View {
                                 artworkType: recentSaveState.game.system.gameArtworkType,
                                 name: recentSaveState.game.title,
                                 yearReleased: recentSaveState.game.publishDate) {
-                                    gameLaunchDelegate?.load(recentSaveState.game, sender: self, core: nil, saveState: recentSaveState)
+                                    rootDelegate?.root_load(recentSaveState.game, sender: self, core: nil, saveState: recentSaveState)
                                 }
                         }
                     }
@@ -82,7 +82,7 @@ struct HomeView: SwiftUI.View {
                                 artworkType: recentlyPlayedGame.game.system.gameArtworkType,
                                 name: recentlyPlayedGame.game.title,
                                 yearReleased: recentlyPlayedGame.game.publishDate) {
-                                    gameLaunchDelegate?.load(recentlyPlayedGame.game, sender: self, core: nil, saveState: nil)
+                                    rootDelegate?.root_load(recentlyPlayedGame.game, sender: self, core: nil, saveState: nil)
                                 }
                         }
                     }
@@ -95,7 +95,7 @@ struct HomeView: SwiftUI.View {
                                 artworkType: favorite.system.gameArtworkType,
                                 name: favorite.title,
                                 yearReleased: favorite.publishDate) {
-                                    gameLaunchDelegate?.load(favorite, sender: self, core: nil, saveState: nil)
+                                    rootDelegate?.root_load(favorite, sender: self, core: nil, saveState: nil)
                                 }
                         }
                     }
@@ -108,7 +108,7 @@ struct HomeView: SwiftUI.View {
                                 artworkType: playedGame.system.gameArtworkType,
                                 name: playedGame.title,
                                 yearReleased: playedGame.publishDate) {
-                                    gameLaunchDelegate?.load(playedGame, sender: self, core: nil, saveState: nil)
+                                    rootDelegate?.root_load(playedGame, sender: self, core: nil, saveState: nil)
                                 }
                         }
                     }

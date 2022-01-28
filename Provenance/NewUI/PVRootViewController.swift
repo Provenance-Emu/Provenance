@@ -9,11 +9,13 @@
 import Foundation
 
 #if canImport(SwiftUI)
+#if canImport(Combine)
 import Foundation
 import UIKit
 import SwiftUI
 import SideMenu
 import RealmSwift
+import Combine
 
 // PVRootViewController serves as a UIKit parent for child SwiftUI menu views.
 
@@ -35,6 +37,17 @@ enum PVNavOption {
         }
     }
 }
+
+public protocol PVRootDelegate: AnyObject {
+    // maps to and is handled by GameLaunchingViewController conformance
+    func root_canLoad(_ game: PVGame) throws
+    func root_load(_ game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?)
+    func root_openSaveState(_ saveState: PVSaveState)
+    func root_updateRecentGames(_ game: PVGame)
+    func root_presentCoreSelection(forGame game: PVGame, sender: Any?)
+    // other
+    func attemptToDelete(game: PVGame)
+}
   
 @available(iOS 14.0.0, *)
 class PVRootViewController: UIViewController, GameLaunchingViewController, GameSharingViewController {
@@ -49,6 +62,9 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
     var gameImporter: GameImporter!
     
     let disposeBag = DisposeBag()
+    var selectedTabCancellable: AnyCancellable?
+    
+    lazy var consolesWrapperViewDelegate = ConsolesWrapperViewDelegate()
     
     static func instantiate(updatesController: PVGameLibraryUpdatesController, gameLibrary: PVGameLibrary, gameImporter: GameImporter) -> PVRootViewController {
         let controller = PVRootViewController()
@@ -63,15 +79,13 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
         
         super.viewDidLoad()
         
-        self.view.addSubview(containerView)
+        self.navigationItem.leftBarButtonItem = menuButton
         
+        self.view.addSubview(containerView)
         self.fillParentView(child: containerView, parent: self.view)
         
         let homeView = HomeView(gameLibrary: self.gameLibrary, delegate: self)
-        
         self.loadIntoContainer(.home, newVC: UIHostingController(rootView: homeView))
-        
-        self.navigationItem.leftBarButtonItem = menuButton
         
         let hud = MBProgressHUD(view: view)!
         hud.isUserInteractionEnabled = false
@@ -105,6 +119,10 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
 //                }
 //            })
 //            .disposed(by: disposeBag)
+    }
+    
+    deinit {
+        selectedTabCancellable?.cancel()
     }
     
     @objc func showMenu() {
@@ -202,7 +220,12 @@ extension PVRootViewController: PVMenuDelegate {
         guard let console = try? Realm().object(ofType: PVSystem.self, forPrimaryKey: consoleId) else { return }
         let consoles = try? Realm().objects(PVSystem.self).filter("games.@count > 0").sorted(byKeyPath: "name")
         guard let consoles = consoles else { return }
-        let consolesView = ConsolesWrapperView(gameLibrary: self.gameLibrary, delegate: self, consoles: consoles, selectedTab: console.identifier)
+        consolesWrapperViewDelegate.selectedTab = console.identifier
+        let consolesView = ConsolesWrapperView(consolesWrapperViewDelegate: consolesWrapperViewDelegate, gameLibrary: self.gameLibrary, rootDelegate: self, consoles: consoles)
+        selectedTabCancellable = consolesWrapperViewDelegate.$selectedTab.sink { [weak self] tab in
+            guard let self = self else { return }
+            self.navigationItem.title = tab // TODO: map PVSystem identifier to console name
+        }
         self.loadIntoContainer(.console(title: console.name), newVC: UIHostingController(rootView: consolesView))
     }
 
@@ -218,6 +241,71 @@ extension PVRootViewController: PVMenuDelegate {
         present(alert, animated: true, completion: nil)
     }
     
+}
+
+// MARK: - Helpers
+
+@available(iOS 14.0.0, *)
+extension PVRootViewController {
+    
+    func addChildViewController(_ child: UIViewController, toContainerView containerView: UIView) {
+        addChild(child)
+        containerView.addSubview(child.view)
+        child.didMove(toParent: self)
+    }
+    
+    func fillParentView(child: UIView, parent: UIView) {
+        child.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            child.topAnchor.constraint(equalTo: parent.topAnchor),
+            child.bottomAnchor.constraint(equalTo: parent.bottomAnchor),
+            child.leadingAnchor.constraint(equalTo: parent.leadingAnchor),
+            child.trailingAnchor.constraint(equalTo: parent.trailingAnchor),
+        ])
+    }
+    
+}
+
+// MARK: - PVControllerMethodsDelegate methods
+
+@available(iOS 14.0.0, *)
+extension PVRootViewController: PVRootDelegate {
+    func root_canLoad(_ game: PVGame) throws {
+        
+    }
+    
+    func root_load(_ game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?) {
+        
+    }
+    
+    func root_openSaveState(_ saveState: PVSaveState) {
+        
+    }
+    
+    func root_updateRecentGames(_ game: PVGame) {
+        
+    }
+    
+    func root_presentCoreSelection(forGame game: PVGame, sender: Any?) {
+        
+    }
+    
+    func attemptToDelete(game: PVGame) {
+        do {
+            try self.delete(game: game)
+        } catch {
+            self.presentError(error.localizedDescription)
+        }
+    }
+}
+
+// MARK: - Methods from PVGameLibraryViewController
+
+@available(iOS 14.0.0, *)
+extension PVRootViewController {
+    func delete(game: PVGame) throws {
+        try RomDatabase.sharedInstance.delete(game: game)
+    }
 }
 
 // MARK: - UIDocumentPickerDelegate
@@ -298,27 +386,6 @@ extension PVRootViewController: UIDocumentPickerDelegate {
     }
 }
 
-// MARK: - Helpers
 
-@available(iOS 14.0.0, *)
-extension PVRootViewController {
-    
-    func addChildViewController(_ child: UIViewController, toContainerView containerView: UIView) {
-        addChild(child)
-        containerView.addSubview(child.view)
-        child.didMove(toParent: self)
-    }
-    
-    func fillParentView(child: UIView, parent: UIView) {
-        child.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            child.topAnchor.constraint(equalTo: parent.topAnchor),
-            child.bottomAnchor.constraint(equalTo: parent.bottomAnchor),
-            child.leadingAnchor.constraint(equalTo: parent.leadingAnchor),
-            child.trailingAnchor.constraint(equalTo: parent.trailingAnchor),
-        ])
-    }
-    
-}
-
+#endif
 #endif
