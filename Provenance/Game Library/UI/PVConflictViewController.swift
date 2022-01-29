@@ -75,6 +75,30 @@ final class PVConflictViewController: UITableViewController {
             #endif
         }
         .disposed(by: disposeBag)
+        
+        tableView.rx.itemDeleted
+            .do(onNext: {
+                self.tableView.deselectRow(at: $0, animated: true)
+            })
+                .compactMap({ indexPath -> (ConflictsController.Conflict, IndexPath)? in
+                    let row: Row = try self.tableView.rx.model(at: indexPath)
+                    switch row {
+                    case .conflict(let conflict):
+                        return (conflict, indexPath)
+                    case .empty:
+                        return nil
+                    }
+                })
+                .bind(onNext: { conflict, indexPath in
+                    // Delete file
+                    do {
+                        try FileManager.default.removeItem(at: conflict.path)
+                    } catch {
+                        ELOG(error.localizedDescription)
+                    }
+                    self.tableView.reloadData()
+                })
+            .disposed(by: disposeBag)
 
         tableView.rx.itemSelected
             .do(onNext: { self.tableView.deselectRow(at: $0, animated: true) })
@@ -98,7 +122,9 @@ final class PVConflictViewController: UITableViewController {
                 }
 
                 alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-                self.present(alertController, animated: true) { () -> Void in }
+                self.present(alertController, animated: true) { () -> Void in
+                    self.tableView.reloadData()
+                }
             })
             .disposed(by: disposeBag)
     }

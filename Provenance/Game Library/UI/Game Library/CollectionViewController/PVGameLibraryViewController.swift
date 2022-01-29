@@ -85,10 +85,12 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     // add or remove the conflict button (iff it is in the storyboard)
     func updateConflictsButton(_ hasConflicts: Bool) {
         if let conflictsBarButtonItem = conflictsBarButtonItem {
-            var items = navigationItem.leftBarButtonItems?.filter({$0 !== conflictsBarButtonItem})
-            if hasConflicts {
-                items?.append(conflictsBarButtonItem)
-            }
+            conflictsBarButtonItem.isEnabled = hasConflicts
+            #if os(tvOS)
+            let items: [UIBarButtonItem] = hasConflicts ? [ getMoreRomsBarButtonItem, conflictsBarButtonItem ] : [getMoreRomsBarButtonItem]
+            #else
+            let items: [UIBarButtonItem] = hasConflicts ? [ settingsBarButtonItem, conflictsBarButtonItem ] : [settingsBarButtonItem]
+            #endif
             navigationItem.leftBarButtonItems = items
         }
     }
