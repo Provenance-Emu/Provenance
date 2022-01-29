@@ -61,6 +61,7 @@ final class PVConflictViewController: UITableViewController {
         rows.bind(to: tableView.rx.items(cellIdentifier: cellIdentifier, cellType: UITableViewCell.self)) { _, row, cell in
             switch row {
             case .conflict(let conflict):
+                cell.editingAccessoryType = .checkmark
                 cell.textLabel?.text = conflict.path    .lastPathComponent
                 cell.accessoryType = .disclosureIndicator
             case .empty(let title):
@@ -105,6 +106,7 @@ final class PVConflictViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if navigationController == nil || navigationController!.viewControllers.count <= 1 {
+            navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(showEditing))
             navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissMe))
         }
     }
@@ -124,4 +126,41 @@ final class PVConflictViewController: UITableViewController {
             }
         }
     #endif
+}
+
+extension PVConflictViewController {
+    
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    override func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return .delete
+    }
+    
+    @objc private func toggleEditing() {
+        tableView.setEditing(!tableView.isEditing, animated: true) // Set opposite value of current editing status
+        navigationItem.rightBarButtonItem?.title = tableView.isEditing ? "Done" : "Edit" // Set title depending on the editing status
+    }
+    
+    @objc func showEditing(sender: UIBarButtonItem) {
+       if self.tableView.isEditing {
+           self.tableView.isEditing = false
+           self.navigationItem.rightBarButtonItem?.title = "Done"
+       } else {
+           self.tableView.isEditing = true
+           self.navigationItem.rightBarButtonItem?.title = "Edit"
+       }
+   }
+    
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+        
+        // Toggle table view editing.
+         tableView.setEditing(editing, animated: true)
+    }
 }
