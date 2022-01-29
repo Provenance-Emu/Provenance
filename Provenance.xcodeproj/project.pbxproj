@@ -972,6 +972,19 @@
 		B311B1F627A53FCA00D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = nl; path = nl.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
 		B311B1F727A53FCB00D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = nl; path = nl.lproj/Cheats.storyboard; sourceTree = "<group>"; };
 		B311B1F827A53FCB00D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = nl; path = ../nl.lproj/Info.plist; sourceTree = "<group>"; };
+		B311B1F927A53FEF00D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = it; path = it.lproj/PVGameLibraryCollectionViewCell.xib; sourceTree = "<group>"; };
+		B311B1FA27A53FEF00D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Strings.strings; sourceTree = "<group>"; };
+		B311B1FB27A53FF000D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B311B1FC27A53FF100D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/Provenance.storyboard; sourceTree = "<group>"; };
+		B311B1FD27A53FF100D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
+		B311B1FE27A53FF200D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/Settings.storyboard; sourceTree = "<group>"; };
+		B311B1FF27A53FF300D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = it; path = it.lproj/Default.xib; sourceTree = "<group>"; };
+		B311B20027A53FF300D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/Cheats.storyboard; sourceTree = "<group>"; };
+		B311B20127A53FF400D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/Provenance.storyboard; sourceTree = "<group>"; };
+		B311B20227A53FF500D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/Settings.storyboard; sourceTree = "<group>"; };
+		B311B20327A53FF500D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
+		B311B20427A53FF600D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/Cheats.storyboard; sourceTree = "<group>"; };
+		B311B20527A53FF700D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = it; path = ../it.lproj/Info.plist; sourceTree = "<group>"; };
 		B313544626E4C0F90047F338 /* PVPS2ControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVPS2ControllerViewController.swift; sourceTree = "<group>"; };
 		B313544926E4C3B90047F338 /* PVPlay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPlay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B313544C26E4C3BE0047F338 /* PVPlay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPlay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2590,6 +2603,7 @@
 				ru,
 				ja,
 				nl,
+				it,
 			);
 			mainGroup = 1A3D408B17B2DCE4004DFFFC;
 			packageReferences = (
@@ -3341,6 +3355,7 @@
 				B311B1D427A53E7500D1DE41 /* ru */,
 				B311B1E127A53F9E00D1DE41 /* ja */,
 				B311B1EE27A53FC500D1DE41 /* nl */,
+				B311B1FB27A53FF000D1DE41 /* it */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -3354,6 +3369,7 @@
 				B311B1D527A53E7600D1DE41 /* ru */,
 				B311B1E227A53F9E00D1DE41 /* ja */,
 				B311B1EF27A53FC500D1DE41 /* nl */,
+				B311B1FC27A53FF100D1DE41 /* it */,
 			);
 			name = Provenance.storyboard;
 			sourceTree = "<group>";
@@ -3367,6 +3383,7 @@
 				B311B1D627A53E7700D1DE41 /* ru */,
 				B311B1E327A53F9F00D1DE41 /* ja */,
 				B311B1F027A53FC600D1DE41 /* nl */,
+				B311B1FD27A53FF100D1DE41 /* it */,
 			);
 			name = SaveStates.storyboard;
 			sourceTree = "<group>";
@@ -3380,6 +3397,7 @@
 				B311B1D727A53E7800D1DE41 /* ru */,
 				B311B1E427A53FA000D1DE41 /* ja */,
 				B311B1F127A53FC700D1DE41 /* nl */,
+				B311B1FE27A53FF200D1DE41 /* it */,
 			);
 			name = Settings.storyboard;
 			sourceTree = "<group>";
@@ -3393,6 +3411,7 @@
 				B311B1D927A53E7B00D1DE41 /* ru */,
 				B311B1E627A53FA100D1DE41 /* ja */,
 				B311B1F327A53FC800D1DE41 /* nl */,
+				B311B20027A53FF300D1DE41 /* it */,
 			);
 			name = Cheats.storyboard;
 			sourceTree = "<group>";
@@ -3406,6 +3425,7 @@
 				B311B1DA27A53E7C00D1DE41 /* ru */,
 				B311B1E727A53FA200D1DE41 /* ja */,
 				B311B1F427A53FC900D1DE41 /* nl */,
+				B311B20127A53FF400D1DE41 /* it */,
 			);
 			name = Provenance.storyboard;
 			sourceTree = "<group>";
@@ -3419,6 +3439,7 @@
 				B311B1DB27A53E7D00D1DE41 /* ru */,
 				B311B1E827A53FA200D1DE41 /* ja */,
 				B311B1F527A53FC900D1DE41 /* nl */,
+				B311B20227A53FF500D1DE41 /* it */,
 			);
 			name = Settings.storyboard;
 			sourceTree = "<group>";
@@ -3432,6 +3453,7 @@
 				B311B1DC27A53E7E00D1DE41 /* ru */,
 				B311B1E927A53FA300D1DE41 /* ja */,
 				B311B1F627A53FCA00D1DE41 /* nl */,
+				B311B20327A53FF500D1DE41 /* it */,
 			);
 			name = SaveStates.storyboard;
 			sourceTree = "<group>";
@@ -3445,6 +3467,7 @@
 				B311B1DD27A53E7F00D1DE41 /* ru */,
 				B311B1EA27A53FA400D1DE41 /* ja */,
 				B311B1F727A53FCB00D1DE41 /* nl */,
+				B311B20427A53FF600D1DE41 /* it */,
 			);
 			name = Cheats.storyboard;
 			sourceTree = "<group>";
@@ -3458,6 +3481,7 @@
 				B311B1D227A53E7200D1DE41 /* ru */,
 				B311B1DF27A53F9C00D1DE41 /* ja */,
 				B311B1EC27A53FC300D1DE41 /* nl */,
+				B311B1F927A53FEF00D1DE41 /* it */,
 			);
 			name = PVGameLibraryCollectionViewCell.xib;
 			sourceTree = "<group>";
@@ -3471,6 +3495,7 @@
 				B311B1D827A53E7900D1DE41 /* ru */,
 				B311B1E527A53FA000D1DE41 /* ja */,
 				B311B1F227A53FC700D1DE41 /* nl */,
+				B311B1FF27A53FF300D1DE41 /* it */,
 			);
 			name = Default.xib;
 			sourceTree = "<group>";
@@ -3484,6 +3509,7 @@
 				B311B1D327A53E7400D1DE41 /* ru */,
 				B311B1E027A53F9D00D1DE41 /* ja */,
 				B311B1ED27A53FC400D1DE41 /* nl */,
+				B311B1FA27A53FEF00D1DE41 /* it */,
 			);
 			name = Strings.strings;
 			sourceTree = "<group>";
@@ -3496,6 +3522,7 @@
 				B311B1DE27A53E8000D1DE41 /* ru */,
 				B311B1EB27A53FA400D1DE41 /* ja */,
 				B311B1F827A53FCB00D1DE41 /* nl */,
+				B311B20527A53FF700D1DE41 /* it */,
 			);
 			name = Info.plist;
 			sourceTree = "<group>";
