@@ -73,3 +73,6 @@
 [submodule "Cores/ProSystem/ProSystem1_3"]
 	path = Cores/ProSystem/ProSystem1_3
 	url = https://github.com/Provenance-Emu/ProSystem1_3.git
+[submodule "Cores/FinalBurnNeo/FBNeo"]
+	path = Cores/FinalBurnNeo/FBNeo
+	url = https://github.com/Provenance-Emu/FBNeo.git
