@@ -109,6 +109,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
 - (void)resetEmulation
 {
+    CPU.Flags = 0;
     S9xSoftReset();
 }
 
@@ -135,15 +136,14 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 	
 }
 
-- (void)executeFrame
-{
+- (void)executeFrame {
     IPPU.RenderThisFrame = TRUE;
     S9xMainLoop();
 }
 
-- (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error
-{
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {
 
+    CPU.Flags = 0;
     memset(&Settings, 0, sizeof(Settings));
 
     Settings.DontSaveOopsSnapshot       = false;
