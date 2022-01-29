@@ -681,6 +681,8 @@ static void *dlopen_myself()
 {
     [super setPauseEmulation:flag];
     [self parseOptions];
+// TODO: Fix pause
+//    CoreDoCommand(M64CMD_PAUSE, flag, NULL);
 
     if (flag)
     {
