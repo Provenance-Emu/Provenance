@@ -13,12 +13,6 @@ import RxSwift
 import RxCocoa
 import CoreSpotlight
 
-protocol ConflictsController {
-    typealias Conflict = (path: URL, candidates: [System])
-    var conflicts: Observable<[Conflict]> { get }
-    func resolveConflicts(withSolutions: [URL: System])
-}
-
 // Responsible for handling updates to game library, finding conflicts and resolving them
 struct PVGameLibraryUpdatesController {
     public let hudState: Observable<HudState>

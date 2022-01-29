@@ -9,7 +9,7 @@
 import Foundation
 
 public class SystemSettingsCell: UITableViewCell {
-    public static let identifier: String = String(describing: self)
+    public static let identifier: String = String(describing: SystemSettingsCell.self)
 
     public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
