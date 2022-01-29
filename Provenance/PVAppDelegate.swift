@@ -87,6 +87,8 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
                 fatalError(error.localizedDescription)
             }))
 
+            self.window?.rootViewController = UIViewController()
+            self.window?.makeKeyAndVisible()
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 self.window?.rootViewController?.present(alert, animated: true, completion: nil)
             }

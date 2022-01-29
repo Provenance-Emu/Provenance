@@ -32,6 +32,9 @@ let PVGameLibraryCollectionViewGamesCellIdentifier = "RecentlyPlayedCollectionCe
 
 let PVRequiresMigrationKey = "PVRequiresMigration"
 
+// should we use the "new" context menus added in iOS 13, or use an action sheet
+let useModernContextMenus = true
+
 // For Obj-C
 public extension NSNotification {
     @objc
@@ -429,9 +432,12 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         sections.map { !$0.isEmpty }.bind(to: libraryInfoContainerView.rx.isHidden).disposed(by: disposeBag)
         #endif
 
-        collectionView.rx.longPressed(Section.Item.self)
-            .bind(onNext: self.longPressed)
-            .disposed(by: disposeBag)
+        // attach long press gesture only on pre-iOS 13, and tvOS
+        if  useModernContextMenus == false || NSClassFromString("UIContextMenuConfiguration") == nil {
+            collectionView.rx.longPressed(Section.Item.self)
+                .bind(onNext: self.longPressed)
+                .disposed(by: disposeBag)
+        }
 
         collectionView.rx.setDelegate(self).disposed(by: disposeBag)
         collectionView.bounces = true
@@ -748,8 +754,13 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             }
         #else
             sortOptionsTableView.layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+            sortOptionsTableView.backgroundColor = UIColor(red:0.11, green:0.11, blue:0.12, alpha:1)
+            sortOptionsTableView.layer.borderColor = view.tintColor.cgColor
+            sortOptionsTableView.layer.borderWidth = 4.0
+            sortOptionsTableView.layer.cornerRadius = 32.0
+        
             sortOptionsTableViewController.preferredContentSize = CGSize(width:800, height:sortOptionsTableView.contentSize.height);
-            let pvc = TVPopupController(rootViewController:sortOptionsTableViewController)
+            let pvc = TVFullscreenController(rootViewController:sortOptionsTableViewController)
             present(pvc, animated: true, completion: nil)
         #endif
     }
@@ -819,7 +830,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
             present(actionSheet, animated: true, completion: nil)
 
-            actionSheet.rx.deallocating.asObservable().bind { [weak self] in
+            (actionSheet as UIViewController).rx.deallocating.asObservable().bind { [weak self] in
                 self?.reachability.stopNotifier()
             }.disposed(by: disposeBag)
         #else // tvOS
@@ -940,11 +951,31 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         actionSheet.popoverPresentationController?.sourceRect = cell.bounds
         present(actionSheet, animated: true)
     }
+    
+    #if os(iOS)
+    @available(iOS 13.0, *)
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        guard useModernContextMenus,
+              let cell = collectionView.cellForItem(at: indexPath),
+              let item: Section.Item = try? collectionView.rx.model(at: indexPath)
+        else { return nil }
 
+        if let actionSheet = contextMenu(for: item, cell: cell, point: point) as? UIAlertControllerProtocol {
+            return UIContextMenuConfiguration(identifier:nil) {
+                return nil      // use default
+            } actionProvider: {_ in
+                return actionSheet.convertToMenu()
+            }
+        }
+        return nil
+    }
+    #endif
+    
     private func contextMenu(for item: Section.Item, cell: UICollectionViewCell, point: CGPoint) -> UIViewController {
         switch item {
         case .game(let game):
             return contextMenu(for: game, sender: cell)
+        // TODO: favorites, saveState, and recents will return the wrong item if the nested collection view is scrolled!
         case .favorites:
             let game: PVGame = (cell as! CollectionViewInCollectionViewCell).item(at: point)!
             return contextMenu(for: game, sender: cell)
@@ -1127,6 +1158,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             }
         })
         actionSheet.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
+        actionSheet.preferredAction = actionSheet.actions.last
         return actionSheet
     }
 
@@ -1241,7 +1273,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             presentActionSheetViewControllerForPopoverPresentation(imagePickerActionSheet, sourceView: sourceView)
         }
 
-        private func presentActionSheetViewControllerForPopoverPresentation(_ alertController: UIAlertController, sourceView: UIView) {
+        private func presentActionSheetViewControllerForPopoverPresentation(_ alertController: UIViewController, sourceView: UIView) {
             
             if traitCollection.userInterfaceIdiom == .pad {
                 alertController.popoverPresentationController?.sourceView = sourceView
@@ -1737,6 +1769,12 @@ extension PVGameLibraryViewController: GameLibraryCollectionViewDelegate {
             completion?(false)
         }))
         present(alert, animated: true) { () -> Void in }
+    }
+}
+
+extension PVGameLibraryViewController : UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        print("updateSearchResults")
     }
 }
 

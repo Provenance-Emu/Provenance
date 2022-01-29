@@ -22,6 +22,10 @@ extension PVEmulatorViewController {
             nav.navigationBar.isTranslucent = false
             nav.navigationBar.backgroundColor =  UIColor.black.withAlphaComponent(0.8)
         #endif
+        // disable iOS 13 swipe to dismiss...
+        if #available(iOS 13.0, tvOS 13.0, *) {
+            nav.isModalInPresentation = true
+        }
         present(nav, animated: true, completion: nil)
     }
 }
