@@ -153,6 +153,10 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         }
     }
     
+    #if os(iOS)
+    var searchController: UISearchController!
+    #endif
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         isInitialAppearance = true
@@ -205,10 +209,14 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             let searchController = UISearchController(searchResultsController: nil)
             searchController.searchBar.placeholder = "Search"
             searchController.obscuresBackgroundDuringPresentation = false
-            searchController.hidesNavigationBarDuringPresentation = true
+            searchController.hidesNavigationBarDuringPresentation = false
+            if #available(iOS 13.0, *) {
+                searchController.automaticallyShowsCancelButton = true
+            }
             navigationItem.hidesSearchBarWhenScrolling = true
             navigationItem.searchController = searchController
 
+            self.searchController = searchController
             searchText = Observable.merge(searchController.rx.searchText, searchController.rx.didDismiss.map { _ in nil })
         #else
             searchText = .never()

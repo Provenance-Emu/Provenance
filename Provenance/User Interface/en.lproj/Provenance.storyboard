@@ -13,7 +13,7 @@
         <!--Navigation Controller-->
         <scene sceneID="9Nl-1J-rrm">
             <objects>
-                <navigationController storyboardIdentifier="rootNavigationController" definesPresentationContext="YES" useStoryboardIdentifierAsRestorationIdentifier="YES" hidesBarsWhenKeyboardAppears="YES" id="PpW-xz-Ouo" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="rootNavigationController" definesPresentationContext="YES" providesPresentationContextTransitionStyle="YES" useStoryboardIdentifierAsRestorationIdentifier="YES" hidesBarsWhenKeyboardAppears="YES" id="PpW-xz-Ouo" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" id="iLh-mO-joj">
                         <rect key="frame" x="0.0" y="44" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -444,13 +444,13 @@
         <!--Game Library View Controller-->
         <scene sceneID="SSZ-SN-hMc">
             <objects>
-                <viewController restorationIdentifier="gameLibrary" storyboardIdentifier="PVGameLibraryViewController" definesPresentationContext="YES" providesPresentationContextTransitionStyle="YES" id="40z-oi-2L6" customClass="PVGameLibraryViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController restorationIdentifier="gameLibrary" storyboardIdentifier="PVGameLibraryViewController" id="40z-oi-2L6" customClass="PVGameLibraryViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="ooJ-sW-pgf">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="724"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="ooQ-n9-WR1">
-                                <rect key="frame" x="113.00000000000001" y="404" width="149.33333333333337" height="58.333333333333314"/>
+                                <rect key="frame" x="113.00000000000001" y="316" width="149.33333333333337" height="58.333333333333314"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Game library empty" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DrX-UD-xpk">
                                         <rect key="frame" x="0.0" y="0.0" width="149.33333333333334" height="20.333333333333332"/>
@@ -477,6 +477,7 @@
                             <constraint firstItem="ooQ-n9-WR1" firstAttribute="centerY" secondItem="AH0-kg-WTv" secondAttribute="centerY" id="x9M-lZ-qfE"/>
                         </constraints>
                     </view>
+                    <extendedEdge key="edgesForExtendedLayout"/>
                     <navigationItem key="navigationItem" id="LoK-Fl-znC">
                         <nil key="title"/>
                         <leftBarButtonItems>
