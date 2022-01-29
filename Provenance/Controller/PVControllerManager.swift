@@ -204,8 +204,9 @@ final class PVControllerManager: NSObject {
             ELOG("Object wasn't a GCController")
             return
         }
+        
         // ignore the bogus controller in the simulator
-        if isSimulator && controller.vendorName == nil {
+        if isSimulator && (controller.vendorName == nil || controller.vendorName == "Gamepad") {
             return
         }
 

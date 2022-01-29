@@ -572,14 +572,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     func hideMenu() {
         enableControllerInput(false)
         isShowingMenu = false
-        if presentedViewController is UIAlertController {
+        if (presentedViewController is UIAlertController) && !presentedViewController!.isBeingDismissed {
             dismiss(animated: true) { () -> Void in }
         }
-        #if os(tvOS)
-        if presentedViewController is TVAlertController {
+        if (presentedViewController is TVAlertController) && !presentedViewController!.isBeingDismissed {
             dismiss(animated: true) { () -> Void in }
         }
-        #endif
         updateLastPlayedTime()
         core.setPauseEmulation(false)
     }
@@ -677,6 +675,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             tap.allowedPressTypes = [.menu]
             moreInfoViewController.view.addGestureRecognizer(tap)
         #endif
+        
+        // disable iOS 13 swipe to dismiss...
+        if #available(iOS 13.0, tvOS 13.0, *) {
+            newNav.isModalInPresentation = true
+        }
 
         self.present(newNav, animated: true) { () -> Void in }
         //hideMoreInfo will/should do this!
