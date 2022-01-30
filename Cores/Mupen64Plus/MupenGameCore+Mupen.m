@@ -44,12 +44,14 @@ void MupenAudioSampleRateChanged(int SystemType)
     GET_CURRENT_AND_RETURN();
 
     float currentRate = current.mupenSampleRate;
-    
-    switch (SystemType)
-    {
+
+    switch (SystemType) {
         default:
         case SYSTEM_NTSC:
             current.mupenSampleRate = 48681812 / (*AudioInfo.AI_DACRATE_REG + 1);
+            break;
+        case SYSTEM_MPAL:
+            current.mupenSampleRate = 48628316 / (*AudioInfo.AI_DACRATE_REG + 1);
             break;
         case SYSTEM_PAL:
             current.mupenSampleRate = 49656530 / (*AudioInfo.AI_DACRATE_REG + 1);
@@ -68,8 +70,7 @@ void MupenAudioLenChanged()
     uint8_t *ptr = (uint8_t*)(AudioInfo.RDRAM + (*AudioInfo.AI_DRAM_ADDR_REG & 0xFFFFFF));
     
     // Swap channels
-    for (uint32_t i = 0; i < LenReg; i += 4)
-    {
+    for (uint32_t i = 0; i < LenReg; i += 4) {
         ptr[i] ^= ptr[i + 2];
         ptr[i + 2] ^= ptr[i];
         ptr[i] ^= ptr[i + 2];
@@ -107,17 +108,19 @@ void SetIsNTSC()
     }
 }
 
-int MupenOpenAudio(AUDIO_INFO info)
-{
+int MupenOpenAudio(AUDIO_INFO info) {
     AudioInfo = info;
     
     SetIsNTSC();
     
+    ILOG(@"called");
+
     return M64ERR_SUCCESS;
 }
 
 void MupenSetAudioSpeed(int percent) {
     // do we need this?
+    ILOG(@"value: %i", percent);
 }
 
 void ConfigureAll(NSString *romFolder) {
