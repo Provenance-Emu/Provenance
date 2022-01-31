@@ -316,7 +316,7 @@ extension PVRecentGame: SubCellItem {
 
 extension CollectionViewInCollectionViewCell {
     func item(at point: CGPoint) -> Item? {
-        let internalPoint = convert(point, from: superview)
+        let internalPoint = internalCollectionView.convert(point, from: superview)
         guard let indexPath = internalCollectionView.indexPathForItem(at: internalPoint)
             else { return nil }
         return try? internalCollectionView.rx.model(at: indexPath)
