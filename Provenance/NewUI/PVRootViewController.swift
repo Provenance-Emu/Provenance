@@ -171,7 +171,6 @@ protocol PVMenuDelegate {
     func didTapAddGames()
     func didTapConsole(with consoleId: String)
     func didTapCollection(with collection: Int)
-    func didTapToggleNewUI()
 }
 
 @available(iOS 14.0.0, *)
@@ -231,25 +230,18 @@ extension PVRootViewController: PVMenuDelegate {
         guard let consoles = consoles else { return }
         consolesWrapperViewDelegate.selectedTab = console.identifier
         let consolesView = ConsolesWrapperView(consolesWrapperViewDelegate: consolesWrapperViewDelegate, gameLibrary: self.gameLibrary, rootDelegate: self, consoles: consoles)
+        var consoleIdentifiersAndNamesMap: [String:String] = [:]
+        for console in consoles {
+            consoleIdentifiersAndNamesMap[console.identifier] = console.name
+        }
         selectedTabCancellable = consolesWrapperViewDelegate.$selectedTab.sink { [weak self] tab in
             guard let self = self else { return }
-            self.navigationItem.title = tab // TODO: map PVSystem identifier to console name
+            self.navigationItem.title = consoleIdentifiersAndNamesMap[tab]
         }
         self.loadIntoContainer(.console(consoleId: consoleId, title: console.name), newVC: UIHostingController(rootView: consolesView))
     }
 
     func didTapCollection(with collection: Int) { /* TODO: collections */ }
-    
-    func didTapToggleNewUI() {
-        menu.dismiss(animated: true, completion: nil)
-        
-        PVSettingsModel.shared.debugOptions.useSwiftUI.toggle()
-        
-        let alert = UIAlertController(title: "Preference Updated", message: "Next time Provence starts, it will use the \(PVSettingsModel.shared.debugOptions.useSwiftUI == true ? "new" : "old") UI", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        present(alert, animated: true, completion: nil)
-    }
-    
 }
 
 // MARK: - Helpers
@@ -273,30 +265,6 @@ extension PVRootViewController {
         ])
     }
     
-}
-
-// MARK: - PVControllerMethodsDelegate methods
-
-@available(iOS 14.0.0, *)
-extension PVRootViewController: PVRootDelegate {
-    func attemptToDelete(game: PVGame) {
-        do {
-            try self.delete(game: game)
-        } catch {
-            self.presentError(error.localizedDescription)
-        }
-    }
-}
-
-// MARK: - Methods from PVGameLibraryViewController
-
-@available(iOS 14.0.0, *)
-extension PVRootViewController {
-    func delete(game: PVGame) throws {
-        try RomDatabase.sharedInstance.delete(game: game)
-//        loadLastKnownNavOption()
-        // we're still retaining a refernce to the removed game, causing a realm crash. Need to reload the view
-    }
 }
 
 // MARK: - UIDocumentPickerDelegate
