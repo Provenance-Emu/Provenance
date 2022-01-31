@@ -975,7 +975,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         switch item {
         case .game(let game):
             return contextMenu(for: game, sender: cell)
-        // TODO: favorites, saveState, and recents will return the wrong item if the nested collection view is scrolled!
         case .favorites:
             let game: PVGame = (cell as! CollectionViewInCollectionViewCell).item(at: point)!
             return contextMenu(for: game, sender: cell)
@@ -1003,9 +1002,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     private func contextMenu(for game: PVGame, sender: UIView) -> UIViewController {
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        #if os(tvOS)
         actionSheet.title = "Options for \(game.title)"
-        #endif
         // If game.system has multiple cores, add actions to manage
         if let system = game.system, system.cores.count > 1 {
             // If user has select a core for this game, actio to reset
