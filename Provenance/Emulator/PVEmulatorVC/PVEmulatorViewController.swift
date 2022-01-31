@@ -631,9 +631,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         }
 
     #endif
-    @objc func showSpeedMenu() {
+    @objc func showSpeedMenu(_ sender:AnyObject?) {
         let actionSheet = UIAlertController(title: "Game Speed", message: nil, preferredStyle: .actionSheet)
-        if traitCollection.userInterfaceIdiom == .pad, let menuButton = menuButton {
+        if traitCollection.userInterfaceIdiom == .pad, let menuButton = menuButton, sender === menuButton {
             actionSheet.popoverPresentationController?.sourceView = menuButton
             actionSheet.popoverPresentationController?.sourceRect = menuButton.bounds
         }

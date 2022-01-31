@@ -92,6 +92,7 @@ class TVAlertController: UIViewController, UIAlertControllerProtocol {
         self.title = title
         self.message = message
         self.preferredStyle = preferredStyle
+
         self.modalPresentationStyle = _modalPresentationStyle
         self.modalTransitionStyle = .crossDissolve
     }
@@ -236,10 +237,23 @@ class TVAlertController: UIViewController, UIAlertControllerProtocol {
          }
     }
     
+    #if os(iOS)
+    override var popoverPresentationController: UIPopoverPresentationController? {
+        
+        // if caller is asking for a ppc, they must want a popup
+        let tc = UIApplication.shared.keyWindow?.traitCollection
+        if tc?.userInterfaceIdiom == .pad && tc?.horizontalSizeClass == .regular {
+            self.modalPresentationStyle = .popover
+        }
+
+        return super.popoverPresentationController
+    }
+    #endif
+    
     // MARK: layout and size
     
     private var isFullscreen: Bool {
-        return (view.window ?? UIApplication.shared.keyWindow)?.bounds == view.bounds || modalPresentationStyle == .overFullScreen
+        return modalPresentationStyle == _modalPresentationStyle
     }
 
     private var maxWidth: CGFloat {
@@ -249,9 +263,7 @@ class TVAlertController: UIViewController, UIAlertControllerProtocol {
     override var preferredContentSize: CGSize {
         get {
             var size = stack.systemLayoutSizeFitting(.zero)
-            print(size)
             size.width = min(size.width, maxWidth)
-            print(size)
             if size != .zero {
                 size.width  += (_inset * 2)
                 size.height += (_inset * 2)
@@ -268,11 +280,12 @@ class TVAlertController: UIViewController, UIAlertControllerProtocol {
         guard let content = view.subviews.last else {return}
         
         let rect = CGRect(origin: .zero, size: self.preferredContentSize)
-        stack.frame = rect.inset(by: UIEdgeInsets(top:_inset, left:_inset, bottom:_inset, right:_inset))
+        stack.frame = rect.insetBy(dx:_inset, dy:_inset)
         content.bounds = rect
-        content.center = CGPoint(x: view.bounds.midX, y: view.bounds.midY)
+        let safe = view.bounds.inset(by: view.safeAreaInsets)
+        content.center = CGPoint(x: safe.midX, y: safe.midY)
         
-        if _borderWidth != 0.0 {
+        if _borderWidth != 0.0 && isFullscreen {
             content.layer.borderWidth = _borderWidth
             content.layer.borderColor = view.tintColor.cgColor
         }
@@ -281,7 +294,8 @@ class TVAlertController: UIViewController, UIAlertControllerProtocol {
             // create a *inverse* round-rect path to fill the background but not under our effect view
             if let shape = content.layer.sublayers?.first as? CAShapeLayer {
                 let path = CGMutablePath()
-                path.addRect(CGRect(x: -10_000_000, y: -10_000_000, width: 20_000_000, height: 20_000_000))
+                //path.addRect(CGRect.infinite)
+                path.addRect(rect.insetBy(dx:-10_000_000, dy:-10_000_000))
                 path.addRoundedRect(in:rect, cornerWidth:_inset, cornerHeight:_inset)
                 shape.path = path
                 shape.fillColor = _fullscreenColor.cgColor
