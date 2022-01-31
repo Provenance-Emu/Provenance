@@ -157,6 +157,7 @@
 		378F4A0D1B63D7CD0065FA39 /* GCDWebUploader.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 378F49FD1B63D7CD0065FA39 /* GCDWebUploader.bundle */; };
 		378F4A0E1B63D7CD0065FA39 /* GCDWebUploader.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49FF1B63D7CD0065FA39 /* GCDWebUploader.m */; };
 		378F4A111B63DCF00065FA39 /* PVWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F4A101B63DCF00065FA39 /* PVWebServer.m */; };
+		37C8B58B27A7696E00065678 /* PVRootViewController+DelegateMethods.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C8B58A27A7696E00065678 /* PVRootViewController+DelegateMethods.swift */; };
 		37CFD802279C350C007B5FC7 /* PVRootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37CFD801279C350C007B5FC7 /* PVRootViewController.swift */; };
 		42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */; };
 		55546DF1257D6CA800616332 /* PVTGBDual.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5525388625574D48004B00B6 /* PVTGBDual.framework */; };
@@ -883,6 +884,7 @@
 		378F49FF1B63D7CD0065FA39 /* GCDWebUploader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebUploader.m; sourceTree = "<group>"; };
 		378F4A0F1B63DCF00065FA39 /* PVWebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVWebServer.h; sourceTree = "<group>"; };
 		378F4A101B63DCF00065FA39 /* PVWebServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVWebServer.m; sourceTree = "<group>"; };
+		37C8B58A27A7696E00065678 /* PVRootViewController+DelegateMethods.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVRootViewController+DelegateMethods.swift"; sourceTree = "<group>"; };
 		37CFD7FF279C34C1007B5FC7 /* CodeSigning.xcconfig copy.sample */ = {isa = PBXFileReference; lastKnownFileType = text; path = "CodeSigning.xcconfig copy.sample"; sourceTree = "<group>"; };
 		37CFD801279C350C007B5FC7 /* PVRootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVRootViewController.swift; sourceTree = "<group>"; };
 		423BB97A17DD35B10048F457 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
@@ -1837,6 +1839,7 @@
 			isa = PBXGroup;
 			children = (
 				37CFD801279C350C007B5FC7 /* PVRootViewController.swift */,
+				37C8B58A27A7696E00065678 /* PVRootViewController+DelegateMethods.swift */,
 				3759CAF6279C38D600E9267B /* Utils */,
 				3759CAEF279C380800E9267B /* Home */,
 				3759CAEE279C380100E9267B /* Consoles */,
@@ -2919,6 +2922,7 @@
 				B378225721D32B0B0077E86F /* SliderRow.swift in Sources */,
 				B3A4FB66278FFB6600A65248 /* Result+Conveniences.swift in Sources */,
 				B378224A21D329EC0077E86F /* SettingsRowSwitch.swift in Sources */,
+				37C8B58B27A7696E00065678 /* PVRootViewController+DelegateMethods.swift in Sources */,
 				B382C635278E5055007E61FE /* PVEmulatorViewController+Audio.swift in Sources */,
 				B382C63D278E514A007E61FE /* PVEmulatorViewController+CoreOptions.swift in Sources */,
 				3759CAF8279C38DF00E9267B /* NewUIHelpers.swift in Sources */,
