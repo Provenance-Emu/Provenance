@@ -11,25 +11,25 @@
 import UIKit
 
 // these are the defaults assuming Dark mode, etc.
-private let _modalPresentationStyle = UIModalPresentationStyle.overFullScreen  // default to .overFullScreen OR .blurOverFullScreen
 private let _fullscreenColor = UIColor.black.withAlphaComponent(0.8)
 private let _backgroundColor = UIColor(red:0.11, green:0.11, blue:0.12, alpha:1)      // secondarySystemGroupedBackground
-private let _defaultButtonColor = UIColor(white: 0.222, alpha: 0.666)
-private let _destructiveButtonColor = UIColor.systemRed.withAlphaComponent(0.666)
-private let _blur = true
+private let _defaultButtonColor = UIColor(white: 0.222, alpha: 0.8)
+private let _destructiveButtonColor = UIColor.systemRed.withAlphaComponent(0.8)
 private let _borderWidth = 4.0
 private let _fontTitleF = 1.5
 private let _animateDuration = 0.200
 
 // os specific defaults
 #if os(tvOS)
-    private let _font = UIFont.systemFont(ofSize: 48.0)
+    private let _blurFullscreen = true
+    private let _font = UIFont.systemFont(ofSize: 24.0)
     private let _inset:CGFloat = 32.0
-    private let _maxWidthF:CGFloat = 0.50
+    private let _maxTextWidthF:CGFloat = 0.25
 #else
+    private let _blurFullscreen = true
     private let _font = UIFont.preferredFont(forTextStyle: .body)
     private let _inset:CGFloat = 16.0
-    private let _maxWidthF:CGFloat = 0.80
+    private let _maxTextWidthF:CGFloat = 0.80
 #endif
 
 protocol UIAlertControllerProtocol : UIViewController {
@@ -93,8 +93,12 @@ class TVAlertController: UIViewController, UIAlertControllerProtocol {
         self.message = message
         self.preferredStyle = preferredStyle
 
-        self.modalPresentationStyle = _modalPresentationStyle
-        self.modalTransitionStyle = .crossDissolve
+        #if os(tvOS)
+            self.modalPresentationStyle = _blurFullscreen ?  .blurOverFullScreen : .overFullScreen
+        #else
+            self.modalPresentationStyle = .overFullScreen
+            self.modalTransitionStyle = .crossDissolve
+        #endif
     }
     
     var spacing: CGFloat {
@@ -121,7 +125,7 @@ class TVAlertController: UIViewController, UIAlertControllerProtocol {
             label.font = .boldSystemFont(ofSize: font.pointSize * _fontTitleF)
             label.numberOfLines = 0
             label.textAlignment = .center
-            label.preferredMaxLayoutWidth = maxWidth
+            label.preferredMaxLayoutWidth = maxTextWidth
         }
         get {
             return (stack.arrangedSubviews[0] as? UILabel)?.text
@@ -135,7 +139,7 @@ class TVAlertController: UIViewController, UIAlertControllerProtocol {
             label.font = self.font
             label.numberOfLines = 0
             label.textAlignment = .center
-            label.preferredMaxLayoutWidth = maxWidth
+            label.preferredMaxLayoutWidth = maxTextWidth
         }
         get {
             return (stack.arrangedSubviews[1] as? UILabel)?.text
@@ -193,25 +197,17 @@ class TVAlertController: UIViewController, UIAlertControllerProtocol {
         view.addSubview(menu)
 
         menu.layer.cornerRadius = _inset
-        menu.backgroundColor = _backgroundColor
-        view.backgroundColor = isFullscreen ? _fullscreenColor : nil
+        menu.backgroundColor = isFullscreen ? _backgroundColor : nil
+        view.backgroundColor = (isFullscreen && !_blurFullscreen) ? _fullscreenColor : nil
 
-        if _blur {
+        #if os(iOS)
+        if _blurFullscreen && isFullscreen {
             let blur = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
             blur.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-            blur.frame = menu.bounds;
-            blur.layer.cornerRadius = _inset
-            blur.layer.masksToBounds = true
-            menu.insertSubview(blur, at: 0)
-            menu.backgroundColor = nil
+            blur.frame = view.bounds;
+            view.insertSubview(blur, at: 0)
         }
-        
-        // use shape layer to mask out the area under the menu so the effect view can blur it
-        if _blur && isFullscreen {
-            view.backgroundColor = nil
-            // add a CAShapeLayer to the menu so we can animate it in-out
-            menu.layer.insertSublayer(CAShapeLayer(), at:0)
-        }
+        #endif
     }
     
     // convert stackView to two columns
@@ -240,7 +236,7 @@ class TVAlertController: UIViewController, UIAlertControllerProtocol {
     #if os(iOS)
     override var popoverPresentationController: UIPopoverPresentationController? {
         
-        // if caller is asking for a ppc, they must want a popup
+        // if caller is asking for a ppc, they must want a popup!
         let tc = UIApplication.shared.keyWindow?.traitCollection
         if tc?.userInterfaceIdiom == .pad && tc?.horizontalSizeClass == .regular {
             self.modalPresentationStyle = .popover
@@ -252,18 +248,22 @@ class TVAlertController: UIViewController, UIAlertControllerProtocol {
     
     // MARK: layout and size
     
+    // are we fullscreen (aka not a popover)
     private var isFullscreen: Bool {
-        return modalPresentationStyle == _modalPresentationStyle
+        #if os(tvOS)
+            return true
+        #else
+            return modalPresentationStyle == .overFullScreen
+        #endif
     }
 
-    private var maxWidth: CGFloat {
-        return (UIApplication.shared.keyWindow?.bounds.width ?? UIScreen.main.bounds.width) * _maxWidthF
+    private var maxTextWidth: CGFloat {
+        return (UIApplication.shared.keyWindow?.bounds.width ?? UIScreen.main.bounds.width) * _maxTextWidthF
     }
 
     override var preferredContentSize: CGSize {
         get {
             var size = stack.systemLayoutSizeFitting(.zero)
-            size.width = min(size.width, maxWidth)
             if size != .zero {
                 size.width  += (_inset * 2)
                 size.height += (_inset * 2)
@@ -288,19 +288,6 @@ class TVAlertController: UIViewController, UIAlertControllerProtocol {
         if _borderWidth != 0.0 && isFullscreen {
             content.layer.borderWidth = _borderWidth
             content.layer.borderColor = view.tintColor.cgColor
-        }
-        
-        if isFullscreen && _blur {
-            // create a *inverse* round-rect path to fill the background but not under our effect view
-            if let shape = content.layer.sublayers?.first as? CAShapeLayer {
-                let path = CGMutablePath()
-                //path.addRect(CGRect.infinite)
-                path.addRect(rect.insetBy(dx:-10_000_000, dy:-10_000_000))
-                path.addRoundedRect(in:rect, cornerWidth:_inset, cornerHeight:_inset)
-                shape.path = path
-                shape.fillColor = _fullscreenColor.cgColor
-                shape.fillRule = .evenOdd
-            }
         }
     }
     
@@ -391,7 +378,7 @@ class TVAlertController: UIViewController, UIAlertControllerProtocol {
     @objc func tapBackgroundToDismiss(_ sender:UITapGestureRecognizer) {
         #if os(iOS)
             let pt = sender.location(in: self.view)
-            if view.subviews.first?.frame.contains(pt) == true {
+            if view.subviews.last?.frame.contains(pt) == true {
                 return;
             }
         #endif
