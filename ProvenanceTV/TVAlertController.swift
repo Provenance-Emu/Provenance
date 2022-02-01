@@ -29,7 +29,7 @@ private let _animateDuration = 0.200
     private let _blurFullscreen = true
     private let _font = UIFont.preferredFont(forTextStyle: .body)
     private let _inset:CGFloat = 16.0
-    private let _maxTextWidthF:CGFloat = 0.80
+    private let _maxTextWidthF:CGFloat = 0.50
 #endif
 
 protocol UIAlertControllerProtocol : UIViewController {
@@ -258,7 +258,14 @@ class TVAlertController: UIViewController, UIAlertControllerProtocol {
     }
 
     private var maxTextWidth: CGFloat {
-        return (UIApplication.shared.keyWindow?.bounds.width ?? UIScreen.main.bounds.width) * _maxTextWidthF
+        let width = UIApplication.shared.keyWindow?.bounds.width ?? UIScreen.main.bounds.width
+        let tc = UIApplication.shared.keyWindow?.traitCollection
+        
+        if tc?.horizontalSizeClass == .compact {
+            return width * 0.80
+        }
+        
+        return width * _maxTextWidthF
     }
 
     override var preferredContentSize: CGSize {
