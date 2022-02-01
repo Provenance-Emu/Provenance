@@ -75,6 +75,8 @@ class TVAlertController: UIViewController, UIAlertControllerProtocol {
     var cancelAction: UIAlertAction?
     
     var autoDismiss = true          // a UIAlertController is always autoDismiss
+    
+    private var doubleStackHeight = 0
 
     private let stack = {() -> UIStackView in
         let stack = UIStackView(arrangedSubviews: [UILabel(), UILabel()])
@@ -210,29 +212,33 @@ class TVAlertController: UIViewController, UIAlertControllerProtocol {
         #endif
     }
     
-    // convert stackView to two columns
+    // convert menu to two columns
     private func doubleStack() {
-        var count = stack.arrangedSubviews.count;
         
-        // dont merge the last item(s), if they are cancel or destructive
-        count = count - (actions.reversed().firstIndex(where:{$0.style == .default}) ?? count)
-        let n = (count-2) / 2
+        // dont merge non destructive or cancel items
+        let count = actions.firstIndex(where: {$0.style != .default}) ?? actions.count
+        let n = count / 2
+        self.doubleStackHeight = n  // remember this
         
         let spacing = self.spacing
         for i in 0..<n {
-            let lhs = stack.arrangedSubviews[2+i]
-            let rhs = stack.arrangedSubviews[2+n]
+            guard let lhs = button(for:actions[i]),
+                  let rhs = button(for:actions[i+n]),
+                  let idx = stack.arrangedSubviews.firstIndex(of: lhs)
+                  else { break }
             lhs.removeFromSuperview()
             rhs.removeFromSuperview()
             (lhs as? TVButton)?.setGrowDelta(spacing * 0.8, for: .focused)
             (rhs as? TVButton)?.setGrowDelta(spacing * 0.8, for: .focused)
+            (lhs as? TVButton)?.setGrowDelta(spacing * 0.8, for: .selected)
+            (rhs as? TVButton)?.setGrowDelta(spacing * 0.8, for: .selected)
             let hstack = UIStackView(arrangedSubviews: [lhs, rhs])
             hstack.spacing = spacing
             hstack.distribution = .fillEqually
-            stack.insertArrangedSubview(hstack, at:2+i)
+            stack.insertArrangedSubview(hstack, at:idx)
          }
     }
-    
+
     #if os(iOS)
     override var popoverPresentationController: UIPopoverPresentationController? {
         
@@ -575,6 +581,10 @@ extension TVAlertController : ControllerButtonPress {
             moveDefaultAction(-1)
         case .downArrow:
             moveDefaultAction(+1)
+        case .leftArrow:
+            moveDefaultAction(-1000)
+        case .rightArrow:
+            moveDefaultAction(+1000)
         case .select:   // (aka A or ENTER)
             buttonPress(button(for: preferredAction))
         case .menu:     // (aka B or ESC)
@@ -582,18 +592,23 @@ extension TVAlertController : ControllerButtonPress {
             if cancelAction != nil  {
                 presentingViewController?.dismiss(animated:true, completion:nil)
             }
-        case .leftArrow:
-            moveDefaultActionHorz(-1)
-        case .rightArrow:
-            moveDefaultActionHorz(+1)
         default:
             break
         }
     }
     private func moveDefaultAction(_ dir:Int) {
-        if let action = preferredAction, let idx = actions.firstIndex(of: action) {
-            if actions.indices.contains(idx + dir) {
-                preferredAction = actions[idx+dir]
+        if let action = preferredAction, var idx = actions.firstIndex(of: action) {
+            if doubleStackHeight != 0 {
+                let n = self.doubleStackHeight
+                if dir == +1 && idx == n-1   {idx = n*2-1}
+                if dir == -1 && idx == n     {idx = n+1}
+                if dir == -1 && idx == n*2   {idx = n}
+                if dir == +1000 && idx < n   {idx = idx + n - 1000}
+                if dir == -1000 && idx < n*2 {idx = idx - n + 1000}
+            }
+            idx = idx + dir
+            if actions.indices.contains(idx) {
+                preferredAction = actions[idx]
                 button(for: action)?.isSelected = false
                 button(for: preferredAction)?.isSelected = true
             }
@@ -603,8 +618,4 @@ extension TVAlertController : ControllerButtonPress {
             button(for: preferredAction)?.isSelected = true
         }
     }
-    private func moveDefaultActionHorz(_ dir:Int) {
-        // TODO: move left and right in two column mode
-    }
-
 }
