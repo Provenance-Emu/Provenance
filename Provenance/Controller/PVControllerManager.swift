@@ -419,7 +419,94 @@ final class PVControllerManager: NSObject {
         }
     }
 #endif
+    
+// MARK: - Controller User Interaction (ie use controller to drive UX)
+
+#if os(iOS)
+    //
+    // make a *cheap* *simple* version of the FocusSystem
+    // get controller input and turn it into button presses menu,select,up,down,left,right
+    // NOTE we assume no cores or other parts of PV is using valueChangedHandler
+    // TODO: what happens if a controller get added/removed while controllerUserInteractionEnabled == true
+    //
+    private var current_button_state = GCExtendedGamepad.ButtonState()
+    
+    var controllerUserInteractionEnabled: Bool = false {
+        didSet {
+            if controllerUserInteractionEnabled {
+                controllers().forEach { controller in
+                    var current_state = GCExtendedGamepad.ButtonState()
+                    controller.extendedGamepad?.valueChangedHandler = { gamepad, element in
+                        let state = gamepad.readButtonState()
+                        let changed_state = current_state.symmetricDifference(state)
+                        let changed_state_pressed = changed_state.intersection(state)
+                        
+                        for button in changed_state_pressed {
+                            // send button press up the responder chain
+                            UIApplication.shared.sendAction(#selector(ControllerButtonPress.controllerButtonPress), to: nil, from:button, for: nil)
+                        }
+                        // remember state so we can only send changes
+                        current_state = state
+                    }
+                }
+            }
+            else {
+                controllers().forEach { controller in
+                    controller.extendedGamepad?.valueChangedHandler = nil
+                }
+            }
+        }
+    }
+#endif
+    
 }
+
+// MARK: - ControllerButtonPress protocol
+
+@objc protocol ControllerButtonPress {
+    func controllerButtonPress(_ type:Any?)
+}
+
+// MARK: - Read Controller UX buttons
+
+private extension GCExtendedGamepad {
+    
+    typealias ButtonState = Set<UIPress.PressType>
+    
+    func readButtonState() -> ButtonState {
+        var state = ButtonState()
+        
+        if buttonA.isPressed {state.formUnion([.select])}
+        if buttonB.isPressed {state.formUnion([.menu])}
+        
+        for pad in [dpad, leftThumbstick, rightThumbstick] {
+            if pad.up.isPressed {state.formUnion([.upArrow])}
+            if pad.down.isPressed {state.formUnion([.downArrow])}
+            if pad.left.isPressed {state.formUnion([.leftArrow])}
+            if pad.right.isPressed {state.formUnion([.rightArrow])}
+        }
+
+        return state
+    }
+}
+
+// MARK: - UIPress.PressType CustomStringConvertible
+
+extension UIPress.PressType : CustomStringConvertible {
+    public var description : String {
+        switch self {
+        case .upArrow:      return "UP"
+        case .downArrow:    return "DOWN"
+        case .leftArrow:    return "LEFT"
+        case .rightArrow:   return "RIGHT"
+        case .select:       return "SELECT"
+        case .menu:         return "MENU"
+        case .playPause:    return "PLAY/PAUSE"
+        default:            return "[[\(rawValue)]]"
+        }
+    }
+}
+
 
 // MARK: - Controller type detection
 
@@ -441,6 +528,7 @@ extension GCController {
 //
 // create a GCController that turns a keyboard into a controller
 //
+// [ESC:B]
 // [TILDE:MENU] [1:OPTIONS]
 //
 // [TAB:L1]    [Q:X]     [W:UP]   [E:Y]     [R:R1]
@@ -477,7 +565,7 @@ extension GCKeyboard {
 
             // ABXY
             gamepad.buttonA.setValue(isPressed(.spacebar) || isPressed(.returnOrEnter) ? 1.0 : 0.0)
-            gamepad.buttonB.setValue(isPressed(.keyF) ? 1.0 : 0.0)
+            gamepad.buttonB.setValue(isPressed(.keyF) || isPressed(.escape) ? 1.0 : 0.0)
             gamepad.buttonX.setValue(isPressed(.keyQ) ? 1.0 : 0.0)
             gamepad.buttonY.setValue(isPressed(.keyE) ? 1.0 : 0.0)
 
@@ -492,6 +580,9 @@ extension GCKeyboard {
             // MENU, OPTIONS
             gamepad.buttonMenu.setValue(isPressed(.graveAccentAndTilde) ? 1.0 : 0.0)
             gamepad.buttonOptions?.setValue(isPressed(.one) ? 1.0 : 0.0)
+            
+            // the system does not call this handler in setValue, so call it with the dpad
+            gamepad.valueChangedHandler?(gamepad, gamepad.dpad)
         }
         
         return controller
