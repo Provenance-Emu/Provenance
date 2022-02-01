@@ -741,7 +741,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         #if os(iOS)
             // Add done button to iPhone
             // iPad is a popover do no done button needed
-            if traitCollection.horizontalSizeClass == .compact {
+            if traitCollection.horizontalSizeClass == .compact || !(sender is UIBarButtonItem) {
                 let navController = UINavigationController(rootViewController: sortOptionsTableViewController)
                 sortOptionsTableViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(PVGameLibraryViewController.dismissVC))
                 present(navController, animated: true, completion: nil)

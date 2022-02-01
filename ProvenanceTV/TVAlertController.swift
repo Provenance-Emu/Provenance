@@ -561,3 +561,50 @@ private class TVButton : UIButton {
         }, completion: nil)
     }
 }
+
+// MARK: ControllerButtonPress
+
+extension TVAlertController : ControllerButtonPress {
+    override var canBecomeFirstResponder: Bool {
+        return true
+    }
+    func controllerButtonPress(_ type: Any?) {
+        guard let type = type as? UIPress.PressType else { return }
+        switch type {
+        case .upArrow:
+            moveDefaultAction(-1)
+        case .downArrow:
+            moveDefaultAction(+1)
+        case .select:   // (aka A or ENTER)
+            buttonPress(button(for: preferredAction))
+        case .menu:     // (aka B or ESC)
+            // only automaticly dismiss if there is a cancel button
+            if cancelAction != nil  {
+                presentingViewController?.dismiss(animated:true, completion:nil)
+            }
+        case .leftArrow:
+            moveDefaultActionHorz(-1)
+        case .rightArrow:
+            moveDefaultActionHorz(+1)
+        default:
+            break
+        }
+    }
+    private func moveDefaultAction(_ dir:Int) {
+        if let action = preferredAction, let idx = actions.firstIndex(of: action) {
+            if actions.indices.contains(idx + dir) {
+                preferredAction = actions[idx+dir]
+                button(for: action)?.isSelected = false
+                button(for: preferredAction)?.isSelected = true
+            }
+        }
+        else {
+            preferredAction = actions.first(where: {$0.style == .default && $0.isEnabled})
+            button(for: preferredAction)?.isSelected = true
+        }
+    }
+    private func moveDefaultActionHorz(_ dir:Int) {
+        // TODO: move left and right in two column mode
+    }
+
+}

@@ -560,6 +560,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             //    if (@available(iOS 10, *)) {
             //        self.controllerUserInteractionEnabled = enabled;
             //    }
+            PVControllerManager.shared.controllerUserInteractionEnabled = enabled
         #endif
     }
 
