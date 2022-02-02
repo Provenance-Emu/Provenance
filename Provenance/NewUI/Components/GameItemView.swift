@@ -10,8 +10,9 @@
 
 import Foundation
 import SwiftUI
+import PVLibrary
 
-@available(iOS 14.0.0, *)
+@available(iOS 14.0.0, tvOS 14.0.0, *)
 struct GameItemView: SwiftUI.View {
     
     var artworkURL: String?
@@ -55,7 +56,7 @@ struct GameItemView: SwiftUI.View {
     }
 }
 
-@available(iOS 14.0.0, *)
+@available(iOS 14.0.0, tvOS 14.0.0, *)
 struct ArtworkImageBaseView: SwiftUI.View {
 
     var artwork: UIImage?
@@ -79,7 +80,7 @@ struct ArtworkImageBaseView: SwiftUI.View {
     }
 }
 
-@available(iOS 14.0.0, *)
+@available(iOS 14.0.0, tvOS 14.0.0, *)
 struct GameItemThumbnail: SwiftUI.View {
     var artwork: UIImage?
     var artworkType: GameArtworkType
@@ -94,7 +95,7 @@ struct GameItemThumbnail: SwiftUI.View {
     }
 }
 
-@available(iOS 14.0.0, *)
+@available(iOS 14.0.0, tvOS 14.0.0, *)
 struct GameItemTitle: SwiftUI.View {
     var text: String
     var body: some SwiftUI.View {
@@ -106,7 +107,7 @@ struct GameItemTitle: SwiftUI.View {
     }
 }
 
-@available(iOS 14.0.0, *)
+@available(iOS 14.0.0, tvOS 14.0.0, *)
 struct GameItemSubtitle: SwiftUI.View {
     var text: String
     var body: some SwiftUI.View {
@@ -118,7 +119,7 @@ struct GameItemSubtitle: SwiftUI.View {
     }
 }
 
-@available(iOS 14.0.0, *)
+@available(iOS 14.0.0, tvOS 14.0.0, *)
 struct ArtworkDynamicWidthPreferenceKey: PreferenceKey {
     static let defaultValue: CGFloat = 0
 
@@ -128,7 +129,7 @@ struct ArtworkDynamicWidthPreferenceKey: PreferenceKey {
     }
 }
 
-@available(iOS 14.0.0, *)
+@available(iOS 14.0.0, tvOS 14.0.0, *)
 struct GameItemRow: SwiftUI.View {
     
     var body: some SwiftUI.View {
@@ -170,7 +171,7 @@ struct GameItemRow: SwiftUI.View {
 }
 
 // previews
-@available(iOS 14.0.0, *)
+@available(iOS 14.0.0, tvOS 14.0.0, *)
 struct GameItemView_Previews: PreviewProvider {
     static var previews: some SwiftUI.View {
         if #available(iOS 15.0, *) {

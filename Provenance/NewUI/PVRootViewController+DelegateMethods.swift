@@ -7,10 +7,11 @@
 //
 
 import Foundation
+import PVLibrary
 
 // MARK: - PVControllerMethodsDelegate methods
 
-@available(iOS 14.0.0, *)
+@available(iOS 14.0.0, tvOS 14.0.0, *)
 extension PVRootViewController: PVRootDelegate {
     func attemptToDelete(game: PVGame) {
         do {
@@ -23,7 +24,7 @@ extension PVRootViewController: PVRootDelegate {
 
 // MARK: - Methods from PVGameLibraryViewController
 
-@available(iOS 14.0.0, *)
+@available(iOS 14.0.0, tvOS 14.0.0, *)
 extension PVRootViewController {
     func delete(game: PVGame) throws {
         try RomDatabase.sharedInstance.delete(game: game)

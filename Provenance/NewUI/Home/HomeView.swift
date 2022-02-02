@@ -10,6 +10,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import PVLibrary
 
 enum PVHomeSection: Int, CaseIterable {
     case recentSaveStates
@@ -18,7 +19,7 @@ enum PVHomeSection: Int, CaseIterable {
     case mostPlayed
 }
 
-@available(iOS 14.0.0, *)
+@available(iOS 14.0.0, tvOS 14.0.0, *)
 struct HomeView: SwiftUI.View {
     
     var gameLibrary: PVGameLibrary!
@@ -121,7 +122,7 @@ struct HomeView: SwiftUI.View {
 }
 
 
-@available(iOS 14.0.0, *)
+@available(iOS 14.0.0, tvOS 14.0.0, *)
 struct HomeItemView: SwiftUI.View {
     
     var imageName: String

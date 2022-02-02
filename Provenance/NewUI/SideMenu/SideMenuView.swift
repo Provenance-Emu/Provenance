@@ -10,11 +10,23 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import PVLibrary
 
-@available(iOS 14.0.0, *)
+@available(iOS 14.0.0, tvOS 14.0.0, *)
 struct SideMenuView: SwiftUI.View {
     
+    static func instantiate(delegate: PVMenuDelegate) -> UIViewController {
+        let view = SideMenuView(delegate: delegate)
+        let hostingView = UIHostingController(rootView: view)
+        return hostingView
+    }
+    
     @State var consoles: Results<PVSystem>?
+    
+//    @State var consoles: Results<PVSystem> = Realm().objects(PVSystem.self).filter("games.@count > 0").sorted(byKeyPath: "name")
+    
+//    @ObservedResults(PVSystem.self, filter: NSPredicate(format: "games.@count > 0")) var consoles
+    
     var delegate: PVMenuDelegate?
     
     var body: some SwiftUI.View {
@@ -58,7 +70,7 @@ struct SideMenuView: SwiftUI.View {
     }
 }
 
-@available(iOS 14.0.0, *)
+@available(iOS 14.0.0, tvOS 14.0.0, *)
 struct MenuSectionHeaderView: SwiftUI.View {
     
     var sectionTitle: String
@@ -86,7 +98,7 @@ struct MenuSectionHeaderView: SwiftUI.View {
     }
 }
 
-@available(iOS 14.0.0, *)
+@available(iOS 14.0.0, tvOS 14.0.0, *)
 struct MenuItemView: SwiftUI.View {
     
     var imageName: String
@@ -108,7 +120,7 @@ struct MenuItemView: SwiftUI.View {
     }
 }
 
-@available(iOS 14.0.0, *)
+@available(iOS 14.0.0, tvOS 14.0.0, *)
 struct SideMenuView_Previews: PreviewProvider {
     static var previews: some SwiftUI.View {
         SideMenuView()

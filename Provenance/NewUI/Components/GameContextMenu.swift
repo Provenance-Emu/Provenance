@@ -10,8 +10,9 @@
 
 import Foundation
 import SwiftUI
+import PVLibrary
 
-@available(iOS 14.0.0, *)
+@available(iOS 14.0.0, tvOS 14.0.0, *)
 struct GameContextMenu: SwiftUI.View {
     
     @ObservedObject var game: PVGame

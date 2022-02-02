@@ -13,9 +13,9 @@ import Foundation
 import Foundation
 import UIKit
 import SwiftUI
-import SideMenu
 import RealmSwift
 import Combine
+import PVLibrary
 
 // PVRootViewController serves as a UIKit parent for child SwiftUI menu views.
 
@@ -42,10 +42,9 @@ public protocol PVRootDelegate: GameLaunchingViewController {
     func attemptToDelete(game: PVGame)
 }
   
-@available(iOS 14.0.0, *)
+@available(iOS 14.0.0, tvOS 14.0.0, *)
 class PVRootViewController: UIViewController, GameLaunchingViewController, GameSharingViewController {
     
-    var menu: PVSideMenu!
     let containerView = UIView()
     
     lazy var menuButton = UIBarButtonItem.makeFromCustomView(image: UIImage.symbolNameWithFallBack(name: "line.3.horizontal")!, target: self, action: #selector(PVRootViewController.showMenu))
@@ -70,8 +69,6 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
     }
     
     override func viewDidLoad() {
-        menu = loadSideMenu()
-        
         super.viewDidLoad()
         
         self.navigationItem.leftBarButtonItem = menuButton
@@ -121,16 +118,11 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
     }
     
     @objc func showMenu() {
-        menu = loadSideMenu()
-        present(menu, animated: true, completion: nil)
+        self.sideNavigationController?.showLeftSide()
     }
     
-    func loadSideMenu() -> PVSideMenu {
-        let hostingController = UIHostingController(rootView: SideMenuView(consoles: nil, delegate: self))
-        let menu = PVSideMenu(rootViewController: hostingController)
-         SideMenuManager.default.leftMenuNavigationController = menu
-         SideMenuManager.default.addScreenEdgePanGesturesToPresent(toView: self.containerView, forMenu: .left)
-        return menu
+    func closeMenu() {
+        self.sideNavigationController?.closeSide()
     }
     
     func loadIntoContainer(_ navItem: PVNavOption, newVC: UIViewController) {
@@ -173,7 +165,7 @@ protocol PVMenuDelegate {
     func didTapCollection(with collection: Int)
 }
 
-@available(iOS 14.0.0, *)
+@available(iOS 14.0.0, tvOS 14.0.0, *)
 extension PVRootViewController: PVMenuDelegate {
     func didTapSettings() {
         guard
@@ -182,7 +174,7 @@ extension PVRootViewController: PVMenuDelegate {
         else { return }
         
         settingsVC.conflictsController = updatesController
-        menu.dismiss(animated: true, completion: nil)
+        self.closeMenu()
         // modal
 //        menu.dismiss(animated: true, completion: {
 //            self.present(settingsNav, animated: true)
@@ -192,14 +184,14 @@ extension PVRootViewController: PVMenuDelegate {
     }
 
     func didTapHome() {
-        menu.dismiss(animated: true, completion: nil)
+        self.closeMenu()
         self.navigationItem.title = "Home"
         let homeView = HomeView(gameLibrary: self.gameLibrary, delegate: self)
         self.loadIntoContainer(.home, newVC: UIHostingController(rootView: homeView))
     }
 
     func didTapAddGames() {
-        menu.dismiss(animated: true, completion: nil)
+        self.closeMenu()
 
         /// from PVGameLibraryViewController#getMoreROMs
         let actionSheet = UIAlertController(title: "Select Import Source", message: nil, preferredStyle: .actionSheet)
@@ -224,7 +216,7 @@ extension PVRootViewController: PVMenuDelegate {
     }
 
     func didTapConsole(with consoleId: String) {
-        menu.dismiss(animated: true, completion: nil)
+        self.closeMenu()
         guard let console = try? Realm().object(ofType: PVSystem.self, forPrimaryKey: consoleId) else { return }
         let consoles = try? Realm().objects(PVSystem.self).filter("games.@count > 0").sorted(byKeyPath: "name")
         guard let consoles = consoles else { return }
@@ -246,7 +238,7 @@ extension PVRootViewController: PVMenuDelegate {
 
 // MARK: - Helpers
 
-@available(iOS 14.0.0, *)
+@available(iOS 14.0.0, tvOS 14.0.0, *)
 extension PVRootViewController {
     
     func addChildViewController(_ child: UIViewController, toContainerView containerView: UIView) {
@@ -268,7 +260,7 @@ extension PVRootViewController {
 }
 
 // MARK: - UIDocumentPickerDelegate
-@available(iOS 14.0.0, *)
+@available(iOS 14.0.0, tvOS 14.0.0, *)
 extension PVRootViewController: UIDocumentPickerDelegate {
     // copied from PVGameLibraryViewController#documentPicker()
     func documentPicker(_: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
