@@ -26,10 +26,21 @@ struct HomeView: SwiftUI.View {
     
     var rootDelegate: PVRootDelegate?
     
-    @State var recentSaveStates: Results<PVSaveState>?
-    @State var recentlyPlayedGames: Results<PVRecentGame>?
-    @State var favorites: Results<PVGame>?
-    @State var mostPlayed: Results<PVGame>?
+//    @State var recentSaveStates: Results<PVSaveState>?
+//    @State var recentlyPlayedGames: Results<PVRecentGame>?
+//    @State var favorites: Results<PVGame>?
+//    @State var mostPlayed: Results<PVGame>?
+    
+    
+    @ObservedObject var recentSaveStates: BindableResults<PVSaveState>
+    @ObservedObject var recentlyPlayedGames: BindableResults<PVRecentGame>
+    @ObservedObject var favorites: BindableResults<PVGame>
+    @ObservedObject var mostPlayed: BindableResults<PVGame>
+    
+//    init(gameLibrary: PVGameLibrary, delegate: PVMenuDelegate) {
+//        self.consoles = BindableResults(results: gameLibrary.activeSystems)
+//        self.delegate = delegate
+//    }
     
 //    collectionView.rx.itemSelected
 //        .map { indexPath in (try! collectionView.rx.model(at: indexPath) as Section.Item, collectionView.cellForItem(at: indexPath)) }
@@ -52,10 +63,10 @@ struct HomeView: SwiftUI.View {
         self.gameLibrary = gameLibrary
         self.rootDelegate = delegate
         
-        self.recentSaveStates = self.gameLibrary.saveStatesResults
-        self.recentlyPlayedGames = self.gameLibrary.recentsResults
-        self.favorites = self.gameLibrary.favoritesResults
-        self.mostPlayed = self.gameLibrary.mostPlayedResults
+        self.recentSaveStates = BindableResults(results: self.gameLibrary.saveStatesResults)
+        self.recentlyPlayedGames = BindableResults(results: self.gameLibrary.recentsResults)
+        self.favorites = BindableResults(results: self.gameLibrary.favoritesResults)
+        self.mostPlayed = BindableResults(results: self.gameLibrary.mostPlayedResults)
     }
     
     
@@ -69,7 +80,7 @@ struct HomeView: SwiftUI.View {
                 
                 if let recentSaveStates = recentSaveStates {
                     HStack {
-                        ForEach(recentSaveStates, id: \.self) { recentSaveState in
+                        ForEach(recentSaveStates.results, id: \.self) { recentSaveState in
                             GameItemView(
                                 artwork: nil,
                                 artworkType: recentSaveState.game.system.gameArtworkType,
@@ -82,7 +93,7 @@ struct HomeView: SwiftUI.View {
                 }
                 if let recentlyPlayedGames = recentlyPlayedGames {
                     HStack {
-                        ForEach(recentlyPlayedGames, id: \.self) { recentlyPlayedGame in
+                        ForEach(recentlyPlayedGames.results, id: \.self) { recentlyPlayedGame in
                             GameItemView(
                                 artwork: nil,
                                 artworkType: recentlyPlayedGame.game.system.gameArtworkType,
@@ -95,7 +106,7 @@ struct HomeView: SwiftUI.View {
                 }
                 if let favorites = favorites {
                     HStack {
-                        ForEach(favorites, id: \.self) { favorite in
+                        ForEach(favorites.results, id: \.self) { favorite in
                             GameItemView(
                                 artwork: nil,
                                 artworkType: favorite.system.gameArtworkType,
@@ -108,7 +119,7 @@ struct HomeView: SwiftUI.View {
                 }
                 if let mostPlayed = mostPlayed {
                     HStack {
-                        ForEach(mostPlayed, id: \.self) { playedGame in
+                        ForEach(mostPlayed.results, id: \.self) { playedGame in
                             GameItemView(
                                 artwork: nil,
                                 artworkType: playedGame.system.gameArtworkType,
