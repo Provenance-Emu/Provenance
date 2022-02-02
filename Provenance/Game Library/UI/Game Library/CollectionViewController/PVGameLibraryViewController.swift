@@ -1769,12 +1769,6 @@ extension PVGameLibraryViewController: GameLibraryCollectionViewDelegate {
     }
 }
 
-extension PVGameLibraryViewController : UISearchResultsUpdating {
-    func updateSearchResults(for searchController: UISearchController) {
-        print("updateSearchResults")
-    }
-}
-
 // Helper function inserted by Swift 4.2 migrator.
 #if os(iOS)
     private func convertFromUIImagePickerControllerInfoKeyDictionary(_ input: [UIImagePickerController.InfoKey: Any]) -> [String: Any] {

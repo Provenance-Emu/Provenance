@@ -429,8 +429,6 @@ final class PVControllerManager: NSObject {
     // NOTE we assume no cores or other parts of PV is using valueChangedHandler
     // TODO: what happens if a controller get added/removed while controllerUserInteractionEnabled == true
     //
-    private var current_button_state = GCExtendedGamepad.ButtonState()
-    
     var controllerUserInteractionEnabled: Bool = false {
         didSet {
             if controllerUserInteractionEnabled {
