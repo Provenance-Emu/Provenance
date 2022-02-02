@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import PVLibrary
 
 public enum GameArtworkType {
     case tall

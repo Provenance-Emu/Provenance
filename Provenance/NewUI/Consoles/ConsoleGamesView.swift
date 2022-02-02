@@ -11,8 +11,9 @@ import Foundation
 #if canImport(SwiftUI)
 import SwiftUI
 import RealmSwift
+import PVLibrary
 
-@available(iOS 14.0.0, *)
+@available(iOS 14.0.0, tvOS 14.0.0, *)
 struct ConsoleGamesView: SwiftUI.View {
     
     var console: PVSystem!
@@ -55,7 +56,7 @@ struct ConsoleGamesView: SwiftUI.View {
     }
 }
 
-//@available(iOS 14.0.0, *)
+//@available(iOS 14.0.0, tvOS 14.0.0, *)
 //struct HomeView_Previews: PreviewProvider {
 //    static var previews: some SwiftUI.View {
 //        HomeView()
