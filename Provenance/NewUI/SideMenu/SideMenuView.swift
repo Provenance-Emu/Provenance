@@ -6,8 +6,8 @@
 //  Copyright © 2022 Provenance Emu. All rights reserved.
 //
 
-#if canImport(SwiftUI)
 import Foundation
+#if canImport(SwiftUI)
 import SwiftUI
 import RealmSwift
 import PVLibrary
@@ -15,19 +15,20 @@ import PVLibrary
 @available(iOS 14, tvOS 14, *)
 struct SideMenuView: SwiftUI.View {
     
-    static func instantiate(delegate: PVMenuDelegate) -> UIViewController {
-        let view = SideMenuView(delegate: delegate)
+    var delegate: PVMenuDelegate?
+    
+    @ObservedObject var consoles: BindableResults<PVSystem>
+    
+    init(gameLibrary: PVGameLibrary, delegate: PVMenuDelegate) {
+        self.consoles = BindableResults(results: gameLibrary.activeSystems)
+        self.delegate = delegate
+    }
+    
+    static func instantiate(gameLibrary: PVGameLibrary, delegate: PVMenuDelegate) -> UIViewController {
+        let view = SideMenuView(gameLibrary: gameLibrary, delegate: delegate)
         let hostingView = UIHostingController(rootView: view)
         return hostingView
     }
-    
-    @State var consoles: Results<PVSystem>?
-    
-//    @State var consoles: Results<PVSystem> = Realm().objects(PVSystem.self).filter("games.@count > 0").sorted(byKeyPath: "name")
-    
-//    @ObservedResults(PVSystem.self, filter: NSPredicate(format: "games.@count > 0")) var consoles
-    
-    var delegate: PVMenuDelegate?
     
     var body: some SwiftUI.View {
         ScrollView {
@@ -46,9 +47,9 @@ struct SideMenuView: SwiftUI.View {
                     }
                 }
                 Group {
-                    if let consoles = consoles, consoles.count > 0 { // TODO: handle sorting
-                        MenuSectionHeaderView(sectionTitle: "CONSOLES", sortable: consoles.count > 1)
-                        ForEach(consoles, id: \.self) { console in
+                    if consoles.results.count > 0 { // TODO: handle sorting
+                        MenuSectionHeaderView(sectionTitle: "CONSOLES", sortable: consoles.results.count > 1)
+                        ForEach(consoles.results, id: \.self) { console in
                             Divider()
                             MenuItemView(imageName: "prov_snes_icon", rowTitle: console.name) {
                                 delegate?.didTapConsole(with: console.identifier)
@@ -64,9 +65,6 @@ struct SideMenuView: SwiftUI.View {
             }
         }
         .background(Color.black)
-        .onAppear {
-            consoles = try? Realm().objects(PVSystem.self).filter("games.@count > 0").sorted(byKeyPath: "name")
-        }
     }
 }
 
@@ -120,11 +118,11 @@ struct MenuItemView: SwiftUI.View {
     }
 }
 
-@available(iOS 14, tvOS 14, *)
-struct SideMenuView_Previews: PreviewProvider {
-    static var previews: some SwiftUI.View {
-        SideMenuView()
-    }
-}
+//@available(iOS 14, tvOS 14, *)
+//struct SideMenuView_Previews: PreviewProvider {
+//    static var previews: some SwiftUI.View {
+//        SideMenuView(delegate: self)
+//    }
+//}
 
 #endif

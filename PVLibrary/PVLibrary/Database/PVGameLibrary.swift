@@ -22,6 +22,8 @@ public struct PVGameLibrary {
     public let favoritesResults: Results<PVGame>
     public let recentsResults: Results<PVRecentGame>
     public let mostPlayedResults: Results<PVGame>
+    
+    public let activeSystems: Results<PVSystem>
 
     private let database: RomDatabase
 
@@ -47,6 +49,8 @@ public struct PVGameLibrary {
         self.mostPlayed = Observable
             .collection(from: self.mostPlayedResults)
             .mapMany { $0 }
+        
+        self.activeSystems = database.realm.objects(PVSystem.self).filter("games.@count > 0").sorted(byKeyPath: "name")
     }
 
     public func search(for searchText: String) -> Observable<[PVGame]> {
@@ -127,6 +131,10 @@ public struct PVGameLibrary {
     public func gamesForSystem(systemIdentifier: String) -> Results<PVGame> {
         return database.all(PVGame.self).filter(NSPredicate(format: "systemIdentifier == %@", argumentArray: [systemIdentifier]))
     }
+    
+//    public func activeSystems() -> Results<PVSystem> {
+//        return database.all(PVSystem.self).filter("games.@count > 0").sorted(byKeyPath: "name")
+//    }
 }
 
 public extension ObservableType where Element: Collection {

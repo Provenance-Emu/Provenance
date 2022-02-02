@@ -18,6 +18,7 @@ import UIKit
 #endif
 
 @UIApplicationMain
+
 final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     var shortcutItemGame: PVGame?
@@ -43,7 +44,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
                 gameImporter: gameImporter)
             let sideNav = SideNavigationController(mainViewController: UINavigationController(rootViewController: rootViewController))
             sideNav.leftSide(
-                viewController: SideMenuView.instantiate(delegate: rootViewController),
+                viewController: SideMenuView.instantiate(gameLibrary: gameLibrary, delegate: rootViewController),
                 options: .init(widthPercent: 0.8, animationDuration: 0.2, overlayColor: .gray,overlayOpacity: 0.3, shadowOpacity: 0.0)
             )
             let window = UIWindow(frame: UIScreen.main.bounds)

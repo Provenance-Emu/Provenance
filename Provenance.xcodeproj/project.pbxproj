@@ -170,6 +170,7 @@
 		37B7B3E427AA671600E05B90 /* SideNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B7B3DE27AA56E600E05B90 /* SideNavigationController.swift */; };
 		37B7B3E527AA671900E05B90 /* SideNavigationController+NestedTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B7B3E027AA56FB00E05B90 /* SideNavigationController+NestedTypes.swift */; };
 		37B7B3E627AA671C00E05B90 /* UIViewController+SideNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B7B3E227AA570900E05B90 /* UIViewController+SideNavigationController.swift */; };
+		37B7B3E827AA719E00E05B90 /* BindableResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B7B3E727AA719E00E05B90 /* BindableResult.swift */; };
 		37C8B58B27A7696E00065678 /* PVRootViewController+DelegateMethods.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C8B58A27A7696E00065678 /* PVRootViewController+DelegateMethods.swift */; };
 		37CFD802279C350C007B5FC7 /* PVRootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37CFD801279C350C007B5FC7 /* PVRootViewController.swift */; };
 		42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */; };
@@ -918,6 +919,7 @@
 		37B7B3DE27AA56E600E05B90 /* SideNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideNavigationController.swift; sourceTree = "<group>"; };
 		37B7B3E027AA56FB00E05B90 /* SideNavigationController+NestedTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SideNavigationController+NestedTypes.swift"; sourceTree = "<group>"; };
 		37B7B3E227AA570900E05B90 /* UIViewController+SideNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+SideNavigationController.swift"; sourceTree = "<group>"; };
+		37B7B3E727AA719E00E05B90 /* BindableResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BindableResult.swift; sourceTree = "<group>"; };
 		37C8B58A27A7696E00065678 /* PVRootViewController+DelegateMethods.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVRootViewController+DelegateMethods.swift"; sourceTree = "<group>"; };
 		37CFD7FF279C34C1007B5FC7 /* CodeSigning.xcconfig copy.sample */ = {isa = PBXFileReference; lastKnownFileType = text; path = "CodeSigning.xcconfig copy.sample"; sourceTree = "<group>"; };
 		37CFD801279C350C007B5FC7 /* PVRootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVRootViewController.swift; sourceTree = "<group>"; };
@@ -1856,6 +1858,7 @@
 			isa = PBXGroup;
 			children = (
 				3759CAF7279C38DF00E9267B /* NewUIHelpers.swift */,
+				37B7B3E727AA719E00E05B90 /* BindableResult.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -2994,6 +2997,7 @@
 			files = (
 				B3411C1D276B470C00D85327 /* RadioSection.swift in Sources */,
 				B378225C21D32FCC0077E86F /* PVSliderCell.swift in Sources */,
+				37B7B3E827AA719E00E05B90 /* BindableResult.swift in Sources */,
 				1A2FB109206EE8A700A1F942 /* PVSaveStatesViewController.swift in Sources */,
 				B3411C11276B470B00D85327 /* QuickTableViewController.swift in Sources */,
 				378F4A001B63D7CD0065FA39 /* GCDWebServer.m in Sources */,
