@@ -12,7 +12,7 @@ import Foundation
 import SwiftUI
 import PVLibrary
 
-@available(iOS 14.0.0, tvOS 14.0.0, *)
+@available(iOS 14, tvOS 14, *)
 struct GameContextMenu: SwiftUI.View {
     
     @ObservedObject var game: PVGame
@@ -36,7 +36,7 @@ struct GameContextMenu: SwiftUI.View {
             // Share
             Divider()
             // Delete
-            if #available(iOS 15.0, *) {
+            if #available(iOS 15, tvOS 15, *) {
                 Button(role: .destructive) {
                     rootDelegate?.attemptToDelete(game: game)
                 } label: { Label("Delete", systemImage: "trash") }

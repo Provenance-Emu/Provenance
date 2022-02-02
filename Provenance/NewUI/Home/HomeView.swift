@@ -19,7 +19,7 @@ enum PVHomeSection: Int, CaseIterable {
     case mostPlayed
 }
 
-@available(iOS 14.0.0, tvOS 14.0.0, *)
+@available(iOS 14, tvOS 14, *)
 struct HomeView: SwiftUI.View {
     
     var gameLibrary: PVGameLibrary!
@@ -122,7 +122,7 @@ struct HomeView: SwiftUI.View {
 }
 
 
-@available(iOS 14.0.0, tvOS 14.0.0, *)
+@available(iOS 14, tvOS 14, *)
 struct HomeItemView: SwiftUI.View {
     
     var imageName: String
