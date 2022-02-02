@@ -24,14 +24,6 @@ extension GCController {
 extension GCController {
     func setupPauseHandler(onPause: @escaping () -> Void) {
         
-        if #available(iOS 15.0, tvOS 15.0, *) {
-            // dont let tvOS or iOS do anything with **our** buttons!!
-            // iOS will start a screen recording if you hold or dbl click the OPTIONS button, we dont want that.
-            buttonHome?.preferredSystemGestureState = .disabled
-            buttonMenu?.preferredSystemGestureState = .disabled
-            buttonOptions?.preferredSystemGestureState = .disabled
-        }
-        
         // Use buttonHome for iOS/tvOS14 and later
         if let buttonHome = buttonHome {
             buttonHome.pressedChangedHandler = { _, _, isPressed in
