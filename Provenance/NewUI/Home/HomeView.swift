@@ -62,6 +62,11 @@ struct HomeView: SwiftUI.View {
     var body: some SwiftUI.View {
         ScrollView {
             VStack {
+                
+                Button("here") {
+                    self.rootDelegate?.openDrawer()
+                }
+                
                 if let recentSaveStates = recentSaveStates {
                     HStack {
                         ForEach(recentSaveStates, id: \.self) { recentSaveState in
