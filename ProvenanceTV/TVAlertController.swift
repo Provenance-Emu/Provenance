@@ -12,18 +12,18 @@ import UIKit
 
 // these are the defaults assuming Dark mode, etc.
 private let _fullscreenColor = UIColor.black.withAlphaComponent(0.8)
-private let _backgroundColor = UIColor(red:0.11, green:0.11, blue:0.12, alpha:1)      // secondarySystemGroupedBackground
-private let _defaultButtonColor = UIColor(white: 0.222, alpha: 0.8)
-private let _destructiveButtonColor = UIColor.systemRed.withAlphaComponent(0.8)
+private let _backgroundColor = UIColor(red:0.1, green:0.1, blue:0.1, alpha:1)      // secondarySystemGroupedBackground
+private let _defaultButtonColor = UIColor(white: 0.2, alpha: 1)
+private let _destructiveButtonColor = UIColor.systemRed.withAlphaComponent(0.5)
 private let _borderWidth = 4.0
-private let _fontTitleF = 1.5
-private let _animateDuration = 0.200
+private let _fontTitleF = 1.25
+private let _animateDuration = 0.150
 
 // os specific defaults
 #if os(tvOS)
     private let _blurFullscreen = false
     private let _font = UIFont.systemFont(ofSize: 24.0)
-    private let _inset:CGFloat = 32.0
+    private let _inset:CGFloat = 16.0
     private let _maxTextWidthF:CGFloat = 0.25
 #else
     private let _blurFullscreen = true
@@ -228,10 +228,10 @@ class TVAlertController: UIViewController, UIAlertControllerProtocol {
                   else { break }
             lhs.removeFromSuperview()
             rhs.removeFromSuperview()
-            (lhs as? TVButton)?.setGrowDelta(spacing * 0.8, for: .focused)
-            (rhs as? TVButton)?.setGrowDelta(spacing * 0.8, for: .focused)
-            (lhs as? TVButton)?.setGrowDelta(spacing * 0.8, for: .selected)
-            (rhs as? TVButton)?.setGrowDelta(spacing * 0.8, for: .selected)
+            (lhs as? TVButton)?.setGrowDelta(spacing * 0.5, for: .focused)
+            (rhs as? TVButton)?.setGrowDelta(spacing * 0.5, for: .focused)
+            (lhs as? TVButton)?.setGrowDelta(spacing * 0.5, for: .selected)
+            (rhs as? TVButton)?.setGrowDelta(spacing * 0.5, for: .selected)
             let hstack = UIStackView(arrangedSubviews: [lhs, rhs])
             hstack.spacing = spacing
             hstack.distribution = .fillEqually
@@ -358,8 +358,8 @@ class TVAlertController: UIViewController, UIAlertControllerProtocol {
         let spacing = self.spacing
         btn.contentEdgeInsets = UIEdgeInsets(top:spacing, left:spacing*2, bottom:spacing, right:spacing*2)
         
-        btn.setGrowDelta(_inset * 0.5, for: .focused)
-        btn.setGrowDelta(_inset * 0.5, for: .selected)
+        btn.setGrowDelta(_inset * 0.25, for: .focused)
+        btn.setGrowDelta(_inset * 0.25, for: .selected)
 
         let h = font.lineHeight * 1.5
         btn.addConstraint(NSLayoutConstraint(item:btn, attribute:.height, relatedBy:.equal, toItem:nil, attribute:.notAnAttribute, multiplier:1.0, constant:h))
