@@ -26,26 +26,26 @@ struct ConsolesWrapperView: SwiftUI.View {
     var gameLibrary: PVGameLibrary!
     var rootDelegate: PVRootDelegate!
     
-    @State var consoles: Results<PVSystem>
+//    @State var consoles: Results<PVSystem>
+    @ObservedObject var consoles: BindableResults<PVSystem>
     
     init(
         consolesWrapperViewDelegate: ConsolesWrapperViewDelegate,
         gameLibrary: PVGameLibrary,
-        rootDelegate: PVRootDelegate,
-        consoles: Results<PVSystem>
+        rootDelegate: PVRootDelegate
     ) {
         self.delegate = consolesWrapperViewDelegate
         self.gameLibrary = gameLibrary
-        self.consoles = consoles
         self.rootDelegate = rootDelegate
+        self.consoles = BindableResults(results: gameLibrary.activeSystems)
     }
     
     var body: some SwiftUI.View {
         TabView(selection: $delegate.selectedTab) {
-            if consoles.count > 0 { // TODO: handle sorting
-                ForEach(0..<consoles.count, id: \.self) { index in
-                    ConsoleGamesView(gameLibrary: self.gameLibrary, console: consoles[index], rootDelegate: rootDelegate)
-                        .tag(consoles[index].identifier)
+            if consoles.results.count > 0 { // TODO: handle sorting
+                ForEach(0..<consoles.results.count, id: \.self) { index in // TODO: do you need the counttype loop here? Check HomeView for alternate approach
+                    ConsoleGamesView(gameLibrary: self.gameLibrary, console: consoles.results[index], rootDelegate: rootDelegate)
+                        .tag(consoles.results[index].identifier)
                 }
             } else {
                 Text("No Consoles")
@@ -54,7 +54,7 @@ struct ConsolesWrapperView: SwiftUI.View {
         }
         .tabViewStyle(.page)
         .indexViewStyle(.page(backgroundDisplayMode: .always))
-        .id(consoles.count)
+        .id(consoles.results.count)
     }
 }
 

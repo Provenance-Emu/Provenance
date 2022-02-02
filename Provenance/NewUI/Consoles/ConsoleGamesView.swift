@@ -25,19 +25,19 @@ struct ConsoleGamesView: SwiftUI.View {
         GridItem(.flexible()),
     ]
     
-    @State var games: Results<PVGame>
+    @ObservedObject var games: BindableResults<PVGame>
     
     init(gameLibrary: PVGameLibrary, console: PVSystem, rootDelegate: PVRootDelegate) {
         self.console = console
         self.rootDelegate = rootDelegate
-        self.games = gameLibrary.gamesForSystem(systemIdentifier: self.console.identifier)
+        self.games = BindableResults(results: gameLibrary.gamesForSystem(systemIdentifier: self.console.identifier))
     }
     
     var body: some SwiftUI.View {
         ScrollView {
             // TODO: sort options view. This includes replacing the grid with a list
             LazyVGrid(columns: columns, spacing: 20) {
-                ForEach(games, id: \.self) { game in
+                ForEach(games.results, id: \.self) { game in
                     GameItemView(
                         artwork: nil,
                         artworkType: console.gameArtworkType,
