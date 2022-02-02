@@ -419,6 +419,7 @@ class TVAlertController: UIViewController, UIAlertControllerProtocol {
     // TODO: detect focus sytem on iPad iOS 15+ ???
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        becomeFirstResponder()
         
         if let button = preferredFocusEnvironments.first as? TVButton {
             button.isSelected = true
