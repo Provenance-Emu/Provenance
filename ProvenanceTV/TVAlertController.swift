@@ -371,6 +371,7 @@ class TVAlertController: UIViewController, UIAlertControllerProtocol {
             btn.backgroundColor = _destructiveButtonColor
             btn.setBackgroundColor(_destructiveButtonColor.withAlphaComponent(1), for:.focused)
             btn.setBackgroundColor(_destructiveButtonColor.withAlphaComponent(1), for:.highlighted)
+            btn.setBackgroundColor(_destructiveButtonColor.withAlphaComponent(1), for:.selected)
         }
         else {
             btn.backgroundColor = _defaultButtonColor
