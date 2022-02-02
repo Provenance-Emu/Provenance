@@ -167,6 +167,9 @@
 		37B7B3DF27AA56E600E05B90 /* SideNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B7B3DE27AA56E600E05B90 /* SideNavigationController.swift */; };
 		37B7B3E127AA56FB00E05B90 /* SideNavigationController+NestedTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B7B3E027AA56FB00E05B90 /* SideNavigationController+NestedTypes.swift */; };
 		37B7B3E327AA570900E05B90 /* UIViewController+SideNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B7B3E227AA570900E05B90 /* UIViewController+SideNavigationController.swift */; };
+		37B7B3E427AA671600E05B90 /* SideNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B7B3DE27AA56E600E05B90 /* SideNavigationController.swift */; };
+		37B7B3E527AA671900E05B90 /* SideNavigationController+NestedTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B7B3E027AA56FB00E05B90 /* SideNavigationController+NestedTypes.swift */; };
+		37B7B3E627AA671C00E05B90 /* UIViewController+SideNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B7B3E227AA570900E05B90 /* UIViewController+SideNavigationController.swift */; };
 		37C8B58B27A7696E00065678 /* PVRootViewController+DelegateMethods.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C8B58A27A7696E00065678 /* PVRootViewController+DelegateMethods.swift */; };
 		37CFD802279C350C007B5FC7 /* PVRootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37CFD801279C350C007B5FC7 /* PVRootViewController.swift */; };
 		42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */; };
@@ -3192,7 +3195,9 @@
 				CF87D47E258ADDA500838AF8 /* PVEmulatorViewController+Cheats.swift in Sources */,
 				B3B104D1218F2EF400210C39 /* PVSaturnControllerViewController.swift in Sources */,
 				1FE10F291D94ECC600A20D1A /* PVAppearanceViewController.swift in Sources */,
+				37B7B3E427AA671600E05B90 /* SideNavigationController.swift in Sources */,
 				B3D5E2C0218EC62E0015C690 /* Sections.swift in Sources */,
+				37B7B3E627AA671C00E05B90 /* UIViewController+SideNavigationController.swift in Sources */,
 				B3375EBF278EA28E004B0DC0 /* ulTron.metal in Sources */,
 				B3B104BF218F2EC000210C39 /* JSButton.swift in Sources */,
 				37470DA327A7C11500BE956D /* ConsoleGamesView.swift in Sources */,
@@ -3340,6 +3345,7 @@
 				B3B104C7218F2EF400210C39 /* PVGBControllerViewController.swift in Sources */,
 				B3B104CC218F2EF400210C39 /* PVNESControllerViewController.swift in Sources */,
 				B35E6C24207ED7050040709A /* UIAppearanceExtensions.swift in Sources */,
+				37B7B3E527AA671900E05B90 /* SideNavigationController+NestedTypes.swift in Sources */,
 				B3F7BE7A204A289B000D0B4D /* PVConflictViewController.swift in Sources */,
 				B3B104CB218F2EF400210C39 /* PVNeoGeoPocketControllerViewController.swift in Sources */,
 				1AD481DD1BA3544800FDA50A /* GCDWebServerFileRequest.m in Sources */,

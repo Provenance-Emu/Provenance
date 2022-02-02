@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-@available(iOS 14.0.0, tvOS 14.0.0, *)
+@available(iOS 14, tvOS 14, *)
 public extension UIImage {
     class func symbolNameWithFallBack(name: String) -> UIImage? {
         if #available(iOS 13, *) {

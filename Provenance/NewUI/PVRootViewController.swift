@@ -42,7 +42,7 @@ public protocol PVRootDelegate: GameLaunchingViewController {
     func attemptToDelete(game: PVGame)
 }
   
-@available(iOS 14.0.0, tvOS 14.0.0, *)
+@available(iOS 14, tvOS 14, *)
 class PVRootViewController: UIViewController, GameLaunchingViewController, GameSharingViewController {
     
     let containerView = UIView()
@@ -165,7 +165,7 @@ protocol PVMenuDelegate {
     func didTapCollection(with collection: Int)
 }
 
-@available(iOS 14.0.0, tvOS 14.0.0, *)
+@available(iOS 14, tvOS 14, *)
 extension PVRootViewController: PVMenuDelegate {
     func didTapSettings() {
         guard
@@ -192,6 +192,7 @@ extension PVRootViewController: PVMenuDelegate {
 
     func didTapAddGames() {
         self.closeMenu()
+        #if os(iOS)
 
         /// from PVGameLibraryViewController#getMoreROMs
         let actionSheet = UIAlertController(title: "Select Import Source", message: nil, preferredStyle: .actionSheet)
@@ -213,6 +214,7 @@ extension PVRootViewController: PVMenuDelegate {
         actionSheet.preferredContentSize = CGSize(width: 300, height: 150)
 
         present(actionSheet, animated: true, completion: nil)
+        #endif
     }
 
     func didTapConsole(with consoleId: String) {
@@ -238,7 +240,7 @@ extension PVRootViewController: PVMenuDelegate {
 
 // MARK: - Helpers
 
-@available(iOS 14.0.0, tvOS 14.0.0, *)
+@available(iOS 14, tvOS 14, *)
 extension PVRootViewController {
     
     func addChildViewController(_ child: UIViewController, toContainerView containerView: UIView) {
@@ -259,8 +261,9 @@ extension PVRootViewController {
     
 }
 
+#if os(iOS)
 // MARK: - UIDocumentPickerDelegate
-@available(iOS 14.0.0, tvOS 14.0.0, *)
+@available(iOS 14.0.0, *)
 extension PVRootViewController: UIDocumentPickerDelegate {
     // copied from PVGameLibraryViewController#documentPicker()
     func documentPicker(_: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
@@ -336,7 +339,6 @@ extension PVRootViewController: UIDocumentPickerDelegate {
         ILOG("Document picker was cancelled")
     }
 }
-
-
-#endif
-#endif
+#endif // os(iOS)
+#endif // canImport(Combine)
+#endif // canImport(SwiftUI)

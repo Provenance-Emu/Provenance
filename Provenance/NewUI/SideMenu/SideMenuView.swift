@@ -12,7 +12,7 @@ import SwiftUI
 import RealmSwift
 import PVLibrary
 
-@available(iOS 14.0.0, tvOS 14.0.0, *)
+@available(iOS 14, tvOS 14, *)
 struct SideMenuView: SwiftUI.View {
     
     static func instantiate(delegate: PVMenuDelegate) -> UIViewController {
@@ -70,7 +70,7 @@ struct SideMenuView: SwiftUI.View {
     }
 }
 
-@available(iOS 14.0.0, tvOS 14.0.0, *)
+@available(iOS 14, tvOS 14, *)
 struct MenuSectionHeaderView: SwiftUI.View {
     
     var sectionTitle: String
@@ -98,7 +98,7 @@ struct MenuSectionHeaderView: SwiftUI.View {
     }
 }
 
-@available(iOS 14.0.0, tvOS 14.0.0, *)
+@available(iOS 14, tvOS 14, *)
 struct MenuItemView: SwiftUI.View {
     
     var imageName: String
@@ -120,7 +120,7 @@ struct MenuItemView: SwiftUI.View {
     }
 }
 
-@available(iOS 14.0.0, tvOS 14.0.0, *)
+@available(iOS 14, tvOS 14, *)
 struct SideMenuView_Previews: PreviewProvider {
     static var previews: some SwiftUI.View {
         SideMenuView()
