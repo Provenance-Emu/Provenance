@@ -7,7 +7,6 @@
 //
 
 import Foundation
-
 #if canImport(SwiftUI)
 import SwiftUI
 import RealmSwift
