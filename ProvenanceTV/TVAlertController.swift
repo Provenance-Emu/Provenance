@@ -21,7 +21,7 @@ private let _animateDuration = 0.200
 
 // os specific defaults
 #if os(tvOS)
-    private let _blurFullscreen = true
+    private let _blurFullscreen = false
     private let _font = UIFont.systemFont(ofSize: 24.0)
     private let _inset:CGFloat = 32.0
     private let _maxTextWidthF:CGFloat = 0.25
@@ -543,7 +543,7 @@ private class TVButton : UIButton {
     private func update() {
         self.backgroundColor = getBackgroundColor(for: self.state)
         if self.bounds.width != 0 {
-            let scale = 1.0 + getGrowDelta(for: state) / (self.bounds.width * 0.5)
+            let scale = min(1.04, 1.0 + getGrowDelta(for: state) / (self.bounds.width * 0.5))
             self.transform = CGAffineTransform(scaleX: scale, y: scale)
         }
     }
