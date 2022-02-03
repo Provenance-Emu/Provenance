@@ -27,7 +27,7 @@ struct SideMenuView: SwiftUI.View {
         self.delegate = delegate
     }
     
-    @State var sortAscending = false // maybe: hook up to user defaults
+    @State var sortAscending = true
     
     static func instantiate(gameLibrary: PVGameLibrary, delegate: PVMenuDelegate) -> UIViewController {
         let view = SideMenuView(gameLibrary: gameLibrary, delegate: delegate)
@@ -95,7 +95,7 @@ struct MenuSectionHeaderView: SwiftUI.View {
                 if sortable {
                     HStack(alignment: .bottom, spacing: 0) {
                         Text("Sort").foregroundColor(Color.gray).font(.system(.caption))
-                        Image(sortAscending == true ? "chevron_up" : "chevron_down").resizable().foregroundColor(.gray).frame(width: 16, height: 16)
+                        OptionsIndicator(pointDown: sortAscending)
                     }
                 }
             }
