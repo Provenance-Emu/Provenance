@@ -754,10 +754,10 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             }
         #else
             sortOptionsTableView.layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-            sortOptionsTableView.backgroundColor = UIColor(red:0.11, green:0.11, blue:0.12, alpha:1)
+            sortOptionsTableView.backgroundColor = UIColor(red:0.1, green:0.1, blue:0.1, alpha:1)
             sortOptionsTableView.layer.borderColor = view.tintColor.cgColor
             sortOptionsTableView.layer.borderWidth = 4.0
-            sortOptionsTableView.layer.cornerRadius = 32.0
+            sortOptionsTableView.layer.cornerRadius = 16.0
         
             sortOptionsTableViewController.preferredContentSize = CGSize(width:800, height:sortOptionsTableView.contentSize.height);
             let pvc = TVFullscreenController(rootViewController:sortOptionsTableViewController)
