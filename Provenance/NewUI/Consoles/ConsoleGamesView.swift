@@ -99,31 +99,18 @@ struct GamesDisplayOptionsView: SwiftUI.View {
     var toggleViewTypeAction: () -> Void
     
     var body: some SwiftUI.View {
-        HStack(alignment: .bottom, spacing: 10) {
+        HStack(spacing: 12) {
             Spacer()
-            Button {
-                // TODO: this, should be a menu w/ filter options
-            } label: {
-                HStack(alignment: .bottom, spacing: 0) {
-                    Text("Filter").foregroundColor(Color.gray).font(.system(size: 12))
-                    OptionsIndicator(pointDown: true)
-                }
+            OptionsIndicator(pointDown: true, action: { /* TODO: this */ }) {
+                Text("Filter").foregroundColor(Color.gray).font(.system(size: 12))
             }
-            Button {
-                toggleSortAction()
-            } label: {
-                HStack(alignment: .bottom, spacing: 0) {
-                    Text("Sort").foregroundColor(Color.gray).font(.system(size: 13))
-                    OptionsIndicator(pointDown: sortAscending)
-                }
+            OptionsIndicator(pointDown: sortAscending, action: { toggleSortAction() }) {
+                Text("Sort").foregroundColor(Color.gray).font(.system(size: 13))
             }
-            Button {
-                toggleViewTypeAction()
-            } label: {
-                HStack(alignment: .bottom, spacing: 0) {
-                    Image(systemName: isGrid == true ? "square.grid.3x3.fill" : "line.3.horizontal.circle.fill").foregroundColor(Color.gray).font(.system(.caption))
-                    OptionsIndicator(pointDown: true)
-                }
+            OptionsIndicator(pointDown: true, action: { toggleViewTypeAction() }) {
+                Image(systemName: isGrid == true ? "square.grid.3x3.fill" : "line.3.horizontal")
+                    .foregroundColor(Color.gray)
+                    .font(.system(size: 13, weight: .light))
             }
             .padding(.trailing, 10)
         }
@@ -131,13 +118,26 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 }
 
 @available(iOS 14, tvOS 14, *)
-struct OptionsIndicator: SwiftUI.View {
+struct OptionsIndicator<Content: SwiftUI.View>: SwiftUI.View {
     
     var pointDown: Bool = true
-    var size: CGFloat = 16.0
+    var chevronSize: CGFloat = 12.0
+    
+    var action: () -> Void
+    
+    @ViewBuilder var label: () -> Content
     
     var body: some SwiftUI.View {
-        Image(pointDown == true ? "chevron_down" : "chevron_up").resizable().foregroundColor(.gray).frame(width: size, height: size)
+        Button {
+            action()
+        } label: {
+            HStack(spacing: 3) {
+                label()
+                Image(systemName: pointDown == true ? "chevron.down" : "chevron.up")
+                    .foregroundColor(.gray)
+                    .font(.system(size: chevronSize, weight: .ultraLight))
+            }
+        }
     }
 }
 

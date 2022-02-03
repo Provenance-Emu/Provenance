@@ -43,6 +43,7 @@ struct GameItemView: SwiftUI.View {
             .onPreferenceChange(ArtworkDynamicWidthPreferenceKey.self) {
                 textMaxWidth = $0
             }
+            .background(Color.red)
             .onAppear {
                 if let imageKey = artworkURL {
                     PVMediaCache.shareInstance().image(forKey: imageKey, completion: { _, image in

@@ -57,8 +57,9 @@ struct SideMenuView: SwiftUI.View {
                 }
                 Group {
                     if consoles.count > 0 {
-                        MenuSectionHeaderView(sectionTitle: "CONSOLES", sortable: consoles.count > 1, sortAscending: sortAscending)
-                            .onTapGesture { self.sortAscending.toggle() }
+                        MenuSectionHeaderView(sectionTitle: "CONSOLES", sortable: consoles.count > 1, sortAscending: sortAscending) {
+                            self.sortAscending.toggle()
+                        }
                         ForEach(sortedConsoles(), id: \.self) { console in
                             Divider()
                             MenuItemView(imageName: "prov_snes_icon", rowTitle: console.name) {
@@ -69,7 +70,7 @@ struct SideMenuView: SwiftUI.View {
                 }
                 // TODO: flesh out collections later
                 Group {
-                    MenuSectionHeaderView(sectionTitle: "Provenance 2.something", sortable: false)
+                    MenuSectionHeaderView(sectionTitle: "Provenance 2.something", sortable: false) {}
                 }
                 Spacer()
             }
@@ -84,6 +85,7 @@ struct MenuSectionHeaderView: SwiftUI.View {
     var sectionTitle: String
     var sortable: Bool
     var sortAscending: Bool = false
+    var action: () -> Void
     
     var body: some SwiftUI.View {
         VStack(spacing: 0) {
@@ -93,9 +95,8 @@ struct MenuSectionHeaderView: SwiftUI.View {
                 Text(sectionTitle).foregroundColor(Color.gray).font(.system(size: 13))
                 Spacer()
                 if sortable {
-                    HStack(alignment: .bottom, spacing: 0) {
+                    OptionsIndicator(pointDown: sortAscending, action: action) {
                         Text("Sort").foregroundColor(Color.gray).font(.system(.caption))
-                        OptionsIndicator(pointDown: sortAscending)
                     }
                 }
             }
