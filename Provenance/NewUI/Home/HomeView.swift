@@ -26,100 +26,83 @@ struct HomeView: SwiftUI.View {
     
     var rootDelegate: PVRootDelegate?
     
-    @ObservedObject var recentSaveStates: BindableResults<PVSaveState>
-    @ObservedObject var recentlyPlayedGames: BindableResults<PVRecentGame>
-    @ObservedObject var favorites: BindableResults<PVGame>
-    @ObservedObject var mostPlayed: BindableResults<PVGame>
+    @ObservedResults(
+        PVSaveState.self,
+        configuration: RealmConfiguration.realmConfig,
+        filter: NSPredicate(format: "game != nil && game.system != nil")
+    ) var recentSaveStates
     
-//    collectionView.rx.itemSelected
-//        .map { indexPath in (try! collectionView.rx.model(at: indexPath) as Section.Item, collectionView.cellForItem(at: indexPath)) }
-//        .compactMap({ item, cell -> Playable? in
-//            switch item {
-//            case .game(let game):
-//                return (game, cell, nil, nil)
-//            case .saves, .favorites, .recents:
-//                // Handled in another place libVC.load(self.saveState!.game, sender: sender, core: nil, saveState: saveState)
-//                return nil
-//            }
-//        })
-//        .bind(to: selectedPlayable)
-//        .disposed(by: disposeBag)
-//
-//    selectedPlayable.bind(onNext: self.load).disposed(by: disposeBag)
+    @ObservedResults(
+        PVRecentGame.self,
+        configuration: RealmConfiguration.realmConfig,
+        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
+    ) var recentlyPlayedGames
     
+    @ObservedResults(
+        PVGame.self,
+        configuration: RealmConfiguration.realmConfig,
+        filter: NSPredicate(format: "\(#keyPath(PVGame.isFavorite)) == %@", NSNumber(value: true)),
+        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: false)
+    ) var favorites
+    
+    @ObservedResults(
+        PVGame.self,
+        configuration: RealmConfiguration.realmConfig,
+        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: false)
+    ) var mostPlayed
     
     init(gameLibrary: PVGameLibrary, delegate: PVRootDelegate) {
         self.gameLibrary = gameLibrary
         self.rootDelegate = delegate
-        
-        self.recentSaveStates = BindableResults(results: self.gameLibrary.saveStatesResults)
-        self.recentlyPlayedGames = BindableResults(results: self.gameLibrary.recentsResults)
-        self.favorites = BindableResults(results: self.gameLibrary.favoritesResults)
-        self.mostPlayed = BindableResults(results: self.gameLibrary.mostPlayedResults)
     }
-    
     
     var body: some SwiftUI.View {
         ScrollView {
             VStack {
-                
-                Button("here") {
-                    self.rootDelegate?.openDrawer()
-                }
-                
-                if let recentSaveStates = recentSaveStates {
-                    HStack {
-                        ForEach(recentSaveStates.results, id: \.self) { recentSaveState in
-                            GameItemView(
-                                artwork: nil,
-                                artworkType: recentSaveState.game.system.gameArtworkType,
-                                name: recentSaveState.game.title,
-                                yearReleased: recentSaveState.game.publishDate) {
-                                    rootDelegate?.load(recentSaveState.game, sender: self, core: nil, saveState: recentSaveState)
-                                }
-                        }
+                HStack {
+                    ForEach(recentSaveStates, id: \.self) { recentSaveState in
+                        GameItemView(
+                            artwork: nil,
+                            artworkType: recentSaveState.game.system.gameArtworkType,
+                            name: recentSaveState.game.title,
+                            yearReleased: recentSaveState.game.publishDate) {
+                                rootDelegate?.load(recentSaveState.game, sender: self, core: nil, saveState: recentSaveState)
+                            }
                     }
                 }
-                if let recentlyPlayedGames = recentlyPlayedGames {
-                    HStack {
-                        ForEach(recentlyPlayedGames.results, id: \.self) { recentlyPlayedGame in
-                            GameItemView(
-                                artwork: nil,
-                                artworkType: recentlyPlayedGame.game.system.gameArtworkType,
-                                name: recentlyPlayedGame.game.title,
-                                yearReleased: recentlyPlayedGame.game.publishDate) {
-                                    rootDelegate?.load(recentlyPlayedGame.game, sender: self, core: nil, saveState: nil)
-                                }
-                        }
+                HStack {
+                    ForEach(recentlyPlayedGames, id: \.self) { recentlyPlayedGame in
+                        GameItemView(
+                            artwork: nil,
+                            artworkType: recentlyPlayedGame.game.system.gameArtworkType,
+                            name: recentlyPlayedGame.game.title,
+                            yearReleased: recentlyPlayedGame.game.publishDate) {
+                                rootDelegate?.load(recentlyPlayedGame.game, sender: self, core: nil, saveState: nil)
+                            }
                     }
                 }
-                if let favorites = favorites {
-                    HStack {
-                        ForEach(favorites.results, id: \.self) { favorite in
-                            GameItemView(
-                                artwork: nil,
-                                artworkType: favorite.system.gameArtworkType,
-                                name: favorite.title,
-                                yearReleased: favorite.publishDate) {
-                                    rootDelegate?.load(favorite, sender: self, core: nil, saveState: nil)
-                                }
-                        }
+                HStack {
+                    ForEach(favorites, id: \.self) { favorite in
+                        GameItemView(
+                            artwork: nil,
+                            artworkType: favorite.system.gameArtworkType,
+                            name: favorite.title,
+                            yearReleased: favorite.publishDate) {
+                                rootDelegate?.load(favorite, sender: self, core: nil, saveState: nil)
+                            }
                     }
                 }
-                if let mostPlayed = mostPlayed {
-                    HStack {
-                        ForEach(mostPlayed.results, id: \.self) { playedGame in
-                            GameItemView(
-                                artwork: nil,
-                                artworkType: playedGame.system.gameArtworkType,
-                                name: playedGame.title,
-                                yearReleased: playedGame.publishDate) {
-                                    rootDelegate?.load(playedGame, sender: self, core: nil, saveState: nil)
-                                }
-                        }
+                HStack {
+                    ForEach(mostPlayed, id: \.self) { playedGame in
+                        GameItemView(
+                            artwork: nil,
+                            artworkType: playedGame.system.gameArtworkType,
+                            name: playedGame.title,
+                            yearReleased: playedGame.publishDate) {
+                                rootDelegate?.load(playedGame, sender: self, core: nil, saveState: nil)
+                            }
                     }
                 }
-                
             }
         }
         .background(Color.black)
