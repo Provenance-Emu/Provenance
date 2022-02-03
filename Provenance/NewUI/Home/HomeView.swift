@@ -122,18 +122,19 @@ struct HomeSection<Content: SwiftUI.View>: SwiftUI.View {
             Divider()
                 .frame(height: 1)
                 .background(Color.gray)
-                .opacity(0.3)
+                .opacity(0.1)
+                .padding(.horizontal, 10)
             Text(title.uppercased())
                 .foregroundColor(Color.gray)
                 .font(.system(size: 11))
-                .padding(.horizontal, 16)
+                .padding(.horizontal, 10)
                 .padding(.top, 24)
                 .padding(.bottom, 8)
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack {
                     content()
                 }
-                .padding(.horizontal, 16)
+                .padding(.horizontal, 10)
             }
         }
     }
