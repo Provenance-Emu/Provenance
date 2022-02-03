@@ -58,7 +58,7 @@ struct HomeView: SwiftUI.View {
     
     var body: some SwiftUI.View {
         ScrollView {
-            VStack {
+            LazyVStack {
                 HomeSection(title: "Continue") {
                     ForEach(recentSaveStates, id: \.self) { recentSaveState in
                         GameItemView(
