@@ -109,10 +109,10 @@ extension PVRootViewController: PVMenuDelegate {
 
     func didTapConsole(with consoleId: String) {
         self.closeMenu()
-        // TODO: call from from the gameLibrary instead
-        guard let console = try? Realm().object(ofType: PVSystem.self, forPrimaryKey: consoleId) else { return }
-        let consoles = try? Realm().objects(PVSystem.self).filter("games.@count > 0").sorted(byKeyPath: "name")
-        guard let consoles = consoles else { return }
+        
+        guard let console = gameLibrary.system(identifier: consoleId) else { return }
+        let consoles = gameLibrary.activeSystems
+        
         consolesWrapperViewDelegate.selectedTab = console.identifier
         let consolesView = ConsolesWrapperView(consolesWrapperViewDelegate: consolesWrapperViewDelegate, gameLibrary: self.gameLibrary, rootDelegate: self)
         var consoleIdentifiersAndNamesMap: [String:String] = [:]
