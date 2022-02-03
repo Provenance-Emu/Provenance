@@ -26,21 +26,10 @@ struct HomeView: SwiftUI.View {
     
     var rootDelegate: PVRootDelegate?
     
-//    @State var recentSaveStates: Results<PVSaveState>?
-//    @State var recentlyPlayedGames: Results<PVRecentGame>?
-//    @State var favorites: Results<PVGame>?
-//    @State var mostPlayed: Results<PVGame>?
-    
-    
     @ObservedObject var recentSaveStates: BindableResults<PVSaveState>
     @ObservedObject var recentlyPlayedGames: BindableResults<PVRecentGame>
     @ObservedObject var favorites: BindableResults<PVGame>
     @ObservedObject var mostPlayed: BindableResults<PVGame>
-    
-//    init(gameLibrary: PVGameLibrary, delegate: PVMenuDelegate) {
-//        self.consoles = BindableResults(results: gameLibrary.activeSystems)
-//        self.delegate = delegate
-//    }
     
 //    collectionView.rx.itemSelected
 //        .map { indexPath in (try! collectionView.rx.model(at: indexPath) as Section.Item, collectionView.cellForItem(at: indexPath)) }

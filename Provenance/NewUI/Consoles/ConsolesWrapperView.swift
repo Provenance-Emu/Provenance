@@ -26,7 +26,6 @@ struct ConsolesWrapperView: SwiftUI.View {
     var gameLibrary: PVGameLibrary!
     var rootDelegate: PVRootDelegate!
     
-//    @State var consoles: Results<PVSystem>
     @ObservedObject var consoles: BindableResults<PVSystem>
     
     init(
@@ -43,9 +42,9 @@ struct ConsolesWrapperView: SwiftUI.View {
     var body: some SwiftUI.View {
         TabView(selection: $delegate.selectedTab) {
             if consoles.results.count > 0 { // TODO: handle sorting
-                ForEach(0..<consoles.results.count, id: \.self) { index in // TODO: do you need the counttype loop here? Check HomeView for alternate approach
-                    ConsoleGamesView(gameLibrary: self.gameLibrary, console: consoles.results[index], rootDelegate: rootDelegate)
-                        .tag(consoles.results[index].identifier)
+                ForEach(consoles.results, id: \.self) { console in
+                    ConsoleGamesView(gameLibrary: self.gameLibrary, console: console, rootDelegate: rootDelegate)
+                        .tag(console.identifier)
                 }
             } else {
                 Text("No Consoles")

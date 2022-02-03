@@ -109,7 +109,7 @@ extension PVRootViewController: PVMenuDelegate {
 
     func didTapConsole(with consoleId: String) {
         self.closeMenu()
-        // TODO: call from from the rom database instead
+        // TODO: call from from the gameLibrary instead
         guard let console = try? Realm().object(ofType: PVSystem.self, forPrimaryKey: consoleId) else { return }
         let consoles = try? Realm().objects(PVSystem.self).filter("games.@count > 0").sorted(byKeyPath: "name")
         guard let consoles = consoles else { return }
