@@ -48,7 +48,7 @@ struct ConsoleGamesView: SwiftUI.View {
                 ForEach(filteredAndSortedGames(), id: \.self) { game in
                     GameItemView(
                         artwork: nil,
-                        artworkType: console.gameArtworkType,
+                        boxartAspectRatio: game.boxartAspectRatio,
                         name: game.title,
                         yearReleased: game.publishDate) {
                             rootDelegate?.load(game, sender: self, core: nil, saveState: nil)

@@ -63,7 +63,8 @@ struct HomeView: SwiftUI.View {
                     ForEach(recentSaveStates, id: \.self) { recentSaveState in
                         GameItemView(
                             artwork: nil,
-                            artworkType: recentSaveState.game.system.gameArtworkType,
+                            
+                            boxartAspectRatio: recentSaveState.game.boxartAspectRatio,
                             name: recentSaveState.game.title,
                             yearReleased: recentSaveState.game.publishDate) {
                                 rootDelegate?.load(recentSaveState.game, sender: self, core: nil, saveState: recentSaveState)
@@ -74,7 +75,7 @@ struct HomeView: SwiftUI.View {
                     ForEach(recentlyPlayedGames, id: \.self) { recentlyPlayedGame in
                         GameItemView(
                             artwork: nil,
-                            artworkType: recentlyPlayedGame.game.system.gameArtworkType,
+                            boxartAspectRatio: recentlyPlayedGame.game.boxartAspectRatio,
                             name: recentlyPlayedGame.game.title,
                             yearReleased: recentlyPlayedGame.game.publishDate) {
                                 rootDelegate?.load(recentlyPlayedGame.game, sender: self, core: nil, saveState: nil)
@@ -85,7 +86,7 @@ struct HomeView: SwiftUI.View {
                     ForEach(favorites, id: \.self) { favorite in
                         GameItemView(
                             artwork: nil,
-                            artworkType: favorite.system.gameArtworkType,
+                            boxartAspectRatio: favorite.boxartAspectRatio,
                             name: favorite.title,
                             yearReleased: favorite.publishDate) {
                                 rootDelegate?.load(favorite, sender: self, core: nil, saveState: nil)
@@ -96,7 +97,7 @@ struct HomeView: SwiftUI.View {
                     ForEach(mostPlayed, id: \.self) { playedGame in
                         GameItemView(
                             artwork: nil,
-                            artworkType: playedGame.system.gameArtworkType,
+                            boxartAspectRatio: playedGame.boxartAspectRatio,
                             name: playedGame.title,
                             yearReleased: playedGame.publishDate) {
                                 rootDelegate?.load(playedGame, sender: self, core: nil, saveState: nil)
