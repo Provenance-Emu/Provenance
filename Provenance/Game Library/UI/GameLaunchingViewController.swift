@@ -666,6 +666,7 @@ extension GameLaunchingViewController where Self: UIViewController {
                     #endif
                     completion(latestSaveState)
                 }))
+                alert.preferredAction = alert.actions.last
 
                 #if os(tvOS)
                     // Continue Always

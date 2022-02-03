@@ -610,7 +610,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        _ = PVControllerManager.shared
+        PVControllerManager.shared.controllerUserInteractionEnabled = true
         if isInitialAppearance {
             isInitialAppearance = false
             #if os(tvOS)
@@ -759,7 +759,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             sortOptionsTableView.layer.borderWidth = 4.0
             sortOptionsTableView.layer.cornerRadius = 16.0
         
-            sortOptionsTableViewController.preferredContentSize = CGSize(width:800, height:sortOptionsTableView.contentSize.height);
+            sortOptionsTableViewController.preferredContentSize = CGSize(width:675, height:sortOptionsTableView.contentSize.height);
             let pvc = TVFullscreenController(rootViewController:sortOptionsTableViewController)
             present(pvc, animated: true, completion: nil)
         #endif

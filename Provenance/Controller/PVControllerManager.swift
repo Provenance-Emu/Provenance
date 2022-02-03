@@ -226,6 +226,9 @@ final class PVControllerManager: NSObject {
 #endif
         ILOG("Controller connected: \(controller.vendorName ?? "No Vendor")")
         assign(controller)
+        if self.controllerUserInteractionEnabled {
+            self.controllerUserInteractionEnabled = true
+        }
     }
 
     @objc func handleControllerDidDisconnect(_ note: Notification?) {
@@ -439,10 +442,12 @@ final class PVControllerManager: NSObject {
                         let changed_state = current_state.symmetricDifference(state)
                         let changed_state_pressed = changed_state.intersection(state)
                         
+                        // send button press(s) to the top bannana
+                        let top = UIApplication.shared.keyWindow?.topViewController
                         for button in changed_state_pressed {
-                            // send button press up the responder chain
-                            UIApplication.shared.sendAction(#selector(ControllerButtonPress.controllerButtonPress), to: nil, from:button, for: nil)
+                            (top as? ControllerButtonPress)?.controllerButtonPress(button)
                         }
+                        
                         // remember state so we can only send changes
                         current_state = state
                     }
@@ -459,52 +464,66 @@ final class PVControllerManager: NSObject {
     
 }
 
+// MARK: - UIWindow::topViewController
+
+private extension UIWindow {
+    var topViewController: UIViewController? {
+        var top = self.rootViewController
+        top = (top as? UINavigationController)?.topViewController ?? top
+        while let presented = top?.presentedViewController {
+            top = presented
+        }
+        top = (top as? UINavigationController)?.topViewController ?? top
+        return top
+    }
+}
+
+
 // MARK: - ControllerButtonPress protocol
 
-@objc protocol ControllerButtonPress {
-    func controllerButtonPress(_ type:Any?)
+protocol ControllerButtonPress {
+    typealias ButtonType = GCExtendedGamepad.ButtonType
+    func controllerButtonPress(_ type:ButtonType)
 }
 
 // MARK: - Read Controller UX buttons
 
-private extension GCExtendedGamepad {
+extension GCExtendedGamepad {
     
-    typealias ButtonState = Set<UIPress.PressType>
+    enum ButtonType: String {
+        case a,b,x,y
+        case menu,options
+        case up,down,left,right
+        static let select = a
+        static let back = b
+        static let cancel = b
+    }
+    
+    typealias ButtonState = Set<ButtonType>
     
     func readButtonState() -> ButtonState {
         var state = ButtonState()
         
-        if buttonA.isPressed {state.formUnion([.select])}
-        if buttonB.isPressed {state.formUnion([.menu])}
-        
+        if buttonA.isPressed {state.formUnion([.a])}
+        if buttonB.isPressed {state.formUnion([.b])}
+        if buttonX.isPressed {state.formUnion([.x])}
+        if buttonY.isPressed {state.formUnion([.y])}
+
+        if #available(iOS 13.0, *) {
+            if buttonMenu.isPressed {state.formUnion([.menu])}
+            if buttonOptions?.isPressed == true {state.formUnion([.options])}
+        }
+
         for pad in [dpad, leftThumbstick, rightThumbstick] {
-            if pad.up.isPressed {state.formUnion([.upArrow])}
-            if pad.down.isPressed {state.formUnion([.downArrow])}
-            if pad.left.isPressed {state.formUnion([.leftArrow])}
-            if pad.right.isPressed {state.formUnion([.rightArrow])}
+            if pad.up.isPressed {state.formUnion([.up])}
+            if pad.down.isPressed {state.formUnion([.down])}
+            if pad.left.isPressed {state.formUnion([.left])}
+            if pad.right.isPressed {state.formUnion([.right])}
         }
 
         return state
     }
 }
-
-// MARK: - UIPress.PressType CustomStringConvertible
-
-extension UIPress.PressType : CustomStringConvertible {
-    public var description : String {
-        switch self {
-        case .upArrow:      return "UP"
-        case .downArrow:    return "DOWN"
-        case .leftArrow:    return "LEFT"
-        case .rightArrow:   return "RIGHT"
-        case .select:       return "SELECT"
-        case .menu:         return "MENU"
-        case .playPause:    return "PLAY/PAUSE"
-        default:            return "[[\(rawValue)]]"
-        }
-    }
-}
-
 
 // MARK: - Controller type detection
 

@@ -419,7 +419,6 @@ class TVAlertController: UIViewController, UIAlertControllerProtocol {
     // TODO: detect focus sytem on iPad iOS 15+ ???
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        becomeFirstResponder()
         
         if let button = preferredFocusEnvironments.first as? TVButton {
             button.isSelected = true
@@ -573,23 +572,20 @@ private class TVButton : UIButton {
 // MARK: ControllerButtonPress
 
 extension TVAlertController : ControllerButtonPress {
-    override var canBecomeFirstResponder: Bool {
-        return true
-    }
-    func controllerButtonPress(_ type: Any?) {
-        guard let type = type as? UIPress.PressType else { return }
+    func controllerButtonPress(_ type: ButtonType) {
+        print("TVAlertController: \(type)")
         switch type {
-        case .upArrow:
+        case .up:
             moveDefaultAction(-1)
-        case .downArrow:
+        case .down:
             moveDefaultAction(+1)
-        case .leftArrow:
+        case .left:
             moveDefaultAction(-1000)
-        case .rightArrow:
+        case .right:
             moveDefaultAction(+1000)
         case .select:   // (aka A or ENTER)
             buttonPress(button(for: preferredAction))
-        case .menu:     // (aka B or ESC)
+        case .back:     // (aka B or ESC)
             // only automaticly dismiss if there is a cancel button
             if cancelAction != nil  {
                 presentingViewController?.dismiss(animated:true, completion:nil)
@@ -621,3 +617,25 @@ extension TVAlertController : ControllerButtonPress {
         }
     }
 }
+
+extension UIAlertController : ControllerButtonPress {
+    func controllerButtonPress(_ type: ButtonType) {
+        switch type {
+        case .select:   // (aka A or ENTER)
+            dismiss(with: preferredAction, animated: true)
+        case .back:     // (aka B or ESC)
+            let cancelAction = actions.first(where: {$0.style == .cancel})
+            dismiss(with: cancelAction, animated: true)
+        default:
+            break
+        }
+    }
+    private func dismiss(with action:UIAlertAction?, animated: Bool) {
+        if let action = action {
+            presentingViewController?.dismiss(animated: animated, completion: {
+                action.callActionHandler()
+            })
+        }
+    }
+}
+
