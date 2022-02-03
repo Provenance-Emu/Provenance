@@ -17,10 +17,17 @@ struct SideMenuView: SwiftUI.View {
     
     var delegate: PVMenuDelegate?
     
-    @ObservedObject var consoles: BindableResults<PVSystem>
+//    @ObservedObject var consoles: BindableResults<PVSystem>
+    
+    @ObservedResults(
+        PVSystem.self,
+        configuration: RealmConfiguration.realmConfig,
+        filter: NSPredicate(format: "games.@count > 0"),
+        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSystem.name), ascending: false)
+    ) var consoles
     
     init(gameLibrary: PVGameLibrary, delegate: PVMenuDelegate) {
-        self.consoles = BindableResults(results: gameLibrary.activeSystems)
+//        self.consoles = BindableResults(results: gameLibrary.activeSystems)
         self.delegate = delegate
     }
     
@@ -47,9 +54,9 @@ struct SideMenuView: SwiftUI.View {
                     }
                 }
                 Group {
-                    if consoles.results.count > 0 { // TODO: handle sorting
-                        MenuSectionHeaderView(sectionTitle: "CONSOLES", sortable: consoles.results.count > 1)
-                        ForEach(consoles.results, id: \.self) { console in
+                    if consoles.count > 0 { // TODO: handle sorting
+                        MenuSectionHeaderView(sectionTitle: "CONSOLES", sortable: consoles.count > 1)
+                        ForEach(consoles, id: \.self) { console in
                             Divider()
                             MenuItemView(imageName: "prov_snes_icon", rowTitle: console.name) {
                                 delegate?.didTapConsole(with: console.identifier)

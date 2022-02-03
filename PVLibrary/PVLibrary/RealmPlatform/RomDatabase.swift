@@ -56,7 +56,7 @@ public final class RealmConfiguration {
         Realm.Configuration.defaultConfiguration = config
     }
 
-    private static var realmConfig: Realm.Configuration = {
+    public static var realmConfig: Realm.Configuration = {
         let realmFilename = "default.realm"
         let nonGroupPath = PVEmulatorConfiguration.documentsPath.appendingPathComponent(realmFilename, isDirectory: false)
 

@@ -26,7 +26,12 @@ struct ConsolesWrapperView: SwiftUI.View {
     var gameLibrary: PVGameLibrary!
     var rootDelegate: PVRootDelegate!
     
-    @ObservedObject var consoles: BindableResults<PVSystem>
+    @ObservedResults(
+        PVSystem.self,
+        configuration: RealmConfiguration.realmConfig,
+        filter: NSPredicate(format: "games.@count > 0"),
+        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSystem.name), ascending: false)
+    ) var consoles
     
     init(
         consolesWrapperViewDelegate: ConsolesWrapperViewDelegate,
@@ -36,13 +41,12 @@ struct ConsolesWrapperView: SwiftUI.View {
         self.delegate = consolesWrapperViewDelegate
         self.gameLibrary = gameLibrary
         self.rootDelegate = rootDelegate
-        self.consoles = BindableResults(results: gameLibrary.activeSystems)
     }
     
     var body: some SwiftUI.View {
         TabView(selection: $delegate.selectedTab) {
-            if consoles.results.count > 0 { // TODO: handle sorting
-                ForEach(consoles.results, id: \.self) { console in
+            if consoles.count > 0 { // TODO: handle sorting
+                ForEach(consoles, id: \.self) { console in
                     ConsoleGamesView(gameLibrary: self.gameLibrary, console: console, rootDelegate: rootDelegate)
                         .tag(console.identifier)
                 }
@@ -53,7 +57,7 @@ struct ConsolesWrapperView: SwiftUI.View {
         }
         .tabViewStyle(.page)
         .indexViewStyle(.page(backgroundDisplayMode: .always))
-        .id(consoles.results.count)
+        .id(consoles.count)
     }
 }
 
