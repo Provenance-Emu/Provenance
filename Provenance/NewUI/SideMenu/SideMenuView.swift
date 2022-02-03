@@ -17,17 +17,13 @@ struct SideMenuView: SwiftUI.View {
     
     var delegate: PVMenuDelegate?
     
-//    @ObservedObject var consoles: BindableResults<PVSystem>
-    
     @ObservedResults(
         PVSystem.self,
         configuration: RealmConfiguration.realmConfig,
-        filter: NSPredicate(format: "games.@count > 0"),
-        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSystem.name), ascending: false)
+        filter: NSPredicate(format: "games.@count > 0")
     ) var consoles
     
     init(gameLibrary: PVGameLibrary, delegate: PVMenuDelegate) {
-//        self.consoles = BindableResults(results: gameLibrary.activeSystems)
         self.delegate = delegate
     }
     
@@ -35,6 +31,10 @@ struct SideMenuView: SwiftUI.View {
         let view = SideMenuView(gameLibrary: gameLibrary, delegate: delegate)
         let hostingView = UIHostingController(rootView: view)
         return hostingView
+    }
+    
+    func sortedConsoles() -> Results<PVSystem> {
+        return self.consoles.sorted(by: [SortDescriptor(keyPath: #keyPath(PVSystem.name), ascending: false)])
     }
     
     var body: some SwiftUI.View {
