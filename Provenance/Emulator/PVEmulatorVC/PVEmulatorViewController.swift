@@ -401,6 +401,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 				self.controllerPauseButtonPressed()
 			})
 		}
+        enableControllerInput(false)
     }
 
     public override func viewDidAppear(_: Bool) {
@@ -579,6 +580,17 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         if (presentedViewController is TVAlertController) && !presentedViewController!.isBeingDismissed {
             dismiss(animated: true) { () -> Void in }
         }
+        #if os(iOS)
+        // if there is a DONE button, press it
+        if let nav = presentedViewController as? UINavigationController, !presentedViewController!.isBeingDismissed {
+            let top = nav.topViewController?.navigationItem
+            for bbi in (top?.leftBarButtonItems ?? []) + (top?.rightBarButtonItems ?? []) {
+                if bbi.style == .done || bbi.action == NSSelectorFromString("done:") {
+                    _ = bbi.target?.perform(bbi.action, with:bbi)
+                }
+            }
+        }
+        #endif
         updateLastPlayedTime()
         core.setPauseEmulation(false)
     }
