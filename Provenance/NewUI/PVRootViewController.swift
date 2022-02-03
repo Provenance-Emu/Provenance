@@ -27,11 +27,12 @@ import PVLibrary
 /**
  high level goals:
  ✅ sort options for side menu
+ ✅ style home screen bottom rows
  - sort options in console view
  - stub context menu options
  - fix artwork styling across diff sizes
  - fix artwork loading
- - style home screen
+ - style home screen top cell
  - style side menu iOS
  - bios options in console view
  - search
