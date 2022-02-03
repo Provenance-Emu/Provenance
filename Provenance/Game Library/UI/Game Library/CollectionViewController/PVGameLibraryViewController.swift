@@ -610,7 +610,10 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        PVControllerManager.shared.controllerUserInteractionEnabled = true
+        _ = PVControllerManager.shared
+        #if os(iOS)
+            PVControllerManager.shared.controllerUserInteractionEnabled = true
+        #endif
         if isInitialAppearance {
             isInitialAppearance = false
             #if os(tvOS)
