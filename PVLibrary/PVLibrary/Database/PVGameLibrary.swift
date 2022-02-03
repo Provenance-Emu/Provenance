@@ -22,7 +22,6 @@ public struct PVGameLibrary {
     public let favoritesResults: Results<PVGame>
     public let recentsResults: Results<PVRecentGame>
     public let mostPlayedResults: Results<PVGame>
-    
     public let activeSystems: Results<PVSystem>
 
     private let database: RomDatabase
@@ -49,11 +48,8 @@ public struct PVGameLibrary {
         self.mostPlayed = Observable
             .collection(from: self.mostPlayedResults)
             .mapMany { $0 }
-//        
-//        let titleResults = self.database.all(PVGame.self, filter: NSPredicate(format: "title CONTAINS[c] %@", argumentArray: [searchText]))
-//        
+
         self.activeSystems = database.all(PVSystem.self, filter: NSPredicate(format: "games.@count > 0")).sorted(byKeyPath: #keyPath(PVSystem.name), ascending: false)
-//        self.activeSystems = database.realm.objects(PVSystem.self).filter("games.@count > 0").sorted(byKeyPath: "name")
     }
 
     public func search(for searchText: String) -> Observable<[PVGame]> {
