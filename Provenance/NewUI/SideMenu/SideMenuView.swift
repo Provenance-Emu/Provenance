@@ -27,6 +27,8 @@ struct SideMenuView: SwiftUI.View {
         self.delegate = delegate
     }
     
+    @State var sortAscending = false // maybe: hook up to user defaults
+    
     static func instantiate(gameLibrary: PVGameLibrary, delegate: PVMenuDelegate) -> UIViewController {
         let view = SideMenuView(gameLibrary: gameLibrary, delegate: delegate)
         let hostingView = UIHostingController(rootView: view)
@@ -34,7 +36,7 @@ struct SideMenuView: SwiftUI.View {
     }
     
     func sortedConsoles() -> Results<PVSystem> {
-        return self.consoles.sorted(by: [SortDescriptor(keyPath: #keyPath(PVSystem.name), ascending: false)])
+        return self.consoles.sorted(by: [SortDescriptor(keyPath: #keyPath(PVSystem.name), ascending: sortAscending)])
     }
     
     var body: some SwiftUI.View {
@@ -54,9 +56,10 @@ struct SideMenuView: SwiftUI.View {
                     }
                 }
                 Group {
-                    if consoles.count > 0 { // TODO: handle sorting
-                        MenuSectionHeaderView(sectionTitle: "CONSOLES", sortable: consoles.count > 1)
-                        ForEach(consoles, id: \.self) { console in
+                    if consoles.count > 0 {
+                        MenuSectionHeaderView(sectionTitle: "CONSOLES", sortable: consoles.count > 1, sortAscending: sortAscending)
+                            .onTapGesture { self.sortAscending.toggle() }
+                        ForEach(sortedConsoles(), id: \.self) { console in
                             Divider()
                             MenuItemView(imageName: "prov_snes_icon", rowTitle: console.name) {
                                 delegate?.didTapConsole(with: console.identifier)
@@ -80,18 +83,19 @@ struct MenuSectionHeaderView: SwiftUI.View {
     
     var sectionTitle: String
     var sortable: Bool
+    var sortAscending: Bool = false
     
     var body: some SwiftUI.View {
         VStack(spacing: 0) {
-            Divider().frame(height: 4).background(Color.gray)
+            Divider().frame(height: 2).background(Color.gray)
             Spacer()
             HStack(alignment: .bottom) {
-                Text(sectionTitle).foregroundColor(Color.gray).font(.system(.subheadline))
+                Text(sectionTitle).foregroundColor(Color.gray).font(.system(size: 13))
                 Spacer()
                 if sortable {
                     HStack(alignment: .bottom, spacing: 0) {
                         Text("Sort").foregroundColor(Color.gray).font(.system(.caption))
-                        Image("chevron_down").resizable().foregroundColor(.gray).frame(width: 16, height: 16)
+                        Image(sortAscending == true ? "chevron_up" : "chevron_down").resizable().foregroundColor(.gray).frame(width: 16, height: 16)
                     }
                 }
             }
