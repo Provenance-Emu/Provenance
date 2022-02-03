@@ -50,7 +50,7 @@ class TVFullscreenController: UIViewController {
         let scale = min(1.0, min(view.bounds.size.width * 0.95 / size.width, view.bounds.size.height * 0.95 / size.height))
         
         content.transform = CGAffineTransform(scaleX:0.001, y:0.001)
-        UIView.animate(withDuration: 0.200) {
+        UIView.animate(withDuration: 0.150) {
             content.transform  = CGAffineTransform(scaleX:scale, y:scale)
         }
     }
