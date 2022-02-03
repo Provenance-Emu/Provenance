@@ -226,9 +226,11 @@ final class PVControllerManager: NSObject {
 #endif
         ILOG("Controller connected: \(controller.vendorName ?? "No Vendor")")
         assign(controller)
-        if self.controllerUserInteractionEnabled {
-            self.controllerUserInteractionEnabled = true
-        }
+        #if os(iOS)
+            if self.controllerUserInteractionEnabled {
+                self.controllerUserInteractionEnabled = true
+            }
+        #endif
     }
 
     @objc func handleControllerDidDisconnect(_ note: Notification?) {
@@ -509,7 +511,7 @@ extension GCExtendedGamepad {
         if buttonX.isPressed {state.formUnion([.x])}
         if buttonY.isPressed {state.formUnion([.y])}
 
-        if #available(iOS 13.0, *) {
+        if #available(iOS 13.0, tvOS 13.0, *) {
             if buttonMenu.isPressed {state.formUnion([.menu])}
             if buttonOptions?.isPressed == true {state.formUnion([.options])}
         }
