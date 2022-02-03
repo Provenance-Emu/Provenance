@@ -131,9 +131,13 @@ public struct PVGameLibrary {
         return database.all(PVGame.self).filter(NSPredicate(format: "systemIdentifier == %@", argumentArray: [systemIdentifier]))
     }
     
-//    public func activeSystems() -> Results<PVSystem> {
-//        return database.all(PVSystem.self).filter("games.@count > 0").sorted(byKeyPath: "name")
-//    }
+    public func system(identifier: String) -> PVSystem? {
+        return database.object(ofType: PVSystem.self, wherePrimaryKeyEquals: identifier)
+    }
+    
+    public func game(identifier: String) -> PVGame? {
+        return database.object(ofType: PVGame.self, wherePrimaryKeyEquals: identifier)
+    }
 }
 
 public extension ObservableType where Element: Collection {
