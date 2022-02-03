@@ -24,6 +24,22 @@ import PVLibrary
 // to UIViewControllers, etc.) it will be more easier to integrate by starting here
 // and porting the remaining views/logic over to as conditions change moving forward.
 
+/**
+ high level goals:
+ - sort options for side menu
+ - sort options in console view
+ - stub context menu options
+ - fix artwork styling across diff sizes
+ - fix artwork loading
+ - style home screen
+ - style side menu iOS
+ - bios options in console view
+ - search
+ - style side menu tvOS
+ - all things collections
+ - full context menu options
+ */
+
 enum PVNavOption {
     case settings
     case home
