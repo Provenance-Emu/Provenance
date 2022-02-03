@@ -35,9 +35,7 @@ struct GameItemView: SwiftUI.View {
                 GameItemThumbnail(artwork: artwork, gameTitle: name, boxartAspectRatio: boxartAspectRatio)
                 VStack(alignment: .leading, spacing: 0) {
                     GameItemTitle(text: name)
-                    if let yearReleased = yearReleased {
-                        GameItemSubtitle(text: yearReleased)
-                    }
+                    GameItemSubtitle(text: yearReleased)
                 }
                 .frame(width: textMaxWidth)
             }
@@ -120,6 +118,7 @@ struct GameItemThumbnail: SwiftUI.View {
                     value: geometry.size.width
                 )
             })
+            .cornerRadius(3.0)
     }
 }
 
@@ -137,13 +136,14 @@ struct GameItemTitle: SwiftUI.View {
 
 @available(iOS 14, tvOS 14, *)
 struct GameItemSubtitle: SwiftUI.View {
-    var text: String
+    var text: String?
     var body: some SwiftUI.View {
-        Text(text)
+        Text(text ?? "blank")
             .font(.system(size: 8))
             .foregroundColor(Color.gray) // TOOD: theme colors
             .lineLimit(1)
             .frame(maxWidth: .infinity, alignment: .leading)
+            .opacity(text != nil ? 1.0 : 0.0)
     }
 }
 

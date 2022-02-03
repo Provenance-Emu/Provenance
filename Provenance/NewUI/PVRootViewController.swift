@@ -26,7 +26,7 @@ import PVLibrary
 
 /**
  high level goals:
- - sort options for side menu
+ ✅ sort options for side menu
  - sort options in console view
  - stub context menu options
  - fix artwork styling across diff sizes

@@ -59,7 +59,7 @@ struct HomeView: SwiftUI.View {
     var body: some SwiftUI.View {
         ScrollView {
             VStack {
-                HStack {
+                HomeSection(title: "Continue") {
                     ForEach(recentSaveStates, id: \.self) { recentSaveState in
                         GameItemView(
                             artwork: nil,
@@ -71,7 +71,7 @@ struct HomeView: SwiftUI.View {
                             }
                     }
                 }
-                HStack {
+                HomeSection(title: "Recently Played") {
                     ForEach(recentlyPlayedGames, id: \.self) { recentlyPlayedGame in
                         GameItemView(
                             artwork: nil,
@@ -82,7 +82,7 @@ struct HomeView: SwiftUI.View {
                             }
                     }
                 }
-                HStack {
+                HomeSection(title: "Favorites") {
                     ForEach(favorites, id: \.self) { favorite in
                         GameItemView(
                             artwork: nil,
@@ -93,7 +93,7 @@ struct HomeView: SwiftUI.View {
                             }
                     }
                 }
-                HStack {
+                HomeSection(title: "Most Played") {
                     ForEach(mostPlayed, id: \.self) { playedGame in
                         GameItemView(
                             artwork: nil,
@@ -110,6 +110,34 @@ struct HomeView: SwiftUI.View {
     }
 }
 
+@available(iOS 14, tvOS 14, *)
+struct HomeSection<Content: SwiftUI.View>: SwiftUI.View {
+    
+    let title: String
+    
+    @ViewBuilder var content: () -> Content
+    
+    var body: some SwiftUI.View {
+        VStack(alignment: .leading, spacing: 0) {
+            Divider()
+                .frame(height: 1)
+                .background(Color.gray)
+                .opacity(0.3)
+            Text(title.uppercased())
+                .foregroundColor(Color.gray)
+                .font(.system(size: 11))
+                .padding(.horizontal, 16)
+                .padding(.top, 24)
+                .padding(.bottom, 8)
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack {
+                    content()
+                }
+                .padding(.horizontal, 16)
+            }
+        }
+    }
+}
 
 @available(iOS 14, tvOS 14, *)
 struct HomeItemView: SwiftUI.View {
