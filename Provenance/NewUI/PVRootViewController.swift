@@ -28,10 +28,10 @@ import PVLibrary
  high level goals:
  ✅ sort options for side menu
  ✅ style home screen bottom rows
- - sort options in console view
+ ✅ sort options in console view
+ ✅ fix artwork styling across diff sizes
+ ✅ fix artwork loading
  - stub context menu options
- - fix artwork styling across diff sizes
- - fix artwork loading
  - style home screen top cell
  - style side menu iOS
  - bios options in console view
@@ -39,6 +39,7 @@ import PVLibrary
  - style side menu tvOS
  - all things collections
  - full context menu options
+ - maybe find out why realm crashes? Might be a good idea, you know
  */
 
 enum PVNavOption {
