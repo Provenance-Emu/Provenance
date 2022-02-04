@@ -129,7 +129,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         gpuViewController.view?.removeFromSuperview()
         gpuViewController.removeFromParent()
         #if os(iOS)
-            GCController.controllers().forEach { $0.controllerPausedHandler = nil }
+            PVControllerManager.shared.controllers().forEach { $0.controllerPausedHandler = nil }
         #endif
         updatePlayedDuration()
         destroyAutosaveTimer()
@@ -377,12 +377,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             initFPSLabel()
         }
 
-        #if !targetEnvironment(simulator)
-            if !GCController.controllers().isEmpty {
-                menuButton?.isHidden = true
-            }
-        #endif
-
+        hideOrShowMenuButton()
+ 
         convertOldSaveStatesToNewIfNeeded()
 
         core.startEmulation()
@@ -399,12 +395,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             view.addGestureRecognizer(menuGestureRecognizer!)
         }
         #endif
-        GCController.controllers().forEach {
+        PVControllerManager.shared.controllers().forEach {
 			$0.setupPauseHandler(onPause: { [weak self] in
 				guard let self = self else { return }
 				self.controllerPauseButtonPressed()
 			})
 		}
+        enableControllerInput(false)
     }
 
     public override func viewDidAppear(_: Bool) {
@@ -564,25 +561,36 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             //    if (@available(iOS 10, *)) {
             //        self.controllerUserInteractionEnabled = enabled;
             //    }
+            PVControllerManager.shared.controllerUserInteractionEnabled = enabled
         #endif
     }
 
     @objc func hideMoreInfo() {
         dismiss(animated: true, completion: { () -> Void in
-            #if os(tvOS)
-                self.showMenu(nil)
-            #else
-                self.hideMenu()
-            #endif
+            self.hideMenu()
         })
     }
 
     func hideMenu() {
         enableControllerInput(false)
-        if presentedViewController is UIAlertController {
+        isShowingMenu = false
+        if (presentedViewController is UIAlertController) && !presentedViewController!.isBeingDismissed {
             dismiss(animated: true) { () -> Void in }
-            isShowingMenu = false
         }
+        if (presentedViewController is TVAlertController) && !presentedViewController!.isBeingDismissed {
+            dismiss(animated: true) { () -> Void in }
+        }
+        #if os(iOS)
+        // if there is a DONE button, press it
+        if let nav = presentedViewController as? UINavigationController, !presentedViewController!.isBeingDismissed {
+            let top = nav.topViewController?.navigationItem
+            for bbi in (top?.leftBarButtonItems ?? []) + (top?.rightBarButtonItems ?? []) {
+                if bbi.style == .done || bbi.action == NSSelectorFromString("done:") {
+                    _ = bbi.target?.perform(bbi.action, with:bbi)
+                }
+            }
+        }
+        #endif
         updateLastPlayedTime()
         core.setPauseEmulation(false)
     }
@@ -636,9 +644,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         }
 
     #endif
-    @objc func showSpeedMenu() {
+    @objc func showSpeedMenu(_ sender:AnyObject?) {
         let actionSheet = UIAlertController(title: "Game Speed", message: nil, preferredStyle: .actionSheet)
-        if traitCollection.userInterfaceIdiom == .pad, let menuButton = menuButton {
+        if traitCollection.userInterfaceIdiom == .pad, let menuButton = menuButton, sender === menuButton {
             actionSheet.popoverPresentationController?.sourceView = menuButton
             actionSheet.popoverPresentationController?.sourceRect = menuButton.bounds
         }
@@ -655,6 +663,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
                 actionSheet.preferredAction = action
             }
         }
+        let action = UIAlertAction(title: "Cancel", style: .cancel, handler: { (_: UIAlertAction) -> Void in
+            self.core.setPauseEmulation(false)
+            self.isShowingMenu = false
+            self.enableControllerInput(false)
+        })
+        actionSheet.addAction(action)
+
         present(actionSheet, animated: true, completion: { () -> Void in
             PVControllerManager.shared.iCadeController?.refreshListener()
         })
@@ -664,15 +679,25 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         guard let moreInfoViewController = UIStoryboard(name: "Provenance", bundle: nil).instantiateViewController(withIdentifier: "gameMoreInfoVC") as? PVGameMoreInfoViewController else { return }
         moreInfoViewController.game = self.game
         moreInfoViewController.showsPlayButton = false
+        let newNav = UINavigationController(rootViewController: moreInfoViewController)
 
         #if os(iOS)
-        moreInfoViewController.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(self.hideMoreInfo))
+            moreInfoViewController.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(self.hideMoreInfo))
+        #else
+            let tap = UITapGestureRecognizer(target: self, action: #selector(self.hideMoreInfo))
+            tap.allowedPressTypes = [.menu]
+            moreInfoViewController.view.addGestureRecognizer(tap)
         #endif
+        
+        // disable iOS 13 swipe to dismiss...
+        if #available(iOS 13.0, tvOS 13.0, *) {
+            newNav.isModalInPresentation = true
+        }
 
-        let newNav = UINavigationController(rootViewController: moreInfoViewController)
         self.present(newNav, animated: true) { () -> Void in }
-        self.isShowingMenu = false
-        self.enableControllerInput(false)
+        //hideMoreInfo will/should do this!
+        //self.isShowingMenu = false
+        //self.enableControllerInput(false)
     }
 
     typealias QuitCompletion = () -> Void

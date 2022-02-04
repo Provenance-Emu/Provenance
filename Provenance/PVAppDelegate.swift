@@ -44,7 +44,11 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         // Set root view controller and make windows visible
         let window = UIWindow.init(frame: UIScreen.main.bounds)
         self.window = window
-        
+
+        #if os(tvOS)
+            window.tintColor = UIColor(red: 0.1, green: 0.5, blue: 0.95, alpha: 1.0)  // PVBlue
+        #endif
+
         if PVSettingsModel.shared.debugOptions.useSwiftUI {
             
         } else {
@@ -83,6 +87,8 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
                 fatalError(error.localizedDescription)
             }))
 
+            self.window?.rootViewController = UIViewController()
+            self.window?.makeKeyAndVisible()
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 self.window?.rootViewController?.present(alert, animated: true, completion: nil)
             }
