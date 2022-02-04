@@ -56,28 +56,20 @@ struct ConsoleGamesView: SwiftUI.View {
             if isGrid {
                 LazyVGrid(columns: columns, spacing: 20) {
                     ForEach(filteredAndSortedGames(), id: \.self) { game in
-                        GameItemView(
-                            artworkURL: game.trueArtworkURL,
-                            boxartAspectRatio: game.boxartAspectRatio,
-                            name: game.title,
-                            yearReleased: game.publishDate) {
-                                rootDelegate?.load(game, sender: self, core: nil, saveState: nil)
-                            }
-                            .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
+                        GameItemView(game: game) {
+                            rootDelegate?.load(game, sender: self, core: nil, saveState: nil)
+                        }
+                        .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
                     }
                 }
                 .padding(.horizontal, 10)
             } else {
                 LazyVStack { // TODO: convert to row
                     ForEach(filteredAndSortedGames(), id: \.self) { game in
-                        GameItemView(
-                            artworkURL: game.trueArtworkURL,
-                            boxartAspectRatio: game.boxartAspectRatio,
-                            name: game.title,
-                            yearReleased: game.publishDate) {
-                                rootDelegate?.load(game, sender: self, core: nil, saveState: nil)
-                            }
-                            .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
+                        GameItemView(game: game) {
+                            rootDelegate?.load(game, sender: self, core: nil, saveState: nil)
+                        }
+                        .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
                     }
                 }
                 .padding(.horizontal, 10)

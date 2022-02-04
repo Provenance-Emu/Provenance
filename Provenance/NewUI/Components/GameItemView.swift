@@ -21,13 +21,10 @@ import PVLibrary
 @available(iOS 14, tvOS 14, *)
 struct GameItemView: SwiftUI.View {
     
-    var artworkURL: String?
-    @State var artwork: UIImage?
-    var boxartAspectRatio: PVGameBoxArtAspectRatio
-    var name: String
-    var yearReleased: String?
-    var constrainHeight: Bool = false
+    @ObservedRealmObject var game: PVGame
     
+    var constrainHeight: Bool = false
+    @State var artwork: UIImage? = nil
     @State private var textMaxWidth: CGFloat = 150
     
     var action: () -> Void
@@ -37,10 +34,10 @@ struct GameItemView: SwiftUI.View {
             action()
         } label: {
             VStack(alignment: .leading, spacing: 3) {
-                GameItemThumbnail(artwork: artwork, gameTitle: name, boxartAspectRatio: boxartAspectRatio)
+                GameItemThumbnail(artwork: artwork, gameTitle: game.title, boxartAspectRatio: game.boxartAspectRatio)
                 VStack(alignment: .leading, spacing: 0) {
-                    GameItemTitle(text: name)
-                    GameItemSubtitle(text: yearReleased)
+                    GameItemTitle(text: game.title)
+                    GameItemSubtitle(text: game.publishDate)
                 }
                 .frame(width: textMaxWidth)
             }
@@ -51,11 +48,9 @@ struct GameItemView: SwiftUI.View {
                 textMaxWidth = $0
             }
             .onAppear {
-                if let imageKey = artworkURL {
-                    PVMediaCache.shareInstance().image(forKey: imageKey, completion: { _, image in
-                        self.artwork = image
-                    })
-                }
+                PVMediaCache.shareInstance().image(forKey: game.trueArtworkURL, completion: { _, image in
+                    self.artwork = image
+                })
             }
         }
     }
@@ -161,60 +156,6 @@ struct ArtworkDynamicWidthPreferenceKey: PreferenceKey {
     static func reduce(value: inout CGFloat,
                        nextValue: () -> CGFloat) {
         value = max(value, nextValue())
-    }
-}
-
-@available(iOS 14, tvOS 14, *)
-struct GameItemRow: SwiftUI.View {
-    
-    var body: some SwiftUI.View {
-        ScrollView(.horizontal) {
-            HStack(spacing: 10) {
-                GameItemView(
-                    artworkURL: "",
-                    artwork: UIImage(named: "prov_game_ff") ?? UIImage(),
-                    boxartAspectRatio: .nesUSA,
-                    name: "Final Fantasy",
-                    yearReleased: "2019") {}
-                GameItemView(
-                    artworkURL: "",
-                    artwork: UIImage(named: "prov_game_ff3") ?? UIImage(),
-                    boxartAspectRatio: .snesUSA,
-                    name: "Final Fantasy III",
-                    yearReleased: "2019") {}
-                GameItemView(
-                    artworkURL: "",
-                    artwork: UIImage(named: "prov_game_ff7s") ?? UIImage(),
-                    boxartAspectRatio: .square,
-                    name: "Final Fantasy III",
-                    yearReleased: "2019") {}
-                GameItemView(
-                    artworkURL: "",
-                    artwork: UIImage(named: "prov_game_linktothepast") ?? UIImage(),
-                    boxartAspectRatio: .snesUSA,
-                    name: "The Legend of Zelda: A Link to The Past",
-                    yearReleased: "2019") {}
-                GameItemView(
-                    artworkURL: "",
-                    artwork: UIImage(named: "prov_game_fft") ?? UIImage(),
-                    boxartAspectRatio: .square,
-                    name: "Final Fantasy Tactics Advance",
-                    yearReleased: "2019") {}
-            }
-        }
-    }
-}
-
-// previews
-@available(iOS 14, tvOS 14, *)
-struct GameItemView_Previews: PreviewProvider {
-    static var previews: some SwiftUI.View {
-        if #available(iOS 15, tvOS 15, *) {
-            GameItemRow()
-                .previewInterfaceOrientation(.landscapeLeft)
-        } else {
-            GameItemRow()
-        }
     }
 }
 
