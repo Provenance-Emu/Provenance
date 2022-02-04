@@ -21,21 +21,31 @@ struct GameContextMenu: SwiftUI.View {
     
     var body: some SwiftUI.View {
         Group {
-            // Open with...
             Button {
                 rootDelegate?.load(game, sender: self, core: nil, saveState: nil)
-            } label: {
-                Text("Open with...")
-            }
-            // Game Info
-            // Favorite
-            // Rename
-            // Copy MD5 URL
-            // Choose Cover
-            // Paste Cover
-            // Share
+            } label: { Label("Open in...", systemImage: "gamecontroller") }
+            Button {
+                self.rootDelegate?.showUnderConstructionAlert() // TODO: this
+            } label: { Label("Game Info", systemImage: "info.circle") }
+            Button {
+                self.rootDelegate?.showUnderConstructionAlert() // TODO: this
+            } label: { Label("Favorite", systemImage: "heart") }
+            Button {
+                self.rootDelegate?.showUnderConstructionAlert() // TODO: this
+            } label: { Label("Rename", systemImage: "rectangle.and.pencil.and.ellipsis") }
+            Button {
+                self.rootDelegate?.showUnderConstructionAlert() // TODO: this
+            } label: { Label("Copy MD5 URL", systemImage: "number.square") }
+            Button {
+                self.rootDelegate?.showUnderConstructionAlert() // TODO: this
+            } label: { Label("Choose Cover", systemImage: "book.closed") }
+            Button {
+                self.rootDelegate?.showUnderConstructionAlert() // TODO: this
+            } label: { Label("Paste Cover", systemImage: "doc.on.clipboard") }
+            Button {
+                self.rootDelegate?.showUnderConstructionAlert() // TODO: this
+            } label: { Label("Share", systemImage: "square.and.arrow.up") }
             Divider()
-            // Delete
             if #available(iOS 15, tvOS 15, *) {
                 Button(role: .destructive) {
                     rootDelegate?.attemptToDelete(game: game)
