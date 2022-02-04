@@ -61,50 +61,30 @@ struct HomeView: SwiftUI.View {
             LazyVStack {
                 HomeSection(title: "Continue") {
                     ForEach(recentSaveStates, id: \.self) { recentSaveState in
-                        GameItemView(
-                            artworkURL: recentSaveState.game.trueArtworkURL,
-                            boxartAspectRatio: recentSaveState.game.boxartAspectRatio,
-                            name: recentSaveState.game.title,
-                            yearReleased: recentSaveState.game.publishDate,
-                            constrainHeight: true) {
-                                rootDelegate?.load(recentSaveState.game, sender: self, core: nil, saveState: recentSaveState)
-                            }
+                        GameItemView(game: recentSaveState.game, constrainHeight: true) {
+                            rootDelegate?.load(recentSaveState.game, sender: self, core: nil, saveState: recentSaveState)
+                        }
                     }
                 }
                 HomeSection(title: "Recently Played") {
                     ForEach(recentlyPlayedGames, id: \.self) { recentlyPlayedGame in
-                        GameItemView(
-                            artworkURL: recentlyPlayedGame.game.trueArtworkURL,
-                            boxartAspectRatio: recentlyPlayedGame.game.boxartAspectRatio,
-                            name: recentlyPlayedGame.game.title,
-                            yearReleased: recentlyPlayedGame.game.publishDate,
-                            constrainHeight: true) {
-                                rootDelegate?.load(recentlyPlayedGame.game, sender: self, core: nil, saveState: nil)
-                            }
+                        GameItemView(game: recentlyPlayedGame.game, constrainHeight: true) {
+                            rootDelegate?.load(recentlyPlayedGame.game, sender: self, core: nil, saveState: nil)
+                        }
                     }
                 }
                 HomeSection(title: "Favorites") {
                     ForEach(favorites, id: \.self) { favorite in
-                        GameItemView(
-                            artworkURL: favorite.trueArtworkURL,
-                            boxartAspectRatio: favorite.boxartAspectRatio,
-                            name: favorite.title,
-                            yearReleased: favorite.publishDate,
-                            constrainHeight: true) {
-                                rootDelegate?.load(favorite, sender: self, core: nil, saveState: nil)
-                            }
+                        GameItemView(game: favorite, constrainHeight: true) {
+                            rootDelegate?.load(favorite, sender: self, core: nil, saveState: nil)
+                        }
                     }
                 }
                 HomeSection(title: "Most Played") {
                     ForEach(mostPlayed, id: \.self) { playedGame in
-                        GameItemView(
-                            artworkURL: playedGame.trueArtworkURL,
-                            boxartAspectRatio: playedGame.boxartAspectRatio,
-                            name: playedGame.title,
-                            yearReleased: playedGame.publishDate,
-                            constrainHeight: true) {
-                                rootDelegate?.load(playedGame, sender: self, core: nil, saveState: nil)
-                            }
+                        GameItemView(game: playedGame, constrainHeight: true) {
+                            rootDelegate?.load(playedGame, sender: self, core: nil, saveState: nil)
+                        }
                     }
                 }
             }
