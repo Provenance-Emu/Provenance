@@ -12,6 +12,12 @@ import Foundation
 import SwiftUI
 import PVLibrary
 
+#if os(tvOS)
+    public let PVRowHeight: CGFloat = 300.0
+#else
+    public let PVRowHeight: CGFloat = 150.0
+#endif
+
 @available(iOS 14, tvOS 14, *)
 struct GameItemView: SwiftUI.View {
     
@@ -20,6 +26,7 @@ struct GameItemView: SwiftUI.View {
     var boxartAspectRatio: PVGameBoxArtAspectRatio
     var name: String
     var yearReleased: String?
+    var constrainHeight: Bool = false
     
     var thing = true
     
@@ -39,11 +46,12 @@ struct GameItemView: SwiftUI.View {
                 }
                 .frame(width: textMaxWidth)
             }
-            .frame(height: 150.0)
+            .if(constrainHeight) { view in
+                view.frame(height: PVRowHeight)
+            }
             .onPreferenceChange(ArtworkDynamicWidthPreferenceKey.self) {
                 textMaxWidth = $0
             }
-            .background(Color.red)
             .onAppear {
                 if let imageKey = artworkURL {
                     PVMediaCache.shareInstance().image(forKey: imageKey, completion: { _, image in
@@ -52,6 +60,23 @@ struct GameItemView: SwiftUI.View {
                 }
             }
         }
+    }
+}
+
+@available(iOS 14, tvOS 14, *)
+struct GameItemThumbnail: SwiftUI.View {
+    var artwork: UIImage?
+    var gameTitle: String
+    var boxartAspectRatio: PVGameBoxArtAspectRatio
+    var body: some SwiftUI.View {
+        ArtworkImageBaseView(artwork: artwork, gameTitle: gameTitle, boxartAspectRatio: boxartAspectRatio)
+            .background(GeometryReader { geometry in
+                Color.clear.preference(
+                    key: ArtworkDynamicWidthPreferenceKey.self,
+                    value: geometry.size.width
+                )
+            })
+            .cornerRadius(3.0)
     }
 }
 
@@ -107,23 +132,6 @@ struct ArtworkImageBaseView: SwiftUI.View {
 }
 
 @available(iOS 14, tvOS 14, *)
-struct GameItemThumbnail: SwiftUI.View {
-    var artwork: UIImage?
-    var gameTitle: String
-    var boxartAspectRatio: PVGameBoxArtAspectRatio
-    var body: some SwiftUI.View {
-        ArtworkImageBaseView(artwork: artwork, gameTitle: gameTitle, boxartAspectRatio: boxartAspectRatio)
-            .background(GeometryReader { geometry in
-                Color.clear.preference(
-                    key: ArtworkDynamicWidthPreferenceKey.self,
-                    value: geometry.size.width
-                )
-            })
-            .cornerRadius(3.0)
-    }
-}
-
-@available(iOS 14, tvOS 14, *)
 struct GameItemTitle: SwiftUI.View {
     var text: String
     var body: some SwiftUI.View {
@@ -144,7 +152,7 @@ struct GameItemSubtitle: SwiftUI.View {
             .foregroundColor(Color.gray) // TOOD: theme colors
             .lineLimit(1)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .opacity(text != nil ? 1.0 : 0.0)
+            .opacity(text != nil ? 1.0 : 0.0) // hide rather than not render so that cell keeps consistent height
     }
 }
 

@@ -66,7 +66,8 @@ struct HomeView: SwiftUI.View {
                             
                             boxartAspectRatio: recentSaveState.game.boxartAspectRatio,
                             name: recentSaveState.game.title,
-                            yearReleased: recentSaveState.game.publishDate) {
+                            yearReleased: recentSaveState.game.publishDate,
+                            constrainHeight: true) {
                                 rootDelegate?.load(recentSaveState.game, sender: self, core: nil, saveState: recentSaveState)
                             }
                     }
@@ -77,7 +78,8 @@ struct HomeView: SwiftUI.View {
                             artwork: nil,
                             boxartAspectRatio: recentlyPlayedGame.game.boxartAspectRatio,
                             name: recentlyPlayedGame.game.title,
-                            yearReleased: recentlyPlayedGame.game.publishDate) {
+                            yearReleased: recentlyPlayedGame.game.publishDate,
+                            constrainHeight: true) {
                                 rootDelegate?.load(recentlyPlayedGame.game, sender: self, core: nil, saveState: nil)
                             }
                     }
@@ -88,7 +90,8 @@ struct HomeView: SwiftUI.View {
                             artwork: nil,
                             boxartAspectRatio: favorite.boxartAspectRatio,
                             name: favorite.title,
-                            yearReleased: favorite.publishDate) {
+                            yearReleased: favorite.publishDate,
+                            constrainHeight: true) {
                                 rootDelegate?.load(favorite, sender: self, core: nil, saveState: nil)
                             }
                     }
@@ -99,7 +102,8 @@ struct HomeView: SwiftUI.View {
                             artwork: nil,
                             boxartAspectRatio: playedGame.boxartAspectRatio,
                             name: playedGame.title,
-                            yearReleased: playedGame.publishDate) {
+                            yearReleased: playedGame.publishDate,
+                            constrainHeight: true) {
                                 rootDelegate?.load(playedGame, sender: self, core: nil, saveState: nil)
                             }
                     }
