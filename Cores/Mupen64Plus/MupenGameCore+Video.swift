@@ -8,7 +8,13 @@
 
 import Foundation
 import PVSupport
+
+#if targetEnvironment(macCatalyst)
+import OpenGL
+import GLUT
+#else
 import OpenGLES.ES3
+#endif
 
 @objc
 public extension MupenGameCore {
@@ -21,5 +27,4 @@ public extension MupenGameCore {
     override var bufferSize: CGSize { .init(width: 1024, height: 512) }
     override var screenRect: CGRect { .init(x: 0, y: 0, width: Int(videoWidth), height: Int(videoHeight)) }
     override var aspectSize: CGSize { .init(width: Int(videoWidth), height: Int(videoHeight)) }
-
 }
