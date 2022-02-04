@@ -64,9 +64,9 @@ struct ConsoleGamesView: SwiftUI.View {
                 }
                 .padding(.horizontal, 10)
             } else {
-                LazyVStack { // TODO: convert to row
+                LazyVStack {
                     ForEach(filteredAndSortedGames(), id: \.self) { game in
-                        GameItemView(game: game) {
+                        GameItemView(game: game, asRow: true) {
                             rootDelegate?.load(game, sender: self, core: nil, saveState: nil)
                         }
                         .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
