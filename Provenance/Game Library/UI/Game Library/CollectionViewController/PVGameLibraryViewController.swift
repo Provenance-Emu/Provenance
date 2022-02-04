@@ -57,7 +57,7 @@ public extension Notification.Name {
     }
 #endif
 
-final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate, GameLaunchingViewController, GameSharingViewController, WebServerActivatorController {
+final class PVGameLibraryViewController: GCEventViewController, UITextFieldDelegate, UINavigationControllerDelegate, GameLaunchingViewController, GameSharingViewController, WebServerActivatorController {
     lazy var collectionViewZoom: CGFloat = CGFloat(PVSettingsModel.shared.gameLibraryScale)
 
     let disposeBag = DisposeBag()
@@ -66,7 +66,15 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     var gameImporter: GameImporter!
     var filePathsToImport = [URL]()
 
-    var collectionView: UICollectionView?
+    var collectionView: UICollectionView? {
+        didSet {
+            guard let collectionView = collectionView else { return }
+            if #available(iOS 14.0, *) {
+                collectionView.selectionFollowsFocus = true
+            }
+            collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        }
+    }
 
     #if os(iOS)
         var photoLibrary: PHPhotoLibrary?
@@ -268,7 +276,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
         let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: layout)
         self.collectionView = collectionView
-        collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 
         typealias Playable = (PVGame, UICollectionViewCell?, PVCore?, PVSaveState?)
         let selectedPlayable = PublishSubject<Playable>()
@@ -310,7 +317,9 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         })
 
         collectionView.rx.itemSelected
-            .map { indexPath in (try! collectionView.rx.model(at: indexPath) as Section.Item, collectionView.cellForItem(at: indexPath)) }
+            .map {
+                indexPath in (try! collectionView.rx.model(at: indexPath) as Section.Item, collectionView.cellForItem(at: indexPath))
+            }
             .compactMap({ item, cell -> Playable? in
                 switch item {
                 case .game(let game):
@@ -533,9 +542,9 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         becomeFirstResponder()
     }
 
-    #if os(tvOS)
+//    #if os(tvOS)
         var focusedGame: PVGame?
-    #endif
+//    #endif
 
     #if os(iOS)
         @objc
@@ -606,6 +615,13 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         guard RomDatabase.databaseInitilized else {
             return
         }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        #if os(iOS)
+            PVControllerManager.shared.controllerUserInteractionEnabled = false
+        #endif
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -1708,38 +1724,38 @@ extension PVGameLibraryViewController {
             promptToDeleteGame(focusedGame)
         }
 
-        func collectionView(_ collectionView: UICollectionView, didUpdateFocusIn context: UICollectionViewFocusUpdateContext, with _: UIFocusAnimationCoordinator) {
-            focusedGame = getFocusedGame(in: collectionView, focusContext: context)
-        }
 
-        private func getFocusedGame(in collectionView: UICollectionView, focusContext context: UICollectionViewFocusUpdateContext) -> PVGame? {
-            guard let indexPath = context.nextFocusedIndexPath,
-                let item: Section.Item = try? collectionView.rx.model(at: indexPath)
-                else { return nil }
-
-            switch item {
-                case .game(let game):
-                    return game
-            case .favorites(let games):
-                if let outerCell = collectionView.cellForItem(at: indexPath) as? CollectionViewInCollectionViewCell<PVGame>,
-                    let innerCell = context.nextFocusedItem as? UICollectionViewCell,
-                    let innerIndexPath = outerCell.internalCollectionView.indexPath(for: innerCell) {
-                    return games[innerIndexPath.row]
-                }
-                return nil
-            case .recents(let games):
-                if let outerCell = collectionView.cellForItem(at: indexPath) as? CollectionViewInCollectionViewCell<PVRecentGame>,
-                    let innerCell = context.nextFocusedItem as? UICollectionViewCell,
-                    let innerIndexPath = outerCell.internalCollectionView.indexPath(for: innerCell) {
-                    return games[innerIndexPath.row].game
-                }
-                return nil
-            case .saves:
-                return nil
-            }
-        }
     #endif
+    func collectionView(_ collectionView: UICollectionView, didUpdateFocusIn context: UICollectionViewFocusUpdateContext, with _: UIFocusAnimationCoordinator) {
+        focusedGame = getFocusedGame(in: collectionView, focusContext: context)
+    }
 
+    private func getFocusedGame(in collectionView: UICollectionView, focusContext context: UICollectionViewFocusUpdateContext) -> PVGame? {
+        guard let indexPath = context.nextFocusedIndexPath,
+            let item: Section.Item = try? collectionView.rx.model(at: indexPath)
+            else { return nil }
+
+        switch item {
+            case .game(let game):
+                return game
+        case .favorites(let games):
+            if let outerCell = collectionView.cellForItem(at: indexPath) as? CollectionViewInCollectionViewCell<PVGame>,
+                let innerCell = context.nextFocusedItem as? UICollectionViewCell,
+                let innerIndexPath = outerCell.internalCollectionView.indexPath(for: innerCell) {
+                return games[innerIndexPath.row]
+            }
+            return nil
+        case .recents(let games):
+            if let outerCell = collectionView.cellForItem(at: indexPath) as? CollectionViewInCollectionViewCell<PVRecentGame>,
+                let innerCell = context.nextFocusedItem as? UICollectionViewCell,
+                let innerIndexPath = outerCell.internalCollectionView.indexPath(for: innerCell) {
+                return games[innerIndexPath.row].game
+            }
+            return nil
+        case .saves:
+            return nil
+        }
+    }
     #if os(iOS)
         @objc
         func settingsCommand() {
@@ -1792,5 +1808,72 @@ private extension UIImage {
         return UIGraphicsImageRenderer(size:size).image { (context) in
             self.draw(in: CGRect(origin:.zero, size:size))
         }
+    }
+}
+
+// MARK: ControllerButtonPress
+extension PVGameLibraryViewController: ControllerButtonPress {
+    func controllerButtonPress(_ type: ButtonType) {
+        guard let collectionView = collectionView else { return }
+        guard let indexPath: IndexPath = collectionView.indexPathsForSelectedItems?.first else {
+            collectionView.selectItem(at: .init(row: 0, section: 0), animated: true, scrollPosition: .top)
+            return
+        }
+        var newIndex = indexPath
+        let numberOfSections = collectionView.numberOfSections
+        let numberOfItemsInSection = collectionView.numberOfItems(inSection: indexPath.section)
+
+        switch type {
+        case .up:
+            newIndex.section = indexPath.section - 1
+            if newIndex.section < 0 {
+                newIndex.section = numberOfSections - 1
+            }
+        case .down:
+            newIndex.section = indexPath.section + 1
+            if newIndex.section >= numberOfSections {
+                newIndex.section = 0
+            }
+        case .left:
+            newIndex.row = indexPath.row - 1
+            if newIndex.row < 0 {
+                newIndex.row = 0
+            }
+        case .right:
+            newIndex.row = indexPath.row + 1
+            if newIndex.row >= numberOfItemsInSection {
+                newIndex.row = 0
+                newIndex.section = indexPath.section + 1
+                if newIndex.section >= numberOfSections {
+                    newIndex.section = 0
+                }
+            }
+        case .select:   // (aka A or ENTER)
+            selectPress()
+        case .back:     // (aka B or ESC)
+            backPress()
+            // only automaticly dismiss if there is a cancel button
+//            if cancelAction != nil  {
+//                presentingViewController?.dismiss(animated:true, completion:nil)
+//            }
+        default:
+            break
+        }
+        if newIndex != indexPath {
+            collectionView.selectItem(at: newIndex, animated: true, scrollPosition: .top)
+        }
+    }
+    
+    private func selectPress() {
+        guard let focusedGame = focusedGame else {
+            WLOG("focusedGame is Nil")
+            return
+        }
+        presentCoreSelection(forGame: focusedGame, sender: self)
+    }
+    
+    
+    private func backPress() {
+        self.presentedViewController?.dismiss(animated: true, completion: nil)
     }
 }

@@ -66,7 +66,7 @@ func UIAlertController(title: String?, message: String?, preferredStyle style: U
 
 extension UIAlertController : UIAlertControllerProtocol { }
 
-class TVAlertController: UIViewController, UIAlertControllerProtocol {
+final class TVAlertController: UIViewController, UIAlertControllerProtocol {
 
     var preferredStyle = UIAlertController.Style.alert
     var actions = [UIAlertAction]()
@@ -76,7 +76,7 @@ class TVAlertController: UIViewController, UIAlertControllerProtocol {
     
     var autoDismiss = true          // a UIAlertController is always autoDismiss
     
-    private var doubleStackHeight = 0
+    internal private(set) var doubleStackHeight = 0
 
     private let stack = {() -> UIStackView in
         let stack = UIStackView(arrangedSubviews: [UILabel(), UILabel()])
@@ -314,7 +314,7 @@ class TVAlertController: UIViewController, UIAlertControllerProtocol {
         return idx + 8675309
     }
 
-    private func button(for action:UIAlertAction?) -> UIButton? {
+    internal func button(for action:UIAlertAction?) -> UIButton? {
         if let action = action, let idx = actions.firstIndex(of:action) {
             if let btn = stack.viewWithTag(idx2tag(idx)) as? UIButton {
                 return btn
@@ -572,50 +572,7 @@ private class TVButton : UIButton {
 // MARK: ControllerButtonPress
 
 extension TVAlertController : ControllerButtonPress {
-    func controllerButtonPress(_ type: ButtonType) {
-        print("TVAlertController: \(type)")
-        switch type {
-        case .up:
-            moveDefaultAction(-1)
-        case .down:
-            moveDefaultAction(+1)
-        case .left:
-            moveDefaultAction(-1000)
-        case .right:
-            moveDefaultAction(+1000)
-        case .select:   // (aka A or ENTER)
-            buttonPress(button(for: preferredAction))
-        case .back:     // (aka B or ESC)
-            // only automaticly dismiss if there is a cancel button
-            if cancelAction != nil  {
-                presentingViewController?.dismiss(animated:true, completion:nil)
-            }
-        default:
-            break
-        }
-    }
-    private func moveDefaultAction(_ dir:Int) {
-        if let action = preferredAction, var idx = actions.firstIndex(of: action) {
-            if doubleStackHeight != 0 {
-                let n = self.doubleStackHeight
-                if dir == +1 && idx == n-1   {idx = n*2-1}
-                if dir == -1 && idx == n     {idx = n+1}
-                if dir == -1 && idx == n*2   {idx = n}
-                if dir == +1000 && idx < n   {idx = idx + n - 1000}
-                if dir == -1000 && idx < n*2 {idx = idx - n + 1000}
-            }
-            idx = idx + dir
-            if actions.indices.contains(idx) {
-                preferredAction = actions[idx]
-                button(for: action)?.isSelected = false
-                button(for: preferredAction)?.isSelected = true
-            }
-        }
-        else {
-            preferredAction = actions.first(where: {$0.style == .default && $0.isEnabled})
-            button(for: preferredAction)?.isSelected = true
-        }
-    }
+ 
 }
 
 extension UIAlertController : ControllerButtonPress {

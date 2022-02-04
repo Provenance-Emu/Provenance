@@ -416,7 +416,7 @@ final class PVControllerManager: NSObject {
         }
         return false
     }
-
+    
 #if !targetEnvironment(macCatalyst) && canImport(SteamController)
     func setSteamControllersMode(_ mode: SteamControllerMode) {
         for controller in SteamControllerManager.shared().controllers {
@@ -425,8 +425,8 @@ final class PVControllerManager: NSObject {
     }
 #endif
     
-// MARK: - Controller User Interaction (ie use controller to drive UX)
-
+    // MARK: - Controller User Interaction (ie use controller to drive UX)
+    
 #if os(iOS)
     //
     // make a *cheap* *simple* version of the FocusSystem
@@ -436,34 +436,34 @@ final class PVControllerManager: NSObject {
     //
     var controllerUserInteractionEnabled: Bool = false {
         didSet {
-            if controllerUserInteractionEnabled {
-                controllers().forEach { controller in
-                    var current_state = GCExtendedGamepad.ButtonState()
-                    controller.extendedGamepad?.valueChangedHandler = { gamepad, element in
-                        let state = gamepad.readButtonState()
-                        let changed_state = current_state.symmetricDifference(state)
-                        let changed_state_pressed = changed_state.intersection(state)
-                        
-                        // send button press(s) to the top bannana
-                        let top = UIApplication.shared.keyWindow?.topViewController
-                        for button in changed_state_pressed {
-                            (top as? ControllerButtonPress)?.controllerButtonPress(button)
-                        }
-                        
-                        // remember state so we can only send changes
-                        current_state = state
-                    }
-                }
+            guard controllerUserInteractionEnabled else {
+                controllers().forEach { $0.extendedGamepad?.valueChangedHandler = nil }
+                return
             }
-            else {
-                controllers().forEach { controller in
-                    controller.extendedGamepad?.valueChangedHandler = nil
+            controllers().forEach { controller in
+                var current_state = GCExtendedGamepad.ButtonState()
+                controller.extendedGamepad?.valueChangedHandler = { gamepad, element in
+                    let state = gamepad.readButtonState()
+                    let changed_state = current_state.symmetricDifference(state)
+                    let changed_state_pressed = changed_state.intersection(state)
+                    
+                    let topVC = UIApplication.shared.keyWindow?.topViewController
+//                    print("topVC \(topVC.debugDescription)")
+                    // send button press(s) to the top bannana
+                    if let top = topVC as? ControllerButtonPress {
+                        changed_state_pressed.forEach {
+                            top.controllerButtonPress($0)
+                        }
+                    } else {
+                        DLOG("topVC is not of type `ControllerButtonPress`")
+                    }
+                    // remember state so we can only send changes
+                    current_state = state
                 }
             }
         }
     }
 #endif
-    
 }
 
 // MARK: - UIWindow::topViewController
@@ -486,6 +486,53 @@ private extension UIWindow {
 protocol ControllerButtonPress {
     typealias ButtonType = GCExtendedGamepad.ButtonType
     func controllerButtonPress(_ type:ButtonType)
+}
+
+extension ControllerButtonPress where Self: TVAlertController {
+    func controllerButtonPress(_ type: ButtonType) {
+        VLOG("TVAlertController: \(type)")
+        switch type {
+        case .up:
+            moveDefaultAction(-1)
+        case .down:
+            moveDefaultAction(+1)
+        case .left:
+            moveDefaultAction(-1000)
+        case .right:
+            moveDefaultAction(+1000)
+        case .select:   // (aka A or ENTER)
+            buttonPress(button(for: preferredAction))
+        case .back:     // (aka B or ESC)
+            // only automaticly dismiss if there is a cancel button
+            if cancelAction != nil  {
+                presentingViewController?.dismiss(animated:true, completion:nil)
+            }
+        default:
+            break
+        }
+    }
+    private func moveDefaultAction(_ dir:Int) {
+        if let action = preferredAction, var idx = actions.firstIndex(of: action) {
+            if doubleStackHeight != 0 {
+                let n = self.doubleStackHeight
+                if dir == +1 && idx == n-1   {idx = n*2-1}
+                if dir == -1 && idx == n     {idx = n+1}
+                if dir == -1 && idx == n*2   {idx = n}
+                if dir == +1000 && idx < n   {idx = idx + n - 1000}
+                if dir == -1000 && idx < n*2 {idx = idx - n + 1000}
+            }
+            idx = idx + dir
+            if actions.indices.contains(idx) {
+                preferredAction = actions[idx]
+                button(for: action)?.isSelected = false
+                button(for: preferredAction)?.isSelected = true
+            }
+        }
+        else {
+            preferredAction = actions.first(where: {$0.style == .default && $0.isEnabled})
+            button(for: preferredAction)?.isSelected = true
+        }
+    }
 }
 
 // MARK: - Read Controller UX buttons
