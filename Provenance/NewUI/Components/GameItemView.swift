@@ -28,8 +28,6 @@ struct GameItemView: SwiftUI.View {
     var yearReleased: String?
     var constrainHeight: Bool = false
     
-    var thing = true
-    
     @State private var textMaxWidth: CGFloat = 150
     
     var action: () -> Void
@@ -221,3 +219,9 @@ struct GameItemView_Previews: PreviewProvider {
 }
 
 #endif
+
+extension PVGame {
+    var trueArtworkURL: String {
+        return (customArtworkURL.isEmpty) ? originalArtworkURL : customArtworkURL
+    }
+}

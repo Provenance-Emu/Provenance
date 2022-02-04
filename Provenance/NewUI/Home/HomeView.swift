@@ -62,8 +62,7 @@ struct HomeView: SwiftUI.View {
                 HomeSection(title: "Continue") {
                     ForEach(recentSaveStates, id: \.self) { recentSaveState in
                         GameItemView(
-                            artwork: nil,
-                            
+                            artworkURL: recentSaveState.game.trueArtworkURL,
                             boxartAspectRatio: recentSaveState.game.boxartAspectRatio,
                             name: recentSaveState.game.title,
                             yearReleased: recentSaveState.game.publishDate,
@@ -75,7 +74,7 @@ struct HomeView: SwiftUI.View {
                 HomeSection(title: "Recently Played") {
                     ForEach(recentlyPlayedGames, id: \.self) { recentlyPlayedGame in
                         GameItemView(
-                            artwork: nil,
+                            artworkURL: recentlyPlayedGame.game.trueArtworkURL,
                             boxartAspectRatio: recentlyPlayedGame.game.boxartAspectRatio,
                             name: recentlyPlayedGame.game.title,
                             yearReleased: recentlyPlayedGame.game.publishDate,
@@ -87,7 +86,7 @@ struct HomeView: SwiftUI.View {
                 HomeSection(title: "Favorites") {
                     ForEach(favorites, id: \.self) { favorite in
                         GameItemView(
-                            artwork: nil,
+                            artworkURL: favorite.trueArtworkURL,
                             boxartAspectRatio: favorite.boxartAspectRatio,
                             name: favorite.title,
                             yearReleased: favorite.publishDate,
@@ -99,7 +98,7 @@ struct HomeView: SwiftUI.View {
                 HomeSection(title: "Most Played") {
                     ForEach(mostPlayed, id: \.self) { playedGame in
                         GameItemView(
-                            artwork: nil,
+                            artworkURL: playedGame.trueArtworkURL,
                             boxartAspectRatio: playedGame.boxartAspectRatio,
                             name: playedGame.title,
                             yearReleased: playedGame.publishDate,

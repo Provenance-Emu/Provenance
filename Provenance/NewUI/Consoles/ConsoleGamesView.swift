@@ -54,11 +54,10 @@ struct ConsoleGamesView: SwiftUI.View {
                 toggleViewTypeAction: { isGrid.toggle() })
                 .padding(.top, 16)
             if isGrid {
-                // TODO: look into why there is inconsistent spacing between display options and games depending on console
                 LazyVGrid(columns: columns, spacing: 20) {
                     ForEach(filteredAndSortedGames(), id: \.self) { game in
                         GameItemView(
-                            artwork: nil,
+                            artworkURL: game.trueArtworkURL,
                             boxartAspectRatio: game.boxartAspectRatio,
                             name: game.title,
                             yearReleased: game.publishDate) {
@@ -72,7 +71,7 @@ struct ConsoleGamesView: SwiftUI.View {
                 LazyVStack { // TODO: convert to row
                     ForEach(filteredAndSortedGames(), id: \.self) { game in
                         GameItemView(
-                            artwork: nil,
+                            artworkURL: game.trueArtworkURL,
                             boxartAspectRatio: game.boxartAspectRatio,
                             name: game.title,
                             yearReleased: game.publishDate) {
