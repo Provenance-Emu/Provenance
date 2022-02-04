@@ -22,37 +22,80 @@ import PVLibrary
 struct GameItemView: SwiftUI.View {
     
     @ObservedRealmObject var game: PVGame
-    
     var constrainHeight: Bool = false
-    @State var artwork: UIImage? = nil
-    @State private var textMaxWidth: CGFloat = 150
+    var asRow: Bool = false
     
+    @State var artwork: UIImage? = nil
     var action: () -> Void
+    
     
     var body: some SwiftUI.View {
         Button {
             action()
         } label: {
-            VStack(alignment: .leading, spacing: 3) {
-                GameItemThumbnail(artwork: artwork, gameTitle: game.title, boxartAspectRatio: game.boxartAspectRatio)
-                VStack(alignment: .leading, spacing: 0) {
-                    GameItemTitle(text: game.title)
-                    GameItemSubtitle(text: game.publishDate)
-                }
-                .frame(width: textMaxWidth)
-            }
-            .if(constrainHeight) { view in
-                view.frame(height: PVRowHeight)
-            }
-            .onPreferenceChange(ArtworkDynamicWidthPreferenceKey.self) {
-                textMaxWidth = $0
-            }
-            .onAppear {
-                PVMediaCache.shareInstance().image(forKey: game.trueArtworkURL, completion: { _, image in
-                    self.artwork = image
-                })
+            if asRow {
+                GameItemViewRow(game: game, artwork: artwork, constrainHeight: constrainHeight)
+            } else {
+                GameItemViewCell(game: game, artwork: artwork, constrainHeight: constrainHeight)
             }
         }
+        .onAppear {
+            PVMediaCache.shareInstance().image(forKey: game.trueArtworkURL, completion: { _, image in
+                self.artwork = image
+            })
+        }
+    }
+    
+}
+
+@available(iOS 14, tvOS 14, *)
+struct GameItemViewCell: SwiftUI.View {
+    
+    @ObservedRealmObject var game: PVGame
+    
+    var artwork: UIImage? = nil
+    
+    var constrainHeight: Bool = false
+    
+    @State private var textMaxWidth: CGFloat = 150
+    
+    var body: some SwiftUI.View {
+        VStack(alignment: .leading, spacing: 3) {
+            GameItemThumbnail(artwork: artwork, gameTitle: game.title, boxartAspectRatio: game.boxartAspectRatio)
+            VStack(alignment: .leading, spacing: 0) {
+                GameItemTitle(text: game.title)
+                GameItemSubtitle(text: game.publishDate)
+            }
+            .frame(width: textMaxWidth)
+        }
+        .if(constrainHeight) { view in
+            view.frame(height: PVRowHeight)
+        }
+        .onPreferenceChange(ArtworkDynamicWidthPreferenceKey.self) {
+            textMaxWidth = $0
+        }
+    }
+}
+
+@available(iOS 14, tvOS 14, *)
+struct GameItemViewRow: SwiftUI.View {
+    
+    @ObservedRealmObject var game: PVGame
+    
+    var artwork: UIImage? = nil
+    @State private var textMaxWidth: CGFloat = 150
+    
+    var constrainHeight: Bool = false
+    
+    var body: some SwiftUI.View {
+        HStack(alignment: .center, spacing: 10) {
+            GameItemThumbnail(artwork: artwork, gameTitle: game.title, boxartAspectRatio: game.boxartAspectRatio)
+            VStack(alignment: .leading, spacing: 0) {
+                GameItemTitle(text: game.title)
+                GameItemSubtitle(text: game.publishDate)
+            }
+        }
+        .frame(height: 65.0)
     }
 }
 
