@@ -262,7 +262,7 @@ final class PVControllerManager: NSObject {
         }
     }
     
-    @available(tvOS 14.0, *)
+    @available(iOS 14.0, tvOS 14.0, *)
     @objc func handleKeyboardConnect(_ note: Notification?) {
         if let controller = GCKeyboard.coalesced?.createController() {
             keyboardController = controller
@@ -270,7 +270,7 @@ final class PVControllerManager: NSObject {
         }
     }
     
-    @available(tvOS 14.0, *)
+    @available(iOS 14.0, tvOS 14.0, *)
     @objc func handleKeyboardDisconnect(_ note: Notification?) {
         if let controller = keyboardController {
             keyboardController = nil
@@ -447,7 +447,7 @@ extension GCController {
 // [LSHIFT:L2]                              [V:R2]                     [UP]
 //                       [SPACE:A]                             [LEFT] [DOWN] [RIGHT]
 //
-@available(tvOS 14.0, *)
+@available(iOS 14.0, tvOS 14.0, *)
 extension GCKeyboard {
     func createController() -> GCController? {
         guard let keyboard = self.keyboardInput else {return nil}
