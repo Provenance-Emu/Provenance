@@ -69,9 +69,11 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
     var collectionView: UICollectionView? {
         didSet {
             guard let collectionView = collectionView else { return }
-            if #available(iOS 14.0, *) {
-                collectionView.selectionFollowsFocus = true
-            }
+            #if os(iOS)
+                if #available(iOS 14.0, *) {
+                    collectionView.selectionFollowsFocus = true
+                }
+            #endif
             collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         }
     }
@@ -621,6 +623,8 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         super.viewWillDisappear(animated)
         #if os(iOS)
             PVControllerManager.shared.controllerUserInteractionEnabled = false
+        #else
+            self.controllerUserInteractionEnabled = false
         #endif
     }
 
@@ -629,6 +633,8 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         _ = PVControllerManager.shared
         #if os(iOS)
             PVControllerManager.shared.controllerUserInteractionEnabled = true
+        #else
+            self.controllerUserInteractionEnabled = true
         #endif
         if isInitialAppearance {
             isInitialAppearance = false
