@@ -31,7 +31,7 @@ import PVLibrary
  ✅ sort options in console view
  ✅ fix artwork styling across diff sizes
  ✅ fix artwork loading
- - stub context menu options
+ ✅ stub context menu options
  - style home screen top cell
  - style side menu iOS
  - bios options in console view

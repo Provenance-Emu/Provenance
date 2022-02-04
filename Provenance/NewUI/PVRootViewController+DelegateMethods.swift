@@ -15,7 +15,7 @@ import SwiftUI
 
 public protocol PVRootDelegate: GameLaunchingViewController {
     func attemptToDelete(game: PVGame)
-    func openDrawer()
+    func showUnderConstructionAlert()
 }
 
 @available(iOS 14, tvOS 14, *)
@@ -28,8 +28,8 @@ extension PVRootViewController: PVRootDelegate {
         }
     }
     
-    func openDrawer() {
-        self.showMenu()
+    func showUnderConstructionAlert() {
+        self.presentMessage("Please try again in a future update.", title: "⚠️ Under Construction ⚠️")
     }
 }
 
