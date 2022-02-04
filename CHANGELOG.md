@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.0.5] - 2022-01-26
 
+Special thanks to contributors on this release;
+👉 @mrjschulte
+👉 @ToddLa
+👉 @ac90b671
+👉 @nenge123
+👉 @david.nicolson
+👉 @davidmuzi
+
 ### Added
 
 - Code Signing is now managed with an XCConfig file. See `CodeSigning.xcconfig.example` for instructions. (Only applies to developers/xcode source installs)
