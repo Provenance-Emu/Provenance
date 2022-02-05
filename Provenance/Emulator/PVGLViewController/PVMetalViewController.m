@@ -533,19 +533,40 @@ PV_OBJC_DIRECT_MEMBERS
         
         if (!strongself.emulatorCore.rendersToOpenGL)
         {
-            const void* videoBuffer = strongself.emulatorCore.videoBuffer;
+            const uint8_t* videoBuffer = strongself.emulatorCore.videoBuffer;
             CGSize videoBufferSize = strongself.emulatorCore.bufferSize;
             uint formatByteWidth = [strongself getByteWidthForPixelFormat:strongself.emulatorCore.pixelFormat type:strongself.emulatorCore.pixelType];
+            uint inputBytesPerRow = videoBufferSize.width * formatByteWidth;
             
             id<MTLBuffer> uploadBuffer = strongself->_uploadBuffer[++strongself->_frameCount % BUFFER_COUNT];
+            uint8_t* uploadAddress = uploadBuffer.contents;
             
-            memcpy(uploadBuffer.contents, videoBuffer, videoBufferSize.width * screenRect.size.height * formatByteWidth);
+
+            uint outputBytesPerRow;
+            if (screenRect.origin.x == 0) // fast path if x is aligned to edge
+            {
+                outputBytesPerRow = inputBytesPerRow;
+                const uint8_t* inputAddress = &videoBuffer[(uint)screenRect.origin.y * inputBytesPerRow];
+                uint8_t* outputAddress = uploadAddress;
+                memcpy(outputAddress, inputAddress, screenRect.size.height * inputBytesPerRow);
+            }
+            else
+            {
+                outputBytesPerRow = screenRect.size.width * formatByteWidth;
+                for (uint i = 0; i < (uint)screenRect.size.height; ++i)
+                {
+                    uint inputRow = screenRect.origin.y + i;
+                    const uint8_t* inputAddress = &videoBuffer[(inputRow * inputBytesPerRow) + ((uint)screenRect.origin.x * formatByteWidth)];
+                    uint8_t* outputAddress = &uploadAddress[i * outputBytesPerRow];
+                    memcpy(outputAddress, inputAddress, outputBytesPerRow);
+                }
+            }
             
             id<MTLBlitCommandEncoder> encoder = [commandBuffer blitCommandEncoder];
             
             [encoder copyFromBuffer:uploadBuffer
                        sourceOffset:0
-                  sourceBytesPerRow:videoBufferSize.width * formatByteWidth
+                  sourceBytesPerRow:outputBytesPerRow
                 sourceBytesPerImage:0
                          sourceSize:MTLSizeMake(screenRect.size.width, screenRect.size.height, 1)
                            toTexture:strongself.inputTexture
@@ -761,7 +782,7 @@ PV_OBJC_DIRECT_MEMBERS
     [encoder copyFromTexture:backingMTLTexture
                  sourceSlice:0
                  sourceLevel:0
-                sourceOrigin:MTLOriginMake(0, 0, 0)
+                sourceOrigin:MTLOriginMake(screenRect.origin.x, screenRect.origin.y, 0)
                   sourceSize:MTLSizeMake(screenRect.size.width, screenRect.size.height, 1)
                    toTexture:_inputTexture
             destinationSlice:0
