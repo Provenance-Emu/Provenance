@@ -448,7 +448,7 @@ final class PVControllerManager: NSObject {
                     let changed_state_pressed = changed_state.intersection(state)
                     
                     let topVC = UIApplication.shared.keyWindow?.topViewController
-//                    print("topVC \(topVC.debugDescription)")
+                    
                     // send button press(s) to the top bannana
                     if let top = topVC as? ControllerButtonPress {
                         changed_state_pressed.forEach {
@@ -456,6 +456,12 @@ final class PVControllerManager: NSObject {
                         }
                     } else {
                         DLOG("topVC is not of type `ControllerButtonPress`")
+                    }
+                    // also send button press(s) to the top bannana's navigation controller
+                    if let nav = topVC?.navigationController {
+                        changed_state_pressed.forEach {
+                            nav.controllerButtonPress($0)
+                        }
                     }
                     // remember state so we can only send changes
                     current_state = state
@@ -465,6 +471,8 @@ final class PVControllerManager: NSObject {
     }
 #endif
 }
+
+#if os(iOS)
 
 // MARK: - UIWindow::topViewController
 
@@ -480,13 +488,14 @@ private extension UIWindow {
     }
 }
 
-
 // MARK: - ControllerButtonPress protocol
 
-protocol ControllerButtonPress {
+protocol ControllerButtonPress : UIViewController {
     typealias ButtonType = GCExtendedGamepad.ButtonType
     func controllerButtonPress(_ type:ButtonType)
 }
+
+// MARK: - ControllerButtonPress - TVAlertController
 
 extension ControllerButtonPress where Self: TVAlertController {
     func controllerButtonPress(_ type: ButtonType) {
@@ -535,6 +544,102 @@ extension ControllerButtonPress where Self: TVAlertController {
     }
 }
 
+// MARK: - ControllerButtonPress - UINavigationController
+
+extension UINavigationController : ControllerButtonPress {
+    
+    func controllerButtonPress(_ type: ButtonType) {
+        switch type {
+        case .cancel:
+             // if there is a BACK button, press it
+            if self.navigationBar.backItem != nil {
+                self.popViewController(animated: true)
+            }
+            // if there is a DONE button, press it
+            else if let bbi = self.navigationBar.topItem?.rightBarButtonItem {
+                if bbi.style == .done || bbi.action == NSSelectorFromString("done:") {
+                    _ = bbi.target?.perform(bbi.action, with:bbi)
+                }
+            }
+        default:
+            break
+        }
+    }
+}
+
+// MARK: - ControllerButtonPress - UITableViewController
+
+extension QuickTableViewController: ControllerButtonPressTableView {}
+extension UITableViewController: ControllerButtonPressTableView {}
+
+protocol ControllerButtonPressTableView: ControllerButtonPress {
+    var tableView: UITableView! { get }
+    var clearsSelectionOnViewWillAppear: Bool { get set }
+}
+extension ControllerButtonPressTableView {
+    
+    func controllerButtonPress(_ type: ButtonType) {
+        switch type {
+        case .select:
+            if let indexPath = tableView.indexPathForSelectedRow {
+                clearsSelectionOnViewWillAppear = false
+                tableView.delegate?.tableView?(tableView, didSelectRowAt: indexPath)
+                
+                if let cell = tableView.cellForRow(at: indexPath) {
+                    if cell.accessoryType != .none {
+                        tableView.delegate?.tableView?(tableView, accessoryButtonTappedForRowWith: indexPath)
+                    }
+                    if let sw = cell.accessoryView as? UISwitch {
+                        sw.isOn = !sw.isOn
+                        sw.sendActions(for: .valueChanged)
+                    }
+                    if let _ = cell.accessoryView as? UISlider {
+                        // TODO: do we care?
+                    }
+                }
+            }
+        case .up:
+            moveSelection(-1)
+        case .down:
+            moveSelection(+1)
+        default:
+            break
+        }
+    }
+    private func maxSection() -> Int {
+        return tableView.numberOfSections-1
+    }
+    private func maxRow(_ indexPath:IndexPath) -> Int {
+        return tableView.numberOfRows(inSection:indexPath.section)-1
+    }
+    private func select(_ indexPath:IndexPath) {
+        tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+        tableView.scrollToRow(at: indexPath, at: .none, animated: false)
+        let cell = tableView.cellForRow(at: indexPath)
+        cell?.selectedBackgroundView = cell?.selectedBackgroundView ?? UIView()
+        cell?.selectedBackgroundView?.backgroundColor = navigationController?.view.tintColor ?? tableView.tintColor
+    }
+    private func moveSelection(_ dir:Int) {
+        guard var indexPath = tableView.indexPathForSelectedRow else {
+            return select(IndexPath(row:0, section:0))
+        }
+        // TODO: what about a (hidden) section with zero items
+        if dir == -1 && indexPath.row == 0 && indexPath.section != 0 {
+            indexPath.section -= 1
+            indexPath.row = maxRow(indexPath)
+        }
+        else if dir == +1 && indexPath.row == maxRow(indexPath) && indexPath.section < maxSection() {
+            indexPath.section += 1
+            indexPath.row = 0
+        }
+        else {
+            indexPath.row += dir
+            indexPath.row = max(0, min(indexPath.row, maxRow(indexPath)))
+        }
+        select(indexPath)
+    }
+}
+
 // MARK: - Read Controller UX buttons
 
 extension GCExtendedGamepad {
@@ -573,6 +678,8 @@ extension GCExtendedGamepad {
         return state
     }
 }
+
+#endif // os(iOS)
 
 // MARK: - Controller type detection
 

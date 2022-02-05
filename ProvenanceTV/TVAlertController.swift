@@ -571,6 +571,8 @@ private class TVButton : UIButton {
 
 // MARK: ControllerButtonPress
 
+#if os(iOS)
+
 extension TVAlertController : ControllerButtonPress {
  
 }
@@ -595,4 +597,6 @@ extension UIAlertController : ControllerButtonPress {
         }
     }
 }
+
+#endif
 
