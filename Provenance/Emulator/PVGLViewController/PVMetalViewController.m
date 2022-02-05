@@ -543,7 +543,7 @@ PV_OBJC_DIRECT_MEMBERS
             
 
             uint outputBytesPerRow;
-            if (screenRect.origin.x == 0) // fast path if x is aligned to edge
+            if (screenRect.origin.x == 0 && (screenRect.size.width * 2 >= videoBufferSize.width)) // fast path if x is aligned to edge and excess width isn't too crazy
             {
                 outputBytesPerRow = inputBytesPerRow;
                 const uint8_t* inputAddress = &videoBuffer[(uint)screenRect.origin.y * inputBytesPerRow];
