@@ -62,28 +62,28 @@ struct HomeView: SwiftUI.View {
                 HomeSection(title: "Continue") {
                     ForEach(recentSaveStates, id: \.self) { recentSaveState in
                         GameItemView(game: recentSaveState.game, constrainHeight: true) {
-                            rootDelegate?.load(recentSaveState.game, sender: self, core: nil, saveState: recentSaveState)
+                            rootDelegate?.root_load(recentSaveState.game, sender: self, core: nil, saveState: recentSaveState)
                         }
                     }
                 }
                 HomeSection(title: "Recently Played") {
                     ForEach(recentlyPlayedGames, id: \.self) { recentlyPlayedGame in
                         GameItemView(game: recentlyPlayedGame.game, constrainHeight: true) {
-                            rootDelegate?.load(recentlyPlayedGame.game, sender: self, core: nil, saveState: nil)
+                            rootDelegate?.root_load(recentlyPlayedGame.game, sender: self, core: nil, saveState: nil)
                         }
                     }
                 }
                 HomeSection(title: "Favorites") {
                     ForEach(favorites, id: \.self) { favorite in
                         GameItemView(game: favorite, constrainHeight: true) {
-                            rootDelegate?.load(favorite, sender: self, core: nil, saveState: nil)
+                            rootDelegate?.root_load(favorite, sender: self, core: nil, saveState: nil)
                         }
                     }
                 }
                 HomeSection(title: "Most Played") {
                     ForEach(mostPlayed, id: \.self) { playedGame in
                         GameItemView(game: playedGame, constrainHeight: true) {
-                            rootDelegate?.load(playedGame, sender: self, core: nil, saveState: nil)
+                            rootDelegate?.root_load(playedGame, sender: self, core: nil, saveState: nil)
                         }
                     }
                 }

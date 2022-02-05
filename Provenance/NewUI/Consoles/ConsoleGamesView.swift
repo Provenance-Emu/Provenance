@@ -58,7 +58,7 @@ struct ConsoleGamesView: SwiftUI.View {
                 LazyVGrid(columns: columns, spacing: 20) {
                     ForEach(filteredAndSortedGames(), id: \.self) { game in
                         GameItemView(game: game) {
-                            rootDelegate?.load(game, sender: self, core: nil, saveState: nil)
+                            rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
                         }
                         .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
                     }
@@ -68,7 +68,7 @@ struct ConsoleGamesView: SwiftUI.View {
                 LazyVStack {
                     ForEach(filteredAndSortedGames(), id: \.self) { game in
                         GameItemView(game: game, asRow: true) {
-                            rootDelegate?.load(game, sender: self, core: nil, saveState: nil)
+                            rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
                         }
                         .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
                     }

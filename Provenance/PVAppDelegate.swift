@@ -34,9 +34,6 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         gameImporter: GameImporter,
         gameLibrary: PVGameLibrary
     ) {
-        guard let rootNavigation = window?.rootViewController as? UINavigationController else {
-            fatalError("No root nav controller")
-        }
         if #available(iOS 14, tvOS 14, *), PVSettingsModel.shared.debugOptions.useSwiftUI {
             let rootViewController = PVRootViewController.instantiate(
                 updatesController: libraryUpdatesController,
@@ -47,11 +44,15 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
                 viewController: SideMenuView.instantiate(gameLibrary: gameLibrary, delegate: rootViewController),
                 options: .init(widthPercent: 0.8, animationDuration: 0.2, overlayColor: .gray,overlayOpacity: 0.3, shadowOpacity: 0.0)
             )
+            
             let window = UIWindow(frame: UIScreen.main.bounds)
             window.rootViewController = sideNav
             self.window = window
             window.makeKeyAndVisible()
         } else {
+            guard let rootNavigation = window?.rootViewController as? UINavigationController else {
+                fatalError("No root nav controller")
+            }
             guard let gameLibraryViewController = rootNavigation.viewControllers.first as? PVGameLibraryViewController else {
                 fatalError("No gameLibraryViewController")
             }
