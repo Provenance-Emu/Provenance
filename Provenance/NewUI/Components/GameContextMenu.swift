@@ -15,7 +15,8 @@ import PVLibrary
 @available(iOS 14, tvOS 14, *)
 struct GameContextMenu: SwiftUI.View {
     
-    @ObservedRealmObject var game: PVGame
+//    @ObservedRealmObject var game: PVGame
+    var game: PVGame
     
     var rootDelegate: PVRootDelegate?
     
