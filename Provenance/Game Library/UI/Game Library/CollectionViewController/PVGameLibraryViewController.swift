@@ -544,9 +544,9 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         becomeFirstResponder()
     }
 
-//    #if os(tvOS)
+    #if os(tvOS)
         var focusedGame: PVGame?
-//    #endif
+    #endif
 
     #if os(iOS)
         @objc
@@ -1731,7 +1731,6 @@ extension PVGameLibraryViewController {
         }
 
 
-    #endif
     func collectionView(_ collectionView: UICollectionView, didUpdateFocusIn context: UICollectionViewFocusUpdateContext, with _: UIFocusAnimationCoordinator) {
         focusedGame = getFocusedGame(in: collectionView, focusContext: context)
     }
@@ -1762,6 +1761,9 @@ extension PVGameLibraryViewController {
             return nil
         }
     }
+    #endif
+    
+
     #if os(iOS)
         @objc
         func settingsCommand() {
@@ -1818,74 +1820,138 @@ private extension UIImage {
 }
 
 // MARK: ControllerButtonPress
+
+#if os(iOS)
+
+// NOTE this may not be a *real* indexPath, if it is for a section with a nexted collection view
+var _selectedIndexPath:IndexPath?
+var _selectedView:UIView!
+
 extension PVGameLibraryViewController: ControllerButtonPress {
     func controllerButtonPress(_ type: ButtonType) {
-        guard let collectionView = collectionView else { return }
-        guard let indexPath: IndexPath = collectionView.indexPathsForSelectedItems?.first else {
-            collectionView.selectItem(at: .init(row: 0, section: 0), animated: true, scrollPosition: .top)
-            return
-        }
-        var newIndex = indexPath
-        let numberOfSections = collectionView.numberOfSections
-        let numberOfItemsInSection = collectionView.numberOfItems(inSection: indexPath.section)
-
         switch type {
+        case .select:
+            // TODO: what about save states
+            if let game = getGame(_selectedIndexPath) {
+                print(game.title)
+            }
         case .up:
-            newIndex.section = indexPath.section - 1
-            if newIndex.section < 0 {
-                newIndex.section = numberOfSections - 1
-            }
+            moveVert(-1)
         case .down:
-            newIndex.section = indexPath.section + 1
-            if newIndex.section >= numberOfSections {
-                newIndex.section = 0
-            }
+            moveVert(+1)
         case .left:
-            newIndex.row = indexPath.row - 1
-            if newIndex.row < 0 {
-                newIndex.row = 0
-            }
+            moveHorz(-1)
         case .right:
-            newIndex.row = indexPath.row + 1
-            if newIndex.row >= numberOfItemsInSection {
-                newIndex.row = 0
-                newIndex.section = indexPath.section + 1
-                if newIndex.section >= numberOfSections {
-                    newIndex.section = 0
-                }
-            }
-        case .select:   // (aka A or ENTER)
-            selectPress()
-        case .back:     // (aka B or ESC)
-            backPress()
-            // only automaticly dismiss if there is a cancel button
-//            if cancelAction != nil  {
-//                presentingViewController?.dismiss(animated:true, completion:nil)
-//            }
+            moveHorz(+1)
         case .x:
             settingsCommand()
         case .y:
-            // should do a context (aka long press)
-            break
-
+            // longPress
+            break;
         default:
             break
         }
-        if newIndex != indexPath {
-            collectionView.selectItem(at: newIndex, animated: true, scrollPosition: .top)
-        }
     }
     
-    private func selectPress() {
-        guard let focusedGame = focusedGame else {
-            WLOG("focusedGame is Nil")
+    private func moveVert(_ dir:Int) {
+        guard var indexPath = _selectedIndexPath else {
+            return select(IndexPath(item:0, section:0))
+        }
+        indexPath.item = indexPath.item + dir * itemsPerRow(indexPath)
+        if indexPath.item < 0 {
+            indexPath.section = indexPath.section-1
+            indexPath.item = collectionView!.numberOfItems(inSection: indexPath.section)-1
+        }
+        if indexPath.item >= collectionView!.numberOfItems(inSection: indexPath.section) {
+            indexPath.section = indexPath.section+1
+            indexPath.item = 0
+        }
+        select(indexPath)
+    }
+    
+    private func moveHorz(_ dir:Int) {
+        guard var indexPath = _selectedIndexPath else {
+            return select(IndexPath(item:0, section:0))
+        }
+        indexPath.item = indexPath.item + dir
+        select(indexPath)
+    }
+
+    // access cell(s) in nested collectionView
+    private func getNestedCollectionView(_ indexPath:IndexPath) -> UICollectionView? {
+        if let cell = collectionView?.cellForItem(at: IndexPath(item: 0, section: indexPath.section)),
+           let cv = (cell as? CollectionViewInCollectionViewCell<PVGame>)?.internalCollectionView ??
+                    (cell as? CollectionViewInCollectionViewCell<PVSaveState>)?.internalCollectionView ??
+                    (cell as? CollectionViewInCollectionViewCell<PVRecentGame>)?.internalCollectionView {
+            return cv
+        }
+        return nil
+    }
+
+    private func itemsPerRow(_ indexPath:IndexPath) -> Int {
+        guard let rect = collectionView!.layoutAttributesForItem(at: IndexPath(item: 0, section: indexPath.section))?.frame else {
+            return 1
+        }
+        
+        let layout = (collectionView!.collectionViewLayout as! UICollectionViewFlowLayout)
+        let space = layout.minimumInteritemSpacing
+        let width = collectionView!.bounds.width // + space // - (layout.sectionInset.left + layout.sectionInset.right)
+        let n = width / (rect.width + space)
+        
+        return max(1, Int(n))
+    }
+    private func select(_ indexPath:IndexPath?) {
+        
+        guard var indexPath = indexPath else {
+            _selectedIndexPath = nil
+            _selectedView?.frame = .zero
             return
         }
-        presentCoreSelection(forGame: focusedGame, sender: self)
+
+        indexPath.section = max(0, min(collectionView!.numberOfSections-1,indexPath.section))
+        let rect:CGRect
+        if let cv = getNestedCollectionView(indexPath) {
+            collectionView?.scrollToItem(at: IndexPath(item:0, section: indexPath.section), at: [], animated: false)
+            indexPath.item = max(0, min(cv.numberOfItems(inSection:0)-1,indexPath.item))
+            let idx = IndexPath(item:indexPath.item, section:0)
+            cv.scrollToItem(at:idx , at:[], animated: false)
+            rect = cv.convert(cv.layoutAttributesForItem(at:idx)?.frame ?? .zero, to: collectionView)
+        }
+        else {
+            indexPath.item = max(0, min(collectionView!.numberOfItems(inSection:indexPath.section)-1,indexPath.item))
+            collectionView?.scrollToItem(at: indexPath, at: [], animated: false)
+            rect = collectionView!.layoutAttributesForItem(at: indexPath)?.frame ?? .zero
+        }
+        
+        _selectedIndexPath = indexPath
+        
+        if !rect.isEmpty {
+            _selectedView = _selectedView ?? UIView()
+            collectionView!.addSubview(_selectedView)
+            collectionView!.bringSubviewToFront(_selectedView)
+            _selectedView.frame = rect.insetBy(dx: -4.0, dy: -4.0)
+            _selectedView.backgroundColor = .systemBlue.withAlphaComponent(0.333)
+            _selectedView.layer.cornerRadius = 16.0
+        }
     }
     
-    
-    private func backPress() {
-        self.presentedViewController?.dismiss(animated: true, completion: nil)
+    private func getGame(_ indexPath:IndexPath?) -> PVGame? {
+        guard let indexPath = indexPath,
+            let item: Section.Item = (try? collectionView!.rx.model(at: indexPath)) ??
+                (try? collectionView!.rx.model(at: IndexPath(item:0, section:indexPath.section)))
+            else { return nil }
+
+        switch item {
+        case .game(let game):
+            return game
+        case .favorites(let games):
+            return games[indexPath.row]
+        case .recents(let games):
+            return games[indexPath.row].game
+        case .saves:
+            return nil
+        }
     }
 }
+#endif
+
