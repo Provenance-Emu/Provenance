@@ -1862,6 +1862,12 @@ extension PVGameLibraryViewController: ControllerButtonPress {
 //            if cancelAction != nil  {
 //                presentingViewController?.dismiss(animated:true, completion:nil)
 //            }
+        case .x:
+            settingsCommand()
+        case .y:
+            // should do a context (aka long press)
+            break
+
         default:
             break
         }
