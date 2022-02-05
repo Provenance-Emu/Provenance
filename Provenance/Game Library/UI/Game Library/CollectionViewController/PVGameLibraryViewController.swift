@@ -65,7 +65,14 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
     var gameLibrary: PVGameLibrary!
     var gameImporter: GameImporter!
     var filePathsToImport = [URL]()
-
+    
+    // selected (aka hilighted) item selected via game controller UX
+    #if os(iOS)
+        // NOTE this may not be a *real* indexPath, if it is for a section with a nexted collection view
+        var _selectedIndexPath:IndexPath?
+        var _selectedIndexPathView:UIView!
+    #endif
+    
     var collectionView: UICollectionView? {
         didSet {
             guard let collectionView = collectionView else { return }
@@ -1823,18 +1830,11 @@ private extension UIImage {
 
 #if os(iOS)
 
-// NOTE this may not be a *real* indexPath, if it is for a section with a nexted collection view
-var _selectedIndexPath:IndexPath?
-var _selectedView:UIView!
-
 extension PVGameLibraryViewController: ControllerButtonPress {
     func controllerButtonPress(_ type: ButtonType) {
         switch type {
         case .select:
-            // TODO: what about save states
-            if let game = getGame(_selectedIndexPath) {
-                print(game.title)
-            }
+            select()
         case .up:
             moveVert(-1)
         case .down:
@@ -1846,8 +1846,7 @@ extension PVGameLibraryViewController: ControllerButtonPress {
         case .x:
             settingsCommand()
         case .y:
-            // longPress
-            break;
+            longPress()
         default:
             break
         }
@@ -1893,6 +1892,7 @@ extension PVGameLibraryViewController: ControllerButtonPress {
             return 1
         }
         
+        // TODO: this math is probably wrong
         let layout = (collectionView!.collectionViewLayout as! UICollectionViewFlowLayout)
         let space = layout.minimumInteritemSpacing
         let width = collectionView!.bounds.width // + space // - (layout.sectionInset.left + layout.sectionInset.right)
@@ -1900,13 +1900,17 @@ extension PVGameLibraryViewController: ControllerButtonPress {
         
         return max(1, Int(n))
     }
+    
+    // just hilight (with a cheesy overlay) the item
     private func select(_ indexPath:IndexPath?) {
         
         guard var indexPath = indexPath else {
             _selectedIndexPath = nil
-            _selectedView?.frame = .zero
+            _selectedIndexPathView?.frame = .zero
             return
         }
+        
+        // TODO: this is a hack, a cell should be selected by setting isSelected and the cell class should handle it
 
         indexPath.section = max(0, min(collectionView!.numberOfSections-1,indexPath.section))
         let rect:CGRect
@@ -1924,32 +1928,39 @@ extension PVGameLibraryViewController: ControllerButtonPress {
         }
         
         _selectedIndexPath = indexPath
+
+        // TODO: this is a hack, a cell should be selected by setting isSelected and the cell class should handle it
         
         if !rect.isEmpty {
-            _selectedView = _selectedView ?? UIView()
-            collectionView!.addSubview(_selectedView)
-            collectionView!.bringSubviewToFront(_selectedView)
-            _selectedView.frame = rect.insetBy(dx: -4.0, dy: -4.0)
-            _selectedView.backgroundColor = .systemBlue.withAlphaComponent(0.333)
-            _selectedView.layer.cornerRadius = 16.0
+            _selectedIndexPathView = _selectedIndexPathView ?? UIView()
+            collectionView!.addSubview(_selectedIndexPathView)
+            collectionView!.bringSubviewToFront(_selectedIndexPathView)
+            _selectedIndexPathView.frame = rect.insetBy(dx: -4.0, dy: -4.0)
+            _selectedIndexPathView.backgroundColor = navigationController?.view.tintColor
+            _selectedIndexPathView.alpha = 0.5
+            _selectedIndexPathView.layer.cornerRadius = 16.0
         }
     }
     
-    private func getGame(_ indexPath:IndexPath?) -> PVGame? {
-        guard let indexPath = indexPath,
-            let item: Section.Item = (try? collectionView!.rx.model(at: indexPath)) ??
-                (try? collectionView!.rx.model(at: IndexPath(item:0, section:indexPath.section)))
-            else { return nil }
-
-        switch item {
-        case .game(let game):
-            return game
-        case .favorites(let games):
-            return games[indexPath.row]
-        case .recents(let games):
-            return games[indexPath.row].game
-        case .saves:
-            return nil
+    // actually *push* the selected item
+    private func select() {
+        guard let indexPath = _selectedIndexPath else { return }
+        if let collectionView = getNestedCollectionView(indexPath) {
+            let indexPath = IndexPath(item: indexPath.item, section:0)
+            collectionView.delegate?.collectionView?(collectionView, didSelectItemAt: indexPath)
+        }
+        else {
+            collectionView!.delegate?.collectionView?(collectionView!, didSelectItemAt: indexPath)
+        }
+    }
+    private func longPress() {
+        guard var indexPath = _selectedIndexPath else { return }
+        
+        if let _ = getNestedCollectionView(indexPath) {
+            indexPath = IndexPath(item:0, section:indexPath.section)
+        }
+        if let item: Section.Item = try? collectionView!.rx.model(at: indexPath) {
+            longPressed(item: item, at: indexPath, point: _selectedIndexPathView.center)
         }
     }
 }
