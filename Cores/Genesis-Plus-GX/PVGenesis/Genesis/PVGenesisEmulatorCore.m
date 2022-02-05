@@ -25,12 +25,215 @@
 #endif
 
 
-#include "shared.h"
 #include "libretro.h"
+
+#include "shared.h"
 #include "state.h"
 #include "genesis.h"
 #include "md_ntsc.h"
 #include "sms_ntsc.h"
+#include "osd.h"
+//#include "config.h"
+
+
+char GG_ROM[256];
+char AR_ROM[256];
+char SK_ROM[256];
+char SK_UPMEM[256];
+char MD_BIOS[256];
+char GG_BIOS[256];
+char MS_BIOS_EU[256];
+char MS_BIOS_JP[256];
+char MS_BIOS_US[256];
+char CD_BIOS_EU[256];
+char CD_BIOS_US[256];
+char CD_BIOS_JP[256];
+char CD_BRAM_JP[256];
+char CD_BRAM_US[256];
+char CD_BRAM_EU[256];
+char CART_BRAM[256];
+
+#undef  CHUNKSIZE
+#define CHUNKSIZE   (0x10000)
+
+static uint32_t brm_crc[2];
+static uint8_t brm_format[0x40] =
+{
+  0x5f,0x5f,0x5f,0x5f,0x5f,0x5f,0x5f,0x5f,0x5f,0x5f,0x5f,0x00,0x00,0x00,0x00,0x40,
+  0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+  0x53,0x45,0x47,0x41,0x5f,0x43,0x44,0x5f,0x52,0x4f,0x4d,0x00,0x01,0x00,0x00,0x00,
+  0x52,0x41,0x4d,0x5f,0x43,0x41,0x52,0x54,0x52,0x49,0x44,0x47,0x45,0x5f,0x5f,0x5f
+};
+
+static void bram_load(void)
+{
+	FILE *fp;
+
+	/* automatically load internal backup RAM */
+	switch (region_code)
+	{
+	   case REGION_JAPAN_NTSC:
+		  fp = fopen(CD_BRAM_JP, "rb");
+		  break;
+	   case REGION_EUROPE:
+		  fp = fopen(CD_BRAM_EU, "rb");
+		  break;
+	   case REGION_USA:
+		  fp = fopen(CD_BRAM_US, "rb");
+		  break;
+	   default:
+		  return;
+	}
+
+	if (fp != NULL)
+	{
+	  fread(scd.bram, 0x2000, 1, fp);
+	  fclose(fp);
+
+	  /* update CRC */
+	  brm_crc[0] = crc32(0, scd.bram, 0x2000);
+	}
+	else
+	{
+	  /* force internal backup RAM format (does not use previous region backup RAM) */
+	  scd.bram[0x1fff] = 0;
+	}
+
+	/* check if internal backup RAM is correctly formatted */
+	if (memcmp(scd.bram + 0x2000 - 0x20, brm_format + 0x20, 0x20))
+	{
+	  /* clear internal backup RAM */
+	  memset(scd.bram, 0x00, 0x2000 - 0x40);
+
+	  /* internal Backup RAM size fields */
+	  brm_format[0x10] = brm_format[0x12] = brm_format[0x14] = brm_format[0x16] = 0x00;
+	  brm_format[0x11] = brm_format[0x13] = brm_format[0x15] = brm_format[0x17] = (sizeof(scd.bram) / 64) - 3;
+
+	  /* format internal backup RAM */
+	  memcpy(scd.bram + 0x2000 - 0x40, brm_format, 0x40);
+
+	  /* clear CRC to force file saving (in case previous region backup RAM was also formatted) */
+	  brm_crc[0] = 0;
+	}
+
+	/* automatically load cartridge backup RAM (if enabled) */
+	if (scd.cartridge.id)
+	{
+	  fp = fopen(CART_BRAM, "rb");
+	  if (fp != NULL)
+	  {
+		int filesize = scd.cartridge.mask + 1;
+		int done = 0;
+
+		/* Read into buffer (2k blocks) */
+		while (filesize > CHUNKSIZE)
+		{
+		  fread(scd.cartridge.area + done, CHUNKSIZE, 1, fp);
+		  done += CHUNKSIZE;
+		  filesize -= CHUNKSIZE;
+		}
+
+		/* Read remaining bytes */
+		if (filesize)
+		{
+		  fread(scd.cartridge.area + done, filesize, 1, fp);
+		}
+
+		/* close file */
+		fclose(fp);
+
+		/* update CRC */
+		brm_crc[1] = crc32(0, scd.cartridge.area, scd.cartridge.mask + 1);
+	  }
+
+	  /* check if cartridge backup RAM is correctly formatted */
+	  if (memcmp(scd.cartridge.area + scd.cartridge.mask + 1 - 0x20, brm_format + 0x20, 0x20))
+	  {
+		/* clear cartridge backup RAM */
+		memset(scd.cartridge.area, 0x00, scd.cartridge.mask + 1);
+
+		/* Cartridge Backup RAM size fields */
+		brm_format[0x10] = brm_format[0x12] = brm_format[0x14] = brm_format[0x16] = (((scd.cartridge.mask + 1) / 64) - 3) >> 8;
+		brm_format[0x11] = brm_format[0x13] = brm_format[0x15] = brm_format[0x17] = (((scd.cartridge.mask + 1) / 64) - 3) & 0xff;
+
+		/* format cartridge backup RAM */
+		memcpy(scd.cartridge.area + scd.cartridge.mask + 1 - 0x40, brm_format, 0x40);
+	  }
+	}
+}
+
+static void bram_save(void)
+{
+	FILE *fp;
+
+	/* verify that internal backup RAM has been modified */
+	if (crc32(0, scd.bram, 0x2000) != brm_crc[0])
+	{
+	  /* check if it is correctly formatted before saving */
+	  if (!memcmp(scd.bram + 0x2000 - 0x20, brm_format + 0x20, 0x20))
+	  {
+		switch (region_code)
+	{
+		case REGION_JAPAN_NTSC:
+			fp = fopen(CD_BRAM_JP, "wb");
+			break;
+		case REGION_EUROPE:
+			fp = fopen(CD_BRAM_EU, "wb");
+			break;
+		case REGION_USA:
+			fp = fopen(CD_BRAM_US, "wb");
+			break;
+		default:
+				return;
+	}
+		if (fp != NULL)
+		{
+		  fwrite(scd.bram, 0x2000, 1, fp);
+		  fclose(fp);
+
+		  /* update CRC */
+		  brm_crc[0] = crc32(0, scd.bram, 0x2000);
+		}
+	  }
+	}
+
+	/* verify that cartridge backup RAM has been modified */
+	if (scd.cartridge.id && (crc32(0, scd.cartridge.area, scd.cartridge.mask + 1) != brm_crc[1]))
+	{
+	  /* check if it is correctly formatted before saving */
+	  if (!memcmp(scd.cartridge.area + scd.cartridge.mask + 1 - 0x20, brm_format + 0x20, 0x20))
+	  {
+		fp = fopen(CART_BRAM, "wb");
+		if (fp != NULL)
+		{
+		  int filesize = scd.cartridge.mask + 1;
+		  int done = 0;
+
+		  /* Write to file (2k blocks) */
+		  while (filesize > CHUNKSIZE)
+		  {
+			fwrite(scd.cartridge.area + done, CHUNKSIZE, 1, fp);
+			done += CHUNKSIZE;
+			filesize -= CHUNKSIZE;
+		  }
+
+		  /* Write remaining bytes */
+		  if (filesize)
+		  {
+			fwrite(scd.cartridge.area + done, filesize, 1, fp);
+		  }
+
+		  /* Close file */
+		  fclose(fp);
+
+		  /* update CRC */
+		  brm_crc[1] = crc32(0, scd.cartridge.area, scd.cartridge.mask + 1);
+		}
+	  }
+	}
+}
+
+
 
 @interface PVGenesisEmulatorCore ()
 {
@@ -302,6 +505,66 @@ static bool environment_callback(unsigned cmd, void *data)
     info.data = data;
     info.size = size;
     info.meta = meta;
+
+
+		//	0 : enable only PSG output (power-on default)
+  //	1 : enable only FM output
+  //	2 : disable both PSG & FM output
+  //	3 : enable both PSG and FM output
+	  config.psg_preamp = 3;
+	  /* sound options */
+	  config.psg_preamp     = 150;
+	  config.fm_preamp      = 100;
+	  config.hq_fm          = 1; /* high-quality FM resampling (slower) */
+	  config.hq_psg         = 1; /* high-quality PSG resampling (slower) */
+	  config.filter         = 1; /* no filter */
+	  config.lp_range       = 0x8ccd; /* = 55% in 0.16 fixed point to match a Model1 VA2 US Genesis, was 0x7fff */
+	  config.low_freq       = 880;
+	  config.high_freq      = 5000;
+	  config.lg             = 100;
+	  config.mg             = 100;
+	  config.hg             = 100;
+   //   config.ym2612         = YM2612_DISCRETE;
+	  config.ym2413         = 1; /* 1, On 2, AUTO */
+	  config.mono           = 0; /* STEREO output */
+
+  #ifdef HAVE_YM3438_CORE
+	 OPN2_SetChipType(ym3438_mode_ym2612);
+	 config.ym3438         = 1;
+  #endif
+  #ifdef HAVE_OPLL_CORE
+	 config.opll           = 1;
+  #endif
+
+	  /* system options */
+	  config.system         = 0; /* AUTO */
+	  config.region_detect  = 0; /* AUTO */
+	  config.vdp_mode       = 0; /* AUTO */
+	  config.master_clock   = 0; /* AUTO */
+	  config.force_dtack    = 0;
+	  config.addr_error     = 1;
+	  config.bios           = 0;
+	  config.lock_on        = 0;
+   #ifdef HAVE_OVERCLOCK
+	  config.overclock      = 100;
+   #endif
+	  config.no_sprite_limit = 1;
+
+	  /* video options */
+	  config.overscan = 0; /* 0 = no borders , 1 = vertical borders only, 2 = horizontal borders only, 3 = full borders */
+	  config.aspect_ratio = 0;
+	  config.gg_extra = 1; /* 1 = show extended Game Gear screen (256x192) */
+	  config.ntsc     = 0;
+	  config.lcd		= 0; /* 0.8 fixed point */
+	  config.render   = 0;
+
+	  /* input options */
+	  input.system[0] = SYSTEM_GAMEPAD;
+	  input.system[1] = SYSTEM_GAMEPAD;
+	  for (int i=0; i<MAX_INPUTS; i++) {
+		config.input[i].padtype = DEVICE_PAD2B | DEVICE_PAD3B | DEVICE_PAD6B;
+	  }
+
     
     if (retro_load_game(&info))
     {
@@ -321,7 +584,12 @@ static bool environment_callback(unsigned cmd, void *data)
         _sampleRate = info.timing.sample_rate;
         
         retro_get_region();
-        [self executeFrame];
+		
+#warning "No clue what this does, JM"
+		if (system_hw == SYSTEM_MCD)
+			 bram_load();
+
+		[self executeFrame];
         
         return YES;
     }
