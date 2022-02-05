@@ -1653,6 +1653,13 @@
 			remoteGlobalIDString = B35D6684218185710005A992;
 			remoteInfo = "hwcpu-tvOS";
 		};
+		B36C7D5227AE10F600715677 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B393F253277C0C340097F71C;
+			remoteInfo = "hwcpu-m68k-tvOS";
+		};
 		C6E1B64925AA9DC1007C3CF1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
@@ -8637,6 +8644,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				B36C7D5327AE10F600715677 /* PBXTargetDependency */,
 			);
 			name = "hwcpu-tvOS";
 			productName = hwcpu;
@@ -10860,6 +10868,11 @@
 			isa = PBXTargetDependency;
 			target = B35D6684218185710005A992 /* hwcpu-tvOS */;
 			targetProxy = B35D6692218185FF0005A992 /* PBXContainerItemProxy */;
+		};
+		B36C7D5327AE10F600715677 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B393F253277C0C340097F71C /* hwcpu-m68k-tvOS */;
+			targetProxy = B36C7D5227AE10F600715677 /* PBXContainerItemProxy */;
 		};
 		C6E1B64A25AA9DC1007C3CF1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
