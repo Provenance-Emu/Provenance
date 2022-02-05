@@ -13,13 +13,44 @@ import SwiftUI
 
 // MARK: - PVRootDelegate
 
-public protocol PVRootDelegate: GameLaunchingViewController {
+public protocol PVRootDelegate {
     func attemptToDelete(game: PVGame)
     func showUnderConstructionAlert()
+//    func canLoad(_ game: PVGame) throws
+//    func load(_ game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?)
+//    func openSaveState(_ saveState: PVSaveState)
+//    func updateRecentGames(_ game: PVGame)
+//    func presentCoreSelection(forGame game: PVGame, sender: Any?)
+    // objects fetched via @ObservedResults are `frozen`, so we need to thaw them before Realm lets us use them
+    func root_canLoad(_ game: PVGame) throws
+    func root_load(_ game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?)
+    func root_openSaveState(_ saveState: PVSaveState)
+    func root_updateRecentGames(_ game: PVGame)
+    func root_presentCoreSelection(forGame game: PVGame, sender: Any?)
 }
 
 @available(iOS 14, tvOS 14, *)
 extension PVRootViewController: PVRootDelegate {
+    func root_canLoad(_ game: PVGame) throws {
+        try self.canLoad(game.warmUp())
+    }
+    
+    func root_load(_ game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?) {
+        self.load(game.warmUp(), sender: sender, core: core, saveState: saveState)
+    }
+    
+    func root_openSaveState(_ saveState: PVSaveState) {
+        self.openSaveState(saveState.warmUp())
+    }
+    
+    func root_updateRecentGames(_ game: PVGame) {
+        self.updateRecentGames(game.warmUp())
+    }
+    
+    func root_presentCoreSelection(forGame game: PVGame, sender: Any?) {
+        self.presentCoreSelection(forGame: game.warmUp(), sender: sender)
+    }
+    
     func attemptToDelete(game: PVGame) {
         do {
             try self.delete(game: game)
@@ -115,6 +146,7 @@ extension PVRootViewController: PVMenuDelegate {
         
         consolesWrapperViewDelegate.selectedTab = console.identifier
         let consolesView = ConsolesWrapperView(consolesWrapperViewDelegate: consolesWrapperViewDelegate, gameLibrary: self.gameLibrary, rootDelegate: self)
+        // TODO: this map HERE works until you load a new console, in which case the new console screen has an empty title until you run this function again
         var consoleIdentifiersAndNamesMap: [String:String] = [:]
         for console in consoles {
             consoleIdentifiersAndNamesMap[console.identifier] = console.name
