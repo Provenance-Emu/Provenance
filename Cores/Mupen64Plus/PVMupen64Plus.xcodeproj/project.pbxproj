@@ -62,8 +62,6 @@
 		B369B0E021A3D7FB0064EDCA /* MupenOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C3B207EE3750040709A /* MupenOptions.swift */; };
 		B36EF42F279C5284005C7ED4 /* r4300_core.h in Headers */ = {isa = PBXBuildFile; fileRef = B3055A712072FEE9001212D2 /* r4300_core.h */; };
 		B36EF430279C5286005C7ED4 /* r4300_core.h in Headers */ = {isa = PBXBuildFile; fileRef = B3055A712072FEE9001212D2 /* r4300_core.h */; };
-		B36EF436279C559A005C7ED4 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = B30559C42072FEE9001212D2 /* Makefile */; };
-		B36EF437279C559B005C7ED4 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = B30559C42072FEE9001212D2 /* Makefile */; };
 		B36EF438279C55A4005C7ED4 /* asm_defines.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A092072FEE9001212D2 /* asm_defines.c */; };
 		B36EF439279C55A4005C7ED4 /* asm_defines.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A092072FEE9001212D2 /* asm_defines.c */; };
 		B37263B326EA161100E95488 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A326EA0D6700E95488 /* libz.tbd */; };
@@ -5552,7 +5550,6 @@
 				B3AE1D94207311E900AD06D4 /* files_macos.c in Sources */,
 				B3AE1D83207311E900AD06D4 /* savestates.c in Sources */,
 				B3963E64279E867100B00117 /* MupenGameCore+Video.swift in Sources */,
-				B36EF436279C559A005C7ED4 /* Makefile in Sources */,
 				B3AE1DAB207311E900AD06D4 /* dummy_input.c in Sources */,
 				B3AE1D81207311E900AD06D4 /* bootrom_hle.c in Sources */,
 				B3AE1DBF207311E900AD06D4 /* ri_controller.c in Sources */,
@@ -5725,7 +5722,6 @@
 				B3AE1DDB2073378600AD06D4 /* main.m in Sources */,
 				B39C29DB27A12D100078D028 /* MupenGameCore+Cheats.m in Sources */,
 				B3AE1DF12073378600AD06D4 /* ai_controller.c in Sources */,
-				B36EF437279C559B005C7ED4 /* Makefile in Sources */,
 				B3AE1E062073378600AD06D4 /* bootrom_hle.c in Sources */,
 				B3AE1E0E2073378600AD06D4 /* mi_controller.c in Sources */,
 				B3AE1E152073378600AD06D4 /* sdl_key_converter.c in Sources */,
