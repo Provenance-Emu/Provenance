@@ -15,7 +15,8 @@ import PVLibrary
 @available(iOS 14, tvOS 14, *)
 struct ConsoleGamesView: SwiftUI.View {
     
-    @ObservedRealmObject var console: PVSystem
+//    @ObservedRealmObject var console: PVSystem
+    var console: PVSystem
     
     var rootDelegate: PVRootDelegate?
     

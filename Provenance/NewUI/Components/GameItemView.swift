@@ -21,7 +21,8 @@ import PVLibrary
 @available(iOS 14, tvOS 14, *)
 struct GameItemView: SwiftUI.View {
     
-    @ObservedRealmObject var game: PVGame
+//    @ObservedRealmObject var game: PVGame
+    var game: PVGame
     var constrainHeight: Bool = false
     var asRow: Bool = false
     
@@ -51,7 +52,8 @@ struct GameItemView: SwiftUI.View {
 @available(iOS 14, tvOS 14, *)
 struct GameItemViewCell: SwiftUI.View {
     
-    @ObservedRealmObject var game: PVGame
+//    @ObservedRealmObject var game: PVGame
+    var game: PVGame
     
     var artwork: UIImage? = nil
     
@@ -80,7 +82,8 @@ struct GameItemViewCell: SwiftUI.View {
 @available(iOS 14, tvOS 14, *)
 struct GameItemViewRow: SwiftUI.View {
     
-    @ObservedRealmObject var game: PVGame
+//    @ObservedRealmObject var game: PVGame
+    var game: PVGame
     
     var artwork: UIImage? = nil
     @State private var textMaxWidth: CGFloat = 150
