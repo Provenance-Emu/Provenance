@@ -361,9 +361,9 @@ PV_OBJC_DIRECT_MEMBERS
         desc.minFilter = MTLSamplerMinMagFilterNearest;
         desc.magFilter = MTLSamplerMinMagFilterNearest;
         desc.mipFilter = MTLSamplerMipFilterNearest;
-        desc.sAddressMode = MTLSamplerAddressModeClampToEdge;
-        desc.tAddressMode = MTLSamplerAddressModeClampToEdge;
-        desc.rAddressMode = MTLSamplerAddressModeClampToEdge;
+        desc.sAddressMode = MTLSamplerAddressModeClampToZero;
+        desc.tAddressMode = MTLSamplerAddressModeClampToZero;
+        desc.rAddressMode = MTLSamplerAddressModeClampToZero;
         
         _pointSampler = [_device newSamplerStateWithDescriptor:desc];
     }
@@ -373,9 +373,9 @@ PV_OBJC_DIRECT_MEMBERS
         desc.minFilter = MTLSamplerMinMagFilterLinear;
         desc.magFilter = MTLSamplerMinMagFilterLinear;
         desc.mipFilter = MTLSamplerMipFilterNearest;
-        desc.sAddressMode = MTLSamplerAddressModeClampToEdge;
-        desc.tAddressMode = MTLSamplerAddressModeClampToEdge;
-        desc.rAddressMode = MTLSamplerAddressModeClampToEdge;
+        desc.sAddressMode = MTLSamplerAddressModeClampToZero;
+        desc.tAddressMode = MTLSamplerAddressModeClampToZero;
+        desc.rAddressMode = MTLSamplerAddressModeClampToZero;
         
         _linearSampler = [_device newSamplerStateWithDescriptor:desc];
     }
