@@ -590,8 +590,8 @@ PV_OBJC_DIRECT_MEMBERS
         if (strongself->renderSettings.crtFilterEnabled)
         {
             struct CRT_Data cbData;
-            cbData.DisplayRect.x = screenRect.origin.x;
-            cbData.DisplayRect.y = screenRect.origin.y;
+            cbData.DisplayRect.x = 0;
+            cbData.DisplayRect.y = 0;
             cbData.DisplayRect.z = screenRect.size.width;
             cbData.DisplayRect.w = screenRect.size.height;
             
