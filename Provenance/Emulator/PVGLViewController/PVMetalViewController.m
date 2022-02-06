@@ -325,6 +325,9 @@ PV_OBJC_DIRECT_MEMBERS
     CGRect screenRect = self.emulatorCore.screenRect;
     MTLPixelFormat pixelFormat = [self getMTLPixelFormatFromGLPixelFormat:self.emulatorCore.pixelFormat type:self.emulatorCore.pixelType];
     
+    if (self.emulatorCore.rendersToOpenGL)
+        pixelFormat = MTLPixelFormatRGBA8Unorm;
+    
     if (self.inputTexture == nil ||
         self.inputTexture.width != screenRect.size.width ||
         self.inputTexture.height != screenRect.size.height ||
