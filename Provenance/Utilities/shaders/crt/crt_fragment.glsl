@@ -1,6 +1,6 @@
 // PUBLIC DOMAIN CRT SHADER
 //
-//   by Jay Mattis (Further tweaks by MrJs 01-2021)
+//   by Jay Mattis (Further tweaks by MrJs 02-2022)
 //
 // I'm a big fan of Timothy Lottes' shader, but it doesn't scale well and I was looking for something that
 // was performant on my 4K TV and still looked decent on my phone. This takes a lot of inspiration from his
@@ -83,9 +83,7 @@ highp vec2 Warp( highp vec2 uv )
     uv *= vec2( 1.0 + ( uv.y * uv.y ) * WARP_X, 1.0 + ( uv.x * uv.x ) * WARP_Y );
     return uv * 0.5 + 0.5;
 #else
-    uv = uv * 2.0 - 1.0;
-    uv *= vec2( 1.0 + ( uv.y * uv.y ) * 0.0, 1.0 + ( uv.x * uv.x ) * 0.0 );
-    return uv * 0.5 + 0.5;
+   return uv;
 #endif
 }
 
@@ -152,7 +150,7 @@ vec3 sampleCol( highp vec2 uv, vec3 centerTap )
 vec3 crtFilter( highp vec2 uv )
 {
     highp vec2 warpedUV = Warp( uv );
-    float edgeMask = 1.0 - exp2( ( 1.0 - max( abs( warpedUV.x - 0.5 ), abs( warpedUV.y - 0.5 ) ) / 0.5 ) * -WARP_EDGE_HARDNESS );
+    float edgeMask = clamp( 1.0 - exp2( ( 1.0 - max( abs( warpedUV.x - 0.5 ), abs( warpedUV.y - 0.5 ) ) / 0.5 ) * -WARP_EDGE_HARDNESS ), 0.0, 1.0);
     float bloomAmount = BLOOM_AMOUNT;
 #if USE_SCANLINES
     if ( SCANLINES_ALLOWED )
