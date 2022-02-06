@@ -78,7 +78,7 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
         let webServerAddress: String = PVWebServer.shared.urlString
         let webDavAddress: String = PVWebServer.shared.webDavURLString
         let message = """
-        
+         
         Read more about how to import
         ROMs on the Provenance wiki at:
         
