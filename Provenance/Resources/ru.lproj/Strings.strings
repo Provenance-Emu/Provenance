@@ -7,71 +7,71 @@
 */
 
 /* Loading and item */
-"Loading" = "Loading";
+"Loading" = "Загружается";
 
-"App" = "App";
-"Core Options" = "Core Options";
-"Auto Save" = "Auto Save";
-"Timed Auto Saves" = "Timed Auto Saves";
-"Auto Load Saves" = "Auto Load Saves";
-"Ask to Load Saves" = "Ask to Load Saves";
-"Opacity" = "Opacity";
-"Saves" = "Saves";
-"Video Options" = "Video Options";
+"App" = "Приложение";
+"Core Options" = "Настройки ядра";
+"Auto Save" = "Авто сохранение";
+"Timed Auto Saves" = "Авто сохранение по расписанию";
+"Auto Load Saves" = "Автоматически загружать сохраненные игры";
+"Ask to Load Saves" = "Запрашивать подтверждения загрузки сохраненной игры";
+"Opacity" = "Прозрачность";
+"Saves" = "Сохранённые игры";
+"Video Options" = "Настройки видео";
 
-"Button Colors" = "Button Colors";
+"Button Colors" = "Цвета кнопок";
 
 "All-Right Shoulders" = "All-Right Shoulders";
 
-"Haptic Feedback" = "Haptic Feedback";
+"Haptic Feedback" = "Тактильный отклик";
 
-"Enable 8BitDo M30 Mapping" = "Enable 8BitDo M30 Mapping";
+"Enable 8BitDo M30 Mapping" = "Включить мапирование 8BitDo M30";
 
-"Controllers" = "Controllers";
-"Controller" = "Controller";
+"Controllers" = "Геймпады";
+"Controller" = "Геймпад";
 
-"iCade Controller" = "iCade Controller";
+"iCade Controller" = "Геймпад iCade";
 
-"Appearance" = "Appearance";
+"Appearance" = "Внешний вид";
 
-"Build" = "Build";
+"Build" = "Сборка";
 
-"Mode" = "Mode";
+"Mode" = "Режим";
 
 "Git Revision" = "Git Revision";
-"Build Data" = "Build Data";
-"Builder" = "Builder";
-"Bundle ID" = "Bundle ID";
-"Unknown" = "Unknown";
-"Cores" = "Cores";
-"Licenses" = "Licenses";
-"Logs" = "Logs";
-"Systems" = "Systems";
-"Volume HUD" = "Volume HUD";
-"Native Scale" = "Native Scale";
-"Integer Scaling" = "Integer Scaling";
-"CRT Filter" = "CRT Filter";
-"Image Smoothing" = "Image Smoothing";
-"FPS Counter" = "FPS Counter";
-"Missing Buttons Always On-Screen" = "Missing Buttons Always On-Screen";
-"iCloud Sync" = "iCloud Sync";
-"Use Metal" = "Use Metal";
-"Multi-threaded GL" = "Multi-threaded GL";
-"4X Multisampling GL" = "4X Multisampling GL";
-"Disable Auto Lock" = "Disable Auto Lock";
-"Launch Web Server" = "Launch Web Server";
-"Game Library" = "Game Library";
-"Refresh Game Library" = "Refresh Game Library";
-"Empty Image Cache" = "Empty Image Cache";
-"Manage Conflicts" = "Manage Conflicts";
-"Beta Features" = "Beta Features";
-"Unknown" = "Unknown";
-"Version" = "Version";
-"Build Information" = "Build Information";
-"3rd Party & Legal" = "3rd Party & Legal";
-"Debug" = "Debug";
-"No" = "No";
-"Empty Image Cache?" = "Empty Image Cache?";
-"Yes" = "Yes";
-"Acknowledgements" = "Acknowledgements";
-"Database Error" = "Database Error";
+"Build Data" = "Данные сборки";
+"Builder" = "Компайлер";
+"Bundle ID" = "ID пакета";
+"Unknown" = "Неизвестный";
+"Cores" = "Ядра";
+"Licenses" = "Лицензии";
+"Logs" = "Логи";
+"Systems" = "Системы";
+"Volume HUD" = "Объем HUD";
+"Native Scale" = "Оригинальное масштабирование";
+"Integer Scaling" = "Целочисленное масштабирование";
+"CRT Filter" = "Фильтр ЭЛТ";
+"Image Smoothing" = "Сглаживание изображения";
+"FPS Counter" = "Счетчик FPS";
+"Missing Buttons Always On-Screen" = "Отсутсвующие кнопки всегда на экране";
+"iCloud Sync" = "Синхронизация с iCloud";
+"Use Metal" = "Использовать Metal";
+"Multi-threaded GL" = "Многопоточный GL";
+"4X Multisampling GL" = "4X мультисэмплинг GL";
+"Disable Auto Lock" = "Отключить авто блокировку";
+"Launch Web Server" = "Запустить веб сервер";
+"Game Library" = "Библиотека Игр";
+"Refresh Game Library" = "Обновить библиотеку игр";
+"Empty Image Cache" = "Очистить Image Cache";
+"Manage Conflicts" = "Регулировать конфликты";
+"Beta Features" = "Бета функции";
+"Unknown" = "Неизвестный";
+"Version" = "Версия";
+"Build Information" = "Информация о сборке";
+"3rd Party & Legal" = "Третьи стороны и юридические лица";
+"Debug" = "Дебаггер";
+"No" = "Нет";
+"Empty Image Cache?" = "Очистить Image Cache?";
+"Yes" = "Да";
+"Acknowledgements" = "Благодарности";
+"Database Error" = "Ошибка датабазы";
