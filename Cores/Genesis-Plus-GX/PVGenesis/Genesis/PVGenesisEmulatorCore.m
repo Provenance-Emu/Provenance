@@ -674,34 +674,37 @@ static bool environment_callback(unsigned cmd, void *data)
     return YES;
 }
 
-- (CGRect)screenRect
-{
-    if([[self systemIdentifier] isEqualToString:@"com.provenance.gamegear"])
-    {
-        return CGRectMake(0, 0, 160, 144);
-    }
-    else
-    {
+- (CGRect)screenRect {
+    float ratio = 8.0/7.0;
+
+    if([[self systemIdentifier] isEqualToString:@"com.provenance.gamegear"]) {
+        return config.gg_extra ? CGRectMake(0, 0, 256, 192): CGRectMake(0, 0, 160, 144);
+    } else {
         return CGRectMake(0, 0, _videoWidth, _videoHeight);
     }
 }
 
 - (CGSize)aspectSize
 {
-    if([[self systemIdentifier] isEqualToString:@"com.provenance.gamegear"])
-    {
-        return CGSizeMake(160, 144);
+    int width = bitmap.viewport.w;
+    int height = bitmap.viewport.h;
+
+    // GameGear
+    if([[self systemIdentifier] isEqualToString:@"com.provenance.gamegear"]) {
+        
+        return config.gg_extra ? CGSizeMake(256, 192): CGSizeMake(160, 144);
     }
-    else if([[self systemIdentifier] isEqualToString:@"com.provenance.mastersystem"] || [[self systemIdentifier] isEqualToString:@"com.provenance.sg1000"])
-    {
-        return CGSizeMake(256 * (8.0/7.0), 192);
+    // Master System
+    else if([[self systemIdentifier] isEqualToString:@"com.provenance.mastersystem"] || [[self systemIdentifier] isEqualToString:@"com.provenance.sg1000"]) {
+        float ratio = 8.0/7.0;
+        return CGSizeMake(256 * ratio, 192);
     }
-    else // is Genesis/Megadrive
-    {
+    // Genesis/Megadrive
+    else {
         return CGSizeMake(_videoWidth, _videoHeight);
     }
 }
-
+ 
 - (CGSize)bufferSize
 {
 	return CGSizeMake(720, 576);

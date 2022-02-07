@@ -38,7 +38,7 @@ extension PVGenesisEmulatorCore: CoreOptional {
             static let overscan: CoreOption =
                 .enumeration(.init(
                     title: "Video Overscan",
-                    description: "If 1st player controller has dual joysticks, use the right joystick as player 2. For games, such as GoldenEye, that support using 2 N64 controllers for single player input.",
+                    description: "",
                     requiresRestart: true),
                              values:[
                                .init(title: "None", description: "No borders", value: 0),
@@ -54,14 +54,14 @@ extension PVGenesisEmulatorCore: CoreOptional {
             static let hq_fm: CoreOption =
                 .bool(.init(
                     title: "HQ FM",
-                    description: "high-quality FM resampling (slower)",
+                    description: "High-quality FM resampling (slower)",
                     requiresRestart: true),
                       defaultValue: true)
  
             static let hq_pqg: CoreOption =
                 .bool(.init(
-                    title: "HQ PQP",
-                    description: "high-quality PSG resampling (slower)",
+                    title: "HQ PSG",
+                    description: "High-quality PSG resampling (slower)",
                     requiresRestart: true),
                       defaultValue: true)
             
@@ -75,8 +75,8 @@ extension PVGenesisEmulatorCore: CoreOptional {
             
             static let ym2413: CoreOption =
                 .enumeration(.init(
-                    title: "ym2413 chip",
-                    description: "",
+                    title: "YM2413 chip",
+                    description: "FM sound used in the FM Sound Unit add-on to the Sega Mark III and later.",
                     requiresRestart: true),
                              values:[
                                .init(title: "Off", description: "", value: 0),
@@ -87,8 +87,8 @@ extension PVGenesisEmulatorCore: CoreOptional {
             
             static let ym2612: CoreOption =
                 .enumeration(.init(
-                    title: "ym2413 chip",
-                    description: "",
+                    title: "YM2612 chip",
+                    description: "The Yamaha YM2612 is a six-channel FM synthesizer. Originally only in JPN models.",
                     requiresRestart: true),
                              values:[
                                .init(title: "Discrete", description: "", value: 0),
@@ -173,7 +173,7 @@ extension PVGenesisEmulatorCore {
     public static var hq_psg: Bool { valueForOption(Options.Sound.hq_fm).asBool }
     public static var filter: Int { valueForOption(Options.Sound.hq_fm).asInt! }
     public static var ym2413: Int { valueForOption(Options.Sound.ym2413).asInt! }
-    public static var ym2612: Int { valueForOption(Options.Sound.ym2413).asInt! }
+    public static var ym2612: Int { valueForOption(Options.Sound.ym2612).asInt! }
 
     public static var no_sprite_limit: Bool { valueForOption(Options.System.noSpriteLimit).asBool }
     
