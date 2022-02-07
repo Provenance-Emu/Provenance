@@ -8,6 +8,8 @@
 
 #import "PVGenesisEmulatorCore.h"
 @import PVSupport;
+#import <PVGenesis/PVGenesis-Swift.h>
+
 //#import <PVSupport/OERingBuffer.h>
 //#import <PVSupport/DebugUtils.h>
 //#import <PVSupport/PVLogging.h>
@@ -507,26 +509,26 @@ static bool environment_callback(unsigned cmd, void *data)
     info.meta = meta;
 
 
-		//	0 : enable only PSG output (power-on default)
+  //	0 : enable only PSG output (power-on default)
   //	1 : enable only FM output
   //	2 : disable both PSG & FM output
   //	3 : enable both PSG and FM output
-	  config.psg_preamp = 3;
-	  /* sound options */
-	  config.psg_preamp     = 150;
-	  config.fm_preamp      = 100;
-	  config.hq_fm          = 1; /* high-quality FM resampling (slower) */
-	  config.hq_psg         = 1; /* high-quality PSG resampling (slower) */
-	  config.filter         = 1; /* no filter */
-	  config.lp_range       = 0x8ccd; /* = 55% in 0.16 fixed point to match a Model1 VA2 US Genesis, was 0x7fff */
-	  config.low_freq       = 880;
-	  config.high_freq      = 5000;
-	  config.lg             = 100;
-	  config.mg             = 100;
-	  config.hg             = 100;
-   //   config.ym2612         = YM2612_DISCRETE;
-	  config.ym2413         = 1; /* 1, On 2, AUTO */
-	  config.mono           = 0; /* STEREO output */
+
+    /* sound options */
+//	  config.psg_preamp     = 150;
+//	  config.fm_preamp      = 100;
+	  config.hq_fm          = PVGenesisEmulatorCore.hq_fm; /* high-quality FM resampling (slower) */
+	  config.hq_psg         = PVGenesisEmulatorCore.hq_psg; /* high-quality PSG resampling (slower) */
+	  config.filter         = PVGenesisEmulatorCore.filter; /* 0=off, 1=low pass, 2=3 band eq */
+//	  config.lp_range       = 0x8ccd; /* = 55% in 0.16 fixed point to match a Model1 VA2 US Genesis, was 0x7fff */
+//	  config.low_freq       = 880;
+//	  config.high_freq      = 5000;
+//	  config.lg             = 100;
+//	  config.mg             = 100;
+//	  config.hg             = 100;
+    config.ym2612         = PVGenesisEmulatorCore.ym2612; //YM2612_DISCRETE;
+    config.ym2413         = PVGenesisEmulatorCore.ym2413; /* 0: Off, 1:On, 2:AUTO */
+//	  config.mono           = 0; /* STEREO output */
 
   #ifdef HAVE_YM3438_CORE
 	 OPN2_SetChipType(ym3438_mode_ym2612);
@@ -537,26 +539,26 @@ static bool environment_callback(unsigned cmd, void *data)
   #endif
 
 	  /* system options */
-	  config.system         = 0; /* AUTO */
-	  config.region_detect  = 0; /* AUTO */
-	  config.vdp_mode       = 0; /* AUTO */
-	  config.master_clock   = 0; /* AUTO */
-	  config.force_dtack    = 0;
-	  config.addr_error     = 1;
-	  config.bios           = 0;
-	  config.lock_on        = 0;
+//	  config.system         = 0; /* AUTO */
+//	  config.region_detect  = 0; /* AUTO */
+//	  config.vdp_mode       = 0; /* AUTO */
+//	  config.master_clock   = 0; /* AUTO */
+//	  config.force_dtack    = 0;
+//	  config.addr_error     = 1;
+//	  config.bios           = 0;
+//	  config.lock_on        = 0;
    #ifdef HAVE_OVERCLOCK
 	  config.overclock      = 100;
    #endif
-	  config.no_sprite_limit = 1;
+	  config.no_sprite_limit = PVGenesisEmulatorCore.no_sprite_limit;
 
 	  /* video options */
-	  config.overscan = 0; /* 0 = no borders , 1 = vertical borders only, 2 = horizontal borders only, 3 = full borders */
-	  config.aspect_ratio = 0;
-	  config.gg_extra = 1; /* 1 = show extended Game Gear screen (256x192) */
-	  config.ntsc     = 0;
-	  config.lcd		= 0; /* 0.8 fixed point */
-	  config.render   = 0;
+	  config.overscan = PVGenesisEmulatorCore.overscan; /* 0 = no borders , 1 = vertical borders only, 2 = horizontal borders only, 3 = full borders */
+//	  config.aspect_ratio = 0;
+	  config.gg_extra = PVGenesisEmulatorCore.gg_extra; /* 1 = show extended Game Gear screen (256x192) */
+//	  config.ntsc     = 0;
+//	  config.lcd		= 0; /* 0.8 fixed point */
+//	  config.render   = 0;
 
 	  /* input options */
 	  input.system[0] = SYSTEM_GAMEPAD;
@@ -566,10 +568,8 @@ static bool environment_callback(unsigned cmd, void *data)
 	  }
 
     
-    if (retro_load_game(&info))
-    {
-        if ([self.batterySavesPath length])
-        {
+    if (retro_load_game(&info)) {
+        if ([self.batterySavesPath length]) {
             [[NSFileManager defaultManager] createDirectoryAtPath:self.batterySavesPath withIntermediateDirectories:YES attributes:nil error:NULL];
             
             NSString *filePath = [self.batterySavesPath stringByAppendingPathComponent:[self.romName stringByAppendingPathExtension:@"sav"]];
@@ -611,8 +611,7 @@ static bool environment_callback(unsigned cmd, void *data)
     return NO;
 }
 
-- (void)loadSaveFile:(NSString *)path forType:(int)type
-{
+- (void)loadSaveFile:(NSString *)path forType:(int)type {
     size_t size = retro_get_memory_size(type);
     void *ramData = retro_get_memory_data(type);
     

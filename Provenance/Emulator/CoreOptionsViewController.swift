@@ -71,8 +71,8 @@ final class CoreOptionsViewController: QuickTableViewController {
 				switch option {
 				case let .bool(display, defaultValue):
 					let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
-					return SwitchRow<PVSwitchCell>(text: display.title, detailText: detailText, switchValue: core.valueForOption(Bool.self, option.key) ?? defaultValue, action: { _ in
-						let value = self.core.valueForOption(Bool.self, option.key) ?? defaultValue
+					return SwitchRow<PVSwitchCell>(text: display.title, detailText: detailText, switchValue: core.storedValueForOption(Bool.self, option.key) ?? defaultValue, action: { _ in
+						let value = self.core.storedValueForOption(Bool.self, option.key) ?? defaultValue
 						self.core.setValue(!value, forOption: option)
 					})
 				case let .multi(display, values):
@@ -83,7 +83,7 @@ final class CoreOptionsViewController: QuickTableViewController {
 															 customization: { _, _ in
 															 },
 															 action: { _ in
-																 let currentSelection: String? = self.core.valueForOption(String.self, option.key) ?? option.defaultValue as? String
+																 let currentSelection: String? = self.core.storedValueForOption(String.self, option.key) ?? option.defaultValue as? String
 																 let actionController = UIAlertController(title: display.title, message: nil, preferredStyle: .actionSheet)
 
 																 if let popoverPresentationController = actionController.popoverPresentationController {
@@ -109,7 +109,7 @@ final class CoreOptionsViewController: QuickTableViewController {
 																	 self.tableView.deselectRow(at: indexPath, animated: false)
 																 }
 					})
-                case let .enumeration(display, values: values):
+                case let .enumeration(display, values: values, defaultValue: defaultValue):
                     let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
                     return NavigationRow<SystemSettingsCell>(text: display.title,
                                                              detailText: detailText,
@@ -117,7 +117,7 @@ final class CoreOptionsViewController: QuickTableViewController {
                                                              customization: { _, _ in
                                                              },
                                                              action: { _ in
-                                                                 let currentSelection: Int = self.core.valueForOption(Int.self, option.key) ?? option.defaultValue as? Int ?? 0
+                                                                 let currentSelection: Int = self.core.storedValueForOption(Int.self, option.key) ?? option.defaultValue as? Int ?? defaultValue
                                                                  let actionController = UIAlertController(title: display.title, message: nil, preferredStyle: .actionSheet)
 
                                                                  if let popoverPresentationController = actionController.popoverPresentationController {
@@ -145,7 +145,7 @@ final class CoreOptionsViewController: QuickTableViewController {
                     })
 				case let .range(display, range: range, defaultValue: defaultValue):
 					let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
-                    let value = core.valueForOption(Int.self, option.key) ?? defaultValue
+                    let value = core.storedValueForOption(Int.self, option.key) ?? defaultValue
                     
                     #if os(tvOS)
                     fatalError("Unfinished feature")
@@ -158,13 +158,13 @@ final class CoreOptionsViewController: QuickTableViewController {
                         valueImages: (min: nil, max: nil),
                         customization: nil)
                     { _ in
-                        let value = self.core.valueForOption(Int.self, option.key) ?? defaultValue
+                        let value = self.core.storedValueForOption(Int.self, option.key) ?? defaultValue
                         self.core.setValue(value, forOption: option)
                     }
                     #endif
 				case let .rangef(display, range: range, defaultValue: defaultValue):
                     let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
-                    let value = core.valueForOption(Float.self, option.key) ?? defaultValue
+                    let value = core.storedValueForOption(Float.self, option.key) ?? defaultValue
                     #if os(tvOS)
                     fatalError("Unfinished feature")
                     #else
@@ -176,13 +176,13 @@ final class CoreOptionsViewController: QuickTableViewController {
                         valueImages: (min: nil, max: nil),
                         customization: nil)
                     { _ in
-                        let value = self.core.valueForOption(Float.self, option.key) ?? defaultValue
+                        let value = self.core.storedValueForOption(Float.self, option.key) ?? defaultValue
                         self.core.setValue(value, forOption: option)
                     }
                     #endif
                 case let .string(display, defaultValue: defaultValue):
                     let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
-                    let value = core.valueForOption(String.self, option.key) ?? defaultValue
+                    let value = core.storedValueForOption(String.self, option.key) ?? defaultValue
                     
                     return NavigationRow<SystemSettingsCell>(text: display.title,
                                                              detailText: detailText,
@@ -190,7 +190,7 @@ final class CoreOptionsViewController: QuickTableViewController {
                                                              customization: { _, _ in
                                                              },
                                                              action: { _ in
-                                                                 let currentValue: String = self.core.valueForOption(String.self, option.key) ?? option.defaultValue as? String ?? ""
+                                                                 let currentValue: String = value
                                                                  let actionController = UIAlertController(title: display.title, message: nil, preferredStyle: .actionSheet)
 
                                                                  if let popoverPresentationController = actionController.popoverPresentationController {

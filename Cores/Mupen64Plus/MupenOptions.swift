@@ -290,37 +290,37 @@ extension MupenGameCore {
 		// TODO: move these generall accessors somewhere global, maybe use dynamicC
 	@objc
 	static public func bool(forOption option: String) -> Bool {
-		return valueForOption(Bool.self, option) ?? false
+		return storedValueForOption(Bool.self, option) ?? false
 	}
 
 	@objc
 	static public func int(forOption option: String) -> Int {
-		let value = valueForOption(Int.self, option)
+		let value = storedValueForOption(Int.self, option)
 		return value ?? 0
 	}
 
 	@objc
 	static public func float(forOption option: String) -> Float {
-		let value = valueForOption(Float.self, option)
+		let value = storedValueForOption(Float.self, option)
 		return value ?? 0
 	}
 
 	@objc
 	static public func string(forOption option: String) -> String? {
-		let value = valueForOption(String.self, option)
+		let value = storedValueForOption(String.self, option)
 		return value
 	}
 
 	public static var useRice: Bool {
-		return valueForOption(String.self, "GFX Plugin") == "Rice Video"
+		return storedValueForOption(String.self, "GFX Plugin") == "Rice Video"
 	}
 
 	public static var useCXD4: Bool {
-		return valueForOption(String.self, "RSP Plugin") == "CXD4"
+		return storedValueForOption(String.self, "RSP Plugin") == "CXD4"
 	}
 
 	public static var perPixelLighting: Bool {
-		return valueForOption(Bool.self, "Hardware Lighting") ?? false
+		return storedValueForOption(Bool.self, "Hardware Lighting") ?? false
 	}
 }
 
