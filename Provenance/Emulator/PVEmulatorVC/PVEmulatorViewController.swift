@@ -215,7 +215,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             guard let `self` = self else { return }
             let green = [NSAttributedString.Key.foregroundColor: UIColor.green]
             let red = [NSAttributedString.Key.foregroundColor: UIColor.red]
-            let white = [NSAttributedString.Key.foregroundColor: UIColor.white]
+//            let white = [NSAttributedString.Key.foregroundColor: UIColor.white]
 
             let coreSpeed = self.core.renderFPS/self.core.frameInterval * 100
             let drawTime =  self.gpuViewController.timeSinceLastDraw * 1000
@@ -224,17 +224,17 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
             let cpu = self.cpuUsage()
             let cpuFormatted = String.init(format: "%03.01f", cpu)
-            let cpuAttributed = NSAttributedString(string: cpuFormatted,
-                                                   attributes: red)
-            
+//            let cpuAttributed = NSAttributedString(string: cpuFormatted,
+//                                                   attributes: red)
+//
             let memFormatted: String = NSString.localizedStringWithFormat("%i", (mem.used/1024/1024)) as String
             let memTotalFormatted: String = NSString.localizedStringWithFormat("%i", (mem.total/1024/1024)) as
             String
 
-            let memUsedAttributed = NSAttributedString(string: memFormatted,
-                                                       attributes: green)
-            let memTotalAttributed = NSAttributedString(string: memTotalFormatted,
-                                                        attributes: green)
+//            let memUsedAttributed = NSAttributedString(string: memFormatted,
+//                                                       attributes: green)
+//            let memTotalAttributed = NSAttributedString(string: memTotalFormatted,
+//                                                        attributes: green)
 //
 //            let label = NSMutableAttributedString()
 //            

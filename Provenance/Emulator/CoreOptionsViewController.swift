@@ -12,9 +12,12 @@ import UIKit
 
 final class CoreOptionsViewController: QuickTableViewController {
     let core: CoreOptional.Type
-
-    init(withCore core: CoreOptional.Type) {
+    
+    let subOptions: [CoreOption]?
+    
+    init(withCore core: CoreOptional.Type, subOptions: [CoreOption]? = nil) {
         self.core = core
+        self.subOptions = subOptions
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -25,8 +28,8 @@ final class CoreOptionsViewController: QuickTableViewController {
 
     lazy var groups: [TableGroup] = {
         var rootOptions = [CoreOption]()
-
-        var groups = core.options.compactMap({ (option) -> TableGroup? in
+        let options: [CoreOption] = subOptions ?? core.options
+        var groups = options.compactMap({ (option) -> TableGroup? in
             switch option {
             case let .group(display, subOptions):
                 return TableGroup(title: display.title, options: subOptions)
@@ -187,14 +190,17 @@ final class CoreOptionsViewController: QuickTableViewController {
                     return NavigationRow<SystemSettingsCell>(text: display.title,
                                                              detailText: detailText,
                                                              icon: nil,
-                                                             customization: { _, _ in
+                                                             customization: { cell, _ in
+//                        cell.textLabel?.text = value
                                                              },
-                                                             action: { _ in
-                                                                 let currentValue: String = value
+                                                             action: { cell in
+                                                                 let currentValue: String = value // self.core.valueForOption(String.self, option.key) ?? option.defaultValue as? String ?? ""
                                                                  let actionController = UIAlertController(title: display.title, message: nil, preferredStyle: .actionSheet)
+                        let cellRect = self.tableView.rectForRow(at: IndexPath(row: rowIndex, section: 0))
 
+                        let textField = UITextField()
+                        textField.text = value
                                                                  if let popoverPresentationController = actionController.popoverPresentationController {
-                                                                    let cellRect = self.tableView.rectForRow(at: IndexPath(row: rowIndex, section: 0))
                                                                     popoverPresentationController.sourceView = self.tableView
                                                                     popoverPresentationController.sourceRect = cellRect
                                                                  }
@@ -217,16 +223,20 @@ final class CoreOptionsViewController: QuickTableViewController {
                                                                  }
                     })
                 case let .group(display, subOptions: subOptions):
-					let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
-//					return self.sections(forGroups: subOptions)
-					return NavigationRow<SystemSettingsCell>(text: display.title,
-															 detailText: detailText,
-															 icon: nil,
-															 customization: { _, _ in
-															 },
-															 action: { _ in
-					})
-				default:
+                    let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
+                    return NavigationRow<SystemSettingsCell>(text: display.title,
+                                                             detailText: detailText,
+                                                             icon: nil,
+                                                             customization: { _, _ in
+                    },
+                                                             action:
+                                                                { [weak self] row in
+                        guard let self = self else { return }
+                        let subOptionsVC = CoreOptionsViewController(withCore: self.core, subOptions: subOptions)
+                        subOptionsVC.title = row.text
+                        self.navigationController?.pushViewController(subOptionsVC, animated: true)
+                    })
+                @unknown default:
 					fatalError("Unfinished feature")
 				}
 			}
