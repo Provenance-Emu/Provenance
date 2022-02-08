@@ -61,7 +61,7 @@ jobs:
       inputs:
         scheme: '$(scheme)'
         xcWorkspacePath: '$(xcWorkspacePath)'
-        xcodeDeveloperDir: /Applications/Xcode_13.0.app/Contents/Developer
+        xcodeDeveloperDir: /Applications/Xcode_13.2.1.app/Contents/Developer
         xcodeVersion: specifyPath
         exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
         packageApp: false
@@ -113,13 +113,14 @@ jobs:
       configuration: Debug
       destinationPlatform: 'tvOS'
       destinationSimulators: 'Apple TV 4K'
-      xcodeDeveloperDir: /Applications/Xcode_13.0.app/Contents/Developer
+      xcodeDeveloperDir: /Applications/Xcode_13.2.1.app/Contents/Developer
       xcodeVersion: specifyPath
       #exportMethod: '$(ExportMethod)'
       #exportPath: '$(agent.buildDirectory)/output/appletvos/$(configuration)'
       packageApp: false
-      scheme: 'ProvenanceTV'
+      scheme: 'ProvenanceTV-Azure'
       sdk: 'appletvsimulator'
+      destinationTypeOption: 'simulators'
       useXcpretty: true
       xcWorkspacePath: '$(xcWorkspacePath)'
       clean: false
