@@ -39,7 +39,6 @@ import PVLibrary
  - style side menu tvOS
  - all things collections
  - full context menu options
- - maybe find out why realm crashes? Might be a good idea, you know
  */
 
 enum PVNavOption {
