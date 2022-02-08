@@ -145,16 +145,23 @@ extension PVRootViewController: PVMenuDelegate {
         let consoles = gameLibrary.activeSystems
         
         consolesWrapperViewDelegate.selectedTab = console.identifier
-        let consolesView = ConsolesWrapperView(consolesWrapperViewDelegate: consolesWrapperViewDelegate, gameLibrary: self.gameLibrary, rootDelegate: self)
-        // TODO: this map HERE works until you load a new console, in which case the new console screen has an empty title until you run this function again
-        var consoleIdentifiersAndNamesMap: [String:String] = [:]
+        self.consoleIdentifiersAndNamesMap.removeAll()
         for console in consoles {
-            consoleIdentifiersAndNamesMap[console.identifier] = console.name
+            self.consoleIdentifiersAndNamesMap[console.identifier] = console.name
         }
         selectedTabCancellable = consolesWrapperViewDelegate.$selectedTab.sink { [weak self] tab in
             guard let self = self else { return }
-            self.navigationItem.title = consoleIdentifiersAndNamesMap[tab]
+            if let cachedTitle = self.consoleIdentifiersAndNamesMap[tab] {
+                self.navigationItem.title = cachedTitle
+            } else if let console = self.gameLibrary.system(identifier: tab) {
+                self.consoleIdentifiersAndNamesMap[console.identifier] = console.name
+                self.navigationItem.title = self.consoleIdentifiersAndNamesMap[tab]
+            } else {
+                self.navigationItem.title = tab
+            }
         }
+        
+        let consolesView = ConsolesWrapperView(consolesWrapperViewDelegate: consolesWrapperViewDelegate, gameLibrary: self.gameLibrary, rootDelegate: self)
         self.loadIntoContainer(.console(consoleId: consoleId, title: console.name), newVC: UIHostingController(rootView: consolesView))
     }
 
