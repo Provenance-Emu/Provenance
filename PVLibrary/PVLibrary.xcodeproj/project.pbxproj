@@ -318,6 +318,8 @@
 		B378228121D41E460077E86F /* PackageResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227F21D41E460077E86F /* PackageResult.swift */; };
 		B378228521D41E9B0077E86F /* LibrarySerializerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378228421D41E9B0077E86F /* LibrarySerializerError.swift */; };
 		B378228621D41E9B0077E86F /* LibrarySerializerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378228421D41E9B0077E86F /* LibrarySerializerError.swift */; };
+		B37B4DF027B2292F0068F8D1 /* Differentiator in Frameworks */ = {isa = PBXBuildFile; productRef = B37B4DEF27B2292F0068F8D1 /* Differentiator */; };
+		B37B4DF227B2292F0068F8D1 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = B37B4DF127B2292F0068F8D1 /* RxDataSources */; };
 		B383F3BC219BB29600DB6926 /* iCloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = B383F3BB219BB29600DB6926 /* iCloudSync.swift */; };
 		B383F3BD219BB29600DB6926 /* iCloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = B383F3BB219BB29600DB6926 /* iCloudSync.swift */; };
 		B3A3204127209B4300F338F6 /* ZipArchive in Frameworks */ = {isa = PBXBuildFile; productRef = B3A3204027209B4300F338F6 /* ZipArchive */; };
@@ -1100,6 +1102,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3411C39276B498100D85327 /* RealmSwift in Frameworks */,
+				B37B4DF027B2292F0068F8D1 /* Differentiator in Frameworks */,
 				B305EF9F276B50E2003AE510 /* SwiftUI.framework in Frameworks */,
 				B3411C37276B498100D85327 /* Realm in Frameworks */,
 				B336B90F26B39BCF00960A81 /* SQLite in Frameworks */,
@@ -1109,6 +1112,7 @@
 				B336B8FB26B399B400960A81 /* RxCocoa in Frameworks */,
 				1180B31E2492A9BB00636C8A /* CoreServices.framework in Frameworks */,
 				B3067F4B2106B5A30091437F /* Foundation.framework in Frameworks */,
+				B37B4DF227B2292F0068F8D1 /* RxDataSources in Frameworks */,
 				B336B90626B39ABA00960A81 /* RxRealm in Frameworks */,
 				B3A3204127209B4300F338F6 /* ZipArchive in Frameworks */,
 			);
@@ -2002,6 +2006,8 @@
 				B3A3204027209B4300F338F6 /* ZipArchive */,
 				B3411C36276B498100D85327 /* Realm */,
 				B3411C38276B498100D85327 /* RealmSwift */,
+				B37B4DEF27B2292F0068F8D1 /* Differentiator */,
+				B37B4DF127B2292F0068F8D1 /* RxDataSources */,
 			);
 			productName = PVLibrary;
 			productReference = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */;
@@ -2089,6 +2095,7 @@
 				B336B90D26B39BCF00960A81 /* XCRemoteSwiftPackageReference "SQLite.swift" */,
 				B3A3203F27209B4300F338F6 /* XCRemoteSwiftPackageReference "ZipArchive" */,
 				B3411C35276B498100D85327 /* XCRemoteSwiftPackageReference "realm-cocoa" */,
+				B37B4DEE27B2292F0068F8D1 /* XCRemoteSwiftPackageReference "RxDataSources" */,
 			);
 			productRefGroup = B3579D102106B11D00DDEBD6 /* Products */;
 			projectDirPath = "";
@@ -3471,6 +3478,14 @@
 				version = 10.20.2;
 			};
 		};
+		B37B4DEE27B2292F0068F8D1 /* XCRemoteSwiftPackageReference "RxDataSources" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RxSwiftCommunity/RxDataSources.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
 		B3A3203F27209B4300F338F6 /* XCRemoteSwiftPackageReference "ZipArchive" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ZipArchive/ZipArchive";
@@ -3561,6 +3576,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B3411C35276B498100D85327 /* XCRemoteSwiftPackageReference "realm-cocoa" */;
 			productName = RealmSwift;
+		};
+		B37B4DEF27B2292F0068F8D1 /* Differentiator */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B37B4DEE27B2292F0068F8D1 /* XCRemoteSwiftPackageReference "RxDataSources" */;
+			productName = Differentiator;
+		};
+		B37B4DF127B2292F0068F8D1 /* RxDataSources */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B37B4DEE27B2292F0068F8D1 /* XCRemoteSwiftPackageReference "RxDataSources" */;
+			productName = RxDataSources;
 		};
 		B3A3204027209B4300F338F6 /* ZipArchive */ = {
 			isa = XCSwiftPackageProductDependency;

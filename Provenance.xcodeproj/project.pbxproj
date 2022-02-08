@@ -539,10 +539,6 @@
 		B3E6DAE120B7C2F800454DD4 /* PVLogViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3E6DAE020B7C2F800454DD4 /* PVLogViewController.xib */; };
 		B3EA0CD32070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
 		B3EA0CD42070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
-		B3F187712720B7FE00659D87 /* Differentiator in Frameworks */ = {isa = PBXBuildFile; productRef = B3F187702720B7FE00659D87 /* Differentiator */; };
-		B3F187732720B7FE00659D87 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = B3F187722720B7FE00659D87 /* RxDataSources */; };
-		B3F187752720B80C00659D87 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = B3F187742720B80C00659D87 /* RxDataSources */; };
-		B3F187772720B81100659D87 /* Differentiator in Frameworks */ = {isa = PBXBuildFile; productRef = B3F187762720B81100659D87 /* Differentiator */; };
 		B3F43DCF2168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F43DD02168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F43DE22169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */; };
@@ -1314,7 +1310,6 @@
 				B3C9D4331DEA1B340068D057 /* PVGenesis.framework in Frameworks */,
 				B354693C1DECDA710018B6F3 /* PVAtari800.framework in Frameworks */,
 				1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */,
-				B3F187732720B7FE00659D87 /* RxDataSources in Frameworks */,
 				B30A2007278FC95C009E08C9 /* PVDuckStation.framework in Frameworks */,
 				B357A43827092254002C7C0F /* AppCenterAnalytics in Frameworks */,
 				B3CB85BF1E9BFB07009155A6 /* PVPokeMini.framework in Frameworks */,
@@ -1333,7 +1328,6 @@
 				B33625FD26EDF88200DC41EA /* Metal.framework in Frameworks */,
 				B3B3B8951DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Frameworks */,
 				1A3D431E17B2F01F004DFFFC /* OpenGLES.framework in Frameworks */,
-				B3F187712720B7FE00659D87 /* Differentiator in Frameworks */,
 				B3B3B8981DECF8C700602746 /* PVMupen64PlusRspHLE.framework in Frameworks */,
 				B3C9D55D1DEA85C60068D057 /* PVSNES.framework in Frameworks */,
 				1A3D409817B2DCE4004DFFFC /* UIKit.framework in Frameworks */,
@@ -1355,7 +1349,6 @@
 				B312805F274C60EC00550720 /* SteamController in Frameworks */,
 				B324C61521920384009F4EDC /* libz.tbd in Frameworks */,
 				B3B4C956279E6BAB00505424 /* ProSystem.framework in Frameworks */,
-				B3F187752720B80C00659D87 /* RxDataSources in Frameworks */,
 				B324C312219195CE009F4EDC /* CFNetwork.framework in Frameworks */,
 				B324C30C219195BB009F4EDC /* SystemConfiguration.framework in Frameworks */,
 				B324C30A219195AE009F4EDC /* AudioToolbox.framework in Frameworks */,
@@ -1366,7 +1359,6 @@
 				B324C308219195A8009F4EDC /* GLKit.framework in Frameworks */,
 				B324C306219195A0009F4EDC /* OpenGLES.framework in Frameworks */,
 				B324C30321919596009F4EDC /* UIKit.framework in Frameworks */,
-				B3F187772720B81100659D87 /* Differentiator in Frameworks */,
 				B324C30421919596009F4EDC /* TVUIKit.framework in Frameworks */,
 				B37263AB26EA159400E95488 /* PVMupen64PlusRspHLE.framework in Frameworks */,
 				B37263B126EA159500E95488 /* PVRSPCXD4.framework in Frameworks */,
@@ -2358,8 +2350,6 @@
 			packageProductDependencies = (
 				B357A43727092254002C7C0F /* AppCenterAnalytics */,
 				B357A43927092254002C7C0F /* AppCenterCrashes */,
-				B3F187702720B7FE00659D87 /* Differentiator */,
-				B3F187722720B7FE00659D87 /* RxDataSources */,
 				B390B0E9276B2DB20018E065 /* AltKit */,
 				B3FB9678276DD7F600F7EDEE /* SteamController */,
 			);
@@ -2391,8 +2381,6 @@
 				B3D30FC026F0BCE60064603F /* SteamController */,
 				B3F94A4D27093ABC002A71EF /* AppCenterAnalytics */,
 				B3F94A4F27093ABC002A71EF /* AppCenterCrashes */,
-				B3F187742720B80C00659D87 /* RxDataSources */,
-				B3F187762720B81100659D87 /* Differentiator */,
 			);
 			productName = ProvenanceTV;
 			productReference = 1AD481B41BA350A400FDA50A /* Provenance.app */;
@@ -2619,7 +2607,6 @@
 			packageReferences = (
 				B3D30FBD26F0B4CD0064603F /* XCRemoteSwiftPackageReference "SteamController" */,
 				B357A43627092253002C7C0F /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */,
-				B3F1876F2720B7FE00659D87 /* XCRemoteSwiftPackageReference "RxDataSources" */,
 				B390B0E8276B2DB20018E065 /* XCRemoteSwiftPackageReference "AltKit" */,
 			);
 			productRefGroup = 1A3D409517B2DCE4004DFFFC /* Products */;
@@ -5071,14 +5058,6 @@
 				kind = branch;
 			};
 		};
-		B3F1876F2720B7FE00659D87 /* XCRemoteSwiftPackageReference "RxDataSources" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/RxSwiftCommunity/RxDataSources.git";
-			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 5.0.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -5101,26 +5080,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B3D30FBD26F0B4CD0064603F /* XCRemoteSwiftPackageReference "SteamController" */;
 			productName = SteamController;
-		};
-		B3F187702720B7FE00659D87 /* Differentiator */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3F1876F2720B7FE00659D87 /* XCRemoteSwiftPackageReference "RxDataSources" */;
-			productName = Differentiator;
-		};
-		B3F187722720B7FE00659D87 /* RxDataSources */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3F1876F2720B7FE00659D87 /* XCRemoteSwiftPackageReference "RxDataSources" */;
-			productName = RxDataSources;
-		};
-		B3F187742720B80C00659D87 /* RxDataSources */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3F1876F2720B7FE00659D87 /* XCRemoteSwiftPackageReference "RxDataSources" */;
-			productName = RxDataSources;
-		};
-		B3F187762720B81100659D87 /* Differentiator */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3F1876F2720B7FE00659D87 /* XCRemoteSwiftPackageReference "RxDataSources" */;
-			productName = Differentiator;
 		};
 		B3F94A4D27093ABC002A71EF /* AppCenterAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
