@@ -104,15 +104,17 @@ struct GameItemThumbnail: SwiftUI.View {
     var artwork: UIImage?
     var gameTitle: String
     var boxartAspectRatio: PVGameBoxArtAspectRatio
+    let radius: CGFloat = 3.0
     var body: some SwiftUI.View {
         ArtworkImageBaseView(artwork: artwork, gameTitle: gameTitle, boxartAspectRatio: boxartAspectRatio)
+            .overlay(RoundedRectangle(cornerRadius: radius).stroke(Color.gray.opacity(0.5), lineWidth: 1)) // TODO: theme colors
             .background(GeometryReader { geometry in
                 Color.clear.preference(
                     key: ArtworkDynamicWidthPreferenceKey.self,
                     value: geometry.size.width
                 )
             })
-            .cornerRadius(3.0)
+            .cornerRadius(radius)
     }
 }
 
