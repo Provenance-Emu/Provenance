@@ -71,6 +71,7 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
     var selectedTabCancellable: AnyCancellable?
     
     lazy var consolesWrapperViewDelegate = ConsolesWrapperViewDelegate()
+    var consoleIdentifiersAndNamesMap: [String:String] = [:]
     
     var lastNavOptionLoaded: PVNavOption? = nil
     
