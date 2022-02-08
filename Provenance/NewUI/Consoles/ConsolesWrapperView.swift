@@ -23,7 +23,6 @@ struct ConsolesWrapperView: SwiftUI.View {
     
     @ObservedObject var delegate: ConsolesWrapperViewDelegate
     
-    var gameLibrary: PVGameLibrary!
     var rootDelegate: PVRootDelegate!
     
     @ObservedResults(
@@ -35,11 +34,9 @@ struct ConsolesWrapperView: SwiftUI.View {
     
     init(
         consolesWrapperViewDelegate: ConsolesWrapperViewDelegate,
-        gameLibrary: PVGameLibrary,
         rootDelegate: PVRootDelegate
     ) {
         self.delegate = consolesWrapperViewDelegate
-        self.gameLibrary = gameLibrary
         self.rootDelegate = rootDelegate
     }
     
@@ -47,7 +44,7 @@ struct ConsolesWrapperView: SwiftUI.View {
         TabView(selection: $delegate.selectedTab) {
             if consoles.count > 0 { // TODO: handle sorting
                 ForEach(consoles, id: \.self) { console in
-                    ConsoleGamesView(gameLibrary: self.gameLibrary, console: console, rootDelegate: rootDelegate)
+                    ConsoleGamesView(console: console, rootDelegate: rootDelegate)
                         .tag(console.identifier)
                 }
             } else {
@@ -56,7 +53,7 @@ struct ConsolesWrapperView: SwiftUI.View {
             }
         }
         .tabViewStyle(.page)
-        .indexViewStyle(.page(backgroundDisplayMode: .always))
+        .indexViewStyle(.page(backgroundDisplayMode: .interactive))
         .id(consoles.count)
     }
 }

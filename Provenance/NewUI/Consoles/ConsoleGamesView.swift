@@ -12,6 +12,7 @@ import SwiftUI
 import RealmSwift
 import PVLibrary
 
+// TODO: might be able to reuse this view for collections.
 @available(iOS 14, tvOS 14, *)
 struct ConsoleGamesView: SwiftUI.View {
     
@@ -26,7 +27,7 @@ struct ConsoleGamesView: SwiftUI.View {
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: false)
     ) var games
     
-    init(gameLibrary: PVGameLibrary, console: PVSystem, rootDelegate: PVRootDelegate) {
+    init(console: PVSystem, rootDelegate: PVRootDelegate) {
         self.console = console
         self.rootDelegate = rootDelegate
     }
