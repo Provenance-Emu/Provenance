@@ -1018,6 +1018,9 @@
 		B324C61A219203AF009F4EDC /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
 		B324C6212192059E009F4EDC /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B324C64E219216DD009F4EDC /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Build-iOS.xcconfig"; sourceTree = "<group>"; };
+		B326758627B1E0BC0033C5D1 /* Build-tvOS.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Build-tvOS.xcconfig"; sourceTree = "<group>"; };
+		B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Build-watchOS.xcconfig"; sourceTree = "<group>"; };
 		B3271BDA276B8B2E0031AECC /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
 		B3271BDC276B8B660031AECC /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/CoreTelephony.framework; sourceTree = DEVELOPER_DIR; };
 		B32746BC219BD65F00B78124 /* PVGameLibraryCollectionFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameLibraryCollectionFlowLayout.swift; sourceTree = "<group>"; };
@@ -1486,9 +1489,12 @@
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
-				B380EAC12759D689001B8532 /* Build.xcconfig */,
-				B380EAC22759D692001B8532 /* CodeSigning.xcconfig */,
 				B380EAC32759D69A001B8532 /* CodeSigning.xcconfig.sample */,
+				B380EAC22759D692001B8532 /* CodeSigning.xcconfig */,
+				B380EAC12759D689001B8532 /* Build.xcconfig */,
+				B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */,
+				B326758627B1E0BC0033C5D1 /* Build-tvOS.xcconfig */,
+				B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */,
 				B399119326C0F41300E54426 /* CHANGELOG.md */,
 				B399119126C0F41300E54426 /* LICENSE.md */,
 				B399119226C0F41300E54426 /* README.md */,
@@ -3667,6 +3673,7 @@
 		};
 		1A3D40B217B2DCE4004DFFFC /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				APP_DISPLAY_NAME = "Prov Debug";
@@ -3714,6 +3721,7 @@
 		};
 		1A3D40B317B2DCE4004DFFFC /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				APP_DISPLAY_NAME = "$(TARGET_NAME)";
@@ -3759,6 +3767,7 @@
 		};
 		1AD481C51BA350A500FDA50A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758627B1E0BC0033C5D1 /* Build-tvOS.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "Prov Debug";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
@@ -3807,6 +3816,7 @@
 		};
 		1AD481C61BA350A500FDA50A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758627B1E0BC0033C5D1 /* Build-tvOS.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "${PRODUCT_NAME}";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
@@ -3974,6 +3984,7 @@
 		};
 		B305EF16276B4C74003AE510 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -4003,6 +4014,7 @@
 		};
 		B305EF17276B4C74003AE510 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -4033,6 +4045,7 @@
 		};
 		B305EF18276B4C74003AE510 /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -4063,6 +4076,7 @@
 		};
 		B305EF1A276B4C74003AE510 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -4104,6 +4118,7 @@
 		};
 		B305EF1B276B4C74003AE510 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -4146,6 +4161,7 @@
 		};
 		B305EF1C276B4C74003AE510 /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -4188,6 +4204,7 @@
 		};
 		B305EF1E276B4C74003AE510 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -4236,6 +4253,7 @@
 		};
 		B305EF1F276B4C74003AE510 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -4285,6 +4303,7 @@
 		};
 		B305EF20276B4C74003AE510 /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -4413,6 +4432,7 @@
 		};
 		B3721CEC21912B7400433E4C /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				APP_DISPLAY_NAME = "$(TARGET_NAME)";
@@ -4458,6 +4478,7 @@
 		};
 		B3721CED21912B7400433E4C /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758627B1E0BC0033C5D1 /* Build-tvOS.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "${PRODUCT_NAME}";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
@@ -4563,6 +4584,7 @@
 		};
 		B3721CEF21912B7400433E4C /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758627B1E0BC0033C5D1 /* Build-tvOS.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -4604,6 +4626,7 @@
 		};
 		B3721CF021912B7400433E4C /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;

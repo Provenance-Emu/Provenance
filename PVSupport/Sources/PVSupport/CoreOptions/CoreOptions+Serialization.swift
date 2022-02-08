@@ -9,7 +9,7 @@
 import Foundation
 
 public extension CoreOptional { // where Self:PVEmulatorCore {
-    static func valueForOption<T>(_: T.Type, _ option: String, andMD5 md5: String? = nil) -> T? {
+    static func storedValueForOption<T>(_: T.Type, _ option: String, andMD5 md5: String? = nil) -> T? {
         let className = NSStringFromClass(Self.self)
         let key = "\(className).\(option)"
         let md5Key: String = [className, md5, option].compactMap {$0}.joined(separator: ".")
@@ -53,42 +53,42 @@ public extension CoreOptional { // where Self:PVEmulatorCore {
 
     static func valueForOption(_ option: CoreOption) -> CoreOptionValue {
         switch option {
-        case .bool:
-            let value = valueForOption(Bool.self, option.key) ?? false
+        case let .bool(_, defaultValue):
+            guard let value = storedValueForOption(Bool.self, option.key) else { return .bool(defaultValue) }
             return .bool(value)
         case .string:
-            if let value = valueForOption(String.self, option.key) {
+            if let value = storedValueForOption(String.self, option.key) {
                 return .string(value)
             } else {
                 return .notFound
             }
-        case .range:
-            if let value = valueForOption(Int.self, option.key) {
+        case let .range(_, _, defaultValue):
+            if let value = storedValueForOption(Int.self, option.key) {
                 return .int(value)
             } else {
-                return .notFound
+                return .int(defaultValue)
             }
-        case .rangef:
-            if let value = valueForOption(Float.self, option.key) {
+        case let .rangef(_, _, defaultValue):
+            if let value = storedValueForOption(Float.self, option.key) {
                 return .float(value)
             } else {
-                return .notFound
+                return .float(defaultValue)
             }
         case .multi:
-            if let value = valueForOption(Int.self, option.key) {
+            if let value = storedValueForOption(Int.self, option.key) {
                 return .int(value)
-            } else if let value = valueForOption(String.self, option.key) {
+            } else if let value = storedValueForOption(String.self, option.key) {
                 return .string(value)
             } else {
                 return .notFound
             }
-        case .enumeration:
-            if let value = valueForOption(Int.self, option.key) {
+        case let .enumeration(_, _, defaultValue):
+            if let value = storedValueForOption(Int.self, option.key) {
                 return .int(value)
-            } else if let value = valueForOption(String.self, option.key) {
+            } else if let value = storedValueForOption(String.self, option.key) {
                 return .string(value)
             } else {
-                return .notFound
+                return .int(defaultValue)
             }
         case .group:
             assertionFailure("Feature unfinished")

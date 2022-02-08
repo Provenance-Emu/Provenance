@@ -14,6 +14,7 @@ Special thanks to contributors on this release;
 👉 @nenge123
 👉 @david.nicolson
 👉 @davidmuzi
+👉 @amoorecodes 
 
 ### Added
 
@@ -31,7 +32,11 @@ Special thanks to contributors on this release;
 - Swift UI/UIKit optional code paths at app start (SwiftUI currernly empty, for easier development in future)
 - Mednafen: SNESFaust 1 frame render ahead option (on by default. VERY SNAPPY!)
 - Mednafen : many more sub-core options added
-- Localizations : Chinese Simplifed, Spanish (Only Partially translated WIP)
+- Localizations (Only Partially translated WIP)
+  - Chinese Simplifed by  @nenge123
+  - Spanish
+  - Russian by  @amoorecodes
+  - Dutch by @mrjschulte
 - Support new Apple TV Siri remote (MicroGamepad and DirectionalGamepad)
 - NSLocalizedString for most strings in main app source
 - Long press a ROM for quick access to Core Options
@@ -59,6 +64,7 @@ Special thanks to contributors on this release;
 - Converted more app code from ObjC to Swift
 - check if file exists before attempt to delete, reduces superfulous throws trapping in the debugger
 - Mark various ObjC classes `objc_direct_members`. Should improve Swift to ObjC calls bypassing dynamic dispatch for function pointers (in theory)
+
 ### Fixed
 
 - Conflicts better detected

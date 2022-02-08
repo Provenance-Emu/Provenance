@@ -289,7 +289,9 @@ final class PVSettingsViewController: PVQuickTableViewController {
                 icon: nil,
                 action: numberOfConflicts > 0 ? { [weak self] _ in self?.manageConflictsAction() } : nil
             ),
-            SegueNavigationRow(text: NSLocalizedString("Appearance", comment: "Appearance"), detailText: .subtitle("Visual options for Game Library"), viewController: self, segue: "appearanceSegue")
+            SegueNavigationRow(text: NSLocalizedString("Appearance", comment: "Appearance"),
+                               detailText: .subtitle("Visual options for Game Library"),
+                               viewController: self, segue: "appearanceSegue")
         ]
 
         let librarySection2 = Section(title: nil, rows: library2Rows)

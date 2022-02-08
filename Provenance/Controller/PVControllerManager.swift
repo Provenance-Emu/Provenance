@@ -729,12 +729,17 @@ extension GCKeyboard {
             // DPAD
             let dpad_x:Float = isPressed(.rightArrow) ? 1.0 : isPressed(.leftArrow) ? -1.0 : 0.0
             let dpad_y:Float = isPressed(.upArrow)    ? 1.0 : isPressed(.downArrow) ? -1.0 : 0.0
-            gamepad.dpad.setValueForXAxis(dpad_x, yAxis:dpad_y)
+            gamepad.dpad.setValueForXAxis(dpad_x, yAxis:dpad_y) 
 
             // WASD
             let left_x:Float = isPressed(.keyD) ? 1.0 : isPressed(.keyA) ? -1.0 : 0.0
             let left_y:Float = isPressed(.keyW) ? 1.0 : isPressed(.keyS) ? -1.0 : 0.0
             gamepad.leftThumbstick.setValueForXAxis(left_x, yAxis:left_y)
+            
+            // -,=,[,]
+            let right_x:Float = isPressed(.closeBracket) ? 1.0 : isPressed(.openBracket) ? -1.0 : 0.0
+            let right_y:Float = isPressed(.equalSign) ? 1.0 : isPressed(.hyphen) ? -1.0 : 0.0
+            gamepad.rightThumbstick.setValueForXAxis(right_x, yAxis:right_y)
 
             // ABXY
             gamepad.buttonA.setValue(isPressed(.spacebar) || isPressed(.returnOrEnter) ? 1.0 : 0.0)
