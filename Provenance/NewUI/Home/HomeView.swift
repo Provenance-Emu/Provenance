@@ -69,6 +69,7 @@ struct HomeView: SwiftUI.View {
                             }
                         }
                     }
+                    HomeDividerView()
                 }
                 HomeSection(title: "Recently Played") {
                     ForEach(recentlyPlayedGames, id: \.self) { recentlyPlayedGame in
@@ -77,6 +78,7 @@ struct HomeView: SwiftUI.View {
                         }
                     }
                 }
+                HomeDividerView()
                 HomeSection(title: "Favorites") {
                     ForEach(favorites, id: \.self) { favorite in
                         GameItemView(game: favorite, constrainHeight: true) {
@@ -84,6 +86,7 @@ struct HomeView: SwiftUI.View {
                         }
                     }
                 }
+                HomeDividerView()
                 HomeSection(title: "Most Played") {
                     ForEach(mostPlayed, id: \.self) { playedGame in
                         GameItemView(game: playedGame, constrainHeight: true) {
@@ -185,16 +188,11 @@ struct HomeSection<Content: SwiftUI.View>: SwiftUI.View {
     
     var body: some SwiftUI.View {
         VStack(alignment: .leading, spacing: 0) {
-            Divider()
-                .frame(height: 1)
-                .background(Color.gray)
-                .opacity(0.1)
-                .padding(.horizontal, 10)
             Text(title.uppercased())
                 .foregroundColor(Color.gray)
                 .font(.system(size: 11))
                 .padding(.horizontal, 10)
-                .padding(.top, 24)
+                .padding(.top, 20)
                 .padding(.bottom, 8)
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack {
@@ -202,7 +200,19 @@ struct HomeSection<Content: SwiftUI.View>: SwiftUI.View {
                 }
                 .padding(.horizontal, 10)
             }
+            .padding(.bottom, 5)
         }
+    }
+}
+
+@available(iOS 14, tvOS 14, *)
+struct HomeDividerView: SwiftUI.View {
+    var body: some SwiftUI.View {
+        Divider()
+            .frame(height: 1)
+            .background(Color.gray)
+            .opacity(0.1)
+            .padding(.horizontal, 10)
     }
 }
 
