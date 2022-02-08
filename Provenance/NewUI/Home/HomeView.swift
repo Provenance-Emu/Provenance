@@ -29,7 +29,8 @@ struct HomeView: SwiftUI.View {
     @ObservedResults(
         PVSaveState.self,
         configuration: RealmConfiguration.realmConfig,
-        filter: NSPredicate(format: "game != nil && game.system != nil")
+        filter: NSPredicate(format: "game != nil && game.system != nil"),
+        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: false)
     ) var recentSaveStates
     
     @ObservedResults(
