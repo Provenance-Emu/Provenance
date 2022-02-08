@@ -44,7 +44,7 @@ extension PVGenesisEmulatorCore: CoreOptional {
                                .init(title: "None", description: "No borders", value: 0),
                                .init(title: "Vertical", description: "Vertical borders only", value: 1),
                                .init(title: "Horizontal", description: "horizontal borders only", value: 2),
-                               .init(title: "Full", description: "Full borders", value: 2),
+                               .init(title: "Full", description: "Full borders", value: 3),
                              ])
             
             static var allOptions: [CoreOption] = [overscan, gg_extra]
