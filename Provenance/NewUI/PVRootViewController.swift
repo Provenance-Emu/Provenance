@@ -32,7 +32,7 @@ import PVLibrary
  ✅ fix artwork styling across diff sizes
  ✅ fix artwork loading
  ✅ stub context menu options
- - style home screen top cell
+ ✅  style home screen top cell // NOTE: unable to get middle play button working
  - style side menu iOS
  - bios options in console view
  - search
