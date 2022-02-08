@@ -59,7 +59,17 @@ struct HomeView: SwiftUI.View {
     var body: some SwiftUI.View {
         ScrollView {
             LazyVStack {
-                HomeContinueSection(continueStates: recentSaveStates, rootDelegate: rootDelegate)
+                if #available(iOS 15, tvOS 15, *) {
+                    HomeContinueSection(continueStates: recentSaveStates, rootDelegate: rootDelegate)
+                } else {
+                    HomeSection(title: "Continue") {
+                        ForEach(recentSaveStates, id: \.self) { recentSaveState in
+                            GameItemView(game: recentSaveState.game, constrainHeight: true) {
+                                rootDelegate?.root_load(recentSaveState.game, sender: self, core: recentSaveState.core, saveState: recentSaveState)
+                            }
+                        }
+                    }
+                }
                 HomeSection(title: "Recently Played") {
                     ForEach(recentlyPlayedGames, id: \.self) { recentlyPlayedGame in
                         GameItemView(game: recentlyPlayedGame.game, constrainHeight: true) {
@@ -87,18 +97,19 @@ struct HomeView: SwiftUI.View {
     }
 }
 
-@available(iOS 14, tvOS 14, *)
+@available(iOS 15, tvOS 15, *)
 struct HomeContinueSection: SwiftUI.View {
     
     var continueStates: Results<PVSaveState>
     var rootDelegate: PVRootDelegate?
+    let height: CGFloat = 260
     
     var body: some SwiftUI.View {
         
         TabView {
             if continueStates.count > 0 {
                 ForEach(continueStates, id: \.self) { state in
-                    HomeContinueItemView(continueState: state) {
+                    HomeContinueItemView(continueState: state, height: height) {
                         rootDelegate?.root_load(state.game, sender: self, core: state.core, saveState: state)
                     }
                 }
@@ -110,39 +121,58 @@ struct HomeContinueSection: SwiftUI.View {
         .tabViewStyle(.page)
         .indexViewStyle(.page(backgroundDisplayMode: .interactive))
         .id(continueStates.count)
-        .frame(height: 260)
+        .frame(height: height)
     }
 }
 
-@available(iOS 14, tvOS 14, *)
+@available(iOS 15, tvOS 15, *)
 struct HomeContinueItemView: SwiftUI.View {
     
     var continueState: PVSaveState
+    let height: CGFloat // match image height to section height, else the fill content mode messes up the zstack
     var action: () -> Void
-    
-//    @State var screenshot: UIImage?
     
     var body: some SwiftUI.View {
         Button {
             action()
         } label: {
-            if let screenshot = continueState.image, let image = UIImage(contentsOfFile: screenshot.url.path) {
-                Image(uiImage: image)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-            } else {
-                Image(uiImage: UIImage.missingArtworkImage(gameTitle: continueState.game.title, ratio: 1))
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
+            ZStack {
+                if let screenshot = continueState.image, let image = UIImage(contentsOfFile: screenshot.url.path) {
+                    Image(uiImage: image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(height: height)
+                } else {
+                    Image(uiImage: UIImage.missingArtworkImage(gameTitle: continueState.game.title, ratio: 1))
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(height: height)
+                }
+                VStack {
+                    Spacer()
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Continue...")
+                                .font(.system(size: 10))
+                                .foregroundColor(Color.gray) // TOOD: theme colors
+                            Text(continueState.game.title)
+                                .font(.system(size: 13))
+                                .foregroundColor(Color.white) // TOOD: theme colors
+                        }
+                        Spacer()
+                        VStack(alignment: .trailing) {
+                            Text("...").font(.system(size: 15)).opacity(0)
+                            Text(continueState.game.system.name)
+                                .font(.system(size: 8))
+                                .foregroundColor(Color.gray) // TOOD: theme colors
+                        }
+                    }
+                    .padding(.vertical, 10)
+                    .padding(.horizontal, 10)
+                    .background(.ultraThinMaterial)
+                }
             }
         }
-//        .onAppear {
-//            if let url = continueState.image?.url {
-//                PVMediaCache.shareInstance().image(forKey: url.path, completion: { _, image in
-//                    self.screenshot = image
-//                })
-//            }
-//        }
     }
 }
 
