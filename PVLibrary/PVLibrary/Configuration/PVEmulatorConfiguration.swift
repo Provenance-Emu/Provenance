@@ -46,7 +46,7 @@ public struct SystemDictionaryKeys {
     }
 }
 
-public enum SystemIdentifier: String {
+public enum SystemIdentifier: String, CaseIterable {
     case _3DO = "com.provenance.3DO"
     case Atari2600 = "com.provenance.2600"
     case Atari5200 = "com.provenance.5200"
@@ -93,6 +93,7 @@ public enum SystemIdentifier: String {
 
     case Unknown
 
+    static public let betas: [SystemIdentifier] = [.ColecoVision, .Dreamcast, .DS, .Atari8bit, .Intellivision, ._3DO, .Vectrex, .PSP, .PS2, .PS3, .GameCube]
     // MARK: Assistance accessors for properties
 
     public var system: PVSystem? {

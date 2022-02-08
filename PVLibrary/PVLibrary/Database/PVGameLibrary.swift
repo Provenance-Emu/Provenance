@@ -43,7 +43,7 @@ public struct PVGameLibrary {
     }
 
     public func systems(sortedBy sortOptions: SortOptions) -> Observable<[System]> {
-        let betaIDs: [SystemIdentifier] = [.AtariJaguar, .Dreamcast]
+        let betaIDs: [SystemIdentifier] = SystemIdentifier.betas
         return Observable.collection(from: database.all(PVSystem.self))
             .flatMapLatest({ systems -> Observable<[System]> in
                 // Here we actualy observe on the games for each system, since we want to update this when games are added or removed from a system
