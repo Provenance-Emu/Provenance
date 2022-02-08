@@ -56,20 +56,6 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B37EFEEF1C72E63300857158"
-               BuildableName = "PVMupen64PlusVideoRice.framework"
-               BlueprintName = "PVMupen64PlusVideoRice-iOS"
-               ReferencedContainer = "container:Cores/Mupen64Plus/PVMupen64Plus.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
                BuildableName = "PVSupport.framework"
                BlueprintName = "PVSupport-iOS"
@@ -102,20 +88,6 @@
                BuildableName = "PVLibrary.framework"
                BlueprintName = "PVLibrary-iOS"
                ReferencedContainer = "container:PVLibrary/PVLibrary.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3B3B85F1DECEA9100602746"
-               BuildableName = "PVMupen64PlusRspHLE.framework"
-               BlueprintName = "PVMupen64PlusRspHLE-iOS"
-               ReferencedContainer = "container:Cores/Mupen64Plus/PVMupen64Plus.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -227,20 +199,6 @@
                BlueprintIdentifier = "B37EFF371C72F43300857158"
                BuildableName = "PVMupen64Plus.framework"
                BlueprintName = "PVMupen64Plus-iOS"
-               ReferencedContainer = "container:Cores/Mupen64Plus/PVMupen64Plus.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "DFB6017F2038AD13001E70F1"
-               BuildableName = "PVMupen64PlusVideoGlideN64.framework"
-               BlueprintName = "PVMupen64PlusVideoGlideN64-iOS"
                ReferencedContainer = "container:Cores/Mupen64Plus/PVMupen64Plus.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
