@@ -1,6 +1,6 @@
 // PUBLIC DOMAIN CRT SHADER
 //
-//   by Jay Mattis (Further tweaks by MrJs 01-2021)
+//   by Jay Mattis (Further tweaks by MrJs 02-2022)
 //
 // I'm a big fan of Timothy Lottes' shader, but it doesn't scale well and I was looking for something that
 // was performant on my 4K TV and still looked decent on my phone. This takes a lot of inspiration from his
@@ -34,7 +34,6 @@ struct CRT_Data
     float2 FinalRes;
 };
 
-#define mod(x, y) (x - y * floor(x / y))
 #define FINAL_RES cbData.FinalRes
 // These are to convert input texture coordinates to UV (0-1) space and back.
 #define INPUTCOORD_TO_UV( inputCoord, data ) ( inputCoord / data.DisplayRect.zw * data.EmulatedImageSize - data.DisplayRect.xy / data.DisplayRect.zw )
@@ -83,9 +82,7 @@ float2 Warp( float2 uv )
     uv *= float2( 1.0 + ( uv.y * uv.y ) * WARP_X, 1.0 + ( uv.x * uv.x ) * WARP_Y );
     return uv * 0.5 + 0.5;
 #else
-    uv = uv * 2.0 - 1.0;
-    uv *= float2( 1.0 + ( uv.y * uv.y ) * 0.0, 1.0 + ( uv.x * uv.x ) * 0.0 );
-    return uv * 0.5 + 0.5;
+    return uv;
 #endif
 }
 
@@ -101,6 +98,12 @@ float2 getShadowMaskRes(constant CRT_Data& cbData)
         shadowMaskRes = float2( FINAL_RES.x / FINAL_RES.y * TVL, TVL );
     }
     return shadowMaskRes;
+}
+
+template<typename Tx, typename Ty>
+inline Tx mod(Tx x, Ty y)
+{
+    return x - y * floor(x / y);
 }
 
 float3 getShadowMaskRGB( constant CRT_Data& cbData, float2 uv )
@@ -152,7 +155,7 @@ float3 sampleCol( texture2d<float> EmulatedImage, sampler Sampler, constant CRT_
 float3 crtFilter( texture2d<float> EmulatedImage, sampler Sampler, constant CRT_Data& cbData, float2 uv )
 {
     float2 warpedUV = Warp( uv );
-    float edgeMask = 1.0 - exp2( ( 1.0 - max( abs( warpedUV.x - 0.5 ), abs( warpedUV.y - 0.5 ) ) / 0.5 ) * -WARP_EDGE_HARDNESS );
+    float edgeMask = clamp( 1.0 - exp2( ( 1.0 - max( abs( warpedUV.x - 0.5 ), abs( warpedUV.y - 0.5 ) ) / 0.5 ) * -WARP_EDGE_HARDNESS ), 0.0, 1.0);
     float bloomAmount = BLOOM_AMOUNT;
 #if USE_SCANLINES
     if ( SCANLINES_ALLOWED )
@@ -171,4 +174,3 @@ fragment float4 crt_filter_ps(Inputs I [[stage_in]], texture2d<float> EmulatedIm
     output.a = 1.0;
     return output;
 }
-

@@ -8,12 +8,14 @@
 
 import Foundation
 
+#if os(iOS) && !targetEnvironment(macCatalyst)
 @_silgen_name("AudioServicesStopSystemSound")
 func AudioServicesStopSystemSound(_ soundID: SystemSoundID)
 
 	// vibrationPattern parameter must be NSDictionary to prevent crash when bridging from Swift.Dictionary.
 @_silgen_name("AudioServicesPlaySystemSoundWithVibration")
 func AudioServicesPlaySystemSoundWithVibration(_ soundID: SystemSoundID, _ idk: Any?, _ vibrationPattern: NSDictionary)
+#endif
 
 @objc
 public extension PVEmulatorCore {
@@ -33,7 +35,11 @@ public extension PVEmulatorCore {
 		switch player {
 		case 1:
 			if let controller1 = self.controller1, controller1.isAttachedToDevice {
+                #if os(iOS) && !targetEnvironment(macCatalyst)
 				rumblePhone()
+                #else
+                VLOG("rumblePhone*(")
+                #endif
 			} else {
 				controller = self.controller1
 			}
@@ -49,7 +55,7 @@ public extension PVEmulatorCore {
 		}
 
 	}
-
+    #if os(iOS) && !targetEnvironment(macCatalyst)
 	func rumblePhone() {
 
 		let deviceHasHaptic = (UIDevice.current.value(forKey: "_feedbackSupportLevel") as? Int ?? 0) > 0
@@ -76,6 +82,7 @@ public extension PVEmulatorCore {
 			}
 		}
 	}
+    #endif
 }
 
 private extension UIDevice {

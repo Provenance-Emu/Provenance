@@ -62,7 +62,6 @@
 		1180B31C2492A96700636C8A /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B31B2492A95400636C8A /* CoreServices.framework */; };
 		1180B3242492AFC900636C8A /* PVGameLibraryUpdatesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1180B3232492AFC900636C8A /* PVGameLibraryUpdatesController.swift */; };
 		11A8A9E72496A3E500C1C6B4 /* PVGameLibraryUpdatesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1180B3232492AFC900636C8A /* PVGameLibraryUpdatesController.swift */; };
-		11ADB31F2471A34E001C7B27 /* PVTVTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ADB31E2471A34E001C7B27 /* PVTVTabBarController.swift */; };
 		11AFB2B72487C120000A3922 /* UISearchController+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2B62487C120000A3922 /* UISearchController+Rx.swift */; };
 		11BB0A2225AF7DFE004DEDC3 /* PVEmulatorViewController+PauseMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38A2A452102328600374CDD /* PVEmulatorViewController+PauseMenu.swift */; };
 		11BB0A2325AF7DFF004DEDC3 /* PVEmulatorViewController+PauseMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38A2A452102328600374CDD /* PVEmulatorViewController+PauseMenu.swift */; };
@@ -201,6 +200,9 @@
 		B31117B0218EB3A900C495A2 /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */; };
 		B31117B1218EB3AA00C495A2 /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */; };
 		B31117B3218EB3AE00C495A2 /* PVButtonGroupOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ED1205CD20800C273C7 /* PVButtonGroupOverlayView.swift */; };
+		B311B1C227A52F1700D1DE41 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B311B1C127A52F1700D1DE41 /* UIKit.framework */; };
+		B311B1C427A52F2000D1DE41 /* PVPokeMini.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B311B1C327A52F2000D1DE41 /* PVPokeMini.framework */; };
+		B311B1C527A52F2000D1DE41 /* PVPokeMini.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B311B1C327A52F2000D1DE41 /* PVPokeMini.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B312805F274C60EC00550720 /* SteamController in Frameworks */ = {isa = PBXBuildFile; productRef = B3D30FC026F0BCE60064603F /* SteamController */; };
 		B313544726E4C0F90047F338 /* PVPS2ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B313544626E4C0F90047F338 /* PVPS2ControllerViewController.swift */; };
 		B313544826E4C0F90047F338 /* PVPS2ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B313544626E4C0F90047F338 /* PVPS2ControllerViewController.swift */; };
@@ -378,7 +380,6 @@
 		B369B0DE21A3C1C40064EDCA /* PVLogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E6DADB20B7AD1500454DD4 /* PVLogViewController.m */; };
 		B36D9DF8203562E000D583C4 /* PVControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */; };
 		B36D9DFD203605BC00D583C4 /* PVCoreFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */; };
-		B37263A126EA04E700E95488 /* ProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A026EA04E700E95488 /* ProSystem.framework */; };
 		B37263A926EA159400E95488 /* PVMupen64Plus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A426EA159400E95488 /* PVMupen64Plus.framework */; };
 		B37263AA26EA159400E95488 /* PVMupen64Plus.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A426EA159400E95488 /* PVMupen64Plus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B37263AB26EA159400E95488 /* PVMupen64PlusRspHLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A526EA159400E95488 /* PVMupen64PlusRspHLE.framework */; };
@@ -431,8 +432,11 @@
 		B390B0EA276B2DB20018E065 /* AltKit in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B390B0E9276B2DB20018E065 /* AltKit */; };
 		B394C98A20609E180014A65D /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = B394C98920609E180014A65D /* UIColor+Hex.swift */; };
 		B394C98B20609E180014A65D /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = B394C98920609E180014A65D /* UIColor+Hex.swift */; };
+		B398800D27A521AC004DEFCA /* ConflictsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B398800C27A521AC004DEFCA /* ConflictsController.swift */; };
+		B398800E27A521AC004DEFCA /* ConflictsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B398800C27A521AC004DEFCA /* ConflictsController.swift */; };
 		B3995E4F2058229F001D4985 /* PVFCEU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3995E4E2058229F001D4985 /* PVFCEU.framework */; };
 		B3995E502058229F001D4985 /* PVFCEU.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3995E4E2058229F001D4985 /* PVFCEU.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B39DC77D279E79D40017E28D /* TopShelf.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3A320372720974F00F338F6 /* PVGameCubeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A320362720974F00F338F6 /* PVGameCubeControllerViewController.swift */; };
 		B3A320382720974F00F338F6 /* PVGameCubeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A320362720974F00F338F6 /* PVGameCubeControllerViewController.swift */; };
 		B3A32150218EB4D700BD7DA2 /* UIView+FrameAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.swift */; };
@@ -510,6 +514,8 @@
 		B3B3B8961DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8941DECF8C200602746 /* PVMupen64PlusVideoRice.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3B3B8981DECF8C700602746 /* PVMupen64PlusRspHLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8971DECF8C700602746 /* PVMupen64PlusRspHLE.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3B3B8991DECF8C700602746 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8971DECF8C700602746 /* PVMupen64PlusRspHLE.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3B4C956279E6BAB00505424 /* ProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B4C955279E6BAA00505424 /* ProSystem.framework */; };
+		B3B4C957279E6BAB00505424 /* ProSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B4C955279E6BAA00505424 /* ProSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3B923B0202D2EAE00580FFC /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A9202D2EAE00580FFC /* Theme.swift */; };
 		B3C9D4331DEA1B340068D057 /* PVGenesis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; };
 		B3C9D4341DEA1B340068D057 /* PVGenesis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -603,6 +609,9 @@
 		DF3751952026B83600EE727E /* PVRSPCXD4.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B97B1DED14AE00602746 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DFCD6EBF203762AF00719289 /* shaders in Resources */ = {isa = PBXBuildFile; fileRef = DFCD6EBE203762AE00719289 /* shaders */; };
 		DFCD6EC0203762AF00719289 /* shaders in Resources */ = {isa = PBXBuildFile; fileRef = DFCD6EBE203762AE00719289 /* shaders */; };
+		EF474BA8279CCDD200578663 /* TVFullscreenController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF474BA7279CCDD100578663 /* TVFullscreenController.swift */; };
+		EF474BAA279E63B800578663 /* TVAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF474BA9279E63B700578663 /* TVAlertController.swift */; };
+		EF56AA6227A21CBC0097AD05 /* TVAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF474BA9279E63B700578663 /* TVAlertController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -648,6 +657,13 @@
 			remoteGlobalIDString = B383225D26ED9C530029D12F;
 			remoteInfo = "Check Git Submodules";
 		};
+		B39DC77E279E79D40017E28D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BE9FDCB61C210B9E0046DF0E;
+			remoteInfo = TopShelf;
+		};
 		B3B29D452156183D00903290 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
@@ -675,6 +691,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = B3B29D3F2156177100903290;
 			remoteInfo = "Create Version files";
+		};
+		B3B4C953279E69AD00505424 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BE9FDCB61C210B9E0046DF0E;
+			remoteInfo = TopShelf;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -704,6 +727,7 @@
 				B37263B226EA159500E95488 /* PVRSPCXD4.framework in Embed Frameworks */,
 				B324C61221920037009F4EDC /* ProSystem.framework in Embed Frameworks */,
 				B324C60C2191FFBB009F4EDC /* PVGBA.framework in Embed Frameworks */,
+				B3B4C957279E6BAB00505424 /* ProSystem.framework in Embed Frameworks */,
 				B37263AA26EA159400E95488 /* PVMupen64Plus.framework in Embed Frameworks */,
 				B324C6092191FF9A009F4EDC /* PVAtari800.framework in Embed Frameworks */,
 			);
@@ -771,9 +795,21 @@
 			files = (
 				B305F08C276B5248003AE510 /* PVSupport.framework in Embed Frameworks */,
 				B305F089276B5243003AE510 /* PVLibrary.framework in Embed Frameworks */,
+				B311B1C527A52F2000D1DE41 /* PVPokeMini.framework in Embed Frameworks */,
 				B305EF30276B4CB0003AE510 /* PVStella.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B39DC780279E79D40017E28D /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				B39DC77D279E79D40017E28D /* TopShelf.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B3DFEE132686D848005C6CF2 /* Embed Frameworks */ = {
@@ -804,7 +840,6 @@
 		1180B3172492A93F00636C8A /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		1180B31B2492A95400636C8A /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS13.4.sdk/System/Library/Frameworks/CoreServices.framework; sourceTree = DEVELOPER_DIR; };
 		1180B3232492AFC900636C8A /* PVGameLibraryUpdatesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameLibraryUpdatesController.swift; sourceTree = "<group>"; };
-		11ADB31E2471A34E001C7B27 /* PVTVTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVTVTabBarController.swift; sourceTree = "<group>"; };
 		11AFB2B62487C120000A3922 /* UISearchController+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UISearchController+Rx.swift"; sourceTree = "<group>"; };
 		14C8EF2121D9443E001B7E37 /* PVTGBDual.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVTGBDual.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVEmulatorViewController.swift; sourceTree = "<group>"; };
@@ -936,6 +971,63 @@
 		B309C7A42717C49F00279529 /* PVFlycast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFlycast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B309C7A72717C4B500279529 /* PVFlycast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFlycast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B30C6E20271D823F0025DD88 /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B311B01627A52B8B00D1DE41 /* PVUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B311B01927A52B9200D1DE41 /* PVUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B311B01C27A52B9C00D1DE41 /* PVUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B311B1C127A52F1700D1DE41 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.3.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		B311B1C327A52F2000D1DE41 /* PVPokeMini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPokeMini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B311B1D227A53E7200D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ru; path = ru.lproj/PVGameLibraryCollectionViewCell.xib; sourceTree = "<group>"; };
+		B311B1D327A53E7400D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Strings.strings; sourceTree = "<group>"; };
+		B311B1D427A53E7500D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B311B1D527A53E7600D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ru; path = ru.lproj/Provenance.storyboard; sourceTree = "<group>"; };
+		B311B1D627A53E7700D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ru; path = ru.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
+		B311B1D727A53E7800D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ru; path = ru.lproj/Settings.storyboard; sourceTree = "<group>"; };
+		B311B1D827A53E7900D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ru; path = ru.lproj/Default.xib; sourceTree = "<group>"; };
+		B311B1D927A53E7B00D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ru; path = ru.lproj/Cheats.storyboard; sourceTree = "<group>"; };
+		B311B1DA27A53E7C00D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ru; path = ru.lproj/Provenance.storyboard; sourceTree = "<group>"; };
+		B311B1DB27A53E7D00D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ru; path = ru.lproj/Settings.storyboard; sourceTree = "<group>"; };
+		B311B1DC27A53E7E00D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ru; path = ru.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
+		B311B1DD27A53E7F00D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ru; path = ru.lproj/Cheats.storyboard; sourceTree = "<group>"; };
+		B311B1DE27A53E8000D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = ru; path = ../ru.lproj/Info.plist; sourceTree = "<group>"; };
+		B311B1DF27A53F9C00D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/PVGameLibraryCollectionViewCell.xib; sourceTree = "<group>"; };
+		B311B1E027A53F9D00D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Strings.strings; sourceTree = "<group>"; };
+		B311B1E127A53F9E00D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B311B1E227A53F9E00D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ja; path = ja.lproj/Provenance.storyboard; sourceTree = "<group>"; };
+		B311B1E327A53F9F00D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ja; path = ja.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
+		B311B1E427A53FA000D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ja; path = ja.lproj/Settings.storyboard; sourceTree = "<group>"; };
+		B311B1E527A53FA000D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/Default.xib; sourceTree = "<group>"; };
+		B311B1E627A53FA100D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ja; path = ja.lproj/Cheats.storyboard; sourceTree = "<group>"; };
+		B311B1E727A53FA200D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ja; path = ja.lproj/Provenance.storyboard; sourceTree = "<group>"; };
+		B311B1E827A53FA200D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ja; path = ja.lproj/Settings.storyboard; sourceTree = "<group>"; };
+		B311B1E927A53FA300D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ja; path = ja.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
+		B311B1EA27A53FA400D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ja; path = ja.lproj/Cheats.storyboard; sourceTree = "<group>"; };
+		B311B1EB27A53FA400D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = ja; path = ../ja.lproj/Info.plist; sourceTree = "<group>"; };
+		B311B1EC27A53FC300D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = nl; path = nl.lproj/PVGameLibraryCollectionViewCell.xib; sourceTree = "<group>"; };
+		B311B1ED27A53FC400D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Strings.strings; sourceTree = "<group>"; };
+		B311B1EE27A53FC500D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B311B1EF27A53FC500D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = nl; path = nl.lproj/Provenance.storyboard; sourceTree = "<group>"; };
+		B311B1F027A53FC600D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = nl; path = nl.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
+		B311B1F127A53FC700D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = nl; path = nl.lproj/Settings.storyboard; sourceTree = "<group>"; };
+		B311B1F227A53FC700D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = nl; path = nl.lproj/Default.xib; sourceTree = "<group>"; };
+		B311B1F327A53FC800D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = nl; path = nl.lproj/Cheats.storyboard; sourceTree = "<group>"; };
+		B311B1F427A53FC900D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = nl; path = nl.lproj/Provenance.storyboard; sourceTree = "<group>"; };
+		B311B1F527A53FC900D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = nl; path = nl.lproj/Settings.storyboard; sourceTree = "<group>"; };
+		B311B1F627A53FCA00D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = nl; path = nl.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
+		B311B1F727A53FCB00D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = nl; path = nl.lproj/Cheats.storyboard; sourceTree = "<group>"; };
+		B311B1F827A53FCB00D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = nl; path = ../nl.lproj/Info.plist; sourceTree = "<group>"; };
+		B311B1F927A53FEF00D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = it; path = it.lproj/PVGameLibraryCollectionViewCell.xib; sourceTree = "<group>"; };
+		B311B1FA27A53FEF00D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Strings.strings; sourceTree = "<group>"; };
+		B311B1FB27A53FF000D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B311B1FC27A53FF100D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/Provenance.storyboard; sourceTree = "<group>"; };
+		B311B1FD27A53FF100D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
+		B311B1FE27A53FF200D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/Settings.storyboard; sourceTree = "<group>"; };
+		B311B1FF27A53FF300D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = it; path = it.lproj/Default.xib; sourceTree = "<group>"; };
+		B311B20027A53FF300D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/Cheats.storyboard; sourceTree = "<group>"; };
+		B311B20127A53FF400D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/Provenance.storyboard; sourceTree = "<group>"; };
+		B311B20227A53FF500D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/Settings.storyboard; sourceTree = "<group>"; };
+		B311B20327A53FF500D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
+		B311B20427A53FF600D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/Cheats.storyboard; sourceTree = "<group>"; };
+		B311B20527A53FF700D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = it; path = ../it.lproj/Info.plist; sourceTree = "<group>"; };
 		B313544626E4C0F90047F338 /* PVPS2ControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVPS2ControllerViewController.swift; sourceTree = "<group>"; };
 		B313544926E4C3B90047F338 /* PVPlay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPlay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B313544C26E4C3BE0047F338 /* PVPlay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPlay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1088,6 +1180,7 @@
 		B382C647278E626C007E61FE /* PVGPUViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVGPUViewController.h; sourceTree = "<group>"; };
 		B382C648278E626D007E61FE /* PVGPUViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PVGPUViewController.m; sourceTree = "<group>"; };
 		B383F3BE219BBD8700DB6926 /* LogViewable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogViewable.swift; sourceTree = "<group>"; };
+		B3843BD327966171005C36F5 /* GameLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameLibraryView.swift; sourceTree = "<group>"; };
 		B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameMoreInfoViewController.swift; sourceTree = "<group>"; };
 		B387676B20BD0F43009D8CD2 /* WebServerActivatorController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebServerActivatorController.swift; sourceTree = "<group>"; };
 		B3890BE320B97588005BB001 /* PVGameLibraryViewController+PeekPop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGameLibraryViewController+PeekPop.swift"; sourceTree = "<group>"; };
@@ -1099,10 +1192,13 @@
 		B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebDAVServer.m; sourceTree = "<group>"; };
 		B394C98920609E180014A65D /* UIColor+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Hex.swift"; sourceTree = "<group>"; };
 		B3977533219AB53F00E16AD5 /* Provenance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Provenance.entitlements; path = Provenance/Provenance.entitlements; sourceTree = SOURCE_ROOT; };
+		B398800C27A521AC004DEFCA /* ConflictsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConflictsController.swift; sourceTree = "<group>"; };
 		B399119126C0F41300E54426 /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
 		B399119226C0F41300E54426 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		B399119326C0F41300E54426 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		B3995E4E2058229F001D4985 /* PVFCEU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFCEU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B39DC77A279E77200017E28D /* PVGCVRViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVGCVRViewController.h; sourceTree = "<group>"; };
+		B39DC77B279E77230017E28D /* PVGCVRViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVGCVRViewController.m; sourceTree = "<group>"; };
 		B3A320362720974F00F338F6 /* PVGameCubeControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVGameCubeControllerViewController.swift; sourceTree = "<group>"; };
 		B3A320392720991B00F338F6 /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A3203C2720992500F338F6 /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1146,6 +1242,7 @@
 		B3B3B9781DED14A100602746 /* PVMupen64PlusVideoRice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoRice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B3B97B1DED14AE00602746 /* PVRSPCXD4.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVRSPCXD4.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B3B97E1DED169100602746 /* PVRSPCXD4.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVRSPCXD4.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3B4C955279E6BAA00505424 /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B9239C202D054B00580FFC /* Provenance-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Provenance-Bridging-Header.h"; sourceTree = "<group>"; };
 		B3B9239D202D054B00580FFC /* ProvenanceTV-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ProvenanceTV-Bridging-Header.h"; sourceTree = "<group>"; };
 		B3B923A9202D2EAE00580FFC /* Theme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
@@ -1224,6 +1321,8 @@
 		DA5EB009206C4DEB000B5F30 /* PVGame+TopShelf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGame+TopShelf.swift"; sourceTree = "<group>"; };
 		DFB603BD2038B6C0001E70F1 /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DFCD6EBE203762AE00719289 /* shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = shaders; sourceTree = "<group>"; };
+		EF474BA7279CCDD100578663 /* TVFullscreenController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TVFullscreenController.swift; sourceTree = "<group>"; };
+		EF474BA9279E63B700578663 /* TVAlertController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TVAlertController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1292,6 +1391,7 @@
 				B324C6172192038C009F4EDC /* libxml2.tbd in Frameworks */,
 				B312805F274C60EC00550720 /* SteamController in Frameworks */,
 				B324C61521920384009F4EDC /* libz.tbd in Frameworks */,
+				B3B4C956279E6BAB00505424 /* ProSystem.framework in Frameworks */,
 				B3F187752720B80C00659D87 /* RxDataSources in Frameworks */,
 				B324C312219195CE009F4EDC /* CFNetwork.framework in Frameworks */,
 				B324C30C219195BB009F4EDC /* SystemConfiguration.framework in Frameworks */,
@@ -1308,7 +1408,6 @@
 				B37263AB26EA159400E95488 /* PVMupen64PlusRspHLE.framework in Frameworks */,
 				B37263B126EA159500E95488 /* PVRSPCXD4.framework in Frameworks */,
 				B324C3002191958D009F4EDC /* CoreGraphics.framework in Frameworks */,
-				B37263A126EA04E700E95488 /* ProSystem.framework in Frameworks */,
 				B324C2FE21919585009F4EDC /* Foundation.framework in Frameworks */,
 				B324C2FD21919568009F4EDC /* AVFoundation.framework in Frameworks */,
 				B3AF70662191733D000FA7F9 /* GameController.framework in Frameworks */,
@@ -1347,6 +1446,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B305F08B276B5248003AE510 /* PVSupport.framework in Frameworks */,
+				B311B1C227A52F1700D1DE41 /* UIKit.framework in Frameworks */,
+				B311B1C427A52F2000D1DE41 /* PVPokeMini.framework in Frameworks */,
 				B305F088276B5243003AE510 /* PVLibrary.framework in Frameworks */,
 				B305EF2F276B4CB0003AE510 /* PVStella.framework in Frameworks */,
 			);
@@ -1379,6 +1480,7 @@
 		1A1237F217CA279900CEC788 /* User Interface */ = {
 			isa = PBXGroup;
 			children = (
+				B3843BCF2796606B005C36F5 /* SwiftUI */,
 				B3B923A1202D2EAE00580FFC /* Themes */,
 				B3296EAC26CABE880088AC32 /* Provenance.storyboard */,
 				B3296EB126CABEA80088AC32 /* SaveStates.storyboard */,
@@ -1462,6 +1564,12 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B311B1C327A52F2000D1DE41 /* PVPokeMini.framework */,
+				B311B1C127A52F1700D1DE41 /* UIKit.framework */,
+				B311B01C27A52B9C00D1DE41 /* PVUI.framework */,
+				B311B01927A52B9200D1DE41 /* PVUI.framework */,
+				B311B01627A52B8B00D1DE41 /* PVUI.framework */,
+				B3B4C955279E6BAA00505424 /* ProSystem.framework */,
 				B36455EB278E919500B6E87A /* PVDuckStation.framework */,
 				B3271BDC276B8B660031AECC /* CoreTelephony.framework */,
 				B3271BDA276B8B2E0031AECC /* OpenGL.framework */,
@@ -1690,7 +1798,8 @@
 			children = (
 				B35D667D21814EAB0005A992 /* Story Boards */,
 				BE9FDCCC1C21109B0046DF0E /* Provenance.entitlements */,
-				11ADB31E2471A34E001C7B27 /* PVTVTabBarController.swift */,
+				EF474BA9279E63B700578663 /* TVAlertController.swift */,
+				EF474BA7279CCDD100578663 /* TVFullscreenController.swift */,
 				1AACCAEC1BB61D5600DC21AE /* PVTVSplitViewController.swift */,
 				1A2B13CC1D0DFF5100D0B863 /* PVSearchViewController.swift */,
 				B3B9239D202D054B00580FFC /* ProvenanceTV-Bridging-Header.h */,
@@ -2122,6 +2231,8 @@
 		B382C63F278E5288007E61FE /* PVGLViewController */ = {
 			isa = PBXGroup;
 			children = (
+				B39DC77A279E77200017E28D /* PVGCVRViewController.h */,
+				B39DC77B279E77230017E28D /* PVGCVRViewController.m */,
 				B382C640278E55C9007E61FE /* PVMetalViewController.h */,
 				B382C641278E55C9007E61FE /* PVMetalViewController.m */,
 				1A3D433917B30BA2004DFFFC /* PVGLViewController.h */,
@@ -2132,6 +2243,14 @@
 			path = PVGLViewController;
 			sourceTree = "<group>";
 		};
+		B3843BCF2796606B005C36F5 /* SwiftUI */ = {
+			isa = PBXGroup;
+			children = (
+				B3843BD327966171005C36F5 /* GameLibraryView.swift */,
+			);
+			path = SwiftUI;
+			sourceTree = "<group>";
+		};
 		B38D30FA202AC26500E9A068 /* GCDWebDAVServer */ = {
 			isa = PBXGroup;
 			children = (
@@ -2139,6 +2258,14 @@
 				B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */,
 			);
 			path = GCDWebDAVServer;
+			sourceTree = "<group>";
+		};
+		B398800B27A5218A004DEFCA /* Conflicts */ = {
+			isa = PBXGroup;
+			children = (
+				B398800C27A521AC004DEFCA /* ConflictsController.swift */,
+			);
+			path = Conflicts;
 			sourceTree = "<group>";
 		};
 		B3AB371D2187F568009D9244 /* Systems */ = {
@@ -2265,6 +2392,7 @@
 		B3E3B5D1202ED5D500A11871 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				B398800B27A5218A004DEFCA /* Conflicts */,
 				B3411BFA276B470B00D85327 /* QuickTableViewController */,
 				CF17107925858FA800258602 /* Cheats */,
 				B3D5E2BC218EC5C20015C690 /* Game Library */,
@@ -2352,12 +2480,15 @@
 				1AD481B21BA350A400FDA50A /* Resources */,
 				1A44C0AE1D0A1E730018751A /* Script: Set Build Number */,
 				1AACCAE61BB60DB500DC21AE /* Embed Frameworks */,
+				B39DC780279E79D40017E28D /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				B383226626ED9F0C0029D12F /* PBXTargetDependency */,
 				B3B29D4C2156185700903290 /* PBXTargetDependency */,
+				B3B4C954279E69AD00505424 /* PBXTargetDependency */,
+				B39DC77F279E79D40017E28D /* PBXTargetDependency */,
 			);
 			name = ProvenanceTV;
 			packageProductDependencies = (
@@ -2583,6 +2714,10 @@
 				en,
 				"zh-Hans",
 				es,
+				ru,
+				ja,
+				nl,
+				it,
 			);
 			mainGroup = 1A3D408B17B2DCE4004DFFFC;
 			packageReferences = (
@@ -2969,6 +3104,7 @@
 				374D488927A2628000F0B1D7 /* ConsolesWrapperView.swift in Sources */,
 				B3B923B0202D2EAE00580FFC /* Theme.swift in Sources */,
 				B3A4FB60278FF84800A65248 /* ApplicationMonitor.swift in Sources */,
+				B398800D27A521AC004DEFCA /* ConflictsController.swift in Sources */,
 				CF17114E2586A13100258602 /* PVCheatsTableViewCell.swift in Sources */,
 				B3AB37342187F569009D9244 /* PVGBControllerViewController.swift in Sources */,
 				B3375EC4278EA28E004B0DC0 /* MetalViewShaders.metal in Sources */,
@@ -2985,6 +3121,7 @@
 				B3375EC0278EA28E004B0DC0 /* MameShaders.metal in Sources */,
 				B3D534E220AFF21900A83D4E /* Version.swift in Sources */,
 				B37B71B0278E33B9005FB278 /* MenuButton.swift in Sources */,
+				EF56AA6227A21CBC0097AD05 /* TVAlertController.swift in Sources */,
 				B343717A276B0B650014F87C /* PVColecoVisionControllerViewController.swift in Sources */,
 				B3375ECC278EA28E004B0DC0 /* lineTron.metal in Sources */,
 				B35E6C23207ED7050040709A /* UIAppearanceExtensions.swift in Sources */,
@@ -3108,6 +3245,7 @@
 				1AD481E51BA3546600FDA50A /* PVGLViewController.m in Sources */,
 				B3375EC5278EA28E004B0DC0 /* MetalViewShaders.metal in Sources */,
 				B369B0DD21A3BF7C0064EDCA /* PVSettingsViewController.swift in Sources */,
+				EF474BAA279E63B800578663 /* TVAlertController.swift in Sources */,
 				B382C636278E5055007E61FE /* PVEmulatorViewController+Audio.swift in Sources */,
 				B3F94A4C27093794002A71EF /* PVAppDelegate+AppCenter.swift in Sources */,
 				11A8A9E72496A3E500C1C6B4 /* PVGameLibraryUpdatesController.swift in Sources */,
@@ -3166,6 +3304,7 @@
 				B3375ECB278EA28E004B0DC0 /* simpleCRT.metal in Sources */,
 				B3D534ED20B001D700A83D4E /* PillPageControl.swift in Sources */,
 				B354E7C7219A7D9D0041F971 /* SystemOverviewViewModel.swift in Sources */,
+				B398800E27A521AC004DEFCA /* ConflictsController.swift in Sources */,
 				B3A32151218EB4D800BD7DA2 /* UIView+FrameAdditions.swift in Sources */,
 				1AD481E01BA3545400FDA50A /* GCDWebServerDataResponse.m in Sources */,
 				B35E6C2A207ED7050040709A /* AppearanceStyleExtensions.swift in Sources */,
@@ -3199,7 +3338,7 @@
 				B3589E32219E8C5B001C5E12 /* LogViewable.swift in Sources */,
 				37470D9F27A7C10A00BE956D /* PVRootViewController+DelegateMethods.swift in Sources */,
 				B3D5E2B1218EC1AE0015C690 /* Reactive+RxRealmDataSources.swift in Sources */,
-				11ADB31F2471A34E001C7B27 /* PVTVTabBarController.swift in Sources */,
+				EF474BA8279CCDD200578663 /* TVFullscreenController.swift in Sources */,
 				11AFB2B72487C120000A3922 /* UISearchController+Rx.swift in Sources */,
 				B37B71B1278E33B9005FB278 /* MenuButton.swift in Sources */,
 				B3B104C5218F2EF400210C39 /* PVDreamcastControllerViewController.swift in Sources */,
@@ -3316,6 +3455,11 @@
 			target = B383225D26ED9C530029D12F /* Check Git Submodules */;
 			targetProxy = B383226526ED9F0C0029D12F /* PBXContainerItemProxy */;
 		};
+		B39DC77F279E79D40017E28D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BE9FDCB61C210B9E0046DF0E /* TopShelf */;
+			targetProxy = B39DC77E279E79D40017E28D /* PBXContainerItemProxy */;
+		};
 		B3B29D462156183D00903290 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B3B29D3F2156177100903290 /* Create Version files */;
@@ -3336,6 +3480,11 @@
 			target = B3B29D3F2156177100903290 /* Create Version files */;
 			targetProxy = B3B29D4B2156185700903290 /* PBXContainerItemProxy */;
 		};
+		B3B4C954279E69AD00505424 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BE9FDCB61C210B9E0046DF0E /* TopShelf */;
+			targetProxy = B3B4C953279E69AD00505424 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -3345,6 +3494,10 @@
 				1A3D40A117B2DCE4004DFFFC /* en */,
 				B3296EA926CABE760088AC32 /* zh-Hans */,
 				B3CEC5A72794CD8D004A7CC1 /* es */,
+				B311B1D427A53E7500D1DE41 /* ru */,
+				B311B1E127A53F9E00D1DE41 /* ja */,
+				B311B1EE27A53FC500D1DE41 /* nl */,
+				B311B1FB27A53FF000D1DE41 /* it */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -3355,6 +3508,10 @@
 				B3296EAB26CABE880088AC32 /* en */,
 				B3296EAE26CABE950088AC32 /* zh-Hans */,
 				B3CEC5A82794CD8E004A7CC1 /* es */,
+				B311B1D527A53E7600D1DE41 /* ru */,
+				B311B1E227A53F9E00D1DE41 /* ja */,
+				B311B1EF27A53FC500D1DE41 /* nl */,
+				B311B1FC27A53FF100D1DE41 /* it */,
 			);
 			name = Provenance.storyboard;
 			sourceTree = "<group>";
@@ -3365,6 +3522,10 @@
 				B3296EB026CABEA80088AC32 /* en */,
 				B3296EBD26CABF6D0088AC32 /* zh-Hans */,
 				B3CEC5A92794CD8E004A7CC1 /* es */,
+				B311B1D627A53E7700D1DE41 /* ru */,
+				B311B1E327A53F9F00D1DE41 /* ja */,
+				B311B1F027A53FC600D1DE41 /* nl */,
+				B311B1FD27A53FF100D1DE41 /* it */,
 			);
 			name = SaveStates.storyboard;
 			sourceTree = "<group>";
@@ -3375,6 +3536,10 @@
 				B3296EB326CABEE00088AC32 /* en */,
 				B3296EB926CABF300088AC32 /* zh-Hans */,
 				B3CEC5AA2794CD8F004A7CC1 /* es */,
+				B311B1D727A53E7800D1DE41 /* ru */,
+				B311B1E427A53FA000D1DE41 /* ja */,
+				B311B1F127A53FC700D1DE41 /* nl */,
+				B311B1FE27A53FF200D1DE41 /* it */,
 			);
 			name = Settings.storyboard;
 			sourceTree = "<group>";
@@ -3385,6 +3550,10 @@
 				B3296EB626CABF250088AC32 /* en */,
 				B3296EBB26CABF340088AC32 /* zh-Hans */,
 				B3CEC5AC2794CD91004A7CC1 /* es */,
+				B311B1D927A53E7B00D1DE41 /* ru */,
+				B311B1E627A53FA100D1DE41 /* ja */,
+				B311B1F327A53FC800D1DE41 /* nl */,
+				B311B20027A53FF300D1DE41 /* it */,
 			);
 			name = Cheats.storyboard;
 			sourceTree = "<group>";
@@ -3395,6 +3564,10 @@
 				B3296EBF26CABF9F0088AC32 /* en */,
 				B3296EC226CABFA70088AC32 /* zh-Hans */,
 				B3CEC5AD2794CD92004A7CC1 /* es */,
+				B311B1DA27A53E7C00D1DE41 /* ru */,
+				B311B1E727A53FA200D1DE41 /* ja */,
+				B311B1F427A53FC900D1DE41 /* nl */,
+				B311B20127A53FF400D1DE41 /* it */,
 			);
 			name = Provenance.storyboard;
 			sourceTree = "<group>";
@@ -3405,6 +3578,10 @@
 				B3296EC426CABFB00088AC32 /* en */,
 				B3296EC726CABFB90088AC32 /* zh-Hans */,
 				B3CEC5AE2794CD92004A7CC1 /* es */,
+				B311B1DB27A53E7D00D1DE41 /* ru */,
+				B311B1E827A53FA200D1DE41 /* ja */,
+				B311B1F527A53FC900D1DE41 /* nl */,
+				B311B20227A53FF500D1DE41 /* it */,
 			);
 			name = Settings.storyboard;
 			sourceTree = "<group>";
@@ -3415,6 +3592,10 @@
 				B3296EDB26CAC2220088AC32 /* zh-Hans */,
 				B3296EDC26CAC2220088AC32 /* en */,
 				B3CEC5AF2794CD93004A7CC1 /* es */,
+				B311B1DC27A53E7E00D1DE41 /* ru */,
+				B311B1E927A53FA300D1DE41 /* ja */,
+				B311B1F627A53FCA00D1DE41 /* nl */,
+				B311B20327A53FF500D1DE41 /* it */,
 			);
 			name = SaveStates.storyboard;
 			sourceTree = "<group>";
@@ -3425,6 +3606,10 @@
 				B3296ED026CABFDE0088AC32 /* en */,
 				B3296EDD26CAC2320088AC32 /* zh-Hans */,
 				B3CEC5B02794CD94004A7CC1 /* es */,
+				B311B1DD27A53E7F00D1DE41 /* ru */,
+				B311B1EA27A53FA400D1DE41 /* ja */,
+				B311B1F727A53FCB00D1DE41 /* nl */,
+				B311B20427A53FF600D1DE41 /* it */,
 			);
 			name = Cheats.storyboard;
 			sourceTree = "<group>";
@@ -3435,6 +3620,10 @@
 				B3296EDF26CAC27C0088AC32 /* en */,
 				B3296EE126CAC2800088AC32 /* zh-Hans */,
 				B3CEC5A52794CD8B004A7CC1 /* es */,
+				B311B1D227A53E7200D1DE41 /* ru */,
+				B311B1DF27A53F9C00D1DE41 /* ja */,
+				B311B1EC27A53FC300D1DE41 /* nl */,
+				B311B1F927A53FEF00D1DE41 /* it */,
 			);
 			name = PVGameLibraryCollectionViewCell.xib;
 			sourceTree = "<group>";
@@ -3445,6 +3634,10 @@
 				B3296EE326CAC2B10088AC32 /* en */,
 				B3296EE526CAC2CA0088AC32 /* zh-Hans */,
 				B3CEC5AB2794CD90004A7CC1 /* es */,
+				B311B1D827A53E7900D1DE41 /* ru */,
+				B311B1E527A53FA000D1DE41 /* ja */,
+				B311B1F227A53FC700D1DE41 /* nl */,
+				B311B1FF27A53FF300D1DE41 /* it */,
 			);
 			name = Default.xib;
 			sourceTree = "<group>";
@@ -3455,6 +3648,10 @@
 				B3296EE926CAC3ED0088AC32 /* en */,
 				B3296EEB26CAC3F00088AC32 /* zh-Hans */,
 				B3CEC5A62794CD8C004A7CC1 /* es */,
+				B311B1D327A53E7400D1DE41 /* ru */,
+				B311B1E027A53F9D00D1DE41 /* ja */,
+				B311B1ED27A53FC400D1DE41 /* nl */,
+				B311B1FA27A53FEF00D1DE41 /* it */,
 			);
 			name = Strings.strings;
 			sourceTree = "<group>";
@@ -3464,6 +3661,10 @@
 			children = (
 				B37D31C9274A57F000D635E0 /* en */,
 				B3CEC5B12794CD94004A7CC1 /* es */,
+				B311B1DE27A53E8000D1DE41 /* ru */,
+				B311B1EB27A53FA400D1DE41 /* ja */,
+				B311B1F827A53FCB00D1DE41 /* nl */,
+				B311B20527A53FF700D1DE41 /* it */,
 			);
 			name = Info.plist;
 			sourceTree = "<group>";
@@ -4146,7 +4347,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Provenance Watch WatchKit Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit Extension";
-				INFOPLIST_KEY_CLKComplicationPrincipalClass = "$(PRODUCT_MODULE_NAME).ComplicationController";
+				INFOPLIST_KEY_CLKComplicationPrincipalClass = Provenance_Watch_WatchKit_Extension.ComplicationController;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Provenance Emu. All rights reserved.";
 				INFOPLIST_KEY_WKWatchOnly = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -4196,7 +4397,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Provenance Watch WatchKit Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit Extension";
-				INFOPLIST_KEY_CLKComplicationPrincipalClass = "$(PRODUCT_MODULE_NAME).ComplicationController";
+				INFOPLIST_KEY_CLKComplicationPrincipalClass = Provenance_Watch_WatchKit_Extension.ComplicationController;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Provenance Emu. All rights reserved.";
 				INFOPLIST_KEY_WKWatchOnly = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -4245,7 +4446,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Provenance Watch WatchKit Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit Extension";
-				INFOPLIST_KEY_CLKComplicationPrincipalClass = "$(PRODUCT_MODULE_NAME).ComplicationController";
+				INFOPLIST_KEY_CLKComplicationPrincipalClass = Provenance_Watch_WatchKit_Extension.ComplicationController;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Provenance Emu. All rights reserved.";
 				INFOPLIST_KEY_WKWatchOnly = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -4527,7 +4728,7 @@
 				);
 				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "${TOPSHELF_PRODUCT_BUNDLE_IDENTIFIER}";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(TOPSHELF_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -4773,7 +4974,7 @@
 				);
 				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "${TOPSHELF_PRODUCT_BUNDLE_IDENTIFIER}";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(TOPSHELF_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -4813,7 +5014,7 @@
 				);
 				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "${TOPSHELF_PRODUCT_BUNDLE_IDENTIFIER}";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(TOPSHELF_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;

@@ -63,6 +63,9 @@ __attribute__((visibility("default")))
 @interface MednafenGameCore()
 @property (nonatomic, assign) MednaSystem systemType;
 @property (nonatomic, assign) NSUInteger maxDiscs;
+
+@property (nonatomic, assign) BOOL video_opengl;
+
 -(void)setMedia:(BOOL)open forDisc:(NSUInteger)disc;
 -(void)changeDisplayMode;
 

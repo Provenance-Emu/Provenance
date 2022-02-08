@@ -142,7 +142,7 @@ extension SyncFileToiCloud where Self: LocalFileInfoProvider {
     }
 
     func syncToiCloud(completionHandler: @escaping (SyncResult) -> Void) {
-        DispatchQueue.global(qos: .background).async {
+        DispatchQueue.global(qos: .utility).async {
             guard let destinationURL = self.destinationURL else {
                 completionHandler(.denied)
                 return
@@ -207,7 +207,7 @@ extension SyncFileToiCloud where Self: LocalFileInfoProvider {
             return
         }
 
-        DispatchQueue.global(qos: .background).async {
+        DispatchQueue.global(qos: .utility).async {
             if !FileManager.default.isUbiquitousItem(at: destinationURL) {
                 completionHandler(.fileNotExist)
                 return

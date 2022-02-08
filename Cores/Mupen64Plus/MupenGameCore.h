@@ -35,25 +35,28 @@ __attribute__((visibility("default")))
 @interface MupenGameCore : PVEmulatorCore <PVN64SystemResponderClient>
 {
 //@private
+    @public
     uint8_t padData[4][PVN64ButtonCount];
     int8_t xAxis[4];
     int8_t yAxis[4];
-//    int videoWidth;
-//    int videoHeight;
-//    int videoBitDepth;
-    int videoDepthBitDepth; // eh
     
-    float sampleRate;
-    
-    BOOL isNTSC;
+    int controllerMode[4];
+    NSOperationQueue *_inputQueue;
 }
 
 @property (nonatomic, assign) int videoWidth;
 @property (nonatomic, assign) int videoHeight;
 @property (nonatomic, assign) int videoBitDepth;
 
+@property (nonatomic, assign) double mupenSampleRate;
+@property (nonatomic, assign) int videoDepthBitDepth;
+@property (nonatomic, assign) BOOL isNTSC;
+@property (nonatomic, assign) BOOL dualJoystick;
+
 - (void) videoInterrupt;
 - (void) swapBuffers;
+
+- (void)setMode:(NSInteger)mode forController:(NSInteger)controller;
 @end
 
 extern __weak MupenGameCore *_current;

@@ -932,6 +932,85 @@
 		<key>PVManufacturer</key>
 		<string>NGK</string>
 		<key>PVSystemName</key>
+		<string>Neo Geo</string>
+		<key>PVSystemShortName</key>
+		<string>NG</string>
+		<key>PVReleaseYear</key>
+		<string>1990</string>
+		<key>PVBit</key>
+		<string>24</string>
+		<key>PVSystemIdentifier</key>
+		<string>com.provenance.neogeo</string>
+		<key>PVDatabaseID</key>
+		<string>91</string>
+		<key>PVPortable</key>
+		<false/>
+		<key>PVRequiresBIOS</key>
+		<true/>
+		<key>PVBIOSNames</key>
+		<array>
+			<dict>
+				<key>Description</key>
+				<string>UNIVERSE BIOS</string>
+				<key>MD5</key>
+				<string>4f0aeda8d2d145f596826b62d563c4ef</string>
+				<key>Name</key>
+				<string>uni-bios.rom</string>
+				<key>Size</key>
+				<integer>131072</integer>
+			</dict>
+		</array>
+		<key>PVSupportedExtensions</key>
+		<array>
+			<string>ng</string>
+		</array>
+		<key>PVControlLayout</key>
+		<array>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVButtonGroup</string>
+				<key>PVControlSize</key>
+				<string>{180, 180}</string>
+				<key>PVGroupedButtons</key>
+				<array>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>B</string>
+						<key>PVControlFrame</key>
+						<string>{{116,60},{60,60}}</string>
+					</dict>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>A</string>
+						<key>PVControlFrame</key>
+						<string>{{60,116},{60,60}}</string>
+					</dict>
+				</array>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVDPad</string>
+				<key>PVControlSize</key>
+				<string>{180,180}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVStartButton</string>
+				<key>PVControlTitle</key>
+				<string>Option</string>
+				<key>PVControlSize</key>
+				<string>{60,42}</string>
+			</dict>
+		</array>
+	</dict>
+	<dict>
+		<key>PVManufacturer</key>
+		<string>NGK</string>
+		<key>PVSystemName</key>
 		<string>Neo Geo Pocket Color</string>
 		<key>PVSystemShortName</key>
 		<string>NGPC</string>

@@ -12,14 +12,15 @@ import PVSupport
 import UIKit
 
 extension PVEmulatorViewController {
-    @objc func showMenu(_: Any?) {
+    @objc func showMenu(_ sender: AnyObject?) {
         enableControllerInput(true)
         core.setPauseEmulation(true)
         isShowingMenu = true
 
-        let actionSheet: UIAlertController = UIAlertController(title: "Game Options", message: nil, preferredStyle: .actionSheet)
+        let actionSheet = UIAlertController(title: "Game Options", message: nil, preferredStyle: .actionSheet)
 
-        if traitCollection.userInterfaceIdiom == .pad {
+        // only popup if sumoned from menuButton
+        if traitCollection.userInterfaceIdiom == .pad && sender === menuButton {
             actionSheet.popoverPresentationController?.sourceView = menuButton
             actionSheet.popoverPresentationController?.sourceRect = menuButton!.bounds
         }
@@ -145,7 +146,7 @@ extension PVEmulatorViewController {
             self.showMoreInfo()
         }))
         actionSheet.addAction(UIAlertAction(title: "Game Speed", style: .default, handler: { action in
-            self.perform(#selector(self.showSpeedMenu), with: nil, afterDelay: 0.1)
+            self.perform(#selector(self.showSpeedMenu(_:)), with: sender, afterDelay: 0.1)
         }))
         if core.supportsSaveStates {
             actionSheet.addAction(UIAlertAction(title: "Save States", style: .default, handler: { action in
@@ -207,7 +208,8 @@ extension PVEmulatorViewController {
             }))
         }
 
-        let resumeAction = UIAlertAction(title: "Resume", style: .default, handler: { action in
+        // make sure this item is marked .cancel so it will be called even if user dismises popup
+        let resumeAction = UIAlertAction(title: "Resume", style: .cancel, handler: { action in
             self.core.setPauseEmulation(false)
             self.isShowingMenu = false
             self.enableControllerInput(false)

@@ -380,7 +380,7 @@
 		B304F56626BE57B300A4F549 /* cd_xa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AA9A26BE55D30096A354 /* cd_xa.cpp */; };
 		B304F56726BE57B300A4F549 /* cue_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AA9226BE55D30096A354 /* cue_parser.cpp */; };
 		B304F56826BE57B300A4F549 /* wav_writer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AA5C26BE55D30096A354 /* wav_writer.cpp */; };
-		B30A200A278FC9FF009E08C9 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30A2009278FC9FF009E08C9 /* OpenGL.framework */; platformFilter = maccatalyst; };
+		B30A200A278FC9FF009E08C9 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30A2009278FC9FF009E08C9 /* OpenGL.framework */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3203C1026DB126F00B016C6 /* thread_pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AAFF26BE55D30096A354 /* thread_pool.cpp */; };
 		B324C64021920EB9009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C63F21920EB9009F4EDC /* PVSupport.framework */; };
 		B3375ECE278EA4B8004B0DC0 /* xxh_x86dispatch.c in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A88326BE55D10096A354 /* xxh_x86dispatch.c */; };
@@ -391,7 +391,7 @@
 		B38526A82108264D00434945 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B38526A72108264D00434945 /* PVSupport.framework */; };
 		B3C2906126DDD28C003CB9D4 /* OpenGLHostDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3D527C326DDCCC300991E84 /* OpenGLHostDisplay.mm */; };
 		B3C2906226DDD28D003CB9D4 /* OpenGLHostDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3D527C326DDCCC300991E84 /* OpenGLHostDisplay.mm */; };
-		B3C2907126DDD854003CB9D4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2907026DDD854003CB9D4 /* OpenGLES.framework */; platformFilter = ios; };
+		B3C2907126DDD854003CB9D4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2907026DDD854003CB9D4 /* OpenGLES.framework */; platformFilter = ios; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3C2907326DDD85D003CB9D4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2907226DDD85D003CB9D4 /* OpenGLES.framework */; };
 		B3C290B326DDDB36003CB9D4 /* shadergen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A97F26BE55D20096A354 /* shadergen.cpp */; };
 		B3C290B426DDDC06003CB9D4 /* cd_image_chd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AAE726BE55D30096A354 /* cd_image_chd.cpp */; };
@@ -508,7 +508,7 @@
 		B3C2924026DEFED8003CB9D4 /* stb_image_write.c in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A7FB26BE55D00096A354 /* stb_image_write.c */; };
 		B3C2924126DEFEE6003CB9D4 /* libstb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2923426DEFECD003CB9D4 /* libstb.a */; };
 		B3C2924426DEFF58003CB9D4 /* LzmaEnc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A8B926BE55D10096A354 /* LzmaEnc.c */; };
-		B3C2924626DEFFD8003CB9D4 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2924526DEFFD8003CB9D4 /* GLKit.framework */; platformFilter = ios; };
+		B3C2924626DEFFD8003CB9D4 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2924526DEFFD8003CB9D4 /* GLKit.framework */; platformFilter = ios; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3C2924C26DEFFE8003CB9D4 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2924826DEFFE7003CB9D4 /* MetalKit.framework */; };
 		B3C2924E26DEFFE8003CB9D4 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2924A26DEFFE8003CB9D4 /* Metal.framework */; };
 		B3C2925026DF00AC003CB9D4 /* gpu_hw_shadergen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A99326BE55D20096A354 /* gpu_hw_shadergen.cpp */; };
@@ -576,7 +576,6 @@
 		B3C292D126DF0561003CB9D4 /* stream_buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AAD526BE55D30096A354 /* stream_buffer.cpp */; };
 		B3C292D226DF0561003CB9D4 /* shader_cache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AAC026BE55D30096A354 /* shader_cache.cpp */; };
 		B3C292D326DF0561003CB9D4 /* texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8AAC326BE55D30096A354 /* texture.cpp */; };
-		B3C292D526DF0696003CB9D4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2907026DDD854003CB9D4 /* OpenGLES.framework */; };
 		B3C292EF26DF0C31003CB9D4 /* cubeb_resampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A5E426BE55CE0096A354 /* cubeb_resampler.cpp */; };
 		B3C292F126DF0C31003CB9D4 /* cubeb_strings.c in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A5CE26BE55CE0096A354 /* cubeb_strings.c */; };
 		B3C292F226DF0C31003CB9D4 /* cubeb_mixer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A5E326BE55CE0096A354 /* cubeb_mixer.cpp */; };
@@ -3441,7 +3440,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3C292D526DF0696003CB9D4 /* OpenGLES.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8575,6 +8573,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
+					"GL_SILENCE_DEPRECATION=1",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -8631,6 +8630,10 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"GL_SILENCE_DEPRECATION=1",
+					"$(inherited)",
+				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -10380,6 +10383,10 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"GL_SILENCE_DEPRECATION=1",
+					"$(inherited)",
+				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -10446,6 +10453,7 @@
 				PRODUCT_NAME = PVDuckStation;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -10543,6 +10551,7 @@
 				PRODUCT_NAME = PVDuckStation;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -10596,6 +10605,7 @@
 				PRODUCT_NAME = PVDuckStation;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";

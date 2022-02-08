@@ -19,13 +19,14 @@ import UIKit
 import RxSwift
 
 class PVQuickTableViewController: QuickTableViewController {
+    
     open override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
 
         #if os(iOS)
             (cell as? SliderCell)?.delegate = self
         #endif
-
+        
         return cell
     }
 }
@@ -44,11 +45,10 @@ final class PVSettingsViewController: PVQuickTableViewController {
         tableView.reloadData()
 
         #if os(tvOS)
-            tableView.backgroundColor = .black
             tableView.rowHeight = 80
             splitViewController?.view.backgroundColor = .black
-            tableView.sectionHeaderHeight = 0
-            tableView.sectionFooterHeight = 0
+            navigationController?.navigationBar.isTranslucent = false
+            navigationController?.navigationBar.backgroundColor =  UIColor.black.withAlphaComponent(0.8)
         #endif
 
         conflictsController.conflicts
@@ -85,7 +85,13 @@ final class PVSettingsViewController: PVQuickTableViewController {
         typealias TableRow = Row & RowStyle
 
         // -- Section : App
-        let autolockRow = PVSettingsSwitchRow(text: NSLocalizedString("Disable Auto Lock", comment: "Disable Auto Lock"), key: \PVSettingsModel.disableAutoLock)
+        #if os(tvOS)
+        let autolockRowDetailText:DetailText = .subtitle("This also disables the screensaver.")
+        #else
+        let autolockRowDetailText:DetailText? = nil
+        #endif
+        let autolockRow = PVSettingsSwitchRow(text: NSLocalizedString("Disable Auto Lock", comment: "Disable Auto Lock"), detailText: autolockRowDetailText, key: \PVSettingsModel.disableAutoLock)
+
         let systemsRow = SegueNavigationRow(text: NSLocalizedString("Systems", comment: "Systems"), viewController: self, segue: "pushSystemSettings")
 
         #if os(tvOS)
@@ -316,9 +322,8 @@ final class PVSettingsViewController: PVQuickTableViewController {
                                 key: \PVSettingsModel.debugOptions.unsupportedCores),
             
             PVSettingsSwitchRow(text: NSLocalizedString("Use Swift UI", comment: "Use Swift UI"),
-                                            detailText: .subtitle("Swift UI placeholder. Don't use unless you're a developer."),
-                                            key: \PVSettingsModel.debugOptions.useSwiftUI),
-            
+                                detailText: .subtitle("Swift UI placeholder. Don't use unless you're a developer."),
+                                key: \PVSettingsModel.debugOptions.useSwiftUI),
         ]
         #else
          let betaRows: [TableRow] = [
@@ -354,7 +359,16 @@ final class PVSettingsViewController: PVQuickTableViewController {
                                         cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
                                         cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
                                 }
-            )
+            ),
+            
+            PVSettingsSwitchRow(text: NSLocalizedString("Use SwiftUI", comment: "Use SwiftUI"),
+                               detailText: .subtitle("Don't use unless you enjoy empty windows."),
+                               key: \PVSettingsModel.debugOptions.multiSampling,
+                                   customization: { cell, _ in
+                                       cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+                                       cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
+                               }
+           )
                 ]
         #endif
 

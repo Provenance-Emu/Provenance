@@ -32,6 +32,9 @@ let PVGameLibraryCollectionViewGamesCellIdentifier = "RecentlyPlayedCollectionCe
 
 let PVRequiresMigrationKey = "PVRequiresMigration"
 
+// should we use the "new" context menus added in iOS 13, or use an action sheet
+let useModernContextMenus = true
+
 // For Obj-C
 public extension NSNotification {
     @objc
@@ -54,7 +57,7 @@ public extension Notification.Name {
     }
 #endif
 
-final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate, GameLaunchingViewController, GameSharingViewController, WebServerActivatorController {
+final class PVGameLibraryViewController: GCEventViewController, UITextFieldDelegate, UINavigationControllerDelegate, GameLaunchingViewController, GameSharingViewController, WebServerActivatorController {
     lazy var collectionViewZoom: CGFloat = CGFloat(PVSettingsModel.shared.gameLibraryScale)
 
     let disposeBag = DisposeBag()
@@ -62,8 +65,25 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     var gameLibrary: PVGameLibrary!
     var gameImporter: GameImporter!
     var filePathsToImport = [URL]()
-
-    var collectionView: UICollectionView?
+    
+    // selected (aka hilighted) item selected via game controller UX
+    #if os(iOS)
+        // NOTE this may not be a *real* indexPath, if it is for a section with a nexted collection view
+        var _selectedIndexPath:IndexPath?
+        var _selectedIndexPathView:UIView!
+    #endif
+    
+    var collectionView: UICollectionView? {
+        didSet {
+            guard let collectionView = collectionView else { return }
+            #if os(iOS)
+                if #available(iOS 14.0, *) {
+                    collectionView.selectionFollowsFocus = true
+                }
+            #endif
+            collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        }
+    }
 
     #if os(iOS)
         var photoLibrary: PHPhotoLibrary?
@@ -85,37 +105,21 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     // add or remove the conflict button (iff it is in the storyboard)
     func updateConflictsButton(_ hasConflicts: Bool) {
         if let conflictsBarButtonItem = conflictsBarButtonItem {
-            var items = navigationItem.leftBarButtonItems?.filter({$0 !== conflictsBarButtonItem})
-            if hasConflicts {
-                items?.append(conflictsBarButtonItem)
-            }
+            conflictsBarButtonItem.isEnabled = hasConflicts
+            #if os(tvOS)
+            let items: [UIBarButtonItem] = hasConflicts ? [ getMoreRomsBarButtonItem, conflictsBarButtonItem ] : [getMoreRomsBarButtonItem]
+            #else
+            let items: [UIBarButtonItem] = hasConflicts ? [ settingsBarButtonItem, conflictsBarButtonItem ] : [settingsBarButtonItem]
+            #endif
             navigationItem.leftBarButtonItems = items
         }
     }
 
     @IBOutlet var sortOptionsTableView: UITableView!
     lazy var sortOptionsTableViewController: UIViewController = {
-        let optionsTableView = sortOptionsTableView
         let avc = UIViewController()
-        avc.view = optionsTableView
-
-        #if os(iOS)
-            avc.modalPresentationStyle = .popover
-            //        avc.popoverPresentationController?.delegate = self
-            avc.popoverPresentationController?.barButtonItem = sortOptionBarButtonItem
-            avc.popoverPresentationController?.sourceView = collectionView
-            avc.preferredContentSize = CGSize(width: 300, height: 500)
-            avc.title = "Library Options"
-        #else
-            //		providesPresentationContextTransitionStyle = true
-            //		definesPresentationContext = true
-            if #available(tvOS 11.0, *) {
-                avc.modalPresentationStyle = .blurOverFullScreen
-            } else {
-                avc.modalPresentationStyle = .currentContext
-            }
-            avc.modalTransitionStyle = .coverVertical
-        #endif
+        avc.view = sortOptionsTableView
+        avc.title = "Library Options"
         return avc
     }()
 
@@ -168,6 +172,10 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         }
     }
     
+    #if os(iOS)
+    var searchController: UISearchController!
+    #endif
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         isInitialAppearance = true
@@ -192,7 +200,12 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             })
         #else
             navigationController?.navigationBar.isTranslucent = false
-            navigationController?.navigationBar.backgroundColor =  UIColor.black.withAlphaComponent(0.8)
+            let blurEffect = UIBlurEffect(style: UIBlurEffect.Style.dark)
+            let blurEffectView = UIVisualEffectView(effect: blurEffect)
+            blurEffectView.frame = (self.navigationController?.navigationBar.bounds)!
+            self.navigationController?.navigationBar.addSubview(blurEffectView)
+            self.navigationController?.navigationBar.sendSubviewToBack(blurEffectView)
+            navigationController?.navigationBar.backgroundColor = UIColor.black.withAlphaComponent(0.5)
             // ironicaly BarButtonItems (unselected background) look better when forced to LightMode
             if #available(tvOS 13.0, *) {
                 navigationController?.overrideUserInterfaceStyle = .light
@@ -215,10 +228,14 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             let searchController = UISearchController(searchResultsController: nil)
             searchController.searchBar.placeholder = "Search"
             searchController.obscuresBackgroundDuringPresentation = false
-            searchController.hidesNavigationBarDuringPresentation = true
+            searchController.hidesNavigationBarDuringPresentation = false
+            if #available(iOS 13.0, *) {
+                searchController.automaticallyShowsCancelButton = true
+            }
             navigationItem.hidesSearchBarWhenScrolling = true
             navigationItem.searchController = searchController
 
+            self.searchController = searchController
             searchText = Observable.merge(searchController.rx.searchText, searchController.rx.didDismiss.map { _ in nil })
         #else
             searchText = .never()
@@ -268,7 +285,6 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
         let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: layout)
         self.collectionView = collectionView
-        collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 
         typealias Playable = (PVGame, UICollectionViewCell?, PVCore?, PVSaveState?)
         let selectedPlayable = PublishSubject<Playable>()
@@ -310,7 +326,9 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         })
 
         collectionView.rx.itemSelected
-            .map { indexPath in (try! collectionView.rx.model(at: indexPath) as Section.Item, collectionView.cellForItem(at: indexPath)) }
+            .map {
+                indexPath in (try! collectionView.rx.model(at: indexPath) as Section.Item, collectionView.cellForItem(at: indexPath))
+            }
             .compactMap({ item, cell -> Playable? in
                 switch item {
                 case .game(let game):
@@ -432,9 +450,12 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         sections.map { !$0.isEmpty }.bind(to: libraryInfoContainerView.rx.isHidden).disposed(by: disposeBag)
         #endif
 
-        collectionView.rx.longPressed(Section.Item.self)
-            .bind(onNext: self.longPressed)
-            .disposed(by: disposeBag)
+        // attach long press gesture only on pre-iOS 13, and tvOS
+        if  useModernContextMenus == false || NSClassFromString("UIContextMenuConfiguration") == nil {
+            collectionView.rx.longPressed(Section.Item.self)
+                .bind(onNext: self.longPressed)
+                .disposed(by: disposeBag)
+        }
 
         collectionView.rx.setDelegate(self).disposed(by: disposeBag)
         collectionView.bounces = true
@@ -553,7 +574,10 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             case .began:
                 Holder.scaleStart = collectionViewZoom
                 collectionView.isScrollEnabled = false
-
+                guard collectionView.collectionViewLayout.collectionViewContentSize.height != 0 else {
+                    ELOG("collectionView.collectionViewLayout.collectionViewContentSize.height is 0")
+                    return
+                }
                 Holder.normalisedY = gesture.location(in: collectionView).y / collectionView.collectionViewLayout.collectionViewContentSize.height
             case .changed:
                 var newScale = Holder.scaleStart * gesture.scale
@@ -601,10 +625,24 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             return
         }
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        #if os(iOS)
+            PVControllerManager.shared.controllerUserInteractionEnabled = false
+        #else
+            self.controllerUserInteractionEnabled = false
+        #endif
+    }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         _ = PVControllerManager.shared
+        #if os(iOS)
+            PVControllerManager.shared.controllerUserInteractionEnabled = true
+        #else
+            self.controllerUserInteractionEnabled = true
+        #endif
         if isInitialAppearance {
             isInitialAppearance = false
             #if os(tvOS)
@@ -727,24 +765,35 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     #endif
     
     @IBAction func sortButtonTapped(_ sender: Any) {
+        if self.presentedViewController != nil {
+            return;
+        }
+        sortOptionsTableView.reloadData()
+        
         #if os(iOS)
             // Add done button to iPhone
             // iPad is a popover do no done button needed
-            if traitCollection.horizontalSizeClass == .compact {
+            if traitCollection.horizontalSizeClass == .compact || !(sender is UIBarButtonItem) {
                 let navController = UINavigationController(rootViewController: sortOptionsTableViewController)
                 sortOptionsTableViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(PVGameLibraryViewController.dismissVC))
-                sortOptionsTableView.reloadData()
                 present(navController, animated: true, completion: nil)
-                return
             } else {
+                sortOptionsTableViewController.modalPresentationStyle = .popover
                 sortOptionsTableViewController.popoverPresentationController?.barButtonItem = sender as? UIBarButtonItem
                 sortOptionsTableViewController.popoverPresentationController?.sourceView = collectionView
-                sortOptionsTableView.reloadData()
+                sortOptionsTableViewController.preferredContentSize = CGSize(width:300, height:sortOptionsTableView.contentSize.height);
                 present(sortOptionsTableViewController, animated: true, completion: nil)
             }
         #else
-            sortOptionsTableView.reloadData()
-            present(sortOptionsTableViewController, animated: true, completion: nil)
+            sortOptionsTableView.layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+            sortOptionsTableView.backgroundColor = UIColor(red:0.1, green:0.1, blue:0.1, alpha:1)
+            sortOptionsTableView.layer.borderColor = view.tintColor.cgColor
+            sortOptionsTableView.layer.borderWidth = 4.0
+            sortOptionsTableView.layer.cornerRadius = 16.0
+        
+            sortOptionsTableViewController.preferredContentSize = CGSize(width:675, height:sortOptionsTableView.contentSize.height);
+            let pvc = TVFullscreenController(rootViewController:sortOptionsTableViewController)
+            present(pvc, animated: true, completion: nil)
         #endif
     }
 
@@ -813,7 +862,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
             present(actionSheet, animated: true, completion: nil)
 
-            actionSheet.rx.deallocating.asObservable().bind { [weak self] in
+            (actionSheet as UIViewController).rx.deallocating.asObservable().bind { [weak self] in
                 self?.reachability.stopNotifier()
             }.disposed(by: disposeBag)
         #else // tvOS
@@ -898,7 +947,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
     }
 
     @objc func handleCacheEmptied(_: NotificationCenter) {
-        DispatchQueue.global(qos: .default).async(execute: { () -> Void in
+        DispatchQueue.global(qos: .userInitiated).async(execute: { () -> Void in
             let database = RomDatabase.sharedInstance
             database.refresh()
 
@@ -928,29 +977,33 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
     private func longPressed(item: Section.Item, at indexPath: IndexPath, point: CGPoint) {
         let cell = collectionView!.cellForItem(at: indexPath)!
-        #if os(iOS) && !targetEnvironment(macCatalyst)
-            presentActionSheetViewControllerForPopoverPresentation(contextMenu(for: item, cell: cell, point: point),
-                                                               sourceView: cell)
-        #elseif targetEnvironment(macCatalyst)
         let actionSheet = contextMenu(for: item, cell: cell, point: point)
-        if traitCollection.userInterfaceIdiom == .mac {
-            actionSheet.popoverPresentationController?.sourceView = cell
-            actionSheet.popoverPresentationController?.sourceRect = (collectionView?.layoutAttributesForItem(at: indexPath)?.bounds ?? CGRect.zero)
-        }
 
+        actionSheet.popoverPresentationController?.sourceView = cell
+        actionSheet.popoverPresentationController?.sourceRect = cell.bounds
         present(actionSheet, animated: true)
-        #else
-            let actionSheet = contextMenu(for: item, cell: cell, point: point)
+    }
+    
+    #if os(iOS)
+    @available(iOS 13.0, *)
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        guard useModernContextMenus,
+              let cell = collectionView.cellForItem(at: indexPath),
+              let item: Section.Item = try? collectionView.rx.model(at: indexPath)
+        else { return nil }
 
-            if traitCollection.userInterfaceIdiom == .pad {
-                actionSheet.popoverPresentationController?.sourceView = cell
-                actionSheet.popoverPresentationController?.sourceRect = (collectionView?.layoutAttributesForItem(at: indexPath)?.bounds ?? CGRect.zero)
-			}
-            present(actionSheet, animated: true)
-        #endif
+        if let actionSheet = contextMenu(for: item, cell: cell, point: point) as? UIAlertControllerProtocol {
+            return UIContextMenuConfiguration(identifier:nil) {
+                return nil      // use default
+            } actionProvider: {_ in
+                return actionSheet.convertToMenu()
+            }
         }
-
-    private func contextMenu(for item: Section.Item, cell: UICollectionViewCell, point: CGPoint) -> UIAlertController {
+        return nil
+    }
+    #endif
+    
+    private func contextMenu(for item: Section.Item, cell: UICollectionViewCell, point: CGPoint) -> UIViewController {
         switch item {
         case .game(let game):
             return contextMenu(for: game, sender: cell)
@@ -966,21 +1019,22 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         }
     }
     
-    private func showCoreOptions(forCore core: CoreOptional.Type) {
+    private func showCoreOptions(forCore core: CoreOptional.Type, withTitle title:String) {
         let optionsVC = CoreOptionsViewController(withCore: core)
-        
-//        let nav = UINavigationController(rootViewController: optionsVC)
-//        coreOptionsVC.title = row.text
-//        optionsVC.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissNav))
-        self.navigationController?.pushViewController(optionsVC, animated: true)
-//        present(nav, animated: true, completion: nil)
+        optionsVC.title = title
+        #if os(iOS)
+            self.navigationController?.pushViewController(optionsVC, animated: true)
+        #else
+            let nav = UINavigationController(rootViewController: optionsVC)
+            nav.navigationBar.isTranslucent = false
+            nav.navigationBar.backgroundColor =  UIColor.black.withAlphaComponent(0.8)
+            present(nav, animated: true, completion: nil)
+        #endif
     }
 
-    private func contextMenu(for game: PVGame, sender: UIView) -> UIAlertController {
+    private func contextMenu(for game: PVGame, sender: UIView) -> UIViewController {
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        #if os(tvOS)
-        actionSheet.message = "Options for \(game.title)"
-        #endif
+        actionSheet.title = "Options for \(game.title)"
         // If game.system has multiple cores, add actions to manage
         if let system = game.system, system.cores.count > 1 {
             // If user has select a core for this game, actio to reset
@@ -992,7 +1046,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
                 actionSheet.addAction(UIAlertAction(title: "Reset default core selection (\(coreName))", style: .default, handler: { [unowned self] _ in
 
                     let resetAlert = UIAlertController(title: "Reset core?", message: "Are you sure you want to reset \(game.title) to no longer default to use \(coreName)?", preferredStyle: .alert)
-                    resetAlert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+                    resetAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
                     resetAlert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { _ in
                         try! RomDatabase.sharedInstance.writeTransaction {
                             game.userPreferredCoreID = nil
@@ -1011,7 +1065,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         if let system = game.system, system.cores.count == 1, let pvcore = system.cores.first, let coreClass = NSClassFromString(pvcore.principleClass) as? CoreOptional.Type {
 
             actionSheet.addAction(UIAlertAction(title: "\(pvcore.projectName) options", style: .default, handler: { (_: UIAlertAction) -> Void in
-                self.showCoreOptions(forCore: coreClass)
+                self.showCoreOptions(forCore: coreClass, withTitle:pvcore.projectName)
             }))
         }
 
@@ -1088,7 +1142,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
 
                 let gameRef = ThreadSafeReference(to: game)
 
-                DispatchQueue.global(qos: .default).async {
+                DispatchQueue.global(qos: .userInitiated).async {
                     let realm = try! Realm()
                     guard let game = realm.resolve(gameRef) else {
                         return // person was deleted
@@ -1122,8 +1176,8 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
         return actionSheet
     }
 
-    private func contextMenu(for saveState: PVSaveState) -> UIAlertController {
-        let actionSheet = UIAlertController(title: "Delete this save state?", message: nil, preferredStyle: .actionSheet)
+    private func contextMenu(for saveState: PVSaveState) -> UIViewController {
+        let actionSheet = UIAlertController(title: "Delete this save state?", message: nil, preferredStyle: .alert)
 
         actionSheet.addAction(UIAlertAction(title: "Yes", style: .destructive) { [unowned self] _ in
             do {
@@ -1133,6 +1187,7 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             }
         })
         actionSheet.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
+        actionSheet.preferredAction = actionSheet.actions.last
         return actionSheet
     }
 
@@ -1247,7 +1302,8 @@ final class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, 
             presentActionSheetViewControllerForPopoverPresentation(imagePickerActionSheet, sourceView: sourceView)
         }
 
-        private func presentActionSheetViewControllerForPopoverPresentation(_ alertController: UIAlertController, sourceView: UIView) {
+        private func presentActionSheetViewControllerForPopoverPresentation(_ alertController: UIViewController, sourceView: UIView) {
+            
             if traitCollection.userInterfaceIdiom == .pad {
                 alertController.popoverPresentationController?.sourceView = sourceView
                 alertController.popoverPresentationController?.sourceRect = sourceView.bounds
@@ -1476,19 +1532,35 @@ extension PVGameLibraryViewController: UITableViewDataSource {
     func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
         return section == 0 ? SortOptions.count : 4
     }
-
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // NOTE: cell setup is done in willDisplayCell
         if indexPath.section == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "sortCell", for: indexPath)
+            return tableView.dequeueReusableCell(withIdentifier: "sortCell", for: indexPath)
+        } else if indexPath.section == 1 {
+            return tableView.dequeueReusableCell(withIdentifier: "viewOptionsCell", for: indexPath)
+        }
+        else {
+            fatalError("Invalid section")
+        }
+    }
+}
 
+extension PVGameLibraryViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+
+        cell.selectionStyle = .none     // prevent cell flashing when selected
+        
+        #if os(tvOS)
+            cell.layer.cornerRadius = 12
+        #endif
+
+        if indexPath.section == 0 {
             let sortOption = SortOptions.allCases[indexPath.row]
-
             cell.textLabel?.text = sortOption.description
             cell.accessoryType = indexPath.row == (try! currentSort.value()).row ? .checkmark : .none
-            return cell
         } else if indexPath.section == 1 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "viewOptionsCell", for: indexPath)
-
             switch indexPath.row {
             case 0:
                 cell.textLabel?.text = "Show Game Titles"
@@ -1505,18 +1577,22 @@ extension PVGameLibraryViewController: UITableViewDataSource {
             default:
                 fatalError("Invalid row")
             }
-
-            return cell
         }
-        fatalError("Invalid section")
+        else {
+            fatalError("Invalid section")
+        }
     }
-}
-
-extension PVGameLibraryViewController: UITableViewDelegate {
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 {
             currentSort.onNext(SortOptions.optionForRow(UInt(indexPath.row)))
-            dismiss(animated: true, completion: nil)
+            //dont call reloadSections or we will loose focus on tvOS
+            //tableView.reloadSections([indexPath.section], with: .automatic)
+            for row in 0..<(self.tableView(tableView, numberOfRowsInSection: indexPath.section)) {
+                let indexPath = IndexPath(row:row, section:indexPath.section)
+                self.tableView(tableView, willDisplay:tableView.cellForRow(at:indexPath)!, forRowAt:indexPath)
+            }
+            //dismiss(animated: true, completion: nil)
         } else if indexPath.section == 1 {
             switch indexPath.row {
             case 0:
@@ -1530,8 +1606,9 @@ extension PVGameLibraryViewController: UITableViewDelegate {
             default:
                 fatalError("Invalid row")
             }
-
-            tableView.reloadRows(at: [indexPath], with: .automatic)
+            //dont call reloadRows or we will loose focus on tvOS
+            //tableView.reloadRows(at: [indexPath], with:.automatic)
+            self.tableView(tableView, willDisplay:tableView.cellForRow(at:indexPath)!, forRowAt:indexPath)
             collectionView?.reloadData()
         }
     }
@@ -1660,37 +1737,39 @@ extension PVGameLibraryViewController {
             promptToDeleteGame(focusedGame)
         }
 
-        func collectionView(_ collectionView: UICollectionView, didUpdateFocusIn context: UICollectionViewFocusUpdateContext, with _: UIFocusAnimationCoordinator) {
-            focusedGame = getFocusedGame(in: collectionView, focusContext: context)
-        }
 
-        private func getFocusedGame(in collectionView: UICollectionView, focusContext context: UICollectionViewFocusUpdateContext) -> PVGame? {
-            guard let indexPath = context.nextFocusedIndexPath,
-                let item: Section.Item = try? collectionView.rx.model(at: indexPath)
-                else { return nil }
+    func collectionView(_ collectionView: UICollectionView, didUpdateFocusIn context: UICollectionViewFocusUpdateContext, with _: UIFocusAnimationCoordinator) {
+        focusedGame = getFocusedGame(in: collectionView, focusContext: context)
+    }
 
-            switch item {
-                case .game(let game):
-                    return game
-            case .favorites(let games):
-                if let outerCell = collectionView.cellForItem(at: indexPath) as? CollectionViewInCollectionViewCell<PVGame>,
-                    let innerCell = context.nextFocusedItem as? UICollectionViewCell,
-                    let innerIndexPath = outerCell.internalCollectionView.indexPath(for: innerCell) {
-                    return games[innerIndexPath.row]
-                }
-                return nil
-            case .recents(let games):
-                if let outerCell = collectionView.cellForItem(at: indexPath) as? CollectionViewInCollectionViewCell<PVRecentGame>,
-                    let innerCell = context.nextFocusedItem as? UICollectionViewCell,
-                    let innerIndexPath = outerCell.internalCollectionView.indexPath(for: innerCell) {
-                    return games[innerIndexPath.row].game
-                }
-                return nil
-            case .saves:
-                return nil
+    private func getFocusedGame(in collectionView: UICollectionView, focusContext context: UICollectionViewFocusUpdateContext) -> PVGame? {
+        guard let indexPath = context.nextFocusedIndexPath,
+            let item: Section.Item = try? collectionView.rx.model(at: indexPath)
+            else { return nil }
+
+        switch item {
+            case .game(let game):
+                return game
+        case .favorites(let games):
+            if let outerCell = collectionView.cellForItem(at: indexPath) as? CollectionViewInCollectionViewCell<PVGame>,
+                let innerCell = context.nextFocusedItem as? UICollectionViewCell,
+                let innerIndexPath = outerCell.internalCollectionView.indexPath(for: innerCell) {
+                return games[innerIndexPath.row]
             }
+            return nil
+        case .recents(let games):
+            if let outerCell = collectionView.cellForItem(at: indexPath) as? CollectionViewInCollectionViewCell<PVRecentGame>,
+                let innerCell = context.nextFocusedItem as? UICollectionViewCell,
+                let innerIndexPath = outerCell.internalCollectionView.indexPath(for: innerCell) {
+                return games[innerIndexPath.row].game
+            }
+            return nil
+        case .saves:
+            return nil
         }
+    }
     #endif
+    
 
     #if os(iOS)
         @objc
@@ -1746,3 +1825,144 @@ private extension UIImage {
         }
     }
 }
+
+// MARK: ControllerButtonPress
+
+#if os(iOS)
+
+extension PVGameLibraryViewController: ControllerButtonPress {
+    func controllerButtonPress(_ type: ButtonType) {
+        switch type {
+        case .select:
+            select()
+        case .up:
+            moveVert(-1)
+        case .down:
+            moveVert(+1)
+        case .left:
+            moveHorz(-1)
+        case .right:
+            moveHorz(+1)
+        case .x:
+            settingsCommand()
+        case .y:
+            longPress()
+        default:
+            break
+        }
+    }
+    
+    private func moveVert(_ dir:Int) {
+        guard var indexPath = _selectedIndexPath else {
+            return select(IndexPath(item:0, section:0))
+        }
+        indexPath.item = indexPath.item + dir * itemsPerRow(indexPath)
+        if indexPath.item < 0 {
+            indexPath.section = indexPath.section-1
+            indexPath.item = collectionView!.numberOfItems(inSection: indexPath.section)-1
+        }
+        if indexPath.item >= collectionView!.numberOfItems(inSection: indexPath.section) {
+            indexPath.section = indexPath.section+1
+            indexPath.item = 0
+        }
+        select(indexPath)
+    }
+    
+    private func moveHorz(_ dir:Int) {
+        guard var indexPath = _selectedIndexPath else {
+            return select(IndexPath(item:0, section:0))
+        }
+        indexPath.item = indexPath.item + dir
+        select(indexPath)
+    }
+
+    // access cell(s) in nested collectionView
+    private func getNestedCollectionView(_ indexPath:IndexPath) -> UICollectionView? {
+        if let cell = collectionView?.cellForItem(at: IndexPath(item: 0, section: indexPath.section)),
+           let cv = (cell as? CollectionViewInCollectionViewCell<PVGame>)?.internalCollectionView ??
+                    (cell as? CollectionViewInCollectionViewCell<PVSaveState>)?.internalCollectionView ??
+                    (cell as? CollectionViewInCollectionViewCell<PVRecentGame>)?.internalCollectionView {
+            return cv
+        }
+        return nil
+    }
+
+    private func itemsPerRow(_ indexPath:IndexPath) -> Int {
+        guard let rect = collectionView!.layoutAttributesForItem(at: IndexPath(item: 0, section: indexPath.section))?.frame else {
+            return 1
+        }
+        
+        // TODO: this math is probably wrong
+        let layout = (collectionView!.collectionViewLayout as! UICollectionViewFlowLayout)
+        let space = layout.minimumInteritemSpacing
+        let width = collectionView!.bounds.width // + space // - (layout.sectionInset.left + layout.sectionInset.right)
+        let n = width / (rect.width + space)
+        
+        return max(1, Int(n))
+    }
+    
+    // just hilight (with a cheesy overlay) the item
+    private func select(_ indexPath:IndexPath?) {
+        
+        guard var indexPath = indexPath else {
+            _selectedIndexPath = nil
+            _selectedIndexPathView?.frame = .zero
+            return
+        }
+        
+        // TODO: this is a hack, a cell should be selected by setting isSelected and the cell class should handle it
+
+        indexPath.section = max(0, min(collectionView!.numberOfSections-1,indexPath.section))
+        let rect:CGRect
+        if let cv = getNestedCollectionView(indexPath) {
+            collectionView?.scrollToItem(at: IndexPath(item:0, section: indexPath.section), at: [], animated: false)
+            indexPath.item = max(0, min(cv.numberOfItems(inSection:0)-1,indexPath.item))
+            let idx = IndexPath(item:indexPath.item, section:0)
+            cv.scrollToItem(at:idx , at:[], animated: false)
+            rect = cv.convert(cv.layoutAttributesForItem(at:idx)?.frame ?? .zero, to: collectionView)
+        }
+        else {
+            indexPath.item = max(0, min(collectionView!.numberOfItems(inSection:indexPath.section)-1,indexPath.item))
+            collectionView?.scrollToItem(at: indexPath, at: [], animated: false)
+            rect = collectionView!.layoutAttributesForItem(at: indexPath)?.frame ?? .zero
+        }
+        
+        _selectedIndexPath = indexPath
+
+        // TODO: this is a hack, a cell should be selected by setting isSelected and the cell class should handle it
+        
+        if !rect.isEmpty {
+            _selectedIndexPathView = _selectedIndexPathView ?? UIView()
+            collectionView!.addSubview(_selectedIndexPathView)
+            collectionView!.bringSubviewToFront(_selectedIndexPathView)
+            _selectedIndexPathView.frame = rect.insetBy(dx: -4.0, dy: -4.0)
+            _selectedIndexPathView.backgroundColor = navigationController?.view.tintColor
+            _selectedIndexPathView.alpha = 0.5
+            _selectedIndexPathView.layer.cornerRadius = 16.0
+        }
+    }
+    
+    // actually *push* the selected item
+    private func select() {
+        guard let indexPath = _selectedIndexPath else { return }
+        if let collectionView = getNestedCollectionView(indexPath) {
+            let indexPath = IndexPath(item: indexPath.item, section:0)
+            collectionView.delegate?.collectionView?(collectionView, didSelectItemAt: indexPath)
+        }
+        else {
+            collectionView!.delegate?.collectionView?(collectionView!, didSelectItemAt: indexPath)
+        }
+    }
+    private func longPress() {
+        guard var indexPath = _selectedIndexPath else { return }
+        
+        if let _ = getNestedCollectionView(indexPath) {
+            indexPath = IndexPath(item:0, section:indexPath.section)
+        }
+        if let item: Section.Item = try? collectionView!.rx.model(at: indexPath) {
+            longPressed(item: item, at: indexPath, point: _selectedIndexPathView.center)
+        }
+    }
+}
+#endif
+

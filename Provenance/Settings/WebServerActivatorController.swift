@@ -44,6 +44,7 @@ protocol WebServerActivatorController: AnyObject {
                 self.showServer()
             })
             alert.addAction(viewAction)
+            alert.preferredAction = alert.actions.last
             present(alert, animated: true) { () -> Void in }
         }
 
@@ -77,13 +78,19 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
         let webServerAddress: String = PVWebServer.shared.urlString
         let webDavAddress: String = PVWebServer.shared.webDavURLString
         let message = """
-        Read about how to import ROMs on the Provenance wiki at:
+         
+        Read more about how to import
+        ROMs on the Provenance wiki at:
+        
         https://wiki.provenance-emu.com
 
+        
+        
         Upload/Download files to your device at:
 
         \(webServerAddress)  ᵂᵉᵇᵁᴵ
         \(webDavAddress)  ᵂᵉᵇᴰᴬⱽ
+        
         """
         return message
     }
@@ -104,7 +111,7 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
             // start web transfer service
             if PVWebServer.shared.startServers() {
                 let alert = UIAlertController(title: "Web Server Active", message: webServerAlertMessage, preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Stop", style: .default, handler: { (_: UIAlertAction) -> Void in
+                alert.addAction(UIAlertAction(title: "Stop", style: .cancel, handler: { (_: UIAlertAction) -> Void in
                     PVWebServer.shared.stopServers()
                 }))
                 #if os(iOS)
@@ -113,6 +120,7 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
                     })
                     alert.addAction(viewAction)
                 #endif
+                alert.preferredAction = alert.actions.last
                 present(alert, animated: true) { () -> Void in
                     alert.message = self.webServerAlertMessage
                 }

@@ -29,8 +29,14 @@
 #import <PVSupport/PVSupport.h>
 //#import <PVSupport/OERingBuffer.h>
 //#import <PVSupport/DebugUtils.h>
+#if !TARGET_OS_MACCATALYST
+#import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
+#import <OpenGLES/EAGL.h>
+#else
+#import <OpenGL/OpenGL.h>
+#endif
 
 #define TickCount DuckTickCount
 #include "core/types.h"

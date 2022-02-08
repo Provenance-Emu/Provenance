@@ -28,13 +28,33 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     #if os(iOS)
         var _logViewController: PVLogViewController?
     #endif
+
+    func _initUITheme() {
+        #if os(iOS)
+        //        let currentTheme = PVSettingsModel.shared.theme
+        //        Theme.currentTheme = currentTheme.theme
+        DispatchQueue.main.async {
+            Theme.currentTheme = Theme.darkTheme
+        }
+        #endif
+    }
     
     func _initUI(
         libraryUpdatesController: PVGameLibraryUpdatesController,
         gameImporter: GameImporter,
         gameLibrary: PVGameLibrary
     ) {
-        if #available(iOS 14, tvOS 14, *), PVSettingsModel.shared.debugOptions.useSwiftUI {
+        _initUITheme()
+        
+        // Set root view controller and make windows visible
+        let window = UIWindow.init(frame: UIScreen.main.bounds)
+        self.window = window
+
+        #if os(tvOS)
+            window.tintColor = UIColor(red: 0.1, green: 0.5, blue: 0.95, alpha: 1.0)  // PVBlue
+        #endif
+
+        if  #available(iOS 14, tvOS 14, *), PVSettingsModel.shared.debugOptions.useSwiftUI {
             let rootViewController = PVRootViewController.instantiate(
                 updatesController: libraryUpdatesController,
                 gameLibrary: gameLibrary,
@@ -45,12 +65,14 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
                 options: .init(widthPercent: 0.8, animationDuration: 0.2, overlayColor: .gray,overlayOpacity: 0.3, shadowOpacity: 0.0)
             )
             
-            let window = UIWindow(frame: UIScreen.main.bounds)
             window.rootViewController = sideNav
-            self.window = window
-            window.makeKeyAndVisible()
         } else {
-            guard let rootNavigation = window?.rootViewController as? UINavigationController else {
+            let storyboard = UIStoryboard.init(name: "Provenance", bundle: Bundle.main)
+            let vc = storyboard.instantiateInitialViewController()
+            
+            window.rootViewController = vc
+            
+            guard let rootNavigation = window.rootViewController as? UINavigationController else {
                 fatalError("No root nav controller")
             }
             guard let gameLibraryViewController = rootNavigation.viewControllers.first as? PVGameLibraryViewController else {
@@ -69,7 +91,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         _initLogging()
         _initAppCenter()
         setDefaultsFromSettingsBundle()
-
+        
 		#if !targetEnvironment(macCatalyst)
         DispatchQueue.global(qos: .background).async {
             let useiCloud = PVSettingsModel.shared.debugOptions.iCloudSync && PVEmulatorConfiguration.supportsICloud
@@ -92,13 +114,15 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
                 fatalError(error.localizedDescription)
             }))
 
+            self.window?.rootViewController = UIViewController()
+            self.window?.makeKeyAndVisible()
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 self.window?.rootViewController?.present(alert, animated: true, completion: nil)
             }
 
             return true
         }
-
+        
         let gameLibrary = PVGameLibrary(database: RomDatabase.sharedInstance)
 
         #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
@@ -118,12 +142,6 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             }
         #endif
 
-        #if os(iOS)
-//        let currentTheme = PVSettingsModel.shared.theme
-//        Theme.currentTheme = currentTheme.theme
-            Theme.currentTheme = Theme.darkTheme
-        #endif
-
         // Setup importing/updating library
         let gameImporter = GameImporter.shared
         let libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter)
@@ -140,7 +158,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             .subscribe().disposed(by: disposeBag)
 
         _initUI(libraryUpdatesController: libraryUpdatesController, gameImporter: gameImporter, gameLibrary: gameLibrary)
-        
+
         let database = RomDatabase.sharedInstance
         database.refresh()
 
@@ -162,6 +180,8 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 		DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: { [unowned self] in
 			self.startOptionalWebDavServer()
 		})
+
+        self.window!.makeKeyAndVisible()
 
         return true
     }

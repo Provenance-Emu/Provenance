@@ -43,6 +43,13 @@ typedef struct RenderSettings {
 
 @interface PVGPUViewController : BaseViewController
 
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
+@property (nonatomic, assign) BOOL isPaused;
+@property (nonatomic, assign) double framesPerSecond;
+@property (nonatomic, assign) NSTimeInterval timeSinceLastDraw;
+
+#endif
+
 @end
 
 NS_ASSUME_NONNULL_END

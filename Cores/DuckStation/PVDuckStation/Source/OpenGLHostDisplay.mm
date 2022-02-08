@@ -39,16 +39,14 @@
 
 #include <glad.h>
 
-//#if !TARGET_OS_MACCATALYST
+#if !TARGET_OS_MACCATALYST
 #import <OpenGLES/gltypes.h>
 //#import <OpenGLES/ES3/gl.h>
 //#import <OpenGLES/ES3/glext.h>
 #import <OpenGLES/EAGL.h>
-//#else
-//@import OpenGL;
-//@import AppKit;
-//@import GLUT;
-//#endif
+#else
+#import <OpenGL/OpenGL.h>
+#endif
 
 #define OE_CORE_LOG OS_LOG_DEFAULT
 

@@ -252,7 +252,7 @@
                             </stackView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="GjV-Kx-6VO"/>
-                        <color key="backgroundColor" systemColor="tableCellGroupedBackgroundColor"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="8Rk-2X-23P" firstAttribute="leading" secondItem="GjV-Kx-6VO" secondAttribute="leading" constant="20" id="5My-XJ-KLX"/>
                             <constraint firstItem="GjV-Kx-6VO" firstAttribute="top" secondItem="8Rk-2X-23P" secondAttribute="top" constant="11" id="9M4-Ph-zhF"/>
@@ -380,7 +380,7 @@
                     <navigationItem key="navigationItem" id="YeI-bH-0RW">
                         <leftBarButtonItems>
                             <barButtonItem systemItem="add" id="qjY-qw-buq">
-                                <color key="tintColor" red="0.1" green="0.5" blue="0.95" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="tintColor" red="0.10000000000000001" green="0.5" blue="0.94999999999999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
                                     <action selector="getMoreROMs:" destination="In9-6L-5FX" id="Pje-W7-Ltl"/>
                                 </connections>
@@ -395,19 +395,19 @@
                         <rightBarButtonItems>
                             <barButtonItem id="d3P-nN-WL5" userLabel="Settings">
                                 <imageReference key="image" image="gear" symbolScale="large" renderingMode="template"/>
-                                <color key="tintColor" red="0.1" green="0.5" blue="0.95" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="tintColor" red="0.10000000000000001" green="0.5" blue="0.94999999999999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
                                     <segue destination="LQv-GI-W6u" kind="presentation" identifier="SplitSettingsSegue" modalPresentationStyle="fullScreen" id="c3G-jH-C8F"/>
                                 </connections>
                             </barButtonItem>
                             <barButtonItem image="sort" id="d9C-DJ-Fuv" userLabel="Sort">
-                                <color key="tintColor" red="0.1" green="0.5" blue="0.95" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="tintColor" red="0.10000000000000001" green="0.5" blue="0.94999999999999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
                                     <action selector="sortButtonTapped:" destination="In9-6L-5FX" id="Ncy-G2-J4k"/>
                                 </connections>
                             </barButtonItem>
                             <barButtonItem systemItem="search" id="hPG-1V-noK">
-                                <color key="tintColor" red="0.1" green="0.5" blue="0.95" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="tintColor" red="0.10000000000000001" green="0.5" blue="0.94999999999999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
                                     <action selector="searchButtonTapped:" destination="In9-6L-5FX" id="1Tm-PH-MVd"/>
                                 </connections>
@@ -417,7 +417,9 @@
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="conflictsBarButtonItem" destination="Dsv-oR-lbw" id="Ztu-t8-0xP"/>
+                        <outlet property="getMoreRomsBarButtonItem" destination="qjY-qw-buq" id="exm-wG-N87"/>
                         <outlet property="settingsBarButtonItem" destination="d3P-nN-WL5" id="J6I-TX-4u5"/>
+                        <outlet property="sortOptionBarButtonItem" destination="d9C-DJ-Fuv" id="yHy-GM-GMA"/>
                         <outlet property="sortOptionsTableView" destination="YhY-ua-og3" id="hcg-6Z-b08"/>
                         <outlet property="view" destination="gzA-0Q-J61" id="3uu-VO-m35"/>
                         <segue destination="rRL-5Z-sl7" kind="showDetail" identifier="gameMoreInfoSegue" id="7da-Wx-yg7"/>

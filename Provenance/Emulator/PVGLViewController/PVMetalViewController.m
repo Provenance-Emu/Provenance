@@ -65,7 +65,7 @@
 
 @end
 
-__attribute__((objc_direct_members))
+PV_OBJC_DIRECT_MEMBERS
 @implementation PVMetalViewController
 
 + (void)initialize
@@ -325,6 +325,9 @@ __attribute__((objc_direct_members))
     CGRect screenRect = self.emulatorCore.screenRect;
     MTLPixelFormat pixelFormat = [self getMTLPixelFormatFromGLPixelFormat:self.emulatorCore.pixelFormat type:self.emulatorCore.pixelType];
     
+    if (self.emulatorCore.rendersToOpenGL) {
+        pixelFormat = MTLPixelFormatRGBA8Unorm;
+    }    
     if (self.inputTexture == nil ||
         self.inputTexture.width != screenRect.size.width ||
         self.inputTexture.height != screenRect.size.height ||
@@ -361,9 +364,9 @@ __attribute__((objc_direct_members))
         desc.minFilter = MTLSamplerMinMagFilterNearest;
         desc.magFilter = MTLSamplerMinMagFilterNearest;
         desc.mipFilter = MTLSamplerMipFilterNearest;
-        desc.sAddressMode = MTLSamplerAddressModeClampToEdge;
-        desc.tAddressMode = MTLSamplerAddressModeClampToEdge;
-        desc.rAddressMode = MTLSamplerAddressModeClampToEdge;
+        desc.sAddressMode = MTLSamplerAddressModeClampToZero;
+        desc.tAddressMode = MTLSamplerAddressModeClampToZero;
+        desc.rAddressMode = MTLSamplerAddressModeClampToZero;
         
         _pointSampler = [_device newSamplerStateWithDescriptor:desc];
     }
@@ -373,9 +376,9 @@ __attribute__((objc_direct_members))
         desc.minFilter = MTLSamplerMinMagFilterLinear;
         desc.magFilter = MTLSamplerMinMagFilterLinear;
         desc.mipFilter = MTLSamplerMipFilterNearest;
-        desc.sAddressMode = MTLSamplerAddressModeClampToEdge;
-        desc.tAddressMode = MTLSamplerAddressModeClampToEdge;
-        desc.rAddressMode = MTLSamplerAddressModeClampToEdge;
+        desc.sAddressMode = MTLSamplerAddressModeClampToZero;
+        desc.tAddressMode = MTLSamplerAddressModeClampToZero;
+        desc.rAddressMode = MTLSamplerAddressModeClampToZero;
         
         _linearSampler = [_device newSamplerStateWithDescriptor:desc];
     }
@@ -533,19 +536,40 @@ __attribute__((objc_direct_members))
         
         if (!strongself.emulatorCore.rendersToOpenGL)
         {
-            const void* videoBuffer = strongself.emulatorCore.videoBuffer;
+            const uint8_t* videoBuffer = strongself.emulatorCore.videoBuffer;
             CGSize videoBufferSize = strongself.emulatorCore.bufferSize;
             uint formatByteWidth = [strongself getByteWidthForPixelFormat:strongself.emulatorCore.pixelFormat type:strongself.emulatorCore.pixelType];
+            uint inputBytesPerRow = videoBufferSize.width * formatByteWidth;
             
             id<MTLBuffer> uploadBuffer = strongself->_uploadBuffer[++strongself->_frameCount % BUFFER_COUNT];
+            uint8_t* uploadAddress = uploadBuffer.contents;
             
-            memcpy(uploadBuffer.contents, videoBuffer, videoBufferSize.width * screenRect.size.height * formatByteWidth);
+
+            uint outputBytesPerRow;
+            if (screenRect.origin.x == 0 && (screenRect.size.width * 2 >= videoBufferSize.width)) // fast path if x is aligned to edge and excess width isn't too crazy
+            {
+                outputBytesPerRow = inputBytesPerRow;
+                const uint8_t* inputAddress = &videoBuffer[(uint)screenRect.origin.y * inputBytesPerRow];
+                uint8_t* outputAddress = uploadAddress;
+                memcpy(outputAddress, inputAddress, screenRect.size.height * inputBytesPerRow);
+            }
+            else
+            {
+                outputBytesPerRow = screenRect.size.width * formatByteWidth;
+                for (uint i = 0; i < (uint)screenRect.size.height; ++i)
+                {
+                    uint inputRow = screenRect.origin.y + i;
+                    const uint8_t* inputAddress = &videoBuffer[(inputRow * inputBytesPerRow) + ((uint)screenRect.origin.x * formatByteWidth)];
+                    uint8_t* outputAddress = &uploadAddress[i * outputBytesPerRow];
+                    memcpy(outputAddress, inputAddress, outputBytesPerRow);
+                }
+            }
             
             id<MTLBlitCommandEncoder> encoder = [commandBuffer blitCommandEncoder];
             
             [encoder copyFromBuffer:uploadBuffer
                        sourceOffset:0
-                  sourceBytesPerRow:videoBufferSize.width * formatByteWidth
+                  sourceBytesPerRow:outputBytesPerRow
                 sourceBytesPerImage:0
                          sourceSize:MTLSizeMake(screenRect.size.width, screenRect.size.height, 1)
                            toTexture:strongself.inputTexture
@@ -569,8 +593,8 @@ __attribute__((objc_direct_members))
         if (strongself->renderSettings.crtFilterEnabled)
         {
             struct CRT_Data cbData;
-            cbData.DisplayRect.x = screenRect.origin.x;
-            cbData.DisplayRect.y = screenRect.origin.y;
+            cbData.DisplayRect.x = 0;
+            cbData.DisplayRect.y = 0;
             cbData.DisplayRect.z = screenRect.size.width;
             cbData.DisplayRect.w = screenRect.size.height;
             
@@ -761,7 +785,7 @@ __attribute__((objc_direct_members))
     [encoder copyFromTexture:backingMTLTexture
                  sourceSlice:0
                  sourceLevel:0
-                sourceOrigin:MTLOriginMake(0, 0, 0)
+                sourceOrigin:MTLOriginMake(screenRect.origin.x, screenRect.origin.y, 0)
                   sourceSize:MTLSizeMake(screenRect.size.width, screenRect.size.height, 1)
                    toTexture:_inputTexture
             destinationSlice:0

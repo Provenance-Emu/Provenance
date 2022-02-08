@@ -129,7 +129,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         gpuViewController.view?.removeFromSuperview()
         gpuViewController.removeFromParent()
         #if os(iOS)
-            GCController.controllers().forEach { $0.controllerPausedHandler = nil }
+            PVControllerManager.shared.controllers().forEach { $0.controllerPausedHandler = nil }
         #endif
         updatePlayedDuration()
         destroyAutosaveTimer()
@@ -201,6 +201,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         fpsLabel.translatesAutoresizingMaskIntoConstraints = false
         fpsLabel.textAlignment = .right
         fpsLabel.isOpaque = true
+        fpsLabel.numberOfLines = 2
         #if os(tvOS)
             fpsLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 40, weight: .bold)
         #else
@@ -212,12 +213,91 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
         fpsTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { [weak self] (_: Timer) -> Void in
             guard let `self` = self else { return }
+            let green = [NSAttributedString.Key.foregroundColor: UIColor.green]
+            let red = [NSAttributedString.Key.foregroundColor: UIColor.red]
+            let white = [NSAttributedString.Key.foregroundColor: UIColor.white]
 
             let coreSpeed = self.core.renderFPS/self.core.frameInterval * 100
             let drawTime =  self.gpuViewController.timeSinceLastDraw * 1000
             let fps = 1000 / drawTime
-            self.fpsLabel.text = String( format: "Core speed %03.02f%% - Draw time %02.02f%ms - FPS %03.02f%", coreSpeed, drawTime, fps)
+            let mem = self.memoryUsage()
+
+            let cpu = self.cpuUsage()
+            let cpuFormatted = String.init(format: "%03.01f", cpu)
+            let cpuAttributed = NSAttributedString(string: cpuFormatted,
+                                                   attributes: red)
+            
+            let memFormatted: String = NSString.localizedStringWithFormat("%i", (mem.used/1024/1024)) as String
+            let memTotalFormatted: String = NSString.localizedStringWithFormat("%i", (mem.total/1024/1024)) as
+            String
+
+            let memUsedAttributed = NSAttributedString(string: memFormatted,
+                                                       attributes: green)
+            let memTotalAttributed = NSAttributedString(string: memTotalFormatted,
+                                                        attributes: green)
+//
+//            let label = NSMutableAttributedString()
+//            
+//            let top = NSAttributedString(format: "Core speed %03.02f%% - Draw time %02.02f%ms - FPS %03.02f\n", coreSpeed, drawTime, fps);
+//            
+//            label.append(top)
+            
+            self.fpsLabel.text = String(format: "Core speed %03.02f%% - Draw time %02.02f%ms - FPS %03.02f\nCPU %@%% Mem %@/%@(MB)", coreSpeed, drawTime, fps, cpuFormatted, memFormatted, memTotalFormatted)
         })
+    }
+    
+    typealias MemoryUsage = (used: UInt64, total: UInt64)
+    func memoryUsage() -> MemoryUsage {
+        var taskInfo = task_vm_info_data_t()
+        var count = mach_msg_type_number_t(MemoryLayout<task_vm_info>.size) / 4
+        let result: kern_return_t = withUnsafeMutablePointer(to: &taskInfo) {
+            $0.withMemoryRebound(to: integer_t.self, capacity: 1) {
+                task_info(mach_task_self_, task_flavor_t(TASK_VM_INFO), $0, &count)
+            }
+        }
+        
+        var used: UInt64 = 0
+        if result == KERN_SUCCESS {
+            used = UInt64(taskInfo.phys_footprint)
+        }
+        
+        let total = ProcessInfo.processInfo.physicalMemory
+        return (used, total)
+    }
+    
+    func cpuUsage() -> Double {
+        var totalUsageOfCPU: Double = 0.0
+        var threadsList: thread_act_array_t?
+        var threadsCount = mach_msg_type_number_t(0)
+        let threadsResult = withUnsafeMutablePointer(to: &threadsList) {
+            return $0.withMemoryRebound(to: thread_act_array_t?.self, capacity: 1) {
+                task_threads(mach_task_self_, $0, &threadsCount)
+            }
+        }
+        
+        if threadsResult == KERN_SUCCESS, let threadsList = threadsList {
+            for index in 0..<threadsCount {
+                var threadInfo = thread_basic_info()
+                var threadInfoCount = mach_msg_type_number_t(THREAD_INFO_MAX)
+                let infoResult = withUnsafeMutablePointer(to: &threadInfo) {
+                    $0.withMemoryRebound(to: integer_t.self, capacity: 1) {
+                        thread_info(threadsList[Int(index)], thread_flavor_t(THREAD_BASIC_INFO), $0, &threadInfoCount)
+                    }
+                }
+                
+                guard infoResult == KERN_SUCCESS else {
+                    break
+                }
+                
+                let threadBasicInfo = threadInfo as thread_basic_info
+                if threadBasicInfo.flags & TH_FLAGS_IDLE == 0 {
+                    totalUsageOfCPU = (totalUsageOfCPU + (Double(threadBasicInfo.cpu_usage) / Double(TH_USAGE_SCALE) * 100.0))
+                }
+            }
+        }
+        
+        vm_deallocate(mach_task_self_, vm_address_t(UInt(bitPattern: threadsList)), vm_size_t(Int(threadsCount) * MemoryLayout<thread_t>.stride))
+        return totalUsageOfCPU
     }
 
     // TODO: This method is way too big, break it up
@@ -297,12 +377,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             initFPSLabel()
         }
 
-        #if !targetEnvironment(simulator)
-            if !GCController.controllers().isEmpty {
-                menuButton?.isHidden = true
-            }
-        #endif
-
+        hideOrShowMenuButton()
+ 
         convertOldSaveStatesToNewIfNeeded()
 
         core.startEmulation()
@@ -319,12 +395,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             view.addGestureRecognizer(menuGestureRecognizer!)
         }
         #endif
-        GCController.controllers().forEach {
+        PVControllerManager.shared.controllers().forEach {
 			$0.setupPauseHandler(onPause: { [weak self] in
 				guard let self = self else { return }
 				self.controllerPauseButtonPressed()
 			})
 		}
+        enableControllerInput(false)
     }
 
     public override func viewDidAppear(_: Bool) {
@@ -484,25 +561,36 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             //    if (@available(iOS 10, *)) {
             //        self.controllerUserInteractionEnabled = enabled;
             //    }
+            PVControllerManager.shared.controllerUserInteractionEnabled = enabled
         #endif
     }
 
     @objc func hideMoreInfo() {
         dismiss(animated: true, completion: { () -> Void in
-            #if os(tvOS)
-                self.showMenu(nil)
-            #else
-                self.hideMenu()
-            #endif
+            self.hideMenu()
         })
     }
 
     func hideMenu() {
         enableControllerInput(false)
-        if presentedViewController is UIAlertController {
+        isShowingMenu = false
+        if (presentedViewController is UIAlertController) && !presentedViewController!.isBeingDismissed {
             dismiss(animated: true) { () -> Void in }
-            isShowingMenu = false
         }
+        if (presentedViewController is TVAlertController) && !presentedViewController!.isBeingDismissed {
+            dismiss(animated: true) { () -> Void in }
+        }
+        #if os(iOS)
+        // if there is a DONE button, press it
+        if let nav = presentedViewController as? UINavigationController, !presentedViewController!.isBeingDismissed {
+            let top = nav.topViewController?.navigationItem
+            for bbi in (top?.leftBarButtonItems ?? []) + (top?.rightBarButtonItems ?? []) {
+                if bbi.style == .done || bbi.action == NSSelectorFromString("done:") {
+                    _ = bbi.target?.perform(bbi.action, with:bbi)
+                }
+            }
+        }
+        #endif
         updateLastPlayedTime()
         core.setPauseEmulation(false)
     }
@@ -531,7 +619,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     #if os(iOS)
         @objc func takeScreenshot() {
             if let screenshot = captureScreenshot() {
-                DispatchQueue.global(qos: .default).async(execute: { () -> Void in
+                DispatchQueue.global(qos: .utility).async(execute: { () -> Void in
                     UIImageWriteToSavedPhotosAlbum(screenshot, nil, nil, nil)
                 })
 
@@ -556,13 +644,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         }
 
     #endif
-    @objc func showSpeedMenu() {
+    @objc func showSpeedMenu(_ sender:AnyObject?) {
         let actionSheet = UIAlertController(title: "Game Speed", message: nil, preferredStyle: .actionSheet)
-        if traitCollection.userInterfaceIdiom == .pad, let menuButton = menuButton {
+        if traitCollection.userInterfaceIdiom == .pad, let menuButton = menuButton, sender === menuButton {
             actionSheet.popoverPresentationController?.sourceView = menuButton
             actionSheet.popoverPresentationController?.sourceRect = menuButton.bounds
         }
-        let speeds = ["Slow", "Normal", "Fast"]
+        let speeds = ["Slow (20%)", "Normal (100%)", "Fast (500%)"]
         speeds.enumerated().forEach { idx, title in
             let action = UIAlertAction(title: title, style: .default, handler: { (_: UIAlertAction) -> Void in
                 self.core.gameSpeed = GameSpeed(rawValue: idx) ?? .normal
@@ -575,6 +663,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
                 actionSheet.preferredAction = action
             }
         }
+        let action = UIAlertAction(title: "Cancel", style: .cancel, handler: { (_: UIAlertAction) -> Void in
+            self.core.setPauseEmulation(false)
+            self.isShowingMenu = false
+            self.enableControllerInput(false)
+        })
+        actionSheet.addAction(action)
+
         present(actionSheet, animated: true, completion: { () -> Void in
             PVControllerManager.shared.iCadeController?.refreshListener()
         })
@@ -584,15 +679,25 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         guard let moreInfoViewController = UIStoryboard(name: "Provenance", bundle: nil).instantiateViewController(withIdentifier: "gameMoreInfoVC") as? PVGameMoreInfoViewController else { return }
         moreInfoViewController.game = self.game
         moreInfoViewController.showsPlayButton = false
+        let newNav = UINavigationController(rootViewController: moreInfoViewController)
 
         #if os(iOS)
-        moreInfoViewController.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(self.hideMoreInfo))
+            moreInfoViewController.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(self.hideMoreInfo))
+        #else
+            let tap = UITapGestureRecognizer(target: self, action: #selector(self.hideMoreInfo))
+            tap.allowedPressTypes = [.menu]
+            moreInfoViewController.view.addGestureRecognizer(tap)
         #endif
+        
+        // disable iOS 13 swipe to dismiss...
+        if #available(iOS 13.0, tvOS 13.0, *) {
+            newNav.isModalInPresentation = true
+        }
 
-        let newNav = UINavigationController(rootViewController: moreInfoViewController)
         self.present(newNav, animated: true) { () -> Void in }
-        self.isShowingMenu = false
-        self.enableControllerInput(false)
+        //hideMoreInfo will/should do this!
+        //self.isShowingMenu = false
+        //self.enableControllerInput(false)
     }
 
     typealias QuitCompletion = () -> Void
