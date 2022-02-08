@@ -585,9 +585,9 @@ static bool environment_callback(unsigned cmd, void *data)
         
         retro_get_region();
 		
-#warning "No clue what this does, JM"
-		if (system_hw == SYSTEM_MCD)
-			 bram_load();
+//#warning "No clue what this does, JM"
+//		if (system_hw == SYSTEM_MCD)
+//			 bram_load();
 
 		[self executeFrame];
         
