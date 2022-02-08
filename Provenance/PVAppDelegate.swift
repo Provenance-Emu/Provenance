@@ -41,8 +41,8 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
                 gameImporter: gameImporter)
             let sideNav = SideNavigationController(mainViewController: UINavigationController(rootViewController: rootViewController))
             sideNav.leftSide(
-                viewController: SideMenuView.instantiate(gameLibrary: gameLibrary, delegate: rootViewController),
-                options: .init(widthPercent: 0.8, animationDuration: 0.2, overlayColor: .gray,overlayOpacity: 0.3, shadowOpacity: 0.0)
+                viewController: UINavigationController(rootViewController: SideMenuView.instantiate(gameLibrary: gameLibrary, delegate: rootViewController)),
+                options: .init(widthPercent: 0.8, animationDuration: 0.18, overlayColor: .clear, overlayOpacity: 1, shadowOpacity: 0.0)
             )
             
             let window = UIWindow(frame: UIScreen.main.bounds)

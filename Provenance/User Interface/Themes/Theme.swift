@@ -129,6 +129,7 @@ struct DarkTheme: iOSTheme {
     var alertViewText: UIColor { return UIColor.lightGray }
 
     var statusBarStyle: UIStatusBarStyle { return UIStatusBarStyle.lightContent }
+    var statusBarColor: UIColor? { return UIColor(hex: "#1C1C1C") }
 
     var settingsHeaderBackground: UIColor? { return UIColor.black }
     var settingsHeaderText: UIColor? { return UIColor(white: 0.5, alpha: 1.0) }
