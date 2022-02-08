@@ -126,20 +126,6 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3D73CF11E9EAF1C0023925B"
-               BuildableName = "PVDuckStation.framework"
-               BlueprintName = "PVDuckStation-tvOS"
-               ReferencedContainer = "container:Cores/DuckStation/PVDuckStation.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C9D4C51DEA77E90068D057"
                BuildableName = "PVGBA.framework"
                BlueprintName = "PVGBA-tvOS"

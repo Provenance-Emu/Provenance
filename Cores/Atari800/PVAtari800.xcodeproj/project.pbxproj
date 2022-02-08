@@ -237,7 +237,7 @@
 		B36DE7841D6AB44D002EE3ED /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B36DE7991D6AD049002EE3ED /* libedit.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libedit.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/usr/lib/libedit.tbd; sourceTree = DEVELOPER_DIR; };
 		B38526A72108264D00434945 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3D73D331E9EAF1C0023925B /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3D73D331E9EAF1C0023925B /* PVAtari800-tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "PVAtari800-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -281,7 +281,7 @@
 			isa = PBXGroup;
 			children = (
 				B36DE7481D6AB19C002EE3ED /* PVAtari800.framework */,
-				B3D73D331E9EAF1C0023925B /* PVAtari800.framework */,
+				B3D73D331E9EAF1C0023925B /* PVAtari800-tvOS.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -510,7 +510,7 @@
 			);
 			name = "PVAtari800-tvOS";
 			productName = PVAtari800;
-			productReference = B3D73D331E9EAF1C0023925B /* PVAtari800.framework */;
+			productReference = B3D73D331E9EAF1C0023925B /* PVAtari800-tvOS.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -912,7 +912,8 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVAtari800";
-				PRODUCT_NAME = PVAtari800;
+				PRODUCT_MODULE_NAME = PVAtari800;
+				PRODUCT_NAME = "PVAtari800-tvOS";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
@@ -1036,7 +1037,8 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVAtari800";
-				PRODUCT_NAME = PVAtari800;
+				PRODUCT_MODULE_NAME = PVAtari800;
+				PRODUCT_NAME = "PVAtari800-tvOS";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
@@ -1076,7 +1078,8 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVAtari800";
-				PRODUCT_NAME = PVAtari800;
+				PRODUCT_MODULE_NAME = PVAtari800;
+				PRODUCT_NAME = "PVAtari800-tvOS";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
