@@ -59,13 +59,7 @@ struct HomeView: SwiftUI.View {
     var body: some SwiftUI.View {
         ScrollView {
             LazyVStack {
-                HomeSection(title: "Continue") {
-                    ForEach(recentSaveStates, id: \.self) { recentSaveState in
-                        GameItemView(game: recentSaveState.game, constrainHeight: true) {
-                            rootDelegate?.root_load(recentSaveState.game, sender: self, core: nil, saveState: recentSaveState)
-                        }
-                    }
-                }
+                HomeContinueSection(continueStates: recentSaveStates, rootDelegate: rootDelegate)
                 HomeSection(title: "Recently Played") {
                     ForEach(recentlyPlayedGames, id: \.self) { recentlyPlayedGame in
                         GameItemView(game: recentlyPlayedGame.game, constrainHeight: true) {
@@ -90,6 +84,65 @@ struct HomeView: SwiftUI.View {
             }
         }
         .background(Color.black)
+    }
+}
+
+@available(iOS 14, tvOS 14, *)
+struct HomeContinueSection: SwiftUI.View {
+    
+    var continueStates: Results<PVSaveState>
+    var rootDelegate: PVRootDelegate?
+    
+    var body: some SwiftUI.View {
+        
+        TabView {
+            if continueStates.count > 0 {
+                ForEach(continueStates, id: \.self) { state in
+                    HomeContinueItemView(continueState: state) {
+                        rootDelegate?.root_load(state.game, sender: self, core: state.core, saveState: state)
+                    }
+                }
+            } else {
+                Text("No Continues")
+                    .tag("no continues")
+            }
+        }
+        .tabViewStyle(.page)
+        .indexViewStyle(.page(backgroundDisplayMode: .interactive))
+        .id(continueStates.count)
+        .frame(height: 260)
+    }
+}
+
+@available(iOS 14, tvOS 14, *)
+struct HomeContinueItemView: SwiftUI.View {
+    
+    var continueState: PVSaveState
+    var action: () -> Void
+    
+//    @State var screenshot: UIImage?
+    
+    var body: some SwiftUI.View {
+        Button {
+            action()
+        } label: {
+            if let screenshot = continueState.image, let image = UIImage(contentsOfFile: screenshot.url.path) {
+                Image(uiImage: image)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+            } else {
+                Image(uiImage: UIImage.missingArtworkImage(gameTitle: continueState.game.title, ratio: 1))
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+            }
+        }
+//        .onAppear {
+//            if let url = continueState.image?.url {
+//                PVMediaCache.shareInstance().image(forKey: url.path, completion: { _, image in
+//                    self.screenshot = image
+//                })
+//            }
+//        }
     }
 }
 

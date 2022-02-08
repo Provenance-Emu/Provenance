@@ -36,7 +36,7 @@ extension PVRootViewController: PVRootDelegate {
     }
     
     func root_load(_ game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?) {
-        self.load(game.warmUp(), sender: sender, core: core, saveState: saveState)
+        self.load(game.warmUp(), sender: sender, core: core?.warmUp(), saveState: saveState?.warmUp())
     }
     
     func root_openSaveState(_ saveState: PVSaveState) {
@@ -161,7 +161,7 @@ extension PVRootViewController: PVMenuDelegate {
             }
         }
         
-        let consolesView = ConsolesWrapperView(consolesWrapperViewDelegate: consolesWrapperViewDelegate, gameLibrary: self.gameLibrary, rootDelegate: self)
+        let consolesView = ConsolesWrapperView(consolesWrapperViewDelegate: consolesWrapperViewDelegate, rootDelegate: self)
         self.loadIntoContainer(.console(consoleId: consoleId, title: console.name), newVC: UIHostingController(rootView: consolesView))
     }
 

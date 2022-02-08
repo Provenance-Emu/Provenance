@@ -21,7 +21,6 @@ import PVLibrary
 @available(iOS 14, tvOS 14, *)
 struct GameItemView: SwiftUI.View {
     
-//    @ObservedRealmObject var game: PVGame
     var game: PVGame
     var constrainHeight: Bool = false
     var asRow: Bool = false
@@ -52,7 +51,6 @@ struct GameItemView: SwiftUI.View {
 @available(iOS 14, tvOS 14, *)
 struct GameItemViewCell: SwiftUI.View {
     
-//    @ObservedRealmObject var game: PVGame
     var game: PVGame
     
     var artwork: UIImage? = nil
@@ -82,7 +80,6 @@ struct GameItemViewCell: SwiftUI.View {
 @available(iOS 14, tvOS 14, *)
 struct GameItemViewRow: SwiftUI.View {
     
-//    @ObservedRealmObject var game: PVGame
     var game: PVGame
     
     var artwork: UIImage? = nil
@@ -132,38 +129,13 @@ struct ArtworkImageBaseView: SwiftUI.View {
         self.boxartAspectRatio = boxartAspectRatio
     }
     
-    func missingArtworkImage() -> UIImage {
-    #if os(iOS)
-        let backgroundColor: UIColor = Theme.currentTheme.settingsCellBackground!
-    #else
-        let backgroundColor: UIColor = UIColor(white: 0.18, alpha: 1.0)
-    #endif
-        
-    #if os(iOS)
-        let attributedText = NSAttributedString(string: gameTitle, attributes: [
-            NSAttributedString.Key.font: UIFont.systemFont(ofSize: 30.0),
-            NSAttributedString.Key.foregroundColor: Theme.currentTheme.settingsCellText!])
-    #else
-        let attributedText = NSAttributedString(string: gameTitle, attributes: [
-            NSAttributedString.Key.font: UIFont.systemFont(ofSize: 60.0),
-            NSAttributedString.Key.foregroundColor: UIColor.gray])
-    #endif
-        
-        let height: CGFloat = CGFloat(PVThumbnailMaxResolution)
-        let ratio: CGFloat = boxartAspectRatio.rawValue
-        let width: CGFloat = height * ratio
-        let size = CGSize(width: width, height: height)
-        let missingArtworkImage = UIImage.image(withSize: size, color: backgroundColor, text: attributedText)
-        return missingArtworkImage ?? UIImage()
-    }
-    
     var body: some SwiftUI.View {
         if let artwork = artwork {
             Image(uiImage: artwork)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
         } else {
-            Image(uiImage: missingArtworkImage())
+            Image(uiImage: UIImage.missingArtworkImage(gameTitle: gameTitle, ratio: boxartAspectRatio.rawValue))
                 .resizable()
                 .aspectRatio(contentMode: .fit)
         }
@@ -210,5 +182,31 @@ struct ArtworkDynamicWidthPreferenceKey: PreferenceKey {
 extension PVGame {
     var trueArtworkURL: String {
         return (customArtworkURL.isEmpty) ? originalArtworkURL : customArtworkURL
+    }
+}
+
+extension UIImage {
+    static func missingArtworkImage(gameTitle: String, ratio: CGFloat) -> UIImage {
+    #if os(iOS)
+        let backgroundColor: UIColor = Theme.currentTheme.settingsCellBackground!
+    #else
+        let backgroundColor: UIColor = UIColor(white: 0.18, alpha: 1.0)
+    #endif
+        
+    #if os(iOS)
+        let attributedText = NSAttributedString(string: gameTitle, attributes: [
+            NSAttributedString.Key.font: UIFont.systemFont(ofSize: 30.0),
+            NSAttributedString.Key.foregroundColor: Theme.currentTheme.settingsCellText!])
+    #else
+        let attributedText = NSAttributedString(string: gameTitle, attributes: [
+            NSAttributedString.Key.font: UIFont.systemFont(ofSize: 60.0),
+            NSAttributedString.Key.foregroundColor: UIColor.gray])
+    #endif
+        
+        let height: CGFloat = CGFloat(PVThumbnailMaxResolution)
+        let width: CGFloat = height * ratio
+        let size = CGSize(width: width, height: height)
+        let missingArtworkImage = UIImage.image(withSize: size, color: backgroundColor, text: attributedText)
+        return missingArtworkImage ?? UIImage()
     }
 }
