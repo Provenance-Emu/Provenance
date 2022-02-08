@@ -35,6 +35,17 @@ struct SideMenuView: SwiftUI.View {
         return hostingView
     }
     
+    func versionText() -> String {
+        let masterBranch: Bool = kGITBranch.lowercased() == "master"
+        var versionText = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+        versionText = versionText ?? "" + (" (\(Bundle.main.infoDictionary?["CFBundleVersion"] ?? ""))")
+        if !masterBranch {
+            versionText = "\(versionText ?? "") Beta"
+//            versionLabel.textColor = UIColor.init(hex: "#F5F5A0")
+        }
+        return versionText ?? ""
+    }
+    
     func sortedConsoles() -> Results<PVSystem> {
         return self.consoles.sorted(by: [SortDescriptor(keyPath: #keyPath(PVSystem.name), ascending: sortAscending)])
     }
@@ -70,7 +81,7 @@ struct SideMenuView: SwiftUI.View {
                 }
                 // TODO: flesh out collections later
                 Group {
-                    MenuSectionHeaderView(sectionTitle: "Provenance 2.something", sortable: false) {}
+                    MenuSectionHeaderView(sectionTitle: "Provenance \(versionText())", sortable: false) {}
                 }
                 Spacer()
             }
