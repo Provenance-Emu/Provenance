@@ -34,10 +34,9 @@ import PVLibrary
  ✅ stub context menu options
  ✅  style home screen top cell // NOTE: unable to get middle play button working
  - style side menu iOS
- - bios options in console view
  - search
- - style side menu tvOS
- - all things collections
+ - bios options in console view
+ - all things collections?? Save for later
  - full context menu options
  */
 
@@ -169,9 +168,7 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
 }
 
 // MARK: - Helpers
-
-@available(iOS 14, tvOS 14, *)
-extension PVRootViewController {
+extension UIViewController {
     
     func addChildViewController(_ child: UIViewController, toContainerView containerView: UIView) {
         addChild(child)
