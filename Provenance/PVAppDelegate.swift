@@ -12,10 +12,7 @@ import PVLibrary
 import PVSupport
 import RealmSwift
 import RxSwift
-#if !targetEnvironment(macCatalyst) && !os(macOS) // && canImport(SteamController)
-import SteamController
-import UIKit
-#endif
+
 
 @UIApplicationMain
 final class PVAppDelegate: UIResponder, UIApplicationDelegate {
@@ -146,11 +143,6 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
         let database = RomDatabase.sharedInstance
         database.refresh()
-
-        #if !targetEnvironment(macCatalyst) && canImport(SteamController) && !targetEnvironment(simulator)
-        // SteamController is build with STEAMCONTROLLER_NO_PRIVATE_API, so dont call this! ??
-        // SteamControllerManager.listenForConnections()
-        #endif
 
         #if os(iOS)
         if #available(iOS 11, *) {

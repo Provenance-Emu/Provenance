@@ -11,9 +11,6 @@ import Foundation
 import GameController
 import PVLibrary
 import PVSupport
-#if !targetEnvironment(macCatalyst) && !os(macOS) && canImport(SteamController)
-import SteamController
-#endif
 
 extension Notification.Name {
     static let PVControllerManagerControllerReassigned = Notification.Name("PVControllerManagerControllerReassignedNotification")
@@ -210,20 +207,6 @@ final class PVControllerManager: NSObject {
             return
         }
 
-#if !targetEnvironment(macCatalyst) && canImport(SteamController)
-        if let steamController = controller as? SteamController {
-            #if os(tvOS)
-            // PVEmulatorViewController will set to controller mode if game is running
-            steamController.steamControllerMode = .keyboardAndMouse
-            #endif
-            // combinations for mode toggles
-            steamController.steamButtonCombinationHandler = { (controller, button, down) in
-                if down {
-                    self.handleSteamControllerCombination(controller: controller, button: button)
-                }
-            }
-        }
-#endif
         ILOG("Controller connected: \(controller.vendorName ?? "No Vendor")")
         assign(controller)
         #if os(iOS)
@@ -296,29 +279,6 @@ final class PVControllerManager: NSObject {
         listenForICadeControllers(window: nil) { () -> Void in }
     }
 
-#if !targetEnvironment(macCatalyst) && canImport(SteamController)
-    func handleSteamControllerCombination(controller: SteamController, button: SteamControllerButton) {
-        switch button {
-        case .leftTrackpadClick:
-            // toggle left trackpad click to input
-            controller.steamLeftTrackpadRequiresClick = !controller.steamLeftTrackpadRequiresClick
-        case .rightTrackpadClick:
-            // toggle right trackpad click to input
-            controller.steamRightTrackpadRequiresClick = !controller.steamRightTrackpadRequiresClick
-        case .stick:
-            // toggle stick mapping between d-pad and left stick
-            if controller.steamThumbstickMapping == .leftThumbstick {
-                controller.steamThumbstickMapping = .dPad
-                controller.steamLeftTrackpadMapping = .leftThumbstick
-            } else {
-                controller.steamThumbstickMapping = .leftThumbstick
-                controller.steamLeftTrackpadMapping = .dPad
-            }
-        default:
-            return
-        }
-    }
-#endif
     // MARK: - Controllers assignment
 
     func setController(_ controller: GCController?, toPlayer player: Int) {
@@ -416,14 +376,6 @@ final class PVControllerManager: NSObject {
         }
         return false
     }
-    
-#if !targetEnvironment(macCatalyst) && canImport(SteamController)
-    func setSteamControllersMode(_ mode: SteamControllerMode) {
-        for controller in SteamControllerManager.shared().controllers {
-            controller.steamControllerMode = mode
-        }
-    }
-#endif
     
     // MARK: - Controller User Interaction (ie use controller to drive UX)
     
