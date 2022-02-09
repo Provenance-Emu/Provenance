@@ -35,6 +35,9 @@ import PVLibrary
  ✅  style home screen top cell // NOTE: unable to get middle play button working
  ✅ style side menu iOS // search bar won't work
  - search // gonna have to been in PVRoot
+ - - set up like so:
+ - - - SwiftUI View as search controller (so as to levergage existing UI)
+ - - - have a search delegate to handle middle-man communication and updates
  - filter options in games view
  - bios options in console view
  */
@@ -58,7 +61,7 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
     
     let containerView = UIView()
     
-    lazy var menuButton = UIBarButtonItem.makeFromCustomView(image: UIImage.symbolNameWithFallBack(name: "line.3.horizontal")!, target: self, action: #selector(PVRootViewController.showMenu))
+//    lazy var menuButton = UIBarButtonItem.makeFromCustomView(image: UIImage.symbolNameWithFallBack(name: "line.3.horizontal")!, target: self, action: #selector(PVRootViewController.showMenu))
     
     var updatesController: PVGameLibraryUpdatesController!
     var gameLibrary: PVGameLibrary!
@@ -83,7 +86,13 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.navigationItem.leftBarButtonItem = menuButton
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "line.3.horizontal"), primaryAction: UIAction { _ in
+            self.showMenu()
+        })
+        
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "magnifyingglass"), primaryAction: UIAction { _ in
+            self.toggleSearch()
+        })
         
         self.view.addSubview(containerView)
         self.fillParentView(child: containerView, parent: self.view)
@@ -111,29 +120,38 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
                 }
             })
             .disposed(by: disposeBag)
-
-//        updatesController.conflicts
-//            .map { !$0.isEmpty }
-//            .observe(on: MainScheduler.instance)
-//            .subscribe(onNext: { hasConflicts in
-//                self.updateConflictsButton(hasConflicts)
-//                if hasConflicts {
-//                    self.showConflictsAlert()
-//                }
-//            })
-//            .disposed(by: disposeBag)
     }
     
     deinit {
         selectedTabCancellable?.cancel()
     }
     
-    @objc func showMenu() {
+    func showMenu() {
         self.sideNavigationController?.showLeftSide()
     }
     
     func closeMenu() {
         self.sideNavigationController?.closeSide()
+    }
+    
+    func toggleSearch() {
+        // TODO: create separate search controller
+        // TODO: only allow search func when in home or consoles views
+        if navigationItem.searchController == nil {
+            UIView.animate(withDuration: 0.18) {
+                let searchController = UISearchController(searchResultsController: nil)
+                searchController.searchBar.placeholder = "Search"
+                searchController.obscuresBackgroundDuringPresentation = false
+                searchController.hidesNavigationBarDuringPresentation = false
+                searchController.automaticallyShowsCancelButton = true
+                self.navigationItem.hidesSearchBarWhenScrolling = false
+                self.navigationItem.searchController = searchController
+            }
+        } else {
+            UIView.animate(withDuration: 0.18) {
+                self.navigationItem.searchController = nil
+            }
+        }
     }
     
     func loadIntoContainer(_ navItem: PVNavOption, newVC: UIViewController) {
