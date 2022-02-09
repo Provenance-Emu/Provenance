@@ -18,12 +18,35 @@ import PVLibrary
     public let PVRowHeight: CGFloat = 150.0
 #endif
 
+enum GameItemViewType {
+    case cell
+    case row
+    
+    var titleFontSize: CGFloat {
+        switch self {
+        case .cell:
+            return 11
+        case .row:
+            return 15
+        }
+    }
+    
+    var subtitleFontSize: CGFloat {
+        switch self {
+        case .cell:
+            return 8
+        case .row:
+            return 12
+        }
+    }
+}
+
 @available(iOS 14, tvOS 14, *)
 struct GameItemView: SwiftUI.View {
     
     var game: PVGame
     var constrainHeight: Bool = false
-    var asRow: Bool = false
+    var viewType: GameItemViewType = .cell
     
     @State var artwork: UIImage? = nil
     var action: () -> Void
@@ -33,10 +56,11 @@ struct GameItemView: SwiftUI.View {
         Button {
             action()
         } label: {
-            if asRow {
-                GameItemViewRow(game: game, artwork: artwork, constrainHeight: constrainHeight)
-            } else {
-                GameItemViewCell(game: game, artwork: artwork, constrainHeight: constrainHeight)
+            switch viewType {
+            case .cell:
+                GameItemViewCell(game: game, artwork: artwork, constrainHeight: constrainHeight, viewType: viewType)
+            case .row:
+                GameItemViewRow(game: game, artwork: artwork, constrainHeight: constrainHeight, viewType: viewType)
             }
         }
         .onAppear {
@@ -57,14 +81,16 @@ struct GameItemViewCell: SwiftUI.View {
     
     var constrainHeight: Bool = false
     
+    var viewType: GameItemViewType
+    
     @State private var textMaxWidth: CGFloat = 150
     
     var body: some SwiftUI.View {
         VStack(alignment: .leading, spacing: 3) {
             GameItemThumbnail(artwork: artwork, gameTitle: game.title, boxartAspectRatio: game.boxartAspectRatio)
             VStack(alignment: .leading, spacing: 0) {
-                GameItemTitle(text: game.title)
-                GameItemSubtitle(text: game.publishDate)
+                GameItemTitle(text: game.title, viewType: viewType)
+                GameItemSubtitle(text: game.publishDate, viewType: viewType)
             }
             .frame(width: textMaxWidth)
         }
@@ -87,15 +113,17 @@ struct GameItemViewRow: SwiftUI.View {
     
     var constrainHeight: Bool = false
     
+    var viewType: GameItemViewType
+    
     var body: some SwiftUI.View {
         HStack(alignment: .center, spacing: 10) {
             GameItemThumbnail(artwork: artwork, gameTitle: game.title, boxartAspectRatio: game.boxartAspectRatio)
             VStack(alignment: .leading, spacing: 0) {
-                GameItemTitle(text: game.title)
-                GameItemSubtitle(text: game.publishDate)
+                GameItemTitle(text: game.title, viewType: viewType)
+                GameItemSubtitle(text: game.publishDate, viewType: viewType)
             }
         }
-        .frame(height: 65.0)
+        .frame(height: 50.0)
     }
 }
 
@@ -147,9 +175,11 @@ struct ArtworkImageBaseView: SwiftUI.View {
 @available(iOS 14, tvOS 14, *)
 struct GameItemTitle: SwiftUI.View {
     var text: String
+    var viewType: GameItemViewType
+    
     var body: some SwiftUI.View {
         Text(text)
-            .font(.system(size: 11))
+            .font(.system(size: viewType.titleFontSize))
             .foregroundColor(Color.white) // TOOD: theme colors
             .lineLimit(1)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -159,9 +189,11 @@ struct GameItemTitle: SwiftUI.View {
 @available(iOS 14, tvOS 14, *)
 struct GameItemSubtitle: SwiftUI.View {
     var text: String?
+    var viewType: GameItemViewType
+    
     var body: some SwiftUI.View {
         Text(text ?? "blank")
-            .font(.system(size: 8))
+            .font(.system(size: viewType.subtitleFontSize))
             .foregroundColor(Color.gray) // TOOD: theme colors
             .lineLimit(1)
             .frame(maxWidth: .infinity, alignment: .leading)

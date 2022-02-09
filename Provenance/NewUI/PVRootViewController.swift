@@ -33,11 +33,9 @@ import PVLibrary
  ✅ fix artwork loading
  ✅ stub context menu options
  ✅  style home screen top cell // NOTE: unable to get middle play button working
- - style side menu iOS
- - search
+ ✅ style side menu iOS // search bar won't work
+ - search // gonna have to been in PVRoot
  - bios options in console view
- - all things collections?? Save for later
- - full context menu options
  */
 
 enum PVNavOption {
