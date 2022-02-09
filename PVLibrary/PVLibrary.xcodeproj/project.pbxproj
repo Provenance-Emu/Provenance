@@ -13,6 +13,9 @@
 		1180B3202492A9CB00636C8A /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B31F2492A9C200636C8A /* CoreServices.framework */; };
 		11AFB2B324867482000A3922 /* PVGameLibrary+Migration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2B224867482000A3922 /* PVGameLibrary+Migration.swift */; };
 		11AFB2B424867482000A3922 /* PVGameLibrary+Migration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2B224867482000A3922 /* PVGameLibrary+Migration.swift */; };
+		B3014FA227B487EB006AC79B /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = B3014FA127B487EB006AC79B /* RxDataSources */; };
+		B3014FA427B487F0006AC79B /* Differentiator in Frameworks */ = {isa = PBXBuildFile; productRef = B3014FA327B487F0006AC79B /* Differentiator */; };
+		B3014FA627B487FD006AC79B /* Differentiator in Frameworks */ = {isa = PBXBuildFile; productRef = B3014FA527B487FD006AC79B /* Differentiator */; };
 		B305EF9F276B50E2003AE510 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF9E276B50DF003AE510 /* SwiftUI.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B305EFA1276B5112003AE510 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305EFA0276B5112003AE510 /* SwiftUI.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B305EFAD276B512D003AE510 /* NSData+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D362106B4D700DDEBD6 /* NSData+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1086,6 +1089,7 @@
 			files = (
 				B305F084276B5229003AE510 /* PVSupport.framework in Frameworks */,
 				B305F070276B512D003AE510 /* SwiftUI.framework in Frameworks */,
+				B3014FA627B487FD006AC79B /* Differentiator in Frameworks */,
 				B305F071276B512D003AE510 /* SQLite in Frameworks */,
 				B305F072276B512D003AE510 /* RxCocoa in Frameworks */,
 				B305F074276B512D003AE510 /* RxRealm in Frameworks */,
@@ -1126,7 +1130,9 @@
 				B336B91126B39BDA00960A81 /* SQLite in Frameworks */,
 				B336B90326B39A1200960A81 /* RxCocoa in Frameworks */,
 				B324C2ED219192FF009F4EDC /* PVSupport.framework in Frameworks */,
+				B3014FA427B487F0006AC79B /* Differentiator in Frameworks */,
 				B336B90C26B39ACB00960A81 /* RxRealm in Frameworks */,
+				B3014FA227B487EB006AC79B /* RxDataSources in Frameworks */,
 				B3AF6FBF219160C4000FA7F9 /* Foundation.framework in Frameworks */,
 				B336B90126B399E200960A81 /* RxSwift in Frameworks */,
 				1180B3202492A9CB00636C8A /* CoreServices.framework in Frameworks */,
@@ -1979,6 +1985,7 @@
 				B305EFA6276B512D003AE510 /* RxRealm */,
 				B305EFA8276B512D003AE510 /* SQLite */,
 				B305EFAA276B512D003AE510 /* ZipArchive */,
+				B3014FA527B487FD006AC79B /* Differentiator */,
 			);
 			productName = PVLibrary;
 			productReference = B305F081276B512D003AE510 /* PVLibrary.framework */;
@@ -2033,6 +2040,8 @@
 				B336B90B26B39ACB00960A81 /* RxRealm */,
 				B336B91026B39BDA00960A81 /* SQLite */,
 				B3128065274C658E00550720 /* ZipArchive */,
+				B3014FA127B487EB006AC79B /* RxDataSources */,
+				B3014FA327B487F0006AC79B /* Differentiator */,
 			);
 			productName = PVLibrary;
 			productReference = B3C04B4421077B3100E7AF79 /* PVLibrary.framework */;
@@ -3497,6 +3506,21 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		B3014FA127B487EB006AC79B /* RxDataSources */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B37B4DEE27B2292F0068F8D1 /* XCRemoteSwiftPackageReference "RxDataSources" */;
+			productName = RxDataSources;
+		};
+		B3014FA327B487F0006AC79B /* Differentiator */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B37B4DEE27B2292F0068F8D1 /* XCRemoteSwiftPackageReference "RxDataSources" */;
+			productName = Differentiator;
+		};
+		B3014FA527B487FD006AC79B /* Differentiator */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B37B4DEE27B2292F0068F8D1 /* XCRemoteSwiftPackageReference "RxDataSources" */;
+			productName = Differentiator;
+		};
 		B305EFA3276B512D003AE510 /* RxSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B305EFA4276B512D003AE510 /* XCRemoteSwiftPackageReference "RxSwift" */;
