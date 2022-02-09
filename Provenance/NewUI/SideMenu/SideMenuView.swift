@@ -11,6 +11,7 @@ import Foundation
 import SwiftUI
 import RealmSwift
 import PVLibrary
+import Introspect
 
 @available(iOS 14, tvOS 14, *)
 struct SideMenuView: SwiftUI.View {
@@ -86,6 +87,11 @@ struct SideMenuView: SwiftUI.View {
                 Spacer()
             }
         }
+        .introspectViewController(customize: { vc in
+            let logo = UIBarButtonItem(image: UIImage(named: "provnavicon"))
+            logo.customView?.isUserInteractionEnabled = false
+            vc.navigationItem.leftBarButtonItem = logo
+        })
         .background(Color.black)
     }
 }
