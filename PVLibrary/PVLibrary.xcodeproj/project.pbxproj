@@ -633,6 +633,7 @@
 		CF17109E2585F97000258602 /* PVCheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF17109C2585F97000258602 /* PVCheats.swift */; };
 		CF1710A12585FA3F00258602 /* Cheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1710A02585FA3F00258602 /* Cheats.swift */; };
 		CF1710A22585FA3F00258602 /* Cheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1710A02585FA3F00258602 /* Cheats.swift */; };
+		EF7D4AA527B44FA7002528B7 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = EF7D4AA427B44FA7002528B7 /* RxDataSources */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1132,7 +1133,7 @@
 				B324C2ED219192FF009F4EDC /* PVSupport.framework in Frameworks */,
 				B3014FA427B487F0006AC79B /* Differentiator in Frameworks */,
 				B336B90C26B39ACB00960A81 /* RxRealm in Frameworks */,
-				B3014FA227B487EB006AC79B /* RxDataSources in Frameworks */,
+				EF7D4AA527B44FA7002528B7 /* RxDataSources in Frameworks */,
 				B3AF6FBF219160C4000FA7F9 /* Foundation.framework in Frameworks */,
 				B336B90126B399E200960A81 /* RxSwift in Frameworks */,
 				1180B3202492A9CB00636C8A /* CoreServices.framework in Frameworks */,
@@ -2040,7 +2041,7 @@
 				B336B90B26B39ACB00960A81 /* RxRealm */,
 				B336B91026B39BDA00960A81 /* SQLite */,
 				B3128065274C658E00550720 /* ZipArchive */,
-				B3014FA127B487EB006AC79B /* RxDataSources */,
+				EF7D4AA427B44FA7002528B7 /* RxDataSources */,
 				B3014FA327B487F0006AC79B /* Differentiator */,
 			);
 			productName = PVLibrary;
@@ -3615,6 +3616,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B3A3203F27209B4300F338F6 /* XCRemoteSwiftPackageReference "ZipArchive" */;
 			productName = ZipArchive;
+		};
+		EF7D4AA427B44FA7002528B7 /* RxDataSources */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B37B4DEE27B2292F0068F8D1 /* XCRemoteSwiftPackageReference "RxDataSources" */;
+			productName = RxDataSources;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

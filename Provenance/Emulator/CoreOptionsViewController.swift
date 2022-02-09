@@ -151,7 +151,14 @@ final class CoreOptionsViewController: QuickTableViewController {
                     let value = core.storedValueForOption(Int.self, option.key) ?? defaultValue
                     
                     #if os(tvOS)
-                    fatalError("Unfinished feature")
+                    // TODO: slider on tvOS?
+                    return NavigationRow<SystemSettingsCell>(text: "\(display.title): \(value)",
+                                                             detailText: detailText,
+                                                             icon: nil,
+                                                             customization: { _, _ in
+                                                             },
+                                                             action: { _ in
+                    })
                     #else
                     return SliderRow<PVSliderCell>(
                         text: display.title,
@@ -169,7 +176,14 @@ final class CoreOptionsViewController: QuickTableViewController {
                     let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
                     let value = core.storedValueForOption(Float.self, option.key) ?? defaultValue
                     #if os(tvOS)
-                    fatalError("Unfinished feature")
+                    // TODO: slider on tvOS?
+                    return NavigationRow<SystemSettingsCell>(text: "\(display.title): \(value)",
+                                                             detailText: detailText,
+                                                             icon: nil,
+                                                             customization: { _, _ in
+                                                             },
+                                                             action: { _ in
+                    })
                     #else
                     return SliderRow<PVSliderCell>(
                         text: display.title,
