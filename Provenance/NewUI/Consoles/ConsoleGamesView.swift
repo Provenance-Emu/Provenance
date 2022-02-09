@@ -72,6 +72,7 @@ struct ConsoleGamesView: SwiftUI.View {
                             rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
                         }
                         .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
+                        GamesDividerView()
                     }
                 }
                 .padding(.horizontal, 10)
@@ -79,6 +80,16 @@ struct ConsoleGamesView: SwiftUI.View {
             // TODO: bios if applicable
         }
         .background(Color.black)
+    }
+}
+
+@available(iOS 14, tvOS 14, *)
+struct GamesDividerView: SwiftUI.View {
+    var body: some SwiftUI.View {
+        Divider()
+            .frame(height: 1)
+            .background(Color.gray)
+            .opacity(0.1)
     }
 }
 
