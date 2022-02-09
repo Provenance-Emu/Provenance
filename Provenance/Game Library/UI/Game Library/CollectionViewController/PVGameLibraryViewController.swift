@@ -773,7 +773,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         #if os(iOS)
             // Add done button to iPhone
             // iPad is a popover do no done button needed
-            if traitCollection.horizontalSizeClass == .compact || !(sender is UIBarButtonItem) {
+            if traitCollection.userInterfaceIdiom != .pad || traitCollection.horizontalSizeClass == .compact || !(sender is UIBarButtonItem) {
                 let navController = UINavigationController(rootViewController: sortOptionsTableViewController)
                 sortOptionsTableViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(PVGameLibraryViewController.dismissVC))
                 present(navController, animated: true, completion: nil)
@@ -785,12 +785,6 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                 present(sortOptionsTableViewController, animated: true, completion: nil)
             }
         #else
-            sortOptionsTableView.layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-            sortOptionsTableView.backgroundColor = UIColor(red:0.1, green:0.1, blue:0.1, alpha:1)
-            sortOptionsTableView.layer.borderColor = view.tintColor.cgColor
-            sortOptionsTableView.layer.borderWidth = 4.0
-            sortOptionsTableView.layer.cornerRadius = 16.0
-        
             sortOptionsTableViewController.preferredContentSize = CGSize(width:675, height:sortOptionsTableView.contentSize.height);
             let pvc = TVFullscreenController(rootViewController:sortOptionsTableViewController)
             present(pvc, animated: true, completion: nil)
@@ -1026,9 +1020,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             self.navigationController?.pushViewController(optionsVC, animated: true)
         #else
             let nav = UINavigationController(rootViewController: optionsVC)
-            nav.navigationBar.isTranslucent = false
-            nav.navigationBar.backgroundColor =  UIColor.black.withAlphaComponent(0.8)
-            present(nav, animated: true, completion: nil)
+            present(TVFullscreenController(rootViewController: nav), animated: true, completion: nil)
         #endif
     }
 
