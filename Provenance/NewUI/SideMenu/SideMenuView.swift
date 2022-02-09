@@ -33,7 +33,8 @@ struct SideMenuView: SwiftUI.View {
     static func instantiate(gameLibrary: PVGameLibrary, delegate: PVMenuDelegate) -> UIViewController {
         let view = SideMenuView(gameLibrary: gameLibrary, delegate: delegate)
         let hostingView = UIHostingController(rootView: view)
-        return hostingView
+        let nav = UINavigationController(rootViewController: hostingView)
+        return nav
     }
     
     func versionText() -> String {
