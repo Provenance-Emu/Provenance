@@ -615,9 +615,21 @@ extension ControllerButtonPressTableView {
     private func select(_ indexPath:IndexPath) {
         tableView.selectRow(at: indexPath, animated: true, scrollPosition: .top)
         tableView.scrollToRow(at: indexPath, at: .none, animated: false)
-        let cell = tableView.cellForRow(at: indexPath)
-        cell?.selectedBackgroundView = cell?.selectedBackgroundView ?? UIView()
-        cell?.selectedBackgroundView?.backgroundColor = navigationController?.view.tintColor ?? tableView.tintColor
+        guard let cell = tableView.cellForRow(at: indexPath) else {
+            ELOG("No cell for indexPath \(indexPath.debugDescription)")
+            return
+        }
+        
+        let selectedBackgroundView: UIView
+        if let v = cell.selectedBackgroundView {
+            selectedBackgroundView = v
+        } else {
+            let newView = UIView()
+            newView.frame = cell.contentView.bounds
+            selectedBackgroundView = newView
+        }
+        selectedBackgroundView.backgroundColor = navigationController?.view.tintColor ?? tableView.tintColor
+        cell.selectedBackgroundView = selectedBackgroundView
     }
     private func moveSelection(_ dir:Int) {
         guard var indexPath = tableView.indexPathForSelectedRow else {
