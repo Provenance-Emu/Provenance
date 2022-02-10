@@ -571,6 +571,7 @@ extension UINavigationController : ControllerButtonPress {
 
 extension QuickTableViewController: ControllerButtonPressTableView {}
 extension UITableViewController: ControllerButtonPressTableView {}
+extension SortOptionsTableViewController: ControllerButtonPressTableView {}
 
 protocol ControllerButtonPressTableView: ControllerButtonPress {
     var tableView: UITableView! { get }
@@ -613,23 +614,15 @@ extension ControllerButtonPressTableView {
         return tableView.numberOfRows(inSection:indexPath.section)-1
     }
     private func select(_ indexPath:IndexPath) {
-        tableView.selectRow(at: indexPath, animated: true, scrollPosition: .top)
+        // NOTE you might be tempted to use animated==true, but this causes massive redraw issues in scrolling table views, like Settings
         tableView.scrollToRow(at: indexPath, at: .none, animated: false)
-        guard let cell = tableView.cellForRow(at: indexPath) else {
+        guard let cell = self.tableView.cellForRow(at: indexPath) else {
             ELOG("No cell for indexPath \(indexPath.debugDescription)")
             return
         }
-        
-        let selectedBackgroundView: UIView
-        if let v = cell.selectedBackgroundView {
-            selectedBackgroundView = v
-        } else {
-            let newView = UIView()
-            newView.frame = cell.contentView.bounds
-            selectedBackgroundView = newView
-        }
-        selectedBackgroundView.backgroundColor = navigationController?.view.tintColor ?? tableView.tintColor
-        cell.selectedBackgroundView = selectedBackgroundView
+        cell.selectedBackgroundView = cell.selectedBackgroundView ?? UIView()
+        cell.selectedBackgroundView?.backgroundColor = navigationController?.view.tintColor ?? tableView.tintColor
+        tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
     }
     private func moveSelection(_ dir:Int) {
         guard var indexPath = tableView.indexPathForSelectedRow else {
@@ -785,7 +778,7 @@ extension GCKeyboard {
     }
 }
 
-public final class SortOptionsTableViewController: UIViewController, ControllerButtonPressTableView {
+public final class SortOptionsTableViewController: UIViewController {
     var clearsSelectionOnViewWillAppear: Bool = true
     
     public private(set) var tableView: UITableView!

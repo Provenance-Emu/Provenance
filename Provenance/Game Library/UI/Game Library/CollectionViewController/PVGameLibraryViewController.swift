@@ -1563,8 +1563,6 @@ extension PVGameLibraryViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
 
-        cell.selectionStyle = .none     // prevent cell flashing when selected
-        
         #if os(tvOS)
             cell.layer.cornerRadius = 12
         #endif
@@ -1886,7 +1884,9 @@ extension PVGameLibraryViewController: ControllerButtonPress {
             indexPath.section = indexPath.section+1
             indexPath.item = 0
         }
-        select(indexPath)
+        if indexPath.section >= 0 && indexPath.section < collectionView!.numberOfSections {
+            select(indexPath)
+        }
     }
     
     private func moveHorz(_ dir:Int) {
