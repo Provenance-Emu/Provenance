@@ -36,6 +36,7 @@ import PVLibrary
  ✅ style side menu iOS // search bar won't work
  ✅ search
  - filter options in games view
+ - Theme colors dangit
  - bios options in console view
  - stretch goal: collections
  */

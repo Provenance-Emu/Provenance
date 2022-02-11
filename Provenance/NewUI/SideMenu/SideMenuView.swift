@@ -62,39 +62,41 @@ struct SideMenuView: SwiftUI.View {
     }
     
     var body: some SwiftUI.View {
-        ScrollView {
-            LazyVStack(alignment: .leading, spacing: 0) {
-                Group {
-                    MenuItemView(imageName: "prov_settings_gear", rowTitle: "Settings") {
-                        delegate?.didTapSettings()
-                    }
-                    Divider()
-                    MenuItemView(imageName: "prov_home_icon", rowTitle: "Home") {
-                        delegate?.didTapHome()
-                    }
-                    Divider()
-                    MenuItemView(imageName: "prov_add_games_icon", rowTitle: "Add Games") {
-                        delegate?.didTapAddGames()
-                    }
-                }
-                Group {
-                    if consoles.count > 0 {
-                        MenuSectionHeaderView(sectionTitle: "CONSOLES", sortable: consoles.count > 1, sortAscending: sortAscending) {
-                            self.sortAscending.toggle()
+        StatusBarProtectionWrapper {
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 0) {
+                    Group {
+                        MenuItemView(imageName: "prov_settings_gear", rowTitle: "Settings") {
+                            delegate?.didTapSettings()
                         }
-                        ForEach(sortedConsoles(), id: \.self) { console in
-                            Divider()
-                            MenuItemView(imageName: "prov_snes_icon", rowTitle: console.name) {
-                                delegate?.didTapConsole(with: console.identifier)
+                        Divider()
+                        MenuItemView(imageName: "prov_home_icon", rowTitle: "Home") {
+                            delegate?.didTapHome()
+                        }
+                        Divider()
+                        MenuItemView(imageName: "prov_add_games_icon", rowTitle: "Add Games") {
+                            delegate?.didTapAddGames()
+                        }
+                    }
+                    Group {
+                        if consoles.count > 0 {
+                            MenuSectionHeaderView(sectionTitle: "CONSOLES", sortable: consoles.count > 1, sortAscending: sortAscending) {
+                                self.sortAscending.toggle()
+                            }
+                            ForEach(sortedConsoles(), id: \.self) { console in
+                                Divider()
+                                MenuItemView(imageName: "prov_snes_icon", rowTitle: console.name) {
+                                    delegate?.didTapConsole(with: console.identifier)
+                                }
                             }
                         }
                     }
+                    // TODO: flesh out collections later
+                    Group {
+                        MenuSectionHeaderView(sectionTitle: "Provenance \(versionText())", sortable: false) {}
+                    }
+                    Spacer()
                 }
-                // TODO: flesh out collections later
-                Group {
-                    MenuSectionHeaderView(sectionTitle: "Provenance \(versionText())", sortable: false) {}
-                }
-                Spacer()
             }
         }
         .introspectViewController(customize: { vc in
@@ -105,21 +107,23 @@ struct SideMenuView: SwiftUI.View {
         // search results
         .if(!searchBar.text.isEmpty) { view in
             view.overlay(
-                ApplyBackgroundWrapper {
-                    ScrollView {
-                        VStack {
-                            LazyVStack {
-                                ForEach(filteredSearchResults(), id: \.self) { game in
-                                    GameItemView(game: game, viewType: .row) {
-                                        rootDelegate.root_load(game, sender: self, core: nil, saveState: nil)
+                StatusBarProtectionWrapper {
+                    ApplyBackgroundWrapper {
+                        ScrollView {
+                            VStack {
+                                LazyVStack {
+                                    ForEach(filteredSearchResults(), id: \.self) { game in
+                                        GameItemView(game: game, viewType: .row) {
+                                            rootDelegate.root_load(game, sender: self, core: nil, saveState: nil)
+                                        }
+                                        .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
+                                        GamesDividerView()
                                     }
-                                    .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
-                                    GamesDividerView()
                                 }
+                                .padding(.horizontal, 10)
                             }
-                            .padding(.horizontal, 10)
+                            .background(Color.black)
                         }
-                        .background(Color.black)
                     }
                 }
             )
@@ -187,6 +191,22 @@ struct ApplyBackgroundWrapper<Content: SwiftUI.View>: SwiftUI.View {
         } else {
             content().background(Color.black)
         }
+    }
+}
+
+@available(iOS 14, tvOS 14, *)
+struct StatusBarProtectionWrapper<Content: SwiftUI.View>: SwiftUI.View {
+    // Scroll content inside of PVRootViewController's containerView will appear up in the status bar for some reason
+    // Even though certain views will never have multiple pages/tabs, wrap them in a paged TabView to prevent this behavior
+    // Note that this may potentially have side effects if your content contains certain views, but is working so far
+    @ViewBuilder var content: () -> Content
+    var body: some SwiftUI.View {
+        TabView {
+            content()
+        }
+        .tabViewStyle(.page)
+        .indexViewStyle(.page(backgroundDisplayMode: .never))
+        .ignoresSafeArea(.all, edges: .bottom)
     }
 }
 
