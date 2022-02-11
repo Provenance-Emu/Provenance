@@ -24,21 +24,8 @@ import PVLibrary
 // to UIViewControllers, etc.) it will be more easier to integrate by starting here
 // and porting the remaining views/logic over to as conditions change moving forward.
 
-/**
- high level goals:
- ✅ sort options for side menu
- ✅ style home screen bottom rows
- ✅ sort options in console view
- ✅ fix artwork styling across diff sizes
- ✅ fix artwork loading
- ✅ stub context menu options
- ✅  style home screen top cell // NOTE: unable to get middle play button working
- ✅ style side menu iOS // search bar won't work
- ✅ search
- - Theme colors dangit
- - bios options in console view
- - stretch goal: collections
- */
+// - bios options in console view
+// - stretch goal: collections
 
 enum PVNavOption {
     case settings
