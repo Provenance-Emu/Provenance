@@ -34,12 +34,10 @@ import PVLibrary
  ✅ stub context menu options
  ✅  style home screen top cell // NOTE: unable to get middle play button working
  ✅ style side menu iOS // search bar won't work
- - search // gonna have to been in PVRoot
- - - set up like so:
- - - - SwiftUI View as search controller (so as to levergage existing UI)
- - - - have a search delegate to handle middle-man communication and updates
+ ✅ search
  - filter options in games view
  - bios options in console view
+ - stretch goal: collections
  */
 
 enum PVNavOption {
@@ -60,8 +58,6 @@ enum PVNavOption {
 class PVRootViewController: UIViewController, GameLaunchingViewController, GameSharingViewController {
     
     let containerView = UIView()
-    
-//    lazy var menuButton = UIBarButtonItem.makeFromCustomView(image: UIImage.symbolNameWithFallBack(name: "line.3.horizontal")!, target: self, action: #selector(PVRootViewController.showMenu))
     
     var updatesController: PVGameLibraryUpdatesController!
     var gameLibrary: PVGameLibrary!
@@ -86,13 +82,14 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // TODO: move these to loadIntoContainer
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "line.3.horizontal"), primaryAction: UIAction { _ in
             self.showMenu()
         })
         
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "magnifyingglass"), primaryAction: UIAction { _ in
-            self.toggleSearch()
-        })
+//        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "magnifyingglass"), primaryAction: UIAction { _ in
+//            self.toggleSearch()
+//        })
         
         self.view.addSubview(containerView)
         self.fillParentView(child: containerView, parent: self.view)
@@ -134,26 +131,6 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
         self.sideNavigationController?.closeSide()
     }
     
-    func toggleSearch() {
-        // TODO: create separate search controller
-        // TODO: only allow search func when in home or consoles views
-        if navigationItem.searchController == nil {
-            UIView.animate(withDuration: 0.18) {
-                let searchController = UISearchController(searchResultsController: nil)
-                searchController.searchBar.placeholder = "Search"
-                searchController.obscuresBackgroundDuringPresentation = false
-                searchController.hidesNavigationBarDuringPresentation = false
-                searchController.automaticallyShowsCancelButton = true
-                self.navigationItem.hidesSearchBarWhenScrolling = false
-                self.navigationItem.searchController = searchController
-            }
-        } else {
-            UIView.animate(withDuration: 0.18) {
-                self.navigationItem.searchController = nil
-            }
-        }
-    }
-    
     func loadIntoContainer(_ navItem: PVNavOption, newVC: UIViewController) {
         self.lastNavOptionLoaded = navItem
         // remove old view
@@ -161,7 +138,7 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
         self.children.forEach { $0.removeFromParent() }
         // set title
         self.navigationItem.title = navItem.title
-        // set bar button items (if any)
+        // set bar button items (if any) // TODO: this.
         switch navItem {
         case .settings, .home, .console: break
         }

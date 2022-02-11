@@ -97,6 +97,7 @@ struct HomeView: SwiftUI.View {
                 }
             }
         }
+        .navigationTitle("Hellloooo")
         .background(Color.black)
     }
 }

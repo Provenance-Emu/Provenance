@@ -131,7 +131,7 @@ struct DarkTheme: iOSTheme {
     var statusBarStyle: UIStatusBarStyle { return UIStatusBarStyle.lightContent }
     var statusBarColor: UIColor? {
         if PVSettingsModel.shared.debugOptions.useSwiftUI {
-            return UIColor(hex: "#1C1C1C")
+            return nil
         } else {
             return nil
         }

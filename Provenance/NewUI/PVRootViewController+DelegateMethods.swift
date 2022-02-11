@@ -98,7 +98,8 @@ extension PVRootViewController: PVMenuDelegate {
         
         settingsVC.conflictsController = updatesController
         self.closeMenu()
-        self.loadIntoContainer(.settings, newVC: settingsVC)
+        self.present(settingsNav, animated: true)
+//        self.loadIntoContainer(.settings, newVC: settingsVC)
         #elseif os(tvOS)
         // TODO: load tvOS settings from bundle
         #endif
@@ -106,7 +107,6 @@ extension PVRootViewController: PVMenuDelegate {
 
     func didTapHome() {
         self.closeMenu()
-        self.navigationItem.title = "Home"
         let homeView = HomeView(gameLibrary: self.gameLibrary, delegate: self)
         self.loadIntoContainer(.home, newVC: UIHostingController(rootView: homeView))
     }
