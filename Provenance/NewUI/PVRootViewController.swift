@@ -69,8 +69,6 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
     lazy var consolesWrapperViewDelegate = ConsolesWrapperViewDelegate()
     var consoleIdentifiersAndNamesMap: [String:String] = [:]
     
-    var lastNavOptionLoaded: PVNavOption? = nil
-    
     static func instantiate(updatesController: PVGameLibraryUpdatesController, gameLibrary: PVGameLibrary, gameImporter: GameImporter) -> PVRootViewController {
         let controller = PVRootViewController()
         controller.updatesController = updatesController
@@ -132,7 +130,6 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
     }
     
     func loadIntoContainer(_ navItem: PVNavOption, newVC: UIViewController) {
-        self.lastNavOptionLoaded = navItem
         // remove old view
         self.containerView.subviews.forEach { $0.removeFromSuperview() }
         self.children.forEach { $0.removeFromParent() }
@@ -145,19 +142,6 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
         // load new view
         self.addChildViewController(newVC, toContainerView: self.containerView)
         self.fillParentView(child: newVC.view, parent: self.containerView)
-    }
-    
-    func loadLastKnownNavOption() {
-        if let lastNavOptionLoaded = lastNavOptionLoaded {
-            switch lastNavOptionLoaded {
-            case .settings:
-                self.didTapSettings()
-            case .home:
-                self.didTapHome()
-            case .console(let consoleId, _):
-                self.didTapConsole(with: consoleId)
-            }
-        }
     }
 }
 
