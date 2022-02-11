@@ -78,6 +78,7 @@ struct HomeView: SwiftUI.View {
                             GameItemView(game: recentlyPlayedGame.game, constrainHeight: true) {
                                 rootDelegate?.root_load(recentlyPlayedGame.game, sender: self, core: nil, saveState: nil)
                             }
+                            .contextMenu { GameContextMenu(game: recentlyPlayedGame.game, rootDelegate: rootDelegate) }
                         }
                     }
                     HomeDividerView()
@@ -86,6 +87,7 @@ struct HomeView: SwiftUI.View {
                             GameItemView(game: favorite, constrainHeight: true) {
                                 rootDelegate?.root_load(favorite, sender: self, core: nil, saveState: nil)
                             }
+                            .contextMenu { GameContextMenu(game: favorite, rootDelegate: rootDelegate) }
                         }
                     }
                     HomeDividerView()
@@ -94,6 +96,7 @@ struct HomeView: SwiftUI.View {
                             GameItemView(game: playedGame, constrainHeight: true) {
                                 rootDelegate?.root_load(playedGame, sender: self, core: nil, saveState: nil)
                             }
+                            .contextMenu { GameContextMenu(game: playedGame, rootDelegate: rootDelegate) }
                         }
                     }
                 }
