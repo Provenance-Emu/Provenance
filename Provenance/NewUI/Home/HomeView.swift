@@ -102,7 +102,7 @@ struct HomeView: SwiftUI.View {
                 }
             }
         }
-        .background(Color.black)
+        .background(Theme.currentTheme.gameLibraryBackground.swiftUIColor)
     }
 }
 
@@ -163,17 +163,17 @@ struct HomeContinueItemView: SwiftUI.View {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Continue...")
                                 .font(.system(size: 10))
-                                .foregroundColor(Color.gray) // TOOD: theme colors
+                                .foregroundColor(Theme.currentTheme.gameLibraryText.swiftUIColor)
                             Text(continueState.game.title)
                                 .font(.system(size: 13))
-                                .foregroundColor(Color.white) // TOOD: theme colors
+                                .foregroundColor(Color.white)
                         }
                         Spacer()
                         VStack(alignment: .trailing) {
                             Text("...").font(.system(size: 15)).opacity(0)
                             Text(continueState.game.system.name)
                                 .font(.system(size: 8))
-                                .foregroundColor(Color.gray) // TOOD: theme colors
+                                .foregroundColor(Theme.currentTheme.gameLibraryText.swiftUIColor)
                         }
                     }
                     .padding(.vertical, 10)
@@ -195,7 +195,7 @@ struct HomeSection<Content: SwiftUI.View>: SwiftUI.View {
     var body: some SwiftUI.View {
         VStack(alignment: .leading, spacing: 0) {
             Text(title.uppercased())
-                .foregroundColor(Color.gray)
+                .foregroundColor(Theme.currentTheme.gameLibraryText.swiftUIColor)
                 .font(.system(size: 11))
                 .padding(.horizontal, 10)
                 .padding(.top, 20)
@@ -216,7 +216,7 @@ struct HomeDividerView: SwiftUI.View {
     var body: some SwiftUI.View {
         Divider()
             .frame(height: 1)
-            .background(Color.gray)
+            .background(Theme.currentTheme.gameLibraryText.swiftUIColor)
             .opacity(0.1)
             .padding(.horizontal, 10)
     }
@@ -235,7 +235,7 @@ struct HomeItemView: SwiftUI.View {
             Spacer()
         }
         .frame(height: 40.0)
-        .background(Color.black)
+        .background(Theme.currentTheme.gameLibraryBackground.swiftUIColor)
     }
 }
 

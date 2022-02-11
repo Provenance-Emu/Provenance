@@ -149,7 +149,7 @@
 		3759CAF3279C389300E9267B /* ConsoleGamesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3759CAF2279C389300E9267B /* ConsoleGamesView.swift */; };
 		3759CAF5279C38AA00E9267B /* GameItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3759CAF4279C38AA00E9267B /* GameItemView.swift */; };
 		3759CAF8279C38DF00E9267B /* NewUIHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3759CAF7279C38DF00E9267B /* NewUIHelpers.swift */; };
-		37887E8327AD0A4900C43435 /* View+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37887E8227AD0A4900C43435 /* View+Ext.swift */; };
+		37887E8327AD0A4900C43435 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37887E8227AD0A4900C43435 /* Extensions.swift */; };
 		378F4A001B63D7CD0065FA39 /* GCDWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49DF1B63D7CD0065FA39 /* GCDWebServer.m */; };
 		378F4A011B63D7CD0065FA39 /* GCDWebServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49E11B63D7CD0065FA39 /* GCDWebServerConnection.m */; };
 		378F4A021B63D7CD0065FA39 /* GCDWebServerFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49E31B63D7CD0065FA39 /* GCDWebServerFunctions.m */; };
@@ -904,7 +904,7 @@
 		3759CAF2279C389300E9267B /* ConsoleGamesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleGamesView.swift; sourceTree = "<group>"; };
 		3759CAF4279C38AA00E9267B /* GameItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameItemView.swift; sourceTree = "<group>"; };
 		3759CAF7279C38DF00E9267B /* NewUIHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewUIHelpers.swift; sourceTree = "<group>"; };
-		37887E8227AD0A4900C43435 /* View+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Ext.swift"; sourceTree = "<group>"; };
+		37887E8227AD0A4900C43435 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		378F49DE1B63D7CD0065FA39 /* GCDWebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServer.h; sourceTree = "<group>"; };
 		378F49DF1B63D7CD0065FA39 /* GCDWebServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServer.m; sourceTree = "<group>"; };
 		378F49E01B63D7CD0065FA39 /* GCDWebServerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerConnection.h; sourceTree = "<group>"; };
@@ -1886,7 +1886,7 @@
 			children = (
 				3759CAF7279C38DF00E9267B /* NewUIHelpers.swift */,
 				37B7B3E727AA719E00E05B90 /* BindableResult.swift */,
-				37887E8227AD0A4900C43435 /* View+Ext.swift */,
+				37887E8227AD0A4900C43435 /* Extensions.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -3067,7 +3067,7 @@
 				C6C125C020B0826900DC045B /* UILabel+Theming.swift in Sources */,
 				B3AB37332187F569009D9244 /* PVAtari2600ControllerViewController.swift in Sources */,
 				B3EA0CD32070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */,
-				37887E8327AD0A4900C43435 /* View+Ext.swift in Sources */,
+				37887E8327AD0A4900C43435 /* Extensions.swift in Sources */,
 				B3411C1C276B470C00D85327 /* Icon.swift in Sources */,
 				B3DB11AD205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */,
 				B313544726E4C0F90047F338 /* PVPS2ControllerViewController.swift in Sources */,
