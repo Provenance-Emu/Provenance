@@ -135,7 +135,7 @@ struct GameItemThumbnail: SwiftUI.View {
     let radius: CGFloat = 3.0
     var body: some SwiftUI.View {
         ArtworkImageBaseView(artwork: artwork, gameTitle: gameTitle, boxartAspectRatio: boxartAspectRatio)
-            .overlay(RoundedRectangle(cornerRadius: radius).stroke(Color.gray.opacity(0.5), lineWidth: 1)) // TODO: theme colors
+            .overlay(RoundedRectangle(cornerRadius: radius).stroke(Theme.currentTheme.gameLibraryText.swiftUIColor.opacity(0.5), lineWidth: 1)) // TODO: theme colors
             .background(GeometryReader { geometry in
                 Color.clear.preference(
                     key: ArtworkDynamicWidthPreferenceKey.self,
@@ -180,7 +180,7 @@ struct GameItemTitle: SwiftUI.View {
     var body: some SwiftUI.View {
         Text(text)
             .font(.system(size: viewType.titleFontSize))
-            .foregroundColor(Color.white) // TOOD: theme colors
+            .foregroundColor(Color.white)
             .lineLimit(1)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -194,7 +194,7 @@ struct GameItemSubtitle: SwiftUI.View {
     var body: some SwiftUI.View {
         Text(text ?? "blank")
             .font(.system(size: viewType.subtitleFontSize))
-            .foregroundColor(Color.gray) // TOOD: theme colors
+            .foregroundColor(Theme.currentTheme.gameLibraryText.swiftUIColor)
             .lineLimit(1)
             .frame(maxWidth: .infinity, alignment: .leading)
             .opacity(text != nil ? 1.0 : 0.0) // hide rather than not render so that cell keeps consistent height

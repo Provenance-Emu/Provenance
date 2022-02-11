@@ -22,4 +22,11 @@ extension SwiftUI.View {
    }
 }
 
+@available(iOS 14, tvOS 14, *)
+extension UIColor {
+    var swiftUIColor: Color {
+        return Color(self)
+    }
+}
+
 #endif

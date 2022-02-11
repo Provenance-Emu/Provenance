@@ -35,7 +35,6 @@ import PVLibrary
  ✅  style home screen top cell // NOTE: unable to get middle play button working
  ✅ style side menu iOS // search bar won't work
  ✅ search
- - filter options in games view
  - Theme colors dangit
  - bios options in console view
  - stretch goal: collections

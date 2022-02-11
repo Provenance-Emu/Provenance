@@ -81,7 +81,7 @@ struct ConsoleGamesView: SwiftUI.View {
             }
             // TODO: bios if applicable
         }
-        .background(Color.black)
+        .background(Theme.currentTheme.gameLibraryBackground.swiftUIColor)
     }
 }
 
@@ -90,7 +90,7 @@ struct GamesDividerView: SwiftUI.View {
     var body: some SwiftUI.View {
         Divider()
             .frame(height: 1)
-            .background(Color.gray)
+            .background(Theme.currentTheme.gameLibraryText.swiftUIColor)
             .opacity(0.1)
     }
 }
@@ -109,14 +109,14 @@ struct GamesDisplayOptionsView: SwiftUI.View {
         HStack(spacing: 12) {
             Spacer()
             OptionsIndicator(pointDown: true, action: { toggleFilterAction() }) {
-                Text("Filter").foregroundColor(Color.gray).font(.system(size: 12))
+                Text("Filter").foregroundColor(Theme.currentTheme.gameLibraryText.swiftUIColor).font(.system(size: 13))
             }
             OptionsIndicator(pointDown: sortAscending, action: { toggleSortAction() }) {
-                Text("Sort").foregroundColor(Color.gray).font(.system(size: 13))
+                Text("Sort").foregroundColor(Theme.currentTheme.gameLibraryText.swiftUIColor).font(.system(size: 13))
             }
             OptionsIndicator(pointDown: true, action: { toggleViewTypeAction() }) {
                 Image(systemName: isGrid == true ? "square.grid.3x3.fill" : "line.3.horizontal")
-                    .foregroundColor(Color.gray)
+                    .foregroundColor(Theme.currentTheme.gameLibraryText.swiftUIColor)
                     .font(.system(size: 13, weight: .light))
             }
             .padding(.trailing, 10)
