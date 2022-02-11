@@ -16,7 +16,6 @@ import PVLibrary
 @available(iOS 14, tvOS 14, *)
 struct ConsoleGamesView: SwiftUI.View {
     
-//    @ObservedRealmObject var console: PVSystem
     var console: PVSystem
     
     var rootDelegate: PVRootDelegate?
@@ -38,6 +37,7 @@ struct ConsoleGamesView: SwiftUI.View {
             .sorted(by: [SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: sortAscending)])
     }
     
+    // TODO: adjust for landscape
     let columns = [
         GridItem(.flexible()),
         GridItem(.flexible()),

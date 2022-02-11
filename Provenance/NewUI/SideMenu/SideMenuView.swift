@@ -17,6 +17,8 @@ import Introspect
 struct SideMenuView: SwiftUI.View {
     
     var delegate: PVMenuDelegate?
+    var rootDelegate: PVRootDelegate
+    var gameLibrary: PVGameLibrary
     
     @ObservedResults(
         PVSystem.self,
@@ -24,14 +26,18 @@ struct SideMenuView: SwiftUI.View {
         filter: NSPredicate(format: "games.@count > 0")
     ) var consoles
     
-    init(gameLibrary: PVGameLibrary, delegate: PVMenuDelegate) {
-        self.delegate = delegate
-    }
-    
     @State var sortAscending = true
     
-    static func instantiate(gameLibrary: PVGameLibrary, delegate: PVMenuDelegate) -> UIViewController {
-        let view = SideMenuView(gameLibrary: gameLibrary, delegate: delegate)
+    @ObservedObject var searchBar: SearchBar = SearchBar()
+    
+    init(gameLibrary: PVGameLibrary, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) {
+        self.gameLibrary = gameLibrary
+        self.delegate = delegate
+        self.rootDelegate = rootDelegate
+    }
+    
+    static func instantiate(gameLibrary: PVGameLibrary, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) -> UIViewController {
+        let view = SideMenuView(gameLibrary: gameLibrary, delegate: delegate, rootDelegate: rootDelegate)
         let hostingView = UIHostingController(rootView: view)
         let nav = UINavigationController(rootViewController: hostingView)
         return nav
@@ -43,13 +49,16 @@ struct SideMenuView: SwiftUI.View {
         versionText = versionText ?? "" + (" (\(Bundle.main.infoDictionary?["CFBundleVersion"] ?? ""))")
         if !masterBranch {
             versionText = "\(versionText ?? "") Beta"
-//            versionLabel.textColor = UIColor.init(hex: "#F5F5A0")
         }
         return versionText ?? ""
     }
     
     func sortedConsoles() -> Results<PVSystem> {
         return self.consoles.sorted(by: [SortDescriptor(keyPath: #keyPath(PVSystem.name), ascending: sortAscending)])
+    }
+    
+    func filteredSearchResults() -> Results<PVGame> {
+        return self.gameLibrary.searchResults(for: self.searchBar.text)
     }
     
     var body: some SwiftUI.View {
@@ -89,11 +98,32 @@ struct SideMenuView: SwiftUI.View {
             }
         }
         .introspectViewController(customize: { vc in
-            let logo = UIBarButtonItem(image: UIImage(named: "provnavicon"))
-            logo.customView?.isUserInteractionEnabled = false
-            vc.navigationItem.leftBarButtonItem = logo
+            vc.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "provnavicon"))
         })
         .background(Color.black)
+        .add(self.searchBar)
+        // search results
+        .if(!searchBar.text.isEmpty) { view in
+            view.overlay(
+                ApplyBackgroundWrapper {
+                    ScrollView {
+                        VStack {
+                            LazyVStack {
+                                ForEach(filteredSearchResults(), id: \.self) { game in
+                                    GameItemView(game: game, viewType: .row) {
+                                        rootDelegate.root_load(game, sender: self, core: nil, saveState: nil)
+                                    }
+                                    .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
+                                    GamesDividerView()
+                                }
+                            }
+                            .padding(.horizontal, 10)
+                        }
+                        .background(Color.black)
+                    }
+                }
+            )
+        }
     }
 }
 
@@ -148,11 +178,16 @@ struct MenuItemView: SwiftUI.View {
     }
 }
 
-//@available(iOS 14, tvOS 14, *)
-//struct SideMenuView_Previews: PreviewProvider {
-//    static var previews: some SwiftUI.View {
-//        SideMenuView(delegate: self)
-//    }
-//}
+@available(iOS 14, tvOS 14, *)
+struct ApplyBackgroundWrapper<Content: SwiftUI.View>: SwiftUI.View {
+    @ViewBuilder var content: () -> Content
+    var body: some SwiftUI.View {
+        if #available(iOS 15, tvOS 15, *) {
+            content().background(Material.ultraThinMaterial)
+        } else {
+            content().background(Color.black)
+        }
+    }
+}
 
 #endif
