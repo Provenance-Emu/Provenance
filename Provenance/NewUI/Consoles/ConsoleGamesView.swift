@@ -12,7 +12,7 @@ import SwiftUI
 import RealmSwift
 import PVLibrary
 
-// TODO: might be able to reuse this view for collections.
+// TODO: might be able to reuse this view for collections
 @available(iOS 14, tvOS 14, *)
 struct ConsoleGamesView: SwiftUI.View {
     
@@ -32,6 +32,7 @@ struct ConsoleGamesView: SwiftUI.View {
     }
     
     func filteredAndSortedGames() -> Results<PVGame> {
+        // TODO: if filters are on, apply them here before returning
         return games
             .filter(NSPredicate(format: "systemIdentifier == %@", argumentArray: [console.identifier]))
             .sorted(by: [SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: sortAscending)])
@@ -52,6 +53,7 @@ struct ConsoleGamesView: SwiftUI.View {
             GamesDisplayOptionsView(
                 sortAscending: sortAscending,
                 isGrid: isGrid,
+                toggleFilterAction: { self.rootDelegate?.showUnderConstructionAlert() },
                 toggleSortAction: { sortAscending.toggle() },
                 toggleViewTypeAction: { isGrid.toggle() })
                 .padding(.top, 16)
@@ -99,13 +101,14 @@ struct GamesDisplayOptionsView: SwiftUI.View {
     var sortAscending = true
     var isGrid = true
     
+    var toggleFilterAction: () -> Void
     var toggleSortAction: () -> Void
     var toggleViewTypeAction: () -> Void
     
     var body: some SwiftUI.View {
         HStack(spacing: 12) {
             Spacer()
-            OptionsIndicator(pointDown: true, action: { /* TODO: this */ }) {
+            OptionsIndicator(pointDown: true, action: { toggleFilterAction() }) {
                 Text("Filter").foregroundColor(Color.gray).font(.system(size: 12))
             }
             OptionsIndicator(pointDown: sortAscending, action: { toggleSortAction() }) {
