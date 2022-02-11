@@ -16,12 +16,8 @@ import SwiftUI
 public protocol PVRootDelegate {
     func attemptToDelete(game: PVGame)
     func showUnderConstructionAlert()
-//    func canLoad(_ game: PVGame) throws
-//    func load(_ game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?)
-//    func openSaveState(_ saveState: PVSaveState)
-//    func updateRecentGames(_ game: PVGame)
-//    func presentCoreSelection(forGame game: PVGame, sender: Any?)
     // objects fetched via @ObservedResults are `frozen`, so we need to thaw them before Realm lets us use them
+    // the following methods call their equivalent GameLaunchingViewController methods with thawed objects
     func root_canLoad(_ game: PVGame) throws
     func root_load(_ game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?)
     func root_openSaveState(_ saveState: PVSaveState)
@@ -99,7 +95,6 @@ extension PVRootViewController: PVMenuDelegate {
         settingsVC.conflictsController = updatesController
         self.closeMenu()
         self.present(settingsNav, animated: true)
-//        self.loadIntoContainer(.settings, newVC: settingsVC)
         #elseif os(tvOS)
         // TODO: load tvOS settings from bundle
         #endif

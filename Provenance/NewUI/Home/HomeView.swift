@@ -58,46 +58,47 @@ struct HomeView: SwiftUI.View {
     }
     
     var body: some SwiftUI.View {
-        ScrollView {
-            LazyVStack {
-                if #available(iOS 15, tvOS 15, *) {
-                    HomeContinueSection(continueStates: recentSaveStates, rootDelegate: rootDelegate)
-                } else {
-                    HomeSection(title: "Continue") {
-                        ForEach(recentSaveStates, id: \.self) { recentSaveState in
-                            GameItemView(game: recentSaveState.game, constrainHeight: true) {
-                                rootDelegate?.root_load(recentSaveState.game, sender: self, core: recentSaveState.core, saveState: recentSaveState)
+        StatusBarProtectionWrapper {
+            ScrollView {
+                LazyVStack {
+                    if #available(iOS 15, tvOS 15, *) {
+                        HomeContinueSection(continueStates: recentSaveStates, rootDelegate: rootDelegate)
+                    } else {
+                        HomeSection(title: "Continue") {
+                            ForEach(recentSaveStates, id: \.self) { recentSaveState in
+                                GameItemView(game: recentSaveState.game, constrainHeight: true) {
+                                    rootDelegate?.root_load(recentSaveState.game, sender: self, core: recentSaveState.core, saveState: recentSaveState)
+                                }
+                            }
+                        }
+                        HomeDividerView()
+                    }
+                    HomeSection(title: "Recently Played") {
+                        ForEach(recentlyPlayedGames, id: \.self) { recentlyPlayedGame in
+                            GameItemView(game: recentlyPlayedGame.game, constrainHeight: true) {
+                                rootDelegate?.root_load(recentlyPlayedGame.game, sender: self, core: nil, saveState: nil)
                             }
                         }
                     }
                     HomeDividerView()
-                }
-                HomeSection(title: "Recently Played") {
-                    ForEach(recentlyPlayedGames, id: \.self) { recentlyPlayedGame in
-                        GameItemView(game: recentlyPlayedGame.game, constrainHeight: true) {
-                            rootDelegate?.root_load(recentlyPlayedGame.game, sender: self, core: nil, saveState: nil)
+                    HomeSection(title: "Favorites") {
+                        ForEach(favorites, id: \.self) { favorite in
+                            GameItemView(game: favorite, constrainHeight: true) {
+                                rootDelegate?.root_load(favorite, sender: self, core: nil, saveState: nil)
+                            }
                         }
                     }
-                }
-                HomeDividerView()
-                HomeSection(title: "Favorites") {
-                    ForEach(favorites, id: \.self) { favorite in
-                        GameItemView(game: favorite, constrainHeight: true) {
-                            rootDelegate?.root_load(favorite, sender: self, core: nil, saveState: nil)
-                        }
-                    }
-                }
-                HomeDividerView()
-                HomeSection(title: "Most Played") {
-                    ForEach(mostPlayed, id: \.self) { playedGame in
-                        GameItemView(game: playedGame, constrainHeight: true) {
-                            rootDelegate?.root_load(playedGame, sender: self, core: nil, saveState: nil)
+                    HomeDividerView()
+                    HomeSection(title: "Most Played") {
+                        ForEach(mostPlayed, id: \.self) { playedGame in
+                            GameItemView(game: playedGame, constrainHeight: true) {
+                                rootDelegate?.root_load(playedGame, sender: self, core: nil, saveState: nil)
+                            }
                         }
                     }
                 }
             }
         }
-        .navigationTitle("Hellloooo")
         .background(Color.black)
     }
 }
