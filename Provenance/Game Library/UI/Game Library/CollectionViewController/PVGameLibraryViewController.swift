@@ -1109,9 +1109,11 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             self?.chooseCustomArtwork(for: game, sourceView: sender)
         })
 
-        actionSheet.addAction(UIAlertAction(title: "Paste Cover", symbol:"arrow.down.doc", style: .default, handler: { (_: UIAlertAction) -> Void in
-            self.pasteCustomArtwork(for: game)
-        }))
+        if UIPasteboard.general.hasImages || UIPasteboard.general.hasURLs {
+            actionSheet.addAction(UIAlertAction(title: "Paste Cover", symbol:"arrow.down.doc", style: .default, handler: { (_: UIAlertAction) -> Void in
+                self.pasteCustomArtwork(for: game)
+            }))
+        }
 
         if !game.saveStates.isEmpty {
             actionSheet.addAction(UIAlertAction(title: "View Save States", symbol:"archivebox", style: .default, handler: { (_: UIAlertAction) -> Void in
