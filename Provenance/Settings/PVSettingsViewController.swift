@@ -202,7 +202,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
                 PVSettingsSwitchRow(text: NSLocalizedString("Button Colors", comment: "Button Colors"), key: \PVSettingsModel.buttonTints),
                 PVSettingsSwitchRow(text: NSLocalizedString("All-Right Shoulders", comment: "All-Right Shoulders"), detailText: .subtitle("Moves L1, L2 & Z to right side"), key: \PVSettingsModel.allRightShoulders),
                 PVSettingsSwitchRow(text: NSLocalizedString("Haptic Feedback", comment: "Haptic Feedback"), key: \PVSettingsModel.buttonVibration),
-                PVSettingsSwitchRow(text: NSLocalizedString("Enable 8BitDo M30 Mapping", comment: "Enable 8BitDo M30 Mapping"), detailText: .subtitle("For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X and the PC Engine."), key: \PVSettingsModel.use8BitdoM30)
+                PVSettingsSwitchRow(text: NSLocalizedString("Enable 8BitDo M30 Mapping", comment: "Enable 8BitDo M30 Mapping"), detailText: .subtitle("For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X, Saturn and the PC Engine."), key: \PVSettingsModel.use8BitdoM30)
             ]
 
         )
@@ -215,7 +215,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
         ])
         #if os(tvOS)
         controllerRows.append(contentsOf: [
-            PVSettingsSwitchRow(text: NSLocalizedString("Enable 8BitDo M30 Mapping", comment: "Enable 8BitDo M30 Mapping"), detailText: .subtitle("For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X and the PC Engine."), key: \PVSettingsModel.use8BitdoM30,
+            PVSettingsSwitchRow(text: NSLocalizedString("Enable 8BitDo M30 Mapping", comment: "Enable 8BitDo M30 Mapping"), detailText: .subtitle("For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X, Saturn and the \nTG16/PC Engine, TG16/PC Engine CD and SuperGrafx systems."), key: \PVSettingsModel.use8BitdoM30,
             customization: { cell, _ in
             cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
             cell.detailTextLabel?.font =  UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
