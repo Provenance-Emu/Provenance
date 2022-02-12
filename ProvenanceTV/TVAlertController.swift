@@ -354,9 +354,19 @@ final class TVAlertController: UIViewController, UIAlertControllerProtocol {
         btn.setAttributedTitle(NSAttributedString(string:action.title ?? "", attributes:[.font:self.font]), for: .normal)
         btn.setTitleColor(UIColor.white, for: .normal)
         btn.setTitleColor(UIColor.gray, for: .disabled)
-        
+
         let spacing = self.spacing
         btn.contentEdgeInsets = UIEdgeInsets(top:spacing, left:spacing*2, bottom:spacing, right:spacing*2)
+
+        if let image = action.getImage() {
+            btn.tintColor = .white
+            btn.setImage(image, for: .normal)
+            btn.contentEdgeInsets = UIEdgeInsets(top:spacing, left:spacing*2, bottom:spacing, right:spacing*3)
+            btn.titleEdgeInsets = UIEdgeInsets(top:0, left:spacing, bottom:0, right:-spacing)
+            #if os(tvOS)
+                btn.imageView?.adjustsImageWhenAncestorFocused = false
+            #endif
+        }
         
         btn.setGrowDelta(_inset * 0.25, for: .focused)
         btn.setGrowDelta(_inset * 0.25, for: .selected)
@@ -466,6 +476,25 @@ private extension UIAlertAction {
     }
 }
 
+extension UIAlertAction {
+    convenience init(title: String, symbol:String, style: UIAlertAction.Style, handler: @escaping ((UIAlertAction) -> Void)) {
+        self.init(title: title, style: style, handler: handler)
+        if #available(iOS 13.0, tvOS 13.0, *) {
+            if let image = UIImage(systemName: symbol, withConfiguration: UIImage.SymbolConfiguration(font: _font)) {
+                self.setValue(image, forKey: "image")
+            }
+        }
+    }
+    func getImage() -> UIImage? {
+        if #available(iOS 13.0, tvOS 13.0, *) {
+            return self.value(forKey: "image") as? UIImage
+        }
+        else {
+            return nil
+        }
+    }
+}
+
 // MARK: MENU
 
 #if os(iOS)
@@ -485,7 +514,7 @@ extension UIAlertControllerProtocol {
 
             let title = alert_action.title ?? ""
             let attributes = (alert_action.style == .destructive) ? UIMenuElement.Attributes.destructive : []
-            return UIAction(title: title, attributes: attributes) { _ in
+            return UIAction(title: title, image:alert_action.getImage(), attributes: attributes) { _ in
                 alert_action.callActionHandler()
             }
         }
@@ -509,9 +538,9 @@ private class TVButton : UIButton {
         
         // these are the defaults if not set
         _color[.normal]       = _color[.normal] ?? backgroundColor ?? .gray
-        _color[.focused]      = _color[.focused] ?? tintColor
-        _color[.highlighted]  = _color[.highlighted] ?? tintColor
-        _color[.selected]     = _color[.selected] ?? tintColor
+        _color[.focused]      = _color[.focused] ?? superview?.tintColor
+        _color[.highlighted]  = _color[.highlighted] ?? superview?.tintColor
+        _color[.selected]     = _color[.selected] ?? superview?.tintColor
 
         _grow[.focused] = _grow[.focused] ?? 16.0
         _grow[.highlighted] = _grow[.highlighted] ?? 0.0
