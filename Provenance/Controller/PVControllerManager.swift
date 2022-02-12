@@ -613,7 +613,7 @@ extension ControllerButtonPressTableView {
         return tableView.numberOfRows(inSection:indexPath.section)-1
     }
     private func select(_ indexPath:IndexPath) {
-        tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+        tableView.selectRow(at: indexPath, animated: true, scrollPosition: .top)
         tableView.scrollToRow(at: indexPath, at: .none, animated: false)
         let cell = tableView.cellForRow(at: indexPath)
         cell?.selectedBackgroundView = cell?.selectedBackgroundView ?? UIView()
@@ -648,6 +648,7 @@ extension GCExtendedGamepad {
         case a,b,x,y
         case menu,options
         case up,down,left,right
+        case l1, l2, r1, r2
         static let select = a
         static let back = b
         static let cancel = b
@@ -674,6 +675,11 @@ extension GCExtendedGamepad {
             if pad.left.isPressed {state.formUnion([.left])}
             if pad.right.isPressed {state.formUnion([.right])}
         }
+
+        if rightShoulder.isPressed {state.formUnion([.r1])}
+        if rightTrigger.isPressed {state.formUnion([.r2])}
+        if leftShoulder.isPressed {state.formUnion([.l1])}
+        if leftTrigger.isPressed {state.formUnion([.l2])}
 
         return state
     }
@@ -764,5 +770,26 @@ extension GCKeyboard {
         }
         
         return controller
+    }
+}
+
+public final class SortOptionsTableViewController: UIViewController, ControllerButtonPressTableView {
+    var clearsSelectionOnViewWillAppear: Bool = true
+    
+    public private(set) var tableView: UITableView!
+    
+    public required init(withTableView tableView: UITableView) {
+        super.init(nibName: nil, bundle: nil)
+
+        self.tableView = tableView
+    }
+    
+    public override func loadView() {
+        self.view = tableView
+    }
+    
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
