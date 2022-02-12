@@ -1,0 +1,71 @@
+/*
+
+  Strings.strings
+
+  Provenance
+
+  Created by Joseph Mattiello on 8/16/21.
+
+  Copyright © 2021 Provenance Emu. All rights reserved.
+ 
+  Translated by Stéfano Santos on 2/11/22 - Portuguese (Brazil) (PT-BR)
+*/
+
+/* Loading and item */
+"Loading" = "Carregando";
+"App" = "App";
+"Core Options" = "Opções de emulador/núcleo";
+"Auto Save" = "Salvar automaticamente";
+"Timed Auto Saves" = "Salvamentos automáticos cronometrados";
+"Auto Load Saves" = "Carregar automaticamente os salvamentos";
+"Ask to Load Saves" = "Perguntar antes de carregar os salvamentos";
+"Opacity" = "Opacidade";
+"Saves" = "Salvamentos (Saves)";
+"Video Options" = "Opções de Vídeo";
+"Button Colors" = "Cores dos botões";
+"All-Right Shoulders" = "All-Right Shoulders";
+"Haptic Feedback" = "Resposta tátil";
+"Enable 8BitDo M30 Mapping" = "Habilitar mapeamento 8BitDo M30";
+"Controllers" = "Controles";
+"Controller" = "Controle";
+"iCade Controller" = "Controle iCade";
+"Appearance" = "Aparência";
+"Build" = "Compilação";
+"Mode" = "Modo";
+"Git Revision" = "Revisão Git";
+"Build Data" = "Data de compilação";
+"Builder" = "Builder";
+"Bundle ID" = "Bundle ID";
+"Unknown" = "Desconhecido";
+"Cores" = "Emuladores/núcleos";
+"Licenses" = "Licenças";
+"Logs" = "Logs";
+"Systems" = "Sistemas";
+"Volume HUD" = "Volume HUD";
+"Native Scale" = "Escala nativa";
+"Integer Scaling" = "Escala de números inteiros";
+"CRT Filter" = "Filtro CRT";
+"Image Smoothing" = "Suavização de imagem";
+"FPS Counter" = "Contador de FPS";
+"Missing Buttons Always On-Screen" = "Botões ausentes sempre na tela";
+"iCloud Sync" = "Sincronização iCloud";
+"Use Metal" = "Usar Metal";
+"Multi-threaded GL" = "Multi-threaded GL";
+"4X Multisampling GL" = "4X Multisampling GL";
+"Disable Auto Lock" = "Desativar bloqueio automático";
+"Launch Web Server" = "Iniciar servidor web";
+"Game Library" = "Biblioteca de jogos";
+"Refresh Game Library" = "Recarregar biblioteca de jogos";
+"Empty Image Cache" = "Limpar imagens baixadas (cache)";
+"Manage Conflicts" = "Gerenciar conflitos";
+"Beta Features" = "Funcionalidades Beta";
+"Unknown" = "Desconhecido";
+"Version" = "Versão";
+"Build Information" = "Informação de compilação";
+"3rd Party & Legal" = "Terceiros e Jurídico";
+"Debug" = "Debug";
+"No" = "Não";
+"Empty Image Cache?" = "Limpar imagens baixadas (cache)?";
+"Yes" = "Sim";
+"Acknowledgements" = "Reconhecimentos";
+"Database Error" = "Erro de banco de dados";
