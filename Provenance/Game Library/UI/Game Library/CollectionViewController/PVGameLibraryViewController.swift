@@ -1860,8 +1860,8 @@ extension PVGameLibraryViewController: ControllerButtonPress {
             menu()
         case .x:
             settingsCommand()
-        case .y:
-            longPress()
+//        case .y: // Bad merge?
+//            longPress()
         case .r1:
             getMoreROMs(self)
         case .l1:
