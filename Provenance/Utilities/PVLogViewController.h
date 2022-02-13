@@ -6,8 +6,7 @@
 //  Copyright © 2015 Joe Mattiello. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-
+@import UIKit;
 @import PVSupport;
 @import CocoaLumberjack;
 //#import <UIForLumberJack/UIForLumberJack.h>
