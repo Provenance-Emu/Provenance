@@ -66,6 +66,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         setDefaultsFromSettingsBundle()
         
 		#if !targetEnvironment(macCatalyst)
+        PVEmulatorConfiguration.initICloud()
         DispatchQueue.global(qos: .background).async {
             let useiCloud = PVSettingsModel.shared.debugOptions.iCloudSync && PVEmulatorConfiguration.supportsICloud
             if useiCloud {

@@ -237,14 +237,20 @@ public final class PVEmulatorConfiguration: NSObject {
         return URL(fileURLWithPath: paths.first!, isDirectory: true)
     }()
 
+    public static func initICloud() {
+        DispatchQueue.global(qos: .background).async {
+            ILOG("iCloudContainerDirectory: \(PVEmulatorConfiguration.iCloudContainerDirectory)")
+        }
+    }
+    
     static var iCloudContainerDirectoryCached: URL?
     /// This should be called on a background thread
     static var iCloudContainerDirectory: URL? {
-        if Thread.isMainThread {
-            WLOG("Warning, this should only be called on background threads.")
-        }
         guard iCloudContainerDirectoryCached == nil else {
             return iCloudContainerDirectoryCached
+        }
+        if Thread.isMainThread {
+            WLOG("Warning, this should only be called on background threads.")
         }
         iCloudContainerDirectoryCached = FileManager.default.url(forUbiquityContainerIdentifier: Constants.iCloud.containerIdentifier)
         return iCloudContainerDirectoryCached
