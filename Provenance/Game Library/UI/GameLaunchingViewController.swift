@@ -481,7 +481,12 @@ extension GameLaunchingViewController where Self: UIViewController {
                 return
             }
 
-            let cores = system.cores
+            let cores = system.cores.filter({
+                guard !$0.disabled else {
+                    return PVSettingsModel.shared.debugOptions.experimentalCores
+                }
+                return true
+            })
 
             guard !cores.isEmpty else {
                 displayAndLogError(withTitle: "Cannot open game", message: "No core found for game system '\(system.shortName)'.")
