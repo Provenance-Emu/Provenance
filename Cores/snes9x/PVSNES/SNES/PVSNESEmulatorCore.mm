@@ -764,74 +764,64 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
 #pragma mark Video
 
-- (void)swapBuffers
-{
-    if (GFX.Screen == (short unsigned int *)videoBufferA)
-    {
+- (void)swapBuffers {
+    if (GFX.Screen == (short unsigned int *)videoBufferA) {
         videoBuffer = videoBufferA;
         GFX.Screen = (short unsigned int *)videoBufferB;
-    }
-    else
-    {
+    } else {
         videoBuffer = videoBufferB;
         GFX.Screen = (short unsigned int *)videoBufferA;
     }
 }
 
-- (const void *)videoBuffer
-{
+- (const void *)videoBuffer {
     return videoBuffer;
 }
 
-- (CGRect)screenRect
-{
+- (CGRect)screenRect {
     return CGRectMake(0, 0, IPPU.RenderedScreenWidth, IPPU.RenderedScreenHeight);
 }
 
-- (CGSize)aspectSize
-{
+- (CGSize)aspectSize {
 	return CGSizeMake(IPPU.RenderedScreenWidth * (8.0/7.0), IPPU.RenderedScreenHeight);
 }
 
-- (CGSize)bufferSize
-{
-    return CGSizeMake(MAX_SNES_WIDTH, MAX_SNES_HEIGHT);
+- (CGSize)bufferSize {
+    static dispatch_once_t onceToken;
+    static CGSize size;
+    dispatch_once(&onceToken, ^{
+        size =  CGSizeMake(MAX_SNES_WIDTH, MAX_SNES_HEIGHT);
+    });
+    return size;
 }
 
-- (GLenum)pixelFormat
-{
+- (GLenum)pixelFormat {
     return GL_RGB;
 }
 
-- (GLenum)pixelType
-{
+- (GLenum)pixelType {
     return GL_UNSIGNED_SHORT_5_6_5;
 }
 
-- (GLenum)internalPixelFormat
-{
+- (GLenum)internalPixelFormat {
     return GL_RGB;
 }
 
-- (NSTimeInterval)frameInterval
-{
+- (NSTimeInterval)frameInterval {
     return Settings.PAL ? 50 : 60; // for more "accuracy" does 50.007 : 60.098806 make a difference?
 }
 
-- (BOOL)isDoubleBuffered
-{
+- (BOOL)isDoubleBuffered {
     return YES;
 }
 
 #pragma mark Audio
 
-bool8 S9xOpenSoundDevice(void)
-{
+bool8 S9xOpenSoundDevice(void) {
 	return true;
 }
 
-static void FinalizeSamplesAudioCallback(void *)
-{
+static void FinalizeSamplesAudioCallback(void *) {
     __strong PVSNESEmulatorCore *strongCurrent = _current;
     
     int samples = S9xGetSampleCount();
@@ -839,33 +829,28 @@ static void FinalizeSamplesAudioCallback(void *)
     [[strongCurrent ringBufferAtIndex:0] write:strongCurrent->soundBuffer maxLength:samples * 2];
 }
 
-- (double)audioSampleRate
-{
+- (double)audioSampleRate {
     return SAMPLERATE;
 }
 
-- (NSUInteger)channelCount
-{
+- (NSUInteger)channelCount {
     return 2;
 }
 
 #pragma mark Save States
-- (BOOL)saveStateToFileAtPath: (NSString *) fileName error:(NSError**)error  
-{
+- (BOOL)saveStateToFileAtPath: (NSString *) fileName error:(NSError**)error   {
     @synchronized(self) {
         return S9xFreezeGame([fileName UTF8String]) ? YES : NO;
     }
 }
 
-- (BOOL)loadStateFromFileAtPath: (NSString *) fileName error:(NSError**)error
-{
+- (BOOL)loadStateFromFileAtPath: (NSString *) fileName error:(NSError**)error {
     @synchronized(self) {
         return S9xUnfreezeGame([fileName UTF8String]) ? YES : NO;
     }
 }
 
-- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled  error:(NSError**)error
-{
+- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled  error:(NSError**)error {
     @synchronized(self) {
         if (enabled)
             cheatList[code] = @YES;
@@ -918,20 +903,16 @@ static void FinalizeSamplesAudioCallback(void *)
 
 #pragma mark - Input
 
-- (void)didPushSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player
-{
+- (void)didPushSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player {
     S9xReportButton((player+1 << 16) | button, true);
 }
 
-- (void)didReleaseSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player
-{
+- (void)didReleaseSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player {
     S9xReportButton((player+1 << 16) | button, false);
 }
 
-- (void)mapButtons
-{
-    for(int player = 1; player <= 8; player++)
-    {
+- (void)mapButtons {
+    for(int player = 1; player <= 8; player++) {
         NSUInteger playerMask = player << 16;
 		
         NSString *playerString = [NSString stringWithFormat:@"Joypad%d ", player];
@@ -944,17 +925,14 @@ static void FinalizeSamplesAudioCallback(void *)
     }
 }
 
-- (void)updateControllers
-{
+- (void)updateController {
     GCController *controller = nil;
 
-    for (NSInteger player = 1; player <= 2; player++)
-    {
+    for (NSInteger player = 1; player <= 2; player++) {
         NSUInteger playerMask = player << 16;
         GCController *controller = (player == 1) ? self.controller1 : self.controller2;
 
-        if ([controller extendedGamepad])
-        {
+        if ([controller extendedGamepad]) {
             GCExtendedGamepad *gamepad = [controller extendedGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
 
