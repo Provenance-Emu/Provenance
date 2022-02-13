@@ -166,6 +166,7 @@
 		378F4A0D1B63D7CD0065FA39 /* GCDWebUploader.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 378F49FD1B63D7CD0065FA39 /* GCDWebUploader.bundle */; };
 		378F4A0E1B63D7CD0065FA39 /* GCDWebUploader.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49FF1B63D7CD0065FA39 /* GCDWebUploader.m */; };
 		378F4A111B63DCF00065FA39 /* PVWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F4A101B63DCF00065FA39 /* PVWebServer.m */; };
+		37B583DC27B99EAC00585B67 /* PVRootViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B583DB27B99EAC00585B67 /* PVRootViewModel.swift */; };
 		37B7B3DF27AA56E600E05B90 /* SideNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B7B3DE27AA56E600E05B90 /* SideNavigationController.swift */; };
 		37B7B3E127AA56FB00E05B90 /* SideNavigationController+NestedTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B7B3E027AA56FB00E05B90 /* SideNavigationController+NestedTypes.swift */; };
 		37B7B3E327AA570900E05B90 /* UIViewController+SideNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B7B3E227AA570900E05B90 /* UIViewController+SideNavigationController.swift */; };
@@ -938,6 +939,7 @@
 		378F49FF1B63D7CD0065FA39 /* GCDWebUploader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebUploader.m; sourceTree = "<group>"; };
 		378F4A0F1B63DCF00065FA39 /* PVWebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVWebServer.h; sourceTree = "<group>"; };
 		378F4A101B63DCF00065FA39 /* PVWebServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVWebServer.m; sourceTree = "<group>"; };
+		37B583DB27B99EAC00585B67 /* PVRootViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVRootViewModel.swift; sourceTree = "<group>"; };
 		37B7B3DE27AA56E600E05B90 /* SideNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideNavigationController.swift; sourceTree = "<group>"; };
 		37B7B3E027AA56FB00E05B90 /* SideNavigationController+NestedTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SideNavigationController+NestedTypes.swift"; sourceTree = "<group>"; };
 		37B7B3E227AA570900E05B90 /* UIViewController+SideNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+SideNavigationController.swift"; sourceTree = "<group>"; };
@@ -1988,6 +1990,7 @@
 				37B7B3DD27AA56CF00E05B90 /* SideNavigationController */,
 				37CFD801279C350C007B5FC7 /* PVRootViewController.swift */,
 				37C8B58A27A7696E00065678 /* PVRootViewController+DelegateMethods.swift */,
+				37B583DB27B99EAC00585B67 /* PVRootViewModel.swift */,
 				3759CAF6279C38D600E9267B /* Utils */,
 				3759CAEF279C380800E9267B /* Home */,
 				3759CAEE279C380100E9267B /* Consoles */,
@@ -3142,6 +3145,7 @@
 				B3375ECC278EA28E004B0DC0 /* lineTron.metal in Sources */,
 				B35E6C23207ED7050040709A /* UIAppearanceExtensions.swift in Sources */,
 				3759CAF1279C381800E9267B /* HomeView.swift in Sources */,
+				37B583DC27B99EAC00585B67 /* PVRootViewModel.swift in Sources */,
 				B35E6C29207ED7050040709A /* AppearanceStyleExtensions.swift in Sources */,
 				B3AB37442187F569009D9244 /* PVNESControllerViewController.swift in Sources */,
 				3759CAEC279C37B100E9267B /* SideMenuView.swift in Sources */,

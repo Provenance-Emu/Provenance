@@ -25,6 +25,7 @@ import PVLibrary
 // and porting the remaining views/logic over to as conditions change moving forward.
 
 // - bios options in console view
+// - refactor some logic to viewModel
 // - stretch goal: collections
 
 enum PVNavOption {

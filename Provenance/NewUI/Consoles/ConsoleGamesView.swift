@@ -79,9 +79,84 @@ struct ConsoleGamesView: SwiftUI.View {
                 }
                 .padding(.horizontal, 10)
             }
-            // TODO: bios if applicable
+            if console.bioses.count > 0 {
+                LazyVStack {
+                    GamesDividerView()
+                    ForEach(console.bioses, id: \.self) { bios in
+                        BiosRowView(bios: bios)
+                        GamesDividerView()
+                    }
+                }
+                .background(Theme.currentTheme.settingsCellBackground?.swiftUIColor.opacity(0.3) ?? Color.black)
+            }
         }
         .background(Theme.currentTheme.gameLibraryBackground.swiftUIColor)
+    }
+}
+
+@available(iOS 14, tvOS 14, *)
+struct BiosRowView: SwiftUI.View {
+    
+    var bios: PVBIOS
+    
+    func biosState() -> BIOSStatus.State {
+        return (bios as BIOSStatusProvider).status.state
+    }
+    
+    var body: some SwiftUI.View {
+        HStack(alignment: .center, spacing: 0) {
+            Image(biosState().biosStatusImageName).resizable().scaledToFit()
+                .padding(.vertical, 8)
+                .padding(.horizontal, 8)
+                .background(Color.purple)
+            VStack(alignment: .leading) {
+                Text("\(bios.descriptionText)")
+                    .font(.system(size: 13))
+                    .foregroundColor(Color.white)
+                Text("\(bios.expectedMD5.uppercased()) : \(bios.expectedSize) bytes")
+                    .font(.system(size: 10))
+                    .foregroundColor(Theme.currentTheme.gameLibraryText.swiftUIColor)
+            }
+            .background(Color.red)
+            .frame(maxWidth: .infinity)
+            HStack {
+                switch biosState() {
+                case .match:
+                    Image(systemName: "checkmark")
+                        .foregroundColor(Theme.currentTheme.gameLibraryText.swiftUIColor)
+                        .font(.system(size: 13, weight: .light))
+                        .padding(8)
+                case .missing:
+                    Text("Missing")
+                        .font(.system(size: 12))
+                        .foregroundColor(Color.yellow)
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundColor(Color.yellow)
+                        .font(.system(size: 12, weight: .light))
+                        .padding(8)
+                case let .mismatch(mismatches):
+                    Text("Mismatch")
+                        .font(.system(size: 12))
+                        .foregroundColor(Color.red)
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundColor(Color.red)
+                        .font(.system(size: 12, weight: .light))
+                        .padding(8)
+                }
+            }
+            .padding(.horizontal, 4)
+        }
+        .frame(height: 40)
+    }
+}
+
+extension BIOSStatus.State {
+    var biosStatusImageName: String {
+        switch self {
+        case .missing: return "bios_empty"
+        case .mismatch(_):  return "bios_empty"
+        case .match: return "bios_filled"
+        }
     }
 }
 
