@@ -270,10 +270,12 @@ final class PVControllerManager: NSObject {
     
     @available(iOS 14.0, tvOS 14.0, *)
     @objc func handleKeyboardConnect(_ note: Notification?) {
+        #if !targetEnvironment(simulator)
         if let controller = GCKeyboard.coalesced?.createController() {
             keyboardController = controller
             NotificationCenter.default.post(name:.GCControllerDidConnect, object: controller)
         }
+        #endif
     }
     
     @available(iOS 14.0, tvOS 14.0, *)
