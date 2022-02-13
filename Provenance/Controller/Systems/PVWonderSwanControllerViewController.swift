@@ -105,7 +105,7 @@ final class PVWonderSwanControllerViewController: PVControllerViewController<PVW
         vibrate()
     }
 
-    override func dPadDidReleaseDirection(_ dPad: JSDPad) {
+    override func dPad(_ dPad: JSDPad, didRelease direction: JSDPadDirection) {
         if dPad == self.dPad {
             emulatorCore.didRelease(.x1, forPlayer: 0)
             emulatorCore.didRelease(.x2, forPlayer: 0)

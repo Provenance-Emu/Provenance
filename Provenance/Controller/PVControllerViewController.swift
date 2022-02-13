@@ -29,7 +29,7 @@ protocol JSButtonDisplayer {
 }
 
 private typealias Keys = SystemDictionaryKeys.ControllerLayoutKeys
-private let kDPadTopMargin: CGFloat = 96.0
+private let kDPadTopMargin: CGFloat = 48.0
 private let gripControl = false
 
 protocol StartSelectDelegate: AnyObject {
@@ -53,6 +53,7 @@ protocol ControllerVC: StartSelectDelegate, JSButtonDelegate, JSDPadDelegate whe
 
     var dPad: JSDPad? { get }
     var dPad2: JSDPad? { get }
+    var joyPad: JSDPad? { get }
     var buttonGroup: UIView? { get }
     var leftShoulderButton: JSButton? { get }
     var rightShoulderButton: JSButton? { get }
@@ -152,8 +153,11 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
     func dPad(_: JSDPad, didPress _: JSDPadDirection) {
         vibrate()
     }
-
-    func dPadDidReleaseDirection(_: JSDPad) {}
+    
+    func dPad(_: JSDPad, didRelease _: JSDPadDirection) {
+    }
+    
+    func dPad(_: JSDPad, joystick _: JoystickValue) { }
 
     typealias ResponderType = T
     var emulatorCore: ResponderType
@@ -163,6 +167,7 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
 
     var dPad: JSDPad?
     var dPad2: JSDPad?
+    var joyPad: JSDPad?
     var buttonGroup: UIView?
     var leftShoulderButton: JSButton?
     var rightShoulderButton: JSButton?
@@ -244,23 +249,18 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
                     hideTouchControls(for: controller)
                 }
             } else {
-                dPad?.isHidden = false
+                allButtons.forEach {
+                    $0.isHidden = false
+                }
                 dPad2?.isHidden = traitCollection.verticalSizeClass == .compact
-                buttonGroup?.isHidden = false
-                leftShoulderButton?.isHidden = false
-                rightShoulderButton?.isHidden = false
-                leftShoulderButton2?.isHidden = false
-                rightShoulderButton2?.isHidden = false
-                zTriggerButton?.isHidden = false
-                startButton?.isHidden = false
-                selectButton?.isHidden = false
-                leftAnalogButton?.isHidden = false
-                rightAnalogButton?.isHidden = false
             }
             setupTouchControls()
         #endif
     }
 
+    var allButtons: [UIView] {
+        return [dPad, dPad2, joyPad, buttonGroup, leftShoulderButton, rightShoulderButton, leftShoulderButton2, rightShoulderButton2, zTriggerButton, startButton, selectButton, leftAnalogButton, rightAnalogButton].compactMap{$0}
+    }
     @objc func controllerDidDisconnect(_: Notification?) {
         #if os(iOS)
             if PVControllerManager.shared.hasControllers {
@@ -268,18 +268,10 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
                     hideTouchControls(for: controller)
                 }
             } else {
-                dPad?.isHidden = false
+                allButtons.forEach {
+                    $0.isHidden = false
+                }
                 dPad2?.isHidden = traitCollection.verticalSizeClass == .compact
-                buttonGroup?.isHidden = false
-                leftShoulderButton?.isHidden = false
-                rightShoulderButton?.isHidden = false
-                leftShoulderButton2?.isHidden = false
-                rightShoulderButton2?.isHidden = false
-                zTriggerButton?.isHidden = false
-                startButton?.isHidden = false
-                selectButton?.isHidden = false
-                leftAnalogButton?.isHidden = false
-                rightAnalogButton?.isHidden = false
             }
             setupTouchControls()
         #endif
@@ -387,7 +379,7 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
                 let controlOriginY: CGFloat = compactVertical ? view.bounds.size.height - controlSize.height : view.frame.width + (kDPadTopMargin / 2)
 
                 if controlType == Keys.DPad {
-                    let xPadding: CGFloat = safeAreaInsets.left + 5
+                    let xPadding: CGFloat = 0 //safeAreaInsets.left
                     let bottomPadding: CGFloat = 16
                     let dPadOriginY: CGFloat = min(controlOriginY - bottomPadding, view.frame.height - controlSize.height - bottomPadding)
                     var dPadFrame = CGRect(x: xPadding, y: dPadOriginY, width: controlSize.width, height: controlSize.height)
@@ -403,7 +395,9 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
                         dPad2.alpha = alpha
                         dPad2.autoresizingMask = [.flexibleTopMargin, .flexibleRightMargin]
                         view.addSubview(dPad2)
-                    } else if dPad == nil {
+                    } else if let dPad = dPad {
+                        dPad.frame = dPadFrame
+                    } else {
                         let dPad = JSDPad(frame: dPadFrame)
                         if let tintColor = control.PVControlTint {
                             dPad.tintColor = UIColor(hex: tintColor)
@@ -413,13 +407,31 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
                         dPad.alpha = alpha
                         dPad.autoresizingMask = [.flexibleTopMargin, .flexibleRightMargin]
                         view.addSubview(dPad)
-                    } else {
-                        dPad?.frame = dPadFrame
                     }
-                    if dPad != nil {
-                        dPad?.transform = .identity
+                    if let dPad = dPad {
+                        dPad.transform = .identity
                     }
-                    dPad2?.isHidden = compactVertical
+                    if let dPad2 = dPad2 {
+                        dPad2.isHidden = compactVertical
+                    }
+                } else if controlType == Keys.JoyPad {
+                    let xPadding: CGFloat = 0 //safeAreaInsets.left
+                    let bottomPadding: CGFloat = 16
+                    let dPadOriginY: CGFloat = min(controlOriginY - bottomPadding, view.frame.height - controlSize.height - bottomPadding)
+                    var dPadFrame = CGRect(x: xPadding, y: dPadOriginY, width: controlSize.width, height: controlSize.height)
+
+                    dPadFrame.origin.y += dPadFrame.height + bottomPadding
+                    
+                    let joyPad = JSDPad.JoyPad(frame: dPadFrame)
+                    if let tintColor = control.PVControlTint {
+                        joyPad.tintColor = UIColor(hex: tintColor)
+                    }
+                    self.joyPad = joyPad
+                    joyPad.delegate = self
+                    joyPad.alpha = alpha
+                    joyPad.autoresizingMask = [.flexibleTopMargin, .flexibleRightMargin]
+                    view.addSubview(joyPad)
+                    
                 } else if controlType == Keys.ButtonGroup {
                     let xPadding: CGFloat = safeAreaInsets.right + 5
                     let bottomPadding: CGFloat = 16
@@ -518,6 +530,16 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
                     }
                 }
             }
+  
+        if let joyPad = joyPad {
+            self.view.bringSubviewToFront(joyPad)
+        }
+        if let dPad2 = dPad2 {
+            self.view.bringSubviewToFront(dPad2)
+        }
+        if let dPad = dPad {
+            self.view.bringSubviewToFront(dPad)
+        }
         #endif
     }
 
@@ -555,6 +577,7 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
                 rightShoulderButton.autoresizingMask = [.flexibleBottomMargin, .flexibleLeftMargin]
                 view.addSubview(rightShoulderButton)
             } else if rightShoulderButton2 == nil, let title = control.PVControlTitle, title == "R2" {
+                rightShoulderFrame.origin.y += 40
                 let rightShoulderButton2 = JSButton(frame: rightShoulderFrame)
                 if let tintColor = control.PVControlTint {
                     rightShoulderButton2.tintColor = UIColor(hex: tintColor)
@@ -650,6 +673,7 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
                 leftShoulderButton.autoresizingMask = [.flexibleBottomMargin, .flexibleRightMargin]
                 view.addSubview(leftShoulderButton)
             } else if leftShoulderButton2 == nil, let title = control.PVControlTitle, title == "L2" {
+                leftShoulderFrame.origin.y += 40
                 let leftShoulderButton2 = JSButton(frame: leftShoulderFrame)
                 if let tintColor = control.PVControlTint {
                     leftShoulderButton2.tintColor = UIColor(hex: tintColor)
@@ -698,6 +722,10 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
             if selectFrame.maxY >= view.frame.size.height {
                 selectFrame.origin.y -= (selectFrame.maxY - view.frame.size.height) + yPadding
             }
+            
+            if ["PSX", "PS1"].contains(system.shortName.uppercased()) {
+                selectFrame.origin.x += 80
+            }
 
             if let selectButton = self.selectButton {
                 selectButton.frame = selectFrame
@@ -721,21 +749,29 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
 
         func layoutStartButton(control: ControlLayoutEntry) {
             let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
-            let yPadding: CGFloat = safeAreaInsets.bottom + 10
-            let xPadding: CGFloat = safeAreaInsets.right + 10
+            let yPadding: CGFloat = safeAreaInsets.bottom
+            let xPadding: CGFloat = safeAreaInsets.right
             let spacing: CGFloat = 20
-            var startFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
+            var startFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding,
+                                    y: view.frame.height - yPadding - controlSize.height,
+                                    width: controlSize.width,
+                                    height: controlSize.height)
 
             if super.view.bounds.size.width > super.view.bounds.size.height || UIDevice.current.orientation.isLandscape || UIDevice.current.userInterfaceIdiom == .pad {
-                if buttonGroup != nil, !(buttonGroup?.isHidden)! {
-                    startFrame = CGRect(x: (buttonGroup?.frame.origin.x)! - controlSize.width + (controlSize.width / 3), y: (buttonGroup?.frame.maxY)! - controlSize.height, width: controlSize.width, height: controlSize.height)
-                    if system.shortName == "SG" || system.shortName == "SCD" || system.shortName == "32X" || system.shortName == "SS" || system.shortName == "PCFX" {
-                        startFrame.origin.x -= (controlSize.width / 2)
-                    }
-                } else if buttonGroup != nil, (buttonGroup?.isHidden)! {
-                    startFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
-                    if gripControl {
-                        startFrame.origin.y = (UIScreen.main.bounds.height / 2)
+                if let buttonGroup = buttonGroup {
+                    if buttonGroup.isHidden {
+                        startFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
+                        if gripControl {
+                            startFrame.origin.y = (UIScreen.main.bounds.height / 2)
+                        }
+                    } else {
+                        startFrame = CGRect(x: buttonGroup.frame.origin.x - controlSize.width + (controlSize.width / 3),
+                                            y: buttonGroup.frame.maxY - controlSize.height,
+                                            width: controlSize.width,
+                                            height: controlSize.height)
+                        if ["SG", "SCD", "32X", "SS", "PCFX"].contains(system.shortName.uppercased()) {
+                            startFrame.origin.x -= (controlSize.width / 2)
+                        }
                     }
                 }
             } else if super.view.bounds.size.width < super.view.bounds.size.height || UIDevice.current.orientation.isPortrait {
@@ -743,8 +779,13 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
                 if selectButton == nil {
                     startFrame.origin.x -= (spacing / 2) + (controlSize.width / 2)
                 }
+      
             }
 
+            if ["PSX", "PS1"].contains(system.shortName.uppercased()) {
+                startFrame.origin.x += 120
+            }
+            
             if startFrame.maxY >= view.frame.size.height {
                 startFrame.origin.y -= (startFrame.maxY - view.frame.size.height) + yPadding
             }

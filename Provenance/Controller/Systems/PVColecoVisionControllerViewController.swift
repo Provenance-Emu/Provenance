@@ -71,11 +71,31 @@ final class PVColecoVisionControllerViewController: PVControllerViewController<P
         vibrate()
     }
 
-    override func dPadDidReleaseDirection(_: JSDPad) {
-        emulatorCore.didRelease(.up, forPlayer: 0)
-        emulatorCore.didRelease(.down, forPlayer: 0)
-        emulatorCore.didRelease(.left, forPlayer: 0)
-        emulatorCore.didRelease(.right, forPlayer: 0)
+   override func dPad(_ dPad: JSDPad, didRelease direction: JSDPadDirection) {
+        switch direction {
+        case .upLeft:
+            emulatorCore.didRelease(.up, forPlayer: 0)
+            emulatorCore.didRelease(.left, forPlayer: 0)
+        case .up:
+            emulatorCore.didRelease(.up, forPlayer: 0)
+        case .upRight:
+            emulatorCore.didRelease(.up, forPlayer: 0)
+            emulatorCore.didRelease(.right, forPlayer: 0)
+        case .left:
+            emulatorCore.didRelease(.left, forPlayer: 0)
+        case .none:
+            break
+        case .right:
+            emulatorCore.didRelease(.right, forPlayer: 0)
+        case .downLeft:
+            emulatorCore.didRelease(.down, forPlayer: 0)
+            emulatorCore.didRelease(.left, forPlayer: 0)
+        case .down:
+            emulatorCore.didRelease(.down, forPlayer: 0)
+        case .downRight:
+            emulatorCore.didRelease(.down, forPlayer: 0)
+            emulatorCore.didRelease(.right, forPlayer: 0)
+        }
     }
 
     override func buttonPressed(_ button: JSButton) {
