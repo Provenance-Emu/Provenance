@@ -18,8 +18,10 @@ Special thanks to contributors on this release;
 
 ### Added
 
-- APIs for keyboard, mouse, rumble, on-screen joystick. (coming in future release)
-- Apple TV: Support new Siri remote (MicroGamepad and DirectionalGamepad)
+- Controllers:
+  - On Screen Joystick Controls for N64 and PSX
+  - APIs for keyboard, mouse, rumble, on-screen joystick. (coming in future release)
+  - Apple TV: Support new Siri remote (MicroGamepad and DirectionalGamepad)
 - Code Signing is now managed with an XCConfig file. See `CodeSigning.xcconfig.example` for instructions. (Only applies to developers/xcode source installs)
 - Enumeration type menu options UI
 - FPS debug label now includes total CPU and Memory usage.
@@ -30,7 +32,7 @@ Special thanks to contributors on this release;
   - many more sub-core options added
   - SNESFaust 1 frame render ahead option (on by default. VERY SNAPPY!)
 - Metal Shaders (CRT, LCD, etc.)
-- N64: 
+- N64:
   - mupen/gliden/rice options exposed
   - Dual Shock 4 touchpad as pause
   - option for Dual Joysticks on DualShock4 as dual controllers (allows Goldeneye dual controller joystock layout from 1 physical dualshock)
@@ -48,7 +50,6 @@ Special thanks to contributors on this release;
   - Russian by  @amoorecodes
   - Dutch by @mrjschulte
   - Portuguese (Brazil) by  Stéfano Santos
-
 ### Improved
 
 - Mupen:
@@ -84,11 +85,12 @@ Special thanks to contributors on this release;
 
 ### Updated
 
-- N64: Swap left and right triggers to L:Start R:Z Button from other way around prior
+- N64: 
+  - Swap left and right triggers to L:Start R:Z Button from other way around prior
+  - mupen cxd4 plugin to latest upstream version
+  - mupen rsp-hle pluring to latest upstream version
 - Updated Swift Packages (RxRealm, Realm, Cocoalumberjack)
 - Improved tvOS UI (top buttons, search, icons, more consistant styling)
-- mupen cxd4 plugin to latest upstream version
-- mupen rsp-hle pluring to latest upstream version
 
 ### Removed
 
