@@ -16,8 +16,8 @@ import PVLibrary
 @available(iOS 14, tvOS 14, *)
 struct ConsoleGamesView: SwiftUI.View {
     
+    @ObservedObject var viewModel: PVRootViewModel
     var console: PVSystem
-    
     var rootDelegate: PVRootDelegate?
     
     @ObservedResults(
@@ -26,8 +26,9 @@ struct ConsoleGamesView: SwiftUI.View {
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: false)
     ) var games
     
-    init(console: PVSystem, rootDelegate: PVRootDelegate) {
+    init(console: PVSystem, viewModel: PVRootViewModel, rootDelegate: PVRootDelegate) {
         self.console = console
+        self.viewModel = viewModel
         self.rootDelegate = rootDelegate
     }
     
@@ -35,7 +36,7 @@ struct ConsoleGamesView: SwiftUI.View {
         // TODO: if filters are on, apply them here before returning
         return games
             .filter(NSPredicate(format: "systemIdentifier == %@", argumentArray: [console.identifier]))
-            .sorted(by: [SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: sortAscending)])
+            .sorted(by: [SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: viewModel.sortGamesAscending)])
     }
     
     // TODO: adjust for landscape
@@ -45,19 +46,17 @@ struct ConsoleGamesView: SwiftUI.View {
         GridItem(.flexible()),
     ]
     
-    @State var sortAscending = true // TODO: this will likely be a keypath on a game attribute, not just on title
-    @State var isGrid = true
     
     var body: some SwiftUI.View {
         ScrollView {
             GamesDisplayOptionsView(
-                sortAscending: sortAscending,
-                isGrid: isGrid,
+                sortAscending: viewModel.sortGamesAscending,
+                isGrid: viewModel.viewGamesAsGrid,
                 toggleFilterAction: { self.rootDelegate?.showUnderConstructionAlert() },
-                toggleSortAction: { sortAscending.toggle() },
-                toggleViewTypeAction: { isGrid.toggle() })
+                toggleSortAction: { viewModel.sortGamesAscending.toggle() },
+                toggleViewTypeAction: { viewModel.viewGamesAsGrid.toggle() })
                 .padding(.top, 16)
-            if isGrid {
+            if viewModel.viewGamesAsGrid {
                 LazyVGrid(columns: columns, spacing: 20) {
                     ForEach(filteredAndSortedGames(), id: \.self) { game in
                         GameItemView(game: game) {

@@ -16,7 +16,8 @@ import Introspect
 @available(iOS 14, tvOS 14, *)
 struct SideMenuView: SwiftUI.View {
     
-    var delegate: PVMenuDelegate?
+    var delegate: PVMenuDelegate
+    @ObservedObject var viewModel: PVRootViewModel
     var rootDelegate: PVRootDelegate
     var gameLibrary: PVGameLibrary
     
@@ -26,18 +27,17 @@ struct SideMenuView: SwiftUI.View {
         filter: NSPredicate(format: "games.@count > 0")
     ) var consoles
     
-    @State var sortAscending = true
-    
     @ObservedObject var searchBar: SearchBar = SearchBar()
     
-    init(gameLibrary: PVGameLibrary, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) {
+    init(gameLibrary: PVGameLibrary, viewModel: PVRootViewModel, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) {
         self.gameLibrary = gameLibrary
+        self.viewModel = viewModel
         self.delegate = delegate
         self.rootDelegate = rootDelegate
     }
     
-    static func instantiate(gameLibrary: PVGameLibrary, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) -> UIViewController {
-        let view = SideMenuView(gameLibrary: gameLibrary, delegate: delegate, rootDelegate: rootDelegate)
+    static func instantiate(gameLibrary: PVGameLibrary, viewModel: PVRootViewModel, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) -> UIViewController {
+        let view = SideMenuView(gameLibrary: gameLibrary, viewModel: viewModel, delegate: delegate, rootDelegate: rootDelegate)
         let hostingView = UIHostingController(rootView: view)
         let nav = UINavigationController(rootViewController: hostingView)
         return nav
@@ -54,7 +54,7 @@ struct SideMenuView: SwiftUI.View {
     }
     
     func sortedConsoles() -> Results<PVSystem> {
-        return self.consoles.sorted(by: [SortDescriptor(keyPath: #keyPath(PVSystem.name), ascending: sortAscending)])
+        return self.consoles.sorted(by: [SortDescriptor(keyPath: #keyPath(PVSystem.name), ascending: viewModel.sortConsolesAscending)])
     }
     
     func filteredSearchResults() -> Results<PVGame> {
@@ -65,36 +65,30 @@ struct SideMenuView: SwiftUI.View {
         StatusBarProtectionWrapper {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 0) {
-                    Group {
-                        MenuItemView(imageName: "prov_settings_gear", rowTitle: "Settings") {
-                            delegate?.didTapSettings()
-                        }
-                        Divider()
-                        MenuItemView(imageName: "prov_home_icon", rowTitle: "Home") {
-                            delegate?.didTapHome()
-                        }
-                        Divider()
-                        MenuItemView(imageName: "prov_add_games_icon", rowTitle: "Add Games") {
-                            delegate?.didTapAddGames()
-                        }
+                    MenuItemView(imageName: "prov_settings_gear", rowTitle: "Settings") {
+                        delegate.didTapSettings()
                     }
-                    Group {
-                        if consoles.count > 0 {
-                            MenuSectionHeaderView(sectionTitle: "CONSOLES", sortable: consoles.count > 1, sortAscending: sortAscending) {
-                                self.sortAscending.toggle()
-                            }
-                            ForEach(sortedConsoles(), id: \.self) { console in
-                                Divider()
-                                MenuItemView(imageName: "prov_snes_icon", rowTitle: console.name) {
-                                    delegate?.didTapConsole(with: console.identifier)
-                                }
+                    Divider()
+                    MenuItemView(imageName: "prov_home_icon", rowTitle: "Home") {
+                        delegate.didTapHome()
+                    }
+                    Divider()
+                    MenuItemView(imageName: "prov_add_games_icon", rowTitle: "Add Games") {
+                        delegate.didTapAddGames()
+                    }
+                    if consoles.count > 0 {
+                        MenuSectionHeaderView(sectionTitle: "CONSOLES", sortable: consoles.count > 1, sortAscending: viewModel.sortConsolesAscending) {
+                            viewModel.sortConsolesAscending.toggle()
+                        }
+                        ForEach(sortedConsoles(), id: \.self) { console in
+                            Divider()
+                            MenuItemView(imageName: "prov_snes_icon", rowTitle: console.name) {
+                                delegate.didTapConsole(with: console.identifier)
                             }
                         }
                     }
-                    // TODO: flesh out collections later
-                    Group {
-                        MenuSectionHeaderView(sectionTitle: "Provenance \(versionText())", sortable: false) {}
-                    }
+                // TODO: flesh out collections later
+                    MenuSectionHeaderView(sectionTitle: "Provenance \(versionText())", sortable: false) {}
                     Spacer()
                 }
             }
