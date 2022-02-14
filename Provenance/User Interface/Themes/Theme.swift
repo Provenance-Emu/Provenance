@@ -122,13 +122,7 @@ struct DarkTheme: iOSTheme {
     var gameLibraryHeaderBackground: UIColor { return UIColor.black }
     var gameLibraryHeaderText: UIColor { return UIColor(hex: "#333")! }
 
-    var barButtonItemTint: UIColor? {
-        if PVSettingsModel.shared.debugOptions.useSwiftUI {
-            return UIColor(hex: "#6F6F6F")
-        } else {
-            return UIColor(hex: "#18A9F7")
-        }
-    }
+    var barButtonItemTint: UIColor? { return UIColor(hex: "#18A9F7") }
     var navigationBarBackgroundColor: UIColor? { return UIColor(hex: "#1C1C1C") }
 
     var alertViewBackground: UIColor { return UIColor.darkGray }

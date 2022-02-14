@@ -83,7 +83,7 @@ struct ConsoleGamesView: SwiftUI.View {
                 LazyVStack {
                     GamesDividerView()
                     ForEach(console.bioses, id: \.self) { bios in
-                        BiosRowView(bios: bios)
+                        BiosRowView(bios: bios.warmUp())
                         GamesDividerView()
                     }
                 }
@@ -106,9 +106,8 @@ struct BiosRowView: SwiftUI.View {
     var body: some SwiftUI.View {
         HStack(alignment: .center, spacing: 0) {
             Image(biosState().biosStatusImageName).resizable().scaledToFit()
-                .padding(.vertical, 8)
-                .padding(.horizontal, 8)
-                .background(Color.purple)
+                .padding(.vertical, 4)
+                .padding(.horizontal, 12)
             VStack(alignment: .leading) {
                 Text("\(bios.descriptionText)")
                     .font(.system(size: 13))
@@ -117,15 +116,13 @@ struct BiosRowView: SwiftUI.View {
                     .font(.system(size: 10))
                     .foregroundColor(Theme.currentTheme.gameLibraryText.swiftUIColor)
             }
-            .background(Color.red)
-            .frame(maxWidth: .infinity)
-            HStack {
+            Spacer()
+            HStack(alignment: .center, spacing: 4) {
                 switch biosState() {
                 case .match:
                     Image(systemName: "checkmark")
                         .foregroundColor(Theme.currentTheme.gameLibraryText.swiftUIColor)
                         .font(.system(size: 13, weight: .light))
-                        .padding(8)
                 case .missing:
                     Text("Missing")
                         .font(.system(size: 12))
@@ -133,18 +130,16 @@ struct BiosRowView: SwiftUI.View {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .foregroundColor(Color.yellow)
                         .font(.system(size: 12, weight: .light))
-                        .padding(8)
-                case let .mismatch(mismatches):
+                case let .mismatch(_):
                     Text("Mismatch")
                         .font(.system(size: 12))
                         .foregroundColor(Color.red)
                     Image(systemName: "exclamationmark.triangle.fill")
                         .foregroundColor(Color.red)
-                        .font(.system(size: 12, weight: .light))
-                        .padding(8)
+                        .font(.system(size: 12, weight: .medium))
                 }
             }
-            .padding(.horizontal, 4)
+            .padding(.horizontal, 12)
         }
         .frame(height: 40)
     }
