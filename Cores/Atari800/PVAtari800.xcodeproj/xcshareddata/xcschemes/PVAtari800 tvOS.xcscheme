@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3D73CF11E9EAF1C0023925B"
-               BuildableName = "PVAtari800.framework"
+               BuildableName = "PVAtari800-tvOS.framework"
                BlueprintName = "PVAtari800-tvOS"
                ReferencedContainer = "container:PVAtari800.xcodeproj">
             </BuildableReference>
@@ -58,7 +58,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3D73CF11E9EAF1C0023925B"
-            BuildableName = "PVAtari800.framework"
+            BuildableName = "PVAtari800-tvOS.framework"
             BlueprintName = "PVAtari800-tvOS"
             ReferencedContainer = "container:PVAtari800.xcodeproj">
          </BuildableReference>
@@ -74,7 +74,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3D73CF11E9EAF1C0023925B"
-            BuildableName = "PVAtari800.framework"
+            BuildableName = "PVAtari800-tvOS.framework"
             BlueprintName = "PVAtari800-tvOS"
             ReferencedContainer = "container:PVAtari800.xcodeproj">
          </BuildableReference>

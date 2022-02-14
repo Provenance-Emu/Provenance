@@ -210,21 +210,21 @@ extension MednafenGameCore: CoreOptional {
     @objc(vb_sidebyside) var vb_sidebyside: Bool { MednafenGameCore.valueForOption(MednafenGameCore.vb_sidebyside).asBool }
 
     static func bool(forOption option: String) -> Bool {
-        return valueForOption(Bool.self, option) ?? false
+        return storedValueForOption(Bool.self, option) ?? false
     }
 
     static func int(forOption option: String) -> Int {
-        let value = valueForOption(Int.self, option)
+        let value = storedValueForOption(Int.self, option)
         return value ?? 0
     }
 
     static func float(forOption option: String) -> Float {
-        let value = valueForOption(Float.self, option)
+        let value = storedValueForOption(Float.self, option)
         return value ?? 0
     }
 
     static func string(forOption option: String) -> String? {
-        let value = valueForOption(String.self, option)
+        let value = storedValueForOption(String.self, option)
         return value
     }
     

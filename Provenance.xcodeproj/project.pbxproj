@@ -197,8 +197,6 @@
 		B305F08C276B5248003AE510 /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B305F08A276B5248003AE510 /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B306E0CF2769F2C2001DC52E /* PVOdyssey2ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B306E0CE2769F2C2001DC52E /* PVOdyssey2ControllerViewController.swift */; };
 		B306E0D02769F2C2001DC52E /* PVOdyssey2ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B306E0CE2769F2C2001DC52E /* PVOdyssey2ControllerViewController.swift */; };
-		B30A2007278FC95C009E08C9 /* PVDuckStation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3203C2626DB1B6600B016C6 /* PVDuckStation.framework */; };
-		B30A2008278FC95C009E08C9 /* PVDuckStation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3203C2626DB1B6600B016C6 /* PVDuckStation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B31117B0218EB3A900C495A2 /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */; };
 		B31117B1218EB3AA00C495A2 /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */; };
 		B31117B3218EB3AE00C495A2 /* PVButtonGroupOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ED1205CD20800C273C7 /* PVButtonGroupOverlayView.swift */; };
@@ -229,8 +227,6 @@
 		B324C5F72191FD89009F4EDC /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701221916C3A000FA7F9 /* PVLibrary.framework */; };
 		B324C5F82191FDAA009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701B21916E38000FA7F9 /* PVSupport.framework */; };
 		B324C5F92191FDB0009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF700F21916C30000FA7F9 /* PVSupport.framework */; };
-		B324C6082191FF9A009F4EDC /* PVAtari800.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C6072191FF9A009F4EDC /* PVAtari800.framework */; };
-		B324C6092191FF9A009F4EDC /* PVAtari800.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B324C6072191FF9A009F4EDC /* PVAtari800.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B324C60B2191FFBB009F4EDC /* PVGBA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C60A2191FFBB009F4EDC /* PVGBA.framework */; };
 		B324C60C2191FFBB009F4EDC /* PVGBA.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B324C60A2191FFBB009F4EDC /* PVGBA.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B324C61121920037009F4EDC /* ProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C61021920037009F4EDC /* ProSystem.framework */; };
@@ -380,6 +376,8 @@
 		B35E6C32207ED7050040709A /* AppearanceStyleHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C20207ED7050040709A /* AppearanceStyleHelpers.swift */; };
 		B369B0DD21A3BF7C0064EDCA /* PVSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB95FFB17C563C100D3E392 /* PVSettingsViewController.swift */; };
 		B369B0DE21A3C1C40064EDCA /* PVLogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E6DADB20B7AD1500454DD4 /* PVLogViewController.m */; };
+		B36C7D5727AE2CF400715677 /* PVAtari800-tvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36C7D5627AE2CF400715677 /* PVAtari800-tvOS.framework */; };
+		B36C7D5827AE2CF500715677 /* PVAtari800-tvOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B36C7D5627AE2CF400715677 /* PVAtari800-tvOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B36D9DF8203562E000D583C4 /* PVControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */; };
 		B36D9DFD203605BC00D583C4 /* PVCoreFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */; };
 		B37263A926EA159400E95488 /* PVMupen64Plus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A426EA159400E95488 /* PVMupen64Plus.framework */; };
@@ -445,8 +443,6 @@
 		B3A32151218EB4D800BD7DA2 /* UIView+FrameAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.swift */; };
 		B3A40C7121A67C7800544C20 /* PVGameLibrarySectionFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A40C7021A67C7800544C20 /* PVGameLibrarySectionFooterView.swift */; };
 		B3A40C7221A67C7800544C20 /* PVGameLibrarySectionFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A40C7021A67C7800544C20 /* PVGameLibrarySectionFooterView.swift */; };
-		B3A4FB5D278FE8B500A65248 /* PVDuckStation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36455EB278E919500B6E87A /* PVDuckStation.framework */; };
-		B3A4FB5E278FE8B500A65248 /* PVDuckStation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B36455EB278E919500B6E87A /* PVDuckStation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3A4FB60278FF84800A65248 /* ApplicationMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A4FB5F278FF84800A65248 /* ApplicationMonitor.swift */; };
 		B3A4FB62278FFA0F00A65248 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A4FB61278FFA0F00A65248 /* LocationManager.swift */; };
 		B3A4FB64278FFA5100A65248 /* PublishedPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A4FB63278FFA5100A65248 /* PublishedPipeline.swift */; };
@@ -567,10 +563,6 @@
 		B3E6DAE120B7C2F800454DD4 /* PVLogViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3E6DAE020B7C2F800454DD4 /* PVLogViewController.xib */; };
 		B3EA0CD32070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
 		B3EA0CD42070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
-		B3F187712720B7FE00659D87 /* Differentiator in Frameworks */ = {isa = PBXBuildFile; productRef = B3F187702720B7FE00659D87 /* Differentiator */; };
-		B3F187732720B7FE00659D87 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = B3F187722720B7FE00659D87 /* RxDataSources */; };
-		B3F187752720B80C00659D87 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = B3F187742720B80C00659D87 /* RxDataSources */; };
-		B3F187772720B81100659D87 /* Differentiator in Frameworks */ = {isa = PBXBuildFile; productRef = B3F187762720B81100659D87 /* Differentiator */; };
 		B3F43DCF2168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F43DD02168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F43DE22169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */; };
@@ -659,13 +651,6 @@
 			remoteGlobalIDString = B383225D26ED9C530029D12F;
 			remoteInfo = "Check Git Submodules";
 		};
-		B39DC77E279E79D40017E28D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = BE9FDCB61C210B9E0046DF0E;
-			remoteInfo = TopShelf;
-		};
 		B3B29D452156183D00903290 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
@@ -717,6 +702,7 @@
 				B3C9D5E21DEA8A290068D057 /* PVGenesis.framework in Embed Frameworks */,
 				B3C9D4B21DEA74500068D057 /* PVGB.framework in Embed Frameworks */,
 				B37263AC26EA159400E95488 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
+				B36C7D5827AE2CF500715677 /* PVAtari800-tvOS.framework in Embed Frameworks */,
 				B324C6232192059E009F4EDC /* PVMednafen.framework in Embed Frameworks */,
 				B37263B026EA159400E95488 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
 				14C4C1A221EBB0040055C6DC /* PVTGBDual.framework in Embed Frameworks */,
@@ -725,13 +711,11 @@
 				B316B4DD219265B700693472 /* PVVirtualJaguar.framework in Embed Frameworks */,
 				B3C9D5E51DEA8AED0068D057 /* PVStella.framework in Embed Frameworks */,
 				B3C9D5611DEA85D10068D057 /* PVSNES.framework in Embed Frameworks */,
-				B3A4FB5E278FE8B500A65248 /* PVDuckStation.framework in Embed Frameworks */,
 				B37263B226EA159500E95488 /* PVRSPCXD4.framework in Embed Frameworks */,
 				B324C61221920037009F4EDC /* ProSystem.framework in Embed Frameworks */,
 				B324C60C2191FFBB009F4EDC /* PVGBA.framework in Embed Frameworks */,
 				B3B4C957279E6BAB00505424 /* ProSystem.framework in Embed Frameworks */,
 				B37263AA26EA159400E95488 /* PVMupen64Plus.framework in Embed Frameworks */,
-				B324C6092191FF9A009F4EDC /* PVAtari800.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -757,7 +741,6 @@
 				B3AF701421916C3A000FA7F9 /* PVLibrary.framework in Embed Frameworks */,
 				B324C61E21920523009F4EDC /* ProSystem.framework in Embed Frameworks */,
 				B354693D1DECDA710018B6F3 /* PVAtari800.framework in Embed Frameworks */,
-				B30A2008278FC95C009E08C9 /* PVDuckStation.framework in Embed Frameworks */,
 				B3C9D5221DEA787D0068D057 /* PVGBA.framework in Embed Frameworks */,
 				DF3751952026B83600EE727E /* PVRSPCXD4.framework in Embed Frameworks */,
 				B3C9D4341DEA1B340068D057 /* PVGenesis.framework in Embed Frameworks */,
@@ -1063,6 +1046,9 @@
 		B324C61A219203AF009F4EDC /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
 		B324C6212192059E009F4EDC /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B324C64E219216DD009F4EDC /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Build-iOS.xcconfig"; sourceTree = "<group>"; };
+		B326758627B1E0BC0033C5D1 /* Build-tvOS.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Build-tvOS.xcconfig"; sourceTree = "<group>"; };
+		B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Build-watchOS.xcconfig"; sourceTree = "<group>"; };
 		B3271BDA276B8B2E0031AECC /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
 		B3271BDC276B8B660031AECC /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/CoreTelephony.framework; sourceTree = DEVELOPER_DIR; };
 		B32746BC219BD65F00B78124 /* PVGameLibraryCollectionFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameLibraryCollectionFlowLayout.swift; sourceTree = "<group>"; };
@@ -1154,6 +1140,7 @@
 		B35E6C20207ED7050040709A /* AppearanceStyleHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppearanceStyleHelpers.swift; sourceTree = "<group>"; };
 		B361938F221FB93B00F73875 /* Provenance-Free.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Provenance-Free.entitlements"; path = "Provenance/Provenance-Free.entitlements"; sourceTree = SOURCE_ROOT; };
 		B36455EB278E919500B6E87A /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B36C7D5627AE2CF400715677 /* PVAtari800-tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = "PVAtari800-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVControllerViewController.swift; sourceTree = "<group>"; };
 		B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVCoreFactory.swift; sourceTree = "<group>"; };
 		B37263A026EA04E700E95488 /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1247,6 +1234,7 @@
 		B3B3B97B1DED14AE00602746 /* PVRSPCXD4.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVRSPCXD4.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B3B97E1DED169100602746 /* PVRSPCXD4.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVRSPCXD4.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B4C955279E6BAA00505424 /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3B66A7027B872BA00E2236B /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Strings.strings"; sourceTree = "<group>"; };
 		B3B9239C202D054B00580FFC /* Provenance-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Provenance-Bridging-Header.h"; sourceTree = "<group>"; };
 		B3B9239D202D054B00580FFC /* ProvenanceTV-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ProvenanceTV-Bridging-Header.h"; sourceTree = "<group>"; };
 		B3B923A9202D2EAE00580FFC /* Theme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
@@ -1356,8 +1344,6 @@
 				B3C9D4331DEA1B340068D057 /* PVGenesis.framework in Frameworks */,
 				B354693C1DECDA710018B6F3 /* PVAtari800.framework in Frameworks */,
 				1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */,
-				B3F187732720B7FE00659D87 /* RxDataSources in Frameworks */,
-				B30A2007278FC95C009E08C9 /* PVDuckStation.framework in Frameworks */,
 				B357A43827092254002C7C0F /* AppCenterAnalytics in Frameworks */,
 				B3CB85BF1E9BFB07009155A6 /* PVPokeMini.framework in Frameworks */,
 				1A4869DD17C8D60C0019F6D2 /* CFNetwork.framework in Frameworks */,
@@ -1375,7 +1361,6 @@
 				B33625FD26EDF88200DC41EA /* Metal.framework in Frameworks */,
 				B3B3B8951DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Frameworks */,
 				1A3D431E17B2F01F004DFFFC /* OpenGLES.framework in Frameworks */,
-				B3F187712720B7FE00659D87 /* Differentiator in Frameworks */,
 				B3B3B8981DECF8C700602746 /* PVMupen64PlusRspHLE.framework in Frameworks */,
 				B3C9D55D1DEA85C60068D057 /* PVSNES.framework in Frameworks */,
 				1A3D409817B2DCE4004DFFFC /* UIKit.framework in Frameworks */,
@@ -1397,7 +1382,7 @@
 				B312805F274C60EC00550720 /* SteamController in Frameworks */,
 				B324C61521920384009F4EDC /* libz.tbd in Frameworks */,
 				B3B4C956279E6BAB00505424 /* ProSystem.framework in Frameworks */,
-				B3F187752720B80C00659D87 /* RxDataSources in Frameworks */,
+				B36C7D5727AE2CF400715677 /* PVAtari800-tvOS.framework in Frameworks */,
 				B324C312219195CE009F4EDC /* CFNetwork.framework in Frameworks */,
 				B324C30C219195BB009F4EDC /* SystemConfiguration.framework in Frameworks */,
 				B324C30A219195AE009F4EDC /* AudioToolbox.framework in Frameworks */,
@@ -1408,7 +1393,6 @@
 				B324C308219195A8009F4EDC /* GLKit.framework in Frameworks */,
 				B324C306219195A0009F4EDC /* OpenGLES.framework in Frameworks */,
 				B324C30321919596009F4EDC /* UIKit.framework in Frameworks */,
-				B3F187772720B81100659D87 /* Differentiator in Frameworks */,
 				B324C30421919596009F4EDC /* TVUIKit.framework in Frameworks */,
 				B37263AB26EA159400E95488 /* PVMupen64PlusRspHLE.framework in Frameworks */,
 				B37263B126EA159500E95488 /* PVRSPCXD4.framework in Frameworks */,
@@ -1432,8 +1416,6 @@
 				B37263A926EA159400E95488 /* PVMupen64Plus.framework in Frameworks */,
 				B324C61121920037009F4EDC /* ProSystem.framework in Frameworks */,
 				B37263AF26EA159400E95488 /* PVMupen64PlusVideoRice.framework in Frameworks */,
-				B324C6082191FF9A009F4EDC /* PVAtari800.framework in Frameworks */,
-				B3A4FB5D278FE8B500A65248 /* PVDuckStation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1531,9 +1513,12 @@
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
-				B380EAC12759D689001B8532 /* Build.xcconfig */,
+				B380EAC32759D69A001B8532 /* CodeSigning.xcconfig.sample */,
 				B380EAC22759D692001B8532 /* CodeSigning.xcconfig */,
-				37CFD7FF279C34C1007B5FC7 /* CodeSigning.xcconfig copy.sample */,
+				B380EAC12759D689001B8532 /* Build.xcconfig */,
+				B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */,
+				B326758627B1E0BC0033C5D1 /* Build-tvOS.xcconfig */,
+				B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */,
 				B399119326C0F41300E54426 /* CHANGELOG.md */,
 				B399119126C0F41300E54426 /* LICENSE.md */,
 				B399119226C0F41300E54426 /* README.md */,
@@ -1569,6 +1554,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B36C7D5627AE2CF400715677 /* PVAtari800-tvOS.framework */,
 				B311B1C327A52F2000D1DE41 /* PVPokeMini.framework */,
 				B311B1C127A52F1700D1DE41 /* UIKit.framework */,
 				B311B01C27A52B9C00D1DE41 /* PVUI.framework */,
@@ -2469,8 +2455,6 @@
 			packageProductDependencies = (
 				B357A43727092254002C7C0F /* AppCenterAnalytics */,
 				B357A43927092254002C7C0F /* AppCenterCrashes */,
-				B3F187702720B7FE00659D87 /* Differentiator */,
-				B3F187722720B7FE00659D87 /* RxDataSources */,
 				B390B0E9276B2DB20018E065 /* AltKit */,
 				B3FB9678276DD7F600F7EDEE /* SteamController */,
 				372F35D227B3796C008D9E03 /* Introspect */,
@@ -2496,15 +2480,12 @@
 				B383226626ED9F0C0029D12F /* PBXTargetDependency */,
 				B3B29D4C2156185700903290 /* PBXTargetDependency */,
 				B3B4C954279E69AD00505424 /* PBXTargetDependency */,
-				B39DC77F279E79D40017E28D /* PBXTargetDependency */,
 			);
 			name = ProvenanceTV;
 			packageProductDependencies = (
 				B3D30FC026F0BCE60064603F /* SteamController */,
 				B3F94A4D27093ABC002A71EF /* AppCenterAnalytics */,
 				B3F94A4F27093ABC002A71EF /* AppCenterCrashes */,
-				B3F187742720B80C00659D87 /* RxDataSources */,
-				B3F187762720B81100659D87 /* Differentiator */,
 			);
 			productName = ProvenanceTV;
 			productReference = 1AD481B41BA350A400FDA50A /* Provenance.app */;
@@ -2726,12 +2707,12 @@
 				ja,
 				nl,
 				it,
+				"pt-BR",
 			);
 			mainGroup = 1A3D408B17B2DCE4004DFFFC;
 			packageReferences = (
 				B3D30FBD26F0B4CD0064603F /* XCRemoteSwiftPackageReference "SteamController" */,
 				B357A43627092253002C7C0F /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */,
-				B3F1876F2720B7FE00659D87 /* XCRemoteSwiftPackageReference "RxDataSources" */,
 				B390B0E8276B2DB20018E065 /* XCRemoteSwiftPackageReference "AltKit" */,
 				372F35D127B3796C008D9E03 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 			);
@@ -3465,11 +3446,6 @@
 			target = B383225D26ED9C530029D12F /* Check Git Submodules */;
 			targetProxy = B383226526ED9F0C0029D12F /* PBXContainerItemProxy */;
 		};
-		B39DC77F279E79D40017E28D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = BE9FDCB61C210B9E0046DF0E /* TopShelf */;
-			targetProxy = B39DC77E279E79D40017E28D /* PBXContainerItemProxy */;
-		};
 		B3B29D462156183D00903290 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B3B29D3F2156177100903290 /* Create Version files */;
@@ -3662,6 +3638,7 @@
 				B311B1E027A53F9D00D1DE41 /* ja */,
 				B311B1ED27A53FC400D1DE41 /* nl */,
 				B311B1FA27A53FEF00D1DE41 /* it */,
+				B3B66A7027B872BA00E2236B /* pt-BR */,
 			);
 			name = Strings.strings;
 			sourceTree = "<group>";
@@ -3813,6 +3790,7 @@
 		};
 		1A3D40B217B2DCE4004DFFFC /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				APP_DISPLAY_NAME = "Prov Debug";
@@ -3860,6 +3838,7 @@
 		};
 		1A3D40B317B2DCE4004DFFFC /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				APP_DISPLAY_NAME = "$(TARGET_NAME)";
@@ -3905,6 +3884,7 @@
 		};
 		1AD481C51BA350A500FDA50A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758627B1E0BC0033C5D1 /* Build-tvOS.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "Prov Debug";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
@@ -3953,6 +3933,7 @@
 		};
 		1AD481C61BA350A500FDA50A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758627B1E0BC0033C5D1 /* Build-tvOS.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "${PRODUCT_NAME}";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
@@ -4120,6 +4101,7 @@
 		};
 		B305EF16276B4C74003AE510 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -4149,6 +4131,7 @@
 		};
 		B305EF17276B4C74003AE510 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -4179,6 +4162,7 @@
 		};
 		B305EF18276B4C74003AE510 /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -4209,6 +4193,7 @@
 		};
 		B305EF1A276B4C74003AE510 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -4250,6 +4235,7 @@
 		};
 		B305EF1B276B4C74003AE510 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -4292,6 +4278,7 @@
 		};
 		B305EF1C276B4C74003AE510 /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -4334,6 +4321,7 @@
 		};
 		B305EF1E276B4C74003AE510 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -4382,6 +4370,7 @@
 		};
 		B305EF1F276B4C74003AE510 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -4431,6 +4420,7 @@
 		};
 		B305EF20276B4C74003AE510 /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -4559,6 +4549,7 @@
 		};
 		B3721CEC21912B7400433E4C /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				APP_DISPLAY_NAME = "$(TARGET_NAME)";
@@ -4604,6 +4595,7 @@
 		};
 		B3721CED21912B7400433E4C /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758627B1E0BC0033C5D1 /* Build-tvOS.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "${PRODUCT_NAME}";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
@@ -4709,6 +4701,7 @@
 		};
 		B3721CEF21912B7400433E4C /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758627B1E0BC0033C5D1 /* Build-tvOS.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -4750,6 +4743,7 @@
 		};
 		B3721CF021912B7400433E4C /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -5202,14 +5196,6 @@
 				kind = branch;
 			};
 		};
-		B3F1876F2720B7FE00659D87 /* XCRemoteSwiftPackageReference "RxDataSources" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/RxSwiftCommunity/RxDataSources.git";
-			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 5.0.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -5237,26 +5223,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B3D30FBD26F0B4CD0064603F /* XCRemoteSwiftPackageReference "SteamController" */;
 			productName = SteamController;
-		};
-		B3F187702720B7FE00659D87 /* Differentiator */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3F1876F2720B7FE00659D87 /* XCRemoteSwiftPackageReference "RxDataSources" */;
-			productName = Differentiator;
-		};
-		B3F187722720B7FE00659D87 /* RxDataSources */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3F1876F2720B7FE00659D87 /* XCRemoteSwiftPackageReference "RxDataSources" */;
-			productName = RxDataSources;
-		};
-		B3F187742720B80C00659D87 /* RxDataSources */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3F1876F2720B7FE00659D87 /* XCRemoteSwiftPackageReference "RxDataSources" */;
-			productName = RxDataSources;
-		};
-		B3F187762720B81100659D87 /* Differentiator */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3F1876F2720B7FE00659D87 /* XCRemoteSwiftPackageReference "RxDataSources" */;
-			productName = Differentiator;
 		};
 		B3F94A4D27093ABC002A71EF /* AppCenterAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;

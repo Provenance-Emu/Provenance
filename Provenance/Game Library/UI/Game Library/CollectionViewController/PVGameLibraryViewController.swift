@@ -427,7 +427,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             })
             .mapMany({ system, isCollapsed -> Section? in
                 guard !system.sortedGames.isEmpty else { return nil }
-                let header = "\(system.manufacturer) : \(system.shortName)" + (system.isBeta ? " Beta" : "")
+                let header = "\(system.manufacturer) : \(system.shortName)" + (system.isBeta ? " ⚠️ Beta" : "")
                 let items = isCollapsed ? [] : system.sortedGames.map { Section.Item.game($0) }
 
                 return Section(header: header, items: items,
@@ -764,7 +764,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
     }
     #endif
     
-    @IBAction func sortButtonTapped(_ sender: Any) {
+    @IBAction func sortButtonTapped(_ sender: Any?) {
         if self.presentedViewController != nil {
             return;
         }
@@ -773,7 +773,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         #if os(iOS)
             // Add done button to iPhone
             // iPad is a popover do no done button needed
-            if traitCollection.horizontalSizeClass == .compact || !(sender is UIBarButtonItem) {
+            if traitCollection.userInterfaceIdiom != .pad || traitCollection.horizontalSizeClass == .compact || !(sender is UIBarButtonItem) {
                 let navController = UINavigationController(rootViewController: sortOptionsTableViewController)
                 sortOptionsTableViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(PVGameLibraryViewController.dismissVC))
                 present(navController, animated: true, completion: nil)
@@ -785,12 +785,6 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                 present(sortOptionsTableViewController, animated: true, completion: nil)
             }
         #else
-            sortOptionsTableView.layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-            sortOptionsTableView.backgroundColor = UIColor(red:0.1, green:0.1, blue:0.1, alpha:1)
-            sortOptionsTableView.layer.borderColor = view.tintColor.cgColor
-            sortOptionsTableView.layer.borderWidth = 4.0
-            sortOptionsTableView.layer.cornerRadius = 16.0
-        
             sortOptionsTableViewController.preferredContentSize = CGSize(width:675, height:sortOptionsTableView.contentSize.height);
             let pvc = TVFullscreenController(rootViewController:sortOptionsTableViewController)
             present(pvc, animated: true, completion: nil)
@@ -805,7 +799,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
 
     // MARK: - Filesystem Helpers
 
-    @IBAction func getMoreROMs(_ sender: Any) {
+    @IBAction func getMoreROMs(_ sender: Any?) {
         do {
             try reachability.startNotifier()
         } catch {
@@ -1026,24 +1020,30 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             self.navigationController?.pushViewController(optionsVC, animated: true)
         #else
             let nav = UINavigationController(rootViewController: optionsVC)
-            nav.navigationBar.isTranslucent = false
-            nav.navigationBar.backgroundColor =  UIColor.black.withAlphaComponent(0.8)
-            present(nav, animated: true, completion: nil)
+            present(TVFullscreenController(rootViewController: nav), animated: true, completion: nil)
         #endif
     }
 
     private func contextMenu(for game: PVGame, sender: UIView) -> UIViewController {
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        actionSheet.title = "Options for \(game.title)"
+        actionSheet.title = game.title
+        
         // If game.system has multiple cores, add actions to manage
         if let system = game.system, system.cores.count > 1 {
             // If user has select a core for this game, actio to reset
             if let userPreferredCoreID = game.userPreferredCoreID {
+
+                // Action to play for default core
+                actionSheet.addAction(UIAlertAction(title: "Play", symbol:"gamecontroller", style: .default, handler: { [unowned self] _ in
+                    self.load(game, sender: sender, core: nil, saveState: nil)
+                }))
+                actionSheet.preferredAction = actionSheet.actions.last
+                
                 // Find the core for the current id
                 let userSelectedCore = RomDatabase.sharedInstance.object(ofType: PVCore.self, wherePrimaryKeyEquals: userPreferredCoreID)
                 let coreName = userSelectedCore?.projectName ?? "nil"
                 // Add reset action
-                actionSheet.addAction(UIAlertAction(title: "Reset default core selection (\(coreName))", style: .default, handler: { [unowned self] _ in
+                actionSheet.addAction(UIAlertAction(title: "Reset default core selection (\(coreName))", symbol:"bolt.circle", style: .default, handler: { [unowned self] _ in
 
                     let resetAlert = UIAlertController(title: "Reset core?", message: "Are you sure you want to reset \(game.title) to no longer default to use \(coreName)?", preferredStyle: .alert)
                     resetAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
@@ -1057,36 +1057,45 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             }
 
             // Action to Open with...
-            actionSheet.addAction(UIAlertAction(title: "Open with…", style: .default, handler: { [unowned self] _ in
+            actionSheet.addAction(UIAlertAction(title: "Play with…", symbol: "ellipsis.circle", style: .default, handler: { [unowned self] _ in
                 self.presentCoreSelection(forGame: game, sender: sender)
             }))
+        }
+        else {
+            // Action to play for single core games
+            actionSheet.addAction(UIAlertAction(title: "Play", symbol:"gamecontroller", style: .default, handler: { [unowned self] _ in
+                self.load(game, sender: sender, core: nil, saveState: nil)
+            }))
+            actionSheet.preferredAction = actionSheet.actions.last
         }
         
         if let system = game.system, system.cores.count == 1, let pvcore = system.cores.first, let coreClass = NSClassFromString(pvcore.principleClass) as? CoreOptional.Type {
 
-            actionSheet.addAction(UIAlertAction(title: "\(pvcore.projectName) options", style: .default, handler: { (_: UIAlertAction) -> Void in
+            actionSheet.addAction(UIAlertAction(title: "\(pvcore.projectName) options", symbol: "slider.horizontal.3", style: .default, handler: { (_: UIAlertAction) -> Void in
                 self.showCoreOptions(forCore: coreClass, withTitle:pvcore.projectName)
             }))
         }
 
-        actionSheet.addAction(UIAlertAction(title: "Game Info", style: .default, handler: { (_: UIAlertAction) -> Void in
+        actionSheet.addAction(UIAlertAction(title: "Game Info", symbol: "info.circle", style: .default, handler: { (_: UIAlertAction) -> Void in
             self.moreInfo(for: game)
         }))
 
         var favoriteTitle = "Favorite"
+        var favoriteSymbol = "heart"
         if game.isFavorite {
             favoriteTitle = "Unfavorite"
+            favoriteSymbol = "heart.fill"
         }
-        actionSheet.addAction(UIAlertAction(title: favoriteTitle, style: .default, handler: { (_: UIAlertAction) -> Void in
+        actionSheet.addAction(UIAlertAction(title: favoriteTitle, symbol:favoriteSymbol, style: .default, handler: { (_: UIAlertAction) -> Void in
             self.toggleFavorite(for: game)
         }))
 
-        actionSheet.addAction(UIAlertAction(title: "Rename", style: .default, handler: { (_: UIAlertAction) -> Void in
+        actionSheet.addAction(UIAlertAction(title: "Rename", symbol: "rectangle.and.pencil.and.ellipsis", style: .default, handler: { (_: UIAlertAction) -> Void in
             self.renameGame(game)
         }))
         #if os(iOS)
 
-        actionSheet.addAction(UIAlertAction(title: "Copy MD5 URL", style: .default, handler: { (_: UIAlertAction) -> Void in
+        actionSheet.addAction(UIAlertAction(title: "Copy MD5 URL", symbol: "arrow.up.doc", style: .default, handler: { (_: UIAlertAction) -> Void in
             let md5URL = "provenance://open?md5=\(game.md5Hash)"
             UIPasteboard.general.string = md5URL
             let alert = UIAlertController(title: nil, message: "URL copied to clipboard.", preferredStyle: .alert)
@@ -1096,16 +1105,18 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             })
         }))
 
-        actionSheet.addAction(UIAlertAction(title: "Choose Cover", style: .default) { [weak self] _ in
+        actionSheet.addAction(UIAlertAction(title: "Choose Cover", symbol:"folder", style: .default) { [weak self] _ in
             self?.chooseCustomArtwork(for: game, sourceView: sender)
         })
 
-        actionSheet.addAction(UIAlertAction(title: "Paste Cover", style: .default, handler: { (_: UIAlertAction) -> Void in
-            self.pasteCustomArtwork(for: game)
-        }))
+        if UIPasteboard.general.hasImages || UIPasteboard.general.hasURLs {
+            actionSheet.addAction(UIAlertAction(title: "Paste Cover", symbol:"arrow.down.doc", style: .default, handler: { (_: UIAlertAction) -> Void in
+                self.pasteCustomArtwork(for: game)
+            }))
+        }
 
         if !game.saveStates.isEmpty {
-            actionSheet.addAction(UIAlertAction(title: "View Save States", style: .default, handler: { (_: UIAlertAction) -> Void in
+            actionSheet.addAction(UIAlertAction(title: "View Save States", symbol:"archivebox", style: .default, handler: { (_: UIAlertAction) -> Void in
                 guard let saveStatesNavController = UIStoryboard(name: "SaveStates", bundle: nil).instantiateViewController(withIdentifier: "PVSaveStatesViewControllerNav") as? UINavigationController else {
                     return
                 }
@@ -1133,7 +1144,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
 
         // conditionally show Restore Original Artwork
         if !game.originalArtworkURL.isEmpty, !game.customArtworkURL.isEmpty, game.originalArtworkURL != game.customArtworkURL {
-            actionSheet.addAction(UIAlertAction(title: "Restore Cover", style: .default, handler: { (_: UIAlertAction) -> Void in
+            actionSheet.addAction(UIAlertAction(title: "Restore Cover", symbol:"photo", style: .default, handler: { (_: UIAlertAction) -> Void in
                 try! PVMediaCache.deleteImage(forKey: game.customArtworkURL)
 
                 try! RomDatabase.sharedInstance.writeTransaction {
@@ -1153,12 +1164,12 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             }))
         }
 
-        actionSheet.addAction(UIAlertAction(title: "Share", style: .default, handler: { (_: UIAlertAction) -> Void in
+        actionSheet.addAction(UIAlertAction(title: "Share", symbol:"square.and.arrow.up", style: .default, handler: { (_: UIAlertAction) -> Void in
             self.share(for: game, sender: sender)
         }))
         #endif
 
-        actionSheet.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (_: UIAlertAction) -> Void in
+        actionSheet.addAction(UIAlertAction(title: "Delete", symbol:"trash", style: .destructive, handler: { (_: UIAlertAction) -> Void in
             let alert = UIAlertController(title: "Delete \(game.title)", message: "Any save states and battery saves will also be deleted, are you sure?", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { (_: UIAlertAction) -> Void in
                 // Delete from Realm
@@ -1172,6 +1183,9 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             self.present(alert, animated: true) { () -> Void in }
         }))
 
+        if actionSheet.preferredAction == nil {
+            actionSheet.preferredAction = actionSheet.actions.first
+        }
         actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         return actionSheet
     }
@@ -1843,10 +1857,10 @@ extension PVGameLibraryViewController: ControllerButtonPress {
             moveHorz(-1)
         case .right:
             moveHorz(+1)
-        case .x:
-            settingsCommand()
-        case .y:
-            longPress()
+        case .options:
+            options()
+        case .menu:
+            menu()
         default:
             break
         }
@@ -1953,15 +1967,47 @@ extension PVGameLibraryViewController: ControllerButtonPress {
             collectionView!.delegate?.collectionView?(collectionView!, didSelectItemAt: indexPath)
         }
     }
-    private func longPress() {
-        guard var indexPath = _selectedIndexPath else { return }
+    private func contextMenu(for indexPath:IndexPath?) -> UIViewController? {
+        guard var indexPath = indexPath else { return nil }
         
         if let _ = getNestedCollectionView(indexPath) {
             indexPath = IndexPath(item:0, section:indexPath.section)
         }
-        if let item: Section.Item = try? collectionView!.rx.model(at: indexPath) {
-            longPressed(item: item, at: indexPath, point: _selectedIndexPathView.center)
+        if  let item: Section.Item = try? collectionView!.rx.model(at: indexPath),
+            let cell = collectionView!.cellForItem(at: indexPath) {
+            return contextMenu(for: item, cell: cell, point: _selectedIndexPathView.center)
         }
+        return nil
+    }
+    private func menu() {
+        if let menu = contextMenu(for: _selectedIndexPath) {
+            present(menu, animated: true)
+        }
+    }
+    private func options() {
+        let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+
+        if _selectedIndexPath != nil {
+            // get the title of the game from the contextMenu!
+            if let menu = contextMenu(for: _selectedIndexPath), let title = menu.title, !title.isEmpty {
+                actionSheet.addAction(UIAlertAction(title: "Play \(title)", symbol:"gamecontroller", style: .default, handler: { _ in
+                    self.select()
+                }))
+            }
+        }
+        actionSheet.addAction(UIAlertAction(title: "Settings", symbol:"gear", style: .default, handler: { _ in
+            self.settingsCommand()
+        }))
+        actionSheet.addAction(UIAlertAction(title: "Sort Options", symbol:"list.bullet", style: .default, handler: { _ in
+            self.sortButtonTapped(nil)
+        }))
+        actionSheet.addAction(UIAlertAction(title: "Add ROMs", symbol:"plus", style: .default, handler: { _ in
+            self.getMoreROMs(nil)
+        }))
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        actionSheet.preferredAction = actionSheet.actions.first
+
+        present(actionSheet, animated: true)
     }
 }
 #endif

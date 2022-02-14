@@ -13,7 +13,7 @@ public enum CoreOption {
     case range(_ display: CoreOptionValueDisplay, range: CoreOptionRange<Int>, defaultValue: Int)
 	case rangef(_ display: CoreOptionValueDisplay, range: CoreOptionRange<Float>, defaultValue: Float)
     case multi(_ display: CoreOptionValueDisplay, values: [CoreOptionMultiValue])
-	case enumeration(_ display: CoreOptionValueDisplay, values: [CoreOptionEnumValue])
+    case enumeration(_ display: CoreOptionValueDisplay, values: [CoreOptionEnumValue], defaultValue: Int = 0)
     case string(_ display: CoreOptionValueDisplay, defaultValue: String = "")
     case group(_ display: CoreOptionValueDisplay, subOptions: [CoreOption])
 
@@ -27,8 +27,8 @@ public enum CoreOption {
 			return defaultValue
         case let .multi(_, values):
             return values.first?.title
-		case let .enumeration(_, values):
-			return values.first?.value
+		case let .enumeration(_, values, defaultValue):
+			return values.first?.value ?? defaultValue
         case let .string(_, defaultValue):
             return defaultValue
         case .group:
@@ -50,7 +50,7 @@ public enum CoreOption {
             return display.title
         case .group(let display, _):
             return display.title
-		case .enumeration(let display, _):
+		case .enumeration(let display, _, _):
 			return display.title
 		}
     }
@@ -63,6 +63,19 @@ public enum CoreOption {
             return nil
         }
     }
+}
+
+extension CoreOption: Equatable {
+    // MARK: - Equatable
+
+    /// Returns true iff `lhs` and `rhs` have equal titles, detail texts, selection states, and icons.
+//    public static func == (lhs: CoreOption, rhs: CoreOption) -> Bool {
+//      return
+//        lhs.text == rhs.text &&
+//        lhs.detailText == rhs.detailText &&
+//        lhs.isSelected == rhs.isSelected &&
+//        lhs.icon == rhs.icon
+//    }
 }
 
 extension CoreOption: Codable {
@@ -134,9 +147,10 @@ extension CoreOption: Codable {
         case let .multi(display, values):
             try container.encode(display, forKey: .display)
             try container.encode(values, forKey: .values)
-		case let .enumeration(display, values):
+		case let .enumeration(display, values, defaultValue):
 			try container.encode(display, forKey: .display)
 			try container.encode(values, forKey: .values)
+            try container.encode(defaultValue, forKey: .defaultValue)
         case let .string(display, defaultValue):
             try container.encode(display, forKey: .display)
             try container.encode(defaultValue, forKey: .defaultValue)
