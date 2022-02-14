@@ -24,10 +24,6 @@ import PVLibrary
 // to UIViewControllers, etc.) it will be more easier to integrate by starting here
 // and porting the remaining views/logic over to as conditions change moving forward.
 
-// - bios options in console view
-// - refactor some logic to viewModel
-// - stretch goal: collections
-
 enum PVNavOption {
     case settings
     case home
@@ -69,15 +65,6 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // TODO: move these to loadIntoContainer
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "line.3.horizontal"), primaryAction: UIAction { _ in
-            self.showMenu()
-        })
-        
-//        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "magnifyingglass"), primaryAction: UIAction { _ in
-//            self.toggleSearch()
-//        })
         
         self.view.addSubview(containerView)
         self.fillParentView(child: containerView, parent: self.view)
@@ -125,9 +112,12 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
         self.children.forEach { $0.removeFromParent() }
         // set title
         self.navigationItem.title = navItem.title
-        // set bar button items (if any) // TODO: this.
+        // set bar button items (if any)
         switch navItem {
-        case .settings, .home, .console: break
+        case .settings, .home, .console:
+            self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "line.3.horizontal"), primaryAction: UIAction { _ in
+                self.showMenu()
+            })
         }
         // load new view
         self.addChildViewController(newVC, toContainerView: self.containerView)

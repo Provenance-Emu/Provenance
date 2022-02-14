@@ -173,7 +173,6 @@
 		37B7B3E627AA671C00E05B90 /* UIViewController+SideNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B7B3E227AA570900E05B90 /* UIViewController+SideNavigationController.swift */; };
 		37C8B58B27A7696E00065678 /* PVRootViewController+DelegateMethods.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C8B58A27A7696E00065678 /* PVRootViewController+DelegateMethods.swift */; };
 		37CFD802279C350C007B5FC7 /* PVRootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37CFD801279C350C007B5FC7 /* PVRootViewController.swift */; };
-		37D453B527B5090A00D49132 /* GameSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D453B427B5090A00D49132 /* GameSearchView.swift */; };
 		42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */; };
 		55546DF1257D6CA800616332 /* PVTGBDual.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5525388625574D48004B00B6 /* PVTGBDual.framework */; };
 		55546DF2257D6CA800616332 /* PVTGBDual.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5525388625574D48004B00B6 /* PVTGBDual.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -923,9 +922,7 @@
 		37B7B3E027AA56FB00E05B90 /* SideNavigationController+NestedTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SideNavigationController+NestedTypes.swift"; sourceTree = "<group>"; };
 		37B7B3E227AA570900E05B90 /* UIViewController+SideNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+SideNavigationController.swift"; sourceTree = "<group>"; };
 		37C8B58A27A7696E00065678 /* PVRootViewController+DelegateMethods.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVRootViewController+DelegateMethods.swift"; sourceTree = "<group>"; };
-		37CFD7FF279C34C1007B5FC7 /* CodeSigning.xcconfig copy.sample */ = {isa = PBXFileReference; lastKnownFileType = text; path = "CodeSigning.xcconfig copy.sample"; sourceTree = "<group>"; };
 		37CFD801279C350C007B5FC7 /* PVRootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVRootViewController.swift; sourceTree = "<group>"; };
-		37D453B427B5090A00D49132 /* GameSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSearchView.swift; sourceTree = "<group>"; };
 		423BB97A17DD35B10048F457 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVGameLibrarySectionHeaderView.swift; sourceTree = "<group>"; };
 		5525388625574D48004B00B6 /* PVTGBDual.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PVTGBDual.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1161,7 +1158,6 @@
 		B37D31C9274A57F000D635E0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = en; path = Info.plist; sourceTree = "<group>"; };
 		B37D31CC274A57F000D635E0 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "zh-Hans"; path = Info.plist; sourceTree = "<group>"; };
 		B380EAC12759D689001B8532 /* Build.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Build.xcconfig; sourceTree = "<group>"; };
-		B380EAC22759D692001B8532 /* CodeSigning.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CodeSigning.xcconfig; sourceTree = "<group>"; };
 		B382C632278E5054007E61FE /* PVEmulatorViewController+Audio.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVEmulatorViewController+Audio.swift"; sourceTree = "<group>"; };
 		B382C633278E5055007E61FE /* PVEmulatorViewController+MultiDisc.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVEmulatorViewController+MultiDisc.swift"; sourceTree = "<group>"; };
 		B382C634278E5055007E61FE /* PVEmulatorViewController+Controllers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVEmulatorViewController+Controllers.swift"; sourceTree = "<group>"; };
@@ -1513,8 +1509,6 @@
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
-				B380EAC32759D69A001B8532 /* CodeSigning.xcconfig.sample */,
-				B380EAC22759D692001B8532 /* CodeSigning.xcconfig */,
 				B380EAC12759D689001B8532 /* Build.xcconfig */,
 				B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */,
 				B326758627B1E0BC0033C5D1 /* Build-tvOS.xcconfig */,
@@ -1840,7 +1834,6 @@
 			children = (
 				3759CAF4279C38AA00E9267B /* GameItemView.swift */,
 				37255D1727A3D2DC00F6DAAD /* GameContextMenu.swift */,
-				37D453B427B5090A00D49132 /* GameSearchView.swift */,
 				370ED31E27B620C900EBCAAE /* SearchBar.swift */,
 				370ED32027B6214300EBCAAE /* ViewControllerResolver.swift */,
 			);
@@ -3107,7 +3100,6 @@
 				B35E6C2F207ED7050040709A /* AppearanceStyle.swift in Sources */,
 				B3A4FB62278FFA0F00A65248 /* LocationManager.swift in Sources */,
 				B35E6C27207ED7050040709A /* AppearanceStyleable.swift in Sources */,
-				37D453B527B5090A00D49132 /* GameSearchView.swift in Sources */,
 				B3375EC0278EA28E004B0DC0 /* MameShaders.metal in Sources */,
 				B3D534E220AFF21900A83D4E /* Version.swift in Sources */,
 				370ED32127B6214300EBCAAE /* ViewControllerResolver.swift in Sources */,

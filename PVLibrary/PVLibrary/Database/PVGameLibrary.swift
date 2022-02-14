@@ -219,7 +219,7 @@ extension Array where Element == PVGameLibrary.System {
                 let l2 = s2.sortedGames.first?.playCount
 
                 if let l1 = l1, let l2 = l2 {
-                    return l1 < l2 // TODO: ensure this is correct
+                    return l1 < l2
                 } else if l1 != nil {
                     return true
                 } else if l2 != nil {
