@@ -22,7 +22,7 @@ class ConsolesWrapperViewDelegate: ObservableObject {
 struct ConsolesWrapperView: SwiftUI.View {
     
     @ObservedObject var delegate: ConsolesWrapperViewDelegate
-    
+    @ObservedObject var viewModel: PVRootViewModel
     var rootDelegate: PVRootDelegate!
     
     @ObservedResults(
@@ -34,17 +34,24 @@ struct ConsolesWrapperView: SwiftUI.View {
     
     init(
         consolesWrapperViewDelegate: ConsolesWrapperViewDelegate,
+        viewModel: PVRootViewModel,
         rootDelegate: PVRootDelegate
     ) {
         self.delegate = consolesWrapperViewDelegate
+        self.viewModel = viewModel
         self.rootDelegate = rootDelegate
     }
     
     var body: some SwiftUI.View {
         TabView(selection: $delegate.selectedTab) {
-            if consoles.count > 0 { // TODO: handle sorting
-                ForEach(consoles, id: \.self) { console in
-                    ConsoleGamesView(console: console, rootDelegate: rootDelegate)
+            if consoles.count > 0 {
+                ForEach(
+                    viewModel.sortConsolesAscending == true
+                        ? consoles.reversed()
+                        : consoles.map { $0 },
+                    id: \.self
+                ) { console in
+                    ConsoleGamesView(console: console, viewModel: viewModel, rootDelegate: rootDelegate)
                         .tag(console.identifier)
                 }
             } else {

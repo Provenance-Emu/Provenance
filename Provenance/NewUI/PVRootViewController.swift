@@ -46,6 +46,7 @@ enum PVNavOption {
 class PVRootViewController: UIViewController, GameLaunchingViewController, GameSharingViewController {
     
     let containerView = UIView()
+    var viewModel: PVRootViewModel!
     
     var updatesController: PVGameLibraryUpdatesController!
     var gameLibrary: PVGameLibrary!
@@ -57,11 +58,12 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
     lazy var consolesWrapperViewDelegate = ConsolesWrapperViewDelegate()
     var consoleIdentifiersAndNamesMap: [String:String] = [:]
     
-    static func instantiate(updatesController: PVGameLibraryUpdatesController, gameLibrary: PVGameLibrary, gameImporter: GameImporter) -> PVRootViewController {
+    static func instantiate(updatesController: PVGameLibraryUpdatesController, gameLibrary: PVGameLibrary, gameImporter: GameImporter, viewModel: PVRootViewModel) -> PVRootViewController {
         let controller = PVRootViewController()
         controller.updatesController = updatesController
         controller.gameLibrary = gameLibrary
         controller.gameImporter = gameImporter
+        controller.viewModel = viewModel
         return controller
     }
     

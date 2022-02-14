@@ -45,13 +45,15 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         #endif
 
         if #available(iOS 14, *), PVSettingsModel.shared.debugOptions.useSwiftUI {
+            let viewModel = PVRootViewModel()
             let rootViewController = PVRootViewController.instantiate(
                 updatesController: libraryUpdatesController,
                 gameLibrary: gameLibrary,
-                gameImporter: gameImporter)
+                gameImporter: gameImporter,
+                viewModel: viewModel)
             let sideNav = SideNavigationController(mainViewController: UINavigationController(rootViewController: rootViewController))
             sideNav.leftSide(
-                viewController: SideMenuView.instantiate(gameLibrary: gameLibrary, delegate: rootViewController, rootDelegate: rootViewController),
+                viewController: SideMenuView.instantiate(gameLibrary: gameLibrary, viewModel: viewModel, delegate: rootViewController, rootDelegate: rootViewController),
                 options: .init(widthPercent: 0.8, animationDuration: 0.18, overlayColor: .clear, overlayOpacity: 1, shadowOpacity: 0.0)
             )
             
