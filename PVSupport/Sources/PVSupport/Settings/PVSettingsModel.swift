@@ -228,7 +228,7 @@ extension MirroredSettings {
 
     @objc public class DebugOptions: NSObject {
 		@objc public dynamic var useMetal = false
-        @objc public dynamic var useSwiftUI = true
+        @objc public dynamic var useSwiftUI = false
 		@objc public dynamic var experimentalCores = false
         @objc public dynamic var iCloudSync = false
         @objc public dynamic var unsupportedCores = false
