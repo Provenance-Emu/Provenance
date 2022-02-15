@@ -35,7 +35,7 @@ Special thanks to contributors on this release;
 - N64:
   - mupen/gliden/rice options exposed
   - Dual Shock 4 touchpad as pause
-  - option for Dual Joysticks on DualShock4 as dual controllers (allows Goldeneye dual controller joystock layout from 1 physical dualshock)
+  - option for Dual Joysticks on DualShock4 as dual controllers (allows Goldeneye dual controller joystick layout from 1 physical dualshock)
 - Native Metal renderer option [WIP/Buggy]
 - per-game option overrides
 - radio selection options
@@ -45,15 +45,16 @@ Special thanks to contributors on this release;
 - XCode will present a warning message if it detects a device build but CodeSigning.xcconfig isn't setup.
 - Localizations (Only Partially translated WIP)
   - NSLocalizedString for most strings in main app source
-  - Chinese Simplifed by  @nenge123
+  - Chinese Simplified by  @nenge123
   - Spanish
   - Russian by  @amoorecodes
   - Dutch by @mrjschulte
   - Portuguese (Brazil) by  Stéfano Santos
+
 ### Improved
 
 - Mupen:
-  -  wrapper code organized, refactored
+  - wrapper code organized, refactored
   - faster controller polling, various other code speedup tweaks.
   - mupen llvm optimization flags improved (was incorrectly -O2, now -Os)
 - On-Screen Controls
@@ -61,7 +62,7 @@ Special thanks to contributors on this release;
   - PSX layout improved
 - Branch prediction compiler hints for tight loops, possibly faster.
 - Catalyst: All cores build now for Intel and M1.
-- check if file exists before attempt to delete, reduces superfulous throws trapping in the debugger
+- check if file exists before attempt to delete, reduces superfluous throws trapping in the debugger
 - Converted more app code from ObjC to Swift
 - Dark Mode UI always on, fixes some color issues
 - Fix some excessive thread blocks
@@ -85,12 +86,12 @@ Special thanks to contributors on this release;
 
 ### Updated
 
-- N64: 
+- N64:
   - Swap left and right triggers to L:Start R:Z Button from other way around prior
   - mupen cxd4 plugin to latest upstream version
-  - mupen rsp-hle pluring to latest upstream version
+  - mupen rsp-hle plugin to latest upstream version
 - Updated Swift Packages (RxRealm, Realm, Cocoalumberjack)
-- Improved tvOS UI (top buttons, search, icons, more consistant styling)
+- Improved tvOS UI (top buttons, search, icons, more consistent styling)
 
 ### Removed
 
@@ -134,7 +135,7 @@ Special thanks to contributors on this release;
 ### Fixed
 
 - #1621 GBC palette options crashed gambatte
-- #1414 smarter expecptions in PVSystem
+- #1414 smarter exceptions in PVSystem
 - #1645 PCE Audio setting tweaks to match real hardware
 - #1637 Cheats label name cut off fixed
 - #1649 two PCE module audio related setting tweaks that enable Provenance's PCE Audio output to match much closer to the measured MDFourier output of a real system, as tested with @artemio from the MDFourier project.
@@ -169,7 +170,7 @@ Localization, start basic support
 Remove base localization
 - Fix GL_SILENCE_DEPRECATION=1
 - Fix PS2 stealing PS1 bios
-- Fix gamecub stealing n64 roms
+- Fix gamecube stealing n64 roms
 - add nintendo DS enums
 - Replace QuickTableViewController SPM with source
 - PicoDrive fix naming
