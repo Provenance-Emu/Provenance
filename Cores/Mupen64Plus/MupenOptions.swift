@@ -31,8 +31,8 @@ extension MupenGameCore: CoreOptional {
          #define PLUGIN_TRANSFER_PAK         4 /* not implemented for non raw data */
          #define PLUGIN_RAW                  5 /* the controller plugin is passed in raw data */
          */
-
-        .enumeration(.init(title: "Controller Pak \(index)",
+        let defaultValue = index <= 1 ? 2 : 5
+        return .enumeration(.init(title: "Controller Pak \(index)",
                                                 description: nil,
                                                 requiresRestart: true),
                                           values:[
@@ -41,7 +41,8 @@ extension MupenGameCore: CoreOptional {
 //                                            .init(title: "Rumble Pak, description: "", value: 3),
 //                                            .init(title: "Transer Pak", description: "", value: 4),
                                             .init(title: "Raw Data", description: "Used for Rumble or Transer Pak", value: 5),
-                                          ])
+                                          ],
+                     defaultValue: defaultValue)
     }
     
     static var controllerPak1: CoreOption = controllerPakOption(forController: 1)
@@ -82,7 +83,8 @@ extension MupenGameCore: CoreOptional {
 										values:[
 											.init(title: "Pure Interpreter", description: "Slowest", value: 0),
 											.init(title: "Cached Interpreter", description: "Default", value: 1),
-											.init(title: "Dynamic Recompiler", description: "Fastest but bequires JIT or will crash", value: 2)]))
+											.init(title: "Dynamic Recompiler", description: "Fastest but bequires JIT or will crash", value: 2)],
+                                        defaultValue: 1))
 
 		let coreGroup:CoreOption = .group(.init(title: "Mupen Core", description: "Global options for Mupen"),
 										  subOptions: coreOptions)
@@ -100,11 +102,12 @@ extension MupenGameCore: CoreOptional {
 											.init(title: "Stretch", description: "Slowest", value: 0),
 											.init(title: "4:3", description: "Default", value: 1),
 											.init(title: "16:9", description: "Fastest but bequires JIT or will crash", value: 2),
-											.init(title: "Adjust", description: "Default", value: 3)]))
+											.init(title: "Adjust", description: "Default", value: 3)],
+                                          defaultValue: 3))
 
 
 			// MARK: EnableHWLighting <Bool=0>
-		glidenOptions.append(.bool(.init(title: "Hardware Lighting", description: "Per-pixel lighting", requiresRestart: true), defaultValue: false))
+		glidenOptions.append(.bool(.init(title: "Hardware Lighting", description: "Per-pixel lighting", requiresRestart: true), defaultValue: true))
 			// MARK: fullscreenRefresh <Int=60>
 
 			// MARK: MultiSampling <Enum=0>
@@ -154,7 +157,8 @@ extension MupenGameCore: CoreOptional {
 											.init(title: "4xBRZ", description: "", value: 11),
 											.init(title: "5xBRZ", description: "", value: 12),
 											.init(title: "6xBRZ", description: "", value: 13),
-										  ]))
+										  ],
+                                         defaultValue: 0))
 
 			// MARK: txFilterMode <Enum=0>
 			// Texture filter (0=none, 1=Smooth filtering 1, 2=Smooth filtering 2, 3=Smooth filtering 3, 4=Smooth filtering 4, 5=Sharp filtering 1, 6=Sharp filtering 2)
@@ -188,7 +192,7 @@ extension MupenGameCore: CoreOptional {
 
 			// MARK: ---- HiRes
 			// MARK: txHiresEnable <Bool=0>
-		glidenOptions.append(.bool(.init(title: "Enable HiRes Texture packs", description: "These must be installed seperately. Refer to our WIKI for HD textures.", requiresRestart: true), defaultValue: false))
+		glidenOptions.append(.bool(.init(title: "Enable HiRes Texture packs", description: "These must be installed seperately. Refer to our WIKI for HD textures.", requiresRestart: true), defaultValue: true))
 
 			// MARK: txHresAltCRC <Bool=0>
 			// "Use alternative method of paletted textures CRC calculation."
@@ -222,13 +226,13 @@ extension MupenGameCore: CoreOptional {
 
 		riceOptions.append(.bool(.init(title: "Fast Texture Loading", description: "Use a faster algorithm to speed up texture loading and CRC computation", requiresRestart: true), defaultValue: false))
 
-		riceOptions.append(.bool(.init(title: "DoubleSizeForSmallTxtrBuf", description: "Enable this option to have better render-to-texture quality", requiresRestart: true), defaultValue: false))
+		riceOptions.append(.bool(.init(title: "DoubleSizeForSmallTxtrBuf", description: "Enable this option to have better render-to-texture quality", requiresRestart: true), defaultValue: true))
 
 		riceOptions.append(.bool(.init(title: "FullTMEMEmulation", description: "N64 Texture Memory Full Emulation (may fix some games, may break others)", requiresRestart: true), defaultValue: false))
 
 		riceOptions.append(.bool(.init(title: "SkipFrame", description: "If this option is enabled, the plugin will skip every other frame. Breaks some games in my testing ", requiresRestart: true), defaultValue: false))
 
-		riceOptions.append(.bool(.init(title: "LoadHiResTextures", description: "Enable hi-resolution texture file loading", requiresRestart: true), defaultValue: false))
+		riceOptions.append(.bool(.init(title: "LoadHiResTextures", description: "Enable hi-resolution texture file loading", requiresRestart: true), defaultValue: true))
 
 		/*
 
