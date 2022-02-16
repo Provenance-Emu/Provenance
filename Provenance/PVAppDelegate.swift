@@ -76,7 +76,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             
             window.rootViewController = vc
             
-            guard let rootNavigation = window?.rootViewController as? UINavigationController else {
+            guard let rootNavigation = window.rootViewController as? UINavigationController else {
                 fatalError("No root nav controller")
             }
             guard let gameLibraryViewController = rootNavigation.viewControllers.first as? PVGameLibraryViewController else {
