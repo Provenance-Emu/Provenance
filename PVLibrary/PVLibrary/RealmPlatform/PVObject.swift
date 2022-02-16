@@ -22,7 +22,14 @@ public extension PVObject where Self: Object {
     }
 
     func delete() throws {
-        try RomDatabase.sharedInstance.delete(self)
+        try RomDatabase.sharedInstance.delete(self.warmUp())
+    }
+
+    func warmUp() -> Self {
+        if self.isFrozen, let thawed = self.thaw() {
+            return thawed
+        }
+        return self
     }
 
     static func with(primaryKey: String) -> Self? {

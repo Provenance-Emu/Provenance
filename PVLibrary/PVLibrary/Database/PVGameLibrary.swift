@@ -16,30 +16,54 @@ public struct PVGameLibrary {
     public let saveStates: Observable<[PVSaveState]>
     public let favorites: Observable<[PVGame]>
     public let recents: Observable<[PVRecentGame]>
+    public let mostPlayed: Observable<[PVGame]>
+    
+    public let saveStatesResults: Results<PVSaveState>
+    public let favoritesResults: Results<PVGame>
+    public let recentsResults: Results<PVRecentGame>
+    public let mostPlayedResults: Results<PVGame>
+    public let activeSystems: Results<PVSystem>
 
     private let database: RomDatabase
 
     public init(database: RomDatabase) {
         self.database = database
+        
+        self.saveStatesResults = database.all(PVSaveState.self).filter("game != nil && game.system != nil").sorted(byKeyPath: #keyPath(PVSaveState.lastOpened), ascending: false).sorted(byKeyPath: #keyPath(PVSaveState.date), ascending: false)
         self.saveStates = Observable
-            .collection(from: database.all(PVSaveState.self).filter("game != nil && game.system != nil").sorted(byKeyPath: #keyPath(PVSaveState.lastOpened), ascending: false).sorted(byKeyPath: #keyPath(PVSaveState.date), ascending: false))
+            .collection(from: self.saveStatesResults)
             .mapMany { $0 }
+        
+        self.favoritesResults = database.all(PVGame.self, where: #keyPath(PVGame.isFavorite), value: true).sorted(byKeyPath: #keyPath(PVGame.title), ascending: false)
         self.favorites = Observable
-            .collection(from: database.all(PVGame.self, where: #keyPath(PVGame.isFavorite), value: true).sorted(byKeyPath: #keyPath(PVGame.title), ascending: false))
+            .collection(from: self.favoritesResults)
             .mapMany { $0 }
+        
+        self.recentsResults = database.all(PVRecentGame.self).sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
         self.recents = Observable
-            .collection(from: database.all(PVRecentGame.self).sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false))
+            .collection(from: recentsResults)
             .mapMany { $0 }
+        
+        self.mostPlayedResults = database.all(PVGame.self).sorted(byKeyPath: #keyPath(PVGame.playCount), ascending: false)
+        self.mostPlayed = Observable
+            .collection(from: self.mostPlayedResults)
+            .mapMany { $0 }
+
+        self.activeSystems = database.all(PVSystem.self, filter: NSPredicate(format: "games.@count > 0")).sorted(byKeyPath: #keyPath(PVSystem.name), ascending: false)
     }
 
     public func search(for searchText: String) -> Observable<[PVGame]> {
+        return Observable.collection(from: searchResults(for: searchText)).mapMany { $0 }
+    }
+    
+    public func searchResults(for searchText: String) -> Results<PVGame> {
         // Search first by title, and a broader search if that one's empty
         let titleResults = self.database.all(PVGame.self, filter: NSPredicate(format: "title CONTAINS[c] %@", argumentArray: [searchText]))
         let results = !titleResults.isEmpty ?
             titleResults :
             self.database.all(PVGame.self, filter: NSPredicate(format: "genres LIKE[c] %@ OR gameDescription CONTAINS[c] %@ OR regionName LIKE[c] %@ OR developer LIKE[c] %@ or publisher LIKE[c] %@", argumentArray: [searchText, searchText, searchText, searchText, searchText]))
 
-        return Observable.collection(from: results.sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)).mapMany { $0 }
+        return results.sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)
     }
 
     public func systems(sortedBy sortOptions: SortOptions) -> Observable<[System]> {
@@ -106,6 +130,18 @@ public struct PVGameLibrary {
             return Disposables.create()
         }
     }
+    
+    public func gamesForSystem(systemIdentifier: String) -> Results<PVGame> {
+        return database.all(PVGame.self).filter(NSPredicate(format: "systemIdentifier == %@", argumentArray: [systemIdentifier]))
+    }
+    
+    public func system(identifier: String) -> PVSystem? {
+        return database.object(ofType: PVSystem.self, wherePrimaryKeyEquals: identifier)
+    }
+    
+    public func game(identifier: String) -> PVGame? {
+        return database.object(ofType: PVGame.self, wherePrimaryKeyEquals: identifier)
+    }
 }
 
 public extension ObservableType where Element: Collection {
@@ -124,6 +160,8 @@ extension LinkingObjects where Element: PVGame {
             sortDescriptors.append(SortDescriptor(keyPath: #keyPath(PVGame.importDate), ascending: false))
         case .lastPlayed:
             sortDescriptors.append(SortDescriptor(keyPath: #keyPath(PVGame.lastPlayed), ascending: false))
+        case .mostPlayed:
+            sortDescriptors.append(SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: false))
         }
 
         sortDescriptors.append(SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: true))
@@ -167,6 +205,21 @@ extension Array where Element == PVGameLibrary.System {
 
                 if let l1 = l1, let l2 = l2 {
                     return l1.compare(l2) == .orderedDescending
+                } else if l1 != nil {
+                    return true
+                } else if l2 != nil {
+                    return false
+                } else {
+                    return titleSort(s1, s2)
+                }
+            })
+        case .mostPlayed:
+            return sorted(by: { (s1, s2) -> Bool in
+                let l1 = s1.sortedGames.first?.playCount
+                let l2 = s2.sortedGames.first?.playCount
+
+                if let l1 = l1, let l2 = l2 {
+                    return l1 < l2
                 } else if l1 != nil {
                     return true
                 } else if l2 != nil {
