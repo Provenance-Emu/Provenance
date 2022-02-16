@@ -44,10 +44,9 @@ struct PVGameLibraryUpdatesController {
         let filesToImport = Observable.merge(initialScan, directoryWatcherExtractedFiles)
 
         // We use a hacky combineLatest here since we need to do the bind to `gameImporter.startImport` somewhere, so we hack it into the hudState definition
-        hudState = Observable.combineLatest(
-            Self.hudState(from: directoryWatcher, gameImporterEvents: gameImporterEvents, scheduler: scheduler),
-            filesToImport.do(onNext: gameImporter.startImport)
-        ) { hudState, _ in hudState }
+        let o1 = Self.hudState(from: directoryWatcher, gameImporterEvents: gameImporterEvents, scheduler: scheduler)
+        let o2 = filesToImport.do(onNext: gameImporter.startImport)
+        hudState = Observable.combineLatest(o1, o2) { _hudState, _ in return _hudState }
 
         let gameImporterConflicts = gameImporterEvents
             .compactMap({ event -> Void? in

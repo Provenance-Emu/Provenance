@@ -395,7 +395,13 @@ extension GameLaunchingViewController where Self: UIViewController {
 
         let cores = system.cores
             .sorted(byKeyPath: "projectName")
-            .filter({ PVSettingsModel.shared.debugOptions.experimentalCores || !$0.disabled })
+            .filter({
+                guard !$0.disabled else {
+                    return PVSettingsModel.shared.debugOptions.experimentalCores
+                }
+                return true
+            })
+//            .distinct(by: #keyPath(\PVSystem.name))
             .sorted { $0.supportedSystems.count <= $1.supportedSystems.count }
 
         let coreChoiceAlert = UIAlertController(title: "Multiple cores found", message: "Select which core to use with this game. If not sure, select the 1st option.", preferredStyle: .actionSheet)
@@ -475,7 +481,12 @@ extension GameLaunchingViewController where Self: UIViewController {
                 return
             }
 
-            let cores = system.cores
+            let cores = system.cores.filter({
+                guard !$0.disabled else {
+                    return PVSettingsModel.shared.debugOptions.experimentalCores
+                }
+                return true
+            })
 
             guard !cores.isEmpty else {
                 displayAndLogError(withTitle: "Cannot open game", message: "No core found for game system '\(system.shortName)'.")

@@ -347,9 +347,11 @@ void MupenControllerCommand(int Control, unsigned char *Command) {
     }
     switch (button) {
         case PVN64ButtonAnalogUp:
-            yAxis[player] = value * N64_ANALOG_MAX;
+            NSLog(@"Up: %f", round(value * N64_ANALOG_MAX));
+            yAxis[player] = round(value * N64_ANALOG_MAX);
             break;
         case PVN64ButtonAnalogDown:
+            NSLog(@"Down: %f", value * -N64_ANALOG_MAX);
             yAxis[player] = value * -N64_ANALOG_MAX;
             break;
         case PVN64ButtonAnalogLeft:

@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.5] - 2022-01-26
+## [2.1.0] - 2022-02-14
 
 Special thanks to contributors on this release;
 👉 @mrjschulte
@@ -14,56 +14,66 @@ Special thanks to contributors on this release;
 👉 @nenge123
 👉 @david.nicolson
 👉 @davidmuzi
-👉 @amoorecodes 
+👉 @amoorecodes
 
 ### Added
 
+- Controllers:
+  - On Screen Joystick Controls for N64 and PSX
+  - APIs for keyboard, mouse, rumble, on-screen joystick. (coming in future release)
+  - Apple TV: Support new Siri remote (MicroGamepad and DirectionalGamepad)
 - Code Signing is now managed with an XCConfig file. See `CodeSigning.xcconfig.example` for instructions. (Only applies to developers/xcode source installs)
-- Native Metal renderer option [WIP/Buggy]
-- Metal Shaders (CRT, LCD, etc.)
-- Sega Saturn Mutli-CD support
-- N64: Dual Shock 4 touchpad as pause
-- N64: option for Dual Joysticks on DualShock4 as dual controllers (allows Goldeneye dual controller joystock layout from 1 physical dualshock)
-- enumeration options
-- radio selection options
-- per-game option overrides
+- Enumeration type menu options UI
+- FPS debug label now includes total CPU and Memory usage.
+- GameBoy Advanced cheat code support
 - Jaguar options exposed
-- N64 mupen/gliden/rice options exposed
+- Long press a ROM for quick access to Core Options
+- Mednafen
+  - many more sub-core options added
+  - SNESFaust 1 frame render ahead option (on by default. VERY SNAPPY!)
+- Metal Shaders (CRT, LCD, etc.)
+- N64:
+  - mupen/gliden/rice options exposed
+  - Dual Shock 4 touchpad as pause
+  - option for Dual Joysticks on DualShock4 as dual controllers (allows Goldeneye dual controller joystick layout from 1 physical dualshock)
+- Native Metal renderer option [WIP/Buggy]
+- per-game option overrides
+- radio selection options
+- Sega Saturn Mutli-CD support
 - Swift UI/UIKit optional code paths at app start (SwiftUI currernly empty, for easier development in future)
-- Mednafen: SNESFaust 1 frame render ahead option (on by default. VERY SNAPPY!)
-- Mednafen : many more sub-core options added
+- VirtualBoy side by side mode (for 3D tv's with Side by Side mode. Google Cardboard coming later)
+- XCode will present a warning message if it detects a device build but CodeSigning.xcconfig isn't setup.
 - Localizations (Only Partially translated WIP)
-  - Chinese Simplifed by  @nenge123
+  - NSLocalizedString for most strings in main app source
+  - Chinese Simplified by  @nenge123
   - Spanish
   - Russian by  @amoorecodes
   - Dutch by @mrjschulte
-- Support new Apple TV Siri remote (MicroGamepad and DirectionalGamepad)
-- NSLocalizedString for most strings in main app source
-- Long press a ROM for quick access to Core Options
-- FPS debug label now includes total CPU and Memory usage.
-- GameBoy Advanced cheat code support
-- APIs for keyboard, mouse, rumble, on-screen joystick. (coming in future release)
-- VirtualBoy side by side mode (for 3D tv's with Side by Side mode. Google Cardboard coming later)
-- XCode will present a warning message if it detects a device build but CodeSigning.xcconfig isn't setup.
+  - Portuguese (Brazil) by  Stéfano Santos
 
 ### Improved
 
+- Mupen:
+  - wrapper code organized, refactored
+  - faster controller polling, various other code speedup tweaks.
+  - mupen llvm optimization flags improved (was incorrectly -O2, now -Os)
+- On-Screen Controls
+  - N64 layout improved
+  - PSX layout improved
+- Branch prediction compiler hints for tight loops, possibly faster.
+- Catalyst: All cores build now for Intel and M1.
+- check if file exists before attempt to delete, reduces superfluous throws trapping in the debugger
+- Converted more app code from ObjC to Swift
+- Dark Mode UI always on, fixes some color issues
+- Fix some excessive thread blocks
+- Hide/Show systems chevron location tweaks
 - If multiple cores support a system, cores are listed in recommended order.
 - Improved logo/header bar for iOS & tvOS
-- Branch prediction compiler hints for tight loops, possibly faster.
-- Fix some excessive thread blocks
+- Jaguar button layout tweaks
+- Mark various ObjC classes `objc_direct_members`. Should improve Swift to ObjC calls bypassing dynamic dispatch for function pointers (in theory)
 - Replace all spinlocks with atomic operations for better thread performance
-- mupen faster controller polling, various other code speedup tweaks.
-- mupen llvm optimization flags improved (was incorrectly -O2, now -Os)
 - replaced some sloppy force unwraps with proper nil checks and logging
 - Shaders are copied to Documents at load and read from thereafter. This allows locally editing / developing shaders without rebuilding.
-- Catalyst: All cores build now for Intel and M1.
-- Dark Mode UI always on, fixes some color issues
-- Mupen wrapper code organized, refactored
-- Jaguar button layout tweaks
-- Converted more app code from ObjC to Swift
-- check if file exists before attempt to delete, reduces superfulous throws trapping in the debugger
-- Mark various ObjC classes `objc_direct_members`. Should improve Swift to ObjC calls bypassing dynamic dispatch for function pointers (in theory)
 
 ### Fixed
 
@@ -76,11 +86,13 @@ Special thanks to contributors on this release;
 
 ### Updated
 
-- N64: Swap left and right triggers to L:Start R:Z Button from other way around prior
+- N64:
+  - Swap left and right triggers to L:Start R:Z Button from other way around prior
+  - mupen cxd4 plugin to latest upstream version
+  - mupen rsp-hle plugin to latest upstream version
 - Updated Swift Packages (RxRealm, Realm, Cocoalumberjack)
-- Improved tvOS UI (top buttons, search, icons, more consistant styling)
-- mupen cxd4 plugin to latest upstream version
-- mupen rsp-hle pluring to latest upstream version
+- Improved tvOS UI (top buttons, search, icons, more consistent styling)
+
 ### Removed
 
 - Removed SteamController support (no one used it and the code caused too many compilations, plus steam controllers are kind of trash, sorry.)
@@ -123,7 +135,7 @@ Special thanks to contributors on this release;
 ### Fixed
 
 - #1621 GBC palette options crashed gambatte
-- #1414 smarter expecptions in PVSystem
+- #1414 smarter exceptions in PVSystem
 - #1645 PCE Audio setting tweaks to match real hardware
 - #1637 Cheats label name cut off fixed
 - #1649 two PCE module audio related setting tweaks that enable Provenance's PCE Audio output to match much closer to the measured MDFourier output of a real system, as tested with @artemio from the MDFourier project.
@@ -158,7 +170,7 @@ Localization, start basic support
 Remove base localization
 - Fix GL_SILENCE_DEPRECATION=1
 - Fix PS2 stealing PS1 bios
-- Fix gamecub stealing n64 roms
+- Fix gamecube stealing n64 roms
 - add nintendo DS enums
 - Replace QuickTableViewController SPM with source
 - PicoDrive fix naming

@@ -85,11 +85,32 @@ final class PVGameCubeControllerViewController: PVControllerViewController<PVGam
         vibrate()
     }
 
-    override func dPadDidReleaseDirection(_: JSDPad) {
-        emulatorCore.didMoveJoystick(.analogUp, withValue: 0, forPlayer: 0)
-        emulatorCore.didMoveJoystick(.analogLeft, withValue: 0, forPlayer: 0)
-        emulatorCore.didMoveJoystick(.analogRight, withValue: 0, forPlayer: 0)
-        emulatorCore.didMoveJoystick(.analogDown, withValue: 0, forPlayer: 0)
+    override func dPad(_ dPad: JSDPad, didRelease direction: JSDPadDirection) {
+        switch direction {
+        case .upLeft:
+            emulatorCore.didRelease(.analogUp, forPlayer: 0)
+            emulatorCore.didRelease(.analogLeft, forPlayer: 0)
+        case .up:
+            emulatorCore.didRelease(.analogUp, forPlayer: 0)
+        case .upRight:
+            emulatorCore.didRelease(.analogUp, forPlayer: 0)
+            emulatorCore.didRelease(.analogRight, forPlayer: 0)
+        case .left:
+            emulatorCore.didRelease(.analogLeft, forPlayer: 0)
+        case .none:
+            break
+        case .right:
+            emulatorCore.didRelease(.analogRight, forPlayer: 0)
+        case .downLeft:
+            emulatorCore.didRelease(.analogDown, forPlayer: 0)
+            emulatorCore.didRelease(.analogLeft, forPlayer: 0)
+        case .down:
+            emulatorCore.didRelease(.analogDown, forPlayer: 0)
+        case .downRight:
+            emulatorCore.didRelease(.analogDown, forPlayer: 0)
+            emulatorCore.didRelease(.analogRight, forPlayer: 0)
+        }
+        super.dPad(dPad, didRelease: direction)
     }
 
     override func buttonPressed(_ button: JSButton) {

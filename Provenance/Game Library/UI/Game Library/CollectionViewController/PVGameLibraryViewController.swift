@@ -116,9 +116,8 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
     }
 
     @IBOutlet var sortOptionsTableView: UITableView!
-    lazy var sortOptionsTableViewController: UIViewController = {
-        let avc = UIViewController()
-        avc.view = sortOptionsTableView
+    lazy var sortOptionsTableViewController: SortOptionsTableViewController = {
+        let avc = SortOptionsTableViewController(withTableView: sortOptionsTableView)
         avc.title = "Library Options"
         return avc
     }()
@@ -445,7 +444,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                     return nonSearchSections
                 }
         }
-        sections.bind(to: collectionView.rx.items(dataSource: dataSource)).disposed(by: disposeBag)
+        sections.observe(on: MainScheduler.instance).bind(to: collectionView.rx.items(dataSource: dataSource)).disposed(by: disposeBag)
         #if os(iOS)
         sections.map { !$0.isEmpty }.bind(to: libraryInfoContainerView.rx.isHidden).disposed(by: disposeBag)
         #endif
@@ -1564,8 +1563,6 @@ extension PVGameLibraryViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
 
-        cell.selectionStyle = .none     // prevent cell flashing when selected
-        
         #if os(tvOS)
             cell.layer.cornerRadius = 12
         #endif
@@ -1861,6 +1858,14 @@ extension PVGameLibraryViewController: ControllerButtonPress {
             options()
         case .menu:
             menu()
+        case .x:
+            settingsCommand()
+//        case .y: // Bad merge?
+//            longPress()
+        case .r1:
+            getMoreROMs(self)
+        case .l1:
+            sortButtonTapped(self)
         default:
             break
         }
@@ -1879,7 +1884,9 @@ extension PVGameLibraryViewController: ControllerButtonPress {
             indexPath.section = indexPath.section+1
             indexPath.item = 0
         }
-        select(indexPath)
+        if indexPath.section >= 0 && indexPath.section < collectionView!.numberOfSections {
+            select(indexPath)
+        }
     }
     
     private func moveHorz(_ dir:Int) {

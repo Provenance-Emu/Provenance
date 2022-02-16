@@ -35,6 +35,7 @@ public struct SystemDictionaryKeys {
         public static let ControlTint = "PVControlTint"
         public static let ControlType = "PVControlType"
         public static let DPad = "PVDPad"
+        public static let JoyPad = "PVJoyPad"
         public static let GroupedButtons = "PVGroupedButtons"
         public static let LeftShoulderButton = "PVLeftShoulderButton"
         public static let RightShoulderButton = "PVRightShoulderButton"
@@ -236,12 +237,23 @@ public final class PVEmulatorConfiguration: NSObject {
         return URL(fileURLWithPath: paths.first!, isDirectory: true)
     }()
 
+    public static func initICloud() {
+        DispatchQueue.global(qos: .background).async {
+            ILOG("iCloudContainerDirectory: \(PVEmulatorConfiguration.iCloudContainerDirectory)")
+        }
+    }
+    
+    static var iCloudContainerDirectoryCached: URL?
     /// This should be called on a background thread
     static var iCloudContainerDirectory: URL? {
+        guard iCloudContainerDirectoryCached == nil else {
+            return iCloudContainerDirectoryCached
+        }
         if Thread.isMainThread {
             WLOG("Warning, this should only be called on background threads.")
         }
-        return FileManager.default.url(forUbiquityContainerIdentifier: Constants.iCloud.containerIdentifier)
+        iCloudContainerDirectoryCached = FileManager.default.url(forUbiquityContainerIdentifier: Constants.iCloud.containerIdentifier)
+        return iCloudContainerDirectoryCached
     }
 
     /// This should be called on a background thread

@@ -109,8 +109,12 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         collapseButton.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
         collapseButton.widthAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
         collapseButton.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        #if os(tvOS)
+        collapseButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -94).isActive = true
+        #else
         collapseButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 0).isActive = true
-
+        #endif
+        
         isOpaque = true
     }
 

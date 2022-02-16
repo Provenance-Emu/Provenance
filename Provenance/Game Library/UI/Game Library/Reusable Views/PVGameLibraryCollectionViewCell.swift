@@ -391,9 +391,11 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
     @IBOutlet private(set) var titleLabel: UILabel! {
         didSet {
             #if os(tvOS)
-                // The label's alpha will get set to 1 on focus
-                titleLabel.alpha = 1
-                titleLabel.textColor = UIColor.darkGray
+            // The label's alpha will get set to 1 on focus
+            titleLabel.alpha = 1
+            titleLabel.textColor = UIColor.darkGray
+            titleLabel.shadowColor = UIColor.init(white: 0.2, alpha: 0.5)
+            titleLabel.shadowOffset = .init(width: 0.5, height: 0.5)
             #endif
         }
     }

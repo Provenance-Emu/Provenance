@@ -14,22 +14,22 @@ public extension CoreOptional { // where Self:PVEmulatorCore {
         let key = "\(className).\(option)"
         let md5Key: String = [className, md5, option].compactMap {$0}.joined(separator: ".")
 
-        DLOG("Looking for either key's `\(key)` or \(md5Key) with type \(T.self)")
+        VLOG("Looking for either key's `\(key)` or \(md5Key) with type \(T.self)")
 
         let savedOption = UserDefaults.standard.object(forKey: md5Key) ??  UserDefaults.standard.object(forKey: key)
-        DLOG("savedOption found?: \(String(describing: savedOption)) isIt type: \(T.self), \(savedOption as? T)")
+        VLOG("savedOption found?: \(String(describing: savedOption)) isIt type: \(T.self), \(savedOption as? T)")
 
         if let savedOption = savedOption as? T {
-            DLOG("Read key `\(md5Key)` option: \(savedOption)")
+            VLOG("Read key `\(md5Key)` option: \(savedOption)")
             return savedOption
         } else {
-            DLOG("need to find options for key `\(option)`")
+            VLOG("need to find options for key `\(option)`")
             let currentOptions: [CoreOption] = options
             guard let foundOption = findOption(forKey: option, options: currentOptions) else {
                 ELOG("No option for key: `\(option)`")
                 return nil
             }
-            DLOG("Found option `\(foundOption)`")
+            VLOG("Found option `\(foundOption)`")
 			let key = "\(className).\(foundOption.key)"
 			let object = UserDefaults.standard.object(forKey: key)
 			return object as? T ?? foundOption.defaultValue as? T

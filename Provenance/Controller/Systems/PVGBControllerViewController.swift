@@ -68,14 +68,34 @@ final class PVGBControllerViewController: PVControllerViewController<PVGBSystemR
         super.dPad(dPad, didPress: direction)
     }
 
-    override func dPadDidReleaseDirection(_ dPad: JSDPad) {
-        emulatorCore.didRelease(.up, forPlayer: 0)
-        emulatorCore.didRelease(.down, forPlayer: 0)
-        emulatorCore.didRelease(.left, forPlayer: 0)
-        emulatorCore.didRelease(.right, forPlayer: 0)
-        super.dPadDidReleaseDirection(dPad)
+    override func dPad(_ dPad: JSDPad, didRelease direction: JSDPadDirection) {
+        switch direction {
+        case .upLeft:
+            emulatorCore.didRelease(PVGBButton.up, forPlayer: 0)
+            emulatorCore.didRelease(PVGBButton.left, forPlayer: 0)
+        case .up:
+            emulatorCore.didRelease(PVGBButton.up, forPlayer: 0)
+        case .upRight:
+            emulatorCore.didRelease(PVGBButton.up, forPlayer: 0)
+            emulatorCore.didRelease(PVGBButton.right, forPlayer: 0)
+        case .left:
+            emulatorCore.didRelease(PVGBButton.left, forPlayer: 0)
+        case .none:
+            break
+        case .right:
+            emulatorCore.didRelease(PVGBButton.right, forPlayer: 0)
+        case .downLeft:
+            emulatorCore.didRelease(PVGBButton.down, forPlayer: 0)
+            emulatorCore.didRelease(PVGBButton.left, forPlayer: 0)
+        case .down:
+            emulatorCore.didRelease(PVGBButton.down, forPlayer: 0)
+        case .downRight:
+            emulatorCore.didRelease(PVGBButton.down, forPlayer: 0)
+            emulatorCore.didRelease(PVGBButton.right, forPlayer: 0)
+        }
+        super.dPad(dPad, didRelease: direction)
     }
-
+    
     override func buttonPressed(_ button: JSButton) {
         emulatorCore.didPush(button.buttonTag, forPlayer: 0)
         super.buttonPressed(button)
