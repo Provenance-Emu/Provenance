@@ -517,6 +517,8 @@ static bool environment_callback(unsigned cmd, void *data)
 
     
     if (retro_load_game(&info)) {
+        [self readOptions];
+
         if ([self.batterySavesPath length]) {
             [[NSFileManager defaultManager] createDirectoryAtPath:self.batterySavesPath withIntermediateDirectories:YES attributes:nil error:NULL];
             
@@ -536,7 +538,6 @@ static bool environment_callback(unsigned cmd, void *data)
 //#warning "No clue what this does, JM"
 //		if (system_hw == SYSTEM_MCD)
 //			 bram_load();
-        [self readOptions];
 
 		[self executeFrame];
         
