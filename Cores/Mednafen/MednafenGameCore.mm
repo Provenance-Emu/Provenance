@@ -1656,7 +1656,10 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                 default:
                 break;
             }}
-        { switch (buttonID) {
+        {
+			GCDualSenseGamepad *dualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]] ? gamepad : nil;
+
+			switch (buttonID) {
             case PVSaturnButtonUp:
                 return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] isPressed];
             case PVSaturnButtonDown:
@@ -1679,11 +1682,10 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                 return [[gamepad rightShoulder] isPressed];
             case PVSaturnButtonL:
                 return [[gamepad leftTrigger] isPressed];
-//            case PVSaturnButtonR:
-//                return [[gamepad rightTrigger] isPressed];
-// Use Right Trigger for Start, for now until we can fix the "P1 Start" Game menu option.
-            case PVSaturnButtonStart:
+            case PVSaturnButtonR:
                 return [[gamepad rightTrigger] isPressed];
+            case PVSaturnButtonStart:
+                return [[dualSense buttonHome]  isPressed];
             default:
                 break;
         }}
