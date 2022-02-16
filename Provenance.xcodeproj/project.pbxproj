@@ -146,6 +146,22 @@
 		378F4A0D1B63D7CD0065FA39 /* GCDWebUploader.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 378F49FD1B63D7CD0065FA39 /* GCDWebUploader.bundle */; };
 		378F4A0E1B63D7CD0065FA39 /* GCDWebUploader.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49FF1B63D7CD0065FA39 /* GCDWebUploader.m */; };
 		378F4A111B63DCF00065FA39 /* PVWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F4A101B63DCF00065FA39 /* PVWebServer.m */; };
+		37EEA29A27BC7E610070E222 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA28627BC7E610070E222 /* HomeView.swift */; };
+		37EEA29B27BC7E610070E222 /* PVRootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA28727BC7E610070E222 /* PVRootViewController.swift */; };
+		37EEA29C27BC7E610070E222 /* PVRootViewController+DelegateMethods.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA28827BC7E610070E222 /* PVRootViewController+DelegateMethods.swift */; };
+		37EEA29D27BC7E610070E222 /* SideNavigationController+NestedTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA28A27BC7E610070E222 /* SideNavigationController+NestedTypes.swift */; };
+		37EEA29E27BC7E610070E222 /* SideNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA28B27BC7E610070E222 /* SideNavigationController.swift */; };
+		37EEA29F27BC7E610070E222 /* UIViewController+SideNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA28C27BC7E610070E222 /* UIViewController+SideNavigationController.swift */; };
+		37EEA2A027BC7E610070E222 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA28E27BC7E610070E222 /* Extensions.swift */; };
+		37EEA2A127BC7E610070E222 /* GameContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29027BC7E610070E222 /* GameContextMenu.swift */; };
+		37EEA2A227BC7E610070E222 /* GameItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29127BC7E610070E222 /* GameItemView.swift */; };
+		37EEA2A327BC7E610070E222 /* ViewControllerResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29227BC7E610070E222 /* ViewControllerResolver.swift */; };
+		37EEA2A427BC7E610070E222 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29327BC7E610070E222 /* SearchBar.swift */; };
+		37EEA2A527BC7E610070E222 /* SideMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29527BC7E610070E222 /* SideMenuView.swift */; };
+		37EEA2A627BC7E610070E222 /* PVRootViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29627BC7E610070E222 /* PVRootViewModel.swift */; };
+		37EEA2A727BC7E610070E222 /* ConsolesWrapperView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29827BC7E610070E222 /* ConsolesWrapperView.swift */; };
+		37EEA2A827BC7E610070E222 /* ConsoleGamesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29927BC7E610070E222 /* ConsoleGamesView.swift */; };
+		37EEA2AB27BC81890070E222 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 37EEA2AA27BC81890070E222 /* Introspect */; };
 		42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */; };
 		55546DF1257D6CA800616332 /* PVTGBDual.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5525388625574D48004B00B6 /* PVTGBDual.framework */; };
 		55546DF2257D6CA800616332 /* PVTGBDual.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5525388625574D48004B00B6 /* PVTGBDual.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -881,6 +897,21 @@
 		378F49FF1B63D7CD0065FA39 /* GCDWebUploader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebUploader.m; sourceTree = "<group>"; };
 		378F4A0F1B63DCF00065FA39 /* PVWebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVWebServer.h; sourceTree = "<group>"; };
 		378F4A101B63DCF00065FA39 /* PVWebServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVWebServer.m; sourceTree = "<group>"; };
+		37EEA28627BC7E610070E222 /* HomeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		37EEA28727BC7E610070E222 /* PVRootViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRootViewController.swift; sourceTree = "<group>"; };
+		37EEA28827BC7E610070E222 /* PVRootViewController+DelegateMethods.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVRootViewController+DelegateMethods.swift"; sourceTree = "<group>"; };
+		37EEA28A27BC7E610070E222 /* SideNavigationController+NestedTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SideNavigationController+NestedTypes.swift"; sourceTree = "<group>"; };
+		37EEA28B27BC7E610070E222 /* SideNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SideNavigationController.swift; sourceTree = "<group>"; };
+		37EEA28C27BC7E610070E222 /* UIViewController+SideNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+SideNavigationController.swift"; sourceTree = "<group>"; };
+		37EEA28E27BC7E610070E222 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		37EEA29027BC7E610070E222 /* GameContextMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameContextMenu.swift; sourceTree = "<group>"; };
+		37EEA29127BC7E610070E222 /* GameItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameItemView.swift; sourceTree = "<group>"; };
+		37EEA29227BC7E610070E222 /* ViewControllerResolver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewControllerResolver.swift; sourceTree = "<group>"; };
+		37EEA29327BC7E610070E222 /* SearchBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
+		37EEA29527BC7E610070E222 /* SideMenuView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SideMenuView.swift; sourceTree = "<group>"; };
+		37EEA29627BC7E610070E222 /* PVRootViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRootViewModel.swift; sourceTree = "<group>"; };
+		37EEA29827BC7E610070E222 /* ConsolesWrapperView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConsolesWrapperView.swift; sourceTree = "<group>"; };
+		37EEA29927BC7E610070E222 /* ConsoleGamesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConsoleGamesView.swift; sourceTree = "<group>"; };
 		423BB97A17DD35B10048F457 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVGameLibrarySectionHeaderView.swift; sourceTree = "<group>"; };
 		5525388625574D48004B00B6 /* PVTGBDual.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PVTGBDual.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1324,6 +1355,7 @@
 				B3C9D5E71DEAA7E80068D057 /* PVStella.framework in Frameworks */,
 				1A3D409C17B2DCE4004DFFFC /* CoreGraphics.framework in Frameworks */,
 				B390B0EA276B2DB20018E065 /* AltKit in Frameworks */,
+				37EEA2AB27BC81890070E222 /* Introspect in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1565,6 +1597,7 @@
 				1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */,
 				B3290498270D1F95002707AC /* PVAppDelegate+NitoTV.swift */,
 				B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */,
+				37EEA28427BC7E610070E222 /* NewUI */,
 				1AADCDB117BD997500F53CFE /* Categories */,
 				1A47C94A17BC310700C27644 /* Controller */,
 				1A1237F417CA27B700CEC788 /* Emulator */,
@@ -1860,6 +1893,76 @@
 				378F49FF1B63D7CD0065FA39 /* GCDWebUploader.m */,
 			);
 			path = GCDWebUploader;
+			sourceTree = "<group>";
+		};
+		37EEA28427BC7E610070E222 /* NewUI */ = {
+			isa = PBXGroup;
+			children = (
+				37EEA28527BC7E610070E222 /* Home */,
+				37EEA28727BC7E610070E222 /* PVRootViewController.swift */,
+				37EEA28827BC7E610070E222 /* PVRootViewController+DelegateMethods.swift */,
+				37EEA28927BC7E610070E222 /* SideNavigationController */,
+				37EEA28D27BC7E610070E222 /* Utils */,
+				37EEA28F27BC7E610070E222 /* Components */,
+				37EEA29427BC7E610070E222 /* SideMenu */,
+				37EEA29627BC7E610070E222 /* PVRootViewModel.swift */,
+				37EEA29727BC7E610070E222 /* Consoles */,
+			);
+			path = NewUI;
+			sourceTree = "<group>";
+		};
+		37EEA28527BC7E610070E222 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				37EEA28627BC7E610070E222 /* HomeView.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		37EEA28927BC7E610070E222 /* SideNavigationController */ = {
+			isa = PBXGroup;
+			children = (
+				37EEA28A27BC7E610070E222 /* SideNavigationController+NestedTypes.swift */,
+				37EEA28B27BC7E610070E222 /* SideNavigationController.swift */,
+				37EEA28C27BC7E610070E222 /* UIViewController+SideNavigationController.swift */,
+			);
+			path = SideNavigationController;
+			sourceTree = "<group>";
+		};
+		37EEA28D27BC7E610070E222 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				37EEA28E27BC7E610070E222 /* Extensions.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		37EEA28F27BC7E610070E222 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				37EEA29027BC7E610070E222 /* GameContextMenu.swift */,
+				37EEA29127BC7E610070E222 /* GameItemView.swift */,
+				37EEA29227BC7E610070E222 /* ViewControllerResolver.swift */,
+				37EEA29327BC7E610070E222 /* SearchBar.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		37EEA29427BC7E610070E222 /* SideMenu */ = {
+			isa = PBXGroup;
+			children = (
+				37EEA29527BC7E610070E222 /* SideMenuView.swift */,
+			);
+			path = SideMenu;
+			sourceTree = "<group>";
+		};
+		37EEA29727BC7E610070E222 /* Consoles */ = {
+			isa = PBXGroup;
+			children = (
+				37EEA29827BC7E610070E222 /* ConsolesWrapperView.swift */,
+				37EEA29927BC7E610070E222 /* ConsoleGamesView.swift */,
+			);
+			path = Consoles;
 			sourceTree = "<group>";
 		};
 		B305EEFE276B4C71003AE510 /* Provenance Watch WatchKit App */ = {
@@ -2340,6 +2443,7 @@
 				B357A43927092254002C7C0F /* AppCenterCrashes */,
 				B390B0E9276B2DB20018E065 /* AltKit */,
 				B3FB9678276DD7F600F7EDEE /* SteamController */,
+				37EEA2AA27BC81890070E222 /* Introspect */,
 			);
 			productName = Provenance;
 			productReference = 1A3D409417B2DCE4004DFFFC /* Provenance.app */;
@@ -2596,6 +2700,7 @@
 				B3D30FBD26F0B4CD0064603F /* XCRemoteSwiftPackageReference "SteamController" */,
 				B357A43627092253002C7C0F /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */,
 				B390B0E8276B2DB20018E065 /* XCRemoteSwiftPackageReference "AltKit" */,
+				37EEA2A927BC81880070E222 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 			);
 			productRefGroup = 1A3D409517B2DCE4004DFFFC /* Products */;
 			projectDirPath = "";
@@ -2895,11 +3000,13 @@
 				B3AB373C2187F569009D9244 /* PVLynxControllerViewController.swift in Sources */,
 				B31117B3218EB3AE00C495A2 /* PVButtonGroupOverlayView.swift in Sources */,
 				B3A320372720974F00F338F6 /* PVGameCubeControllerViewController.swift in Sources */,
+				37EEA2A827BC7E610070E222 /* ConsoleGamesView.swift in Sources */,
 				B3375EBC278EA28E004B0DC0 /* crt_filter_ps.metal in Sources */,
 				B357A43C2709228E002C7C0F /* PVAppDelegate+AppCenter.swift in Sources */,
 				B3AB37402187F569009D9244 /* PVSaturnControllerViewController.swift in Sources */,
 				B382C642278E55C9007E61FE /* PVMetalViewController.m in Sources */,
 				B3D5E2B2218EC1AE0015C690 /* RxTableViewRealmDataSource.swift in Sources */,
+				37EEA2A327BC7E610070E222 /* ViewControllerResolver.swift in Sources */,
 				B3AB37372187F569009D9244 /* PVPSXControllerViewController.swift in Sources */,
 				1A3D40A817B2DCE4004DFFFC /* PVAppDelegate.swift in Sources */,
 				B38D30FD202AC26500E9A068 /* GCDWebDAVServer.m in Sources */,
@@ -2927,6 +3034,7 @@
 				B313544726E4C0F90047F338 /* PVPS2ControllerViewController.swift in Sources */,
 				B3AB373B2187F569009D9244 /* PVPCEControllerViewController.swift in Sources */,
 				B31117B1218EB3AA00C495A2 /* PVEmulatorViewController.swift in Sources */,
+				37EEA29D27BC7E610070E222 /* SideNavigationController+NestedTypes.swift in Sources */,
 				B3AB373A2187F569009D9244 /* PVPCFXControllerViewController.swift in Sources */,
 				CF1710B5258610DE00258602 /* PVCheatsInfoViewController.swift in Sources */,
 				B3F64ED5205CD21400C273C7 /* PVControllerManager.swift in Sources */,
@@ -2941,6 +3049,7 @@
 				B3890BE420B97588005BB001 /* PVGameLibraryViewController+PeekPop.swift in Sources */,
 				B3447E73218B596600557ACE /* PVDreamcastControllerViewController.swift in Sources */,
 				B3E6DADC20B7AD1500454DD4 /* PVLogViewController.m in Sources */,
+				37EEA2A027BC7E610070E222 /* Extensions.swift in Sources */,
 				B382C649278E626D007E61FE /* PVGPUViewController.m in Sources */,
 				C665CD8421FEC68E00C834C6 /* GCControllerExtensions.swift in Sources */,
 				378F4A0A1B63D7CD0065FA39 /* GCDWebServerErrorResponse.m in Sources */,
@@ -2948,6 +3057,8 @@
 				B3AB373D2187F569009D9244 /* PVPokeMiniControllerViewController.swift in Sources */,
 				1A3D433B17B30BA3004DFFFC /* PVGLViewController.m in Sources */,
 				B3F43DE22169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */,
+				37EEA29E27BC7E610070E222 /* SideNavigationController.swift in Sources */,
+				37EEA2A727BC7E610070E222 /* ConsolesWrapperView.swift in Sources */,
 				B378225721D32B0B0077E86F /* SliderRow.swift in Sources */,
 				B3A4FB66278FFB6600A65248 /* Result+Conveniences.swift in Sources */,
 				B378224A21D329EC0077E86F /* SettingsRowSwitch.swift in Sources */,
@@ -2960,6 +3071,7 @@
 				B35E6C2D207ED7050040709A /* UIWindowExtensions.swift in Sources */,
 				1A2FB10F206EF29E00A1F942 /* PVSaveStateHeaderView.swift in Sources */,
 				B3411C1A276B470C00D85327 /* NavigationRow.swift in Sources */,
+				37EEA29F27BC7E610070E222 /* UIViewController+SideNavigationController.swift in Sources */,
 				378F4A0E1B63D7CD0065FA39 /* GCDWebUploader.m in Sources */,
 				1A2FB10C206EF07C00A1F942 /* PVSaveStateCollectionViewCell.swift in Sources */,
 				B3375EC2278EA28E004B0DC0 /* blit_ps.metal in Sources */,
@@ -2967,6 +3079,7 @@
 				B394C98A20609E180014A65D /* UIColor+Hex.swift in Sources */,
 				42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift in Sources */,
 				B3B923B0202D2EAE00580FFC /* Theme.swift in Sources */,
+				37EEA2A427BC7E610070E222 /* SearchBar.swift in Sources */,
 				B3A4FB60278FF84800A65248 /* ApplicationMonitor.swift in Sources */,
 				B398800D27A521AC004DEFCA /* ConflictsController.swift in Sources */,
 				CF17114E2586A13100258602 /* PVCheatsTableViewCell.swift in Sources */,
@@ -2986,6 +3099,7 @@
 				B37B71B0278E33B9005FB278 /* MenuButton.swift in Sources */,
 				EF56AA6227A21CBC0097AD05 /* TVAlertController.swift in Sources */,
 				B343717A276B0B650014F87C /* PVColecoVisionControllerViewController.swift in Sources */,
+				37EEA29A27BC7E610070E222 /* HomeView.swift in Sources */,
 				B3375ECC278EA28E004B0DC0 /* lineTron.metal in Sources */,
 				B35E6C23207ED7050040709A /* UIAppearanceExtensions.swift in Sources */,
 				B35E6C29207ED7050040709A /* AppearanceStyleExtensions.swift in Sources */,
@@ -3006,11 +3120,15 @@
 				378F4A061B63D7CD0065FA39 /* GCDWebServerFileRequest.m in Sources */,
 				378F4A0B1B63D7CD0065FA39 /* GCDWebServerFileResponse.m in Sources */,
 				1A65D1C619917D55004E1777 /* UIImage+ImageEffects.m in Sources */,
+				37EEA29C27BC7E610070E222 /* PVRootViewController+DelegateMethods.swift in Sources */,
 				B3532B2B21A78FB2006CDA0F /* PVSwitchCell.swift in Sources */,
+				37EEA2A627BC7E610070E222 /* PVRootViewModel.swift in Sources */,
 				B306E0CF2769F2C2001DC52E /* PVOdyssey2ControllerViewController.swift in Sources */,
 				1AB95FFD17C563C200D3E392 /* PVSettingsViewController.swift in Sources */,
 				B3F64ECF205CD1F100C273C7 /* JSButton.swift in Sources */,
 				B3A32150218EB4D700BD7DA2 /* UIView+FrameAdditions.swift in Sources */,
+				37EEA2A527BC7E610070E222 /* SideMenuView.swift in Sources */,
+				37EEA29B27BC7E610070E222 /* PVRootViewController.swift in Sources */,
 				B383F3BF219BBD8700DB6926 /* LogViewable.swift in Sources */,
 				378F4A041B63D7CD0065FA39 /* GCDWebServerResponse.m in Sources */,
 				11BB0A2225AF7DFE004DEDC3 /* PVEmulatorViewController+PauseMenu.swift in Sources */,
@@ -3023,6 +3141,7 @@
 				B3411C1E276B470C00D85327 /* Deprecated.swift in Sources */,
 				B3AB37412187F569009D9244 /* PVGenesisControllerViewController.swift in Sources */,
 				B3AB373E2187F569009D9244 /* PVAtari5200ControllerViewController.swift in Sources */,
+				37EEA2A227BC7E610070E222 /* GameItemView.swift in Sources */,
 				378F4A051B63D7CD0065FA39 /* GCDWebServerDataRequest.m in Sources */,
 				B378225121D32A6B0077E86F /* SettingsTableView.swift in Sources */,
 				B3AB37322187F569009D9244 /* PVSNESControllerViewController.swift in Sources */,
@@ -3036,6 +3155,7 @@
 				C6E8F64D2095CAE4003CC2D9 /* SubtleVolume.swift in Sources */,
 				B3411C1B276B470C00D85327 /* Subtitle.swift in Sources */,
 				B3AB373F2187F569009D9244 /* PV32XControllerViewController.swift in Sources */,
+				37EEA2A127BC7E610070E222 /* GameContextMenu.swift in Sources */,
 				B3D5E2BF218EC62E0015C690 /* Sections.swift in Sources */,
 				B3411BF8276B37DE00D85327 /* PVDSControllerViewController.swift in Sources */,
 				1FB125961D93E57F00D045D0 /* PVAppearanceViewController.swift in Sources */,
@@ -5006,6 +5126,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		37EEA2A927BC81880070E222 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		B357A43627092253002C7C0F /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/microsoft/appcenter-sdk-apple.git";
@@ -5033,6 +5161,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		37EEA2AA27BC81890070E222 /* Introspect */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 37EEA2A927BC81880070E222 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
+			productName = Introspect;
+		};
 		B357A43727092254002C7C0F /* AppCenterAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B357A43627092253002C7C0F /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */;

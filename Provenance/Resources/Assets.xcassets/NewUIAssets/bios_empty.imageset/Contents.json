@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "bios_empty.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

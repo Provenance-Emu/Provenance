@@ -13,7 +13,7 @@ import RealmSwift
 protocol PVLibraryEntry where Self: Object {}
 
 @objcMembers
-public final class PVGame: Object, PVLibraryEntry {
+public final class PVGame: Object, Identifiable, PVLibraryEntry {
     public dynamic var title: String = ""
     public dynamic var id = NSUUID().uuidString
 

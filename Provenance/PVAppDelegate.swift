@@ -38,7 +38,11 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         #endif
     }
     
-    func _initUI() {
+    func _initUI(
+        libraryUpdatesController: PVGameLibraryUpdatesController,
+        gameImporter: GameImporter,
+        gameLibrary: PVGameLibrary
+    ) {
         _initUITheme()
         
         // Set root view controller and make windows visible
@@ -49,13 +53,40 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             window.tintColor = UIColor(red: 0.1, green: 0.5, blue: 0.95, alpha: 1.0)  // PVBlue
         #endif
 
-        if PVSettingsModel.shared.debugOptions.useSwiftUI {
+        if #available(iOS 14, *), PVSettingsModel.shared.debugOptions.useSwiftUI {
+            let viewModel = PVRootViewModel()
+            let rootViewController = PVRootViewController.instantiate(
+                updatesController: libraryUpdatesController,
+                gameLibrary: gameLibrary,
+                gameImporter: gameImporter,
+                viewModel: viewModel)
+            let sideNav = SideNavigationController(mainViewController: UINavigationController(rootViewController: rootViewController))
+            sideNav.leftSide(
+                viewController: SideMenuView.instantiate(gameLibrary: gameLibrary, viewModel: viewModel, delegate: rootViewController, rootDelegate: rootViewController),
+                options: .init(widthPercent: 0.8, animationDuration: 0.18, overlayColor: .clear, overlayOpacity: 1, shadowOpacity: 0.0)
+            )
             
+            let window = UIWindow(frame: UIScreen.main.bounds)
+            window.rootViewController = sideNav
+            self.window = window
+            window.makeKeyAndVisible()
         } else {
             let storyboard = UIStoryboard.init(name: "Provenance", bundle: Bundle.main)
             let vc = storyboard.instantiateInitialViewController()
             
             window.rootViewController = vc
+            
+            guard let rootNavigation = window.rootViewController as? UINavigationController else {
+                fatalError("No root nav controller")
+            }
+            guard let gameLibraryViewController = rootNavigation.viewControllers.first as? PVGameLibraryViewController else {
+                fatalError("No gameLibraryViewController")
+            }
+
+            // Would be nice to inject this in a better way, so that we can be certain that it's present at viewDidLoad for PVGameLibraryViewController, but this works for now
+            gameLibraryViewController.updatesController = libraryUpdatesController
+            gameLibraryViewController.gameImporter = gameImporter
+            gameLibraryViewController.gameLibrary = gameLibrary
         }
     }
 
@@ -131,19 +162,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             }
             .subscribe().disposed(by: disposeBag)
 
-        _initUI()
-
-        guard let rootNavigation = window?.rootViewController as? UINavigationController else {
-            fatalError("No root nav controller")
-        }
-        guard let gameLibraryViewController = rootNavigation.viewControllers.first as? PVGameLibraryViewController else {
-            fatalError("No gameLibraryViewController")
-        }
-
-        // Would be nice to inject this in a better way, so that we can be certain that it's present at viewDidLoad for PVGameLibraryViewController, but this works for now
-        gameLibraryViewController.updatesController = libraryUpdatesController
-        gameLibraryViewController.gameImporter = gameImporter
-        gameLibraryViewController.gameLibrary = gameLibrary
+        _initUI(libraryUpdatesController: libraryUpdatesController, gameImporter: gameImporter, gameLibrary: gameLibrary)
 
         let database = RomDatabase.sharedInstance
         database.refresh()

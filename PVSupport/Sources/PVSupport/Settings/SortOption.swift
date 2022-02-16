@@ -13,12 +13,14 @@ public enum SortOptions: UInt, CustomStringConvertible, CaseIterable, UserDefaul
     case title
     case importDate
     case lastPlayed
+    case mostPlayed
 
     public var description: String {
         switch self {
         case .title: return "Title"
         case .importDate: return "Imported"
         case .lastPlayed: return "Last Played"
+        case .mostPlayed: return "Most Played"
         }
     }
 
@@ -38,6 +40,8 @@ public enum SortOptions: UInt, CustomStringConvertible, CaseIterable, UserDefaul
             return .importDate
         case 2:
             return .lastPlayed
+        case 3:
+            return .mostPlayed
         default:
             ELOG("Bad row \(row)")
             return .title

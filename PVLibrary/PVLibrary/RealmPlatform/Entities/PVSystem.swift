@@ -34,7 +34,7 @@ public struct SystemOptions: OptionSet, Codable {
 }
 
 @objcMembers
-public final class PVSystem: Object, SystemProtocol {
+public final class PVSystem: Object, Identifiable, SystemProtocol {
     public typealias BIOSInfoProviderType = PVBIOS
 
     public dynamic var name: String = ""
