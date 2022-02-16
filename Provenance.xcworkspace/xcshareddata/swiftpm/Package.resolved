@@ -2,12 +2,12 @@
   "object": {
     "pins": [
       {
-        "package": "AltKit",
-        "repositoryURL": "https://github.com/rileytestut/AltKit.git",
+        "package": "AppCenter",
+        "repositoryURL": "https://github.com/microsoft/appcenter-sdk-apple.git",
         "state": {
-          "branch": "main",
-          "revision": "2fd376df1c79ec06a5c80cc8933da027f65b3148",
-          "version": null
+          "branch": null,
+          "revision": "25f64229373de97ff3920941cd52203193e5d8be",
+          "version": "4.3.0"
         }
       },
       {
@@ -26,6 +26,15 @@
           "branch": "master",
           "revision": "3408cce1ff97bef20f3dcf367a02019b5c51d198",
           "version": null
+        }
+      },
+      {
+        "package": "PLCrashReporter",
+        "repositoryURL": "https://github.com/microsoft/PLCrashReporter.git",
+        "state": {
+          "branch": null,
+          "revision": "6b27393cad517c067dceea85fadf050e70c4ceaa",
+          "version": "1.10.1"
         }
       },
       {
@@ -89,6 +98,15 @@
           "branch": null,
           "revision": "0a9893ec030501a3956bee572d6b4fdd3ae158a1",
           "version": "0.12.2"
+        }
+      },
+      {
+        "package": "SteamController",
+        "repositoryURL": "https://github.com/Provenance-Emu/SteamController.git",
+        "state": {
+          "branch": "master",
+          "revision": "55d2fe0484f4cc5ed3535033af6b0218621e37b2",
+          "version": null
         }
       },
       {
