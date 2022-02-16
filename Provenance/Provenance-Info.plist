@@ -4,6 +4,10 @@
 <dict>
 	<key>ALTDeviceID</key>
 	<string></string>
+	<key>APP_GROUP_IDENTIFIER</key>
+	<string>$(APP_GROUP_IDENTIFIER)</string>
+	<key>CFBundleAllowMixedLocalizations</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -45,6 +49,8 @@
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
+	<key>CFBundleGetInfoString</key>
+	<string></string>
 	<key>CFBundleIcons</key>
 	<dict/>
 	<key>CFBundleIcons~ipad</key>
@@ -55,6 +61,7 @@
 	<string>6.0</string>
 	<key>CFBundleLocalizations</key>
 	<array>
+		<string>Spanish</string>
 		<string>en</string>
 		<string>zh_CN</string>
 	</array>
@@ -91,11 +98,11 @@
 		</dict>
 		<dict>
 			<key>ProfileName</key>
-			<string>DirectionalGamepad</string>
+			<string>MicroGamepad</string>
 		</dict>
 		<dict>
 			<key>ProfileName</key>
-			<string>MicroGamepad</string>
+			<string>DirectionalGamepad</string>
 		</dict>
 	</array>
 	<key>GCSupportsControllerUserInteraction</key>
@@ -170,6 +177,7 @@
 		<string>bluetooth-central</string>
 		<string>external-accessory</string>
 		<string>fetch</string>
+		<string>location</string>
 		<string>processing</string>
 		<string>remote-notification</string>
 	</array>
@@ -177,8 +185,6 @@
 	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>Default</string>
-	<key>UIMainStoryboardFile</key>
-	<string>Provenance</string>
 	<key>UIPrerenderedIcon</key>
 	<true/>
 	<key>UIRequiredDeviceCapabilities</key>
@@ -205,6 +211,8 @@
 	</array>
 	<key>UISupportsDocumentBrowser</key>
 	<true/>
+	<key>UIUserInterfaceStyle</key>
+	<string>Dark</string>
 	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>

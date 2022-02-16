@@ -50,7 +50,19 @@ static __weak PVTGBDualCore *_current;
     
     //load cart, read bytes, get length
     NSData* dataObj = [NSData dataWithContentsOfFile:[path stringByStandardizingPath]];
-    if(dataObj == nil) return false;
+    if(dataObj == nil) {
+        NSDictionary *userInfo = @{
+            NSLocalizedDescriptionKey: @"Failed to load game.",
+            NSLocalizedFailureReasonErrorKey: @"TGBDual failed to load ROM.",
+            NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format TGBDual supports."
+        };
+        
+        *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                     code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                 userInfo:userInfo];
+        ELOG(@"dataObj is nil");
+        return false;
+    }
     size = [dataObj length];
     data = (uint8_t*)[dataObj bytes];
     const char *meta = NULL;
@@ -74,11 +86,20 @@ static __weak PVTGBDualCore *_current;
     
     if(retro_load_game(&info)) {
         if([self.batterySavesPath length]) {
-            [[NSFileManager defaultManager] createDirectoryAtPath:self.batterySavesPath withIntermediateDirectories:YES attributes:nil error:NULL];
+            NSError *fmError;
+            [[NSFileManager defaultManager] createDirectoryAtPath:self.batterySavesPath withIntermediateDirectories:YES attributes:nil error:&fmError];
+            
+            if (error) {
+                ELOG(@"%@", fmError.localizedDescription);
+                *error = fmError;
+            }
             
             NSString *filePath = [self.batterySavesPath stringByAppendingPathComponent:[self.romName stringByAppendingPathExtension:@"sav"]];
             
-            [self loadSaveFile:filePath forType: RETRO_MEMORY_SAVE_RAM];
+            BOOL success = [self loadSaveFile:filePath forType: RETRO_MEMORY_SAVE_RAM];
+            if (!success) {
+                ELOG(@"failed to load battery save: %@", filePath);
+            }
         }
         
         struct retro_system_av_info info;

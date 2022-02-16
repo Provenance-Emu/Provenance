@@ -1,0 +1,77 @@
+/* 
+  Strings.strings
+  Provenance
+
+  Created by Joseph Mattiello on 8/16/21.
+  Copyright © 2021 Provenance Emu. All rights reserved.
+*/
+
+/* Loading and item */
+"Loading" = "Bezig met Laden";
+
+"App" = "App";
+"Core Options" = "Core Opties";
+"Auto Save" = "Automatisch Opslaan";
+"Timed Auto Saves" = "Getimed Automatisch Saven";
+"Auto Load Saves" = "Automatisch Laden Opgeslagen Saves";
+"Ask to Load Saves" = "Vragen om Saves te Laden";
+"Opacity" = "Transparantie";
+"Saves" = "Saves";
+"Video Options" = "Video Opties";
+
+"Button Colors" = "Knop Kleuren";
+
+"All-Right Shoulders" = "All-Rechts Schouder";
+
+"Haptic Feedback" = "Haptic Feedback";
+
+"Enable 8BitDo M30 Mapping" = "8BitDo M30 Mapping Inschakelen";
+
+"Controllers" = "Controllers";
+"Controller" = "Controller";
+
+"iCade Controller" = "iCade Controller";
+
+"Appearance" = "Uiterlijk";
+
+"Build" = "Build";
+
+"Mode" = "Mode";
+
+"Git Revision" = "Git Revisie";
+"Build Data" = "Build Data";
+"Builder" = "Builder";
+"Bundle ID" = "Bundle ID";
+"Unknown" = "Onbekend";
+"Cores" = "Cores";
+"Licenses" = "Licenties";
+"Logs" = "Logs";
+"Systems" = "Systemen";
+"Volume HUD" = "Geluidsvolume HUD";
+"Native Scale" = "Native Grote";
+"Integer Scaling" = "Geheel Getal Schaleren";
+"CRT Filter" = "CRT Filter";
+"Image Smoothing" = "Afbeelding Gladmaken";
+"FPS Counter" = "FPS Teller";
+"Missing Buttons Always On-Screen" = "Vermiste Knoppen altijd In-Beeld";
+"iCloud Sync" = "iCloud Sync";
+"Use Metal" = "Gebruik Metal";
+"Multi-threaded GL" = "Multi-threaded GL";
+"4X Multisampling GL" = "4X Multisampling GL";
+"Disable Auto Lock" = "Uitzetten Automatisch Vergrendelen";
+"Launch Web Server" = "Start de Web Server";
+"Game Library" = "Spel Bibliotheek";
+"Refresh Game Library" = "Ververs Spel Bibliotheek";
+"Empty Image Cache" = "Leeg Afbeelding Cache";
+"Manage Conflicts" = "Conflicten Beheren";
+"Beta Features" = "Beta Opties";
+"Unknown" = "Onbekend";
+"Version" = "Versie";
+"Build Information" = "Build Informatie";
+"3rd Party & Legal" = "3de Partij en Legaal";
+"Debug" = "Debug";
+"No" = "Nee";
+"Empty Image Cache?" = "Leeg Afbeelding Cache?";
+"Yes" = "Ja";
+"Acknowledgements" = "Dankbetuigingen";
+"Database Error" = "Database Fout";

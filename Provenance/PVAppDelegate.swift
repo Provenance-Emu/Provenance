@@ -12,8 +12,9 @@ import PVLibrary
 import PVSupport
 import RealmSwift
 import RxSwift
-#if !targetEnvironment(macCatalyst) && !os(macOS)
+#if !targetEnvironment(macCatalyst) && !os(macOS) // && canImport(SteamController)
 import SteamController
+import UIKit
 #endif
 
 @UIApplicationMain
@@ -26,14 +27,46 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     #if os(iOS)
         var _logViewController: PVLogViewController?
     #endif
+    
+    func _initUITheme() {
+        #if os(iOS)
+        //        let currentTheme = PVSettingsModel.shared.theme
+        //        Theme.currentTheme = currentTheme.theme
+        DispatchQueue.main.async {
+            Theme.currentTheme = Theme.darkTheme
+        }
+        #endif
+    }
+    
+    func _initUI() {
+        _initUITheme()
+        
+        // Set root view controller and make windows visible
+        let window = UIWindow.init(frame: UIScreen.main.bounds)
+        self.window = window
+
+        #if os(tvOS)
+            window.tintColor = UIColor(red: 0.1, green: 0.5, blue: 0.95, alpha: 1.0)  // PVBlue
+        #endif
+
+        if PVSettingsModel.shared.debugOptions.useSwiftUI {
+            
+        } else {
+            let storyboard = UIStoryboard.init(name: "Provenance", bundle: Bundle.main)
+            let vc = storyboard.instantiateInitialViewController()
+            
+            window.rootViewController = vc
+        }
+    }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         application.isIdleTimerDisabled = PVSettingsModel.shared.disableAutoLock
         _initLogging()
         _initAppCenter()
         setDefaultsFromSettingsBundle()
-
+        
 		#if !targetEnvironment(macCatalyst)
+        PVEmulatorConfiguration.initICloud()
         DispatchQueue.global(qos: .background).async {
             let useiCloud = PVSettingsModel.shared.debugOptions.iCloudSync && PVEmulatorConfiguration.supportsICloud
             if useiCloud {
@@ -49,19 +82,21 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             try RomDatabase.initDefaultDatabase()
         } catch {
             let appName: String = Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "the application"
-            let alert = UIAlertController(title: "Database Error", message: error.localizedDescription + "\nDelete and reinstall " + appName + ".", preferredStyle: .alert)
+            let alert = UIAlertController(title: NSLocalizedString("Database Error", comment: ""), message: error.localizedDescription + "\nDelete and reinstall " + appName + ".", preferredStyle: .alert)
             ELOG(error.localizedDescription)
             alert.addAction(UIAlertAction(title: "Exit", style: .destructive, handler: { _ in
                 fatalError(error.localizedDescription)
             }))
 
+            self.window?.rootViewController = UIViewController()
+            self.window?.makeKeyAndVisible()
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 self.window?.rootViewController?.present(alert, animated: true, completion: nil)
             }
 
             return true
         }
-
+        
         let gameLibrary = PVGameLibrary(database: RomDatabase.sharedInstance)
 
         #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
@@ -81,22 +116,6 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             }
         #endif
 
-        #if os(tvOS)
-            if let tabBarController = window?.rootViewController as? UITabBarController {
-                let searchNavigationController = PVSearchViewController.createEmbeddedInNavigationController(gameLibrary: gameLibrary)
-
-                guard var viewControllers = tabBarController.viewControllers else {
-                    fatalError("tabBarController.viewControllers is nil")
-                }
-                viewControllers.insert(searchNavigationController, at: 1)
-                tabBarController.viewControllers = viewControllers
-            }
-        #else
-//        let currentTheme = PVSettingsModel.shared.theme
-//        Theme.currentTheme = currentTheme.theme
-            Theme.currentTheme = Theme.darkTheme
-        #endif
-
         // Setup importing/updating library
         let gameImporter = GameImporter.shared
         let libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter)
@@ -112,20 +131,11 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             }
             .subscribe().disposed(by: disposeBag)
 
-        #if os(iOS) || os(macOS)
+        _initUI()
+
         guard let rootNavigation = window?.rootViewController as? UINavigationController else {
             fatalError("No root nav controller")
         }
-        #else
-        guard let tabBarController = window?.rootViewController as? UITabBarController,
-              let rootNavigation = tabBarController.viewControllers?[0] as? UINavigationController,
-              let splitVC = tabBarController.viewControllers?[2] as? PVTVSplitViewController,
-              let navVC = splitVC.viewControllers[1] as? UINavigationController,
-              let settingsVC = navVC.topViewController as? PVSettingsViewController else {
-                  fatalError("Bad View Controller heiarchy")
-              }
-        settingsVC.conflictsController = libraryUpdatesController
-        #endif
         guard let gameLibraryViewController = rootNavigation.viewControllers.first as? PVGameLibraryViewController else {
             fatalError("No gameLibraryViewController")
         }
@@ -138,19 +148,26 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         let database = RomDatabase.sharedInstance
         database.refresh()
 
-        #if !targetEnvironment(macCatalyst)
-        SteamControllerManager.listenForConnections()
+        #if !targetEnvironment(macCatalyst) && canImport(SteamController) && !targetEnvironment(simulator)
+        // SteamController is build with STEAMCONTROLLER_NO_PRIVATE_API, so dont call this! ??
+        // SteamControllerManager.listenForConnections()
         #endif
 
         #if os(iOS)
         if #available(iOS 11, *) {
             PVAltKitService.shared.start()
         }
+        
+        if #available(iOS 13, *) {
+            ApplicationMonitor.shared.start()
+        }
         #endif
 
 		DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: { [unowned self] in
 			self.startOptionalWebDavServer()
 		})
+
+        self.window!.makeKeyAndVisible()
 
         return true
     }

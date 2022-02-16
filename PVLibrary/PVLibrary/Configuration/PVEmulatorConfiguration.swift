@@ -35,6 +35,7 @@ public struct SystemDictionaryKeys {
         public static let ControlTint = "PVControlTint"
         public static let ControlType = "PVControlType"
         public static let DPad = "PVDPad"
+        public static let JoyPad = "PVJoyPad"
         public static let GroupedButtons = "PVGroupedButtons"
         public static let LeftShoulderButton = "PVLeftShoulderButton"
         public static let RightShoulderButton = "PVRightShoulderButton"
@@ -46,11 +47,12 @@ public struct SystemDictionaryKeys {
     }
 }
 
-public enum SystemIdentifier: String {
+public enum SystemIdentifier: String, CaseIterable {
     case _3DO = "com.provenance.3DO"
     case Atari2600 = "com.provenance.2600"
     case Atari5200 = "com.provenance.5200"
     case Atari7800 = "com.provenance.7800"
+	case Atari8bit = "com.provenance.atari8bit"
     case AtariJaguar = "com.provenance.jaguar"
     case ColecoVision = "com.provenance.colecovision"
     case DS = "com.provenance.ds"
@@ -67,6 +69,7 @@ public enum SystemIdentifier: String {
     case MasterSystem = "com.provenance.mastersystem"
     case N64 = "com.provenance.n64"
     case NES = "com.provenance.nes"
+    case NeoGeo = "com.provenance.neogeo"
     case NGP = "com.provenance.ngp"
     case NGPC = "com.provenance.ngpc"
     case Odyssey2 = "com.provenance.odyssey2"
@@ -91,6 +94,7 @@ public enum SystemIdentifier: String {
 
     case Unknown
 
+    static public let betas: [SystemIdentifier] = [.ColecoVision, .Dreamcast, .DS, .Atari8bit, .Intellivision, ._3DO, .Vectrex, .PSP, .PS2, .PS3, .GameCube]
     // MARK: Assistance accessors for properties
 
     public var system: PVSystem? {
@@ -233,12 +237,23 @@ public final class PVEmulatorConfiguration: NSObject {
         return URL(fileURLWithPath: paths.first!, isDirectory: true)
     }()
 
+    public static func initICloud() {
+        DispatchQueue.global(qos: .background).async {
+            ILOG("iCloudContainerDirectory: \(PVEmulatorConfiguration.iCloudContainerDirectory)")
+        }
+    }
+    
+    static var iCloudContainerDirectoryCached: URL?
     /// This should be called on a background thread
     static var iCloudContainerDirectory: URL? {
+        guard iCloudContainerDirectoryCached == nil else {
+            return iCloudContainerDirectoryCached
+        }
         if Thread.isMainThread {
             WLOG("Warning, this should only be called on background threads.")
         }
-        return FileManager.default.url(forUbiquityContainerIdentifier: Constants.iCloud.containerIdentifier)
+        iCloudContainerDirectoryCached = FileManager.default.url(forUbiquityContainerIdentifier: Constants.iCloud.containerIdentifier)
+        return iCloudContainerDirectoryCached
     }
 
     /// This should be called on a background thread
@@ -586,7 +601,12 @@ public extension PVEmulatorConfiguration {
     @objc
     class func m3uFile(forGame game: PVGame) -> URL? {
         let gamePath = path(forGame: game)
-        let gameDirectory = romDirectory(forSystemIdentifier: game.system.identifier)
+        return m3uFile(forURL: gamePath, indentifier: game.system.identifier)
+    }
+    
+    @objc
+    class func m3uFile(forURL gamePath: URL, indentifier: String) -> URL? {
+        let gameDirectory = romDirectory(forSystemIdentifier: indentifier)
         let filenameWithoutExtension = stripDiscNames(fromFilename: gamePath.deletingPathExtension().lastPathComponent)
 
         do {

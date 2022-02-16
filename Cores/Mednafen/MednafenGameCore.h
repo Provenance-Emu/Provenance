@@ -63,6 +63,9 @@ __attribute__((visibility("default")))
 @interface MednafenGameCore()
 @property (nonatomic, assign) MednaSystem systemType;
 @property (nonatomic, assign) NSUInteger maxDiscs;
+
+@property (nonatomic, assign) BOOL video_opengl;
+
 -(void)setMedia:(BOOL)open forDisc:(NSUInteger)disc;
 -(void)changeDisplayMode;
 
@@ -70,7 +73,4 @@ __attribute__((visibility("default")))
 - (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled error:(NSError**)error;
 - (BOOL)getCheatSupport;
 
-#pragma mark - Options
-@property (nonatomic, readonly) BOOL mednafen_pceFast;
-@property (nonatomic, readonly) BOOL mednafen_snesFast;
 @end

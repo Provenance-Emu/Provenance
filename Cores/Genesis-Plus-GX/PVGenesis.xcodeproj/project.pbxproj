@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		B324C63421920D5C009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C63321920D5C009F4EDC /* PVSupport.framework */; };
 		B324C63621920D6D009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C63521920D6D009F4EDC /* PVSupport.framework */; };
+		B326758327B1C5BB0033C5D1 /* GenesisOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B326758227B1C5BB0033C5D1 /* GenesisOptions.swift */; };
+		B326758427B1C5BB0033C5D1 /* GenesisOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B326758227B1C5BB0033C5D1 /* GenesisOptions.swift */; };
 		B3547B572058589900CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B562058589900CFF7D8 /* Core.plist */; };
 		B3547B582058589900CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B562058589900CFF7D8 /* Core.plist */; };
 		B37302D41DE7DB1B00D0B366 /* gamepad.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7AC17F752600031B1C9 /* gamepad.c */; };
@@ -278,6 +280,7 @@
 		1ACEA8D817F75B8A0031B1C9 /* osd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = osd.h; sourceTree = "<group>"; };
 		B324C63321920D5C009F4EDC /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B324C63521920D6D009F4EDC /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B326758227B1C5BB0033C5D1 /* GenesisOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenesisOptions.swift; sourceTree = "<group>"; };
 		B3547B562058589900CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B3A9F41F1DE7EB67008450F5 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		B3E432041DE6917700D3C91E /* PVGenesis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVGenesis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -397,6 +400,7 @@
 				1ACEA6E717F752600031B1C9 /* genplusgx_source */,
 				1ACEA85A17F752610031B1C9 /* libretro */,
 				1ACEA8D117F75B8A0031B1C9 /* other */,
+				B326758227B1C5BB0033C5D1 /* GenesisOptions.swift */,
 			);
 			path = GenesisCore;
 			sourceTree = "<group>";
@@ -713,10 +717,12 @@
 				TargetAttributes = {
 					B3E432031DE6917700D3C91E = {
 						CreatedOnToolsVersion = 8.1;
+						LastSwiftMigration = 1320;
 						ProvisioningStyle = Manual;
 					};
 					B3E432111DE6919B00D3C91E = {
 						CreatedOnToolsVersion = 8.1;
+						LastSwiftMigration = 1320;
 					};
 				};
 			};
@@ -794,6 +800,7 @@
 				B37302EC1DE7DB1B00D0B366 /* gfx.c in Sources */,
 				B37302EE1DE7DB1B00D0B366 /* state.c in Sources */,
 				B37302EF1DE7DB1B00D0B366 /* terebi_oekaki.c in Sources */,
+				B326758327B1C5BB0033C5D1 /* GenesisOptions.swift in Sources */,
 				B37302F01DE7DB1B00D0B366 /* activator.c in Sources */,
 				B37302F11DE7DB1B00D0B366 /* md_cart.c in Sources */,
 				B37302F21DE7DB1B00D0B366 /* s68kcpu.c in Sources */,
@@ -854,6 +861,7 @@
 				C66E094A2586D39E00EA6170 /* opll.c in Sources */,
 				B373031D1DE7DB1B00D0B366 /* gfx.c in Sources */,
 				B373031F1DE7DB1B00D0B366 /* state.c in Sources */,
+				B326758427B1C5BB0033C5D1 /* GenesisOptions.swift in Sources */,
 				B37303201DE7DB1B00D0B366 /* terebi_oekaki.c in Sources */,
 				B37303211DE7DB1B00D0B366 /* activator.c in Sources */,
 				B37303221DE7DB1B00D0B366 /* md_cart.c in Sources */,
@@ -1042,6 +1050,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
@@ -1091,6 +1100,7 @@
 				PRODUCT_NAME = PVGenesis;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -1101,6 +1111,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
@@ -1150,6 +1161,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 12.1;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1161,6 +1173,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
@@ -1202,6 +1215,8 @@
 				PRODUCT_NAME = PVGenesis;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -1212,6 +1227,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
@@ -1261,6 +1277,7 @@
 				PRODUCT_NAME = PVGenesis;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -1271,6 +1288,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
@@ -1312,6 +1330,8 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 12.1;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1323,6 +1343,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
@@ -1372,6 +1393,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 12.1;
 				VERSIONING_SYSTEM = "apple-generic";

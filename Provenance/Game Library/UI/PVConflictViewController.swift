@@ -61,7 +61,8 @@ final class PVConflictViewController: UITableViewController {
         rows.bind(to: tableView.rx.items(cellIdentifier: cellIdentifier, cellType: UITableViewCell.self)) { _, row, cell in
             switch row {
             case .conflict(let conflict):
-                cell.textLabel?.text = conflict.path.deletingPathExtension().lastPathComponent
+                cell.editingAccessoryType = .checkmark
+                cell.textLabel?.text = conflict.path    .lastPathComponent
                 cell.accessoryType = .disclosureIndicator
             case .empty(let title):
                 cell.textLabel?.text = title
@@ -74,6 +75,30 @@ final class PVConflictViewController: UITableViewController {
             #endif
         }
         .disposed(by: disposeBag)
+        
+        tableView.rx.itemDeleted
+            .do(onNext: {
+                self.tableView.deselectRow(at: $0, animated: true)
+            })
+                .compactMap({ indexPath -> (ConflictsController.Conflict, IndexPath)? in
+                    let row: Row = try self.tableView.rx.model(at: indexPath)
+                    switch row {
+                    case .conflict(let conflict):
+                        return (conflict, indexPath)
+                    case .empty:
+                        return nil
+                    }
+                })
+                .bind(onNext: { conflict, indexPath in
+                    // Delete file
+                    do {
+                        try FileManager.default.removeItem(at: conflict.path)
+                    } catch {
+                        ELOG(error.localizedDescription)
+                    }
+                    self.tableView.reloadData()
+                })
+            .disposed(by: disposeBag)
 
         tableView.rx.itemSelected
             .do(onNext: { self.tableView.deselectRow(at: $0, animated: true) })
@@ -97,16 +122,21 @@ final class PVConflictViewController: UITableViewController {
                 }
 
                 alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-                self.present(alertController, animated: true) { () -> Void in }
+                self.present(alertController, animated: true) { () -> Void in
+                    self.tableView.reloadData()
+                }
             })
             .disposed(by: disposeBag)
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        #if os(iOS)
         if navigationController == nil || navigationController!.viewControllers.count <= 1 {
+            navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(showEditing))
             navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissMe))
         }
+        #endif
     }
 
     @objc func dismissMe() {
@@ -124,4 +154,41 @@ final class PVConflictViewController: UITableViewController {
             }
         }
     #endif
+}
+
+extension PVConflictViewController {
+    
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    override func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return .delete
+    }
+    
+    @objc private func toggleEditing() {
+        tableView.setEditing(!tableView.isEditing, animated: true) // Set opposite value of current editing status
+        navigationItem.rightBarButtonItem?.title = tableView.isEditing ? "Done" : "Edit" // Set title depending on the editing status
+    }
+    
+    @objc func showEditing(sender: UIBarButtonItem) {
+       if self.tableView.isEditing {
+           self.tableView.isEditing = false
+           self.navigationItem.rightBarButtonItem?.title = "Done"
+       } else {
+           self.tableView.isEditing = true
+           self.navigationItem.rightBarButtonItem?.title = "Edit"
+       }
+   }
+    
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+        
+        // Toggle table view editing.
+         tableView.setEditing(editing, animated: true)
+    }
 }

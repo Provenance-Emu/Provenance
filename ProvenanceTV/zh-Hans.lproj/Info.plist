@@ -50,6 +50,8 @@
 	</array>
 	<key>GCSupportsControllerUserInteraction</key>
 	<true/>
+	<key>GCSupportsMultipleMicroGamepads</key>
+	<true/>
 	<key>GitBranch</key>
 	<string></string>
 	<key>GitDate</key>

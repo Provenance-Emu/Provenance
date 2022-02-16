@@ -7,6 +7,17 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		B30E94832793B8BE00871E57 /* Check CodeSigning */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = B30E94852793B8BE00871E57 /* Build configuration list for PBXAggregateTarget "Check CodeSigning" */;
+			buildPhases = (
+				B30E94842793B8BE00871E57 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "Check CodeSigning";
+			productName = "Check Git Submodules";
+		};
 		B383225D26ED9C530029D12F /* Check Git Submodules */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = B383225E26ED9C530029D12F /* Build configuration list for PBXAggregateTarget "Check Git Submodules" */;
@@ -51,7 +62,6 @@
 		1180B31C2492A96700636C8A /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B31B2492A95400636C8A /* CoreServices.framework */; };
 		1180B3242492AFC900636C8A /* PVGameLibraryUpdatesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1180B3232492AFC900636C8A /* PVGameLibraryUpdatesController.swift */; };
 		11A8A9E72496A3E500C1C6B4 /* PVGameLibraryUpdatesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1180B3232492AFC900636C8A /* PVGameLibraryUpdatesController.swift */; };
-		11ADB31F2471A34E001C7B27 /* PVTVTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ADB31E2471A34E001C7B27 /* PVTVTabBarController.swift */; };
 		11AFB2B72487C120000A3922 /* UISearchController+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2B62487C120000A3922 /* UISearchController+Rx.swift */; };
 		11BB0A2225AF7DFE004DEDC3 /* PVEmulatorViewController+PauseMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38A2A452102328600374CDD /* PVEmulatorViewController+PauseMenu.swift */; };
 		11BB0A2325AF7DFF004DEDC3 /* PVEmulatorViewController+PauseMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38A2A452102328600374CDD /* PVEmulatorViewController+PauseMenu.swift */; };
@@ -162,6 +172,9 @@
 		B31117B0218EB3A900C495A2 /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */; };
 		B31117B1218EB3AA00C495A2 /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */; };
 		B31117B3218EB3AE00C495A2 /* PVButtonGroupOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ED1205CD20800C273C7 /* PVButtonGroupOverlayView.swift */; };
+		B311B1C227A52F1700D1DE41 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B311B1C127A52F1700D1DE41 /* UIKit.framework */; };
+		B311B1C427A52F2000D1DE41 /* PVPokeMini.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B311B1C327A52F2000D1DE41 /* PVPokeMini.framework */; };
+		B311B1C527A52F2000D1DE41 /* PVPokeMini.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B311B1C327A52F2000D1DE41 /* PVPokeMini.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B312805F274C60EC00550720 /* SteamController in Frameworks */ = {isa = PBXBuildFile; productRef = B3D30FC026F0BCE60064603F /* SteamController */; };
 		B313544726E4C0F90047F338 /* PVPS2ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B313544626E4C0F90047F338 /* PVPS2ControllerViewController.swift */; };
 		B313544826E4C0F90047F338 /* PVPS2ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B313544626E4C0F90047F338 /* PVPS2ControllerViewController.swift */; };
@@ -186,8 +199,6 @@
 		B324C5F72191FD89009F4EDC /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701221916C3A000FA7F9 /* PVLibrary.framework */; };
 		B324C5F82191FDAA009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701B21916E38000FA7F9 /* PVSupport.framework */; };
 		B324C5F92191FDB0009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF700F21916C30000FA7F9 /* PVSupport.framework */; };
-		B324C6082191FF9A009F4EDC /* PVAtari800.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C6072191FF9A009F4EDC /* PVAtari800.framework */; };
-		B324C6092191FF9A009F4EDC /* PVAtari800.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B324C6072191FF9A009F4EDC /* PVAtari800.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B324C60B2191FFBB009F4EDC /* PVGBA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C60A2191FFBB009F4EDC /* PVGBA.framework */; };
 		B324C60C2191FFBB009F4EDC /* PVGBA.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B324C60A2191FFBB009F4EDC /* PVGBA.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B324C61121920037009F4EDC /* ProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C61021920037009F4EDC /* ProSystem.framework */; };
@@ -228,6 +239,24 @@
 		B33468D720AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D520AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift */; };
 		B33625FC26EDF88200DC41EA /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FA26EDF88200DC41EA /* MetalKit.framework */; };
 		B33625FD26EDF88200DC41EA /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FB26EDF88200DC41EA /* Metal.framework */; };
+		B3375EBC278EA28E004B0DC0 /* crt_filter_ps.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB2278EA28E004B0DC0 /* crt_filter_ps.metal */; };
+		B3375EBD278EA28E004B0DC0 /* crt_filter_ps.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB2278EA28E004B0DC0 /* crt_filter_ps.metal */; };
+		B3375EBE278EA28E004B0DC0 /* ulTron.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB3278EA28E004B0DC0 /* ulTron.metal */; };
+		B3375EBF278EA28E004B0DC0 /* ulTron.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB3278EA28E004B0DC0 /* ulTron.metal */; };
+		B3375EC0278EA28E004B0DC0 /* MameShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB5278EA28E004B0DC0 /* MameShaders.metal */; };
+		B3375EC1278EA28E004B0DC0 /* MameShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB5278EA28E004B0DC0 /* MameShaders.metal */; };
+		B3375EC2278EA28E004B0DC0 /* blit_ps.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB6278EA28E004B0DC0 /* blit_ps.metal */; };
+		B3375EC3278EA28E004B0DC0 /* blit_ps.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB6278EA28E004B0DC0 /* blit_ps.metal */; };
+		B3375EC4278EA28E004B0DC0 /* MetalViewShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB7278EA28E004B0DC0 /* MetalViewShaders.metal */; };
+		B3375EC5278EA28E004B0DC0 /* MetalViewShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB7278EA28E004B0DC0 /* MetalViewShaders.metal */; };
+		B3375EC6278EA28E004B0DC0 /* fullscreen_vs.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB8278EA28E004B0DC0 /* fullscreen_vs.metal */; };
+		B3375EC7278EA28E004B0DC0 /* fullscreen_vs.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB8278EA28E004B0DC0 /* fullscreen_vs.metal */; };
+		B3375EC8278EA28E004B0DC0 /* megaTron.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB9278EA28E004B0DC0 /* megaTron.metal */; };
+		B3375EC9278EA28E004B0DC0 /* megaTron.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB9278EA28E004B0DC0 /* megaTron.metal */; };
+		B3375ECA278EA28E004B0DC0 /* simpleCRT.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EBA278EA28E004B0DC0 /* simpleCRT.metal */; };
+		B3375ECB278EA28E004B0DC0 /* simpleCRT.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EBA278EA28E004B0DC0 /* simpleCRT.metal */; };
+		B3375ECC278EA28E004B0DC0 /* lineTron.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EBB278EA28E004B0DC0 /* lineTron.metal */; };
+		B3375ECD278EA28E004B0DC0 /* lineTron.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EBB278EA28E004B0DC0 /* lineTron.metal */; };
 		B3411BF8276B37DE00D85327 /* PVDSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411BF7276B37DE00D85327 /* PVDSControllerViewController.swift */; };
 		B3411BF9276B37DE00D85327 /* PVDSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411BF7276B37DE00D85327 /* PVDSControllerViewController.swift */; };
 		B3411C11276B470B00D85327 /* QuickTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411BFB276B470B00D85327 /* QuickTableViewController.swift */; };
@@ -319,9 +348,10 @@
 		B35E6C32207ED7050040709A /* AppearanceStyleHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C20207ED7050040709A /* AppearanceStyleHelpers.swift */; };
 		B369B0DD21A3BF7C0064EDCA /* PVSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB95FFB17C563C100D3E392 /* PVSettingsViewController.swift */; };
 		B369B0DE21A3C1C40064EDCA /* PVLogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E6DADB20B7AD1500454DD4 /* PVLogViewController.m */; };
+		B36C7D5727AE2CF400715677 /* PVAtari800-tvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36C7D5627AE2CF400715677 /* PVAtari800-tvOS.framework */; };
+		B36C7D5827AE2CF500715677 /* PVAtari800-tvOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B36C7D5627AE2CF400715677 /* PVAtari800-tvOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B36D9DF8203562E000D583C4 /* PVControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */; };
 		B36D9DFD203605BC00D583C4 /* PVCoreFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */; };
-		B37263A126EA04E700E95488 /* ProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A026EA04E700E95488 /* ProSystem.framework */; };
 		B37263A926EA159400E95488 /* PVMupen64Plus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A426EA159400E95488 /* PVMupen64Plus.framework */; };
 		B37263AA26EA159400E95488 /* PVMupen64Plus.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A426EA159400E95488 /* PVMupen64Plus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B37263AB26EA159400E95488 /* PVMupen64PlusRspHLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A526EA159400E95488 /* PVMupen64PlusRspHLE.framework */; };
@@ -343,6 +373,22 @@
 		B378225721D32B0B0077E86F /* SliderRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225621D32B0B0077E86F /* SliderRow.swift */; };
 		B378225A21D32F970077E86F /* SettingsRowSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225921D32F970077E86F /* SettingsRowSlider.swift */; };
 		B378225C21D32FCC0077E86F /* PVSliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225B21D32FCC0077E86F /* PVSliderCell.swift */; };
+		B37B71AD278E3198005FB278 /* UIViewController+Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37B71AC278E3198005FB278 /* UIViewController+Alerts.swift */; };
+		B37B71AE278E3198005FB278 /* UIViewController+Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37B71AC278E3198005FB278 /* UIViewController+Alerts.swift */; };
+		B37B71B0278E33B9005FB278 /* MenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37B71AF278E33B9005FB278 /* MenuButton.swift */; };
+		B37B71B1278E33B9005FB278 /* MenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37B71AF278E33B9005FB278 /* MenuButton.swift */; };
+		B382C635278E5055007E61FE /* PVEmulatorViewController+Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = B382C632278E5054007E61FE /* PVEmulatorViewController+Audio.swift */; };
+		B382C636278E5055007E61FE /* PVEmulatorViewController+Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = B382C632278E5054007E61FE /* PVEmulatorViewController+Audio.swift */; };
+		B382C637278E5055007E61FE /* PVEmulatorViewController+MultiDisc.swift in Sources */ = {isa = PBXBuildFile; fileRef = B382C633278E5055007E61FE /* PVEmulatorViewController+MultiDisc.swift */; };
+		B382C638278E5055007E61FE /* PVEmulatorViewController+MultiDisc.swift in Sources */ = {isa = PBXBuildFile; fileRef = B382C633278E5055007E61FE /* PVEmulatorViewController+MultiDisc.swift */; };
+		B382C639278E5055007E61FE /* PVEmulatorViewController+Controllers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B382C634278E5055007E61FE /* PVEmulatorViewController+Controllers.swift */; };
+		B382C63A278E5055007E61FE /* PVEmulatorViewController+Controllers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B382C634278E5055007E61FE /* PVEmulatorViewController+Controllers.swift */; };
+		B382C63D278E514A007E61FE /* PVEmulatorViewController+CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B382C63C278E514A007E61FE /* PVEmulatorViewController+CoreOptions.swift */; };
+		B382C63E278E514A007E61FE /* PVEmulatorViewController+CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B382C63C278E514A007E61FE /* PVEmulatorViewController+CoreOptions.swift */; };
+		B382C642278E55C9007E61FE /* PVMetalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B382C641278E55C9007E61FE /* PVMetalViewController.m */; };
+		B382C643278E55C9007E61FE /* PVMetalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B382C641278E55C9007E61FE /* PVMetalViewController.m */; };
+		B382C649278E626D007E61FE /* PVGPUViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B382C648278E626D007E61FE /* PVGPUViewController.m */; };
+		B382C64A278E626D007E61FE /* PVGPUViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B382C648278E626D007E61FE /* PVGPUViewController.m */; };
 		B383F3BF219BBD8700DB6926 /* LogViewable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B383F3BE219BBD8700DB6926 /* LogViewable.swift */; };
 		B385542E20336D02006CA50B /* PVGameMoreInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */; };
 		B387676C20BD0F43009D8CD2 /* WebServerActivatorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B387676B20BD0F43009D8CD2 /* WebServerActivatorController.swift */; };
@@ -358,14 +404,21 @@
 		B390B0EA276B2DB20018E065 /* AltKit in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B390B0E9276B2DB20018E065 /* AltKit */; };
 		B394C98A20609E180014A65D /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = B394C98920609E180014A65D /* UIColor+Hex.swift */; };
 		B394C98B20609E180014A65D /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = B394C98920609E180014A65D /* UIColor+Hex.swift */; };
+		B398800D27A521AC004DEFCA /* ConflictsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B398800C27A521AC004DEFCA /* ConflictsController.swift */; };
+		B398800E27A521AC004DEFCA /* ConflictsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B398800C27A521AC004DEFCA /* ConflictsController.swift */; };
 		B3995E4F2058229F001D4985 /* PVFCEU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3995E4E2058229F001D4985 /* PVFCEU.framework */; };
 		B3995E502058229F001D4985 /* PVFCEU.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3995E4E2058229F001D4985 /* PVFCEU.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B39DC77D279E79D40017E28D /* TopShelf.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3A320372720974F00F338F6 /* PVGameCubeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A320362720974F00F338F6 /* PVGameCubeControllerViewController.swift */; };
 		B3A320382720974F00F338F6 /* PVGameCubeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A320362720974F00F338F6 /* PVGameCubeControllerViewController.swift */; };
 		B3A32150218EB4D700BD7DA2 /* UIView+FrameAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.swift */; };
 		B3A32151218EB4D800BD7DA2 /* UIView+FrameAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.swift */; };
 		B3A40C7121A67C7800544C20 /* PVGameLibrarySectionFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A40C7021A67C7800544C20 /* PVGameLibrarySectionFooterView.swift */; };
 		B3A40C7221A67C7800544C20 /* PVGameLibrarySectionFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A40C7021A67C7800544C20 /* PVGameLibrarySectionFooterView.swift */; };
+		B3A4FB60278FF84800A65248 /* ApplicationMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A4FB5F278FF84800A65248 /* ApplicationMonitor.swift */; };
+		B3A4FB62278FFA0F00A65248 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A4FB61278FFA0F00A65248 /* LocationManager.swift */; };
+		B3A4FB64278FFA5100A65248 /* PublishedPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A4FB63278FFA5100A65248 /* PublishedPipeline.swift */; };
+		B3A4FB66278FFB6600A65248 /* Result+Conveniences.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A4FB65278FFB6600A65248 /* Result+Conveniences.swift */; };
 		B3AB37322187F569009D9244 /* PVSNESControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB371E2187F568009D9244 /* PVSNESControllerViewController.swift */; };
 		B3AB37332187F569009D9244 /* PVAtari2600ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB371F2187F568009D9244 /* PVAtari2600ControllerViewController.swift */; };
 		B3AB37342187F569009D9244 /* PVGBControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37202187F568009D9244 /* PVGBControllerViewController.swift */; };
@@ -431,6 +484,8 @@
 		B3B3B8961DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8941DECF8C200602746 /* PVMupen64PlusVideoRice.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3B3B8981DECF8C700602746 /* PVMupen64PlusRspHLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8971DECF8C700602746 /* PVMupen64PlusRspHLE.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3B3B8991DECF8C700602746 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8971DECF8C700602746 /* PVMupen64PlusRspHLE.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3B4C956279E6BAB00505424 /* ProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B4C955279E6BAA00505424 /* ProSystem.framework */; };
+		B3B4C957279E6BAB00505424 /* ProSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B4C955279E6BAA00505424 /* ProSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3B923B0202D2EAE00580FFC /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A9202D2EAE00580FFC /* Theme.swift */; };
 		B3C9D4331DEA1B340068D057 /* PVGenesis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; };
 		B3C9D4341DEA1B340068D057 /* PVGenesis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -456,6 +511,7 @@
 		B3CB85C31E9BFB16009155A6 /* PVPokeMini.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85C11E9BFB16009155A6 /* PVPokeMini.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3CCD2BA21DAA8D30031C42C /* PVEmulatorViewController+Saves.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CCD2B921DAA8D30031C42C /* PVEmulatorViewController+Saves.swift */; };
 		B3CCD2BB21DAA8D30031C42C /* PVEmulatorViewController+Saves.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CCD2B921DAA8D30031C42C /* PVEmulatorViewController+Saves.swift */; };
+		B3CEC5B22794D8DD004A7CC1 /* Strings.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3296EEA26CAC3ED0088AC32 /* Strings.strings */; };
 		B3D534E220AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
 		B3D534E320AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
 		B3D534ED20B001D700A83D4E /* PillPageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534EB20B001D700A83D4E /* PillPageControl.swift */; };
@@ -479,10 +535,6 @@
 		B3E6DAE120B7C2F800454DD4 /* PVLogViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3E6DAE020B7C2F800454DD4 /* PVLogViewController.xib */; };
 		B3EA0CD32070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
 		B3EA0CD42070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
-		B3F187712720B7FE00659D87 /* Differentiator in Frameworks */ = {isa = PBXBuildFile; productRef = B3F187702720B7FE00659D87 /* Differentiator */; };
-		B3F187732720B7FE00659D87 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = B3F187722720B7FE00659D87 /* RxDataSources */; };
-		B3F187752720B80C00659D87 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = B3F187742720B80C00659D87 /* RxDataSources */; };
-		B3F187772720B81100659D87 /* Differentiator in Frameworks */ = {isa = PBXBuildFile; productRef = B3F187762720B81100659D87 /* Differentiator */; };
 		B3F43DCF2168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F43DD02168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F43DE22169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */; };
@@ -500,7 +552,7 @@
 		B3F94A4C27093794002A71EF /* PVAppDelegate+AppCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */; };
 		B3F94A4E27093ABC002A71EF /* AppCenterAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = B3F94A4D27093ABC002A71EF /* AppCenterAnalytics */; };
 		B3F94A5027093ABC002A71EF /* AppCenterCrashes in Frameworks */ = {isa = PBXBuildFile; productRef = B3F94A4F27093ABC002A71EF /* AppCenterCrashes */; };
-		B3FB9679276DD7F600F7EDEE /* SteamController in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B3FB9678276DD7F600F7EDEE /* SteamController */; };
+		B3FB9679276DD7F600F7EDEE /* SteamController in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B3FB9678276DD7F600F7EDEE /* SteamController */; settings = {ATTRIBUTES = (Weak, ); }; };
 		BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */; };
 		BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */; };
 		C13CC82923CABE2800463EDD /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13CC82823CABE2800463EDD /* Photos.framework */; };
@@ -523,6 +575,9 @@
 		DF3751952026B83600EE727E /* PVRSPCXD4.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B97B1DED14AE00602746 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DFCD6EBF203762AF00719289 /* shaders in Resources */ = {isa = PBXBuildFile; fileRef = DFCD6EBE203762AE00719289 /* shaders */; };
 		DFCD6EC0203762AF00719289 /* shaders in Resources */ = {isa = PBXBuildFile; fileRef = DFCD6EBE203762AE00719289 /* shaders */; };
+		EF474BA8279CCDD200578663 /* TVFullscreenController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF474BA7279CCDD100578663 /* TVFullscreenController.swift */; };
+		EF474BAA279E63B800578663 /* TVAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF474BA9279E63B700578663 /* TVAlertController.swift */; };
+		EF56AA6227A21CBC0097AD05 /* TVAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF474BA9279E63B700578663 /* TVAlertController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -596,6 +651,13 @@
 			remoteGlobalIDString = B3B29D3F2156177100903290;
 			remoteInfo = "Create Version files";
 		};
+		B3B4C953279E69AD00505424 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BE9FDCB61C210B9E0046DF0E;
+			remoteInfo = TopShelf;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -612,6 +674,7 @@
 				B3C9D5E21DEA8A290068D057 /* PVGenesis.framework in Embed Frameworks */,
 				B3C9D4B21DEA74500068D057 /* PVGB.framework in Embed Frameworks */,
 				B37263AC26EA159400E95488 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
+				B36C7D5827AE2CF500715677 /* PVAtari800-tvOS.framework in Embed Frameworks */,
 				B324C6232192059E009F4EDC /* PVMednafen.framework in Embed Frameworks */,
 				B37263B026EA159400E95488 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
 				14C4C1A221EBB0040055C6DC /* PVTGBDual.framework in Embed Frameworks */,
@@ -623,8 +686,8 @@
 				B37263B226EA159500E95488 /* PVRSPCXD4.framework in Embed Frameworks */,
 				B324C61221920037009F4EDC /* ProSystem.framework in Embed Frameworks */,
 				B324C60C2191FFBB009F4EDC /* PVGBA.framework in Embed Frameworks */,
+				B3B4C957279E6BAB00505424 /* ProSystem.framework in Embed Frameworks */,
 				B37263AA26EA159400E95488 /* PVMupen64Plus.framework in Embed Frameworks */,
-				B324C6092191FF9A009F4EDC /* PVAtari800.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -689,9 +752,21 @@
 			files = (
 				B305F08C276B5248003AE510 /* PVSupport.framework in Embed Frameworks */,
 				B305F089276B5243003AE510 /* PVLibrary.framework in Embed Frameworks */,
+				B311B1C527A52F2000D1DE41 /* PVPokeMini.framework in Embed Frameworks */,
 				B305EF30276B4CB0003AE510 /* PVStella.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B39DC780279E79D40017E28D /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				B39DC77D279E79D40017E28D /* TopShelf.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B3DFEE132686D848005C6CF2 /* Embed Frameworks */ = {
@@ -722,7 +797,6 @@
 		1180B3172492A93F00636C8A /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		1180B31B2492A95400636C8A /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS13.4.sdk/System/Library/Frameworks/CoreServices.framework; sourceTree = DEVELOPER_DIR; };
 		1180B3232492AFC900636C8A /* PVGameLibraryUpdatesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameLibraryUpdatesController.swift; sourceTree = "<group>"; };
-		11ADB31E2471A34E001C7B27 /* PVTVTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVTVTabBarController.swift; sourceTree = "<group>"; };
 		11AFB2B62487C120000A3922 /* UISearchController+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UISearchController+Rx.swift"; sourceTree = "<group>"; };
 		14C8EF2121D9443E001B7E37 /* PVTGBDual.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVTGBDual.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVEmulatorViewController.swift; sourceTree = "<group>"; };
@@ -839,6 +913,63 @@
 		B309C7A42717C49F00279529 /* PVFlycast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFlycast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B309C7A72717C4B500279529 /* PVFlycast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFlycast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B30C6E20271D823F0025DD88 /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B311B01627A52B8B00D1DE41 /* PVUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B311B01927A52B9200D1DE41 /* PVUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B311B01C27A52B9C00D1DE41 /* PVUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B311B1C127A52F1700D1DE41 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.3.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		B311B1C327A52F2000D1DE41 /* PVPokeMini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPokeMini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B311B1D227A53E7200D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ru; path = ru.lproj/PVGameLibraryCollectionViewCell.xib; sourceTree = "<group>"; };
+		B311B1D327A53E7400D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Strings.strings; sourceTree = "<group>"; };
+		B311B1D427A53E7500D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B311B1D527A53E7600D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ru; path = ru.lproj/Provenance.storyboard; sourceTree = "<group>"; };
+		B311B1D627A53E7700D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ru; path = ru.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
+		B311B1D727A53E7800D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ru; path = ru.lproj/Settings.storyboard; sourceTree = "<group>"; };
+		B311B1D827A53E7900D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ru; path = ru.lproj/Default.xib; sourceTree = "<group>"; };
+		B311B1D927A53E7B00D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ru; path = ru.lproj/Cheats.storyboard; sourceTree = "<group>"; };
+		B311B1DA27A53E7C00D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ru; path = ru.lproj/Provenance.storyboard; sourceTree = "<group>"; };
+		B311B1DB27A53E7D00D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ru; path = ru.lproj/Settings.storyboard; sourceTree = "<group>"; };
+		B311B1DC27A53E7E00D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ru; path = ru.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
+		B311B1DD27A53E7F00D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ru; path = ru.lproj/Cheats.storyboard; sourceTree = "<group>"; };
+		B311B1DE27A53E8000D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = ru; path = ../ru.lproj/Info.plist; sourceTree = "<group>"; };
+		B311B1DF27A53F9C00D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/PVGameLibraryCollectionViewCell.xib; sourceTree = "<group>"; };
+		B311B1E027A53F9D00D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Strings.strings; sourceTree = "<group>"; };
+		B311B1E127A53F9E00D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B311B1E227A53F9E00D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ja; path = ja.lproj/Provenance.storyboard; sourceTree = "<group>"; };
+		B311B1E327A53F9F00D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ja; path = ja.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
+		B311B1E427A53FA000D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ja; path = ja.lproj/Settings.storyboard; sourceTree = "<group>"; };
+		B311B1E527A53FA000D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/Default.xib; sourceTree = "<group>"; };
+		B311B1E627A53FA100D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ja; path = ja.lproj/Cheats.storyboard; sourceTree = "<group>"; };
+		B311B1E727A53FA200D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ja; path = ja.lproj/Provenance.storyboard; sourceTree = "<group>"; };
+		B311B1E827A53FA200D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ja; path = ja.lproj/Settings.storyboard; sourceTree = "<group>"; };
+		B311B1E927A53FA300D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ja; path = ja.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
+		B311B1EA27A53FA400D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ja; path = ja.lproj/Cheats.storyboard; sourceTree = "<group>"; };
+		B311B1EB27A53FA400D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = ja; path = ../ja.lproj/Info.plist; sourceTree = "<group>"; };
+		B311B1EC27A53FC300D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = nl; path = nl.lproj/PVGameLibraryCollectionViewCell.xib; sourceTree = "<group>"; };
+		B311B1ED27A53FC400D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Strings.strings; sourceTree = "<group>"; };
+		B311B1EE27A53FC500D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B311B1EF27A53FC500D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = nl; path = nl.lproj/Provenance.storyboard; sourceTree = "<group>"; };
+		B311B1F027A53FC600D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = nl; path = nl.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
+		B311B1F127A53FC700D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = nl; path = nl.lproj/Settings.storyboard; sourceTree = "<group>"; };
+		B311B1F227A53FC700D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = nl; path = nl.lproj/Default.xib; sourceTree = "<group>"; };
+		B311B1F327A53FC800D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = nl; path = nl.lproj/Cheats.storyboard; sourceTree = "<group>"; };
+		B311B1F427A53FC900D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = nl; path = nl.lproj/Provenance.storyboard; sourceTree = "<group>"; };
+		B311B1F527A53FC900D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = nl; path = nl.lproj/Settings.storyboard; sourceTree = "<group>"; };
+		B311B1F627A53FCA00D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = nl; path = nl.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
+		B311B1F727A53FCB00D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = nl; path = nl.lproj/Cheats.storyboard; sourceTree = "<group>"; };
+		B311B1F827A53FCB00D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = nl; path = ../nl.lproj/Info.plist; sourceTree = "<group>"; };
+		B311B1F927A53FEF00D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = it; path = it.lproj/PVGameLibraryCollectionViewCell.xib; sourceTree = "<group>"; };
+		B311B1FA27A53FEF00D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Strings.strings; sourceTree = "<group>"; };
+		B311B1FB27A53FF000D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B311B1FC27A53FF100D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/Provenance.storyboard; sourceTree = "<group>"; };
+		B311B1FD27A53FF100D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
+		B311B1FE27A53FF200D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/Settings.storyboard; sourceTree = "<group>"; };
+		B311B1FF27A53FF300D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = it; path = it.lproj/Default.xib; sourceTree = "<group>"; };
+		B311B20027A53FF300D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/Cheats.storyboard; sourceTree = "<group>"; };
+		B311B20127A53FF400D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/Provenance.storyboard; sourceTree = "<group>"; };
+		B311B20227A53FF500D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/Settings.storyboard; sourceTree = "<group>"; };
+		B311B20327A53FF500D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
+		B311B20427A53FF600D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/Cheats.storyboard; sourceTree = "<group>"; };
+		B311B20527A53FF700D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = it; path = ../it.lproj/Info.plist; sourceTree = "<group>"; };
 		B313544626E4C0F90047F338 /* PVPS2ControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVPS2ControllerViewController.swift; sourceTree = "<group>"; };
 		B313544926E4C3B90047F338 /* PVPlay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPlay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B313544C26E4C3BE0047F338 /* PVPlay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPlay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -870,6 +1001,9 @@
 		B324C61A219203AF009F4EDC /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
 		B324C6212192059E009F4EDC /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B324C64E219216DD009F4EDC /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Build-iOS.xcconfig"; sourceTree = "<group>"; };
+		B326758627B1E0BC0033C5D1 /* Build-tvOS.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Build-tvOS.xcconfig"; sourceTree = "<group>"; };
+		B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Build-watchOS.xcconfig"; sourceTree = "<group>"; };
 		B3271BDA276B8B2E0031AECC /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
 		B3271BDC276B8B660031AECC /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/CoreTelephony.framework; sourceTree = DEVELOPER_DIR; };
 		B32746BC219BD65F00B78124 /* PVGameLibraryCollectionFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameLibraryCollectionFlowLayout.swift; sourceTree = "<group>"; };
@@ -895,14 +1029,24 @@
 		B3296EE126CAC2800088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "zh-Hans"; path = "zh-Hans.lproj/PVGameLibraryCollectionViewCell.xib"; sourceTree = "<group>"; };
 		B3296EE326CAC2B10088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/Default.xib; sourceTree = "<group>"; };
 		B3296EE526CAC2CA0088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "zh-Hans"; path = "zh-Hans.lproj/Default.xib"; sourceTree = "<group>"; };
-		B3296EE926CAC3ED0088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Strings.strings; sourceTree = "<group>"; };
-		B3296EEB26CAC3F00088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Strings.strings"; sourceTree = "<group>"; };
+		B3296EE926CAC3ED0088AC32 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Strings.strings; sourceTree = "<group>"; };
+		B3296EEB26CAC3F00088AC32 /* zh-Hans */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Strings.strings"; sourceTree = "<group>"; };
 		B32D8F811EA7FDBE00175FBF /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		B33468D120AB347300092CA6 /* CenterFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenterFlowLayout.swift; sourceTree = "<group>"; };
 		B33468D520AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewInCollectionViewCell.swift; sourceTree = "<group>"; };
 		B33625F726EDEFF700DC41EA /* MTLViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTLViewController.swift; sourceTree = "<group>"; };
 		B33625FA26EDF88200DC41EA /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/iOSSupport/System/Library/Frameworks/MetalKit.framework; sourceTree = DEVELOPER_DIR; };
 		B33625FB26EDF88200DC41EA /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/Metal.framework; sourceTree = DEVELOPER_DIR; };
+		B3375EB2278EA28E004B0DC0 /* crt_filter_ps.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = crt_filter_ps.metal; sourceTree = "<group>"; };
+		B3375EB3278EA28E004B0DC0 /* ulTron.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = ulTron.metal; sourceTree = "<group>"; };
+		B3375EB4278EA28E004B0DC0 /* MetalViewShaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalViewShaders.h; sourceTree = "<group>"; };
+		B3375EB5278EA28E004B0DC0 /* MameShaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = MameShaders.metal; sourceTree = "<group>"; };
+		B3375EB6278EA28E004B0DC0 /* blit_ps.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = blit_ps.metal; sourceTree = "<group>"; };
+		B3375EB7278EA28E004B0DC0 /* MetalViewShaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = MetalViewShaders.metal; sourceTree = "<group>"; };
+		B3375EB8278EA28E004B0DC0 /* fullscreen_vs.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = fullscreen_vs.metal; sourceTree = "<group>"; };
+		B3375EB9278EA28E004B0DC0 /* megaTron.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = megaTron.metal; sourceTree = "<group>"; };
+		B3375EBA278EA28E004B0DC0 /* simpleCRT.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = simpleCRT.metal; sourceTree = "<group>"; };
+		B3375EBB278EA28E004B0DC0 /* lineTron.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = lineTron.metal; sourceTree = "<group>"; };
 		B340E6091E088CF900AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3411BF7276B37DE00D85327 /* PVDSControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVDSControllerViewController.swift; sourceTree = "<group>"; };
 		B3411BFB276B470B00D85327 /* QuickTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuickTableViewController.swift; sourceTree = "<group>"; };
@@ -950,6 +1094,8 @@
 		B35E6C1F207ED7040040709A /* AppearanceStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppearanceStyle.swift; sourceTree = "<group>"; };
 		B35E6C20207ED7050040709A /* AppearanceStyleHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppearanceStyleHelpers.swift; sourceTree = "<group>"; };
 		B361938F221FB93B00F73875 /* Provenance-Free.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Provenance-Free.entitlements"; path = "Provenance/Provenance-Free.entitlements"; sourceTree = SOURCE_ROOT; };
+		B36455EB278E919500B6E87A /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B36C7D5627AE2CF400715677 /* PVAtari800-tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = "PVAtari800-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVControllerViewController.swift; sourceTree = "<group>"; };
 		B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVCoreFactory.swift; sourceTree = "<group>"; };
 		B37263A026EA04E700E95488 /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -965,9 +1111,23 @@
 		B378225621D32B0B0077E86F /* SliderRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderRow.swift; sourceTree = "<group>"; };
 		B378225921D32F970077E86F /* SettingsRowSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRowSlider.swift; sourceTree = "<group>"; };
 		B378225B21D32FCC0077E86F /* PVSliderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSliderCell.swift; sourceTree = "<group>"; };
+		B37B71AC278E3198005FB278 /* UIViewController+Alerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alerts.swift"; sourceTree = "<group>"; };
+		B37B71AF278E33B9005FB278 /* MenuButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuButton.swift; sourceTree = "<group>"; };
 		B37D31C9274A57F000D635E0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = en; path = Info.plist; sourceTree = "<group>"; };
 		B37D31CC274A57F000D635E0 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "zh-Hans"; path = Info.plist; sourceTree = "<group>"; };
+		B380EAC12759D689001B8532 /* Build.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Build.xcconfig; sourceTree = "<group>"; };
+		B380EAC22759D692001B8532 /* CodeSigning.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CodeSigning.xcconfig; sourceTree = "<group>"; };
+		B380EAC32759D69A001B8532 /* CodeSigning.xcconfig.sample */ = {isa = PBXFileReference; lastKnownFileType = text; path = CodeSigning.xcconfig.sample; sourceTree = "<group>"; };
+		B382C632278E5054007E61FE /* PVEmulatorViewController+Audio.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVEmulatorViewController+Audio.swift"; sourceTree = "<group>"; };
+		B382C633278E5055007E61FE /* PVEmulatorViewController+MultiDisc.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVEmulatorViewController+MultiDisc.swift"; sourceTree = "<group>"; };
+		B382C634278E5055007E61FE /* PVEmulatorViewController+Controllers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVEmulatorViewController+Controllers.swift"; sourceTree = "<group>"; };
+		B382C63C278E514A007E61FE /* PVEmulatorViewController+CoreOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVEmulatorViewController+CoreOptions.swift"; sourceTree = "<group>"; };
+		B382C640278E55C9007E61FE /* PVMetalViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVMetalViewController.h; sourceTree = "<group>"; };
+		B382C641278E55C9007E61FE /* PVMetalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVMetalViewController.m; sourceTree = "<group>"; };
+		B382C647278E626C007E61FE /* PVGPUViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVGPUViewController.h; sourceTree = "<group>"; };
+		B382C648278E626D007E61FE /* PVGPUViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PVGPUViewController.m; sourceTree = "<group>"; };
 		B383F3BE219BBD8700DB6926 /* LogViewable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogViewable.swift; sourceTree = "<group>"; };
+		B3843BD327966171005C36F5 /* GameLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameLibraryView.swift; sourceTree = "<group>"; };
 		B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameMoreInfoViewController.swift; sourceTree = "<group>"; };
 		B387676B20BD0F43009D8CD2 /* WebServerActivatorController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebServerActivatorController.swift; sourceTree = "<group>"; };
 		B3890BE320B97588005BB001 /* PVGameLibraryViewController+PeekPop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGameLibraryViewController+PeekPop.swift"; sourceTree = "<group>"; };
@@ -979,14 +1139,21 @@
 		B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebDAVServer.m; sourceTree = "<group>"; };
 		B394C98920609E180014A65D /* UIColor+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Hex.swift"; sourceTree = "<group>"; };
 		B3977533219AB53F00E16AD5 /* Provenance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Provenance.entitlements; path = Provenance/Provenance.entitlements; sourceTree = SOURCE_ROOT; };
+		B398800C27A521AC004DEFCA /* ConflictsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConflictsController.swift; sourceTree = "<group>"; };
 		B399119126C0F41300E54426 /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
 		B399119226C0F41300E54426 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		B399119326C0F41300E54426 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		B3995E4E2058229F001D4985 /* PVFCEU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFCEU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B39DC77A279E77200017E28D /* PVGCVRViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVGCVRViewController.h; sourceTree = "<group>"; };
+		B39DC77B279E77230017E28D /* PVGCVRViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVGCVRViewController.m; sourceTree = "<group>"; };
 		B3A320362720974F00F338F6 /* PVGameCubeControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVGameCubeControllerViewController.swift; sourceTree = "<group>"; };
 		B3A320392720991B00F338F6 /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A3203C2720992500F338F6 /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A40C7021A67C7800544C20 /* PVGameLibrarySectionFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameLibrarySectionFooterView.swift; sourceTree = "<group>"; };
+		B3A4FB5F278FF84800A65248 /* ApplicationMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationMonitor.swift; sourceTree = "<group>"; };
+		B3A4FB61278FFA0F00A65248 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		B3A4FB63278FFA5100A65248 /* PublishedPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublishedPipeline.swift; sourceTree = "<group>"; };
+		B3A4FB65278FFB6600A65248 /* Result+Conveniences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Result+Conveniences.swift"; sourceTree = "<group>"; };
 		B3AB371E2187F568009D9244 /* PVSNESControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVSNESControllerViewController.swift; sourceTree = "<group>"; };
 		B3AB371F2187F568009D9244 /* PVAtari2600ControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVAtari2600ControllerViewController.swift; sourceTree = "<group>"; };
 		B3AB37202187F568009D9244 /* PVGBControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVGBControllerViewController.swift; sourceTree = "<group>"; };
@@ -1022,6 +1189,8 @@
 		B3B3B9781DED14A100602746 /* PVMupen64PlusVideoRice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoRice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B3B97B1DED14AE00602746 /* PVRSPCXD4.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVRSPCXD4.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B3B97E1DED169100602746 /* PVRSPCXD4.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVRSPCXD4.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3B4C955279E6BAA00505424 /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3B66A7027B872BA00E2236B /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Strings.strings"; sourceTree = "<group>"; };
 		B3B9239C202D054B00580FFC /* Provenance-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Provenance-Bridging-Header.h"; sourceTree = "<group>"; };
 		B3B9239D202D054B00580FFC /* ProvenanceTV-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ProvenanceTV-Bridging-Header.h"; sourceTree = "<group>"; };
 		B3B923A9202D2EAE00580FFC /* Theme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
@@ -1037,6 +1206,19 @@
 		B3CB85BE1E9BFB07009155A6 /* PVPokeMini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPokeMini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3CB85C11E9BFB16009155A6 /* PVPokeMini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPokeMini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3CCD2B921DAA8D30031C42C /* PVEmulatorViewController+Saves.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVEmulatorViewController+Saves.swift"; sourceTree = "<group>"; };
+		B3CEC5A52794CD8B004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = es; path = es.lproj/PVGameLibraryCollectionViewCell.xib; sourceTree = "<group>"; };
+		B3CEC5A62794CD8C004A7CC1 /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Strings.strings; sourceTree = "<group>"; };
+		B3CEC5A72794CD8D004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B3CEC5A82794CD8E004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = es; path = es.lproj/Provenance.storyboard; sourceTree = "<group>"; };
+		B3CEC5A92794CD8E004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = es; path = es.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
+		B3CEC5AA2794CD8F004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = es; path = es.lproj/Settings.storyboard; sourceTree = "<group>"; };
+		B3CEC5AB2794CD90004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = es; path = es.lproj/Default.xib; sourceTree = "<group>"; };
+		B3CEC5AC2794CD91004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = es; path = es.lproj/Cheats.storyboard; sourceTree = "<group>"; };
+		B3CEC5AD2794CD92004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = es; path = es.lproj/Provenance.storyboard; sourceTree = "<group>"; };
+		B3CEC5AE2794CD92004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = es; path = es.lproj/Settings.storyboard; sourceTree = "<group>"; };
+		B3CEC5AF2794CD93004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = es; path = es.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
+		B3CEC5B02794CD94004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = es; path = es.lproj/Cheats.storyboard; sourceTree = "<group>"; };
+		B3CEC5B12794CD94004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = es; path = ../es.lproj/Info.plist; sourceTree = "<group>"; };
 		B3D534E120AFF21800A83D4E /* Version.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
 		B3D534EB20B001D700A83D4E /* PillPageControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PillPageControl.swift; sourceTree = "<group>"; };
 		B3D54EF42768306200476241 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/iOSSupport/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
@@ -1087,6 +1269,8 @@
 		DA5EB009206C4DEB000B5F30 /* PVGame+TopShelf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGame+TopShelf.swift"; sourceTree = "<group>"; };
 		DFB603BD2038B6C0001E70F1 /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DFCD6EBE203762AE00719289 /* shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = shaders; sourceTree = "<group>"; };
+		EF474BA7279CCDD100578663 /* TVFullscreenController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TVFullscreenController.swift; sourceTree = "<group>"; };
+		EF474BA9279E63B700578663 /* TVAlertController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TVAlertController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1115,7 +1299,6 @@
 				B3C9D4331DEA1B340068D057 /* PVGenesis.framework in Frameworks */,
 				B354693C1DECDA710018B6F3 /* PVAtari800.framework in Frameworks */,
 				1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */,
-				B3F187732720B7FE00659D87 /* RxDataSources in Frameworks */,
 				B357A43827092254002C7C0F /* AppCenterAnalytics in Frameworks */,
 				B3CB85BF1E9BFB07009155A6 /* PVPokeMini.framework in Frameworks */,
 				1A4869DD17C8D60C0019F6D2 /* CFNetwork.framework in Frameworks */,
@@ -1133,7 +1316,6 @@
 				B33625FD26EDF88200DC41EA /* Metal.framework in Frameworks */,
 				B3B3B8951DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Frameworks */,
 				1A3D431E17B2F01F004DFFFC /* OpenGLES.framework in Frameworks */,
-				B3F187712720B7FE00659D87 /* Differentiator in Frameworks */,
 				B3B3B8981DECF8C700602746 /* PVMupen64PlusRspHLE.framework in Frameworks */,
 				B3C9D55D1DEA85C60068D057 /* PVSNES.framework in Frameworks */,
 				1A3D409817B2DCE4004DFFFC /* UIKit.framework in Frameworks */,
@@ -1154,7 +1336,8 @@
 				B324C6172192038C009F4EDC /* libxml2.tbd in Frameworks */,
 				B312805F274C60EC00550720 /* SteamController in Frameworks */,
 				B324C61521920384009F4EDC /* libz.tbd in Frameworks */,
-				B3F187752720B80C00659D87 /* RxDataSources in Frameworks */,
+				B3B4C956279E6BAB00505424 /* ProSystem.framework in Frameworks */,
+				B36C7D5727AE2CF400715677 /* PVAtari800-tvOS.framework in Frameworks */,
 				B324C312219195CE009F4EDC /* CFNetwork.framework in Frameworks */,
 				B324C30C219195BB009F4EDC /* SystemConfiguration.framework in Frameworks */,
 				B324C30A219195AE009F4EDC /* AudioToolbox.framework in Frameworks */,
@@ -1165,12 +1348,10 @@
 				B324C308219195A8009F4EDC /* GLKit.framework in Frameworks */,
 				B324C306219195A0009F4EDC /* OpenGLES.framework in Frameworks */,
 				B324C30321919596009F4EDC /* UIKit.framework in Frameworks */,
-				B3F187772720B81100659D87 /* Differentiator in Frameworks */,
 				B324C30421919596009F4EDC /* TVUIKit.framework in Frameworks */,
 				B37263AB26EA159400E95488 /* PVMupen64PlusRspHLE.framework in Frameworks */,
 				B37263B126EA159500E95488 /* PVRSPCXD4.framework in Frameworks */,
 				B324C3002191958D009F4EDC /* CoreGraphics.framework in Frameworks */,
-				B37263A126EA04E700E95488 /* ProSystem.framework in Frameworks */,
 				B324C2FE21919585009F4EDC /* Foundation.framework in Frameworks */,
 				B324C2FD21919568009F4EDC /* AVFoundation.framework in Frameworks */,
 				B3AF70662191733D000FA7F9 /* GameController.framework in Frameworks */,
@@ -1190,7 +1371,6 @@
 				B37263A926EA159400E95488 /* PVMupen64Plus.framework in Frameworks */,
 				B324C61121920037009F4EDC /* ProSystem.framework in Frameworks */,
 				B37263AF26EA159400E95488 /* PVMupen64PlusVideoRice.framework in Frameworks */,
-				B324C6082191FF9A009F4EDC /* PVAtari800.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1208,6 +1388,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B305F08B276B5248003AE510 /* PVSupport.framework in Frameworks */,
+				B311B1C227A52F1700D1DE41 /* UIKit.framework in Frameworks */,
+				B311B1C427A52F2000D1DE41 /* PVPokeMini.framework in Frameworks */,
 				B305F088276B5243003AE510 /* PVLibrary.framework in Frameworks */,
 				B305EF2F276B4CB0003AE510 /* PVStella.framework in Frameworks */,
 			);
@@ -1240,6 +1422,7 @@
 		1A1237F217CA279900CEC788 /* User Interface */ = {
 			isa = PBXGroup;
 			children = (
+				B3843BCF2796606B005C36F5 /* SwiftUI */,
 				B3B923A1202D2EAE00580FFC /* Themes */,
 				B3296EAC26CABE880088AC32 /* Provenance.storyboard */,
 				B3296EB126CABEA80088AC32 /* SaveStates.storyboard */,
@@ -1271,15 +1454,12 @@
 		1A1237F417CA27B700CEC788 /* Emulator */ = {
 			isa = PBXGroup;
 			children = (
-				1A3D433917B30BA2004DFFFC /* PVGLViewController.h */,
-				1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */,
-				1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */,
-				B3CCD2B921DAA8D30031C42C /* PVEmulatorViewController+Saves.swift */,
+				B3375EB1278EA28E004B0DC0 /* Shaders */,
+				B382C63F278E5288007E61FE /* PVGLViewController */,
+				B382C63B278E5061007E61FE /* PVEmulatorVC */,
 				B354E7D1219A9C230041F971 /* CoreOptionsViewController.swift */,
-				B38A2A452102328600374CDD /* PVEmulatorViewController+PauseMenu.swift */,
 				B38A2A47210233FE00374CDD /* EmulatorActionCell.xib */,
 				B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */,
-				CF17107025858B5400258602 /* PVEmulatorViewController+Cheats.swift */,
 				B33625F726EDEFF700DC41EA /* MTLViewController.swift */,
 			);
 			path = Emulator;
@@ -1288,6 +1468,12 @@
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
+				B380EAC32759D69A001B8532 /* CodeSigning.xcconfig.sample */,
+				B380EAC22759D692001B8532 /* CodeSigning.xcconfig */,
+				B380EAC12759D689001B8532 /* Build.xcconfig */,
+				B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */,
+				B326758627B1E0BC0033C5D1 /* Build-tvOS.xcconfig */,
+				B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */,
 				B399119326C0F41300E54426 /* CHANGELOG.md */,
 				B399119126C0F41300E54426 /* LICENSE.md */,
 				B399119226C0F41300E54426 /* README.md */,
@@ -1323,6 +1509,14 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B36C7D5627AE2CF400715677 /* PVAtari800-tvOS.framework */,
+				B311B1C327A52F2000D1DE41 /* PVPokeMini.framework */,
+				B311B1C127A52F1700D1DE41 /* UIKit.framework */,
+				B311B01C27A52B9C00D1DE41 /* PVUI.framework */,
+				B311B01927A52B9200D1DE41 /* PVUI.framework */,
+				B311B01627A52B8B00D1DE41 /* PVUI.framework */,
+				B3B4C955279E6BAA00505424 /* ProSystem.framework */,
+				B36455EB278E919500B6E87A /* PVDuckStation.framework */,
 				B3271BDC276B8B660031AECC /* CoreTelephony.framework */,
 				B3271BDA276B8B2E0031AECC /* OpenGL.framework */,
 				B305F103276B6BBD003AE510 /* PVCrabEmu.framework */,
@@ -1367,6 +1561,7 @@
 		1A3D409D17B2DCE4004DFFFC /* Provenance */ = {
 			isa = PBXGroup;
 			children = (
+				B3B9239C202D054B00580FFC /* Provenance-Bridging-Header.h */,
 				1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */,
 				B3290498270D1F95002707AC /* PVAppDelegate+NitoTV.swift */,
 				B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */,
@@ -1410,6 +1605,7 @@
 				B3AB37F421881CDC009D9244 /* PViCadeControllerViewController.swift */,
 				B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */,
 				C665CD8321FEC68E00C834C6 /* GCControllerExtensions.swift */,
+				B37B71AF278E33B9005FB278 /* MenuButton.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -1537,6 +1733,7 @@
 				1A5665081D96A18A006EAE01 /* UIDevice+Hardware.m */,
 				B394C98920609E180014A65D /* UIColor+Hex.swift */,
 				1180B306248FF8AC00636C8A /* UICollectionView+Rx.swift */,
+				B37B71AC278E3198005FB278 /* UIViewController+Alerts.swift */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -1546,9 +1743,11 @@
 			children = (
 				B35D667D21814EAB0005A992 /* Story Boards */,
 				BE9FDCCC1C21109B0046DF0E /* Provenance.entitlements */,
-				11ADB31E2471A34E001C7B27 /* PVTVTabBarController.swift */,
+				EF474BA9279E63B700578663 /* TVAlertController.swift */,
+				EF474BA7279CCDD100578663 /* TVFullscreenController.swift */,
 				1AACCAEC1BB61D5600DC21AE /* PVTVSplitViewController.swift */,
 				1A2B13CC1D0DFF5100D0B863 /* PVSearchViewController.swift */,
+				B3B9239D202D054B00580FFC /* ProvenanceTV-Bridging-Header.h */,
 				1AD481C21BA350A400FDA50A /* TVAssets.xcassets */,
 				1AD481B61BA350A400FDA50A /* Supporting Files */,
 			);
@@ -1735,6 +1934,23 @@
 			path = SaveStates;
 			sourceTree = "<group>";
 		};
+		B3375EB1278EA28E004B0DC0 /* Shaders */ = {
+			isa = PBXGroup;
+			children = (
+				B3375EB2278EA28E004B0DC0 /* crt_filter_ps.metal */,
+				B3375EB3278EA28E004B0DC0 /* ulTron.metal */,
+				B3375EB4278EA28E004B0DC0 /* MetalViewShaders.h */,
+				B3375EB5278EA28E004B0DC0 /* MameShaders.metal */,
+				B3375EB6278EA28E004B0DC0 /* blit_ps.metal */,
+				B3375EB7278EA28E004B0DC0 /* MetalViewShaders.metal */,
+				B3375EB8278EA28E004B0DC0 /* fullscreen_vs.metal */,
+				B3375EB9278EA28E004B0DC0 /* megaTron.metal */,
+				B3375EBA278EA28E004B0DC0 /* simpleCRT.metal */,
+				B3375EBB278EA28E004B0DC0 /* lineTron.metal */,
+			);
+			path = Shaders;
+			sourceTree = "<group>";
+		};
 		B3411BFA276B470B00D85327 /* QuickTableViewController */ = {
 			isa = PBXGroup;
 			children = (
@@ -1808,6 +2024,10 @@
 				B3532C3B21A9AC93006CDA0F /* Services.swift */,
 				B31A464D26B4C5060084A1D6 /* PVAltKitService.h */,
 				B31A464E26B4C5060084A1D6 /* PVAltKitService.m */,
+				B3A4FB5F278FF84800A65248 /* ApplicationMonitor.swift */,
+				B3A4FB61278FFA0F00A65248 /* LocationManager.swift */,
+				B3A4FB63278FFA5100A65248 /* PublishedPipeline.swift */,
+				B3A4FB65278FFB6600A65248 /* Result+Conveniences.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -1869,6 +2089,44 @@
 			path = "zh-Hans.lproj";
 			sourceTree = "<group>";
 		};
+		B382C63B278E5061007E61FE /* PVEmulatorVC */ = {
+			isa = PBXGroup;
+			children = (
+				1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */,
+				B382C632278E5054007E61FE /* PVEmulatorViewController+Audio.swift */,
+				CF17107025858B5400258602 /* PVEmulatorViewController+Cheats.swift */,
+				B382C634278E5055007E61FE /* PVEmulatorViewController+Controllers.swift */,
+				B382C63C278E514A007E61FE /* PVEmulatorViewController+CoreOptions.swift */,
+				B382C633278E5055007E61FE /* PVEmulatorViewController+MultiDisc.swift */,
+				B38A2A452102328600374CDD /* PVEmulatorViewController+PauseMenu.swift */,
+				B3CCD2B921DAA8D30031C42C /* PVEmulatorViewController+Saves.swift */,
+			);
+			path = PVEmulatorVC;
+			sourceTree = "<group>";
+		};
+		B382C63F278E5288007E61FE /* PVGLViewController */ = {
+			isa = PBXGroup;
+			children = (
+				B39DC77A279E77200017E28D /* PVGCVRViewController.h */,
+				B39DC77B279E77230017E28D /* PVGCVRViewController.m */,
+				B382C640278E55C9007E61FE /* PVMetalViewController.h */,
+				B382C641278E55C9007E61FE /* PVMetalViewController.m */,
+				1A3D433917B30BA2004DFFFC /* PVGLViewController.h */,
+				1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */,
+				B382C647278E626C007E61FE /* PVGPUViewController.h */,
+				B382C648278E626D007E61FE /* PVGPUViewController.m */,
+			);
+			path = PVGLViewController;
+			sourceTree = "<group>";
+		};
+		B3843BCF2796606B005C36F5 /* SwiftUI */ = {
+			isa = PBXGroup;
+			children = (
+				B3843BD327966171005C36F5 /* GameLibraryView.swift */,
+			);
+			path = SwiftUI;
+			sourceTree = "<group>";
+		};
 		B38D30FA202AC26500E9A068 /* GCDWebDAVServer */ = {
 			isa = PBXGroup;
 			children = (
@@ -1876,6 +2134,14 @@
 				B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */,
 			);
 			path = GCDWebDAVServer;
+			sourceTree = "<group>";
+		};
+		B398800B27A5218A004DEFCA /* Conflicts */ = {
+			isa = PBXGroup;
+			children = (
+				B398800C27A521AC004DEFCA /* ConflictsController.swift */,
+			);
+			path = Conflicts;
 			sourceTree = "<group>";
 		};
 		B3AB371D2187F568009D9244 /* Systems */ = {
@@ -1991,6 +2257,7 @@
 		B3E21D6C203211BE009939D3 /* Spotlight */ = {
 			isa = PBXGroup;
 			children = (
+				B3E21D7E20321EE0009939D3 /* Spotlight-Bridging-Header.h */,
 				B3579D0221069B4E00DDEBD6 /* Spotlight.entitlements */,
 				B3E21D6D203211BE009939D3 /* IndexRequestHandler.swift */,
 				B3E21D6F203211BE009939D3 /* Info.plist */,
@@ -2001,6 +2268,7 @@
 		B3E3B5D1202ED5D500A11871 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				B398800B27A5218A004DEFCA /* Conflicts */,
 				B3411BFA276B470B00D85327 /* QuickTableViewController */,
 				CF17107925858FA800258602 /* Cheats */,
 				B3D5E2BC218EC5C20015C690 /* Game Library */,
@@ -2017,10 +2285,6 @@
 		B3F43DDA2169BC9C00CDD40A /* Bridging Headers */ = {
 			isa = PBXGroup;
 			children = (
-				B3B9239C202D054B00580FFC /* Provenance-Bridging-Header.h */,
-				B3B9239D202D054B00580FFC /* ProvenanceTV-Bridging-Header.h */,
-				B3E21D7E20321EE0009939D3 /* Spotlight-Bridging-Header.h */,
-				B3E3B5C7202E3AB700A11871 /* TopShelf-Bridging-Header.h */,
 			);
 			name = "Bridging Headers";
 			sourceTree = "<group>";
@@ -2032,6 +2296,7 @@
 				BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */,
 				BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */,
 				DA5EB009206C4DEB000B5F30 /* PVGame+TopShelf.swift */,
+				B3E3B5C7202E3AB700A11871 /* TopShelf-Bridging-Header.h */,
 				BE9FDCBE1C210B9F0046DF0E /* Info.plist */,
 			);
 			path = TopShelf;
@@ -2073,8 +2338,6 @@
 			packageProductDependencies = (
 				B357A43727092254002C7C0F /* AppCenterAnalytics */,
 				B357A43927092254002C7C0F /* AppCenterCrashes */,
-				B3F187702720B7FE00659D87 /* Differentiator */,
-				B3F187722720B7FE00659D87 /* RxDataSources */,
 				B390B0E9276B2DB20018E065 /* AltKit */,
 				B3FB9678276DD7F600F7EDEE /* SteamController */,
 			);
@@ -2091,20 +2354,20 @@
 				1AD481B21BA350A400FDA50A /* Resources */,
 				1A44C0AE1D0A1E730018751A /* Script: Set Build Number */,
 				1AACCAE61BB60DB500DC21AE /* Embed Frameworks */,
+				B39DC780279E79D40017E28D /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				B383226626ED9F0C0029D12F /* PBXTargetDependency */,
 				B3B29D4C2156185700903290 /* PBXTargetDependency */,
+				B3B4C954279E69AD00505424 /* PBXTargetDependency */,
 			);
 			name = ProvenanceTV;
 			packageProductDependencies = (
 				B3D30FC026F0BCE60064603F /* SteamController */,
 				B3F94A4D27093ABC002A71EF /* AppCenterAnalytics */,
 				B3F94A4F27093ABC002A71EF /* AppCenterCrashes */,
-				B3F187742720B80C00659D87 /* RxDataSources */,
-				B3F187762720B81100659D87 /* Differentiator */,
 			);
 			productName = ProvenanceTV;
 			productReference = 1AD481B41BA350A400FDA50A /* Provenance.app */;
@@ -2321,12 +2584,17 @@
 			knownRegions = (
 				en,
 				"zh-Hans",
+				es,
+				ru,
+				ja,
+				nl,
+				it,
+				"pt-BR",
 			);
 			mainGroup = 1A3D408B17B2DCE4004DFFFC;
 			packageReferences = (
 				B3D30FBD26F0B4CD0064603F /* XCRemoteSwiftPackageReference "SteamController" */,
 				B357A43627092253002C7C0F /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */,
-				B3F1876F2720B7FE00659D87 /* XCRemoteSwiftPackageReference "RxDataSources" */,
 				B390B0E8276B2DB20018E065 /* XCRemoteSwiftPackageReference "AltKit" */,
 			);
 			productRefGroup = 1A3D409517B2DCE4004DFFFC /* Products */;
@@ -2341,9 +2609,10 @@
 				B3B29D3F2156177100903290 /* Create Version files */,
 				B3B29D4D21561F0600903290 /* Setup Code-Signing */,
 				B383225D26ED9C530029D12F /* Check Git Submodules */,
+				B30E94832793B8BE00871E57 /* Check CodeSigning */,
+				B305EF04276B4C73003AE510 /* Provenance Watch WatchKit Extension */,
 				B305EEF6276B4C71003AE510 /* Provenance Watch */,
 				B305EEF9276B4C71003AE510 /* Provenance Watch WatchKit App */,
-				B305EF04276B4C73003AE510 /* Provenance Watch WatchKit Extension */,
 			);
 		};
 /* End PBXProject section */
@@ -2382,6 +2651,7 @@
 				B3F64ECA205CBD1200C273C7 /* licenses.html in Resources */,
 				B3296ECF26CABFDE0088AC32 /* Cheats.storyboard in Resources */,
 				B3296EBE26CABF9F0088AC32 /* Provenance.storyboard in Resources */,
+				B3CEC5B22794D8DD004A7CC1 /* Strings.strings in Resources */,
 				B3296EC826CABFCA0088AC32 /* SaveStates.storyboard in Resources */,
 				1AD481C31BA350A400FDA50A /* TVAssets.xcassets in Resources */,
 				1AD482361BA35A2D00FDA50A /* Assets.xcassets in Resources */,
@@ -2488,6 +2758,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = ./Provenance/Resources/createVersionHeader.sh;
+		};
+		B30E94842793B8BE00871E57 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "FILE=\"${SRCROOT}/CodeSigning.xcconfig\"\nif [ -e \"${FILE}\" ]\nthen\n\techo \"CodeSigning OK!\"\nelse\n    osascript -e 'display notification \"Copy CodeSigning.xcconfig.sample to CodeSigning.xcconfig and edit with your Apple Developer Account info for proper signing.\" with title \"Code Signing not Configured!\"'\n    echo \"warning: Missing CodeSigning.xcconfig\"\nfi\n";
 		};
 		B383226226ED9C590029D12F /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2608,8 +2895,10 @@
 				B3AB373C2187F569009D9244 /* PVLynxControllerViewController.swift in Sources */,
 				B31117B3218EB3AE00C495A2 /* PVButtonGroupOverlayView.swift in Sources */,
 				B3A320372720974F00F338F6 /* PVGameCubeControllerViewController.swift in Sources */,
+				B3375EBC278EA28E004B0DC0 /* crt_filter_ps.metal in Sources */,
 				B357A43C2709228E002C7C0F /* PVAppDelegate+AppCenter.swift in Sources */,
 				B3AB37402187F569009D9244 /* PVSaturnControllerViewController.swift in Sources */,
+				B382C642278E55C9007E61FE /* PVMetalViewController.m in Sources */,
 				B3D5E2B2218EC1AE0015C690 /* RxTableViewRealmDataSource.swift in Sources */,
 				B3AB37372187F569009D9244 /* PVPSXControllerViewController.swift in Sources */,
 				1A3D40A817B2DCE4004DFFFC /* PVAppDelegate.swift in Sources */,
@@ -2621,9 +2910,11 @@
 				B3AB37362187F569009D9244 /* PVAtariJaguarControllerViewController.swift in Sources */,
 				B3CCD2BA21DAA8D30031C42C /* PVEmulatorViewController+Saves.swift in Sources */,
 				378F4A071B63D7CD0065FA39 /* GCDWebServerMultiPartFormRequest.m in Sources */,
+				B382C637278E5055007E61FE /* PVEmulatorViewController+MultiDisc.swift in Sources */,
 				B3A40C7121A67C7800544C20 /* PVGameLibrarySectionFooterView.swift in Sources */,
 				B3AB37452187F569009D9244 /* PVAtari7800ControllerViewController.swift in Sources */,
 				B354E7C6219A7D9D0041F971 /* SystemOverviewViewModel.swift in Sources */,
+				B3375EBE278EA28E004B0DC0 /* ulTron.metal in Sources */,
 				B3411C15276B470B00D85327 /* RowStyle.swift in Sources */,
 				B3F7BE79204A289B000D0B4D /* PVConflictViewController.swift in Sources */,
 				378F4A031B63D7CD0065FA39 /* GCDWebServerRequest.m in Sources */,
@@ -2650,6 +2941,7 @@
 				B3890BE420B97588005BB001 /* PVGameLibraryViewController+PeekPop.swift in Sources */,
 				B3447E73218B596600557ACE /* PVDreamcastControllerViewController.swift in Sources */,
 				B3E6DADC20B7AD1500454DD4 /* PVLogViewController.m in Sources */,
+				B382C649278E626D007E61FE /* PVGPUViewController.m in Sources */,
 				C665CD8421FEC68E00C834C6 /* GCControllerExtensions.swift in Sources */,
 				378F4A0A1B63D7CD0065FA39 /* GCDWebServerErrorResponse.m in Sources */,
 				B34EADAE218824C2008F52EE /* PViCadeControllerViewController.swift in Sources */,
@@ -2657,7 +2949,10 @@
 				1A3D433B17B30BA3004DFFFC /* PVGLViewController.m in Sources */,
 				B3F43DE22169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */,
 				B378225721D32B0B0077E86F /* SliderRow.swift in Sources */,
+				B3A4FB66278FFB6600A65248 /* Result+Conveniences.swift in Sources */,
 				B378224A21D329EC0077E86F /* SettingsRowSwitch.swift in Sources */,
+				B382C635278E5055007E61FE /* PVEmulatorViewController+Audio.swift in Sources */,
+				B382C63D278E514A007E61FE /* PVEmulatorViewController+CoreOptions.swift in Sources */,
 				B3AB37392187F569009D9244 /* PVVBControllerViewController.swift in Sources */,
 				B3437178276B0B650014F87C /* PV3DOControllerViewController.swift in Sources */,
 				B354E7D2219A9C230041F971 /* CoreOptionsViewController.swift in Sources */,
@@ -2667,12 +2962,16 @@
 				B3411C1A276B470C00D85327 /* NavigationRow.swift in Sources */,
 				378F4A0E1B63D7CD0065FA39 /* GCDWebUploader.m in Sources */,
 				1A2FB10C206EF07C00A1F942 /* PVSaveStateCollectionViewCell.swift in Sources */,
+				B3375EC2278EA28E004B0DC0 /* blit_ps.metal in Sources */,
 				B3AB37422187F569009D9244 /* PVNeoGeoPocketControllerViewController.swift in Sources */,
 				B394C98A20609E180014A65D /* UIColor+Hex.swift in Sources */,
 				42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift in Sources */,
 				B3B923B0202D2EAE00580FFC /* Theme.swift in Sources */,
+				B3A4FB60278FF84800A65248 /* ApplicationMonitor.swift in Sources */,
+				B398800D27A521AC004DEFCA /* ConflictsController.swift in Sources */,
 				CF17114E2586A13100258602 /* PVCheatsTableViewCell.swift in Sources */,
 				B3AB37342187F569009D9244 /* PVGBControllerViewController.swift in Sources */,
+				B3375EC4278EA28E004B0DC0 /* MetalViewShaders.metal in Sources */,
 				B3532C3C21A9AC93006CDA0F /* Services.swift in Sources */,
 				1180B3242492AFC900636C8A /* PVGameLibraryUpdatesController.swift in Sources */,
 				B3AB37382187F569009D9244 /* PVGBAControllerViewController.swift in Sources */,
@@ -2680,15 +2979,21 @@
 				B36D9DF8203562E000D583C4 /* PVControllerViewController.swift in Sources */,
 				378F4A021B63D7CD0065FA39 /* GCDWebServerFunctions.m in Sources */,
 				B35E6C2F207ED7050040709A /* AppearanceStyle.swift in Sources */,
+				B3A4FB62278FFA0F00A65248 /* LocationManager.swift in Sources */,
 				B35E6C27207ED7050040709A /* AppearanceStyleable.swift in Sources */,
+				B3375EC0278EA28E004B0DC0 /* MameShaders.metal in Sources */,
 				B3D534E220AFF21900A83D4E /* Version.swift in Sources */,
+				B37B71B0278E33B9005FB278 /* MenuButton.swift in Sources */,
+				EF56AA6227A21CBC0097AD05 /* TVAlertController.swift in Sources */,
 				B343717A276B0B650014F87C /* PVColecoVisionControllerViewController.swift in Sources */,
+				B3375ECC278EA28E004B0DC0 /* lineTron.metal in Sources */,
 				B35E6C23207ED7050040709A /* UIAppearanceExtensions.swift in Sources */,
 				B35E6C29207ED7050040709A /* AppearanceStyleExtensions.swift in Sources */,
 				B3AB37442187F569009D9244 /* PVNESControllerViewController.swift in Sources */,
 				B354E7C2219A7D630041F971 /* SystemSettingsHeaderCell.swift in Sources */,
 				B3411C1F276B470C00D85327 /* Section.swift in Sources */,
 				B378225421D32AD60077E86F /* SliderCell.swift in Sources */,
+				B37B71AD278E3198005FB278 /* UIViewController+Alerts.swift in Sources */,
 				B343717D276B0FA40014F87C /* PVVectrexControllerViewController.swift in Sources */,
 				B387676C20BD0F43009D8CD2 /* WebServerActivatorController.swift in Sources */,
 				B35E6C31207ED7050040709A /* AppearanceStyleHelpers.swift in Sources */,
@@ -2697,6 +3002,7 @@
 				378F4A011B63D7CD0065FA39 /* GCDWebServerConnection.m in Sources */,
 				B3411C20276B470C00D85327 /* DetailText.swift in Sources */,
 				378F4A111B63DCF00065FA39 /* PVWebServer.m in Sources */,
+				B3A4FB64278FFA5100A65248 /* PublishedPipeline.swift in Sources */,
 				378F4A061B63D7CD0065FA39 /* GCDWebServerFileRequest.m in Sources */,
 				378F4A0B1B63D7CD0065FA39 /* GCDWebServerFileResponse.m in Sources */,
 				1A65D1C619917D55004E1777 /* UIImage+ImageEffects.m in Sources */,
@@ -2742,11 +3048,15 @@
 				B3411C17276B470B00D85327 /* OptionRow.swift in Sources */,
 				B36D9DFD203605BC00D583C4 /* PVCoreFactory.swift in Sources */,
 				378F4A0C1B63D7CD0065FA39 /* GCDWebServerStreamedResponse.m in Sources */,
+				B382C639278E5055007E61FE /* PVEmulatorViewController+Controllers.swift in Sources */,
 				B3437176276B0B650014F87C /* PVIntellivisionControllerViewController.swift in Sources */,
 				1180B305248EB8C300636C8A /* UISearchController+Rx.swift in Sources */,
 				CF1710942585917A00258602 /* PVCheatsViewController.swift in Sources */,
 				B3054371272026E800F5257D /* PVPSPControllerViewController.swift in Sources */,
 				B3890BF420B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift in Sources */,
+				B3375ECA278EA28E004B0DC0 /* simpleCRT.metal in Sources */,
+				B3375EC6278EA28E004B0DC0 /* fullscreen_vs.metal in Sources */,
+				B3375EC8278EA28E004B0DC0 /* megaTron.metal in Sources */,
 				B3411C21276B470C00D85327 /* TapActionCell.swift in Sources */,
 				B302F31421713AFD000322B9 /* CenterFlowLayout.swift in Sources */,
 				B3411C22276B470C00D85327 /* SwitchCell.swift in Sources */,
@@ -2760,13 +3070,16 @@
 				B3411C27276B472900D85327 /* RowCompatible.swift in Sources */,
 				CF87D486258ADDD100838AF8 /* PVCheatsHeaderView.swift in Sources */,
 				CF87D487258ADDD100838AF8 /* PVCheatsViewController.swift in Sources */,
+				B3375EC9278EA28E004B0DC0 /* megaTron.metal in Sources */,
 				CF87D488258ADDD100838AF8 /* PVCheatsInfoViewController.swift in Sources */,
 				CF87D489258ADDD100838AF8 /* PVCheatsTableViewCell.swift in Sources */,
 				CF87D47E258ADDA500838AF8 /* PVEmulatorViewController+Cheats.swift in Sources */,
 				B3B104D1218F2EF400210C39 /* PVSaturnControllerViewController.swift in Sources */,
 				1FE10F291D94ECC600A20D1A /* PVAppearanceViewController.swift in Sources */,
 				B3D5E2C0218EC62E0015C690 /* Sections.swift in Sources */,
+				B3375EBF278EA28E004B0DC0 /* ulTron.metal in Sources */,
 				B3B104BF218F2EC000210C39 /* JSButton.swift in Sources */,
+				B382C638278E5055007E61FE /* PVEmulatorViewController+MultiDisc.swift in Sources */,
 				B306E0D02769F2C2001DC52E /* PVOdyssey2ControllerViewController.swift in Sources */,
 				B3411C2E276B472900D85327 /* TapActionRow.swift in Sources */,
 				B35E6C30207ED7050040709A /* AppearanceStyle.swift in Sources */,
@@ -2782,7 +3095,10 @@
 				B3532C3D21A9AC93006CDA0F /* Services.swift in Sources */,
 				B31117B0218EB3A900C495A2 /* PVEmulatorViewController.swift in Sources */,
 				1AD481E51BA3546600FDA50A /* PVGLViewController.m in Sources */,
+				B3375EC5278EA28E004B0DC0 /* MetalViewShaders.metal in Sources */,
 				B369B0DD21A3BF7C0064EDCA /* PVSettingsViewController.swift in Sources */,
+				EF474BAA279E63B800578663 /* TVAlertController.swift in Sources */,
+				B382C636278E5055007E61FE /* PVEmulatorViewController+Audio.swift in Sources */,
 				B3F94A4C27093794002A71EF /* PVAppDelegate+AppCenter.swift in Sources */,
 				11A8A9E72496A3E500C1C6B4 /* PVGameLibraryUpdatesController.swift in Sources */,
 				B354E7C3219A7D630041F971 /* SystemSettingsHeaderCell.swift in Sources */,
@@ -2797,6 +3113,7 @@
 				B3B104C9218F2EF400210C39 /* PVLynxControllerViewController.swift in Sources */,
 				B35E6C28207ED7050040709A /* AppearanceStyleable.swift in Sources */,
 				1A2B13CD1D0DFF5100D0B863 /* PVSearchViewController.swift in Sources */,
+				B37B71AE278E3198005FB278 /* UIViewController+Alerts.swift in Sources */,
 				1AD481DC1BA3544500FDA50A /* GCDWebServerDataRequest.m in Sources */,
 				B32746BE219BD65F00B78124 /* PVGameLibraryCollectionFlowLayout.swift in Sources */,
 				B3290499270D1F95002707AC /* PVAppDelegate+NitoTV.swift in Sources */,
@@ -2805,12 +3122,14 @@
 				B3D534E320AFF21900A83D4E /* Version.swift in Sources */,
 				B3411C2B276B472900D85327 /* Deprecated.swift in Sources */,
 				B3CCD2BB21DAA8D30031C42C /* PVEmulatorViewController+Saves.swift in Sources */,
+				B382C63E278E514A007E61FE /* PVEmulatorViewController+CoreOptions.swift in Sources */,
 				B378224B21D329FB0077E86F /* SettingsRowSwitch.swift in Sources */,
 				B343717E276B0FA40014F87C /* PVVectrexControllerViewController.swift in Sources */,
 				B3411BF9276B37DE00D85327 /* PVDSControllerViewController.swift in Sources */,
 				1AD481EE1BA3548800FDA50A /* MBProgressHUD.m in Sources */,
 				B3B104CD218F2EF400210C39 /* PVPCEControllerViewController.swift in Sources */,
 				B3B104C4218F2EF400210C39 /* PVAtariJaguarControllerViewController.swift in Sources */,
+				B382C64A278E626D007E61FE /* PVGPUViewController.m in Sources */,
 				B3B104C6218F2EF400210C39 /* PVGBAControllerViewController.swift in Sources */,
 				B3F64EC9205CBC6100C273C7 /* PVLicensesViewController.swift in Sources */,
 				1AD481C91BA3530B00FDA50A /* PVAppDelegate.swift in Sources */,
@@ -2827,14 +3146,18 @@
 				B3B104C0218F2EF400210C39 /* PV32XControllerViewController.swift in Sources */,
 				B354E7C0219A7D250041F971 /* SystemSettingsCell.swift in Sources */,
 				B3411C31276B472900D85327 /* Row.swift in Sources */,
+				B3375EC3278EA28E004B0DC0 /* blit_ps.metal in Sources */,
 				B3411C2A276B472900D85327 /* RowStyle.swift in Sources */,
 				1AD481E21BA3545B00FDA50A /* GCDWebServerFileResponse.m in Sources */,
 				B3532B2C21A78FB2006CDA0F /* PVSwitchCell.swift in Sources */,
+				B3375ECB278EA28E004B0DC0 /* simpleCRT.metal in Sources */,
 				B3D534ED20B001D700A83D4E /* PillPageControl.swift in Sources */,
 				B354E7C7219A7D9D0041F971 /* SystemOverviewViewModel.swift in Sources */,
+				B398800E27A521AC004DEFCA /* ConflictsController.swift in Sources */,
 				B3A32151218EB4D800BD7DA2 /* UIView+FrameAdditions.swift in Sources */,
 				1AD481E01BA3545400FDA50A /* GCDWebServerDataResponse.m in Sources */,
 				B35E6C2A207ED7050040709A /* AppearanceStyleExtensions.swift in Sources */,
+				B3375EC1278EA28E004B0DC0 /* MameShaders.metal in Sources */,
 				B3437179276B0B650014F87C /* PV3DOControllerViewController.swift in Sources */,
 				1AD481D41BA3542200FDA50A /* PVWebServer.m in Sources */,
 				B3890BF520B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift in Sources */,
@@ -2844,8 +3167,10 @@
 				1A2FB10A206EE8A700A1F942 /* PVSaveStatesViewController.swift in Sources */,
 				B3411C2D276B472900D85327 /* TapActionCell.swift in Sources */,
 				B3411C24276B472900D85327 /* RadioSection.swift in Sources */,
+				B3375ECD278EA28E004B0DC0 /* lineTron.metal in Sources */,
 				1AD481DE1BA3544A00FDA50A /* GCDWebServerMultiPartFormRequest.m in Sources */,
 				1AD481DA1BA3543E00FDA50A /* GCDWebServerRequest.m in Sources */,
+				B3375EBD278EA28E004B0DC0 /* crt_filter_ps.metal in Sources */,
 				B3D5E2AF218EC1AE0015C690 /* RealmBindObserver.swift in Sources */,
 				1A2FB110206EF29E00A1F942 /* PVSaveStateHeaderView.swift in Sources */,
 				B35E6C26207ED7050040709A /* UIApplicationExtensions.swift in Sources */,
@@ -2860,11 +3185,13 @@
 				B3A40C7221A67C7800544C20 /* PVGameLibrarySectionFooterView.swift in Sources */,
 				B3589E32219E8C5B001C5E12 /* LogViewable.swift in Sources */,
 				B3D5E2B1218EC1AE0015C690 /* Reactive+RxRealmDataSources.swift in Sources */,
-				11ADB31F2471A34E001C7B27 /* PVTVTabBarController.swift in Sources */,
+				EF474BA8279CCDD200578663 /* TVFullscreenController.swift in Sources */,
 				11AFB2B72487C120000A3922 /* UISearchController+Rx.swift in Sources */,
+				B37B71B1278E33B9005FB278 /* MenuButton.swift in Sources */,
 				B3B104C5218F2EF400210C39 /* PVDreamcastControllerViewController.swift in Sources */,
 				B3B104CE218F2EF400210C39 /* PVPCFXControllerViewController.swift in Sources */,
 				B3D5E2B3218EC1AE0015C690 /* RxTableViewRealmDataSource.swift in Sources */,
+				B382C63A278E5055007E61FE /* PVEmulatorViewController+Controllers.swift in Sources */,
 				B3411C32276B472900D85327 /* SwitchCell.swift in Sources */,
 				1AD481DF1BA3544D00FDA50A /* GCDWebServerURLEncodedFormRequest.m in Sources */,
 				1AD481DB1BA3544100FDA50A /* GCDWebServerResponse.m in Sources */,
@@ -2874,6 +3201,7 @@
 				B387676D20BD0F43009D8CD2 /* WebServerActivatorController.swift in Sources */,
 				B313544826E4C0F90047F338 /* PVPS2ControllerViewController.swift in Sources */,
 				B3B104D6218F2F2800210C39 /* PVButtonGroupOverlayView.swift in Sources */,
+				B382C643278E55C9007E61FE /* PVMetalViewController.m in Sources */,
 				1180B30824924AEA00636C8A /* UICollectionView+Rx.swift in Sources */,
 				B343717B276B0B650014F87C /* PVColecoVisionControllerViewController.swift in Sources */,
 				B3437177276B0B650014F87C /* PVIntellivisionControllerViewController.swift in Sources */,
@@ -2884,6 +3212,7 @@
 				1AD481F61BA3549F00FDA50A /* UIImage+ImageEffects.m in Sources */,
 				B3A320382720974F00F338F6 /* PVGameCubeControllerViewController.swift in Sources */,
 				B33468D720AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift in Sources */,
+				B3375EC7278EA28E004B0DC0 /* fullscreen_vs.metal in Sources */,
 				B3B104C7218F2EF400210C39 /* PVGBControllerViewController.swift in Sources */,
 				B3B104CC218F2EF400210C39 /* PVNESControllerViewController.swift in Sources */,
 				B35E6C24207ED7050040709A /* UIAppearanceExtensions.swift in Sources */,
@@ -2991,6 +3320,11 @@
 			target = B3B29D3F2156177100903290 /* Create Version files */;
 			targetProxy = B3B29D4B2156185700903290 /* PBXContainerItemProxy */;
 		};
+		B3B4C954279E69AD00505424 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BE9FDCB61C210B9E0046DF0E /* TopShelf */;
+			targetProxy = B3B4C953279E69AD00505424 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -2999,6 +3333,11 @@
 			children = (
 				1A3D40A117B2DCE4004DFFFC /* en */,
 				B3296EA926CABE760088AC32 /* zh-Hans */,
+				B3CEC5A72794CD8D004A7CC1 /* es */,
+				B311B1D427A53E7500D1DE41 /* ru */,
+				B311B1E127A53F9E00D1DE41 /* ja */,
+				B311B1EE27A53FC500D1DE41 /* nl */,
+				B311B1FB27A53FF000D1DE41 /* it */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -3008,6 +3347,11 @@
 			children = (
 				B3296EAB26CABE880088AC32 /* en */,
 				B3296EAE26CABE950088AC32 /* zh-Hans */,
+				B3CEC5A82794CD8E004A7CC1 /* es */,
+				B311B1D527A53E7600D1DE41 /* ru */,
+				B311B1E227A53F9E00D1DE41 /* ja */,
+				B311B1EF27A53FC500D1DE41 /* nl */,
+				B311B1FC27A53FF100D1DE41 /* it */,
 			);
 			name = Provenance.storyboard;
 			sourceTree = "<group>";
@@ -3017,6 +3361,11 @@
 			children = (
 				B3296EB026CABEA80088AC32 /* en */,
 				B3296EBD26CABF6D0088AC32 /* zh-Hans */,
+				B3CEC5A92794CD8E004A7CC1 /* es */,
+				B311B1D627A53E7700D1DE41 /* ru */,
+				B311B1E327A53F9F00D1DE41 /* ja */,
+				B311B1F027A53FC600D1DE41 /* nl */,
+				B311B1FD27A53FF100D1DE41 /* it */,
 			);
 			name = SaveStates.storyboard;
 			sourceTree = "<group>";
@@ -3026,6 +3375,11 @@
 			children = (
 				B3296EB326CABEE00088AC32 /* en */,
 				B3296EB926CABF300088AC32 /* zh-Hans */,
+				B3CEC5AA2794CD8F004A7CC1 /* es */,
+				B311B1D727A53E7800D1DE41 /* ru */,
+				B311B1E427A53FA000D1DE41 /* ja */,
+				B311B1F127A53FC700D1DE41 /* nl */,
+				B311B1FE27A53FF200D1DE41 /* it */,
 			);
 			name = Settings.storyboard;
 			sourceTree = "<group>";
@@ -3035,6 +3389,11 @@
 			children = (
 				B3296EB626CABF250088AC32 /* en */,
 				B3296EBB26CABF340088AC32 /* zh-Hans */,
+				B3CEC5AC2794CD91004A7CC1 /* es */,
+				B311B1D927A53E7B00D1DE41 /* ru */,
+				B311B1E627A53FA100D1DE41 /* ja */,
+				B311B1F327A53FC800D1DE41 /* nl */,
+				B311B20027A53FF300D1DE41 /* it */,
 			);
 			name = Cheats.storyboard;
 			sourceTree = "<group>";
@@ -3044,6 +3403,11 @@
 			children = (
 				B3296EBF26CABF9F0088AC32 /* en */,
 				B3296EC226CABFA70088AC32 /* zh-Hans */,
+				B3CEC5AD2794CD92004A7CC1 /* es */,
+				B311B1DA27A53E7C00D1DE41 /* ru */,
+				B311B1E727A53FA200D1DE41 /* ja */,
+				B311B1F427A53FC900D1DE41 /* nl */,
+				B311B20127A53FF400D1DE41 /* it */,
 			);
 			name = Provenance.storyboard;
 			sourceTree = "<group>";
@@ -3053,6 +3417,11 @@
 			children = (
 				B3296EC426CABFB00088AC32 /* en */,
 				B3296EC726CABFB90088AC32 /* zh-Hans */,
+				B3CEC5AE2794CD92004A7CC1 /* es */,
+				B311B1DB27A53E7D00D1DE41 /* ru */,
+				B311B1E827A53FA200D1DE41 /* ja */,
+				B311B1F527A53FC900D1DE41 /* nl */,
+				B311B20227A53FF500D1DE41 /* it */,
 			);
 			name = Settings.storyboard;
 			sourceTree = "<group>";
@@ -3062,6 +3431,11 @@
 			children = (
 				B3296EDB26CAC2220088AC32 /* zh-Hans */,
 				B3296EDC26CAC2220088AC32 /* en */,
+				B3CEC5AF2794CD93004A7CC1 /* es */,
+				B311B1DC27A53E7E00D1DE41 /* ru */,
+				B311B1E927A53FA300D1DE41 /* ja */,
+				B311B1F627A53FCA00D1DE41 /* nl */,
+				B311B20327A53FF500D1DE41 /* it */,
 			);
 			name = SaveStates.storyboard;
 			sourceTree = "<group>";
@@ -3071,6 +3445,11 @@
 			children = (
 				B3296ED026CABFDE0088AC32 /* en */,
 				B3296EDD26CAC2320088AC32 /* zh-Hans */,
+				B3CEC5B02794CD94004A7CC1 /* es */,
+				B311B1DD27A53E7F00D1DE41 /* ru */,
+				B311B1EA27A53FA400D1DE41 /* ja */,
+				B311B1F727A53FCB00D1DE41 /* nl */,
+				B311B20427A53FF600D1DE41 /* it */,
 			);
 			name = Cheats.storyboard;
 			sourceTree = "<group>";
@@ -3080,6 +3459,11 @@
 			children = (
 				B3296EDF26CAC27C0088AC32 /* en */,
 				B3296EE126CAC2800088AC32 /* zh-Hans */,
+				B3CEC5A52794CD8B004A7CC1 /* es */,
+				B311B1D227A53E7200D1DE41 /* ru */,
+				B311B1DF27A53F9C00D1DE41 /* ja */,
+				B311B1EC27A53FC300D1DE41 /* nl */,
+				B311B1F927A53FEF00D1DE41 /* it */,
 			);
 			name = PVGameLibraryCollectionViewCell.xib;
 			sourceTree = "<group>";
@@ -3089,6 +3473,11 @@
 			children = (
 				B3296EE326CAC2B10088AC32 /* en */,
 				B3296EE526CAC2CA0088AC32 /* zh-Hans */,
+				B3CEC5AB2794CD90004A7CC1 /* es */,
+				B311B1D827A53E7900D1DE41 /* ru */,
+				B311B1E527A53FA000D1DE41 /* ja */,
+				B311B1F227A53FC700D1DE41 /* nl */,
+				B311B1FF27A53FF300D1DE41 /* it */,
 			);
 			name = Default.xib;
 			sourceTree = "<group>";
@@ -3098,6 +3487,12 @@
 			children = (
 				B3296EE926CAC3ED0088AC32 /* en */,
 				B3296EEB26CAC3F00088AC32 /* zh-Hans */,
+				B3CEC5A62794CD8C004A7CC1 /* es */,
+				B311B1D327A53E7400D1DE41 /* ru */,
+				B311B1E027A53F9D00D1DE41 /* ja */,
+				B311B1ED27A53FC400D1DE41 /* nl */,
+				B311B1FA27A53FEF00D1DE41 /* it */,
+				B3B66A7027B872BA00E2236B /* pt-BR */,
 			);
 			name = Strings.strings;
 			sourceTree = "<group>";
@@ -3106,6 +3501,11 @@
 			isa = PBXVariantGroup;
 			children = (
 				B37D31C9274A57F000D635E0 /* en */,
+				B3CEC5B12794CD94004A7CC1 /* es */,
+				B311B1DE27A53E8000D1DE41 /* ru */,
+				B311B1EB27A53FA400D1DE41 /* ja */,
+				B311B1F827A53FCB00D1DE41 /* nl */,
+				B311B20527A53FF700D1DE41 /* it */,
 			);
 			name = Info.plist;
 			sourceTree = "<group>";
@@ -3123,6 +3523,7 @@
 /* Begin XCBuildConfiguration section */
 		1A3D40AF17B2DCE4004DFFFC /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B380EAC12759D689001B8532 /* Build.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -3151,6 +3552,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -3170,12 +3572,13 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=300 -Xfrontend -warn-long-expression-type-checking=200";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.0;
-				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = "OpenGLES GLKit SteamController";
+				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = "OpenGLES GLKit";
 				VALID_ARCHS = "$(ARCHS_STANDARD)";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -3183,6 +3586,7 @@
 		};
 		1A3D40B017B2DCE4004DFFFC /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B380EAC12759D689001B8532 /* Build.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -3210,6 +3614,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
 				COPY_PHASE_STRIP = YES;
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = NO;
@@ -3222,6 +3627,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=300 -Xfrontend -warn-long-expression-type-checking=200";
@@ -3230,7 +3636,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
-				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = "OpenGLES GLKit SteamController";
+				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = "OpenGLES GLKit";
 				VALID_ARCHS = "$(ARCHS_STANDARD)";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -3238,6 +3644,7 @@
 		};
 		1A3D40B217B2DCE4004DFFFC /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				APP_DISPLAY_NAME = "Prov Debug";
@@ -3248,9 +3655,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2779;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
@@ -3266,15 +3671,14 @@
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
-				MARKETING_VERSION = 2.0.4;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance";
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_COMPILATION_MODE = singlefile;
-				SWIFT_OBJC_BRIDGING_HEADER = "Provenance-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Provenance/Provenance-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_VERSION = 5.0;
@@ -3287,6 +3691,7 @@
 		};
 		1A3D40B317B2DCE4004DFFFC /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				APP_DISPLAY_NAME = "$(TARGET_NAME)";
@@ -3297,8 +3702,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2779;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
@@ -3314,15 +3717,14 @@
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
-				MARKETING_VERSION = 2.0.4;
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1  ";
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SUPPORTS_MACCATALYST = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "Provenance-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Provenance/Provenance-Bridging-Header.h";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
@@ -3334,6 +3736,7 @@
 		};
 		1AD481C51BA350A500FDA50A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758627B1E0BC0033C5D1 /* Build-tvOS.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "Prov Debug";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
@@ -3346,9 +3749,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_ENTITLEMENTS = ProvenanceTV/Provenance.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2779;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -3368,14 +3769,13 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.4;
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance";
 				PRODUCT_NAME = Provenance;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SWIFT_COMPILATION_MODE = singlefile;
-				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV/ProvenanceTV-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 12.1;
@@ -3384,6 +3784,7 @@
 		};
 		1AD481C61BA350A500FDA50A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758627B1E0BC0033C5D1 /* Build-tvOS.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "${PRODUCT_NAME}";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
@@ -3397,9 +3798,7 @@
 				CODE_SIGN_ENTITLEMENTS = ProvenanceTV/Provenance.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2779;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -3420,14 +3819,13 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.4;
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance";
 				PRODUCT_NAME = Provenance;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV/ProvenanceTV-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 12.1;
@@ -3448,7 +3846,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -3511,7 +3908,6 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3555,6 +3951,7 @@
 		};
 		B305EF16276B4C74003AE510 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -3569,14 +3966,13 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Watch";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(WATCH_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -3585,6 +3981,7 @@
 		};
 		B305EF17276B4C74003AE510 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -3600,15 +3997,14 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Watch";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(WATCH_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
@@ -3616,6 +4012,7 @@
 		};
 		B305EF18276B4C74003AE510 /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -3631,15 +4028,14 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Watch";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(WATCH_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
@@ -3647,6 +4043,7 @@
 		};
 		B305EF1A276B4C74003AE510 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -3664,7 +4061,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -3672,10 +4068,10 @@
 				IBSC_MODULE = Provenance_Watch_WatchKit_Extension;
 				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit App";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Watch.watchkitapp";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(WATCH_APP_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -3689,6 +4085,7 @@
 		};
 		B305EF1B276B4C74003AE510 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -3707,7 +4104,6 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -3716,10 +4112,10 @@
 				IBSC_MODULE = Provenance_Watch_WatchKit_Extension;
 				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit App";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Watch.watchkitapp";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(WATCH_APP_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -3732,6 +4128,7 @@
 		};
 		B305EF1C276B4C74003AE510 /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -3750,7 +4147,6 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -3759,10 +4155,10 @@
 				IBSC_MODULE = Provenance_Watch_WatchKit_Extension;
 				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit App";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Watch.watchkitapp";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(WATCH_APP_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -3775,6 +4171,7 @@
 		};
 		B305EF1E276B4C74003AE510 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -3791,7 +4188,6 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_ASSET_PATHS = "\"Provenance Watch WatchKit Extension/Preview Content\"";
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_PREVIEWS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -3799,7 +4195,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Provenance Watch WatchKit Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit Extension";
-				INFOPLIST_KEY_CLKComplicationPrincipalClass = "$(PRODUCT_MODULE_NAME).ComplicationController";
+				INFOPLIST_KEY_CLKComplicationPrincipalClass = Provenance_Watch_WatchKit_Extension.ComplicationController;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Provenance Emu. All rights reserved.";
 				INFOPLIST_KEY_WKWatchOnly = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3807,10 +4203,10 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Watch.watchkitapp.watchkitextension";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(WATCH_APP_EXTENSION_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -3824,6 +4220,7 @@
 		};
 		B305EF1F276B4C74003AE510 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -3841,7 +4238,6 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "\"Provenance Watch WatchKit Extension/Preview Content\"";
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_PREVIEWS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -3850,7 +4246,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Provenance Watch WatchKit Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit Extension";
-				INFOPLIST_KEY_CLKComplicationPrincipalClass = "$(PRODUCT_MODULE_NAME).ComplicationController";
+				INFOPLIST_KEY_CLKComplicationPrincipalClass = Provenance_Watch_WatchKit_Extension.ComplicationController;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Provenance Emu. All rights reserved.";
 				INFOPLIST_KEY_WKWatchOnly = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3858,10 +4254,10 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Watch.watchkitapp.watchkitextension";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(WATCH_APP_EXTENSION_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -3874,6 +4270,7 @@
 		};
 		B305EF20276B4C74003AE510 /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -3891,7 +4288,6 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "\"Provenance Watch WatchKit Extension/Preview Content\"";
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_PREVIEWS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -3900,7 +4296,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Provenance Watch WatchKit Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit Extension";
-				INFOPLIST_KEY_CLKComplicationPrincipalClass = "$(PRODUCT_MODULE_NAME).ComplicationController";
+				INFOPLIST_KEY_CLKComplicationPrincipalClass = Provenance_Watch_WatchKit_Extension.ComplicationController;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Provenance Emu. All rights reserved.";
 				INFOPLIST_KEY_WKWatchOnly = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3908,10 +4304,10 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Watch.watchkitapp.watchkitextension";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(WATCH_APP_EXTENSION_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -3922,8 +4318,33 @@
 			};
 			name = Archive;
 		};
+		B30E94862793B8BE00871E57 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B30E94872793B8BE00871E57 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		B30E94882793B8BE00871E57 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Archive;
+		};
 		B3721CEB21912B7400433E4C /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B380EAC12759D689001B8532 /* Build.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -3951,6 +4372,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
 				COPY_PHASE_STRIP = YES;
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -3969,7 +4391,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
-				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = "OpenGLES GLKit SteamController";
+				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = "OpenGLES GLKit";
 				VALID_ARCHS = "$(ARCHS_STANDARD)";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -3977,6 +4399,7 @@
 		};
 		B3721CEC21912B7400433E4C /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				APP_DISPLAY_NAME = "$(TARGET_NAME)";
@@ -3987,8 +4410,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2779;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
@@ -4004,15 +4425,14 @@
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
-				MARKETING_VERSION = 2.0.4;
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1  ";
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SUPPORTS_MACCATALYST = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "Provenance-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Provenance/Provenance-Bridging-Header.h";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
@@ -4024,6 +4444,7 @@
 		};
 		B3721CED21912B7400433E4C /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758627B1E0BC0033C5D1 /* Build-tvOS.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "${PRODUCT_NAME}";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
@@ -4038,9 +4459,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2779;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -4061,13 +4480,12 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.4;
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance";
 				PRODUCT_NAME = Provenance;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
-				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV/ProvenanceTV-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 12.1;
 			};
@@ -4088,7 +4506,6 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -4132,6 +4549,7 @@
 		};
 		B3721CEF21912B7400433E4C /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758627B1E0BC0033C5D1 /* Build-tvOS.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -4143,9 +4561,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2779;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -4160,20 +4576,21 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.0.4;
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.topshelf";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(TOPSHELF_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "TopShelf-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "TopShelf/TopShelf-Bridging-Header.h";
 				TVOS_DEPLOYMENT_TARGET = 12.1;
 			};
 			name = Archive;
 		};
 		B3721CF021912B7400433E4C /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -4188,9 +4605,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2779;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -4202,16 +4617,16 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.0.4;
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=200 -Xfrontend -warn-long-expression-type-checking=200";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.spotlight";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(SPOTLIGHT_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = EXTENSION;
-				SWIFT_OBJC_BRIDGING_HEADER = "Spotlight-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Spotlight/Spotlight-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
@@ -4309,9 +4724,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = Spotlight/Spotlight.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2779;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -4322,17 +4735,17 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.0.4;
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=200 -Xfrontend -warn-long-expression-type-checking=200";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.spotlight";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(SPOTLIGHT_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG EXTENSION";
 				SWIFT_COMPILATION_MODE = singlefile;
-				SWIFT_OBJC_BRIDGING_HEADER = "Spotlight-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Spotlight/Spotlight-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
@@ -4354,9 +4767,7 @@
 				CODE_SIGN_ENTITLEMENTS = Spotlight/Spotlight.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2779;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -4368,16 +4779,16 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.0.4;
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=200 -Xfrontend -warn-long-expression-type-checking=200";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.spotlight";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(SPOTLIGHT_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = EXTENSION;
-				SWIFT_OBJC_BRIDGING_HEADER = "Spotlight-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Spotlight/Spotlight-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
@@ -4394,9 +4805,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_ENTITLEMENTS = TopShelf/TopShelf.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2779;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -4410,14 +4819,14 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.0.4;
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.topshelf";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(TOPSHELF_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "TopShelf-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "TopShelf/TopShelf-Bridging-Header.h";
 				TVOS_DEPLOYMENT_TARGET = 12.1;
 			};
 			name = Debug;
@@ -4434,9 +4843,7 @@
 				CODE_SIGN_ENTITLEMENTS = TopShelf/TopShelf.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2779;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -4451,14 +4858,14 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.0.4;
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.topshelf";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(TOPSHELF_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "TopShelf-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "TopShelf/TopShelf-Bridging-Header.h";
 				TVOS_DEPLOYMENT_TARGET = 12.1;
 			};
 			name = Release;
@@ -4536,6 +4943,16 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		B30E94852793B8BE00871E57 /* Build configuration list for PBXAggregateTarget "Check CodeSigning" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B30E94862793B8BE00871E57 /* Debug */,
+				B30E94872793B8BE00871E57 /* Release */,
+				B30E94882793B8BE00871E57 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		B383225E26ED9C530029D12F /* Build configuration list for PBXAggregateTarget "Check Git Submodules" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -4609,16 +5026,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Provenance-Emu/SteamController.git";
 			requirement = {
-				kind = exactVersion;
-				version = 1.3.1;
-			};
-		};
-		B3F1876F2720B7FE00659D87 /* XCRemoteSwiftPackageReference "RxDataSources" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/RxSwiftCommunity/RxDataSources.git";
-			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 5.0.0;
+				branch = master;
+				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -4643,26 +5052,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B3D30FBD26F0B4CD0064603F /* XCRemoteSwiftPackageReference "SteamController" */;
 			productName = SteamController;
-		};
-		B3F187702720B7FE00659D87 /* Differentiator */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3F1876F2720B7FE00659D87 /* XCRemoteSwiftPackageReference "RxDataSources" */;
-			productName = Differentiator;
-		};
-		B3F187722720B7FE00659D87 /* RxDataSources */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3F1876F2720B7FE00659D87 /* XCRemoteSwiftPackageReference "RxDataSources" */;
-			productName = RxDataSources;
-		};
-		B3F187742720B80C00659D87 /* RxDataSources */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3F1876F2720B7FE00659D87 /* XCRemoteSwiftPackageReference "RxDataSources" */;
-			productName = RxDataSources;
-		};
-		B3F187762720B81100659D87 /* Differentiator */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3F1876F2720B7FE00659D87 /* XCRemoteSwiftPackageReference "RxDataSources" */;
-			productName = Differentiator;
 		};
 		B3F94A4D27093ABC002A71EF /* AppCenterAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -17,11 +17,11 @@ final class PVCoresTableViewController: QuickTableViewController {
         let cores = RomDatabase.sharedInstance.all(PVCore.self, sortedByKeyPath: #keyPath(PVCore.projectName))
 
         #if os(tvOS)
-            splitViewController?.title = "Cores"
+            splitViewController?.title = NSLocalizedString("Cores", comment: "")
         #endif
 
         tableContents = [
-            Section(title: "Cores", rows: cores.map { core in
+            Section(title: NSLocalizedString("Cores", comment: ""), rows: cores.map { core in
                 let systemsText = core.supportedSystems.map({ $0.shortName }).joined(separator: ", ")
                 let detailLabelText = "\(core.projectVersion) : \(systemsText)"
 

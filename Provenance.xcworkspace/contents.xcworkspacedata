@@ -2,10 +2,10 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Provenance.xctestplan">
+      location = "container:Provenance.xcodeproj">
    </FileRef>
    <FileRef
-      location = "container:Provenance.xcodeproj">
+      location = "group:PVUI/PVUI/PVUI.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:PVLibrary/PVLibrary.xcodeproj">
@@ -68,6 +68,9 @@
    <Group
       location = "container:"
       name = "Cores Development">
+      <FileRef
+         location = "group:Cores/snesticle/PVSnesticle.xcodeproj">
+      </FileRef>
       <FileRef
          location = "group:Cores/4DO/4DO.xcodeproj">
       </FileRef>

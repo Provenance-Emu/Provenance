@@ -15,9 +15,9 @@ import Foundation
 
 struct Constants {
     struct iCloud {
-        static let containerIdentifier = "iCloud.org.provenance-emu.provenance"
+//        static let containerIdentifier = "iCloud.org.provenance-emu.provenance"
         // Dynamic version based off of bundle Identifier
-        //        static let documentsContainerIdentifier = "iCloud." + (Bundle.main.bundleIdentifier ?? "")
+		static let containerIdentifier =  (Bundle.main.infoDictionary?["NSUbiquitousContainers"] as? [String: AnyObject])?.keys.first ?? "iCloud.org.provenance-emu.provenance"
     }
 }
 
@@ -113,17 +113,19 @@ public final class GameImporter {
     }
 
     lazy var openVGDB: OESQLiteDatabase = {
-        let bundle = Bundle(identifier: "org.provenance-emu.PVLibrary")!
+		let bundle = ThisBundle
         let _openVGDB = try! OESQLiteDatabase(url: bundle.url(forResource: "openvgdb", withExtension: "sqlite")!)
         return _openVGDB
     }()
 
     lazy var sqldb: Connection = {
-        let bundle = Bundle(identifier: "org.provenance-emu.PVLibrary")!
-        let sqlFile = bundle.url(forResource: "openvgdb", withExtension: "sqlite")!
+        let bundle = ThisBundle
+		let sqlFile = bundle.url(forResource: "openvgdb", withExtension: "sqlite")!
         let sqldb = try! Connection(sqlFile.path, readonly: true)
         return sqldb
     }()
+
+	fileprivate let ThisBundle: Bundle = Bundle(for: GameImporter.self)
 
     public var conflictedFiles: [URL]? {
         guard FileManager.default.fileExists(atPath: conflictPath.path),
@@ -148,7 +150,7 @@ public final class GameImporter {
             classInfo.bundle.url(forResource: "Core", withExtension: "plist")
         }
 
-        let bundle = Bundle(identifier: "org.provenance-emu.PVLibrary")!
+        let bundle = ThisBundle
         PVEmulatorConfiguration.updateSystems(fromPlists: [bundle.url(forResource: "systems", withExtension: "plist")!])
         PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
     }
@@ -243,7 +245,9 @@ public final class GameImporter {
                 if !["bin", "iso", "img", "sub"].contains(candidate.filePath.pathExtension) {
                     WLOG("File should have existed at \(candidate.filePath) but it might have been moved")
                 }
-                self.deleteIfJunk(candidate.filePath)
+                DispatchQueue.global(qos: .utility).async {
+                    self.deleteIfJunk(candidate.filePath)
+                }
 
                 return nil
             }
@@ -268,8 +272,10 @@ public final class GameImporter {
         if filePath.lastPathComponent != "0", filePath.path.contains(PVEmulatorConfiguration.Paths.romsImportPath.lastPathComponent), !PVEmulatorConfiguration.allKnownExtensions.contains(filePath.pathExtension.lowercased()) {
             ILOG("\(filePath.lastPathComponent) doesn't matching any known possible extensions and is in \(PVEmulatorConfiguration.Paths.romsImportPath.lastPathComponent) directory. Deleting.")
             do {
-                try FileManager.default.removeItem(at: filePath)
-                ILOG("Deleted \(filePath.path).")
+                if FileManager.default.fileExists(atPath: filePath.path) {
+                    try FileManager.default.removeItem(at: filePath)
+                    ILOG("Deleted \(filePath.path).")
+                }
                 return true
             } catch {
                 ELOG("Deletion error: \(error.localizedDescription)")

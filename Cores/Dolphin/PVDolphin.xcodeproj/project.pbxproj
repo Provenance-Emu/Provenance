@@ -53,6 +53,23 @@
 		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		B3B2546727842AD600F97E55 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3B2546227842AD600F97E55 /* DolphiniOS.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B945A3702362908500B21680;
+			remoteInfo = DolphiniOS;
+		};
+		B3B2546927842AD600F97E55 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3B2546227842AD600F97E55 /* DolphiniOS.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B97DDCDA2666035A0083896C;
+			remoteInfo = DolphinATV;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		B30178D1207C901D0051B93D /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -14715,6 +14732,7 @@
 		B3A320472720A06C00F338F6 /* DolHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DolHost.h; sourceTree = "<group>"; };
 		B3A320482720A06D00F338F6 /* DolHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DolHost.mm; sourceTree = "<group>"; };
 		B3B104B8218F281B00210C39 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3B2546227842AD600F97E55 /* DolphiniOS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = DolphiniOS.xcodeproj; sourceTree = "<group>"; };
 		B3C7621020783162009950E4 /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621320783162009950E4 /* PVDolphin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVDolphin.h; sourceTree = "<group>"; };
 		B3C7621420783162009950E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -17812,6 +17830,7 @@
 				B316C2AC26E5C6720077FE46 /* DolphinATV */,
 				B316C2BB26E5C6720077FE46 /* DolphiniOS */,
 				B316C44A26E5C6730077FE46 /* DolphiniOS.xcworkspace */,
+				B3B2546227842AD600F97E55 /* DolphiniOS.xcodeproj */,
 				B316C44B26E5C6730077FE46 /* Common */,
 				B316C4AC26E5C6740077FE46 /* Podfile */,
 				B316C4AD26E5C6740077FE46 /* .bartycrouch.toml */,
@@ -38331,6 +38350,15 @@
 			path = Core;
 			sourceTree = "<group>";
 		};
+		B3B2546327842AD600F97E55 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B3B2546827842AD600F97E55 /* DolphiniOS.app */,
+				B3B2546A27842AD600F97E55 /* DolphinATV.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		B3C7620620783162009950E4 = {
 			isa = PBXGroup;
 			children = (
@@ -38537,6 +38565,12 @@
 			mainGroup = B3C7620620783162009950E4;
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = B3B2546327842AD600F97E55 /* Products */;
+					ProjectRef = B3B2546227842AD600F97E55 /* DolphiniOS.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				B3C7620F20783162009950E4 /* PVDolphin-iOS */,
@@ -38546,6 +38580,23 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		B3B2546827842AD600F97E55 /* DolphiniOS.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = DolphiniOS.app;
+			remoteRef = B3B2546727842AD600F97E55 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3B2546A27842AD600F97E55 /* DolphinATV.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = DolphinATV.app;
+			remoteRef = B3B2546927842AD600F97E55 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		B3447EDF218BEDD200557ACE /* Resources */ = {

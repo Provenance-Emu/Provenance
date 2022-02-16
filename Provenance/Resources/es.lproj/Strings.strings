@@ -1,0 +1,77 @@
+/*
+  Strings.strings
+  Provenance
+
+  Created by Joseph Mattiello on 8/16/21.
+  Copyright © 2021 Provenance Emu. All rights reserved.
+*/
+
+/* Loading and item */
+"Loading" = "Cargando";
+
+"App" = "Aplicación";
+"Core Options" = "Opciones de nucleos";
+"Auto Save" = "Guardado automático";
+"Timed Auto Saves" = "Guardados automáticos programados";
+"Auto Load Saves" = "Carga de partida automática";
+"Ask to Load Saves" = "Preguntar para cargar partida";
+"Opacity" = "Opacidad";
+"Saves" = "Partidas guardadas";
+"Video Options" = "Opciones de vídeo";
+
+"Button Colors" = "Colores de los botones";
+
+"All-Right Shoulders" = "Mueve L1, L2 y Z al lado derecho";
+
+"Haptic Feedback" = "Retroalimentación háptica";
+
+"Enable 8BitDo M30 Mapping" = "Habilitar mapeado 8BitDo M30";
+
+"Controllers" = "Mandos";
+"Controller" = "Mando";
+
+"iCade Controller" = "Mando iCade";
+
+"Appearance" = "Apariencia";
+
+"Build" = "Construcción";
+
+"Mode" = "Modo";
+
+"Git Revision" = "Revisión Git";
+"Build Data" = "Fecha de construcción";
+"Builder" = "Constructor";
+"Bundle ID" = "ID de paquete";
+"Unknown" = "Desconocido";
+"Cores" = "Núcleos";
+"Licenses" = "Licencias";
+"Logs" = "Registros";
+"Systems" = "Sistemas";
+"Volume HUD" = "Volumen HUD";
+"Native Scale" = "Escala nativa";
+"Integer Scaling" = "Escalado de enteros";
+"CRT Filter" = "Filtro CRT";
+"Image Smoothing" = "Suavizado de imagen";
+"FPS Counter" = "Contador de FPS";
+"Missing Buttons Always On-Screen" = "Botones faltantes siempre en pantalla";
+"iCloud Sync" = "Sincronización de iCloud";
+"Use Metal" = "Usar Metal";
+"Multi-threaded GL" = "GL de subprocesos múltiples";
+"4X Multisampling GL" = "GL multimuestreo 4X";
+"Disable Auto Lock" = "Desactivar bloqueo automático";
+"Launch Web Server" = "Iniciar servidor web";
+"Game Library" = "Biblioteca de juegos";
+"Refresh Game Library" = "Actualizar biblioteca de juegos";
+"Empty Image Cache" = "Caché de imagen vacía";
+"Manage Conflicts" = "Administrar conflictos";
+"Beta Features" = "Funciones beta";
+"Unknown" = "Desconocido";
+"Version" = "Versión";
+"Build Information" = "Información de compilación";
+"3rd Party & Legal" = "Terceros y legales";
+"Debug" = "Depurar";
+"No" = "No";
+"Empty Image Cache?" = "¿Vaciar cache de imagen?";
+"Yes" = "Sí";
+"Acknowledgements" = "Agradecimientos";
+"Database Error" = "Error de la base de datos";

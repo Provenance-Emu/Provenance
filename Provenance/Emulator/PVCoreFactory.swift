@@ -104,6 +104,12 @@ public final class PVCoreFactory: NSObject {
             } else {
                 fatalError("Core doesn't implement PV5200SystemResponderClient")
             }
+        case .Atari8bit:
+            if let core = core as? PV5200SystemResponderClient {
+                return PVAtari5200ControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else {
+                fatalError("Core doesn't implement PV5200SystemResponderClient")
+            }
         case .Atari7800:
             if let core = core as? PV7800SystemResponderClient {
                 return PVAtari7800ControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
@@ -170,7 +176,7 @@ public final class PVCoreFactory: NSObject {
             } else {
                 fatalError("Core doesn't implement PVPCFXSystemResponderClient")
             }
-        case .NGP, .NGPC:
+        case .NeoGeo, .NGP, .NGPC:
             if let core = core as? PVNeoGeoPocketSystemResponderClient {
                 return PVNeoGeoPocketControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else {
@@ -196,7 +202,7 @@ public final class PVCoreFactory: NSObject {
             }
         case .N64:
             if let core = core as? PVN64SystemResponderClient {
-                return PVN64ControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+				return PVN64ControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else {
                 fatalError("Core doesn't implement PVN64SystemResponderClient")
             }

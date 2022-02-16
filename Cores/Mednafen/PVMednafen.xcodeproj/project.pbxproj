@@ -607,7 +607,6 @@
 		B32CF1D1219240770058E2E7 /* libneogeopocket-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B32CF17821923F520058E2E7 /* libneogeopocket-tvOS.a */; };
 		B32CF1D2219240770058E2E7 /* libpce-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B32CF19F21923F790058E2E7 /* libpce-tvOS.a */; };
 		B32CF1D3219240770058E2E7 /* libpcefast-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B32CF1B121923F7F0058E2E7 /* libpcefast-tvOS.a */; };
-		B32CF1D4219240770058E2E7 /* libsegamastersystem-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B32CF1C421923F850058E2E7 /* libsegamastersystem-tvOS.a */; };
 		B32CF1D5219240770058E2E7 /* libvirtualboy-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B32CF15521923F330058E2E7 /* libvirtualboy-tvOS.a */; };
 		B32CF1D6219241EE0058E2E7 /* libhwvideo-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C34C21919C1C009F4EDC /* libhwvideo-tvOS.a */; };
 		B32CF1D7219241EE0058E2E7 /* libmednafen-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C42A21919D73009F4EDC /* libmednafen-tvOS.a */; };
@@ -913,7 +912,6 @@
 		B3335282207B02EB0036A448 /* libpce-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351CB207B01860036A448 /* libpce-iOS.a */; };
 		B3335283207B02EB0036A448 /* libpcefast-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351D8207B01970036A448 /* libpcefast-iOS.a */; };
 		B3335284207B02EB0036A448 /* libpcfx-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351FC207B020C0036A448 /* libpcfx-iOS.a */; };
-		B3335285207B02EB0036A448 /* libsegamastersystem-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351E5207B01C60036A448 /* libsegamastersystem-iOS.a */; };
 		B3335286207B02F70036A448 /* c65c02.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAC0020736EE80097D86F /* c65c02.cpp */; };
 		B3335287207B02F70036A448 /* cart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAC0120736EE80097D86F /* cart.cpp */; };
 		B3335288207B02F70036A448 /* memmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABEA20736EE80097D86F /* memmap.cpp */; };
@@ -1063,6 +1061,10 @@
 		B35D6689218185710005A992 /* v810_fp_ops.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE0020736EE90097D86F /* v810_fp_ops.cpp */; };
 		B35D6691218185A60005A992 /* libhwcpu-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B35D6690218185710005A992 /* libhwcpu-tvOS.a */; };
 		B36CBFED2039819100728482 /* PVMednafen.h in Headers */ = {isa = PBXBuildFile; fileRef = B340E4641E08887700AD0E8B /* PVMednafen.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B393F252277C0C1C0097F71C /* m68k.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADEB20736EE90097D86F /* m68k.cpp */; };
+		B393F260277C0C4E0097F71C /* m68k.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADEB20736EE90097D86F /* m68k.cpp */; };
+		B393F261277C109C0097F71C /* libhwcpu-m68k-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B393F251277C0BF70097F71C /* libhwcpu-m68k-iOS.a */; };
+		B393F262277C10A40097F71C /* libhwcpu-m68k-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B393F25F277C0C340097F71C /* libhwcpu-m68k-tvOS.a */; };
 		B3AAB425207379230097D86F /* stubs.mm in Sources */ = {isa = PBXBuildFile; fileRef = 94454E3B17852E61006C057B /* stubs.mm */; };
 		B3AAB43D2073820C0097D86F /* MednafenGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 824088350FFDDCF400F0FE7D /* MednafenGameCore.mm */; };
 		B3AAB43F2073820C0097D86F /* MednafenMultiDisc.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */; };
@@ -1241,7 +1243,6 @@
 		C6E1B64C25AAA042007C3CF1 /* rom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1E720736EEA0097D86F /* rom.cpp */; };
 		C6E1B64F25AAA24A007C3CF1 /* DSPUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2CC24880BF3000A3922 /* DSPUtility.cpp */; };
 		C6E1B65125AAA24A007C3CF1 /* SwiftResampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2CD24880BF3000A3922 /* SwiftResampler.cpp */; };
-		C6E1B65225AAA3EA007C3CF1 /* m68k.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADEB20736EE90097D86F /* m68k.cpp */; };
 		C6E1B66F25AAC1B1007C3CF1 /* scu_dsp_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB17B20736EEA0097D86F /* scu_dsp_misc.cpp */; };
 		C6E1B67025AAC1B1007C3CF1 /* scu_dsp_jmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB18020736EEA0097D86F /* scu_dsp_jmp.cpp */; };
 		C6E1B67125AAC1B1007C3CF1 /* 3dpad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB18920736EEA0097D86F /* 3dpad.cpp */; };
@@ -1275,7 +1276,6 @@
 		C6E1B68D25AAC1B2007C3CF1 /* cart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB21520736EEB0097D86F /* cart.cpp */; };
 		C6E1B68E25AAC1B2007C3CF1 /* vdp1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB21620736EEB0097D86F /* vdp1.cpp */; };
 		C6E1B68F25AAC1B2007C3CF1 /* scu_dsp_gen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB21820736EEB0097D86F /* scu_dsp_gen.cpp */; };
-		C6E1B69225AAC1FC007C3CF1 /* m68k.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADEB20736EE90097D86F /* m68k.cpp */; };
 		C6E1B69325AAC243007C3CF1 /* DSPUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2CC24880BF3000A3922 /* DSPUtility.cpp */; };
 		C6E1B69425AAC243007C3CF1 /* SwiftResampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2CD24880BF3000A3922 /* SwiftResampler.cpp */; };
 		C6E1B69525AAC5A3007C3CF1 /* libsaturn-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C6E1B66E25AAC123007C3CF1 /* libsaturn-iOS.a */; };
@@ -1456,6 +1456,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = B324C5E02191AD13009F4EDC;
 			remoteInfo = "wonderswan-tvOS";
+		};
+		B31737FD2783F8AF002D3ACD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B393F245277C0BF70097F71C;
+			remoteInfo = "hwcpu-m68k-iOS";
 		};
 		B34AB5872106DF8400C45F09 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1645,6 +1652,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = B35D6684218185710005A992;
 			remoteInfo = "hwcpu-tvOS";
+		};
+		B36C7D5227AE10F600715677 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B393F253277C0C340097F71C;
+			remoteInfo = "hwcpu-m68k-tvOS";
 		};
 		C6E1B64925AA9DC1007C3CF1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2138,6 +2152,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B393F24C277C0BF70097F71C /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B393F25A277C0C340097F71C /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3FBDEF6207FF0E300E661D1 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2314,6 +2346,8 @@
 		B34CB0EC2274BA81009134B4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B3547B5F205858EF00CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B35D6690218185710005A992 /* libhwcpu-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libhwcpu-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B393F251277C0BF70097F71C /* libhwcpu-m68k-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libhwcpu-m68k-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B393F25F277C0C340097F71C /* libhwcpu-m68k-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libhwcpu-m68k-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A74C8C20522B86001D3D2E /* MednafenGameCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MednafenGameCore.swift; sourceTree = "<group>"; };
 		B3AA9D6A20736B030097D86F /* README.PORTING */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.PORTING; sourceTree = "<group>"; };
 		B3AA9D6B20736B030097D86F /* acinclude.m4 */ = {isa = PBXFileReference; lastKnownFileType = text; path = acinclude.m4; sourceTree = "<group>"; };
@@ -4297,6 +4331,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B393F261277C109C0097F71C /* libhwcpu-m68k-iOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4391,7 +4426,6 @@
 				B3335282207B02EB0036A448 /* libpce-iOS.a in Frameworks */,
 				B3335283207B02EB0036A448 /* libpcefast-iOS.a in Frameworks */,
 				B3335284207B02EB0036A448 /* libpcfx-iOS.a in Frameworks */,
-				B3335285207B02EB0036A448 /* libsegamastersystem-iOS.a in Frameworks */,
 				B333519F207B01230036A448 /* libgb-iOS.a in Frameworks */,
 				B33350AE207B00080036A448 /* libnes-iOS.a in Frameworks */,
 				B333509C207AFF3F0036A448 /* libvirtualboy-iOS.a in Frameworks */,
@@ -4417,7 +4451,6 @@
 				B32CF1D1219240770058E2E7 /* libneogeopocket-tvOS.a in Frameworks */,
 				B32CF1D2219240770058E2E7 /* libpce-tvOS.a in Frameworks */,
 				B32CF1D3219240770058E2E7 /* libpcefast-tvOS.a in Frameworks */,
-				B32CF1D4219240770058E2E7 /* libsegamastersystem-tvOS.a in Frameworks */,
 				B32CF1D5219240770058E2E7 /* libvirtualboy-tvOS.a in Frameworks */,
 				B32CF14721923F030058E2E7 /* libhwaudio-tvOS.a in Frameworks */,
 				B324C62521920724009F4EDC /* libgba-tvOS.a in Frameworks */,
@@ -4442,6 +4475,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B35D668B218185710005A992 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B393F262277C10A40097F71C /* libhwcpu-m68k-tvOS.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B393F24B277C0BF70097F71C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B393F259277C0C340097F71C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -4613,6 +4661,8 @@
 				B32CF1CE219240270058E2E7 /* libhwmisc-tvOS.a */,
 				C6E1B62825AA9C15007C3CF1 /* libsaturn-tvOS.a */,
 				C6E1B66E25AAC123007C3CF1 /* libsaturn-iOS.a */,
+				B393F251277C0BF70097F71C /* libhwcpu-m68k-iOS.a */,
+				B393F25F277C0C340097F71C /* libhwcpu-m68k-tvOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -8332,6 +8382,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				B31737FE2783F8AF002D3ACD /* PBXTargetDependency */,
 			);
 			name = "hwcpu-iOS";
 			productName = hwcpu;
@@ -8593,10 +8644,45 @@
 			buildRules = (
 			);
 			dependencies = (
+				B36C7D5327AE10F600715677 /* PBXTargetDependency */,
 			);
 			name = "hwcpu-tvOS";
 			productName = hwcpu;
 			productReference = B35D6690218185710005A992 /* libhwcpu-tvOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B393F245277C0BF70097F71C /* hwcpu-m68k-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B393F24D277C0BF70097F71C /* Build configuration list for PBXNativeTarget "hwcpu-m68k-iOS" */;
+			buildPhases = (
+				B393F246277C0BF70097F71C /* Sources */,
+				B393F24B277C0BF70097F71C /* Frameworks */,
+				B393F24C277C0BF70097F71C /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "hwcpu-m68k-iOS";
+			productName = hwcpu;
+			productReference = B393F251277C0BF70097F71C /* libhwcpu-m68k-iOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B393F253277C0C340097F71C /* hwcpu-m68k-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B393F25B277C0C340097F71C /* Build configuration list for PBXNativeTarget "hwcpu-m68k-tvOS" */;
+			buildPhases = (
+				B393F254277C0C340097F71C /* Sources */,
+				B393F259277C0C340097F71C /* Frameworks */,
+				B393F25A277C0C340097F71C /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "hwcpu-m68k-tvOS";
+			productName = hwcpu;
+			productReference = B393F25F277C0C340097F71C /* libhwcpu-m68k-tvOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		B3FBDEF7207FF0E300E661D1 /* snes-iOS */ = {
@@ -8843,6 +8929,8 @@
 				B324C34421919C1C009F4EDC /* hwvideo-tvOS */,
 				B33352C0207B06730036A448 /* hwcpu-iOS */,
 				B35D6684218185710005A992 /* hwcpu-tvOS */,
+				B393F245277C0BF70097F71C /* hwcpu-m68k-iOS */,
+				B393F253277C0C340097F71C /* hwcpu-m68k-tvOS */,
 				B33352CD207B067F0036A448 /* hwmisc-iOS */,
 				B32CF1C5219240270058E2E7 /* hwmisc-tvOS */,
 				B333546E207B1B500036A448 /* cdrom-iOS */,
@@ -10044,7 +10132,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C6E1B69225AAC1FC007C3CF1 /* m68k.cpp in Sources */,
 				B33352E8207B07C20036A448 /* z80_ops.cpp in Sources */,
 				B33352E0207B06D70036A448 /* v810_cpu.cpp in Sources */,
 				B33352E9207B07FD0036A448 /* z80.cpp in Sources */,
@@ -10259,11 +10346,26 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C6E1B65225AAA3EA007C3CF1 /* m68k.cpp in Sources */,
 				B35D6686218185710005A992 /* z80_ops.cpp in Sources */,
 				B35D6687218185710005A992 /* v810_cpu.cpp in Sources */,
 				B35D6688218185710005A992 /* z80.cpp in Sources */,
 				B35D6689218185710005A992 /* v810_fp_ops.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B393F246277C0BF70097F71C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B393F252277C0C1C0097F71C /* m68k.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B393F254277C0C340097F71C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B393F260277C0C4E0097F71C /* m68k.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10627,6 +10729,11 @@
 			target = B324C5E02191AD13009F4EDC /* wonderswan-tvOS */;
 			targetProxy = 11389FC8248D4F6B0089CBFF /* PBXContainerItemProxy */;
 		};
+		B31737FE2783F8AF002D3ACD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B393F245277C0BF70097F71C /* hwcpu-m68k-iOS */;
+			targetProxy = B31737FD2783F8AF002D3ACD /* PBXContainerItemProxy */;
+		};
 		B34AB5882106DF8400C45F09 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B333502C207AFBA30036A448 /* psx-iOS */;
@@ -10761,6 +10868,11 @@
 			isa = PBXTargetDependency;
 			target = B35D6684218185710005A992 /* hwcpu-tvOS */;
 			targetProxy = B35D6692218185FF0005A992 /* PBXContainerItemProxy */;
+		};
+		B36C7D5327AE10F600715677 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B393F253277C0C340097F71C /* hwcpu-m68k-tvOS */;
+			targetProxy = B36C7D5227AE10F600715677 /* PBXContainerItemProxy */;
 		};
 		C6E1B64A25AA9DC1007C3CF1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -10948,7 +11060,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					WANT_GB_EMU,
 					WANT_GBA_EMU,
@@ -11597,7 +11709,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					WANT_GB_EMU,
 					WANT_GBA_EMU,
@@ -16321,6 +16433,188 @@
 			};
 			name = Release;
 		};
+		B393F24E277C0BF70097F71C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
+			};
+			name = Debug;
+		};
+		B393F24F277C0BF70097F71C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_OPTIMIZATION_LEVEL = 1;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B393F250277C0BF70097F71C /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_OPTIMIZATION_LEVEL = 1;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
+		B393F25C277C0C340097F71C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = 3;
+			};
+			name = Debug;
+		};
+		B393F25D277C0C340097F71C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_OPTIMIZATION_LEVEL = 1;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = 3;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B393F25E277C0C340097F71C /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_OPTIMIZATION_LEVEL = 1;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TARGETED_DEVICE_FAMILY = 3;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
 		B3FBDEFE207FF0E300E661D1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -17232,6 +17526,26 @@
 				B35D668E218185710005A992 /* Debug */,
 				B35D668F218185710005A992 /* Release */,
 				B324C4F02191A22A009F4EDC /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B393F24D277C0BF70097F71C /* Build configuration list for PBXNativeTarget "hwcpu-m68k-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B393F24E277C0BF70097F71C /* Debug */,
+				B393F24F277C0BF70097F71C /* Release */,
+				B393F250277C0BF70097F71C /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B393F25B277C0C340097F71C /* Build configuration list for PBXNativeTarget "hwcpu-m68k-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B393F25C277C0C340097F71C /* Debug */,
+				B393F25D277C0C340097F71C /* Release */,
+				B393F25E277C0C340097F71C /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

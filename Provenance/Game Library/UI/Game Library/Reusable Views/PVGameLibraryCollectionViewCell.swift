@@ -391,9 +391,11 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
     @IBOutlet private(set) var titleLabel: UILabel! {
         didSet {
             #if os(tvOS)
-                // The label's alpha will get set to 1 on focus
-                titleLabel.alpha = 1
-                titleLabel.textColor = UIColor.darkGray
+            // The label's alpha will get set to 1 on focus
+            titleLabel.alpha = 1
+            titleLabel.textColor = UIColor.darkGray
+            titleLabel.shadowColor = UIColor.init(white: 0.2, alpha: 0.5)
+            titleLabel.shadowOffset = .init(width: 0.5, height: 0.5)
             #endif
         }
     }
@@ -926,7 +928,12 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
             coordinator.addCoordinatedAnimations({ () -> Void in
                 if self.isFocused {
                     let transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
-                    self.superview?.bringSubviewToFront(self)
+                    if let header = self.superview?.subviews.filter({$0 is PVGameLibrarySectionHeaderView}).first {
+                        self.superview?.insertSubview(self, belowSubview: header)
+                    }
+                    else {
+                        self.superview?.bringSubviewToFront(self)
+                    }
                     if PVSettingsModel.shared.showGameBadges {
                         if #available(tvOS 11, *) {} else {
                             // Hide for non os 11 since we don't have the auto contentLayerView

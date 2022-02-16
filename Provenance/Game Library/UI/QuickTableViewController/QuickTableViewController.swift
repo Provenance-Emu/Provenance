@@ -31,9 +31,21 @@ open class QuickTableViewController: UIViewController, UITableViewDataSource, UI
 
   /// A Boolean value indicating if the controller clears the selection when the collection view appears.
   open var clearsSelectionOnViewWillAppear = true
+    
+  private var _selected:IndexPath?
 
   /// Returns the table view managed by the controller object.
-  open var tableView: UITableView = UITableView(frame: .zero, style: .grouped)
+    #if os(iOS) || os(macOS)
+        open var tableView: UITableView! = {
+            if #available(iOS 13.0, *) {
+                return UITableView(frame: .zero, style: .insetGrouped)
+            } else {
+                return UITableView(frame: .zero, style: .grouped)
+            }
+        }()
+    #else
+        open var tableView: UITableView = UITableView(frame: .zero, style: .grouped)
+    #endif
 
   /// The layout of sections and rows to display in the table view.
   open var tableContents: [Section] = [] {
@@ -84,6 +96,10 @@ open class QuickTableViewController: UIViewController, UITableViewDataSource, UI
     tableView.estimatedRowHeight = 44
     tableView.dataSource = self
     tableView.delegate = self
+    #if os(tvOS)
+    // leave some room on the left and right for tvOS focus animation scaling
+    tableView.layoutMargins = UIEdgeInsets(top:0, left:16, bottom:0, right:16)
+    #endif
   }
 
   open override func viewWillAppear(_ animated: Bool) {
@@ -118,6 +134,9 @@ open class QuickTableViewController: UIViewController, UITableViewDataSource, UI
     #if os(iOS)
       (cell as? SwitchCell)?.delegate = self
     #endif
+    #if os(tvOS)
+      cell.layer.cornerRadius = 12
+    #endif
     row.customize?(cell, row)
 
     return cell
@@ -136,6 +155,8 @@ open class QuickTableViewController: UIViewController, UITableViewDataSource, UI
   open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     let section = tableContents[indexPath.section]
     let row = section.rows[indexPath.row]
+      
+    _selected = indexPath   // remember this so we can restore focus after a reloadData
 
     switch (section, row) {
     case let (radio as RadioSection, option as OptionRowCompatible):
@@ -189,6 +210,13 @@ open class QuickTableViewController: UIViewController, UITableViewDataSource, UI
     }
   }
   #endif
+    
+#if os(tvOS)
+    public func indexPathForPreferredFocusedView(in tableView: UITableView) -> IndexPath? {
+        // set the focus to what was last selected
+        return _selected ?? IndexPath(row:0, section:0)
+    }
+#endif
 
 }
 

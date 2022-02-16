@@ -97,7 +97,7 @@ final class PVControllerSelectionViewController: UITableViewController {
             actionSheet.popoverPresentationController?.sourceRect = self.tableView.rectForRow(at: indexPath)
         }
 
-        for controller: GCController in GCController.controllers() {
+        for controller: GCController in PVControllerManager.shared.controllers() {
             var title = controller.vendorName ?? ""
 
             if controller == PVControllerManager.shared.player1 {

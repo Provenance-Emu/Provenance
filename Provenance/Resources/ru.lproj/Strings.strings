@@ -1,0 +1,79 @@
+/* 
+  Strings.strings
+  Provenance
+
+  Created by Joseph Mattiello on 8/16/21.
+  Copyright © 2021 Provenance Emu. All rights reserved.
+ 
+  Translated by Arthur Moore on 2/09/22 - Russian
+*/
+
+/* Loading and item */
+"Loading" = "Загружается";
+
+"App" = "Приложение";
+"Core Options" = "Настройки ядра";
+"Auto Save" = "Авто сохранение";
+"Timed Auto Saves" = "Авто сохранение по расписанию";
+"Auto Load Saves" = "Автоматически загружать сохраненные игры";
+"Ask to Load Saves" = "Запрашивать подтверждения загрузки сохраненной игры";
+"Opacity" = "Прозрачность";
+"Saves" = "Сохранённые игры";
+"Video Options" = "Настройки видео";
+
+"Button Colors" = "Цвета кнопок";
+
+"All-Right Shoulders" = "All-Right Shoulders";
+
+"Haptic Feedback" = "Тактильный отклик";
+
+"Enable 8BitDo M30 Mapping" = "Включить мапирование 8BitDo M30";
+
+"Controllers" = "Геймпады";
+"Controller" = "Геймпад";
+
+"iCade Controller" = "Геймпад iCade";
+
+"Appearance" = "Внешний вид";
+
+"Build" = "Сборка";
+
+"Mode" = "Режим";
+
+"Git Revision" = "Git Revision";
+"Build Data" = "Данные сборки";
+"Builder" = "Компайлер";
+"Bundle ID" = "ID пакета";
+"Unknown" = "Неизвестный";
+"Cores" = "Ядра";
+"Licenses" = "Лицензии";
+"Logs" = "Логи";
+"Systems" = "Системы";
+"Volume HUD" = "Объем HUD";
+"Native Scale" = "Оригинальное масштабирование";
+"Integer Scaling" = "Целочисленное масштабирование";
+"CRT Filter" = "Фильтр ЭЛТ";
+"Image Smoothing" = "Сглаживание изображения";
+"FPS Counter" = "Счетчик FPS";
+"Missing Buttons Always On-Screen" = "Отсутсвующие кнопки всегда на экране";
+"iCloud Sync" = "Синхронизация с iCloud";
+"Use Metal" = "Использовать Metal";
+"Multi-threaded GL" = "Многопоточный GL";
+"4X Multisampling GL" = "4X мультисэмплинг GL";
+"Disable Auto Lock" = "Отключить авто блокировку";
+"Launch Web Server" = "Запустить веб сервер";
+"Game Library" = "Библиотека Игр";
+"Refresh Game Library" = "Обновить библиотеку игр";
+"Empty Image Cache" = "Очистить Image Cache";
+"Manage Conflicts" = "Регулировать конфликты";
+"Beta Features" = "Бета функции";
+"Unknown" = "Неизвестный";
+"Version" = "Версия";
+"Build Information" = "Информация о сборке";
+"3rd Party & Legal" = "Третьи стороны и юридические лица";
+"Debug" = "Дебаггер";
+"No" = "Нет";
+"Empty Image Cache?" = "Очистить Image Cache?";
+"Yes" = "Да";
+"Acknowledgements" = "Благодарности";
+"Database Error" = "Ошибка датабазы";

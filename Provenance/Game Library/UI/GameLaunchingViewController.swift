@@ -393,9 +393,18 @@ extension GameLaunchingViewController where Self: UIViewController {
             return
         }
 
-        let cores = system.cores.sorted(byKeyPath: "projectName").filter({ return !$0.disabled })
+        let cores = system.cores
+            .sorted(byKeyPath: "projectName")
+            .filter({
+                guard !$0.disabled else {
+                    return PVSettingsModel.shared.debugOptions.experimentalCores
+                }
+                return true
+            })
+//            .distinct(by: #keyPath(\PVSystem.name))
+            .sorted { $0.supportedSystems.count <= $1.supportedSystems.count }
 
-        let coreChoiceAlert = UIAlertController(title: "Multiple cores found", message: "Select which core to use with this game.", preferredStyle: .actionSheet)
+        let coreChoiceAlert = UIAlertController(title: "Multiple cores found", message: "Select which core to use with this game. If not sure, select the 1st option.", preferredStyle: .actionSheet)
         if traitCollection.userInterfaceIdiom == .pad, let senderView = sender as? UIView ?? self.view {
             coreChoiceAlert.popoverPresentationController?.sourceView = senderView
             coreChoiceAlert.popoverPresentationController?.sourceRect = senderView.bounds
@@ -403,7 +412,8 @@ extension GameLaunchingViewController where Self: UIViewController {
 
         for core in cores {
             let action = UIAlertAction(title: core.projectName, style: .default) { [unowned self] _ in
-                let alwaysUseAlert = UIAlertController(title: nil, message: "Open with \(core.projectName)…", preferredStyle: .actionSheet)
+                let message = "Open with \(core.projectName)…"
+                let alwaysUseAlert = UIAlertController(title: nil, message: message, preferredStyle: .actionSheet)
                 if self.traitCollection.userInterfaceIdiom == .pad, let senderView = sender as? UIView ?? self.view {
                     alwaysUseAlert.popoverPresentationController?.sourceView = senderView
                     alwaysUseAlert.popoverPresentationController?.sourceRect = senderView.bounds
@@ -471,7 +481,12 @@ extension GameLaunchingViewController where Self: UIViewController {
                 return
             }
 
-            let cores = system.cores
+            let cores = system.cores.filter({
+                guard !$0.disabled else {
+                    return PVSettingsModel.shared.debugOptions.experimentalCores
+                }
+                return true
+            })
 
             guard !cores.isEmpty else {
                 displayAndLogError(withTitle: "Cannot open game", message: "No core found for game system '\(system.shortName)'.")
@@ -572,7 +587,7 @@ extension GameLaunchingViewController where Self: UIViewController {
             // Open the save state after a bootup delay if the user selected one
             // Use a timer loop on ios 10+ to check if the emulator has started running
             if let saveState = saveState {
-                emulatorViewController.glViewController.view.isHidden = true
+                emulatorViewController.gpuViewController.view.isHidden = true
                 _ = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true, block: {[weak self] timer in
 					guard let self = self else {
 						timer.invalidate()
@@ -581,7 +596,7 @@ extension GameLaunchingViewController where Self: UIViewController {
                     if !emulatorViewController.core.isEmulationPaused {
                         timer.invalidate()
                         self.openSaveState(saveState)
-                        emulatorViewController.glViewController.view.isHidden = false
+                        emulatorViewController.gpuViewController.view.isHidden = false
                     }
                 })
             }
@@ -662,6 +677,7 @@ extension GameLaunchingViewController where Self: UIViewController {
                     #endif
                     completion(latestSaveState)
                 }))
+                alert.preferredAction = alert.actions.last
 
                 #if os(tvOS)
                     // Continue Always

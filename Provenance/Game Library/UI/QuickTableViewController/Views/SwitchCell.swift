@@ -28,7 +28,7 @@ import UIKit
 
 /// The `SwitchCellDelegate` protocol allows the adopting delegate to respond to the UI interaction. Not available on tvOS.
 @available(tvOS, unavailable, message: "SwitchCellDelegate is not available on tvOS.")
-public protocol SwitchCellDelegate: class {
+public protocol SwitchCellDelegate: AnyObject {
   /// Tells the delegate that the switch control is toggled.
   func switchCell(_ cell: SwitchCell, didToggleSwitch isOn: Bool)
 }

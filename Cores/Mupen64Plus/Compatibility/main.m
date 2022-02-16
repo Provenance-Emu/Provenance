@@ -36,16 +36,19 @@ void new_vi(void)
     
 	struct r4300_core* r4300 = &g_dev.r4300;
 
-	if (g_gs_vi_counter < 60)
-	{
+	if (g_gs_vi_counter < 60) {
 		if (g_gs_vi_counter == 0)
 			cheat_apply_cheats(&g_cheat_ctx, r4300, ENTRY_BOOT);
 		g_gs_vi_counter++;
-	}
-	else
-	{
+	} else {
 		cheat_apply_cheats(&g_cheat_ctx, r4300, ENTRY_VI);
 	}
+    
+    // TODO: Maybe fix speed/pause here?
+//    apply_speed_limiter();
+//    main_check_inputs();
+
+//    pause_loop();
 
     [current videoInterrupt];
 }
