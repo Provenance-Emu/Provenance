@@ -17,16 +17,17 @@
 <a href="https://github.com/Provenance-Emu/Provenance/graphs/contributors">
   <img src="https://img.shields.io/github/contributors/provenance-emu/Provenance.svg?style=flat-square"/>
 </a>
+<img alt="GitHub all releases" src="https://img.shields.io/github/downloads/provenance-emu/provenance/total?logo=github&style=flat-square">
+</br>  
 <img src="https://img.shields.io/github/languages/count/provenance-emu/provenance.svg?style=flat-square"/>
-<a href="https://codecov.io/gh/Provenance-Emu/Provenance">
-  <img src="https://codecov.io/gh/Provenance-Emu/Provenance/branch/develop/graph/badge.svg"/>
-</a>
-<a href="https://travis-ci.org/Provenance-Emu/Provenance#">
-  <img src="https://travis-ci.org/Provenance-Emu/Provenance.svg?branch=develop"/>
-</a>
+<img alt="GitHub top language" src="https://img.shields.io/github/languages/top/provenance-emu/provenance?style=flat-square">
+<img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/provenance-emu/provenance?style=flat-square">
+<img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/provenance-emu/provenance">
+<img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/Provenance-EMU/Provenance">
 </div>
 
 </br>
+
 <p align="center">
 <a href="https://www.patreon.com/bePatron?u=8537745">
   <img src="https://user-images.githubusercontent.com/399864/139607496-983c7220-3aae-46f6-8369-ebd45d4c7f06.png" height="65" />
@@ -35,8 +36,40 @@
   <img src="https://user-images.githubusercontent.com/399864/140426153-b6797d7d-c82f-4542-89ff-b29a3e70525d.jpg"  height="65" />
 </a>
  </p>
+ <div style="align:center" align="center">
+ <img alt="Open Collective backers and sponsors" src="https://img.shields.io/opencollective/all/provenanceemu?logo=OpenCollective">
+<img alt="GitHub Sponsors" src="https://img.shields.io/github/sponsors/Provenance-EMU?logo=GitHub&style=flat-square">
+  </div>
 </br>
 
+### Release Roadmap
+
+![GitHub Release](https://img.shields.io/github/release/provenance-emu/provenance.svg?style=flat-square) 
+![GitHub Release Date](https://img.shields.io/github/release-date/provenance-emu/provenance.svg?style=flat-square)
+![Github commits (since latest release)](https://img.shields.io/github/commits-since/provenance-emu/provenance/latest.svg?style=flat-square) 
+![GitHub milestone](https://img.shields.io/github/milestones/progress/provenance-emu/provenance/10?style=flat-square)
+![GitHub last commit](https://img.shields.io/github/last-commit/provenance-emu/provenance?style=flat-square)
+
+We track upcoming releases in our GitHub [Milestones](https://github.com/Provenance-Emu/Provenance/milestones?direction=asc&sort=title&state=open). Keep in mind they are subject to change.
+
+### Issues
+
+<span>
+<img alt="GitHub closed issues" src="https://img.shields.io/github/issues-closed-raw/provenance-emu/provenance">
+<img alt="GitHub closed pull requests" src="https://img.shields.io/github/issues-pr-closed-raw/provenance-emu/provenance?style=flat-square">
+<img alt="GitHub issues" src="https://img.shields.io/github/issues/provenance-emu/provenance?style=flat-square">
+<img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr-raw/provenance-emu/provenance?style=flat-square">
+</span>
+
+### Community
+
+[![Discord Widget](https://img.shields.io/discord/421819941835243520.svg?style=flat-square)](https://discord.gg/4TK7PU5)
+<a href="https://www.twitch.tv/joe__codes"><img alt="Twitch Status" src="https://img.shields.io/twitch/status/joe__codes?style=flat-square"></a>
+![Twitter Follow](https://img.shields.io/twitter/follow/provenanceapp.svg?style=social&logo=twitter&label=Follow)
+<img alt="YouTube Channel Subscribers" src="https://img.shields.io/youtube/channel/subscribers/UCKeN6unYKdayfgLWulXgB1w?style=social">
+
+💬 Join us and the rest of the community on the [Provenence-Emu Discord](https://discord.gg/4TK7PU5).<br><br>
+  
 ## Installation
 
 To get started, please follow the [Installation](https://wiki.provenance-emu.com/installation-and-usage/installing-provenance) instructions on the wiki.
@@ -200,19 +233,11 @@ Please consider supporting those you love or want to see improved!
 ----
 
 ### Importing ROMs
+
 Visit our wiki on [Importing ROMs](https://wiki.provenance-emu.com/installation-and-usage/roms/importing-roms) to learn how to load ROMs into Provenance.
 
-
-### Release Roadmap
-![GitHub Release](https://img.shields.io/github/release/provenance-emu/provenance.svg?style=flat-square) 
-![GitHub Release Date](https://img.shields.io/github/release-date/provenance-emu/provenance.svg?style=flat-square)
-![Github commits (since latest release)](https://img.shields.io/github/commits-since/provenance-emu/provenance/latest.svg?style=flat-square) 
-[![Travis](https://img.shields.io/travis/provenance-emu/provenance.svg?style=flat-square)](https://travis-ci.org/Provenance-Emu/Provenance)
-
-We track upcoming releases in our GitHub [Milestones](https://github.com/Provenance-Emu/Provenance/milestones?direction=asc&sort=title&state=open). Keep in mind they are subject to change.
-
-
 ### <a id="contributions-footnote"></a>Contributions
+
 [![GitHub open issues](https://img.shields.io/github/issues-raw/provenance-emu/Provenance.svg?style=flat-square)](https://github.com/provenance-emu/Provenance/issues)
 [![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/provenance-emu/Provenance.svg?style=flat-square)](https://github.com/provenance-emu/Provenance/issues)
 ![GitHub open pull requests](https://img.shields.io/github/issues-pr-raw/provenance-emu/provenance.svg?style=flat-square)
@@ -226,12 +251,6 @@ To contribute to the Provenance project please take look at the [open issues](ht
 Before posting new issues, we ask you to please read up on [Issues Usage](https://github.com/Provenance-Emu/Provenance/wiki/Issues-Usage). If you just want to give us a a shout out,  twitter: [@provenanceapp](https://twitter.com/provenanceapp), and of course, new GitHub contributors are always welcome. _Thank you._
 
 <sup>° Please note that Issues _is not_ a discussion board _nor_ a help desk. Please help us keep it focused on improving Provenance. </sup><br> 
-
-### Community
-[![Discord Widget](https://img.shields.io/discord/421819941835243520.svg?style=flat-square)](https://discord.gg/4TK7PU5)
-![Twitter Follow](https://img.shields.io/twitter/follow/provenanceapp.svg?style=social&logo=twitter&label=Follow)
-
-💬 Join us and the rest of the community on the [Provenence-Emu Discord](https://discord.gg/4TK7PU5).<br><br>
 
 ----
 
