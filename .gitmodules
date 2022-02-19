@@ -76,3 +76,6 @@
 [submodule "Cores/FinalBurnNeo/FBNeo"]
 	path = Cores/FinalBurnNeo/FBNeo
 	url = https://github.com/Provenance-Emu/FBNeo.git
+[submodule "Cores/FCEU/fceux"]
+	path = Cores/FCEU/fceux
+	url = https://github.com/Provenance-Emu/fceux.git
