@@ -378,7 +378,9 @@ bool FCEUI_AviEnableHUDrecording() {return false;}
 bool FCEUI_AviIsRecording(void) {return false;}
 bool FCEUI_AviDisableMovieMessages() {return true;}
 FCEUFILE *FCEUD_OpenArchiveIndex(ArchiveScanRecord &asr, std::string &fname, int innerIndex) {return 0;}
+FCEUFILE *FCEUD_OpenArchiveIndex(ArchiveScanRecord &asr, std::string &fname, int innerIndex, int* userCancel) {return 0;}
 FCEUFILE *FCEUD_OpenArchive(ArchiveScanRecord &asr, std::string &fname, std::string *innerFilename) {return 0;}
+FCEUFILE *FCEUD_OpenArchive(ArchiveScanRecord &asr, std::string &fname, std::string *innerFilename, int* userCancel) {return 0;}
 ArchiveScanRecord FCEUD_ScanArchive(std::string fname) { return ArchiveScanRecord(); }
 void FCEUD_PrintError(const char *s)
 {

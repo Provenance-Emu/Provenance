@@ -94,6 +94,53 @@
 		B34AB5822106DDCC00C45F09 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34AB5812106DDCC00C45F09 /* PVSupport.framework */; };
 		B3547B4B205857B900CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B4A205857B900CFF7D8 /* Core.plist */; };
 		B3547B4C205857B900CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B4A205857B900CFF7D8 /* Core.plist */; };
+		B391F2D427C1695700730B53 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B391F2D227C1695700730B53 /* CoreFoundation.framework */; };
+		B391F2D527C1695700730B53 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B391F2D327C1695700730B53 /* Foundation.framework */; };
+		B391F2D727C1696A00730B53 /* liblzma.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B391F2D627C1696A00730B53 /* liblzma.tbd */; };
+		B391F2D927C16AC200730B53 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B391F2D827C16AC100730B53 /* OpenGL.framework */; platformFilter = maccatalyst; };
+		B391F2DA27C16ACA00730B53 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3A79AF1ABF1D41002274A3 /* OpenGLES.framework */; };
+		B391F2DC27C1710400730B53 /* hypershot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3B327C09C5B0012118D /* hypershot.cpp */; };
+		B391F2DD27C1710400730B53 /* hypershot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3B327C09C5B0012118D /* hypershot.cpp */; };
+		B391F2DE27C1715000730B53 /* fns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3C627C09C5B0012118D /* fns.cpp */; };
+		B391F2DF27C1715000730B53 /* ftrainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3B627C09C5B0012118D /* ftrainer.cpp */; };
+		B391F2E027C1715000730B53 /* arkanoid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3C227C09C5B0012118D /* arkanoid.cpp */; };
+		B391F2E127C1715000730B53 /* cursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3C427C09C5B0012118D /* cursor.cpp */; };
+		B391F2E227C1715000730B53 /* virtualboy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3B527C09C5B0012118D /* virtualboy.cpp */; };
+		B391F2E327C1715000730B53 /* oekakids.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3B727C09C5B0012118D /* oekakids.cpp */; };
+		B391F2E427C1715000730B53 /* zapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3BB27C09C5B0012118D /* zapper.cpp */; };
+		B391F2E527C1715000730B53 /* toprider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3BD27C09C5B0012118D /* toprider.cpp */; };
+		B391F2E627C1715000730B53 /* powerpad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3BA27C09C5B0012118D /* powerpad.cpp */; };
+		B391F2E727C1715000730B53 /* pec586kb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3C127C09C5B0012118D /* pec586kb.cpp */; };
+		B391F2E827C1715000730B53 /* shadow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3B127C09C5B0012118D /* shadow.cpp */; };
+		B391F2E927C1715000730B53 /* bworld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3C527C09C5B0012118D /* bworld.cpp */; };
+		B391F2EA27C1715000730B53 /* lcdcompzapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3C727C09C5B0012118D /* lcdcompzapper.cpp */; };
+		B391F2EB27C1715000730B53 /* fkb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3B927C09C5B0012118D /* fkb.cpp */; };
+		B391F2EC27C1715000730B53 /* mouse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3B827C09C5B0012118D /* mouse.cpp */; };
+		B391F2ED27C1715000730B53 /* mahjong.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3C027C09C5B0012118D /* mahjong.cpp */; };
+		B391F2EE27C1715000730B53 /* snesmouse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3B227C09C5B0012118D /* snesmouse.cpp */; };
+		B391F2EF27C1715000730B53 /* suborkb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3BF27C09C5B0012118D /* suborkb.cpp */; };
+		B391F2F027C1715000730B53 /* quiz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3B427C09C5B0012118D /* quiz.cpp */; };
+		B391F2F127C1715000730B53 /* fns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3C627C09C5B0012118D /* fns.cpp */; };
+		B391F2F227C1715000730B53 /* ftrainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3B627C09C5B0012118D /* ftrainer.cpp */; };
+		B391F2F327C1715000730B53 /* arkanoid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3C227C09C5B0012118D /* arkanoid.cpp */; };
+		B391F2F427C1715000730B53 /* cursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3C427C09C5B0012118D /* cursor.cpp */; };
+		B391F2F527C1715000730B53 /* virtualboy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3B527C09C5B0012118D /* virtualboy.cpp */; };
+		B391F2F627C1715000730B53 /* oekakids.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3B727C09C5B0012118D /* oekakids.cpp */; };
+		B391F2F727C1715000730B53 /* zapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3BB27C09C5B0012118D /* zapper.cpp */; };
+		B391F2F827C1715000730B53 /* toprider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3BD27C09C5B0012118D /* toprider.cpp */; };
+		B391F2F927C1715000730B53 /* powerpad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3BA27C09C5B0012118D /* powerpad.cpp */; };
+		B391F2FA27C1715000730B53 /* pec586kb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3C127C09C5B0012118D /* pec586kb.cpp */; };
+		B391F2FB27C1715000730B53 /* shadow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3B127C09C5B0012118D /* shadow.cpp */; };
+		B391F2FC27C1715000730B53 /* bworld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3C527C09C5B0012118D /* bworld.cpp */; };
+		B391F2FD27C1715000730B53 /* lcdcompzapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3C727C09C5B0012118D /* lcdcompzapper.cpp */; };
+		B391F2FE27C1715000730B53 /* fkb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3B927C09C5B0012118D /* fkb.cpp */; };
+		B391F2FF27C1715000730B53 /* mouse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3B827C09C5B0012118D /* mouse.cpp */; };
+		B391F30027C1715000730B53 /* mahjong.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3C027C09C5B0012118D /* mahjong.cpp */; };
+		B391F30127C1715000730B53 /* snesmouse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3B227C09C5B0012118D /* snesmouse.cpp */; };
+		B391F30227C1715000730B53 /* suborkb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3BF27C09C5B0012118D /* suborkb.cpp */; };
+		B391F30327C1715000730B53 /* quiz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3B427C09C5B0012118D /* quiz.cpp */; };
+		B391F30427C172B600730B53 /* vidblit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB37C27C09C5B0012118D /* vidblit.cpp */; };
+		B391F30527C172B700730B53 /* vidblit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB37C27C09C5B0012118D /* vidblit.cpp */; };
 		B39E8CB320539B2500380DCD /* PVFCEUEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39E8CB220539B2500380DCD /* PVFCEUEmulatorCore.swift */; };
 		B39E8CB420539B2500380DCD /* PVFCEUEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39E8CB220539B2500380DCD /* PVFCEUEmulatorCore.swift */; };
 		B3A9F43A1DE877B4008450F5 /* PVFCEU.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A9F4381DE877B4008450F5 /* PVFCEU.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1107,6 +1154,11 @@
 		B34AB5592106D57B00C45F09 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B34AB5812106DDCC00C45F09 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3547B4A205857B900CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
+		B391F2B627C14FA300730B53 /* BuildFlags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
+		B391F2D227C1695700730B53 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
+		B391F2D327C1695700730B53 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		B391F2D627C1696A00730B53 /* liblzma.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = liblzma.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/usr/lib/liblzma.tbd; sourceTree = DEVELOPER_DIR; };
+		B391F2D827C16AC100730B53 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
 		B39E8CB220539B2500380DCD /* PVFCEUEmulatorCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVFCEUEmulatorCore.swift; sourceTree = "<group>"; };
 		B3A9F4361DE877B4008450F5 /* PVFCEU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVFCEU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A9F4381DE877B4008450F5 /* PVFCEU.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVFCEU.h; sourceTree = "<group>"; };
@@ -2318,6 +2370,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B391F2DA27C16ACA00730B53 /* OpenGLES.framework in Frameworks */,
+				B391F2D927C16AC200730B53 /* OpenGL.framework in Frameworks */,
+				B391F2D727C1696A00730B53 /* liblzma.tbd in Frameworks */,
+				B391F2D427C1695700730B53 /* CoreFoundation.framework in Frameworks */,
+				B391F2D527C1695700730B53 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2334,6 +2391,7 @@
 		1A3A74DF1ABF11AC002274A3 = {
 			isa = PBXGroup;
 			children = (
+				B391F2B627C14FA300730B53 /* BuildFlags.xcconfig */,
 				1A3A74EA1ABF11AC002274A3 /* PVFCEU */,
 				B3A9F4371DE877B4008450F5 /* PVFCEU */,
 				1A3A79B41ABF1DB2002274A3 /* Frameworks */,
@@ -2690,6 +2748,10 @@
 		1A3A79B41ABF1DB2002274A3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B391F2D827C16AC100730B53 /* OpenGL.framework */,
+				B391F2D627C1696A00730B53 /* liblzma.tbd */,
+				B391F2D227C1695700730B53 /* CoreFoundation.framework */,
+				B391F2D327C1695700730B53 /* Foundation.framework */,
 				B34AB5812106DDCC00C45F09 /* PVSupport.framework */,
 				B34AB5592106D57B00C45F09 /* PVSupport.framework */,
 				B3A9F6341DE8842C008450F5 /* libz.tbd */,
@@ -3510,30 +3572,30 @@
 		B3BCB3B027C09C5B0012118D /* input */ = {
 			isa = PBXGroup;
 			children = (
+				B3BCB3C227C09C5B0012118D /* arkanoid.cpp */,
+				B3BCB3C527C09C5B0012118D /* bworld.cpp */,
+				B3BCB3C427C09C5B0012118D /* cursor.cpp */,
+				B3BCB3B927C09C5B0012118D /* fkb.cpp */,
+				B3BCB3C627C09C5B0012118D /* fns.cpp */,
+				B3BCB3B627C09C5B0012118D /* ftrainer.cpp */,
+				B3BCB3B327C09C5B0012118D /* hypershot.cpp */,
+				B3BCB3C727C09C5B0012118D /* lcdcompzapper.cpp */,
+				B3BCB3C027C09C5B0012118D /* mahjong.cpp */,
+				B3BCB3B827C09C5B0012118D /* mouse.cpp */,
+				B3BCB3B727C09C5B0012118D /* oekakids.cpp */,
+				B3BCB3C127C09C5B0012118D /* pec586kb.cpp */,
+				B3BCB3BA27C09C5B0012118D /* powerpad.cpp */,
+				B3BCB3B427C09C5B0012118D /* quiz.cpp */,
 				B3BCB3B127C09C5B0012118D /* shadow.cpp */,
 				B3BCB3B227C09C5B0012118D /* snesmouse.cpp */,
-				B3BCB3B327C09C5B0012118D /* hypershot.cpp */,
-				B3BCB3B427C09C5B0012118D /* quiz.cpp */,
+				B3BCB3BF27C09C5B0012118D /* suborkb.cpp */,
+				B3BCB3BD27C09C5B0012118D /* toprider.cpp */,
 				B3BCB3B527C09C5B0012118D /* virtualboy.cpp */,
-				B3BCB3B627C09C5B0012118D /* ftrainer.cpp */,
-				B3BCB3B727C09C5B0012118D /* oekakids.cpp */,
-				B3BCB3B827C09C5B0012118D /* mouse.cpp */,
-				B3BCB3B927C09C5B0012118D /* fkb.cpp */,
-				B3BCB3BA27C09C5B0012118D /* powerpad.cpp */,
 				B3BCB3BB27C09C5B0012118D /* zapper.cpp */,
 				B3BCB3BC27C09C5B0012118D /* fkb.h */,
-				B3BCB3BD27C09C5B0012118D /* toprider.cpp */,
 				B3BCB3BE27C09C5B0012118D /* share.h */,
-				B3BCB3BF27C09C5B0012118D /* suborkb.cpp */,
-				B3BCB3C027C09C5B0012118D /* mahjong.cpp */,
-				B3BCB3C127C09C5B0012118D /* pec586kb.cpp */,
-				B3BCB3C227C09C5B0012118D /* arkanoid.cpp */,
-				B3BCB3C327C09C5B0012118D /* zapper.h */,
-				B3BCB3C427C09C5B0012118D /* cursor.cpp */,
-				B3BCB3C527C09C5B0012118D /* bworld.cpp */,
-				B3BCB3C627C09C5B0012118D /* fns.cpp */,
-				B3BCB3C727C09C5B0012118D /* lcdcompzapper.cpp */,
 				B3BCB3C827C09C5B0012118D /* suborkb.h */,
+				B3BCB3C327C09C5B0012118D /* zapper.h */,
 			);
 			path = input;
 			sourceTree = "<group>";
@@ -4659,24 +4721,30 @@
 			files = (
 				B3AAF55327C0A94B001CAE1F /* 193.cpp in Sources */,
 				B3AAF57327C0A94B001CAE1F /* inlnsf.cpp in Sources */,
+				B391F30427C172B600730B53 /* vidblit.cpp in Sources */,
 				B3AAF52827C0A94B001CAE1F /* 103.cpp in Sources */,
 				B3AAF54227C0A94B001CAE1F /* 28.cpp in Sources */,
 				B3AAF57927C0A94B001CAE1F /* 158B.cpp in Sources */,
 				B3AAF5AB27C0A94B001CAE1F /* 33.cpp in Sources */,
 				B3AAF67227C0AA43001CAE1F /* nes_ntsc.c in Sources */,
 				B3AAF51B27C0A94B001CAE1F /* 8157.cpp in Sources */,
+				B391F2E527C1715000730B53 /* toprider.cpp in Sources */,
 				B3AAF52C27C0A94B001CAE1F /* 62.cpp in Sources */,
 				B30C094927C0AB6F009F25D0 /* conddebug.cpp in Sources */,
 				B3AAF67527C0AA43001CAE1F /* scale2x.cpp in Sources */,
 				B3AAF59C27C0A94B001CAE1F /* lh53.cpp in Sources */,
 				B3AAF54C27C0A94B001CAE1F /* vrc2and4.cpp in Sources */,
+				B391F2EA27C1715000730B53 /* lcdcompzapper.cpp in Sources */,
 				B3AAF5B427C0A94B001CAE1F /* et-4320.cpp in Sources */,
 				B3AAF56627C0A94B001CAE1F /* ac-08.cpp in Sources */,
 				B3AAF52027C0A94B001CAE1F /* pec-586.cpp in Sources */,
+				B391F2E227C1715000730B53 /* virtualboy.cpp in Sources */,
 				B3AAF57D27C0A94B001CAE1F /* 176.cpp in Sources */,
+				B391F2E127C1715000730B53 /* cursor.cpp in Sources */,
 				B3AAF53827C0A94B001CAE1F /* 225.cpp in Sources */,
 				B3AAF54B27C0A94B001CAE1F /* 51.cpp in Sources */,
 				B30C097A27C0ABC4009F25D0 /* md5.cpp in Sources */,
+				B391F2E627C1715000730B53 /* powerpad.cpp in Sources */,
 				B3AAF52427C0A94B001CAE1F /* 235.cpp in Sources */,
 				B30C093E27C0AB6F009F25D0 /* wave.cpp in Sources */,
 				B3AAF55E27C0A94B001CAE1F /* sc-127.cpp in Sources */,
@@ -4689,6 +4757,7 @@
 				B3AAF55F27C0A94B001CAE1F /* n106.cpp in Sources */,
 				B3AAF55D27C0A94B001CAE1F /* sb-2000.cpp in Sources */,
 				B3AAF52D27C0A94B001CAE1F /* 36.cpp in Sources */,
+				B391F2EB27C1715000730B53 /* fkb.cpp in Sources */,
 				B3AAF55127C0A94B001CAE1F /* 32.cpp in Sources */,
 				B3AAF53927C0A94B001CAE1F /* 164.cpp in Sources */,
 				B30C097327C0ABC4009F25D0 /* crc32.cpp in Sources */,
@@ -4729,6 +4798,7 @@
 				B3AAF53B27C0A94B001CAE1F /* emu2413.c in Sources */,
 				B3AAF52B27C0A94B001CAE1F /* 170.cpp in Sources */,
 				B3AAF58327C0A94B001CAE1F /* ax5705.cpp in Sources */,
+				B391F2E027C1715000730B53 /* arkanoid.cpp in Sources */,
 				B30C095427C0AB6F009F25D0 /* cart.cpp in Sources */,
 				B3AAF5AF27C0A94B001CAE1F /* transformer.cpp in Sources */,
 				B3AAF5A027C0A94B001CAE1F /* yoko.cpp in Sources */,
@@ -4754,6 +4824,7 @@
 				B3AAF66B27C0AA43001CAE1F /* os_utils.cpp in Sources */,
 				B3AAF55927C0A94B001CAE1F /* 234.cpp in Sources */,
 				B30C097627C0ABC4009F25D0 /* ioapi.cpp in Sources */,
+				B391F2F027C1715000730B53 /* quiz.cpp in Sources */,
 				B3AAF57527C0A94B001CAE1F /* mmc2and4.cpp in Sources */,
 				B3AAF58F27C0A94B001CAE1F /* bb.cpp in Sources */,
 				B3AAF5A727C0A94B001CAE1F /* vrc7p.cpp in Sources */,
@@ -4762,11 +4833,14 @@
 				B3AAF59927C0A94B001CAE1F /* malee.cpp in Sources */,
 				B3AAF67627C0AA43001CAE1F /* config.cpp in Sources */,
 				B3AAF52A27C0A94B001CAE1F /* 208.cpp in Sources */,
+				B391F2ED27C1715000730B53 /* mahjong.cpp in Sources */,
+				B391F2DC27C1710400730B53 /* hypershot.cpp in Sources */,
 				B30C093C27C0AB6F009F25D0 /* movie.cpp in Sources */,
 				B3AAF53327C0A94B001CAE1F /* 186.cpp in Sources */,
 				B3AAF59727C0A94B001CAE1F /* 246.cpp in Sources */,
 				B3AAF56027C0A94B001CAE1F /* 187.cpp in Sources */,
 				B3AAF52527C0A94B001CAE1F /* famicombox.cpp in Sources */,
+				B391F2EF27C1715000730B53 /* suborkb.cpp in Sources */,
 				B3AAF53C27C0A94B001CAE1F /* 99.cpp in Sources */,
 				B3AAF56127C0A94B001CAE1F /* sachen.cpp in Sources */,
 				B3AAF51F27C0A94B001CAE1F /* sl1632.cpp in Sources */,
@@ -4794,14 +4868,15 @@
 				B3AAF55727C0A94B001CAE1F /* bs4xxxr.cpp in Sources */,
 				B3AAF54827C0A94B001CAE1F /* 189.cpp in Sources */,
 				B3AAF5AA27C0A94B001CAE1F /* 90.cpp in Sources */,
-				B30C094527C0AB6F009F25D0 /* file.cpp in Sources */,
 				B3AAF54927C0A94B001CAE1F /* ks7030.cpp in Sources */,
 				B3AAF57C27C0A94B001CAE1F /* 190.cpp in Sources */,
 				B3AAF5B327C0A94B001CAE1F /* mihunche.cpp in Sources */,
 				B3AAF58B27C0A94B001CAE1F /* vrc6.cpp in Sources */,
 				B30C094F27C0AB6F009F25D0 /* filter.cpp in Sources */,
 				B3AAF55427C0A94B001CAE1F /* 8237.cpp in Sources */,
+				B391F2EE27C1715000730B53 /* snesmouse.cpp in Sources */,
 				B3AAF58C27C0A94B001CAE1F /* novel.cpp in Sources */,
+				B391F2E927C1715000730B53 /* bworld.cpp in Sources */,
 				B30C093F27C0AB6F009F25D0 /* ines.cpp in Sources */,
 				B3AAF58227C0A94B001CAE1F /* 69.cpp in Sources */,
 				B3AAF57A27C0A94B001CAE1F /* 253.cpp in Sources */,
@@ -4823,7 +4898,9 @@
 				B3AAF54327C0A94B001CAE1F /* ffe.cpp in Sources */,
 				B30C095627C0AB6F009F25D0 /* netplay.cpp in Sources */,
 				B3AAF59E27C0A94B001CAE1F /* vrc7.cpp in Sources */,
+				B391F2E727C1715000730B53 /* pec586kb.cpp in Sources */,
 				B30C094727C0AB6F009F25D0 /* nsf.cpp in Sources */,
+				B391F2DE27C1715000730B53 /* fns.cpp in Sources */,
 				B30C097527C0ABC4009F25D0 /* ConvertUTF.c in Sources */,
 				B3AAF53627C0A94B001CAE1F /* t-262.cpp in Sources */,
 				B3AAF58527C0A94B001CAE1F /* cheapocabra.cpp in Sources */,
@@ -4831,11 +4908,14 @@
 				B30C094B27C0AB6F009F25D0 /* sound.cpp in Sources */,
 				B3AAF55027C0A94B001CAE1F /* vrc3.cpp in Sources */,
 				B3AAF52127C0A94B001CAE1F /* supervision.cpp in Sources */,
+				B391F2E327C1715000730B53 /* oekakids.cpp in Sources */,
+				B391F2E427C1715000730B53 /* zapper.cpp in Sources */,
 				B3AAF57E27C0A94B001CAE1F /* ks7016.cpp in Sources */,
 				B3AAF56827C0A94B001CAE1F /* ks7037.cpp in Sources */,
 				B3AAF53427C0A94B001CAE1F /* 232.cpp in Sources */,
 				B3AAF5A427C0A94B001CAE1F /* fk23c.cpp in Sources */,
 				B3AAF51727C0A94B001CAE1F /* 80.cpp in Sources */,
+				B391F2EC27C1715000730B53 /* mouse.cpp in Sources */,
 				B3AAF5A527C0A94B001CAE1F /* 244.cpp in Sources */,
 				B3AAF59527C0A94B001CAE1F /* 3d-block.cpp in Sources */,
 				B3AAF55527C0A94B001CAE1F /* BMW8544.cpp in Sources */,
@@ -4843,6 +4923,7 @@
 				B3AAF59D27C0A94B001CAE1F /* bmc64in1nr.cpp in Sources */,
 				B3AAF56D27C0A94B001CAE1F /* 222.cpp in Sources */,
 				B3AAF5BE27C0A94B001CAE1F /* unrom512.cpp in Sources */,
+				B391F2E827C1715000730B53 /* shadow.cpp in Sources */,
 				B3AAF53E27C0A94B001CAE1F /* 230.cpp in Sources */,
 				B3AAF57427C0A94B001CAE1F /* le05.cpp in Sources */,
 				B3AAF58D27C0A94B001CAE1F /* 168.cpp in Sources */,
@@ -4866,6 +4947,7 @@
 				B3AAF57727C0A94B001CAE1F /* ks7013.cpp in Sources */,
 				B3AAF56F27C0A94B001CAE1F /* 80013-B.cpp in Sources */,
 				B3AAF56227C0A94B001CAE1F /* vrc5.cpp in Sources */,
+				B391F2DF27C1715000730B53 /* ftrainer.cpp in Sources */,
 				B3AAF5BB27C0A94B001CAE1F /* 151.cpp in Sources */,
 				B30C093D27C0AB6F009F25D0 /* cheat.cpp in Sources */,
 				B3AAF55B27C0A94B001CAE1F /* eh8813a.cpp in Sources */,
@@ -4875,6 +4957,7 @@
 				B3AAF55227C0A94B001CAE1F /* edu2000.cpp in Sources */,
 				B3AAF56927C0A94B001CAE1F /* 185.cpp in Sources */,
 				B3AAF5A927C0A94B001CAE1F /* mmc5.cpp in Sources */,
+				B30C094527C0AB6F009F25D0 /* file.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4884,24 +4967,30 @@
 			files = (
 				B3AAF5FC27C0A94B001CAE1F /* 193.cpp in Sources */,
 				B3AAF61C27C0A94B001CAE1F /* inlnsf.cpp in Sources */,
+				B391F30527C172B700730B53 /* vidblit.cpp in Sources */,
 				B3AAF5D127C0A94B001CAE1F /* 103.cpp in Sources */,
 				B3AAF5EB27C0A94B001CAE1F /* 28.cpp in Sources */,
 				B3AAF62227C0A94B001CAE1F /* 158B.cpp in Sources */,
 				B3AAF65427C0A94B001CAE1F /* 33.cpp in Sources */,
 				B3AAF68A27C0AA51001CAE1F /* nes_ntsc.c in Sources */,
 				B3AAF5C427C0A94B001CAE1F /* 8157.cpp in Sources */,
+				B391F2F827C1715000730B53 /* toprider.cpp in Sources */,
 				B3AAF5D527C0A94B001CAE1F /* 62.cpp in Sources */,
 				B30C096427C0AB6F009F25D0 /* conddebug.cpp in Sources */,
 				B3AAF68D27C0AA51001CAE1F /* scale2x.cpp in Sources */,
 				B3AAF64527C0A94B001CAE1F /* lh53.cpp in Sources */,
 				B3AAF5F527C0A94B001CAE1F /* vrc2and4.cpp in Sources */,
+				B391F2FD27C1715000730B53 /* lcdcompzapper.cpp in Sources */,
 				B3AAF65D27C0A94B001CAE1F /* et-4320.cpp in Sources */,
 				B3AAF60F27C0A94B001CAE1F /* ac-08.cpp in Sources */,
 				B3AAF5C927C0A94B001CAE1F /* pec-586.cpp in Sources */,
+				B391F2F527C1715000730B53 /* virtualboy.cpp in Sources */,
 				B3AAF62627C0A94B001CAE1F /* 176.cpp in Sources */,
+				B391F2F427C1715000730B53 /* cursor.cpp in Sources */,
 				B3AAF5E127C0A94B001CAE1F /* 225.cpp in Sources */,
 				B3AAF5F427C0A94B001CAE1F /* 51.cpp in Sources */,
 				B30C098527C0ABC4009F25D0 /* md5.cpp in Sources */,
+				B391F2F927C1715000730B53 /* powerpad.cpp in Sources */,
 				B3AAF5CD27C0A94B001CAE1F /* 235.cpp in Sources */,
 				B30C095927C0AB6F009F25D0 /* wave.cpp in Sources */,
 				B3AAF60727C0A94B001CAE1F /* sc-127.cpp in Sources */,
@@ -4914,6 +5003,7 @@
 				B3AAF60827C0A94B001CAE1F /* n106.cpp in Sources */,
 				B3AAF60627C0A94B001CAE1F /* sb-2000.cpp in Sources */,
 				B3AAF5D627C0A94B001CAE1F /* 36.cpp in Sources */,
+				B391F2FE27C1715000730B53 /* fkb.cpp in Sources */,
 				B3AAF5FA27C0A94B001CAE1F /* 32.cpp in Sources */,
 				B3AAF5E227C0A94B001CAE1F /* 164.cpp in Sources */,
 				B30C097E27C0ABC4009F25D0 /* crc32.cpp in Sources */,
@@ -4954,6 +5044,7 @@
 				B3AAF5E427C0A94B001CAE1F /* emu2413.c in Sources */,
 				B3AAF5D427C0A94B001CAE1F /* 170.cpp in Sources */,
 				B3AAF62C27C0A94B001CAE1F /* ax5705.cpp in Sources */,
+				B391F2F327C1715000730B53 /* arkanoid.cpp in Sources */,
 				B30C096F27C0AB6F009F25D0 /* cart.cpp in Sources */,
 				B3AAF65827C0A94B001CAE1F /* transformer.cpp in Sources */,
 				B3AAF64927C0A94B001CAE1F /* yoko.cpp in Sources */,
@@ -4979,6 +5070,7 @@
 				B3AAF68327C0AA51001CAE1F /* os_utils.cpp in Sources */,
 				B3AAF60227C0A94B001CAE1F /* 234.cpp in Sources */,
 				B30C098127C0ABC4009F25D0 /* ioapi.cpp in Sources */,
+				B391F30327C1715000730B53 /* quiz.cpp in Sources */,
 				B3AAF61E27C0A94B001CAE1F /* mmc2and4.cpp in Sources */,
 				B3AAF63827C0A94B001CAE1F /* bb.cpp in Sources */,
 				B3AAF65027C0A94B001CAE1F /* vrc7p.cpp in Sources */,
@@ -4987,11 +5079,14 @@
 				B3AAF64227C0A94B001CAE1F /* malee.cpp in Sources */,
 				B3AAF68E27C0AA51001CAE1F /* config.cpp in Sources */,
 				B3AAF5D327C0A94B001CAE1F /* 208.cpp in Sources */,
+				B391F30027C1715000730B53 /* mahjong.cpp in Sources */,
+				B391F2DD27C1710400730B53 /* hypershot.cpp in Sources */,
 				B30C095727C0AB6F009F25D0 /* movie.cpp in Sources */,
 				B3AAF5DC27C0A94B001CAE1F /* 186.cpp in Sources */,
 				B3AAF64027C0A94B001CAE1F /* 246.cpp in Sources */,
 				B3AAF60927C0A94B001CAE1F /* 187.cpp in Sources */,
 				B3AAF5CE27C0A94B001CAE1F /* famicombox.cpp in Sources */,
+				B391F30227C1715000730B53 /* suborkb.cpp in Sources */,
 				B3AAF5E527C0A94B001CAE1F /* 99.cpp in Sources */,
 				B3AAF60A27C0A94B001CAE1F /* sachen.cpp in Sources */,
 				B3AAF5C827C0A94B001CAE1F /* sl1632.cpp in Sources */,
@@ -5025,7 +5120,9 @@
 				B3AAF65C27C0A94B001CAE1F /* mihunche.cpp in Sources */,
 				B3AAF63427C0A94B001CAE1F /* vrc6.cpp in Sources */,
 				B30C096A27C0AB6F009F25D0 /* filter.cpp in Sources */,
+				B391F30127C1715000730B53 /* snesmouse.cpp in Sources */,
 				B3AAF5FD27C0A94B001CAE1F /* 8237.cpp in Sources */,
+				B391F2FC27C1715000730B53 /* bworld.cpp in Sources */,
 				B3AAF63527C0A94B001CAE1F /* novel.cpp in Sources */,
 				B30C095A27C0AB6F009F25D0 /* ines.cpp in Sources */,
 				B3AAF62B27C0A94B001CAE1F /* 69.cpp in Sources */,
@@ -5047,7 +5144,9 @@
 				B3AAF5D827C0A94B001CAE1F /* dance2000.cpp in Sources */,
 				B3AAF5EC27C0A94B001CAE1F /* ffe.cpp in Sources */,
 				B30C097127C0AB6F009F25D0 /* netplay.cpp in Sources */,
+				B391F2FA27C1715000730B53 /* pec586kb.cpp in Sources */,
 				B3AAF64727C0A94B001CAE1F /* vrc7.cpp in Sources */,
+				B391F2F127C1715000730B53 /* fns.cpp in Sources */,
 				B30C096227C0AB6F009F25D0 /* nsf.cpp in Sources */,
 				B30C098027C0ABC4009F25D0 /* ConvertUTF.c in Sources */,
 				B3AAF5DF27C0A94B001CAE1F /* t-262.cpp in Sources */,
@@ -5055,11 +5154,14 @@
 				B30C096D27C0AB6F009F25D0 /* palette.cpp in Sources */,
 				B30C096627C0AB6F009F25D0 /* sound.cpp in Sources */,
 				B3AAF5F927C0A94B001CAE1F /* vrc3.cpp in Sources */,
+				B391F2F627C1715000730B53 /* oekakids.cpp in Sources */,
+				B391F2F727C1715000730B53 /* zapper.cpp in Sources */,
 				B3AAF5CA27C0A94B001CAE1F /* supervision.cpp in Sources */,
 				B3AAF62727C0A94B001CAE1F /* ks7016.cpp in Sources */,
 				B3AAF61127C0A94B001CAE1F /* ks7037.cpp in Sources */,
 				B3AAF5DD27C0A94B001CAE1F /* 232.cpp in Sources */,
 				B3AAF64D27C0A94B001CAE1F /* fk23c.cpp in Sources */,
+				B391F2FF27C1715000730B53 /* mouse.cpp in Sources */,
 				B3AAF5C027C0A94B001CAE1F /* 80.cpp in Sources */,
 				B3AAF64E27C0A94B001CAE1F /* 244.cpp in Sources */,
 				B3AAF63E27C0A94B001CAE1F /* 3d-block.cpp in Sources */,
@@ -5067,6 +5169,7 @@
 				B3AAF60527C0A94B001CAE1F /* dream.cpp in Sources */,
 				B3AAF64627C0A94B001CAE1F /* bmc64in1nr.cpp in Sources */,
 				B3AAF61627C0A94B001CAE1F /* 222.cpp in Sources */,
+				B391F2FB27C1715000730B53 /* shadow.cpp in Sources */,
 				B3AAF66727C0A94C001CAE1F /* unrom512.cpp in Sources */,
 				B3AAF5E727C0A94B001CAE1F /* 230.cpp in Sources */,
 				B3AAF61D27C0A94B001CAE1F /* le05.cpp in Sources */,
@@ -5090,6 +5193,7 @@
 				B3AAF60E27C0A94B001CAE1F /* 82.cpp in Sources */,
 				B3AAF62027C0A94B001CAE1F /* ks7013.cpp in Sources */,
 				B3AAF61827C0A94B001CAE1F /* 80013-B.cpp in Sources */,
+				B391F2F227C1715000730B53 /* ftrainer.cpp in Sources */,
 				B3AAF60B27C0A94B001CAE1F /* vrc5.cpp in Sources */,
 				B3AAF66427C0A94C001CAE1F /* 151.cpp in Sources */,
 				B30C095827C0AB6F009F25D0 /* cheat.cpp in Sources */,
@@ -5121,6 +5225,7 @@
 /* Begin XCBuildConfiguration section */
 		1A3A74FA1ABF11AC002274A3 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B391F2B627C14FA300730B53 /* BuildFlags.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = NO;
@@ -5170,16 +5275,28 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
+				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DHAVE_ASPRINTF",
+					"-DPSS_STYLE=1",
+					"-DLSB_FIRST",
+				);
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Wno-write-strings",
+				);
 			};
 			name = Debug;
 		};
 		1A3A74FB1ABF11AC002274A3 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B391F2B627C14FA300730B53 /* BuildFlags.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = NO;
@@ -5222,18 +5339,30 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DHAVE_ASPRINTF",
+					"-DPSS_STYLE=1",
+					"-DLSB_FIRST",
+				);
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-Osize";
 				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Wno-write-strings",
+				);
 			};
 			name = Release;
 		};
 		B324C50E2191A366009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B391F2B627C14FA300730B53 /* BuildFlags.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = NO;
@@ -5276,12 +5405,23 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DHAVE_ASPRINTF",
+					"-DPSS_STYLE=1",
+					"-DLSB_FIRST",
+				);
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-Osize";
 				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
+				WARNING_CFLAGS = (
+					"$(inherited)",
+					"-Wno-write-strings",
+				);
 			};
 			name = Archive;
 		};
@@ -5307,7 +5447,6 @@
 				GCC_PREFIX_HEADER = "$(SRCROOT)/PVFCEU-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(inherited)",
 					"\"$(SRCROOT)/fceux/src\"",
 					"\"$(SRCROOT)/fceux/src/drivers\"",
 					"\"$(SRCROOT)/fceux/src/boards\"",
@@ -5326,6 +5465,7 @@
 					"-DHAVE_ASPRINTF",
 					"-DPSS_STYLE=1",
 					"-DLSB_FIRST",
+					"$(inherited)",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.fceu";
 				PRODUCT_NAME = PVFCEU;
@@ -5418,7 +5558,6 @@
 				GCC_PREFIX_HEADER = "$(SRCROOT)/PVFCEU-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(inherited)",
 					"\"$(SRCROOT)/fceux/src\"",
 					"\"$(SRCROOT)/fceux/src/drivers\"",
 					"\"$(SRCROOT)/fceux/src/boards\"",
@@ -5437,6 +5576,7 @@
 					"-DHAVE_ASPRINTF",
 					"-DPSS_STYLE=1",
 					"-DLSB_FIRST",
+					"$(inherited)",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.fceu";
 				PRODUCT_NAME = PVFCEU;
@@ -5477,7 +5617,6 @@
 				GCC_PREFIX_HEADER = "$(SRCROOT)/PVFCEU-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(inherited)",
 					"\"$(SRCROOT)/fceux/src\"",
 					"\"$(SRCROOT)/fceux/src/drivers\"",
 					"\"$(SRCROOT)/fceux/src/boards\"",
@@ -5496,6 +5635,7 @@
 					"-DHAVE_ASPRINTF",
 					"-DPSS_STYLE=1",
 					"-DLSB_FIRST",
+					"$(inherited)",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.fceu";
 				PRODUCT_NAME = PVFCEU;
@@ -5634,7 +5774,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
-				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -5656,7 +5796,6 @@
 					"-DPSS_STYLE=1",
 					"-DLSB_FIRST",
 				);
-				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -5680,7 +5819,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
-				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -5701,7 +5840,6 @@
 					"-DPSS_STYLE=1",
 					"-DLSB_FIRST",
 				);
-				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
@@ -5724,7 +5862,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
-				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -5745,7 +5883,6 @@
 					"-DPSS_STYLE=1",
 					"-DLSB_FIRST",
 				);
-				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
@@ -5790,12 +5927,12 @@
 					"-DPSS_STYLE=1",
 					"-DLSB_FIRST",
 				);
-				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 12.1;
 				WARNING_CFLAGS = (
 					"$(inherited)",
 					"-Wno-write-strings",
@@ -5836,11 +5973,11 @@
 					"-DPSS_STYLE=1",
 					"-DLSB_FIRST",
 				);
-				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 12.1;
 				WARNING_CFLAGS = (
 					"$(inherited)",
 					"-Wno-write-strings",
@@ -5881,11 +6018,11 @@
 					"-DPSS_STYLE=1",
 					"-DLSB_FIRST",
 				);
-				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 12.1;
 				WARNING_CFLAGS = (
 					"$(inherited)",
 					"-Wno-write-strings",
@@ -5909,11 +6046,11 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(inherited)",
 					"\"$(SRCROOT)/fceux/src\"",
-					"\"$(SRCROOT)/fceux/src/drivers\"",
+					"\"$(SRCROOT)/fceux/src/drivers/sdl\"",
 					"\"$(SRCROOT)/fceux/src/boards\"",
 					"\"$(SRCROOT)/fceux/src/attic\"",
+					"\"$(SRCROOT)/fceux/src/drivers\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
@@ -5925,7 +6062,6 @@
 					"-DPSS_STYLE=1",
 					"-DLSB_FIRST",
 				);
-				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -5953,11 +6089,11 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(inherited)",
 					"\"$(SRCROOT)/fceux/src\"",
-					"\"$(SRCROOT)/fceux/src/drivers\"",
+					"\"$(SRCROOT)/fceux/src/drivers/sdl\"",
 					"\"$(SRCROOT)/fceux/src/boards\"",
 					"\"$(SRCROOT)/fceux/src/attic\"",
+					"\"$(SRCROOT)/fceux/src/drivers\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
@@ -5968,7 +6104,6 @@
 					"-DPSS_STYLE=1",
 					"-DLSB_FIRST",
 				);
-				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
@@ -5995,11 +6130,11 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(inherited)",
 					"\"$(SRCROOT)/fceux/src\"",
-					"\"$(SRCROOT)/fceux/src/drivers\"",
+					"\"$(SRCROOT)/fceux/src/drivers/sdl\"",
 					"\"$(SRCROOT)/fceux/src/boards\"",
 					"\"$(SRCROOT)/fceux/src/attic\"",
+					"\"$(SRCROOT)/fceux/src/drivers\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
@@ -6010,7 +6145,6 @@
 					"-DPSS_STYLE=1",
 					"-DLSB_FIRST",
 				);
-				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
@@ -6038,6 +6172,10 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/fceux/src\"",
+					"\"$(SRCROOT)/fceux/src/drivers/sdl\"",
+					"\"$(SRCROOT)/fceux/src/boards\"",
+					"\"$(SRCROOT)/fceux/src/attic\"",
+					"\"$(SRCROOT)/fceux/src/drivers\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
@@ -6049,12 +6187,12 @@
 					"-DPSS_STYLE=1",
 					"-DLSB_FIRST",
 				);
-				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 12.1;
 				WARNING_CFLAGS = (
 					"$(inherited)",
 					"-Wno-write-strings",
@@ -6079,6 +6217,10 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/fceux/src\"",
+					"\"$(SRCROOT)/fceux/src/drivers/sdl\"",
+					"\"$(SRCROOT)/fceux/src/boards\"",
+					"\"$(SRCROOT)/fceux/src/attic\"",
+					"\"$(SRCROOT)/fceux/src/drivers\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
@@ -6089,11 +6231,11 @@
 					"-DPSS_STYLE=1",
 					"-DLSB_FIRST",
 				);
-				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 12.1;
 				WARNING_CFLAGS = (
 					"$(inherited)",
 					"-Wno-write-strings",
@@ -6118,6 +6260,10 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/fceux/src\"",
+					"\"$(SRCROOT)/fceux/src/drivers/sdl\"",
+					"\"$(SRCROOT)/fceux/src/boards\"",
+					"\"$(SRCROOT)/fceux/src/attic\"",
+					"\"$(SRCROOT)/fceux/src/drivers\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
@@ -6128,11 +6274,11 @@
 					"-DPSS_STYLE=1",
 					"-DLSB_FIRST",
 				);
-				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 12.1;
 				WARNING_CFLAGS = (
 					"$(inherited)",
 					"-Wno-write-strings",
