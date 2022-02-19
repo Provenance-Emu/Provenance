@@ -11,7 +11,9 @@ import Foundation
 import SwiftUI
 import RealmSwift
 import PVLibrary
+#if canImport(Introspect)
 import Introspect
+#endif
 
 @available(iOS 14, tvOS 14, *)
 struct SideMenuView: SwiftUI.View {
@@ -92,9 +94,11 @@ struct SideMenuView: SwiftUI.View {
                 }
             }
         }
+#if canImport(Introspect)
         .introspectViewController(customize: { vc in
             vc.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "provnavicon"))
         })
+#endif
         .background(Theme.currentTheme.gameLibraryBackground.swiftUIColor)
         .add(self.searchBar)
         // search results

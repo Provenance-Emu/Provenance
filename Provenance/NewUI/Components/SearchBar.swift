@@ -44,7 +44,11 @@ struct SearchBarModifier: ViewModifier {
         content
             .overlay(
                 ViewControllerResolver { viewController in
-                    viewController.navigationItem.searchController = self.searchBar.searchController
+                    #if !os(tvOS)
+                        viewController.navigationItem.searchController = self.searchBar.searchController
+                    #else
+                    // TODO: something here?
+                    #endif
                 }
                     .frame(width: 0, height: 0)
             )

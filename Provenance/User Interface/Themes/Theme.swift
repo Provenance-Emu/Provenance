@@ -33,8 +33,10 @@ protocol tvOSTheme {}
 public protocol iOSTheme {
     var theme: Themes { get }
 
+    #if !os(tvOS)
     var navigationBarStyle: UIBarStyle { get }
-
+    var statusBarStyle: UIStatusBarStyle { get }
+    #endif
     // Mandatory
     var gameLibraryBackground: UIColor { get }
     var gameLibraryText: UIColor { get }
@@ -53,7 +55,6 @@ public protocol iOSTheme {
     var switchON: UIColor? { get }
     var switchThumb: UIColor? { get }
 
-    var statusBarStyle: UIStatusBarStyle { get }
     var statusBarColor: UIColor? { get }
 
     var settingsHeaderBackground: UIColor? { get }
@@ -84,7 +85,12 @@ extension iOSTheme {
     var settingsCellText: UIColor? { return nil }
     var settingsSeperator: UIColor? { return nil }
 
+    #if !os(tvOS)
     var navigationBarStyle: UIBarStyle { return .default }
+    var statusBarStyle: UIStatusBarStyle {
+        return UIStatusBarStyle.default
+    }
+    #endif
     var statusBarColor: UIColor? { return nil }
 
     // Default to default tint (which defaults to nil)
@@ -100,16 +106,16 @@ extension iOSTheme {
         sharedApp.delegate?.window??.tintColor = defaultTintColor
     }
 
-    var statusBarStyle: UIStatusBarStyle {
-        return UIStatusBarStyle.default
-    }
+
 }
 
 struct DarkTheme: iOSTheme {
     let theme = Themes.dark
 
+    #if !os(tvOS)
     var navigationBarStyle: UIBarStyle { return UIBarStyle.black }
-
+    var statusBarStyle: UIStatusBarStyle { return UIStatusBarStyle.lightContent }
+    #endif
     var defaultTintColor: UIColor? { return UIColor(hex: "#848489")! }
     var keyboardAppearance: UIKeyboardAppearance = .dark
 
@@ -128,7 +134,6 @@ struct DarkTheme: iOSTheme {
     var alertViewBackground: UIColor { return UIColor.darkGray }
     var alertViewText: UIColor { return UIColor.lightGray }
 
-    var statusBarStyle: UIStatusBarStyle { return UIStatusBarStyle.lightContent }
 
     var settingsHeaderBackground: UIColor? { return UIColor.black }
     var settingsHeaderText: UIColor? { return UIColor(white: 0.5, alpha: 1.0) }
@@ -165,6 +170,7 @@ public final class Theme {
     //	}
     static weak var statusBarView: UIView?
     private class func styleStatusBar(withColor color: UIColor? = nil) {
+        #if !os(tvOS)
         guard let color = color else {
             if let statusBarView = statusBarView {
                 statusBarView.removeFromSuperview()
@@ -189,13 +195,16 @@ public final class Theme {
                 statusBar1.backgroundColor = color
             }
         }
+        #endif
     }
 
     private class func setTheme(_ theme: iOSTheme) {
         UINavigationBar.appearance {
             $0.backgroundColor = theme.navigationBarBackgroundColor
             $0.tintColor = theme.barButtonItemTint
+            #if !os(tvOS)
             $0.barStyle = theme.navigationBarStyle
+            #endif
             $0.isTranslucent = true
         }
 
@@ -207,6 +216,7 @@ public final class Theme {
             $0.tintColor = theme.barButtonItemTint
         }
 
+        #if !os(tvOS)
         UISwitch.appearance {
             $0.onTintColor = theme.switchON
 			#if !targetEnvironment(macCatalyst)
@@ -223,6 +233,7 @@ public final class Theme {
             $0.backgroundColor = theme.settingsHeaderBackground
             $0.separatorColor = theme.settingsSeperator
         }
+        #endif
 
         // Settings
         appearance(inAny: [PVSettingsViewController.self, SystemsSettingsTableViewController.self, CoreOptionsViewController.self, SettingsTableView.self, PVAppearanceViewController.self, PVCoresTableViewController.self]) {

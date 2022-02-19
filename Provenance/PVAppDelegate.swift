@@ -53,7 +53,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             window.tintColor = UIColor(red: 0.1, green: 0.5, blue: 0.95, alpha: 1.0)  // PVBlue
         #endif
 
-        if #available(iOS 14, *), PVSettingsModel.shared.debugOptions.useSwiftUI {
+        if #available(iOS 14, tvOS 14, *), PVSettingsModel.shared.debugOptions.useSwiftUI {
             let viewModel = PVRootViewModel()
             let rootViewController = PVRootViewController.instantiate(
                 updatesController: libraryUpdatesController,
