@@ -434,6 +434,11 @@
 		B38D30FD202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
 		B38D30FE202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
 		B390B0EA276B2DB20018E065 /* AltKit in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B390B0E9276B2DB20018E065 /* AltKit */; };
+		B391F2BE27C157E600730B53 /* Provenance_ClipApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B391F2BD27C157E600730B53 /* Provenance_ClipApp.swift */; };
+		B391F2C027C157E700730B53 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B391F2BF27C157E600730B53 /* ContentView.swift */; };
+		B391F2C227C157E800730B53 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B391F2C127C157E800730B53 /* Assets.xcassets */; };
+		B391F2C527C157E800730B53 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B391F2C427C157E800730B53 /* Preview Assets.xcassets */; };
+		B391F2CA27C157E900730B53 /* Provenance Clip.app in Embed App Clips */ = {isa = PBXBuildFile; fileRef = B391F2BB27C157E600730B53 /* Provenance Clip.app */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B394C98A20609E180014A65D /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = B394C98920609E180014A65D /* UIColor+Hex.swift */; };
 		B394C98B20609E180014A65D /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = B394C98920609E180014A65D /* UIColor+Hex.swift */; };
 		B398800D27A521AC004DEFCA /* ConflictsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B398800C27A521AC004DEFCA /* ConflictsController.swift */; };
@@ -655,6 +660,13 @@
 			remoteGlobalIDString = B383225D26ED9C530029D12F;
 			remoteInfo = "Check Git Submodules";
 		};
+		B391F2C827C157E900730B53 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B391F2BA27C157E600730B53;
+			remoteInfo = "Provenance Clip";
+		};
 		B3B29D452156183D00903290 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
@@ -788,6 +800,17 @@
 				B305EF30276B4CB0003AE510 /* PVStella.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B391F2CB27C157E900730B53 /* Embed App Clips */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/AppClips";
+			dstSubfolderSpec = 16;
+			files = (
+				B391F2CA27C157E900730B53 /* Provenance Clip.app in Embed App Clips */,
+			);
+			name = "Embed App Clips";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B39DC780279E79D40017E28D /* Embed App Extensions */ = {
@@ -1184,6 +1207,13 @@
 		B38A2A47210233FE00374CDD /* EmulatorActionCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EmulatorActionCell.xib; sourceTree = "<group>"; };
 		B38D30FB202AC26500E9A068 /* GCDWebDAVServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebDAVServer.h; sourceTree = "<group>"; };
 		B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebDAVServer.m; sourceTree = "<group>"; };
+		B391F2BB27C157E600730B53 /* Provenance Clip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance Clip.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B391F2BD27C157E600730B53 /* Provenance_ClipApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Provenance_ClipApp.swift; sourceTree = "<group>"; };
+		B391F2BF27C157E600730B53 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		B391F2C127C157E800730B53 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B391F2C427C157E800730B53 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		B391F2C627C157E800730B53 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B391F2C727C157E900730B53 /* Provenance_Clip.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Provenance_Clip.entitlements; sourceTree = "<group>"; };
 		B394C98920609E180014A65D /* UIColor+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Hex.swift"; sourceTree = "<group>"; };
 		B3977533219AB53F00E16AD5 /* Provenance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Provenance.entitlements; path = Provenance/Provenance.entitlements; sourceTree = SOURCE_ROOT; };
 		B398800C27A521AC004DEFCA /* ConflictsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConflictsController.swift; sourceTree = "<group>"; };
@@ -1443,6 +1473,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B391F2B827C157E600730B53 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3E21D68203211BE009939D3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1533,6 +1570,7 @@
 				B3E0A580215647BD004B4322 /* Scripts */,
 				B305EEFE276B4C71003AE510 /* Provenance Watch WatchKit App */,
 				B305EF09276B4C73003AE510 /* Provenance Watch WatchKit Extension */,
+				B391F2BC27C157E600730B53 /* Provenance Clip */,
 				1A3D409617B2DCE4004DFFFC /* Frameworks */,
 				1A3D409517B2DCE4004DFFFC /* Products */,
 				B3F43DDA2169BC9C00CDD40A /* Bridging Headers */,
@@ -1550,6 +1588,7 @@
 				B305EEF7276B4C71003AE510 /* Provenance Watch.app */,
 				B305EEFA276B4C71003AE510 /* Provenance Watch WatchKit App.app */,
 				B305EF05276B4C73003AE510 /* Provenance Watch WatchKit Extension.appex */,
+				B391F2BB27C157E600730B53 /* Provenance Clip.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2255,6 +2294,27 @@
 			path = GCDWebDAVServer;
 			sourceTree = "<group>";
 		};
+		B391F2BC27C157E600730B53 /* Provenance Clip */ = {
+			isa = PBXGroup;
+			children = (
+				B391F2BD27C157E600730B53 /* Provenance_ClipApp.swift */,
+				B391F2BF27C157E600730B53 /* ContentView.swift */,
+				B391F2C127C157E800730B53 /* Assets.xcassets */,
+				B391F2C627C157E800730B53 /* Info.plist */,
+				B391F2C727C157E900730B53 /* Provenance_Clip.entitlements */,
+				B391F2C327C157E800730B53 /* Preview Content */,
+			);
+			path = "Provenance Clip";
+			sourceTree = "<group>";
+		};
+		B391F2C327C157E800730B53 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				B391F2C427C157E800730B53 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
 		B398800B27A5218A004DEFCA /* Conflicts */ = {
 			isa = PBXGroup;
 			children = (
@@ -2445,6 +2505,7 @@
 				1A44C0AD1D0A1DE80018751A /* Script: Set Build Number */,
 				1AAE7D3F1BC86C41003066C0 /* Embed Frameworks */,
 				B3E21D77203211BE009939D3 /* Embed App Extensions */,
+				B391F2CB27C157E900730B53 /* Embed App Clips */,
 			);
 			buildRules = (
 			);
@@ -2452,6 +2513,7 @@
 				B383226426ED9F080029D12F /* PBXTargetDependency */,
 				B3B29D462156183D00903290 /* PBXTargetDependency */,
 				B36FE831218EAAD200F858F3 /* PBXTargetDependency */,
+				B391F2C927C157E900730B53 /* PBXTargetDependency */,
 			);
 			name = Provenance;
 			packageProductDependencies = (
@@ -2564,6 +2626,23 @@
 			productReference = B305EF05276B4C73003AE510 /* Provenance Watch WatchKit Extension.appex */;
 			productType = "com.apple.product-type.watchkit2-extension";
 		};
+		B391F2BA27C157E600730B53 /* Provenance Clip */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B391F2CF27C157E900730B53 /* Build configuration list for PBXNativeTarget "Provenance Clip" */;
+			buildPhases = (
+				B391F2B727C157E600730B53 /* Sources */,
+				B391F2B827C157E600730B53 /* Frameworks */,
+				B391F2B927C157E600730B53 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Provenance Clip";
+			productName = "Provenance Clip";
+			productReference = B391F2BB27C157E600730B53 /* Provenance Clip.app */;
+			productType = "com.apple.product-type.application.on-demand-install-capable";
+		};
 		B3E21D6A203211BE009939D3 /* Spotlight */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3E21D73203211BE009939D3 /* Build configuration list for PBXNativeTarget "Spotlight" */;
@@ -2669,6 +2748,9 @@
 					B383225D26ED9C530029D12F = {
 						CreatedOnToolsVersion = 13.0;
 					};
+					B391F2BA27C157E600730B53 = {
+						CreatedOnToolsVersion = 13.2.1;
+					};
 					B3B29D3F2156177100903290 = {
 						CreatedOnToolsVersion = 10.0;
 					};
@@ -2734,6 +2816,7 @@
 				B305EF04276B4C73003AE510 /* Provenance Watch WatchKit Extension */,
 				B305EEF6276B4C71003AE510 /* Provenance Watch */,
 				B305EEF9276B4C71003AE510 /* Provenance Watch WatchKit App */,
+				B391F2BA27C157E600730B53 /* Provenance Clip */,
 			);
 		};
 /* End PBXProject section */
@@ -2811,6 +2894,15 @@
 			files = (
 				B305EF14276B4C73003AE510 /* Preview Assets.xcassets in Resources */,
 				B305EF11276B4C73003AE510 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B391F2B927C157E600730B53 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B391F2C527C157E800730B53 /* Preview Assets.xcassets in Resources */,
+				B391F2C227C157E800730B53 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3401,6 +3493,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B391F2B727C157E600730B53 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B391F2C027C157E700730B53 /* ContentView.swift in Sources */,
+				B391F2BE27C157E600730B53 /* Provenance_ClipApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3E21D67203211BE009939D3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3451,6 +3552,11 @@
 			isa = PBXTargetDependency;
 			target = B383225D26ED9C530029D12F /* Check Git Submodules */;
 			targetProxy = B383226526ED9F0C0029D12F /* PBXContainerItemProxy */;
+		};
+		B391F2C927C157E900730B53 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B391F2BA27C157E600730B53 /* Provenance Clip */;
+			targetProxy = B391F2C827C157E900730B53 /* PBXContainerItemProxy */;
 		};
 		B3B29D462156183D00903290 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -4826,6 +4932,158 @@
 			};
 			name = Archive;
 		};
+		B391F2CC27C157E900730B53 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "Provenance Clip/Provenance_Clip.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_ASSET_PATHS = "\"Provenance Clip/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Provenance Clip/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Provenance;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.Clip";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B391F2CD27C157E900730B53 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "Provenance Clip/Provenance_Clip.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_ASSET_PATHS = "\"Provenance Clip/Preview Content\"";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_PREVIEWS = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Provenance Clip/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Provenance;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.Clip";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B391F2CE27C157E900730B53 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "Provenance Clip/Provenance_Clip.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_ASSET_PATHS = "\"Provenance Clip/Preview Content\"";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_PREVIEWS = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Provenance Clip/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Provenance;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.Clip";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Archive;
+		};
 		B3B29D412156177100903290 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -5111,6 +5369,16 @@
 				B383225F26ED9C530029D12F /* Debug */,
 				B383226026ED9C530029D12F /* Release */,
 				B383226126ED9C530029D12F /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B391F2CF27C157E900730B53 /* Build configuration list for PBXNativeTarget "Provenance Clip" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B391F2CC27C157E900730B53 /* Debug */,
+				B391F2CD27C157E900730B53 /* Release */,
+				B391F2CE27C157E900730B53 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
