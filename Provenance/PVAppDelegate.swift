@@ -35,6 +35,12 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         DispatchQueue.main.async {
             Theme.currentTheme = Theme.darkTheme
         }
+        #elseif os(tvOS)
+        if PVSettingsModel.shared.debugOptions.tvOSThemes {
+            DispatchQueue.main.async {
+                Theme.currentTheme = Theme.darkTheme
+            }
+        }
         #endif
     }
     
