@@ -90,6 +90,24 @@
 		B30C098727C0ABC4009F25D0 /* general.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3D627C09C5B0012118D /* general.cpp */; };
 		B30C098827C0ADD1009F25D0 /* ppu.h in Headers */ = {isa = PBXBuildFile; fileRef = B3BCB43827C09C5B0012118D /* ppu.h */; };
 		B30C098927C0ADD1009F25D0 /* ppu.h in Headers */ = {isa = PBXBuildFile; fileRef = B3BCB43827C09C5B0012118D /* ppu.h */; };
+		B3341F5427C1B18C00E001C6 /* fceux_netplay_server.m in Sources */ = {isa = PBXBuildFile; fileRef = B3341F5327C1B18C00E001C6 /* fceux_netplay_server.m */; };
+		B3341F5527C1B18C00E001C6 /* fceux_netplay_server.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B3341F5227C1B18C00E001C6 /* fceux_netplay_server.h */; };
+		B3341F6D27C1B1E600E001C6 /* md5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3341F5B27C1B1CC00E001C6 /* md5.cpp */; };
+		B3341F6E27C1B1E600E001C6 /* server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3341F6C27C1B1CD00E001C6 /* server.cpp */; };
+		B3341F6F27C1B1E600E001C6 /* throttle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3341F6A27C1B1CD00E001C6 /* throttle.cpp */; };
+		B3341F7227C1B23A00E001C6 /* server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3341F6C27C1B1CD00E001C6 /* server.cpp */; };
+		B3341F7327C1B23A00E001C6 /* md5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3341F5B27C1B1CC00E001C6 /* md5.cpp */; };
+		B3341F7427C1B23A00E001C6 /* fceux_netplay_server.m in Sources */ = {isa = PBXBuildFile; fileRef = B3341F5327C1B18C00E001C6 /* fceux_netplay_server.m */; };
+		B3341F7527C1B23A00E001C6 /* throttle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3341F6A27C1B1CD00E001C6 /* throttle.cpp */; };
+		B3341F7827C1B23A00E001C6 /* fceux_netplay_server.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B3341F5227C1B18C00E001C6 /* fceux_netplay_server.h */; };
+		B3341F7E27C1B2CF00E001C6 /* libfceux-netplay-server-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3341F5027C1B18C00E001C6 /* libfceux-netplay-server-iOS.a */; };
+		B3341F8127C1B2D400E001C6 /* libfceux-netplay-server-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3341F7D27C1B23A00E001C6 /* libfceux-netplay-server-tvOS.a */; };
+		B3341F8527C1B34100E001C6 /* fceux-server.conf in Resources */ = {isa = PBXBuildFile; fileRef = B3341F8427C1B34000E001C6 /* fceux-server.conf */; };
+		B3341F8627C1B34100E001C6 /* fceux-server.conf in Resources */ = {isa = PBXBuildFile; fileRef = B3341F8427C1B34000E001C6 /* fceux-server.conf */; };
+		B3341F8E27C1B39200E001C6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B3341F8D27C1B39200E001C6 /* main.m */; };
+		B3341F9327C1B39A00E001C6 /* throttle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3341F6A27C1B1CD00E001C6 /* throttle.cpp */; };
+		B3341F9427C1B39A00E001C6 /* server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3341F6C27C1B1CD00E001C6 /* server.cpp */; };
+		B3341F9527C1B39A00E001C6 /* md5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3341F5B27C1B1CC00E001C6 /* md5.cpp */; };
 		B34AB55A2106D57B00C45F09 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34AB5592106D57B00C45F09 /* PVSupport.framework */; };
 		B34AB5822106DDCC00C45F09 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34AB5812106DDCC00C45F09 /* PVSupport.framework */; };
 		B3547B4B205857B900CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B4A205857B900CFF7D8 /* Core.plist */; };
@@ -978,6 +996,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		B3341F7F27C1B2CF00E001C6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3A74E01ABF11AC002274A3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3341F4F27C1B18C00E001C6;
+			remoteInfo = "fceux-netplay-server-iOS";
+		};
+		B3341F8227C1B2D400E001C6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3A74E01ABF11AC002274A3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3341F7027C1B23A00E001C6;
+			remoteInfo = "fceux-netplay-server-tvOS";
+		};
 		B3AAF66927C0A95C001CAE1F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3A74E01ABF11AC002274A3 /* Project object */;
@@ -995,6 +1027,35 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		B3341F4E27C1B18C00E001C6 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+				B3341F5527C1B18C00E001C6 /* fceux_netplay_server.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3341F7727C1B23A00E001C6 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+				B3341F7827C1B23A00E001C6 /* fceux_netplay_server.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3341F8927C1B39100E001C6 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		B3BCA6E627C098710012118D /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1151,6 +1212,27 @@
 		B30614EA218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVFCEUEmulatorCore+Controls.h"; sourceTree = "<group>"; };
 		B30614EB218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVFCEUEmulatorCore+Controls.mm"; sourceTree = "<group>"; };
 		B30614F6218D60CB0041AD4F /* PVFCEU+Swift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVFCEU+Swift.h"; sourceTree = "<group>"; };
+		B3341F5027C1B18C00E001C6 /* libfceux-netplay-server-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libfceux-netplay-server-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3341F5227C1B18C00E001C6 /* fceux_netplay_server.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fceux_netplay_server.h; sourceTree = "<group>"; };
+		B3341F5327C1B18C00E001C6 /* fceux_netplay_server.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = fceux_netplay_server.m; sourceTree = "<group>"; };
+		B3341F5B27C1B1CC00E001C6 /* md5.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = md5.cpp; sourceTree = "<group>"; };
+		B3341F5C27C1B1CC00E001C6 /* ChangeLog */ = {isa = PBXFileReference; lastKnownFileType = text; path = ChangeLog; sourceTree = "<group>"; };
+		B3341F6127C1B1CD00E001C6 /* types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
+		B3341F6227C1B1CD00E001C6 /* AUTHORS */ = {isa = PBXFileReference; lastKnownFileType = text; path = AUTHORS; sourceTree = "<group>"; };
+		B3341F6327C1B1CD00E001C6 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		B3341F6427C1B1CD00E001C6 /* fceux-net-server.exe */ = {isa = PBXFileReference; lastKnownFileType = file; path = "fceux-net-server.exe"; sourceTree = "<group>"; };
+		B3341F6527C1B1CD00E001C6 /* cygwin1.dll */ = {isa = PBXFileReference; lastKnownFileType = file; path = cygwin1.dll; sourceTree = "<group>"; };
+		B3341F6627C1B1CD00E001C6 /* md5.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = md5.h; sourceTree = "<group>"; };
+		B3341F6727C1B1CD00E001C6 /* fceux-server.conf */ = {isa = PBXFileReference; lastKnownFileType = text; path = "fceux-server.conf"; sourceTree = "<group>"; };
+		B3341F6827C1B1CD00E001C6 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		B3341F6927C1B1CD00E001C6 /* COPYING */ = {isa = PBXFileReference; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
+		B3341F6A27C1B1CD00E001C6 /* throttle.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = throttle.cpp; sourceTree = "<group>"; };
+		B3341F6B27C1B1CD00E001C6 /* throttle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = throttle.h; sourceTree = "<group>"; };
+		B3341F6C27C1B1CD00E001C6 /* server.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = server.cpp; sourceTree = "<group>"; };
+		B3341F7D27C1B23A00E001C6 /* libfceux-netplay-server-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libfceux-netplay-server-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3341F8427C1B34000E001C6 /* fceux-server.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "fceux-server.conf"; sourceTree = "<group>"; };
+		B3341F8B27C1B39100E001C6 /* fceux-server */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "fceux-server"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3341F8D27C1B39200E001C6 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B34AB5592106D57B00C45F09 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B34AB5812106DDCC00C45F09 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3547B4A205857B900CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
@@ -2328,12 +2410,34 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		B3341F4D27C1B18C00E001C6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3341F7627C1B23A00E001C6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3341F8827C1B39100E001C6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3A9F4321DE877B4008450F5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				B34AB55A2106D57B00C45F09 /* PVSupport.framework in Frameworks */,
 				B3A9F6331DE88425008450F5 /* libz.tbd in Frameworks */,
+				B3341F7E27C1B2CF00E001C6 /* libfceux-netplay-server-iOS.a in Frameworks */,
 				B3A9F4501DE87833008450F5 /* Foundation.framework in Frameworks */,
 				B3A9F44F1DE87827008450F5 /* OpenGLES.framework in Frameworks */,
 				B3AAF66827C0A95C001CAE1F /* libfceux-iOS.a in Frameworks */,
@@ -2346,6 +2450,7 @@
 			files = (
 				B34AB5822106DDCC00C45F09 /* PVSupport.framework in Frameworks */,
 				B3A9F6351DE8842C008450F5 /* libz.tbd in Frameworks */,
+				B3341F8127C1B2D400E001C6 /* libfceux-netplay-server-tvOS.a in Frameworks */,
 				B3A9F4591DE8784B008450F5 /* Foundation.framework in Frameworks */,
 				B3BCB54427C09C820012118D /* libfceux-tvOS.a in Frameworks */,
 				B3A9F4551DE87840008450F5 /* OpenGLES.framework in Frameworks */,
@@ -2394,6 +2499,8 @@
 				B391F2B627C14FA300730B53 /* BuildFlags.xcconfig */,
 				1A3A74EA1ABF11AC002274A3 /* PVFCEU */,
 				B3A9F4371DE877B4008450F5 /* PVFCEU */,
+				B3341F5127C1B18C00E001C6 /* fceux-netplay-server */,
+				B3341F8C27C1B39200E001C6 /* fceux-server */,
 				1A3A79B41ABF1DB2002274A3 /* Frameworks */,
 				1A3A74E91ABF11AC002274A3 /* Products */,
 			);
@@ -2408,6 +2515,9 @@
 				B3BCA8C627C099700012118D /* libfceux-2.2.3-tvOS.a */,
 				B3BCA9BC27C09C230012118D /* libfceux-iOS.a */,
 				B3BCAAAC27C09C2D0012118D /* libfceux-tvOS.a */,
+				B3341F5027C1B18C00E001C6 /* libfceux-netplay-server-iOS.a */,
+				B3341F7D27C1B23A00E001C6 /* libfceux-netplay-server-tvOS.a */,
+				B3341F8B27C1B39100E001C6 /* fceux-server */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2431,6 +2541,7 @@
 		1A3A75041ABF125C002274A3 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				B3341F8427C1B34000E001C6 /* fceux-server.conf */,
 				1A3A75031ABF123F002274A3 /* PVFCEU-Prefix.pch */,
 			);
 			name = "Supporting Files";
@@ -2764,6 +2875,44 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		B3341F5127C1B18C00E001C6 /* fceux-netplay-server */ = {
+			isa = PBXGroup;
+			children = (
+				B3341F5227C1B18C00E001C6 /* fceux_netplay_server.h */,
+				B3341F5327C1B18C00E001C6 /* fceux_netplay_server.m */,
+			);
+			path = "fceux-netplay-server";
+			sourceTree = "<group>";
+		};
+		B3341F5A27C1B1CC00E001C6 /* fceux-server */ = {
+			isa = PBXGroup;
+			children = (
+				B3341F6227C1B1CD00E001C6 /* AUTHORS */,
+				B3341F5C27C1B1CC00E001C6 /* ChangeLog */,
+				B3341F6927C1B1CD00E001C6 /* COPYING */,
+				B3341F6327C1B1CD00E001C6 /* Makefile */,
+				B3341F6827C1B1CD00E001C6 /* README */,
+				B3341F6727C1B1CD00E001C6 /* fceux-server.conf */,
+				B3341F5B27C1B1CC00E001C6 /* md5.cpp */,
+				B3341F6C27C1B1CD00E001C6 /* server.cpp */,
+				B3341F6A27C1B1CD00E001C6 /* throttle.cpp */,
+				B3341F6527C1B1CD00E001C6 /* cygwin1.dll */,
+				B3341F6427C1B1CD00E001C6 /* fceux-net-server.exe */,
+				B3341F6627C1B1CD00E001C6 /* md5.h */,
+				B3341F6B27C1B1CD00E001C6 /* throttle.h */,
+				B3341F6127C1B1CD00E001C6 /* types.h */,
+			);
+			path = "fceux-server";
+			sourceTree = "<group>";
+		};
+		B3341F8C27C1B39200E001C6 /* fceux-server */ = {
+			isa = PBXGroup;
+			children = (
+				B3341F8D27C1B39200E001C6 /* main.m */,
+			);
+			path = "fceux-server";
+			sourceTree = "<group>";
+		};
 		B3A9F4371DE877B4008450F5 /* PVFCEU */ = {
 			isa = PBXGroup;
 			children = (
@@ -2777,6 +2926,7 @@
 		B3BCAAAD27C09C580012118D /* fceux */ = {
 			isa = PBXGroup;
 			children = (
+				B3341F5A27C1B1CC00E001C6 /* fceux-server */,
 				B3BCB16627C09C5A0012118D /* src */,
 			);
 			path = fceux;
@@ -4050,6 +4200,57 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		B3341F4F27C1B18C00E001C6 /* fceux-netplay-server-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3341F5927C1B18C00E001C6 /* Build configuration list for PBXNativeTarget "fceux-netplay-server-iOS" */;
+			buildPhases = (
+				B3341F4C27C1B18C00E001C6 /* Sources */,
+				B3341F4D27C1B18C00E001C6 /* Frameworks */,
+				B3341F4E27C1B18C00E001C6 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "fceux-netplay-server-iOS";
+			productName = "fceux-netplay-server";
+			productReference = B3341F5027C1B18C00E001C6 /* libfceux-netplay-server-iOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B3341F7027C1B23A00E001C6 /* fceux-netplay-server-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3341F7927C1B23A00E001C6 /* Build configuration list for PBXNativeTarget "fceux-netplay-server-tvOS" */;
+			buildPhases = (
+				B3341F7127C1B23A00E001C6 /* Sources */,
+				B3341F7627C1B23A00E001C6 /* Frameworks */,
+				B3341F7727C1B23A00E001C6 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "fceux-netplay-server-tvOS";
+			productName = "fceux-netplay-server";
+			productReference = B3341F7D27C1B23A00E001C6 /* libfceux-netplay-server-tvOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B3341F8A27C1B39100E001C6 /* fceux-server */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3341F8F27C1B39200E001C6 /* Build configuration list for PBXNativeTarget "fceux-server" */;
+			buildPhases = (
+				B3341F8727C1B39100E001C6 /* Sources */,
+				B3341F8827C1B39100E001C6 /* Frameworks */,
+				B3341F8927C1B39100E001C6 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "fceux-server";
+			productName = "fceux-server";
+			productReference = B3341F8B27C1B39100E001C6 /* fceux-server */;
+			productType = "com.apple.product-type.tool";
+		};
 		B3A9F4351DE877B4008450F5 /* PVFCEU-iOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3A9F43B1DE877B4008450F5 /* Build configuration list for PBXNativeTarget "PVFCEU-iOS" */;
@@ -4063,6 +4264,7 @@
 			);
 			dependencies = (
 				B3AAF66A27C0A95C001CAE1F /* PBXTargetDependency */,
+				B3341F8027C1B2CF00E001C6 /* PBXTargetDependency */,
 			);
 			name = "PVFCEU-iOS";
 			productName = PVNES;
@@ -4082,6 +4284,7 @@
 			);
 			dependencies = (
 				B3BCB54627C09C820012118D /* PBXTargetDependency */,
+				B3341F8327C1B2D400E001C6 /* PBXTargetDependency */,
 			);
 			name = "PVFCEU-tvOS";
 			productName = "PVNES tvOS";
@@ -4167,6 +4370,12 @@
 				LastUpgradeCheck = 1300;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
+					B3341F4F27C1B18C00E001C6 = {
+						CreatedOnToolsVersion = 13.2.1;
+					};
+					B3341F8A27C1B39100E001C6 = {
+						CreatedOnToolsVersion = 13.2.1;
+					};
 					B3A9F4351DE877B4008450F5 = {
 						CreatedOnToolsVersion = 8.1;
 						LastSwiftMigration = 1020;
@@ -4199,6 +4408,9 @@
 				B3BCA7D727C099700012118D /* fceux-2.2.3-tvOS */,
 				B3BCA8CD27C09C230012118D /* fceux-iOS */,
 				B3BCA9BD27C09C2D0012118D /* fceux-tvOS */,
+				B3341F4F27C1B18C00E001C6 /* fceux-netplay-server-iOS */,
+				B3341F7027C1B23A00E001C6 /* fceux-netplay-server-tvOS */,
+				B3341F8A27C1B39100E001C6 /* fceux-server */,
 			);
 		};
 /* End PBXProject section */
@@ -4208,6 +4420,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3341F8527C1B34100E001C6 /* fceux-server.conf in Resources */,
 				B3547B4B205857B900CFF7D8 /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4216,6 +4429,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3341F8627C1B34100E001C6 /* fceux-server.conf in Resources */,
 				B3547B4C205857B900CFF7D8 /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4223,6 +4437,39 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		B3341F4C27C1B18C00E001C6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3341F6E27C1B1E600E001C6 /* server.cpp in Sources */,
+				B3341F6D27C1B1E600E001C6 /* md5.cpp in Sources */,
+				B3341F5427C1B18C00E001C6 /* fceux_netplay_server.m in Sources */,
+				B3341F6F27C1B1E600E001C6 /* throttle.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3341F7127C1B23A00E001C6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3341F7227C1B23A00E001C6 /* server.cpp in Sources */,
+				B3341F7327C1B23A00E001C6 /* md5.cpp in Sources */,
+				B3341F7427C1B23A00E001C6 /* fceux_netplay_server.m in Sources */,
+				B3341F7527C1B23A00E001C6 /* throttle.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3341F8727C1B39100E001C6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3341F9427C1B39A00E001C6 /* server.cpp in Sources */,
+				B3341F8E27C1B39200E001C6 /* main.m in Sources */,
+				B3341F9527C1B39A00E001C6 /* md5.cpp in Sources */,
+				B3341F9327C1B39A00E001C6 /* throttle.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3A9F4311DE877B4008450F5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -5210,6 +5457,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		B3341F8027C1B2CF00E001C6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3341F4F27C1B18C00E001C6 /* fceux-netplay-server-iOS */;
+			targetProxy = B3341F7F27C1B2CF00E001C6 /* PBXContainerItemProxy */;
+		};
+		B3341F8327C1B2D400E001C6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3341F7027C1B23A00E001C6 /* fceux-netplay-server-tvOS */;
+			targetProxy = B3341F8227C1B2D400E001C6 /* PBXContainerItemProxy */;
+		};
 		B3AAF66A27C0A95C001CAE1F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B3BCA8CD27C09C230012118D /* fceux-iOS */;
@@ -5533,6 +5790,189 @@
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 				WARNING_CFLAGS = "-Wno-write-strings";
+			};
+			name = Archive;
+		};
+		B3341F5627C1B18C00E001C6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,6";
+			};
+			name = Debug;
+		};
+		B3341F5727C1B18C00E001C6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,6";
+			};
+			name = Release;
+		};
+		B3341F5827C1B18C00E001C6 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,6";
+			};
+			name = Archive;
+		};
+		B3341F7A27C1B23A00E001C6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 12.0;
+			};
+			name = Debug;
+		};
+		B3341F7B27C1B23A00E001C6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 12.0;
+			};
+			name = Release;
+		};
+		B3341F7C27C1B23A00E001C6 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 12.0;
+			};
+			name = Archive;
+		};
+		B3341F9027C1B39200E001C6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				MACOSX_DEPLOYMENT_TARGET = 12.1;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		B3341F9127C1B39200E001C6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				MACOSX_DEPLOYMENT_TARGET = 12.1;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		B3341F9227C1B39200E001C6 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				MACOSX_DEPLOYMENT_TARGET = 12.1;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 			};
 			name = Archive;
 		};
@@ -6295,6 +6735,36 @@
 				1A3A74FA1ABF11AC002274A3 /* Debug */,
 				1A3A74FB1ABF11AC002274A3 /* Release */,
 				B324C50E2191A366009F4EDC /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3341F5927C1B18C00E001C6 /* Build configuration list for PBXNativeTarget "fceux-netplay-server-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3341F5627C1B18C00E001C6 /* Debug */,
+				B3341F5727C1B18C00E001C6 /* Release */,
+				B3341F5827C1B18C00E001C6 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3341F7927C1B23A00E001C6 /* Build configuration list for PBXNativeTarget "fceux-netplay-server-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3341F7A27C1B23A00E001C6 /* Debug */,
+				B3341F7B27C1B23A00E001C6 /* Release */,
+				B3341F7C27C1B23A00E001C6 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3341F8F27C1B39200E001C6 /* Build configuration list for PBXNativeTarget "fceux-server" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3341F9027C1B39200E001C6 /* Debug */,
+				B3341F9127C1B39200E001C6 /* Release */,
+				B3341F9227C1B39200E001C6 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
