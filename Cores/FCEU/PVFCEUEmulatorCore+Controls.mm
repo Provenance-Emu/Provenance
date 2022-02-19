@@ -9,14 +9,14 @@
 #import "PVFCEUEmulatorCore+Controls.h"
 #import "PVFCEUEmulatorCore.h"
 
-#include "FCEU/fceu.h"
-#include "FCEU/driver.h"
-#include "FCEU/input.h"
-#include "FCEU/sound.h"
-#include "FCEU/movie.h"
-#include "FCEU/palette.h"
-#include "FCEU/state.h"
-#include "FCEU/emufile.h"
+#include "fceux/src/fceu.h"
+#include "fceux/src/driver.h"
+#include "fceux/src/input.h"
+#include "fceux/src/sound.h"
+#include "fceux/src/movie.h"
+#include "fceux/src/palette.h"
+#include "fceux/src/state.h"
+#include "fceux/src/emufile.h"
 
 static const int NESMap[] = {JOY_UP, JOY_DOWN, JOY_LEFT, JOY_RIGHT, JOY_A, JOY_B, JOY_START, JOY_SELECT};
 
