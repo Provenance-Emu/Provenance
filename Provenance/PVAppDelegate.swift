@@ -50,7 +50,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         self.window = window
 
         #if os(tvOS)
-            window.tintColor = UIColor(red: 0.1, green: 0.5, blue: 0.95, alpha: 1.0)  // PVBlue
+        window.tintColor = .provenanceBlue
         #endif
 
         if #available(iOS 14, tvOS 14, *), PVSettingsModel.shared.debugOptions.useSwiftUI {
