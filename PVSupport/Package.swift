@@ -18,6 +18,12 @@ let package = Package(
         .library(
             name: "PVSupportObjC",
             targets: ["PVSupportObjC"]),
+        .library(
+            name: "PVAudio",
+            targets: ["PVAudio"]),
+        .library(
+            name: "PVLogging",
+            targets: ["PVLogging"]),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -30,21 +36,28 @@ let package = Package(
             .upToNextMajor(from: "5.1.0"))
     ],
     targets: [
+
+        .target(
+            name: "PVAudio",
+            dependencies: ["PVSupportObjC"],
+            path: "Sources/PVAudio"),
+
+        .target(
+            name: "PVLoggingObjC",
+            dependencies: [.product(name: "CocoaLumberjack", package: "CocoaLumberjack")],
+            path: "Sources/PVLogging/ObjC"),
+
+        .target(
+            name: "PVLogging",
+            dependencies: ["PVLoggingObjC"],
+            path: "Sources/PVLogging/Swift"),
+
         .target(
             name: "PVSupportObjC",
-            dependencies: [
-                .product(name: "CocoaLumberjack", package: "CocoaLumberjack")],
+            dependencies: ["PVLogging"],
             path: "Sources/PVSupport",
             sources: [
-                "Audio/OEGameAudio.m",
-                "Audio/OERingBuffer.m",
-                "Audio/TPCircularBuffer.c",
-                "Audio/CARingBuffer/CAAudioTimeStamp.cpp",
-                "Audio/CARingBuffer/CARingBuffer.cpp",
                 "EmulatorCore/PVEmulatorCore.m",
-                "Logging/PVProvenanceLogging.m",
-                "Logging/PVLogEntry.m",
-                "Logging/PVLogging.m",
                 "NSExtensions/NSObject+PVAbstractAdditions.m",
                 "NSExtensions/NSFileManager+OEHashingAdditions.m",
                 "Threads/RealTimeThread.m"],

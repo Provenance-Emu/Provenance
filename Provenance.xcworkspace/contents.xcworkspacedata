@@ -5,9 +5,6 @@
       location = "container:Provenance.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:PVUI/PVUI/PVUI.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "group:PVLibrary/PVLibrary.xcodeproj">
    </FileRef>
    <FileRef
