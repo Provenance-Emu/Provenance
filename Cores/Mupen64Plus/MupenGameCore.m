@@ -73,9 +73,8 @@ static void (*ptr_SetOSDCallback)(void (*inPV_OSD_Callback)(const char *_pText, 
 
 EXPORT static void PV_DrawOSD(const char *_pText, float _x, float _y)
 {
-#if DEBUG
-//	DLOG(@"%s", _pText);
-#endif
+// TODO: This should print on the screen
+	NSLog(@"%s", _pText);
 }
 
 static void MupenDebugCallback(void *context, int level, const char *message)

@@ -152,6 +152,19 @@ void ConfigureCore(NSString *romFolder) {
     printf("emulator %i", emulator);
     ConfigSetParameter(config, "R4300Emulator", M64TYPE_INT, &emulator);
 
+	int osd = [MupenGameCore boolForOption:@"Debug OSD"];
+
+
+		// Draw on-screen display if True, otherwise don't draw OSD
+		int osd = [MupenGameCore boolForOption:@"Debug OSD"];
+		ConfigSetParameter(config, "OnScreenDisplay", M64TYPE_BOOL, &osd);
+		ConfigSetParameter(config, "ShowFPS", M64TYPE_BOOL, &osd);            // Show FPS counter.
+		ConfigSetParameter(config, "ShowVIS", M64TYPE_BOOL, &osd);            // Show VI/S counter.
+		ConfigSetParameter(config, "ShowPercent", M64TYPE_BOOL, &osd);        // Show percent counter.
+		ConfigSetParameter(config, "ShowInternalResolution", M64TYPE_BOOL, &osd);    // Show internal resolution.
+		ConfigSetParameter(config, "ShowRenderingResolution", M64TYPE_BOOL, &osd);    // Show rendering resolution.
+
+
     ConfigSaveSection("Core");
     /** End Core Config **/
 }
@@ -278,15 +291,6 @@ void ConfigureGLideN64(NSString *romFolder) {
     // "txHiresFullAlphaChannel", "Allow to use alpha channel of high-res texture fully."
     int txHiresFullAlphaChannel = [MupenGameCore boolForOption:@"HiRes Full Alpha"];;
     ConfigSetParameter(gliden64, "txHiresFullAlphaChannel", M64TYPE_BOOL, &txHiresFullAlphaChannel);
-
-    // Draw on-screen display if True, otherwise don't draw OSD
-    int osd = [MupenGameCore boolForOption:@"Debug OSD"];
-    ConfigSetParameter(gliden64, "OnScreenDisplay", M64TYPE_BOOL, &osd);
-    ConfigSetParameter(gliden64, "ShowFPS", M64TYPE_BOOL, &osd);            // Show FPS counter.
-    ConfigSetParameter(gliden64, "ShowVIS", M64TYPE_BOOL, &osd);            // Show VI/S counter.
-    ConfigSetParameter(gliden64, "ShowPercent", M64TYPE_BOOL, &osd);        // Show percent counter.
-    ConfigSetParameter(gliden64, "ShowInternalResolution", M64TYPE_BOOL, &osd);    // Show internal resolution.
-    ConfigSetParameter(gliden64, "ShowRenderingResolution", M64TYPE_BOOL, &osd);    // Show rendering resolution.
 
     ConfigSaveSection("Video-GLideN64");
     /** End GLideN64 Config **/
