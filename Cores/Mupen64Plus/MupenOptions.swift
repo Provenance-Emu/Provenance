@@ -83,7 +83,7 @@ extension MupenGameCore: CoreOptional {
 										values:[
 											.init(title: "Pure Interpreter", description: "Slowest", value: 0),
 											.init(title: "Cached Interpreter", description: "Default", value: 1),
-											.init(title: "Dynamic Recompiler", description: "Fastest but bequires JIT or will crash", value: 2)],
+											.init(title: "Dynamic Recompiler", description: "Fastest but requires JIT or will crash", value: 2)],
                                         defaultValue: 1))
 
 			// MARK: --- DEBUG
