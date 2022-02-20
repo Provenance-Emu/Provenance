@@ -149,20 +149,26 @@ void ConfigureCore(NSString *romFolder) {
 
     // Use Pure Interpreter if 0, Cached Interpreter if 1, or Dynamic Recompiler if 2 or more"
     int emulator = [MupenGameCore intForOption:@"CPU Mode"];
-    printf("emulator %i", emulator);
     ConfigSetParameter(config, "R4300Emulator", M64TYPE_INT, &emulator);
 
-	int osd = [MupenGameCore boolForOption:@"Debug OSD"];
+	int SiDmaDuration = [MupenGameCore intForOption:@"SiDmaDuration"];
+	ConfigSetParameter(config, "SiDmaDuration", M64TYPE_INT, &SiDmaDuration);
+
+	int disableExtraMemory = [MupenGameCore boolForOption:@"Disable Extra Memory"];
+	ConfigSetParameter(config, "DisableExtraMem", M64TYPE_BOOL, &disableExtraMemory);
+
+	int randomizeInterrupt = [MupenGameCore boolForOption:@"Randomize Interrupt"];
+	ConfigSetParameter(config, "RandomizeInterrupt", M64TYPE_BOOL, &randomizeInterrupt);
 
 
 		// Draw on-screen display if True, otherwise don't draw OSD
-		int osd = [MupenGameCore boolForOption:@"Debug OSD"];
-		ConfigSetParameter(config, "OnScreenDisplay", M64TYPE_BOOL, &osd);
-		ConfigSetParameter(config, "ShowFPS", M64TYPE_BOOL, &osd);            // Show FPS counter.
-		ConfigSetParameter(config, "ShowVIS", M64TYPE_BOOL, &osd);            // Show VI/S counter.
-		ConfigSetParameter(config, "ShowPercent", M64TYPE_BOOL, &osd);        // Show percent counter.
-		ConfigSetParameter(config, "ShowInternalResolution", M64TYPE_BOOL, &osd);    // Show internal resolution.
-		ConfigSetParameter(config, "ShowRenderingResolution", M64TYPE_BOOL, &osd);    // Show rendering resolution.
+	int osd = [MupenGameCore boolForOption:@"Debug OSD"];
+	ConfigSetParameter(config, "OnScreenDisplay", M64TYPE_BOOL, &osd);
+	ConfigSetParameter(config, "ShowFPS", M64TYPE_BOOL, &osd);            // Show FPS counter.
+	ConfigSetParameter(config, "ShowVIS", M64TYPE_BOOL, &osd);            // Show VI/S counter.
+	ConfigSetParameter(config, "ShowPercent", M64TYPE_BOOL, &osd);        // Show percent counter.
+	ConfigSetParameter(config, "ShowInternalResolution", M64TYPE_BOOL, &osd);    // Show internal resolution.
+	ConfigSetParameter(config, "ShowRenderingResolution", M64TYPE_BOOL, &osd);    // Show rendering resolution.
 
 
     ConfigSaveSection("Core");

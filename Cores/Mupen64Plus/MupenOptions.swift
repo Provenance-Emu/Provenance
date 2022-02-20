@@ -86,6 +86,26 @@ extension MupenGameCore: CoreOptional {
 											.init(title: "Dynamic Recompiler", description: "Fastest but requires JIT or will crash", value: 2)],
                                         defaultValue: 1))
 
+		coreOptions.append(.range(.init(title: "Count Per Operation",
+										description: "Force number of cycles per emulated instruction.",
+										requiresRestart: true),
+								  range: .init(defaultValue: 2, min: 1, max: 4), defaultValue: 2))
+
+		coreOptions.append(.bool(.init(title: "Disable Extra Memory",
+									   description: "Disable 4MB expansion RAM pack. May be necessary for some games.",
+									   requiresRestart: true),
+								 defaultValue: false))
+
+		coreOptions.append(.range(.init(title: "SiDmaDuration",
+										description: "Duration of SI DMA (-1: use per game settings)",
+										requiresRestart: true),
+								  range: .init(defaultValue: -1, min: -1, max: 255), defaultValue: -1))
+
+		coreOptions.append(.bool(.init(title: "Randomize Interrupt",
+									   description: "Randomize PI/SI Interrupt Timing.",
+									   requiresRestart: true),
+								 defaultValue: true))
+
 			// MARK: --- DEBUG
 			// MARK: OSD <Bool=0>
 			// Draw on-screen display if True, otherwise don't draw OSD
