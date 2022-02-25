@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1300"
+   LastUpgradeVersion = "1320"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,23 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
-               BuildableName = "PVSupport.framework"
-               BlueprintName = "PVSupport-iOS"
-               ReferencedContainer = "container:../../PVSupport/PVSupport.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3A9F4351DE877B4008450F5"
-               BuildableName = "PVFCEU.framework"
-               BlueprintName = "PVFCEU-iOS"
+               BlueprintIdentifier = "B3341F4F27C1B18C00E001C6"
+               BuildableName = "libfceux-netplay-server.a"
+               BlueprintName = "fceux-netplay-server-iOS"
                ReferencedContainer = "container:PVFCEU.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -54,15 +40,6 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B3A9F4351DE877B4008450F5"
-            BuildableName = "PVFCEU.framework"
-            BlueprintName = "PVFCEU-iOS"
-            ReferencedContainer = "container:PVFCEU.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -73,9 +50,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B3A9F4351DE877B4008450F5"
-            BuildableName = "PVFCEU.framework"
-            BlueprintName = "PVFCEU-iOS"
+            BlueprintIdentifier = "B3341F4F27C1B18C00E001C6"
+            BuildableName = "libfceux-netplay-server.a"
+            BlueprintName = "fceux-netplay-server-iOS"
             ReferencedContainer = "container:PVFCEU.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

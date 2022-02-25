@@ -1,0 +1,36 @@
+//
+//  BuildFlags.xcconfig
+//  FCEUX
+//
+//  Created by Joseph Mattiello on 02/19/22.
+//
+//
+
+// All
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited)
+OTHER_CFLAGS = $(inherited) -DHAVE_ASPRINTF -DPSS_STYLE=1 -DLSB_FIRST -ObjC
+GCC_C_LANGUAGE_STANDARD = c99
+//GCC_C_LANGUAGE_STANDARD = gnu99
+CLANG_CXX_LANGUAGE_STANDARD = gnu++0x
+CLANG_CXX_LIBRARY = libc++
+WARNING_CFLAGS = $(inherited) -Wno-write-strings
+//:configuration = Archive
+HEADER_SEARCH_PATHS = $(inherited) "$(SRCROOT)/fceux/src/drivers" "$(SRCROOT)/fceux/src/boards" "$(SRCROOT)/fceux/src/attic" "$(SRCROOT)/fceux/src" "$(SRCROOT)/fceux/drivers/sdl"
+
+//
+//    // Device
+//GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*] = $(inherited)
+//OTHER_CFLAGS[sdk=iphoneos*] = $(inherited)
+//
+//// Simulator
+//GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*] = $(inherited)
+//
+//// tvOS Device
+//GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvos*] = $(inherited)
+//OTHER_CFLAGS[sdk=appletvos*] = $(inherited)
+//
+//// tvOS Simulator
+//GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvsimulator*] = $(inherited)
+//
+//// DEBUG
+//GCC_PREPROCESSOR_DEFINITIONS[configuration=Debug] = DEBUG=1 $(inherited)
