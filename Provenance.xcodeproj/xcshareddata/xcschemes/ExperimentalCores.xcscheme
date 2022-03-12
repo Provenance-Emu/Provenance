@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3341F4F27C1B18C00E001C6"
-               BuildableName = "libfceux-netplay-server-iOS.a"
-               BlueprintName = "fceux-netplay-server-iOS"
-               ReferencedContainer = "container:PVFCEU.xcodeproj">
+               BlueprintIdentifier = "B3C7CCBC27DCB0B90003F9D2"
+               BuildableName = "ExperimentalCores.framework"
+               BlueprintName = "ExperimentalCores"
+               ReferencedContainer = "container:Provenance.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -50,10 +50,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B3341F4F27C1B18C00E001C6"
-            BuildableName = "libfceux-netplay-server-iOS.a"
-            BlueprintName = "fceux-netplay-server-iOS"
-            ReferencedContainer = "container:PVFCEU.xcodeproj">
+            BlueprintIdentifier = "B3C7CCBC27DCB0B90003F9D2"
+            BuildableName = "ExperimentalCores.framework"
+            BlueprintName = "ExperimentalCores"
+            ReferencedContainer = "container:Provenance.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
