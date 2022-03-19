@@ -50,7 +50,7 @@ PVLIBRARY_PRODUCT_BUNDLE_IDENTIFIER = $(ORG_PREFIX).$(PROJECT_NAME:lower).PVLibr
 // MAC_CODE_SIGN_ENTITLEMENTS = $(MAC_CODE_SIGN_ENTITLEMENTS_$(DEVELOPER_ACCOUNT_VM_ACCESS:default=NO))
 
 // Fixes XCode 13.2.1 issues
-OTHER_LDFLAGS = $(inherited) -Wl,-weak-lswift_Concurrency -Wl,-rpath,/usr/lib/swift -ObjC
+//OTHER_LDFLAGS = $(inherited) -Wl,-weak-lswift_Concurrency -Wl,-rpath,/usr/lib/swift -ObjC
 
 //OTHER_LDFLAGS = $(inherited)
 ENABLE_BITCODE = NO

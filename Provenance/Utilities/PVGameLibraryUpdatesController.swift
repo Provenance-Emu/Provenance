@@ -220,7 +220,7 @@ private extension GameImporter {
 }
 
 private extension Reactive where Base: GameImporter {
-    var events: Observable<Base.Event> {
+    var events: Observable<GameImporter.Event> {
         return Observable.create { observer in
             self.base.initialized.notify(queue: DispatchQueue.global(qos: .background)) {
                 observer.onNext(.initialized)

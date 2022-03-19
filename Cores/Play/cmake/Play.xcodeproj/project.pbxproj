@@ -5888,7 +5888,6 @@
 				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_IDENTITY = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
 				SYMROOT = ./cmake/build;
 			};
 			name = MinSizeRel;
@@ -6744,7 +6743,6 @@
 				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_IDENTITY = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
 				SYMROOT = ./cmake/build;
 			};
 			name = Release;
@@ -8055,7 +8053,6 @@
 				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_IDENTITY = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
 				SYMROOT = ./cmake/build;
 			};
 			name = Debug;
@@ -8559,7 +8556,6 @@
 				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_IDENTITY = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
 				SYMROOT = ./cmake/build;
 			};
 			name = RelWithDebInfo;
