@@ -14,6 +14,10 @@
 
 #include "libretro.h"
 
+void log(retro_log_level level, const char *fmt, ...) {
+    
+}
+
 @interface PVTGBDualCore () {
     bool emulationHasRun;
 }
@@ -234,15 +238,15 @@ static bool environment_callback(unsigned cmd, void *data) {
             switch (pix_fmt)
             {
                 case RETRO_PIXEL_FORMAT_0RGB1555:
-                    NSLog(@"Environ SET_PIXEL_FORMAT: 0RGB1555");
+                    ILOG(@"Environ SET_PIXEL_FORMAT: 0RGB1555");
                     break;
                 
                 case RETRO_PIXEL_FORMAT_RGB565:
-                    NSLog(@"Environ SET_PIXEL_FORMAT: RGB565");
+                    ILOG(@"Environ SET_PIXEL_FORMAT: RGB565");
                     break;
                     
                 case RETRO_PIXEL_FORMAT_XRGB8888:
-                    NSLog(@"Environ SET_PIXEL_FORMAT: XRGB8888");
+                    ILOG(@"Environ SET_PIXEL_FORMAT: XRGB8888");
                     break;
                     
                 default:
@@ -255,7 +259,7 @@ static bool environment_callback(unsigned cmd, void *data) {
             NSString *appSupportPath = current.BIOSPath;
             
             *(const char **)data = [appSupportPath UTF8String];
-            NSLog(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", appSupportPath);
+            ILOG(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", appSupportPath);
             break;
         }
         case RETRO_ENVIRONMENT_GET_VARIABLE:
@@ -264,43 +268,47 @@ static bool environment_callback(unsigned cmd, void *data) {
             if(!strcmp(req->key, "tgbdual_gblink_enable"))
             {
                 req->value = "enabled"; //disabled|enabled
-                NSLog(@"Setting key: %s to val: %s", req->key, req->value);
+                ILOG(@"Setting key: %s to val: %s", req->key, req->value);
                 return true;
             }
             else if(!strcmp(req->key, "tgbdual_screen_placement"))
             {
                 req->value = "left-right"; //left-right|top-down
-                NSLog(@"Setting key: %s to val: %s", req->key, req->value);
+                ILOG(@"Setting key: %s to val: %s", req->key, req->value);
                 return true;
             }
             else if(!strcmp(req->key, "tgbdual_switch_screens"))
             {
                 req->value = "normal"; //normal|switched
-                NSLog(@"Setting key: %s to val: %s", req->key, req->value);
+                ILOG(@"Setting key: %s to val: %s", req->key, req->value);
                 return true;
             }
             else if(!strcmp(req->key, "tgbdual_single_screen_mp"))
             {
                 req->value = "both players"; //both players|player 1 only|player 2 only
-                NSLog(@"Setting key: %s to val: %s", req->key, req->value);
+                ILOG(@"Setting key: %s to val: %s", req->key, req->value);
                 return true;
             }
             else if(!strcmp(req->key, "tgbdual_audio_output"))
             {
                 req->value = "Game Boy #1"; //Game Boy #1|Game Boy #2
-                NSLog(@"Setting key: %s to val: %s", req->key, req->value);
+                ILOG(@"Setting key: %s to val: %s", req->key, req->value);
                 return true;
             }
 
-            NSLog(@"Unhandled variable: %s", req->key);
+            WLOG(@"Unhandled variable: %s", req->key);
             return true;
         }
         case RETRO_ENVIRONMENT_SET_VARIABLES:
         {
             break;
         }
-        case RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL:
         case RETRO_ENVIRONMENT_GET_LOG_INTERFACE:
+        {
+            retro_log_callback log_callback = *(retro_log_callback*)data;
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL:
         case RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS:
         case RETRO_ENVIRONMENT_SET_GEOMETRY:
         case RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO:
@@ -308,7 +316,7 @@ static bool environment_callback(unsigned cmd, void *data) {
             break;
         }
         default :
-            NSLog(@"Environ UNSUPPORTED (#%u).\n", cmd);
+            WLOG(@"Environ UNSUPPORTED (#%u).\n", cmd);
             return false;
     }
     
