@@ -31,6 +31,7 @@ public protocol EnumCOption: COption {
 }
 
 public protocol OptionValueRepresentable: Codable {}
+extension Array: OptionValueRepresentable where Self.Element: OptionValueRepresentable { }
 
 extension Int: OptionValueRepresentable {}
 extension UInt: OptionValueRepresentable {}

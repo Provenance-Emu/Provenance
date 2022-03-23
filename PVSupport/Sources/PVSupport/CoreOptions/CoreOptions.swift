@@ -26,9 +26,10 @@ public enum CoreOption {
 		case let .rangef(_, _, defaultValue):
 			return defaultValue
         case let .multi(_, values):
-            return values.first?.title
-		case let .enumeration(_, values, defaultValue):
-			return values.first?.value ?? defaultValue
+            return values.filter { $0.isDefault }.map{ $0.title }
+//            return values.first { $0.isDefault }?.title
+		case let .enumeration(_, _, defaultValue):
+			return defaultValue
         case let .string(_, defaultValue):
             return defaultValue
         case .group:
