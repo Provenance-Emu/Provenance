@@ -241,11 +241,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 //            let top = NSAttributedString(format: "Core speed %03.02f%% - Draw time %02.02f%ms - FPS %03.02f\n", coreSpeed, drawTime, fps);
 //            
 //            label.append(top)
-            
+
             self.fpsLabel.text = String(format: "Core speed %03.02f%% - Draw time %02.02f%ms - FPS %03.02f\nCPU %@%% Mem %@/%@(MB)", coreSpeed, drawTime, fps, cpuFormatted, memFormatted, memTotalFormatted)
         })
     }
-    
+
     typealias MemoryUsage = (used: UInt64, total: UInt64)
     func memoryUsage() -> MemoryUsage {
         var taskInfo = task_vm_info_data_t()
@@ -255,16 +255,16 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
                 task_info(mach_task_self_, task_flavor_t(TASK_VM_INFO), $0, &count)
             }
         }
-        
+
         var used: UInt64 = 0
         if result == KERN_SUCCESS {
             used = UInt64(taskInfo.phys_footprint)
         }
-        
+
         let total = ProcessInfo.processInfo.physicalMemory
         return (used, total)
     }
-    
+
     func cpuUsage() -> Double {
         var totalUsageOfCPU: Double = 0.0
         var threadsList: thread_act_array_t?
@@ -274,7 +274,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
                 task_threads(mach_task_self_, $0, &threadsCount)
             }
         }
-        
+
         if threadsResult == KERN_SUCCESS, let threadsList = threadsList {
             for index in 0..<threadsCount {
                 var threadInfo = thread_basic_info()
@@ -284,18 +284,18 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
                         thread_info(threadsList[Int(index)], thread_flavor_t(THREAD_BASIC_INFO), $0, &threadInfoCount)
                     }
                 }
-                
+
                 guard infoResult == KERN_SUCCESS else {
                     break
                 }
-                
+
                 let threadBasicInfo = threadInfo as thread_basic_info
                 if threadBasicInfo.flags & TH_FLAGS_IDLE == 0 {
                     totalUsageOfCPU = (totalUsageOfCPU + (Double(threadBasicInfo.cpu_usage) / Double(TH_USAGE_SCALE) * 100.0))
                 }
             }
         }
-        
+
         vm_deallocate(mach_task_self_, vm_address_t(UInt(bitPattern: threadsList)), vm_size_t(Int(threadsCount) * MemoryLayout<thread_t>.stride))
         return totalUsageOfCPU
     }
@@ -378,7 +378,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         }
 
         hideOrShowMenuButton()
- 
+
         convertOldSaveStatesToNewIfNeeded()
 
         core.startEmulation()
@@ -515,7 +515,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         }
 
         override var preferredScreenEdgesDeferringSystemGestures: UIRectEdge {
-            return .bottom
+            return [.left, .right, .bottom]
         }
 
         override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -688,16 +688,16 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             tap.allowedPressTypes = [.menu]
             moreInfoViewController.view.addGestureRecognizer(tap)
         #endif
-        
+
         // disable iOS 13 swipe to dismiss...
         if #available(iOS 13.0, tvOS 13.0, *) {
             newNav.isModalInPresentation = true
         }
 
         self.present(newNav, animated: true) { () -> Void in }
-        //hideMoreInfo will/should do this!
-        //self.isShowingMenu = false
-        //self.enableControllerInput(false)
+        // hideMoreInfo will/should do this!
+        // self.isShowingMenu = false
+        // self.enableControllerInput(false)
     }
 
     typealias QuitCompletion = () -> Void
@@ -731,7 +731,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         updatePlayedDuration()
 		staticSelf = nil
     }
-    
+
     @objc
     func dismissNav() {
         presentedViewController?.dismiss(animated: true, completion: nil)
