@@ -301,29 +301,21 @@ public final class PVEmulatorConfiguration: NSObject {
             }()
         }
 
-        public static var romsImportPath: URL {
-            return documentsPath.appendingPathComponent("Imports", isDirectory: true)
-        }
+        public static var romsImportPath: URL { documentsPath.appendingPathComponent("Imports", isDirectory: true) }
+        
+        public static var romsPath: URL { documentsPath.appendingPathComponent("ROMs", isDirectory: true) }
 
         /// Should be called on BG Thread, iCloud blocks
-        public static var batterySavesPath: URL {
-            return documentsiCloudOrLocalPath.appendingPathComponent("Battery States", isDirectory: true)
-        }
+        public static var batterySavesPath: URL { documentsiCloudOrLocalPath.appendingPathComponent("Battery States", isDirectory: true) }
 
         /// Should be called on BG Thread, iCloud blocks
-        public static var saveSavesPath: URL {
-            return documentsiCloudOrLocalPath.appendingPathComponent("Save States", isDirectory: true)
-        }
+        public static var saveSavesPath: URL { documentsiCloudOrLocalPath.appendingPathComponent("Save States", isDirectory: true) }
 
         /// Should be called on BG Thread, iCloud blocks
-        public static var screenShotsPath: URL {
-            return documentsiCloudOrLocalPath.appendingPathComponent("Screenshots", isDirectory: true)
-        }
+        public static var screenShotsPath: URL { documentsiCloudOrLocalPath.appendingPathComponent("Screenshots", isDirectory: true) }
 
         /// Should be called on BG Thread, iCloud blocks
-        public static var biosesPath: URL {
-            return documentsiCloudOrLocalPath.appendingPathComponent("BIOS", isDirectory: true)
-        }
+        public static var biosesPath: URL { documentsiCloudOrLocalPath.appendingPathComponent("BIOS", isDirectory: true) }
     }
 
     public static let archiveExtensions: [String] = ["zip", "7z", "rar", "7zip", "gz", "gzip"]

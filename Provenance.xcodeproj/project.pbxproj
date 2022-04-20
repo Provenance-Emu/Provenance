@@ -361,6 +361,10 @@
 		B343717D276B0FA40014F87C /* PVVectrexControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B343717C276B0FA40014F87C /* PVVectrexControllerViewController.swift */; };
 		B343717E276B0FA40014F87C /* PVVectrexControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B343717C276B0FA40014F87C /* PVVectrexControllerViewController.swift */; };
 		B3447E73218B596600557ACE /* PVDreamcastControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */; };
+		B348DD5C280FC926007DBAE7 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B348DD5B280FC926007DBAE7 /* Constants.swift */; };
+		B348DD5D280FC926007DBAE7 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B348DD5B280FC926007DBAE7 /* Constants.swift */; };
+		B348DD5E280FC926007DBAE7 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B348DD5B280FC926007DBAE7 /* Constants.swift */; };
+		B348DD5F280FC926007DBAE7 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B348DD5B280FC926007DBAE7 /* Constants.swift */; };
 		B34EADAE218824C2008F52EE /* PViCadeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37F421881CDC009D9244 /* PViCadeControllerViewController.swift */; };
 		B34EADAF218824C3008F52EE /* PViCadeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37F421881CDC009D9244 /* PViCadeControllerViewController.swift */; };
 		B3532B2B21A78FB2006CDA0F /* PVSwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532B2A21A78FB2006CDA0F /* PVSwitchCell.swift */; };
@@ -1209,6 +1213,7 @@
 		B343717C276B0FA40014F87C /* PVVectrexControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVVectrexControllerViewController.swift; sourceTree = "<group>"; };
 		B344605A27DCB73E0035B08E /* libswift_Concurrency.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libswift_Concurrency.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/usr/lib/swift/libswift_Concurrency.tbd; sourceTree = DEVELOPER_DIR; };
 		B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVDreamcastControllerViewController.swift; sourceTree = "<group>"; };
+		B348DD5B280FC926007DBAE7 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		B3532B2A21A78FB2006CDA0F /* PVSwitchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSwitchCell.swift; sourceTree = "<group>"; };
 		B3532C3B21A9AC93006CDA0F /* Services.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services.swift; sourceTree = "<group>"; };
 		B354693B1DECDA710018B6F3 /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1781,6 +1786,7 @@
 				1A3D409E17B2DCE4004DFFFC /* Supporting Files */,
 				1A1237F217CA279900CEC788 /* User Interface */,
 				B3DBF13A2094669A005935A8 /* Utilities */,
+				B348DD5B280FC926007DBAE7 /* Constants.swift */,
 			);
 			path = Provenance;
 			sourceTree = "<group>";
@@ -3325,6 +3331,7 @@
 				B3DB11A8205C52B800A6E845 /* UIAlertController+Theming.swift in Sources */,
 				B3411C13276B470B00D85327 /* Reusable.swift in Sources */,
 				378F4A081B63D7CD0065FA39 /* GCDWebServerURLEncodedFormRequest.m in Sources */,
+				B348DD5C280FC926007DBAE7 /* Constants.swift in Sources */,
 				1180B307248FF8AC00636C8A /* UICollectionView+Rx.swift in Sources */,
 				B3890BE420B97588005BB001 /* PVGameLibraryViewController+PeekPop.swift in Sources */,
 				B3447E73218B596600557ACE /* PVDreamcastControllerViewController.swift in Sources */,
@@ -3523,6 +3530,7 @@
 				B3E3B5DA202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */,
 				B3D534E320AFF21900A83D4E /* Version.swift in Sources */,
 				B3411C2B276B472900D85327 /* Deprecated.swift in Sources */,
+				B348DD5D280FC926007DBAE7 /* Constants.swift in Sources */,
 				B3CCD2BB21DAA8D30031C42C /* PVEmulatorViewController+Saves.swift in Sources */,
 				B382C63E278E514A007E61FE /* PVEmulatorViewController+CoreOptions.swift in Sources */,
 				B378224B21D329FB0077E86F /* SettingsRowSwitch.swift in Sources */,
@@ -3686,6 +3694,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3E21D6E203211BE009939D3 /* IndexRequestHandler.swift in Sources */,
+				B348DD5F280FC926007DBAE7 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3696,6 +3705,7 @@
 				BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */,
 				BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */,
 				DA5EB00A206C4DEB000B5F30 /* PVGame+TopShelf.swift in Sources */,
+				B348DD5E280FC926007DBAE7 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -266,7 +266,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
         // Game Library 2
         let library2Rows: [TableRow] = [
             NavigationRow<SystemSettingsCell>(
-                text: NSLocalizedString("Refresh Game Library", comment: ""),
+                text: NSLocalizedString("Refresh Game Library", comment: "Refresh Game Library"),
                 detailText: .subtitle("Re-import ROMs ⚠️ Slow"),
                 icon: nil,
                 customization: nil,
@@ -510,21 +510,25 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
     func refreshGameLibraryAction() {
         tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
-        let alert = UIAlertController(title: "Refresh Game Library?", message: "Attempt to reload the artwork and title information for your entire library. This can be a slow process, especially for large libraries. Only do this if you really, really want to try and get more artwork or update the information.\n\n You will need to completely relaunch the App to start the library rebuild process.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (_: UIAlertAction) -> Void in
+        let message = Constants.Strings.refreshGameLibraryMessage
+        let alert = UIAlertController(title: .refreshGameLibrary, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: .yes, style: .default, handler: { (_: UIAlertAction) -> Void in
             NotificationCenter.default.post(name: NSNotification.Name.PVRefreshLibrary, object: nil)
         }))
-        alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: .no, style: .cancel, handler: nil))
         present(alert, animated: true) { () -> Void in }
     }
 
     func emptyImageCacheAction() {
         tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
-        let alert = UIAlertController(title: NSLocalizedString("Empty Image Cache?", comment: ""), message: "Empty the image cache to free up disk space. Images will be redownloaded on demand.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Yes", comment: ""), style: .default, handler: { (_: UIAlertAction) -> Void in
+        let title = Constants.Strings.emptyImageCacheTitle
+        let message = Constants.Strings.emptyImageCacheMessage
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+
+        alert.addAction(UIAlertAction(title: .yes, style: .default, handler: { (_: UIAlertAction) -> Void in
             try? PVMediaCache.empty()
         }))
-        alert.addAction(UIAlertAction(title: NSLocalizedString("No", comment: ""), style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: .no, style: .cancel, handler: nil))
         present(alert, animated: true) { () -> Void in }
     }
 
@@ -547,7 +551,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
     @IBAction func help(_: Any) {
         #if canImport(SafariServices)
-            let webVC = WebkitViewController(url: URL(string: "https://wiki.provenance-emu.com/")!)
+        let webVC = WebkitViewController(url: Constants.Links.wiki)
             navigationController?.pushViewController(webVC, animated: true)
         #endif
     }

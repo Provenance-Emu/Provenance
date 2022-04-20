@@ -149,7 +149,7 @@ public final class PVMediaCache: NSObject {
 
             memCache.removeAllObjects()
             ILOG("Cache emptied")
-            NotificationCenter.default.post(name: NSNotification.Name.PVMediaCacheWasEmptied, object: nil)
+            NotificationCenter.default.post(name: .PVMediaCacheWasEmptied, object: nil)
         }
     }
 
