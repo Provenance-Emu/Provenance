@@ -15,7 +15,7 @@ jobs:
           - tvOS
           - iOS
         xcode:
-          - ^12
+          - ^13
     runs-on: macos-latest
     steps:
       - use: mxcl/xcodebuild@v1
