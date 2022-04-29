@@ -1,0 +1,23 @@
+name: XCode Build
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - master
+
+jobs:
+  build:
+    runs-on: macos-12
+    steps:
+      - uses: actions/checkout@master
+      - uses: sinoru/actions-setup-xcode@v2
+        with:
+          xcode-version: '13.3.1' # Exact version of a Xcode version to use
+          apple-id: 'apple@joemattiello.com' # Apple ID to download from Apple Developer when Xcode not available in local
+          apple-id-password: ${{ secrets.APPLE_ID_PASSWORD }}
+      - run: fastlane scan
+
+      # - uses: maxim-lobanov/setup-xcode@v1
+      #   with:
+      #     xcode-version: latest-stable
