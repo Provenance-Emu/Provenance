@@ -16,14 +16,17 @@ let package = Package(
             name: "PVSupport",
             targets: ["PVSupport"]),
         .library(
-            name: "PVSupportObjC",
-            targets: ["PVSupportObjC"]),
+            name: "PVSupport-ObjC",
+            targets: ["PVSupport-ObjC"]),
         .library(
             name: "PVAudio",
             targets: ["PVAudio"]),
         .library(
-            name: "PVLogging",
-            targets: ["PVLogging"]),
+            name: "PVLogging-ObjC",
+            targets: ["PVLogging-ObjC"]),
+        .library(
+            name: "PVLogging-Swift",
+            targets: ["PVLogging-Swift"]),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -39,57 +42,40 @@ let package = Package(
 
         .target(
             name: "PVAudio",
-            dependencies: ["PVSupportObjC"],
+            dependencies: ["PVSupport-ObjC"],
             path: "Sources/PVAudio"),
 
+//        .target(
+//            name: "PVLoggingObjC",
+//            dependencies: [.product(name: "CocoaLumberjack", package: "CocoaLumberjack")],
+//            path: "Sources/PVLogging/ObjC"),
+
         .target(
-            name: "PVLoggingObjC",
+            name: "PVLogging-ObjC",
             dependencies: [.product(name: "CocoaLumberjack", package: "CocoaLumberjack")],
-            path: "Sources/PVLogging/ObjC"),
+            path: "Sources/PVLogging-ObjC"),
+        
+        .target(
+            name: "PVLogging-Swift",
+            dependencies: ["PVLogging-ObjC", .product(name: "CocoaLumberjack", package: "CocoaLumberjack")],
+            path: "Sources/PVLogging-Swift"),
 
         .target(
-            name: "PVLogging",
-            dependencies: ["PVLoggingObjC"],
-            path: "Sources/PVLogging/Swift"),
-
-        .target(
-            name: "PVSupportObjC",
-            dependencies: ["PVLogging"],
-            path: "Sources/PVSupport",
-            sources: [
-                "EmulatorCore/PVEmulatorCore.m",
-                "NSExtensions/NSObject+PVAbstractAdditions.m",
-                "NSExtensions/NSFileManager+OEHashingAdditions.m",
-                "Threads/RealTimeThread.m"],
+            name: "PVSupport-ObjC",
+            dependencies: ["PVLogging-Swift"],
+            path: "Sources/PVSupport-ObjC",
             publicHeadersPath: "Public Headers"),
 
         .target(
             name: "PVSupport",
             dependencies: [
-                "PVSupportObjC",
+                "PVSupport-ObjC",
                 .product(name: "CocoaLumberjack", package: "CocoaLumberjack"),
                 .product(name: "CocoaLumberjackSwift", package: "CocoaLumberjack"),
                 .product(name: "CocoaLumberjackSwiftLogBackend", package: "CocoaLumberjack"),
                 "Reachability"],
-            exclude: [
-                "Audio/OEGameAudio.m",
-                "Audio/OERingBuffer.m",
-                "Audio/TPCircularBuffer.c",
-                "Audio/CARingBuffer/CAAudioTimeStamp.cpp",
-                "Audio/CARingBuffer/CARingBuffer.cpp",
-                "EmulatorCore/PVEmulatorCore.m",
-                "Logging/PVProvenanceLogging.m",
-                "Logging/PVLogEntry.m",
-                "Logging/PVLogging.m",
-                "NSExtensions/NSObject+PVAbstractAdditions.m",
-                "NSExtensions/NSFileManager+OEHashingAdditions.m",
-                "Threads/RealTimeThread.m"],
-                // "Info.plist",
-                // "MASShortcut.modulemap",
-                // "Prefix.pch"
-            // ],
             resources: [
-                .process("Controller/AHAP/")
+//                .process("Resources/AHAP/")
             ]),
             // publicHeadersPath: "include"),
 
