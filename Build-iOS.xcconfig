@@ -1,1 +1,4 @@
 #include "Build.xcconfig"
+
+IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*] = 14.2
+IPHONEOS_DEPLOYMENT_TARGET = 13.0
