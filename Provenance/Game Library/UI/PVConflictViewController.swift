@@ -121,7 +121,17 @@ final class PVConflictViewController: UITableViewController {
                     }))
                 }
 
-                alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+				alertController.addAction(.init(title: NSLocalizedString("Delete", comment: "Delete file"), style: .destructive, handler: { _ in
+					let fm = FileManager.default
+					do {
+						try fm.removeItem(at: conflict.path)
+						self.tableView.reloadData()
+					} catch {
+						ELOG("\(error.localizedDescription)")
+					}
+				}))
+
+                alertController.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
                 self.present(alertController, animated: true) { () -> Void in
                     self.tableView.reloadData()
                 }
