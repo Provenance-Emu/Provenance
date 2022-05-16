@@ -13,7 +13,7 @@ import SwiftUI
 
 // MARK: - PVRootDelegate
 
-public protocol PVRootDelegate {
+public protocol PVRootDelegate: AnyObject {
     func attemptToDelete(game: PVGame)
     func showUnderConstructionAlert()
     // objects fetched via @ObservedResults are `frozen`, so we need to thaw them before Realm lets us use them
@@ -73,7 +73,7 @@ extension PVRootViewController {
 
 // MARK: - Menu Delegate
 
-public protocol PVMenuDelegate {
+public protocol PVMenuDelegate: AnyObject {
     func didTapSettings()
     func didTapHome()
     func didTapAddGames()

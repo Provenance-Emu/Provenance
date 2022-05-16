@@ -21,9 +21,14 @@ class ConsolesWrapperViewDelegate: ObservableObject {
 @available(iOS 14, tvOS 14, *)
 struct ConsolesWrapperView: SwiftUI.View {
 
-    @ObservedObject weak var delegate: ConsolesWrapperViewDelegate
-    @ObservedObject var viewModel: PVRootViewModel
-    weak var rootDelegate: PVRootDelegate!
+	// TODO: This was weak before but can't be cause property wrapper - @JoeMatt
+    @ObservedObject
+	var delegate: ConsolesWrapperViewDelegate
+
+	@ObservedObject
+	var viewModel: PVRootViewModel
+
+	weak var rootDelegate: PVRootDelegate!
 
     @ObservedResults(
         PVSystem.self,

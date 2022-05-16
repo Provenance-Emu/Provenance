@@ -51,7 +51,7 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
     let disposeBag = DisposeBag()
     var selectedTabCancellable: AnyCancellable?
 
-    lazy weak var consolesWrapperViewDelegate = ConsolesWrapperViewDelegate()
+    lazy var consolesWrapperViewDelegate = ConsolesWrapperViewDelegate()
     var consoleIdentifiersAndNamesMap: [String:String] = [:]
 
     static func instantiate(updatesController: PVGameLibraryUpdatesController, gameLibrary: PVGameLibrary, gameImporter: GameImporter, viewModel: PVRootViewModel) -> PVRootViewController {

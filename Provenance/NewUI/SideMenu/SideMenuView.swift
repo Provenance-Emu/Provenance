@@ -18,9 +18,12 @@ import Introspect
 @available(iOS 14, tvOS 14, *)
 struct SideMenuView: SwiftUI.View {
 
-    weak var delegate: PVMenuDelegate
-    @ObservedObject var viewModel: PVRootViewModel
-    weak var rootDelegate: PVRootDelegate
+    weak var delegate: PVMenuDelegate!
+
+	@ObservedObject
+	var viewModel: PVRootViewModel
+
+	weak var rootDelegate: PVRootDelegate!
     var gameLibrary: PVGameLibrary
 
     @ObservedResults(
