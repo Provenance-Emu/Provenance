@@ -8,7 +8,7 @@
 
 #import "PVLogEntry.h"
 #import "PVLogging.h"
-#import "DebugUtils.h"
+//#import "DebugUtils.h"
 
 NSUInteger __PVLogEntryIndexCounter = 0;
     // Time of initialization.
@@ -72,7 +72,7 @@ const char * const levelStrings[] = {
 
         //Toggle background color for each line
     char *backgroundColor = toggle ? color4 : color5;
-    BOOL_TOGGLE(toggle);
+    toggle = !toggle;
 
     return [NSString stringWithFormat:@" \
             <span style=\"background-color: %s;\"> \

@@ -8,6 +8,9 @@
 
 //#if canImport(NSLogger)
 import Foundation
+import CocoaLumberjackSwift
+import CocoaLumberjackSwiftLogBackend
+import Logging
 import NSLogger
 @_exported import CocoaLumberjackSwift
 

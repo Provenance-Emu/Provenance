@@ -31,8 +31,11 @@ let package = Package(
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         .package(
-            url: "https://github.com/CocoaLumberjack/CocoaLumberjack",
+            url: "https://github.com/CocoaLumberjack/CocoaLumberjack.git",
             .upToNextMajor(from: "3.7.2")),
+        .package(
+            url: "https://github.com/fpillet/NSLogger.git",
+            .branch("master")),
         .package(
             name: "Reachability",
             url: "https://github.com/ashleymills/Reachability.swift",
@@ -46,18 +49,27 @@ let package = Package(
             path: "Sources/PVAudio"),
 
 //        .target(
-//            name: "PVLoggingObjC",
+//            name: "PVLoggingObjC",PVCocoaLumberJackLogging
 //            dependencies: [.product(name: "CocoaLumberjack", package: "CocoaLumberjack")],
 //            path: "Sources/PVLogging/ObjC"),
 
         .target(
             name: "PVLogging-ObjC",
-            dependencies: [.product(name: "CocoaLumberjack", package: "CocoaLumberjack")],
+            dependencies: [
+                .product(name: "CocoaLumberjack", package: "CocoaLumberjack"),
+                .product(name: "CocoaLumberjackSwift", package: "CocoaLumberjack"),
+                .product(name: "CocoaLumberjackSwiftLogBackend", package: "CocoaLumberjack")
+            ],
             path: "Sources/PVLogging-ObjC"),
         
         .target(
             name: "PVLogging-Swift",
-            dependencies: ["PVLogging-ObjC", .product(name: "CocoaLumberjack", package: "CocoaLumberjack")],
+            dependencies: [
+                "PVLogging-ObjC",
+                .product(name: "CocoaLumberjack", package: "CocoaLumberjack"),
+                "NSLogger"
+//                .product(name: "CocoaLumberjack", package: "CocoaLumberjackSwift")
+            ],
             path: "Sources/PVLogging-Swift"),
 
         .target(

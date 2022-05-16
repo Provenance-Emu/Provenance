@@ -141,7 +141,7 @@ void PVLog(NSUInteger level, NSUInteger flag, const char* file, const char *func
         _listeners = [NSMutableSet new];
 
 #if LOGGING_SYSTEM == LOGGING_SYSTEM_COCOALUMBERJACK
-        _loggingEntity = [PVCocoaLumberJackLogging new];
+//        _loggingEntity = [PVCocoaLumberJackLogging new];
 #else
 #error Invalid setting for LOGGING_SYSTEM
 #endif
@@ -253,7 +253,7 @@ void PVLog(NSUInteger level, NSUInteger flag, const char* file, const char *func
     [info appendFormat:@"Load date: %@\n",[NSDate date]];
 	[info appendFormat:@"App: %@\n",appName];
     [info appendFormat:@"System: %@ %@\n", os, machine];
-	[info appendFormat:@"Device: %@\n", [UIDevice currentDevice].modelName];
+//	[info appendFormat:@"Device: %@\n", [UIDevice currentDevice].modelName];
     [info appendFormat:@"%@ Version: %@\n",systemName, [UIDevice currentDevice].systemVersion];
     [info appendFormat:@"App Id: %@\n",appId];
 	[info appendFormat:@"App Version: %@\n",appVersion];

@@ -31,11 +31,6 @@
 #include <mach/mach.h>
 #include <stdio.h>
 #include <stdlib.h>
-#if SWIFT_PACKAGE
-#import <DebugUtils.h>
-#else
-#import <PVSupport/DebugUtils.h>
-#endif
 
 #define reportResult(result,operation) (_reportResult((result),(operation),strrchr(__FILE__, '/')+1,__LINE__))
 static inline bool _reportResult(kern_return_t result, const char *operation, const char* file, int line) {
@@ -57,7 +52,7 @@ bool _TPCircularBufferInit(TPCircularBuffer *buffer, uint32_t length, size_t str
     
     // Keep trying until we get our buffer, needed to handle race conditions
     int retries = 3;
-    while ( LIKELY(true) ) {
+    while ( true ) {
 
         buffer->length = (uint32_t)round_page(length);    // We need whole page sizes
 

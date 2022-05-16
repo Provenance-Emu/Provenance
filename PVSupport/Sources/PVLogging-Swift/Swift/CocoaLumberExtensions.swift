@@ -7,7 +7,7 @@
 //
 
 @_exported import CocoaLumberjack
-@_exported import CocoaLumberjackSwift
+//@_exported import CocoaLumberjackSwift
 import Foundation
 
 extension DDLogFlag {
