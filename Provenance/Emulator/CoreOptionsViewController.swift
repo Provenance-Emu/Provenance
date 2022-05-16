@@ -105,7 +105,7 @@ final class CoreOptionsViewController: QuickTableViewController {
 																	 })
 																	 actionController.addAction(action)
 																 }
-																 actionController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+																 actionController.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
 																 self.present(actionController, animated: true)
 
 																 if let indexPath = self.tableView.indexPathForSelectedRow {
@@ -153,7 +153,7 @@ final class CoreOptionsViewController: QuickTableViewController {
                                                                      })
                                                                      actionController.addAction(action)
                                                                  }
-                                                                 actionController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+                                                                 actionController.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
                                                                  self.present(actionController, animated: true)
 
                                                                  if let indexPath = self.tableView.indexPathForSelectedRow {
@@ -241,7 +241,7 @@ final class CoreOptionsViewController: QuickTableViewController {
 //                                                                     })
 //                                                                     actionController.addAction(action)
 //                                                                 }
-                                                                 actionController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+                                                                 actionController.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
                                                                  self.present(actionController, animated: true)
 
                                                                  if let indexPath = self.tableView.indexPathForSelectedRow {

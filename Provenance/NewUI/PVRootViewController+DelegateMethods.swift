@@ -125,7 +125,7 @@ extension PVRootViewController: PVMenuDelegate {
         })
 
         actionSheet.addAction(webServerAction)
-        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        actionSheet.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
         actionSheet.preferredContentSize = CGSize(width: 300, height: 150)
 
         present(actionSheet, animated: true, completion: nil)

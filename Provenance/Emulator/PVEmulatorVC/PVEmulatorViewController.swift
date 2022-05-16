@@ -663,7 +663,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
                 actionSheet.preferredAction = action
             }
         }
-        let action = UIAlertAction(title: "Cancel", style: .cancel, handler: { (_: UIAlertAction) -> Void in
+        let action = UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: { (_: UIAlertAction) -> Void in
             self.core.setPauseEmulation(false)
             self.isShowingMenu = false
             self.enableControllerInput(false)

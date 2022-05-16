@@ -139,7 +139,7 @@ final class PVControllerSelectionViewController: UITableViewController {
             PVControllerManager.shared.stopListeningForICadeControllers()
         }))
 
-        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        actionSheet.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
 
         present(actionSheet, animated: true, completion: { [unowned self] () -> Void in
             PVControllerManager.shared.listenForICadeControllers(window: actionSheet.view.window, preferredPlayer: indexPath.row + 1, completion: { () -> Void in

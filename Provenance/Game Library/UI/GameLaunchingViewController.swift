@@ -444,7 +444,7 @@ extension GameLaunchingViewController where Self: UIViewController {
             coreChoiceAlert.addAction(action)
         }
 
-        coreChoiceAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: nil))
+        coreChoiceAlert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .destructive, handler: nil))
 
         present(coreChoiceAlert, animated: true)
     }

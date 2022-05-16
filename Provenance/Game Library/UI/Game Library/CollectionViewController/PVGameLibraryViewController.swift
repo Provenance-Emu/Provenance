@@ -829,7 +829,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
 
             actionSheet.addAction(webServerAction)
 
-            actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            actionSheet.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
 
             reachability.whenReachable = { reachability in
                 if reachability.connection == .wifi {
@@ -1045,7 +1045,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                 actionSheet.addAction(UIAlertAction(title: "Reset default core selection (\(coreName))", symbol:"bolt.circle", style: .default, handler: { [unowned self] _ in
 
                     let resetAlert = UIAlertController(title: "Reset core?", message: "Are you sure you want to reset \(game.title) to no longer default to use \(coreName)?", preferredStyle: .alert)
-                    resetAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+                    resetAlert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
                     resetAlert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { _ in
                         try! RomDatabase.sharedInstance.writeTransaction {
                             game.userPreferredCoreID = nil
@@ -1184,7 +1184,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         if actionSheet.preferredAction == nil {
             actionSheet.preferredAction = actionSheet.actions.first
         }
-        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        actionSheet.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
         return actionSheet
     }
 
@@ -1239,7 +1239,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                 RomDatabase.sharedInstance.renameGame(game, toTitle: title)
             }
         }))
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
         present(alert, animated: true) { () -> Void in }
     }
 
@@ -1307,7 +1307,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                     imagePickerActionSheet.addAction(libraryAction)
                 }
             }
-            imagePickerActionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action) in
+            imagePickerActionSheet.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: { (action) in
                 imagePickerActionSheet.dismiss(animated: true, completion: nil)
             }))
 
@@ -2004,7 +2004,7 @@ extension PVGameLibraryViewController: ControllerButtonPress {
         actionSheet.addAction(UIAlertAction(title: "Add ROMs", symbol:"plus", style: .default, handler: { _ in
             self.getMoreROMs(nil)
         }))
-        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        actionSheet.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
         actionSheet.preferredAction = actionSheet.actions.first
 
         present(actionSheet, animated: true)

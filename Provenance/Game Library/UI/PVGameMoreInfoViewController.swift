@@ -598,7 +598,7 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
             textField.keyboardAppearance = .dark
         }
 
-        alert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .destructive, handler: nil))
         alert.addAction(UIAlertAction(title: "Done", style: .default, handler: { _ in
             let textField = alert.textFields?.first!
             let submittedValue = textField?.text
@@ -632,7 +632,7 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
             textField.autocapitalizationType = .sentences
         }
 
-        alert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .destructive, handler: nil))
         alert.addAction(UIAlertAction(title: "Done", style: .default, handler: { _ in
             let textField = alert.textFields?.first!
             let submittedValue = textField?.text
@@ -806,7 +806,7 @@ extension PVGameMoreInfoViewController: UITextViewDelegate {
 extension PVGameMoreInfoViewController {
     private func askToResetAnalytics() {
         let alert = UIAlertController(title: "Erase history?", message: "Would you like to erase your play counter and time spent in \(game!.title)?", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .default, handler: nil))
         alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { _ in
             do {
                 try RomDatabase.sharedInstance.writeTransaction {
@@ -858,7 +858,7 @@ extension PVGameMoreInfoViewController {
 //                }))
 //            }
 
-            actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            actionSheet.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
             present(actionSheet, animated: true, completion: nil)
         #endif
     }
@@ -929,7 +929,7 @@ extension PVGameMoreInfoViewController {
 //                                imagePickerActionSheet.pv_addButton(withTitle: "Choose from Library...", action: libraryAction)
 //                            }
 //                        }
-//                        imagePickerActionSheet.pv_addCancelButton(withTitle: "Cancel", action: nil)
+//                        imagePickerActionSheet.pv_addCancelButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel"), action: nil)
 //                        imagePickerActionSheet.show(in: self.view)
 //                    }
 //                })
@@ -952,7 +952,7 @@ extension PVGameMoreInfoViewController {
 //                    imagePickerActionSheet.pv_addButton(withTitle: "Choose from Library...", action: libraryAction)
 //                }
 //            }
-//            imagePickerActionSheet.pv_addCancelButton(withTitle: "Cancel", action: nil)
+//            imagePickerActionSheet.pv_addCancelButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel"), action: nil)
 //            imagePickerActionSheet.show(in: self.view)
 //            self.assetsLibrary = nil
 //        })

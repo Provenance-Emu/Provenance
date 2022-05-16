@@ -33,7 +33,7 @@ extension PVEmulatorViewController {
         }
 
         // Add cancel action
-        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { [unowned self] _ in
+        actionSheet.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: { [unowned self] _ in
             core.setPauseEmulation(false)
             self.isShowingMenu = false
             self.enableControllerInput(false)
