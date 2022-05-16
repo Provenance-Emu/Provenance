@@ -11,6 +11,29 @@
 import Foundation
 
 @objc
+protocol PVLoggingEntity: NSObjectProtocol {
+    /**
+     *  Obtain paths of any file logs
+     *
+     *  @return List of file paths, with newest as the first
+     */
+    var logFilePaths: [String]? { get }
+    
+    /**
+     *  Writes any async logs
+     */
+    func flushLogs()
+    
+//    @optional
+    /**
+     *  Array of info for the log files such as zie and modification date
+     *
+     *  @return Sorted list of info dicts, newest first
+     */
+//    var logFileInfos: [String]?  { get }
+}
+
+@objc
 public class PVCocoaLumberJackLogging: NSObject, PVLoggingEntity {
     private var fileLogger: DDFileLogger = {
         let fileLogger = DDFileLogger()
@@ -51,7 +74,7 @@ public class PVCocoaLumberJackLogging: NSObject, PVLoggingEntity {
 //#endif
     }
 
-    public func logFilePaths() -> [String]? {
+    public var logFilePaths: [String]? {
         return fileLogger.logFileManager.sortedLogFilePaths
     }
 

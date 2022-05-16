@@ -8,11 +8,11 @@
 
 //#if canImport(NSLogger)
 import Foundation
-import CocoaLumberjackSwift
+import CocoaLumberjack
 import CocoaLumberjackSwiftLogBackend
 import Logging
 import NSLogger
-@_exported import CocoaLumberjackSwift
+//import CocoaLumberjackSwift
 
 internal class JMLumberjackNSLogger: DDAbstractLogger {
     var logger: NSLogger.Logger { return NSLogger.Logger.shared }

@@ -7,7 +7,7 @@
 //
 
 import Foundation
-@_exported import CocoaLumberjackSwift
+@_exported import CocoaLumberjack
 
 //#if canImport(NSLogger)
 import NSLogger

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import PVLogging
 
 public extension CoreOptional { // where Self:PVEmulatorCore {
     static func storedValueForOption<T>(_: T.Type, _ option: String, andMD5 md5: String? = nil) -> T? {

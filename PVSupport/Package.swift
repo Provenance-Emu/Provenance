@@ -21,12 +21,12 @@ let package = Package(
         .library(
             name: "PVAudio",
             targets: ["PVAudio"]),
+//        .library(
+//            name: "PVLogging-ObjC",
+//            targets: ["PVLogging-ObjC"]),
         .library(
-            name: "PVLogging-ObjC",
-            targets: ["PVLogging-ObjC"]),
-        .library(
-            name: "PVLogging-Swift",
-            targets: ["PVLogging-Swift"]),
+            name: "PVLogging",
+            targets: ["PVLogging"]),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -45,36 +45,36 @@ let package = Package(
 
         .target(
             name: "PVAudio",
-            dependencies: ["PVSupport-ObjC"],
-            path: "Sources/PVAudio"),
+            dependencies: [],
+            path: "Sources/PVAudio",
+            publicHeadersPath: "Public Headers"),
 
 //        .target(
 //            name: "PVLoggingObjC",PVCocoaLumberJackLogging
 //            dependencies: [.product(name: "CocoaLumberjack", package: "CocoaLumberjack")],
 //            path: "Sources/PVLogging/ObjC"),
-
-        .target(
-            name: "PVLogging-ObjC",
-            dependencies: [
-                .product(name: "CocoaLumberjack", package: "CocoaLumberjack"),
-                .product(name: "CocoaLumberjackSwift", package: "CocoaLumberjack"),
-                .product(name: "CocoaLumberjackSwiftLogBackend", package: "CocoaLumberjack")
-            ],
-            path: "Sources/PVLogging-ObjC"),
+//
+//        .target(
+//            name: "PVLogging-ObjC",
+//            dependencies: [
+//                .product(name: "CocoaLumberjack", package: "CocoaLumberjack"),
+//                .product(name: "CocoaLumberjackSwift", package: "CocoaLumberjack"),
+//                .product(name: "CocoaLumberjackSwiftLogBackend", package: "CocoaLumberjack")
+//            ],
+//            path: "Sources/PVLogging-ObjC"),
         
         .target(
-            name: "PVLogging-Swift",
+            name: "PVLogging",
             dependencies: [
-                "PVLogging-ObjC",
                 .product(name: "CocoaLumberjack", package: "CocoaLumberjack"),
                 "NSLogger"
 //                .product(name: "CocoaLumberjack", package: "CocoaLumberjackSwift")
             ],
-            path: "Sources/PVLogging-Swift"),
+            path: "Sources/PVLogging"),
 
         .target(
             name: "PVSupport-ObjC",
-            dependencies: ["PVLogging-Swift"],
+            dependencies: ["PVLogging", "PVAudio"],
             path: "Sources/PVSupport-ObjC",
             publicHeadersPath: "Public Headers"),
 

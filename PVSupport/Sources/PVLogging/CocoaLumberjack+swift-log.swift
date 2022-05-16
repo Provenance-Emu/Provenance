@@ -7,9 +7,9 @@
 //
 
 import Foundation
-@_exported import CocoaLumberjack
-@_exported import CocoaLumberjackSwift
-@_exported import CocoaLumberjackSwiftLogBackend
+//@_exported import CocoaLumberjack
+//@_exported import CocoaLumberjackSwift
+//@_exported import CocoaLumberjackSwiftLogBackend
 
 // class LumberjackNSLogger: NSObject, DDLogger {
 //
