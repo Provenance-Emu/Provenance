@@ -320,31 +320,10 @@ Provenance would not be possible without the great work of those who came before
 <table>
 <tr>
     <td align="center">
-        <a href="https://github.com/jasarien">
-            <img src="https://avatars.githubusercontent.com/u/104444?v=4" width="100;" alt="jasarien"/>
+        <a href="https://github.com/intere">
+            <img src="https://avatars.githubusercontent.com/u/2284832?v=4" width="100;" alt="intere"/>
             <br />
-            <sub><b>James Addyman</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/JoeMatt">
-            <img src="https://avatars.githubusercontent.com/u/399864?v=4" width="100;" alt="JoeMatt"/>
-            <br />
-            <sub><b>Joe Mattiello</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/sevdestruct">
-            <img src="https://avatars.githubusercontent.com/u/3118097?v=4" width="100;" alt="sevdestruct"/>
-            <br />
-            <sub><b>Sev</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/mrjschulte">
-            <img src="https://avatars.githubusercontent.com/u/30782821?v=4" width="100;" alt="mrjschulte"/>
-            <br />
-            <sub><b>MrJs</b></sub>
+            <sub><b>Eric Internicola</b></sub>
         </a>
     </td></tr>
 </table>
@@ -377,17 +356,17 @@ Provenance would not be possible without the great work of those who came before
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/dnicolson">
-            <img src="https://avatars.githubusercontent.com/u/2276355?v=4" width="100;" alt="dnicolson"/>
-            <br />
-            <sub><b>Dave Nicolson</b></sub>
-        </a>
-    </td>
-    <td align="center">
         <a href="https://github.com/mrjschulte">
             <img src="https://avatars.githubusercontent.com/u/30782821?v=4" width="100;" alt="mrjschulte"/>
             <br />
             <sub><b>MrJs</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/dnicolson">
+            <img src="https://avatars.githubusercontent.com/u/2276355?v=4" width="100;" alt="dnicolson"/>
+            <br />
+            <sub><b>Dave Nicolson</b></sub>
         </a>
     </td>
     <td align="center">
@@ -538,7 +517,7 @@ Provenance would not be possible without the great work of those who came before
         <a href="https://github.com/nenge123">
             <img src="https://avatars.githubusercontent.com/u/16117315?v=4" width="100;" alt="nenge123"/>
             <br />
-            <sub><b>Nenge123</b></sub>
+            <sub><b>nenge123</b></sub>
         </a>
     </td>
     <td align="center">
@@ -567,13 +546,6 @@ Provenance would not be possible without the great work of those who came before
             <img src="https://avatars.githubusercontent.com/u/796488?v=4" width="100;" alt="thedrick"/>
             <br />
             <sub><b>Tyler Hedrick</b></sub>
-        </a>
-    </td></tr>
-    <tr><td align="center">
-        <a href="https://github.com/rf2222222">
-            <img src="https://avatars.githubusercontent.com/u/6903427?v=4" width="100;" alt="rf2222222"/>
-            <br />
-            <sub><b>Richard</b></sub>
         </a>
     </td></tr>
 </table>
