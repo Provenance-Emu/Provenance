@@ -261,6 +261,10 @@
 		B39769142859E3A300558958 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39769132859E3A300558958 /* PVLibrary.framework */; };
 		B39769192859E3AD00558958 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39769172859E3AD00558958 /* CoreFoundation.framework */; };
 		B397691A2859E3AD00558958 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39769182859E3AD00558958 /* Foundation.framework */; };
+		B397691B2859FDEF00558958 /* PVCoreLibretro_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39769052859E32B00558958 /* PVCoreLibretro_iOS.framework */; };
+		B397691C2859FDEF00558958 /* PVCoreLibretro_iOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B39769052859E32B00558958 /* PVCoreLibretro_iOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B39769202859FE1600558958 /* libdos-box-libretro-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libdos-box-libretro-iOS.a */; };
+		B39769232859FE4900558958 /* libdos-box-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libdos-box-iOS.a */; };
 		B3A3204227209ED700F338F6 /* PVDosBoxCore+Controls.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E96218B809200557ACE /* PVDosBoxCore+Controls.h */; };
 		B3A3204527209EE100F338F6 /* PVDosBoxCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVDosBoxCore+Controls.mm */; };
 		B3A3204627209EE100F338F6 /* PVDosBoxCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVDosBoxCore+Controls.mm */; };
@@ -285,6 +289,27 @@
 			proxyType = 1;
 			remoteGlobalIDString = B39768ED2859E18B00558958;
 			remoteInfo = "dos-box-libretro-tvOS";
+		};
+		B397691D2859FDEF00558958 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B39769042859E32B00558958;
+			remoteInfo = "PVCoreLibretro-iOS";
+		};
+		B39769212859FE1600558958 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3344B522859E088006E6B3A;
+			remoteInfo = "dos-box-libretro-iOS";
+		};
+		B39769242859FE4900558958 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B30178D2207C901D0051B93D;
+			remoteInfo = "dos-box-iOS";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -323,6 +348,17 @@
 			dstSubfolderSpec = 16;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B397691F2859FDF000558958 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B397691C2859FDEF00558958 /* PVCoreLibretro_iOS.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -689,7 +725,9 @@
 			files = (
 				B39769192859E3AD00558958 /* CoreFoundation.framework in Frameworks */,
 				B397691A2859E3AD00558958 /* Foundation.framework in Frameworks */,
+				B39769232859FE4900558958 /* libdos-box-iOS.a in Frameworks */,
 				B39769142859E3A300558958 /* PVLibrary.framework in Frameworks */,
+				B39769202859FE1600558958 /* libdos-box-libretro-iOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -698,6 +736,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
+				B397691B2859FDEF00558958 /* PVCoreLibretro_iOS.framework in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
@@ -1429,6 +1468,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				B39769222859FE1600558958 /* PBXTargetDependency */,
+				B39769252859FE4900558958 /* PBXTargetDependency */,
 			);
 			name = "PVCoreLibretro-iOS";
 			productName = PVCoreLibretro;
@@ -1443,11 +1484,13 @@
 				B3C7620C20783162009950E4 /* Frameworks */,
 				B3C7620D20783162009950E4 /* Headers */,
 				B3C7620E20783162009950E4 /* Resources */,
+				B397691F2859FDF000558958 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				B39768FA2859E23200558958 /* PBXTargetDependency */,
+				B397691E2859FDEF00558958 /* PBXTargetDependency */,
 			);
 			name = "PVDosBox-iOS";
 			productName = PVReicast;
@@ -1825,6 +1868,21 @@
 			isa = PBXTargetDependency;
 			target = B39768ED2859E18B00558958 /* dos-box-libretro-tvOS */;
 			targetProxy = B39768FC2859E23A00558958 /* PBXContainerItemProxy */;
+		};
+		B397691E2859FDEF00558958 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B39769042859E32B00558958 /* PVCoreLibretro-iOS */;
+			targetProxy = B397691D2859FDEF00558958 /* PBXContainerItemProxy */;
+		};
+		B39769222859FE1600558958 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3344B522859E088006E6B3A /* dos-box-libretro-iOS */;
+			targetProxy = B39769212859FE1600558958 /* PBXContainerItemProxy */;
+		};
+		B39769252859FE4900558958 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B30178D2207C901D0051B93D /* dos-box-iOS */;
+			targetProxy = B39769242859FE4900558958 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

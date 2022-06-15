@@ -21,6 +21,10 @@
 #import <GLUT/GLUT.h>
 #endif
 
+#include "libretro.h"
+
+extern void retro_init(void);
+
 #pragma clang diagnostic push
 #pragma clang diagnostic error "-Wall"
 
@@ -29,8 +33,6 @@
 
 @interface PVLibRetroCore ()
 {
-    uint32_t *videoBuffer;
-    NSUInteger currentDisc;
 }
 @end
 
@@ -40,8 +42,7 @@ static __weak PVLibRetroCore *_current;
 - (instancetype)init {
     if((self = [super init]))
     {
-        videoBuffer = (uint32_t *)malloc(WIDTH * HEIGHT * 4);
-        currentDisc = 1;
+        retro_init();
     }
 
     _current = self;
@@ -50,27 +51,19 @@ static __weak PVLibRetroCore *_current;
 }
 
 - (void)dealloc {
-    free(videoBuffer);
-}
-
-- (void)internalSwapDisc:(NSUInteger)discNumber {
-    if (discNumber == currentDisc) {
-        WLOG(@"Won't swap for same disc number <%lul>", (unsigned long)discNumber);
-        return;
-    }
-    currentDisc = discNumber;
-    
-    [self setPauseEmulation:NO];
-
-
-    // DO Swap
+    retro_deinit();
 }
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {
     NSURL *batterySavesDirectory = [NSURL fileURLWithPath:[self batterySavesPath]];
     [[NSFileManager defaultManager] createDirectoryAtURL:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:nil];
 
-    return YES;
+    struct retro_game_info info;
+    info.path = [path cStringUsingEncoding:NSUTF8StringEncoding];
+    
+    BOOL loaded = retro_load_game(&info);
+    
+    return loaded;
 }
 
 - (void)executeFrame {
@@ -78,6 +71,7 @@ static __weak PVLibRetroCore *_current;
 }
 
 - (void)executeFrameSkippingFrame:(BOOL)skip {
+    retro_run();
 //    for (unsigned y = 0; y < HEIGHT; y++)
 //        for (unsigned x = 0; x < WIDTH; x++, pXBuf++)
 //            videoBuffer[y * WIDTH + x] = palette[*pXBuf];
@@ -89,10 +83,11 @@ static __weak PVLibRetroCore *_current;
 }
 
 - (void)resetEmulation {
+    retro_reset();
 }
 
 - (void)stopEmulation {
-    // Stop
+    retro_unload_game();
     [super stopEmulation];
 }
 
@@ -103,7 +98,7 @@ static __weak PVLibRetroCore *_current;
 # pragma mark - Video
 
 - (const void *)videoBuffer {
-    return videoBuffer;
+    return NULL;
 }
 
 - (CGRect)screenRect {
@@ -142,18 +137,28 @@ static __weak PVLibRetroCore *_current;
     return 2;
 }
 
-# pragma mark - Save States
+@end
 
+# pragma mark - Save States
+@implementation PVLibRetroCore (Saves)
+
+#pragma mark Properties
+-(BOOL)supportsSaveStates {
+    return retro_get_memory_size(0) != 0 && retro_get_memory_data(0) != NULL;
+}
+
+#pragma mark Methods
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error {
     @synchronized(self) {
         // Save
+        //  bool retro_serialize_all(DBPArchive& ar, bool unlock_thread)
         return YES;
     }
 }
 
 - (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error {
     @synchronized(self) {
-        BOOL success = NO; //Load()
+        BOOL success = NO; // bool retro_unserialize(const void *data, size_t size)
         if (!success) {
             if(error != NULL) {
                 NSDictionary *userInfo = @{
@@ -172,5 +177,33 @@ static __weak PVLibRetroCore *_current;
         return success;
     }
 }
+//
+//- (BOOL)saveStateToFileAtPath:(NSString *)fileName {
+//    return NO;
+//}
+//
+//- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
+//    block(NO, nil);
+//}
+//
+//- (BOOL)loadStateFromFileAtPath:(NSString *)fileName {
+//    return NO;
+//}
+//
+//- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
+//    block(NO, nil);
+//}
+//
 @end
+
+@implementation PVLibRetroCore (Cheats)
+
+- (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled {
+    // void retro_cheat_reset(void) { }
+//    void retro_cheat_set(unsigned index, bool enabled, const char *code) { (void)index; (void)enabled; (void)code; }
+}
+
+@end
+
+
 #pragma clang diagnostic pop
