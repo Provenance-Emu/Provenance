@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B30178D2207C901D0051B93D"
-               BuildableName = "libdos-box-iOS.a"
-               BlueprintName = "dos-box-iOS"
+               BlueprintIdentifier = "B39769042859E32B00558958"
+               BuildableName = "PVCoreLibretro_iOS.framework"
+               BlueprintName = "PVCoreLibretro-iOS"
                ReferencedContainer = "container:PVDosBox.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -50,9 +50,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B30178D2207C901D0051B93D"
-            BuildableName = "libdos-box-iOS.a"
-            BlueprintName = "dos-box-iOS"
+            BlueprintIdentifier = "B39769042859E32B00558958"
+            BuildableName = "PVCoreLibretro_iOS.framework"
+            BlueprintName = "PVCoreLibretro-iOS"
             ReferencedContainer = "container:PVDosBox.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
