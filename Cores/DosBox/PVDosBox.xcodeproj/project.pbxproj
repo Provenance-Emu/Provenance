@@ -236,6 +236,8 @@
 		B3344B4F2859D664006E6B3A /* cdrom_image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449F52859D566006E6B3A /* cdrom_image.cpp */; };
 		B3344B502859D664006E6B3A /* drives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A052859D566006E6B3A /* drives.cpp */; };
 		B3344B512859D664006E6B3A /* serialdummy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449E42859D566006E6B3A /* serialdummy.cpp */; };
+		B3344BC42859E0C0006E6B3A /* dosbox_pure_libretro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33448CE2859D566006E6B3A /* dosbox_pure_libretro.cpp */; };
+		B3344BC52859E0E5006E6B3A /* keyb2joypad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449B02859D566006E6B3A /* keyb2joypad.cpp */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
 		B3447ECD218BEDD200557ACE /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
@@ -249,6 +251,8 @@
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
+		B39768EF2859E18B00558958 /* dosbox_pure_libretro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33448CE2859D566006E6B3A /* dosbox_pure_libretro.cpp */; };
+		B39768F02859E18B00558958 /* keyb2joypad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449B02859D566006E6B3A /* keyb2joypad.cpp */; };
 		B3A3204227209ED700F338F6 /* PVDosBoxCore+Controls.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E96218B809200557ACE /* PVDosBoxCore+Controls.h */; };
 		B3A3204527209EE100F338F6 /* PVDosBoxCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVDosBoxCore+Controls.mm */; };
 		B3A3204627209EE100F338F6 /* PVDosBoxCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVDosBoxCore+Controls.mm */; };
@@ -269,7 +273,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3344BBE2859E088006E6B3A /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3447F8D218BEE3F00557ACE /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B39768F22859E18B00558958 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "include/$(PRODUCT_NAME)";
@@ -331,7 +353,6 @@
 		B33448B22859D566006E6B3A /* dbp_serialize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dbp_serialize.h; sourceTree = "<group>"; };
 		B33448B32859D566006E6B3A /* support.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = support.h; sourceTree = "<group>"; };
 		B33448B42859D566006E6B3A /* keyb2joypad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = keyb2joypad.h; sourceTree = "<group>"; };
-		B33448B52859D566006E6B3A /* dosbox_pure_libretro.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = dosbox_pure_libretro.dylib; sourceTree = "<group>"; };
 		B33448B62859D566006E6B3A /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		B33448B72859D566006E6B3A /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		B33448B82859D566006E6B3A /* DOSBOX-AUTHORS */ = {isa = PBXFileReference; lastKnownFileType = text; path = "DOSBOX-AUTHORS"; sourceTree = "<group>"; };
@@ -551,6 +572,7 @@
 		B3344A7D2859D566006E6B3A /* fpu_instructions_x86.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fpu_instructions_x86.h; sourceTree = "<group>"; };
 		B3344A7E2859D566006E6B3A /* fpu.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = fpu.cpp; sourceTree = "<group>"; };
 		B3344A7F2859D566006E6B3A /* fpu_instructions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fpu_instructions.h; sourceTree = "<group>"; };
+		B3344BC32859E088006E6B3A /* libdos-box-libretro-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libdos-box-libretro-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B339468820783F41008DBAB4 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = usr/lib/libpthread.tbd; sourceTree = SDKROOT; };
 		B339468A20783F48008DBAB4 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		B3447E96218B809200557ACE /* PVDosBoxCore+Controls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVDosBoxCore+Controls.h"; sourceTree = "<group>"; };
@@ -570,6 +592,7 @@
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
 		B35E6BF4207CD2740040709A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		B39768F72859E18B00558958 /* libdos-box-libretro-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libdos-box-libretro-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B104B8218F281B00210C39 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621020783162009950E4 /* PVDosBox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVDosBox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621320783162009950E4 /* PVDosBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVDosBox.h; sourceTree = "<group>"; };
@@ -584,6 +607,13 @@
 
 /* Begin PBXFrameworksBuildPhase section */
 		B30178D0207C901D0051B93D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3344BBD2859E088006E6B3A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -607,6 +637,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B3447F8C218BEE3F00557ACE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B39768F12859E18B00558958 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -644,7 +681,6 @@
 				B334488B2859D566006E6B3A /* Makefile */,
 				B33448CE2859D566006E6B3A /* dosbox_pure_libretro.cpp */,
 				B33449B02859D566006E6B3A /* keyb2joypad.cpp */,
-				B33448B52859D566006E6B3A /* dosbox_pure_libretro.dylib */,
 				B33449AB2859D566006E6B3A /* dosbox_pure_libretro.vcxproj.filters */,
 				B33448842859D565006E6B3A /* core_options.h */,
 				B33448B42859D566006E6B3A /* keyb2joypad.h */,
@@ -1144,6 +1180,8 @@
 				B30178D3207C901D0051B93D /* libdos-box-iOS.a */,
 				B3447EE6218BEDD200557ACE /* PVDosBox.framework */,
 				B3447F91218BEE3F00557ACE /* libdos-box-tvOS.a */,
+				B3344BC32859E088006E6B3A /* libdos-box-libretro-iOS.a */,
+				B39768F72859E18B00558958 /* libdos-box-libretro-tvOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1233,6 +1271,23 @@
 			productReference = B30178D3207C901D0051B93D /* libdos-box-iOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		B3344B522859E088006E6B3A /* dos-box-libretro-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "dos-box-libretro-iOS" */;
+			buildPhases = (
+				B3344B532859E088006E6B3A /* Sources */,
+				B3344BBD2859E088006E6B3A /* Frameworks */,
+				B3344BBE2859E088006E6B3A /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "dos-box-libretro-iOS";
+			productName = reicast;
+			productReference = B3344BC32859E088006E6B3A /* libdos-box-libretro-iOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		B3447EC0218BEDD200557ACE /* PVDosBox-tvOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3447EE3218BEDD200557ACE /* Build configuration list for PBXNativeTarget "PVDosBox-tvOS" */;
@@ -1266,6 +1321,23 @@
 			name = "dos-box-tvOS";
 			productName = reicast;
 			productReference = B3447F91218BEE3F00557ACE /* libdos-box-tvOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B39768ED2859E18B00558958 /* dos-box-libretro-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B39768F32859E18B00558958 /* Build configuration list for PBXNativeTarget "dos-box-libretro-tvOS" */;
+			buildPhases = (
+				B39768EE2859E18B00558958 /* Sources */,
+				B39768F12859E18B00558958 /* Frameworks */,
+				B39768F22859E18B00558958 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "dos-box-libretro-tvOS";
+			productName = reicast;
+			productReference = B39768F72859E18B00558958 /* libdos-box-libretro-tvOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		B3C7620F20783162009950E4 /* PVDosBox-iOS */ = {
@@ -1332,6 +1404,8 @@
 			targets = (
 				B3C7620F20783162009950E4 /* PVDosBox-iOS */,
 				B3447EC0218BEDD200557ACE /* PVDosBox-tvOS */,
+				B3344B522859E088006E6B3A /* dos-box-libretro-iOS */,
+				B39768ED2859E18B00558958 /* dos-box-libretro-tvOS */,
 				B30178D2207C901D0051B93D /* dos-box-iOS */,
 				B3447EE8218BEE3F00557ACE /* dos-box-tvOS */,
 			);
@@ -1470,6 +1544,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3344B532859E088006E6B3A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3344BC42859E0C0006E6B3A /* dosbox_pure_libretro.cpp in Sources */,
+				B3344BC52859E0E5006E6B3A /* keyb2joypad.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3447EC1218BEDD200557ACE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1591,6 +1674,15 @@
 				B3344B122859D664006E6B3A /* iohandler.cpp in Sources */,
 				B3344B232859D664006E6B3A /* adlib.cpp in Sources */,
 				B3344B062859D664006E6B3A /* vga_paradise.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B39768EE2859E18B00558958 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B39768EF2859E18B00558958 /* dosbox_pure_libretro.cpp in Sources */,
+				B39768F02859E18B00558958 /* keyb2joypad.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1843,6 +1935,66 @@
 			};
 			name = Archive;
 		};
+		B3344BC02859E088006E6B3A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/dosbox-pure/include\"",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B3344BC12859E088006E6B3A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/dosbox-pure/include\"",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B3344BC22859E088006E6B3A /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/dosbox-pure/include\"",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Archive;
+		};
 		B3447EE4218BEDD200557ACE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1952,6 +2104,69 @@
 				TARGETED_DEVICE_FAMILY = 3;
 			};
 			name = Release;
+		};
+		B39768F42859E18B00558958 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/dosbox-pure/include\"",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B39768F52859E18B00558958 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/dosbox-pure/include\"",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B39768F62859E18B00558958 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/dosbox-pure/include\"",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Archive;
 		};
 		B3C7621620783162009950E4 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -2192,6 +2407,16 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "dos-box-libretro-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3344BC02859E088006E6B3A /* Debug */,
+				B3344BC12859E088006E6B3A /* Release */,
+				B3344BC22859E088006E6B3A /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		B3447EE3218BEDD200557ACE /* Build configuration list for PBXNativeTarget "PVDosBox-tvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -2208,6 +2433,16 @@
 				B3447F8F218BEE3F00557ACE /* Debug */,
 				B3447F90218BEE3F00557ACE /* Release */,
 				B324C5052191A2A2009F4EDC /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B39768F32859E18B00558958 /* Build configuration list for PBXNativeTarget "dos-box-libretro-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B39768F42859E18B00558958 /* Debug */,
+				B39768F52859E18B00558958 /* Release */,
+				B39768F62859E18B00558958 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
