@@ -69,6 +69,9 @@
       location = "container:"
       name = "Cores Development">
       <FileRef
+         location = "group:Cores/MednafenPCE/PVMednafenPCE.xcodeproj">
+      </FileRef>
+      <FileRef
          location = "group:Cores/DosBox/PVDosBox.xcodeproj">
       </FileRef>
       <FileRef

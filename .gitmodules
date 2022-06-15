@@ -82,3 +82,6 @@
 [submodule "Cores/DosBox/dosbox-pure"]
 	path = Cores/DosBox/dosbox-pure
 	url = https://github.com/Provenance-Emu/dosbox-pure.git
+[submodule "Cores/MednafenPCE/mednafenPceDev"]
+	path = Cores/MednafenPCE/mednafenPceDev
+	url = https://github.com/Provenance-Emu/mednafenPceDev.git
