@@ -56,6 +56,7 @@ public enum SystemIdentifier: String, CaseIterable {
     case AtariJaguar = "com.provenance.jaguar"
     case ColecoVision = "com.provenance.colecovision"
     case DS = "com.provenance.ds"
+    case DOS = "com.provenance.dos"
     case Dreamcast = "com.provenance.dreamcast"
     case FDS = "com.provenance.fds"
     case GameCube = "com.provenance.gamecube"

@@ -242,6 +242,12 @@ public final class PVCoreFactory: NSObject {
             } else {
                 fatalError("Core doesn't implement PVDSSystemResponderClient")
             }
+        case .DOS:
+            if let core = core as? PVDOSSystemResponderClient {
+                return PVDOSControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else {
+                fatalError("Core doesn't implement PVDOSSystemResponderClient")
+            }
         case .Unknown:
             ELOG("No known system named: \(system.name) id: \(system.identifier)")
             return nil

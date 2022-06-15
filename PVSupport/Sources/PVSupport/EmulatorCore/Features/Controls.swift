@@ -1040,3 +1040,31 @@ import Foundation
     @objc(didReleaseIntellivisionButton:forPlayer:)
     func didRelease(_ button: PVIntellivisionButton, forPlayer player: Int)
 }
+
+// MARK: - PC DOS
+
+@objc public enum PVDOSButton: Int {
+    case up
+    case down
+    case left
+    case right
+    case fire1
+    case fire2
+    case select
+    case pause
+    case reset
+    case leftDiff
+    case rightDiff
+    case count
+}
+
+@objc public protocol PVDOSSystemResponderClient: ResponderClient, ButtonResponder, KeyboardResponder, MouseResponder {
+    @objc(didPushDOSButton:forPlayer:)
+    func didPush(_ button: PVDOSButton, forPlayer player: Int)
+    @objc(didReleaseDOSButton:forPlayer:)
+    func didRelease(_ button: PVDOSButton, forPlayer player: Int)
+
+    func mouseMoved(at point: CGPoint)
+    func leftMouseDown(at point: CGPoint)
+    func leftMouseUp()
+}

@@ -485,6 +485,8 @@
 		B391F2C527C157E800730B53 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B391F2C427C157E800730B53 /* Preview Assets.xcassets */; };
 		B394C98A20609E180014A65D /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = B394C98920609E180014A65D /* UIColor+Hex.swift */; };
 		B394C98B20609E180014A65D /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = B394C98920609E180014A65D /* UIColor+Hex.swift */; };
+		B3976927285A020800558958 /* PVDOSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3976926285A020800558958 /* PVDOSControllerViewController.swift */; };
+		B3976928285A020800558958 /* PVDOSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3976926285A020800558958 /* PVDOSControllerViewController.swift */; };
 		B398800D27A521AC004DEFCA /* ConflictsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B398800C27A521AC004DEFCA /* ConflictsController.swift */; };
 		B398800E27A521AC004DEFCA /* ConflictsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B398800C27A521AC004DEFCA /* ConflictsController.swift */; };
 		B3995E4F2058229F001D4985 /* PVFCEU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3995E4E2058229F001D4985 /* PVFCEU.framework */; };
@@ -1288,6 +1290,7 @@
 		B391F2C627C157E800730B53 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B391F2C727C157E900730B53 /* Provenance_Clip.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Provenance_Clip.entitlements; sourceTree = "<group>"; };
 		B394C98920609E180014A65D /* UIColor+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Hex.swift"; sourceTree = "<group>"; };
+		B3976926285A020800558958 /* PVDOSControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVDOSControllerViewController.swift; sourceTree = "<group>"; };
 		B3977533219AB53F00E16AD5 /* Provenance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Provenance.entitlements; path = Provenance/Provenance.entitlements; sourceTree = SOURCE_ROOT; };
 		B398800C27A521AC004DEFCA /* ConflictsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConflictsController.swift; sourceTree = "<group>"; };
 		B399119126C0F41300E54426 /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
@@ -2508,6 +2511,7 @@
 				B3AB37222187F568009D9244 /* PVAtariJaguarControllerViewController.swift */,
 				B3437175276B0B650014F87C /* PVColecoVisionControllerViewController.swift */,
 				B3411BF7276B37DE00D85327 /* PVDSControllerViewController.swift */,
+				B3976926285A020800558958 /* PVDOSControllerViewController.swift */,
 				B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */,
 				B3A320362720974F00F338F6 /* PVGameCubeControllerViewController.swift */,
 				B3AB37242187F568009D9244 /* PVGBAControllerViewController.swift */,
@@ -3467,6 +3471,7 @@
 				B3AB37432187F569009D9244 /* PVN64ControllerViewController.swift in Sources */,
 				B3D5E2AE218EC1AE0015C690 /* RealmBindObserver.swift in Sources */,
 				1A48697617C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.swift in Sources */,
+				B3976927285A020800558958 /* PVDOSControllerViewController.swift in Sources */,
 				B3411C1E276B470C00D85327 /* Deprecated.swift in Sources */,
 				B3AB37412187F569009D9244 /* PVGenesisControllerViewController.swift in Sources */,
 				B3AB373E2187F569009D9244 /* PVAtari5200ControllerViewController.swift in Sources */,
@@ -3657,6 +3662,7 @@
 				B3EA0CD42070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */,
 				B3411C25276B472900D85327 /* DetailText.swift in Sources */,
 				B3B104D2218F2EF400210C39 /* PVSNESControllerViewController.swift in Sources */,
+				B3976928285A020800558958 /* PVDOSControllerViewController.swift in Sources */,
 				B387676D20BD0F43009D8CD2 /* WebServerActivatorController.swift in Sources */,
 				B361F63327C07B300080D368 /* ViewControllerResolver.swift in Sources */,
 				B361F63D27C07BB20080D368 /* Theme.swift in Sources */,
