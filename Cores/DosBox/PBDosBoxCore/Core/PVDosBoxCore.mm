@@ -7,8 +7,6 @@
 //
 
 #import "PVDosBoxCore.h"
-#include "AudioCommon/SoundStream.h"
-#include "OpenEmuAudioStream.h"
 #include <stdatomic.h>
 #import "PVDosBoxCore+Controls.h"
 #import "PVDosBoxCore+Audio.h"
@@ -36,10 +34,7 @@ __weak PVDosBoxCore *_current = 0;
 
 @implementation PVDosBoxCore
 {
-	DolHost *dol_host;
-
 	uint16_t *_soundBuffer;
-	bool _isWii;
 	atomic_bool _isInitialized;
 	float _frameInterval;
 
@@ -56,12 +51,11 @@ __weak PVDosBoxCore *_current = 0;
 		sampleRate = 44100;
 
 		isNTSC = YES;
-
+        _frameInterval = 60;
+        
 		dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, 0);
 
 		_callbackQueue = dispatch_queue_create("org.provenance-emu.dosbox.CallbackHandlerQueue", queueAttributes);
-
-		dol_host = DolHost::GetInstance();
 	}
 
 	_current = self;
@@ -94,41 +88,21 @@ __weak PVDosBoxCore *_current = 0;
                                                attributes:nil
                                                     error:NULL];
 
-	self.filePath = path;
-
-	if([[self systemIdentifier] isEqualToString:@"com.provenance.dos"])
-	{
-		_frameInterval = 60;
-	}
-	else
-	{
-		_frameInterval = 60;
-	}
-
-	dol_host->Init([[self supportDirectoryPath] fileSystemRepresentation], [path fileSystemRepresentation] );
-
-	usleep(5000);
-	return YES;
+    return YES;
 }
 
 #pragma mark - Running
 - (void)startEmulation {
 	if (!_isInitialized)
 	{
-		[self.renderDelegate willRenderFrameOnAlternateThread];
-
-		dol_host->SetPresentationFBO((int)[[self.renderDelegate presentationFramebuffer] integerValue]);
-
-		if(dol_host->LoadFileAtPath())
-			_isInitialized = true;
-
-		_frameInterval = dol_host->GetFrameInterval();
-
+//		[self.renderDelegate willRenderFrameOnAlternateThread];
+        _isInitialized = true;
+//		_frameInterval = dol_host->GetFrameInterval();
 	}
 	[super startEmulation];
 
 	//Disable the OE framelimiting
-	[self.renderDelegate suspendFPSLimiting];
+//	[self.renderDelegate suspendFPSLimiting];
 //	if(!self.isRunning) {
 //		[super startEmulation];
 ////        [NSThread detachNewThreadSelector:@selector(runReicastRenderThread) toTarget:self withObject:nil];
@@ -148,16 +122,13 @@ __weak PVDosBoxCore *_current = 0;
 		[super stopEmulation];
 	}
 }
-- (void)setPauseEmulation:(BOOL)flag {
-	dol_host->Pause(flag);
 
+- (void)setPauseEmulation:(BOOL)flag {
 	[super setPauseEmulation:flag];
 }
 
 - (void)stopEmulation {
 	_isInitialized = false;
-
-	dol_host->RequestStop();
 
 	self->shouldStop = YES;
 //	dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
@@ -170,20 +141,17 @@ __weak PVDosBoxCore *_current = 0;
 }
 
 - (void)resetEmulation {
-	dol_host->Reset();
 	//	dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
 	[self.frontBufferCondition lock];
 	[self.frontBufferCondition signal];
 	[self.frontBufferCondition unlock];
 }
 
-# pragma mark - Cheats
-- (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled
-{
-	dol_host->SetCheat([code UTF8String], [type UTF8String], enabled);
-}
-
-- (BOOL)supportsRumble { return YES; }
-- (BOOL)supportsCheatCode@end { return YES; }
+//# pragma mark - Cheats
+//- (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled {
+//}
+//
+//- (BOOL)supportsRumble { return NO; }
+//- (BOOL)supportsCheatCodes { return NO; }
 
 @end

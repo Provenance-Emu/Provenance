@@ -1752,7 +1752,7 @@
 					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
 					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/PVDolphin/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/PVDosBox/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2129,7 +2129,7 @@
 					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
 					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/PVDolphin/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/PVDosBox/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2163,7 +2163,7 @@
 					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
 					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/PVDolphin/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/PVDosBox/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (

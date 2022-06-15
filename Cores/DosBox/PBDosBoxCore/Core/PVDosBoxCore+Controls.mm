@@ -140,24 +140,21 @@ s8 joyx[4], joyy[4];
 }
 
 -(void)didPushGameCubeButton:(enum PVGameCubeButton)button forPlayer:(NSInteger)player {
-	if(_isInitialized)
-	  {
-		  dol_host->setButtonState(button, 1, (int)player);
-	  }
+//	if(_isInitialized)
+//	  {
+//	  }
 }
 
 -(void)didReleaseGameCubeButton:(enum PVGameCubeButton)button forPlayer:(NSInteger)player {
-	if(_isInitialized)
-	  {
-		  dol_host->setButtonState(button, 0, (int)player);
-	  }
+//	if(_isInitialized)
+//	  {
+//	  }
 }
 
 - (void)didMoveGameCubeJoystickDirection:(enum PVGameCubeButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
-	if(_isInitialized)
-	  {
-		  dol_host->SetAxis(button, value, (int)player);
-	  }
+//	if(_isInitialized)
+//	  {
+//	  }
 }
 
 -(void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player {

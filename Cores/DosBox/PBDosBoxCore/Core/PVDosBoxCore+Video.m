@@ -12,7 +12,6 @@
 #import <OpenGLES/ES3/glext.h>
 #import <OpenGLES/ES3/gl.h>
 #import <GLKit/GLKit.h>
-#include "DolHost.h"
 
 @implementation PVDosBoxCore (Video)
 
@@ -32,11 +31,6 @@
 
 	if (![self isEmulationPaused])
 	 {
-		 if(!dol_host->CoreRunning()) {
-		 dol_host->Pause(false);
-		 }
-
-	   dol_host->UpdateFrame();
 	 }
         //dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
 
