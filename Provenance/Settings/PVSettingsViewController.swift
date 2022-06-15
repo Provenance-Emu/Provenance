@@ -326,6 +326,10 @@ final class PVSettingsViewController: PVQuickTableViewController {
             PVSettingsSwitchRow(text: NSLocalizedString("Use Swift UI", comment: "Use Swift UI"),
                                 detailText: .subtitle("Swift UI placeholder. Don't use unless you're a developer."),
                                 key: \PVSettingsModel.debugOptions.useSwiftUI),
+            
+            PVSettingsSwitchRow(text: NSLocalizedString("On screen Joypad", comment: ""),
+                                detailText: .subtitle("Show a touch Joystick pad on supported systems. Layout is strange on some devices while in beta."),
+                                key: \PVSettingsModel.debugOptions.onscreenJoypad),
         ]
         #else // tvOS
          let betaRows: [TableRow] = [

@@ -238,6 +238,7 @@ extension MirroredSettings {
         #if os(tvOS)
         @objc public dynamic var tvOSThemes = false
         #endif
+        @objc public dynamic var onscreenJoypad = true
     }
 
     public dynamic var debugOptions = DebugOptions()
