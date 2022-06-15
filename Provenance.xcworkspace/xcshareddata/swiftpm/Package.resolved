@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/microsoft/appcenter-sdk-apple.git",
       "state" : {
-        "revision" : "b84bc8a39ff04bc8d5ae7b4d230c171c562891aa",
-        "version" : "4.4.1"
+        "revision" : "8354a50fe01a7e54e196d3b5493b5ab53dd5866a",
+        "version" : "4.4.2"
       }
     },
     {
@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core",
       "state" : {
-        "revision" : "dcd3788f75bafb0cc397d145e1651aab3ad4bf0e",
-        "version" : "11.12.0"
+        "revision" : "fd48276f88f3d55dbdcdc9e8cbf32541811d5865",
+        "version" : "12.1.0"
       }
     },
     {
@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift.git",
       "state" : {
-        "revision" : "628cf20632d65d3a3e90ae8aaf52bce596d7ad8f",
-        "version" : "10.24.2"
+        "revision" : "d3aaab84885e0de9a7a49955874cee160adee164",
+        "version" : "10.28.1"
       }
     },
     {
@@ -104,8 +104,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/stephencelis/SQLite.swift.git",
       "state" : {
-        "revision" : "5f5ad81ac0d0a0f3e56e39e646e8423c617df523",
-        "version" : "0.13.2"
+        "revision" : "4d543d811ee644fa4cc4bfa0be996b4dd6ba0f54",
+        "version" : "0.13.3"
       }
     },
     {
@@ -132,7 +132,7 @@
       "location" : "https://github.com/siteline/SwiftUI-Introspect",
       "state" : {
         "branch" : "master",
-        "revision" : "72a509c93166540c0adf8323fd2652daade7f9f6"
+        "revision" : "7ef0df639079491ee1aaf6b83b6fd4d08df80393"
       }
     },
     {
@@ -140,8 +140,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ZipArchive/ZipArchive",
       "state" : {
-        "revision" : "38e0ce0598e06b034271f296a8e15b149c91aa19",
-        "version" : "2.4.3"
+        "revision" : "bc8bdb5216f9b37071a917025d76183a2ea41135",
+        "version" : "2.5.0"
       }
     }
   ],
