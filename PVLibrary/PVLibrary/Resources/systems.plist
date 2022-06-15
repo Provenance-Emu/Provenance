@@ -3376,9 +3376,9 @@
 				<key>MD5</key>
 				<string>0bac0c6a50104045d902df4503a4c30b</string>
 				<key>Name</key>
-				<string>ataribas.rom</string>
+				<string>ATARIBAS.ROM</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>8192</integer>
 			</dict>
 			<dict>
 				<key>Description</key>
@@ -3388,7 +3388,7 @@
 				<key>Name</key>
 				<string>ATARIXL.ROM</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>16384</integer>
 			</dict>
 			<dict>
 				<key>Description</key>
@@ -3398,7 +3398,7 @@
 				<key>Name</key>
 				<string>ATARIOSA.ROM</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>10240</integer>
 			</dict>
 			<dict>
 				<key>Description</key>
@@ -3408,7 +3408,7 @@
 				<key>Name</key>
 				<string>ATARIOSB.ROM</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>10240</integer>
 			</dict>
 		</array>
 		<key>PVSupportedExtensions</key>

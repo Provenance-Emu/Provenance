@@ -1,3 +1,3 @@
-"PROLOGUE" = "<p><span class=\"nowrap\">Upload new files to Imports.</span> <span class=\"nowrap\">Upload multi-file ROMs as single-file .zip or .7z archives.</span> <span class=\"nowrap\">Check the wiki for more info about <a href=\"https://github.com/jasarien/Provenance/wiki/Importing-ROMs\">Importing ROMs.</a></span></p>";
+"PROLOGUE" = "<p><span class=\"nowrap\">Upload new files to <strong>Imports</strong> folder below.</span> <span class=\"nowrap\">Upload multi-file ROMs as single-file .zip or .7z archives.</span> <span class=\"nowrap\">Check the wiki for more info about <a href=\"https://wiki.provenance-emu.com/installation-and-usage/roms/importing-roms\" target=\"_blank\">Importing ROMs.</a></span></p>";
 "EPILOGUE" = "<p><span class=\"nowrap\">Files can be directly added to subfolders (at own risk).</span> <br>Drag & Drop is supported.</p>";
 "FOOTER_FORMAT" = "%@ %@";

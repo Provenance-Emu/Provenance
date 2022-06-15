@@ -414,7 +414,7 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
                     if let dPad2 = dPad2 {
                         dPad2.isHidden = compactVertical
                     }
-                } else if controlType == Keys.JoyPad {
+                } else if controlType == Keys.JoyPad, PVSettingsModel.shared.debugOptions.onscreenJoypad {
                     let xPadding: CGFloat = 0 //safeAreaInsets.left
                     let bottomPadding: CGFloat = 16
                     let dPadOriginY: CGFloat = min(controlOriginY - bottomPadding, view.frame.height - controlSize.height - bottomPadding)

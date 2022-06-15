@@ -36,9 +36,8 @@ final class PVSearchViewController: UICollectionViewController, GameLaunchingVie
         let width = tvOSCellUnit
         let height = tvOSCellUnit
         flowLayout.itemSize = CGSize(width: width, height: height)
-        flowLayout.sectionInset = .init(top: 0, left: 0, bottom: 0, right: 0)
-        flowLayout.minimumInteritemSpacing = 48.0
-        flowLayout.minimumLineSpacing = 40.0
+        flowLayout.minimumInteritemSpacing = 55.0
+        flowLayout.minimumLineSpacing = 55.0
         flowLayout.scrollDirection = .vertical
         flowLayout.invalidateLayout()
         super.init(collectionViewLayout: flowLayout)
@@ -54,7 +53,7 @@ final class PVSearchViewController: UICollectionViewController, GameLaunchingVie
         collectionView?.dataSource = nil
         collectionView?.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
         collectionView?.backgroundColor = .black
-        collectionView?.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 80)
+        collectionView?.contentInset = .init(top: 10, left:  90, bottom: 50, right: 90)
         collectionView.alwaysBounceVertical = true
         collectionView.remembersLastFocusedIndexPath = true
         collectionView.bounces = true

@@ -69,8 +69,8 @@ final class CoreOptionsViewController: QuickTableViewController {
 	func sections(forGroups groups: [TableGroup]) -> [Section] {
 		typealias TableRow = Row & RowStyle
 
-		let sections: [Section] = groups.map {
-			let rows: [TableRow] = $0.options.enumerated().map { (rowIndex, option) in
+        let sections: [Section] = groups.enumerated().map { sectionIndex, group in
+			let rows: [TableRow] = group.options.enumerated().map { (rowIndex, option) in
 				switch option {
 				case let .bool(display, defaultValue):
 					let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
@@ -90,7 +90,7 @@ final class CoreOptionsViewController: QuickTableViewController {
 																 let actionController = UIAlertController(title: display.title, message: nil, preferredStyle: .actionSheet)
 
 																 if let popoverPresentationController = actionController.popoverPresentationController {
-																	let cellRect = self.tableView.rectForRow(at: IndexPath(row: rowIndex, section: 0))
+																	let cellRect = self.tableView.rectForRow(at: IndexPath(row: rowIndex, section: sectionIndex))
 																	popoverPresentationController.sourceView = self.tableView
 																	popoverPresentationController.sourceRect = cellRect
 																 }
@@ -119,15 +119,29 @@ final class CoreOptionsViewController: QuickTableViewController {
                                                              icon: nil,
                                                              customization: { _, _ in
                                                              },
-                                                             action: { _ in
+                                                             action: { row in
                                                                  let currentSelection: Int = self.core.storedValueForOption(Int.self, option.key) ?? option.defaultValue as? Int ?? defaultValue
                                                                  let actionController = UIAlertController(title: display.title, message: nil, preferredStyle: .actionSheet)
 
-                                                                 if let popoverPresentationController = actionController.popoverPresentationController {
-                                                                    let cellRect = self.tableView.rectForRow(at: IndexPath(row: rowIndex, section: 0))
-                                                                    popoverPresentationController.sourceView = self.tableView
-                                                                    popoverPresentationController.sourceRect = cellRect
-                                                                 }
+#if !os(tvOS)
+                            if #available(iOS 15.0, *), let sheetPresentationController = actionController.sheetPresentationController {
+//                                let cellRect = self.tableView.rectForRow(at: IndexPath(row: rowIndex, section: sectionIndex))
+                                sheetPresentationController.sourceView = self.tableView
+//                                sheetPresentationController.sourceRect = cellRect
+                            } else if let popoverPresentationController = actionController.popoverPresentationController {
+                                let cellRect = self.tableView.rectForRow(at: IndexPath(row: rowIndex, section: sectionIndex))
+                                popoverPresentationController.sourceView = self.tableView
+                                popoverPresentationController.sourceRect = cellRect
+                             }
+                        #else
+                        if let popoverPresentationController = actionController.popoverPresentationController {
+                            let cellRect = self.tableView.rectForRow(at: IndexPath(row: rowIndex, section: sectionIndex))
+                            popoverPresentationController.sourceView = self.tableView
+                            popoverPresentationController.sourceRect = cellRect
+                         }
+                        #endif
+                        
+                                                                
 
                                                                  values.forEach { value in
                                                                      var title = value.title
@@ -210,7 +224,7 @@ final class CoreOptionsViewController: QuickTableViewController {
                                                              action: { cell in
                                                                  let currentValue: String = value // self.core.valueForOption(String.self, option.key) ?? option.defaultValue as? String ?? ""
                                                                  let actionController = UIAlertController(title: display.title, message: nil, preferredStyle: .actionSheet)
-                        let cellRect = self.tableView.rectForRow(at: IndexPath(row: rowIndex, section: 0))
+                        let cellRect = self.tableView.rectForRow(at: IndexPath(row: rowIndex, section: sectionIndex))
 
                         let textField = UITextField()
                         textField.text = value
@@ -254,7 +268,7 @@ final class CoreOptionsViewController: QuickTableViewController {
 					fatalError("Unfinished feature")
 				}
 			}
-			return Section(title: $0.title, rows: rows)
+			return Section(title: group.title, rows: rows)
 		}
 		return sections
 	}

@@ -73,9 +73,8 @@ static void (*ptr_SetOSDCallback)(void (*inPV_OSD_Callback)(const char *_pText, 
 
 EXPORT static void PV_DrawOSD(const char *_pText, float _x, float _y)
 {
-#if DEBUG
-//	DLOG(@"%s", _pText);
-#endif
+// TODO: This should print on the screen
+	NSLog(@"%s", _pText);
 }
 
 static void MupenDebugCallback(void *context, int level, const char *message)
@@ -116,15 +115,18 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
     m64p_dynlib_handle plugins[4];
 }
 
-- (instancetype)init
-{
+- (instancetype)init {
     if (self = [super init]) {
         mupenWaitToBeginFrameSemaphore = dispatch_semaphore_create(0);
         coreWaitToEndFrameSemaphore    = dispatch_semaphore_create(0);
         if(RESIZE_TO_FULLSCREEN) {
             CGSize size = UIApplication.sharedApplication.keyWindow.bounds.size;
-            float widthScale = floor(size.height / WIDTHf);
-            float heightScale = floor(size.height / HEIGHTf);
+            float widthScale = size.width / WIDTHf;
+            float heightScale = size.height / HEIGHTf ;
+            if (PVSettingsModel.shared.integerScaleEnabled) {
+                widthScale = floor(widthScale);
+                heightScale = floor(heightScale);
+            }
             float scale = MAX(MIN(widthScale, heightScale), 1);
             _videoWidth =  scale * WIDTHf;
             _videoHeight = scale * HEIGHTf;

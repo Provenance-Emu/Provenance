@@ -52,7 +52,6 @@
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
-		B3411B48276B2F9C00D85327 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3411B47276B2F9C00D85327 /* PVLibrary.framework */; };
 		B3447ECD218BEDD200557ACE /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B3447ECE218BEDD200557ACE /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		B3447ED0218BEDD200557ACE /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
@@ -64,7 +63,7 @@
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
-		B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B104B8218F281B00210C39 /* PVSupport.framework */; };
+		B3A3976427E6B9C800D8F433 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3976327E6B9C800D8F433 /* PVSupport.framework */; };
 		B3C7621520783162009950E4 /* PVTGBDual.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVTGBDual.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilter = ios; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
@@ -91,7 +90,6 @@
 		B3D275CD26E9D71800543CFE /* libretro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1490199A21C8466700C35ECE /* libretro.cpp */; };
 		B3D275CF26E9D71800543CFE /* cheat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 149019AA21C8466700C35ECE /* cheat.cpp */; };
 		B3D275D826E9D75000543CFE /* libtgbdual-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D275D726E9D71800543CFE /* libtgbdual-tvOS.a */; };
-		B3D275DC26E9D8A000543CFE /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D275DB26E9D8A000543CFE /* PVSupport.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -187,6 +185,7 @@
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
 		B35E6BF4207CD2740040709A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		B3A3976327E6B9C800D8F433 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B104B8218F281B00210C39 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621020783162009950E4 /* PVTGBDual.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVTGBDual.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621320783162009950E4 /* PVTGBDual.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVTGBDual.h; sourceTree = "<group>"; };
@@ -205,9 +204,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3D275DC26E9D8A000543CFE /* PVSupport.framework in Frameworks */,
+				B3A3976427E6B9C800D8F433 /* PVSupport.framework in Frameworks */,
 				B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */,
-				B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */,
 				B3447ECD218BEDD200557ACE /* CoreAudio.framework in Frameworks */,
 				B3D275D826E9D75000543CFE /* libtgbdual-tvOS.a in Frameworks */,
 				B3447ECE218BEDD200557ACE /* AudioToolbox.framework in Frameworks */,
@@ -223,7 +221,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3271BE1276B8C730031AECC /* OpenGL.framework in Frameworks */,
-				B3411B48276B2F9C00D85327 /* PVLibrary.framework in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
@@ -400,6 +397,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3A3976327E6B9C800D8F433 /* PVSupport.framework */,
 				B3271BE0276B8C730031AECC /* OpenGL.framework */,
 				B3411B47276B2F9C00D85327 /* PVLibrary.framework */,
 				B3D275DB26E9D8A000543CFE /* PVSupport.framework */,
@@ -740,6 +738,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					RELEASE,
 					"$(inherited)",
+					FRONTEND_SUPPORTS_RGB565,
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -941,6 +940,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					DEBUG,
 					"$(inherited)",
+					FRONTEND_SUPPORTS_RGB565,
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -959,7 +959,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = "";
+				OTHER_CFLAGS = "$(inherited)";
 				SDKROOT = iphoneos;
 				TVOS_DEPLOYMENT_TARGET = 12.1;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
@@ -1014,6 +1014,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					RELEASE,
 					"$(inherited)",
+					FRONTEND_SUPPORTS_RGB565,
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;

@@ -4,22 +4,8 @@
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
-      buildImplicitDependencies = "NO">
+      buildImplicitDependencies = "YES">
       <BuildActionEntries>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3A9F4351DE877B4008450F5"
-               BuildableName = "PVFCEU.framework"
-               BlueprintName = "PVFCEU-iOS"
-               ReferencedContainer = "container:PVFCEU.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
          <BuildActionEntry
             buildForTesting = "YES"
             buildForRunning = "YES"
@@ -32,6 +18,20 @@
                BuildableName = "PVSupport.framework"
                BlueprintName = "PVSupport-iOS"
                ReferencedContainer = "container:../../PVSupport/PVSupport.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3A9F4351DE877B4008450F5"
+               BuildableName = "PVFCEU.framework"
+               BlueprintName = "PVFCEU-iOS"
+               ReferencedContainer = "container:PVFCEU.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

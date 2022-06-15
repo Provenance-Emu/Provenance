@@ -83,8 +83,37 @@ extension MupenGameCore: CoreOptional {
 										values:[
 											.init(title: "Pure Interpreter", description: "Slowest", value: 0),
 											.init(title: "Cached Interpreter", description: "Default", value: 1),
-											.init(title: "Dynamic Recompiler", description: "Fastest but bequires JIT or will crash", value: 2)],
+											.init(title: "Dynamic Recompiler", description: "Fastest but requires JIT or will crash", value: 2)],
                                         defaultValue: 1))
+
+		coreOptions.append(.range(.init(title: "Count Per Operation",
+										description: "Force number of cycles per emulated instruction.",
+										requiresRestart: true),
+								  range: .init(defaultValue: 2, min: 1, max: 4), defaultValue: 2))
+
+		coreOptions.append(.bool(.init(title: "Disable Extra Memory",
+									   description: "Disable 4MB expansion RAM pack. May be necessary for some games.",
+									   requiresRestart: true),
+								 defaultValue: false))
+
+		coreOptions.append(.range(.init(title: "SiDmaDuration",
+										description: "Duration of SI DMA (-1: use per game settings)",
+										requiresRestart: true),
+								  range: .init(defaultValue: -1, min: -1, max: 255), defaultValue: -1))
+
+		coreOptions.append(.bool(.init(title: "Randomize Interrupt",
+									   description: "Randomize PI/SI Interrupt Timing.",
+									   requiresRestart: true),
+								 defaultValue: true))
+
+			// MARK: --- DEBUG
+			// MARK: OSD <Bool=0>
+			// Draw on-screen display if True, otherwise don't draw OSD
+		coreOptions.append(.bool(.init(title: "Debug OSD",
+									   description: "Draw on-screen display if True, otherwise don't draw OSD",
+									   requiresRestart: true),
+								 defaultValue: false))
+
 
 		let coreGroup:CoreOption = .group(.init(title: "Mupen Core", description: "Global options for Mupen"),
 										  subOptions: coreOptions)
@@ -201,11 +230,6 @@ extension MupenGameCore: CoreOptional {
 			// MARK: txHiresFullAlphaChannel <Bool=0>
 			// "Allow to use alpha channel of high-res texture fully."
 		glidenOptions.append(.bool(.init(title: "HiRes Full Alpha", description: "Allow to use alpha channel of high-res texture fully.", requiresRestart: true), defaultValue: true))
-
-			// MARK: --- DEBUG
-			// MARK: OSD <Bool=0>
-			// Draw on-screen display if True, otherwise don't draw OSD
-		glidenOptions.append(.bool(.init(title: "Debug OSD", description: "Draw on-screen display if True, otherwise don't draw OSD", requiresRestart: true), defaultValue: false))
 
 			// MARK: --- Bloom
 		glidenOptions.append(.bool(.init(title: "Bloom filter", description: nil, requiresRestart: true), defaultValue: false))

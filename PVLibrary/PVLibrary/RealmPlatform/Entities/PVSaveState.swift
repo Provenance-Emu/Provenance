@@ -21,7 +21,7 @@ extension LocalFileProvider where Self: Filed {
 }
 
 @objcMembers
-public final class PVSaveState: Object, Filed, LocalFileProvider {
+public final class PVSaveState: Object, Identifiable, Filed, LocalFileProvider {
     public dynamic var id = UUID().uuidString
     public dynamic var game: PVGame!
     public dynamic var core: PVCore!
