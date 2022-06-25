@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B39769042859E32B00558958"
-               BuildableName = "PVCoreLibretro.framework"
-               BlueprintName = "PVCoreLibretro-iOS"
-               ReferencedContainer = "container:PVDosBox.xcodeproj">
+               BlueprintIdentifier = "B392848D28670348003BAC21"
+               BuildableName = "PVLibRetro.framework"
+               BlueprintName = "PVLibRetro"
+               ReferencedContainer = "container:PVSupport.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -50,10 +50,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B39769042859E32B00558958"
-            BuildableName = "PVCoreLibretro.framework"
-            BlueprintName = "PVCoreLibretro-iOS"
-            ReferencedContainer = "container:PVDosBox.xcodeproj">
+            BlueprintIdentifier = "B392848D28670348003BAC21"
+            BuildableName = "PVLibRetro.framework"
+            BlueprintName = "PVLibRetro"
+            ReferencedContainer = "container:PVSupport.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
