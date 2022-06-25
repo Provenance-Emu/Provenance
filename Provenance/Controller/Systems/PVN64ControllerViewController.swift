@@ -156,7 +156,7 @@ final class PVN64ControllerViewController: PVControllerViewController<PVN64Syste
         left = max(left, 0.0)
         right = max(right, 0.0)
 
-        print("x: \(value.x) , y: \(value.y), up:\(up), down:\(down), left:\(left), right:\(right), ")
+        // print("x: \(value.x) , y: \(value.y), up:\(up), down:\(down), left:\(left), right:\(right), ")
         emulatorCore.didMoveJoystick(.analogUp, withValue: up, forPlayer: 0)
         if down != 0 {
             emulatorCore.didMoveJoystick(.analogDown, withValue: down, forPlayer: 0)

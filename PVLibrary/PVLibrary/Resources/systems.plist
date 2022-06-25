@@ -1938,6 +1938,18 @@
 		<array>
 			<dict>
 				<key>PVControlType</key>
+				<string>PVDPad</string>
+				<key>PVControlSize</key>
+				<string>{180,180}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVJoyPad</string>
+				<key>PVControlSize</key>
+				<string>{160,160}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
 				<string>PVButtonGroup</string>
 				<key>PVControlSize</key>
 				<string>{212,160}</string>
@@ -1992,12 +2004,6 @@
 						<string>{{144,8},{60,60}}</string>
 					</dict>
 				</array>
-			</dict>
-			<dict>
-				<key>PVControlType</key>
-				<string>PVDPad</string>
-				<key>PVControlSize</key>
-				<string>{180,180}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -3294,6 +3300,18 @@
 		<array>
 			<dict>
 				<key>PVControlType</key>
+				<string>PVDPad</string>
+				<key>PVControlSize</key>
+				<string>{180,180}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVJoyPad</string>
+				<key>PVControlSize</key>
+				<string>{160,160}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
 				<string>PVButtonGroup</string>
 				<key>PVControlSize</key>
 				<string>{180,180}</string>
@@ -3336,12 +3354,6 @@
 				<string>Start</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
-			</dict>
-			<dict>
-				<key>PVControlType</key>
-				<string>PVDPad</string>
-				<key>PVControlSize</key>
-				<string>{180,180}</string>
 			</dict>
 		</array>
 	</dict>
@@ -3644,6 +3656,18 @@
 		<array>
 			<dict>
 				<key>PVControlType</key>
+				<string>PVDPad</string>
+				<key>PVControlSize</key>
+				<string>{180,180}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVJoyPad</string>
+				<key>PVControlSize</key>
+				<string>{160,160}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
 				<string>PVButtonGroup</string>
 				<key>PVControlSize</key>
 				<string>{180,180}</string>
@@ -3660,12 +3684,6 @@
 						<string>#f96763</string>
 					</dict>
 				</array>
-			</dict>
-			<dict>
-				<key>PVControlType</key>
-				<string>PVDPad</string>
-				<key>PVControlSize</key>
-				<string>{180,180}</string>
 			</dict>
 		</array>
 	</dict>

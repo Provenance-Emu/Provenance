@@ -487,11 +487,14 @@ import Foundation
     case count
 }
 
-@objc public protocol PV5200SystemResponderClient: ResponderClient, ButtonResponder {
+@objc public protocol PV5200SystemResponderClient: ResponderClient, ButtonResponder, JoystickResponder {
     @objc(didPush5200Button:forPlayer:)
     func didPush(_ button: PV5200Button, forPlayer player: Int)
     @objc(didRelease5200Button:forPlayer:)
     func didRelease(_ button: PV5200Button, forPlayer player: Int)
+    
+    @objc(didMove5200JoystickDirection:withValue:forPlayer:)
+    func didMoveJoystick(_ button: PV5200Button, withValue value: CGFloat, forPlayer player: Int)
 }
 
 @objc public enum PVA8Button: Int {
