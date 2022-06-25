@@ -790,9 +790,7 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
             }
 
             if ["PSX", "PS1"].contains(system.shortName.uppercased()) {
-                startFrame.origin.x += 120
-            } else if let joystickFrame = joyPad?.frame {
-                startFrame.origin.x = joystickFrame.maxX + 20
+//                startFrame.origin.x += 120
             }
             
             if startFrame.maxY >= view.frame.size.height {
