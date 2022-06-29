@@ -4562,6 +4562,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
+					"\"$(SRCROOT)/Sources/retro\"",
 					"$(inherited)",
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
@@ -4611,6 +4612,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
+					"\"$(SRCROOT)/Sources/retro\"",
 					"$(inherited)",
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
@@ -4658,6 +4660,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
+					"\"$(SRCROOT)/Sources/retro\"",
 					"$(inherited)",
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
