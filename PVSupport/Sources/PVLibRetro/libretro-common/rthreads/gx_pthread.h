@@ -1,4 +1,4 @@
-/* Copyright  (C) 2010-2020 The RetroArch team
+/* Copyright  (C) 2010-2016 The RetroArch team
  *
  * ---------------------------------------------------------------------------------------
  * The following license statement only applies to this file (gx_pthread.h).
@@ -26,7 +26,7 @@
 #include <ogcsys.h>
 #include <gccore.h>
 #include <ogc/cond.h>
-#include "../include/retro_inline.h"
+#include <retro_inline.h>
 
 #ifndef OSThread
 #define OSThread lwp_t
@@ -52,6 +52,10 @@
 #define OSUnlockMutex(mutex) LWP_MutexUnlock(mutex)
 #endif
 
+#ifndef OSTryLockMutex
+#define OSTryLockMutex(mutex) LWP_MutexTryLock(mutex)
+#endif
+
 #ifndef OSInitCond
 #define OSInitCond(cond) LWP_CondInit(cond)
 #endif
@@ -68,25 +72,22 @@
 #define OSSleepThread(queue) LWP_ThreadSleep(queue)
 #endif
 
+#ifndef OSJoinThread
+#define OSJoinThread(thread, val) LWP_JoinThread(thread, val)
+#endif
+
 #ifndef OSCreateThread
 #define OSCreateThread(thread, func, intarg, ptrarg, stackbase, stacksize, priority, attrs) LWP_CreateThread(thread, func, ptrarg, stackbase, stacksize, priority)
 #endif
 
-//#define STACKSIZE (8 * 1024)
-#define STACKSIZE DBP_STACK_SIZE
+#define STACKSIZE (8 * 1024)
 
 typedef OSThread pthread_t;
 typedef mutex_t pthread_mutex_t;
-typedef OSCond pthread_cond_t;
-
-#if defined(GX_PTHREAD_LEGACY)
 typedef void* pthread_mutexattr_t;
 typedef int pthread_attr_t;
+typedef OSCond pthread_cond_t;
 typedef OSCond pthread_condattr_t;
-#define pthread_attr_init(a)
-#define pthread_attr_setstacksize(a,b)
-#define pthread_attr_destroy(a)
-#endif
 
 static INLINE int pthread_create(pthread_t *thread,
       const pthread_attr_t *attr, void *(*start_routine)(void*), void *arg)
@@ -94,6 +95,12 @@ static INLINE int pthread_create(pthread_t *thread,
    *thread = 0;
    return OSCreateThread(thread, start_routine, 0 /* unused */, arg,
          0, STACKSIZE, 64, 0 /* unused */);
+}
+
+static INLINE pthread_t pthread_self(void)
+{
+   /* zero 20-mar-2016: untested */
+   return LWP_GetSelf();
 }
 
 static INLINE int pthread_mutex_init(pthread_mutex_t *mutex,
@@ -117,6 +124,12 @@ static INLINE int pthread_mutex_unlock(pthread_mutex_t *mutex)
    return OSUnlockMutex(*mutex);
 }
 
+static INLINE void pthread_exit(void *retval)
+{
+   /* FIXME: No LWP equivalent for this? */
+   (void)retval;
+}
+
 static INLINE int pthread_detach(pthread_t thread)
 {
    /* FIXME: pthread_detach equivalent missing? */
@@ -124,10 +137,26 @@ static INLINE int pthread_detach(pthread_t thread)
    return 0;
 }
 
+static INLINE int pthread_join(pthread_t thread, void **retval)
+{
+   return OSJoinThread(thread, retval);
+}
+
+static INLINE int pthread_mutex_trylock(pthread_mutex_t *mutex)
+{
+   return OSTryLockMutex(*mutex);
+}
+
 static INLINE int pthread_cond_wait(pthread_cond_t *cond,
       pthread_mutex_t *mutex)
 {
    return OSWaitCond(*cond, *mutex);
+}
+
+static INLINE int pthread_cond_timedwait(pthread_cond_t *cond,
+      pthread_mutex_t *mutex, const struct timespec *abstime)
+{
+   return LWP_CondTimedWait(*cond, *mutex, abstime);
 }
 
 static INLINE int pthread_cond_init(pthread_cond_t *cond,
@@ -150,5 +179,7 @@ static INLINE int pthread_cond_destroy(pthread_cond_t *cond)
 {
    return LWP_CondDestroy(*cond);
 }
+
+extern int pthread_equal(pthread_t t1, pthread_t t2);
 
 #endif
