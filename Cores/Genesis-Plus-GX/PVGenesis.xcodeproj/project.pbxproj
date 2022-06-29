@@ -42,7 +42,7 @@
 		B37302F01DE7DB1B00D0B366 /* activator.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7AA17F752600031B1C9 /* activator.c */; };
 		B37302F11DE7DB1B00D0B366 /* md_cart.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6F317F752600031B1C9 /* md_cart.c */; };
 		B37302F21DE7DB1B00D0B366 /* s68kcpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7CC17F752600031B1C9 /* s68kcpu.c */; };
-		B37302F31DE7DB1B00D0B366 /* m68kcpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7C517F752600031B1C9 /* m68kcpu.c */; };
+		B37302F31DE7DB1B00D0B366 /* m68kcpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7C517F752600031B1C9 /* m68kcpu.c */; settings = {COMPILER_FLAGS = "-Wno-sometimes-uninitialized -Wno-conditional-uninitialized"; }; };
 		B37302F41DE7DB1B00D0B366 /* eeprom_spi.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6EF17F752600031B1C9 /* eeprom_spi.c */; };
 		B37302F51DE7DB1B00D0B366 /* sram.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6F717F752600031B1C9 /* sram.c */; };
 		B37302F61DE7DB1B00D0B366 /* memz80.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7D317F752600031B1C9 /* memz80.c */; };
