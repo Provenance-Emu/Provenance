@@ -78,6 +78,29 @@
 		B305EF8B276B4E41003AE510 /* CocoaLumberjackSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B305EF42276B4E41003AE510 /* CocoaLumberjackSwift */; };
 		B305EF9A276B4F0A003AE510 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF99276B4F0A003AE510 /* GameKit.framework */; };
 		B305EF9C276B4FDD003AE510 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF9B276B4FDC003AE510 /* CoreGraphics.framework */; };
+		B3225131286C4728001FDF42 /* retro.m in Sources */ = {isa = PBXBuildFile; fileRef = B3225130286C4728001FDF42 /* retro.m */; };
+		B3225132286C4728001FDF42 /* retro.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B322512F286C4728001FDF42 /* retro.h */; };
+		B3225137286C4737001FDF42 /* msg_hash_it.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4DF28671EFF00B60497 /* msg_hash_it.c */; };
+		B3225138286C4737001FDF42 /* audio_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC3C928671EFE00B60497 /* audio_driver.c */; };
+		B3225139286C4737001FDF42 /* input_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC54928671EFF00B60497 /* input_driver.c */; };
+		B322513A286C4737001FDF42 /* core_info.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC36C286717AE00B60497 /* core_info.c */; };
+		B322513B286C4737001FDF42 /* dynamic_dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC59528671EFF00B60497 /* dynamic_dummy.c */; };
+		B322513C286C4737001FDF42 /* stdstring.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC7182867202D00B60497 /* stdstring.c */; };
+		B322513D286C4737001FDF42 /* msg_hash_uspseudo.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4E328671EFF00B60497 /* msg_hash_uspseudo.c */; };
+		B322513E286C4737001FDF42 /* dir_list.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC6702867202D00B60497 /* dir_list.c */; };
+		B322513F286C4737001FDF42 /* audio_resampler_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC3BD28671EFE00B60497 /* audio_resampler_driver.c */; };
+		B3225140286C4737001FDF42 /* core_impl.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC369286717AE00B60497 /* core_impl.c */; };
+		B3225141286C4737001FDF42 /* file_path.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC6752867202D00B60497 /* file_path.c */; };
+		B3225142286C4737001FDF42 /* msg_hash_jp.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4DC28671EFF00B60497 /* msg_hash_jp.c */; };
+		B3225143286C4742001FDF42 /* input_joypad_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC51B28671EFF00B60497 /* input_joypad_driver.c */; };
+		B3225144286C4742001FDF42 /* performance_counters.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC3782867180300B60497 /* performance_counters.c */; };
+		B3225145286C4742001FDF42 /* null_joypad.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC53828671EFF00B60497 /* null_joypad.c */; };
+		B3225146286C4742001FDF42 /* msg_hash_pt.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4E428671EFF00B60497 /* msg_hash_pt.c */; };
+		B3225147286C4742001FDF42 /* msg_hash_us.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4E628671EFF00B60497 /* msg_hash_us.c */; };
+		B3225148286C4742001FDF42 /* msg_hash_de.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4D928671EFE00B60497 /* msg_hash_de.c */; };
+		B3225149286C4742001FDF42 /* dynamic.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC36D286717AE00B60497 /* dynamic.c */; };
+		B322514A286C4742001FDF42 /* msg_hash_es.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4D828671EFE00B60497 /* msg_hash_es.c */; };
+		B322514B286C4753001FDF42 /* libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B322512D286C4728001FDF42 /* libretro.a */; };
 		B324C3162191963B009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C3152191963B009F4EDC /* AVFoundation.framework */; };
 		B3296E8126C67EFA0088AC32 /* CocoaLumberjack+NSLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E8026C67EF90088AC32 /* CocoaLumberjack+NSLogger.swift */; };
 		B3296E8226C67EFA0088AC32 /* CocoaLumberjack+NSLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E8026C67EF90088AC32 /* CocoaLumberjack+NSLogger.swift */; };
@@ -150,29 +173,9 @@
 		B34DC370286717AE00B60497 /* defaults.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC366286717AD00B60497 /* defaults.h */; };
 		B34DC371286717AE00B60497 /* driver.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC367286717AD00B60497 /* driver.h */; };
 		B34DC372286717AE00B60497 /* core.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC368286717AD00B60497 /* core.h */; };
-		B34DC373286717AE00B60497 /* core_impl.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC369286717AE00B60497 /* core_impl.c */; };
 		B34DC374286717AE00B60497 /* core_type.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC36A286717AE00B60497 /* core_type.h */; };
 		B34DC375286717AE00B60497 /* dynamic.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC36B286717AE00B60497 /* dynamic.h */; };
-		B34DC376286717AE00B60497 /* core_info.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC36C286717AE00B60497 /* core_info.c */; };
-		B34DC377286717AE00B60497 /* dynamic.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC36D286717AE00B60497 /* dynamic.c */; };
-		B34DC37A2867180300B60497 /* performance_counters.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC3782867180300B60497 /* performance_counters.c */; };
 		B34DC37B2867180300B60497 /* performance_counters.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC3792867180300B60497 /* performance_counters.h */; };
-		B34DC7332867209900B60497 /* input_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC54928671EFF00B60497 /* input_driver.c */; };
-		B34DC734286720B600B60497 /* audio_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC3C928671EFE00B60497 /* audio_driver.c */; };
-		B34DC7392867211300B60497 /* dynamic_dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC59528671EFF00B60497 /* dynamic_dummy.c */; };
-		B34DC73A2867216700B60497 /* msg_hash_us.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4E628671EFF00B60497 /* msg_hash_us.c */; };
-		B34DC73B2867217700B60497 /* msg_hash_es.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4D828671EFE00B60497 /* msg_hash_es.c */; };
-		B34DC73C2867217700B60497 /* msg_hash_de.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4D928671EFE00B60497 /* msg_hash_de.c */; };
-		B34DC73D2867217700B60497 /* msg_hash_it.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4DF28671EFF00B60497 /* msg_hash_it.c */; };
-		B34DC73E2867217700B60497 /* msg_hash_pt.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4E428671EFF00B60497 /* msg_hash_pt.c */; };
-		B34DC73F2867217700B60497 /* msg_hash_jp.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4DC28671EFF00B60497 /* msg_hash_jp.c */; };
-		B34DC7402867217700B60497 /* msg_hash_uspseudo.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4E328671EFF00B60497 /* msg_hash_uspseudo.c */; };
-		B34DC7412867218F00B60497 /* input_joypad_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC51B28671EFF00B60497 /* input_joypad_driver.c */; };
-		B34DC7432867236900B60497 /* null_joypad.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC53828671EFF00B60497 /* null_joypad.c */; };
-		B34DC7452867238100B60497 /* audio_resampler_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC3BD28671EFE00B60497 /* audio_resampler_driver.c */; };
-		B34DC746286723AB00B60497 /* stdstring.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC7182867202D00B60497 /* stdstring.c */; };
-		B34DC747286723C200B60497 /* dir_list.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC6702867202D00B60497 /* dir_list.c */; };
-		B34DC748286723D500B60497 /* file_path.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC6752867202D00B60497 /* file_path.c */; };
 		B3532B3721A7B736006CDA0F /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96ED81D62C5E7003F1E93 /* PVSupport.framework */; };
 		B3532B3F21A7B753006CDA0F /* PVSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532B3E21A7B753006CDA0F /* PVSettingsTests.swift */; };
 		B3532C3621A925C2006CDA0F /* SortOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3521A925C1006CDA0F /* SortOption.swift */; };
@@ -291,6 +294,19 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		B322512B286C4728001FDF42 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+				B3225132286C4728001FDF42 /* retro.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		0592894D1DC194FD0012644D /* RealTimeThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RealTimeThread.h; sourceTree = "<group>"; };
 		0592894E1DC194FD0012644D /* RealTimeThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RealTimeThread.m; sourceTree = "<group>"; };
@@ -312,6 +328,9 @@
 		B305EF99276B4F0A003AE510 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.3.sdk/System/Library/Frameworks/GameKit.framework; sourceTree = DEVELOPER_DIR; };
 		B305EF9B276B4FDC003AE510 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.3.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		B3173802278419A2002D3ACD /* Build.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Build.xcconfig; path = ../Build.xcconfig; sourceTree = "<group>"; };
+		B322512D286C4728001FDF42 /* libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libretro.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B322512F286C4728001FDF42 /* retro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = retro.h; sourceTree = "<group>"; };
+		B3225130286C4728001FDF42 /* retro.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = retro.m; sourceTree = "<group>"; };
 		B324C3152191963B009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3296E8026C67EF90088AC32 /* CocoaLumberjack+NSLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CocoaLumberjack+NSLogger.swift"; sourceTree = "<group>"; };
 		B3296E8326C67F420088AC32 /* CocoaLumberjack+swift-log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CocoaLumberjack+swift-log.swift"; sourceTree = "<group>"; };
@@ -1110,6 +1129,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B322512A286C4728001FDF42 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3532B2F21A7B736006CDA0F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1122,6 +1148,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B322514B286C4753001FDF42 /* libretro.a in Frameworks */,
 				B392849B286703F2003BAC21 /* PVSupport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1178,6 +1205,7 @@
 				B3532B3321A7B736006CDA0F /* Tests */,
 				1ACEA64A17F7467D0031B1C9 /* Supporting Files */,
 				B392848F28670348003BAC21 /* PVLibRetro */,
+				B322512E286C4728001FDF42 /* retro */,
 				1ACEA64617F7467D0031B1C9 /* Frameworks */,
 				1ACEA64517F7467D0031B1C9 /* Products */,
 			);
@@ -1191,6 +1219,7 @@
 				B3532B3221A7B736006CDA0F /* PVSupportTests.xctest */,
 				B305EF91276B4E41003AE510 /* PVSupport.framework */,
 				B392848E28670348003BAC21 /* PVLibRetro.framework */,
+				B322512D286C4728001FDF42 /* libretro.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1274,6 +1303,15 @@
 				B3532B3E21A7B753006CDA0F /* PVSettingsTests.swift */,
 			);
 			path = PVSupportTests;
+			sourceTree = "<group>";
+		};
+		B322512E286C4728001FDF42 /* retro */ = {
+			isa = PBXGroup;
+			children = (
+				B322512F286C4728001FDF42 /* retro.h */,
+				B3225130286C4728001FDF42 /* retro.m */,
+			);
+			path = retro;
 			sourceTree = "<group>";
 		};
 		B3296E8D26C680EA0088AC32 /* Protocols */ = {
@@ -3344,6 +3382,23 @@
 			productReference = B305EF91276B4E41003AE510 /* PVSupport.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		B322512C286C4728001FDF42 /* retro */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3225136286C4729001FDF42 /* Build configuration list for PBXNativeTarget "retro" */;
+			buildPhases = (
+				B3225129286C4728001FDF42 /* Sources */,
+				B322512A286C4728001FDF42 /* Frameworks */,
+				B322512B286C4728001FDF42 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = retro;
+			productName = retro;
+			productReference = B322512D286C4728001FDF42 /* libretro.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		B3532B3121A7B736006CDA0F /* PVSupportTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3532B3D21A7B736006CDA0F /* Build configuration list for PBXNativeTarget "PVSupportTests" */;
@@ -3452,6 +3507,9 @@
 				LastUpgradeCheck = 1300;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
+					B322512C286C4728001FDF42 = {
+						CreatedOnToolsVersion = 13.4.1;
+					};
 					B3532B3121A7B736006CDA0F = {
 						CreatedOnToolsVersion = 10.1;
 						LastSwiftMigration = 1020;
@@ -3491,6 +3549,7 @@
 				B305EF3D276B4E41003AE510 /* PVSupport-watchOS */,
 				B3532B3121A7B736006CDA0F /* PVSupportTests */,
 				B392848D28670348003BAC21 /* PVLibRetro */,
+				B322512C286C4728001FDF42 /* retro */,
 			);
 		};
 /* End PBXProject section */
@@ -3595,6 +3654,34 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3225129286C4728001FDF42 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3225141286C4737001FDF42 /* file_path.c in Sources */,
+				B3225137286C4737001FDF42 /* msg_hash_it.c in Sources */,
+				B3225144286C4742001FDF42 /* performance_counters.c in Sources */,
+				B3225149286C4742001FDF42 /* dynamic.c in Sources */,
+				B3225147286C4742001FDF42 /* msg_hash_us.c in Sources */,
+				B3225138286C4737001FDF42 /* audio_driver.c in Sources */,
+				B322513B286C4737001FDF42 /* dynamic_dummy.c in Sources */,
+				B3225140286C4737001FDF42 /* core_impl.c in Sources */,
+				B3225142286C4737001FDF42 /* msg_hash_jp.c in Sources */,
+				B3225146286C4742001FDF42 /* msg_hash_pt.c in Sources */,
+				B322513A286C4737001FDF42 /* core_info.c in Sources */,
+				B322513F286C4737001FDF42 /* audio_resampler_driver.c in Sources */,
+				B3225148286C4742001FDF42 /* msg_hash_de.c in Sources */,
+				B3225139286C4737001FDF42 /* input_driver.c in Sources */,
+				B3225143286C4742001FDF42 /* input_joypad_driver.c in Sources */,
+				B322513E286C4737001FDF42 /* dir_list.c in Sources */,
+				B322513D286C4737001FDF42 /* msg_hash_uspseudo.c in Sources */,
+				B3225131286C4728001FDF42 /* retro.m in Sources */,
+				B322514A286C4742001FDF42 /* msg_hash_es.c in Sources */,
+				B322513C286C4737001FDF42 /* stdstring.c in Sources */,
+				B3225145286C4742001FDF42 /* null_joypad.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3532B2E21A7B736006CDA0F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3607,27 +3694,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B34DC73D2867217700B60497 /* msg_hash_it.c in Sources */,
-				B34DC747286723C200B60497 /* dir_list.c in Sources */,
-				B34DC376286717AE00B60497 /* core_info.c in Sources */,
-				B34DC7402867217700B60497 /* msg_hash_uspseudo.c in Sources */,
-				B34DC7332867209900B60497 /* input_driver.c in Sources */,
-				B34DC7392867211300B60497 /* dynamic_dummy.c in Sources */,
-				B34DC7452867238100B60497 /* audio_resampler_driver.c in Sources */,
-				B34DC746286723AB00B60497 /* stdstring.c in Sources */,
-				B34DC734286720B600B60497 /* audio_driver.c in Sources */,
-				B34DC373286717AE00B60497 /* core_impl.c in Sources */,
-				B34DC73F2867217700B60497 /* msg_hash_jp.c in Sources */,
-				B34DC748286723D500B60497 /* file_path.c in Sources */,
 				B392849A286703CD003BAC21 /* PVLibRetroCore.m in Sources */,
-				B34DC377286717AE00B60497 /* dynamic.c in Sources */,
-				B34DC73C2867217700B60497 /* msg_hash_de.c in Sources */,
-				B34DC7432867236900B60497 /* null_joypad.c in Sources */,
-				B34DC73E2867217700B60497 /* msg_hash_pt.c in Sources */,
-				B34DC73B2867217700B60497 /* msg_hash_es.c in Sources */,
-				B34DC37A2867180300B60497 /* performance_counters.c in Sources */,
-				B34DC7412867218F00B60497 /* input_joypad_driver.c in Sources */,
-				B34DC73A2867216700B60497 /* msg_hash_us.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4051,6 +4118,92 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
 				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Archive;
+		};
+		B3225133286C4728001FDF42 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Sources/PVLibRetro/libretro-common/include\"",
+					"$(inherited)",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B3225134286C4728001FDF42 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Sources/PVLibRetro/libretro-common/include\"",
+					"$(inherited)",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B3225135286C4728001FDF42 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Sources/PVLibRetro/libretro-common/include\"",
+					"$(inherited)",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Archive;
 		};
@@ -4625,6 +4778,16 @@
 				B305EF8E276B4E41003AE510 /* Debug */,
 				B305EF8F276B4E41003AE510 /* Release */,
 				B305EF90276B4E41003AE510 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3225136286C4729001FDF42 /* Build configuration list for PBXNativeTarget "retro" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3225133286C4728001FDF42 /* Debug */,
+				B3225134286C4728001FDF42 /* Release */,
+				B3225135286C4728001FDF42 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
