@@ -1,4 +1,4 @@
-/* Copyright  (C) 2010-2016 The RetroArch team
+/* Copyright  (C) 2010-2020 The RetroArch team
  *
  * ---------------------------------------------------------------------------------------
  * The following license statement only applies to this file (memmap.h).
@@ -23,7 +23,10 @@
 #ifndef _LIBRETRO_MEMMAP_H
 #define _LIBRETRO_MEMMAP_H
 
-#if defined(__CELLOS_LV2__) || defined(PSP) || defined(GEKKO) || defined(VITA) || defined(_XBOX) || defined(_3DS)
+#include <stdio.h>
+#include <stdint.h>
+
+#if defined(PSP) || defined(PS2) || defined(GEKKO) || defined(VITA) || defined(_XBOX) || defined(_3DS) || defined(WIIU) || defined(SWITCH) || defined(HAVE_LIBNX) || defined(__PS3__) || defined(__PSL1GHT__)
 /* No mman available */
 #elif defined(_WIN32) && !defined(_XBOX)
 #include <windows.h>

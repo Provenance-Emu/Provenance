@@ -1,4 +1,4 @@
-/* Copyright  (C) 2010-2016 The RetroArch team
+/* Copyright  (C) 2010-2020 The RetroArch team
  *
  * ---------------------------------------------------------------------------------------
  * The following license statement only applies to this file (net_compat.h).
@@ -45,7 +45,6 @@
 #ifndef MSG_NOSIGNAL
 #define MSG_NOSIGNAL 0
 #endif
-
 
 #elif defined(_XBOX)
 
@@ -101,6 +100,8 @@ struct hostent
 	char *h_addr;
 };
 
+struct SceNetInAddr inet_aton(const char *ip_addr);
+
 #else
 #include <sys/select.h>
 #include <sys/types.h>
@@ -115,16 +116,8 @@ struct hostent
 #include <netdb.h>
 #include <fcntl.h>
 
-#if defined(__CELLOS_LV2__) && !defined(__PSL1GHT__)
-#include <cell/sysmodule.h>
-#include <netex/net.h>
+#if !defined(__PSL1GHT__) && defined(__PS3__)
 #include <netex/libnetctl.h>
-#include <sys/timer.h>
-
-#ifndef EWOULDBLOCK
-#define EWOULDBLOCK SYS_NET_EWOULDBLOCK
-#endif
-
 #else
 #include <signal.h>
 #endif
@@ -136,6 +129,14 @@ struct hostent
 #ifdef GEKKO
 #define sendto(s, msg, len, flags, addr, tolen) net_sendto(s, msg, len, 0, addr, 8)
 #define socket(domain, type, protocol) net_socket(domain, type, protocol)
+#define bind(s, name, namelen) net_bind(s, name, namelen)
+#define listen(s, backlog) net_listen(s, backlog)
+#define accept(s, addr, addrlen) net_accept(s, addr, addrlen)
+#define connect(s, addr, addrlen) net_connect(s, addr, addrlen)
+#define send(s, data, size, flags) net_send(s, data, size, flags)
+#define recv(s, mem, len, flags) net_recv(s, mem, len, flags)
+#define recvfrom(s, mem, len, flags, from, fromlen) net_recvfrom(s, mem, len, flags, from, fromlen)
+#define select(maxfdp1, readset, writeset, exceptset, timeout) net_select(maxfdp1, readset, writeset, exceptset, timeout)
 #endif
 
 static INLINE bool isagain(int bytes)
@@ -146,12 +147,21 @@ static INLINE bool isagain(int bytes)
    if (WSAGetLastError() != WSAEWOULDBLOCK)
       return false;
    return true;
+#elif !defined(__PSL1GHT__) && defined(__PS3__) 
+   return (sys_net_errno == SYS_NET_EWOULDBLOCK) || (sys_net_errno == SYS_NET_EAGAIN);
 #elif defined(VITA)
-	 return (bytes<0 && (bytes == SCE_NET_ERROR_EAGAIN || bytes == SCE_NET_ERROR_EWOULDBLOCK));
+   return (bytes<0 && (bytes == SCE_NET_ERROR_EAGAIN || bytes == SCE_NET_ERROR_EWOULDBLOCK));
+#elif defined(WIIU)
+   return (bytes == -1) && ((socketlasterr() == SO_SUCCESS) || (socketlasterr() == SO_EWOULDBLOCK));
 #else
    return (bytes < 0 && (errno == EAGAIN || errno == EWOULDBLOCK));
 #endif
 }
+
+#ifdef WIIU
+#define WIIU_RCVBUF (128 * 2 * 1024)
+#define WIIU_SNDBUF (128 * 2 * 1024)
+#endif
 
 #ifdef _XBOX
 #define socklen_t int
@@ -227,5 +237,9 @@ bool network_init(void);
  * Deinitialize platform specific socket libraries.
  **/
 void network_deinit(void);
+
+const char *inet_ntop_compat(int af, const void *src, char *dst, socklen_t cnt);
+
+bool udp_send_packet(const char *host, uint16_t port, const char *msg);
 
 #endif

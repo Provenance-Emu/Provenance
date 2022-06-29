@@ -1,4 +1,4 @@
-/* Copyright  (C) 2010-2016 The RetroArch team
+/* Copyright  (C) 2010-2020 The RetroArch team
  *
  * ---------------------------------------------------------------------------------------
  * The following license statement only applies to this file (jsonsax.h).
@@ -24,6 +24,10 @@
 #define __LIBRETRO_SDK_FORMAT_JSONSAX_H__
 
 #include <stddef.h>
+
+#include <retro_common_api.h>
+
+RETRO_BEGIN_DECLS
 
 enum
 {
@@ -51,7 +55,7 @@ typedef struct
   int ( *start_array )( void* userdata );
   int ( *end_array )( void* userdata );
   int ( *key )( void* userdata, const char* name, size_t length );
-  int ( *index )( void* userdata, unsigned int index );
+  int ( *array_index )( void* userdata, unsigned int index );
   int ( *string )( void* userdata, const char* string, size_t length );
   int ( *number )( void* userdata, const char* number, size_t length );
   int ( *boolean )( void* userdata, int istrue );
@@ -60,5 +64,7 @@ typedef struct
 jsonsax_handlers_t;
 
 int jsonsax_parse( const char* json, const jsonsax_handlers_t* handlers, void* userdata );
+
+RETRO_END_DECLS
 
 #endif /* __LIBRETRO_SDK_FORMAT_JSONSAX_H__ */

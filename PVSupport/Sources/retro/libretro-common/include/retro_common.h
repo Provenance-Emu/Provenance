@@ -1,4 +1,4 @@
-/* Copyright  (C) 2010-2016 The RetroArch team
+/* Copyright  (C) 2010-2020 The RetroArch team
  *
  * ---------------------------------------------------------------------------------------
  * The following license statement only applies to this file (retro_common.h).
@@ -26,7 +26,7 @@
 /*
 This file is designed to normalize the libretro-common compiling environment.
 It is not to be used in public API headers, as they should be designed as leanly as possible.
-Nonetheless.. in the meantime, if you do something like use ssize_t, which is not fully portable, 
+Nonetheless.. in the meantime, if you do something like use ssize_t, which is not fully portable,
 in a public API, you may need this.
 */
 
@@ -34,4 +34,3 @@ in a public API, you may need this.
 #include <compat/msvc.h>
 
 #endif
-

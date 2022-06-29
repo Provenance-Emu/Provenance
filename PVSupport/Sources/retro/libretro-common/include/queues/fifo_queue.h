@@ -1,4 +1,4 @@
-/* Copyright  (C) 2010-2016 The RetroArch team
+/* Copyright  (C) 2010-2020 The RetroArch team
  *
  * ---------------------------------------------------------------------------------------
  * The following license statement only applies to this file (fifo_queue.h).
@@ -25,16 +25,41 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <stdlib.h>
 
 #include <retro_common_api.h>
+#include <retro_inline.h>
+#include <boolean.h>
 
 RETRO_BEGIN_DECLS
+
+#define FIFO_READ_AVAIL(buffer) (((buffer)->end + (((buffer)->end < (buffer)->first) ? (buffer)->size : 0)) - (buffer)->first)
+
+#define FIFO_WRITE_AVAIL(buffer) (((buffer)->size - 1) - (((buffer)->end + (((buffer)->end < (buffer)->first) ? (buffer)->size : 0)) - (buffer)->first))
+
+#define FIFO_READ_AVAIL_NONPTR(buffer) (((buffer).end + (((buffer).end < (buffer).first) ? (buffer).size : 0)) - (buffer).first)
+
+#define FIFO_WRITE_AVAIL_NONPTR(buffer) (((buffer).size - 1) - (((buffer).end + (((buffer).end < (buffer).first) ? (buffer).size : 0)) - (buffer).first))
+
+struct fifo_buffer
+{
+   uint8_t *buffer;
+   size_t size;
+   size_t first;
+   size_t end;
+};
 
 typedef struct fifo_buffer fifo_buffer_t;
 
 fifo_buffer_t *fifo_new(size_t size);
 
-void fifo_clear(fifo_buffer_t *buffer);
+bool fifo_initialize(fifo_buffer_t *buf, size_t size);
+
+static INLINE void fifo_clear(fifo_buffer_t *buffer)
+{
+   buffer->first = 0;
+   buffer->end   = 0;
+}
 
 void fifo_write(fifo_buffer_t *buffer, const void *in_buf, size_t size);
 
@@ -42,11 +67,9 @@ void fifo_read(fifo_buffer_t *buffer, void *in_buf, size_t size);
 
 void fifo_free(fifo_buffer_t *buffer);
 
-size_t fifo_read_avail(fifo_buffer_t *buffer);
+bool fifo_deinitialize(fifo_buffer_t *buffer);
 
-size_t fifo_write_avail(fifo_buffer_t *buffer);
 
 RETRO_END_DECLS
 
 #endif
-

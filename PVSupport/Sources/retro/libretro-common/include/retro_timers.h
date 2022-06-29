@@ -23,6 +23,8 @@
 #ifndef __LIBRETRO_COMMON_TIMERS_H
 #define __LIBRETRO_COMMON_TIMERS_H
 
+#include <stdint.h>
+
 #if defined(XENON)
 #include <time/time.h>
 #elif !defined(__PSL1GHT__) && defined(__PS3__)
@@ -47,6 +49,13 @@
 #elif defined(_WIN32) && defined(_XBOX)
 #include <Xtl.h>
 #endif
+
+#include <limits.h>
+
+#ifdef _MSC_VER
+#include <compat/msvc.h>
+#endif
+#include <retro_inline.h>
 
 #ifdef DJGPP
 #define timespec timeval

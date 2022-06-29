@@ -1,4 +1,4 @@
-/* Copyright  (C) 2010-2016 The RetroArch team
+/* Copyright  (C) 2010-2020 The RetroArch team
  *
  * ---------------------------------------------------------------------------------------
  * The following license statement only applies to this file (pixconv.h).
@@ -25,6 +25,10 @@
 
 #include <clamping.h>
 
+#include <retro_common_api.h>
+
+RETRO_BEGIN_DECLS
+
 void conv_0rgb1555_argb8888(void *output, const void *input,
       int width, int height,
       int out_stride, int in_stride);
@@ -34,6 +38,10 @@ void conv_0rgb1555_rgb565(void *output, const void *input,
       int out_stride, int in_stride);
 
 void conv_rgb565_0rgb1555(void *output, const void *input,
+      int width, int height,
+      int out_stride, int in_stride);
+
+void conv_rgb565_abgr8888(void *output, const void *input,
       int width, int height,
       int out_stride, int in_stride);
 
@@ -53,6 +61,10 @@ void conv_bgr24_argb8888(void *output, const void *input,
       int width, int height,
       int out_stride, int in_stride);
 
+void conv_bgr24_rgb565(void *output, const void *input,
+      int width, int height,
+      int out_stride, int in_stride);
+
 void conv_argb8888_0rgb1555(void *output, const void *input,
       int width, int height,
       int out_stride, int in_stride);
@@ -66,6 +78,10 @@ void conv_argb8888_rgb565(void *output, const void *input,
       int out_stride, int in_stride);
 
 void conv_argb8888_bgr24(void *output, const void *input,
+      int width, int height,
+      int out_stride, int in_stride);
+
+void conv_abgr8888_bgr24(void *output, const void *input,
       int width, int height,
       int out_stride, int in_stride);
 
@@ -89,5 +105,6 @@ void conv_copy(void *output, const void *input,
       int width, int height,
       int out_stride, int in_stride);
 
-#endif
+RETRO_END_DECLS
 
+#endif

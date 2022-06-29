@@ -1,4 +1,4 @@
-/* Copyright  (C) 2010-2016 The RetroArch team
+/* Copyright  (C) 2010-2020 The RetroArch team
  *
  * ---------------------------------------------------------------------------------------
  * The following license statement only applies to this file (net_socket.h).
@@ -60,14 +60,22 @@ typedef struct socket_target
 
 int socket_init(void **address, uint16_t port, const char *server, enum socket_type type);
 
+int socket_next(void **address);
+
 int socket_close(int fd);
 
+bool socket_set_block(int fd, bool block);
+
+/* TODO: all callers should be converted to socket_set_block() */
 bool socket_nonblock(int fd);
 
 int socket_select(int nfds, fd_set *readfs, fd_set *writefds,
       fd_set *errorfds, struct timeval *timeout);
 
 int socket_send_all_blocking(int fd, const void *data_, size_t size, bool no_signal);
+
+ssize_t socket_send_all_nonblocking(int fd, const void *data_, size_t size,
+      bool no_signal);
 
 int socket_receive_all_blocking(int fd, void *data_, size_t size);
 

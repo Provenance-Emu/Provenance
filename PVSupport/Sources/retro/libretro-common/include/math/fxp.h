@@ -1,4 +1,4 @@
-/* Copyright  (C) 2010-2016 The RetroArch team
+/* Copyright  (C) 2010-2020 The RetroArch team
  *
  * ---------------------------------------------------------------------------------------
  * The following license statement only applies to this file (fxp.h).
@@ -59,4 +59,3 @@ static INLINE int64_t fx32_shiftup(const int32_t a)
 }
 
 #endif
-

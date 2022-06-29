@@ -1,4 +1,4 @@
-/* Copyright  (C) 2010-2016 The RetroArch team
+/* Copyright  (C) 2010-2020 The RetroArch team
  *
  * ---------------------------------------------------------------------------------------
  * The following license statement only applies to this file (intrinsics.h).
@@ -30,7 +30,7 @@
 #include <retro_common_api.h>
 #include <retro_inline.h>
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && !defined(_XBOX)
 #if (_MSC_VER > 1310)
 #include <intrin.h>
 #endif
@@ -41,7 +41,7 @@ RETRO_BEGIN_DECLS
 /* Count Leading Zero, unsigned 16bit input value */
 static INLINE unsigned compat_clz_u16(uint16_t val)
 {
-#ifdef __GNUC__
+#if defined(__GNUC__)
    return __builtin_clz(val << 16 | 0x8000);
 #else
    unsigned ret = 0;
@@ -61,22 +61,36 @@ static INLINE int compat_ctz(unsigned x)
 {
 #if defined(__GNUC__) && !defined(RARCH_CONSOLE)
    return __builtin_ctz(x);
-#elif _MSC_VER >= 1400
+#elif _MSC_VER >= 1400 && !defined(_XBOX) && !defined(__WINRT__)
    unsigned long r = 0;
-   _BitScanReverse((unsigned long*)&r, x);
+   _BitScanForward((unsigned long*)&r, x);
    return (int)r;
 #else
-/* Only checks at nibble granularity, 
- * because that's what we need. */
-   if (x & 0x000f)
-      return 0;
-   if (x & 0x00f0)
-      return 4;
-   if (x & 0x0f00)
-      return 8;
-   if (x & 0xf000)
-      return 12;
-   return 16;
+   int count = 0;
+   if (!(x & 0xffff))
+   {
+      x >>= 16;
+      count |= 16;
+   }
+   if (!(x & 0xff))
+   {
+      x >>= 8;
+      count |= 8;
+   }
+   if (!(x & 0xf))
+   {
+      x >>= 4;
+      count |= 4;
+   }
+   if (!(x & 0x3))
+   {
+      x >>= 2;
+      count |= 2;
+   }
+   if (!(x & 0x1))
+      count |= 1;
+
+   return count;
 #endif
 }
 

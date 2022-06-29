@@ -1,4 +1,4 @@
-/* Copyright  (C) 2010-2015 The RetroArch team
+/* Copyright  (C) 2010-2020 The RetroArch team
  *
  * ---------------------------------------------------------------------------------------
  * The following license statement only applies to this file (interface_stream.h).
@@ -30,15 +30,17 @@
 #include <retro_common_api.h>
 #include <boolean.h>
 
+RETRO_BEGIN_DECLS
+
 enum intfstream_type
 {
    INTFSTREAM_FILE = 0,
-   INTFSTREAM_MEMORY
+   INTFSTREAM_MEMORY,
+   INTFSTREAM_CHD,
+   INTFSTREAM_RZIP
 };
 
-typedef struct intfstream_internal intfstream_internal_t;
-
-typedef struct intfstream intfstream_t;
+typedef struct intfstream_internal intfstream_internal_t, intfstream_t;
 
 typedef struct intfstream_info
 {
@@ -47,10 +49,15 @@ typedef struct intfstream_info
       struct
       {
          uint8_t *data;
-         unsigned size;
+         uint64_t size;
       } buf;
       bool writable;
    } memory;
+   struct
+   {
+      void *handle;
+      int32_t track;
+   } chd;
    enum intfstream_type type;
 } intfstream_info_t;
 
@@ -60,28 +67,64 @@ bool intfstream_resize(intfstream_internal_t *intf,
       intfstream_info_t *info);
 
 bool intfstream_open(intfstream_internal_t *intf,
-      const char *path, unsigned mode, ssize_t len);
+      const char *path, unsigned mode, unsigned hints);
 
-ssize_t intfstream_read(intfstream_internal_t *intf,
-      void *s, size_t len);
+int64_t intfstream_read(intfstream_internal_t *intf,
+      void *s, uint64_t len);
 
-ssize_t intfstream_write(intfstream_internal_t *intf,
-      const void *s, size_t len);
+int64_t intfstream_write(intfstream_internal_t *intf,
+      const void *s, uint64_t len);
+
+int intfstream_printf(intfstream_internal_t *intf,
+      const char* format, ...);
+
+int64_t intfstream_get_ptr(intfstream_internal_t *intf);
 
 char *intfstream_gets(intfstream_internal_t *intf,
-      char *buffer, size_t len);
+      char *buffer, uint64_t len);
 
 int intfstream_getc(intfstream_internal_t *intf);
 
-int intfstream_seek(intfstream_internal_t *intf,
-      int offset, int whence);
+int64_t intfstream_seek(intfstream_internal_t *intf,
+      int64_t offset, int whence);
 
 void intfstream_rewind(intfstream_internal_t *intf);
 
-int intfstream_tell(intfstream_internal_t *intf);
+int64_t intfstream_tell(intfstream_internal_t *intf);
+
+int intfstream_eof(intfstream_internal_t *intf);
 
 void intfstream_putc(intfstream_internal_t *intf, int c);
 
 int intfstream_close(intfstream_internal_t *intf);
+
+int64_t intfstream_get_size(intfstream_internal_t *intf);
+
+int intfstream_flush(intfstream_internal_t *intf);
+
+uint32_t intfstream_get_offset_to_start(intfstream_internal_t *intf);
+
+uint32_t intfstream_get_frame_size(intfstream_internal_t *intf);
+
+bool intfstream_is_compressed(intfstream_internal_t *intf);
+
+bool intfstream_get_crc(intfstream_internal_t *intf, uint32_t *crc);
+
+intfstream_t *intfstream_open_file(const char *path,
+      unsigned mode, unsigned hints);
+
+intfstream_t *intfstream_open_memory(void *data,
+      unsigned mode, unsigned hints, uint64_t size);
+
+intfstream_t *intfstream_open_writable_memory(void *data,
+      unsigned mode, unsigned hints, uint64_t size);
+
+intfstream_t *intfstream_open_chd_track(const char *path,
+      unsigned mode, unsigned hints, int32_t track);
+
+intfstream_t *intfstream_open_rzip_file(const char *path,
+      unsigned mode);
+
+RETRO_END_DECLS
 
 #endif

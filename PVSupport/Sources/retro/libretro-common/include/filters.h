@@ -1,4 +1,4 @@
-/* Copyright  (C) 2010-2016 The RetroArch team
+/* Copyright  (C) 2010-2020 The RetroArch team
  *
  * ---------------------------------------------------------------------------------------
  * The following license statement only applies to this file (filters.h).
@@ -29,7 +29,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <retro_inline.h>
-#include <retro_miscellaneous.h>
+#include <retro_math.h>
 
 static INLINE double sinc(double val)
 {

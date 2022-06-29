@@ -1,4 +1,4 @@
-/* Copyright  (C) 2010-2016 The RetroArch team
+/* Copyright  (C) 2010-2020 The RetroArch team
  *
  * ---------------------------------------------------------------------------------------
  * The following license statement only applies to this file (rjpeg.h).
@@ -46,4 +46,3 @@ rjpeg_t *rjpeg_alloc(void);
 RETRO_END_DECLS
 
 #endif
-

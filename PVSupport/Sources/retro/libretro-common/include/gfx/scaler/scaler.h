@@ -1,4 +1,4 @@
-/* Copyright  (C) 2010-2016 The RetroArch team
+/* Copyright  (C) 2010-2020 The RetroArch team
  *
  * ---------------------------------------------------------------------------------------
  * The following license statement only applies to this file (scaler.h).
@@ -23,16 +23,14 @@
 #ifndef __LIBRETRO_SDK_SCALER_H__
 #define __LIBRETRO_SDK_SCALER_H__
 
-#include <retro_common_api.h>
-
 #include <stdint.h>
 #include <stddef.h>
 #include <boolean.h>
 #include <clamping.h>
 
-RETRO_BEGIN_DECLS
+#include <retro_common_api.h>
 
-#define FILTER_UNITY (1 << 14)
+RETRO_BEGIN_DECLS
 
 enum scaler_pix_fmt
 {
@@ -56,25 +54,13 @@ enum scaler_type
 struct scaler_filter
 {
    int16_t *filter;
-   int filter_len;
-   int filter_stride;
-   int *filter_pos;
+   int     *filter_pos;
+   int      filter_len;
+   int      filter_stride;
 };
 
 struct scaler_ctx
 {
-   int in_width;
-   int in_height;
-   int in_stride;
-
-   int out_width;
-   int out_height;
-   int out_stride;
-
-   enum scaler_pix_fmt in_fmt;
-   enum scaler_pix_fmt out_fmt;
-   enum scaler_type scaler_type;
-
    void (*scaler_horiz)(const struct scaler_ctx*,
          const void*, int);
    void (*scaler_vert)(const struct scaler_ctx*,
@@ -85,9 +71,7 @@ struct scaler_ctx
    void (*in_pixconv)(void*, const void*, int, int, int, int);
    void (*out_pixconv)(void*, const void*, int, int, int, int);
    void (*direct_pixconv)(void*, const void*, int, int, int, int);
-
-   bool unscaled;
-   struct scaler_filter horiz, vert;
+   struct scaler_filter horiz, vert;   /* ptr alignment */
 
    struct
    {
@@ -108,6 +92,20 @@ struct scaler_ctx
       uint32_t *frame;
       int stride;
    } output;
+
+   int in_width;
+   int in_height;
+   int in_stride;
+
+   int out_width;
+   int out_height;
+   int out_stride;
+
+   enum scaler_pix_fmt in_fmt;
+   enum scaler_pix_fmt out_fmt;
+   enum scaler_type scaler_type;
+
+   bool unscaled;
 };
 
 bool scaler_ctx_gen_filter(struct scaler_ctx *ctx);
@@ -125,27 +123,6 @@ void scaler_ctx_gen_reset(struct scaler_ctx *ctx);
 void scaler_ctx_scale(struct scaler_ctx *ctx,
       void *output, const void *input);
 
-/**
- * scaler_alloc:
- * @elem_size    : size of the elements to be used.
- * @siz          : size of the image that the scaler needs to handle.
- *
- * Allocate and returns a scaler object.
- *
- * Returns: pointer to a scaler object of type 'void *' on success,
- * NULL in case of error. Has to be freed manually.
- **/
-void *scaler_alloc(size_t elem_size, size_t size);
-
-/**
- * scaler_free:
- * @ptr          : pointer to scaler object.
- *
- * Frees a scaler object.
- **/
-void scaler_free(void *ptr);
-
 RETRO_END_DECLS
 
 #endif
-

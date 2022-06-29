@@ -1,4 +1,4 @@
-/* Copyright  (C) 2010-2016 The RetroArch team
+/* Copyright  (C) 2010-2020 The RetroArch team
  *
  * ---------------------------------------------------------------------------------------
  * The following license statement only applies to this file (file_list.h).
@@ -34,14 +34,14 @@ RETRO_BEGIN_DECLS
 
 struct item_file
 {
+   void *userdata;
+   void *actiondata;
    char *path;
    char *label;
    char *alt;
-   unsigned type;
    size_t directory_ptr;
    size_t entry_idx;
-   void *userdata;
-   void *actiondata;
+   unsigned type;
 };
 
 typedef struct file_list
@@ -52,14 +52,39 @@ typedef struct file_list
    size_t size;
 } file_list_t;
 
-
-void *file_list_get_userdata_at_offset(const file_list_t *list, 
+void *file_list_get_userdata_at_offset(const file_list_t *list,
       size_t index);
 
-void *file_list_get_actiondata_at_offset(const file_list_t *list, 
+void *file_list_get_actiondata_at_offset(const file_list_t *list,
       size_t index);
 
+/**
+ * @brief frees the list
+ *
+ * NOTE: This function will also free() the entries actiondata
+ * and userdata fields if they are non-null. If you store complex
+ * or non-contiguous data there, make sure you free it's fields
+ * before calling this function or you might get a memory leak.
+ *
+ * @param list List to be freed
+ */
 void file_list_free(file_list_t *list);
+
+bool file_list_deinitialize(file_list_t *list);
+
+bool file_list_initialize(file_list_t *list);
+
+/**
+ * @brief makes the list big enough to contain at least nitems
+ *
+ * This function will not change the capacity if nitems is smaller
+ * than the current capacity.
+ *
+ * @param list The list to open for input
+ * @param nitems Number of items to reserve space for
+ * @return whether or not the operation succeeded
+ */
+bool file_list_reserve(file_list_t *list, size_t nitems);
 
 bool file_list_append(file_list_t *userdata, const char *path,
       const char *label, unsigned type, size_t current_directory_ptr,
@@ -70,11 +95,15 @@ bool file_list_prepend(file_list_t *list,
       unsigned type, size_t directory_ptr,
       size_t entry_idx);
 
+bool file_list_insert(file_list_t *list,
+      const char *path, const char *label,
+      unsigned type, size_t directory_ptr,
+      size_t entry_idx,
+      size_t idx);
+
 void file_list_pop(file_list_t *list, size_t *directory_ptr);
 
 void file_list_clear(file_list_t *list);
-
-void file_list_copy(const file_list_t *src, file_list_t *dst);
 
 void file_list_get_last(const file_list_t *list,
       const char **path, const char **label,
@@ -89,9 +118,9 @@ size_t file_list_get_directory_ptr(const file_list_t *list);
 void file_list_get_at_offset(const file_list_t *list, size_t index,
       const char **path, const char **label,
       unsigned *type, size_t *entry_idx);
-    
+
 void file_list_free_userdata(const file_list_t *list, size_t index);
-    
+
 void file_list_free_actiondata(const file_list_t *list, size_t idx);
 
 void file_list_set_label_at_offset(file_list_t *list, size_t index,
@@ -106,9 +135,6 @@ void file_list_set_alt_at_offset(file_list_t *list, size_t index,
 void file_list_set_userdata(const file_list_t *list, size_t idx, void *ptr);
 
 void file_list_set_actiondata(const file_list_t *list, size_t idx, void *ptr);
-
-void file_list_get_alt_at_offset(const file_list_t *list, size_t index,
-      const char **alt);
 
 void file_list_sort_on_alt(file_list_t *list);
 
