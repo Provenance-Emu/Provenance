@@ -110,6 +110,88 @@ void core_set_input_state(retro_ctx_input_state_info_t *info)
    core.retro_set_input_state(info->cb);
 }
 
+
+/**
+ * input_state:
+ * @port                 : user number.
+ * @device               : device identifier of user.
+ * @idx                  : index value of user.
+ * @id                   : identifier of key pressed by user.
+ *
+ * Input state callback function.
+ *
+ * Returns: Non-zero if the given key (identified by @id) was pressed by the user
+ * (assigned to @port).
+ **/
+int16_t input_state(unsigned port, unsigned device,
+      unsigned idx, unsigned id)
+{
+   int16_t res                     = 0;
+//   settings_t *settings            = config_get_ptr();
+   
+//
+//   device &= RETRO_DEVICE_MASK;
+//
+//   if (bsv_movie_ctl(BSV_MOVIE_CTL_PLAYBACK_ON, NULL))
+//   {
+//      int16_t ret;
+//      if (bsv_movie_ctl(BSV_MOVIE_CTL_GET_INPUT, &ret))
+//         return ret;
+//
+//      bsv_movie_ctl(BSV_MOVIE_CTL_SET_END, NULL);
+//   }
+//
+//   if (settings->input.remap_binds_enable)
+//      input_remapping_state(port, &device, &idx, &id);
+//
+//   if (!input_driver_is_flushing_input()
+//         && !input_driver_is_libretro_input_blocked())
+//   {
+//      if (((id < RARCH_FIRST_META_KEY) || (device == RETRO_DEVICE_KEYBOARD)))
+//         res = current_input->input_state(
+//               current_input_data, libretro_input_binds, port, device, idx, id);
+//
+//#ifdef HAVE_OVERLAY
+//      input_state_overlay(&res, port, device, idx, id);
+//#endif
+//
+//#ifdef HAVE_NETWORKGAMEPAD
+//      input_remote_state(&res, port, device, idx, id);
+//#endif
+//   }
+//
+//   /* Don't allow turbo for D-pad. */
+//   if (device == RETRO_DEVICE_JOYPAD && (id < RETRO_DEVICE_ID_JOYPAD_UP ||
+//            id > RETRO_DEVICE_ID_JOYPAD_RIGHT))
+//   {
+//      /*
+//       * Apply turbo button if activated.
+//       *
+//       * If turbo button is held, all buttons pressed except
+//       * for D-pad will go into a turbo mode. Until the button is
+//       * released again, the input state will be modulated by a
+//       * periodic pulse defined by the configured duty cycle.
+//       */
+//      if (res && input_driver_turbo_btns.frame_enable[port])
+//         input_driver_turbo_btns.enable[port] |= (1 << id);
+//      else if (!res)
+//         input_driver_turbo_btns.enable[port] &= ~(1 << id);
+//
+//      if (input_driver_turbo_btns.enable[port] & (1 << id))
+//      {
+//         /* if turbo button is enabled for this key ID */
+//         res = res && ((input_driver_turbo_btns.count % settings->input.turbo_period)
+//               < settings->input.turbo_duty_cycle);
+//      }
+//   }
+//
+//   if (bsv_movie_ctl(BSV_MOVIE_CTL_PLAYBACK_OFF, NULL))
+//      bsv_movie_ctl(BSV_MOVIE_CTL_SET_INPUT, &res);
+
+   return res;
+}
+
+
 /**
  * core_init_libretro_cbs:
  * @data           : pointer to retro_callbacks object
@@ -213,16 +295,16 @@ bool core_uninit_libretro_callbacks(void)
  **/
 bool core_set_rewind_callbacks(void)
 {
-   if (state_manager_frame_is_reversed())
-   {
+//   if (state_manager_frame_is_reversed())
+//   {
 //	  core.retro_set_audio_sample(audio_driver_sample_rewind);
 //	  core.retro_set_audio_sample_batch(audio_driver_sample_batch_rewind);
-   }
-   else
-   {
+//   }
+//   else
+//   {
 //	  core.retro_set_audio_sample(audio_driver_sample);
 //	  core.retro_set_audio_sample_batch(audio_driver_sample_batch);
-   }
+//   }
    return true;
 }
 
@@ -393,6 +475,13 @@ void core_unset_input_descriptors(void)
    core_has_set_input_descriptors = false;
 }
 
+static settings_t *configuration_settings = NULL;
+
+settings_t *config_get_ptr(void)
+{
+   return configuration_settings;
+}
+
 bool core_load(void)
 {
    settings_t *settings = config_get_ptr();
@@ -404,10 +493,185 @@ bool core_load(void)
 	  return false;
 
    core_get_system_av_info(video_viewport_get_system_av_info());
-   runloop_ctl(RUNLOOP_CTL_SET_FRAME_LIMIT, NULL);
+//   runloop_ctl(RUNLOOP_CTL_SET_FRAME_LIMIT, NULL);
 
    return true;
 }
+
+struct retro_system_av_info *video_viewport_get_system_av_info(void)
+{
+   static struct retro_system_av_info av_info;
+
+   return &av_info;
+}
+
+
+bool core_verify_api_version(void)
+{
+//   unsigned api_version = core.retro_api_version();
+//   RARCH_LOG("%s: %u\n",
+//         msg_hash_to_str(MSG_VERSION_OF_LIBRETRO_API),
+//         api_version);
+//   RARCH_LOG("%s: %u\n",
+//         msg_hash_to_str(MSG_COMPILED_AGAINST_API),
+//         RETRO_API_VERSION);
+//
+//   if (api_version != RETRO_API_VERSION)
+//   {
+//      RARCH_WARN("%s\n", msg_hash_to_str(MSG_LIBRETRO_ABI_BREAK));
+//      return false;
+//   }
+   return true;
+}
+
+/**
+ * init_libretro_sym:
+ * @type                        : Type of core to be loaded.
+ *                                If CORE_TYPE_DUMMY, will
+ *                                load dummy symbols.
+ *
+ * Initializes libretro symbols and
+ * setups environment callback functions.
+ **/
+void init_libretro_sym(enum rarch_core_type type, struct retro_core_t *current_core)
+{
+   /* Guarantee that we can do "dirty" casting.
+    * Every OS that this program supports should pass this. */
+//   retro_assert(sizeof(void*) == sizeof(void (*)(void)));
+//
+//   load_symbols(type, current_core);
+}
+
+/**
+ * input_poll:
+ *
+ * Input polling callback function.
+ **/
+void input_poll(void)
+{
+//   size_t i;
+//   settings_t *settings           = config_get_ptr();
+//
+//   input_driver_poll();
+//
+//   for (i = 0; i < MAX_USERS; i++)
+//      libretro_input_binds[i] = settings->input.binds[i];
+//
+//#ifdef HAVE_OVERLAY
+//   input_poll_overlay(NULL, settings->input.overlay_opacity);
+//#endif
+//
+//#ifdef HAVE_COMMAND
+//   if (input_driver_command)
+//      command_poll(input_driver_command);
+//#endif
+//
+//#ifdef HAVE_NETWORKGAMEPAD
+//   if (input_driver_remote)
+//      input_remote_poll(input_driver_remote);
+//#endif
+}
+
+/**
+ * uninit_libretro_sym:
+ *
+ * Frees libretro core.
+ *
+ * Frees all core options,
+ * associated state, and
+ * unbind all libretro callback symbols.
+ **/
+void uninit_libretro_sym(struct retro_core_t *current_core)
+{
+//#ifdef HAVE_DYNAMIC
+//   if (lib_handle)
+//      dylib_close(lib_handle);
+//   lib_handle = NULL;
+//#endif
+//
+//   memset(current_core, 0, sizeof(struct retro_core_t));
+//
+//   runloop_ctl(RUNLOOP_CTL_CORE_OPTIONS_DEINIT, NULL);
+//   runloop_ctl(RUNLOOP_CTL_SYSTEM_INFO_FREE, NULL);
+//   runloop_ctl(RUNLOOP_CTL_FRAME_TIME_FREE, NULL);
+//   camera_driver_ctl(RARCH_CAMERA_CTL_UNSET_ACTIVE, NULL);
+////   location_driver_ctl(RARCH_LOCATION_CTL_UNSET_ACTIVE, NULL);
+//
+//   /* Performance counters no longer valid. */
+//   performance_counters_clear();
+}
+
+/**
+ * video_driver_frame:
+ * @data                 : pointer to data of the video frame.
+ * @width                : width of the video frame.
+ * @height               : height of the video frame.
+ * @pitch                : pitch of the video frame.
+ *
+ * Video frame render callback function.
+ **/
+void video_driver_frame(const void *data, unsigned width,
+      unsigned height, size_t pitch)
+{
+//   static char video_driver_msg[256];
+//   unsigned output_width  = 0;
+//   unsigned output_height = 0;
+//   unsigned  output_pitch = 0;
+//   const char *msg        = NULL;
+//   settings_t *settings   = config_get_ptr();
+//
+//   runloop_ctl(RUNLOOP_CTL_MSG_QUEUE_PULL,   &msg);
+//
+//   if (!video_driver_is_active())
+//      return;
+//
+//   if (video_driver_scaler_ptr &&
+//         video_pixel_frame_scale(data, width, height, pitch))
+//   {
+//      data                = video_driver_scaler_ptr->scaler_out;
+//      pitch               = video_driver_scaler_ptr->scaler->out_stride;
+//   }
+//
+//   video_driver_cached_frame_set(data, width, height, pitch);
+//
+//   /* Slightly messy code,
+//    * but we really need to do processing before blocking on VSync
+//    * for best possible scheduling.
+//    */
+//   if (
+//         (
+//             !video_driver_state.filter.filter
+//          || !settings->video.post_filter_record
+//          || !data
+//          || video_driver_has_gpu_record()
+//         )
+//      )
+//      recording_dump_frame(data, width, height, pitch);
+//
+//   if (video_driver_frame_filter(data, width, height, pitch,
+//            &output_width, &output_height, &output_pitch))
+//   {
+//      data   = video_driver_state.filter.buffer;
+//      width  = output_width;
+//      height = output_height;
+//      pitch  = output_pitch;
+//   }
+//
+//   video_driver_msg[0] = '\0';
+//   if (msg)
+//      strlcpy(video_driver_msg, msg, sizeof(video_driver_msg));
+//
+//   if (!current_video || !current_video->frame(
+//            video_driver_data, data, width, height,
+//            video_driver_frame_count,
+//            pitch, video_driver_msg))
+//   {
+//      video_driver_unset_active();
+//   }
+//
+//   video_driver_frame_count++;
+}
+
 
 @interface PVLibRetroCore ()
 {

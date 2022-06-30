@@ -78,58 +78,8 @@
 		B305EF8B276B4E41003AE510 /* CocoaLumberjackSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B305EF42276B4E41003AE510 /* CocoaLumberjackSwift */; };
 		B305EF9A276B4F0A003AE510 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF99276B4F0A003AE510 /* GameKit.framework */; };
 		B305EF9C276B4FDD003AE510 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF9B276B4FDC003AE510 /* CoreGraphics.framework */; };
-		B3225131286C4728001FDF42 /* retro.m in Sources */ = {isa = PBXBuildFile; fileRef = B3225130286C4728001FDF42 /* retro.m */; };
 		B3225132286C4728001FDF42 /* retro.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B322512F286C4728001FDF42 /* retro.h */; };
-		B3225137286C4737001FDF42 /* msg_hash_it.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4DF28671EFF00B60497 /* msg_hash_it.c */; };
-		B3225138286C4737001FDF42 /* audio_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC3C928671EFE00B60497 /* audio_driver.c */; };
-		B3225139286C4737001FDF42 /* input_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC54928671EFF00B60497 /* input_driver.c */; };
-		B322513A286C4737001FDF42 /* core_info.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC36C286717AE00B60497 /* core_info.c */; };
-		B322513B286C4737001FDF42 /* dynamic_dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC59528671EFF00B60497 /* dynamic_dummy.c */; };
-		B322513C286C4737001FDF42 /* stdstring.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC7182867202D00B60497 /* stdstring.c */; };
-		B322513D286C4737001FDF42 /* msg_hash_uspseudo.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4E328671EFF00B60497 /* msg_hash_uspseudo.c */; };
-		B322513E286C4737001FDF42 /* dir_list.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC6702867202D00B60497 /* dir_list.c */; };
-		B322513F286C4737001FDF42 /* audio_resampler_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC3BD28671EFE00B60497 /* audio_resampler_driver.c */; };
-		B3225140286C4737001FDF42 /* core_impl.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC369286717AE00B60497 /* core_impl.c */; };
-		B3225141286C4737001FDF42 /* file_path.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC6752867202D00B60497 /* file_path.c */; };
-		B3225142286C4737001FDF42 /* msg_hash_jp.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4DC28671EFF00B60497 /* msg_hash_jp.c */; };
-		B3225143286C4742001FDF42 /* input_joypad_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC51B28671EFF00B60497 /* input_joypad_driver.c */; };
-		B3225144286C4742001FDF42 /* performance_counters.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC3782867180300B60497 /* performance_counters.c */; };
-		B3225145286C4742001FDF42 /* null_joypad.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC53828671EFF00B60497 /* null_joypad.c */; };
-		B3225146286C4742001FDF42 /* msg_hash_pt.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4E428671EFF00B60497 /* msg_hash_pt.c */; };
-		B3225147286C4742001FDF42 /* msg_hash_us.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4E628671EFF00B60497 /* msg_hash_us.c */; };
-		B3225148286C4742001FDF42 /* msg_hash_de.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4D928671EFE00B60497 /* msg_hash_de.c */; };
-		B3225149286C4742001FDF42 /* dynamic.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC36D286717AE00B60497 /* dynamic.c */; };
-		B322514A286C4742001FDF42 /* msg_hash_es.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4D828671EFE00B60497 /* msg_hash_es.c */; };
 		B322514B286C4753001FDF42 /* libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B322512D286C4728001FDF42 /* libretro.a */; };
-		B322514C286C6EB3001FDF42 /* driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC365286717AD00B60497 /* driver.c */; };
-		B322516C286C6F2A001FDF42 /* patch.c in Sources */ = {isa = PBXBuildFile; fileRef = B322514D286C6F28001FDF42 /* patch.c */; };
-		B322516D286C6F2A001FDF42 /* file_path_str.c in Sources */ = {isa = PBXBuildFile; fileRef = B3225152286C6F28001FDF42 /* file_path_str.c */; };
-		B3225170286C6F2A001FDF42 /* file_path_special.c in Sources */ = {isa = PBXBuildFile; fileRef = B3225156286C6F28001FDF42 /* file_path_special.c */; };
-		B3225171286C6F2A001FDF42 /* list_special.c in Sources */ = {isa = PBXBuildFile; fileRef = B322515B286C6F29001FDF42 /* list_special.c */; };
-		B3225172286C6F2A001FDF42 /* msg_hash.c in Sources */ = {isa = PBXBuildFile; fileRef = B322515C286C6F29001FDF42 /* msg_hash.c */; };
-		B3225174286C6F2A001FDF42 /* config_file_userdata.c in Sources */ = {isa = PBXBuildFile; fileRef = B322515F286C6F29001FDF42 /* config_file_userdata.c */; };
-		B3225175286C6F2A001FDF42 /* git_version.c in Sources */ = {isa = PBXBuildFile; fileRef = B3225160286C6F29001FDF42 /* git_version.c */; };
-		B3225178286C6F2A001FDF42 /* movie.c in Sources */ = {isa = PBXBuildFile; fileRef = B3225169286C6F2A001FDF42 /* movie.c */; };
-		B3225181286C6F35001FDF42 /* verbosity.c in Sources */ = {isa = PBXBuildFile; fileRef = B322517A286C6F35001FDF42 /* verbosity.c */; };
-		B3225186286C701C001FDF42 /* playlist.c in Sources */ = {isa = PBXBuildFile; fileRef = B3225166286C6F29001FDF42 /* playlist.c */; };
-		B3225187286C813F001FDF42 /* platform_null.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC38628671EFD00B60497 /* platform_null.c */; };
-		B3225188286C813F001FDF42 /* shader_null.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4C328671EFE00B60497 /* shader_null.c */; };
-		B3225189286C813F001FDF42 /* null_resampler.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC3C128671EFE00B60497 /* null_resampler.c */; };
-		B322518A286C813F001FDF42 /* nullgfx.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC41728671EFE00B60497 /* nullgfx.c */; };
-		B322518B286C813F001FDF42 /* nullinput.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4ED28671EFF00B60497 /* nullinput.c */; };
-		B322518C286C813F001FDF42 /* nullcamera.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC55D28671EFF00B60497 /* nullcamera.c */; };
-		B322518D286C813F001FDF42 /* nullaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC3A228671EFD00B60497 /* nullaudio.c */; };
-		B322518E286C813F001FDF42 /* record_null.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC3E928671EFE00B60497 /* record_null.c */; };
-		B322518F286C813F001FDF42 /* nulllocation.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC5B628671EFF00B60497 /* nulllocation.c */; };
-		B3225190286C813F001FDF42 /* gfx_null_ctx.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC3F528671EFE00B60497 /* gfx_null_ctx.c */; };
-		B3225191286C813F001FDF42 /* null_hid.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC51F28671EFF00B60497 /* null_hid.c */; };
-		B3225192286C819C001FDF42 /* string_list.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC6712867202D00B60497 /* string_list.c */; };
-		B3225193286C81A1001FDF42 /* file_list.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC6722867202D00B60497 /* file_list.c */; };
-		B3225194286C81B9001FDF42 /* video_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC45B28671EFE00B60497 /* video_driver.c */; };
-		B3225195286C81CF001FDF42 /* s16_to_float.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC70F2867202D00B60497 /* s16_to_float.c */; };
-		B3225196286C81EB001FDF42 /* state_manager.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC39428671EFD00B60497 /* state_manager.c */; };
-		B3225197286C8200001FDF42 /* mismatch.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC6F92867202D00B60497 /* mismatch.c */; };
-		B32251D2286C82BB001FDF42 /* task_content.c in Sources */ = {isa = PBXBuildFile; fileRef = B32251B4286C827E001FDF42 /* task_content.c */; };
 		B324C3162191963B009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C3152191963B009F4EDC /* AVFoundation.framework */; };
 		B3296E8126C67EFA0088AC32 /* CocoaLumberjack+NSLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E8026C67EF90088AC32 /* CocoaLumberjack+NSLogger.swift */; };
 		B3296E8226C67EFA0088AC32 /* CocoaLumberjack+NSLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E8026C67EF90088AC32 /* CocoaLumberjack+NSLogger.swift */; };
@@ -215,6 +165,7 @@
 		B39C29CD27A10EE40078D028 /* OEGameAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69217F748F80031B1C9 /* OEGameAudio.m */; };
 		B39C29CE27A10EE50078D028 /* OEGameAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69217F748F80031B1C9 /* OEGameAudio.m */; };
 		B39C29CF27A10EE50078D028 /* OEGameAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69217F748F80031B1C9 /* OEGameAudio.m */; };
+		B3A41BCF286E5E660054E9A5 /* retro.m in Sources */ = {isa = PBXBuildFile; fileRef = B3225130286C4728001FDF42 /* retro.m */; };
 		B3A4FB5A278FE45D00A65248 /* OEGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A4FB59278FE45C00A65248 /* OEGeometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A4FB5B278FE45D00A65248 /* OEGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A4FB59278FE45C00A65248 /* OEGeometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A4FB5C278FE45D00A65248 /* OEGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A4FB59278FE45C00A65248 /* OEGeometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -3823,56 +3774,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B322518F286C813F001FDF42 /* nulllocation.c in Sources */,
-				B3225141286C4737001FDF42 /* file_path.c in Sources */,
-				B3225137286C4737001FDF42 /* msg_hash_it.c in Sources */,
-				B3225195286C81CF001FDF42 /* s16_to_float.c in Sources */,
-				B3225194286C81B9001FDF42 /* video_driver.c in Sources */,
-				B3225144286C4742001FDF42 /* performance_counters.c in Sources */,
-				B3225149286C4742001FDF42 /* dynamic.c in Sources */,
-				B3225147286C4742001FDF42 /* msg_hash_us.c in Sources */,
-				B3225138286C4737001FDF42 /* audio_driver.c in Sources */,
-				B3225175286C6F2A001FDF42 /* git_version.c in Sources */,
-				B322516C286C6F2A001FDF42 /* patch.c in Sources */,
-				B3225196286C81EB001FDF42 /* state_manager.c in Sources */,
-				B3225170286C6F2A001FDF42 /* file_path_special.c in Sources */,
-				B322518B286C813F001FDF42 /* nullinput.c in Sources */,
-				B3225187286C813F001FDF42 /* platform_null.c in Sources */,
-				B322513B286C4737001FDF42 /* dynamic_dummy.c in Sources */,
-				B3225171286C6F2A001FDF42 /* list_special.c in Sources */,
-				B3225140286C4737001FDF42 /* core_impl.c in Sources */,
-				B3225193286C81A1001FDF42 /* file_list.c in Sources */,
-				B3225142286C4737001FDF42 /* msg_hash_jp.c in Sources */,
-				B3225190286C813F001FDF42 /* gfx_null_ctx.c in Sources */,
-				B322518E286C813F001FDF42 /* record_null.c in Sources */,
-				B3225191286C813F001FDF42 /* null_hid.c in Sources */,
-				B3225174286C6F2A001FDF42 /* config_file_userdata.c in Sources */,
-				B3225146286C4742001FDF42 /* msg_hash_pt.c in Sources */,
-				B322513A286C4737001FDF42 /* core_info.c in Sources */,
-				B3225178286C6F2A001FDF42 /* movie.c in Sources */,
-				B322518D286C813F001FDF42 /* nullaudio.c in Sources */,
-				B32251D2286C82BB001FDF42 /* task_content.c in Sources */,
-				B322518A286C813F001FDF42 /* nullgfx.c in Sources */,
-				B3225186286C701C001FDF42 /* playlist.c in Sources */,
-				B3225188286C813F001FDF42 /* shader_null.c in Sources */,
-				B322516D286C6F2A001FDF42 /* file_path_str.c in Sources */,
-				B3225192286C819C001FDF42 /* string_list.c in Sources */,
-				B322513F286C4737001FDF42 /* audio_resampler_driver.c in Sources */,
-				B3225148286C4742001FDF42 /* msg_hash_de.c in Sources */,
-				B3225197286C8200001FDF42 /* mismatch.c in Sources */,
-				B3225181286C6F35001FDF42 /* verbosity.c in Sources */,
-				B3225139286C4737001FDF42 /* input_driver.c in Sources */,
-				B3225143286C4742001FDF42 /* input_joypad_driver.c in Sources */,
-				B322513E286C4737001FDF42 /* dir_list.c in Sources */,
-				B322513D286C4737001FDF42 /* msg_hash_uspseudo.c in Sources */,
-				B322514C286C6EB3001FDF42 /* driver.c in Sources */,
-				B322518C286C813F001FDF42 /* nullcamera.c in Sources */,
-				B3225131286C4728001FDF42 /* retro.m in Sources */,
-				B322514A286C4742001FDF42 /* msg_hash_es.c in Sources */,
-				B3225189286C813F001FDF42 /* null_resampler.c in Sources */,
-				B3225172286C6F2A001FDF42 /* msg_hash.c in Sources */,
-				B322513C286C4737001FDF42 /* stdstring.c in Sources */,
-				B3225145286C4742001FDF42 /* null_joypad.c in Sources */,
+				B3A41BCF286E5E660054E9A5 /* retro.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
