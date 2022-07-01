@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B322512C286C4728001FDF42"
-               BuildableName = "libretro-iOS.a"
+               BuildableName = "libretro.a"
                BlueprintName = "retro-iOS"
                ReferencedContainer = "container:PVSupport.xcodeproj">
             </BuildableReference>
@@ -51,7 +51,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B322512C286C4728001FDF42"
-            BuildableName = "libretro-iOS.a"
+            BuildableName = "libretro.a"
             BlueprintName = "retro-iOS"
             ReferencedContainer = "container:PVSupport.xcodeproj">
          </BuildableReference>

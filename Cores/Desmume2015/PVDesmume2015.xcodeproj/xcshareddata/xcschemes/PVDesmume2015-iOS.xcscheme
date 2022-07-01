@@ -14,9 +14,23 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3C7620F20783162009950E4"
-               BuildableName = "PVDesmume2015.framework"
-               BlueprintName = "PVDesmume2015-iOS"
+               BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
+               BuildableName = "PVSupport.framework"
+               BlueprintName = "PVSupport-iOS"
+               ReferencedContainer = "container:../../PVSupport/PVSupport.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B30178D2207C901D0051B93D"
+               BuildableName = "libdesmume2015.a"
+               BlueprintName = "desmume2015-iOS"
                ReferencedContainer = "container:PVDesmume2015.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -28,10 +42,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
-               BuildableName = "PVSupport.framework"
-               BlueprintName = "PVSupport-iOS"
-               ReferencedContainer = "container:../../PVSupport/PVSupport.xcodeproj">
+               BlueprintIdentifier = "B3C7620F20783162009950E4"
+               BuildableName = "PVDesmume2015.framework"
+               BlueprintName = "PVDesmume2015-iOS"
+               ReferencedContainer = "container:PVDesmume2015.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

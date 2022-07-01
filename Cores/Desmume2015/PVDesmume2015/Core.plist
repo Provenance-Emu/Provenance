@@ -8,7 +8,7 @@
 	<string>PVDesmume2015Core</string>
 	<key>PVSupportedSystems</key>
 	<array>
-		<string>com.provenance.dreamcast</string>
+		<string>com.provenance.ds</string>
 	</array>
 	<key>PVProjectName</key>
 	<string>Desmume2015</string>

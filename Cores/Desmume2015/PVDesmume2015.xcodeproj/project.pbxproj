@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B301797F207C909E0051B93D /* libdesmume2015-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libdesmume2015-iOS.a */; };
 		B316B4E721926FE500693472 /* emu.cfg in Resources */ = {isa = PBXBuildFile; fileRef = B316B4E621926FE500693472 /* emu.cfg */; };
 		B316B4E821926FE500693472 /* emu.cfg in Resources */ = {isa = PBXBuildFile; fileRef = B316B4E621926FE500693472 /* emu.cfg */; };
 		B31B3036272E2CAC00FF72B9 /* rtc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E89272E2C9800FF72B9 /* rtc.cpp */; };
@@ -17,24 +16,20 @@
 		B31B303A272E2CAC00FF72B9 /* GPU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2FBA272E2C9900FF72B9 /* GPU.cpp */; };
 		B31B303B272E2CAC00FF72B9 /* NDSSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E77272E2C9800FF72B9 /* NDSSystem.cpp */; };
 		B31B303C272E2CAC00FF72B9 /* driver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E8B272E2C9800FF72B9 /* driver.cpp */; };
-		B31B303D272E2CAC00FF72B9 /* mic_openal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E92272E2C9800FF72B9 /* mic_openal.cpp */; };
 		B31B303E272E2CAC00FF72B9 /* texcache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2FAA272E2C9900FF72B9 /* texcache.cpp */; };
 		B31B303F272E2CAC00FF72B9 /* wifi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2FB5272E2C9900FF72B9 /* wifi.cpp */; };
 		B31B3040272E2CAC00FF72B9 /* MMU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E94272E2C9800FF72B9 /* MMU.cpp */; };
 		B31B3041272E2CAC00FF72B9 /* readwrite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DC8272E2C9800FF72B9 /* readwrite.cpp */; };
 		B31B3042272E2CAC00FF72B9 /* mc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2FBF272E2C9900FF72B9 /* mc.cpp */; };
 		B31B3043272E2CAC00FF72B9 /* mic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DC1272E2C9800FF72B9 /* mic.cpp */; };
-		B31B3044272E2CAC00FF72B9 /* bios.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DB6272E2C9800FF72B9 /* bios.cpp */; };
 		B31B3045272E2CAC00FF72B9 /* firmware.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DB9272E2C9800FF72B9 /* firmware.cpp */; };
 		B31B3046272E2CAC00FF72B9 /* common.c in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DB8272E2C9800FF72B9 /* common.c */; };
 		B31B3047272E2CAC00FF72B9 /* emufile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2FB8272E2C9900FF72B9 /* emufile.cpp */; };
 		B31B3048272E2CAC00FF72B9 /* saves.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E91272E2C9800FF72B9 /* saves.cpp */; };
 		B31B3049272E2CAC00FF72B9 /* thumb_instructions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2FB9272E2C9900FF72B9 /* thumb_instructions.cpp */; };
-		B31B304A272E2CAC00FF72B9 /* OGLRender_3_2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2FBE272E2C9900FF72B9 /* OGLRender_3_2.cpp */; };
 		B31B304B272E2CAC00FF72B9 /* arm_instructions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DC6272E2C9800FF72B9 /* arm_instructions.cpp */; };
 		B31B304C272E2CAC00FF72B9 /* Disassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DC5272E2C9800FF72B9 /* Disassembler.cpp */; };
 		B31B304D272E2CAC00FF72B9 /* FIFO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DB5272E2C9800FF72B9 /* FIFO.cpp */; };
-		B31B304E272E2CAC00FF72B9 /* OGLRender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2FBC272E2C9900FF72B9 /* OGLRender.cpp */; };
 		B31B304F272E2CAC00FF72B9 /* slot2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2FAC272E2C9900FF72B9 /* slot2.cpp */; };
 		B31B3050272E2CAC00FF72B9 /* SPU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DE7272E2C9800FF72B9 /* SPU.cpp */; };
 		B31B3051272E2CAC00FF72B9 /* matrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E8D272E2C9800FF72B9 /* matrix.cpp */; };
@@ -42,7 +37,6 @@
 		B31B3053272E2CAC00FF72B9 /* cp15.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DB7272E2C9800FF72B9 /* cp15.cpp */; };
 		B31B3054272E2CAC00FF72B9 /* encrypt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DBE272E2C9800FF72B9 /* encrypt.cpp */; };
 		B31B3055272E2CAC00FF72B9 /* gfx3d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E88272E2C9800FF72B9 /* gfx3d.cpp */; };
-		B31B3056272E2CAC00FF72B9 /* mic_alsa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2FB1272E2C9900FF72B9 /* mic_alsa.cpp */; };
 		B31B3057272E2CAC00FF72B9 /* slot1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E90272E2C9800FF72B9 /* slot1.cpp */; };
 		B31B3058272E2CAC00FF72B9 /* version.c in Sources */ = {isa = PBXBuildFile; fileRef = B31B2FAB272E2C9900FF72B9 /* version.c */; };
 		B31B3059272E2CAC00FF72B9 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E8C272E2C9800FF72B9 /* debug.cpp */; };
@@ -55,24 +49,20 @@
 		B31B3060272E2CAD00FF72B9 /* GPU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2FBA272E2C9900FF72B9 /* GPU.cpp */; };
 		B31B3061272E2CAD00FF72B9 /* NDSSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E77272E2C9800FF72B9 /* NDSSystem.cpp */; };
 		B31B3062272E2CAD00FF72B9 /* driver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E8B272E2C9800FF72B9 /* driver.cpp */; };
-		B31B3063272E2CAD00FF72B9 /* mic_openal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E92272E2C9800FF72B9 /* mic_openal.cpp */; };
 		B31B3064272E2CAD00FF72B9 /* texcache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2FAA272E2C9900FF72B9 /* texcache.cpp */; };
 		B31B3065272E2CAD00FF72B9 /* wifi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2FB5272E2C9900FF72B9 /* wifi.cpp */; };
 		B31B3066272E2CAD00FF72B9 /* MMU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E94272E2C9800FF72B9 /* MMU.cpp */; };
 		B31B3067272E2CAD00FF72B9 /* readwrite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DC8272E2C9800FF72B9 /* readwrite.cpp */; };
 		B31B3068272E2CAD00FF72B9 /* mc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2FBF272E2C9900FF72B9 /* mc.cpp */; };
 		B31B3069272E2CAD00FF72B9 /* mic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DC1272E2C9800FF72B9 /* mic.cpp */; };
-		B31B306A272E2CAD00FF72B9 /* bios.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DB6272E2C9800FF72B9 /* bios.cpp */; };
 		B31B306B272E2CAD00FF72B9 /* firmware.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DB9272E2C9800FF72B9 /* firmware.cpp */; };
 		B31B306C272E2CAD00FF72B9 /* common.c in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DB8272E2C9800FF72B9 /* common.c */; };
 		B31B306D272E2CAD00FF72B9 /* emufile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2FB8272E2C9900FF72B9 /* emufile.cpp */; };
 		B31B306E272E2CAD00FF72B9 /* saves.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E91272E2C9800FF72B9 /* saves.cpp */; };
 		B31B306F272E2CAD00FF72B9 /* thumb_instructions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2FB9272E2C9900FF72B9 /* thumb_instructions.cpp */; };
-		B31B3070272E2CAD00FF72B9 /* OGLRender_3_2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2FBE272E2C9900FF72B9 /* OGLRender_3_2.cpp */; };
 		B31B3071272E2CAD00FF72B9 /* arm_instructions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DC6272E2C9800FF72B9 /* arm_instructions.cpp */; };
 		B31B3072272E2CAD00FF72B9 /* Disassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DC5272E2C9800FF72B9 /* Disassembler.cpp */; };
 		B31B3073272E2CAD00FF72B9 /* FIFO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DB5272E2C9800FF72B9 /* FIFO.cpp */; };
-		B31B3074272E2CAD00FF72B9 /* OGLRender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2FBC272E2C9900FF72B9 /* OGLRender.cpp */; };
 		B31B3075272E2CAD00FF72B9 /* slot2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2FAC272E2C9900FF72B9 /* slot2.cpp */; };
 		B31B3076272E2CAD00FF72B9 /* SPU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DE7272E2C9800FF72B9 /* SPU.cpp */; };
 		B31B3077272E2CAD00FF72B9 /* matrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E8D272E2C9800FF72B9 /* matrix.cpp */; };
@@ -80,7 +70,6 @@
 		B31B3079272E2CAD00FF72B9 /* cp15.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DB7272E2C9800FF72B9 /* cp15.cpp */; };
 		B31B307A272E2CAD00FF72B9 /* encrypt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DBE272E2C9800FF72B9 /* encrypt.cpp */; };
 		B31B307B272E2CAD00FF72B9 /* gfx3d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E88272E2C9800FF72B9 /* gfx3d.cpp */; };
-		B31B307C272E2CAD00FF72B9 /* mic_alsa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2FB1272E2C9900FF72B9 /* mic_alsa.cpp */; };
 		B31B307D272E2CAD00FF72B9 /* slot1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E90272E2C9800FF72B9 /* slot1.cpp */; };
 		B31B307E272E2CAD00FF72B9 /* version.c in Sources */ = {isa = PBXBuildFile; fileRef = B31B2FAB272E2C9900FF72B9 /* version.c */; };
 		B31B307F272E2CAD00FF72B9 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E8C272E2C9800FF72B9 /* debug.cpp */; };
@@ -91,12 +80,9 @@
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
 		B3447E9C218B826F00557ACE /* PVDesmume2015+Audio.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E9A218B826F00557ACE /* PVDesmume2015+Audio.h */; };
-		B3447E9D218B826F00557ACE /* PVDesmume2015+Audio.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E9B218B826F00557ACE /* PVDesmume2015+Audio.mm */; };
 		B3447E9E218B857A00557ACE /* PVDesmume2015Core+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVDesmume2015Core+Controls.mm */; };
 		B3447E9F218B858100557ACE /* PVDesmume2015Core+Controls.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E96218B809200557ACE /* PVDesmume2015Core+Controls.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3447EA1218B881000557ACE /* PVDesmume2015.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA0218B881000557ACE /* PVDesmume2015.mm */; };
 		B3447EA3218BBFBC00557ACE /* PVDesmume2015+AudioTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EA2218BBFB700557ACE /* PVDesmume2015+AudioTypes.h */; };
-		B3447EA5218BC36B00557ACE /* PVDesmume2015+CoreAudio.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA4218BC36B00557ACE /* PVDesmume2015+CoreAudio.mm */; };
 		B3447EA7218BC3A600557ACE /* PVDesmume2015+CoreAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EA6218BC3A600557ACE /* PVDesmume2015+CoreAudio.h */; };
 		B3447EAB218BC59D00557ACE /* PVDesmume2015Core+Saves.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EA9218BC59D00557ACE /* PVDesmume2015Core+Saves.h */; };
 		B3447EAC218BC59D00557ACE /* PVDesmume2015Core+Saves.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAA218BC59D00557ACE /* PVDesmume2015Core+Saves.m */; };
@@ -104,13 +90,10 @@
 		B3447EB0218BC5C500557ACE /* PVDesmume2015Core+Video.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVDesmume2015Core+Video.m */; };
 		B3447EB3218BC69700557ACE /* PVDesmume2015Core+Audio.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EB1218BC69700557ACE /* PVDesmume2015Core+Audio.h */; };
 		B3447EB4218BC69700557ACE /* PVDesmume2015Core+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVDesmume2015Core+Audio.m */; };
-		B3447EC2218BEDD200557ACE /* PVDesmume2015+Audio.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E9B218B826F00557ACE /* PVDesmume2015+Audio.mm */; };
 		B3447EC3218BEDD200557ACE /* PVDesmume2015Core+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVDesmume2015Core+Controls.mm */; };
 		B3447EC4218BEDD200557ACE /* PVDesmume2015Core.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVDesmume2015Core.mm */; };
 		B3447EC5218BEDD200557ACE /* PVDesmume2015Core+Saves.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAA218BC59D00557ACE /* PVDesmume2015Core+Saves.m */; };
-		B3447EC6218BEDD200557ACE /* PVDesmume2015.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA0218B881000557ACE /* PVDesmume2015.mm */; };
 		B3447EC7218BEDD200557ACE /* PVDesmume2015Core+Video.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVDesmume2015Core+Video.m */; };
-		B3447EC8218BEDD200557ACE /* PVDesmume2015+CoreAudio.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA4218BC36B00557ACE /* PVDesmume2015+CoreAudio.mm */; };
 		B3447EC9218BEDD200557ACE /* PVDesmume2015Core+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVDesmume2015Core+Audio.m */; };
 		B3447ECD218BEDD200557ACE /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B3447ECE218BEDD200557ACE /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
@@ -132,6 +115,9 @@
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
+		B3A41C26286E88D60054E9A5 /* libdesmume2015.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libdesmume2015.a */; };
+		B3A41C29286E8A8E0054E9A5 /* bios.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DB6272E2C9800FF72B9 /* bios.cpp */; };
+		B3A41C2A286E8A8F0054E9A5 /* bios.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DB6272E2C9800FF72B9 /* bios.cpp */; };
 		B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B104B8218F281B00210C39 /* PVSupport.framework */; };
 		B3C7621520783162009950E4 /* PVDesmume2015.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVDesmume2015.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilter = ios; };
@@ -139,18 +125,8 @@
 		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
 		B3C76225207833DE009950E4 /* PVDesmume2015Core.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVDesmume2015Core.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C76226207833DE009950E4 /* PVDesmume2015Core.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVDesmume2015Core.mm */; };
-		B3DDF56D26E9B90400CE47F0 /* libdesmume2015-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3447F91218BEE3F00557ACE /* libdesmume2015-tvOS.a */; };
+		B3DDF56D26E9B90400CE47F0 /* libdesmume2015.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3447F91218BEE3F00557ACE /* libdesmume2015.a */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		B3DDF56E26E9B90400CE47F0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3C7620720783162009950E4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3447EE8218BEE3F00557ACE;
-			remoteInfo = "desmume2015-tvOS";
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		B30178D1207C901D0051B93D /* CopyFiles */ = {
@@ -174,7 +150,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		B30178D3207C901D0051B93D /* libdesmume2015-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libdesmume2015-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B30178D3207C901D0051B93D /* libdesmume2015.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libdesmume2015.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B316B4E621926FE500693472 /* emu.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = emu.cfg; sourceTree = "<group>"; };
 		B31B2D54272E2C9800FF72B9 /* template.pnproj */ = {isa = PBXFileReference; lastKnownFileType = text; path = template.pnproj; sourceTree = "<group>"; };
 		B31B2D55272E2C9800FF72B9 /* template.prj */ = {isa = PBXFileReference; lastKnownFileType = text; path = template.prj; sourceTree = "<group>"; };
@@ -705,7 +681,7 @@
 		B3447EB2218BC69700557ACE /* PVDesmume2015Core+Audio.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVDesmume2015Core+Audio.m"; sourceTree = "<group>"; };
 		B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
 		B3447EE6218BEDD200557ACE /* PVDesmume2015.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVDesmume2015.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3447F91218BEE3F00557ACE /* libdesmume2015-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libdesmume2015-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3447F91218BEE3F00557ACE /* libdesmume2015.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libdesmume2015.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B35E6BEF207CD2610040709A /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		B35E6BF1207CD2670040709A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
@@ -736,7 +712,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */,
-				B3DDF56D26E9B90400CE47F0 /* libdesmume2015-tvOS.a in Frameworks */,
+				B3DDF56D26E9B90400CE47F0 /* libdesmume2015.a in Frameworks */,
 				B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */,
 				B3447ECD218BEDD200557ACE /* CoreAudio.framework in Frameworks */,
 				B3447ECE218BEDD200557ACE /* AudioToolbox.framework in Frameworks */,
@@ -760,9 +736,9 @@
 			files = (
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
+				B3A41C26286E88D60054E9A5 /* libdesmume2015.a in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
-				B301797F207C909E0051B93D /* libdesmume2015-iOS.a in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
 				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
@@ -2272,9 +2248,9 @@
 			isa = PBXGroup;
 			children = (
 				B3C7621020783162009950E4 /* PVDesmume2015.framework */,
-				B30178D3207C901D0051B93D /* libdesmume2015-iOS.a */,
+				B30178D3207C901D0051B93D /* libdesmume2015.a */,
 				B3447EE6218BEDD200557ACE /* PVDesmume2015.framework */,
-				B3447F91218BEE3F00557ACE /* libdesmume2015-tvOS.a */,
+				B3447F91218BEE3F00557ACE /* libdesmume2015.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2371,7 +2347,7 @@
 			);
 			name = "desmume2015-iOS";
 			productName = desmume2015;
-			productReference = B30178D3207C901D0051B93D /* libdesmume2015-iOS.a */;
+			productReference = B30178D3207C901D0051B93D /* libdesmume2015.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		B3447EC0218BEDD200557ACE /* PVDesmume2015-tvOS */ = {
@@ -2386,7 +2362,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				B3DDF56F26E9B90400CE47F0 /* PBXTargetDependency */,
 			);
 			name = "PVDesmume2015-tvOS";
 			productName = PVDesmume2015;
@@ -2407,7 +2382,7 @@
 			);
 			name = "desmume2015-tvOS";
 			productName = desmume2015;
-			productReference = B3447F91218BEE3F00557ACE /* libdesmume2015-tvOS.a */;
+			productReference = B3447F91218BEE3F00557ACE /* libdesmume2015.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		B3C7620F20783162009950E4 /* PVDesmume2015-iOS */ = {
@@ -2503,6 +2478,7 @@
 				B31B3064272E2CAD00FF72B9 /* texcache.cpp in Sources */,
 				B31B3075272E2CAD00FF72B9 /* slot2.cpp in Sources */,
 				B31B307D272E2CAD00FF72B9 /* slot1.cpp in Sources */,
+				B3A41C29286E8A8E0054E9A5 /* bios.cpp in Sources */,
 				B31B3060272E2CAD00FF72B9 /* GPU.cpp in Sources */,
 				B31B3079272E2CAD00FF72B9 /* cp15.cpp in Sources */,
 				B31B3080272E2CAD00FF72B9 /* path.cpp in Sources */,
@@ -2512,13 +2488,10 @@
 				B31B3061272E2CAD00FF72B9 /* NDSSystem.cpp in Sources */,
 				B31B305E272E2CAD00FF72B9 /* render3D.cpp in Sources */,
 				B31B3072272E2CAD00FF72B9 /* Disassembler.cpp in Sources */,
-				B31B306A272E2CAD00FF72B9 /* bios.cpp in Sources */,
 				B31B307A272E2CAD00FF72B9 /* encrypt.cpp in Sources */,
 				B31B305D272E2CAD00FF72B9 /* rasterize.cpp in Sources */,
 				B31B306C272E2CAD00FF72B9 /* common.c in Sources */,
 				B31B306B272E2CAD00FF72B9 /* firmware.cpp in Sources */,
-				B31B3063272E2CAD00FF72B9 /* mic_openal.cpp in Sources */,
-				B31B3074272E2CAD00FF72B9 /* OGLRender.cpp in Sources */,
 				B31B307B272E2CAD00FF72B9 /* gfx3d.cpp in Sources */,
 				B31B306F272E2CAD00FF72B9 /* thumb_instructions.cpp in Sources */,
 				B31B307F272E2CAD00FF72B9 /* debug.cpp in Sources */,
@@ -2529,9 +2502,7 @@
 				B31B3065272E2CAD00FF72B9 /* wifi.cpp in Sources */,
 				B31B3077272E2CAD00FF72B9 /* matrix.cpp in Sources */,
 				B31B3078272E2CAD00FF72B9 /* arm_jit.cpp in Sources */,
-				B31B307C272E2CAD00FF72B9 /* mic_alsa.cpp in Sources */,
 				B31B3073272E2CAD00FF72B9 /* FIFO.cpp in Sources */,
-				B31B3070272E2CAD00FF72B9 /* OGLRender_3_2.cpp in Sources */,
 				B31B305F272E2CAD00FF72B9 /* armcpu.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2540,13 +2511,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3447EC2218BEDD200557ACE /* PVDesmume2015+Audio.mm in Sources */,
 				B3447EC3218BEDD200557ACE /* PVDesmume2015Core+Controls.mm in Sources */,
 				B3447EC4218BEDD200557ACE /* PVDesmume2015Core.mm in Sources */,
 				B3447EC5218BEDD200557ACE /* PVDesmume2015Core+Saves.m in Sources */,
-				B3447EC6218BEDD200557ACE /* PVDesmume2015.mm in Sources */,
 				B3447EC7218BEDD200557ACE /* PVDesmume2015Core+Video.m in Sources */,
-				B3447EC8218BEDD200557ACE /* PVDesmume2015+CoreAudio.mm in Sources */,
 				B3447EC9218BEDD200557ACE /* PVDesmume2015Core+Audio.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2563,6 +2531,7 @@
 				B31B303E272E2CAC00FF72B9 /* texcache.cpp in Sources */,
 				B31B304F272E2CAC00FF72B9 /* slot2.cpp in Sources */,
 				B31B3057272E2CAC00FF72B9 /* slot1.cpp in Sources */,
+				B3A41C2A286E8A8F0054E9A5 /* bios.cpp in Sources */,
 				B31B303A272E2CAC00FF72B9 /* GPU.cpp in Sources */,
 				B31B3053272E2CAC00FF72B9 /* cp15.cpp in Sources */,
 				B31B305A272E2CAC00FF72B9 /* path.cpp in Sources */,
@@ -2572,13 +2541,10 @@
 				B31B303B272E2CAC00FF72B9 /* NDSSystem.cpp in Sources */,
 				B31B3038272E2CAC00FF72B9 /* render3D.cpp in Sources */,
 				B31B304C272E2CAC00FF72B9 /* Disassembler.cpp in Sources */,
-				B31B3044272E2CAC00FF72B9 /* bios.cpp in Sources */,
 				B31B3054272E2CAC00FF72B9 /* encrypt.cpp in Sources */,
 				B31B3037272E2CAC00FF72B9 /* rasterize.cpp in Sources */,
 				B31B3046272E2CAC00FF72B9 /* common.c in Sources */,
 				B31B3045272E2CAC00FF72B9 /* firmware.cpp in Sources */,
-				B31B303D272E2CAC00FF72B9 /* mic_openal.cpp in Sources */,
-				B31B304E272E2CAC00FF72B9 /* OGLRender.cpp in Sources */,
 				B31B3055272E2CAC00FF72B9 /* gfx3d.cpp in Sources */,
 				B31B3049272E2CAC00FF72B9 /* thumb_instructions.cpp in Sources */,
 				B31B3059272E2CAC00FF72B9 /* debug.cpp in Sources */,
@@ -2589,9 +2555,7 @@
 				B31B303F272E2CAC00FF72B9 /* wifi.cpp in Sources */,
 				B31B3051272E2CAC00FF72B9 /* matrix.cpp in Sources */,
 				B31B3052272E2CAC00FF72B9 /* arm_jit.cpp in Sources */,
-				B31B3056272E2CAC00FF72B9 /* mic_alsa.cpp in Sources */,
 				B31B304D272E2CAC00FF72B9 /* FIFO.cpp in Sources */,
-				B31B304A272E2CAC00FF72B9 /* OGLRender_3_2.cpp in Sources */,
 				B31B3039272E2CAC00FF72B9 /* armcpu.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2600,26 +2564,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3447E9D218B826F00557ACE /* PVDesmume2015+Audio.mm in Sources */,
 				B3447E9E218B857A00557ACE /* PVDesmume2015Core+Controls.mm in Sources */,
 				B3C76226207833DE009950E4 /* PVDesmume2015Core.mm in Sources */,
 				B3447EAC218BC59D00557ACE /* PVDesmume2015Core+Saves.m in Sources */,
-				B3447EA1218B881000557ACE /* PVDesmume2015.mm in Sources */,
 				B3447EB0218BC5C500557ACE /* PVDesmume2015Core+Video.m in Sources */,
-				B3447EA5218BC36B00557ACE /* PVDesmume2015+CoreAudio.mm in Sources */,
 				B3447EB4218BC69700557ACE /* PVDesmume2015Core+Audio.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		B3DDF56F26E9B90400CE47F0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3447EE8218BEE3F00557ACE /* desmume2015-tvOS */;
-			targetProxy = B3DDF56E26E9B90400CE47F0 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		B30178DA207C901D0051B93D /* Debug */ = {
@@ -2630,7 +2583,7 @@
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = desmume2015;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2645,7 +2598,7 @@
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = desmume2015;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2709,6 +2662,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/desmume2015/desmume/src/libretro-common/include\"",
 					"\"$(SRCROOT)/desmume2015-emulator/core/hw\"",
 					"\"$(SRCROOT)/desmume2015-emulator/core\"",
 					"\"$(SRCROOT)/desmume2015-emulator/core/deps\"",
@@ -2804,7 +2758,7 @@
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = desmume2015;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2819,7 +2773,7 @@
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = desmume2015;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -2891,7 +2845,7 @@
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = desmume2015;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -2907,7 +2861,7 @@
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = desmume2015;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -2974,6 +2928,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/desmume2015/desmume/src/libretro-common/include\"",
 					"\"$(SRCROOT)/desmume2015-emulator/core/hw\"",
 					"\"$(SRCROOT)/desmume2015-emulator/core\"",
 					"\"$(SRCROOT)/desmume2015-emulator/core/deps\"",
@@ -3048,6 +3003,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/desmume2015/desmume/src/libretro-common/include\"",
 					"\"$(SRCROOT)/desmume2015-emulator/core/hw\"",
 					"\"$(SRCROOT)/desmume2015-emulator/core\"",
 					"\"$(SRCROOT)/desmume2015-emulator/core/deps\"",

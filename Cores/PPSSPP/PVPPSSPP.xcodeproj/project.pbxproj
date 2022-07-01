@@ -124,6 +124,10 @@
 		B38C4A0D201DBD7E006761ED /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B38C4A0C201DBD7E006761ED /* libz.tbd */; };
 		B38C4A0F201DBD8D006761ED /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B38C4A0E201DBD8D006761ED /* CoreVideo.framework */; };
 		B38C4A10201DBD98006761ED /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B38C4A11201DBD98006761ED /* PVSupport.framework */; };
+		B3A41C20286E809A0054E9A5 /* ppsspp_libretro.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E06AE3272019E700AC0257 /* ppsspp_libretro.dylib */; };
+		B3A41C21286E809A0054E9A5 /* ppsspp_libretro.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E06AE3272019E700AC0257 /* ppsspp_libretro.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B3A41C22286E80AE0054E9A5 /* ppsspp_libretro.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E06AE3272019E700AC0257 /* ppsspp_libretro.dylib */; };
+		B3A41C23286E80AE0054E9A5 /* ppsspp_libretro.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = B3E06AE3272019E700AC0257 /* ppsspp_libretro.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B3E06AE427201A4F00AC0257 /* libspirv-cross-cpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E08271D792B0025DD88 /* libspirv-cross-cpp.a */; };
 		B3E06AE527201A4F00AC0257 /* libspirv-cross-hlsl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E0C271D792B0025DD88 /* libspirv-cross-hlsl.a */; };
 		B3E06AE627201A4F00AC0257 /* libspirv-cross-msl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E0E271D792B0025DD88 /* libspirv-cross-msl.a */; };
@@ -389,6 +393,13 @@
 			remoteGlobalIDString = 9950BEC9AE9F4BB192E371E5;
 			remoteInfo = zstreamtest;
 		};
+		B3A41C24286E86C40054E9A5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B30C6D9A271D792B0025DD88 /* PPSSPP.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = D38D17A114BC46FBB4338E00;
+			remoteInfo = ALL_BUILD;
+		};
 		B3E06AE2272019E700AC0257 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B30C6D9A271D792B0025DD88 /* PPSSPP.xcodeproj */;
@@ -406,6 +417,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				B30543752720289F00F5257D /* libMoltenVK.dylib in Embed Libraries */,
+				B3A41C23286E80AE0054E9A5 /* ppsspp_libretro.dylib in Embed Libraries */,
 			);
 			name = "Embed Libraries";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -417,6 +429,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				B36455BA278E7E3D00B6E87A /* PVLibrary.framework in Embed Frameworks */,
+				B3A41C21286E809A0054E9A5 /* ppsspp_libretro.dylib in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -522,6 +535,7 @@
 				B305434E2720232900F5257D /* libxxhash.a in Frameworks */,
 				B305434F2720232900F5257D /* libpng17.a in Frameworks */,
 				B30543502720232900F5257D /* libCore.a in Frameworks */,
+				B3A41C22286E80AE0054E9A5 /* ppsspp_libretro.dylib in Frameworks */,
 				B30543512720232900F5257D /* libspirv-cross-glsl.a in Frameworks */,
 				B30543522720232900F5257D /* CoreVideo.framework in Frameworks */,
 				B30543532720232900F5257D /* libz.tbd in Frameworks */,
@@ -582,6 +596,7 @@
 				B305431C2720225700F5257D /* libpng17.a in Frameworks */,
 				B30C6E19271D79E60025DD88 /* libCore.a in Frameworks */,
 				B30C6E28271D8BBF0025DD88 /* libspirv-cross-glsl.a in Frameworks */,
+				B3A41C20286E809A0054E9A5 /* ppsspp_libretro.dylib in Frameworks */,
 				B38C4A0F201DBD8D006761ED /* CoreVideo.framework in Frameworks */,
 				B38C4A0D201DBD7E006761ED /* libz.tbd in Frameworks */,
 				B30C6E3B271D8C280025DD88 /* UIKit.framework in Frameworks */,
@@ -842,6 +857,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				B3A41C25286E86C40054E9A5 /* PBXTargetDependency */,
 			);
 			name = PVPPSSPP;
 			productName = PVPPSSPPios;
@@ -1207,6 +1223,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B3A41C25286E86C40054E9A5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ALL_BUILD;
+			targetProxy = B3A41C24286E86C40054E9A5 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		8CAFA7931785AA9900647A96 /* Debug */ = {

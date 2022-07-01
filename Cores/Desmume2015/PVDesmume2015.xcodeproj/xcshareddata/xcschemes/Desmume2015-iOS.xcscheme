@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B30178D2207C901D0051B93D"
-               BuildableName = "libdesmume2015-iOS.a"
+               BuildableName = "libdesmume2015.a"
                BlueprintName = "desmume2015-iOS"
                ReferencedContainer = "container:PVDesmume2015.xcodeproj">
             </BuildableReference>
@@ -51,7 +51,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B30178D2207C901D0051B93D"
-            BuildableName = "libdesmume2015-iOS.a"
+            BuildableName = "libdesmume2015.a"
             BlueprintName = "desmume2015-iOS"
             ReferencedContainer = "container:PVDesmume2015.xcodeproj">
          </BuildableReference>
