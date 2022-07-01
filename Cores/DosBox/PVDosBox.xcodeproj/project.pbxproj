@@ -245,16 +245,10 @@
 		B39768F02859E18B00558958 /* keyb2joypad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449B02859D566006E6B3A /* keyb2joypad.cpp */; };
 		B39768F82859E23200558958 /* libdos-box-libretro-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libdos-box-libretro-iOS.a */; };
 		B39768FB2859E23A00558958 /* libdos-box-libretro-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B39768F72859E18B00558958 /* libdos-box-libretro-tvOS.a */; };
-		B39769082859E32B00558958 /* PVCoreLibretro.h in Headers */ = {isa = PBXBuildFile; fileRef = B39769072859E32B00558958 /* PVCoreLibretro.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B39769112859E38000558958 /* PVLibretro.m in Sources */ = {isa = PBXBuildFile; fileRef = B397690F2859E38000558958 /* PVLibretro.m */; };
-		B39769122859E38000558958 /* PVLibretro.h in Headers */ = {isa = PBXBuildFile; fileRef = B39769102859E38000558958 /* PVLibretro.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B39769142859E3A300558958 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39769132859E3A300558958 /* PVLibrary.framework */; };
-		B39769192859E3AD00558958 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39769172859E3AD00558958 /* CoreFoundation.framework */; };
-		B397691A2859E3AD00558958 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39769182859E3AD00558958 /* Foundation.framework */; };
-		B397691B2859FDEF00558958 /* PVCoreLibretro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39769052859E32B00558958 /* PVCoreLibretro.framework */; };
-		B397691C2859FDEF00558958 /* PVCoreLibretro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B39769052859E32B00558958 /* PVCoreLibretro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B39769202859FE1600558958 /* libdos-box-libretro-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libdos-box-libretro-iOS.a */; };
-		B39769232859FE4900558958 /* libdos-box-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libdos-box-iOS.a */; };
+		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
+		B3A41BEE286E76330054E9A5 /* PVLibRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3A41BF0286E76490054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */; };
+		B3A41BF1286E76490054E9A5 /* PVLibRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3B104AF218F26F400210C39 /* libdos-box-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3447F91218BEE3F00557ACE /* libdos-box-tvOS.a */; };
 		B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B104B8218F281B00210C39 /* PVSupport.framework */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
@@ -276,27 +270,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = B39768ED2859E18B00558958;
 			remoteInfo = "dos-box-libretro-tvOS";
-		};
-		B397691D2859FDEF00558958 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3C7620720783162009950E4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B39769042859E32B00558958;
-			remoteInfo = "PVCoreLibretro-iOS";
-		};
-		B39769212859FE1600558958 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3C7620720783162009950E4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3344B522859E088006E6B3A;
-			remoteInfo = "dos-box-libretro-iOS";
-		};
-		B39769242859FE4900558958 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3C7620720783162009950E4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B30178D2207C901D0051B93D;
-			remoteInfo = "dos-box-iOS";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -343,7 +316,18 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				B397691C2859FDEF00558958 /* PVCoreLibretro.framework in Embed Frameworks */,
+				B3A41BEE286E76330054E9A5 /* PVLibRetro.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3A41BF2286E76490054E9A5 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B3A41BF1286E76490054E9A5 /* PVLibRetro.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -641,13 +625,11 @@
 		B35E6BF4207CD2740040709A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		B39768F72859E18B00558958 /* libdos-box-libretro-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libdos-box-libretro-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B39769052859E32B00558958 /* PVCoreLibretro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVCoreLibretro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B39769072859E32B00558958 /* PVCoreLibretro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVCoreLibretro.h; sourceTree = "<group>"; };
-		B397690F2859E38000558958 /* PVLibretro.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVLibretro.m; sourceTree = "<group>"; };
-		B39769102859E38000558958 /* PVLibretro.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVLibretro.h; sourceTree = "<group>"; };
 		B39769132859E3A300558958 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39769172859E3AD00558958 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B39769182859E3AD00558958 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B104B8218F281B00210C39 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621020783162009950E4 /* PVDosBox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVDosBox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621320783162009950E4 /* PVDosBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVDosBox.h; sourceTree = "<group>"; };
@@ -686,6 +668,7 @@
 				B3447ECD218BEDD200557ACE /* CoreAudio.framework in Frameworks */,
 				B3447ECE218BEDD200557ACE /* AudioToolbox.framework in Frameworks */,
 				B3447ED0218BEDD200557ACE /* libz.tbd in Frameworks */,
+				B3A41BF0286E76490054E9A5 /* PVLibRetro.framework in Frameworks */,
 				B3447ED1218BEDD200557ACE /* libpthread.tbd in Frameworks */,
 				B3447ED3218BEDD200557ACE /* Foundation.framework in Frameworks */,
 				B3447ED4218BEDD200557ACE /* OpenGLES.framework in Frameworks */,
@@ -706,24 +689,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B39769022859E32B00558958 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B39769192859E3AD00558958 /* CoreFoundation.framework in Frameworks */,
-				B397691A2859E3AD00558958 /* Foundation.framework in Frameworks */,
-				B39769232859FE4900558958 /* libdos-box-iOS.a in Frameworks */,
-				B39769142859E3A300558958 /* PVLibrary.framework in Frameworks */,
-				B39769202859FE1600558958 /* libdos-box-libretro-iOS.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C7620C20783162009950E4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
-				B397691B2859FDEF00558958 /* PVCoreLibretro.framework in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
@@ -735,6 +705,7 @@
 				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
+				B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1231,28 +1202,9 @@
 			path = Core;
 			sourceTree = "<group>";
 		};
-		B39769062859E32B00558958 /* PVCoreLibretro */ = {
-			isa = PBXGroup;
-			children = (
-				B397690E2859E38000558958 /* PVCoreLibretro */,
-				B39769072859E32B00558958 /* PVCoreLibretro.h */,
-			);
-			path = PVCoreLibretro;
-			sourceTree = "<group>";
-		};
-		B397690E2859E38000558958 /* PVCoreLibretro */ = {
-			isa = PBXGroup;
-			children = (
-				B39769102859E38000558958 /* PVLibretro.h */,
-				B397690F2859E38000558958 /* PVLibretro.m */,
-			);
-			path = PVCoreLibretro;
-			sourceTree = "<group>";
-		};
 		B3C7620620783162009950E4 = {
 			isa = PBXGroup;
 			children = (
-				B39769062859E32B00558958 /* PVCoreLibretro */,
 				B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */,
 				B33448832859D565006E6B3A /* dosbox-pure */,
 				B3C762202078327B009950E4 /* PVDosBoxCore */,
@@ -1271,7 +1223,6 @@
 				B3447F91218BEE3F00557ACE /* libdos-box-tvOS.a */,
 				B3344BC32859E088006E6B3A /* libdos-box-libretro-iOS.a */,
 				B39768F72859E18B00558958 /* libdos-box-libretro-tvOS.a */,
-				B39769052859E32B00558958 /* PVCoreLibretro.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1289,6 +1240,8 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */,
+				B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */,
 				B39769172859E3AD00558958 /* CoreFoundation.framework */,
 				B39769182859E3AD00558958 /* Foundation.framework */,
 				B39769132859E3A300558958 /* PVLibrary.framework */,
@@ -1327,15 +1280,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3135BA226E4CC650047F338 /* PVDosBox.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B39769002859E32B00558958 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B39769082859E32B00558958 /* PVCoreLibretro.h in Headers */,
-				B39769122859E38000558958 /* PVLibretro.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1393,6 +1337,7 @@
 				B3447ECA218BEDD200557ACE /* Frameworks */,
 				B3447ED5218BEDD200557ACE /* Headers */,
 				B3447EDF218BEDD200557ACE /* Resources */,
+				B3A41BF2286E76490054E9A5 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1438,26 +1383,6 @@
 			productReference = B39768F72859E18B00558958 /* libdos-box-libretro-tvOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B39769042859E32B00558958 /* PVCoreLibretro-iOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B39769092859E32B00558958 /* Build configuration list for PBXNativeTarget "PVCoreLibretro-iOS" */;
-			buildPhases = (
-				B39769002859E32B00558958 /* Headers */,
-				B39769012859E32B00558958 /* Sources */,
-				B39769022859E32B00558958 /* Frameworks */,
-				B39769032859E32B00558958 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B39769222859FE1600558958 /* PBXTargetDependency */,
-				B39769252859FE4900558958 /* PBXTargetDependency */,
-			);
-			name = "PVCoreLibretro-iOS";
-			productName = PVCoreLibretro;
-			productReference = B39769052859E32B00558958 /* PVCoreLibretro.framework */;
-			productType = "com.apple.product-type.framework";
-		};
 		B3C7620F20783162009950E4 /* PVDosBox-iOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVDosBox-iOS" */;
@@ -1472,7 +1397,6 @@
 			);
 			dependencies = (
 				B39768FA2859E23200558958 /* PBXTargetDependency */,
-				B397691E2859FDEF00558958 /* PBXTargetDependency */,
 			);
 			name = "PVDosBox-iOS";
 			productName = PVReicast;
@@ -1493,9 +1417,6 @@
 					B30178D2207C901D0051B93D = {
 						CreatedOnToolsVersion = 9.3;
 						ProvisioningStyle = Automatic;
-					};
-					B39769042859E32B00558958 = {
-						CreatedOnToolsVersion = 13.4.1;
 					};
 					B3C7620F20783162009950E4 = {
 						CreatedOnToolsVersion = 9.3;
@@ -1528,7 +1449,6 @@
 			targets = (
 				B3C7620F20783162009950E4 /* PVDosBox-iOS */,
 				B3447EC0218BEDD200557ACE /* PVDosBox-tvOS */,
-				B39769042859E32B00558958 /* PVCoreLibretro-iOS */,
 				B3344B522859E088006E6B3A /* dos-box-libretro-iOS */,
 				B39768ED2859E18B00558958 /* dos-box-libretro-tvOS */,
 				B30178D2207C901D0051B93D /* dos-box-iOS */,
@@ -1543,13 +1463,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3447EE2218BEDD200557ACE /* Core.plist in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B39769032859E32B00558958 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1814,14 +1727,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B39769012859E32B00558958 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B39769112859E38000558958 /* PVLibretro.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C7620B20783162009950E4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1842,21 +1747,6 @@
 			isa = PBXTargetDependency;
 			target = B39768ED2859E18B00558958 /* dos-box-libretro-tvOS */;
 			targetProxy = B39768FC2859E23A00558958 /* PBXContainerItemProxy */;
-		};
-		B397691E2859FDEF00558958 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B39769042859E32B00558958 /* PVCoreLibretro-iOS */;
-			targetProxy = B397691D2859FDEF00558958 /* PBXContainerItemProxy */;
-		};
-		B39769222859FE1600558958 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3344B522859E088006E6B3A /* dos-box-libretro-iOS */;
-			targetProxy = B39769212859FE1600558958 /* PBXContainerItemProxy */;
-		};
-		B39769252859FE4900558958 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B30178D2207C901D0051B93D /* dos-box-iOS */;
-			targetProxy = B39769242859FE4900558958 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -2328,104 +2218,6 @@
 			};
 			name = Archive;
 		};
-		B397690A2859E32B00558958 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVCoreLibretro";
-				PRODUCT_NAME = PVCoreLibretro;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		B397690B2859E32B00558958 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVCoreLibretro";
-				PRODUCT_NAME = PVCoreLibretro;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		B397690C2859E32B00558958 /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVCoreLibretro";
-				PRODUCT_NAME = PVCoreLibretro;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Archive;
-		};
 		B3C7621620783162009950E4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
@@ -2701,16 +2493,6 @@
 				B39768F42859E18B00558958 /* Debug */,
 				B39768F52859E18B00558958 /* Release */,
 				B39768F62859E18B00558958 /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B39769092859E32B00558958 /* Build configuration list for PBXNativeTarget "PVCoreLibretro-iOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B397690A2859E32B00558958 /* Debug */,
-				B397690B2859E32B00558958 /* Release */,
-				B397690C2859E32B00558958 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

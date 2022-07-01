@@ -156,7 +156,7 @@
 		B372638426EA015700E95488 /* CocoaLumberjack+swift-log.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E8326C67F420088AC32 /* CocoaLumberjack+swift-log.swift */; };
 		B372638526EA015800E95488 /* CocoaLumberjack+swift-log.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E8326C67F420088AC32 /* CocoaLumberjack+swift-log.swift */; };
 		B392849128670348003BAC21 /* PVLibRetro.h in Headers */ = {isa = PBXBuildFile; fileRef = B392849028670348003BAC21 /* PVLibRetro.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3928499286703CD003BAC21 /* PVLibRetroCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3928497286703CD003BAC21 /* PVLibRetroCore.h */; };
+		B3928499286703CD003BAC21 /* PVLibRetroCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3928497286703CD003BAC21 /* PVLibRetroCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B392849A286703CD003BAC21 /* PVLibRetroCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B3928498286703CD003BAC21 /* PVLibRetroCore.m */; };
 		B392849B286703F2003BAC21 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96ED81D62C5E7003F1E93 /* PVSupport.framework */; };
 		B39C29C727A0FADF0078D028 /* OERingBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FA5D5A1D6B908300060D71 /* OERingBuffer.m */; };
@@ -166,6 +166,13 @@
 		B39C29CE27A10EE50078D028 /* OEGameAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69217F748F80031B1C9 /* OEGameAudio.m */; };
 		B39C29CF27A10EE50078D028 /* OEGameAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69217F748F80031B1C9 /* OEGameAudio.m */; };
 		B3A41BCF286E5E660054E9A5 /* retro.m in Sources */ = {isa = PBXBuildFile; fileRef = B3225130286C4728001FDF42 /* retro.m */; };
+		B3A41BD2286E75DD0054E9A5 /* retro.m in Sources */ = {isa = PBXBuildFile; fileRef = B3225130286C4728001FDF42 /* retro.m */; };
+		B3A41BD5286E75DD0054E9A5 /* retro.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B322512F286C4728001FDF42 /* retro.h */; };
+		B3A41BDF286E76110054E9A5 /* PVLibRetro.h in Headers */ = {isa = PBXBuildFile; fileRef = B392849028670348003BAC21 /* PVLibRetro.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3A41BE0286E76110054E9A5 /* PVLibRetroCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3928497286703CD003BAC21 /* PVLibRetroCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3A41BE2286E76110054E9A5 /* PVLibRetroCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B3928498286703CD003BAC21 /* PVLibRetroCore.m */; };
+		B3A41BE4286E76110054E9A5 /* libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B322512D286C4728001FDF42 /* libretro.a */; };
+		B3A41BE5286E76110054E9A5 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96ED81D62C5E7003F1E93 /* PVSupport.framework */; };
 		B3A4FB5A278FE45D00A65248 /* OEGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A4FB59278FE45C00A65248 /* OEGeometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A4FB5B278FE45D00A65248 /* OEGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A4FB59278FE45C00A65248 /* OEGeometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A4FB5C278FE45D00A65248 /* OEGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A4FB59278FE45C00A65248 /* OEGeometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -265,6 +272,13 @@
 			remoteGlobalIDString = B3C96EBE1D62C5E7003F1E93;
 			remoteInfo = "PVSupport-iOS";
 		};
+		B3A41BDD286E76110054E9A5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1ACEA63C17F7467D0031B1C9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3C96EBE1D62C5E7003F1E93;
+			remoteInfo = "PVSupport-iOS";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -275,6 +289,16 @@
 			dstSubfolderSpec = 16;
 			files = (
 				B3225132286C4728001FDF42 /* retro.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3A41BD4286E75DD0054E9A5 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+				B3A41BD5286E75DD0054E9A5 /* retro.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1112,6 +1136,8 @@
 		B392849028670348003BAC21 /* PVLibRetro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVLibRetro.h; sourceTree = "<group>"; };
 		B3928497286703CD003BAC21 /* PVLibRetroCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVLibRetroCore.h; sourceTree = "<group>"; };
 		B3928498286703CD003BAC21 /* PVLibRetroCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVLibRetroCore.m; sourceTree = "<group>"; };
+		B3A41BDA286E75DD0054E9A5 /* libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libretro.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3A41BEB286E76110054E9A5 /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A4FB59278FE45C00A65248 /* OEGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OEGeometry.h; sourceTree = "<group>"; };
 		B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVEmulatorCore.swift; sourceTree = "<group>"; };
 		B3AB37872187F9A9009D9244 /* PViCadeGamepadDirectionPad.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PViCadeGamepadDirectionPad.swift; sourceTree = "<group>"; };
@@ -1197,6 +1223,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3A41BD3286E75DD0054E9A5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3A41BE3286E76110054E9A5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3A41BE4286E76110054E9A5 /* libretro.a in Frameworks */,
+				B3A41BE5286E76110054E9A5 /* PVSupport.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3C96E9A1D62C3A3003F1E93 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1263,6 +1305,8 @@
 				B305EF91276B4E41003AE510 /* PVSupport.framework */,
 				B392848E28670348003BAC21 /* PVLibRetro.framework */,
 				B322512D286C4728001FDF42 /* libretro.a */,
+				B3A41BDA286E75DD0054E9A5 /* libretro.a */,
+				B3A41BEB286E76110054E9A5 /* PVLibRetro.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3421,6 +3465,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3A41BDE286E76110054E9A5 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3A41BDF286E76110054E9A5 /* PVLibRetro.h in Headers */,
+				B3A41BE0286E76110054E9A5 /* PVLibRetroCore.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3C96E9B1D62C3A3003F1E93 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -3498,9 +3551,9 @@
 			productReference = B305EF91276B4E41003AE510 /* PVSupport.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		B322512C286C4728001FDF42 /* retro */ = {
+		B322512C286C4728001FDF42 /* retro-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3225136286C4729001FDF42 /* Build configuration list for PBXNativeTarget "retro" */;
+			buildConfigurationList = B3225136286C4729001FDF42 /* Build configuration list for PBXNativeTarget "retro-iOS" */;
 			buildPhases = (
 				B3225129286C4728001FDF42 /* Sources */,
 				B322512A286C4728001FDF42 /* Frameworks */,
@@ -3510,7 +3563,7 @@
 			);
 			dependencies = (
 			);
-			name = retro;
+			name = "retro-iOS";
 			productName = retro;
 			productReference = B322512D286C4728001FDF42 /* libretro.a */;
 			productType = "com.apple.product-type.library.static";
@@ -3533,9 +3586,9 @@
 			productReference = B3532B3221A7B736006CDA0F /* PVSupportTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		B392848D28670348003BAC21 /* PVLibRetro */ = {
+		B392848D28670348003BAC21 /* PVLibRetro-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B392849528670348003BAC21 /* Build configuration list for PBXNativeTarget "PVLibRetro" */;
+			buildConfigurationList = B392849528670348003BAC21 /* Build configuration list for PBXNativeTarget "PVLibRetro-iOS" */;
 			buildPhases = (
 				B392848928670348003BAC21 /* Headers */,
 				B392848A28670348003BAC21 /* Sources */,
@@ -3547,9 +3600,45 @@
 			dependencies = (
 				B392849E286703F2003BAC21 /* PBXTargetDependency */,
 			);
-			name = PVLibRetro;
+			name = "PVLibRetro-iOS";
 			productName = PVLibRetro;
 			productReference = B392848E28670348003BAC21 /* PVLibRetro.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		B3A41BD0286E75DD0054E9A5 /* retro-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3A41BD6286E75DD0054E9A5 /* Build configuration list for PBXNativeTarget "retro-tvOS" */;
+			buildPhases = (
+				B3A41BD1286E75DD0054E9A5 /* Sources */,
+				B3A41BD3286E75DD0054E9A5 /* Frameworks */,
+				B3A41BD4286E75DD0054E9A5 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "retro-tvOS";
+			productName = retro;
+			productReference = B3A41BDA286E75DD0054E9A5 /* libretro.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B3A41BDB286E76110054E9A5 /* PVLibRetro-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3A41BE7286E76110054E9A5 /* Build configuration list for PBXNativeTarget "PVLibRetro-tvOS" */;
+			buildPhases = (
+				B3A41BDE286E76110054E9A5 /* Headers */,
+				B3A41BE1286E76110054E9A5 /* Sources */,
+				B3A41BE3286E76110054E9A5 /* Frameworks */,
+				B3A41BE6286E76110054E9A5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B3A41BDC286E76110054E9A5 /* PBXTargetDependency */,
+			);
+			name = "PVLibRetro-tvOS";
+			productName = PVLibRetro;
+			productReference = B3A41BEB286E76110054E9A5 /* PVLibRetro.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		B3C96E9D1D62C3A3003F1E93 /* PVSupport-tvOS */ = {
@@ -3664,8 +3753,10 @@
 				B3C96E9D1D62C3A3003F1E93 /* PVSupport-tvOS */,
 				B305EF3D276B4E41003AE510 /* PVSupport-watchOS */,
 				B3532B3121A7B736006CDA0F /* PVSupportTests */,
-				B392848D28670348003BAC21 /* PVLibRetro */,
-				B322512C286C4728001FDF42 /* retro */,
+				B392848D28670348003BAC21 /* PVLibRetro-iOS */,
+				B3A41BDB286E76110054E9A5 /* PVLibRetro-tvOS */,
+				B322512C286C4728001FDF42 /* retro-iOS */,
+				B3A41BD0286E75DD0054E9A5 /* retro-tvOS */,
 			);
 		};
 /* End PBXProject section */
@@ -3687,6 +3778,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B392848C28670348003BAC21 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3A41BE6286E76110054E9A5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3791,6 +3889,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				B392849A286703CD003BAC21 /* PVLibRetroCore.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3A41BD1286E75DD0054E9A5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3A41BD2286E75DD0054E9A5 /* retro.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3A41BE1286E76110054E9A5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3A41BE2286E76110054E9A5 /* PVLibRetroCore.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3968,6 +4082,11 @@
 			isa = PBXTargetDependency;
 			target = B3C96EBE1D62C5E7003F1E93 /* PVSupport-iOS */;
 			targetProxy = B392849D286703F2003BAC21 /* PBXContainerItemProxy */;
+		};
+		B3A41BDC286E76110054E9A5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3C96EBE1D62C5E7003F1E93 /* PVSupport-iOS */;
+			targetProxy = B3A41BDD286E76110054E9A5 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -4239,7 +4358,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = retro;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -4268,7 +4387,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = retro;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -4297,7 +4416,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = retro;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -4585,7 +4704,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibRetro";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = PVLibRetro;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -4635,7 +4754,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibRetro";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = PVLibRetro;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -4683,7 +4802,244 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibRetro";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = PVLibRetro;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Archive;
+		};
+		B3A41BD7286E75DD0054E9A5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
+					"$(inherited)",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = retro;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B3A41BD8286E75DD0054E9A5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
+					"$(inherited)",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = retro;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B3A41BD9286E75DD0054E9A5 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
+					"$(inherited)",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = retro;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Archive;
+		};
+		B3A41BE8286E76110054E9A5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
+					"\"$(SRCROOT)/Sources/retro\"",
+					"$(inherited)",
+				);
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibRetro";
+				PRODUCT_NAME = PVLibRetro;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		B3A41BE9286E76110054E9A5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
+					"\"$(SRCROOT)/Sources/retro\"",
+					"$(inherited)",
+				);
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibRetro";
+				PRODUCT_NAME = PVLibRetro;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		B3A41BEA286E76110054E9A5 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
+					"\"$(SRCROOT)/Sources/retro\"",
+					"$(inherited)",
+				);
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibRetro";
+				PRODUCT_NAME = PVLibRetro;
+				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -4890,7 +5246,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3225136286C4729001FDF42 /* Build configuration list for PBXNativeTarget "retro" */ = {
+		B3225136286C4729001FDF42 /* Build configuration list for PBXNativeTarget "retro-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3225133286C4728001FDF42 /* Debug */,
@@ -4910,12 +5266,32 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B392849528670348003BAC21 /* Build configuration list for PBXNativeTarget "PVLibRetro" */ = {
+		B392849528670348003BAC21 /* Build configuration list for PBXNativeTarget "PVLibRetro-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B392849228670348003BAC21 /* Debug */,
 				B392849328670348003BAC21 /* Release */,
 				B392849428670348003BAC21 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3A41BD6286E75DD0054E9A5 /* Build configuration list for PBXNativeTarget "retro-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3A41BD7286E75DD0054E9A5 /* Debug */,
+				B3A41BD8286E75DD0054E9A5 /* Release */,
+				B3A41BD9286E75DD0054E9A5 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3A41BE7286E76110054E9A5 /* Build configuration list for PBXNativeTarget "PVLibRetro-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3A41BE8286E76110054E9A5 /* Debug */,
+				B3A41BE9286E76110054E9A5 /* Release */,
+				B3A41BEA286E76110054E9A5 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

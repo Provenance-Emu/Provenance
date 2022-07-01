@@ -55,8 +55,7 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic error "-Wall"
 
-#define WIDTH 256
-#define HEIGHT 240
+#define RETRO_API_VERSION 1
 
 static struct retro_core_t core;
 static unsigned            core_poll_type;
@@ -701,8 +700,8 @@ static __weak PVLibRetroCore *_current;
 
     struct retro_game_info info;
     info.path = [path cStringUsingEncoding:NSUTF8StringEncoding];
-    
-    BOOL loaded = false; //retro_load_game(&info);
+    // TODO:: retro_load_game
+    BOOL loaded = core.retro_load_game(&info); // retro_load_game(&info);
     
     return loaded;
 }
@@ -738,16 +737,18 @@ static __weak PVLibRetroCore *_current;
 }
 
 - (void)resetEmulation {
-//    retro_reset();
+    core.retro_reset();
 }
 
 - (void)stopEmulation {
-//    retro_unload_game();
+    core.retro_unload_game();
     [super stopEmulation];
 }
 
 - (NSTimeInterval)frameInterval {
-    return 1.0 / 60.0;
+    static struct retro_system_av_info av_info;
+    core.retro_get_system_av_info(&av_info);
+    return 1.0 / av_info.timing.fps;
 }
 
 # pragma mark - Video
@@ -757,17 +758,44 @@ static __weak PVLibRetroCore *_current;
 }
 
 - (CGRect)screenRect {
-    return CGRectMake(0, 0, WIDTH, HEIGHT);
+    static struct retro_system_av_info av_info;
+    core.retro_get_system_av_info(&av_info);
+    unsigned height = av_info.geometry.base_height;
+    unsigned width = av_info.geometry.base_width;
+
+    return CGRectMake(0, 0, width, height);
 }
 
-- (CGSize)aspectSize
-{
-    return CGSizeMake(4, 3);
+- (CGSize)aspectSize {
+    static struct retro_system_av_info av_info;
+    core.retro_get_system_av_info(&av_info);
+    float aspect_ratio = av_info.geometry.aspect_ratio;
+//    unsigned height = av_info.geometry.max_height;
+//    unsigned width = av_info.geometry.max_width;
+    if (aspect_ratio == 1.0) {
+        return CGSizeMake(1, 1);
+    } else if (aspect_ratio < 1.2 && aspect_ratio > 1.1) {
+        return CGSizeMake(10, 9);
+    } else if (aspect_ratio < 1.26 && aspect_ratio > 1.24) {
+        return CGSizeMake(5, 4);
+    } else if (aspect_ratio < 1.4 && aspect_ratio > 1.3) {
+        return CGSizeMake(4, 3);
+    } else if (aspect_ratio < 1.6 && aspect_ratio > 1.4) {
+        return CGSizeMake(3, 2);
+    } else if (aspect_ratio < 1.7 && aspect_ratio > 1.6) {
+        return CGSizeMake(16, 9);
+    } else {
+        return CGSizeMake(4, 3);
+    }
 }
 
-- (CGSize)bufferSize
-{
-    return CGSizeMake(WIDTH, HEIGHT);
+- (CGSize)bufferSize {
+    static struct retro_system_av_info av_info;
+    core.retro_get_system_av_info(&av_info);
+    unsigned height = av_info.geometry.max_height;
+    unsigned width = av_info.geometry.max_width;
+    
+    return CGSizeMake(width, height);
 }
 
 - (GLenum)pixelFormat {
@@ -785,7 +813,10 @@ static __weak PVLibRetroCore *_current;
 # pragma mark - Audio
 
 - (double)audioSampleRate {
-    return 44100;
+    static struct retro_system_av_info av_info;
+    core.retro_get_system_av_info(&av_info);
+    double sample_rate = av_info.timing.sample_rate;
+    return sample_rate;
 }
 
 - (NSUInteger)channelCount {
@@ -799,7 +830,7 @@ static __weak PVLibRetroCore *_current;
 
 #pragma mark Properties
 -(BOOL)supportsSaveStates {
-    return false; //return retro_get_memory_size(0) != 0 && retro_get_memory_data(0) != NULL;
+    return core.retro_get_memory_size(0) != 0 && core.retro_get_memory_data(0) != NULL;
 }
 
 #pragma mark Methods
@@ -854,6 +885,9 @@ static __weak PVLibRetroCore *_current;
 @implementation PVLibRetroCore (Cheats)
 
 - (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled {
+    unsigned index = 0;
+    const char* cCode = [code cStringUsingEncoding:NSUTF8StringEncoding];
+    core.retro_cheat_set(index, enabled, cCode);
     // void retro_cheat_reset(void) { }
 //    void retro_cheat_set(unsigned index, bool enabled, const char *code) { (void)index; (void)enabled; (void)code; }
 }
@@ -862,7 +896,7 @@ static __weak PVLibRetroCore *_current;
 
 unsigned retro_api_version(void)
 {
-	return 1; //RETRO_API_VERSION;
+	return RETRO_API_VERSION;
 }
 
 #pragma clang diagnostic pop

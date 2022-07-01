@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B392848D28670348003BAC21"
                BuildableName = "PVLibRetro.framework"
-               BlueprintName = "PVLibRetro"
+               BlueprintName = "PVLibRetro-iOS"
                ReferencedContainer = "container:PVSupport.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -52,7 +52,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B392848D28670348003BAC21"
             BuildableName = "PVLibRetro.framework"
-            BlueprintName = "PVLibRetro"
+            BlueprintName = "PVLibRetro-iOS"
             ReferencedContainer = "container:PVSupport.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
