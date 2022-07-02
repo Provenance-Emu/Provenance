@@ -117,6 +117,8 @@
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
+		B364D4B72870E7D300B93A4B /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B364D4B62870E7D300B93A4B /* PVLibRetro.framework */; };
+		B364D4BB2870E7DE00B93A4B /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B364D4BA2870E7DE00B93A4B /* PVLibRetro.framework */; };
 		B3A41C26286E88D60054E9A5 /* libdesmume2015.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libdesmume2015.a */; };
 		B3A41C29286E8A8E0054E9A5 /* bios.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DB6272E2C9800FF72B9 /* bios.cpp */; };
 		B3A41C2A286E8A8F0054E9A5 /* bios.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DB6272E2C9800FF72B9 /* bios.cpp */; };
@@ -689,6 +691,8 @@
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
 		B35E6BF4207CD2740040709A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		B364D4B62870E7D300B93A4B /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B364D4BA2870E7DE00B93A4B /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B104B8218F281B00210C39 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621020783162009950E4 /* PVDesmume2015.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVDesmume2015.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621320783162009950E4 /* PVDesmume2015.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVDesmume2015.h; sourceTree = "<group>"; };
@@ -718,6 +722,7 @@
 				B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */,
 				B3447ECD218BEDD200557ACE /* CoreAudio.framework in Frameworks */,
 				B3447ECE218BEDD200557ACE /* AudioToolbox.framework in Frameworks */,
+				B364D4BB2870E7DE00B93A4B /* PVLibRetro.framework in Frameworks */,
 				B3447ED0218BEDD200557ACE /* libz.tbd in Frameworks */,
 				B3447ED1218BEDD200557ACE /* libpthread.tbd in Frameworks */,
 				B3447ED3218BEDD200557ACE /* Foundation.framework in Frameworks */,
@@ -743,6 +748,7 @@
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
+				B364D4B72870E7D300B93A4B /* PVLibRetro.framework in Frameworks */,
 				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
@@ -2271,6 +2277,8 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B364D4BA2870E7DE00B93A4B /* PVLibRetro.framework */,
+				B364D4B62870E7D300B93A4B /* PVLibRetro.framework */,
 				B35E6BF1207CD2670040709A /* AudioToolbox.framework */,
 				B35E6BEF207CD2610040709A /* AudioUnit.framework */,
 				B324C31B2191964F009F4EDC /* AVFoundation.framework */,
@@ -2674,22 +2682,6 @@
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-mno-thumb",
-					"-mfpu=neon",
-					"-fno-operator-names",
-					"-fno-rtti",
-					"-ffast-math",
-					"-ftree-vectorize",
-					"-fno-strict-aliasing",
-					"-frename-registers",
-					"-fno-rtti",
-					"-fpermissive",
-					"-fno-operator-names",
-					"-fsingle-precision-constant",
-					"-DTARGET_NO_NIXPROF",
-				);
 				SDKROOT = iphoneos;
 				TVOS_DEPLOYMENT_TARGET = 12.1;
 				VALIDATE_PRODUCT = YES;
@@ -2941,7 +2933,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = "-DTARGET_NO_NIXPROF";
 				SDKROOT = iphoneos;
 				TVOS_DEPLOYMENT_TARGET = 12.1;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
@@ -3016,22 +3007,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-mno-thumb",
-					"-mfpu=neon",
-					"-fno-operator-names",
-					"-fno-rtti",
-					"-ffast-math",
-					"-ftree-vectorize",
-					"-fno-strict-aliasing",
-					"-frename-registers",
-					"-fno-rtti",
-					"-fpermissive",
-					"-fno-operator-names",
-					"-fsingle-precision-constant",
-					"-DTARGET_NO_NIXPROF",
-				);
 				SDKROOT = iphoneos;
 				TVOS_DEPLOYMENT_TARGET = 12.1;
 				VALIDATE_PRODUCT = YES;

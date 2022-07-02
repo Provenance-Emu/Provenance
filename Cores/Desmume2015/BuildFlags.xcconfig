@@ -8,6 +8,7 @@
 
 // All
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) OBJ_C IOS ARM USE_POSIX_MEMALIGN __RETRO_ARM__ USE_POSIX_MEMALIGN
+OTHER_CFLAGS = $(inherited) -ObjC
 //OTHER_CFLAGS = $(inherited) -mno-thumb -mfpu=neon -fno-operator-names -fno-rtti -ffast-math -ftree-vectorize -fno-strict-aliasing -frename-registers -fno-rtti -fpermissive -fno-operator-names -fsingle-precision-constant
 
     // Device

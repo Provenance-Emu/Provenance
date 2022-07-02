@@ -53,6 +53,20 @@
 //volatile bool has_init = false;
 //
 #pragma mark - PVDesmume2015Core Begin
+#import <dlfcn.h>
+#import <errno.h>
+#import <mach/mach.h>
+#import <mach-o/loader.h>
+#import <mach-o/getsect.h>
+
+//static void *dlopen_myself()
+//{
+//    Dl_info info;
+//    
+//    dladdr(dlopen_myself, &info);
+//    
+//    return dlopen(info.dli_fname, RTLD_LAZY | RTLD_GLOBAL);
+//}
 
 @implementation PVDesmume2015Core {
 //	dispatch_semaphore_t mupenWaitToBeginFrameSemaphore;

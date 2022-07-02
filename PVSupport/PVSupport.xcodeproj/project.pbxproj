@@ -157,6 +157,8 @@
 		B3532C3621A925C2006CDA0F /* SortOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3521A925C1006CDA0F /* SortOption.swift */; };
 		B3532C3721A925C2006CDA0F /* SortOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3521A925C1006CDA0F /* SortOption.swift */; };
 		B35E6C38207EE15D0040709A /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C36207EE15D0040709A /* CoreOptions.swift */; };
+		B364D4B42870E5F600B93A4B /* libretro.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC6D92867202D00B60497 /* libretro.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B364D4B52870E5F600B93A4B /* libretro.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC6D92867202D00B60497 /* libretro.h */; };
 		B372638426EA015700E95488 /* CocoaLumberjack+swift-log.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E8326C67F420088AC32 /* CocoaLumberjack+swift-log.swift */; };
 		B372638526EA015800E95488 /* CocoaLumberjack+swift-log.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E8326C67F420088AC32 /* CocoaLumberjack+swift-log.swift */; };
 		B392849128670348003BAC21 /* PVLibRetro.h in Headers */ = {isa = PBXBuildFile; fileRef = B392849028670348003BAC21 /* PVLibRetro.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -3466,6 +3468,7 @@
 			files = (
 				B392849128670348003BAC21 /* PVLibRetro.h in Headers */,
 				B3928499286703CD003BAC21 /* PVLibRetroCore.h in Headers */,
+				B364D4B42870E5F600B93A4B /* libretro.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3475,6 +3478,7 @@
 			files = (
 				B3A41BDF286E76110054E9A5 /* PVLibRetro.h in Headers */,
 				B3A41BE0286E76110054E9A5 /* PVLibRetroCore.h in Headers */,
+				B364D4B52870E5F600B93A4B /* libretro.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

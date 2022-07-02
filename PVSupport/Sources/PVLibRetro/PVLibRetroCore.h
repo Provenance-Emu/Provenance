@@ -10,6 +10,7 @@
 
 #import <PVSupport/PVSupport.h>
 #import <PVSupport/PVSupport-Swift.h>
+#import <PVLibRetro/libretro.h>
 
 #pragma clang diagnostic push
 #pragma clang diagnostic error "-Wall"
@@ -22,5 +23,17 @@ __attribute__((weak_import))
 }
 
 @end
+
+#define SYMBOL(x) \
+do { \
+    function_t func = dylib_proc(lib_handle, #x); \
+    memcpy(&current_core->x, &func, sizeof(func)); \
+    if (current_core->x == NULL) { \
+        ELOG(@"Failed to load symbol: \"%s\"\n", #x); \
+        retroarch_fail(1, "init_libretro_sym()"); \
+    } \
+} while (0)
+
+#define SYMBOL_DUMMY(x) current_core->x = libretro_dummy_##x
 
 #pragma clang diagnostic pop

@@ -44,6 +44,7 @@
 //#include "gfx/video_context_driver.h"
 #include <retro_assert.h>
 
+#include "core.h"
 #include "cores/internal_cores.h"
 #include "frontend/frontend_driver.h"
 #include "content.h"
@@ -61,29 +62,25 @@
 
 #define RETRO_API_VERSION 1
 
-static struct retro_core_t core;
-static unsigned            core_poll_type;
-static bool                core_input_polled;
-static bool   core_has_set_input_descriptors = false;
-static struct retro_callbacks retro_ctx;
 
+// MARK: - Retro Structs
+static struct retro_core_t      core;
+static unsigned                 core_poll_type;
+static bool                     core_input_polled;
+static bool                     core_has_set_input_descriptors = false;
+static struct retro_callbacks   retro_ctx;
+
+static dylib_t lib_handle;
+
+// MARK: - Retro typedefs
 typedef void *dylib_t;
 typedef void (*function_t)(void);
 
-static dylib_t lib_handle;
+// MARK: - Retro Macros
 
 void retroarch_fail(int error_code, const char *error) {
     ELOG(@"Code: %i, Error: %s", error_code, error);
 }
-
-
-#define SYMBOL(x) do { \
-   function_t func = dylib_proc(lib_handle, #x); \
-   memcpy(&current_core->x, &func, sizeof(func)); \
-   if (current_core->x == NULL) { ELOG(@"Failed to load symbol: \"%s\"\n", #x); retroarch_fail(1, "init_libretro_sym()"); } \
-} while (0)
-
-#define SYMBOL_DUMMY(x) current_core->x = libretro_dummy_##x
 
 static void load_symbols(enum rarch_core_type type, struct retro_core_t *current_core);
 
@@ -287,7 +284,6 @@ bool core_set_default_callbacks(void *data)
 
    return true;
 }
-
 
 bool core_deinit(void *data)
 {
@@ -696,9 +692,13 @@ void video_driver_frame(const void *data, unsigned width,
 }
 
 const char *config_get_active_core_path(void) {
-    NSBundle *bundle = [NSBundle bundleForClass:[_current class]];
-    const char* path = [bundle.executablePath cStringUsingEncoding:NSUTF8StringEncoding];
-    return path;
+//    NSBundle *bundle = [NSBundle bundleForClass:[_current class]];
+//    const char* path = [bundle.executablePath fileSystemRepresentation];
+    
+    NSString *frameworkPath = [NSString stringWithFormat:@"%@.framework/%@", @"PVDesmume2015", @"PVDesmume2015"];
+    NSString *rspPath = [[[NSBundle mainBundle] privateFrameworksPath] stringByAppendingPathComponent:frameworkPath];
+    NSLog(@"%@", rspPath);
+    return [rspPath fileSystemRepresentation];
 }
 /**
  * init_libretro_sym:
@@ -717,6 +717,7 @@ void init_libretro_sym(enum rarch_core_type type, struct retro_core_t *current_c
 
    load_symbols(type, current_core);
 }
+@import Darwin.POSIX;
 
 static void load_dynamic_core(void)
 {
@@ -776,6 +777,7 @@ static void load_dynamic_core(void)
  **/
 static void load_symbols(enum rarch_core_type type, struct retro_core_t *current_core)
 {
+    ILOG(@"")
    switch (type)
    {
       case CORE_TYPE_PLAIN:
@@ -1015,7 +1017,7 @@ static void load_symbols(enum rarch_core_type type, struct retro_core_t *current
     if((self = [super init])) {
         _current = self;
 
-    //        const char* path = [[NSBundle bundleForClass:[self class]].bundlePath cStringUsingEncoding:NSUTF8StringEncoding];
+    //        const char* path = [[NSBundle bundleForClass:[self class]].bundlePath fileSystemRepresentation];
     //        config_set_active_core_path(path);
         init_libretro_sym(CORE_TYPE_PLAIN, &core);
         load_dynamic_core();
@@ -1036,7 +1038,7 @@ static void load_symbols(enum rarch_core_type type, struct retro_core_t *current
     [[NSFileManager defaultManager] createDirectoryAtURL:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:nil];
 
     struct retro_game_info info;
-    info.path = [path cStringUsingEncoding:NSUTF8StringEncoding];
+    info.path = [path fileSystemRepresentation];
     // TODO:: retro_load_game
     BOOL loaded = core.retro_load_game(&info); // retro_load_game(&info);
     
