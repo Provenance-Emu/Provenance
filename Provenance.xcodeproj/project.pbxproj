@@ -1296,6 +1296,7 @@
 		B391F2C427C157E800730B53 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		B391F2C627C157E800730B53 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B391F2C727C157E900730B53 /* Provenance_Clip.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Provenance_Clip.entitlements; sourceTree = "<group>"; };
+		B39313832870FCFC00372EBB /* PVDesmume2015.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDesmume2015.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B394C98920609E180014A65D /* UIColor+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Hex.swift"; sourceTree = "<group>"; };
 		B3976926285A020800558958 /* PVDOSControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVDOSControllerViewController.swift; sourceTree = "<group>"; };
 		B397692C285A089200558958 /* PVDosBox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDosBox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1715,6 +1716,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B39313832870FCFC00372EBB /* PVDesmume2015.framework */,
 				B37F4AF4286E94C60043F1C9 /* PVDesmume2015.framework */,
 				B397692C285A089200558958 /* PVDosBox.framework */,
 				B344605A27DCB73E0035B08E /* libswift_Concurrency.tbd */,

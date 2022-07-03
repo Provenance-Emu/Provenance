@@ -365,7 +365,7 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (id)init {
 	if ((self = [super init])) {
-	videoBufferA = (uint32_t *)malloc(720 * 576 * sizeof(uint32_t));
+        videoBufferA = (uint32_t *)malloc(720 * 576 * sizeof(uint32_t));
         videoBufferB = (uint32_t *)malloc(720 * 576 * sizeof(uint32_t));
 	}
 	

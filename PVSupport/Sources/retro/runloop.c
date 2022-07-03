@@ -739,19 +739,19 @@ static bool runloop_check_state(event_cmd_state_t *cmd,
    cheat_manager_state_checks(
          runloop_cmd_triggered(cmd, RARCH_CHEAT_INDEX_PLUS),
          runloop_cmd_triggered(cmd, RARCH_CHEAT_INDEX_MINUS),
+                              
+                              static bool runloop_is_frame_count_end(void)
+                              {
+                                 uint64_t *frame_count =
+                                    video_driver_get_frame_count_ptr();
+                                 return runloop_max_frames && (*frame_count >= runloop_max_frames);
+                              }
+
+                              bool runloop_ctl
          runloop_cmd_triggered(cmd, RARCH_CHEAT_TOGGLE));
 
    return true;
-}
-
-static bool runloop_is_frame_count_end(void)
-{
-   uint64_t *frame_count =
-      video_driver_get_frame_count_ptr();
-   return runloop_max_frames && (*frame_count >= runloop_max_frames);
-}
-
-bool runloop_ctl(enum runloop_ctl_state state, void *data)
+}(enum runloop_ctl_state state, void *data)
 {
 
    switch (state)

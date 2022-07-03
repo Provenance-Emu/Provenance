@@ -465,7 +465,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
     double frameSampleCount = [self audioSampleRateForBuffer:buffer] / [self frameInterval];
     NSUInteger channelCount = [self channelCountForBuffer:buffer];
     NSUInteger bytesPerSample = [self audioBitDepth] / 8;
-    NSAssert(frameSampleCount, @"frameSampleCount is 0");
+//    NSAssert(frameSampleCount, @"frameSampleCount is 0");
     return channelCount*bytesPerSample * frameSampleCount;
 }
 
