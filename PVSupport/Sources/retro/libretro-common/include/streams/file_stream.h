@@ -38,6 +38,16 @@
 #include <stdarg.h>
 #include <vfs/vfs_implementation.h>
 
+enum
+	{
+	   RFILE_MODE_READ = 0,
+	   RFILE_MODE_READ_TEXT,
+	   RFILE_MODE_WRITE,
+	   /* There is no garantee these requests will be attended. */
+	   RFILE_HINT_UNBUFFERED = 1<<8,
+	   RFILE_HINT_MMAP       = 1<<9  /* requires RFILE_MODE_READ */
+};
+
 #define FILESTREAM_REQUIRED_VFS_VERSION 2
 
 RETRO_BEGIN_DECLS

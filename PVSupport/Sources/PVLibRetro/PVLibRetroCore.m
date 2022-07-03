@@ -82,7 +82,7 @@ static retro_environment_t environ_cb;
 static dylib_t lib_handle;
 
 // MARK: - Runloop
-static rarch_dir_list_t runloop_shader_dir;
+//static rarch_dir_list_t runloop_shader_dir;
 static char runloop_fullpath[PATH_MAX_LENGTH];
 static char runloop_default_shader_preset[PATH_MAX_LENGTH];
 static rarch_system_info_t runloop_system;
@@ -109,6 +109,56 @@ static bool runloop_game_options_active          = false;
 static slock_t *_runloop_msg_queue_lock           = NULL;
 #endif
 //static msg_queue_t *runloop_msg_queue            = NULL;
+
+// MARK: - Config
+
+static char path_libretro[PATH_MAX_LENGTH];
+
+char *config_get_active_core_path_ptr(void)
+{
+   return path_libretro;
+}
+
+//const char *config_get_active_core_path(void)
+//{
+//   return path_libretro;
+//}
+
+bool config_active_core_path_is_empty(void)
+{
+   return !path_libretro[0];
+}
+
+size_t config_get_active_core_path_size(void)
+{
+   return sizeof(path_libretro);
+}
+
+void config_set_active_core_path(const char *path)
+{
+   strlcpy(path_libretro, path, sizeof(path_libretro));
+}
+
+void config_clear_active_core_path(void)
+{
+   *path_libretro = '\0';
+}
+
+const char *config_get_active_path(void)
+{
+//   global_t   *global          = global_get_ptr();
+//
+//   if (!string_is_empty(global->path.config))
+//	  return global->path.config;
+
+
+   return NULL;
+}
+
+void config_free_state(void)
+{
+}
+
 
 // MARK: - Retro typedefs
 typedef void *dylib_t;
@@ -682,12 +732,12 @@ bool runloop_ctl(enum runloop_ctl_state state, void *data) {
        case RUNLOOP_CTL_SYSTEM_INFO_INIT:
           core_get_system_info(&runloop_system.info);
 
-          if (!runloop_system.info.library_name)
-             runloop_system.info.library_name = msg_hash_to_str(MSG_UNKNOWN);
+//          if (!runloop_system.info.library_name)
+//             runloop_system.info.library_name = msg_hash_to_str(MSG_UNKNOWN);
           if (!runloop_system.info.library_version)
              runloop_system.info.library_version = "v0";
 
-          video_driver_set_title_buf();
+//          video_driver_set_title_buf();
 
           strlcpy(runloop_system.valid_extensions,
                 runloop_system.info.valid_extensions ?
@@ -899,25 +949,25 @@ bool runloop_ctl(enum runloop_ctl_state state, void *data) {
        case RUNLOOP_CTL_GLOBAL_FREE:
           {
              global_t *global = NULL;
-             command_event(CMD_EVENT_TEMPORARY_CONTENT_DEINIT, NULL);
-             command_event(CMD_EVENT_SUBSYSTEM_FULLPATHS_DEINIT, NULL);
-             command_event(CMD_EVENT_RECORD_DEINIT, NULL);
-             command_event(CMD_EVENT_LOG_FILE_DEINIT, NULL);
+//             command_event(CMD_EVENT_TEMPORARY_CONTENT_DEINIT, NULL);
+//             command_event(CMD_EVENT_SUBSYSTEM_FULLPATHS_DEINIT, NULL);
+//             command_event(CMD_EVENT_RECORD_DEINIT, NULL);
+//             command_event(CMD_EVENT_LOG_FILE_DEINIT, NULL);
 
-             rarch_ctl(RARCH_CTL_UNSET_BLOCK_CONFIG_READ, NULL);
+//             rarch_ctl(RARCH_CTL_UNSET_BLOCK_CONFIG_READ, NULL);
              runloop_ctl(RUNLOOP_CTL_CLEAR_CONTENT_PATH,  NULL);
              runloop_overrides_active   = false;
 
              core_unset_input_descriptors();
 
-             global = global_get_ptr();
+//             global = global_get_ptr();
              memset(global, 0, sizeof(struct global));
-             retroarch_override_setting_free_state();
-             config_free_state();
+//             retroarch_override_setting_free_state();
+//             config_free_state();
           }
           break;
        case RUNLOOP_CTL_CLEAR_STATE:
-          driver_ctl(RARCH_DRIVER_CTL_DEINIT,  NULL);
+//          driver_ctl(RARCH_DRIVER_CTL_DEINIT,  NULL);
           runloop_ctl(RUNLOOP_CTL_STATE_FREE,  NULL);
           runloop_ctl(RUNLOOP_CTL_GLOBAL_FREE, NULL);
           break;
@@ -1079,14 +1129,14 @@ bool runloop_ctl(enum runloop_ctl_state state, void *data) {
 //          break;
        case RUNLOOP_CTL_CORE_OPTIONS_INIT:
           {
-             char *game_options_path           = NULL;
-             bool ret                          = false;
-             char buf[PATH_MAX_LENGTH]         = {0};
-             global_t *global                  = global_get_ptr();
-             settings_t *settings              = config_get_ptr();
-             const char *options_path          = settings->path.core_options;
-             const struct retro_variable *vars =
-                (const struct retro_variable*)data;
+//             char *game_options_path           = NULL;
+//             bool ret                          = false;
+//             char buf[PATH_MAX_LENGTH]         = {0};
+//             global_t *global                  = global_get_ptr();
+//             settings_t *settings              = config_get_ptr();
+//             const char *options_path          = settings->path.core_options;
+//             const struct retro_variable *vars =
+//                (const struct retro_variable*)data;
 
 //             if (string_is_empty(options_path)
 //                   && !string_is_empty(global->path.config))
@@ -1116,34 +1166,34 @@ bool runloop_ctl(enum runloop_ctl_state state, void *data) {
 
           }
           break;
-       case RUNLOOP_CTL_CORE_OPTIONS_FREE:
-          if (runloop_core_options)
-             core_option_manager_free(runloop_core_options);
-          runloop_core_options          = NULL;
-          break;
-       case RUNLOOP_CTL_CORE_OPTIONS_DEINIT:
-          {
-             global_t *global                  = global_get_ptr();
-             if (!runloop_core_options)
-                return false;
-
-             /* check if game options file was just created and flush
-                to that file instead */
-             if(global && !string_is_empty(global->path.core_options_path))
-             {
-                core_option_manager_flush_game_specific(runloop_core_options,
-                      global->path.core_options_path);
-                global->path.core_options_path[0] = '\0';
-             }
-             else
-                core_option_manager_flush(runloop_core_options);
-
-             if (runloop_ctl(RUNLOOP_CTL_IS_GAME_OPTIONS_ACTIVE, NULL))
-                runloop_ctl(RUNLOOP_CTL_UNSET_GAME_OPTIONS_ACTIVE, NULL);
-
-             runloop_ctl(RUNLOOP_CTL_CORE_OPTIONS_FREE, NULL);
-          }
-          break;
+//       case RUNLOOP_CTL_CORE_OPTIONS_FREE:
+//          if (runloop_core_options)
+//             core_option_manager_free(runloop_core_options);
+//          runloop_core_options          = NULL;
+//          break;
+//       case RUNLOOP_CTL_CORE_OPTIONS_DEINIT:
+//          {
+//             global_t *global                  = global_get_ptr();
+//             if (!runloop_core_options)
+//                return false;
+//
+//             /* check if game options file was just created and flush
+//                to that file instead */
+//             if(global && !string_is_empty(global->path.core_options_path))
+//             {
+//                core_option_manager_flush_game_specific(runloop_core_options,
+//                      global->path.core_options_path);
+//                global->path.core_options_path[0] = '\0';
+//             }
+//             else
+//                core_option_manager_flush(runloop_core_options);
+//
+//             if (runloop_ctl(RUNLOOP_CTL_IS_GAME_OPTIONS_ACTIVE, NULL))
+//                runloop_ctl(RUNLOOP_CTL_UNSET_GAME_OPTIONS_ACTIVE, NULL);
+//
+//             runloop_ctl(RUNLOOP_CTL_CORE_OPTIONS_FREE, NULL);
+//          }
+//          break;
        case RUNLOOP_CTL_KEY_EVENT_GET:
           {
              retro_keyboard_event_t **key_event =

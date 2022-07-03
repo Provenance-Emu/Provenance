@@ -214,6 +214,7 @@
 		B3B1A740279021C4004D1EF2 /* AHAP in Resources */ = {isa = PBXBuildFile; fileRef = B3B1A73F279021C4004D1EF2 /* AHAP */; };
 		B3B1A741279021C4004D1EF2 /* AHAP in Resources */ = {isa = PBXBuildFile; fileRef = B3B1A73F279021C4004D1EF2 /* AHAP */; };
 		B3B1A742279021C4004D1EF2 /* AHAP in Resources */ = {isa = PBXBuildFile; fileRef = B3B1A73F279021C4004D1EF2 /* AHAP */; };
+		B3B3D17428712EE1008A0E2F /* msg_hash.c in Sources */ = {isa = PBXBuildFile; fileRef = B322515C286C6F29001FDF42 /* msg_hash.c */; };
 		B3B492CB26B3A96B000B426B /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = B3B492CA26B3A96B000B426B /* Reachability */; };
 		B3C96EA71D62C3BE003F1E93 /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4E718C1A6C699F005CA80F /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EA81D62C3C3003F1E93 /* OEGameAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69117F748F80031B1C9 /* OEGameAudio.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -3881,6 +3882,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B342325B286EB4060033EFA5 /* dylib.c in Sources */,
+				B3B3D17428712EE1008A0E2F /* msg_hash.c in Sources */,
 				B3A41BCF286E5E660054E9A5 /* retro.m in Sources */,
 				B3423260286EB5CA0033EFA5 /* dynamic_dummy.c in Sources */,
 			);
