@@ -85,3 +85,6 @@
 [submodule "Cores/Mini_vMac/libretro-minivmac"]
 	path = Cores/Mini_vMac/libretro-minivmac
 	url = https://github.com/Provenance-Emu/libretro-minivmac.git
+[submodule "Cores/BeetlePSX/beetle-psx-libretro"]
+	path = Cores/BeetlePSX/beetle-psx-libretro
+	url = https://github.com/Provenance-Emu/beetle-psx-libretro.git
