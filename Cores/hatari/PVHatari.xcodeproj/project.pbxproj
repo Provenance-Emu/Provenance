@@ -155,6 +155,672 @@
 		B3C7621C20783243009950E4 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		B3C7621E2078325C009950E4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B3C7622120783297009950E4 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3EBA89B287296FB00EAEB37 /* VisualStudioFix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VisualStudioFix.h; sourceTree = "<group>"; };
+		B3EBA89C287296FB00EAEB37 /* VisualStudioFix.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = VisualStudioFix.c; sourceTree = "<group>"; };
+		B3EBA89E287296FB00EAEB37 /* zip2st.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = zip2st.sh; sourceTree = "<group>"; };
+		B3EBA89F287296FB00EAEB37 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		B3EBA8A0287296FB00EAEB37 /* hatari-local-rs232.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "hatari-local-rs232.sh"; sourceTree = "<group>"; };
+		B3EBA8A1287296FB00EAEB37 /* atari-hd-image.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = "atari-hd-image.1"; sourceTree = "<group>"; };
+		B3EBA8A3287296FB00EAEB37 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		B3EBA8A4287296FB00EAEB37 /* floppy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = floppy.h; sourceTree = "<group>"; };
+		B3EBA8A5287296FB00EAEB37 /* hmsa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = hmsa.h; sourceTree = "<group>"; };
+		B3EBA8A6287296FB00EAEB37 /* hmsa.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = hmsa.1; sourceTree = "<group>"; };
+		B3EBA8A7287296FB00EAEB37 /* floppy.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = floppy.c; sourceTree = "<group>"; };
+		B3EBA8A8287296FB00EAEB37 /* hmsa.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = hmsa.c; sourceTree = "<group>"; };
+		B3EBA8A9287296FB00EAEB37 /* readme-hmsa.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "readme-hmsa.txt"; sourceTree = "<group>"; };
+		B3EBA8AB287296FB00EAEB37 /* ahcc-symbols-convert.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "ahcc-symbols-convert.sh"; sourceTree = "<group>"; };
+		B3EBA8AC287296FB00EAEB37 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		B3EBA8AD287296FB00EAEB37 /* gst2ascii.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = gst2ascii.1; sourceTree = "<group>"; };
+		B3EBA8AE287296FB00EAEB37 /* hatari_profile.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = hatari_profile.1; sourceTree = "<group>"; };
+		B3EBA8AF287296FB00EAEB37 /* nm-symbols-cleanup.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "nm-symbols-cleanup.sh"; sourceTree = "<group>"; };
+		B3EBA8B0287296FB00EAEB37 /* dsp-lod-symbols-convert.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "dsp-lod-symbols-convert.sh"; sourceTree = "<group>"; };
+		B3EBA8B1287296FB00EAEB37 /* hatari_spinloop.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = hatari_spinloop.py; sourceTree = "<group>"; };
+		B3EBA8B2287296FB00EAEB37 /* gst2ascii.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gst2ascii.c; sourceTree = "<group>"; };
+		B3EBA8B3287296FB00EAEB37 /* devpac3-symbols-convert.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "devpac3-symbols-convert.sh"; sourceTree = "<group>"; };
+		B3EBA8B4287296FB00EAEB37 /* hatari_profile.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = hatari_profile.py; sourceTree = "<group>"; };
+		B3EBA8B5287296FB00EAEB37 /* hatari-tos-register.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "hatari-tos-register.sh"; sourceTree = "<group>"; };
+		B3EBA8B6287296FB00EAEB37 /* hatari-local-midi-ring.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "hatari-local-midi-ring.sh"; sourceTree = "<group>"; };
+		B3EBA8B8287296FB00EAEB37 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		B3EBA8B9287296FB00EAEB37 /* hconsole.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = hconsole.1; sourceTree = "<group>"; };
+		B3EBA8BA287296FB00EAEB37 /* hconsole.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = hconsole.py; sourceTree = "<group>"; };
+		B3EBA8BB287296FB00EAEB37 /* release-notes.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "release-notes.txt"; sourceTree = "<group>"; };
+		B3EBA8BC287296FB00EAEB37 /* example.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = example.py; sourceTree = "<group>"; };
+		B3EBA8BD287296FB00EAEB37 /* example-debugger */ = {isa = PBXFileReference; lastKnownFileType = text; path = "example-debugger"; sourceTree = "<group>"; };
+		B3EBA8BE287296FB00EAEB37 /* example-commands */ = {isa = PBXFileReference; lastKnownFileType = text; path = "example-commands"; sourceTree = "<group>"; };
+		B3EBA8BF287296FB00EAEB37 /* zip2st.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = zip2st.1; sourceTree = "<group>"; };
+		B3EBA8C0287296FB00EAEB37 /* atari-hd-image.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "atari-hd-image.sh"; sourceTree = "<group>"; };
+		B3EBA8C1287296FB00EAEB37 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		B3EBA8C3287296FB00EAEB37 /* FindCapsImage.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = FindCapsImage.cmake; sourceTree = "<group>"; };
+		B3EBA8C4287296FB00EAEB37 /* DistClean.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = DistClean.cmake; sourceTree = "<group>"; };
+		B3EBA8C5287296FB00EAEB37 /* FindSDL2.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = FindSDL2.cmake; sourceTree = "<group>"; };
+		B3EBA8C6287296FB00EAEB37 /* Toolchain-mingw32-win64_32.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Toolchain-mingw32-win64_32.cmake"; sourceTree = "<group>"; };
+		B3EBA8C7287296FB00EAEB37 /* config-cmake.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "config-cmake.h"; sourceTree = "<group>"; };
+		B3EBA8C8287296FB00EAEB37 /* Uninstall.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = Uninstall.cmake; sourceTree = "<group>"; };
+		B3EBA8C9287296FB00EAEB37 /* FindPortAudio.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = FindPortAudio.cmake; sourceTree = "<group>"; };
+		B3EBA8CA287296FB00EAEB37 /* FindTermcap.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = FindTermcap.cmake; sourceTree = "<group>"; };
+		B3EBA8CB287296FB00EAEB37 /* FindMath.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = FindMath.cmake; sourceTree = "<group>"; };
+		B3EBA8CC287296FB00EAEB37 /* FindReadline.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = FindReadline.cmake; sourceTree = "<group>"; };
+		B3EBA8CD287296FB00EAEB37 /* Toolchain-mingw32-win64_64.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Toolchain-mingw32-win64_64.cmake"; sourceTree = "<group>"; };
+		B3EBA8CE287296FB00EAEB37 /* configure */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = configure; sourceTree = "<group>"; };
+		B3EBA8CF287296FB00EAEB37 /* .hgignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .hgignore; sourceTree = "<group>"; };
+		B3EBA8D2287296FB00EAEB37 /* buserr_w.s */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = buserr_w.s; sourceTree = "<group>"; };
+		B3EBA8D3287296FB00EAEB37 /* buserr_b.prg */ = {isa = PBXFileReference; lastKnownFileType = file; path = buserr_b.prg; sourceTree = "<group>"; };
+		B3EBA8D4287296FB00EAEB37 /* buserr_w.prg */ = {isa = PBXFileReference; lastKnownFileType = file; path = buserr_w.prg; sourceTree = "<group>"; };
+		B3EBA8D5287296FB00EAEB37 /* buserr_b.s */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = buserr_b.s; sourceTree = "<group>"; };
+		B3EBA8D7287296FB00EAEB37 /* fal_n_b.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = fal_n_b.txt; sourceTree = "<group>"; };
+		B3EBA8D8287296FB00EAEB37 /* st_b.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = st_b.txt; sourceTree = "<group>"; };
+		B3EBA8D9287296FB00EAEB37 /* st_w.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = st_w.txt; sourceTree = "<group>"; };
+		B3EBA8DA287296FB00EAEB37 /* fal_n_w.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = fal_n_w.txt; sourceTree = "<group>"; };
+		B3EBA8DB287296FB00EAEB37 /* ste_b.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = ste_b.txt; sourceTree = "<group>"; };
+		B3EBA8DC287296FB00EAEB37 /* ste_w.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = ste_w.txt; sourceTree = "<group>"; };
+		B3EBA8DD287296FB00EAEB37 /* fal_c_b.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = fal_c_b.txt; sourceTree = "<group>"; };
+		B3EBA8DE287296FB00EAEB37 /* fal_c_w.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = fal_c_w.txt; sourceTree = "<group>"; };
+		B3EBA8DF287296FB00EAEB37 /* tt_b.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = tt_b.txt; sourceTree = "<group>"; };
+		B3EBA8E0287296FB00EAEB37 /* tt_w.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = tt_w.txt; sourceTree = "<group>"; };
+		B3EBA8E1287296FB00EAEB37 /* readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
+		B3EBA8E3287296FB00EAEB37 /* nf_ahcc.prj */ = {isa = PBXFileReference; lastKnownFileType = text; path = nf_ahcc.prj; sourceTree = "<group>"; };
+		B3EBA8E4287296FB00EAEB37 /* makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
+		B3EBA8E5287296FB00EAEB37 /* Makefile.vbc */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.vbc; sourceTree = "<group>"; };
+		B3EBA8E6287296FB00EAEB37 /* natfeats.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = natfeats.h; sourceTree = "<group>"; };
+		B3EBA8E7287296FB00EAEB37 /* nf_vbcc.tos */ = {isa = PBXFileReference; lastKnownFileType = file; path = nf_vbcc.tos; sourceTree = "<group>"; };
+		B3EBA8E8287296FB00EAEB37 /* nf_asma.s */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = nf_asma.s; sourceTree = "<group>"; };
+		B3EBA8E9287296FB00EAEB37 /* nf_asmv.s */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = nf_asmv.s; sourceTree = "<group>"; };
+		B3EBA8EA287296FB00EAEB37 /* readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
+		B3EBA8EB287296FB00EAEB37 /* Makefile.gcc */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.gcc; sourceTree = "<group>"; };
+		B3EBA8EC287296FB00EAEB37 /* nf_asmg.s */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = nf_asmg.s; sourceTree = "<group>"; };
+		B3EBA8ED287296FB00EAEB37 /* natfeats.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = natfeats.c; sourceTree = "<group>"; };
+		B3EBA8EF287296FB00EAEB37 /* keytest.prg */ = {isa = PBXFileReference; lastKnownFileType = file; path = keytest.prg; sourceTree = "<group>"; };
+		B3EBA8F0287296FB00EAEB37 /* keytest.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = keytest.c; sourceTree = "<group>"; };
+		B3EBA8F1287296FB00EAEB37 /* keytest.rso */ = {isa = PBXFileReference; lastKnownFileType = file; path = keytest.rso; sourceTree = "<group>"; };
+		B3EBA8F2287296FB00EAEB37 /* listkeys.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = listkeys.c; sourceTree = "<group>"; };
+		B3EBA8F3287296FB00EAEB37 /* checkkeys.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = checkkeys.c; sourceTree = "<group>"; };
+		B3EBA8F4287296FB00EAEB37 /* keytest.mak */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = keytest.mak; sourceTree = "<group>"; };
+		B3EBA8F5287296FB00EAEB37 /* keytest.prj */ = {isa = PBXFileReference; lastKnownFileType = text; path = keytest.prj; sourceTree = "<group>"; };
+		B3EBA8F6287296FB00EAEB37 /* readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
+		B3EBA8F7287296FB00EAEB37 /* keytest.rsc */ = {isa = PBXFileReference; lastKnownFileType = file; path = keytest.rsc; sourceTree = "<group>"; };
+		B3EBA8F9287296FB00EAEB37 /* test-symbols.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "test-symbols.c"; sourceTree = "<group>"; };
+		B3EBA8FA287296FB00EAEB37 /* test-dummies.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "test-dummies.c"; sourceTree = "<group>"; };
+		B3EBA8FB287296FB00EAEB37 /* makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
+		B3EBA8FC287296FB00EAEB37 /* test-evaluate.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "test-evaluate.c"; sourceTree = "<group>"; };
+		B3EBA8FD287296FB00EAEB37 /* test-breakcond.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "test-breakcond.c"; sourceTree = "<group>"; };
+		B3EBA8FE287296FB00EAEB37 /* test-scripting.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "test-scripting.sh"; sourceTree = "<group>"; };
+		B3EBA900287296FB00EAEB37 /* etos512.sym */ = {isa = PBXFileReference; lastKnownFileType = text; path = etos512.sym; sourceTree = "<group>"; };
+		B3EBA901287296FB00EAEB37 /* test.ini */ = {isa = PBXFileReference; lastKnownFileType = text; path = test.ini; sourceTree = "<group>"; };
+		B3EBA902287296FB00EAEB37 /* console.ini */ = {isa = PBXFileReference; lastKnownFileType = text; path = console.ini; sourceTree = "<group>"; };
+		B3EBA903287296FB00EAEB37 /* os-header.sym */ = {isa = PBXFileReference; lastKnownFileType = text; path = "os-header.sym"; sourceTree = "<group>"; };
+		B3EBA904287296FB00EAEB37 /* debugger.ini */ = {isa = PBXFileReference; lastKnownFileType = text; path = debugger.ini; sourceTree = "<group>"; };
+		B3EBA905287296FB00EAEB37 /* dsp-test.sym */ = {isa = PBXFileReference; lastKnownFileType = text; path = "dsp-test.sym"; sourceTree = "<group>"; };
+		B3EBA906287296FB00EAEB37 /* readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
+		B3EBA908287296FB00EAEB37 /* bootauto.st.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = bootauto.st.gz; sourceTree = "<group>"; };
+		B3EBA909287296FB00EAEB37 /* makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
+		B3EBA90A287296FB00EAEB37 /* .hgignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .hgignore; sourceTree = "<group>"; };
+		B3EBA90B287296FB00EAEB37 /* screenshot-report.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "screenshot-report.sh"; sourceTree = "<group>"; };
+		B3EBA90D287296FB00EAEB37 /* common.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = common.c; sourceTree = "<group>"; };
+		B3EBA90E287296FB00EAEB37 /* minimal.prj */ = {isa = PBXFileReference; lastKnownFileType = text; path = minimal.prj; sourceTree = "<group>"; };
+		B3EBA90F287296FB00EAEB37 /* TEST */ = {isa = PBXFileReference; lastKnownFileType = text; path = TEST; sourceTree = "<group>"; };
+		B3EBA910287296FB00EAEB37 /* ahcc-gemdos */ = {isa = PBXFileReference; lastKnownFileType = text; path = "ahcc-gemdos"; sourceTree = "<group>"; };
+		B3EBA911287296FB00EAEB37 /* minimal.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = minimal.c; sourceTree = "<group>"; };
+		B3EBA912287296FB00EAEB37 /* .hgignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .hgignore; sourceTree = "<group>"; };
+		B3EBA913287296FB00EAEB37 /* GEMDOS.PRG */ = {isa = PBXFileReference; lastKnownFileType = file; path = GEMDOS.PRG; sourceTree = "<group>"; };
+		B3EBA914287296FB00EAEB37 /* ahcc-minimal */ = {isa = PBXFileReference; lastKnownFileType = text; path = "ahcc-minimal"; sourceTree = "<group>"; };
+		B3EBA915287296FB00EAEB37 /* gemdos.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gemdos.c; sourceTree = "<group>"; };
+		B3EBA916287296FB00EAEB37 /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
+		B3EBA917287296FB00EAEB37 /* MINIMAL.PRG */ = {isa = PBXFileReference; lastKnownFileType = file; path = MINIMAL.PRG; sourceTree = "<group>"; };
+		B3EBA918287296FB00EAEB37 /* TEXT */ = {isa = PBXFileReference; lastKnownFileType = text; path = TEXT; sourceTree = "<group>"; };
+		B3EBA919287296FB00EAEB37 /* gemdos.prj */ = {isa = PBXFileReference; lastKnownFileType = text; path = gemdos.prj; sourceTree = "<group>"; };
+		B3EBA91A287296FB00EAEB37 /* readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
+		B3EBA91B287296FB00EAEB37 /* bootdesk.st.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = bootdesk.st.gz; sourceTree = "<group>"; };
+		B3EBA91C287296FB00EAEB37 /* tos_tester.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = tos_tester.py; sourceTree = "<group>"; };
+		B3EBA91E287296FB00EAEB37 /* EMUDESK.INF */ = {isa = PBXFileReference; lastKnownFileType = text; path = EMUDESK.INF; sourceTree = "<group>"; };
+		B3EBA91F287296FB00EAEB37 /* DESKTOP.INF */ = {isa = PBXFileReference; lastKnownFileType = text; path = DESKTOP.INF; sourceTree = "<group>"; };
+		B3EBA920287296FB00EAEB37 /* blank-a.st.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = "blank-a.st.gz"; sourceTree = "<group>"; };
+		B3EBA922287296FB00EAEB37 /* win-ce.cfg */ = {isa = PBXFileReference; lastKnownFileType = text; path = "win-ce.cfg"; sourceTree = "<group>"; };
+		B3EBA923287296FB00EAEB37 /* wiz.cfg */ = {isa = PBXFileReference; lastKnownFileType = text; path = wiz.cfg; sourceTree = "<group>"; };
+		B3EBA925287296FB00EAEB37 /* hatari-wrapper.gpe */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "hatari-wrapper.gpe"; sourceTree = "<group>"; };
+		B3EBA926287296FB00EAEB37 /* crossdefs.wiz */ = {isa = PBXFileReference; lastKnownFileType = text; path = crossdefs.wiz; sourceTree = "<group>"; };
+		B3EBA927287296FB00EAEB37 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		B3EBA928287296FB00EAEB37 /* n810.cfg */ = {isa = PBXFileReference; lastKnownFileType = text; path = n810.cfg; sourceTree = "<group>"; };
+		B3EBA929287296FB00EAEB37 /* Makefile.common */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.common; sourceTree = "<group>"; };
+		B3EBA92A287296FB00EAEB37 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		B3EBA92B287296FB00EAEB37 /* Makefile.libretro */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.libretro; sourceTree = "<group>"; };
+		B3EBA92C287296FB00EAEB37 /* gpl.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = gpl.txt; sourceTree = "<group>"; };
+		B3EBA92E287296FB00EAEB37 /* libretro.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = libretro.c; sourceTree = "<group>"; };
+		B3EBA92F287296FB00EAEB37 /* retro_strings.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = retro_strings.c; sourceTree = "<group>"; };
+		B3EBA930287296FB00EAEB37 /* retro_disk_control.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = retro_disk_control.c; sourceTree = "<group>"; };
+		B3EBA932287296FB00EAEB37 /* cpudefs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cpudefs.c; sourceTree = "<group>"; };
+		B3EBA933287296FB00EAEB37 /* cputbl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cputbl.h; sourceTree = "<group>"; };
+		B3EBA934287296FB00EAEB37 /* cpuemu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cpuemu.c; sourceTree = "<group>"; };
+		B3EBA935287296FB00EAEB37 /* cpustbl.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cpustbl.c; sourceTree = "<group>"; };
+		B3EBA936287296FB00EAEB37 /* RETROHACK.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = RETROHACK.txt; sourceTree = "<group>"; };
+		B3EBA938287296FB00EAEB37 /* retroscreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = retroscreen.h; sourceTree = "<group>"; };
+		B3EBA939287296FB00EAEB37 /* SDL_endian.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDL_endian.h; sourceTree = "<group>"; };
+		B3EBA93A287296FB00EAEB37 /* SDL_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDL_types.h; sourceTree = "<group>"; };
+		B3EBA93B287296FB00EAEB37 /* SDL_keyboard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDL_keyboard.h; sourceTree = "<group>"; };
+		B3EBA93C287296FB00EAEB37 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
+		B3EBA93D287296FB00EAEB37 /* SDL_keysym.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDL_keysym.h; sourceTree = "<group>"; };
+		B3EBA93E287296FB00EAEB37 /* SDL_video.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDL_video.h; sourceTree = "<group>"; };
+		B3EBA93F287296FB00EAEB37 /* SDL_thread.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDL_thread.h; sourceTree = "<group>"; };
+		B3EBA940287296FB00EAEB37 /* SDL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDL.h; sourceTree = "<group>"; };
+		B3EBA941287296FB00EAEB37 /* gui-retro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "gui-retro.h"; sourceTree = "<group>"; };
+		B3EBA942287296FB00EAEB37 /* retro_files.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = retro_files.c; sourceTree = "<group>"; };
+		B3EBA943287296FB00EAEB37 /* hatari-mapper.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "hatari-mapper.c"; sourceTree = "<group>"; };
+		B3EBA946287296FB00EAEB37 /* unzip.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = unzip.c; sourceTree = "<group>"; };
+		B3EBA947287296FB00EAEB37 /* zip.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = zip.c; sourceTree = "<group>"; };
+		B3EBA948287296FB00EAEB37 /* iowin32.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = iowin32.h; sourceTree = "<group>"; };
+		B3EBA949287296FB00EAEB37 /* ioapi.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ioapi.c; sourceTree = "<group>"; };
+		B3EBA94A287296FB00EAEB37 /* mztools.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mztools.c; sourceTree = "<group>"; };
+		B3EBA94B287296FB00EAEB37 /* crypt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = crypt.h; sourceTree = "<group>"; };
+		B3EBA94C287296FB00EAEB37 /* zip.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = zip.h; sourceTree = "<group>"; };
+		B3EBA94D287296FB00EAEB37 /* zlib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = zlib.h; sourceTree = "<group>"; };
+		B3EBA94E287296FB00EAEB37 /* unzip.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = unzip.h; sourceTree = "<group>"; };
+		B3EBA94F287296FB00EAEB37 /* mztools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mztools.h; sourceTree = "<group>"; };
+		B3EBA950287296FB00EAEB37 /* ioapi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ioapi.h; sourceTree = "<group>"; };
+		B3EBA951287296FB00EAEB37 /* zconf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = zconf.h; sourceTree = "<group>"; };
+		B3EBA953287296FB00EAEB37 /* zutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = zutil.h; sourceTree = "<group>"; };
+		B3EBA954287296FB00EAEB37 /* inftrees.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = inftrees.h; sourceTree = "<group>"; };
+		B3EBA955287296FB00EAEB37 /* inflate.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = inflate.c; sourceTree = "<group>"; };
+		B3EBA956287296FB00EAEB37 /* compress.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = compress.c; sourceTree = "<group>"; };
+		B3EBA957287296FB00EAEB37 /* deflate.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = deflate.c; sourceTree = "<group>"; };
+		B3EBA958287296FB00EAEB37 /* inffixed.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = inffixed.h; sourceTree = "<group>"; };
+		B3EBA959287296FB00EAEB37 /* gzread.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gzread.c; sourceTree = "<group>"; };
+		B3EBA95A287296FB00EAEB37 /* trees.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = trees.h; sourceTree = "<group>"; };
+		B3EBA95B287296FB00EAEB37 /* inffast.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = inffast.h; sourceTree = "<group>"; };
+		B3EBA95E287296FB00EAEB37 /* unzip.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = unzip.c; sourceTree = "<group>"; };
+		B3EBA95F287296FB00EAEB37 /* zip.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = zip.c; sourceTree = "<group>"; };
+		B3EBA960287296FB00EAEB37 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		B3EBA961287296FB00EAEB37 /* ioapi.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ioapi.c; sourceTree = "<group>"; };
+		B3EBA962287296FB00EAEB37 /* mztools.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mztools.c; sourceTree = "<group>"; };
+		B3EBA963287296FB00EAEB37 /* crypt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = crypt.h; sourceTree = "<group>"; };
+		B3EBA964287296FB00EAEB37 /* zip.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = zip.h; sourceTree = "<group>"; };
+		B3EBA965287296FB00EAEB37 /* zlib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = zlib.h; sourceTree = "<group>"; };
+		B3EBA966287296FB00EAEB37 /* make_vms.com */ = {isa = PBXFileReference; lastKnownFileType = text; path = make_vms.com; sourceTree = "<group>"; };
+		B3EBA967287296FB00EAEB37 /* unzip.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = unzip.h; sourceTree = "<group>"; };
+		B3EBA968287296FB00EAEB37 /* mztools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mztools.h; sourceTree = "<group>"; };
+		B3EBA969287296FB00EAEB37 /* ioapi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ioapi.h; sourceTree = "<group>"; };
+		B3EBA96A287296FB00EAEB37 /* zconf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = zconf.h; sourceTree = "<group>"; };
+		B3EBA96B287296FB00EAEB37 /* miniunz.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = miniunz.c; sourceTree = "<group>"; };
+		B3EBA96C287296FB00EAEB37 /* crc32.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = crc32.c; sourceTree = "<group>"; };
+		B3EBA96D287296FB00EAEB37 /* infback.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = infback.c; sourceTree = "<group>"; };
+		B3EBA96E287296FB00EAEB37 /* zutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = zutil.c; sourceTree = "<group>"; };
+		B3EBA96F287296FB00EAEB37 /* deflate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = deflate.h; sourceTree = "<group>"; };
+		B3EBA970287296FB00EAEB37 /* gzguts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gzguts.h; sourceTree = "<group>"; };
+		B3EBA971287296FB00EAEB37 /* zlib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = zlib.h; sourceTree = "<group>"; };
+		B3EBA972287296FB00EAEB37 /* gzlib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gzlib.c; sourceTree = "<group>"; };
+		B3EBA973287296FB00EAEB37 /* inflate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = inflate.h; sourceTree = "<group>"; };
+		B3EBA974287296FB00EAEB37 /* inftrees.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = inftrees.c; sourceTree = "<group>"; };
+		B3EBA975287296FB00EAEB37 /* uncompr.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = uncompr.c; sourceTree = "<group>"; };
+		B3EBA976287296FB00EAEB37 /* gzwrite.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gzwrite.c; sourceTree = "<group>"; };
+		B3EBA977287296FB00EAEB37 /* trees.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = trees.c; sourceTree = "<group>"; };
+		B3EBA978287296FB00EAEB37 /* gzclose.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gzclose.c; sourceTree = "<group>"; };
+		B3EBA979287296FB00EAEB37 /* crc32.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = crc32.h; sourceTree = "<group>"; };
+		B3EBA97A287296FB00EAEB37 /* inffast.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = inffast.c; sourceTree = "<group>"; };
+		B3EBA97B287296FB00EAEB37 /* adler32.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = adler32.c; sourceTree = "<group>"; };
+		B3EBA97C287296FB00EAEB37 /* zconf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = zconf.h; sourceTree = "<group>"; };
+		B3EBA97D287296FB00EAEB37 /* vkbd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vkbd.h; sourceTree = "<group>"; };
+		B3EBA97E287296FB00EAEB37 /* graph.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = graph.h; sourceTree = "<group>"; };
+		B3EBA97F287296FB00EAEB37 /* libretro-hatari.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "libretro-hatari.h"; sourceTree = "<group>"; };
+		B3EBA981287296FB00EAEB37 /* dlgFloppy.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgFloppy.c; sourceTree = "<group>"; };
+		B3EBA982287296FB00EAEB37 /* dlgDevice.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgDevice.c; sourceTree = "<group>"; };
+		B3EBA983287296FB00EAEB37 /* dlgJoystick.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgJoystick.c; sourceTree = "<group>"; };
+		B3EBA984287296FB00EAEB37 /* dlgHardDisk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgHardDisk.c; sourceTree = "<group>"; };
+		B3EBA985287296FB00EAEB37 /* font10x16.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = font10x16.bmp; sourceTree = "<group>"; };
+		B3EBA986287296FB00EAEB37 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		B3EBA987287296FB00EAEB37 /* dlgRom.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgRom.c; sourceTree = "<group>"; };
+		B3EBA988287296FB00EAEB37 /* dlgMain.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgMain.c; sourceTree = "<group>"; };
+		B3EBA989287296FB00EAEB37 /* dlgNewDisk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgNewDisk.c; sourceTree = "<group>"; };
+		B3EBA98A287296FB00EAEB37 /* dlgAbout.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgAbout.c; sourceTree = "<group>"; };
+		B3EBA98B287296FB00EAEB37 /* dlgSound.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgSound.c; sourceTree = "<group>"; };
+		B3EBA98C287296FB00EAEB37 /* sdlgui.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = sdlgui.c; sourceTree = "<group>"; };
+		B3EBA98D287296FB00EAEB37 /* dlgMemory.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgMemory.c; sourceTree = "<group>"; };
+		B3EBA98E287296FB00EAEB37 /* font5x8.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = font5x8.h; sourceTree = "<group>"; };
+		B3EBA98F287296FB00EAEB37 /* font5x8.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = font5x8.bmp; sourceTree = "<group>"; };
+		B3EBA990287296FB00EAEB37 /* dlgAlert.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgAlert.c; sourceTree = "<group>"; };
+		B3EBA991287296FB00EAEB37 /* dlgFileSelect.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgFileSelect.c; sourceTree = "<group>"; };
+		B3EBA992287296FC00EAEB37 /* font10x16.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = font10x16.h; sourceTree = "<group>"; };
+		B3EBA993287296FC00EAEB37 /* dlgKeyboard.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgKeyboard.c; sourceTree = "<group>"; };
+		B3EBA994287296FC00EAEB37 /* dlgScreen.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgScreen.c; sourceTree = "<group>"; };
+		B3EBA995287296FC00EAEB37 /* dlgSystem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgSystem.c; sourceTree = "<group>"; };
+		B3EBA996287296FC00EAEB37 /* retro_strings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = retro_strings.h; sourceTree = "<group>"; };
+		B3EBA997287296FC00EAEB37 /* retromain.inc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.pascal; path = retromain.inc; sourceTree = "<group>"; };
+		B3EBA999287296FC00EAEB37 /* dlgAlert.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgAlert.c; sourceTree = "<group>"; };
+		B3EBA99C287296FC00EAEB37 /* libco.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libco.h; sourceTree = "<group>"; };
+		B3EBA99F287296FC00EAEB37 /* zutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = zutil.h; sourceTree = "<group>"; };
+		B3EBA9A0287296FC00EAEB37 /* zconf.h.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = zconf.h.in; sourceTree = "<group>"; };
+		B3EBA9A1287296FC00EAEB37 /* zlib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = zlib.h; sourceTree = "<group>"; };
+		B3EBA9A2287296FC00EAEB37 /* zconf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = zconf.h; sourceTree = "<group>"; };
+		B3EBA9A3287296FC00EAEB37 /* retro_common_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = retro_common_api.h; sourceTree = "<group>"; };
+		B3EBA9A4287296FC00EAEB37 /* libretro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libretro.h; sourceTree = "<group>"; };
+		B3EBA9A6287296FC00EAEB37 /* sjlj.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = sjlj.c; sourceTree = "<group>"; };
+		B3EBA9A7287296FC00EAEB37 /* ppc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ppc.c; sourceTree = "<group>"; };
+		B3EBA9A8287296FC00EAEB37 /* ucontext.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ucontext.c; sourceTree = "<group>"; };
+		B3EBA9A9287296FC00EAEB37 /* fiber.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fiber.c; sourceTree = "<group>"; };
+		B3EBA9AA287296FC00EAEB37 /* aarch64.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = aarch64.c; sourceTree = "<group>"; };
+		B3EBA9AB287296FC00EAEB37 /* libco.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = libco.c; sourceTree = "<group>"; };
+		B3EBA9AC287296FC00EAEB37 /* scefiber.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = scefiber.c; sourceTree = "<group>"; };
+		B3EBA9AD287296FC00EAEB37 /* genode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = genode.cpp; sourceTree = "<group>"; };
+		B3EBA9AE287296FC00EAEB37 /* armeabi.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = armeabi.c; sourceTree = "<group>"; };
+		B3EBA9AF287296FC00EAEB37 /* amd64.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = amd64.c; sourceTree = "<group>"; };
+		B3EBA9B0287296FC00EAEB37 /* psp2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = psp2.c; sourceTree = "<group>"; };
+		B3EBA9B1287296FC00EAEB37 /* x86.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = x86.c; sourceTree = "<group>"; };
+		B3EBA9B2287296FC00EAEB37 /* psp1.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = psp1.c; sourceTree = "<group>"; };
+		B3EBA9B3287296FC00EAEB37 /* vkbd_def.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vkbd_def.h; sourceTree = "<group>"; };
+		B3EBA9B4287296FC00EAEB37 /* retro_disk_control.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = retro_disk_control.h; sourceTree = "<group>"; };
+		B3EBA9B5287296FC00EAEB37 /* cmdline.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cmdline.c; sourceTree = "<group>"; };
+		B3EBA9B6287296FC00EAEB37 /* bmp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bmp.c; sourceTree = "<group>"; };
+		B3EBA9B7287296FC00EAEB37 /* link.T */ = {isa = PBXFileReference; lastKnownFileType = text; path = link.T; sourceTree = "<group>"; };
+		B3EBA9B9287296FC00EAEB37 /* Android.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Android.mk; sourceTree = "<group>"; };
+		B3EBA9BA287296FC00EAEB37 /* Application.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Application.mk; sourceTree = "<group>"; };
+		B3EBA9BB287296FC00EAEB37 /* STkeymap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = STkeymap.h; sourceTree = "<group>"; };
+		B3EBA9BC287296FC00EAEB37 /* graph.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = graph.c; sourceTree = "<group>"; };
+		B3EBA9BD287296FC00EAEB37 /* vkbd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = vkbd.c; sourceTree = "<group>"; };
+		B3EBA9BE287296FC00EAEB37 /* retro_files.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = retro_files.h; sourceTree = "<group>"; };
+		B3EBA9BF287296FC00EAEB37 /* font2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = font2.c; sourceTree = "<group>"; };
+		B3EBA9C0287296FC00EAEB37 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		B3EBA9C2287296FC00EAEB37 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		B3EBA9C3287296FC00EAEB37 /* hatari.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = hatari.1; sourceTree = "<group>"; };
+		B3EBA9C4287296FC00EAEB37 /* todo.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = todo.txt; sourceTree = "<group>"; };
+		B3EBA9C6287296FC00EAEB37 /* callgraph.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = callgraph.svg; sourceTree = "<group>"; };
+		B3EBA9C7287296FC00EAEB37 /* floppydisks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = floppydisks.png; sourceTree = "<group>"; };
+		B3EBA9C8287296FC00EAEB37 /* main.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = main.png; sourceTree = "<group>"; };
+		B3EBA9C9287296FC00EAEB37 /* joystick.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = joystick.png; sourceTree = "<group>"; };
+		B3EBA9CA287296FC00EAEB37 /* keyboard.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyboard.png; sourceTree = "<group>"; };
+		B3EBA9CB287296FC00EAEB37 /* devices.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = devices.png; sourceTree = "<group>"; };
+		B3EBA9CC287296FC00EAEB37 /* callgraph.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = callgraph.png; sourceTree = "<group>"; };
+		B3EBA9CD287296FC00EAEB37 /* sound.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sound.png; sourceTree = "<group>"; };
+		B3EBA9CE287296FC00EAEB37 /* harddisks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = harddisks.png; sourceTree = "<group>"; };
+		B3EBA9CF287296FC00EAEB37 /* system.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = system.png; sourceTree = "<group>"; };
+		B3EBA9D0287296FC00EAEB37 /* monitor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = monitor.png; sourceTree = "<group>"; };
+		B3EBA9D1287296FC00EAEB37 /* screen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = screen.png; sourceTree = "<group>"; };
+		B3EBA9D2287296FC00EAEB37 /* tos.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tos.png; sourceTree = "<group>"; };
+		B3EBA9D3287296FC00EAEB37 /* kcachegrind.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = kcachegrind.png; sourceTree = "<group>"; };
+		B3EBA9D4287296FC00EAEB37 /* fileselector.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fileselector.png; sourceTree = "<group>"; };
+		B3EBA9D5287296FC00EAEB37 /* newfloppy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = newfloppy.png; sourceTree = "<group>"; };
+		B3EBA9D6287296FC00EAEB37 /* memory.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = memory.png; sourceTree = "<group>"; };
+		B3EBA9D7287296FC00EAEB37 /* emutos.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = emutos.txt; sourceTree = "<group>"; };
+		B3EBA9D8287296FC00EAEB37 /* toc.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = toc.js; sourceTree = "<group>"; };
+		B3EBA9D9287296FC00EAEB37 /* release-notes.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "release-notes.txt"; sourceTree = "<group>"; };
+		B3EBA9DA287296FC00EAEB37 /* compatibility.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = compatibility.html; sourceTree = "<group>"; };
+		B3EBA9DB287296FC00EAEB37 /* coding.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = coding.txt; sourceTree = "<group>"; };
+		B3EBA9DD287296FC00EAEB37 /* tastatur-windows.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "tastatur-windows.txt"; sourceTree = "<group>"; };
+		B3EBA9DF287296FC00EAEB37 /* hatari.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = hatari.1; sourceTree = "<group>"; };
+		B3EBA9E0287296FC00EAEB37 /* clavier-exemple.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "clavier-exemple.txt"; sourceTree = "<group>"; };
+		B3EBA9E2287296FC00EAEB37 /* Doxyfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Doxyfile; sourceTree = "<group>"; };
+		B3EBA9E3287296FC00EAEB37 /* authors.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = authors.txt; sourceTree = "<group>"; };
+		B3EBA9E4287296FC00EAEB37 /* manual.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = manual.html; sourceTree = "<group>"; };
+		B3EBA9E5287296FC00EAEB37 /* keymap-sample.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "keymap-sample.txt"; sourceTree = "<group>"; };
+		B3EBA9E6287296FC00EAEB37 /* midi-linux.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "midi-linux.txt"; sourceTree = "<group>"; };
+		B3EBA9E7287296FC00EAEB37 /* memory-usage.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "memory-usage.txt"; sourceTree = "<group>"; };
+		B3EBA9E8287296FC00EAEB37 /* readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
+		B3EBA9E9287296FC00EAEB37 /* .gitlab-ci.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = ".gitlab-ci.yml"; sourceTree = "<group>"; };
+		B3EBA9EA287296FC00EAEB37 /* hatari.spec */ = {isa = PBXFileReference; lastKnownFileType = text; path = hatari.spec; sourceTree = "<group>"; };
+		B3EBA9EB287296FC00EAEB37 /* .travis.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .travis.yml; sourceTree = "<group>"; };
+		B3EBA9ED287296FC00EAEB37 /* hatariui */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = hatariui; sourceTree = "<group>"; };
+		B3EBA9EE287296FC00EAEB37 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		B3EBA9EF287296FC00EAEB37 /* config.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = config.py; sourceTree = "<group>"; };
+		B3EBA9F0287296FC00EAEB37 /* release-notes.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "release-notes.txt"; sourceTree = "<group>"; };
+		B3EBA9F2287296FC00EAEB37 /* pygtk-hatari-embed-test.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "pygtk-hatari-embed-test.py"; sourceTree = "<group>"; };
+		B3EBA9F3287296FC00EAEB37 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		B3EBA9F4287296FC00EAEB37 /* pygtk-hello-world.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "pygtk-hello-world.py"; sourceTree = "<group>"; };
+		B3EBA9F5287296FC00EAEB37 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		B3EBA9F6287296FC00EAEB37 /* TODO */ = {isa = PBXFileReference; lastKnownFileType = text; path = TODO; sourceTree = "<group>"; };
+		B3EBA9F7287296FC00EAEB37 /* hatari-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "hatari-icon.png"; sourceTree = "<group>"; };
+		B3EBA9F8287296FC00EAEB37 /* hatari.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = hatari.png; sourceTree = "<group>"; };
+		B3EBA9F9287296FC00EAEB37 /* hatariui.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = hatariui.py; sourceTree = "<group>"; };
+		B3EBA9FA287296FC00EAEB37 /* gentypes.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = gentypes.py; sourceTree = "<group>"; };
+		B3EBA9FB287296FC00EAEB37 /* FILES */ = {isa = PBXFileReference; lastKnownFileType = text; path = FILES; sourceTree = "<group>"; };
+		B3EBA9FC287296FC00EAEB37 /* hatariui.desktop */ = {isa = PBXFileReference; lastKnownFileType = text; path = hatariui.desktop; sourceTree = "<group>"; };
+		B3EBA9FD287296FC00EAEB37 /* dialogs.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = dialogs.py; sourceTree = "<group>"; };
+		B3EBA9FE287296FC00EAEB37 /* uihelpers.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = uihelpers.py; sourceTree = "<group>"; };
+		B3EBA9FF287296FC00EAEB37 /* .cvsignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .cvsignore; sourceTree = "<group>"; };
+		B3EBAA00287296FC00EAEB37 /* hatariui.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = hatariui.1; sourceTree = "<group>"; };
+		B3EBAA01287296FC00EAEB37 /* hatari.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = hatari.py; sourceTree = "<group>"; };
+		B3EBAA02287296FC00EAEB37 /* debugui.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = debugui.py; sourceTree = "<group>"; };
+		B3EBAA04287296FC00EAEB37 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		B3EBAA09287296FC00EAEB37 /* application-x-msa-disk-image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "application-x-msa-disk-image.png"; sourceTree = "<group>"; };
+		B3EBAA0A287296FC00EAEB37 /* application-x-st-disk-image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "application-x-st-disk-image.png"; sourceTree = "<group>"; };
+		B3EBAA0C287296FC00EAEB37 /* hatari.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = hatari.png; sourceTree = "<group>"; };
+		B3EBAA0F287296FC00EAEB37 /* application-x-msa-disk-image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "application-x-msa-disk-image.png"; sourceTree = "<group>"; };
+		B3EBAA10287296FC00EAEB37 /* application-x-st-disk-image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "application-x-st-disk-image.png"; sourceTree = "<group>"; };
+		B3EBAA12287296FC00EAEB37 /* hatari.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = hatari.png; sourceTree = "<group>"; };
+		B3EBAA15287296FC00EAEB37 /* application-x-msa-disk-image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "application-x-msa-disk-image.png"; sourceTree = "<group>"; };
+		B3EBAA16287296FC00EAEB37 /* application-x-st-disk-image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "application-x-st-disk-image.png"; sourceTree = "<group>"; };
+		B3EBAA18287296FC00EAEB37 /* hatari.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = hatari.png; sourceTree = "<group>"; };
+		B3EBAA1B287296FC00EAEB37 /* application-x-msa-disk-image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "application-x-msa-disk-image.png"; sourceTree = "<group>"; };
+		B3EBAA1C287296FC00EAEB37 /* application-x-st-disk-image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "application-x-st-disk-image.png"; sourceTree = "<group>"; };
+		B3EBAA1E287296FC00EAEB37 /* hatari.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = hatari.png; sourceTree = "<group>"; };
+		B3EBAA21287296FC00EAEB37 /* application-x-msa-disk-image.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "application-x-msa-disk-image.svg"; sourceTree = "<group>"; };
+		B3EBAA22287296FC00EAEB37 /* application-x-st-disk-image.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "application-x-st-disk-image.svg"; sourceTree = "<group>"; };
+		B3EBAA24287296FC00EAEB37 /* hatari.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = hatari.svg; sourceTree = "<group>"; };
+		B3EBAA27287296FC00EAEB37 /* application-x-msa-disk-image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "application-x-msa-disk-image.png"; sourceTree = "<group>"; };
+		B3EBAA28287296FC00EAEB37 /* application-x-st-disk-image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "application-x-st-disk-image.png"; sourceTree = "<group>"; };
+		B3EBAA2A287296FC00EAEB37 /* hatari.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = hatari.png; sourceTree = "<group>"; };
+		B3EBAA2C287296FC00EAEB37 /* hatari.desktop */ = {isa = PBXFileReference; lastKnownFileType = text; path = hatari.desktop; sourceTree = "<group>"; };
+		B3EBAA2F287296FC00EAEB37 /* hatari.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = hatari.xml; sourceTree = "<group>"; };
+		B3EBAA31287296FC00EAEB37 /* stMemory.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = stMemory.c; sourceTree = "<group>"; };
+		B3EBAA32287296FC00EAEB37 /* cart.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cart.c; sourceTree = "<group>"; };
+		B3EBAA33287296FC00EAEB37 /* dim.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dim.c; sourceTree = "<group>"; };
+		B3EBAA34287296FC00EAEB37 /* ioMem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ioMem.c; sourceTree = "<group>"; };
+		B3EBAA35287296FC00EAEB37 /* xbios.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = xbios.c; sourceTree = "<group>"; };
+		B3EBAA36287296FC00EAEB37 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		B3EBAA37287296FC00EAEB37 /* hatari-icon.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "hatari-icon.bmp"; sourceTree = "<group>"; };
+		B3EBAA38287296FC00EAEB37 /* change.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = change.c; sourceTree = "<group>"; };
+		B3EBAA39287296FC00EAEB37 /* unzip.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = unzip.c; sourceTree = "<group>"; };
+		B3EBAA3A287296FC00EAEB37 /* createBlankImage.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = createBlankImage.c; sourceTree = "<group>"; };
+		B3EBAA3B287296FC00EAEB37 /* floppy_ipf.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = floppy_ipf.c; sourceTree = "<group>"; };
+		B3EBAA3C287296FC00EAEB37 /* dmaSnd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dmaSnd.c; sourceTree = "<group>"; };
+		B3EBAA3D287296FC00EAEB37 /* rtc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = rtc.c; sourceTree = "<group>"; };
+		B3EBAA3E287296FC00EAEB37 /* paths.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = paths.c; sourceTree = "<group>"; };
+		B3EBAA3F287296FC00EAEB37 /* video.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = video.c; sourceTree = "<group>"; };
+		B3EBAA40287296FC00EAEB37 /* ioMemTabTT.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ioMemTabTT.c; sourceTree = "<group>"; };
+		B3EBAA41287296FC00EAEB37 /* zip.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = zip.c; sourceTree = "<group>"; };
+		B3EBAA43287296FC00EAEB37 /* events_jit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = events_jit.h; sourceTree = "<group>"; };
+		B3EBAA44287296FC00EAEB37 /* sysconfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sysconfig.h; sourceTree = "<group>"; };
+		B3EBAA45287296FC00EAEB37 /* fpp-unknown.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "fpp-unknown.h"; sourceTree = "<group>"; };
+		B3EBAA46287296FC00EAEB37 /* table68k */ = {isa = PBXFileReference; lastKnownFileType = text; path = table68k; sourceTree = "<group>"; };
+		B3EBAA47287296FC00EAEB37 /* custom.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = custom.h; sourceTree = "<group>"; };
+		B3EBAA48287296FC00EAEB37 /* m68k.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = m68k.h; sourceTree = "<group>"; };
+		B3EBAA49287296FC00EAEB37 /* fpp-ieee-be.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "fpp-ieee-be.h"; sourceTree = "<group>"; };
+		B3EBAA4A287296FC00EAEB37 /* memory.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = memory.c; sourceTree = "<group>"; };
+		B3EBAA4B287296FC00EAEB37 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		B3EBAA4C287296FC00EAEB37 /* events_normal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = events_normal.h; sourceTree = "<group>"; };
+		B3EBAA4D287296FC00EAEB37 /* hatari-glue.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "hatari-glue.c"; sourceTree = "<group>"; };
+		B3EBAA4E287296FC00EAEB37 /* mmu_common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mmu_common.h; sourceTree = "<group>"; };
+		B3EBAA4F287296FC00EAEB37 /* falcon_cycle030.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = falcon_cycle030.h; sourceTree = "<group>"; };
+		B3EBAA50287296FC00EAEB37 /* cpummu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cpummu.h; sourceTree = "<group>"; };
+		B3EBAA51287296FC00EAEB37 /* readcpu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = readcpu.c; sourceTree = "<group>"; };
+		B3EBAA52287296FC00EAEB37 /* gencpu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gencpu.c; sourceTree = "<group>"; };
+		B3EBAA53287296FC00EAEB37 /* newcpu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = newcpu.h; sourceTree = "<group>"; };
+		B3EBAA54287296FC00EAEB37 /* cpummu030.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cpummu030.c; sourceTree = "<group>"; };
+		B3EBAA55287296FC00EAEB37 /* events.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = events.h; sourceTree = "<group>"; };
+		B3EBAA56287296FC00EAEB37 /* md-fpp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "md-fpp.h"; sourceTree = "<group>"; };
+		B3EBAA57287296FC00EAEB37 /* build68k.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = build68k.c; sourceTree = "<group>"; };
+		B3EBAA58287296FC00EAEB37 /* custom.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = custom.c; sourceTree = "<group>"; };
+		B3EBAA59287296FC00EAEB37 /* cpummu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cpummu.c; sourceTree = "<group>"; };
+		B3EBAA5B287296FC00EAEB37 /* compemu_support.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = compemu_support.c; sourceTree = "<group>"; };
+		B3EBAA5C287296FC00EAEB37 /* codegen_x86.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = codegen_x86.c; sourceTree = "<group>"; };
+		B3EBAA5D287296FC00EAEB37 /* compemu_raw_x86.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = compemu_raw_x86.c; sourceTree = "<group>"; };
+		B3EBAA5E287296FC00EAEB37 /* comptbl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = comptbl.h; sourceTree = "<group>"; };
+		B3EBAA5F287296FC00EAEB37 /* compemu_fpp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = compemu_fpp.c; sourceTree = "<group>"; };
+		B3EBAA60287296FC00EAEB37 /* codegen_x86.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = codegen_x86.h; sourceTree = "<group>"; };
+		B3EBAA61287296FC00EAEB37 /* compemu_support_codegen.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = compemu_support_codegen.c; sourceTree = "<group>"; };
+		B3EBAA62287296FC00EAEB37 /* compemu_codegen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = compemu_codegen.h; sourceTree = "<group>"; };
+		B3EBAA63287296FC00EAEB37 /* compemu_optimizer_x86.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = compemu_optimizer_x86.c; sourceTree = "<group>"; };
+		B3EBAA64287296FC00EAEB37 /* gencomp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gencomp.c; sourceTree = "<group>"; };
+		B3EBAA65287296FC00EAEB37 /* compemu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = compemu.h; sourceTree = "<group>"; };
+		B3EBAA66287296FC00EAEB37 /* readcpu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = readcpu.h; sourceTree = "<group>"; };
+		B3EBAA67287296FC00EAEB37 /* options_cpu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = options_cpu.h; sourceTree = "<group>"; };
+		B3EBAA68287296FC00EAEB37 /* maccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = maccess.h; sourceTree = "<group>"; };
+		B3EBAA69287296FC00EAEB37 /* hatari-glue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "hatari-glue.h"; sourceTree = "<group>"; };
+		B3EBAA6A287296FC00EAEB37 /* compat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = compat.h; sourceTree = "<group>"; };
+		B3EBAA6B287296FC00EAEB37 /* cpu_prefetch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cpu_prefetch.h; sourceTree = "<group>"; };
+		B3EBAA6C287296FC00EAEB37 /* memory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = memory.h; sourceTree = "<group>"; };
+		B3EBAA6D287296FC00EAEB37 /* cpummu030.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cpummu030.h; sourceTree = "<group>"; };
+		B3EBAA6E287296FC00EAEB37 /* newcpu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = newcpu.c; sourceTree = "<group>"; };
+		B3EBAA6F287296FC00EAEB37 /* sysdeps.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sysdeps.h; sourceTree = "<group>"; };
+		B3EBAA70287296FC00EAEB37 /* fpp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fpp.c; sourceTree = "<group>"; };
+		B3EBAA71287296FC00EAEB37 /* savestate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = savestate.h; sourceTree = "<group>"; };
+		B3EBAA72287296FC00EAEB37 /* acia.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = acia.c; sourceTree = "<group>"; };
+		B3EBAA73287296FC00EAEB37 /* spec512.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = spec512.c; sourceTree = "<group>"; };
+		B3EBAA74287296FC00EAEB37 /* screen.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = screen.c; sourceTree = "<group>"; };
+		B3EBAA75287296FC00EAEB37 /* hdc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = hdc.c; sourceTree = "<group>"; };
+		B3EBAA76287296FC00EAEB37 /* scandir.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = scandir.c; sourceTree = "<group>"; };
+		B3EBAA77287296FC00EAEB37 /* resolution.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = resolution.c; sourceTree = "<group>"; };
+		B3EBAA78287296FC00EAEB37 /* str.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = str.c; sourceTree = "<group>"; };
+		B3EBAA79287296FC00EAEB37 /* tos.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = tos.c; sourceTree = "<group>"; };
+		B3EBAA7A287296FC00EAEB37 /* mfp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mfp.c; sourceTree = "<group>"; };
+		B3EBAA7B287296FC00EAEB37 /* cartData.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cartData.c; sourceTree = "<group>"; };
+		B3EBAA7D287296FC00EAEB37 /* ymFormat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ymFormat.h; sourceTree = "<group>"; };
+		B3EBAA7E287296FC00EAEB37 /* joy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = joy.h; sourceTree = "<group>"; };
+		B3EBAA7F287296FC00EAEB37 /* main.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
+		B3EBAA80287296FC00EAEB37 /* sound.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sound.h; sourceTree = "<group>"; };
+		B3EBAA81287296FC00EAEB37 /* screenSnapShot.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = screenSnapShot.h; sourceTree = "<group>"; };
+		B3EBAA82287296FC00EAEB37 /* avi_record.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = avi_record.h; sourceTree = "<group>"; };
+		B3EBAA83287296FC00EAEB37 /* ioMemTables.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ioMemTables.h; sourceTree = "<group>"; };
+		B3EBAA84287296FC00EAEB37 /* printer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = printer.h; sourceTree = "<group>"; };
+		B3EBAA85287296FC00EAEB37 /* shortcut.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = shortcut.h; sourceTree = "<group>"; };
+		B3EBAA86287296FC00EAEB37 /* utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
+		B3EBAA87287296FC00EAEB37 /* vdi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vdi.h; sourceTree = "<group>"; };
+		B3EBAA88287296FC00EAEB37 /* gemdos.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gemdos.h; sourceTree = "<group>"; };
+		B3EBAA89287296FC00EAEB37 /* bios.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bios.h; sourceTree = "<group>"; };
+		B3EBAA8A287296FC00EAEB37 /* control.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = control.h; sourceTree = "<group>"; };
+		B3EBAA8B287296FC00EAEB37 /* sdlgui.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sdlgui.h; sourceTree = "<group>"; };
+		B3EBAA8C287296FC00EAEB37 /* st.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = st.h; sourceTree = "<group>"; };
+		B3EBAA8D287296FC00EAEB37 /* msa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = msa.h; sourceTree = "<group>"; };
+		B3EBAA8E287296FC00EAEB37 /* version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
+		B3EBAA8F287296FC00EAEB37 /* dialog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dialog.h; sourceTree = "<group>"; };
+		B3EBAA90287296FC00EAEB37 /* cfgopts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cfgopts.h; sourceTree = "<group>"; };
+		B3EBAA91287296FC00EAEB37 /* fdc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fdc.h; sourceTree = "<group>"; };
+		B3EBAA92287296FC00EAEB37 /* memorySnapShot.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = memorySnapShot.h; sourceTree = "<group>"; };
+		B3EBAA93287296FC00EAEB37 /* rs232.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = rs232.h; sourceTree = "<group>"; };
+		B3EBAA94287296FC00EAEB37 /* pixel_convert.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pixel_convert.h; sourceTree = "<group>"; };
+		B3EBAA95287296FC00EAEB37 /* midi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = midi.h; sourceTree = "<group>"; };
+		B3EBAA96287296FC00EAEB37 /* blitter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = blitter.h; sourceTree = "<group>"; };
+		B3EBAA97287296FC00EAEB37 /* floppy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = floppy.h; sourceTree = "<group>"; };
+		B3EBAA98287296FC00EAEB37 /* m68000.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = m68000.h; sourceTree = "<group>"; };
+		B3EBAA99287296FC00EAEB37 /* ikbd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ikbd.h; sourceTree = "<group>"; };
+		B3EBAA9A287296FC00EAEB37 /* clocks_timings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = clocks_timings.h; sourceTree = "<group>"; };
+		B3EBAA9B287296FC00EAEB37 /* cycInt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cycInt.h; sourceTree = "<group>"; };
+		B3EBAA9C287296FC00EAEB37 /* statusbar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = statusbar.h; sourceTree = "<group>"; };
+		B3EBAA9D287296FC00EAEB37 /* file.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = file.h; sourceTree = "<group>"; };
+		B3EBAA9E287296FC00EAEB37 /* ide.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ide.h; sourceTree = "<group>"; };
+		B3EBAA9F287296FC00EAEB37 /* psg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = psg.h; sourceTree = "<group>"; };
+		B3EBAAA0287296FC00EAEB37 /* cycles.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cycles.h; sourceTree = "<group>"; };
+		B3EBAAA1287296FC00EAEB37 /* configuration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = configuration.h; sourceTree = "<group>"; };
+		B3EBAAA2287296FC00EAEB37 /* audio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = audio.h; sourceTree = "<group>"; };
+		B3EBAAA3287296FC00EAEB37 /* gemdos_defines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gemdos_defines.h; sourceTree = "<group>"; };
+		B3EBAAA4287296FC00EAEB37 /* options.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = options.h; sourceTree = "<group>"; };
+		B3EBAAA5287296FC00EAEB37 /* ioMem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ioMem.h; sourceTree = "<group>"; };
+		B3EBAAA6287296FC00EAEB37 /* cart.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cart.h; sourceTree = "<group>"; };
+		B3EBAAA7287296FC00EAEB37 /* dim.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dim.h; sourceTree = "<group>"; };
+		B3EBAAA8287296FC00EAEB37 /* stMemory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stMemory.h; sourceTree = "<group>"; };
+		B3EBAAA9287296FC00EAEB37 /* zip.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = zip.h; sourceTree = "<group>"; };
+		B3EBAAAA287296FC00EAEB37 /* floppy_ipf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = floppy_ipf.h; sourceTree = "<group>"; };
+		B3EBAAAB287296FC00EAEB37 /* createBlankImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = createBlankImage.h; sourceTree = "<group>"; };
+		B3EBAAAC287296FC00EAEB37 /* video.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = video.h; sourceTree = "<group>"; };
+		B3EBAAAD287296FC00EAEB37 /* paths.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = paths.h; sourceTree = "<group>"; };
+		B3EBAAAE287296FC00EAEB37 /* rtc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = rtc.h; sourceTree = "<group>"; };
+		B3EBAAAF287296FC00EAEB37 /* ym2149_fixed_vol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ym2149_fixed_vol.h; sourceTree = "<group>"; };
+		B3EBAAB0287296FC00EAEB37 /* dmaSnd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dmaSnd.h; sourceTree = "<group>"; };
+		B3EBAAB1287296FC00EAEB37 /* change.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = change.h; sourceTree = "<group>"; };
+		B3EBAAB2287296FC00EAEB37 /* unzip.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = unzip.h; sourceTree = "<group>"; };
+		B3EBAAB3287296FC00EAEB37 /* xbios.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = xbios.h; sourceTree = "<group>"; };
+		B3EBAAB4287296FC00EAEB37 /* str.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = str.h; sourceTree = "<group>"; };
+		B3EBAAB5287296FC00EAEB37 /* mfp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mfp.h; sourceTree = "<group>"; };
+		B3EBAAB6287296FC00EAEB37 /* tos.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tos.h; sourceTree = "<group>"; };
+		B3EBAAB7287296FC00EAEB37 /* scandir.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scandir.h; sourceTree = "<group>"; };
+		B3EBAAB8287296FC00EAEB37 /* hdc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = hdc.h; sourceTree = "<group>"; };
+		B3EBAAB9287296FC00EAEB37 /* screen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = screen.h; sourceTree = "<group>"; };
+		B3EBAABA287296FC00EAEB37 /* spec512.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = spec512.h; sourceTree = "<group>"; };
+		B3EBAABB287296FC00EAEB37 /* resolution.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = resolution.h; sourceTree = "<group>"; };
+		B3EBAABC287296FC00EAEB37 /* acia.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = acia.h; sourceTree = "<group>"; };
+		B3EBAABD287296FC00EAEB37 /* reset.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = reset.h; sourceTree = "<group>"; };
+		B3EBAABE287296FC00EAEB37 /* wavFormat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = wavFormat.h; sourceTree = "<group>"; };
+		B3EBAABF287296FC00EAEB37 /* floppy_stx.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = floppy_stx.h; sourceTree = "<group>"; };
+		B3EBAAC0287296FC00EAEB37 /* keymap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = keymap.h; sourceTree = "<group>"; };
+		B3EBAAC1287296FC00EAEB37 /* floppy_stx.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = floppy_stx.c; sourceTree = "<group>"; };
+		B3EBAAC2287296FC00EAEB37 /* keymap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = keymap.c; sourceTree = "<group>"; };
+		B3EBAAC3287296FC00EAEB37 /* hd6301_cpu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = hd6301_cpu.c; sourceTree = "<group>"; };
+		B3EBAAC4287296FC00EAEB37 /* wavFormat.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = wavFormat.c; sourceTree = "<group>"; };
+		B3EBAAC6287296FC00EAEB37 /* dlgFloppy.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgFloppy.c; sourceTree = "<group>"; };
+		B3EBAAC7287296FC00EAEB37 /* dlgDevice.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgDevice.c; sourceTree = "<group>"; };
+		B3EBAAC8287296FC00EAEB37 /* dlgJoystick.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgJoystick.c; sourceTree = "<group>"; };
+		B3EBAAC9287296FC00EAEB37 /* dlgHardDisk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgHardDisk.c; sourceTree = "<group>"; };
+		B3EBAACA287296FC00EAEB37 /* font10x16.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = font10x16.bmp; sourceTree = "<group>"; };
+		B3EBAACB287296FC00EAEB37 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		B3EBAACC287296FC00EAEB37 /* dlgRom.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgRom.c; sourceTree = "<group>"; };
+		B3EBAACD287296FC00EAEB37 /* dlgMain.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgMain.c; sourceTree = "<group>"; };
+		B3EBAACE287296FC00EAEB37 /* dlgNewDisk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgNewDisk.c; sourceTree = "<group>"; };
+		B3EBAACF287296FC00EAEB37 /* dlgAbout.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgAbout.c; sourceTree = "<group>"; };
+		B3EBAAD0287296FC00EAEB37 /* dlgSound.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgSound.c; sourceTree = "<group>"; };
+		B3EBAAD1287296FD00EAEB37 /* sdlgui.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = sdlgui.c; sourceTree = "<group>"; };
+		B3EBAAD2287296FD00EAEB37 /* dlgMemory.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgMemory.c; sourceTree = "<group>"; };
+		B3EBAAD3287296FD00EAEB37 /* font5x8.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = font5x8.h; sourceTree = "<group>"; };
+		B3EBAAD4287296FD00EAEB37 /* font5x8.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = font5x8.bmp; sourceTree = "<group>"; };
+		B3EBAAD5287296FD00EAEB37 /* dlgAlert.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgAlert.c; sourceTree = "<group>"; };
+		B3EBAAD6287296FD00EAEB37 /* dlgFileSelect.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgFileSelect.c; sourceTree = "<group>"; };
+		B3EBAAD7287296FD00EAEB37 /* font10x16.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = font10x16.h; sourceTree = "<group>"; };
+		B3EBAAD8287296FD00EAEB37 /* dlgKeyboard.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgKeyboard.c; sourceTree = "<group>"; };
+		B3EBAAD9287296FD00EAEB37 /* dlgScreen.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgScreen.c; sourceTree = "<group>"; };
+		B3EBAADA287296FD00EAEB37 /* dlgSystem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dlgSystem.c; sourceTree = "<group>"; };
+		B3EBAADB287296FD00EAEB37 /* reset.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = reset.c; sourceTree = "<group>"; };
+		B3EBAADC287296FD00EAEB37 /* st.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = st.c; sourceTree = "<group>"; };
+		B3EBAADD287296FD00EAEB37 /* control.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = control.c; sourceTree = "<group>"; };
+		B3EBAADE287296FD00EAEB37 /* bios.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bios.c; sourceTree = "<group>"; };
+		B3EBAADF287296FD00EAEB37 /* msa.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = msa.c; sourceTree = "<group>"; };
+		B3EBAAE0287296FD00EAEB37 /* gemdos.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gemdos.c; sourceTree = "<group>"; };
+		B3EBAAE1287296FD00EAEB37 /* avi_record.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = avi_record.c; sourceTree = "<group>"; };
+		B3EBAAE2287296FD00EAEB37 /* screenSnapShot.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = screenSnapShot.c; sourceTree = "<group>"; };
+		B3EBAAE3287296FD00EAEB37 /* cart_asm.s */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = cart_asm.s; sourceTree = "<group>"; };
+		B3EBAAE4287296FD00EAEB37 /* vdi.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = vdi.c; sourceTree = "<group>"; };
+		B3EBAAE5287296FD00EAEB37 /* utils.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = utils.c; sourceTree = "<group>"; };
+		B3EBAAE6287296FD00EAEB37 /* shortcut.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = shortcut.c; sourceTree = "<group>"; };
+		B3EBAAE7287296FD00EAEB37 /* printer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = printer.c; sourceTree = "<group>"; };
+		B3EBAAE8287296FD00EAEB37 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		B3EBAAE9287296FD00EAEB37 /* joy.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = joy.c; sourceTree = "<group>"; };
+		B3EBAAEA287296FD00EAEB37 /* ymFormat.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ymFormat.c; sourceTree = "<group>"; };
+		B3EBAAEB287296FD00EAEB37 /* sound.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = sound.c; sourceTree = "<group>"; };
+		B3EBAAED287296FD00EAEB37 /* opencon.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = opencon.c; sourceTree = "<group>"; };
+		B3EBAAEE287296FD00EAEB37 /* hatari-winicon.ico */ = {isa = PBXFileReference; lastKnownFileType = image.ico; path = "hatari-winicon.ico"; sourceTree = "<group>"; };
+		B3EBAAEF287296FD00EAEB37 /* hatari-winicon.rc */ = {isa = PBXFileReference; lastKnownFileType = text; path = "hatari-winicon.rc"; sourceTree = "<group>"; };
+		B3EBAAF0287296FD00EAEB37 /* opencon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = opencon.h; sourceTree = "<group>"; };
+		B3EBAAF1287296FD00EAEB37 /* m68000.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = m68000.c; sourceTree = "<group>"; };
+		B3EBAAF2287296FD00EAEB37 /* floppy.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = floppy.c; sourceTree = "<group>"; };
+		B3EBAAF3287296FD00EAEB37 /* ikbd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ikbd.c; sourceTree = "<group>"; };
+		B3EBAAF4287296FD00EAEB37 /* rs232.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = rs232.c; sourceTree = "<group>"; };
+		B3EBAAF5287296FD00EAEB37 /* blitter.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = blitter.c; sourceTree = "<group>"; };
+		B3EBAAF6287296FD00EAEB37 /* midi.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = midi.c; sourceTree = "<group>"; };
+		B3EBAAF8287296FD00EAEB37 /* fpp-unknown.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "fpp-unknown.h"; sourceTree = "<group>"; };
+		B3EBAAF9287296FD00EAEB37 /* table68k */ = {isa = PBXFileReference; lastKnownFileType = text; path = table68k; sourceTree = "<group>"; };
+		B3EBAAFA287296FD00EAEB37 /* m68k.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = m68k.h; sourceTree = "<group>"; };
+		B3EBAAFB287296FD00EAEB37 /* fpp-ieee-be.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "fpp-ieee-be.h"; sourceTree = "<group>"; };
+		B3EBAAFC287296FD00EAEB37 /* memory.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = memory.c; sourceTree = "<group>"; };
+		B3EBAAFD287296FD00EAEB37 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		B3EBAAFE287296FD00EAEB37 /* hatari-glue.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "hatari-glue.c"; sourceTree = "<group>"; };
+		B3EBAAFF287296FD00EAEB37 /* readcpu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = readcpu.c; sourceTree = "<group>"; };
+		B3EBAB00287296FD00EAEB37 /* gencpu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gencpu.c; sourceTree = "<group>"; };
+		B3EBAB01287296FD00EAEB37 /* newcpu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = newcpu.h; sourceTree = "<group>"; };
+		B3EBAB02287296FD00EAEB37 /* build68k.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = build68k.c; sourceTree = "<group>"; };
+		B3EBAB03287296FD00EAEB37 /* readcpu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = readcpu.h; sourceTree = "<group>"; };
+		B3EBAB04287296FD00EAEB37 /* options_cpu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = options_cpu.h; sourceTree = "<group>"; };
+		B3EBAB05287296FD00EAEB37 /* maccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = maccess.h; sourceTree = "<group>"; };
+		B3EBAB06287296FD00EAEB37 /* hatari-glue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "hatari-glue.h"; sourceTree = "<group>"; };
+		B3EBAB07287296FD00EAEB37 /* emumemory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = emumemory.h; sourceTree = "<group>"; };
+		B3EBAB08287296FD00EAEB37 /* newcpu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = newcpu.c; sourceTree = "<group>"; };
+		B3EBAB09287296FD00EAEB37 /* sysdeps.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sysdeps.h; sourceTree = "<group>"; };
+		B3EBAB0A287296FD00EAEB37 /* fpp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fpp.c; sourceTree = "<group>"; };
+		B3EBAB0B287296FD00EAEB37 /* savestate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = savestate.h; sourceTree = "<group>"; };
+		B3EBAB0C287296FD00EAEB37 /* cfgopts.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cfgopts.c; sourceTree = "<group>"; };
+		B3EBAB0D287296FD00EAEB37 /* dialog.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dialog.c; sourceTree = "<group>"; };
+		B3EBAB0E287296FD00EAEB37 /* memorySnapShot.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = memorySnapShot.c; sourceTree = "<group>"; };
+		B3EBAB0F287296FD00EAEB37 /* fdc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fdc.c; sourceTree = "<group>"; };
+		B3EBAB10287296FD00EAEB37 /* ioMemTabSTE.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ioMemTabSTE.c; sourceTree = "<group>"; };
+		B3EBAB11287296FD00EAEB37 /* cycles.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cycles.c; sourceTree = "<group>"; };
+		B3EBAB12287296FD00EAEB37 /* ioMemTabFalcon.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ioMemTabFalcon.c; sourceTree = "<group>"; };
+		B3EBAB13287296FD00EAEB37 /* psg.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = psg.c; sourceTree = "<group>"; };
+		B3EBAB14287296FD00EAEB37 /* file.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = file.c; sourceTree = "<group>"; };
+		B3EBAB15287296FD00EAEB37 /* ioMemTabST.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ioMemTabST.c; sourceTree = "<group>"; };
+		B3EBAB16287296FD00EAEB37 /* ide.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ide.c; sourceTree = "<group>"; };
+		B3EBAB17287296FD00EAEB37 /* statusbar.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = statusbar.c; sourceTree = "<group>"; };
+		B3EBAB18287296FD00EAEB37 /* cycInt.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cycInt.c; sourceTree = "<group>"; };
+		B3EBAB19287296FD00EAEB37 /* clocks_timings.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = clocks_timings.c; sourceTree = "<group>"; };
+		B3EBAB1A287296FD00EAEB37 /* cart_mus.x32 */ = {isa = PBXFileReference; lastKnownFileType = file; path = cart_mus.x32; sourceTree = "<group>"; };
+		B3EBAB1D287296FD00EAEB37 /* English */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
+		B3EBAB1F287296FD00EAEB37 /* English */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B3EBAB21287296FD00EAEB37 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/SDLMain.nib; sourceTree = "<group>"; };
+		B3EBAB23287296FD00EAEB37 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/SDLMain.xib; sourceTree = "<group>"; };
+		B3EBAB24287296FD00EAEB37 /* Shared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Shared.h; sourceTree = "<group>"; };
+		B3EBAB25287296FD00EAEB37 /* Info-Hatari.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-Hatari.plist"; sourceTree = "<group>"; };
+		B3EBAB26287296FD00EAEB37 /* PrefsController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PrefsController.m; sourceTree = "<group>"; };
+		B3EBAB27287296FD00EAEB37 /* SDLMain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
+		B3EBAB28287296FD00EAEB37 /* Info-Hatari Winuae.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-Hatari Winuae.plist"; sourceTree = "<group>"; };
+		B3EBAB29287296FD00EAEB37 /* disk.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = disk.icns; sourceTree = "<group>"; };
+		B3EBAB2A287296FD00EAEB37 /* CreateFloppyController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CreateFloppyController.h; sourceTree = "<group>"; };
+		B3EBAB2B287296FD00EAEB37 /* AlertHooks.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AlertHooks.m; sourceTree = "<group>"; };
+		B3EBAB2C287296FD00EAEB37 /* Shared.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Shared.m; sourceTree = "<group>"; };
+		B3EBAB2D287296FD00EAEB37 /* French */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = French; path = French.lproj/Localizable.strings; sourceTree = "<group>"; };
+		B3EBAB2E287296FD00EAEB37 /* French */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = French; path = French.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B3EBAB2F287296FD00EAEB37 /* French */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = French; path = French.lproj/SDLMain.nib; sourceTree = "<group>"; };
+		B3EBAB30287296FD00EAEB37 /* French */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = French; path = French.lproj/SDLMain.xib; sourceTree = "<group>"; };
+		B3EBAB31287296FD00EAEB37 /* Hatari.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Hatari.icns; sourceTree = "<group>"; };
+		B3EBAB32287296FD00EAEB37 /* SDLMain.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
+		B3EBAB33287296FD00EAEB37 /* PrefsController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefsController.h; sourceTree = "<group>"; };
+		B3EBAB34287296FD00EAEB37 /* AlertHooks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlertHooks.h; sourceTree = "<group>"; };
+		B3EBAB35287296FD00EAEB37 /* CreateFloppyController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CreateFloppyController.m; sourceTree = "<group>"; };
+		B3EBAB37287296FD00EAEB37 /* hostscreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = hostscreen.h; sourceTree = "<group>"; };
+		B3EBAB38287296FD00EAEB37 /* dsp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dsp.c; sourceTree = "<group>"; };
+		B3EBAB39287296FD00EAEB37 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		B3EBAB3A287296FD00EAEB37 /* dsp_cpu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dsp_cpu.h; sourceTree = "<group>"; };
+		B3EBAB3B287296FD00EAEB37 /* nvram.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = nvram.h; sourceTree = "<group>"; };
+		B3EBAB3C287296FD00EAEB37 /* microphone.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = microphone.h; sourceTree = "<group>"; };
+		B3EBAB3D287296FD00EAEB37 /* dsp_core.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dsp_core.c; sourceTree = "<group>"; };
+		B3EBAB3E287296FD00EAEB37 /* crossbar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = crossbar.h; sourceTree = "<group>"; };
+		B3EBAB3F287296FD00EAEB37 /* dsp_disasm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dsp_disasm.h; sourceTree = "<group>"; };
+		B3EBAB40287296FD00EAEB37 /* videl.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = videl.c; sourceTree = "<group>"; };
+		B3EBAB41287296FD00EAEB37 /* nvram.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = nvram.c; sourceTree = "<group>"; };
+		B3EBAB42287296FD00EAEB37 /* dsp_cpu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dsp_cpu.c; sourceTree = "<group>"; };
+		B3EBAB43287296FD00EAEB37 /* hostscreen.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = hostscreen.c; sourceTree = "<group>"; };
+		B3EBAB44287296FD00EAEB37 /* dsp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dsp.h; sourceTree = "<group>"; };
+		B3EBAB45287296FD00EAEB37 /* dsp_core.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dsp_core.h; sourceTree = "<group>"; };
+		B3EBAB46287296FD00EAEB37 /* microphone.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = microphone.c; sourceTree = "<group>"; };
+		B3EBAB47287296FD00EAEB37 /* videl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = videl.h; sourceTree = "<group>"; };
+		B3EBAB48287296FD00EAEB37 /* dsp_disasm.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = dsp_disasm.c; sourceTree = "<group>"; };
+		B3EBAB49287296FD00EAEB37 /* crossbar.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = crossbar.c; sourceTree = "<group>"; };
+		B3EBAB4A287296FD00EAEB37 /* options.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = options.c; sourceTree = "<group>"; };
+		B3EBAB4B287296FD00EAEB37 /* audio.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; };
+		B3EBAB4C287296FD00EAEB37 /* hd6301_cpu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = hd6301_cpu.h; sourceTree = "<group>"; };
+		B3EBAB4E287296FD00EAEB37 /* high640x8.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = high640x8.c; sourceTree = "<group>"; };
+		B3EBAB4F287296FD00EAEB37 /* low320x16_spec.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = low320x16_spec.c; sourceTree = "<group>"; };
+		B3EBAB50287296FD00EAEB37 /* routines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = routines.h; sourceTree = "<group>"; };
+		B3EBAB51287296FD00EAEB37 /* low320x32_spec.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = low320x32_spec.c; sourceTree = "<group>"; };
+		B3EBAB52287296FD00EAEB37 /* vdi4.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = vdi4.c; sourceTree = "<group>"; };
+		B3EBAB53287296FD00EAEB37 /* med640x16.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = med640x16.c; sourceTree = "<group>"; };
+		B3EBAB54287296FD00EAEB37 /* low320x8.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = low320x8.c; sourceTree = "<group>"; };
+		B3EBAB55287296FD00EAEB37 /* low640x8.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = low640x8.c; sourceTree = "<group>"; };
+		B3EBAB56287296FD00EAEB37 /* low640x32.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = low640x32.c; sourceTree = "<group>"; };
+		B3EBAB57287296FD00EAEB37 /* vdi16.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = vdi16.c; sourceTree = "<group>"; };
+		B3EBAB58287296FD00EAEB37 /* low320x16.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = low320x16.c; sourceTree = "<group>"; };
+		B3EBAB59287296FD00EAEB37 /* med640x32.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = med640x32.c; sourceTree = "<group>"; };
+		B3EBAB5A287296FD00EAEB37 /* macros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = macros.h; sourceTree = "<group>"; };
+		B3EBAB5B287296FD00EAEB37 /* low640x16.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = low640x16.c; sourceTree = "<group>"; };
+		B3EBAB5C287296FD00EAEB37 /* low320x32.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = low320x32.c; sourceTree = "<group>"; };
+		B3EBAB5D287296FD00EAEB37 /* low640x32_spec.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = low640x32_spec.c; sourceTree = "<group>"; };
+		B3EBAB5E287296FD00EAEB37 /* med640x32_spec.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = med640x32_spec.c; sourceTree = "<group>"; };
+		B3EBAB5F287296FD00EAEB37 /* vdi2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = vdi2.c; sourceTree = "<group>"; };
+		B3EBAB60287296FD00EAEB37 /* low640x16_spec.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = low640x16_spec.c; sourceTree = "<group>"; };
+		B3EBAB61287296FD00EAEB37 /* med640x16_spec.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = med640x16_spec.c; sourceTree = "<group>"; };
+		B3EBAB62287296FD00EAEB37 /* med640x8.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = med640x8.c; sourceTree = "<group>"; };
+		B3EBAB64287296FD00EAEB37 /* debugui.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = debugui.h; sourceTree = "<group>"; };
+		B3EBAB65287296FD00EAEB37 /* log.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = log.c; sourceTree = "<group>"; };
+		B3EBAB66287296FD00EAEB37 /* console.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = console.h; sourceTree = "<group>"; };
+		B3EBAB67287296FD00EAEB37 /* history.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = history.c; sourceTree = "<group>"; };
+		B3EBAB68287296FD00EAEB37 /* debugdsp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = debugdsp.h; sourceTree = "<group>"; };
+		B3EBAB69287296FD00EAEB37 /* debugcpu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = debugcpu.h; sourceTree = "<group>"; };
+		B3EBAB6A287296FD00EAEB37 /* 68kDisass.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = 68kDisass.c; sourceTree = "<group>"; };
+		B3EBAB6B287296FD00EAEB37 /* debug_priv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = debug_priv.h; sourceTree = "<group>"; };
+		B3EBAB6C287296FD00EAEB37 /* profile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = profile.h; sourceTree = "<group>"; };
+		B3EBAB6D287296FD00EAEB37 /* symbols.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = symbols.h; sourceTree = "<group>"; };
+		B3EBAB6E287296FD00EAEB37 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		B3EBAB6F287296FD00EAEB37 /* profiledsp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = profiledsp.c; sourceTree = "<group>"; };
+		B3EBAB70287296FD00EAEB37 /* breakcond.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = breakcond.c; sourceTree = "<group>"; };
+		B3EBAB71287296FD00EAEB37 /* profilecpu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = profilecpu.c; sourceTree = "<group>"; };
+		B3EBAB72287296FD00EAEB37 /* evaluate.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = evaluate.c; sourceTree = "<group>"; };
+		B3EBAB73287296FD00EAEB37 /* natfeats.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = natfeats.h; sourceTree = "<group>"; };
+		B3EBAB74287296FD00EAEB37 /* debugInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = debugInfo.h; sourceTree = "<group>"; };
+		B3EBAB75287296FD00EAEB37 /* debugcpu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = debugcpu.c; sourceTree = "<group>"; };
+		B3EBAB76287296FD00EAEB37 /* 68kDisass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = 68kDisass.h; sourceTree = "<group>"; };
+		B3EBAB77287296FD00EAEB37 /* console.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = console.c; sourceTree = "<group>"; };
+		B3EBAB78287296FD00EAEB37 /* debugdsp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = debugdsp.c; sourceTree = "<group>"; };
+		B3EBAB79287296FD00EAEB37 /* history.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = history.h; sourceTree = "<group>"; };
+		B3EBAB7A287296FD00EAEB37 /* debugui.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = debugui.c; sourceTree = "<group>"; };
+		B3EBAB7B287296FD00EAEB37 /* log.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = log.h; sourceTree = "<group>"; };
+		B3EBAB7C287296FD00EAEB37 /* breakcond.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = breakcond.h; sourceTree = "<group>"; };
+		B3EBAB7D287296FD00EAEB37 /* profile.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = profile.c; sourceTree = "<group>"; };
+		B3EBAB7E287296FD00EAEB37 /* symbols.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = symbols.c; sourceTree = "<group>"; };
+		B3EBAB7F287296FD00EAEB37 /* evaluate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = evaluate.h; sourceTree = "<group>"; };
+		B3EBAB80287296FD00EAEB37 /* profile_priv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = profile_priv.h; sourceTree = "<group>"; };
+		B3EBAB81287296FD00EAEB37 /* debugInfo.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = debugInfo.c; sourceTree = "<group>"; };
+		B3EBAB82287296FD00EAEB37 /* natfeats.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = natfeats.c; sourceTree = "<group>"; };
+		B3EBAB83287296FD00EAEB37 /* configuration.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = configuration.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -254,6 +920,7 @@
 		B3C7620620783162009950E4 = {
 			isa = PBXGroup;
 			children = (
+				B3EBA899287296FB00EAEB37 /* hatari */,
 				B37022BE287253B300B3F6DA /* PVHatari */,
 				B37022C4287253B300B3F6DA /* PVHatariCore */,
 				B37022C3287253B300B3F6DA /* PVHatari.h */,
@@ -301,6 +968,1283 @@
 				B3C7622120783297009950E4 /* PVSupport.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B3EBA899287296FB00EAEB37 /* hatari */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA9C0287296FC00EAEB37 /* .gitignore */,
+				B3EBA8CF287296FB00EAEB37 /* .hgignore */,
+				B3EBA8CE287296FB00EAEB37 /* configure */,
+				B3EBA929287296FB00EAEB37 /* Makefile.common */,
+				B3EBA92B287296FB00EAEB37 /* Makefile.libretro */,
+				B3EBA92A287296FB00EAEB37 /* README.md */,
+				B3EBA9EA287296FC00EAEB37 /* hatari.spec */,
+				B3EBA8C1287296FB00EAEB37 /* CMakeLists.txt */,
+				B3EBA92C287296FB00EAEB37 /* gpl.txt */,
+				B3EBA9E8287296FC00EAEB37 /* readme.txt */,
+				B3EBA9E9287296FC00EAEB37 /* .gitlab-ci.yml */,
+				B3EBA9EB287296FC00EAEB37 /* .travis.yml */,
+				B3EBA8C2287296FB00EAEB37 /* cmake */,
+				B3EBA9C1287296FC00EAEB37 /* doc */,
+				B3EBA921287296FB00EAEB37 /* etc */,
+				B3EBA92D287296FB00EAEB37 /* libretro */,
+				B3EBA9EC287296FC00EAEB37 /* python-ui */,
+				B3EBAA03287296FC00EAEB37 /* share */,
+				B3EBAA30287296FC00EAEB37 /* src */,
+				B3EBA8D0287296FB00EAEB37 /* tests */,
+				B3EBA89D287296FB00EAEB37 /* tools */,
+				B3EBA89A287296FB00EAEB37 /* Visual.Studio */,
+			);
+			path = hatari;
+			sourceTree = "<group>";
+		};
+		B3EBA89A287296FB00EAEB37 /* Visual.Studio */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA89B287296FB00EAEB37 /* VisualStudioFix.h */,
+				B3EBA89C287296FB00EAEB37 /* VisualStudioFix.c */,
+			);
+			path = Visual.Studio;
+			sourceTree = "<group>";
+		};
+		B3EBA89D287296FB00EAEB37 /* tools */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA89E287296FB00EAEB37 /* zip2st.sh */,
+				B3EBA89F287296FB00EAEB37 /* CMakeLists.txt */,
+				B3EBA8A0287296FB00EAEB37 /* hatari-local-rs232.sh */,
+				B3EBA8A1287296FB00EAEB37 /* atari-hd-image.1 */,
+				B3EBA8A2287296FB00EAEB37 /* hmsa */,
+				B3EBA8AA287296FB00EAEB37 /* debugger */,
+				B3EBA8B5287296FB00EAEB37 /* hatari-tos-register.sh */,
+				B3EBA8B6287296FB00EAEB37 /* hatari-local-midi-ring.sh */,
+				B3EBA8B7287296FB00EAEB37 /* hconsole */,
+				B3EBA8BF287296FB00EAEB37 /* zip2st.1 */,
+				B3EBA8C0287296FB00EAEB37 /* atari-hd-image.sh */,
+			);
+			path = tools;
+			sourceTree = "<group>";
+		};
+		B3EBA8A2287296FB00EAEB37 /* hmsa */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA8A3287296FB00EAEB37 /* CMakeLists.txt */,
+				B3EBA8A4287296FB00EAEB37 /* floppy.h */,
+				B3EBA8A5287296FB00EAEB37 /* hmsa.h */,
+				B3EBA8A6287296FB00EAEB37 /* hmsa.1 */,
+				B3EBA8A7287296FB00EAEB37 /* floppy.c */,
+				B3EBA8A8287296FB00EAEB37 /* hmsa.c */,
+				B3EBA8A9287296FB00EAEB37 /* readme-hmsa.txt */,
+			);
+			path = hmsa;
+			sourceTree = "<group>";
+		};
+		B3EBA8AA287296FB00EAEB37 /* debugger */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA8AB287296FB00EAEB37 /* ahcc-symbols-convert.sh */,
+				B3EBA8AC287296FB00EAEB37 /* CMakeLists.txt */,
+				B3EBA8AD287296FB00EAEB37 /* gst2ascii.1 */,
+				B3EBA8AE287296FB00EAEB37 /* hatari_profile.1 */,
+				B3EBA8AF287296FB00EAEB37 /* nm-symbols-cleanup.sh */,
+				B3EBA8B0287296FB00EAEB37 /* dsp-lod-symbols-convert.sh */,
+				B3EBA8B1287296FB00EAEB37 /* hatari_spinloop.py */,
+				B3EBA8B2287296FB00EAEB37 /* gst2ascii.c */,
+				B3EBA8B3287296FB00EAEB37 /* devpac3-symbols-convert.sh */,
+				B3EBA8B4287296FB00EAEB37 /* hatari_profile.py */,
+			);
+			path = debugger;
+			sourceTree = "<group>";
+		};
+		B3EBA8B7287296FB00EAEB37 /* hconsole */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA8B8287296FB00EAEB37 /* CMakeLists.txt */,
+				B3EBA8B9287296FB00EAEB37 /* hconsole.1 */,
+				B3EBA8BA287296FB00EAEB37 /* hconsole.py */,
+				B3EBA8BB287296FB00EAEB37 /* release-notes.txt */,
+				B3EBA8BC287296FB00EAEB37 /* example.py */,
+				B3EBA8BD287296FB00EAEB37 /* example-debugger */,
+				B3EBA8BE287296FB00EAEB37 /* example-commands */,
+			);
+			path = hconsole;
+			sourceTree = "<group>";
+		};
+		B3EBA8C2287296FB00EAEB37 /* cmake */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA8C3287296FB00EAEB37 /* FindCapsImage.cmake */,
+				B3EBA8C4287296FB00EAEB37 /* DistClean.cmake */,
+				B3EBA8C5287296FB00EAEB37 /* FindSDL2.cmake */,
+				B3EBA8C6287296FB00EAEB37 /* Toolchain-mingw32-win64_32.cmake */,
+				B3EBA8C7287296FB00EAEB37 /* config-cmake.h */,
+				B3EBA8C8287296FB00EAEB37 /* Uninstall.cmake */,
+				B3EBA8C9287296FB00EAEB37 /* FindPortAudio.cmake */,
+				B3EBA8CA287296FB00EAEB37 /* FindTermcap.cmake */,
+				B3EBA8CB287296FB00EAEB37 /* FindMath.cmake */,
+				B3EBA8CC287296FB00EAEB37 /* FindReadline.cmake */,
+				B3EBA8CD287296FB00EAEB37 /* Toolchain-mingw32-win64_64.cmake */,
+			);
+			path = cmake;
+			sourceTree = "<group>";
+		};
+		B3EBA8D0287296FB00EAEB37 /* tests */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA8D1287296FB00EAEB37 /* buserror */,
+				B3EBA8E2287296FB00EAEB37 /* natfeats */,
+				B3EBA8EE287296FB00EAEB37 /* keymap */,
+				B3EBA8F8287296FB00EAEB37 /* debugger */,
+				B3EBA906287296FB00EAEB37 /* readme.txt */,
+				B3EBA907287296FB00EAEB37 /* tosboot */,
+			);
+			path = tests;
+			sourceTree = "<group>";
+		};
+		B3EBA8D1287296FB00EAEB37 /* buserror */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA8D2287296FB00EAEB37 /* buserr_w.s */,
+				B3EBA8D3287296FB00EAEB37 /* buserr_b.prg */,
+				B3EBA8D4287296FB00EAEB37 /* buserr_w.prg */,
+				B3EBA8D5287296FB00EAEB37 /* buserr_b.s */,
+				B3EBA8D6287296FB00EAEB37 /* results */,
+				B3EBA8E1287296FB00EAEB37 /* readme.txt */,
+			);
+			path = buserror;
+			sourceTree = "<group>";
+		};
+		B3EBA8D6287296FB00EAEB37 /* results */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA8D7287296FB00EAEB37 /* fal_n_b.txt */,
+				B3EBA8D8287296FB00EAEB37 /* st_b.txt */,
+				B3EBA8D9287296FB00EAEB37 /* st_w.txt */,
+				B3EBA8DA287296FB00EAEB37 /* fal_n_w.txt */,
+				B3EBA8DB287296FB00EAEB37 /* ste_b.txt */,
+				B3EBA8DC287296FB00EAEB37 /* ste_w.txt */,
+				B3EBA8DD287296FB00EAEB37 /* fal_c_b.txt */,
+				B3EBA8DE287296FB00EAEB37 /* fal_c_w.txt */,
+				B3EBA8DF287296FB00EAEB37 /* tt_b.txt */,
+				B3EBA8E0287296FB00EAEB37 /* tt_w.txt */,
+			);
+			path = results;
+			sourceTree = "<group>";
+		};
+		B3EBA8E2287296FB00EAEB37 /* natfeats */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA8E3287296FB00EAEB37 /* nf_ahcc.prj */,
+				B3EBA8E4287296FB00EAEB37 /* makefile */,
+				B3EBA8E5287296FB00EAEB37 /* Makefile.vbc */,
+				B3EBA8E6287296FB00EAEB37 /* natfeats.h */,
+				B3EBA8E7287296FB00EAEB37 /* nf_vbcc.tos */,
+				B3EBA8E8287296FB00EAEB37 /* nf_asma.s */,
+				B3EBA8E9287296FB00EAEB37 /* nf_asmv.s */,
+				B3EBA8EA287296FB00EAEB37 /* readme.txt */,
+				B3EBA8EB287296FB00EAEB37 /* Makefile.gcc */,
+				B3EBA8EC287296FB00EAEB37 /* nf_asmg.s */,
+				B3EBA8ED287296FB00EAEB37 /* natfeats.c */,
+			);
+			path = natfeats;
+			sourceTree = "<group>";
+		};
+		B3EBA8EE287296FB00EAEB37 /* keymap */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA8EF287296FB00EAEB37 /* keytest.prg */,
+				B3EBA8F0287296FB00EAEB37 /* keytest.c */,
+				B3EBA8F1287296FB00EAEB37 /* keytest.rso */,
+				B3EBA8F2287296FB00EAEB37 /* listkeys.c */,
+				B3EBA8F3287296FB00EAEB37 /* checkkeys.c */,
+				B3EBA8F4287296FB00EAEB37 /* keytest.mak */,
+				B3EBA8F5287296FB00EAEB37 /* keytest.prj */,
+				B3EBA8F6287296FB00EAEB37 /* readme.txt */,
+				B3EBA8F7287296FB00EAEB37 /* keytest.rsc */,
+			);
+			path = keymap;
+			sourceTree = "<group>";
+		};
+		B3EBA8F8287296FB00EAEB37 /* debugger */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA8F9287296FB00EAEB37 /* test-symbols.c */,
+				B3EBA8FA287296FB00EAEB37 /* test-dummies.c */,
+				B3EBA8FB287296FB00EAEB37 /* makefile */,
+				B3EBA8FC287296FB00EAEB37 /* test-evaluate.c */,
+				B3EBA8FD287296FB00EAEB37 /* test-breakcond.c */,
+				B3EBA8FE287296FB00EAEB37 /* test-scripting.sh */,
+				B3EBA8FF287296FB00EAEB37 /* data */,
+			);
+			path = debugger;
+			sourceTree = "<group>";
+		};
+		B3EBA8FF287296FB00EAEB37 /* data */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA900287296FB00EAEB37 /* etos512.sym */,
+				B3EBA901287296FB00EAEB37 /* test.ini */,
+				B3EBA902287296FB00EAEB37 /* console.ini */,
+				B3EBA903287296FB00EAEB37 /* os-header.sym */,
+				B3EBA904287296FB00EAEB37 /* debugger.ini */,
+				B3EBA905287296FB00EAEB37 /* dsp-test.sym */,
+			);
+			path = data;
+			sourceTree = "<group>";
+		};
+		B3EBA907287296FB00EAEB37 /* tosboot */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA908287296FB00EAEB37 /* bootauto.st.gz */,
+				B3EBA909287296FB00EAEB37 /* makefile */,
+				B3EBA90A287296FB00EAEB37 /* .hgignore */,
+				B3EBA90B287296FB00EAEB37 /* screenshot-report.sh */,
+				B3EBA90C287296FB00EAEB37 /* disk */,
+				B3EBA91A287296FB00EAEB37 /* readme.txt */,
+				B3EBA91B287296FB00EAEB37 /* bootdesk.st.gz */,
+				B3EBA91C287296FB00EAEB37 /* tos_tester.py */,
+				B3EBA91D287296FB00EAEB37 /* floppy */,
+				B3EBA920287296FB00EAEB37 /* blank-a.st.gz */,
+			);
+			path = tosboot;
+			sourceTree = "<group>";
+		};
+		B3EBA90C287296FB00EAEB37 /* disk */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA90D287296FB00EAEB37 /* common.c */,
+				B3EBA90E287296FB00EAEB37 /* minimal.prj */,
+				B3EBA90F287296FB00EAEB37 /* TEST */,
+				B3EBA910287296FB00EAEB37 /* ahcc-gemdos */,
+				B3EBA911287296FB00EAEB37 /* minimal.c */,
+				B3EBA912287296FB00EAEB37 /* .hgignore */,
+				B3EBA913287296FB00EAEB37 /* GEMDOS.PRG */,
+				B3EBA914287296FB00EAEB37 /* ahcc-minimal */,
+				B3EBA915287296FB00EAEB37 /* gemdos.c */,
+				B3EBA916287296FB00EAEB37 /* common.h */,
+				B3EBA917287296FB00EAEB37 /* MINIMAL.PRG */,
+				B3EBA918287296FB00EAEB37 /* TEXT */,
+				B3EBA919287296FB00EAEB37 /* gemdos.prj */,
+			);
+			path = disk;
+			sourceTree = "<group>";
+		};
+		B3EBA91D287296FB00EAEB37 /* floppy */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA91E287296FB00EAEB37 /* EMUDESK.INF */,
+				B3EBA91F287296FB00EAEB37 /* DESKTOP.INF */,
+			);
+			path = floppy;
+			sourceTree = "<group>";
+		};
+		B3EBA921287296FB00EAEB37 /* etc */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA922287296FB00EAEB37 /* win-ce.cfg */,
+				B3EBA923287296FB00EAEB37 /* wiz.cfg */,
+				B3EBA924287296FB00EAEB37 /* GP2X_Wiz */,
+				B3EBA927287296FB00EAEB37 /* README */,
+				B3EBA928287296FB00EAEB37 /* n810.cfg */,
+			);
+			path = etc;
+			sourceTree = "<group>";
+		};
+		B3EBA924287296FB00EAEB37 /* GP2X_Wiz */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA925287296FB00EAEB37 /* hatari-wrapper.gpe */,
+				B3EBA926287296FB00EAEB37 /* crossdefs.wiz */,
+			);
+			path = GP2X_Wiz;
+			sourceTree = "<group>";
+		};
+		B3EBA92D287296FB00EAEB37 /* libretro */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA92E287296FB00EAEB37 /* libretro.c */,
+				B3EBA92F287296FB00EAEB37 /* retro_strings.c */,
+				B3EBA930287296FB00EAEB37 /* retro_disk_control.c */,
+				B3EBA931287296FB00EAEB37 /* uae-cpu-pregen */,
+				B3EBA936287296FB00EAEB37 /* RETROHACK.txt */,
+				B3EBA937287296FB00EAEB37 /* include */,
+				B3EBA942287296FB00EAEB37 /* retro_files.c */,
+				B3EBA943287296FB00EAEB37 /* hatari-mapper.c */,
+				B3EBA944287296FB00EAEB37 /* utils */,
+				B3EBA97D287296FB00EAEB37 /* vkbd.h */,
+				B3EBA97E287296FB00EAEB37 /* graph.h */,
+				B3EBA97F287296FB00EAEB37 /* libretro-hatari.h */,
+				B3EBA980287296FB00EAEB37 /* gui-retro */,
+				B3EBA996287296FC00EAEB37 /* retro_strings.h */,
+				B3EBA997287296FC00EAEB37 /* retromain.inc */,
+				B3EBA998287296FC00EAEB37 /* stub */,
+				B3EBA99A287296FC00EAEB37 /* libretro-common */,
+				B3EBA9B3287296FC00EAEB37 /* vkbd_def.h */,
+				B3EBA9B4287296FC00EAEB37 /* retro_disk_control.h */,
+				B3EBA9B5287296FC00EAEB37 /* cmdline.c */,
+				B3EBA9B6287296FC00EAEB37 /* bmp.c */,
+				B3EBA9B7287296FC00EAEB37 /* link.T */,
+				B3EBA9B8287296FC00EAEB37 /* jni */,
+				B3EBA9BB287296FC00EAEB37 /* STkeymap.h */,
+				B3EBA9BC287296FC00EAEB37 /* graph.c */,
+				B3EBA9BD287296FC00EAEB37 /* vkbd.c */,
+				B3EBA9BE287296FC00EAEB37 /* retro_files.h */,
+				B3EBA9BF287296FC00EAEB37 /* font2.c */,
+			);
+			path = libretro;
+			sourceTree = "<group>";
+		};
+		B3EBA931287296FB00EAEB37 /* uae-cpu-pregen */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA932287296FB00EAEB37 /* cpudefs.c */,
+				B3EBA933287296FB00EAEB37 /* cputbl.h */,
+				B3EBA934287296FB00EAEB37 /* cpuemu.c */,
+				B3EBA935287296FB00EAEB37 /* cpustbl.c */,
+			);
+			path = "uae-cpu-pregen";
+			sourceTree = "<group>";
+		};
+		B3EBA937287296FB00EAEB37 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA938287296FB00EAEB37 /* retroscreen.h */,
+				B3EBA939287296FB00EAEB37 /* SDL_endian.h */,
+				B3EBA93A287296FB00EAEB37 /* SDL_types.h */,
+				B3EBA93B287296FB00EAEB37 /* SDL_keyboard.h */,
+				B3EBA93C287296FB00EAEB37 /* config.h */,
+				B3EBA93D287296FB00EAEB37 /* SDL_keysym.h */,
+				B3EBA93E287296FB00EAEB37 /* SDL_video.h */,
+				B3EBA93F287296FB00EAEB37 /* SDL_thread.h */,
+				B3EBA940287296FB00EAEB37 /* SDL.h */,
+				B3EBA941287296FB00EAEB37 /* gui-retro.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		B3EBA944287296FB00EAEB37 /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA945287296FB00EAEB37 /* unzip */,
+				B3EBA952287296FB00EAEB37 /* zlib */,
+			);
+			path = utils;
+			sourceTree = "<group>";
+		};
+		B3EBA945287296FB00EAEB37 /* unzip */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA946287296FB00EAEB37 /* unzip.c */,
+				B3EBA947287296FB00EAEB37 /* zip.c */,
+				B3EBA948287296FB00EAEB37 /* iowin32.h */,
+				B3EBA949287296FB00EAEB37 /* ioapi.c */,
+				B3EBA94A287296FB00EAEB37 /* mztools.c */,
+				B3EBA94B287296FB00EAEB37 /* crypt.h */,
+				B3EBA94C287296FB00EAEB37 /* zip.h */,
+				B3EBA94D287296FB00EAEB37 /* zlib.h */,
+				B3EBA94E287296FB00EAEB37 /* unzip.h */,
+				B3EBA94F287296FB00EAEB37 /* mztools.h */,
+				B3EBA950287296FB00EAEB37 /* ioapi.h */,
+				B3EBA951287296FB00EAEB37 /* zconf.h */,
+			);
+			path = unzip;
+			sourceTree = "<group>";
+		};
+		B3EBA952287296FB00EAEB37 /* zlib */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA953287296FB00EAEB37 /* zutil.h */,
+				B3EBA954287296FB00EAEB37 /* inftrees.h */,
+				B3EBA955287296FB00EAEB37 /* inflate.c */,
+				B3EBA956287296FB00EAEB37 /* compress.c */,
+				B3EBA957287296FB00EAEB37 /* deflate.c */,
+				B3EBA958287296FB00EAEB37 /* inffixed.h */,
+				B3EBA959287296FB00EAEB37 /* gzread.c */,
+				B3EBA95A287296FB00EAEB37 /* trees.h */,
+				B3EBA95B287296FB00EAEB37 /* inffast.h */,
+				B3EBA95C287296FB00EAEB37 /* contrib */,
+				B3EBA96C287296FB00EAEB37 /* crc32.c */,
+				B3EBA96D287296FB00EAEB37 /* infback.c */,
+				B3EBA96E287296FB00EAEB37 /* zutil.c */,
+				B3EBA96F287296FB00EAEB37 /* deflate.h */,
+				B3EBA970287296FB00EAEB37 /* gzguts.h */,
+				B3EBA971287296FB00EAEB37 /* zlib.h */,
+				B3EBA972287296FB00EAEB37 /* gzlib.c */,
+				B3EBA973287296FB00EAEB37 /* inflate.h */,
+				B3EBA974287296FB00EAEB37 /* inftrees.c */,
+				B3EBA975287296FB00EAEB37 /* uncompr.c */,
+				B3EBA976287296FB00EAEB37 /* gzwrite.c */,
+				B3EBA977287296FB00EAEB37 /* trees.c */,
+				B3EBA978287296FB00EAEB37 /* gzclose.c */,
+				B3EBA979287296FB00EAEB37 /* crc32.h */,
+				B3EBA97A287296FB00EAEB37 /* inffast.c */,
+				B3EBA97B287296FB00EAEB37 /* adler32.c */,
+				B3EBA97C287296FB00EAEB37 /* zconf.h */,
+			);
+			path = zlib;
+			sourceTree = "<group>";
+		};
+		B3EBA95C287296FB00EAEB37 /* contrib */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA95D287296FB00EAEB37 /* minizip */,
+			);
+			path = contrib;
+			sourceTree = "<group>";
+		};
+		B3EBA95D287296FB00EAEB37 /* minizip */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA95E287296FB00EAEB37 /* unzip.c */,
+				B3EBA95F287296FB00EAEB37 /* zip.c */,
+				B3EBA960287296FB00EAEB37 /* Makefile */,
+				B3EBA961287296FB00EAEB37 /* ioapi.c */,
+				B3EBA962287296FB00EAEB37 /* mztools.c */,
+				B3EBA963287296FB00EAEB37 /* crypt.h */,
+				B3EBA964287296FB00EAEB37 /* zip.h */,
+				B3EBA965287296FB00EAEB37 /* zlib.h */,
+				B3EBA966287296FB00EAEB37 /* make_vms.com */,
+				B3EBA967287296FB00EAEB37 /* unzip.h */,
+				B3EBA968287296FB00EAEB37 /* mztools.h */,
+				B3EBA969287296FB00EAEB37 /* ioapi.h */,
+				B3EBA96A287296FB00EAEB37 /* zconf.h */,
+				B3EBA96B287296FB00EAEB37 /* miniunz.c */,
+			);
+			path = minizip;
+			sourceTree = "<group>";
+		};
+		B3EBA980287296FB00EAEB37 /* gui-retro */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA981287296FB00EAEB37 /* dlgFloppy.c */,
+				B3EBA982287296FB00EAEB37 /* dlgDevice.c */,
+				B3EBA983287296FB00EAEB37 /* dlgJoystick.c */,
+				B3EBA984287296FB00EAEB37 /* dlgHardDisk.c */,
+				B3EBA985287296FB00EAEB37 /* font10x16.bmp */,
+				B3EBA986287296FB00EAEB37 /* CMakeLists.txt */,
+				B3EBA987287296FB00EAEB37 /* dlgRom.c */,
+				B3EBA988287296FB00EAEB37 /* dlgMain.c */,
+				B3EBA989287296FB00EAEB37 /* dlgNewDisk.c */,
+				B3EBA98A287296FB00EAEB37 /* dlgAbout.c */,
+				B3EBA98B287296FB00EAEB37 /* dlgSound.c */,
+				B3EBA98C287296FB00EAEB37 /* sdlgui.c */,
+				B3EBA98D287296FB00EAEB37 /* dlgMemory.c */,
+				B3EBA98E287296FB00EAEB37 /* font5x8.h */,
+				B3EBA98F287296FB00EAEB37 /* font5x8.bmp */,
+				B3EBA990287296FB00EAEB37 /* dlgAlert.c */,
+				B3EBA991287296FB00EAEB37 /* dlgFileSelect.c */,
+				B3EBA992287296FC00EAEB37 /* font10x16.h */,
+				B3EBA993287296FC00EAEB37 /* dlgKeyboard.c */,
+				B3EBA994287296FC00EAEB37 /* dlgScreen.c */,
+				B3EBA995287296FC00EAEB37 /* dlgSystem.c */,
+			);
+			path = "gui-retro";
+			sourceTree = "<group>";
+		};
+		B3EBA998287296FC00EAEB37 /* stub */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA999287296FC00EAEB37 /* dlgAlert.c */,
+			);
+			path = stub;
+			sourceTree = "<group>";
+		};
+		B3EBA99A287296FC00EAEB37 /* libretro-common */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA99B287296FC00EAEB37 /* include */,
+				B3EBA9A5287296FC00EAEB37 /* libco */,
+			);
+			path = "libretro-common";
+			sourceTree = "<group>";
+		};
+		B3EBA99B287296FC00EAEB37 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA99C287296FC00EAEB37 /* libco.h */,
+				B3EBA99D287296FC00EAEB37 /* compat */,
+				B3EBA9A3287296FC00EAEB37 /* retro_common_api.h */,
+				B3EBA9A4287296FC00EAEB37 /* libretro.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		B3EBA99D287296FC00EAEB37 /* compat */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA99E287296FC00EAEB37 /* zlib */,
+			);
+			path = compat;
+			sourceTree = "<group>";
+		};
+		B3EBA99E287296FC00EAEB37 /* zlib */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA99F287296FC00EAEB37 /* zutil.h */,
+				B3EBA9A0287296FC00EAEB37 /* zconf.h.in */,
+				B3EBA9A1287296FC00EAEB37 /* zlib.h */,
+				B3EBA9A2287296FC00EAEB37 /* zconf.h */,
+			);
+			path = zlib;
+			sourceTree = "<group>";
+		};
+		B3EBA9A5287296FC00EAEB37 /* libco */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA9A6287296FC00EAEB37 /* sjlj.c */,
+				B3EBA9A7287296FC00EAEB37 /* ppc.c */,
+				B3EBA9A8287296FC00EAEB37 /* ucontext.c */,
+				B3EBA9A9287296FC00EAEB37 /* fiber.c */,
+				B3EBA9AA287296FC00EAEB37 /* aarch64.c */,
+				B3EBA9AB287296FC00EAEB37 /* libco.c */,
+				B3EBA9AC287296FC00EAEB37 /* scefiber.c */,
+				B3EBA9AD287296FC00EAEB37 /* genode.cpp */,
+				B3EBA9AE287296FC00EAEB37 /* armeabi.c */,
+				B3EBA9AF287296FC00EAEB37 /* amd64.c */,
+				B3EBA9B0287296FC00EAEB37 /* psp2.c */,
+				B3EBA9B1287296FC00EAEB37 /* x86.c */,
+				B3EBA9B2287296FC00EAEB37 /* psp1.c */,
+			);
+			path = libco;
+			sourceTree = "<group>";
+		};
+		B3EBA9B8287296FC00EAEB37 /* jni */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA9B9287296FC00EAEB37 /* Android.mk */,
+				B3EBA9BA287296FC00EAEB37 /* Application.mk */,
+			);
+			path = jni;
+			sourceTree = "<group>";
+		};
+		B3EBA9C1287296FC00EAEB37 /* doc */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA9C2287296FC00EAEB37 /* CMakeLists.txt */,
+				B3EBA9C3287296FC00EAEB37 /* hatari.1 */,
+				B3EBA9C4287296FC00EAEB37 /* todo.txt */,
+				B3EBA9C5287296FC00EAEB37 /* images */,
+				B3EBA9D7287296FC00EAEB37 /* emutos.txt */,
+				B3EBA9D8287296FC00EAEB37 /* toc.js */,
+				B3EBA9D9287296FC00EAEB37 /* release-notes.txt */,
+				B3EBA9DA287296FC00EAEB37 /* compatibility.html */,
+				B3EBA9DB287296FC00EAEB37 /* coding.txt */,
+				B3EBA9DC287296FC00EAEB37 /* de */,
+				B3EBA9DE287296FC00EAEB37 /* fr */,
+				B3EBA9E1287296FC00EAEB37 /* doxygen */,
+				B3EBA9E3287296FC00EAEB37 /* authors.txt */,
+				B3EBA9E4287296FC00EAEB37 /* manual.html */,
+				B3EBA9E5287296FC00EAEB37 /* keymap-sample.txt */,
+				B3EBA9E6287296FC00EAEB37 /* midi-linux.txt */,
+				B3EBA9E7287296FC00EAEB37 /* memory-usage.txt */,
+			);
+			path = doc;
+			sourceTree = "<group>";
+		};
+		B3EBA9C5287296FC00EAEB37 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA9C6287296FC00EAEB37 /* callgraph.svg */,
+				B3EBA9C7287296FC00EAEB37 /* floppydisks.png */,
+				B3EBA9C8287296FC00EAEB37 /* main.png */,
+				B3EBA9C9287296FC00EAEB37 /* joystick.png */,
+				B3EBA9CA287296FC00EAEB37 /* keyboard.png */,
+				B3EBA9CB287296FC00EAEB37 /* devices.png */,
+				B3EBA9CC287296FC00EAEB37 /* callgraph.png */,
+				B3EBA9CD287296FC00EAEB37 /* sound.png */,
+				B3EBA9CE287296FC00EAEB37 /* harddisks.png */,
+				B3EBA9CF287296FC00EAEB37 /* system.png */,
+				B3EBA9D0287296FC00EAEB37 /* monitor.png */,
+				B3EBA9D1287296FC00EAEB37 /* screen.png */,
+				B3EBA9D2287296FC00EAEB37 /* tos.png */,
+				B3EBA9D3287296FC00EAEB37 /* kcachegrind.png */,
+				B3EBA9D4287296FC00EAEB37 /* fileselector.png */,
+				B3EBA9D5287296FC00EAEB37 /* newfloppy.png */,
+				B3EBA9D6287296FC00EAEB37 /* memory.png */,
+			);
+			path = images;
+			sourceTree = "<group>";
+		};
+		B3EBA9DC287296FC00EAEB37 /* de */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA9DD287296FC00EAEB37 /* tastatur-windows.txt */,
+			);
+			path = de;
+			sourceTree = "<group>";
+		};
+		B3EBA9DE287296FC00EAEB37 /* fr */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA9DF287296FC00EAEB37 /* hatari.1 */,
+				B3EBA9E0287296FC00EAEB37 /* clavier-exemple.txt */,
+			);
+			path = fr;
+			sourceTree = "<group>";
+		};
+		B3EBA9E1287296FC00EAEB37 /* doxygen */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA9E2287296FC00EAEB37 /* Doxyfile */,
+			);
+			path = doxygen;
+			sourceTree = "<group>";
+		};
+		B3EBA9EC287296FC00EAEB37 /* python-ui */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA9ED287296FC00EAEB37 /* hatariui */,
+				B3EBA9EE287296FC00EAEB37 /* CMakeLists.txt */,
+				B3EBA9EF287296FC00EAEB37 /* config.py */,
+				B3EBA9F0287296FC00EAEB37 /* release-notes.txt */,
+				B3EBA9F1287296FC00EAEB37 /* tests */,
+				B3EBA9F5287296FC00EAEB37 /* README */,
+				B3EBA9F6287296FC00EAEB37 /* TODO */,
+				B3EBA9F7287296FC00EAEB37 /* hatari-icon.png */,
+				B3EBA9F8287296FC00EAEB37 /* hatari.png */,
+				B3EBA9F9287296FC00EAEB37 /* hatariui.py */,
+				B3EBA9FA287296FC00EAEB37 /* gentypes.py */,
+				B3EBA9FB287296FC00EAEB37 /* FILES */,
+				B3EBA9FC287296FC00EAEB37 /* hatariui.desktop */,
+				B3EBA9FD287296FC00EAEB37 /* dialogs.py */,
+				B3EBA9FE287296FC00EAEB37 /* uihelpers.py */,
+				B3EBA9FF287296FC00EAEB37 /* .cvsignore */,
+				B3EBAA00287296FC00EAEB37 /* hatariui.1 */,
+				B3EBAA01287296FC00EAEB37 /* hatari.py */,
+				B3EBAA02287296FC00EAEB37 /* debugui.py */,
+			);
+			path = "python-ui";
+			sourceTree = "<group>";
+		};
+		B3EBA9F1287296FC00EAEB37 /* tests */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA9F2287296FC00EAEB37 /* pygtk-hatari-embed-test.py */,
+				B3EBA9F3287296FC00EAEB37 /* README */,
+				B3EBA9F4287296FC00EAEB37 /* pygtk-hello-world.py */,
+			);
+			path = tests;
+			sourceTree = "<group>";
+		};
+		B3EBAA03287296FC00EAEB37 /* share */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAA04287296FC00EAEB37 /* CMakeLists.txt */,
+				B3EBAA05287296FC00EAEB37 /* icons */,
+				B3EBAA2B287296FC00EAEB37 /* applications */,
+				B3EBAA2D287296FC00EAEB37 /* mime */,
+			);
+			path = share;
+			sourceTree = "<group>";
+		};
+		B3EBAA05287296FC00EAEB37 /* icons */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAA06287296FC00EAEB37 /* hicolor */,
+			);
+			path = icons;
+			sourceTree = "<group>";
+		};
+		B3EBAA06287296FC00EAEB37 /* hicolor */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAA07287296FC00EAEB37 /* 64x64 */,
+				B3EBAA0D287296FC00EAEB37 /* 32x32 */,
+				B3EBAA13287296FC00EAEB37 /* 128x128 */,
+				B3EBAA19287296FC00EAEB37 /* 256x256 */,
+				B3EBAA1F287296FC00EAEB37 /* scalable */,
+				B3EBAA25287296FC00EAEB37 /* 48x48 */,
+			);
+			path = hicolor;
+			sourceTree = "<group>";
+		};
+		B3EBAA07287296FC00EAEB37 /* 64x64 */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAA08287296FC00EAEB37 /* mimetypes */,
+				B3EBAA0B287296FC00EAEB37 /* apps */,
+			);
+			path = 64x64;
+			sourceTree = "<group>";
+		};
+		B3EBAA08287296FC00EAEB37 /* mimetypes */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAA09287296FC00EAEB37 /* application-x-msa-disk-image.png */,
+				B3EBAA0A287296FC00EAEB37 /* application-x-st-disk-image.png */,
+			);
+			path = mimetypes;
+			sourceTree = "<group>";
+		};
+		B3EBAA0B287296FC00EAEB37 /* apps */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAA0C287296FC00EAEB37 /* hatari.png */,
+			);
+			path = apps;
+			sourceTree = "<group>";
+		};
+		B3EBAA0D287296FC00EAEB37 /* 32x32 */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAA0E287296FC00EAEB37 /* mimetypes */,
+				B3EBAA11287296FC00EAEB37 /* apps */,
+			);
+			path = 32x32;
+			sourceTree = "<group>";
+		};
+		B3EBAA0E287296FC00EAEB37 /* mimetypes */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAA0F287296FC00EAEB37 /* application-x-msa-disk-image.png */,
+				B3EBAA10287296FC00EAEB37 /* application-x-st-disk-image.png */,
+			);
+			path = mimetypes;
+			sourceTree = "<group>";
+		};
+		B3EBAA11287296FC00EAEB37 /* apps */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAA12287296FC00EAEB37 /* hatari.png */,
+			);
+			path = apps;
+			sourceTree = "<group>";
+		};
+		B3EBAA13287296FC00EAEB37 /* 128x128 */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAA14287296FC00EAEB37 /* mimetypes */,
+				B3EBAA17287296FC00EAEB37 /* apps */,
+			);
+			path = 128x128;
+			sourceTree = "<group>";
+		};
+		B3EBAA14287296FC00EAEB37 /* mimetypes */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAA15287296FC00EAEB37 /* application-x-msa-disk-image.png */,
+				B3EBAA16287296FC00EAEB37 /* application-x-st-disk-image.png */,
+			);
+			path = mimetypes;
+			sourceTree = "<group>";
+		};
+		B3EBAA17287296FC00EAEB37 /* apps */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAA18287296FC00EAEB37 /* hatari.png */,
+			);
+			path = apps;
+			sourceTree = "<group>";
+		};
+		B3EBAA19287296FC00EAEB37 /* 256x256 */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAA1A287296FC00EAEB37 /* mimetypes */,
+				B3EBAA1D287296FC00EAEB37 /* apps */,
+			);
+			path = 256x256;
+			sourceTree = "<group>";
+		};
+		B3EBAA1A287296FC00EAEB37 /* mimetypes */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAA1B287296FC00EAEB37 /* application-x-msa-disk-image.png */,
+				B3EBAA1C287296FC00EAEB37 /* application-x-st-disk-image.png */,
+			);
+			path = mimetypes;
+			sourceTree = "<group>";
+		};
+		B3EBAA1D287296FC00EAEB37 /* apps */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAA1E287296FC00EAEB37 /* hatari.png */,
+			);
+			path = apps;
+			sourceTree = "<group>";
+		};
+		B3EBAA1F287296FC00EAEB37 /* scalable */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAA20287296FC00EAEB37 /* mimetypes */,
+				B3EBAA23287296FC00EAEB37 /* apps */,
+			);
+			path = scalable;
+			sourceTree = "<group>";
+		};
+		B3EBAA20287296FC00EAEB37 /* mimetypes */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAA21287296FC00EAEB37 /* application-x-msa-disk-image.svg */,
+				B3EBAA22287296FC00EAEB37 /* application-x-st-disk-image.svg */,
+			);
+			path = mimetypes;
+			sourceTree = "<group>";
+		};
+		B3EBAA23287296FC00EAEB37 /* apps */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAA24287296FC00EAEB37 /* hatari.svg */,
+			);
+			path = apps;
+			sourceTree = "<group>";
+		};
+		B3EBAA25287296FC00EAEB37 /* 48x48 */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAA26287296FC00EAEB37 /* mimetypes */,
+				B3EBAA29287296FC00EAEB37 /* apps */,
+			);
+			path = 48x48;
+			sourceTree = "<group>";
+		};
+		B3EBAA26287296FC00EAEB37 /* mimetypes */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAA27287296FC00EAEB37 /* application-x-msa-disk-image.png */,
+				B3EBAA28287296FC00EAEB37 /* application-x-st-disk-image.png */,
+			);
+			path = mimetypes;
+			sourceTree = "<group>";
+		};
+		B3EBAA29287296FC00EAEB37 /* apps */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAA2A287296FC00EAEB37 /* hatari.png */,
+			);
+			path = apps;
+			sourceTree = "<group>";
+		};
+		B3EBAA2B287296FC00EAEB37 /* applications */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAA2C287296FC00EAEB37 /* hatari.desktop */,
+			);
+			path = applications;
+			sourceTree = "<group>";
+		};
+		B3EBAA2D287296FC00EAEB37 /* mime */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAA2E287296FC00EAEB37 /* packages */,
+			);
+			path = mime;
+			sourceTree = "<group>";
+		};
+		B3EBAA2E287296FC00EAEB37 /* packages */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAA2F287296FC00EAEB37 /* hatari.xml */,
+			);
+			path = packages;
+			sourceTree = "<group>";
+		};
+		B3EBAA30287296FC00EAEB37 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAA31287296FC00EAEB37 /* stMemory.c */,
+				B3EBAA32287296FC00EAEB37 /* cart.c */,
+				B3EBAA33287296FC00EAEB37 /* dim.c */,
+				B3EBAA34287296FC00EAEB37 /* ioMem.c */,
+				B3EBAA35287296FC00EAEB37 /* xbios.c */,
+				B3EBAA36287296FC00EAEB37 /* CMakeLists.txt */,
+				B3EBAA37287296FC00EAEB37 /* hatari-icon.bmp */,
+				B3EBAA38287296FC00EAEB37 /* change.c */,
+				B3EBAA39287296FC00EAEB37 /* unzip.c */,
+				B3EBAA3A287296FC00EAEB37 /* createBlankImage.c */,
+				B3EBAA3B287296FC00EAEB37 /* floppy_ipf.c */,
+				B3EBAA3C287296FC00EAEB37 /* dmaSnd.c */,
+				B3EBAA3D287296FC00EAEB37 /* rtc.c */,
+				B3EBAA3E287296FC00EAEB37 /* paths.c */,
+				B3EBAA3F287296FC00EAEB37 /* video.c */,
+				B3EBAA40287296FC00EAEB37 /* ioMemTabTT.c */,
+				B3EBAA41287296FC00EAEB37 /* zip.c */,
+				B3EBAA42287296FC00EAEB37 /* cpu */,
+				B3EBAA72287296FC00EAEB37 /* acia.c */,
+				B3EBAA73287296FC00EAEB37 /* spec512.c */,
+				B3EBAA74287296FC00EAEB37 /* screen.c */,
+				B3EBAA75287296FC00EAEB37 /* hdc.c */,
+				B3EBAA76287296FC00EAEB37 /* scandir.c */,
+				B3EBAA77287296FC00EAEB37 /* resolution.c */,
+				B3EBAA78287296FC00EAEB37 /* str.c */,
+				B3EBAA79287296FC00EAEB37 /* tos.c */,
+				B3EBAA7A287296FC00EAEB37 /* mfp.c */,
+				B3EBAA7B287296FC00EAEB37 /* cartData.c */,
+				B3EBAA7C287296FC00EAEB37 /* includes */,
+				B3EBAAC1287296FC00EAEB37 /* floppy_stx.c */,
+				B3EBAAC2287296FC00EAEB37 /* keymap.c */,
+				B3EBAAC3287296FC00EAEB37 /* hd6301_cpu.c */,
+				B3EBAAC4287296FC00EAEB37 /* wavFormat.c */,
+				B3EBAAC5287296FC00EAEB37 /* gui-sdl */,
+				B3EBAADB287296FD00EAEB37 /* reset.c */,
+				B3EBAADC287296FD00EAEB37 /* st.c */,
+				B3EBAADD287296FD00EAEB37 /* control.c */,
+				B3EBAADE287296FD00EAEB37 /* bios.c */,
+				B3EBAADF287296FD00EAEB37 /* msa.c */,
+				B3EBAAE0287296FD00EAEB37 /* gemdos.c */,
+				B3EBAAE1287296FD00EAEB37 /* avi_record.c */,
+				B3EBAAE2287296FD00EAEB37 /* screenSnapShot.c */,
+				B3EBAAE3287296FD00EAEB37 /* cart_asm.s */,
+				B3EBAAE4287296FD00EAEB37 /* vdi.c */,
+				B3EBAAE5287296FD00EAEB37 /* utils.c */,
+				B3EBAAE6287296FD00EAEB37 /* shortcut.c */,
+				B3EBAAE7287296FD00EAEB37 /* printer.c */,
+				B3EBAAE8287296FD00EAEB37 /* main.c */,
+				B3EBAAE9287296FD00EAEB37 /* joy.c */,
+				B3EBAAEA287296FD00EAEB37 /* ymFormat.c */,
+				B3EBAAEB287296FD00EAEB37 /* sound.c */,
+				B3EBAAEC287296FD00EAEB37 /* gui-win */,
+				B3EBAAF1287296FD00EAEB37 /* m68000.c */,
+				B3EBAAF2287296FD00EAEB37 /* floppy.c */,
+				B3EBAAF3287296FD00EAEB37 /* ikbd.c */,
+				B3EBAAF4287296FD00EAEB37 /* rs232.c */,
+				B3EBAAF5287296FD00EAEB37 /* blitter.c */,
+				B3EBAAF6287296FD00EAEB37 /* midi.c */,
+				B3EBAAF7287296FD00EAEB37 /* uae-cpu */,
+				B3EBAB0C287296FD00EAEB37 /* cfgopts.c */,
+				B3EBAB0D287296FD00EAEB37 /* dialog.c */,
+				B3EBAB0E287296FD00EAEB37 /* memorySnapShot.c */,
+				B3EBAB0F287296FD00EAEB37 /* fdc.c */,
+				B3EBAB10287296FD00EAEB37 /* ioMemTabSTE.c */,
+				B3EBAB11287296FD00EAEB37 /* cycles.c */,
+				B3EBAB12287296FD00EAEB37 /* ioMemTabFalcon.c */,
+				B3EBAB13287296FD00EAEB37 /* psg.c */,
+				B3EBAB14287296FD00EAEB37 /* file.c */,
+				B3EBAB15287296FD00EAEB37 /* ioMemTabST.c */,
+				B3EBAB16287296FD00EAEB37 /* ide.c */,
+				B3EBAB17287296FD00EAEB37 /* statusbar.c */,
+				B3EBAB18287296FD00EAEB37 /* cycInt.c */,
+				B3EBAB19287296FD00EAEB37 /* clocks_timings.c */,
+				B3EBAB1A287296FD00EAEB37 /* cart_mus.x32 */,
+				B3EBAB1B287296FD00EAEB37 /* gui-osx */,
+				B3EBAB36287296FD00EAEB37 /* falcon */,
+				B3EBAB4A287296FD00EAEB37 /* options.c */,
+				B3EBAB4B287296FD00EAEB37 /* audio.c */,
+				B3EBAB4C287296FD00EAEB37 /* hd6301_cpu.h */,
+				B3EBAB4D287296FD00EAEB37 /* convert */,
+				B3EBAB63287296FD00EAEB37 /* debug */,
+				B3EBAB83287296FD00EAEB37 /* configuration.c */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		B3EBAA42287296FC00EAEB37 /* cpu */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAA43287296FC00EAEB37 /* events_jit.h */,
+				B3EBAA44287296FC00EAEB37 /* sysconfig.h */,
+				B3EBAA45287296FC00EAEB37 /* fpp-unknown.h */,
+				B3EBAA46287296FC00EAEB37 /* table68k */,
+				B3EBAA47287296FC00EAEB37 /* custom.h */,
+				B3EBAA48287296FC00EAEB37 /* m68k.h */,
+				B3EBAA49287296FC00EAEB37 /* fpp-ieee-be.h */,
+				B3EBAA4A287296FC00EAEB37 /* memory.c */,
+				B3EBAA4B287296FC00EAEB37 /* CMakeLists.txt */,
+				B3EBAA4C287296FC00EAEB37 /* events_normal.h */,
+				B3EBAA4D287296FC00EAEB37 /* hatari-glue.c */,
+				B3EBAA4E287296FC00EAEB37 /* mmu_common.h */,
+				B3EBAA4F287296FC00EAEB37 /* falcon_cycle030.h */,
+				B3EBAA50287296FC00EAEB37 /* cpummu.h */,
+				B3EBAA51287296FC00EAEB37 /* readcpu.c */,
+				B3EBAA52287296FC00EAEB37 /* gencpu.c */,
+				B3EBAA53287296FC00EAEB37 /* newcpu.h */,
+				B3EBAA54287296FC00EAEB37 /* cpummu030.c */,
+				B3EBAA55287296FC00EAEB37 /* events.h */,
+				B3EBAA56287296FC00EAEB37 /* md-fpp.h */,
+				B3EBAA57287296FC00EAEB37 /* build68k.c */,
+				B3EBAA58287296FC00EAEB37 /* custom.c */,
+				B3EBAA59287296FC00EAEB37 /* cpummu.c */,
+				B3EBAA5A287296FC00EAEB37 /* jit */,
+				B3EBAA66287296FC00EAEB37 /* readcpu.h */,
+				B3EBAA67287296FC00EAEB37 /* options_cpu.h */,
+				B3EBAA68287296FC00EAEB37 /* maccess.h */,
+				B3EBAA69287296FC00EAEB37 /* hatari-glue.h */,
+				B3EBAA6A287296FC00EAEB37 /* compat.h */,
+				B3EBAA6B287296FC00EAEB37 /* cpu_prefetch.h */,
+				B3EBAA6C287296FC00EAEB37 /* memory.h */,
+				B3EBAA6D287296FC00EAEB37 /* cpummu030.h */,
+				B3EBAA6E287296FC00EAEB37 /* newcpu.c */,
+				B3EBAA6F287296FC00EAEB37 /* sysdeps.h */,
+				B3EBAA70287296FC00EAEB37 /* fpp.c */,
+				B3EBAA71287296FC00EAEB37 /* savestate.h */,
+			);
+			path = cpu;
+			sourceTree = "<group>";
+		};
+		B3EBAA5A287296FC00EAEB37 /* jit */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAA5B287296FC00EAEB37 /* compemu_support.c */,
+				B3EBAA5C287296FC00EAEB37 /* codegen_x86.c */,
+				B3EBAA5D287296FC00EAEB37 /* compemu_raw_x86.c */,
+				B3EBAA5E287296FC00EAEB37 /* comptbl.h */,
+				B3EBAA5F287296FC00EAEB37 /* compemu_fpp.c */,
+				B3EBAA60287296FC00EAEB37 /* codegen_x86.h */,
+				B3EBAA61287296FC00EAEB37 /* compemu_support_codegen.c */,
+				B3EBAA62287296FC00EAEB37 /* compemu_codegen.h */,
+				B3EBAA63287296FC00EAEB37 /* compemu_optimizer_x86.c */,
+				B3EBAA64287296FC00EAEB37 /* gencomp.c */,
+				B3EBAA65287296FC00EAEB37 /* compemu.h */,
+			);
+			path = jit;
+			sourceTree = "<group>";
+		};
+		B3EBAA7C287296FC00EAEB37 /* includes */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAA7D287296FC00EAEB37 /* ymFormat.h */,
+				B3EBAA7E287296FC00EAEB37 /* joy.h */,
+				B3EBAA7F287296FC00EAEB37 /* main.h */,
+				B3EBAA80287296FC00EAEB37 /* sound.h */,
+				B3EBAA81287296FC00EAEB37 /* screenSnapShot.h */,
+				B3EBAA82287296FC00EAEB37 /* avi_record.h */,
+				B3EBAA83287296FC00EAEB37 /* ioMemTables.h */,
+				B3EBAA84287296FC00EAEB37 /* printer.h */,
+				B3EBAA85287296FC00EAEB37 /* shortcut.h */,
+				B3EBAA86287296FC00EAEB37 /* utils.h */,
+				B3EBAA87287296FC00EAEB37 /* vdi.h */,
+				B3EBAA88287296FC00EAEB37 /* gemdos.h */,
+				B3EBAA89287296FC00EAEB37 /* bios.h */,
+				B3EBAA8A287296FC00EAEB37 /* control.h */,
+				B3EBAA8B287296FC00EAEB37 /* sdlgui.h */,
+				B3EBAA8C287296FC00EAEB37 /* st.h */,
+				B3EBAA8D287296FC00EAEB37 /* msa.h */,
+				B3EBAA8E287296FC00EAEB37 /* version.h */,
+				B3EBAA8F287296FC00EAEB37 /* dialog.h */,
+				B3EBAA90287296FC00EAEB37 /* cfgopts.h */,
+				B3EBAA91287296FC00EAEB37 /* fdc.h */,
+				B3EBAA92287296FC00EAEB37 /* memorySnapShot.h */,
+				B3EBAA93287296FC00EAEB37 /* rs232.h */,
+				B3EBAA94287296FC00EAEB37 /* pixel_convert.h */,
+				B3EBAA95287296FC00EAEB37 /* midi.h */,
+				B3EBAA96287296FC00EAEB37 /* blitter.h */,
+				B3EBAA97287296FC00EAEB37 /* floppy.h */,
+				B3EBAA98287296FC00EAEB37 /* m68000.h */,
+				B3EBAA99287296FC00EAEB37 /* ikbd.h */,
+				B3EBAA9A287296FC00EAEB37 /* clocks_timings.h */,
+				B3EBAA9B287296FC00EAEB37 /* cycInt.h */,
+				B3EBAA9C287296FC00EAEB37 /* statusbar.h */,
+				B3EBAA9D287296FC00EAEB37 /* file.h */,
+				B3EBAA9E287296FC00EAEB37 /* ide.h */,
+				B3EBAA9F287296FC00EAEB37 /* psg.h */,
+				B3EBAAA0287296FC00EAEB37 /* cycles.h */,
+				B3EBAAA1287296FC00EAEB37 /* configuration.h */,
+				B3EBAAA2287296FC00EAEB37 /* audio.h */,
+				B3EBAAA3287296FC00EAEB37 /* gemdos_defines.h */,
+				B3EBAAA4287296FC00EAEB37 /* options.h */,
+				B3EBAAA5287296FC00EAEB37 /* ioMem.h */,
+				B3EBAAA6287296FC00EAEB37 /* cart.h */,
+				B3EBAAA7287296FC00EAEB37 /* dim.h */,
+				B3EBAAA8287296FC00EAEB37 /* stMemory.h */,
+				B3EBAAA9287296FC00EAEB37 /* zip.h */,
+				B3EBAAAA287296FC00EAEB37 /* floppy_ipf.h */,
+				B3EBAAAB287296FC00EAEB37 /* createBlankImage.h */,
+				B3EBAAAC287296FC00EAEB37 /* video.h */,
+				B3EBAAAD287296FC00EAEB37 /* paths.h */,
+				B3EBAAAE287296FC00EAEB37 /* rtc.h */,
+				B3EBAAAF287296FC00EAEB37 /* ym2149_fixed_vol.h */,
+				B3EBAAB0287296FC00EAEB37 /* dmaSnd.h */,
+				B3EBAAB1287296FC00EAEB37 /* change.h */,
+				B3EBAAB2287296FC00EAEB37 /* unzip.h */,
+				B3EBAAB3287296FC00EAEB37 /* xbios.h */,
+				B3EBAAB4287296FC00EAEB37 /* str.h */,
+				B3EBAAB5287296FC00EAEB37 /* mfp.h */,
+				B3EBAAB6287296FC00EAEB37 /* tos.h */,
+				B3EBAAB7287296FC00EAEB37 /* scandir.h */,
+				B3EBAAB8287296FC00EAEB37 /* hdc.h */,
+				B3EBAAB9287296FC00EAEB37 /* screen.h */,
+				B3EBAABA287296FC00EAEB37 /* spec512.h */,
+				B3EBAABB287296FC00EAEB37 /* resolution.h */,
+				B3EBAABC287296FC00EAEB37 /* acia.h */,
+				B3EBAABD287296FC00EAEB37 /* reset.h */,
+				B3EBAABE287296FC00EAEB37 /* wavFormat.h */,
+				B3EBAABF287296FC00EAEB37 /* floppy_stx.h */,
+				B3EBAAC0287296FC00EAEB37 /* keymap.h */,
+			);
+			path = includes;
+			sourceTree = "<group>";
+		};
+		B3EBAAC5287296FC00EAEB37 /* gui-sdl */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAAC6287296FC00EAEB37 /* dlgFloppy.c */,
+				B3EBAAC7287296FC00EAEB37 /* dlgDevice.c */,
+				B3EBAAC8287296FC00EAEB37 /* dlgJoystick.c */,
+				B3EBAAC9287296FC00EAEB37 /* dlgHardDisk.c */,
+				B3EBAACA287296FC00EAEB37 /* font10x16.bmp */,
+				B3EBAACB287296FC00EAEB37 /* CMakeLists.txt */,
+				B3EBAACC287296FC00EAEB37 /* dlgRom.c */,
+				B3EBAACD287296FC00EAEB37 /* dlgMain.c */,
+				B3EBAACE287296FC00EAEB37 /* dlgNewDisk.c */,
+				B3EBAACF287296FC00EAEB37 /* dlgAbout.c */,
+				B3EBAAD0287296FC00EAEB37 /* dlgSound.c */,
+				B3EBAAD1287296FD00EAEB37 /* sdlgui.c */,
+				B3EBAAD2287296FD00EAEB37 /* dlgMemory.c */,
+				B3EBAAD3287296FD00EAEB37 /* font5x8.h */,
+				B3EBAAD4287296FD00EAEB37 /* font5x8.bmp */,
+				B3EBAAD5287296FD00EAEB37 /* dlgAlert.c */,
+				B3EBAAD6287296FD00EAEB37 /* dlgFileSelect.c */,
+				B3EBAAD7287296FD00EAEB37 /* font10x16.h */,
+				B3EBAAD8287296FD00EAEB37 /* dlgKeyboard.c */,
+				B3EBAAD9287296FD00EAEB37 /* dlgScreen.c */,
+				B3EBAADA287296FD00EAEB37 /* dlgSystem.c */,
+			);
+			path = "gui-sdl";
+			sourceTree = "<group>";
+		};
+		B3EBAAEC287296FD00EAEB37 /* gui-win */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAAED287296FD00EAEB37 /* opencon.c */,
+				B3EBAAEE287296FD00EAEB37 /* hatari-winicon.ico */,
+				B3EBAAEF287296FD00EAEB37 /* hatari-winicon.rc */,
+				B3EBAAF0287296FD00EAEB37 /* opencon.h */,
+			);
+			path = "gui-win";
+			sourceTree = "<group>";
+		};
+		B3EBAAF7287296FD00EAEB37 /* uae-cpu */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAAF8287296FD00EAEB37 /* fpp-unknown.h */,
+				B3EBAAF9287296FD00EAEB37 /* table68k */,
+				B3EBAAFA287296FD00EAEB37 /* m68k.h */,
+				B3EBAAFB287296FD00EAEB37 /* fpp-ieee-be.h */,
+				B3EBAAFC287296FD00EAEB37 /* memory.c */,
+				B3EBAAFD287296FD00EAEB37 /* CMakeLists.txt */,
+				B3EBAAFE287296FD00EAEB37 /* hatari-glue.c */,
+				B3EBAAFF287296FD00EAEB37 /* readcpu.c */,
+				B3EBAB00287296FD00EAEB37 /* gencpu.c */,
+				B3EBAB01287296FD00EAEB37 /* newcpu.h */,
+				B3EBAB02287296FD00EAEB37 /* build68k.c */,
+				B3EBAB03287296FD00EAEB37 /* readcpu.h */,
+				B3EBAB04287296FD00EAEB37 /* options_cpu.h */,
+				B3EBAB05287296FD00EAEB37 /* maccess.h */,
+				B3EBAB06287296FD00EAEB37 /* hatari-glue.h */,
+				B3EBAB07287296FD00EAEB37 /* emumemory.h */,
+				B3EBAB08287296FD00EAEB37 /* newcpu.c */,
+				B3EBAB09287296FD00EAEB37 /* sysdeps.h */,
+				B3EBAB0A287296FD00EAEB37 /* fpp.c */,
+				B3EBAB0B287296FD00EAEB37 /* savestate.h */,
+			);
+			path = "uae-cpu";
+			sourceTree = "<group>";
+		};
+		B3EBAB1B287296FD00EAEB37 /* gui-osx */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAB1C287296FD00EAEB37 /* Localizable.strings */,
+				B3EBAB1E287296FD00EAEB37 /* InfoPlist.strings */,
+				B3EBAB20287296FD00EAEB37 /* SDLMain.nib */,
+				B3EBAB22287296FD00EAEB37 /* SDLMain.xib */,
+				B3EBAB24287296FD00EAEB37 /* Shared.h */,
+				B3EBAB25287296FD00EAEB37 /* Info-Hatari.plist */,
+				B3EBAB26287296FD00EAEB37 /* PrefsController.m */,
+				B3EBAB27287296FD00EAEB37 /* SDLMain.h */,
+				B3EBAB28287296FD00EAEB37 /* Info-Hatari Winuae.plist */,
+				B3EBAB29287296FD00EAEB37 /* disk.icns */,
+				B3EBAB2A287296FD00EAEB37 /* CreateFloppyController.h */,
+				B3EBAB2B287296FD00EAEB37 /* AlertHooks.m */,
+				B3EBAB2C287296FD00EAEB37 /* Shared.m */,
+				B3EBAB31287296FD00EAEB37 /* Hatari.icns */,
+				B3EBAB32287296FD00EAEB37 /* SDLMain.m */,
+				B3EBAB33287296FD00EAEB37 /* PrefsController.h */,
+				B3EBAB34287296FD00EAEB37 /* AlertHooks.h */,
+				B3EBAB35287296FD00EAEB37 /* CreateFloppyController.m */,
+			);
+			path = "gui-osx";
+			sourceTree = "<group>";
+		};
+		B3EBAB36287296FD00EAEB37 /* falcon */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAB37287296FD00EAEB37 /* hostscreen.h */,
+				B3EBAB38287296FD00EAEB37 /* dsp.c */,
+				B3EBAB39287296FD00EAEB37 /* CMakeLists.txt */,
+				B3EBAB3A287296FD00EAEB37 /* dsp_cpu.h */,
+				B3EBAB3B287296FD00EAEB37 /* nvram.h */,
+				B3EBAB3C287296FD00EAEB37 /* microphone.h */,
+				B3EBAB3D287296FD00EAEB37 /* dsp_core.c */,
+				B3EBAB3E287296FD00EAEB37 /* crossbar.h */,
+				B3EBAB3F287296FD00EAEB37 /* dsp_disasm.h */,
+				B3EBAB40287296FD00EAEB37 /* videl.c */,
+				B3EBAB41287296FD00EAEB37 /* nvram.c */,
+				B3EBAB42287296FD00EAEB37 /* dsp_cpu.c */,
+				B3EBAB43287296FD00EAEB37 /* hostscreen.c */,
+				B3EBAB44287296FD00EAEB37 /* dsp.h */,
+				B3EBAB45287296FD00EAEB37 /* dsp_core.h */,
+				B3EBAB46287296FD00EAEB37 /* microphone.c */,
+				B3EBAB47287296FD00EAEB37 /* videl.h */,
+				B3EBAB48287296FD00EAEB37 /* dsp_disasm.c */,
+				B3EBAB49287296FD00EAEB37 /* crossbar.c */,
+			);
+			path = falcon;
+			sourceTree = "<group>";
+		};
+		B3EBAB4D287296FD00EAEB37 /* convert */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAB4E287296FD00EAEB37 /* high640x8.c */,
+				B3EBAB4F287296FD00EAEB37 /* low320x16_spec.c */,
+				B3EBAB50287296FD00EAEB37 /* routines.h */,
+				B3EBAB51287296FD00EAEB37 /* low320x32_spec.c */,
+				B3EBAB52287296FD00EAEB37 /* vdi4.c */,
+				B3EBAB53287296FD00EAEB37 /* med640x16.c */,
+				B3EBAB54287296FD00EAEB37 /* low320x8.c */,
+				B3EBAB55287296FD00EAEB37 /* low640x8.c */,
+				B3EBAB56287296FD00EAEB37 /* low640x32.c */,
+				B3EBAB57287296FD00EAEB37 /* vdi16.c */,
+				B3EBAB58287296FD00EAEB37 /* low320x16.c */,
+				B3EBAB59287296FD00EAEB37 /* med640x32.c */,
+				B3EBAB5A287296FD00EAEB37 /* macros.h */,
+				B3EBAB5B287296FD00EAEB37 /* low640x16.c */,
+				B3EBAB5C287296FD00EAEB37 /* low320x32.c */,
+				B3EBAB5D287296FD00EAEB37 /* low640x32_spec.c */,
+				B3EBAB5E287296FD00EAEB37 /* med640x32_spec.c */,
+				B3EBAB5F287296FD00EAEB37 /* vdi2.c */,
+				B3EBAB60287296FD00EAEB37 /* low640x16_spec.c */,
+				B3EBAB61287296FD00EAEB37 /* med640x16_spec.c */,
+				B3EBAB62287296FD00EAEB37 /* med640x8.c */,
+			);
+			path = convert;
+			sourceTree = "<group>";
+		};
+		B3EBAB63287296FD00EAEB37 /* debug */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBAB64287296FD00EAEB37 /* debugui.h */,
+				B3EBAB65287296FD00EAEB37 /* log.c */,
+				B3EBAB66287296FD00EAEB37 /* console.h */,
+				B3EBAB67287296FD00EAEB37 /* history.c */,
+				B3EBAB68287296FD00EAEB37 /* debugdsp.h */,
+				B3EBAB69287296FD00EAEB37 /* debugcpu.h */,
+				B3EBAB6A287296FD00EAEB37 /* 68kDisass.c */,
+				B3EBAB6B287296FD00EAEB37 /* debug_priv.h */,
+				B3EBAB6C287296FD00EAEB37 /* profile.h */,
+				B3EBAB6D287296FD00EAEB37 /* symbols.h */,
+				B3EBAB6E287296FD00EAEB37 /* CMakeLists.txt */,
+				B3EBAB6F287296FD00EAEB37 /* profiledsp.c */,
+				B3EBAB70287296FD00EAEB37 /* breakcond.c */,
+				B3EBAB71287296FD00EAEB37 /* profilecpu.c */,
+				B3EBAB72287296FD00EAEB37 /* evaluate.c */,
+				B3EBAB73287296FD00EAEB37 /* natfeats.h */,
+				B3EBAB74287296FD00EAEB37 /* debugInfo.h */,
+				B3EBAB75287296FD00EAEB37 /* debugcpu.c */,
+				B3EBAB76287296FD00EAEB37 /* 68kDisass.h */,
+				B3EBAB77287296FD00EAEB37 /* console.c */,
+				B3EBAB78287296FD00EAEB37 /* debugdsp.c */,
+				B3EBAB79287296FD00EAEB37 /* history.h */,
+				B3EBAB7A287296FD00EAEB37 /* debugui.c */,
+				B3EBAB7B287296FD00EAEB37 /* log.h */,
+				B3EBAB7C287296FD00EAEB37 /* breakcond.h */,
+				B3EBAB7D287296FD00EAEB37 /* profile.c */,
+				B3EBAB7E287296FD00EAEB37 /* symbols.c */,
+				B3EBAB7F287296FD00EAEB37 /* evaluate.h */,
+				B3EBAB80287296FD00EAEB37 /* profile_priv.h */,
+				B3EBAB81287296FD00EAEB37 /* debugInfo.c */,
+				B3EBAB82287296FD00EAEB37 /* natfeats.c */,
+			);
+			path = debug;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -473,6 +2417,8 @@
 				ru,
 				fr,
 				nl,
+				English,
+				French,
 			);
 			mainGroup = B3C7620620783162009950E4;
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
@@ -573,6 +2519,45 @@
 			targetProxy = B39768FC2859E23A00558958 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		B3EBAB1C287296FD00EAEB37 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B3EBAB1D287296FD00EAEB37 /* English */,
+				B3EBAB2D287296FD00EAEB37 /* French */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		B3EBAB1E287296FD00EAEB37 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B3EBAB1F287296FD00EAEB37 /* English */,
+				B3EBAB2E287296FD00EAEB37 /* French */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		B3EBAB20287296FD00EAEB37 /* SDLMain.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B3EBAB21287296FD00EAEB37 /* English */,
+				B3EBAB2F287296FD00EAEB37 /* French */,
+			);
+			name = SDLMain.nib;
+			sourceTree = "<group>";
+		};
+		B3EBAB22287296FD00EAEB37 /* SDLMain.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B3EBAB23287296FD00EAEB37 /* English */,
+				B3EBAB30287296FD00EAEB37 /* French */,
+			);
+			name = SDLMain.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		B30178DA207C901D0051B93D /* Debug */ = {

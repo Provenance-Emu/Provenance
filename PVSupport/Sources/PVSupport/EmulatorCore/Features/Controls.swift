@@ -1068,3 +1068,31 @@ import Foundation
     func leftMouseDown(at point: CGPoint)
     func leftMouseUp()
 }
+
+
+// MARK: - EP128
+ @objc public enum PVEP128Button: Int {
+	 case up
+	 case down
+	 case left
+	 case right
+	 case fire1
+	 case fire2
+	 case select
+	 case pause
+	 case reset
+	 case leftDiff
+	 case rightDiff
+	 case count
+ }
+
+ @objc public protocol PVEP128SystemResponderClient: ResponderClient, ButtonResponder, KeyboardResponder, MouseResponder {
+	 @objc(didPushEP128Button:forPlayer:)
+	 func didPush(_ button: PVEP128Button, forPlayer player: Int)
+	 @objc(didReleaseEP128Button:forPlayer:)
+	 func didRelease(_ button: PVEP128Button, forPlayer player: Int)
+
+	 func mouseMoved(at point: CGPoint)
+	 func leftMouseDown(at point: CGPoint)
+	 func leftMouseUp()
+ }

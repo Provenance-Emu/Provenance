@@ -155,6 +155,38 @@
 		B3C7621C20783243009950E4 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		B3C7621E2078325C009950E4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B3C7622120783297009950E4 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3EBA0FB2872965F00EAEB37 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		B3EBA0FE2872965F00EAEB37 /* libretro.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = libretro.c; sourceTree = "<group>"; };
+		B3EBA0FF2872965F00EAEB37 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		B3EBA1002872965F00EAEB37 /* Makefile.common */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.common; sourceTree = "<group>"; };
+		B3EBA1012872965F00EAEB37 /* libretro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libretro.h; sourceTree = "<group>"; };
+		B3EBA1022872965F00EAEB37 /* libretro_core_options.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libretro_core_options.h; sourceTree = "<group>"; };
+		B3EBA1032872965F00EAEB37 /* libretro_core_options_intl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libretro_core_options_intl.h; sourceTree = "<group>"; };
+		B3EBA1082872965F00EAEB37 /* stdint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stdint.h; sourceTree = "<group>"; };
+		B3EBA1092872965F00EAEB37 /* msvc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = msvc.h; sourceTree = "<group>"; };
+		B3EBA10A2872965F00EAEB37 /* retro_inline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = retro_inline.h; sourceTree = "<group>"; };
+		B3EBA10B2872965F00EAEB37 /* link.T */ = {isa = PBXFileReference; lastKnownFileType = text; path = link.T; sourceTree = "<group>"; };
+		B3EBA10D2872965F00EAEB37 /* Android.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Android.mk; sourceTree = "<group>"; };
+		B3EBA10E2872965F00EAEB37 /* Application.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Application.mk; sourceTree = "<group>"; };
+		B3EBA10F2872965F00EAEB37 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		B3EBA1112872965F00EAEB37 /* sound.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sound.h; sourceTree = "<group>"; };
+		B3EBA1122872965F00EAEB37 /* memorymap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = memorymap.c; sourceTree = "<group>"; };
+		B3EBA1132872965F00EAEB37 /* gpu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gpu.c; sourceTree = "<group>"; };
+		B3EBA1142872965F00EAEB37 /* controls.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = controls.h; sourceTree = "<group>"; };
+		B3EBA1152872965F00EAEB37 /* timer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = timer.c; sourceTree = "<group>"; };
+		B3EBA1162872965F00EAEB37 /* types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
+		B3EBA1182872965F00EAEB37 /* m6502.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = m6502.c; sourceTree = "<group>"; };
+		B3EBA1192872965F00EAEB37 /* tables.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tables.h; sourceTree = "<group>"; };
+		B3EBA11A2872965F00EAEB37 /* m6502.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = m6502.h; sourceTree = "<group>"; };
+		B3EBA11B2872965F00EAEB37 /* controls.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = controls.c; sourceTree = "<group>"; };
+		B3EBA11C2872965F00EAEB37 /* timer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = timer.h; sourceTree = "<group>"; };
+		B3EBA11D2872965F00EAEB37 /* memorymap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = memorymap.h; sourceTree = "<group>"; };
+		B3EBA11E2872965F00EAEB37 /* gpu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gpu.h; sourceTree = "<group>"; };
+		B3EBA11F2872965F00EAEB37 /* sound.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = sound.c; sourceTree = "<group>"; };
+		B3EBA1202872965F00EAEB37 /* supervision.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = supervision.h; sourceTree = "<group>"; };
+		B3EBA1212872965F00EAEB37 /* watara.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = watara.c; sourceTree = "<group>"; };
+		B3EBA1222872965F00EAEB37 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		B3EBA1232872965F00EAEB37 /* .gitlab-ci.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = ".gitlab-ci.yml"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -254,6 +286,7 @@
 		B3C7620620783162009950E4 = {
 			isa = PBXGroup;
 			children = (
+				B3EBA0FA2872965F00EAEB37 /* potator */,
 				B37022BE287253B300B3F6DA /* PVPotator */,
 				B37022C4287253B300B3F6DA /* PVPotatorCore */,
 				B37022C3287253B300B3F6DA /* PVPotator.h */,
@@ -301,6 +334,117 @@
 				B3C7622120783297009950E4 /* PVSupport.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B3EBA0FA2872965F00EAEB37 /* potator */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA0FB2872965F00EAEB37 /* LICENSE */,
+				B3EBA0FC2872965F00EAEB37 /* platform */,
+				B3EBA10F2872965F00EAEB37 /* README.md */,
+				B3EBA1102872965F00EAEB37 /* common */,
+				B3EBA1222872965F00EAEB37 /* .gitignore */,
+				B3EBA1232872965F00EAEB37 /* .gitlab-ci.yml */,
+			);
+			path = potator;
+			sourceTree = "<group>";
+		};
+		B3EBA0FC2872965F00EAEB37 /* platform */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA0FD2872965F00EAEB37 /* libretro */,
+			);
+			path = platform;
+			sourceTree = "<group>";
+		};
+		B3EBA0FD2872965F00EAEB37 /* libretro */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA0FE2872965F00EAEB37 /* libretro.c */,
+				B3EBA0FF2872965F00EAEB37 /* Makefile */,
+				B3EBA1002872965F00EAEB37 /* Makefile.common */,
+				B3EBA1012872965F00EAEB37 /* libretro.h */,
+				B3EBA1022872965F00EAEB37 /* libretro_core_options.h */,
+				B3EBA1032872965F00EAEB37 /* libretro_core_options_intl.h */,
+				B3EBA1042872965F00EAEB37 /* libretro-common */,
+				B3EBA10B2872965F00EAEB37 /* link.T */,
+				B3EBA10C2872965F00EAEB37 /* jni */,
+			);
+			path = libretro;
+			sourceTree = "<group>";
+		};
+		B3EBA1042872965F00EAEB37 /* libretro-common */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA1052872965F00EAEB37 /* include */,
+			);
+			path = "libretro-common";
+			sourceTree = "<group>";
+		};
+		B3EBA1052872965F00EAEB37 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA1062872965F00EAEB37 /* compat */,
+				B3EBA10A2872965F00EAEB37 /* retro_inline.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		B3EBA1062872965F00EAEB37 /* compat */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA1072872965F00EAEB37 /* msvc */,
+				B3EBA1092872965F00EAEB37 /* msvc.h */,
+			);
+			path = compat;
+			sourceTree = "<group>";
+		};
+		B3EBA1072872965F00EAEB37 /* msvc */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA1082872965F00EAEB37 /* stdint.h */,
+			);
+			path = msvc;
+			sourceTree = "<group>";
+		};
+		B3EBA10C2872965F00EAEB37 /* jni */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA10D2872965F00EAEB37 /* Android.mk */,
+				B3EBA10E2872965F00EAEB37 /* Application.mk */,
+			);
+			path = jni;
+			sourceTree = "<group>";
+		};
+		B3EBA1102872965F00EAEB37 /* common */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA1112872965F00EAEB37 /* sound.h */,
+				B3EBA1122872965F00EAEB37 /* memorymap.c */,
+				B3EBA1132872965F00EAEB37 /* gpu.c */,
+				B3EBA1142872965F00EAEB37 /* controls.h */,
+				B3EBA1152872965F00EAEB37 /* timer.c */,
+				B3EBA1162872965F00EAEB37 /* types.h */,
+				B3EBA1172872965F00EAEB37 /* m6502 */,
+				B3EBA11B2872965F00EAEB37 /* controls.c */,
+				B3EBA11C2872965F00EAEB37 /* timer.h */,
+				B3EBA11D2872965F00EAEB37 /* memorymap.h */,
+				B3EBA11E2872965F00EAEB37 /* gpu.h */,
+				B3EBA11F2872965F00EAEB37 /* sound.c */,
+				B3EBA1202872965F00EAEB37 /* supervision.h */,
+				B3EBA1212872965F00EAEB37 /* watara.c */,
+			);
+			path = common;
+			sourceTree = "<group>";
+		};
+		B3EBA1172872965F00EAEB37 /* m6502 */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA1182872965F00EAEB37 /* m6502.c */,
+				B3EBA1192872965F00EAEB37 /* tables.h */,
+				B3EBA11A2872965F00EAEB37 /* m6502.h */,
+			);
+			path = m6502;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
