@@ -91,3 +91,24 @@
 [submodule "Cores/Potator/potator"]
 	path = Cores/Potator/potator
 	url = https://github.com/Provenance-Emu/potator.git
+[submodule "Cores/ep128emu/ep128emu-core"]
+	path = Cores/ep128emu/ep128emu-core
+	url = https://github.com/Provenance-Emu/ep128emu-core.git
+[submodule "Cores/hatari/hatari"]
+	path = Cores/hatari/hatari
+	url = https://github.com/Provenance-Emu/hatari.git
+[submodule "Cores/fmsx/fmsx-libretro"]
+	path = Cores/fmsx/fmsx-libretro
+	url = https://github.com/Provenance-Emu/fmsx-libretro.git
+[submodule "Cores/pcsx_rearmed/pcsx_rearmed"]
+	path = Cores/pcsx_rearmed/pcsx_rearmed
+	url = https://github.com/Provenance-Emu/pcsx_rearmed.git
+[submodule "Cores/opera/opera-libretro"]
+	path = Cores/opera/opera-libretro
+	url = https://github.com/Provenance-Emu/opera-libretro.git
+[submodule "Cores/Mu/Mu"]
+	path = Cores/Mu/Mu
+	url = https://github.com/Provenance-Emu/Mu.git
+[submodule "Cores/Yabause/yabause"]
+	path = Cores/Yabause/yabause
+	url = https://github.com/Provenance-Emu/yabause.git

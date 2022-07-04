@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1320"
+   LastUpgradeVersion = "1300"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B305EEF9276B4C71003AE510"
-               BuildableName = "Provenance Watch WatchKit App.app"
-               BlueprintName = "Provenance Watch WatchKit App"
-               ReferencedContainer = "container:Provenance.xcodeproj">
+               BlueprintIdentifier = "B3C7620F20783162009950E4"
+               BuildableName = "PVDolphin.framework"
+               BlueprintName = "PVDolphin-iOS"
+               ReferencedContainer = "container:PVDolphinCore.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -28,10 +28,24 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B305EEF6276B4C71003AE510"
-               BuildableName = "Provenance Watch.app"
-               BlueprintName = "Provenance Watch"
-               ReferencedContainer = "container:Provenance.xcodeproj">
+               BlueprintIdentifier = "B30178D2207C901D0051B93D"
+               BuildableName = "libplay-iOS.a"
+               BlueprintName = "play-iOS"
+               ReferencedContainer = "container:PVDolphinCore.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
+               BuildableName = "PVSupport.framework"
+               BlueprintName = "PVSupport-iOS"
+               ReferencedContainer = "container:../../PVSupport/PVSupport.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -54,16 +68,6 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B305EEF9276B4C71003AE510"
-            BuildableName = "Provenance Watch WatchKit App.app"
-            BlueprintName = "Provenance Watch WatchKit App"
-            ReferencedContainer = "container:Provenance.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -71,16 +75,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B305EEF9276B4C71003AE510"
-            BuildableName = "Provenance Watch WatchKit App.app"
-            BlueprintName = "Provenance Watch WatchKit App"
-            ReferencedContainer = "container:Provenance.xcodeproj">
+            BlueprintIdentifier = "B3C7620F20783162009950E4"
+            BuildableName = "PVDolphin.framework"
+            BlueprintName = "PVDolphin-iOS"
+            ReferencedContainer = "container:PVDolphinCore.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
