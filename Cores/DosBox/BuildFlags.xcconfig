@@ -8,7 +8,8 @@
 
 // All
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited)
-OTHER_CFLAGS = $(inherited)
+OTHER_CFLAGS = $(inherited) -ObjC
+OTHER_LDFLAGS = $(inherited) -ObjC -Wl,-all_load -all_load
 
     // Device
 GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*] = $(inherited) TARGET_IPHONE=1
