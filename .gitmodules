@@ -88,3 +88,6 @@
 [submodule "Cores/BeetlePSX/beetle-psx-libretro"]
 	path = Cores/BeetlePSX/beetle-psx-libretro
 	url = https://github.com/Provenance-Emu/beetle-psx-libretro.git
+[submodule "Cores/Potator/potator"]
+	path = Cores/Potator/potator
+	url = https://github.com/Provenance-Emu/potator.git

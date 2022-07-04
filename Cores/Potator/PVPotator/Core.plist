@@ -3,18 +3,18 @@
 <plist version="1.0">
 <dict>
 	<key>PVCoreIdentifier</key>
-	<string>com.provenance.core.fbneo</string>
+	<string>com.provenance.potator</string>
 	<key>PVPrincipleClass</key>
-	<string>PVFBNeoCore</string>
+	<string>PVPotator</string>
 	<key>PVSupportedSystems</key>
 	<array>
-		<string>com.provenance.neogeo</string>
+		<string>com.provenance.supervision</string>
 	</array>
 	<key>PVProjectName</key>
-	<string>Final Burn Neo</string>
+	<string>PVPotator</string>
 	<key>PVProjectURL</key>
-	<string>https://neo-source.com</string>
+	<string>https://github.com/alekmaul/potator</string>
 	<key>PVProjectVersion</key>
-	<string>1.0.0.2</string>
+	<string>0</string>
 </dict>
 </plist>
