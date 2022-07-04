@@ -31,7 +31,7 @@ open class QuickTableViewController: UIViewController, UITableViewDataSource, UI
 
   /// A Boolean value indicating if the controller clears the selection when the collection view appears.
   open var clearsSelectionOnViewWillAppear = true
-    
+
   private var _selected:IndexPath?
 
   /// Returns the table view managed by the controller object.
@@ -155,7 +155,7 @@ open class QuickTableViewController: UIViewController, UITableViewDataSource, UI
   open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     let section = tableContents[indexPath.section]
     let row = section.rows[indexPath.row]
-      
+
     _selected = indexPath   // remember this so we can restore focus after a reloadData
 
     switch (section, row) {
@@ -210,7 +210,7 @@ open class QuickTableViewController: UIViewController, UITableViewDataSource, UI
     }
   }
   #endif
-    
+
 #if os(tvOS)
     public func indexPathForPreferredFocusedView(in tableView: UITableView) -> IndexPath? {
         // set the focus to what was last selected
@@ -219,7 +219,6 @@ open class QuickTableViewController: UIViewController, UITableViewDataSource, UI
 #endif
 
 }
-
 
 #if os(iOS)
 extension QuickTableViewController: SwitchCellDelegate {

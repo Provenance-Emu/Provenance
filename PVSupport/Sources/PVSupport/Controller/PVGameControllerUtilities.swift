@@ -10,7 +10,7 @@ import Foundation
 @_exported import GameController
 import simd
 
-fileprivate let thumbstickSensitivty: Float = 0.2;
+private let thumbstickSensitivty: Float = 0.2
 
 @objc
 public enum PVControllerAxisDirection : UInt, CustomDebugStringConvertible {
@@ -23,7 +23,7 @@ public enum PVControllerAxisDirection : UInt, CustomDebugStringConvertible {
     case UpLeft
     case DownRight
     case DownLeft
-    
+
     public var debugDescription: String {
         let label: String
         switch self {
@@ -39,33 +39,32 @@ public enum PVControllerAxisDirection : UInt, CustomDebugStringConvertible {
         }
         return "\(rawValue): \(label)"
     }
-    
+
     public init(forThumbstick thumbstick :GCControllerDirectionPad) {
         let xValue = fabsf(thumbstick.xAxis.value)
         let yValue = fabsf(thumbstick.yAxis.value)
-                           
+
         if xValue <= thumbstickSensitivty && yValue <= thumbstickSensitivty {
             self = .None
             return
         }
-        
-        var angleInRadians: Double = atan2(Double(thumbstick.yAxis.value), Double(thumbstick.xAxis.value))
-        //We have 8 sectors, so get the size of each in degrees.
-        let sectorSize:Double = 360.0 / 8
-        //We also need the size of half a sector
-        let halfSectorSize: Double = sectorSize / 2.0;
 
-        //Atan2 gives us a negative value for angles in the 3rd and 4th quadrants.
+        var angleInRadians: Double = atan2(Double(thumbstick.yAxis.value), Double(thumbstick.xAxis.value))
+        // We have 8 sectors, so get the size of each in degrees.
+        let sectorSize:Double = 360.0 / 8
+        // We also need the size of half a sector
+        let halfSectorSize: Double = sectorSize / 2.0
+
+        // Atan2 gives us a negative value for angles in the 3rd and 4th quadrants.
             // We want a full 360 degrees, so we will add 2 PI to negative values.
         if angleInRadians < 0.0 { angleInRadians += (.pi * 2.0) }
-        //Convert the radians to degrees.  Degrees are easier to visualize.
-        let angleInDegrees: Double = (180.0 * angleInRadians / .pi);
+        // Convert the radians to degrees.  Degrees are easier to visualize.
+        let angleInDegrees: Double = (180.0 * angleInRadians / .pi)
 
-
-        //Next, rotate our angle to match the offset of our sectors.
+        // Next, rotate our angle to match the offset of our sectors.
         let convertedAngle: Double = angleInDegrees + halfSectorSize
 
-        //Finally, we get the current direction by dividing the angle
+        // Finally, we get the current direction by dividing the angle
         // by the size of the sectors
         let direction: Int = Int(floor(convertedAngle / sectorSize))
         switch direction {

@@ -19,14 +19,14 @@ import UIKit
 import RxSwift
 
 class PVQuickTableViewController: QuickTableViewController {
-    
+
     open override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
 
         #if os(iOS)
             (cell as? SliderCell)?.delegate = self
         #endif
-        
+
         return cell
     }
 }
@@ -322,7 +322,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
             PVSettingsSwitchRow(text: NSLocalizedString("Unsupported Cores", comment: "Unsupported Cores"),
                                 detailText: .subtitle("Cores that are in development"),
                                 key: \PVSettingsModel.debugOptions.unsupportedCores),
-            
+
             PVSettingsSwitchRow(text: NSLocalizedString("Use Swift UI", comment: "Use Swift UI"),
                                 detailText: .subtitle("Swift UI placeholder. Don't use unless you're a developer."),
                                 key: \PVSettingsModel.debugOptions.useSwiftUI),
@@ -366,7 +366,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
                                         cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
                                 }
             ),
-            
+
             PVSettingsSwitchRow(text: NSLocalizedString("Use SwiftUI", comment: "Use SwiftUI"),
                                detailText: .subtitle("Don't use unless you enjoy empty windows."),
                                key: \PVSettingsModel.debugOptions.multiSampling,
@@ -375,7 +375,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
                                        cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
                                }
            ),
-            
+
             PVSettingsSwitchRow(text: NSLocalizedString("Use Themes", comment: "Use Themes"),
                                detailText: .subtitle("Use iOS themes on tvOS"),
                                key: \PVSettingsModel.debugOptions.tvOSThemes,

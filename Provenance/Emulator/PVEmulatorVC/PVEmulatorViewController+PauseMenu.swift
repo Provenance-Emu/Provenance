@@ -188,7 +188,7 @@ extension PVEmulatorViewController {
         shouldSave = shouldSave && (game.lastAutosaveAge ?? minutes(2)) > minutes(1)
         shouldSave = shouldSave && abs(game.saveStates.sorted(byKeyPath: "date", ascending: true).last?.date.timeIntervalSinceNow ?? minutes(2)) > minutes(1)
         shouldSave = shouldSave && self.core.supportsSaveStates
-        
+
         // Add Non-Saving quit first
         let quitTitle = shouldSave ? "Quit (without saving)" : "Quit"
         actionSheet.addAction(UIAlertAction(title: quitTitle, style: .destructive, handler: {[weak self] action in

@@ -185,7 +185,7 @@ final class PVCheatsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCell(withIdentifier: "cheatCodeCell", for: indexPath) as! PVCheatsTableViewCell
 		cell.delegate=delegate
-		
+
 		guard let cheat:PVCheats = allCheats?[indexPath.row] else {
 			ELOG("Nil allCheaets")
 			return cell
@@ -199,8 +199,7 @@ final class PVCheatsViewController: UITableViewController {
 		cell.enabledText.text=cheat.enabled ? "Enabled" : "Disabled"
 #endif
 		cell.cheat=cheat
-		
-		
+
 		return cell
 	}
 

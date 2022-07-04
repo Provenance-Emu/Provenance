@@ -6,7 +6,6 @@
 //  Copyright © 2018 Provenance Emu. All rights reserved.
 //
 
-
 import UIKit
 
 final class PVSwitchCell: SwitchCell {

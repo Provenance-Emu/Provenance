@@ -29,21 +29,20 @@ protocol JSDPadDelegate: AnyObject {
     func dPad(_ dPad: JSDPad, didRelease direction: JSDPadDirection)
 }
 
-
 final class JSDPad: UIView {
-    
+
     public class func JoyPad(frame: CGRect) -> JSDPad {
         let dpad = JSDPad.init(frame: frame)
         dpad.analogMode = true
         return dpad
     }
-    
+
     var analogMode: Bool = false {
         didSet {
             dPadImageView.isHidden = analogMode
         }
     }
-    
+
     lazy var centerPoint: CGPoint = CGPoint(x: bounds.midX, y: bounds.midY)
     lazy var analogPoint: CGPoint = centerPoint {
         didSet {
@@ -70,7 +69,7 @@ final class JSDPad: UIView {
                 point.y = minY
                 needUpdate = true
             }
-            
+
             if needUpdate {
                 analogPoint = point
             } else {
@@ -78,7 +77,7 @@ final class JSDPad: UIView {
             }
         }
     }
-    
+
     weak var delegate: JSDPadDelegate?
 
     private var currentDirection: JSDPadDirection = .none
@@ -181,7 +180,7 @@ final class JSDPad: UIView {
             }
         }
     }
-    
+
     private func sendJoyPoint(_ point: CGPoint) {
         let x: CGFloat = (point.x / self.bounds.width)
         let y: CGFloat = (point.y / self.bounds.height)
@@ -210,7 +209,7 @@ final class JSDPad: UIView {
     override func touchesCancelled(_: Set<UITouch>, with _: UIEvent?) {
         currentDirection = .none
         dPadImageView.image = image(for: currentDirection)
-        
+
         guard let delegate = delegate else {
             return
         }
@@ -226,7 +225,7 @@ final class JSDPad: UIView {
     override func touchesEnded(_: Set<UITouch>, with _: UIEvent?) {
         currentDirection = .none
         dPadImageView.image = image(for: currentDirection)
-        
+
         guard let delegate = delegate else {
             return
         }
@@ -238,7 +237,7 @@ final class JSDPad: UIView {
             JSDPadDirection.allCases.forEach { delegate.dPad(self, didRelease: $0) }
         }
     }
-    
+
     override func draw(_ rect: CGRect) {
         guard analogMode else {
             super.draw(rect)
@@ -246,22 +245,22 @@ final class JSDPad: UIView {
         }
         // Get the Graphics Context
         if let context = UIGraphicsGetCurrentContext() {
-            
+
             context.clear(rect)
-            
+
             // Set the circle outerline-width
             context.setLineWidth(5.0)
-            
+
             // Set the circle outerline-colour
             tintColor?.set()
-            
+
             // Create Circle
             let radius = (frame.size.width - 10)/2
             context.addArc(center: centerPoint, radius: radius, startAngle: 0.0, endAngle: .pi * 2.0, clockwise: true)
-                
+
             // Draw
             context.strokePath()
-            
+
             // Create touch point
             context.addArc(center: analogPoint, radius: radius / 6, startAngle: 0.0, endAngle: .pi * 2.0, clockwise: true)
             // Draw

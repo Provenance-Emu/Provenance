@@ -65,14 +65,14 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
     var gameLibrary: PVGameLibrary!
     var gameImporter: GameImporter!
     var filePathsToImport = [URL]()
-    
+
     // selected (aka hilighted) item selected via game controller UX
     #if os(iOS)
         // NOTE this may not be a *real* indexPath, if it is for a section with a nexted collection view
         var _selectedIndexPath:IndexPath?
         var _selectedIndexPathView:UIView!
     #endif
-    
+
     var collectionView: UICollectionView? {
         didSet {
             guard let collectionView = collectionView else { return }
@@ -170,11 +170,11 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             self.init(header: original.header, items: items, collapsable: original.collapsable)
         }
     }
-    
+
     #if os(iOS)
     var searchController: UISearchController!
     #endif
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         isInitialAppearance = true
@@ -239,7 +239,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         #else
             searchText = .never()
         #endif
-        
+
         // create a Logo as the title
         #if os(iOS)
             let font = UIFont.boldSystemFont(ofSize: 20)
@@ -250,29 +250,29 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             let icon = "pv_dark_logo"
             let icon_size = font.capHeight
         #endif
-        if let icon = UIImage(named:icon)?.resize(to:CGSize(width:0,height:icon_size))
+        if let icon = UIImage(named:icon)?.resize(to:CGSize(width:0, height:icon_size))
         {
             let logo = UIImageView(image:icon)
-            logo.layer.cornerRadius = 4.0;
+            logo.layer.cornerRadius = 4.0
             logo.layer.masksToBounds = true
             let name = UILabel()
             name.text = " Provenance"
             name.font = font
             name.textColor = .white
             name.sizeToFit()
-            let stack =  UIStackView(arrangedSubviews:[logo,name])
+            let stack =  UIStackView(arrangedSubviews:[logo, name])
             stack.alignment = .center
             stack.frame = CGRect(origin:.zero, size:stack.systemLayoutSizeFitting(.zero))
             navigationItem.titleView = stack
         }
-        
+
         // we cant use a SF Symbol in the Storyboard cuz of back version support, so change it here in code.
         if #available(iOS 13.0, tvOS 13.0, *) {
             if let bbi = settingsBarButtonItem {
                 bbi.image = UIImage(systemName:"gear", withConfiguration:UIImage.SymbolConfiguration(font:font))
             }
         }
-        
+
         // Persist some settings, could probably be done in a better way
         collapsedSystems.bind(onNext: { PVSettingsModel.shared.collapsedSystems = $0 }).disposed(by: disposeBag)
         currentSort.bind(onNext: { PVSettingsModel.shared.sort = $0 }).disposed(by: disposeBag)
@@ -624,7 +624,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             return
         }
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         #if os(iOS)
@@ -755,20 +755,20 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
     @IBAction func conflictsButtonTapped(_: Any) {
         displayConflictVC()
     }
-    
+
     #if os(tvOS)
     @IBAction func searchButtonTapped(_ sender: Any) {
         let searchNavigationController = PVSearchViewController.createEmbeddedInNavigationController(gameLibrary: gameLibrary)
         present(searchNavigationController, animated: true) { () -> Void in }
     }
     #endif
-    
+
     @IBAction func sortButtonTapped(_ sender: Any?) {
         if self.presentedViewController != nil {
-            return;
+            return
         }
         sortOptionsTableView.reloadData()
-        
+
         #if os(iOS)
             // Add done button to iPhone
             // iPad is a popover do no done button needed
@@ -780,11 +780,11 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                 sortOptionsTableViewController.modalPresentationStyle = .popover
                 sortOptionsTableViewController.popoverPresentationController?.barButtonItem = sender as? UIBarButtonItem
                 sortOptionsTableViewController.popoverPresentationController?.sourceView = collectionView
-                sortOptionsTableViewController.preferredContentSize = CGSize(width:300, height:sortOptionsTableView.contentSize.height);
+                sortOptionsTableViewController.preferredContentSize = CGSize(width:300, height:sortOptionsTableView.contentSize.height)
                 present(sortOptionsTableViewController, animated: true, completion: nil)
             }
         #else
-            sortOptionsTableViewController.preferredContentSize = CGSize(width:675, height:sortOptionsTableView.contentSize.height);
+            sortOptionsTableViewController.preferredContentSize = CGSize(width:675, height:sortOptionsTableView.contentSize.height)
             let pvc = TVFullscreenController(rootViewController:sortOptionsTableViewController)
             present(pvc, animated: true, completion: nil)
         #endif
@@ -976,7 +976,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         actionSheet.popoverPresentationController?.sourceRect = cell.bounds
         present(actionSheet, animated: true)
     }
-    
+
     #if os(iOS)
     @available(iOS 13.0, *)
     func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
@@ -995,7 +995,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         return nil
     }
     #endif
-    
+
     private func contextMenu(for item: Section.Item, cell: UICollectionViewCell, point: CGPoint) -> UIViewController {
         switch item {
         case .game(let game):
@@ -1011,7 +1011,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             return contextMenu(for: game.game, sender: cell)
         }
     }
-    
+
     private func showCoreOptions(forCore core: CoreOptional.Type, withTitle title:String) {
         let optionsVC = CoreOptionsViewController(withCore: core)
         optionsVC.title = title
@@ -1026,7 +1026,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
     private func contextMenu(for game: PVGame, sender: UIView) -> UIViewController {
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         actionSheet.title = game.title
-        
+
         // If game.system has multiple cores, add actions to manage
         if let system = game.system, system.cores.count > 1 {
             // If user has select a core for this game, actio to reset
@@ -1037,7 +1037,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                     self.load(game, sender: sender, core: nil, saveState: nil)
                 }))
                 actionSheet.preferredAction = actionSheet.actions.last
-                
+
                 // Find the core for the current id
                 let userSelectedCore = RomDatabase.sharedInstance.object(ofType: PVCore.self, wherePrimaryKeyEquals: userPreferredCoreID)
                 let coreName = userSelectedCore?.projectName ?? "nil"
@@ -1059,15 +1059,14 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             actionSheet.addAction(UIAlertAction(title: "Play with…", symbol: "ellipsis.circle", style: .default, handler: { [unowned self] _ in
                 self.presentCoreSelection(forGame: game, sender: sender)
             }))
-        }
-        else {
+        } else {
             // Action to play for single core games
             actionSheet.addAction(UIAlertAction(title: "Play", symbol:"gamecontroller", style: .default, handler: { [unowned self] _ in
                 self.load(game, sender: sender, core: nil, saveState: nil)
             }))
             actionSheet.preferredAction = actionSheet.actions.last
         }
-        
+
         if let system = game.system, system.cores.count == 1, let pvcore = system.cores.first, let coreClass = NSClassFromString(pvcore.principleClass) as? CoreOptional.Type {
 
             actionSheet.addAction(UIAlertAction(title: "\(pvcore.projectName) options", symbol: "slider.horizontal.3", style: .default, handler: { (_: UIAlertAction) -> Void in
@@ -1316,7 +1315,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         }
 
         private func presentActionSheetViewControllerForPopoverPresentation(_ alertController: UIViewController, sourceView: UIView) {
-            
+
             if traitCollection.userInterfaceIdiom == .pad {
                 alertController.popoverPresentationController?.sourceView = sourceView
                 alertController.popoverPresentationController?.sourceRect = sourceView.bounds
@@ -1545,22 +1544,21 @@ extension PVGameLibraryViewController: UITableViewDataSource {
     func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
         return section == 0 ? SortOptions.count : 4
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // NOTE: cell setup is done in willDisplayCell
         if indexPath.section == 0 {
             return tableView.dequeueReusableCell(withIdentifier: "sortCell", for: indexPath)
         } else if indexPath.section == 1 {
             return tableView.dequeueReusableCell(withIdentifier: "viewOptionsCell", for: indexPath)
-        }
-        else {
+        } else {
             fatalError("Invalid section")
         }
     }
 }
 
 extension PVGameLibraryViewController: UITableViewDelegate {
-    
+
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
 
         #if os(tvOS)
@@ -1588,22 +1586,21 @@ extension PVGameLibraryViewController: UITableViewDelegate {
             default:
                 fatalError("Invalid row")
             }
-        }
-        else {
+        } else {
             fatalError("Invalid section")
         }
     }
-    
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 {
             currentSort.onNext(SortOptions.optionForRow(UInt(indexPath.row)))
-            //dont call reloadSections or we will loose focus on tvOS
-            //tableView.reloadSections([indexPath.section], with: .automatic)
+            // dont call reloadSections or we will loose focus on tvOS
+            // tableView.reloadSections([indexPath.section], with: .automatic)
             for row in 0..<(self.tableView(tableView, numberOfRowsInSection: indexPath.section)) {
                 let indexPath = IndexPath(row:row, section:indexPath.section)
                 self.tableView(tableView, willDisplay:tableView.cellForRow(at:indexPath)!, forRowAt:indexPath)
             }
-            //dismiss(animated: true, completion: nil)
+            // dismiss(animated: true, completion: nil)
         } else if indexPath.section == 1 {
             switch indexPath.row {
             case 0:
@@ -1617,8 +1614,8 @@ extension PVGameLibraryViewController: UITableViewDelegate {
             default:
                 fatalError("Invalid row")
             }
-            //dont call reloadRows or we will loose focus on tvOS
-            //tableView.reloadRows(at: [indexPath], with:.automatic)
+            // dont call reloadRows or we will loose focus on tvOS
+            // tableView.reloadRows(at: [indexPath], with:.automatic)
             self.tableView(tableView, willDisplay:tableView.cellForRow(at:indexPath)!, forRowAt:indexPath)
             collectionView?.reloadData()
         }
@@ -1748,7 +1745,6 @@ extension PVGameLibraryViewController {
             promptToDeleteGame(focusedGame)
         }
 
-
     func collectionView(_ collectionView: UICollectionView, didUpdateFocusIn context: UICollectionViewFocusUpdateContext, with _: UIFocusAnimationCoordinator) {
         focusedGame = getFocusedGame(in: collectionView, focusContext: context)
     }
@@ -1780,7 +1776,6 @@ extension PVGameLibraryViewController {
         }
     }
     #endif
-    
 
     #if os(iOS)
         @objc
@@ -1870,7 +1865,7 @@ extension PVGameLibraryViewController: ControllerButtonPress {
             break
         }
     }
-    
+
     private func moveVert(_ dir:Int) {
         guard var indexPath = _selectedIndexPath else {
             return select(IndexPath(item:0, section:0))
@@ -1888,7 +1883,7 @@ extension PVGameLibraryViewController: ControllerButtonPress {
             select(indexPath)
         }
     }
-    
+
     private func moveHorz(_ dir:Int) {
         guard var indexPath = _selectedIndexPath else {
             return select(IndexPath(item:0, section:0))
@@ -1912,46 +1907,45 @@ extension PVGameLibraryViewController: ControllerButtonPress {
         guard let rect = collectionView!.layoutAttributesForItem(at: IndexPath(item: 0, section: indexPath.section))?.frame else {
             return 1
         }
-        
+
         // TODO: this math is probably wrong
         let layout = (collectionView!.collectionViewLayout as! UICollectionViewFlowLayout)
         let space = layout.minimumInteritemSpacing
         let width = collectionView!.bounds.width // + space // - (layout.sectionInset.left + layout.sectionInset.right)
         let n = width / (rect.width + space)
-        
+
         return max(1, Int(n))
     }
-    
+
     // just hilight (with a cheesy overlay) the item
     private func select(_ indexPath:IndexPath?) {
-        
+
         guard var indexPath = indexPath else {
             _selectedIndexPath = nil
             _selectedIndexPathView?.frame = .zero
             return
         }
-        
+
         // TODO: this is a hack, a cell should be selected by setting isSelected and the cell class should handle it
 
-        indexPath.section = max(0, min(collectionView!.numberOfSections-1,indexPath.section))
+        indexPath.section = max(0, min(collectionView!.numberOfSections-1, indexPath.section))
         let rect:CGRect
         if let cv = getNestedCollectionView(indexPath) {
             collectionView?.scrollToItem(at: IndexPath(item:0, section: indexPath.section), at: [], animated: false)
-            indexPath.item = max(0, min(cv.numberOfItems(inSection:0)-1,indexPath.item))
+            indexPath.item = max(0, min(cv.numberOfItems(inSection:0)-1, indexPath.item))
             let idx = IndexPath(item:indexPath.item, section:0)
-            cv.scrollToItem(at:idx , at:[], animated: false)
+            cv.scrollToItem(at:idx, at:[], animated: false)
             rect = cv.convert(cv.layoutAttributesForItem(at:idx)?.frame ?? .zero, to: collectionView)
-        }
-        else {
-            indexPath.item = max(0, min(collectionView!.numberOfItems(inSection:indexPath.section)-1,indexPath.item))
+        } else {
+            indexPath.item = max(0, min(collectionView!.numberOfItems(inSection:indexPath.section)-1, indexPath.item))
             collectionView?.scrollToItem(at: indexPath, at: [], animated: false)
             rect = collectionView!.layoutAttributesForItem(at: indexPath)?.frame ?? .zero
         }
-        
+
         _selectedIndexPath = indexPath
 
         // TODO: this is a hack, a cell should be selected by setting isSelected and the cell class should handle it
-        
+
         if !rect.isEmpty {
             _selectedIndexPathView = _selectedIndexPathView ?? UIView()
             collectionView!.addSubview(_selectedIndexPathView)
@@ -1962,21 +1956,20 @@ extension PVGameLibraryViewController: ControllerButtonPress {
             _selectedIndexPathView.layer.cornerRadius = 16.0
         }
     }
-    
+
     // actually *push* the selected item
     private func select() {
         guard let indexPath = _selectedIndexPath else { return }
         if let collectionView = getNestedCollectionView(indexPath) {
             let indexPath = IndexPath(item: indexPath.item, section:0)
             collectionView.delegate?.collectionView?(collectionView, didSelectItemAt: indexPath)
-        }
-        else {
+        } else {
             collectionView!.delegate?.collectionView?(collectionView!, didSelectItemAt: indexPath)
         }
     }
     private func contextMenu(for indexPath:IndexPath?) -> UIViewController? {
         guard var indexPath = indexPath else { return nil }
-        
+
         if let _ = getNestedCollectionView(indexPath) {
             indexPath = IndexPath(item:0, section:indexPath.section)
         }
@@ -2018,4 +2011,3 @@ extension PVGameLibraryViewController: ControllerButtonPress {
     }
 }
 #endif
-

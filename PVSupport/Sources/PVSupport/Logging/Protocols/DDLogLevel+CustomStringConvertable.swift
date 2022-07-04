@@ -9,7 +9,7 @@
 import Foundation
 @_exported import CocoaLumberjackSwift
 
-//#if canImport(NSLogger)
+// #if canImport(NSLogger)
 import NSLogger
 
 extension DDLogLevel {
@@ -30,7 +30,7 @@ extension DDLogFlag {
         return self.toLogLevel().nsloggerLevel
     }
 }
-//#endif
+// #endif
 
 extension DDLogLevel: CustomStringConvertible {
     public var description: String {
@@ -47,4 +47,3 @@ extension DDLogLevel: CustomStringConvertible {
         }
     }
 }
-

@@ -33,7 +33,6 @@ public protocol SwitchCellDelegate: AnyObject {
   func switchCell(_ cell: SwitchCell, didToggleSwitch isOn: Bool)
 }
 
-
 /// A `UITableViewCell` subclass that shows a `UISwitch` as the `accessoryView`.
 open class SwitchCell: UITableViewCell, Configurable {
 

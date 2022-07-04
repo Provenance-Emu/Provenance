@@ -24,7 +24,6 @@
 //  SOFTWARE.
 //
 
-
 import UIKit
 
 public protocol SliderRowCompatible: Row, RowStyle {

@@ -21,7 +21,7 @@ import PVLibrary
 enum GameItemViewType {
     case cell
     case row
-    
+
     var titleFontSize: CGFloat {
         switch self {
         case .cell:
@@ -30,7 +30,7 @@ enum GameItemViewType {
             return 15
         }
     }
-    
+
     var subtitleFontSize: CGFloat {
         switch self {
         case .cell:
@@ -43,15 +43,14 @@ enum GameItemViewType {
 
 @available(iOS 14, tvOS 14, *)
 struct GameItemView: SwiftUI.View {
-    
+
     var game: PVGame
     var constrainHeight: Bool = false
     var viewType: GameItemViewType = .cell
-    
-    @State var artwork: UIImage? = nil
+
+    @State var artwork: UIImage?
     var action: () -> Void
-    
-    
+
     var body: some SwiftUI.View {
         Button {
             action()
@@ -69,22 +68,22 @@ struct GameItemView: SwiftUI.View {
             })
         }
     }
-    
+
 }
 
 @available(iOS 14, tvOS 14, *)
 struct GameItemViewCell: SwiftUI.View {
-    
+
     var game: PVGame
-    
-    var artwork: UIImage? = nil
-    
+
+    var artwork: UIImage?
+
     var constrainHeight: Bool = false
-    
+
     var viewType: GameItemViewType
-    
+
     @State private var textMaxWidth: CGFloat = 150
-    
+
     var body: some SwiftUI.View {
         VStack(alignment: .leading, spacing: 3) {
             GameItemThumbnail(artwork: artwork, gameTitle: game.title, boxartAspectRatio: game.boxartAspectRatio)
@@ -105,16 +104,16 @@ struct GameItemViewCell: SwiftUI.View {
 
 @available(iOS 14, tvOS 14, *)
 struct GameItemViewRow: SwiftUI.View {
-    
+
     var game: PVGame
-    
-    var artwork: UIImage? = nil
+
+    var artwork: UIImage?
     @State private var textMaxWidth: CGFloat = 150
-    
+
     var constrainHeight: Bool = false
-    
+
     var viewType: GameItemViewType
-    
+
     var body: some SwiftUI.View {
         HStack(alignment: .center, spacing: 10) {
             GameItemThumbnail(artwork: artwork, gameTitle: game.title, boxartAspectRatio: game.boxartAspectRatio)
@@ -158,7 +157,7 @@ struct ArtworkImageBaseView: SwiftUI.View {
         self.gameTitle = gameTitle
         self.boxartAspectRatio = boxartAspectRatio
     }
-    
+
     var body: some SwiftUI.View {
         if let artwork = artwork {
             Image(uiImage: artwork)
@@ -176,7 +175,7 @@ struct ArtworkImageBaseView: SwiftUI.View {
 struct GameItemTitle: SwiftUI.View {
     var text: String
     var viewType: GameItemViewType
-    
+
     var body: some SwiftUI.View {
         Text(text)
             .font(.system(size: viewType.titleFontSize))
@@ -190,7 +189,7 @@ struct GameItemTitle: SwiftUI.View {
 struct GameItemSubtitle: SwiftUI.View {
     var text: String?
     var viewType: GameItemViewType
-    
+
     var body: some SwiftUI.View {
         Text(text ?? "blank")
             .font(.system(size: viewType.subtitleFontSize))
@@ -226,7 +225,7 @@ extension UIImage {
     #else
         let backgroundColor: UIColor = UIColor(white: 0.18, alpha: 1.0)
     #endif
-        
+
     #if os(iOS)
         let attributedText = NSAttributedString(string: gameTitle, attributes: [
             NSAttributedString.Key.font: UIFont.systemFont(ofSize: 30.0),
@@ -236,7 +235,7 @@ extension UIImage {
             NSAttributedString.Key.font: UIFont.systemFont(ofSize: 60.0),
             NSAttributedString.Key.foregroundColor: UIColor.gray])
     #endif
-        
+
         let height: CGFloat = CGFloat(PVThumbnailMaxResolution)
         let width: CGFloat = height * ratio
         let size = CGSize(width: width, height: height)

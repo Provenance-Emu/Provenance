@@ -260,7 +260,7 @@ public final class UTI: RawRepresentable, Equatable {
         guard let identifiers = unmanagedIdentifiers?.takeRetainedValue() as? [CFString] else {
             return []
         }
-        
+
         return identifiers.compactMap { UTI(rawValue: $0 as String) }
     }
 

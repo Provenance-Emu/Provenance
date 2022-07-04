@@ -59,7 +59,7 @@ import UIKit
 
             // Find the titles of UIAlertActions that are .cancel type
             let cancelTitles: [String] = actions.filter { $0.style == .cancel }.compactMap { $0.title }
-            
+
             // Find the titles of UIAlertActions that are .destructive type
             let destructiveTitles: [String] = actions.filter { $0.style == .destructive }.compactMap { $0.title }
 

@@ -27,7 +27,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     #if os(iOS)
         var _logViewController: PVLogViewController?
     #endif
-    
+
     func _initUITheme() {
         #if os(iOS)
         //        let currentTheme = PVSettingsModel.shared.theme
@@ -43,14 +43,14 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         }
         #endif
     }
-    
+
     func _initUI(
         libraryUpdatesController: PVGameLibraryUpdatesController,
         gameImporter: GameImporter,
         gameLibrary: PVGameLibrary
     ) {
         _initUITheme()
-        
+
         // Set root view controller and make windows visible
         let window = UIWindow.init(frame: UIScreen.main.bounds)
         self.window = window
@@ -71,14 +71,14 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
                 viewController: SideMenuView.instantiate(gameLibrary: gameLibrary, viewModel: viewModel, delegate: rootViewController, rootDelegate: rootViewController),
                 options: .init(widthPercent: 0.8, animationDuration: 0.18, overlayColor: .clear, overlayOpacity: 1, shadowOpacity: 0.0)
             )
-            
+
             window.rootViewController = sideNav
         } else {
             let storyboard = UIStoryboard.init(name: "Provenance", bundle: Bundle.main)
             let vc = storyboard.instantiateInitialViewController()
-            
+
             window.rootViewController = vc
-            
+
             guard let rootNavigation = window.rootViewController as? UINavigationController else {
                 fatalError("No root nav controller")
             }
@@ -98,7 +98,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         _initLogging()
         _initAppCenter()
         setDefaultsFromSettingsBundle()
-        
+
 		#if !targetEnvironment(macCatalyst)
         PVEmulatorConfiguration.initICloud()
         DispatchQueue.global(qos: .background).async {
@@ -130,7 +130,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
             return true
         }
-        
+
         let gameLibrary = PVGameLibrary(database: RomDatabase.sharedInstance)
 
         #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
@@ -179,7 +179,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         if #available(iOS 11, *) {
             PVAltKitService.shared.start()
         }
-        
+
         if #available(iOS 13, *) {
             ApplicationMonitor.shared.start()
         }

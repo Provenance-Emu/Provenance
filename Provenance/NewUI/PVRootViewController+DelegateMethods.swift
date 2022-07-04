@@ -30,23 +30,23 @@ extension PVRootViewController: PVRootDelegate {
     func root_canLoad(_ game: PVGame) throws {
         try self.canLoad(game.warmUp())
     }
-    
+
     func root_load(_ game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?) {
         self.load(game.warmUp(), sender: sender, core: core?.warmUp(), saveState: saveState?.warmUp())
     }
-    
+
     func root_openSaveState(_ saveState: PVSaveState) {
         self.openSaveState(saveState.warmUp())
     }
-    
+
     func root_updateRecentGames(_ game: PVGame) {
         self.updateRecentGames(game.warmUp())
     }
-    
+
     func root_presentCoreSelection(forGame game: PVGame, sender: Any?) {
         self.presentCoreSelection(forGame: game.warmUp(), sender: sender)
     }
-    
+
     func attemptToDelete(game: PVGame) {
         do {
             try self.delete(game: game)
@@ -54,7 +54,7 @@ extension PVRootViewController: PVRootDelegate {
             self.presentError(error.localizedDescription)
         }
     }
-    
+
     func showUnderConstructionAlert() {
         self.presentMessage("Please try again in a future update.", title: "⚠️ Under Construction ⚠️")
     }
@@ -71,7 +71,6 @@ extension PVRootViewController {
     }
 }
 
-
 // MARK: - Menu Delegate
 
 public protocol PVMenuDelegate {
@@ -86,12 +85,12 @@ public protocol PVMenuDelegate {
 extension PVRootViewController: PVMenuDelegate {
     func didTapSettings() {
         #if os(iOS)
-        
+
         guard
             let settingsNav = UIStoryboard(name: "Provenance", bundle: nil).instantiateViewController(withIdentifier: "settingsNavigationController") as? UINavigationController,
             let settingsVC = settingsNav.topViewController as? PVSettingsViewController
         else { return }
-        
+
         settingsVC.conflictsController = updatesController
         self.closeMenu()
         self.present(settingsNav, animated: true)
@@ -114,7 +113,7 @@ extension PVRootViewController: PVMenuDelegate {
         let actionSheet = UIAlertController(title: "Select Import Source", message: nil, preferredStyle: .actionSheet)
         actionSheet.addAction(UIAlertAction(title: "Cloud & Local Files", style: .default, handler: { _ in
             let extensions = [UTI.rom, UTI.artwork, UTI.savestate, UTI.zipArchive, UTI.sevenZipArchive, UTI.gnuZipArchive, UTI.image, UTI.jpeg, UTI.png, UTI.bios, UTI.data].map { $0.rawValue }
-            
+
             let documentPicker = PVDocumentPickerViewController(documentTypes: extensions, in: .import)
             documentPicker.allowsMultipleSelection = true
             documentPicker.delegate = self
@@ -135,10 +134,10 @@ extension PVRootViewController: PVMenuDelegate {
 
     func didTapConsole(with consoleId: String) {
         self.closeMenu()
-        
+
         guard let console = gameLibrary.system(identifier: consoleId) else { return }
         let consoles = gameLibrary.activeSystems
-        
+
         consolesWrapperViewDelegate.selectedTab = console.identifier
         self.consoleIdentifiersAndNamesMap.removeAll()
         for console in consoles {
@@ -155,7 +154,7 @@ extension PVRootViewController: PVMenuDelegate {
                 self.navigationItem.title = tab
             }
         }
-        
+
         let consolesView = ConsolesWrapperView(consolesWrapperViewDelegate: consolesWrapperViewDelegate, viewModel: self.viewModel, rootDelegate: self)
         self.loadIntoContainer(.console(consoleId: consoleId, title: console.name), newVC: UIHostingController(rootView: consolesView))
     }

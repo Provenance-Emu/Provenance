@@ -242,7 +242,7 @@ public final class PVEmulatorConfiguration: NSObject {
             ILOG("iCloudContainerDirectory: \(PVEmulatorConfiguration.iCloudContainerDirectory)")
         }
     }
-    
+
     static var iCloudContainerDirectoryCached: URL?
     /// This should be called on a background thread
     static var iCloudContainerDirectory: URL? {
@@ -603,7 +603,7 @@ public extension PVEmulatorConfiguration {
         let gamePath = path(forGame: game)
         return m3uFile(forURL: gamePath, indentifier: game.system.identifier)
     }
-    
+
     @objc
     class func m3uFile(forURL gamePath: URL, indentifier: String) -> URL? {
         let gameDirectory = romDirectory(forSystemIdentifier: indentifier)

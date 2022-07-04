@@ -930,8 +930,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                     let transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
                     if let header = self.superview?.subviews.filter({$0 is PVGameLibrarySectionHeaderView}).first {
                         self.superview?.insertSubview(self, belowSubview: header)
-                    }
-                    else {
+                    } else {
                         self.superview?.bringSubviewToFront(self)
                     }
                     if PVSettingsModel.shared.showGameBadges {

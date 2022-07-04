@@ -10,8 +10,6 @@ import PVLibrary
 import RealmSwift
 import UIKit
 
-
-
 final class SystemsSettingsTableViewController: QuickTableViewController {
     var systemsToken: NotificationToken?
 

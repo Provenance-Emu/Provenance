@@ -10,7 +10,7 @@ extension PVEmulatorViewController {
             }
         })
     }
-    
+
     func hideOrShowMenuButton() {
 
         // find out how many *real* controllers we have....
@@ -30,7 +30,7 @@ extension PVEmulatorViewController {
 
         // and hide menu button if we have zero
         menuButton?.isHidden = controllers.count != 0
-        
+
         #if os(iOS)
             setNeedsUpdateOfHomeIndicatorAutoHidden()
         #endif

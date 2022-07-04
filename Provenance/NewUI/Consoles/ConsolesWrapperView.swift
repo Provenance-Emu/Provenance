@@ -20,17 +20,17 @@ class ConsolesWrapperViewDelegate: ObservableObject {
 
 @available(iOS 14, tvOS 14, *)
 struct ConsolesWrapperView: SwiftUI.View {
-    
-    @ObservedObject var delegate: ConsolesWrapperViewDelegate
+
+    @ObservedObject weak var delegate: ConsolesWrapperViewDelegate
     @ObservedObject var viewModel: PVRootViewModel
-    var rootDelegate: PVRootDelegate!
-    
+    weak var rootDelegate: PVRootDelegate!
+
     @ObservedResults(
         PVSystem.self,
         filter: NSPredicate(format: "games.@count > 0"),
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSystem.name), ascending: false)
     ) var consoles
-    
+
     init(
         consolesWrapperViewDelegate: ConsolesWrapperViewDelegate,
         viewModel: PVRootViewModel,
@@ -40,7 +40,7 @@ struct ConsolesWrapperView: SwiftUI.View {
         self.viewModel = viewModel
         self.rootDelegate = rootDelegate
     }
-    
+
     var body: some SwiftUI.View {
         TabView(selection: $delegate.selectedTab) {
             if consoles.count > 0 {

@@ -9,28 +9,23 @@
 import Foundation
 import Combine
 
-public extension Swift.Result
-{
+public extension Swift.Result {
     var value: Success? {
-        switch self
-        {
+        switch self {
         case .success(let value): return value
         case .failure: return nil
         }
     }
-    
+
     var error: Failure? {
-        switch self
-        {
+        switch self {
         case .success: return nil
         case .failure(let error): return error
         }
     }
-    
-    init(_ value: Success?, _ error: Failure?)
-    {
-        switch (value, error)
-        {
+
+    init(_ value: Success?, _ error: Failure?) {
+        switch (value, error) {
         case (let value?, _): self = .success(value)
         case (_, let error?): self = .failure(error)
         case (nil, nil): preconditionFailure("Either value or error must be non-nil")
@@ -38,39 +33,25 @@ public extension Swift.Result
     }
 }
 
-public extension Swift.Result where Success == Void
-{
-    init(_ success: Bool, _ error: Failure?)
-    {
-        if success
-        {
+public extension Swift.Result where Success == Void {
+    init(_ success: Bool, _ error: Failure?) {
+        if success {
             self = .success(())
-        }
-        else if let error = error
-        {
+        } else if let error = error {
             self = .failure(error)
-        }
-        else
-        {
+        } else {
             preconditionFailure("Error must be non-nil if success is false")
         }
     }
 }
 
-public extension Swift.Result
-{
-    init<T, U>(_ values: (T?, U?), _ error: Failure?) where Success == (T, U)
-    {
-        if let value1 = values.0, let value2 = values.1
-        {
+public extension Swift.Result {
+    init<T, U>(_ values: (T?, U?), _ error: Failure?) where Success == (T, U) {
+        if let value1 = values.0, let value2 = values.1 {
             self = .success((value1, value2))
-        }
-        else if let error = error
-        {
+        } else if let error = error {
             self = .failure(error)
-        }
-        else
-        {
+        } else {
             preconditionFailure("Error must be non-nil if either provided values are nil")
         }
     }

@@ -6,7 +6,7 @@ let package = Package(
     name: "PVSupport",
     platforms: [
         .iOS(.v11),
-        .tvOS(.v11),
+        .tvOS(.v11)
         // .watchOS(.v7),
         // .macOS(.v11)
     ],
@@ -17,7 +17,7 @@ let package = Package(
             targets: ["PVSupport"]),
         .library(
             name: "PVSupportObjC",
-            targets: ["PVSupportObjC"]),
+            targets: ["PVSupportObjC"])
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -83,6 +83,6 @@ let package = Package(
         // MARK: SwiftPM tests
         .testTarget(
             name: "PVSupportTests",
-            dependencies: ["PVSupport"]),
+            dependencies: ["PVSupport"])
     ]
 )

@@ -117,7 +117,6 @@ extension iOSTheme {
         sharedApp.delegate?.window??.tintColor = defaultTintColor
     }
 
-
 }
 
 struct DarkTheme: iOSTheme {
@@ -125,7 +124,7 @@ struct DarkTheme: iOSTheme {
         static let lightBlue: UIColor   = .init(hex: "#18A9F7")!
         static let blueishGrey: UIColor = .init(hex: "#848489")!
     }
-    
+
     let theme = Themes.dark
 
     #if !os(tvOS)
@@ -150,7 +149,6 @@ struct DarkTheme: iOSTheme {
     var alertViewBackground: UIColor { return .darkGray }
     var alertViewText: UIColor { return .lightGray }
 
-
     var settingsHeaderBackground: UIColor? { return .black }
     var settingsHeaderText: UIColor? { return .middleGrey }
 
@@ -162,11 +160,10 @@ struct DarkTheme: iOSTheme {
 
 struct LightTheme: iOSTheme {
     let theme = Themes.light
-    
+
     enum Colors {
         static let white9alpha6 = UIColor(white: 0.9, alpha: 0.6)
     }
-    
 
     var defaultTintColor: UIColor? { return .iosBlue } // iOS Blue
 
@@ -349,7 +346,7 @@ public final class Theme {
                 }
             }
         }
-        
+
         // Status bar
         styleStatusBar(withColor: theme.statusBarColor)
     }

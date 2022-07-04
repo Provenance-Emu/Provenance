@@ -12,9 +12,9 @@ import UIKit
 
 final class CoreOptionsViewController: QuickTableViewController {
     let core: CoreOptional.Type
-    
+
     let subOptions: [CoreOption]?
-    
+
     init(withCore core: CoreOptional.Type, subOptions: [CoreOption]? = nil) {
         self.core = core
         self.subOptions = subOptions
@@ -163,7 +163,7 @@ final class CoreOptionsViewController: QuickTableViewController {
 				case let .range(display, range: range, defaultValue: defaultValue):
 					let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
                     let value = core.storedValueForOption(Int.self, option.key) ?? defaultValue
-                    
+
                     #if os(tvOS)
                     // TODO: slider on tvOS?
                     return NavigationRow<SystemSettingsCell>(text: "\(display.title): \(value)",
@@ -180,8 +180,7 @@ final class CoreOptionsViewController: QuickTableViewController {
                         value: Float(value),
                         valueLimits: (min: Float(range.min), max: Float(range.max)),
                         valueImages: (min: nil, max: nil),
-                        customization: nil)
-                    { _ in
+                        customization: nil) { _ in
                         let value = self.core.storedValueForOption(Int.self, option.key) ?? defaultValue
                         self.core.setValue(value, forOption: option)
                     }
@@ -205,8 +204,7 @@ final class CoreOptionsViewController: QuickTableViewController {
                         value: value,
                         valueLimits: (min: range.min, max: range.max),
                         valueImages: (min: nil, max: nil),
-                        customization: nil)
-                    { _ in
+                        customization: nil) { _ in
                         let value = self.core.storedValueForOption(Float.self, option.key) ?? defaultValue
                         self.core.setValue(value, forOption: option)
                     }
@@ -214,7 +212,7 @@ final class CoreOptionsViewController: QuickTableViewController {
                 case let .string(display, defaultValue: defaultValue):
                     let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
                     let value = core.storedValueForOption(String.self, option.key) ?? defaultValue
-                    
+
                     return NavigationRow<SystemSettingsCell>(text: display.title,
                                                              detailText: detailText,
                                                              icon: nil,
@@ -257,8 +255,7 @@ final class CoreOptionsViewController: QuickTableViewController {
                                                              icon: nil,
                                                              customization: { _, _ in
                     },
-                                                             action:
-                                                                { [weak self] row in
+                                                             action: { [weak self] row in
                         guard let self = self else { return }
                         let subOptionsVC = CoreOptionsViewController(withCore: self.core, subOptions: subOptions)
                         subOptionsVC.title = row.text

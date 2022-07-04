@@ -156,10 +156,10 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
     func dPad(_: JSDPad, didPress _: JSDPadDirection) {
         vibrate()
     }
-    
+
     func dPad(_: JSDPad, didRelease _: JSDPadDirection) {
     }
-    
+
     func dPad(_: JSDPad, joystick _: JoystickValue) { }
 
     typealias ResponderType = T
@@ -262,7 +262,7 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
     }
 
     var allButtons: [UIView] {
-        return [dPad, dPad2, joyPad, buttonGroup, leftShoulderButton, rightShoulderButton, leftShoulderButton2, rightShoulderButton2, zTriggerButton, startButton, selectButton, leftAnalogButton, rightAnalogButton].compactMap{$0}
+        return [dPad, dPad2, joyPad, buttonGroup, leftShoulderButton, rightShoulderButton, leftShoulderButton2, rightShoulderButton2, zTriggerButton, startButton, selectButton, leftAnalogButton, rightAnalogButton].compactMap {$0}
     }
     @objc func controllerDidDisconnect(_: Notification?) {
         #if os(iOS)
@@ -382,7 +382,7 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
                 let controlOriginY: CGFloat = compactVertical ? view.bounds.size.height - controlSize.height : view.frame.width + (kDPadTopMargin / 2)
 
                 if controlType == Keys.DPad {
-                    let xPadding: CGFloat = 0 //safeAreaInsets.left
+                    let xPadding: CGFloat = 0 // safeAreaInsets.left
                     let bottomPadding: CGFloat = 16
                     let dPadOriginY: CGFloat = min(controlOriginY - bottomPadding, view.frame.height - controlSize.height - bottomPadding)
                     var dPadFrame = CGRect(x: xPadding, y: dPadOriginY, width: controlSize.width, height: controlSize.height)
@@ -420,7 +420,7 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
     
                     adjustJoystick()
                 } else if controlType == Keys.JoyPad, PVSettingsModel.shared.debugOptions.onscreenJoypad {
-                    let xPadding: CGFloat = 0 //safeAreaInsets.left
+                    let xPadding: CGFloat = 0 // safeAreaInsets.left
                     let bottomPadding: CGFloat = 16
                     let joyPadOriginY: CGFloat = min(controlOriginY - bottomPadding, view.frame.height - controlSize.height - bottomPadding)
                     var joyPadFrame = CGRect(x: xPadding, y: joyPadOriginY, width: controlSize.width, height: controlSize.height)
@@ -537,7 +537,7 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
                     }
                 }
             }
-  
+
         if let joyPad = joyPad {
             self.view.bringSubviewToFront(joyPad)
         }
@@ -729,7 +729,7 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
             if selectFrame.maxY >= view.frame.size.height {
                 selectFrame.origin.y -= (selectFrame.maxY - view.frame.size.height) + yPadding
             }
-            
+
             if ["PSX", "PS1"].contains(system.shortName.uppercased()) {
                 selectFrame.origin.x += 80
             }
@@ -786,13 +786,13 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
                 if selectButton == nil {
                     startFrame.origin.x -= (spacing / 2) + (controlSize.width / 2)
                 }
-      
+
             }
 
             if ["PSX", "PS1"].contains(system.shortName.uppercased()) {
 //                startFrame.origin.x += 120
             }
-            
+
             if startFrame.maxY >= view.frame.size.height {
                 startFrame.origin.y -= (startFrame.maxY - view.frame.size.height) + yPadding
             }
@@ -902,7 +902,7 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
                 view.addSubview(rightAnalogButton)
             }
         }
-    
+
     fileprivate func adjustJoystick() {
         guard let dPad = dPad, let joyPad = joyPad else {
             return

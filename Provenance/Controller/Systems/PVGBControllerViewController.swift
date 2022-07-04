@@ -95,7 +95,7 @@ final class PVGBControllerViewController: PVControllerViewController<PVGBSystemR
         }
         super.dPad(dPad, didRelease: direction)
     }
-    
+
     override func buttonPressed(_ button: JSButton) {
         emulatorCore.didPush(button.buttonTag, forPlayer: 0)
         super.buttonPressed(button)
