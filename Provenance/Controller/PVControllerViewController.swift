@@ -5,6 +5,9 @@
 //  Created by Joe Mattiello on 17/03/2018.
 //  Copyright (c) 2018 Joe Mattiello. All rights reserved.
 //
+// Notes:
+// This entire file is one ugly math hack with ordering mattering in parsing.
+// TLDR; refactor this to SwiftUI or constraints
 
 import AudioToolbox
 import GameController
@@ -414,15 +417,18 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
                     if let dPad2 = dPad2 {
                         dPad2.isHidden = compactVertical
                     }
+    
+                    adjustJoystick()
                 } else if controlType == Keys.JoyPad, PVSettingsModel.shared.debugOptions.onscreenJoypad {
                     let xPadding: CGFloat = 0 //safeAreaInsets.left
                     let bottomPadding: CGFloat = 16
-                    let dPadOriginY: CGFloat = min(controlOriginY - bottomPadding, view.frame.height - controlSize.height - bottomPadding)
-                    var dPadFrame = CGRect(x: xPadding, y: dPadOriginY, width: controlSize.width, height: controlSize.height)
+                    let joyPadOriginY: CGFloat = min(controlOriginY - bottomPadding, view.frame.height - controlSize.height - bottomPadding)
+                    var joyPadFrame = CGRect(x: xPadding, y: joyPadOriginY, width: controlSize.width, height: controlSize.height)
 
-                    dPadFrame.origin.y += dPadFrame.height + bottomPadding
-                    
-                    let joyPad = JSDPad.JoyPad(frame: dPadFrame)
+                    joyPadFrame.origin.y += joyPadFrame.height + bottomPadding
+
+                    let joyPad: JSDPad = self.joyPad ?? JSDPad.JoyPad(frame: joyPadFrame)
+                    joyPad.frame = joyPadFrame
                     if let tintColor = control.PVControlTint {
                         joyPad.tintColor = UIColor(hex: tintColor)
                     }
@@ -431,7 +437,8 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
                     joyPad.alpha = alpha
                     joyPad.autoresizingMask = [.flexibleTopMargin, .flexibleRightMargin]
                     view.addSubview(joyPad)
-                    
+
+                    adjustJoystick()
                 } else if controlType == Keys.ButtonGroup {
                     let xPadding: CGFloat = safeAreaInsets.right + 5
                     let bottomPadding: CGFloat = 16
@@ -783,7 +790,7 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
             }
 
             if ["PSX", "PS1"].contains(system.shortName.uppercased()) {
-                startFrame.origin.x += 120
+//                startFrame.origin.x += 120
             }
             
             if startFrame.maxY >= view.frame.size.height {
@@ -895,6 +902,28 @@ class PVControllerViewController<T: ResponderClient>: UIViewController, Controll
                 view.addSubview(rightAnalogButton)
             }
         }
+    
+    fileprivate func adjustJoystick() {
+        guard let dPad = dPad, let joyPad = joyPad else {
+            return
+        }
+        var joyPadFrame = joyPad.frame
+        var dPadFrame = dPad.frame
+        
+        let joystickOverDPad = joyPadFrame.minY <= dPadFrame.minY
+        
+        if joystickOverDPad {
+            joyPadFrame.origin.y = dPadFrame.minY - joyPadFrame.size.height
+        } else  {
+            let overlap = (dPadFrame.maxY + joyPadFrame.height) - view.frame.height
+            if overlap > 1 {
+                dPadFrame.origin.y -= overlap
+            }
+            joyPadFrame.origin.y = dPadFrame.maxY
+        }
+        dPad.frame = dPadFrame
+        joyPad.frame = joyPadFrame
+    }
 
     #endif
 }
