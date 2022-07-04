@@ -8,7 +8,7 @@
 	<string>PVEP128Emu</string>
 	<key>PVSupportedSystems</key>
 	<array>
-		<string>com.provenance.supervision</string>
+		<string>com.provenance.ep128</string>
 	</array>
 	<key>PVProjectName</key>
 	<string>PVEP128Emu</string>

@@ -69,13 +69,43 @@
       location = "group:"
       name = "Cores Libretro">
       <FileRef
-         location = "group:Cores/FinalBurnNeo/PVFBNeo.xcodeproj">
+         location = "group:Cores/BeetlePSX/PVBeetlePSX.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/Desmume2015/PVDesmume2015.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/DosBox/PVDosBox.xcodeproj">
       </FileRef>
       <FileRef
+         location = "group:Cores/EP128Emu/PVEP128Emu.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/FinalBurnNeo/PVFBNeo.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/Flycast/PVFlycast.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/fMSX/PVfMSX.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/Hatari/PVHatari.xcodeproj">
+      </FileRef>
+      <FileRef
          location = "group:Cores/Mini_vMac/PVMiniVMac.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/Opera/PVOpera.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/pcsx_rearmed/PVPCSXRearmed.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/Potator/PVPotator.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/Yabause/PVYabause.xcodeproj">
       </FileRef>
    </Group>
    <Group
@@ -91,16 +121,10 @@
          location = "group:Cores/CrabEMU/CrabEmu.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Cores/Desmume2015/PVDesmume2015.xcodeproj">
-      </FileRef>
-      <FileRef
          location = "group:Cores/Dolphin/PVDolphin.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/DuckStation/PVDuckStation.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/Flycast/PVFlycast.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/Play/PVPlayCore.xcodeproj">

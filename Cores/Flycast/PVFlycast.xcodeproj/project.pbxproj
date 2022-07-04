@@ -169,7 +169,7 @@
 		B301797C207C908F0051B93D /* zip_entry_new.c in Sources */ = {isa = PBXBuildFile; fileRef = B339427120783CBC008DBAB4 /* zip_entry_new.c */; };
 		B301797D207C908F0051B93D /* zip_open.c in Sources */ = {isa = PBXBuildFile; fileRef = B339428220783CBC008DBAB4 /* zip_open.c */; };
 		B301797E207C908F0051B93D /* driver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B339414220783CBB008DBAB4 /* driver.cpp */; };
-		B301797F207C909E0051B93D /* libflycast-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libflycast-iOS.a */; };
+		B301797F207C909E0051B93D /* libflycast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libflycast.a */; };
 		B316B4E721926FE500693472 /* emu.cfg in Resources */ = {isa = PBXBuildFile; fileRef = B316B4E621926FE500693472 /* emu.cfg */; };
 		B316B4E821926FE500693472 /* emu.cfg in Resources */ = {isa = PBXBuildFile; fileRef = B316B4E621926FE500693472 /* emu.cfg */; };
 		B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C31B2191964F009F4EDC /* AVFoundation.framework */; };
@@ -391,7 +391,7 @@
 		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
 		B3C76225207833DE009950E4 /* PVFlycastCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVFlycastCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C76226207833DE009950E4 /* PVFlycastCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVFlycastCore.mm */; };
-		B3DDF56D26E9B90400CE47F0 /* libflycast-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3447F91218BEE3F00557ACE /* libflycast-tvOS.a */; };
+		B3DDF56D26E9B90400CE47F0 /* libflycast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3447F91218BEE3F00557ACE /* libflycast.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -426,7 +426,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		B30178D3207C901D0051B93D /* libflycast-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libflycast-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B30178D3207C901D0051B93D /* libflycast.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libflycast.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B316B4E621926FE500693472 /* emu.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = emu.cfg; sourceTree = "<group>"; };
 		B324C31B2191964F009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B339412120783CBB008DBAB4 /* rec_x64.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = rec_x64.cpp; sourceTree = "<group>"; };
@@ -1345,7 +1345,7 @@
 		B3447EB2218BC69700557ACE /* PVFlycastCore+Audio.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVFlycastCore+Audio.m"; sourceTree = "<group>"; };
 		B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
 		B3447EE6218BEDD200557ACE /* PVFlycast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVFlycast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3447F91218BEE3F00557ACE /* libflycast-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libflycast-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3447F91218BEE3F00557ACE /* libflycast.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libflycast.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B35E6BEF207CD2610040709A /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		B35E6BF1207CD2670040709A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
@@ -1376,7 +1376,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */,
-				B3DDF56D26E9B90400CE47F0 /* libflycast-tvOS.a in Frameworks */,
+				B3DDF56D26E9B90400CE47F0 /* libflycast.a in Frameworks */,
 				B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */,
 				B3447ECD218BEDD200557ACE /* CoreAudio.framework in Frameworks */,
 				B3447ECE218BEDD200557ACE /* AudioToolbox.framework in Frameworks */,
@@ -1402,7 +1402,7 @@
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
-				B301797F207C909E0051B93D /* libflycast-iOS.a in Frameworks */,
+				B301797F207C909E0051B93D /* libflycast.a in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
 				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
@@ -3468,9 +3468,9 @@
 			isa = PBXGroup;
 			children = (
 				B3C7621020783162009950E4 /* PVFlycast.framework */,
-				B30178D3207C901D0051B93D /* libflycast-iOS.a */,
+				B30178D3207C901D0051B93D /* libflycast.a */,
 				B3447EE6218BEDD200557ACE /* PVFlycast.framework */,
-				B3447F91218BEE3F00557ACE /* libflycast-tvOS.a */,
+				B3447F91218BEE3F00557ACE /* libflycast.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3567,7 +3567,7 @@
 			);
 			name = "flycast-iOS";
 			productName = flycast;
-			productReference = B30178D3207C901D0051B93D /* libflycast-iOS.a */;
+			productReference = B30178D3207C901D0051B93D /* libflycast.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		B3447EC0218BEDD200557ACE /* PVFlycast-tvOS */ = {
@@ -3603,7 +3603,7 @@
 			);
 			name = "flycast-tvOS";
 			productName = flycast;
-			productReference = B3447F91218BEE3F00557ACE /* libflycast-tvOS.a */;
+			productReference = B3447F91218BEE3F00557ACE /* libflycast.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		B3C7620F20783162009950E4 /* PVFlycast-iOS */ = {
@@ -4097,7 +4097,7 @@
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = flycast;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -4112,7 +4112,7 @@
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = flycast;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -4271,7 +4271,7 @@
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = flycast;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -4286,7 +4286,7 @@
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = flycast;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -4358,7 +4358,7 @@
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = flycast;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -4374,7 +4374,7 @@
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = flycast;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;

@@ -8,12 +8,12 @@
 	<string>PVHatari</string>
 	<key>PVSupportedSystems</key>
 	<array>
-		<string>com.provenance.supervision</string>
+		<string>com.provenance.atarist</string>
 	</array>
 	<key>PVProjectName</key>
 	<string>PVHatari</string>
 	<key>PVProjectURL</key>
-	<string>https://github.com/alekmaul/Hatari</string>
+	<string>http://hatari.tuxfamily.org/index.html</string>
 	<key>PVProjectVersion</key>
 	<string>0</string>
 </dict>

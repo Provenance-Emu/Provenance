@@ -8,12 +8,12 @@
 	<string>PVfMSX</string>
 	<key>PVSupportedSystems</key>
 	<array>
-		<string>com.provenance.supervision</string>
+		<string>com.provenance.msx</string>
 	</array>
 	<key>PVProjectName</key>
 	<string>PVfMSX</string>
 	<key>PVProjectURL</key>
-	<string>https://github.com/alekmaul/fMSX</string>
+	<string>http://fms.komkon.org/fMSX/</string>
 	<key>PVProjectVersion</key>
 	<string>0</string>
 </dict>

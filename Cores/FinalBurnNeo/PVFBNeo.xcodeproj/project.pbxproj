@@ -2910,8 +2910,8 @@
 		B3B3DD422871408E008A0E2F /* udp-test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "udp-test.c"; sourceTree = "<group>"; };
 		B3B3DD432871408E008A0E2F /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		B3B3DD442871408E008A0E2F /* net_http_parse_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = net_http_parse_test.c; sourceTree = "<group>"; };
-		B3B3DD452871408E008A0E2F /* net_ifinfo */ = {isa = PBXFileReference; lastKnownFileType = file; path = net_ifinfo; sourceTree = "<group>"; };
-		B3B3DD462871408E008A0E2F /* http_test */ = {isa = PBXFileReference; lastKnownFileType = file; path = http_test; sourceTree = "<group>"; };
+		B3B3DD452871408E008A0E2F /* net_ifinfo */ = {isa = PBXFileReference; lastKnownFileType = text; path = net_ifinfo; sourceTree = "<group>"; };
+		B3B3DD462871408E008A0E2F /* http_test */ = {isa = PBXFileReference; lastKnownFileType = text; path = http_test; sourceTree = "<group>"; };
 		B3B3DD472871408E008A0E2F /* net_http_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = net_http_test.c; sourceTree = "<group>"; };
 		B3B3DD4A2871408E008A0E2F /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		B3B3DD4B2871408E008A0E2F /* rpng_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = rpng_test.c; sourceTree = "<group>"; };
@@ -7682,15 +7682,15 @@
 		B3C7620620783162009950E4 = {
 			isa = PBXGroup;
 			children = (
+				B3B3D1772871354D008A0E2F /* FBNeo */,
+				B3B3DA24287136A0008A0E2F /* PVFBNeoCore */,
+				B3B3DBC828713D66008A0E2F /* PVFBNeo.h */,
+				B3B3DBC928713D66008A0E2F /* PVFBNeo-Prefix.pch */,
 				B3B3DBCA28713D66008A0E2F /* Core.plist */,
 				B3B3DBC728713D66008A0E2F /* Info.plist */,
-				B3B3DBC928713D66008A0E2F /* PVFBNeo-Prefix.pch */,
-				B3B3DBC828713D66008A0E2F /* PVFBNeo.h */,
-				B3B3DA24287136A0008A0E2F /* PVFBNeoCore */,
-				B3B3D1772871354D008A0E2F /* FBNeo */,
 				B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */,
-				B3C7621120783162009950E4 /* Products */,
 				B3C7621B20783242009950E4 /* Frameworks */,
+				B3C7621120783162009950E4 /* Products */,
 			);
 			sourceTree = "<group>";
 		};

@@ -200,7 +200,6 @@
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
 		B35E6BF4207CD2740040709A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
-		B37021F8287253B200B3F6DA /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B37021F9287253B200B3F6DA /* PVMiniVMac.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = PVMiniVMac.xcodeproj; sourceTree = "<group>"; };
 		B37021FE287253B200B3F6DA /* COPYING.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = COPYING.txt; sourceTree = "<group>"; };
 		B3702200287253B200B3F6DA /* CMDARGT1.i */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c.preprocessed; path = CMDARGT1.i; sourceTree = "<group>"; };
@@ -383,7 +382,6 @@
 		B37022BF287253B300B3F6DA /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B37022C0287253B300B3F6DA /* PVMiniVMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVMiniVMac.h; sourceTree = "<group>"; };
 		B37022C1287253B300B3F6DA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B37022C2287253B300B3F6DA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B37022C3287253B300B3F6DA /* PVMiniVMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVMiniVMac.h; sourceTree = "<group>"; };
 		B37022C5287253B300B3F6DA /* PVMiniVMacCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVMiniVMacCore.h; sourceTree = "<group>"; };
 		B37022C6287253B300B3F6DA /* PVMiniVMacCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVMiniVMacCore.mm; sourceTree = "<group>"; };
@@ -806,8 +804,6 @@
 				B37022C4287253B300B3F6DA /* PVMiniVMacCore */,
 				B37022C3287253B300B3F6DA /* PVMiniVMac.h */,
 				B37022BD287253B300B3F6DA /* PVMiniVMac-Prefix.pch */,
-				B37021F8287253B200B3F6DA /* Core.plist */,
-				B37022C2287253B300B3F6DA /* Info.plist */,
 				B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */,
 				B37021F9287253B200B3F6DA /* PVMiniVMac.xcodeproj */,
 				B3C7621B20783242009950E4 /* Frameworks */,

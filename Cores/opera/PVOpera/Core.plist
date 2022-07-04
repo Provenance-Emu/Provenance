@@ -8,12 +8,12 @@
 	<string>PVOpera</string>
 	<key>PVSupportedSystems</key>
 	<array>
-		<string>com.provenance.supervision</string>
+		<string>com.provenance.3do</string>
 	</array>
 	<key>PVProjectName</key>
 	<string>PVOpera</string>
 	<key>PVProjectURL</key>
-	<string>https://github.com/alekmaul/Opera</string>
+	<string>https://github.com/libretro/opera-libretro</string>
 	<key>PVProjectVersion</key>
 	<string>0</string>
 </dict>
