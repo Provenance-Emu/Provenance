@@ -34,60 +34,40 @@
 		B37022D12872564500B3F6DA /* libretro-core.c in Sources */ = {isa = PBXBuildFile; fileRef = B37022B3287253B300B3F6DA /* libretro-core.c */; };
 		B37022D32872564500B3F6DA /* retrostubs.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702295287253B300B3F6DA /* retrostubs.c */; };
 		B37022D42872564500B3F6DA /* libretro-core.c in Sources */ = {isa = PBXBuildFile; fileRef = B37022B3287253B300B3F6DA /* libretro-core.c */; };
-		B37022D52872565C00B3F6DA /* KBRDEMDV.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702261287253B200B3F6DA /* KBRDEMDV.c */; };
 		B37022D62872565C00B3F6DA /* ADBEMDEV.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702258287253B200B3F6DA /* ADBEMDEV.c */; };
-		B37022D72872565C00B3F6DA /* OSGLUXWN.c in Sources */ = {isa = PBXBuildFile; fileRef = B370223C287253B200B3F6DA /* OSGLUXWN.c */; };
 		B37022D82872565C00B3F6DA /* IWMEMDEV.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702278287253B200B3F6DA /* IWMEMDEV.c */; };
 		B37022D92872565C00B3F6DA /* MOUSEMDV.c in Sources */ = {isa = PBXBuildFile; fileRef = B370222F287253B200B3F6DA /* MOUSEMDV.c */; };
 		B37022DA2872565C00B3F6DA /* GLOBGLUE.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702239287253B200B3F6DA /* GLOBGLUE.c */; };
 		B37022DB2872565C00B3F6DA /* M68KITAB.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702281287253B200B3F6DA /* M68KITAB.c */; };
 		B37022DC2872565C00B3F6DA /* VIDEMDEV.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702254287253B200B3F6DA /* VIDEMDEV.c */; };
 		B37022DD2872565C00B3F6DA /* RTCEMDEV.c in Sources */ = {isa = PBXBuildFile; fileRef = B370224F287253B200B3F6DA /* RTCEMDEV.c */; };
-		B37022DE2872565C00B3F6DA /* OSGLUMAC.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702243287253B200B3F6DA /* OSGLUMAC.c */; };
-		B37022DF2872565C00B3F6DA /* OSGLUWIN.c in Sources */ = {isa = PBXBuildFile; fileRef = B370222E287253B200B3F6DA /* OSGLUWIN.c */; };
-		B37022E02872565C00B3F6DA /* OSGLUNDS.c in Sources */ = {isa = PBXBuildFile; fileRef = B370226D287253B200B3F6DA /* OSGLUNDS.c */; };
-		B37022E12872565C00B3F6DA /* PMUEMDEV.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702244287253B200B3F6DA /* PMUEMDEV.c */; };
 		B37022E22872565C00B3F6DA /* PROGMAIN.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702276287253B200B3F6DA /* PROGMAIN.c */; };
 		B37022E32872565C00B3F6DA /* SCCEMDEV.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702240287253B200B3F6DA /* SCCEMDEV.c */; };
 		B37022E42872565C00B3F6DA /* SCSIEMDV.c in Sources */ = {isa = PBXBuildFile; fileRef = B370227D287253B200B3F6DA /* SCSIEMDV.c */; };
 		B37022E52872565C00B3F6DA /* VIA2EMDV.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702237287253B200B3F6DA /* VIA2EMDV.c */; };
-		B37022E62872565C00B3F6DA /* OSGLUSDL.c in Sources */ = {isa = PBXBuildFile; fileRef = B370222B287253B200B3F6DA /* OSGLUSDL.c */; };
-		B37022E72872565C00B3F6DA /* OSGLUGTK.c in Sources */ = {isa = PBXBuildFile; fileRef = B370227C287253B200B3F6DA /* OSGLUGTK.c */; };
-		B37022E82872565C00B3F6DA /* OSGLUOSX.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702230287253B200B3F6DA /* OSGLUOSX.c */; };
 		B37022E92872565C00B3F6DA /* OSGLUERETRO.c in Sources */ = {isa = PBXBuildFile; fileRef = B370225C287253B200B3F6DA /* OSGLUERETRO.c */; };
 		B37022EA2872565C00B3F6DA /* SONYEMDV.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702247287253B200B3F6DA /* SONYEMDV.c */; };
 		B37022EB2872565C00B3F6DA /* VIAEMDEV.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702265287253B200B3F6DA /* VIAEMDEV.c */; };
-		B37022EC2872565C00B3F6DA /* OSGLUSD2.c in Sources */ = {isa = PBXBuildFile; fileRef = B370223A287253B200B3F6DA /* OSGLUSD2.c */; };
 		B37022ED2872565C00B3F6DA /* DISAM68K.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702245287253B200B3F6DA /* DISAM68K.c */; };
 		B37022EE2872565C00B3F6DA /* ROMEMDEV.c in Sources */ = {isa = PBXBuildFile; fileRef = B370227F287253B200B3F6DA /* ROMEMDEV.c */; };
 		B37022EF2872565C00B3F6DA /* SCRNEMDV.c in Sources */ = {isa = PBXBuildFile; fileRef = B370223F287253B200B3F6DA /* SCRNEMDV.c */; };
 		B37022F02872565C00B3F6DA /* MINEM68K.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702251287253B200B3F6DA /* MINEM68K.c */; };
 		B37022F12872565C00B3F6DA /* SNDEMDEV.c in Sources */ = {isa = PBXBuildFile; fileRef = B370223B287253B200B3F6DA /* SNDEMDEV.c */; };
 		B37022F22872565C00B3F6DA /* ASCEMDEV.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702262287253B200B3F6DA /* ASCEMDEV.c */; };
-		B37022F32872565D00B3F6DA /* KBRDEMDV.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702261287253B200B3F6DA /* KBRDEMDV.c */; };
 		B37022F42872565D00B3F6DA /* ADBEMDEV.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702258287253B200B3F6DA /* ADBEMDEV.c */; };
-		B37022F52872565D00B3F6DA /* OSGLUXWN.c in Sources */ = {isa = PBXBuildFile; fileRef = B370223C287253B200B3F6DA /* OSGLUXWN.c */; };
 		B37022F62872565D00B3F6DA /* IWMEMDEV.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702278287253B200B3F6DA /* IWMEMDEV.c */; };
 		B37022F72872565D00B3F6DA /* MOUSEMDV.c in Sources */ = {isa = PBXBuildFile; fileRef = B370222F287253B200B3F6DA /* MOUSEMDV.c */; };
 		B37022F82872565D00B3F6DA /* GLOBGLUE.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702239287253B200B3F6DA /* GLOBGLUE.c */; };
 		B37022F92872565D00B3F6DA /* M68KITAB.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702281287253B200B3F6DA /* M68KITAB.c */; };
 		B37022FA2872565D00B3F6DA /* VIDEMDEV.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702254287253B200B3F6DA /* VIDEMDEV.c */; };
 		B37022FB2872565D00B3F6DA /* RTCEMDEV.c in Sources */ = {isa = PBXBuildFile; fileRef = B370224F287253B200B3F6DA /* RTCEMDEV.c */; };
-		B37022FC2872565D00B3F6DA /* OSGLUMAC.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702243287253B200B3F6DA /* OSGLUMAC.c */; };
-		B37022FD2872565D00B3F6DA /* OSGLUWIN.c in Sources */ = {isa = PBXBuildFile; fileRef = B370222E287253B200B3F6DA /* OSGLUWIN.c */; };
-		B37022FE2872565D00B3F6DA /* OSGLUNDS.c in Sources */ = {isa = PBXBuildFile; fileRef = B370226D287253B200B3F6DA /* OSGLUNDS.c */; };
-		B37022FF2872565D00B3F6DA /* PMUEMDEV.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702244287253B200B3F6DA /* PMUEMDEV.c */; };
 		B37023002872565D00B3F6DA /* PROGMAIN.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702276287253B200B3F6DA /* PROGMAIN.c */; };
 		B37023012872565D00B3F6DA /* SCCEMDEV.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702240287253B200B3F6DA /* SCCEMDEV.c */; };
 		B37023022872565D00B3F6DA /* SCSIEMDV.c in Sources */ = {isa = PBXBuildFile; fileRef = B370227D287253B200B3F6DA /* SCSIEMDV.c */; };
 		B37023032872565D00B3F6DA /* VIA2EMDV.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702237287253B200B3F6DA /* VIA2EMDV.c */; };
-		B37023042872565D00B3F6DA /* OSGLUSDL.c in Sources */ = {isa = PBXBuildFile; fileRef = B370222B287253B200B3F6DA /* OSGLUSDL.c */; };
-		B37023052872565D00B3F6DA /* OSGLUGTK.c in Sources */ = {isa = PBXBuildFile; fileRef = B370227C287253B200B3F6DA /* OSGLUGTK.c */; };
-		B37023062872565D00B3F6DA /* OSGLUOSX.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702230287253B200B3F6DA /* OSGLUOSX.c */; };
 		B37023072872565D00B3F6DA /* OSGLUERETRO.c in Sources */ = {isa = PBXBuildFile; fileRef = B370225C287253B200B3F6DA /* OSGLUERETRO.c */; };
 		B37023082872565D00B3F6DA /* SONYEMDV.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702247287253B200B3F6DA /* SONYEMDV.c */; };
 		B37023092872565D00B3F6DA /* VIAEMDEV.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702265287253B200B3F6DA /* VIAEMDEV.c */; };
-		B370230A2872565D00B3F6DA /* OSGLUSD2.c in Sources */ = {isa = PBXBuildFile; fileRef = B370223A287253B200B3F6DA /* OSGLUSD2.c */; };
 		B370230B2872565D00B3F6DA /* DISAM68K.c in Sources */ = {isa = PBXBuildFile; fileRef = B3702245287253B200B3F6DA /* DISAM68K.c */; };
 		B370230C2872565D00B3F6DA /* ROMEMDEV.c in Sources */ = {isa = PBXBuildFile; fileRef = B370227F287253B200B3F6DA /* ROMEMDEV.c */; };
 		B370230D2872565D00B3F6DA /* SCRNEMDV.c in Sources */ = {isa = PBXBuildFile; fileRef = B370223F287253B200B3F6DA /* SCRNEMDV.c */; };
@@ -395,6 +375,7 @@
 		B3C7621C20783243009950E4 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		B3C7621E2078325C009950E4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B3C7622120783297009950E4 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3CE80022873FDB100B6BB5A /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -820,6 +801,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3CE80022873FDB100B6BB5A /* PVLibRetro.framework */,
 				B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */,
 				B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */,
 				B39769172859E3AD00558958 /* CoreFoundation.framework */,
@@ -1054,31 +1036,21 @@
 			files = (
 				B37022E92872565C00B3F6DA /* OSGLUERETRO.c in Sources */,
 				B37022ED2872565C00B3F6DA /* DISAM68K.c in Sources */,
-				B37022DF2872565C00B3F6DA /* OSGLUWIN.c in Sources */,
 				B37022E32872565C00B3F6DA /* SCCEMDEV.c in Sources */,
 				B37022EE2872565C00B3F6DA /* ROMEMDEV.c in Sources */,
-				B37022E62872565C00B3F6DA /* OSGLUSDL.c in Sources */,
 				B37022EF2872565C00B3F6DA /* SCRNEMDV.c in Sources */,
-				B37022DE2872565C00B3F6DA /* OSGLUMAC.c in Sources */,
 				B37022F12872565C00B3F6DA /* SNDEMDEV.c in Sources */,
 				B37022E22872565C00B3F6DA /* PROGMAIN.c in Sources */,
 				B37022EA2872565C00B3F6DA /* SONYEMDV.c in Sources */,
-				B37022E12872565C00B3F6DA /* PMUEMDEV.c in Sources */,
 				B37022D92872565C00B3F6DA /* MOUSEMDV.c in Sources */,
 				B37022DD2872565C00B3F6DA /* RTCEMDEV.c in Sources */,
-				B37022D52872565C00B3F6DA /* KBRDEMDV.c in Sources */,
 				B37022E52872565C00B3F6DA /* VIA2EMDV.c in Sources */,
 				B37022DB2872565C00B3F6DA /* M68KITAB.c in Sources */,
 				B37022E42872565C00B3F6DA /* SCSIEMDV.c in Sources */,
-				B37022E02872565C00B3F6DA /* OSGLUNDS.c in Sources */,
 				B37022DA2872565C00B3F6DA /* GLOBGLUE.c in Sources */,
 				B37022EB2872565C00B3F6DA /* VIAEMDEV.c in Sources */,
 				B37022D82872565C00B3F6DA /* IWMEMDEV.c in Sources */,
-				B37022E82872565C00B3F6DA /* OSGLUOSX.c in Sources */,
-				B37022E72872565C00B3F6DA /* OSGLUGTK.c in Sources */,
 				B37022D62872565C00B3F6DA /* ADBEMDEV.c in Sources */,
-				B37022D72872565C00B3F6DA /* OSGLUXWN.c in Sources */,
-				B37022EC2872565C00B3F6DA /* OSGLUSD2.c in Sources */,
 				B37022F02872565C00B3F6DA /* MINEM68K.c in Sources */,
 				B37022DC2872565C00B3F6DA /* VIDEMDEV.c in Sources */,
 				B37022F22872565C00B3F6DA /* ASCEMDEV.c in Sources */,
@@ -1108,31 +1080,21 @@
 			files = (
 				B37023072872565D00B3F6DA /* OSGLUERETRO.c in Sources */,
 				B370230B2872565D00B3F6DA /* DISAM68K.c in Sources */,
-				B37022FD2872565D00B3F6DA /* OSGLUWIN.c in Sources */,
 				B37023012872565D00B3F6DA /* SCCEMDEV.c in Sources */,
 				B370230C2872565D00B3F6DA /* ROMEMDEV.c in Sources */,
-				B37023042872565D00B3F6DA /* OSGLUSDL.c in Sources */,
 				B370230D2872565D00B3F6DA /* SCRNEMDV.c in Sources */,
-				B37022FC2872565D00B3F6DA /* OSGLUMAC.c in Sources */,
 				B370230F2872565D00B3F6DA /* SNDEMDEV.c in Sources */,
 				B37023002872565D00B3F6DA /* PROGMAIN.c in Sources */,
 				B37023082872565D00B3F6DA /* SONYEMDV.c in Sources */,
-				B37022FF2872565D00B3F6DA /* PMUEMDEV.c in Sources */,
 				B37022F72872565D00B3F6DA /* MOUSEMDV.c in Sources */,
 				B37022FB2872565D00B3F6DA /* RTCEMDEV.c in Sources */,
-				B37022F32872565D00B3F6DA /* KBRDEMDV.c in Sources */,
 				B37023032872565D00B3F6DA /* VIA2EMDV.c in Sources */,
 				B37022F92872565D00B3F6DA /* M68KITAB.c in Sources */,
 				B37023022872565D00B3F6DA /* SCSIEMDV.c in Sources */,
-				B37022FE2872565D00B3F6DA /* OSGLUNDS.c in Sources */,
 				B37022F82872565D00B3F6DA /* GLOBGLUE.c in Sources */,
 				B37023092872565D00B3F6DA /* VIAEMDEV.c in Sources */,
 				B37022F62872565D00B3F6DA /* IWMEMDEV.c in Sources */,
-				B37023062872565D00B3F6DA /* OSGLUOSX.c in Sources */,
-				B37023052872565D00B3F6DA /* OSGLUGTK.c in Sources */,
 				B37022F42872565D00B3F6DA /* ADBEMDEV.c in Sources */,
-				B37022F52872565D00B3F6DA /* OSGLUXWN.c in Sources */,
-				B370230A2872565D00B3F6DA /* OSGLUSD2.c in Sources */,
 				B370230E2872565D00B3F6DA /* MINEM68K.c in Sources */,
 				B37022FA2872565D00B3F6DA /* VIDEMDEV.c in Sources */,
 				B37023102872565D00B3F6DA /* ASCEMDEV.c in Sources */,
@@ -1270,6 +1232,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/libretro-minivmac/libretro-common/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -1700,6 +1663,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/libretro-minivmac/libretro-common/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -1771,6 +1735,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/libretro-minivmac/libretro-common/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
