@@ -41,6 +41,22 @@
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
+		B3FF641F2873EBCC00829C14 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA0FE2872965F00EAEB37 /* libretro.c */; };
+		B3FF64202873EBCC00829C14 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA0FE2872965F00EAEB37 /* libretro.c */; };
+		B3FF64212873EBEB00829C14 /* gpu.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1132872965F00EAEB37 /* gpu.c */; };
+		B3FF64222873EBEB00829C14 /* memorymap.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1122872965F00EAEB37 /* memorymap.c */; };
+		B3FF64232873EBEB00829C14 /* watara.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1212872965F00EAEB37 /* watara.c */; };
+		B3FF64242873EBEB00829C14 /* controls.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA11B2872965F00EAEB37 /* controls.c */; };
+		B3FF64252873EBEB00829C14 /* sound.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA11F2872965F00EAEB37 /* sound.c */; };
+		B3FF64262873EBEB00829C14 /* timer.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1152872965F00EAEB37 /* timer.c */; };
+		B3FF64272873EBEB00829C14 /* gpu.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1132872965F00EAEB37 /* gpu.c */; };
+		B3FF64282873EBEB00829C14 /* memorymap.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1122872965F00EAEB37 /* memorymap.c */; };
+		B3FF64292873EBEB00829C14 /* watara.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1212872965F00EAEB37 /* watara.c */; };
+		B3FF642A2873EBEB00829C14 /* controls.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA11B2872965F00EAEB37 /* controls.c */; };
+		B3FF642B2873EBEB00829C14 /* sound.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA11F2872965F00EAEB37 /* sound.c */; };
+		B3FF642C2873EBEB00829C14 /* timer.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1152872965F00EAEB37 /* timer.c */; };
+		B3FF642D2873EBF000829C14 /* m6502.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1182872965F00EAEB37 /* m6502.c */; };
+		B3FF642E2873EBF000829C14 /* m6502.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1182872965F00EAEB37 /* m6502.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -339,12 +355,12 @@
 		B3EBA0FA2872965F00EAEB37 /* potator */ = {
 			isa = PBXGroup;
 			children = (
-				B3EBA0FB2872965F00EAEB37 /* LICENSE */,
-				B3EBA0FC2872965F00EAEB37 /* platform */,
-				B3EBA10F2872965F00EAEB37 /* README.md */,
-				B3EBA1102872965F00EAEB37 /* common */,
 				B3EBA1222872965F00EAEB37 /* .gitignore */,
+				B3EBA0FB2872965F00EAEB37 /* LICENSE */,
+				B3EBA10F2872965F00EAEB37 /* README.md */,
 				B3EBA1232872965F00EAEB37 /* .gitlab-ci.yml */,
+				B3EBA1102872965F00EAEB37 /* common */,
+				B3EBA0FC2872965F00EAEB37 /* platform */,
 			);
 			path = potator;
 			sourceTree = "<group>";
@@ -360,15 +376,15 @@
 		B3EBA0FD2872965F00EAEB37 /* libretro */ = {
 			isa = PBXGroup;
 			children = (
-				B3EBA0FE2872965F00EAEB37 /* libretro.c */,
 				B3EBA0FF2872965F00EAEB37 /* Makefile */,
+				B3EBA0FE2872965F00EAEB37 /* libretro.c */,
 				B3EBA1002872965F00EAEB37 /* Makefile.common */,
-				B3EBA1012872965F00EAEB37 /* libretro.h */,
-				B3EBA1022872965F00EAEB37 /* libretro_core_options.h */,
 				B3EBA1032872965F00EAEB37 /* libretro_core_options_intl.h */,
-				B3EBA1042872965F00EAEB37 /* libretro-common */,
+				B3EBA1022872965F00EAEB37 /* libretro_core_options.h */,
+				B3EBA1012872965F00EAEB37 /* libretro.h */,
 				B3EBA10B2872965F00EAEB37 /* link.T */,
 				B3EBA10C2872965F00EAEB37 /* jni */,
+				B3EBA1042872965F00EAEB37 /* libretro-common */,
 			);
 			path = libretro;
 			sourceTree = "<group>";
@@ -419,20 +435,20 @@
 		B3EBA1102872965F00EAEB37 /* common */ = {
 			isa = PBXGroup;
 			children = (
-				B3EBA1112872965F00EAEB37 /* sound.h */,
-				B3EBA1122872965F00EAEB37 /* memorymap.c */,
+				B3EBA11B2872965F00EAEB37 /* controls.c */,
 				B3EBA1132872965F00EAEB37 /* gpu.c */,
-				B3EBA1142872965F00EAEB37 /* controls.h */,
+				B3EBA1122872965F00EAEB37 /* memorymap.c */,
+				B3EBA11F2872965F00EAEB37 /* sound.c */,
 				B3EBA1152872965F00EAEB37 /* timer.c */,
+				B3EBA1212872965F00EAEB37 /* watara.c */,
+				B3EBA1142872965F00EAEB37 /* controls.h */,
+				B3EBA11E2872965F00EAEB37 /* gpu.h */,
+				B3EBA11D2872965F00EAEB37 /* memorymap.h */,
+				B3EBA1112872965F00EAEB37 /* sound.h */,
+				B3EBA1202872965F00EAEB37 /* supervision.h */,
+				B3EBA11C2872965F00EAEB37 /* timer.h */,
 				B3EBA1162872965F00EAEB37 /* types.h */,
 				B3EBA1172872965F00EAEB37 /* m6502 */,
-				B3EBA11B2872965F00EAEB37 /* controls.c */,
-				B3EBA11C2872965F00EAEB37 /* timer.h */,
-				B3EBA11D2872965F00EAEB37 /* memorymap.h */,
-				B3EBA11E2872965F00EAEB37 /* gpu.h */,
-				B3EBA11F2872965F00EAEB37 /* sound.c */,
-				B3EBA1202872965F00EAEB37 /* supervision.h */,
-				B3EBA1212872965F00EAEB37 /* watara.c */,
 			);
 			path = common;
 			sourceTree = "<group>";
@@ -663,6 +679,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3FF64252873EBEB00829C14 /* sound.c in Sources */,
+				B3FF64212873EBEB00829C14 /* gpu.c in Sources */,
+				B3FF64232873EBEB00829C14 /* watara.c in Sources */,
+				B3FF64262873EBEB00829C14 /* timer.c in Sources */,
+				B3FF64222873EBEB00829C14 /* memorymap.c in Sources */,
+				B3FF642D2873EBF000829C14 /* m6502.c in Sources */,
+				B3FF64242873EBEB00829C14 /* controls.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -670,6 +693,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3FF641F2873EBCC00829C14 /* libretro.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -685,6 +709,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3FF642B2873EBEB00829C14 /* sound.c in Sources */,
+				B3FF64272873EBEB00829C14 /* gpu.c in Sources */,
+				B3FF64292873EBEB00829C14 /* watara.c in Sources */,
+				B3FF642C2873EBEB00829C14 /* timer.c in Sources */,
+				B3FF64282873EBEB00829C14 /* memorymap.c in Sources */,
+				B3FF642E2873EBF000829C14 /* m6502.c in Sources */,
+				B3FF642A2873EBEB00829C14 /* controls.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -692,6 +723,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3FF64202873EBCC00829C14 /* libretro.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -817,6 +849,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/potator/platform/libretro/libretro-common/include\"",
+					"\"$(SRCROOT)/potator/platform/libretro\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -1247,6 +1281,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/potator/platform/libretro/libretro-common/include\"",
+					"\"$(SRCROOT)/potator/platform/libretro\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -1318,6 +1354,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/potator/platform/libretro/libretro-common/include\"",
+					"\"$(SRCROOT)/potator/platform/libretro\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
