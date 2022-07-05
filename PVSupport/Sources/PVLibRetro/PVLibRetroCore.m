@@ -307,9 +307,9 @@ static bool core_init_libretro_cbs(void *data)
     if (!cbs)
         return false;
     
-    //   core.retro_set_video_refresh(video_driver_frame);
-    //   core.retro_set_audio_sample(audio_driver_sample);
-    //   core.retro_set_audio_sample_batch(audio_driver_sample_batch);
+   core.retro_set_video_refresh(video_driver_frame);
+//   core.retro_set_audio_sample(audio_driver_sample);
+//   core.retro_set_audio_sample_batch(audio_driver_sample_batch);
     core.retro_set_input_state(core_input_state_poll);
     core.retro_set_input_poll(core_input_state_poll_maybe);
     
@@ -349,18 +349,18 @@ static bool core_init_libretro_cbs(void *data)
  **/
 bool core_set_default_callbacks(void *data)
 {
-    struct retro_callbacks *cbs = (struct retro_callbacks*)data;
-    
-    if (!cbs)
-        return false;
-    
-    cbs->frame_cb        = video_driver_frame;
-    //   cbs->sample_cb       = audio_driver_sample;
-    //   cbs->sample_batch_cb = audio_driver_sample_batch;
-    cbs->state_cb        = core_input_state_poll;
-    cbs->poll_cb         = input_poll;
-    
-    return true;
+	struct retro_callbacks *cbs = (struct retro_callbacks*)data;
+
+	if (!cbs)
+		return false;
+
+	cbs->frame_cb        = video_driver_frame;
+//	cbs->sample_cb       = audio_callback;
+//	cbs->sample_batch_cb = audio_batch_callback;
+	cbs->state_cb        = core_input_state_poll;
+	cbs->poll_cb         = input_poll;
+
+	return true;
 }
 
 bool core_deinit(void *data)
@@ -1693,21 +1693,21 @@ static size_t audio_batch_callback(const int16_t *data, size_t frames)
 
 static void video_callback(const void *data, unsigned width, unsigned height, size_t pitch)
 {
-//    __strong PVLibRetroCore *strongCurrent = _current;
+    __strong PVLibRetroCore *strongCurrent = _current;
     
-//    strongCurrent->_videoWidth  = width;
-//    strongCurrent->_videoHeight = height;
-//
-//    dispatch_queue_t the_queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-//
-//    dispatch_apply(height, the_queue, ^(size_t y){
-//        const uint32_t *src = (uint32_t*)data + y * (pitch >> 2); //pitch is in bytes not pixels
-//        uint32_t *dst = strongCurrent->videoBuffer + y * 720;
-//
-//        memcpy(dst, src, sizeof(uint32_t)*width);
-//    });
-//
-//    strongCurrent = nil;
+    strongCurrent->_videoWidth  = width;
+    strongCurrent->_videoHeight = height;
+
+    dispatch_queue_t the_queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+
+    dispatch_apply(height, the_queue, ^(size_t y){
+        const uint32_t *src = (uint32_t*)data + y * (pitch >> 2); //pitch is in bytes not pixels
+        uint32_t *dst = strongCurrent->videoBuffer + y * 720;
+
+        memcpy(dst, src, sizeof(uint32_t)*width);
+    });
+
+    strongCurrent = nil;
 }
 
 static void input_poll_callback(void)
@@ -1760,15 +1760,21 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
         videoBufferB = (uint32_t *)malloc(720 * 576 * sizeof(uint32_t));
         videoBuffer = videoBufferA;
         
-//        const char* path = [[NSBundle bundleForClass:[self class]].bundlePath fileSystemRepresentation];
-//        config_set_active_core_path(path);
+        const char* path = [[NSBundle bundleForClass:[self class]].bundlePath fileSystemRepresentation];
+        config_set_active_core_path(path);
 //        load_dynamic_core();
         init_libretro_sym(CORE_TYPE_PLAIN, &core);
         retro_set_environment(environment_callback);
         //        libretro_get_system_info(path,
         //        libretro_get_system_info_lib
         core.retro_init();
-        
+
+//		retro_set_audio_sample(audio_callback);
+//		retro_set_audio_sample_batch(audio_batch_callback);
+//		retro_set_video_refresh(video_callback);
+//		retro_set_input_poll(input_poll_callback);
+//		retro_set_input_state(input_state_callback);
+
         core.retro_set_audio_sample(audio_callback);
         core.retro_set_audio_sample_batch(audio_batch_callback);
         core.retro_set_video_refresh(video_callback);
