@@ -22,6 +22,28 @@
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
+		B3681B7C287412DC00C0136F /* beetle_psx_globals.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0722872978C00EAEB37 /* beetle_psx_globals.c */; };
+		B3681B7D287412DD00C0136F /* beetle_psx_globals.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0722872978C00EAEB37 /* beetle_psx_globals.c */; };
+		B3681B7E2874130B00C0136F /* gpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB1142872978C00EAEB37 /* gpu.cpp */; };
+		B3681B802874131100C0136F /* gpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB1142872978C00EAEB37 /* gpu.cpp */; };
+		B3681B81287413CE00C0136F /* libretro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB05C2872978C00EAEB37 /* libretro.cpp */; };
+		B3681B82287413CF00C0136F /* libretro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB05C2872978C00EAEB37 /* libretro.cpp */; };
+		B3681B89287415D200C0136F /* spu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0FE2872978C00EAEB37 /* spu.cpp */; };
+		B3681B8A287415D300C0136F /* spu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0FE2872978C00EAEB37 /* spu.cpp */; };
+		B3681B8B287415E300C0136F /* state.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0D82872978C00EAEB37 /* state.c */; };
+		B3681B8C287415E400C0136F /* state.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0D82872978C00EAEB37 /* state.c */; };
+		B3681B8D287415F300C0136F /* dma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0E72872978C00EAEB37 /* dma.cpp */; };
+		B3681B8E287415F400C0136F /* dma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0E72872978C00EAEB37 /* dma.cpp */; };
+		B3681B8F2874162700C0136F /* cdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB1152872978C00EAEB37 /* cdc.cpp */; };
+		B3681B902874162700C0136F /* cdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB1152872978C00EAEB37 /* cdc.cpp */; };
+		B3681B912874165100C0136F /* cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB1112872978C00EAEB37 /* cpu.cpp */; };
+		B3681B922874165200C0136F /* cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB1112872978C00EAEB37 /* cpu.cpp */; };
+		B3681B932874167800C0136F /* pgxp_mem.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0752872978C00EAEB37 /* pgxp_mem.c */; };
+		B3681B942874167800C0136F /* pgxp_mem.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0752872978C00EAEB37 /* pgxp_mem.c */; };
+		B3681B952874167A00C0136F /* pgxp_cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0782872978C00EAEB37 /* pgxp_cpu.c */; };
+		B3681B962874167B00C0136F /* pgxp_cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0782872978C00EAEB37 /* pgxp_cpu.c */; };
+		B3681B972874168A00C0136F /* pgxp_gpu.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0792872978C00EAEB37 /* pgxp_gpu.c */; };
+		B3681B982874168B00C0136F /* pgxp_gpu.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0792872978C00EAEB37 /* pgxp_gpu.c */; };
 		B37022C72872553D00B3F6DA /* PVBeetlePSXCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B37022C6287253B300B3F6DA /* PVBeetlePSXCore.mm */; };
 		B37022C82872553E00B3F6DA /* PVBeetlePSXCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B37022C6287253B300B3F6DA /* PVBeetlePSXCore.mm */; };
 		B37022C92872554300B3F6DA /* PVBeetlePSXCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C5287253B300B3F6DA /* PVBeetlePSXCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -3055,14 +3077,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3681B912874165100C0136F /* cpu.cpp in Sources */,
+				B3681B8D287415F300C0136F /* dma.cpp in Sources */,
 				B3CE80222874050000B6BB5A /* zutil.c in Sources */,
 				B3CE8019287404EE00B6BB5A /* libchdr_chd.c in Sources */,
+				B3681B8F2874162700C0136F /* cdc.cpp in Sources */,
 				B3CE8008287404B200B6BB5A /* Delta.c in Sources */,
 				B3CE8016287404EE00B6BB5A /* libchdr_bitstream.c in Sources */,
+				B3681B8B287415E300C0136F /* state.c in Sources */,
+				B3681B89287415D200C0136F /* spu.cpp in Sources */,
+				B3681B952874167A00C0136F /* pgxp_cpu.c in Sources */,
 				B3CE80312874057400B6BB5A /* rsx_lib_gl.cpp in Sources */,
+				B3681B932874167800C0136F /* pgxp_mem.c in Sources */,
 				B3CE802B2874052A00B6BB5A /* glsym_es2.c in Sources */,
+				B3681B7E2874130B00C0136F /* gpu.cpp in Sources */,
 				B3CE8009287404B200B6BB5A /* LzFind.c in Sources */,
 				B3CE802D2874055800B6BB5A /* rglgen.c in Sources */,
+				B3681B972874168A00C0136F /* pgxp_gpu.c in Sources */,
 				B3CE8015287404EE00B6BB5A /* libchdr_flac.c in Sources */,
 				B3CE801F2874050000B6BB5A /* inffast.c in Sources */,
 				B3CE80332874059500B6BB5A /* ugui.c in Sources */,
@@ -3088,6 +3119,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3681B81287413CE00C0136F /* libretro.cpp in Sources */,
+				B3681B7C287412DC00C0136F /* beetle_psx_globals.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3103,14 +3136,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3681B922874165200C0136F /* cpu.cpp in Sources */,
+				B3681B8E287415F400C0136F /* dma.cpp in Sources */,
 				B3CE80282874050100B6BB5A /* zutil.c in Sources */,
 				B3CE801E287404EF00B6BB5A /* libchdr_chd.c in Sources */,
+				B3681B902874162700C0136F /* cdc.cpp in Sources */,
 				B3CE8011287404B300B6BB5A /* Delta.c in Sources */,
 				B3CE801B287404EF00B6BB5A /* libchdr_bitstream.c in Sources */,
+				B3681B8C287415E400C0136F /* state.c in Sources */,
+				B3681B8A287415D300C0136F /* spu.cpp in Sources */,
+				B3681B962874167B00C0136F /* pgxp_cpu.c in Sources */,
 				B3CE80322874057600B6BB5A /* rsx_lib_gl.cpp in Sources */,
+				B3681B942874167800C0136F /* pgxp_mem.c in Sources */,
 				B3CE802C2874052B00B6BB5A /* glsym_es2.c in Sources */,
+				B3681B802874131100C0136F /* gpu.cpp in Sources */,
 				B3CE8012287404B300B6BB5A /* LzFind.c in Sources */,
 				B3CE802E2874055900B6BB5A /* rglgen.c in Sources */,
+				B3681B982874168B00C0136F /* pgxp_gpu.c in Sources */,
 				B3CE801A287404EF00B6BB5A /* libchdr_flac.c in Sources */,
 				B3CE80252874050100B6BB5A /* inffast.c in Sources */,
 				B3CE80342874059600B6BB5A /* ugui.c in Sources */,
@@ -3136,6 +3178,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3681B82287413CF00C0136F /* libretro.cpp in Sources */,
+				B3681B7D287412DD00C0136F /* beetle_psx_globals.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3414,7 +3458,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3434,7 +3478,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3454,7 +3498,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3584,7 +3628,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3605,7 +3649,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3626,7 +3670,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
