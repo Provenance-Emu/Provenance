@@ -903,20 +903,24 @@ static void FinalizeSamplesAudioCallback(void *) {
 
 #pragma mark - Input
 
-- (void)didPushSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player {
+- (void)didPushSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player
+{
     S9xReportButton((player+1 << 16) | button, true);
 }
 
-- (void)didReleaseSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player {
+- (void)didReleaseSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player
+{
     S9xReportButton((player+1 << 16) | button, false);
 }
 
-- (void)mapButtons {
-    for(int player = 1; player <= 8; player++) {
+- (void)mapButtons
+{
+    for(int player = 1; player <= 8; player++)
+    {
         NSUInteger playerMask = player << 16;
-		
+        
         NSString *playerString = [NSString stringWithFormat:@"Joypad%d ", player];
-		
+        
         for(NSUInteger idx = 0; idx < PVSNESButtonCount; idx++)
         {
             s9xcommand_t cmd = S9xGetCommandT([[playerString stringByAppendingString:SNESEmulatorKeys[idx]] UTF8String]);
@@ -925,14 +929,17 @@ static void FinalizeSamplesAudioCallback(void *) {
     }
 }
 
-- (void)updateController {
+- (void)updateControllers
+{
     GCController *controller = nil;
 
-    for (NSInteger player = 1; player <= 2; player++) {
+    for (NSInteger player = 1; player <= 2; player++)
+    {
         NSUInteger playerMask = player << 16;
         GCController *controller = (player == 1) ? self.controller1 : self.controller2;
 
-        if ([controller extendedGamepad]) {
+        if ([controller extendedGamepad])
+        {
             GCExtendedGamepad *gamepad = [controller extendedGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
 
