@@ -41,6 +41,58 @@
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
+		B3FF63CA2873E37000829C14 /* error.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9FB22872965000EAEB37 /* error.c */; };
+		B3FF63CB2873E37000829C14 /* cs1.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9BB42872964D00EAEB37 /* cs1.c */; };
+		B3FF63CC2873E37000829C14 /* m68kd.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA0BA2872965100EAEB37 /* m68kd.c */; };
+		B3FF63CD2873E37000829C14 /* bios.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9D902872964E00EAEB37 /* bios.c */; };
+		B3FF63CE2873E37000829C14 /* cs2.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9B762872964D00EAEB37 /* cs2.c */; };
+		B3FF63CF2873E37000829C14 /* cdbase.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9BAD2872964D00EAEB37 /* cdbase.c */; };
+		B3FF63D02873E37000829C14 /* debug.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9D922872964E00EAEB37 /* debug.c */; };
+		B3FF63D12873E37000829C14 /* cheat.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9F812872964F00EAEB37 /* cheat.c */; };
+		B3FF63D22873E37000829C14 /* cs0.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9FAD2872965000EAEB37 /* cs0.c */; };
+		B3FF63D32873E37000829C14 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9B8B2872964D00EAEB37 /* memory.c */; };
+		B3FF63D42873E37000829C14 /* error.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9FB22872965000EAEB37 /* error.c */; };
+		B3FF63D52873E37000829C14 /* cs1.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9BB42872964D00EAEB37 /* cs1.c */; };
+		B3FF63D62873E37000829C14 /* m68kd.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA0BA2872965100EAEB37 /* m68kd.c */; };
+		B3FF63D72873E37000829C14 /* bios.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9D902872964E00EAEB37 /* bios.c */; };
+		B3FF63D82873E37000829C14 /* cs2.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9B762872964D00EAEB37 /* cs2.c */; };
+		B3FF63D92873E37000829C14 /* cdbase.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9BAD2872964D00EAEB37 /* cdbase.c */; };
+		B3FF63DA2873E37000829C14 /* debug.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9D922872964E00EAEB37 /* debug.c */; };
+		B3FF63DB2873E37000829C14 /* cheat.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9F812872964F00EAEB37 /* cheat.c */; };
+		B3FF63DC2873E37000829C14 /* cs0.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9FAD2872965000EAEB37 /* cs0.c */; };
+		B3FF63DD2873E37000829C14 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9B8B2872964D00EAEB37 /* memory.c */; };
+		B3FF63DE2873E3AA00829C14 /* vdp2.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA0B62872965100EAEB37 /* vdp2.c */; };
+		B3FF63DF2873E3AA00829C14 /* smpc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9D862872964E00EAEB37 /* smpc.c */; };
+		B3FF63E02873E3AA00829C14 /* scsp.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9FAE2872965000EAEB37 /* scsp.c */; };
+		B3FF63E12873E3AA00829C14 /* yabause.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9D912872964E00EAEB37 /* yabause.c */; };
+		B3FF63E22873E3AA00829C14 /* sh2d.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9FB52872965000EAEB37 /* sh2d.c */; };
+		B3FF63E32873E3AA00829C14 /* sh2int.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9B8E2872964D00EAEB37 /* sh2int.c */; };
+		B3FF63E42873E3AA00829C14 /* sh2idle.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA0602872965000EAEB37 /* sh2idle.c */; };
+		B3FF63E52873E3AA00829C14 /* vdp1.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9FB92872965000EAEB37 /* vdp1.c */; };
+		B3FF63E62873E3AA00829C14 /* profile.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA0192872965000EAEB37 /* profile.c */; };
+		B3FF63E72873E3AA00829C14 /* scu.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9D7D2872964E00EAEB37 /* scu.c */; };
+		B3FF63E82873E3AA00829C14 /* netlink.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA0AF2872965100EAEB37 /* netlink.c */; };
+		B3FF63E92873E3AA00829C14 /* sh2core.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9D8E2872964E00EAEB37 /* sh2core.c */; };
+		B3FF63EA2873E3AA00829C14 /* peripheral.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9BAF2872964D00EAEB37 /* peripheral.c */; };
+		B3FF63EB2873E3AA00829C14 /* vdp2.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA0B62872965100EAEB37 /* vdp2.c */; };
+		B3FF63EC2873E3AA00829C14 /* smpc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9D862872964E00EAEB37 /* smpc.c */; };
+		B3FF63ED2873E3AA00829C14 /* scsp.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9FAE2872965000EAEB37 /* scsp.c */; };
+		B3FF63EE2873E3AA00829C14 /* yabause.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9D912872964E00EAEB37 /* yabause.c */; };
+		B3FF63EF2873E3AA00829C14 /* sh2d.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9FB52872965000EAEB37 /* sh2d.c */; };
+		B3FF63F02873E3AA00829C14 /* sh2int.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9B8E2872964D00EAEB37 /* sh2int.c */; };
+		B3FF63F12873E3AA00829C14 /* sh2idle.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA0602872965000EAEB37 /* sh2idle.c */; };
+		B3FF63F22873E3AA00829C14 /* vdp1.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9FB92872965000EAEB37 /* vdp1.c */; };
+		B3FF63F32873E3AA00829C14 /* profile.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA0192872965000EAEB37 /* profile.c */; };
+		B3FF63F42873E3AA00829C14 /* scu.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9D7D2872964E00EAEB37 /* scu.c */; };
+		B3FF63F52873E3AA00829C14 /* netlink.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA0AF2872965100EAEB37 /* netlink.c */; };
+		B3FF63F62873E3AA00829C14 /* sh2core.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9D8E2872964E00EAEB37 /* sh2core.c */; };
+		B3FF63F72873E3AA00829C14 /* peripheral.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9BAF2872964D00EAEB37 /* peripheral.c */; };
+		B3FF63F82873E3BA00829C14 /* coffelf.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA0522872965000EAEB37 /* coffelf.c */; };
+		B3FF63F92873E3BA00829C14 /* m68kcore.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9D882872964E00EAEB37 /* m68kcore.c */; };
+		B3FF63FA2873E3BA00829C14 /* coffelf.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA0522872965000EAEB37 /* coffelf.c */; };
+		B3FF63FB2873E3BA00829C14 /* m68kcore.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9D882872964E00EAEB37 /* m68kcore.c */; };
+		B3FF64122873E52700829C14 /* yabause_griffin.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9D982872964E00EAEB37 /* yabause_griffin.c */; };
+		B3FF64132873E52700829C14 /* yabause_griffin.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9D982872964E00EAEB37 /* yabause_griffin.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1650,17 +1702,17 @@
 		B3EB9AF12872964C00EAEB37 /* yabause */ = {
 			isa = PBXGroup;
 			children = (
-				B3EB9AF22872964C00EAEB37 /* yabauseut */,
-				B3EB9B282872964C00EAEB37 /* intl */,
-				B3EB9B352872964C00EAEB37 /* yabause */,
-				B3EBA0C02872965100EAEB37 /* README.md */,
-				B3EBA0C12872965100EAEB37 /* mini18n */,
-				B3EBA0E92872965100EAEB37 /* appveyor.yml */,
 				B3EBA0EA2872965100EAEB37 /* .gitignore */,
-				B3EBA0EB2872965100EAEB37 /* circle.yml */,
-				B3EBA0EC2872965100EAEB37 /* .github */,
+				B3EBA0C02872965100EAEB37 /* README.md */,
 				B3EBA0F22872965100EAEB37 /* .gitlab-ci.yml */,
 				B3EBA0F32872965100EAEB37 /* .travis.yml */,
+				B3EBA0E92872965100EAEB37 /* appveyor.yml */,
+				B3EBA0EB2872965100EAEB37 /* circle.yml */,
+				B3EBA0EC2872965100EAEB37 /* .github */,
+				B3EB9B282872964C00EAEB37 /* intl */,
+				B3EBA0C12872965100EAEB37 /* mini18n */,
+				B3EB9B352872964C00EAEB37 /* yabause */,
+				B3EB9AF22872964C00EAEB37 /* yabauseut */,
 			);
 			path = yabause;
 			sourceTree = "<group>";
@@ -1668,11 +1720,11 @@
 		B3EB9AF22872964C00EAEB37 /* yabauseut */ = {
 			isa = PBXGroup;
 			children = (
-				B3EB9AF32872964C00EAEB37 /* CMakeLists.txt */,
 				B3EB9AF42872964C00EAEB37 /* ChangeLog */,
-				B3EB9AF52872964C00EAEB37 /* Platform */,
-				B3EB9AF72872964C00EAEB37 /* TODO */,
 				B3EB9AF82872964C00EAEB37 /* COPYING */,
+				B3EB9AF72872964C00EAEB37 /* TODO */,
+				B3EB9AF32872964C00EAEB37 /* CMakeLists.txt */,
+				B3EB9AF52872964C00EAEB37 /* Platform */,
 				B3EB9AF92872964C00EAEB37 /* src */,
 			);
 			path = yabauseut;
@@ -1689,37 +1741,37 @@
 		B3EB9AF92872964C00EAEB37 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				B3EB9AFA2872964C00EAEB37 /* main.h */,
 				B3EB9AFB2872964C00EAEB37 /* cart.c */,
-				B3EB9AFC2872964C00EAEB37 /* scsp.h */,
-				B3EB9AFD2872964C00EAEB37 /* m68k.h */,
-				B3EB9AFE2872964C00EAEB37 /* dsp.c */,
-				B3EB9AFF2872964C00EAEB37 /* CMakeLists.txt */,
-				B3EB9B002872964C00EAEB37 /* slavesh.h */,
-				B3EB9B012872964C00EAEB37 /* vdp1.h */,
-				B3EB9B022872964C00EAEB37 /* tests.h */,
-				B3EB9B032872964C00EAEB37 /* sh2.h */,
 				B3EB9B042872964C00EAEB37 /* cdb.c */,
-				B3EB9B052872964C00EAEB37 /* scu.c */,
-				B3EB9B062872964C00EAEB37 /* shared */,
-				B3EB9B092872964C00EAEB37 /* vdp2.h */,
-				B3EB9B0A2872964C00EAEB37 /* mpeg.c */,
-				B3EB9B0B2872964C00EAEB37 /* smpc.c */,
+				B3EB9AFE2872964C00EAEB37 /* dsp.c */,
 				B3EB9B0C2872964C00EAEB37 /* m68k.c */,
-				B3EB9B0D2872964C00EAEB37 /* cart.h */,
-				B3EB9B0E2872964C00EAEB37 /* scsp.c */,
 				B3EB9B0F2872964C00EAEB37 /* main.c */,
+				B3EB9B0A2872964C00EAEB37 /* mpeg.c */,
+				B3EB9B0E2872964C00EAEB37 /* scsp.c */,
+				B3EB9B052872964C00EAEB37 /* scu.c */,
+				B3EB9B232872964C00EAEB37 /* sh2.c */,
+				B3EB9B122872964C00EAEB37 /* slavesh.c */,
+				B3EB9B0B2872964C00EAEB37 /* smpc.c */,
 				B3EB9B102872964C00EAEB37 /* tests.c */,
 				B3EB9B112872964C00EAEB37 /* vdp1.c */,
-				B3EB9B122872964C00EAEB37 /* slavesh.c */,
-				B3EB9B132872964C00EAEB37 /* dsp.h */,
-				B3EB9B142872964C00EAEB37 /* buildcd */,
-				B3EB9B222872964C00EAEB37 /* cdb.h */,
-				B3EB9B232872964C00EAEB37 /* sh2.c */,
-				B3EB9B242872964C00EAEB37 /* mpeg.h */,
 				B3EB9B252872964C00EAEB37 /* vdp2.c */,
-				B3EB9B262872964C00EAEB37 /* smpc.h */,
+				B3EB9B0D2872964C00EAEB37 /* cart.h */,
+				B3EB9B222872964C00EAEB37 /* cdb.h */,
+				B3EB9B132872964C00EAEB37 /* dsp.h */,
+				B3EB9AFD2872964C00EAEB37 /* m68k.h */,
+				B3EB9AFA2872964C00EAEB37 /* main.h */,
+				B3EB9B242872964C00EAEB37 /* mpeg.h */,
+				B3EB9AFC2872964C00EAEB37 /* scsp.h */,
 				B3EB9B272872964C00EAEB37 /* scu.h */,
+				B3EB9B032872964C00EAEB37 /* sh2.h */,
+				B3EB9B002872964C00EAEB37 /* slavesh.h */,
+				B3EB9B262872964C00EAEB37 /* smpc.h */,
+				B3EB9B022872964C00EAEB37 /* tests.h */,
+				B3EB9B012872964C00EAEB37 /* vdp1.h */,
+				B3EB9B092872964C00EAEB37 /* vdp2.h */,
+				B3EB9AFF2872964C00EAEB37 /* CMakeLists.txt */,
+				B3EB9B142872964C00EAEB37 /* buildcd */,
+				B3EB9B062872964C00EAEB37 /* shared */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -1789,14 +1841,14 @@
 		B3EB9B352872964C00EAEB37 /* yabause */ = {
 			isa = PBXGroup;
 			children = (
-				B3EB9B362872964C00EAEB37 /* l10n */,
-				B3EB9B4D2872964C00EAEB37 /* CMakeLists.txt */,
-				B3EB9B4E2872964C00EAEB37 /* ChangeLog */,
 				B3EB9B4F2872964C00EAEB37 /* AUTHORS */,
-				B3EB9B502872964C00EAEB37 /* README */,
+				B3EB9B4E2872964C00EAEB37 /* ChangeLog */,
 				B3EB9B512872964C00EAEB37 /* COPYING */,
+				B3EB9B502872964C00EAEB37 /* README */,
+				B3EB9B4D2872964C00EAEB37 /* CMakeLists.txt */,
 				B3EB9B522872964C00EAEB37 /* CMakeTests */,
 				B3EB9B562872964C00EAEB37 /* doc */,
+				B3EB9B362872964C00EAEB37 /* l10n */,
 				B3EB9B592872964C00EAEB37 /* src */,
 			);
 			path = yabause;
@@ -1853,181 +1905,181 @@
 		B3EB9B592872964C00EAEB37 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				B3EB9B5A2872964C00EAEB37 /* permacjoy.h */,
-				B3EB9B5B2872964C00EAEB37 /* sock.h */,
-				B3EB9B5C2872964C00EAEB37 /* Makefile.dc */,
-				B3EB9B5D2872964C00EAEB37 /* mpeg_card.c */,
-				B3EB9B5E2872964C00EAEB37 /* fakeddk.h */,
-				B3EB9B5F2872964C00EAEB37 /* cd-windows.c */,
-				B3EB9B602872964C00EAEB37 /* yglcache.cpp */,
-				B3EB9B612872964C00EAEB37 /* error.h */,
-				B3EB9B622872964C00EAEB37 /* gameinfo.c */,
-				B3EB9B632872964C00EAEB37 /* cheat.h */,
-				B3EB9B642872964C00EAEB37 /* sndwav.c */,
-				B3EB9B652872964C00EAEB37 /* scsp.h */,
-				B3EB9B662872964C00EAEB37 /* cs0.h */,
-				B3EB9B672872964C00EAEB37 /* yglcache.c */,
-				B3EB9B682872964C00EAEB37 /* vidogl.c */,
-				B3EB9B692872964C00EAEB37 /* sh2iasm.h */,
-				B3EB9B6A2872964C00EAEB37 /* logo.ico */,
-				B3EB9B6B2872964C00EAEB37 /* scr-x.c */,
-				B3EB9B6C2872964C00EAEB37 /* sndmac.h */,
-				B3EB9B6D2872964C00EAEB37 /* tsunami */,
-				B3EB9B752872964D00EAEB37 /* yabause.h */,
-				B3EB9B762872964D00EAEB37 /* cs2.c */,
-				B3EB9B772872964D00EAEB37 /* bios.h */,
-				B3EB9B782872964D00EAEB37 /* sh2core.h */,
-				B3EB9B792872964D00EAEB37 /* gameshw */,
-				B3EB9B7B2872964D00EAEB37 /* debug.h */,
-				B3EB9B7C2872964D00EAEB37 /* core.h */,
-				B3EB9B7D2872964D00EAEB37 /* tools */,
-				B3EB9B812872964D00EAEB37 /* gdb */,
-				B3EB9B882872964D00EAEB37 /* sh7034.h */,
-				B3EB9B892872964D00EAEB37 /* profile.h */,
-				B3EB9B8A2872964D00EAEB37 /* junzip.c */,
-				B3EB9B8B2872964D00EAEB37 /* memory.c */,
-				B3EB9B8C2872964D00EAEB37 /* sh2cache.h */,
-				B3EB9B8D2872964D00EAEB37 /* CMakeLists.txt */,
-				B3EB9B8E2872964D00EAEB37 /* sh2int.c */,
-				B3EB9B8F2872964D00EAEB37 /* thr-windows.c */,
-				B3EB9B902872964D00EAEB37 /* sh2_dynarec */,
-				B3EB9B9C2872964D00EAEB37 /* sndsdl.h */,
-				B3EB9B9D2872964D00EAEB37 /* vidsoft.c */,
-				B3EB9B9E2872964D00EAEB37 /* sock-linux.c */,
 				B3EB9B9F2872964D00EAEB37 /* logo.bmp */,
 				B3EB9BA02872964D00EAEB37 /* cd_drive.c */,
-				B3EB9BA12872964D00EAEB37 /* vdp1.h */,
-				B3EB9BA22872964D00EAEB37 /* m68kmusashi.c */,
-				B3EB9BA32872964D00EAEB37 /* japmodem.h */,
-				B3EB9BA42872964D00EAEB37 /* sh2d.h */,
-				B3EB9BA52872964D00EAEB37 /* osdcore.h */,
-				B3EB9BA62872964D00EAEB37 /* m68kc68k.h */,
-				B3EB9BA72872964D00EAEB37 /* perlinuxjoy.h */,
-				B3EB9BA82872964D00EAEB37 /* persdljoy.c */,
-				B3EB9BA92872964D00EAEB37 /* scsp_dsp_jit.cpp */,
-				B3EB9BAA2872964D00EAEB37 /* macjoy.h */,
-				B3EB9BAB2872964D00EAEB37 /* yui.h */,
-				B3EB9BAC2872964D00EAEB37 /* sh2idle.h */,
-				B3EB9BAD2872964D00EAEB37 /* cdbase.c */,
-				B3EB9BAE2872964D00EAEB37 /* movie.h */,
-				B3EB9BAF2872964D00EAEB37 /* peripheral.c */,
-				B3EB9BB02872964D00EAEB37 /* runner */,
-				B3EB9BB32872964D00EAEB37 /* scsp2.h */,
-				B3EB9BB42872964D00EAEB37 /* cs1.c */,
-				B3EB9BB52872964D00EAEB37 /* perdx.h */,
-				B3EB9BB62872964D00EAEB37 /* c68k */,
-				B3EB9BBF2872964D00EAEB37 /* vidshared.h */,
-				B3EB9BC02872964D00EAEB37 /* vdp2debug.h */,
-				B3EB9BC12872964D00EAEB37 /* coffelf.h */,
-				B3EB9BC22872964D00EAEB37 /* gllibs */,
-				B3EB9BCE2872964D00EAEB37 /* libchdr */,
-				B3EB9CB02872964D00EAEB37 /* aosdk */,
-				B3EB9CB82872964D00EAEB37 /* dreamcast */,
-				B3EB9CCB2872964D00EAEB37 /* qt */,
-				B3EB9D7C2872964E00EAEB37 /* config.h.in */,
-				B3EB9D7D2872964E00EAEB37 /* scu.c */,
-				B3EB9D7E2872964E00EAEB37 /* m68kq68.c */,
-				B3EB9D7F2872964E00EAEB37 /* threads.h */,
-				B3EB9D802872964E00EAEB37 /* thr-dummy.c */,
-				B3EB9D812872964E00EAEB37 /* ygr.h */,
-				B3EB9D822872964E00EAEB37 /* snddx.h */,
-				B3EB9D832872964E00EAEB37 /* sndal.c */,
-				B3EB9D842872964E00EAEB37 /* vdp2.h */,
-				B3EB9D852872964E00EAEB37 /* m68kd.h */,
-				B3EB9D862872964E00EAEB37 /* smpc.c */,
-				B3EB9D872872964E00EAEB37 /* sh2trace.c */,
-				B3EB9D882872964E00EAEB37 /* m68kcore.c */,
-				B3EB9D892872964E00EAEB37 /* scspdsp.h */,
-				B3EB9D8A2872964E00EAEB37 /* netlink.h */,
-				B3EB9D8B2872964E00EAEB37 /* scsp_dsp_jit.h */,
+				B3EBA0562872965000EAEB37 /* cd-freebsd.c */,
+				B3EBA01F2872965000EAEB37 /* cd-libretro.c */,
 				B3EB9D8C2872964E00EAEB37 /* cd-linux.c */,
+				B3EBA0B42872965100EAEB37 /* cd-macosx.c */,
 				B3EB9D8D2872964E00EAEB37 /* cd-netbsd.c */,
-				B3EB9D8E2872964E00EAEB37 /* sh2core.c */,
-				B3EB9D8F2872964E00EAEB37 /* cs2.h */,
-				B3EB9D902872964E00EAEB37 /* bios.c */,
-				B3EB9D912872964E00EAEB37 /* yabause.c */,
-				B3EB9D922872964E00EAEB37 /* debug.c */,
-				B3EB9D932872964E00EAEB37 /* sndmac.c */,
-				B3EB9D942872964E00EAEB37 /* glext.h */,
-				B3EB9D952872964E00EAEB37 /* libretro */,
-				B3EB9F802872964F00EAEB37 /* sock-dummy.c */,
-				B3EB9F812872964F00EAEB37 /* cheat.c */,
-				B3EB9F822872964F00EAEB37 /* sh2iasm.c */,
-				B3EB9F832872964F00EAEB37 /* yglshaderes.c */,
-				B3EB9F842872964F00EAEB37 /* vidogl.h */,
-				B3EB9F852872964F00EAEB37 /* q68 */,
-				B3EB9F922872964F00EAEB37 /* cocoa */,
-				B3EB9FAD2872965000EAEB37 /* cs0.c */,
-				B3EB9FAE2872965000EAEB37 /* scsp.c */,
-				B3EB9FAF2872965000EAEB37 /* mpeg_card.h */,
-				B3EB9FB02872965000EAEB37 /* thr-rthreads.c */,
-				B3EB9FB12872965000EAEB37 /* permacjoy.c */,
-				B3EB9FB22872965000EAEB37 /* error.c */,
-				B3EB9FB32872965000EAEB37 /* gameinfo.h */,
-				B3EB9FB42872965000EAEB37 /* logo.png */,
-				B3EB9FB52872965000EAEB37 /* sh2d.c */,
-				B3EB9FB62872965000EAEB37 /* ygles.c */,
+				B3EB9B5F2872964C00EAEB37 /* cd-windows.c */,
+				B3EBA0522872965000EAEB37 /* coffelf.c */,
+				B3EB9B622872964C00EAEB37 /* gameinfo.c */,
 				B3EB9FB72872965000EAEB37 /* japmodem.c */,
-				B3EB9FB82872965000EAEB37 /* m68kmusashi.h */,
-				B3EB9FB92872965000EAEB37 /* vdp1.c */,
-				B3EB9FBA2872965000EAEB37 /* perlinuxjoy.c */,
+				B3EB9B8A2872964D00EAEB37 /* junzip.c */,
 				B3EB9FBB2872965000EAEB37 /* m68kc68k.c */,
+				B3EB9D882872964E00EAEB37 /* m68kcore.c */,
+				B3EB9D902872964E00EAEB37 /* bios.c */,
+				B3EB9BAD2872964D00EAEB37 /* cdbase.c */,
+				B3EB9F812872964F00EAEB37 /* cheat.c */,
+				B3EB9FAD2872965000EAEB37 /* cs0.c */,
+				B3EB9BB42872964D00EAEB37 /* cs1.c */,
+				B3EB9B762872964D00EAEB37 /* cs2.c */,
+				B3EB9D922872964E00EAEB37 /* debug.c */,
+				B3EB9FB22872965000EAEB37 /* error.c */,
+				B3EBA0BA2872965100EAEB37 /* m68kd.c */,
+				B3EB9BA22872964D00EAEB37 /* m68kmusashi.c */,
+				B3EB9D7E2872964E00EAEB37 /* m68kq68.c */,
+				B3EBA0AE2872965100EAEB37 /* macjoy.c */,
+				B3EB9B8B2872964D00EAEB37 /* memory.c */,
+				B3EBA0622872965000EAEB37 /* movie.c */,
+				B3EB9B5D2872964C00EAEB37 /* mpeg_card.c */,
+				B3EBA0AF2872965100EAEB37 /* netlink.c */,
 				B3EB9FBC2872965000EAEB37 /* osdcore.c */,
-				B3EB9FBD2872965000EAEB37 /* android */,
-				B3EBA0032872965000EAEB37 /* vidsoft.h */,
-				B3EBA0042872965000EAEB37 /* sock-windows.c */,
-				B3EBA0052872965000EAEB37 /* cd_drive.h */,
-				B3EBA0062872965000EAEB37 /* scu_dsp_jit.h */,
-				B3EBA0072872965000EAEB37 /* musashi */,
-				B3EBA0162872965000EAEB37 /* sh2int.h */,
-				B3EBA0172872965000EAEB37 /* sndsdl.c */,
-				B3EBA0182872965000EAEB37 /* sh7034.c */,
+				B3EBA05C2872965000EAEB37 /* perdx.c */,
+				B3EB9BAF2872964D00EAEB37 /* peripheral.c */,
+				B3EB9FBA2872965000EAEB37 /* perlinuxjoy.c */,
+				B3EB9FB12872965000EAEB37 /* permacjoy.c */,
+				B3EB9BA82872964D00EAEB37 /* persdljoy.c */,
 				B3EBA0192872965000EAEB37 /* profile.c */,
+				B3EB9B6B2872964C00EAEB37 /* scr-x.c */,
+				B3EB9FAE2872965000EAEB37 /* scsp.c */,
+				B3EBA05A2872965000EAEB37 /* scsp2.c */,
+				B3EBA0B02872965100EAEB37 /* scspdsp.c */,
+				B3EB9D7D2872964E00EAEB37 /* scu.c */,
+				B3EBA01D2872965000EAEB37 /* sh2cache.c */,
+				B3EB9D8E2872964E00EAEB37 /* sh2core.c */,
+				B3EB9FB52872965000EAEB37 /* sh2d.c */,
+				B3EB9F822872964F00EAEB37 /* sh2iasm.c */,
+				B3EBA0602872965000EAEB37 /* sh2idle.c */,
+				B3EB9B8E2872964D00EAEB37 /* sh2int.c */,
+				B3EB9D872872964E00EAEB37 /* sh2trace.c */,
+				B3EBA0182872965000EAEB37 /* sh7034.c */,
+				B3EB9D862872964E00EAEB37 /* smpc.c */,
+				B3EB9D832872964E00EAEB37 /* sndal.c */,
+				B3EBA0AC2872965100EAEB37 /* snddummy.c */,
+				B3EBA0BE2872965100EAEB37 /* snddx.c */,
+				B3EB9D932872964E00EAEB37 /* sndmac.c */,
+				B3EBA0172872965000EAEB37 /* sndsdl.c */,
+				B3EB9B642872964C00EAEB37 /* sndwav.c */,
+				B3EB9F802872964F00EAEB37 /* sock-dummy.c */,
+				B3EB9B9E2872964D00EAEB37 /* sock-linux.c */,
+				B3EBA0042872965000EAEB37 /* sock-windows.c */,
+				B3EB9D802872964E00EAEB37 /* thr-dummy.c */,
+				B3EBA0572872965000EAEB37 /* thr-linux.c */,
+				B3EBA0B92872965100EAEB37 /* thr-macosx.c */,
+				B3EB9FB02872965000EAEB37 /* thr-rthreads.c */,
+				B3EB9B8F2872964D00EAEB37 /* thr-windows.c */,
+				B3EB9FB92872965000EAEB37 /* vdp1.c */,
+				B3EBA0B62872965100EAEB37 /* vdp2.c */,
+				B3EBA0532872965000EAEB37 /* vdp2debug.c */,
+				B3EB9B682872964C00EAEB37 /* vidogl.c */,
+				B3EBA05B2872965000EAEB37 /* vidshared.c */,
+				B3EB9B9D2872964D00EAEB37 /* vidsoft.c */,
+				B3EB9D912872964E00EAEB37 /* yabause.c */,
+				B3EB9B672872964C00EAEB37 /* yglcache.c */,
+				B3EB9FB62872965000EAEB37 /* ygles.c */,
+				B3EB9F832872964F00EAEB37 /* yglshaderes.c */,
+				B3EBA0BB2872965100EAEB37 /* ygr.c */,
+				B3EB9BA92872964D00EAEB37 /* scsp_dsp_jit.cpp */,
 				B3EBA01A2872965000EAEB37 /* scu_dsp_jit.cpp */,
 				B3EBA01B2872965000EAEB37 /* sh2_jit.cpp */,
-				B3EBA01C2872965000EAEB37 /* memory.h */,
-				B3EBA01D2872965000EAEB37 /* sh2cache.c */,
-				B3EBA01E2872965000EAEB37 /* junzip.h */,
-				B3EBA01F2872965000EAEB37 /* cd-libretro.c */,
-				B3EBA0202872965000EAEB37 /* gtk */,
-				B3EBA0522872965000EAEB37 /* coffelf.c */,
-				B3EBA0532872965000EAEB37 /* vdp2debug.c */,
-				B3EBA0542872965000EAEB37 /* sh1-pseudo.txt */,
-				B3EBA0552872965000EAEB37 /* font.h */,
-				B3EBA0562872965000EAEB37 /* cd-freebsd.c */,
-				B3EBA0572872965000EAEB37 /* thr-linux.c */,
-				B3EBA0582872965000EAEB37 /* cs1.h */,
-				B3EBA0592872965000EAEB37 /* screen.h */,
-				B3EBA05A2872965000EAEB37 /* scsp2.c */,
-				B3EBA05B2872965000EAEB37 /* vidshared.c */,
-				B3EBA05C2872965000EAEB37 /* perdx.c */,
-				B3EBA05D2872965000EAEB37 /* titan */,
-				B3EBA0602872965000EAEB37 /* sh2idle.c */,
-				B3EBA0612872965000EAEB37 /* ygl.h */,
-				B3EBA0622872965000EAEB37 /* movie.c */,
-				B3EBA0632872965000EAEB37 /* peripheral.h */,
+				B3EB9B602872964C00EAEB37 /* yglcache.cpp */,
+				B3EB9B5C2872964C00EAEB37 /* Makefile.dc */,
+				B3EB9B772872964D00EAEB37 /* bios.h */,
+				B3EBA0052872965000EAEB37 /* cd_drive.h */,
 				B3EBA0642872965000EAEB37 /* cdbase.h */,
-				B3EBA0652872965000EAEB37 /* play */,
-				B3EBA0AC2872965100EAEB37 /* snddummy.c */,
-				B3EBA0AD2872965100EAEB37 /* persdljoy.h */,
-				B3EBA0AE2872965100EAEB37 /* macjoy.c */,
-				B3EBA0AF2872965100EAEB37 /* netlink.c */,
-				B3EBA0B02872965100EAEB37 /* scspdsp.c */,
-				B3EBA0B12872965100EAEB37 /* m68kcore.h */,
-				B3EBA0B22872965100EAEB37 /* sh-opc.h */,
-				B3EBA0B32872965100EAEB37 /* logo.svg */,
-				B3EBA0B42872965100EAEB37 /* cd-macosx.c */,
+				B3EB9B632872964C00EAEB37 /* cheat.h */,
+				B3EB9BC12872964D00EAEB37 /* coffelf.h */,
+				B3EB9B7C2872964D00EAEB37 /* core.h */,
+				B3EB9B662872964C00EAEB37 /* cs0.h */,
+				B3EBA0582872965000EAEB37 /* cs1.h */,
+				B3EB9D8F2872964E00EAEB37 /* cs2.h */,
+				B3EB9B7B2872964D00EAEB37 /* debug.h */,
 				B3EBA0B52872965100EAEB37 /* dx.h */,
-				B3EBA0B62872965100EAEB37 /* vdp2.c */,
-				B3EBA0B72872965100EAEB37 /* sh2trace.h */,
-				B3EBA0B82872965100EAEB37 /* smpc.h */,
-				B3EBA0B92872965100EAEB37 /* thr-macosx.c */,
-				B3EBA0BA2872965100EAEB37 /* m68kd.c */,
-				B3EBA0BB2872965100EAEB37 /* ygr.c */,
-				B3EBA0BC2872965100EAEB37 /* sh2_jit.h */,
-				B3EBA0BD2872965100EAEB37 /* sndal.h */,
-				B3EBA0BE2872965100EAEB37 /* snddx.c */,
+				B3EB9B612872964C00EAEB37 /* error.h */,
+				B3EB9B5E2872964C00EAEB37 /* fakeddk.h */,
+				B3EBA0552872965000EAEB37 /* font.h */,
+				B3EB9FB32872965000EAEB37 /* gameinfo.h */,
+				B3EB9D942872964E00EAEB37 /* glext.h */,
+				B3EB9BA32872964D00EAEB37 /* japmodem.h */,
+				B3EBA01E2872965000EAEB37 /* junzip.h */,
+				B3EB9BA62872964D00EAEB37 /* m68kc68k.h */,
+				B3EBA0B12872965100EAEB37 /* m68kcore.h */,
+				B3EB9D852872964E00EAEB37 /* m68kd.h */,
+				B3EB9FB82872965000EAEB37 /* m68kmusashi.h */,
+				B3EB9BAA2872964D00EAEB37 /* macjoy.h */,
+				B3EBA01C2872965000EAEB37 /* memory.h */,
+				B3EB9BAE2872964D00EAEB37 /* movie.h */,
+				B3EB9FAF2872965000EAEB37 /* mpeg_card.h */,
+				B3EB9D8A2872964E00EAEB37 /* netlink.h */,
+				B3EB9BA52872964D00EAEB37 /* osdcore.h */,
+				B3EB9BB52872964D00EAEB37 /* perdx.h */,
+				B3EBA0632872965000EAEB37 /* peripheral.h */,
+				B3EB9BA72872964D00EAEB37 /* perlinuxjoy.h */,
+				B3EB9B5A2872964C00EAEB37 /* permacjoy.h */,
+				B3EBA0AD2872965100EAEB37 /* persdljoy.h */,
+				B3EB9B892872964D00EAEB37 /* profile.h */,
+				B3EBA0592872965000EAEB37 /* screen.h */,
+				B3EB9D8B2872964E00EAEB37 /* scsp_dsp_jit.h */,
+				B3EB9B652872964C00EAEB37 /* scsp.h */,
+				B3EB9BB32872964D00EAEB37 /* scsp2.h */,
+				B3EB9D892872964E00EAEB37 /* scspdsp.h */,
+				B3EBA0062872965000EAEB37 /* scu_dsp_jit.h */,
 				B3EBA0BF2872965100EAEB37 /* scu.h */,
+				B3EBA0B22872965100EAEB37 /* sh-opc.h */,
+				B3EBA0BC2872965100EAEB37 /* sh2_jit.h */,
+				B3EB9B8C2872964D00EAEB37 /* sh2cache.h */,
+				B3EB9B782872964D00EAEB37 /* sh2core.h */,
+				B3EB9BA42872964D00EAEB37 /* sh2d.h */,
+				B3EB9B692872964C00EAEB37 /* sh2iasm.h */,
+				B3EB9BAC2872964D00EAEB37 /* sh2idle.h */,
+				B3EBA0162872965000EAEB37 /* sh2int.h */,
+				B3EBA0B72872965100EAEB37 /* sh2trace.h */,
+				B3EB9B882872964D00EAEB37 /* sh7034.h */,
+				B3EBA0B82872965100EAEB37 /* smpc.h */,
+				B3EBA0BD2872965100EAEB37 /* sndal.h */,
+				B3EB9D822872964E00EAEB37 /* snddx.h */,
+				B3EB9B6C2872964C00EAEB37 /* sndmac.h */,
+				B3EB9B9C2872964D00EAEB37 /* sndsdl.h */,
+				B3EB9B5B2872964C00EAEB37 /* sock.h */,
+				B3EB9D7F2872964E00EAEB37 /* threads.h */,
+				B3EB9BA12872964D00EAEB37 /* vdp1.h */,
+				B3EB9D842872964E00EAEB37 /* vdp2.h */,
+				B3EB9BC02872964D00EAEB37 /* vdp2debug.h */,
+				B3EB9F842872964F00EAEB37 /* vidogl.h */,
+				B3EB9BBF2872964D00EAEB37 /* vidshared.h */,
+				B3EBA0032872965000EAEB37 /* vidsoft.h */,
+				B3EB9B752872964D00EAEB37 /* yabause.h */,
+				B3EBA0612872965000EAEB37 /* ygl.h */,
+				B3EB9D812872964E00EAEB37 /* ygr.h */,
+				B3EB9BAB2872964D00EAEB37 /* yui.h */,
+				B3EB9B6A2872964C00EAEB37 /* logo.ico */,
+				B3EB9D7C2872964E00EAEB37 /* config.h.in */,
+				B3EB9FB42872965000EAEB37 /* logo.png */,
+				B3EBA0B32872965100EAEB37 /* logo.svg */,
+				B3EB9B8D2872964D00EAEB37 /* CMakeLists.txt */,
+				B3EBA0542872965000EAEB37 /* sh1-pseudo.txt */,
+				B3EB9FBD2872965000EAEB37 /* android */,
+				B3EB9CB02872964D00EAEB37 /* aosdk */,
+				B3EB9BB62872964D00EAEB37 /* c68k */,
+				B3EB9F922872964F00EAEB37 /* cocoa */,
+				B3EB9CB82872964D00EAEB37 /* dreamcast */,
+				B3EB9B792872964D00EAEB37 /* gameshw */,
+				B3EB9B812872964D00EAEB37 /* gdb */,
+				B3EB9BC22872964D00EAEB37 /* gllibs */,
+				B3EBA0202872965000EAEB37 /* gtk */,
+				B3EB9BCE2872964D00EAEB37 /* libchdr */,
+				B3EB9D952872964E00EAEB37 /* libretro */,
+				B3EBA0072872965000EAEB37 /* musashi */,
+				B3EBA0652872965000EAEB37 /* play */,
+				B3EB9F852872964F00EAEB37 /* q68 */,
+				B3EB9CCB2872964D00EAEB37 /* qt */,
+				B3EB9BB02872964D00EAEB37 /* runner */,
+				B3EB9B902872964D00EAEB37 /* sh2_dynarec */,
+				B3EBA05D2872965000EAEB37 /* titan */,
+				B3EB9B7D2872964D00EAEB37 /* tools */,
+				B3EB9B6D2872964C00EAEB37 /* tsunami */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -2081,16 +2133,16 @@
 			isa = PBXGroup;
 			children = (
 				B3EB9B912872964D00EAEB37 /* assem_arm.c */,
-				B3EB9B922872964D00EAEB37 /* sh2_dynarec.c */,
-				B3EB9B932872964D00EAEB37 /* assem_x86.c */,
-				B3EB9B942872964D00EAEB37 /* linkage_x64.s */,
-				B3EB9B952872964D00EAEB37 /* assem_x64.h */,
-				B3EB9B962872964D00EAEB37 /* sh2_dynarec.h */,
-				B3EB9B972872964D00EAEB37 /* assem_arm.h */,
-				B3EB9B982872964D00EAEB37 /* linkage_x86.s */,
-				B3EB9B992872964D00EAEB37 /* assem_x86.h */,
-				B3EB9B9A2872964D00EAEB37 /* linkage_arm.s */,
 				B3EB9B9B2872964D00EAEB37 /* assem_x64.c */,
+				B3EB9B932872964D00EAEB37 /* assem_x86.c */,
+				B3EB9B922872964D00EAEB37 /* sh2_dynarec.c */,
+				B3EB9B972872964D00EAEB37 /* assem_arm.h */,
+				B3EB9B952872964D00EAEB37 /* assem_x64.h */,
+				B3EB9B992872964D00EAEB37 /* assem_x86.h */,
+				B3EB9B962872964D00EAEB37 /* sh2_dynarec.h */,
+				B3EB9B9A2872964D00EAEB37 /* linkage_arm.s */,
+				B3EB9B942872964D00EAEB37 /* linkage_x64.s */,
+				B3EB9B982872964D00EAEB37 /* linkage_x86.s */,
 			);
 			path = sh2_dynarec;
 			sourceTree = "<group>";
@@ -2107,14 +2159,14 @@
 		B3EB9BB62872964D00EAEB37 /* c68k */ = {
 			isa = PBXGroup;
 			children = (
-				B3EB9BB72872964D00EAEB37 /* c68kexec.c */,
-				B3EB9BB82872964D00EAEB37 /* CMakeLists.txt */,
-				B3EB9BB92872964D00EAEB37 /* c68kmac.inc */,
 				B3EB9BBA2872964D00EAEB37 /* c68k.c */,
+				B3EB9BB72872964D00EAEB37 /* c68kexec.c */,
 				B3EB9BBB2872964D00EAEB37 /* gen68k.c */,
-				B3EB9BBC2872964D00EAEB37 /* gen68k.inc */,
 				B3EB9BBD2872964D00EAEB37 /* c68k.h */,
 				B3EB9BBE2872964D00EAEB37 /* gen68k.h */,
+				B3EB9BB92872964D00EAEB37 /* c68kmac.inc */,
+				B3EB9BBC2872964D00EAEB37 /* gen68k.inc */,
+				B3EB9BB82872964D00EAEB37 /* CMakeLists.txt */,
 			);
 			path = c68k;
 			sourceTree = "<group>";
@@ -2547,17 +2599,17 @@
 		B3EB9CB82872964D00EAEB37 /* dreamcast */ = {
 			isa = PBXGroup;
 			children = (
-				B3EB9CB92872964D00EAEB37 /* viddc.h */,
-				B3EB9CBA2872964D00EAEB37 /* CMakeLists.txt */,
-				B3EB9CBB2872964D00EAEB37 /* cd.s */,
-				B3EB9CBC2872964D00EAEB37 /* perdc.h */,
 				B3EB9CBD2872964D00EAEB37 /* localtime.c */,
-				B3EB9CBE2872964D00EAEB37 /* sh2rec */,
-				B3EB9CC62872964D00EAEB37 /* viddc.c */,
 				B3EB9CC72872964D00EAEB37 /* perdc.c */,
-				B3EB9CC82872964D00EAEB37 /* dreamcast.cmake */,
+				B3EB9CC62872964D00EAEB37 /* viddc.c */,
 				B3EB9CC92872964D00EAEB37 /* yui.c */,
+				B3EB9CC82872964D00EAEB37 /* dreamcast.cmake */,
 				B3EB9CCA2872964D00EAEB37 /* localtime.h */,
+				B3EB9CBC2872964D00EAEB37 /* perdc.h */,
+				B3EB9CB92872964D00EAEB37 /* viddc.h */,
+				B3EB9CBB2872964D00EAEB37 /* cd.s */,
+				B3EB9CBA2872964D00EAEB37 /* CMakeLists.txt */,
+				B3EB9CBE2872964D00EAEB37 /* sh2rec */,
 			);
 			path = dreamcast;
 			sourceTree = "<group>";
@@ -2565,13 +2617,13 @@
 		B3EB9CBE2872964D00EAEB37 /* sh2rec */ = {
 			isa = PBXGroup;
 			children = (
-				B3EB9CBF2872964D00EAEB37 /* sh2rec_mem.c */,
-				B3EB9CC02872964D00EAEB37 /* sh2rec_htab.h */,
-				B3EB9CC12872964D00EAEB37 /* sh2rec.c */,
-				B3EB9CC22872964D00EAEB37 /* sh2rec_mem.h */,
 				B3EB9CC32872964D00EAEB37 /* sh2rec_htab.c */,
-				B3EB9CC42872964D00EAEB37 /* sh2exec.s */,
+				B3EB9CBF2872964D00EAEB37 /* sh2rec_mem.c */,
+				B3EB9CC12872964D00EAEB37 /* sh2rec.c */,
+				B3EB9CC02872964D00EAEB37 /* sh2rec_htab.h */,
+				B3EB9CC22872964D00EAEB37 /* sh2rec_mem.h */,
 				B3EB9CC52872964D00EAEB37 /* sh2rec.h */,
+				B3EB9CC42872964D00EAEB37 /* sh2exec.s */,
 			);
 			path = sh2rec;
 			sourceTree = "<group>";
@@ -2825,17 +2877,17 @@
 		B3EB9D952872964E00EAEB37 /* libretro */ = {
 			isa = PBXGroup;
 			children = (
+				B3EB9D992872964E00EAEB37 /* Makefile */,
 				B3EB9D962872964E00EAEB37 /* Tupfile */,
 				B3EB9D972872964E00EAEB37 /* libretro.c */,
 				B3EB9D982872964E00EAEB37 /* yabause_griffin.c */,
-				B3EB9D992872964E00EAEB37 /* Makefile */,
-				B3EB9D9A2872964E00EAEB37 /* gas-preprocessor.pl */,
 				B3EB9D9B2872964E00EAEB37 /* Makefile.common */,
-				B3EB9D9C2872964E00EAEB37 /* libretro_core_options.h */,
 				B3EB9D9D2872964E00EAEB37 /* libretro_core_options_intl.h */,
-				B3EB9D9E2872964E00EAEB37 /* libretro-common */,
+				B3EB9D9C2872964E00EAEB37 /* libretro_core_options.h */,
+				B3EB9D9A2872964E00EAEB37 /* gas-preprocessor.pl */,
 				B3EB9F7C2872964F00EAEB37 /* link.T */,
 				B3EB9F7D2872964F00EAEB37 /* jni */,
+				B3EB9D9E2872964E00EAEB37 /* libretro-common */,
 			);
 			path = libretro;
 			sourceTree = "<group>";
@@ -4111,27 +4163,27 @@
 		B3EB9F922872964F00EAEB37 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
-				B3EB9F932872964F00EAEB37 /* CMake-Info.plist */,
+				B3EB9FA42872965000EAEB37 /* vidgcd.c */,
+				B3EB9F9E2872965000EAEB37 /* PerCocoa.h */,
+				B3EB9FAB2872965000EAEB37 /* vidgcd.h */,
 				B3EB9F942872965000EAEB37 /* YabauseButtonFormatter.h */,
-				B3EB9F952872965000EAEB37 /* InfoPlist.strings */,
-				B3EB9F972872965000EAEB37 /* MainMenu.xib */,
+				B3EB9FAA2872965000EAEB37 /* YabauseController.h */,
+				B3EB9F9F2872965000EAEB37 /* YabauseGLView.h */,
+				B3EB9FAC2872965000EAEB37 /* YabausePrefsController.h */,
+				B3EB9FA12872965000EAEB37 /* Yabause.icns */,
+				B3EB9FA72872965000EAEB37 /* main.m */,
+				B3EB9FA92872965000EAEB37 /* PerCocoa.m */,
+				B3EB9FA62872965000EAEB37 /* YabauseButtonFormatter.m */,
+				B3EB9F9D2872965000EAEB37 /* YabauseController.m */,
+				B3EB9FA82872965000EAEB37 /* YabauseGLView.m */,
+				B3EB9FA02872965000EAEB37 /* YabausePrefsController.m */,
+				B3EB9F932872964F00EAEB37 /* CMake-Info.plist */,
+				B3EB9FA52872965000EAEB37 /* Yabause-Info.plist */,
 				B3EB9F992872965000EAEB37 /* CMakeLists.txt */,
 				B3EB9F9A2872965000EAEB37 /* Yabause.xcodeproj */,
-				B3EB9F9D2872965000EAEB37 /* YabauseController.m */,
-				B3EB9F9E2872965000EAEB37 /* PerCocoa.h */,
-				B3EB9F9F2872965000EAEB37 /* YabauseGLView.h */,
-				B3EB9FA02872965000EAEB37 /* YabausePrefsController.m */,
-				B3EB9FA12872965000EAEB37 /* Yabause.icns */,
+				B3EB9F952872965000EAEB37 /* InfoPlist.strings */,
+				B3EB9F972872965000EAEB37 /* MainMenu.xib */,
 				B3EB9FA22872965000EAEB37 /* resources */,
-				B3EB9FA42872965000EAEB37 /* vidgcd.c */,
-				B3EB9FA52872965000EAEB37 /* Yabause-Info.plist */,
-				B3EB9FA62872965000EAEB37 /* YabauseButtonFormatter.m */,
-				B3EB9FA72872965000EAEB37 /* main.m */,
-				B3EB9FA82872965000EAEB37 /* YabauseGLView.m */,
-				B3EB9FA92872965000EAEB37 /* PerCocoa.m */,
-				B3EB9FAA2872965000EAEB37 /* YabauseController.h */,
-				B3EB9FAB2872965000EAEB37 /* vidgcd.h */,
-				B3EB9FAC2872965000EAEB37 /* YabausePrefsController.h */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -4870,6 +4922,31 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3FF63E02873E3AA00829C14 /* scsp.c in Sources */,
+				B3FF63E32873E3AA00829C14 /* sh2int.c in Sources */,
+				B3FF63E92873E3AA00829C14 /* sh2core.c in Sources */,
+				B3FF63F92873E3BA00829C14 /* m68kcore.c in Sources */,
+				B3FF63CE2873E37000829C14 /* cs2.c in Sources */,
+				B3FF63D02873E37000829C14 /* debug.c in Sources */,
+				B3FF63DF2873E3AA00829C14 /* smpc.c in Sources */,
+				B3FF63D32873E37000829C14 /* memory.c in Sources */,
+				B3FF63CF2873E37000829C14 /* cdbase.c in Sources */,
+				B3FF63CD2873E37000829C14 /* bios.c in Sources */,
+				B3FF63CC2873E37000829C14 /* m68kd.c in Sources */,
+				B3FF63E12873E3AA00829C14 /* yabause.c in Sources */,
+				B3FF63D12873E37000829C14 /* cheat.c in Sources */,
+				B3FF63E22873E3AA00829C14 /* sh2d.c in Sources */,
+				B3FF63DE2873E3AA00829C14 /* vdp2.c in Sources */,
+				B3FF63E72873E3AA00829C14 /* scu.c in Sources */,
+				B3FF63F82873E3BA00829C14 /* coffelf.c in Sources */,
+				B3FF63E62873E3AA00829C14 /* profile.c in Sources */,
+				B3FF63D22873E37000829C14 /* cs0.c in Sources */,
+				B3FF63CA2873E37000829C14 /* error.c in Sources */,
+				B3FF63CB2873E37000829C14 /* cs1.c in Sources */,
+				B3FF63EA2873E3AA00829C14 /* peripheral.c in Sources */,
+				B3FF63E82873E3AA00829C14 /* netlink.c in Sources */,
+				B3FF63E52873E3AA00829C14 /* vdp1.c in Sources */,
+				B3FF63E42873E3AA00829C14 /* sh2idle.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4877,6 +4954,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3FF64122873E52700829C14 /* yabause_griffin.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4892,6 +4970,31 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3FF63ED2873E3AA00829C14 /* scsp.c in Sources */,
+				B3FF63F02873E3AA00829C14 /* sh2int.c in Sources */,
+				B3FF63F62873E3AA00829C14 /* sh2core.c in Sources */,
+				B3FF63FB2873E3BA00829C14 /* m68kcore.c in Sources */,
+				B3FF63D82873E37000829C14 /* cs2.c in Sources */,
+				B3FF63DA2873E37000829C14 /* debug.c in Sources */,
+				B3FF63EC2873E3AA00829C14 /* smpc.c in Sources */,
+				B3FF63DD2873E37000829C14 /* memory.c in Sources */,
+				B3FF63D92873E37000829C14 /* cdbase.c in Sources */,
+				B3FF63D72873E37000829C14 /* bios.c in Sources */,
+				B3FF63D62873E37000829C14 /* m68kd.c in Sources */,
+				B3FF63EE2873E3AA00829C14 /* yabause.c in Sources */,
+				B3FF63DB2873E37000829C14 /* cheat.c in Sources */,
+				B3FF63EF2873E3AA00829C14 /* sh2d.c in Sources */,
+				B3FF63EB2873E3AA00829C14 /* vdp2.c in Sources */,
+				B3FF63F42873E3AA00829C14 /* scu.c in Sources */,
+				B3FF63FA2873E3BA00829C14 /* coffelf.c in Sources */,
+				B3FF63F32873E3AA00829C14 /* profile.c in Sources */,
+				B3FF63DC2873E37000829C14 /* cs0.c in Sources */,
+				B3FF63D42873E37000829C14 /* error.c in Sources */,
+				B3FF63D52873E37000829C14 /* cs1.c in Sources */,
+				B3FF63F72873E3AA00829C14 /* peripheral.c in Sources */,
+				B3FF63F52873E3AA00829C14 /* netlink.c in Sources */,
+				B3FF63F22873E3AA00829C14 /* vdp1.c in Sources */,
+				B3FF63F12873E3AA00829C14 /* sh2idle.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4899,6 +5002,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3FF64132873E52700829C14 /* yabause_griffin.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5044,6 +5148,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/yabause/yabause/src/libretro/libretro-common/include\"",
+					"\"$(SRCROOT)/yabause/yabause/src/libretro\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -5466,6 +5571,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/yabause/yabause/src/libretro/libretro-common/include\"",
+					"\"$(SRCROOT)/yabause/yabause/src/libretro\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -5538,6 +5644,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/yabause/yabause/src/libretro/libretro-common/include\"",
+					"\"$(SRCROOT)/yabause/yabause/src/libretro\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;

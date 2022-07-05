@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B30178D2207C901D0051B93D"
-               BuildableName = "libflycast-iOS.a"
+               BuildableName = "libflycast.a"
                BlueprintName = "flycast-iOS"
                ReferencedContainer = "container:PVFlycast.xcodeproj">
             </BuildableReference>
@@ -51,7 +51,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B30178D2207C901D0051B93D"
-            BuildableName = "libflycast-iOS.a"
+            BuildableName = "libflycast.a"
             BlueprintName = "flycast-iOS"
             ReferencedContainer = "container:PVFlycast.xcodeproj">
          </BuildableReference>

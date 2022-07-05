@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1300"
+   LastUpgradeVersion = "1400"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3447EE8218BEE3F00557ACE"
-               BuildableName = "libflycast.a"
-               BlueprintName = "flycast-tvOS"
-               ReferencedContainer = "container:PVFlycast.xcodeproj">
+               BlueprintIdentifier = "B3C7620F20783162009950E4"
+               BuildableName = "PVYabause.framework"
+               BlueprintName = "PVYabause-iOS"
+               ReferencedContainer = "container:PVYabause.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -50,10 +50,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B3447EE8218BEE3F00557ACE"
-            BuildableName = "libflycast.a"
-            BlueprintName = "flycast-tvOS"
-            ReferencedContainer = "container:PVFlycast.xcodeproj">
+            BlueprintIdentifier = "B3C7620F20783162009950E4"
+            BuildableName = "PVYabause.framework"
+            BlueprintName = "PVYabause-iOS"
+            ReferencedContainer = "container:PVYabause.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
