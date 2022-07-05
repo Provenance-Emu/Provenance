@@ -41,6 +41,60 @@
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
+		B3CE8003287404B200B6BB5A /* LzmaDec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0292872978C00EAEB37 /* LzmaDec.c */; };
+		B3CE8004287404B200B6BB5A /* CpuArch.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB02E2872978C00EAEB37 /* CpuArch.c */; };
+		B3CE8005287404B200B6BB5A /* Alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0282872978C00EAEB37 /* Alloc.c */; };
+		B3CE8006287404B200B6BB5A /* Bra86.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0272872978C00EAEB37 /* Bra86.c */; };
+		B3CE8007287404B200B6BB5A /* BraIA64.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB02A2872978C00EAEB37 /* BraIA64.c */; };
+		B3CE8008287404B200B6BB5A /* Delta.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB02C2872978C00EAEB37 /* Delta.c */; };
+		B3CE8009287404B200B6BB5A /* LzFind.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0252872978C00EAEB37 /* LzFind.c */; };
+		B3CE800A287404B200B6BB5A /* Lzma86Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB02B2872978C00EAEB37 /* Lzma86Dec.c */; };
+		B3CE800B287404B200B6BB5A /* LzmaEnc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0242872978C00EAEB37 /* LzmaEnc.c */; };
+		B3CE800C287404B300B6BB5A /* LzmaDec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0292872978C00EAEB37 /* LzmaDec.c */; };
+		B3CE800D287404B300B6BB5A /* CpuArch.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB02E2872978C00EAEB37 /* CpuArch.c */; };
+		B3CE800E287404B300B6BB5A /* Alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0282872978C00EAEB37 /* Alloc.c */; };
+		B3CE800F287404B300B6BB5A /* Bra86.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0272872978C00EAEB37 /* Bra86.c */; };
+		B3CE8010287404B300B6BB5A /* BraIA64.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB02A2872978C00EAEB37 /* BraIA64.c */; };
+		B3CE8011287404B300B6BB5A /* Delta.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB02C2872978C00EAEB37 /* Delta.c */; };
+		B3CE8012287404B300B6BB5A /* LzFind.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0252872978C00EAEB37 /* LzFind.c */; };
+		B3CE8013287404B300B6BB5A /* Lzma86Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB02B2872978C00EAEB37 /* Lzma86Dec.c */; };
+		B3CE8014287404B300B6BB5A /* LzmaEnc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0242872978C00EAEB37 /* LzmaEnc.c */; };
+		B3CE8015287404EE00B6BB5A /* libchdr_flac.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAFD82872978B00EAEB37 /* libchdr_flac.c */; };
+		B3CE8016287404EE00B6BB5A /* libchdr_bitstream.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAFD62872978B00EAEB37 /* libchdr_bitstream.c */; };
+		B3CE8017287404EE00B6BB5A /* libchdr_huffman.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAFD72872978B00EAEB37 /* libchdr_huffman.c */; };
+		B3CE8018287404EE00B6BB5A /* libchdr_cdrom.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAFDA2872978B00EAEB37 /* libchdr_cdrom.c */; };
+		B3CE8019287404EE00B6BB5A /* libchdr_chd.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAFD52872978B00EAEB37 /* libchdr_chd.c */; };
+		B3CE801A287404EF00B6BB5A /* libchdr_flac.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAFD82872978B00EAEB37 /* libchdr_flac.c */; };
+		B3CE801B287404EF00B6BB5A /* libchdr_bitstream.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAFD62872978B00EAEB37 /* libchdr_bitstream.c */; };
+		B3CE801C287404EF00B6BB5A /* libchdr_huffman.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAFD72872978B00EAEB37 /* libchdr_huffman.c */; };
+		B3CE801D287404EF00B6BB5A /* libchdr_cdrom.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAFDA2872978B00EAEB37 /* libchdr_cdrom.c */; };
+		B3CE801E287404EF00B6BB5A /* libchdr_chd.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAFD52872978B00EAEB37 /* libchdr_chd.c */; };
+		B3CE801F2874050000B6BB5A /* inffast.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB00A2872978C00EAEB37 /* inffast.c */; };
+		B3CE80202874050000B6BB5A /* inflate.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAFFA2872978C00EAEB37 /* inflate.c */; };
+		B3CE80212874050000B6BB5A /* inftrees.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0022872978C00EAEB37 /* inftrees.c */; };
+		B3CE80222874050000B6BB5A /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAFFE2872978C00EAEB37 /* zutil.c */; };
+		B3CE80232874050000B6BB5A /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAFFC2872978C00EAEB37 /* crc32.c */; };
+		B3CE80242874050000B6BB5A /* adler32.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB00B2872978C00EAEB37 /* adler32.c */; };
+		B3CE80252874050100B6BB5A /* inffast.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB00A2872978C00EAEB37 /* inffast.c */; };
+		B3CE80262874050100B6BB5A /* inflate.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAFFA2872978C00EAEB37 /* inflate.c */; };
+		B3CE80272874050100B6BB5A /* inftrees.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0022872978C00EAEB37 /* inftrees.c */; };
+		B3CE80282874050100B6BB5A /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAFFE2872978C00EAEB37 /* zutil.c */; };
+		B3CE80292874050100B6BB5A /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAFFC2872978C00EAEB37 /* crc32.c */; };
+		B3CE802A2874050100B6BB5A /* adler32.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB00B2872978C00EAEB37 /* adler32.c */; };
+		B3CE802B2874052A00B6BB5A /* glsym_es2.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE6F2872978A00EAEB37 /* glsym_es2.c */; };
+		B3CE802C2874052B00B6BB5A /* glsym_es2.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE6F2872978A00EAEB37 /* glsym_es2.c */; };
+		B3CE802D2874055800B6BB5A /* rglgen.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE702872978A00EAEB37 /* rglgen.c */; };
+		B3CE802E2874055900B6BB5A /* rglgen.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE702872978A00EAEB37 /* rglgen.c */; };
+		B3CE802F2874056100B6BB5A /* glsm.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAEC52872978B00EAEB37 /* glsm.c */; };
+		B3CE80302874056200B6BB5A /* glsm.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAEC52872978B00EAEB37 /* glsm.c */; };
+		B3CE80312874057400B6BB5A /* rsx_lib_gl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0652872978C00EAEB37 /* rsx_lib_gl.cpp */; };
+		B3CE80322874057600B6BB5A /* rsx_lib_gl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0652872978C00EAEB37 /* rsx_lib_gl.cpp */; };
+		B3CE80332874059500B6BB5A /* ugui.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAED42872978B00EAEB37 /* ugui.c */; };
+		B3CE80342874059600B6BB5A /* ugui.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAED42872978B00EAEB37 /* ugui.c */; };
+		B3CE8035287405B700B6BB5A /* ugui_tools.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE4D2872978A00EAEB37 /* ugui_tools.c */; };
+		B3CE8036287405B800B6BB5A /* ugui_tools.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE4D2872978A00EAEB37 /* ugui_tools.c */; };
+		B3CE8039287405DC00B6BB5A /* liblzma.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CE8037287405DC00B6BB5A /* liblzma.tbd */; };
+		B3CE803A287405DC00B6BB5A /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CE8038287405DC00B6BB5A /* libz.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -155,6 +209,8 @@
 		B3C7621C20783243009950E4 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		B3C7621E2078325C009950E4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B3C7622120783297009950E4 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3CE8037287405DC00B6BB5A /* liblzma.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = liblzma.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/lib/liblzma.tbd; sourceTree = DEVELOPER_DIR; };
+		B3CE8038287405DC00B6BB5A /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		B3EBAD602872978900EAEB37 /* .dir-locals.el */ = {isa = PBXFileReference; lastKnownFileType = text; path = ".dir-locals.el"; sourceTree = "<group>"; };
 		B3EBAD612872978900EAEB37 /* input.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = input.h; sourceTree = "<group>"; };
 		B3EBAD622872978900EAEB37 /* input.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = input.cpp; sourceTree = "<group>"; };
@@ -1040,6 +1096,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3CE8039287405DC00B6BB5A /* liblzma.tbd in Frameworks */,
+				B3CE803A287405DC00B6BB5A /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1160,6 +1218,8 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3CE8037287405DC00B6BB5A /* liblzma.tbd */,
+				B3CE8038287405DC00B6BB5A /* libz.tbd */,
 				B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */,
 				B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */,
 				B39769172859E3AD00558958 /* CoreFoundation.framework */,
@@ -1915,15 +1975,15 @@
 		B3EBAECF2872978B00EAEB37 /* deps */ = {
 			isa = PBXGroup;
 			children = (
-				B3EBAED02872978B00EAEB37 /* ugui */,
-				B3EBAED62872978B00EAEB37 /* lightning */,
 				B3EBAFC52872978B00EAEB37 /* libchdr */,
-				B3EBAFDB2872978B00EAEB37 /* wiiu */,
-				B3EBAFE22872978B00EAEB37 /* mman */,
-				B3EBAFF72872978C00EAEB37 /* zlib-1.2.11 */,
-				B3EBB00D2872978C00EAEB37 /* lzma-19.00 */,
-				B3EBB02F2872978C00EAEB37 /* lightrec */,
 				B3EBB04D2872978C00EAEB37 /* libkirk */,
+				B3EBAED62872978B00EAEB37 /* lightning */,
+				B3EBB02F2872978C00EAEB37 /* lightrec */,
+				B3EBB00D2872978C00EAEB37 /* lzma-19.00 */,
+				B3EBAFE22872978B00EAEB37 /* mman */,
+				B3EBAED02872978B00EAEB37 /* ugui */,
+				B3EBAFDB2872978B00EAEB37 /* wiiu */,
+				B3EBAFF72872978C00EAEB37 /* zlib-1.2.11 */,
 			);
 			path = deps;
 			sourceTree = "<group>";
@@ -2237,10 +2297,10 @@
 		B3EBAFC52872978B00EAEB37 /* libchdr */ = {
 			isa = PBXGroup;
 			children = (
-				B3EBAFC62872978B00EAEB37 /* CMakeLists.txt */,
-				B3EBAFC72872978B00EAEB37 /* include */,
 				B3EBAFD22872978B00EAEB37 /* README.md */,
+				B3EBAFC62872978B00EAEB37 /* CMakeLists.txt */,
 				B3EBAFD32872978B00EAEB37 /* LICENSE.txt */,
+				B3EBAFC72872978B00EAEB37 /* include */,
 				B3EBAFD42872978B00EAEB37 /* src */,
 			);
 			path = libchdr;
@@ -2280,12 +2340,12 @@
 		B3EBAFD42872978B00EAEB37 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				B3EBAFD52872978B00EAEB37 /* libchdr_chd.c */,
 				B3EBAFD62872978B00EAEB37 /* libchdr_bitstream.c */,
-				B3EBAFD72872978B00EAEB37 /* libchdr_huffman.c */,
-				B3EBAFD82872978B00EAEB37 /* libchdr_flac.c */,
-				B3EBAFD92872978B00EAEB37 /* link.T */,
 				B3EBAFDA2872978B00EAEB37 /* libchdr_cdrom.c */,
+				B3EBAFD52872978B00EAEB37 /* libchdr_chd.c */,
+				B3EBAFD82872978B00EAEB37 /* libchdr_flac.c */,
+				B3EBAFD72872978B00EAEB37 /* libchdr_huffman.c */,
+				B3EBAFD92872978B00EAEB37 /* link.T */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -2368,22 +2428,22 @@
 		B3EBAFF72872978C00EAEB37 /* zlib-1.2.11 */ = {
 			isa = PBXGroup;
 			children = (
-				B3EBAFF82872978C00EAEB37 /* zutil.h */,
-				B3EBAFF92872978C00EAEB37 /* inftrees.h */,
-				B3EBAFFA2872978C00EAEB37 /* inflate.c */,
-				B3EBAFFB2872978C00EAEB37 /* inffast.h */,
-				B3EBAFFC2872978C00EAEB37 /* crc32.c */,
 				B3EBAFFD2872978C00EAEB37 /* README */,
-				B3EBAFFE2872978C00EAEB37 /* zutil.c */,
-				B3EBAFFF2872978C00EAEB37 /* gzguts.h */,
-				B3EBB0002872978C00EAEB37 /* zlib.h */,
-				B3EBB0012872978C00EAEB37 /* inflate.h */,
-				B3EBB0022872978C00EAEB37 /* inftrees.c */,
-				B3EBB0032872978C00EAEB37 /* doc */,
-				B3EBB0092872978C00EAEB37 /* crc32.h */,
-				B3EBB00A2872978C00EAEB37 /* inffast.c */,
 				B3EBB00B2872978C00EAEB37 /* adler32.c */,
+				B3EBAFFC2872978C00EAEB37 /* crc32.c */,
+				B3EBB00A2872978C00EAEB37 /* inffast.c */,
+				B3EBAFFA2872978C00EAEB37 /* inflate.c */,
+				B3EBB0022872978C00EAEB37 /* inftrees.c */,
+				B3EBAFFE2872978C00EAEB37 /* zutil.c */,
+				B3EBB0092872978C00EAEB37 /* crc32.h */,
+				B3EBAFFF2872978C00EAEB37 /* gzguts.h */,
+				B3EBAFFB2872978C00EAEB37 /* inffast.h */,
+				B3EBB0012872978C00EAEB37 /* inflate.h */,
+				B3EBAFF92872978C00EAEB37 /* inftrees.h */,
 				B3EBB00C2872978C00EAEB37 /* zconf.h */,
+				B3EBB0002872978C00EAEB37 /* zlib.h */,
+				B3EBAFF82872978C00EAEB37 /* zutil.h */,
+				B3EBB0032872978C00EAEB37 /* doc */,
 			);
 			path = "zlib-1.2.11";
 			sourceTree = "<group>";
@@ -2403,13 +2463,13 @@
 		B3EBB00D2872978C00EAEB37 /* lzma-19.00 */ = {
 			isa = PBXGroup;
 			children = (
+				B3EBB0102872978C00EAEB37 /* LICENSE */,
 				B3EBB00E2872978C00EAEB37 /* lzma.vcxproj.filters */,
 				B3EBB00F2872978C00EAEB37 /* CMakeLists.txt */,
-				B3EBB0102872978C00EAEB37 /* LICENSE */,
-				B3EBB0112872978C00EAEB37 /* include */,
-				B3EBB0202872978C00EAEB37 /* lzma.vcxproj */,
-				B3EBB0212872978C00EAEB37 /* lzma.txt */,
 				B3EBB0222872978C00EAEB37 /* lzma-history.txt */,
+				B3EBB0212872978C00EAEB37 /* lzma.txt */,
+				B3EBB0202872978C00EAEB37 /* lzma.vcxproj */,
+				B3EBB0112872978C00EAEB37 /* include */,
 				B3EBB0232872978C00EAEB37 /* src */,
 			);
 			path = "lzma-19.00";
@@ -2439,17 +2499,17 @@
 		B3EBB0232872978C00EAEB37 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				B3EBB0242872978C00EAEB37 /* LzmaEnc.c */,
-				B3EBB0252872978C00EAEB37 /* LzFind.c */,
-				B3EBB0262872978C00EAEB37 /* Sort.c */,
-				B3EBB0272872978C00EAEB37 /* Bra86.c */,
 				B3EBB0282872978C00EAEB37 /* Alloc.c */,
-				B3EBB0292872978C00EAEB37 /* LzmaDec.c */,
+				B3EBB0272872978C00EAEB37 /* Bra86.c */,
 				B3EBB02A2872978C00EAEB37 /* BraIA64.c */,
-				B3EBB02B2872978C00EAEB37 /* Lzma86Dec.c */,
-				B3EBB02C2872978C00EAEB37 /* Delta.c */,
-				B3EBB02D2872978C00EAEB37 /* Lzma86Enc.c */,
 				B3EBB02E2872978C00EAEB37 /* CpuArch.c */,
+				B3EBB02C2872978C00EAEB37 /* Delta.c */,
+				B3EBB0252872978C00EAEB37 /* LzFind.c */,
+				B3EBB02B2872978C00EAEB37 /* Lzma86Dec.c */,
+				B3EBB02D2872978C00EAEB37 /* Lzma86Enc.c */,
+				B3EBB0292872978C00EAEB37 /* LzmaDec.c */,
+				B3EBB0242872978C00EAEB37 /* LzmaEnc.c */,
+				B3EBB0262872978C00EAEB37 /* Sort.c */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -2577,36 +2637,36 @@
 		B3EBB0882872978C00EAEB37 /* mednafen */ = {
 			isa = PBXGroup;
 			children = (
-				B3EBB0892872978C00EAEB37 /* mempatcher.cpp */,
-				B3EBB08A2872978C00EAEB37 /* general.cpp */,
-				B3EBB08B2872978C00EAEB37 /* tremor */,
-				B3EBB0AD2872978C00EAEB37 /* error.h */,
-				B3EBB0AE2872978C00EAEB37 /* MemoryStream.h */,
-				B3EBB0AF2872978C00EAEB37 /* video */,
-				B3EBB0B42872978C00EAEB37 /* cdrom */,
-				B3EBB0D22872978C00EAEB37 /* mednafen-types.h */,
-				B3EBB0D32872978C00EAEB37 /* mednafen-endian.cpp */,
-				B3EBB0D42872978C00EAEB37 /* clamp.h */,
-				B3EBB0D52872978C00EAEB37 /* settings.h */,
-				B3EBB0D62872978C00EAEB37 /* masmem.h */,
-				B3EBB0D72872978C00EAEB37 /* error.cpp */,
-				B3EBB0D82872978C00EAEB37 /* state.c */,
-				B3EBB0D92872978C00EAEB37 /* mempatcher-driver.h */,
-				B3EBB0DA2872978C00EAEB37 /* general.h */,
-				B3EBB0DB2872978C00EAEB37 /* psx */,
-				B3EBB1182872978C00EAEB37 /* mednafen.h */,
-				B3EBB1192872978C00EAEB37 /* MemoryStream.cpp */,
-				B3EBB11A2872978C00EAEB37 /* mempatcher.h */,
-				B3EBB11B2872978C00EAEB37 /* Stream.h */,
-				B3EBB11C2872978C00EAEB37 /* git.h */,
-				B3EBB11D2872978C00EAEB37 /* state_helpers.h */,
-				B3EBB11E2872978C00EAEB37 /* FileStream.cpp */,
-				B3EBB11F2872978C00EAEB37 /* mednafen-endian.h */,
-				B3EBB1202872978C00EAEB37 /* FileStream.h */,
-				B3EBB1212872978C00EAEB37 /* Stream.cpp */,
 				B3EBB1222872978C00EAEB37 /* settings.c */,
+				B3EBB0D82872978C00EAEB37 /* state.c */,
+				B3EBB0D72872978C00EAEB37 /* error.cpp */,
+				B3EBB11E2872978C00EAEB37 /* FileStream.cpp */,
+				B3EBB08A2872978C00EAEB37 /* general.cpp */,
+				B3EBB0D32872978C00EAEB37 /* mednafen-endian.cpp */,
+				B3EBB1192872978C00EAEB37 /* MemoryStream.cpp */,
+				B3EBB0892872978C00EAEB37 /* mempatcher.cpp */,
+				B3EBB1212872978C00EAEB37 /* Stream.cpp */,
+				B3EBB0D42872978C00EAEB37 /* clamp.h */,
+				B3EBB0AD2872978C00EAEB37 /* error.h */,
+				B3EBB1202872978C00EAEB37 /* FileStream.h */,
+				B3EBB0DA2872978C00EAEB37 /* general.h */,
+				B3EBB11C2872978C00EAEB37 /* git.h */,
+				B3EBB0D62872978C00EAEB37 /* masmem.h */,
 				B3EBB1232872978C00EAEB37 /* math_ops.h */,
+				B3EBB11F2872978C00EAEB37 /* mednafen-endian.h */,
+				B3EBB0D22872978C00EAEB37 /* mednafen-types.h */,
+				B3EBB1182872978C00EAEB37 /* mednafen.h */,
+				B3EBB0AE2872978C00EAEB37 /* MemoryStream.h */,
+				B3EBB0D92872978C00EAEB37 /* mempatcher-driver.h */,
+				B3EBB11A2872978C00EAEB37 /* mempatcher.h */,
+				B3EBB0D52872978C00EAEB37 /* settings.h */,
+				B3EBB11D2872978C00EAEB37 /* state_helpers.h */,
 				B3EBB1242872978C00EAEB37 /* state.h */,
+				B3EBB11B2872978C00EAEB37 /* Stream.h */,
+				B3EBB0B42872978C00EAEB37 /* cdrom */,
+				B3EBB0DB2872978C00EAEB37 /* psx */,
+				B3EBB08B2872978C00EAEB37 /* tremor */,
+				B3EBB0AF2872978C00EAEB37 /* video */,
 			);
 			path = mednafen;
 			sourceTree = "<group>";
@@ -2995,6 +3055,32 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3CE80222874050000B6BB5A /* zutil.c in Sources */,
+				B3CE8019287404EE00B6BB5A /* libchdr_chd.c in Sources */,
+				B3CE8008287404B200B6BB5A /* Delta.c in Sources */,
+				B3CE8016287404EE00B6BB5A /* libchdr_bitstream.c in Sources */,
+				B3CE80312874057400B6BB5A /* rsx_lib_gl.cpp in Sources */,
+				B3CE802B2874052A00B6BB5A /* glsym_es2.c in Sources */,
+				B3CE8009287404B200B6BB5A /* LzFind.c in Sources */,
+				B3CE802D2874055800B6BB5A /* rglgen.c in Sources */,
+				B3CE8015287404EE00B6BB5A /* libchdr_flac.c in Sources */,
+				B3CE801F2874050000B6BB5A /* inffast.c in Sources */,
+				B3CE80332874059500B6BB5A /* ugui.c in Sources */,
+				B3CE8018287404EE00B6BB5A /* libchdr_cdrom.c in Sources */,
+				B3CE802F2874056100B6BB5A /* glsm.c in Sources */,
+				B3CE800B287404B200B6BB5A /* LzmaEnc.c in Sources */,
+				B3CE800A287404B200B6BB5A /* Lzma86Dec.c in Sources */,
+				B3CE80232874050000B6BB5A /* crc32.c in Sources */,
+				B3CE8017287404EE00B6BB5A /* libchdr_huffman.c in Sources */,
+				B3CE8035287405B700B6BB5A /* ugui_tools.c in Sources */,
+				B3CE8005287404B200B6BB5A /* Alloc.c in Sources */,
+				B3CE80212874050000B6BB5A /* inftrees.c in Sources */,
+				B3CE8007287404B200B6BB5A /* BraIA64.c in Sources */,
+				B3CE8004287404B200B6BB5A /* CpuArch.c in Sources */,
+				B3CE80202874050000B6BB5A /* inflate.c in Sources */,
+				B3CE8003287404B200B6BB5A /* LzmaDec.c in Sources */,
+				B3CE8006287404B200B6BB5A /* Bra86.c in Sources */,
+				B3CE80242874050000B6BB5A /* adler32.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3017,6 +3103,32 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3CE80282874050100B6BB5A /* zutil.c in Sources */,
+				B3CE801E287404EF00B6BB5A /* libchdr_chd.c in Sources */,
+				B3CE8011287404B300B6BB5A /* Delta.c in Sources */,
+				B3CE801B287404EF00B6BB5A /* libchdr_bitstream.c in Sources */,
+				B3CE80322874057600B6BB5A /* rsx_lib_gl.cpp in Sources */,
+				B3CE802C2874052B00B6BB5A /* glsym_es2.c in Sources */,
+				B3CE8012287404B300B6BB5A /* LzFind.c in Sources */,
+				B3CE802E2874055900B6BB5A /* rglgen.c in Sources */,
+				B3CE801A287404EF00B6BB5A /* libchdr_flac.c in Sources */,
+				B3CE80252874050100B6BB5A /* inffast.c in Sources */,
+				B3CE80342874059600B6BB5A /* ugui.c in Sources */,
+				B3CE801D287404EF00B6BB5A /* libchdr_cdrom.c in Sources */,
+				B3CE80302874056200B6BB5A /* glsm.c in Sources */,
+				B3CE8014287404B300B6BB5A /* LzmaEnc.c in Sources */,
+				B3CE8013287404B300B6BB5A /* Lzma86Dec.c in Sources */,
+				B3CE80292874050100B6BB5A /* crc32.c in Sources */,
+				B3CE801C287404EF00B6BB5A /* libchdr_huffman.c in Sources */,
+				B3CE8036287405B800B6BB5A /* ugui_tools.c in Sources */,
+				B3CE800E287404B300B6BB5A /* Alloc.c in Sources */,
+				B3CE80272874050100B6BB5A /* inftrees.c in Sources */,
+				B3CE8010287404B300B6BB5A /* BraIA64.c in Sources */,
+				B3CE800D287404B300B6BB5A /* CpuArch.c in Sources */,
+				B3CE80262874050100B6BB5A /* inflate.c in Sources */,
+				B3CE800C287404B300B6BB5A /* LzmaDec.c in Sources */,
+				B3CE800F287404B300B6BB5A /* Bra86.c in Sources */,
+				B3CE802A2874050100B6BB5A /* adler32.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3150,6 +3262,16 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/beetle-psx-libretro/libretro-common/include\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/deps\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/mednafen\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/parallel-psx\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/pgxp\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/rsx\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/deps/libchdr/include\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/deps/lzma-19.00/include\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/deps/lightning/include\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/deps/ugui\"",
+					"\"$(SRCROOT)/beetle-psx-libretro\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -3581,6 +3703,16 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/beetle-psx-libretro/libretro-common/include\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/deps\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/mednafen\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/parallel-psx\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/pgxp\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/rsx\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/deps/libchdr/include\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/deps/lzma-19.00/include\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/deps/lightning/include\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/deps/ugui\"",
+					"\"$(SRCROOT)/beetle-psx-libretro\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -3653,6 +3785,16 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/beetle-psx-libretro/libretro-common/include\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/deps\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/mednafen\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/parallel-psx\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/pgxp\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/rsx\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/deps/libchdr/include\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/deps/lzma-19.00/include\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/deps/lightning/include\"",
+					"\"$(SRCROOT)/beetle-psx-libretro/deps/ugui\"",
+					"\"$(SRCROOT)/beetle-psx-libretro\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;

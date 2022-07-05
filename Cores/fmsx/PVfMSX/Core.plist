@@ -11,7 +11,7 @@
 		<string>com.provenance.msx</string>
 	</array>
 	<key>PVProjectName</key>
-	<string>PVfMSX</string>
+	<string>fMSX</string>
 	<key>PVProjectURL</key>
 	<string>http://fms.komkon.org/fMSX/</string>
 	<key>PVProjectVersion</key>
