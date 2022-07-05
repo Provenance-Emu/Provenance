@@ -30,6 +30,126 @@
 		B37022CC2872556600B3F6DA /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B37022BF287253B300B3F6DA /* Core.plist */; };
 		B37022CD2872558F00B3F6DA /* PVPCSXRearmed.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVPCSXRearmed.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B37022CE2872558F00B3F6DA /* PVPCSXRearmed.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVPCSXRearmed.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3918FE82873EF6B000838F6 /* gte.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA19E2872967500EAEB37 /* gte.c */; };
+		B3918FE92873EF6B000838F6 /* ppf.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1AA2872967500EAEB37 /* ppf.c */; };
+		B3918FEA2873EF6B000838F6 /* cdriso.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1682872967500EAEB37 /* cdriso.c */; };
+		B3918FEB2873EF6B000838F6 /* sio.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA17A2872967500EAEB37 /* sio.c */; };
+		B3918FEC2873EF6B000838F6 /* database.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA16C2872967500EAEB37 /* database.c */; };
+		B3918FED2873EF6B000838F6 /* gte_divider.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1782872967500EAEB37 /* gte_divider.c */; };
+		B3918FEE2873EF6B000838F6 /* gte_nf.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA16B2872967500EAEB37 /* gte_nf.c */; };
+		B3918FEF2873EF6B000838F6 /* psxmem.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA19B2872967500EAEB37 /* psxmem.c */; };
+		B3918FF02873EF6B000838F6 /* cdrom.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA16E2872967500EAEB37 /* cdrom.c */; };
+		B3918FF12873EF6B000838F6 /* decode_xa.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1602872967500EAEB37 /* decode_xa.c */; };
+		B3918FF22873EF6B000838F6 /* plugins.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1702872967500EAEB37 /* plugins.c */; };
+		B3918FF52873EF6B000838F6 /* cheat.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA17E2872967500EAEB37 /* cheat.c */; };
+		B3918FF62873EF6B000838F6 /* psxcommon.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1802872967500EAEB37 /* psxcommon.c */; };
+		B3918FF72873EF6B000838F6 /* misc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1A82872967500EAEB37 /* misc.c */; };
+		B3918FF82873EF6B000838F6 /* psxhle.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1982872967500EAEB37 /* psxhle.c */; };
+		B3918FFA2873EF6B000838F6 /* psxinterpreter.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA19F2872967500EAEB37 /* psxinterpreter.c */; };
+		B3918FFB2873EF6B000838F6 /* psxbios.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1822872967500EAEB37 /* psxbios.c */; };
+		B3918FFC2873EF6B000838F6 /* psxdma.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1752872967500EAEB37 /* psxdma.c */; };
+		B3918FFD2873EF6B000838F6 /* memmap_win32.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA19C2872967500EAEB37 /* memmap_win32.c */; };
+		B3918FFE2873EF6B000838F6 /* psxcounters.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1AD2872967500EAEB37 /* psxcounters.c */; };
+		B3918FFF2873EF6B000838F6 /* spu.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1642872967500EAEB37 /* spu.c */; };
+		B39190002873EF6B000838F6 /* psxhw.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA19D2872967500EAEB37 /* psxhw.c */; };
+		B39190012873EF6B000838F6 /* mdec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1792872967500EAEB37 /* mdec.c */; };
+		B39190022873EF6B000838F6 /* r3000a.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1732872967500EAEB37 /* r3000a.c */; };
+		B39190032873EF6B000838F6 /* gte.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA19E2872967500EAEB37 /* gte.c */; };
+		B39190042873EF6B000838F6 /* ppf.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1AA2872967500EAEB37 /* ppf.c */; };
+		B39190052873EF6B000838F6 /* cdriso.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1682872967500EAEB37 /* cdriso.c */; };
+		B39190062873EF6B000838F6 /* sio.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA17A2872967500EAEB37 /* sio.c */; };
+		B39190072873EF6B000838F6 /* database.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA16C2872967500EAEB37 /* database.c */; };
+		B39190082873EF6B000838F6 /* gte_divider.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1782872967500EAEB37 /* gte_divider.c */; };
+		B39190092873EF6B000838F6 /* gte_nf.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA16B2872967500EAEB37 /* gte_nf.c */; };
+		B391900A2873EF6B000838F6 /* psxmem.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA19B2872967500EAEB37 /* psxmem.c */; };
+		B391900B2873EF6B000838F6 /* cdrom.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA16E2872967500EAEB37 /* cdrom.c */; };
+		B391900C2873EF6B000838F6 /* decode_xa.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1602872967500EAEB37 /* decode_xa.c */; };
+		B391900D2873EF6B000838F6 /* plugins.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1702872967500EAEB37 /* plugins.c */; };
+		B39190102873EF6B000838F6 /* cheat.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA17E2872967500EAEB37 /* cheat.c */; };
+		B39190112873EF6B000838F6 /* psxcommon.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1802872967500EAEB37 /* psxcommon.c */; };
+		B39190122873EF6B000838F6 /* misc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1A82872967500EAEB37 /* misc.c */; };
+		B39190132873EF6B000838F6 /* psxhle.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1982872967500EAEB37 /* psxhle.c */; };
+		B39190152873EF6B000838F6 /* psxinterpreter.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA19F2872967500EAEB37 /* psxinterpreter.c */; };
+		B39190162873EF6B000838F6 /* psxbios.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1822872967500EAEB37 /* psxbios.c */; };
+		B39190172873EF6B000838F6 /* psxdma.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1752872967500EAEB37 /* psxdma.c */; };
+		B39190182873EF6B000838F6 /* memmap_win32.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA19C2872967500EAEB37 /* memmap_win32.c */; };
+		B39190192873EF6B000838F6 /* psxcounters.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1AD2872967500EAEB37 /* psxcounters.c */; };
+		B391901A2873EF6B000838F6 /* spu.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1642872967500EAEB37 /* spu.c */; };
+		B391901B2873EF6B000838F6 /* psxhw.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA19D2872967500EAEB37 /* psxhw.c */; };
+		B391901C2873EF6B000838F6 /* mdec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1792872967500EAEB37 /* mdec.c */; };
+		B391901D2873EF6B000838F6 /* r3000a.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1732872967500EAEB37 /* r3000a.c */; };
+		B39190322873EFDC000838F6 /* psx_gpu_arm_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1F62872967600EAEB37 /* psx_gpu_arm_neon.S */; };
+		B39190332873EFDC000838F6 /* psx_gpu_arm_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1F62872967600EAEB37 /* psx_gpu_arm_neon.S */; };
+		B39190342873F02B000838F6 /* gte_arm.S in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA19A2872967500EAEB37 /* gte_arm.S */; };
+		B39190352873F02B000838F6 /* gte_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1712872967500EAEB37 /* gte_neon.S */; };
+		B39190362873F02C000838F6 /* gte_arm.S in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA19A2872967500EAEB37 /* gte_arm.S */; };
+		B39190372873F02C000838F6 /* gte_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1712872967500EAEB37 /* gte_neon.S */; };
+		B39190382873F0AF000838F6 /* adsr.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA2032872967600EAEB37 /* adsr.c */; };
+		B39190392873F0AF000838F6 /* out.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA2002872967600EAEB37 /* out.c */; };
+		B391903A2873F0AF000838F6 /* reverb.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA20C2872967600EAEB37 /* reverb.c */; };
+		B391903B2873F0AF000838F6 /* dma.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA20B2872967600EAEB37 /* dma.c */; };
+		B391903C2873F0AF000838F6 /* registers.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA2152872967600EAEB37 /* registers.c */; };
+		B391903D2873F0AF000838F6 /* xa.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA20A2872967600EAEB37 /* xa.c */; };
+		B391903E2873F0AF000838F6 /* spu.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1FE2872967600EAEB37 /* spu.c */; };
+		B391903F2873F0AF000838F6 /* arm_utils.S in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA2132872967600EAEB37 /* arm_utils.S */; };
+		B39190402873F0AF000838F6 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA2342872967600EAEB37 /* Makefile */; };
+		B39190412873F0AF000838F6 /* nullsnd.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA2172872967600EAEB37 /* nullsnd.c */; };
+		B39190422873F0AF000838F6 /* freeze.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA2162872967600EAEB37 /* freeze.c */; };
+		B39190432873F0B0000838F6 /* adsr.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA2032872967600EAEB37 /* adsr.c */; };
+		B39190442873F0B0000838F6 /* out.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA2002872967600EAEB37 /* out.c */; };
+		B39190452873F0B0000838F6 /* reverb.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA20C2872967600EAEB37 /* reverb.c */; };
+		B39190462873F0B0000838F6 /* dma.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA20B2872967600EAEB37 /* dma.c */; };
+		B39190472873F0B0000838F6 /* registers.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA2152872967600EAEB37 /* registers.c */; };
+		B39190482873F0B0000838F6 /* xa.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA20A2872967600EAEB37 /* xa.c */; };
+		B39190492873F0B0000838F6 /* spu.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1FE2872967600EAEB37 /* spu.c */; };
+		B391904A2873F0B0000838F6 /* arm_utils.S in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA2132872967600EAEB37 /* arm_utils.S */; };
+		B391904B2873F0B0000838F6 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA2342872967600EAEB37 /* Makefile */; };
+		B391904C2873F0B0000838F6 /* nullsnd.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA2172872967600EAEB37 /* nullsnd.c */; };
+		B391904D2873F0B0000838F6 /* freeze.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA2162872967600EAEB37 /* freeze.c */; };
+		B391904E2873F134000838F6 /* gpulib_thread_if.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1DF2872967500EAEB37 /* gpulib_thread_if.c */; };
+		B391904F2873F134000838F6 /* gpulib_thread_if.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1DF2872967500EAEB37 /* gpulib_thread_if.c */; };
+		B39190502873F164000838F6 /* gpu_arm.S in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA2252872967600EAEB37 /* gpu_arm.S */; };
+		B39190512873F165000838F6 /* gpu_arm.S in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA2252872967600EAEB37 /* gpu_arm.S */; };
+		B39190522873F1A7000838F6 /* Lzma86Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3D42872967700EAEB37 /* Lzma86Dec.c */; };
+		B39190532873F1A7000838F6 /* Alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3D12872967700EAEB37 /* Alloc.c */; };
+		B39190542873F1A7000838F6 /* LzFind.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3CE2872967700EAEB37 /* LzFind.c */; };
+		B39190552873F1A7000838F6 /* BraIA64.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3D32872967700EAEB37 /* BraIA64.c */; };
+		B39190562873F1A7000838F6 /* CpuArch.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3D62872967700EAEB37 /* CpuArch.c */; };
+		B39190572873F1A7000838F6 /* Delta.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3D52872967700EAEB37 /* Delta.c */; };
+		B39190582873F1A7000838F6 /* LzmaDec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3D22872967700EAEB37 /* LzmaDec.c */; };
+		B39190592873F1A7000838F6 /* LzmaEnc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3CD2872967700EAEB37 /* LzmaEnc.c */; };
+		B391905A2873F1A7000838F6 /* Sort.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3CF2872967700EAEB37 /* Sort.c */; };
+		B391905B2873F1A7000838F6 /* Bra86.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3D02872967700EAEB37 /* Bra86.c */; };
+		B391905C2873F1A7000838F6 /* Lzma86Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3D42872967700EAEB37 /* Lzma86Dec.c */; };
+		B391905D2873F1A7000838F6 /* Alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3D12872967700EAEB37 /* Alloc.c */; };
+		B391905E2873F1A7000838F6 /* LzFind.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3CE2872967700EAEB37 /* LzFind.c */; };
+		B391905F2873F1A7000838F6 /* BraIA64.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3D32872967700EAEB37 /* BraIA64.c */; };
+		B39190602873F1A7000838F6 /* CpuArch.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3D62872967700EAEB37 /* CpuArch.c */; };
+		B39190612873F1A7000838F6 /* Delta.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3D52872967700EAEB37 /* Delta.c */; };
+		B39190622873F1A7000838F6 /* LzmaDec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3D22872967700EAEB37 /* LzmaDec.c */; };
+		B39190632873F1A7000838F6 /* LzmaEnc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3CD2872967700EAEB37 /* LzmaEnc.c */; };
+		B39190642873F1A7000838F6 /* Sort.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3CF2872967700EAEB37 /* Sort.c */; };
+		B39190652873F1A7000838F6 /* Bra86.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3D02872967700EAEB37 /* Bra86.c */; };
+		B39190662873F1C0000838F6 /* libchdr_flac.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3DD2872967700EAEB37 /* libchdr_flac.c */; };
+		B39190672873F1C0000838F6 /* libchdr_bitstream.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3DB2872967700EAEB37 /* libchdr_bitstream.c */; };
+		B39190682873F1C0000838F6 /* libchdr_huffman.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3DC2872967700EAEB37 /* libchdr_huffman.c */; };
+		B39190692873F1C0000838F6 /* libchdr_chd.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3DA2872967700EAEB37 /* libchdr_chd.c */; };
+		B391906A2873F1C0000838F6 /* libchdr_cdrom.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3DF2872967700EAEB37 /* libchdr_cdrom.c */; };
+		B391906B2873F1C1000838F6 /* libchdr_flac.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3DD2872967700EAEB37 /* libchdr_flac.c */; };
+		B391906C2873F1C1000838F6 /* libchdr_bitstream.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3DB2872967700EAEB37 /* libchdr_bitstream.c */; };
+		B391906D2873F1C1000838F6 /* libchdr_huffman.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3DC2872967700EAEB37 /* libchdr_huffman.c */; };
+		B391906E2873F1C1000838F6 /* libchdr_chd.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3DA2872967700EAEB37 /* libchdr_chd.c */; };
+		B391906F2873F1C1000838F6 /* libchdr_cdrom.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3DF2872967700EAEB37 /* libchdr_cdrom.c */; };
+		B39190702873F20E000838F6 /* cspace_arm.S in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA13B2872967500EAEB37 /* cspace_arm.S */; };
+		B39190712873F20E000838F6 /* cspace_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA13A2872967500EAEB37 /* cspace_neon.S */; };
+		B39190722873F20F000838F6 /* cspace_arm.S in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA13B2872967500EAEB37 /* cspace_arm.S */; };
+		B39190732873F20F000838F6 /* cspace_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA13A2872967500EAEB37 /* cspace_neon.S */; };
+		B39190742873F219000838F6 /* cspace.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1372872967500EAEB37 /* cspace.c */; };
+		B39190752873F219000838F6 /* cspace.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1372872967500EAEB37 /* cspace.c */; };
+		B39190762873F23E000838F6 /* plat_sdl.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1532872967500EAEB37 /* plat_sdl.c */; };
+		B39190772873F23E000838F6 /* plat_sdl.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1532872967500EAEB37 /* plat_sdl.c */; };
+		B39190782873F292000838F6 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA12B2872967500EAEB37 /* libretro.c */; };
+		B39190792873F292000838F6 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA12B2872967500EAEB37 /* libretro.c */; };
 		B39768F82859E23200558958 /* libpcsx_rearmed-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libpcsx_rearmed-libretro.a */; };
 		B39768FB2859E23A00558958 /* libpcsx_rearmed-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B39768F72859E18B00558958 /* libpcsx_rearmed-libretro.a */; };
 		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
@@ -136,7 +256,6 @@
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
 		B35E6BF4207CD2740040709A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
-		B37021F9287253B200B3F6DA /* PVPCSXRearmed.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = PVPCSXRearmed.xcodeproj; sourceTree = "<group>"; };
 		B37022BD287253B300B3F6DA /* PVPCSXRearmed-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVPCSXRearmed-Prefix.pch"; sourceTree = "<group>"; };
 		B37022BF287253B300B3F6DA /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B37022C0287253B300B3F6DA /* PVPCSXRearmed.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVPCSXRearmed.h; sourceTree = "<group>"; };
@@ -911,11 +1030,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		B37021FA287253B200B3F6DA /* Products */ = {
-			isa = PBXGroup;
-			name = Products;
-			sourceTree = "<group>";
-		};
 		B37022BE287253B300B3F6DA /* PVPCSXRearmed */ = {
 			isa = PBXGroup;
 			children = (
@@ -944,7 +1058,6 @@
 				B37022C3287253B300B3F6DA /* PVPCSXRearmed.h */,
 				B37022BD287253B300B3F6DA /* PVPCSXRearmed-Prefix.pch */,
 				B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */,
-				B37021F9287253B200B3F6DA /* PVPCSXRearmed.xcodeproj */,
 				B3C7621B20783242009950E4 /* Frameworks */,
 				B3C7621120783162009950E4 /* Products */,
 			);
@@ -1031,41 +1144,41 @@
 		B3EBA1292872967500EAEB37 /* frontend */ = {
 			isa = PBXGroup;
 			children = (
-				B3EBA12A2872967500EAEB37 /* main.h */,
-				B3EBA12B2872967500EAEB37 /* libretro.c */,
-				B3EBA12C2872967500EAEB37 /* Cheat.h */,
-				B3EBA12D2872967500EAEB37 /* blit320.h */,
-				B3EBA12E2872967500EAEB37 /* blit320.s */,
-				B3EBA12F2872967500EAEB37 /* vita */,
-				B3EBA1332872967500EAEB37 /* plat_dummy.c */,
-				B3EBA1342872967500EAEB37 /* in_tsbutton.c */,
-				B3EBA1352872967500EAEB37 /* plugin.h */,
-				B3EBA1362872967500EAEB37 /* menu.c */,
 				B3EBA1372872967500EAEB37 /* cspace.c */,
-				B3EBA1382872967500EAEB37 /* plat.h */,
-				B3EBA1392872967500EAEB37 /* plat_omap.c */,
-				B3EBA13A2872967500EAEB37 /* cspace_neon.S */,
-				B3EBA13B2872967500EAEB37 /* cspace_arm.S */,
-				B3EBA13C2872967500EAEB37 /* pl_gun_ts.c */,
-				B3EBA13D2872967500EAEB37 /* plugin_lib.h */,
+				B3EBA1342872967500EAEB37 /* in_tsbutton.c */,
+				B3EBA12B2872967500EAEB37 /* libretro.c */,
 				B3EBA13E2872967500EAEB37 /* main.c */,
-				B3EBA13F2872967500EAEB37 /* libretro_core_options.h */,
-				B3EBA1402872967500EAEB37 /* libretro_core_options_intl.h */,
-				B3EBA1412872967500EAEB37 /* menu.h */,
-				B3EBA1422872967500EAEB37 /* switch */,
-				B3EBA1472872967500EAEB37 /* nopic.h */,
-				B3EBA1482872967500EAEB37 /* in_tsbutton.h */,
-				B3EBA1492872967500EAEB37 /* 3ds */,
-				B3EBA1522872967500EAEB37 /* plugin.c */,
-				B3EBA1532872967500EAEB37 /* plat_sdl.c */,
-				B3EBA1542872967500EAEB37 /* libpicofe */,
-				B3EBA1552872967500EAEB37 /* plat_omap.h */,
-				B3EBA1562872967500EAEB37 /* link.T */,
-				B3EBA1572872967500EAEB37 /* cspace.h */,
-				B3EBA1582872967500EAEB37 /* plugin_lib.c */,
-				B3EBA1592872967500EAEB37 /* pl_gun_ts.h */,
-				B3EBA15A2872967500EAEB37 /* plat_pollux.c */,
+				B3EBA1362872967500EAEB37 /* menu.c */,
+				B3EBA13C2872967500EAEB37 /* pl_gun_ts.c */,
+				B3EBA1332872967500EAEB37 /* plat_dummy.c */,
+				B3EBA1392872967500EAEB37 /* plat_omap.c */,
 				B3EBA15B2872967500EAEB37 /* plat_pandora.c */,
+				B3EBA15A2872967500EAEB37 /* plat_pollux.c */,
+				B3EBA1532872967500EAEB37 /* plat_sdl.c */,
+				B3EBA1582872967500EAEB37 /* plugin_lib.c */,
+				B3EBA1522872967500EAEB37 /* plugin.c */,
+				B3EBA12D2872967500EAEB37 /* blit320.h */,
+				B3EBA12C2872967500EAEB37 /* Cheat.h */,
+				B3EBA1572872967500EAEB37 /* cspace.h */,
+				B3EBA1482872967500EAEB37 /* in_tsbutton.h */,
+				B3EBA1402872967500EAEB37 /* libretro_core_options_intl.h */,
+				B3EBA13F2872967500EAEB37 /* libretro_core_options.h */,
+				B3EBA12A2872967500EAEB37 /* main.h */,
+				B3EBA1412872967500EAEB37 /* menu.h */,
+				B3EBA1472872967500EAEB37 /* nopic.h */,
+				B3EBA1592872967500EAEB37 /* pl_gun_ts.h */,
+				B3EBA1552872967500EAEB37 /* plat_omap.h */,
+				B3EBA1382872967500EAEB37 /* plat.h */,
+				B3EBA13D2872967500EAEB37 /* plugin_lib.h */,
+				B3EBA1352872967500EAEB37 /* plugin.h */,
+				B3EBA12E2872967500EAEB37 /* blit320.s */,
+				B3EBA13B2872967500EAEB37 /* cspace_arm.S */,
+				B3EBA13A2872967500EAEB37 /* cspace_neon.S */,
+				B3EBA1562872967500EAEB37 /* link.T */,
+				B3EBA1492872967500EAEB37 /* 3ds */,
+				B3EBA1542872967500EAEB37 /* libpicofe */,
+				B3EBA1422872967500EAEB37 /* switch */,
+				B3EBA12F2872967500EAEB37 /* vita */,
 			);
 			path = frontend;
 			sourceTree = "<group>";
@@ -1137,69 +1250,69 @@
 		B3EBA15C2872967500EAEB37 /* libpcsxcore */ = {
 			isa = PBXGroup;
 			children = (
+				B3EBA1682872967500EAEB37 /* cdriso.c */,
+				B3EBA16E2872967500EAEB37 /* cdrom.c */,
+				B3EBA17E2872967500EAEB37 /* cheat.c */,
+				B3EBA16C2872967500EAEB37 /* database.c */,
+				B3EBA17C2872967500EAEB37 /* debug.c */,
+				B3EBA1602872967500EAEB37 /* decode_xa.c */,
+				B3EBA16D2872967500EAEB37 /* disr3000a.c */,
+				B3EBA1782872967500EAEB37 /* gte_divider.c */,
+				B3EBA16B2872967500EAEB37 /* gte_nf.c */,
+				B3EBA19E2872967500EAEB37 /* gte.c */,
+				B3EBA1792872967500EAEB37 /* mdec.c */,
+				B3EBA19C2872967500EAEB37 /* memmap_win32.c */,
+				B3EBA1A82872967500EAEB37 /* misc.c */,
+				B3EBA1702872967500EAEB37 /* plugins.c */,
+				B3EBA1AA2872967500EAEB37 /* ppf.c */,
+				B3EBA1822872967500EAEB37 /* psxbios.c */,
+				B3EBA1802872967500EAEB37 /* psxcommon.c */,
+				B3EBA1AD2872967500EAEB37 /* psxcounters.c */,
+				B3EBA1752872967500EAEB37 /* psxdma.c */,
+				B3EBA1982872967500EAEB37 /* psxhle.c */,
+				B3EBA19D2872967500EAEB37 /* psxhw.c */,
+				B3EBA19F2872967500EAEB37 /* psxinterpreter.c */,
+				B3EBA19B2872967500EAEB37 /* psxmem.c */,
+				B3EBA1732872967500EAEB37 /* r3000a.c */,
+				B3EBA17A2872967500EAEB37 /* sio.c */,
+				B3EBA1742872967500EAEB37 /* socket.c */,
+				B3EBA1642872967500EAEB37 /* spu.c */,
+				B3EBA1992872967500EAEB37 /* cdriso.h */,
+				B3EBA1842872967500EAEB37 /* cdrom.h */,
 				B3EBA15D2872967500EAEB37 /* cheat.h */,
+				B3EBA1A92872967500EAEB37 /* coff.h */,
+				B3EBA1832872967500EAEB37 /* database.h */,
+				B3EBA1632872967500EAEB37 /* debug.h */,
+				B3EBA17D2872967500EAEB37 /* decode_xa.h */,
+				B3EBA1812872967500EAEB37 /* gpu.h */,
+				B3EBA1A02872967500EAEB37 /* gte_arm.h */,
+				B3EBA1AC2872967500EAEB37 /* gte_divider.h */,
+				B3EBA1722872967500EAEB37 /* gte_neon.h */,
+				B3EBA1662872967500EAEB37 /* gte.h */,
+				B3EBA1AB2872967500EAEB37 /* mdec.h */,
+				B3EBA17F2872967500EAEB37 /* memmap.h */,
+				B3EBA16F2872967500EAEB37 /* misc.h */,
+				B3EBA1B12872967500EAEB37 /* plugins.h */,
+				B3EBA1762872967500EAEB37 /* ppf.h */,
 				B3EBA15E2872967500EAEB37 /* psxbios.h */,
 				B3EBA15F2872967500EAEB37 /* psxcommon.h */,
-				B3EBA1602872967500EAEB37 /* decode_xa.c */,
-				B3EBA1612872967500EAEB37 /* sjisfont.h */,
-				B3EBA1622872967500EAEB37 /* sio.h */,
-				B3EBA1632872967500EAEB37 /* debug.h */,
-				B3EBA1642872967500EAEB37 /* spu.c */,
-				B3EBA1652872967500EAEB37 /* psxinterpreter.h */,
-				B3EBA1662872967500EAEB37 /* gte.h */,
-				B3EBA1672872967500EAEB37 /* psxhw.h */,
-				B3EBA1682872967500EAEB37 /* cdriso.c */,
-				B3EBA1692872967500EAEB37 /* psxmem.h */,
-				B3EBA16A2872967500EAEB37 /* psxhle.h */,
-				B3EBA16B2872967500EAEB37 /* gte_nf.c */,
-				B3EBA16C2872967500EAEB37 /* database.c */,
-				B3EBA16D2872967500EAEB37 /* disr3000a.c */,
-				B3EBA16E2872967500EAEB37 /* cdrom.c */,
-				B3EBA16F2872967500EAEB37 /* misc.h */,
-				B3EBA1702872967500EAEB37 /* plugins.c */,
-				B3EBA1712872967500EAEB37 /* gte_neon.S */,
-				B3EBA1722872967500EAEB37 /* gte_neon.h */,
-				B3EBA1732872967500EAEB37 /* r3000a.c */,
-				B3EBA1742872967500EAEB37 /* socket.c */,
-				B3EBA1752872967500EAEB37 /* psxdma.c */,
-				B3EBA1762872967500EAEB37 /* ppf.h */,
 				B3EBA1772872967500EAEB37 /* psxcounters.h */,
-				B3EBA1782872967500EAEB37 /* gte_divider.c */,
-				B3EBA1792872967500EAEB37 /* mdec.c */,
-				B3EBA17A2872967500EAEB37 /* sio.c */,
-				B3EBA17B2872967500EAEB37 /* spu.h */,
-				B3EBA17C2872967500EAEB37 /* debug.c */,
-				B3EBA17D2872967500EAEB37 /* decode_xa.h */,
-				B3EBA17E2872967500EAEB37 /* cheat.c */,
-				B3EBA17F2872967500EAEB37 /* memmap.h */,
-				B3EBA1802872967500EAEB37 /* psxcommon.c */,
-				B3EBA1812872967500EAEB37 /* gpu.h */,
-				B3EBA1822872967500EAEB37 /* psxbios.c */,
-				B3EBA1832872967500EAEB37 /* database.h */,
-				B3EBA1842872967500EAEB37 /* cdrom.h */,
-				B3EBA1852872967500EAEB37 /* new_dynarec */,
-				B3EBA1982872967500EAEB37 /* psxhle.c */,
-				B3EBA1992872967500EAEB37 /* cdriso.h */,
-				B3EBA19A2872967500EAEB37 /* gte_arm.S */,
-				B3EBA19B2872967500EAEB37 /* psxmem.c */,
-				B3EBA19C2872967500EAEB37 /* memmap_win32.c */,
-				B3EBA19D2872967500EAEB37 /* psxhw.c */,
-				B3EBA19E2872967500EAEB37 /* gte.c */,
-				B3EBA19F2872967500EAEB37 /* psxinterpreter.c */,
-				B3EBA1A02872967500EAEB37 /* gte_arm.h */,
-				B3EBA1A12872967500EAEB37 /* system.h */,
-				B3EBA1A22872967500EAEB37 /* psxmem_map.h */,
-				B3EBA1A32872967500EAEB37 /* lightrec */,
-				B3EBA1A82872967500EAEB37 /* misc.c */,
-				B3EBA1A92872967500EAEB37 /* coff.h */,
-				B3EBA1AA2872967500EAEB37 /* ppf.c */,
-				B3EBA1AB2872967500EAEB37 /* mdec.h */,
-				B3EBA1AC2872967500EAEB37 /* gte_divider.h */,
-				B3EBA1AD2872967500EAEB37 /* psxcounters.c */,
-				B3EBA1AE2872967500EAEB37 /* socket.h */,
-				B3EBA1AF2872967500EAEB37 /* r3000a.h */,
 				B3EBA1B02872967500EAEB37 /* psxdma.h */,
-				B3EBA1B12872967500EAEB37 /* plugins.h */,
+				B3EBA16A2872967500EAEB37 /* psxhle.h */,
+				B3EBA1672872967500EAEB37 /* psxhw.h */,
+				B3EBA1652872967500EAEB37 /* psxinterpreter.h */,
+				B3EBA1A22872967500EAEB37 /* psxmem_map.h */,
+				B3EBA1692872967500EAEB37 /* psxmem.h */,
+				B3EBA1AF2872967500EAEB37 /* r3000a.h */,
+				B3EBA1622872967500EAEB37 /* sio.h */,
+				B3EBA1612872967500EAEB37 /* sjisfont.h */,
+				B3EBA1AE2872967500EAEB37 /* socket.h */,
+				B3EBA17B2872967500EAEB37 /* spu.h */,
+				B3EBA1A12872967500EAEB37 /* system.h */,
+				B3EBA19A2872967500EAEB37 /* gte_arm.S */,
+				B3EBA1712872967500EAEB37 /* gte_neon.S */,
+				B3EBA1A32872967500EAEB37 /* lightrec */,
+				B3EBA1852872967500EAEB37 /* new_dynarec */,
 			);
 			path = libpcsxcore;
 			sourceTree = "<group>";
@@ -1207,22 +1320,22 @@
 		B3EBA1852872967500EAEB37 /* new_dynarec */ = {
 			isa = PBXGroup;
 			children = (
-				B3EBA1862872967500EAEB37 /* new_dynarec.h */,
 				B3EBA1872872967500EAEB37 /* assem_arm.c */,
-				B3EBA1882872967500EAEB37 /* assem_arm64.h */,
-				B3EBA1892872967500EAEB37 /* linkage_arm64.S */,
-				B3EBA18A2872967500EAEB37 /* pcsxmem_inline.c */,
-				B3EBA18B2872967500EAEB37 /* patches */,
-				B3EBA18E2872967500EAEB37 /* emu_if.c */,
-				B3EBA18F2872967500EAEB37 /* pcsxmem.c */,
 				B3EBA1902872967500EAEB37 /* assem_arm64.c */,
-				B3EBA1912872967500EAEB37 /* assem_arm.h */,
+				B3EBA18E2872967500EAEB37 /* emu_if.c */,
 				B3EBA1922872967500EAEB37 /* new_dynarec.c */,
-				B3EBA1932872967500EAEB37 /* linkage_offsets.h */,
-				B3EBA1942872967500EAEB37 /* linkage_arm.S */,
-				B3EBA1952872967500EAEB37 /* new_dynarec_config.h */,
-				B3EBA1962872967500EAEB37 /* pcsxmem.h */,
+				B3EBA18A2872967500EAEB37 /* pcsxmem_inline.c */,
+				B3EBA18F2872967500EAEB37 /* pcsxmem.c */,
+				B3EBA1912872967500EAEB37 /* assem_arm.h */,
+				B3EBA1882872967500EAEB37 /* assem_arm64.h */,
 				B3EBA1972872967500EAEB37 /* emu_if.h */,
+				B3EBA1932872967500EAEB37 /* linkage_offsets.h */,
+				B3EBA1952872967500EAEB37 /* new_dynarec_config.h */,
+				B3EBA1862872967500EAEB37 /* new_dynarec.h */,
+				B3EBA1962872967500EAEB37 /* pcsxmem.h */,
+				B3EBA1942872967500EAEB37 /* linkage_arm.S */,
+				B3EBA1892872967500EAEB37 /* linkage_arm64.S */,
+				B3EBA18B2872967500EAEB37 /* patches */,
 			);
 			path = new_dynarec;
 			sourceTree = "<group>";
@@ -1391,35 +1504,35 @@
 		B3EBA1FB2872967600EAEB37 /* dfsound */ = {
 			isa = PBXGroup;
 			children = (
-				B3EBA1FC2872967600EAEB37 /* dma.h */,
-				B3EBA1FD2872967600EAEB37 /* xa.h */,
-				B3EBA1FE2872967600EAEB37 /* spu.c */,
-				B3EBA1FF2872967600EAEB37 /* stdafx.h */,
-				B3EBA2002872967600EAEB37 /* out.c */,
-				B3EBA2012872967600EAEB37 /* spu_c64x.h */,
-				B3EBA2022872967600EAEB37 /* psemuxa.h */,
 				B3EBA2032872967600EAEB37 /* adsr.c */,
-				B3EBA2042872967600EAEB37 /* pulseaudio.c */,
 				B3EBA2052872967600EAEB37 /* alsa.c */,
-				B3EBA2062872967600EAEB37 /* spu_config.h */,
-				B3EBA2072872967600EAEB37 /* registers.h */,
-				B3EBA2082872967600EAEB37 /* sdl.c */,
-				B3EBA2092872967600EAEB37 /* spu.h */,
-				B3EBA20A2872967600EAEB37 /* xa.c */,
 				B3EBA20B2872967600EAEB37 /* dma.c */,
-				B3EBA20C2872967600EAEB37 /* reverb.c */,
-				B3EBA20D2872967600EAEB37 /* externals.h */,
-				B3EBA20E2872967600EAEB37 /* oss.c */,
-				B3EBA20F2872967600EAEB37 /* out.h */,
-				B3EBA2102872967600EAEB37 /* adsr.h */,
-				B3EBA2112872967600EAEB37 /* spu_c64x_dspcode.c */,
-				B3EBA2122872967600EAEB37 /* spu_c64x.c */,
-				B3EBA2132872967600EAEB37 /* arm_utils.S */,
-				B3EBA2142872967600EAEB37 /* Makefile.c64p */,
-				B3EBA2152872967600EAEB37 /* registers.c */,
 				B3EBA2162872967600EAEB37 /* freeze.c */,
 				B3EBA2172872967600EAEB37 /* nullsnd.c */,
+				B3EBA20E2872967600EAEB37 /* oss.c */,
+				B3EBA2002872967600EAEB37 /* out.c */,
+				B3EBA2042872967600EAEB37 /* pulseaudio.c */,
+				B3EBA2152872967600EAEB37 /* registers.c */,
+				B3EBA20C2872967600EAEB37 /* reverb.c */,
+				B3EBA2082872967600EAEB37 /* sdl.c */,
+				B3EBA2112872967600EAEB37 /* spu_c64x_dspcode.c */,
+				B3EBA2122872967600EAEB37 /* spu_c64x.c */,
+				B3EBA1FE2872967600EAEB37 /* spu.c */,
+				B3EBA20A2872967600EAEB37 /* xa.c */,
+				B3EBA2142872967600EAEB37 /* Makefile.c64p */,
+				B3EBA2102872967600EAEB37 /* adsr.h */,
+				B3EBA1FC2872967600EAEB37 /* dma.h */,
+				B3EBA20D2872967600EAEB37 /* externals.h */,
 				B3EBA2182872967600EAEB37 /* gauss_i.h */,
+				B3EBA20F2872967600EAEB37 /* out.h */,
+				B3EBA2022872967600EAEB37 /* psemuxa.h */,
+				B3EBA2072872967600EAEB37 /* registers.h */,
+				B3EBA2012872967600EAEB37 /* spu_c64x.h */,
+				B3EBA2062872967600EAEB37 /* spu_config.h */,
+				B3EBA2092872967600EAEB37 /* spu.h */,
+				B3EBA1FF2872967600EAEB37 /* stdafx.h */,
+				B3EBA1FD2872967600EAEB37 /* xa.h */,
+				B3EBA2132872967600EAEB37 /* arm_utils.S */,
 			);
 			path = dfsound;
 			sourceTree = "<group>";
@@ -1427,32 +1540,32 @@
 		B3EBA2192872967600EAEB37 /* gpu_unai */ = {
 			isa = PBXGroup;
 			children = (
-				B3EBA21A2872967600EAEB37 /* gpu_inner_blend.h */,
-				B3EBA21B2872967600EAEB37 /* debug.h */,
-				B3EBA21C2872967600EAEB37 /* port.h */,
-				B3EBA21D2872967600EAEB37 /* gpu_inner_light.h */,
-				B3EBA21E2872967600EAEB37 /* gpu_inner_blend_arm.h */,
-				B3EBA21F2872967600EAEB37 /* gpu_fixedpoint.h */,
-				B3EBA2202872967600EAEB37 /* gpu_inner_blend_arm7.h */,
-				B3EBA2212872967600EAEB37 /* gpu_raster_line.h */,
-				B3EBA2222872967600EAEB37 /* gpulib_if.cpp */,
 				B3EBA2232872967600EAEB37 /* Makefile */,
-				B3EBA2242872967600EAEB37 /* gpu_inner.h */,
-				B3EBA2252872967600EAEB37 /* gpu_arm.S */,
+				B3EBA2322872967600EAEB37 /* gpu.cpp */,
+				B3EBA2222872967600EAEB37 /* gpulib_if.cpp */,
+				B3EBA21B2872967600EAEB37 /* debug.h */,
 				B3EBA2262872967600EAEB37 /* gpu_arm.h */,
 				B3EBA2272872967600EAEB37 /* gpu_blit.h */,
-				B3EBA2282872967600EAEB37 /* gpu_raster_polygon.h */,
-				B3EBA2292872967600EAEB37 /* gpu_inner_light_arm.h */,
-				B3EBA22A2872967600EAEB37 /* gpu.h */,
 				B3EBA22B2872967600EAEB37 /* gpu_command.h */,
+				B3EBA21F2872967600EAEB37 /* gpu_fixedpoint.h */,
+				B3EBA21E2872967600EAEB37 /* gpu_inner_blend_arm.h */,
 				B3EBA22C2872967600EAEB37 /* gpu_inner_blend_arm5.h */,
-				B3EBA22D2872967600EAEB37 /* gpu_unai.h */,
-				B3EBA22E2872967600EAEB37 /* README_senquack.txt */,
-				B3EBA22F2872967600EAEB37 /* gpu_raster_image.h */,
-				B3EBA2302872967600EAEB37 /* gpu_raster_sprite.h */,
-				B3EBA2312872967600EAEB37 /* profiler.h */,
-				B3EBA2322872967600EAEB37 /* gpu.cpp */,
+				B3EBA2202872967600EAEB37 /* gpu_inner_blend_arm7.h */,
+				B3EBA21A2872967600EAEB37 /* gpu_inner_blend.h */,
+				B3EBA2292872967600EAEB37 /* gpu_inner_light_arm.h */,
+				B3EBA21D2872967600EAEB37 /* gpu_inner_light.h */,
 				B3EBA2332872967600EAEB37 /* gpu_inner_quantization.h */,
+				B3EBA2242872967600EAEB37 /* gpu_inner.h */,
+				B3EBA22F2872967600EAEB37 /* gpu_raster_image.h */,
+				B3EBA2212872967600EAEB37 /* gpu_raster_line.h */,
+				B3EBA2282872967600EAEB37 /* gpu_raster_polygon.h */,
+				B3EBA2302872967600EAEB37 /* gpu_raster_sprite.h */,
+				B3EBA22D2872967600EAEB37 /* gpu_unai.h */,
+				B3EBA22A2872967600EAEB37 /* gpu.h */,
+				B3EBA21C2872967600EAEB37 /* port.h */,
+				B3EBA2312872967600EAEB37 /* profiler.h */,
+				B3EBA2252872967600EAEB37 /* gpu_arm.S */,
+				B3EBA22E2872967600EAEB37 /* README_senquack.txt */,
 			);
 			path = gpu_unai;
 			sourceTree = "<group>";
@@ -1998,15 +2111,15 @@
 		B3EBA3702872967700EAEB37 /* libchdr */ = {
 			isa = PBXGroup;
 			children = (
-				B3EBA3712872967700EAEB37 /* pkg-config.pc.in */,
-				B3EBA3722872967700EAEB37 /* CMakeLists.txt */,
-				B3EBA3732872967700EAEB37 /* include */,
-				B3EBA37E2872967700EAEB37 /* tests */,
-				B3EBA3812872967700EAEB37 /* README.md */,
-				B3EBA3822872967700EAEB37 /* deps */,
 				B3EBA3D72872967700EAEB37 /* .gitrepo */,
+				B3EBA3712872967700EAEB37 /* pkg-config.pc.in */,
+				B3EBA3812872967700EAEB37 /* README.md */,
+				B3EBA3722872967700EAEB37 /* CMakeLists.txt */,
 				B3EBA3D82872967700EAEB37 /* LICENSE.txt */,
+				B3EBA3822872967700EAEB37 /* deps */,
+				B3EBA3732872967700EAEB37 /* include */,
 				B3EBA3D92872967700EAEB37 /* src */,
+				B3EBA37E2872967700EAEB37 /* tests */,
 			);
 			path = libchdr;
 			sourceTree = "<group>";
@@ -2163,16 +2276,16 @@
 		B3EBA3CC2872967700EAEB37 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				B3EBA3CD2872967700EAEB37 /* LzmaEnc.c */,
-				B3EBA3CE2872967700EAEB37 /* LzFind.c */,
-				B3EBA3CF2872967700EAEB37 /* Sort.c */,
-				B3EBA3D02872967700EAEB37 /* Bra86.c */,
 				B3EBA3D12872967700EAEB37 /* Alloc.c */,
-				B3EBA3D22872967700EAEB37 /* LzmaDec.c */,
+				B3EBA3D02872967700EAEB37 /* Bra86.c */,
 				B3EBA3D32872967700EAEB37 /* BraIA64.c */,
-				B3EBA3D42872967700EAEB37 /* Lzma86Dec.c */,
-				B3EBA3D52872967700EAEB37 /* Delta.c */,
 				B3EBA3D62872967700EAEB37 /* CpuArch.c */,
+				B3EBA3D52872967700EAEB37 /* Delta.c */,
+				B3EBA3CE2872967700EAEB37 /* LzFind.c */,
+				B3EBA3D42872967700EAEB37 /* Lzma86Dec.c */,
+				B3EBA3D22872967700EAEB37 /* LzmaDec.c */,
+				B3EBA3CD2872967700EAEB37 /* LzmaEnc.c */,
+				B3EBA3CF2872967700EAEB37 /* Sort.c */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -2469,12 +2582,6 @@
 			mainGroup = B3C7620620783162009950E4;
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = B37021FA287253B200B3F6DA /* Products */;
-					ProjectRef = B37021F9287253B200B3F6DA /* PVPCSXRearmed.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				B3C7620F20783162009950E4 /* PVPCSXRearmed-iOS */,
@@ -2511,6 +2618,65 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B391903B2873F0AF000838F6 /* dma.c in Sources */,
+				B39190012873EF6B000838F6 /* mdec.c in Sources */,
+				B3918FED2873EF6B000838F6 /* gte_divider.c in Sources */,
+				B39190532873F1A7000838F6 /* Alloc.c in Sources */,
+				B3918FEA2873EF6B000838F6 /* cdriso.c in Sources */,
+				B391903A2873F0AF000838F6 /* reverb.c in Sources */,
+				B39190502873F164000838F6 /* gpu_arm.S in Sources */,
+				B3918FFD2873EF6B000838F6 /* memmap_win32.c in Sources */,
+				B3918FF72873EF6B000838F6 /* misc.c in Sources */,
+				B3918FFF2873EF6B000838F6 /* spu.c in Sources */,
+				B39190412873F0AF000838F6 /* nullsnd.c in Sources */,
+				B391905B2873F1A7000838F6 /* Bra86.c in Sources */,
+				B39190552873F1A7000838F6 /* BraIA64.c in Sources */,
+				B39190682873F1C0000838F6 /* libchdr_huffman.c in Sources */,
+				B391903E2873F0AF000838F6 /* spu.c in Sources */,
+				B39190672873F1C0000838F6 /* libchdr_bitstream.c in Sources */,
+				B3918FFA2873EF6B000838F6 /* psxinterpreter.c in Sources */,
+				B39190522873F1A7000838F6 /* Lzma86Dec.c in Sources */,
+				B391903D2873F0AF000838F6 /* xa.c in Sources */,
+				B3918FF22873EF6B000838F6 /* plugins.c in Sources */,
+				B3918FF82873EF6B000838F6 /* psxhle.c in Sources */,
+				B39190422873F0AF000838F6 /* freeze.c in Sources */,
+				B3918FF62873EF6B000838F6 /* psxcommon.c in Sources */,
+				B391905A2873F1A7000838F6 /* Sort.c in Sources */,
+				B39190592873F1A7000838F6 /* LzmaEnc.c in Sources */,
+				B39190542873F1A7000838F6 /* LzFind.c in Sources */,
+				B39190742873F219000838F6 /* cspace.c in Sources */,
+				B391903F2873F0AF000838F6 /* arm_utils.S in Sources */,
+				B39190352873F02B000838F6 /* gte_neon.S in Sources */,
+				B3918FEE2873EF6B000838F6 /* gte_nf.c in Sources */,
+				B391904E2873F134000838F6 /* gpulib_thread_if.c in Sources */,
+				B3918FEF2873EF6B000838F6 /* psxmem.c in Sources */,
+				B39190582873F1A7000838F6 /* LzmaDec.c in Sources */,
+				B39190402873F0AF000838F6 /* Makefile in Sources */,
+				B3918FEB2873EF6B000838F6 /* sio.c in Sources */,
+				B39190342873F02B000838F6 /* gte_arm.S in Sources */,
+				B3918FF52873EF6B000838F6 /* cheat.c in Sources */,
+				B39190022873EF6B000838F6 /* r3000a.c in Sources */,
+				B3918FE92873EF6B000838F6 /* ppf.c in Sources */,
+				B391906A2873F1C0000838F6 /* libchdr_cdrom.c in Sources */,
+				B39190572873F1A7000838F6 /* Delta.c in Sources */,
+				B391903C2873F0AF000838F6 /* registers.c in Sources */,
+				B3918FFB2873EF6B000838F6 /* psxbios.c in Sources */,
+				B39190562873F1A7000838F6 /* CpuArch.c in Sources */,
+				B39190702873F20E000838F6 /* cspace_arm.S in Sources */,
+				B3918FF02873EF6B000838F6 /* cdrom.c in Sources */,
+				B39190002873EF6B000838F6 /* psxhw.c in Sources */,
+				B39190762873F23E000838F6 /* plat_sdl.c in Sources */,
+				B39190662873F1C0000838F6 /* libchdr_flac.c in Sources */,
+				B39190382873F0AF000838F6 /* adsr.c in Sources */,
+				B39190322873EFDC000838F6 /* psx_gpu_arm_neon.S in Sources */,
+				B3918FEC2873EF6B000838F6 /* database.c in Sources */,
+				B39190692873F1C0000838F6 /* libchdr_chd.c in Sources */,
+				B39190392873F0AF000838F6 /* out.c in Sources */,
+				B3918FFC2873EF6B000838F6 /* psxdma.c in Sources */,
+				B3918FF12873EF6B000838F6 /* decode_xa.c in Sources */,
+				B39190712873F20E000838F6 /* cspace_neon.S in Sources */,
+				B3918FE82873EF6B000838F6 /* gte.c in Sources */,
+				B3918FFE2873EF6B000838F6 /* psxcounters.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2518,6 +2684,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B39190782873F292000838F6 /* libretro.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2533,6 +2700,65 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B39190462873F0B0000838F6 /* dma.c in Sources */,
+				B391901C2873EF6B000838F6 /* mdec.c in Sources */,
+				B39190082873EF6B000838F6 /* gte_divider.c in Sources */,
+				B391905D2873F1A7000838F6 /* Alloc.c in Sources */,
+				B39190052873EF6B000838F6 /* cdriso.c in Sources */,
+				B39190452873F0B0000838F6 /* reverb.c in Sources */,
+				B39190512873F165000838F6 /* gpu_arm.S in Sources */,
+				B39190182873EF6B000838F6 /* memmap_win32.c in Sources */,
+				B39190122873EF6B000838F6 /* misc.c in Sources */,
+				B391901A2873EF6B000838F6 /* spu.c in Sources */,
+				B391904C2873F0B0000838F6 /* nullsnd.c in Sources */,
+				B39190652873F1A7000838F6 /* Bra86.c in Sources */,
+				B391905F2873F1A7000838F6 /* BraIA64.c in Sources */,
+				B391906D2873F1C1000838F6 /* libchdr_huffman.c in Sources */,
+				B39190492873F0B0000838F6 /* spu.c in Sources */,
+				B391906C2873F1C1000838F6 /* libchdr_bitstream.c in Sources */,
+				B39190152873EF6B000838F6 /* psxinterpreter.c in Sources */,
+				B391905C2873F1A7000838F6 /* Lzma86Dec.c in Sources */,
+				B39190482873F0B0000838F6 /* xa.c in Sources */,
+				B391900D2873EF6B000838F6 /* plugins.c in Sources */,
+				B39190132873EF6B000838F6 /* psxhle.c in Sources */,
+				B391904D2873F0B0000838F6 /* freeze.c in Sources */,
+				B39190112873EF6B000838F6 /* psxcommon.c in Sources */,
+				B39190642873F1A7000838F6 /* Sort.c in Sources */,
+				B39190632873F1A7000838F6 /* LzmaEnc.c in Sources */,
+				B391905E2873F1A7000838F6 /* LzFind.c in Sources */,
+				B39190752873F219000838F6 /* cspace.c in Sources */,
+				B391904A2873F0B0000838F6 /* arm_utils.S in Sources */,
+				B39190372873F02C000838F6 /* gte_neon.S in Sources */,
+				B39190092873EF6B000838F6 /* gte_nf.c in Sources */,
+				B391904F2873F134000838F6 /* gpulib_thread_if.c in Sources */,
+				B391900A2873EF6B000838F6 /* psxmem.c in Sources */,
+				B39190622873F1A7000838F6 /* LzmaDec.c in Sources */,
+				B391904B2873F0B0000838F6 /* Makefile in Sources */,
+				B39190062873EF6B000838F6 /* sio.c in Sources */,
+				B39190362873F02C000838F6 /* gte_arm.S in Sources */,
+				B39190102873EF6B000838F6 /* cheat.c in Sources */,
+				B391901D2873EF6B000838F6 /* r3000a.c in Sources */,
+				B39190042873EF6B000838F6 /* ppf.c in Sources */,
+				B391906F2873F1C1000838F6 /* libchdr_cdrom.c in Sources */,
+				B39190612873F1A7000838F6 /* Delta.c in Sources */,
+				B39190472873F0B0000838F6 /* registers.c in Sources */,
+				B39190162873EF6B000838F6 /* psxbios.c in Sources */,
+				B39190602873F1A7000838F6 /* CpuArch.c in Sources */,
+				B39190722873F20F000838F6 /* cspace_arm.S in Sources */,
+				B391900B2873EF6B000838F6 /* cdrom.c in Sources */,
+				B391901B2873EF6B000838F6 /* psxhw.c in Sources */,
+				B39190772873F23E000838F6 /* plat_sdl.c in Sources */,
+				B391906B2873F1C1000838F6 /* libchdr_flac.c in Sources */,
+				B39190432873F0B0000838F6 /* adsr.c in Sources */,
+				B39190332873EFDC000838F6 /* psx_gpu_arm_neon.S in Sources */,
+				B39190072873EF6B000838F6 /* database.c in Sources */,
+				B391906E2873F1C1000838F6 /* libchdr_chd.c in Sources */,
+				B39190442873F0B0000838F6 /* out.c in Sources */,
+				B39190172873EF6B000838F6 /* psxdma.c in Sources */,
+				B391900C2873EF6B000838F6 /* decode_xa.c in Sources */,
+				B39190732873F20F000838F6 /* cspace_neon.S in Sources */,
+				B39190032873EF6B000838F6 /* gte.c in Sources */,
+				B39190192873EF6B000838F6 /* psxcounters.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2540,6 +2766,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B39190792873F292000838F6 /* libretro.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2665,6 +2892,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/pcsx_rearmed/include\"",
+					"\"$(SRCROOT)/pcsx_rearmed/libretro-common/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -3095,6 +3324,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/pcsx_rearmed/include\"",
+					"\"$(SRCROOT)/pcsx_rearmed/libretro-common/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -3166,6 +3397,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/pcsx_rearmed/include\"",
+					"\"$(SRCROOT)/pcsx_rearmed/libretro-common/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;

@@ -202,7 +202,6 @@
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
 		B35E6BF4207CD2740040709A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
-		B37021F9287253B200B3F6DA /* PVYabause.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = PVYabause.xcodeproj; sourceTree = "<group>"; };
 		B37022BD287253B300B3F6DA /* PVYabause-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVYabause-Prefix.pch"; sourceTree = "<group>"; };
 		B37022BF287253B300B3F6DA /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B37022C0287253B300B3F6DA /* PVYabause.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVYabause.h; sourceTree = "<group>"; };
@@ -1622,11 +1621,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		B37021FA287253B200B3F6DA /* Products */ = {
-			isa = PBXGroup;
-			name = Products;
-			sourceTree = "<group>";
-		};
 		B37022BE287253B300B3F6DA /* PVYabause */ = {
 			isa = PBXGroup;
 			children = (
@@ -1655,7 +1649,6 @@
 				B37022C3287253B300B3F6DA /* PVYabause.h */,
 				B37022BD287253B300B3F6DA /* PVYabause-Prefix.pch */,
 				B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */,
-				B37021F9287253B200B3F6DA /* PVYabause.xcodeproj */,
 				B3C7621B20783242009950E4 /* Frameworks */,
 				B3C7621120783162009950E4 /* Products */,
 			);
@@ -4860,10 +4853,6 @@
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
-				{
-					ProductGroup = B37021FA287253B200B3F6DA /* Products */;
-					ProjectRef = B37021F9287253B200B3F6DA /* PVYabause.xcodeproj */;
-				},
 				{
 					ProductGroup = B3EB9F9B2872965000EAEB37 /* Products */;
 					ProjectRef = B3EB9F9A2872965000EAEB37 /* Yabause.xcodeproj */;

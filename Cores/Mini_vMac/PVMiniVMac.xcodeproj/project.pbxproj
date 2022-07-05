@@ -200,7 +200,6 @@
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
 		B35E6BF4207CD2740040709A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
-		B37021F9287253B200B3F6DA /* PVMiniVMac.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = PVMiniVMac.xcodeproj; sourceTree = "<group>"; };
 		B37021FE287253B200B3F6DA /* COPYING.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = COPYING.txt; sourceTree = "<group>"; };
 		B3702200287253B200B3F6DA /* CMDARGT1.i */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c.preprocessed; path = CMDARGT1.i; sourceTree = "<group>"; };
 		B3702201287253B200B3F6DA /* SPOTHRCF.i */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c.preprocessed; path = SPOTHRCF.i; sourceTree = "<group>"; };
@@ -468,11 +467,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		B37021FA287253B200B3F6DA /* Products */ = {
-			isa = PBXGroup;
-			name = Products;
-			sourceTree = "<group>";
-		};
 		B37021FC287253B200B3F6DA /* libretro-minivmac */ = {
 			isa = PBXGroup;
 			children = (
@@ -805,7 +799,6 @@
 				B37022C3287253B300B3F6DA /* PVMiniVMac.h */,
 				B37022BD287253B300B3F6DA /* PVMiniVMac-Prefix.pch */,
 				B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */,
-				B37021F9287253B200B3F6DA /* PVMiniVMac.xcodeproj */,
 				B3C7621B20783242009950E4 /* Frameworks */,
 				B3C7621120783162009950E4 /* Products */,
 			);
@@ -1023,12 +1016,6 @@
 			mainGroup = B3C7620620783162009950E4;
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = B37021FA287253B200B3F6DA /* Products */;
-					ProjectRef = B37021F9287253B200B3F6DA /* PVMiniVMac.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				B3C7620F20783162009950E4 /* PVMiniVMac-iOS */,

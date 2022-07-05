@@ -136,7 +136,6 @@
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
 		B35E6BF4207CD2740040709A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
-		B37021F9287253B200B3F6DA /* PVOpera.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = PVOpera.xcodeproj; sourceTree = "<group>"; };
 		B37022BD287253B300B3F6DA /* PVOpera-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVOpera-Prefix.pch"; sourceTree = "<group>"; };
 		B37022BF287253B300B3F6DA /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B37022C0287253B300B3F6DA /* PVOpera.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVOpera.h; sourceTree = "<group>"; };
@@ -1280,11 +1279,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		B37021FA287253B200B3F6DA /* Products */ = {
-			isa = PBXGroup;
-			name = Products;
-			sourceTree = "<group>";
-		};
 		B37022BE287253B300B3F6DA /* PVOpera */ = {
 			isa = PBXGroup;
 			children = (
@@ -1314,7 +1308,6 @@
 				B37022C3287253B300B3F6DA /* PVOpera.h */,
 				B37022BD287253B300B3F6DA /* PVOpera-Prefix.pch */,
 				B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */,
-				B37021F9287253B200B3F6DA /* PVOpera.xcodeproj */,
 				B3C7621B20783242009950E4 /* Frameworks */,
 				B3C7621120783162009950E4 /* Products */,
 			);
@@ -1867,78 +1860,78 @@
 		B3EBA54F287296E400EAEB37 /* opera-libretro */ = {
 			isa = PBXGroup;
 			children = (
-				B3EBA550287296E400EAEB37 /* Tupfile */,
-				B3EBA666287296E800EAEB37 /* Tupfile copy */,
-				B3EBA551287296E400EAEB37 /* libretro_core_options.c */,
-				B3EBA65A287296E700EAEB37 /* libretro_core_options copy.c */,
-				B3EBA552287296E400EAEB37 /* libretro.c */,
-				B3EBA65F287296E700EAEB37 /* libretro copy.c */,
-				B3EBA553287296E400EAEB37 /* cuefile.c */,
-				B3EBA64F287296E500EAEB37 /* cuefile copy.c */,
-				B3EBA554287296E400EAEB37 /* lr_input_crosshair.h */,
-				B3EBA65B287296E700EAEB37 /* lr_input_crosshair copy.h */,
-				B3EBA555287296E400EAEB37 /* opera_lr_callbacks.h */,
-				B3EBA655287296E600EAEB37 /* opera_lr_callbacks copy.h */,
-				B3EBA556287296E400EAEB37 /* opera_lr_dsp_regular.ic */,
-				B3EBA64E287296E500EAEB37 /* opera_lr_dsp_regular copy.ic */,
-				B3EBA557287296E400EAEB37 /* opera_lr_opts.h */,
-				B3EBA65E287296E700EAEB37 /* opera_lr_opts copy.h */,
-				B3EBA558287296E400EAEB37 /* lr_input_descs.h */,
-				B3EBA665287296E800EAEB37 /* lr_input_descs copy.h */,
-				B3EBA559287296E400EAEB37 /* retro_cdimage.h */,
-				B3EBA658287296E600EAEB37 /* retro_cdimage copy.h */,
-				B3EBA55A287296E400EAEB37 /* lr_input.h */,
-				B3EBA652287296E600EAEB37 /* lr_input copy.h */,
-				B3EBA55B287296E400EAEB37 /* Makefile */,
-				B3EBA668287296E800EAEB37 /* Makefile copy */,
-				B3EBA55C287296E400EAEB37 /* opera_lr_dsp_threaded.ic */,
-				B3EBA65D287296E700EAEB37 /* opera_lr_dsp_threaded copy.ic */,
-				B3EBA55D287296E400EAEB37 /* opera_lr_dsp.c */,
-				B3EBA66C287296E900EAEB37 /* opera_lr_dsp copy.c */,
-				B3EBA55E287296E400EAEB37 /* Makefile.common */,
-				B3EBA66B287296E800EAEB37 /* Makefile copy.common */,
-				B3EBA55F287296E400EAEB37 /* opera_lr_nvram.h */,
-				B3EBA653287296E600EAEB37 /* opera_lr_nvram copy.h */,
-				B3EBA560287296E400EAEB37 /* README.md */,
-				B3EBA669287296E800EAEB37 /* README copy.md */,
-				B3EBA561287296E400EAEB37 /* opera_lr_callbacks.c */,
-				B3EBA663287296E800EAEB37 /* opera_lr_callbacks copy.c */,
-				B3EBA562287296E400EAEB37 /* cuefile.h */,
-				B3EBA65C287296E700EAEB37 /* cuefile copy.h */,
-				B3EBA563287296E400EAEB37 /* lr_input_crosshair.c */,
-				B3EBA662287296E700EAEB37 /* lr_input_crosshair copy.c */,
 				B3EBA564287296E400EAEB37 /* .gitignore */,
 				B3EBA654287296E600EAEB37 /* .gitignore copy */,
-				B3EBA565287296E400EAEB37 /* libretro_core_options.h */,
-				B3EBA650287296E600EAEB37 /* libretro_core_options copy.h */,
-				B3EBA566287296E400EAEB37 /* libopera */,
-				B3EBA71B287296EA00EAEB37 /* libopera */,
-				B3EBA599287296E500EAEB37 /* lr_input_descs.c */,
+				B3EBA64D287296E500EAEB37 /* control */,
+				B3EBA661287296E700EAEB37 /* control copy */,
+				B3EBA55B287296E400EAEB37 /* Makefile */,
+				B3EBA668287296E800EAEB37 /* Makefile copy */,
+				B3EBA550287296E400EAEB37 /* Tupfile */,
+				B3EBA666287296E800EAEB37 /* Tupfile copy */,
+				B3EBA64F287296E500EAEB37 /* cuefile copy.c */,
+				B3EBA553287296E400EAEB37 /* cuefile.c */,
+				B3EBA65F287296E700EAEB37 /* libretro copy.c */,
+				B3EBA65A287296E700EAEB37 /* libretro_core_options copy.c */,
+				B3EBA551287296E400EAEB37 /* libretro_core_options.c */,
+				B3EBA552287296E400EAEB37 /* libretro.c */,
+				B3EBA660287296E700EAEB37 /* lr_input copy.c */,
+				B3EBA662287296E700EAEB37 /* lr_input_crosshair copy.c */,
+				B3EBA563287296E400EAEB37 /* lr_input_crosshair.c */,
 				B3EBA66D287296E900EAEB37 /* lr_input_descs copy.c */,
-				B3EBA59A287296E500EAEB37 /* opera_lr_opts.c */,
+				B3EBA599287296E500EAEB37 /* lr_input_descs.c */,
+				B3EBA646287296E500EAEB37 /* lr_input.c */,
+				B3EBA663287296E800EAEB37 /* opera_lr_callbacks copy.c */,
+				B3EBA561287296E400EAEB37 /* opera_lr_callbacks.c */,
+				B3EBA66C287296E900EAEB37 /* opera_lr_dsp copy.c */,
+				B3EBA55D287296E400EAEB37 /* opera_lr_dsp.c */,
+				B3EBA664287296E800EAEB37 /* opera_lr_nvram copy.c */,
+				B3EBA64B287296E500EAEB37 /* opera_lr_nvram.c */,
 				B3EBA651287296E600EAEB37 /* opera_lr_opts copy.c */,
-				B3EBA59B287296E500EAEB37 /* libretro-common */,
-				B3EBA6C8287296E900EAEB37 /* libretro-common */,
+				B3EBA59A287296E500EAEB37 /* opera_lr_opts.c */,
+				B3EBA66A287296E800EAEB37 /* retro_cdimage copy.c */,
+				B3EBA64A287296E500EAEB37 /* retro_cdimage.c */,
+				B3EBA66B287296E800EAEB37 /* Makefile copy.common */,
+				B3EBA55E287296E400EAEB37 /* Makefile.common */,
+				B3EBA65C287296E700EAEB37 /* cuefile copy.h */,
+				B3EBA562287296E400EAEB37 /* cuefile.h */,
+				B3EBA650287296E600EAEB37 /* libretro_core_options copy.h */,
+				B3EBA565287296E400EAEB37 /* libretro_core_options.h */,
+				B3EBA652287296E600EAEB37 /* lr_input copy.h */,
+				B3EBA65B287296E700EAEB37 /* lr_input_crosshair copy.h */,
+				B3EBA554287296E400EAEB37 /* lr_input_crosshair.h */,
+				B3EBA665287296E800EAEB37 /* lr_input_descs copy.h */,
+				B3EBA558287296E400EAEB37 /* lr_input_descs.h */,
+				B3EBA55A287296E400EAEB37 /* lr_input.h */,
+				B3EBA655287296E600EAEB37 /* opera_lr_callbacks copy.h */,
+				B3EBA555287296E400EAEB37 /* opera_lr_callbacks.h */,
+				B3EBA657287296E600EAEB37 /* opera_lr_dsp copy.h */,
+				B3EBA645287296E500EAEB37 /* opera_lr_dsp.h */,
+				B3EBA653287296E600EAEB37 /* opera_lr_nvram copy.h */,
+				B3EBA55F287296E400EAEB37 /* opera_lr_nvram.h */,
+				B3EBA65E287296E700EAEB37 /* opera_lr_opts copy.h */,
+				B3EBA557287296E400EAEB37 /* opera_lr_opts.h */,
+				B3EBA658287296E600EAEB37 /* retro_cdimage copy.h */,
+				B3EBA559287296E400EAEB37 /* retro_cdimage.h */,
+				B3EBA64E287296E500EAEB37 /* opera_lr_dsp_regular copy.ic */,
+				B3EBA556287296E400EAEB37 /* opera_lr_dsp_regular.ic */,
+				B3EBA65D287296E700EAEB37 /* opera_lr_dsp_threaded copy.ic */,
+				B3EBA55C287296E400EAEB37 /* opera_lr_dsp_threaded.ic */,
+				B3EBA669287296E800EAEB37 /* README copy.md */,
+				B3EBA560287296E400EAEB37 /* README.md */,
+				B3EBA659287296E600EAEB37 /* link copy.T */,
+				B3EBA644287296E500EAEB37 /* link.T */,
+				B3EBA667287296E800EAEB37 /* .gitlab-ci copy.yml */,
+				B3EBA643287296E500EAEB37 /* .gitlab-ci.yml */,
+				B3EBA656287296E600EAEB37 /* .travis copy.yml */,
+				B3EBA64C287296E500EAEB37 /* .travis.yml */,
 				B3EBA5EE287296E500EAEB37 /* deps */,
 				B3EBA673287296E900EAEB37 /* deps */,
-				B3EBA643287296E500EAEB37 /* .gitlab-ci.yml */,
-				B3EBA667287296E800EAEB37 /* .gitlab-ci copy.yml */,
-				B3EBA644287296E500EAEB37 /* link.T */,
-				B3EBA659287296E600EAEB37 /* link copy.T */,
-				B3EBA645287296E500EAEB37 /* opera_lr_dsp.h */,
-				B3EBA657287296E600EAEB37 /* opera_lr_dsp copy.h */,
-				B3EBA646287296E500EAEB37 /* lr_input.c */,
-				B3EBA660287296E700EAEB37 /* lr_input copy.c */,
 				B3EBA647287296E500EAEB37 /* jni */,
 				B3EBA66E287296E900EAEB37 /* jni */,
-				B3EBA64A287296E500EAEB37 /* retro_cdimage.c */,
-				B3EBA66A287296E800EAEB37 /* retro_cdimage copy.c */,
-				B3EBA64B287296E500EAEB37 /* opera_lr_nvram.c */,
-				B3EBA664287296E800EAEB37 /* opera_lr_nvram copy.c */,
-				B3EBA64C287296E500EAEB37 /* .travis.yml */,
-				B3EBA661287296E700EAEB37 /* control copy */,
-				B3EBA656287296E600EAEB37 /* .travis copy.yml */,
-				B3EBA64D287296E500EAEB37 /* control */,
+				B3EBA566287296E400EAEB37 /* libopera */,
+				B3EBA71B287296EA00EAEB37 /* libopera */,
+				B3EBA59B287296E500EAEB37 /* libretro-common */,
+				B3EBA6C8287296E900EAEB37 /* libretro-common */,
 			);
 			path = "opera-libretro";
 			sourceTree = "<group>";
@@ -3847,12 +3840,6 @@
 			mainGroup = B3C7620620783162009950E4;
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = B37021FA287253B200B3F6DA /* Products */;
-					ProjectRef = B37021F9287253B200B3F6DA /* PVOpera.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				B3C7620F20783162009950E4 /* PVOpera-iOS */,
