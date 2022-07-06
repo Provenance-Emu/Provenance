@@ -1341,22 +1341,6 @@
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-mno-thumb",
-					"-mfpu=neon",
-					"-fno-operator-names",
-					"-fno-rtti",
-					"-ffast-math",
-					"-ftree-vectorize",
-					"-fno-strict-aliasing",
-					"-frename-registers",
-					"-fno-rtti",
-					"-fpermissive",
-					"-fno-operator-names",
-					"-fsingle-precision-constant",
-					"-DTARGET_NO_NIXPROF",
-				);
 				SDKROOT = iphoneos;
 				TVOS_DEPLOYMENT_TARGET = 11.0;
 				VALIDATE_PRODUCT = YES;
@@ -1478,6 +1462,7 @@
 		B3344BC02859E088006E6B3A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -1487,7 +1472,10 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = "ep128emu-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -1498,6 +1486,7 @@
 		B3344BC12859E088006E6B3A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -1507,7 +1496,10 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = "ep128emu-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -1518,6 +1510,7 @@
 		B3344BC22859E088006E6B3A /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -1527,7 +1520,10 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = "ep128emu-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -1775,7 +1771,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = "-DTARGET_NO_NIXPROF";
 				SDKROOT = iphoneos;
 				TVOS_DEPLOYMENT_TARGET = 11.0;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
@@ -1849,22 +1844,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-mno-thumb",
-					"-mfpu=neon",
-					"-fno-operator-names",
-					"-fno-rtti",
-					"-ffast-math",
-					"-ftree-vectorize",
-					"-fno-strict-aliasing",
-					"-frename-registers",
-					"-fno-rtti",
-					"-fpermissive",
-					"-fno-operator-names",
-					"-fsingle-precision-constant",
-					"-DTARGET_NO_NIXPROF",
-				);
 				SDKROOT = iphoneos;
 				TVOS_DEPLOYMENT_TARGET = 11.0;
 				VALIDATE_PRODUCT = YES;

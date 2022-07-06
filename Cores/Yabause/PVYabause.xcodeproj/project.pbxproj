@@ -5141,22 +5141,6 @@
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-mno-thumb",
-					"-mfpu=neon",
-					"-fno-operator-names",
-					"-fno-rtti",
-					"-ffast-math",
-					"-ftree-vectorize",
-					"-fno-strict-aliasing",
-					"-frename-registers",
-					"-fno-rtti",
-					"-fpermissive",
-					"-fno-operator-names",
-					"-fsingle-precision-constant",
-					"-DTARGET_NO_NIXPROF",
-				);
 				SDKROOT = iphoneos;
 				TVOS_DEPLOYMENT_TARGET = 11.0;
 				VALIDATE_PRODUCT = YES;
@@ -5565,7 +5549,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = "-DTARGET_NO_NIXPROF";
 				SDKROOT = iphoneos;
 				TVOS_DEPLOYMENT_TARGET = 11.0;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
@@ -5638,22 +5621,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-mno-thumb",
-					"-mfpu=neon",
-					"-fno-operator-names",
-					"-fno-rtti",
-					"-ffast-math",
-					"-ftree-vectorize",
-					"-fno-strict-aliasing",
-					"-frename-registers",
-					"-fno-rtti",
-					"-fpermissive",
-					"-fno-operator-names",
-					"-fsingle-precision-constant",
-					"-DTARGET_NO_NIXPROF",
-				);
 				SDKROOT = iphoneos;
 				TVOS_DEPLOYMENT_TARGET = 11.0;
 				VALIDATE_PRODUCT = YES;

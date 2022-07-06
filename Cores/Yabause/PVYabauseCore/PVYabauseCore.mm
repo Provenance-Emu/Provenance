@@ -133,15 +133,15 @@
 }
 
 - (GLenum)pixelFormat {
-    return GL_BGRA;
+    return GL_RGB;
 }
 
 - (GLenum)pixelType {
-    return GL_UNSIGNED_BYTE;
+    return GL_UNSIGNED_SHORT_5_6_5;
 }
 
 - (GLenum)internalPixelFormat {
-    return GL_RGBA;
+    return GL_RGB565;
 }
 
 # pragma mark - Audio
