@@ -9,13 +9,23 @@ import Foundation
 import PVSupport
 import RealmSwift
 import UIKit
-import PVLibRetro
+
+extension Sequence where Iterator.Element : Hashable {
+
+    func intersects<S : Sequence>(with sequence: S) -> Bool
+        where S.Iterator.Element == Iterator.Element
+    {
+        let sequenceSet = Set(sequence)
+        return self.contains(where: sequenceSet.contains)
+    }
+}
 
 // MARK: - System Scanner
 
 public extension PVEmulatorConfiguration {
     static var coreClasses: [ClassInfo] {
-        let motherClassInfo = [ClassInfo(PVEmulatorCore.self), ClassInfo(PVLibRetroCore.self)]
+        let libRetroCoreClass = NSClassFromString("PVLibRetroCore")
+        let motherClassInfo = [ClassInfo(PVEmulatorCore.self), ClassInfo(libRetroCoreClass)]
         var subclassList = [ClassInfo]()
 
         var count = UInt32(0)
@@ -23,9 +33,7 @@ public extension PVEmulatorConfiguration {
         let classList = UnsafeBufferPointer(start: classListPointer, count: Int(count))
 
         for i in 0 ..< Int(count) {
-            if let classInfo = ClassInfo(classList[i], withSuperclass: ["PVEmulatorCore", "PVLibRetroCore"]),
-                let superclassInfo = classInfo.superclassInfo,
-               motherClassInfo.contains(superclassInfo)  {
+            if let classInfo = ClassInfo(classList[i], withSuperclass: ["PVEmulatorCore", "PVLibRetroCore"]), let superclassesInfo = classInfo.superclassesInfo, motherClassInfo.intersects(with: motherClassInfo)  {
                 subclassList.append(classInfo)
             }
         }
