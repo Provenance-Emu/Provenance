@@ -54,6 +54,18 @@
 
 #define RETRO_API_VERSION 1
 
+@interface PVLibRetroCore ()
+{
+    @public
+    uint32_t *videoBuffer;
+    uint32_t *videoBufferA;
+    uint32_t *videoBufferB;
+
+    int _videoWidth, _videoHeight;
+    int16_t _pad[2][12];
+}
+@end
+
 
 // MARK: - Retro Structs
 static struct retro_core_t      core;
@@ -461,14 +473,56 @@ bool core_get_memory(retro_ctx_memory_info_t *info)
     return true;
 }
 
+
+
+static void video_configure(const struct retro_game_geometry * geom) {
+    __strong PVLibRetroCore *strongCurrent = _current;
+    
+    strongCurrent->_videoWidth  = geom->max_width;
+    strongCurrent->_videoHeight = geom->max_height;
+}
+
 bool core_load_game(retro_ctx_load_content_info_t *load_info)
 {
     if (!load_info)
         return false;
     
-    if (load_info->special)
-        return core.retro_load_game_special(load_info->special->id, load_info->info, load_info->content->size);
-    return core.retro_load_game(*load_info->content->elems[0].data ? load_info->info : NULL);
+    BOOL loaded = load_info->special ?
+    core.retro_load_game_special(load_info->special->id, load_info->info, load_info->content->size) :
+    core.retro_load_game(*load_info->content->elems[0].data ? load_info->info : NULL);
+    
+    if (!loaded) {
+        ELOG(@"Core failed to load game.");
+        return false;
+    }
+    
+    struct retro_system_timing timing = {
+      60.0f, 10000.0f
+    };
+    struct retro_game_geometry geom = {
+      100, 100, 100, 100, 1.0f
+    };
+    struct retro_system_av_info av = {
+      geom, timing
+    };
+//    struct retro_system_info system = {
+//      0, 0, 0, false, false
+//    };
+//
+//    struct retro_game_info info = {
+//      filename,
+//      0,
+//      0,
+//      NULL
+//    };
+
+    
+    core.retro_get_system_av_info(&av);
+    ILOG(@"Video: %ix%i\n", av.geometry.base_width, av.geometry.base_height);
+
+    video_configure(&av.geometry);
+    return true;
+//    audio_init(av.timing.sample_rate);
 }
 
 bool core_get_system_info(struct retro_system_info *system)
@@ -708,7 +762,6 @@ void audio_driver_unset_callback(void)
 //   audio_callback.callback  = NULL;
 //   audio_callback.set_state = NULL;
 }
-
 
 bool runloop_ctl(enum runloop_ctl_state state, void *data) {
     NSLog(@"runloop_ctl : %i", state);
@@ -1657,18 +1710,6 @@ static void load_symbols(enum rarch_core_type type, struct retro_core_t *current
     }
 }
 
-
-@interface PVLibRetroCore ()
-{
-    uint32_t *videoBuffer;
-    uint32_t *videoBufferA;
-    uint32_t *videoBufferB;
-
-    int _videoWidth, _videoHeight;
-    int16_t _pad[2][12];
-}
-@end
-
 @implementation PVLibRetroCore
 static void audio_callback(int16_t left, int16_t right)
 {
@@ -1874,11 +1915,14 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
 }
 
 - (CGRect)screenRect {
-    static struct retro_system_av_info av_info;
-    core.retro_get_system_av_info(&av_info);
-    unsigned height = av_info.geometry.base_height;
-    unsigned width = av_info.geometry.base_width;
-    
+//    static struct retro_system_av_info av_info;
+//    core.retro_get_system_av_info(&av_info);
+//    unsigned height = av_info.geometry.base_height;
+//    unsigned width = av_info.geometry.base_width;
+//
+    unsigned height = _videoHeight;
+    unsigned width = _videoWidth;
+ 
     return CGRectMake(0, 0, width, height);
 }
 
