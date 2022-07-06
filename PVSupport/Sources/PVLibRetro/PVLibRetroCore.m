@@ -1392,17 +1392,17 @@ static bool environment_callback(unsigned cmd, void *data) {
             break;
         }
         case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY : {
-            NSString *appSupportPath = [strongCurrent BIOSPath];
+            NSString *appSupportPath = [strongCurrent saveStatesPath];
             
             *(const char **)data = [appSupportPath UTF8String];
-            DLOG(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", appSupportPath);
+            DLOG(@"Environ SAVE_DIRECTORY: \"%@\".\n", appSupportPath);
             break;
         }
         case RETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY : {
-            NSString *appSupportPath = [strongCurrent BIOSPath];
+            NSString *appSupportPath = [strongCurrent batterySavesPath];
             
             *(const char **)data = [appSupportPath UTF8String];
-            DLOG(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", appSupportPath);
+            DLOG(@"Environ CONTENT_DIRECTORY: \"%@\".\n", appSupportPath);
             break;
         }
             
