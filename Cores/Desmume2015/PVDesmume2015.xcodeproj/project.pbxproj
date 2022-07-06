@@ -44,6 +44,8 @@
 		B31B305B272E2CAC00FF72B9 /* cheatSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DB4272E2C9800FF72B9 /* cheatSystem.cpp */; };
 		B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C31B2191964F009F4EDC /* AVFoundation.framework */; };
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
+		B338055A28757BA60009C732 /* PVDesmume2015Core+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVDesmume2015Core+Controls.mm */; };
+		B338055B28757C3A0009C732 /* PVDesmume2015Core+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVDesmume2015Core+Controls.mm */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
 		B3423264286EC1400033EFA5 /* libretro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E80272E2C9800FF72B9 /* libretro.cpp */; };
@@ -2686,6 +2688,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3447EC4218BEDD200557ACE /* PVDesmume2015Core.mm in Sources */,
+				B338055A28757BA60009C732 /* PVDesmume2015Core+Controls.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2788,6 +2791,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B338055B28757C3A0009C732 /* PVDesmume2015Core+Controls.mm in Sources */,
 				B3C76226207833DE009950E4 /* PVDesmume2015Core.mm in Sources */,
 				B393138628710F9100372EBB /* arm_gen.cpp in Sources */,
 			);
