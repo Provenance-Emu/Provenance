@@ -56,14 +56,15 @@
 
 @interface PVLibRetroCore ()
 {
-    @public
+@public
     uint32_t *videoBuffer;
     uint32_t *videoBufferA;
     uint32_t *videoBufferB;
-
+    
     int _videoWidth, _videoHeight;
     int16_t _pad[2][12];
 }
+- (void)pollControllers;
 @end
 
 
@@ -118,7 +119,7 @@ static char path_libretro[PATH_MAX_LENGTH];
 
 char *config_get_active_core_path_ptr(void)
 {
-   return path_libretro;
+    return path_libretro;
 }
 
 //const char *config_get_active_core_path(void)
@@ -128,33 +129,33 @@ char *config_get_active_core_path_ptr(void)
 
 bool config_active_core_path_is_empty(void)
 {
-   return !path_libretro[0];
+    return !path_libretro[0];
 }
 
 size_t config_get_active_core_path_size(void)
 {
-   return sizeof(path_libretro);
+    return sizeof(path_libretro);
 }
 
 void config_set_active_core_path(const char *path)
 {
-   strlcpy(path_libretro, path, sizeof(path_libretro));
+    strlcpy(path_libretro, path, sizeof(path_libretro));
 }
 
 void config_clear_active_core_path(void)
 {
-   *path_libretro = '\0';
+    *path_libretro = '\0';
 }
 
 const char *config_get_active_path(void)
 {
-//   global_t   *global          = global_get_ptr();
-//
-//   if (!string_is_empty(global->path.config))
-//	  return global->path.config;
-
-
-   return NULL;
+    //   global_t   *global          = global_get_ptr();
+    //
+    //   if (!string_is_empty(global->path.config))
+    //	  return global->path.config;
+    
+    
+    return NULL;
 }
 
 void config_free_state(void)
@@ -319,9 +320,9 @@ static bool core_init_libretro_cbs(void *data)
     if (!cbs)
         return false;
     
-   core.retro_set_video_refresh(video_driver_frame);
-//   core.retro_set_audio_sample(audio_driver_sample);
-//   core.retro_set_audio_sample_batch(audio_driver_sample_batch);
+    core.retro_set_video_refresh(video_driver_frame);
+    //   core.retro_set_audio_sample(audio_driver_sample);
+    //   core.retro_set_audio_sample_batch(audio_driver_sample_batch);
     core.retro_set_input_state(core_input_state_poll);
     core.retro_set_input_poll(core_input_state_poll_maybe);
     
@@ -361,18 +362,18 @@ static bool core_init_libretro_cbs(void *data)
  **/
 bool core_set_default_callbacks(void *data)
 {
-	struct retro_callbacks *cbs = (struct retro_callbacks*)data;
-
-	if (!cbs)
-		return false;
-
-	cbs->frame_cb        = video_driver_frame;
-//	cbs->sample_cb       = audio_callback;
-//	cbs->sample_batch_cb = audio_batch_callback;
-	cbs->state_cb        = core_input_state_poll;
-	cbs->poll_cb         = input_poll;
-
-	return true;
+    struct retro_callbacks *cbs = (struct retro_callbacks*)data;
+    
+    if (!cbs)
+        return false;
+    
+    cbs->frame_cb        = video_driver_frame;
+    //	cbs->sample_cb       = audio_callback;
+    //	cbs->sample_batch_cb = audio_batch_callback;
+    cbs->state_cb        = core_input_state_poll;
+    cbs->poll_cb         = input_poll;
+    
+    return true;
 }
 
 bool core_deinit(void *data)
@@ -487,9 +488,16 @@ bool core_load_game(retro_ctx_load_content_info_t *load_info)
     if (!load_info)
         return false;
     
-    BOOL loaded = load_info->special ?
-    core.retro_load_game_special(load_info->special->id, load_info->info, load_info->content->size) :
-    core.retro_load_game(*load_info->content->elems[0].data ? load_info->info : NULL);
+    BOOL loaded = false;
+    if (load_info->special != nil) {
+        loaded = core.retro_load_game_special(load_info->special->id, load_info->info, load_info->content->size);
+    } else {
+//        if(load_info->content != nil && load_info->content->elems != nil) {
+//            core.retro_load_game(*load_info->content->elems[0].data);
+//        } else {
+        loaded = core.retro_load_game(load_info->info);
+//        }
+    }
     
     if (!loaded) {
         ELOG(@"Core failed to load game.");
@@ -497,32 +505,32 @@ bool core_load_game(retro_ctx_load_content_info_t *load_info)
     }
     
     struct retro_system_timing timing = {
-      60.0f, 10000.0f
+        60.0f, 10000.0f
     };
     struct retro_game_geometry geom = {
-      100, 100, 100, 100, 1.0f
+        100, 100, 100, 100, 1.0f
     };
     struct retro_system_av_info av = {
-      geom, timing
+        geom, timing
     };
-//    struct retro_system_info system = {
-//      0, 0, 0, false, false
-//    };
-//
-//    struct retro_game_info info = {
-//      filename,
-//      0,
-//      0,
-//      NULL
-//    };
-
+    //    struct retro_system_info system = {
+    //      0, 0, 0, false, false
+    //    };
+    //
+    //    struct retro_game_info info = {
+    //      filename,
+    //      0,
+    //      0,
+    //      NULL
+    //    };
+    
     
     core.retro_get_system_av_info(&av);
     ILOG(@"Video: %ix%i\n", av.geometry.base_width, av.geometry.base_height);
-
+    
     video_configure(&av.geometry);
     return true;
-//    audio_init(av.timing.sample_rate);
+    //    audio_init(av.timing.sample_rate);
 }
 
 bool core_get_system_info(struct retro_system_info *system)
@@ -644,7 +652,7 @@ bool core_load(void)
         return false;
     
     core_get_system_av_info(video_viewport_get_system_av_info());
-   runloop_ctl(RUNLOOP_CTL_SET_FRAME_LIMIT, NULL);
+    runloop_ctl(RUNLOOP_CTL_SET_FRAME_LIMIT, NULL);
     
     return true;
 }
@@ -734,17 +742,17 @@ void input_poll(void)
  **/
 void uninit_libretro_sym(struct retro_core_t *current_core)
 {
-    #ifdef HAVE_DYNAMIC
-       if (lib_handle)
-          dylib_close(lib_handle);
-       lib_handle = NULL;
-    #endif
+#ifdef HAVE_DYNAMIC
+    if (lib_handle)
+        dylib_close(lib_handle);
+    lib_handle = NULL;
+#endif
     
-       memset(current_core, 0, sizeof(struct retro_core_t));
+    memset(current_core, 0, sizeof(struct retro_core_t));
     
-      runloop_ctl(RUNLOOP_CTL_CORE_OPTIONS_DEINIT, NULL);
-      runloop_ctl(RUNLOOP_CTL_SYSTEM_INFO_FREE, NULL);
-      runloop_ctl(RUNLOOP_CTL_FRAME_TIME_FREE, NULL);
+    runloop_ctl(RUNLOOP_CTL_CORE_OPTIONS_DEINIT, NULL);
+    runloop_ctl(RUNLOOP_CTL_SYSTEM_INFO_FREE, NULL);
+    runloop_ctl(RUNLOOP_CTL_FRAME_TIME_FREE, NULL);
     //   camera_driver_ctl(RARCH_CAMERA_CTL_UNSET_ACTIVE, NULL);
     ////   location_driver_ctl(RARCH_LOCATION_CTL_UNSET_ACTIVE, NULL);
     //
@@ -759,517 +767,517 @@ void uninit_libretro_sym(struct retro_core_t *current_core)
 #endif
 void audio_driver_unset_callback(void)
 {
-//   audio_callback.callback  = NULL;
-//   audio_callback.set_state = NULL;
+    //   audio_callback.callback  = NULL;
+    //   audio_callback.set_state = NULL;
 }
 
 bool runloop_ctl(enum runloop_ctl_state state, void *data) {
     NSLog(@"runloop_ctl : %i", state);
     switch (state)
     {
-//       case RUNLOOP_CTL_SHADER_DIR_DEINIT:
-//          shader_dir_free(&runloop_shader_dir);
-//          break;
-//       case RUNLOOP_CTL_SHADER_DIR_INIT:
-//          return shader_dir_init(&runloop_shader_dir);
-       case RUNLOOP_CTL_SYSTEM_INFO_INIT:
-          core_get_system_info(&runloop_system.info);
-
-//          if (!runloop_system.info.library_name)
-//             runloop_system.info.library_name = msg_hash_to_str(MSG_UNKNOWN);
-          if (!runloop_system.info.library_version)
-             runloop_system.info.library_version = "v0";
-
-//          video_driver_set_title_buf();
-
-          strlcpy(runloop_system.valid_extensions,
-                runloop_system.info.valid_extensions ?
-                runloop_system.info.valid_extensions : DEFAULT_EXT,
-                sizeof(runloop_system.valid_extensions));
-          break;
-       case RUNLOOP_CTL_GET_CORE_OPTION_SIZE:
-//          {
-//             unsigned *idx = (unsigned*)data;
-//             if (!idx)
-//                return false;
-//             *idx = core_option_manager_size(runloop_core_options);
-//          }
-          break;
-       case RUNLOOP_CTL_HAS_CORE_OPTIONS:
+            //       case RUNLOOP_CTL_SHADER_DIR_DEINIT:
+            //          shader_dir_free(&runloop_shader_dir);
+            //          break;
+            //       case RUNLOOP_CTL_SHADER_DIR_INIT:
+            //          return shader_dir_init(&runloop_shader_dir);
+        case RUNLOOP_CTL_SYSTEM_INFO_INIT:
+            core_get_system_info(&runloop_system.info);
+            
+            //          if (!runloop_system.info.library_name)
+            //             runloop_system.info.library_name = msg_hash_to_str(MSG_UNKNOWN);
+            if (!runloop_system.info.library_version)
+                runloop_system.info.library_version = "v0";
+            
+            //          video_driver_set_title_buf();
+            
+            strlcpy(runloop_system.valid_extensions,
+                    runloop_system.info.valid_extensions ?
+                    runloop_system.info.valid_extensions : DEFAULT_EXT,
+                    sizeof(runloop_system.valid_extensions));
+            break;
+        case RUNLOOP_CTL_GET_CORE_OPTION_SIZE:
+            //          {
+            //             unsigned *idx = (unsigned*)data;
+            //             if (!idx)
+            //                return false;
+            //             *idx = core_option_manager_size(runloop_core_options);
+            //          }
+            break;
+        case RUNLOOP_CTL_HAS_CORE_OPTIONS:
             return false; //runloop_core_options;
-       case RUNLOOP_CTL_CORE_OPTIONS_LIST_GET:
-//          {
-//             core_option_manager_t **coreopts = (core_option_manager_t**)data;
-//             if (!coreopts)
-//                return false;
-//             *coreopts = runloop_core_options;
-//          }
-          break;
-       case RUNLOOP_CTL_SYSTEM_INFO_GET:
-          {
-             rarch_system_info_t **system = (rarch_system_info_t**)data;
-             if (!system)
+        case RUNLOOP_CTL_CORE_OPTIONS_LIST_GET:
+            //          {
+            //             core_option_manager_t **coreopts = (core_option_manager_t**)data;
+            //             if (!coreopts)
+            //                return false;
+            //             *coreopts = runloop_core_options;
+            //          }
+            break;
+        case RUNLOOP_CTL_SYSTEM_INFO_GET:
+        {
+            rarch_system_info_t **system = (rarch_system_info_t**)data;
+            if (!system)
                 return false;
-             *system = &runloop_system;
-          }
-          break;
-       case RUNLOOP_CTL_SYSTEM_INFO_FREE:
-
-          /* No longer valid. */
-          if (runloop_system.subsystem.data)
-             free(runloop_system.subsystem.data);
-          runloop_system.subsystem.data = NULL;
-          runloop_system.subsystem.size = 0;
-          
-          if (runloop_system.ports.data)
-             free(runloop_system.ports.data);
-          runloop_system.ports.data = NULL;
-          runloop_system.ports.size = 0;
-          
-          if (runloop_system.mmaps.descriptors)
-             free((void *)runloop_system.mmaps.descriptors);
-          runloop_system.mmaps.descriptors     = NULL;
-          runloop_system.mmaps.num_descriptors = 0;
-          
-          runloop_key_event          = NULL;
-          runloop_frontend_key_event = NULL;
-
-          audio_driver_unset_callback();
-          memset(&runloop_system, 0, sizeof(rarch_system_info_t));
-          break;
-       case RUNLOOP_CTL_SET_FRAME_TIME_LAST:
-          runloop_frame_time_last_enable = true;
-          break;
-       case RUNLOOP_CTL_UNSET_FRAME_TIME_LAST:
-          if (!runloop_ctl(RUNLOOP_CTL_IS_FRAME_TIME_LAST, NULL))
-             return false;
-          runloop_frame_time_last        = 0;
-          runloop_frame_time_last_enable = false;
-          break;
-       case RUNLOOP_CTL_SET_OVERRIDES_ACTIVE:
-          runloop_overrides_active = true;
-          break;
-       case RUNLOOP_CTL_UNSET_OVERRIDES_ACTIVE:
-          runloop_overrides_active = false;
-          break;
-       case RUNLOOP_CTL_IS_OVERRIDES_ACTIVE:
-          return runloop_overrides_active;
-       case RUNLOOP_CTL_SET_GAME_OPTIONS_ACTIVE:
-          runloop_game_options_active = true;
-          break;
-       case RUNLOOP_CTL_UNSET_GAME_OPTIONS_ACTIVE:
-          runloop_game_options_active = false;
-          break;
-       case RUNLOOP_CTL_IS_GAME_OPTIONS_ACTIVE:
-          return runloop_game_options_active;
-       case RUNLOOP_CTL_IS_FRAME_TIME_LAST:
-          return runloop_frame_time_last_enable;
-       case RUNLOOP_CTL_SET_FRAME_LIMIT:
-          runloop_set_frame_limit = true;
-          break;
-       case RUNLOOP_CTL_UNSET_FRAME_LIMIT:
-          runloop_set_frame_limit = false;
-          break;
-       case RUNLOOP_CTL_SHOULD_SET_FRAME_LIMIT:
-          return runloop_set_frame_limit;
-       case RUNLOOP_CTL_GET_PERFCNT:
-          {
-             bool **perfcnt = (bool**)data;
-             if (!perfcnt)
+            *system = &runloop_system;
+        }
+            break;
+        case RUNLOOP_CTL_SYSTEM_INFO_FREE:
+            
+            /* No longer valid. */
+            if (runloop_system.subsystem.data)
+                free(runloop_system.subsystem.data);
+            runloop_system.subsystem.data = NULL;
+            runloop_system.subsystem.size = 0;
+            
+            if (runloop_system.ports.data)
+                free(runloop_system.ports.data);
+            runloop_system.ports.data = NULL;
+            runloop_system.ports.size = 0;
+            
+            if (runloop_system.mmaps.descriptors)
+                free((void *)runloop_system.mmaps.descriptors);
+            runloop_system.mmaps.descriptors     = NULL;
+            runloop_system.mmaps.num_descriptors = 0;
+            
+            runloop_key_event          = NULL;
+            runloop_frontend_key_event = NULL;
+            
+            audio_driver_unset_callback();
+            memset(&runloop_system, 0, sizeof(rarch_system_info_t));
+            break;
+        case RUNLOOP_CTL_SET_FRAME_TIME_LAST:
+            runloop_frame_time_last_enable = true;
+            break;
+        case RUNLOOP_CTL_UNSET_FRAME_TIME_LAST:
+            if (!runloop_ctl(RUNLOOP_CTL_IS_FRAME_TIME_LAST, NULL))
                 return false;
-             *perfcnt = &runloop_perfcnt_enable;
-          }
-          break;
-       case RUNLOOP_CTL_SET_PERFCNT_ENABLE:
-          runloop_perfcnt_enable = true;
-          break;
-       case RUNLOOP_CTL_UNSET_PERFCNT_ENABLE:
-          runloop_perfcnt_enable = false;
-          break;
-       case RUNLOOP_CTL_IS_PERFCNT_ENABLE:
-          return runloop_perfcnt_enable;
-       case RUNLOOP_CTL_SET_NONBLOCK_FORCED:
-          runloop_force_nonblock = true;
-          break;
-       case RUNLOOP_CTL_UNSET_NONBLOCK_FORCED:
-          runloop_force_nonblock = false;
-          break;
-       case RUNLOOP_CTL_IS_NONBLOCK_FORCED:
-          return runloop_force_nonblock;
-       case RUNLOOP_CTL_SET_FRAME_TIME:
-          {
-             const struct retro_frame_time_callback *info =
-                (const struct retro_frame_time_callback*)data;
- #ifdef HAVE_NETPLAY
-             global_t *global = global_get_ptr();
-
-             /* retro_run() will be called in very strange and
-              * mysterious ways, have to disable it. */
-             if (global->netplay.enable)
+            runloop_frame_time_last        = 0;
+            runloop_frame_time_last_enable = false;
+            break;
+        case RUNLOOP_CTL_SET_OVERRIDES_ACTIVE:
+            runloop_overrides_active = true;
+            break;
+        case RUNLOOP_CTL_UNSET_OVERRIDES_ACTIVE:
+            runloop_overrides_active = false;
+            break;
+        case RUNLOOP_CTL_IS_OVERRIDES_ACTIVE:
+            return runloop_overrides_active;
+        case RUNLOOP_CTL_SET_GAME_OPTIONS_ACTIVE:
+            runloop_game_options_active = true;
+            break;
+        case RUNLOOP_CTL_UNSET_GAME_OPTIONS_ACTIVE:
+            runloop_game_options_active = false;
+            break;
+        case RUNLOOP_CTL_IS_GAME_OPTIONS_ACTIVE:
+            return runloop_game_options_active;
+        case RUNLOOP_CTL_IS_FRAME_TIME_LAST:
+            return runloop_frame_time_last_enable;
+        case RUNLOOP_CTL_SET_FRAME_LIMIT:
+            runloop_set_frame_limit = true;
+            break;
+        case RUNLOOP_CTL_UNSET_FRAME_LIMIT:
+            runloop_set_frame_limit = false;
+            break;
+        case RUNLOOP_CTL_SHOULD_SET_FRAME_LIMIT:
+            return runloop_set_frame_limit;
+        case RUNLOOP_CTL_GET_PERFCNT:
+        {
+            bool **perfcnt = (bool**)data;
+            if (!perfcnt)
                 return false;
- #endif
-             runloop_frame_time = *info;
-          }
-          break;
-       case RUNLOOP_CTL_GET_WINDOWED_SCALE:
-          {
-             unsigned **scale = (unsigned**)data;
-             if (!scale)
+            *perfcnt = &runloop_perfcnt_enable;
+        }
+            break;
+        case RUNLOOP_CTL_SET_PERFCNT_ENABLE:
+            runloop_perfcnt_enable = true;
+            break;
+        case RUNLOOP_CTL_UNSET_PERFCNT_ENABLE:
+            runloop_perfcnt_enable = false;
+            break;
+        case RUNLOOP_CTL_IS_PERFCNT_ENABLE:
+            return runloop_perfcnt_enable;
+        case RUNLOOP_CTL_SET_NONBLOCK_FORCED:
+            runloop_force_nonblock = true;
+            break;
+        case RUNLOOP_CTL_UNSET_NONBLOCK_FORCED:
+            runloop_force_nonblock = false;
+            break;
+        case RUNLOOP_CTL_IS_NONBLOCK_FORCED:
+            return runloop_force_nonblock;
+        case RUNLOOP_CTL_SET_FRAME_TIME:
+        {
+            const struct retro_frame_time_callback *info =
+            (const struct retro_frame_time_callback*)data;
+#ifdef HAVE_NETPLAY
+            global_t *global = global_get_ptr();
+            
+            /* retro_run() will be called in very strange and
+             * mysterious ways, have to disable it. */
+            if (global->netplay.enable)
                 return false;
-             *scale       = (unsigned*)&runloop_pending_windowed_scale;
-          }
-          break;
-       case RUNLOOP_CTL_SET_WINDOWED_SCALE:
-          {
-             unsigned *idx = (unsigned*)data;
-             if (!idx)
+#endif
+            runloop_frame_time = *info;
+        }
+            break;
+        case RUNLOOP_CTL_GET_WINDOWED_SCALE:
+        {
+            unsigned **scale = (unsigned**)data;
+            if (!scale)
                 return false;
-             runloop_pending_windowed_scale = *idx;
-          }
-          break;
-       case RUNLOOP_CTL_SET_LIBRETRO_PATH:
-          {
-             const char *fullpath = (const char*)data;
-             if (!fullpath)
+            *scale       = (unsigned*)&runloop_pending_windowed_scale;
+        }
+            break;
+        case RUNLOOP_CTL_SET_WINDOWED_SCALE:
+        {
+            unsigned *idx = (unsigned*)data;
+            if (!idx)
                 return false;
-             config_set_active_core_path(fullpath);
-          }
-          break;
-       case RUNLOOP_CTL_CLEAR_CONTENT_PATH:
-          *runloop_fullpath = '\0';
-          break;
-       case RUNLOOP_CTL_GET_CONTENT_PATH:
-          {
-             char **fullpath = (char**)data;
-             if (!fullpath)
+            runloop_pending_windowed_scale = *idx;
+        }
+            break;
+        case RUNLOOP_CTL_SET_LIBRETRO_PATH:
+        {
+            const char *fullpath = (const char*)data;
+            if (!fullpath)
                 return false;
-             *fullpath       = (char*)runloop_fullpath;
-          }
-          break;
-       case RUNLOOP_CTL_SET_CONTENT_PATH:
-          {
-             const char *fullpath = (const char*)data;
-             if (!fullpath)
+            config_set_active_core_path(fullpath);
+        }
+            break;
+        case RUNLOOP_CTL_CLEAR_CONTENT_PATH:
+            *runloop_fullpath = '\0';
+            break;
+        case RUNLOOP_CTL_GET_CONTENT_PATH:
+        {
+            char **fullpath = (char**)data;
+            if (!fullpath)
                 return false;
-             strlcpy(runloop_fullpath, fullpath, sizeof(runloop_fullpath));
-          }
-          break;
-       case RUNLOOP_CTL_CLEAR_DEFAULT_SHADER_PRESET:
-          *runloop_default_shader_preset = '\0';
-          break;
-       case RUNLOOP_CTL_GET_DEFAULT_SHADER_PRESET:
-          {
-             char **preset = (char**)data;
-             if (!preset)
+            *fullpath       = (char*)runloop_fullpath;
+        }
+            break;
+        case RUNLOOP_CTL_SET_CONTENT_PATH:
+        {
+            const char *fullpath = (const char*)data;
+            if (!fullpath)
                 return false;
-             *preset       = (char*)runloop_default_shader_preset;
-          }
-          break;
-       case RUNLOOP_CTL_SET_DEFAULT_SHADER_PRESET:
-          {
-             const char *preset = (const char*)data;
-             if (!preset)
+            strlcpy(runloop_fullpath, fullpath, sizeof(runloop_fullpath));
+        }
+            break;
+        case RUNLOOP_CTL_CLEAR_DEFAULT_SHADER_PRESET:
+            *runloop_default_shader_preset = '\0';
+            break;
+        case RUNLOOP_CTL_GET_DEFAULT_SHADER_PRESET:
+        {
+            char **preset = (char**)data;
+            if (!preset)
                 return false;
-             strlcpy(runloop_default_shader_preset, preset,
-                sizeof(runloop_default_shader_preset));
-          }
-          break;
-       case RUNLOOP_CTL_FRAME_TIME_FREE:
-          memset(&runloop_frame_time, 0, sizeof(struct retro_frame_time_callback));
-          runloop_frame_time_last           = 0;
-          runloop_max_frames                = 0;
-          break;
-       case RUNLOOP_CTL_STATE_FREE:
-          runloop_perfcnt_enable            = false;
-          runloop_idle                      = false;
-          runloop_paused                    = false;
-          runloop_slowmotion                = false;
-          runloop_frame_time_last_enable    = false;
-          runloop_set_frame_limit           = false;
-          runloop_overrides_active          = false;
-          runloop_ctl(RUNLOOP_CTL_FRAME_TIME_FREE, NULL);
-          break;
-       case RUNLOOP_CTL_GLOBAL_FREE:
-          {
-             global_t *global = NULL;
-//             command_event(CMD_EVENT_TEMPORARY_CONTENT_DEINIT, NULL);
-//             command_event(CMD_EVENT_SUBSYSTEM_FULLPATHS_DEINIT, NULL);
-//             command_event(CMD_EVENT_RECORD_DEINIT, NULL);
-//             command_event(CMD_EVENT_LOG_FILE_DEINIT, NULL);
-
-//             rarch_ctl(RARCH_CTL_UNSET_BLOCK_CONFIG_READ, NULL);
-             runloop_ctl(RUNLOOP_CTL_CLEAR_CONTENT_PATH,  NULL);
-             runloop_overrides_active   = false;
-
-             core_unset_input_descriptors();
-
-//             global = global_get_ptr();
-             memset(global, 0, sizeof(struct global));
-//             retroarch_override_setting_free_state();
-//             config_free_state();
-          }
-          break;
-       case RUNLOOP_CTL_CLEAR_STATE:
-//          driver_ctl(RARCH_DRIVER_CTL_DEINIT,  NULL);
-          runloop_ctl(RUNLOOP_CTL_STATE_FREE,  NULL);
-          runloop_ctl(RUNLOOP_CTL_GLOBAL_FREE, NULL);
-          break;
-       case RUNLOOP_CTL_SET_MAX_FRAMES:
-          {
-             unsigned *ptr = (unsigned*)data;
-             if (!ptr)
+            *preset       = (char*)runloop_default_shader_preset;
+        }
+            break;
+        case RUNLOOP_CTL_SET_DEFAULT_SHADER_PRESET:
+        {
+            const char *preset = (const char*)data;
+            if (!preset)
                 return false;
-             runloop_max_frames = *ptr;
-          }
-          break;
-       case RUNLOOP_CTL_IS_IDLE:
-          return runloop_idle;
-       case RUNLOOP_CTL_SET_IDLE:
-          {
-             bool *ptr = (bool*)data;
-             if (!ptr)
+            strlcpy(runloop_default_shader_preset, preset,
+                    sizeof(runloop_default_shader_preset));
+        }
+            break;
+        case RUNLOOP_CTL_FRAME_TIME_FREE:
+            memset(&runloop_frame_time, 0, sizeof(struct retro_frame_time_callback));
+            runloop_frame_time_last           = 0;
+            runloop_max_frames                = 0;
+            break;
+        case RUNLOOP_CTL_STATE_FREE:
+            runloop_perfcnt_enable            = false;
+            runloop_idle                      = false;
+            runloop_paused                    = false;
+            runloop_slowmotion                = false;
+            runloop_frame_time_last_enable    = false;
+            runloop_set_frame_limit           = false;
+            runloop_overrides_active          = false;
+            runloop_ctl(RUNLOOP_CTL_FRAME_TIME_FREE, NULL);
+            break;
+        case RUNLOOP_CTL_GLOBAL_FREE:
+        {
+            global_t *global = NULL;
+            //             command_event(CMD_EVENT_TEMPORARY_CONTENT_DEINIT, NULL);
+            //             command_event(CMD_EVENT_SUBSYSTEM_FULLPATHS_DEINIT, NULL);
+            //             command_event(CMD_EVENT_RECORD_DEINIT, NULL);
+            //             command_event(CMD_EVENT_LOG_FILE_DEINIT, NULL);
+            
+            //             rarch_ctl(RARCH_CTL_UNSET_BLOCK_CONFIG_READ, NULL);
+            runloop_ctl(RUNLOOP_CTL_CLEAR_CONTENT_PATH,  NULL);
+            runloop_overrides_active   = false;
+            
+            core_unset_input_descriptors();
+            
+            //             global = global_get_ptr();
+            memset(global, 0, sizeof(struct global));
+            //             retroarch_override_setting_free_state();
+            //             config_free_state();
+        }
+            break;
+        case RUNLOOP_CTL_CLEAR_STATE:
+            //          driver_ctl(RARCH_DRIVER_CTL_DEINIT,  NULL);
+            runloop_ctl(RUNLOOP_CTL_STATE_FREE,  NULL);
+            runloop_ctl(RUNLOOP_CTL_GLOBAL_FREE, NULL);
+            break;
+        case RUNLOOP_CTL_SET_MAX_FRAMES:
+        {
+            unsigned *ptr = (unsigned*)data;
+            if (!ptr)
                 return false;
-             runloop_idle = *ptr;
-          }
-          break;
-       case RUNLOOP_CTL_IS_SLOWMOTION:
-          return runloop_slowmotion;
-       case RUNLOOP_CTL_SET_SLOWMOTION:
-          {
-             bool *ptr = (bool*)data;
-             if (!ptr)
+            runloop_max_frames = *ptr;
+        }
+            break;
+        case RUNLOOP_CTL_IS_IDLE:
+            return runloop_idle;
+        case RUNLOOP_CTL_SET_IDLE:
+        {
+            bool *ptr = (bool*)data;
+            if (!ptr)
                 return false;
-             runloop_slowmotion = *ptr;
-          }
-          break;
-       case RUNLOOP_CTL_SET_PAUSED:
-          {
-             bool *ptr = (bool*)data;
-             if (!ptr)
+            runloop_idle = *ptr;
+        }
+            break;
+        case RUNLOOP_CTL_IS_SLOWMOTION:
+            return runloop_slowmotion;
+        case RUNLOOP_CTL_SET_SLOWMOTION:
+        {
+            bool *ptr = (bool*)data;
+            if (!ptr)
                 return false;
-             runloop_paused = *ptr;
-          }
-          break;
-       case RUNLOOP_CTL_IS_PAUSED:
-          return runloop_paused;
-       case RUNLOOP_CTL_MSG_QUEUE_PULL:
-//          runloop_msg_queue_lock();
-//          {
-//             const char **ret = (const char**)data;
-//             if (!ret)
-//                return false;
-//             *ret = msg_queue_pull(runloop_msg_queue);
-//          }
-//          runloop_msg_queue_unlock();
-          break;
-       case RUNLOOP_CTL_MSG_QUEUE_FREE:
- #ifdef HAVE_THREADS
-          slock_free(_runloop_msg_queue_lock);
-          _runloop_msg_queue_lock = NULL;
- #endif
-          break;
-       case RUNLOOP_CTL_MSG_QUEUE_CLEAR:
-//          msg_queue_clear(runloop_msg_queue);
-          break;
-       case RUNLOOP_CTL_MSG_QUEUE_DEINIT:
-//          if (!runloop_msg_queue)
-//             return true;
-//
-//          runloop_msg_queue_lock();
-//
-//          msg_queue_free(runloop_msg_queue);
-//
-//          runloop_msg_queue_unlock();
-//          runloop_ctl(RUNLOOP_CTL_MSG_QUEUE_FREE, NULL);
-//
-//          runloop_msg_queue = NULL;
-          break;
-       case RUNLOOP_CTL_MSG_QUEUE_INIT:
-          runloop_ctl(RUNLOOP_CTL_MSG_QUEUE_DEINIT, NULL);
-//          runloop_msg_queue = msg_queue_new(8);
-//          retro_assert(runloop_msg_queue);
-
- #ifdef HAVE_THREADS
-          _runloop_msg_queue_lock = slock_new();
-          retro_assert(_runloop_msg_queue_lock);
- #endif
-          break;
-       case RUNLOOP_CTL_TASK_INIT:
-          {
-// #ifdef HAVE_THREADS
-//             settings_t *settings = config_get_ptr();
-//             bool threaded_enable = settings->threaded_data_runloop_enable;
-// #else
-//             bool threaded_enable = false;
-// #endif
-//             task_queue_ctl(TASK_QUEUE_CTL_DEINIT, NULL);
-//             task_queue_ctl(TASK_QUEUE_CTL_INIT, &threaded_enable);
-          }
-          break;
-       case RUNLOOP_CTL_SET_CORE_SHUTDOWN:
-          runloop_core_shutdown_initiated = true;
-          break;
-       case RUNLOOP_CTL_UNSET_CORE_SHUTDOWN:
-          runloop_core_shutdown_initiated = false;
-          break;
-       case RUNLOOP_CTL_IS_CORE_SHUTDOWN:
-          return runloop_core_shutdown_initiated;
-       case RUNLOOP_CTL_SET_SHUTDOWN:
-          runloop_shutdown_initiated = true;
-          break;
-       case RUNLOOP_CTL_UNSET_SHUTDOWN:
-          runloop_shutdown_initiated = false;
-          break;
-       case RUNLOOP_CTL_IS_SHUTDOWN:
-          return runloop_shutdown_initiated;
-       case RUNLOOP_CTL_SET_EXEC:
-          runloop_exec = true;
-          break;
-       case RUNLOOP_CTL_UNSET_EXEC:
-          runloop_exec = false;
-          break;
-       case RUNLOOP_CTL_IS_EXEC:
-          return runloop_exec;
-       case RUNLOOP_CTL_DATA_DEINIT:
-//          task_queue_ctl(TASK_QUEUE_CTL_DEINIT, NULL);
-          break;
-//       case RUNLOOP_CTL_IS_CORE_OPTION_UPDATED:
-//          if (!runloop_core_options)
-//             return false;
-//          return  core_option_manager_updated(runloop_core_options);
-//       case RUNLOOP_CTL_CORE_OPTION_PREV:
-//          {
-//             unsigned *idx = (unsigned*)data;
-//             if (!idx)
-//                return false;
-//             core_option_manager_prev(runloop_core_options, *idx);
-//             if (ui_companion_is_on_foreground())
-//                ui_companion_driver_notify_refresh();
-//          }
-//          break;
-//       case RUNLOOP_CTL_CORE_OPTION_NEXT:
-//          {
-//             unsigned *idx = (unsigned*)data;
-//             if (!idx)
-//                return false;
-//             core_option_manager_next(runloop_core_options, *idx);
-//             if (ui_companion_is_on_foreground())
-//                ui_companion_driver_notify_refresh();
-//          }
-//          break;
-//       case RUNLOOP_CTL_CORE_OPTIONS_GET:
-//          {
-//             struct retro_variable *var = (struct retro_variable*)data;
-//
-//             if (!runloop_core_options || !var)
-//                return false;
-//
-//             RARCH_LOG("Environ GET_VARIABLE %s:\n", var->key);
-//             core_option_manager_get(runloop_core_options, var);
-//             RARCH_LOG("\t%s\n", var->value ? var->value :
-//                   msg_hash_to_str(MENU_ENUM_LABEL_VALUE_NOT_AVAILABLE));
-//          }
-//          break;
-       case RUNLOOP_CTL_CORE_OPTIONS_INIT:
-          {
-//             char *game_options_path           = NULL;
-//             bool ret                          = false;
-//             char buf[PATH_MAX_LENGTH]         = {0};
-//             global_t *global                  = global_get_ptr();
-//             settings_t *settings              = config_get_ptr();
-//             const char *options_path          = settings->path.core_options;
-//             const struct retro_variable *vars =
-//                (const struct retro_variable*)data;
-
-//             if (string_is_empty(options_path)
-//                   && !string_is_empty(global->path.config))
-//             {
-//                fill_pathname_resolve_relative(buf, global->path.config,
-//                      file_path_str(FILE_PATH_CORE_OPTIONS_CONFIG), sizeof(buf));
-//                options_path = buf;
-//             }
-//
-//
-//             if (settings->game_specific_options)
-//                ret = rarch_game_specific_options(&game_options_path);
-//
-//             if(ret)
-//             {
-//                runloop_ctl(RUNLOOP_CTL_SET_GAME_OPTIONS_ACTIVE, NULL);
-//                runloop_core_options =
-//                   core_option_manager_new(game_options_path, vars);
-//                free(game_options_path);
-//             }
-//             else
-//             {
-//                runloop_ctl(RUNLOOP_CTL_UNSET_GAME_OPTIONS_ACTIVE, NULL);
-//                runloop_core_options =
-//                   core_option_manager_new(options_path, vars);
-//             }
-
-          }
-          break;
-//       case RUNLOOP_CTL_CORE_OPTIONS_FREE:
-//          if (runloop_core_options)
-//             core_option_manager_free(runloop_core_options);
-//          runloop_core_options          = NULL;
-//          break;
-//       case RUNLOOP_CTL_CORE_OPTIONS_DEINIT:
-//          {
-//             global_t *global                  = global_get_ptr();
-//             if (!runloop_core_options)
-//                return false;
-//
-//             /* check if game options file was just created and flush
-//                to that file instead */
-//             if(global && !string_is_empty(global->path.core_options_path))
-//             {
-//                core_option_manager_flush_game_specific(runloop_core_options,
-//                      global->path.core_options_path);
-//                global->path.core_options_path[0] = '\0';
-//             }
-//             else
-//                core_option_manager_flush(runloop_core_options);
-//
-//             if (runloop_ctl(RUNLOOP_CTL_IS_GAME_OPTIONS_ACTIVE, NULL))
-//                runloop_ctl(RUNLOOP_CTL_UNSET_GAME_OPTIONS_ACTIVE, NULL);
-//
-//             runloop_ctl(RUNLOOP_CTL_CORE_OPTIONS_FREE, NULL);
-//          }
-//          break;
-       case RUNLOOP_CTL_KEY_EVENT_GET:
-          {
-             retro_keyboard_event_t **key_event =
-                (retro_keyboard_event_t**)data;
-             if (!key_event)
+            runloop_slowmotion = *ptr;
+        }
+            break;
+        case RUNLOOP_CTL_SET_PAUSED:
+        {
+            bool *ptr = (bool*)data;
+            if (!ptr)
                 return false;
-             *key_event = &runloop_key_event;
-          }
-          break;
-       case RUNLOOP_CTL_FRONTEND_KEY_EVENT_GET:
-          {
-             retro_keyboard_event_t **key_event =
-                (retro_keyboard_event_t**)data;
-             if (!key_event)
+            runloop_paused = *ptr;
+        }
+            break;
+        case RUNLOOP_CTL_IS_PAUSED:
+            return runloop_paused;
+        case RUNLOOP_CTL_MSG_QUEUE_PULL:
+            //          runloop_msg_queue_lock();
+            //          {
+            //             const char **ret = (const char**)data;
+            //             if (!ret)
+            //                return false;
+            //             *ret = msg_queue_pull(runloop_msg_queue);
+            //          }
+            //          runloop_msg_queue_unlock();
+            break;
+        case RUNLOOP_CTL_MSG_QUEUE_FREE:
+#ifdef HAVE_THREADS
+            slock_free(_runloop_msg_queue_lock);
+            _runloop_msg_queue_lock = NULL;
+#endif
+            break;
+        case RUNLOOP_CTL_MSG_QUEUE_CLEAR:
+            //          msg_queue_clear(runloop_msg_queue);
+            break;
+        case RUNLOOP_CTL_MSG_QUEUE_DEINIT:
+            //          if (!runloop_msg_queue)
+            //             return true;
+            //
+            //          runloop_msg_queue_lock();
+            //
+            //          msg_queue_free(runloop_msg_queue);
+            //
+            //          runloop_msg_queue_unlock();
+            //          runloop_ctl(RUNLOOP_CTL_MSG_QUEUE_FREE, NULL);
+            //
+            //          runloop_msg_queue = NULL;
+            break;
+        case RUNLOOP_CTL_MSG_QUEUE_INIT:
+            runloop_ctl(RUNLOOP_CTL_MSG_QUEUE_DEINIT, NULL);
+            //          runloop_msg_queue = msg_queue_new(8);
+            //          retro_assert(runloop_msg_queue);
+            
+#ifdef HAVE_THREADS
+            _runloop_msg_queue_lock = slock_new();
+            retro_assert(_runloop_msg_queue_lock);
+#endif
+            break;
+        case RUNLOOP_CTL_TASK_INIT:
+        {
+            // #ifdef HAVE_THREADS
+            //             settings_t *settings = config_get_ptr();
+            //             bool threaded_enable = settings->threaded_data_runloop_enable;
+            // #else
+            //             bool threaded_enable = false;
+            // #endif
+            //             task_queue_ctl(TASK_QUEUE_CTL_DEINIT, NULL);
+            //             task_queue_ctl(TASK_QUEUE_CTL_INIT, &threaded_enable);
+        }
+            break;
+        case RUNLOOP_CTL_SET_CORE_SHUTDOWN:
+            runloop_core_shutdown_initiated = true;
+            break;
+        case RUNLOOP_CTL_UNSET_CORE_SHUTDOWN:
+            runloop_core_shutdown_initiated = false;
+            break;
+        case RUNLOOP_CTL_IS_CORE_SHUTDOWN:
+            return runloop_core_shutdown_initiated;
+        case RUNLOOP_CTL_SET_SHUTDOWN:
+            runloop_shutdown_initiated = true;
+            break;
+        case RUNLOOP_CTL_UNSET_SHUTDOWN:
+            runloop_shutdown_initiated = false;
+            break;
+        case RUNLOOP_CTL_IS_SHUTDOWN:
+            return runloop_shutdown_initiated;
+        case RUNLOOP_CTL_SET_EXEC:
+            runloop_exec = true;
+            break;
+        case RUNLOOP_CTL_UNSET_EXEC:
+            runloop_exec = false;
+            break;
+        case RUNLOOP_CTL_IS_EXEC:
+            return runloop_exec;
+        case RUNLOOP_CTL_DATA_DEINIT:
+            //          task_queue_ctl(TASK_QUEUE_CTL_DEINIT, NULL);
+            break;
+            //       case RUNLOOP_CTL_IS_CORE_OPTION_UPDATED:
+            //          if (!runloop_core_options)
+            //             return false;
+            //          return  core_option_manager_updated(runloop_core_options);
+            //       case RUNLOOP_CTL_CORE_OPTION_PREV:
+            //          {
+            //             unsigned *idx = (unsigned*)data;
+            //             if (!idx)
+            //                return false;
+            //             core_option_manager_prev(runloop_core_options, *idx);
+            //             if (ui_companion_is_on_foreground())
+            //                ui_companion_driver_notify_refresh();
+            //          }
+            //          break;
+            //       case RUNLOOP_CTL_CORE_OPTION_NEXT:
+            //          {
+            //             unsigned *idx = (unsigned*)data;
+            //             if (!idx)
+            //                return false;
+            //             core_option_manager_next(runloop_core_options, *idx);
+            //             if (ui_companion_is_on_foreground())
+            //                ui_companion_driver_notify_refresh();
+            //          }
+            //          break;
+            //       case RUNLOOP_CTL_CORE_OPTIONS_GET:
+            //          {
+            //             struct retro_variable *var = (struct retro_variable*)data;
+            //
+            //             if (!runloop_core_options || !var)
+            //                return false;
+            //
+            //             RARCH_LOG("Environ GET_VARIABLE %s:\n", var->key);
+            //             core_option_manager_get(runloop_core_options, var);
+            //             RARCH_LOG("\t%s\n", var->value ? var->value :
+            //                   msg_hash_to_str(MENU_ENUM_LABEL_VALUE_NOT_AVAILABLE));
+            //          }
+            //          break;
+        case RUNLOOP_CTL_CORE_OPTIONS_INIT:
+        {
+            //             char *game_options_path           = NULL;
+            //             bool ret                          = false;
+            //             char buf[PATH_MAX_LENGTH]         = {0};
+            //             global_t *global                  = global_get_ptr();
+            //             settings_t *settings              = config_get_ptr();
+            //             const char *options_path          = settings->path.core_options;
+            //             const struct retro_variable *vars =
+            //                (const struct retro_variable*)data;
+            
+            //             if (string_is_empty(options_path)
+            //                   && !string_is_empty(global->path.config))
+            //             {
+            //                fill_pathname_resolve_relative(buf, global->path.config,
+            //                      file_path_str(FILE_PATH_CORE_OPTIONS_CONFIG), sizeof(buf));
+            //                options_path = buf;
+            //             }
+            //
+            //
+            //             if (settings->game_specific_options)
+            //                ret = rarch_game_specific_options(&game_options_path);
+            //
+            //             if(ret)
+            //             {
+            //                runloop_ctl(RUNLOOP_CTL_SET_GAME_OPTIONS_ACTIVE, NULL);
+            //                runloop_core_options =
+            //                   core_option_manager_new(game_options_path, vars);
+            //                free(game_options_path);
+            //             }
+            //             else
+            //             {
+            //                runloop_ctl(RUNLOOP_CTL_UNSET_GAME_OPTIONS_ACTIVE, NULL);
+            //                runloop_core_options =
+            //                   core_option_manager_new(options_path, vars);
+            //             }
+            
+        }
+            break;
+            //       case RUNLOOP_CTL_CORE_OPTIONS_FREE:
+            //          if (runloop_core_options)
+            //             core_option_manager_free(runloop_core_options);
+            //          runloop_core_options          = NULL;
+            //          break;
+            //       case RUNLOOP_CTL_CORE_OPTIONS_DEINIT:
+            //          {
+            //             global_t *global                  = global_get_ptr();
+            //             if (!runloop_core_options)
+            //                return false;
+            //
+            //             /* check if game options file was just created and flush
+            //                to that file instead */
+            //             if(global && !string_is_empty(global->path.core_options_path))
+            //             {
+            //                core_option_manager_flush_game_specific(runloop_core_options,
+            //                      global->path.core_options_path);
+            //                global->path.core_options_path[0] = '\0';
+            //             }
+            //             else
+            //                core_option_manager_flush(runloop_core_options);
+            //
+            //             if (runloop_ctl(RUNLOOP_CTL_IS_GAME_OPTIONS_ACTIVE, NULL))
+            //                runloop_ctl(RUNLOOP_CTL_UNSET_GAME_OPTIONS_ACTIVE, NULL);
+            //
+            //             runloop_ctl(RUNLOOP_CTL_CORE_OPTIONS_FREE, NULL);
+            //          }
+            //          break;
+        case RUNLOOP_CTL_KEY_EVENT_GET:
+        {
+            retro_keyboard_event_t **key_event =
+            (retro_keyboard_event_t**)data;
+            if (!key_event)
                 return false;
-             *key_event = &runloop_frontend_key_event;
-          }
-          break;
-       case RUNLOOP_CTL_HTTPSERVER_INIT:
- #if defined(HAVE_HTTPSERVER) && defined(HAVE_ZLIB)
-          httpserver_init(8888);
- #endif
-          break;
-       case RUNLOOP_CTL_HTTPSERVER_DESTROY:
- #if defined(HAVE_HTTPSERVER) && defined(HAVE_ZLIB)
-          httpserver_destroy();
- #endif
-          break;
-       case RUNLOOP_CTL_NONE:
-       default:
-          break;
+            *key_event = &runloop_key_event;
+        }
+            break;
+        case RUNLOOP_CTL_FRONTEND_KEY_EVENT_GET:
+        {
+            retro_keyboard_event_t **key_event =
+            (retro_keyboard_event_t**)data;
+            if (!key_event)
+                return false;
+            *key_event = &runloop_frontend_key_event;
+        }
+            break;
+        case RUNLOOP_CTL_HTTPSERVER_INIT:
+#if defined(HAVE_HTTPSERVER) && defined(HAVE_ZLIB)
+            httpserver_init(8888);
+#endif
+            break;
+        case RUNLOOP_CTL_HTTPSERVER_DESTROY:
+#if defined(HAVE_HTTPSERVER) && defined(HAVE_ZLIB)
+            httpserver_destroy();
+#endif
+            break;
+        case RUNLOOP_CTL_NONE:
+        default:
+            break;
     }
-
+    
     return true;
 }
 
@@ -1347,10 +1355,10 @@ void video_driver_frame(const void *data, unsigned width,
 
 const char *config_get_active_core_path(void) {
     NSBundle *bundle = [NSBundle bundleForClass:[_current class]];
-//    const char* path = [bundle.executablePath fileSystemRepresentation];
+    //    const char* path = [bundle.executablePath fileSystemRepresentation];
     NSString *bundleName = bundle.infoDictionary[@"CFBundleName"];
     NSString *executableName = bundle.infoDictionary[@"CFBundleExecutable"];
-
+    
     NSString *frameworkPath = [NSString stringWithFormat:@"%@.framework/%@", bundleName, executableName];
     NSString *rspPath = [[[NSBundle mainBundle] privateFrameworksPath] stringByAppendingPathComponent:frameworkPath];
     NSLog(@"%@", rspPath);
@@ -1380,10 +1388,63 @@ void retro_set_environment(retro_environment_t cb)
     core.retro_set_environment(cb);
 }
 
+static void core_log(enum retro_log_level level, const char * fmt, ...) {
+    char buffer[4096] = {0};
+    static const char * levelstr[] = {
+        "dbg",
+        "inf",
+        "wrn",
+        "err"
+    };
+    va_list va;
+    
+    va_start(va, fmt);
+    vsnprintf(buffer, sizeof(buffer), fmt, va);
+    va_end(va);
+    
+    if (level == 0)
+        return;
+    
+    switch (level) {
+        case 0:
+            DLOG(@"%s", buffer);
+            break;
+        case 1:
+            ILOG(@"%s", buffer);
+            break;
+        case 2:
+            WLOG(@"%s", buffer);
+            break;
+        case 3:
+            ELOG(@"%s", buffer);
+            break;
+        default:
+            break;
+    }
+    
+    fprintf(stderr, "[%s] %s", levelstr[level], buffer);
+    fflush(stderr);
+    
+    if (level == RETRO_LOG_ERROR) {
+        exit(EXIT_FAILURE);
+    }
+}
+/*
+ TODO:
+ make an obj-c version this calls
+ and make sure to call the subclass and super(this) classses
+ custom core configs are set with keys, search `desmume_advanced_timing`, `desmume_internal_resolution` for example.
+ will need to make a list for each core and type those into core options
+ */
 static bool environment_callback(unsigned cmd, void *data) {
     __strong PVLibRetroCore *strongCurrent = _current;
     
     switch(cmd) {
+        case RETRO_ENVIRONMENT_GET_LOG_INTERFACE: {
+            struct retro_log_callback* cb = (struct retro_log_callback*)data;
+            cb->log = core_log;
+        }
+            break;
         case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY : {
             NSString *appSupportPath = [strongCurrent BIOSPath];
             
@@ -1407,8 +1468,9 @@ static bool environment_callback(unsigned cmd, void *data) {
         }
             
         case RETRO_ENVIRONMENT_SET_PIXEL_FORMAT: {
-//            *(retro_pixel_format *)data = [strongCurrent pixelFormat];
-            break;
+            DLOG(@"");
+            //            *(retro_pixel_format *)data = [strongCurrent pixelFormat];
+            return true;
         }
         default : {
             DLOG(@"Environ UNSUPPORTED (#%u).\n", cmd);
@@ -1431,27 +1493,27 @@ static void load_dynamic_core(void)
     const char* corepath = config_get_active_core_path();
     lib_handle = dylib_load(corepath);
     
-//    function_t sym       = dylib_proc(lib_handle, "retro_init");
+    //    function_t sym       = dylib_proc(lib_handle, "retro_init");
     
-//    if (sym)
-//    {
-//        /* Try to verify that -lretro was not linked in from other modules
-//         * since loading it dynamically and with -l will fail hard. */
-//        ELOG(@"Serious problem. RetroArch wants to load libretro cores"
-//             "dyamically, but it is already linked.\n");
-//        ELOG(@"This could happen if other modules RetroArch depends on "
-//             "link against libretro directly.\n");
-//        ELOG(@"Proceeding could cause a crash. Aborting ...\n");
-//        retroarch_fail(1, "init_libretro_sym()");
-//    }
-//
-//    if (string_is_empty(config_get_active_core_path()))
-//    {
-//        ELOG(@"RetroArch is built for dynamic libretro cores, but "
-//             "libretro_path is not set. Cannot continue.\n");
-//        retroarch_fail(1, "init_libretro_sym()");
-//    }
-//
+    //    if (sym)
+    //    {
+    //        /* Try to verify that -lretro was not linked in from other modules
+    //         * since loading it dynamically and with -l will fail hard. */
+    //        ELOG(@"Serious problem. RetroArch wants to load libretro cores"
+    //             "dyamically, but it is already linked.\n");
+    //        ELOG(@"This could happen if other modules RetroArch depends on "
+    //             "link against libretro directly.\n");
+    //        ELOG(@"Proceeding could cause a crash. Aborting ...\n");
+    //        retroarch_fail(1, "init_libretro_sym()");
+    //    }
+    //
+    //    if (string_is_empty(config_get_active_core_path()))
+    //    {
+    //        ELOG(@"RetroArch is built for dynamic libretro cores, but "
+    //             "libretro_path is not set. Cannot continue.\n");
+    //        retroarch_fail(1, "init_libretro_sym()");
+    //    }
+    //
     /* Need to use absolute path for this setting. It can be
      * saved to content history, and a relative path would
      * break in that scenario. */
@@ -1489,7 +1551,7 @@ static void load_symbols(enum rarch_core_type type, struct retro_core_t *current
             load_dynamic_core();
 #endif
             ILOG(@"type:%x, current_core: %x, lib_handle: %x", type, current_core, lib_handle);
-
+            
             SYMBOL(retro_init);
             SYMBOL(retro_deinit);
             
@@ -1736,23 +1798,25 @@ static void video_callback(const void *data, unsigned width, unsigned height, si
 {
     __strong PVLibRetroCore *strongCurrent = _current;
     
-    strongCurrent->_videoWidth  = width;
-    strongCurrent->_videoHeight = height;
-
+//    strongCurrent->_videoWidth  = width;
+//    strongCurrent->_videoHeight = height;
+//    
     dispatch_queue_t the_queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-
+    
     dispatch_apply(height, the_queue, ^(size_t y){
         const uint32_t *src = (uint32_t*)data + y * (pitch >> 2); //pitch is in bytes not pixels
         uint32_t *dst = strongCurrent->videoBuffer + y * 720;
-
+        
         memcpy(dst, src, sizeof(uint32_t)*width);
     });
-
+    
     strongCurrent = nil;
 }
 
 static void input_poll_callback(void)
 {
+    __strong PVLibRetroCore *strongCurrent = _current;
+    [strongCurrent pollControllers];
     //DLOG(@"poll callback");
 }
 
@@ -1762,29 +1826,29 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
     
     __strong PVLibRetroCore *strongCurrent = _current;
     int16_t value = 0;
-
+    
     if (port == 0 & device == RETRO_DEVICE_JOYPAD)
     {
         if (strongCurrent.controller1)
         {
-//            value = [strongCurrent controllerValueForButtonID:_id forPlayer:port];
+            //            value = [strongCurrent controllerValueForButtonID:_id forPlayer:port];
         }
-
+        
         if (value == 0)
         {
-//            value = strongCurrent->_pad[0][_id];
+            //            value = strongCurrent->_pad[0][_id];
         }
     }
     else if(port == 1 & device == RETRO_DEVICE_JOYPAD)
     {
         if (strongCurrent.controller2)
         {
-//            value = [strongCurrent controllerValueForButtonID:_id forPlayer:port];
+            //            value = [strongCurrent controllerValueForButtonID:_id forPlayer:port];
         }
-
+        
         if (value == 0)
         {
-//            value = strongCurrent->_pad[1][_id];
+            //            value = strongCurrent->_pad[1][_id];
         }
     }
     
@@ -1803,19 +1867,19 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
         
         const char* path = [[NSBundle bundleForClass:[self class]].bundlePath fileSystemRepresentation];
         config_set_active_core_path(path);
-//        load_dynamic_core();
+        //        load_dynamic_core();
         init_libretro_sym(CORE_TYPE_PLAIN, &core);
         retro_set_environment(environment_callback);
         //        libretro_get_system_info(path,
         //        libretro_get_system_info_lib
         core.retro_init();
-
-//		retro_set_audio_sample(audio_callback);
-//		retro_set_audio_sample_batch(audio_batch_callback);
-//		retro_set_video_refresh(video_callback);
-//		retro_set_input_poll(input_poll_callback);
-//		retro_set_input_state(input_state_callback);
-
+        
+        //		retro_set_audio_sample(audio_callback);
+        //		retro_set_audio_sample_batch(audio_batch_callback);
+        //		retro_set_video_refresh(video_callback);
+        //		retro_set_input_poll(input_poll_callback);
+        //		retro_set_input_state(input_state_callback);
+        
         core.retro_set_audio_sample(audio_callback);
         core.retro_set_audio_sample_batch(audio_batch_callback);
         core.retro_set_video_refresh(video_callback);
@@ -1838,7 +1902,13 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
     info.data = [NSData dataWithContentsOfFile:path].bytes;
     info.path = [path fileSystemRepresentation];
     // TODO:: retro_load_game
-    BOOL loaded = core.retro_load_game(&info); // retro_load_game(&info);
+//    BOOL loaded = core.retro_load_game(&info); // retro_load_game(&info);
+    
+    struct retro_ctx_load_content_info info2;
+    info2.info = &info;
+    info2.content = nil;
+    info2.special = nil;
+    BOOL loaded = core_load_game(&info2);
     
     return loaded;
 }
@@ -1851,7 +1921,7 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
     switch (core_poll_type)
     {
         case POLL_TYPE_EARLY:
-          input_poll();
+            input_poll();
             break;
         case POLL_TYPE_LATE:
             core_input_polled = false;
@@ -1860,7 +1930,7 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
     if (core.retro_run)
         core.retro_run();
     if (core_poll_type == POLL_TYPE_LATE && !core_input_polled)
-       input_poll();
+        input_poll();
     //	return true;
     //    retro_run();
     //    for (unsigned y = 0; y < HEIGHT; y++)
@@ -1884,9 +1954,9 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
 }
 
 - (NSTimeInterval)frameInterval {
-//    static struct retro_system_av_info av_info;
-//    core.retro_get_system_av_info(&av_info);
-//    return 1.0 / av_info.timing.fps;
+    //    static struct retro_system_av_info av_info;
+    //    core.retro_get_system_av_info(&av_info);
+    //    return 1.0 / av_info.timing.fps;
     return 60.0;
 }
 
@@ -1915,14 +1985,14 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
 }
 
 - (CGRect)screenRect {
-//    static struct retro_system_av_info av_info;
-//    core.retro_get_system_av_info(&av_info);
-//    unsigned height = av_info.geometry.base_height;
-//    unsigned width = av_info.geometry.base_width;
-//
+    //    static struct retro_system_av_info av_info;
+    //    core.retro_get_system_av_info(&av_info);
+    //    unsigned height = av_info.geometry.base_height;
+    //    unsigned width = av_info.geometry.base_width;
+    //
     unsigned height = _videoHeight;
     unsigned width = _videoWidth;
- 
+    
     return CGRectMake(0, 0, width, height);
 }
 
@@ -1983,6 +2053,13 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
     return 2;
 }
 
+@end
+
+# pragma mark - Controls
+@implementation PVLibRetroCore (Controls)
+- (void)pollControllers {
+    // TODO: This should warn or something if not in subclass
+}
 @end
 
 # pragma mark - Save States
