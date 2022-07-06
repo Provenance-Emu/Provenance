@@ -417,6 +417,22 @@ public struct ClassInfo: CustomStringConvertible, Equatable {
 
         bundle = Bundle(for: classObject)
     }
+    
+    public var superclassesInfo: [ClassInfo]? {
+        var classInfos = [ClassInfo]()
+        var superClass: ClassInfo? = superclassInfo
+        
+        while(superClass != nil) {
+            if let classInfo = ClassInfo(superClass?.classObject) {
+                classInfos.append(classInfo)
+                superClass = classInfo.superclassInfo
+            } else {
+                superClass = nil
+            }
+        }
+        
+        return classInfos.isEmpty ? nil : classInfos
+    }
 
     public var superclassInfo: ClassInfo? {
         if let superclassObject: AnyClass = class_getSuperclass(self.classObject) {
@@ -441,6 +457,13 @@ public struct ClassInfo: CustomStringConvertible, Equatable {
         let cName = class_getName(superClass)
         let classString = String(cString: cName)
         return classString
+    }
+}
+
+extension ClassInfo: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(className)
+        hasher.combine(bundle.bundleIdentifier)
     }
 }
 
