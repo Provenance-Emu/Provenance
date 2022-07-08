@@ -6,15 +6,18 @@
 //
 //
 
-// All
-GCC_PREPROCESSOR_DEFINITIONS[arch=*] = $(inherited) IOS MUPENPLUSAPI=1 TXFILTER_LIB=1 GL_SILENCE_DEPRECATION=1 HAVE_OPENGLES3=1  __unix__ VFP_HARD=1 NO_ASM MUPENPLUSAPI=1 TXFILTER_LIB=1 M64P_PLUGIN_PROTOTYPES=1 PROVENANCE GCC __LIBRETRO__=1
+// CFLAGS/LDFLAGS All
+OTHER_CFLAGS[arch=*] = $(inherited) -pthread -fPIC -fvisibility-inlines-hidden
+OTHER_LDFLAGS= $(inherited)
+// -EGL < android
 
-OTHER_CFLAGS[arch=*] = $(inherited) -pthread -fPIC
-//GCC_PREPROCESSOR_DEFINITIONS[arch=arm64] = $(inherited) NEW_DYNAREC=3 DYNAREC=3
-//GCC_PREPROCESSOR_DEFINITIONS[arch=armv7s] = $(inherited) NEW_DYNAREC=3
-//GCC_PREPROCESSOR_DEFINITIONS[arch=armv7] = $(inherited) NEW_DYNAREC=3
-GCC_PREPROCESSOR_DEFINITIONS[arch=x86_64] = $(inherited) NO_ASM=0
-//GCC_PREPROCESSOR_DEFINITIONS[arch=x86_64] = $(inherited) NEW_DYNAREC=2 NO_ASM=0
+// DEFINES by Arch's
+GCC_PREPROCESSOR_DEFINITIONS[arch=*] = $(inherited) IOS MUPENPLUSAPI=1 TXFILTER_LIB=1 GL_SILENCE_DEPRECATION=1  __unix__ VFP_HARD=1 NO_ASM MUPENPLUSAPI=1 TXFILTER_LIB=1 M64P_PLUGIN_PROTOTYPES=1 PROVENANCE GCC __LIBRETRO__=1 HAVE_OPENGLES=1 HAVE_OPENGLES3=1 GLES3=1 HAVE_ARM_NEON_ASM_OPTIMIZATIONS=1 HAVE_PARALLEL_RSP=1 PARALLEL_INTEGRATION=1 HAVE_THR_AL=1 HAVE_PARALLEL_RDP=0 PNG_ARM_NEON_OPT=0
+// strdup=_strdup strlcpy=_strlcpy
+GCC_PREPROCESSOR_DEFINITIONS[arch=arm64] = $(inherited) NEW_DYNAREC=4 DYNAREC=3
+GCC_PREPROCESSOR_DEFINITIONS[arch=armv7s] = $(inherited) NEW_DYNAREC=3
+GCC_PREPROCESSOR_DEFINITIONS[arch=armv7] = $(inherited) NEW_DYNAREC=3
+GCC_PREPROCESSOR_DEFINITIONS[arch=x86_64] = $(inherited) NEW_DYNAREC=2 NO_ASM=0 HAVE_ARM_NEON_ASM_OPTIMIZATIONS=0
 
 // MacOS Catalyst
 GCC_PREPROCESSOR_DEFINITIONS[sdk=macosx*] = $(inherited) OS_MAC_OS_X=1 SDL_VIDEO_OPENGL=1
@@ -24,15 +27,27 @@ EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = $(inherited) 3DMathNeon.cpp gSPNeon.cp
 // iPhone
 GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*] = $(inherited) OS_IOS GLESX USE_GLES=1 NEON=1 SDL_VIDEO_OPENGL_ES2=1
 OTHER_CFLAGS[sdk=iphoneos*] = $(inherited) -DOS_IOS -mfpu=neon -D__VEC4_OPT -D__NEON_OPT
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*] = $(inherited) 3DMath.cpp
 
 // Simulator
 GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*] = $(inherited) OS_IOS GLESX USE_GLES=1 NEON=1 SDL_VIDEO_OPENGL_ES2=1
 OTHER_CFLAGS[sdk=iphonesimulator*] = $(inherited) -DOS_IOS
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*] = $(inherited) sinc_resampler_neon.S s16_to_float_neon.c s16_to_float_neon.S float_to_s16_neon.c float_to_s16_neon.S 3DMathNeon.cpp gSPNeon.cpp
 
 // tvOS Device
 GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvos*] = $(inherited) OS_IOS GLESX USE_GLES=1 NEON=1 SDL_VIDEO_OPENGL_ES2=1
 OTHER_CFLAGS[sdk=appletvos*] = $(inherited) -DOS_IOS -mfpu=neon  -D__VEC4_OPT
+EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvos*] = $(inherited) 3DMath.cpp
 
 // tvOS Simulator
 GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvsimulator*] = $(inherited) OS_IOS GLESX USE_GLES=1 NEON=1 SDL_VIDEO_OPENGL_ES2=1
 OTHER_CFLAGS[sdk=appletvsimulator*] = $(inherited) -DOS_IOS 
+
+
+
+//X64
+//SOURCES_C += \
+//    $(CORE_DIR)/src/device/r4300/new_dynarec/new_dynarec.c
+//SOURCES_NASM += \
+//    $(CORE_DIR)/src/device/r4300/new_dynarec/x86/linkage_x64.asm
+
