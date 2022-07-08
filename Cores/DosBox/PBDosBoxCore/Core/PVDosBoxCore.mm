@@ -48,27 +48,9 @@
 
 #pragma mark - PVEmulatorCore
 //- (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {
-//	NSBundle *coreBundle = [NSBundle bundleForClass:[self class]];
-//	const char *dataPath;
+//    BOOL loaded = [super loadFileAtPath:path completionHandler:error];
 //
-//    [self initControllBuffers];
-//
-//	// TODO: Proper path
-//	NSString *configPath = self.saveStatesPath;
-//	dataPath = [[coreBundle resourcePath] fileSystemRepresentation];
-//
-//	[[NSFileManager defaultManager] createDirectoryAtPath:configPath
-//                              withIntermediateDirectories:YES
-//                                               attributes:nil
-//                                                    error:nil];
-//
-//	NSString *batterySavesDirectory = self.batterySavesPath;
-//	[[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory
-//                              withIntermediateDirectories:YES
-//                                               attributes:nil
-//                                                    error:NULL];
-//
-//    return YES;
+//    return loaded;
 //}
 
 #pragma mark - Running

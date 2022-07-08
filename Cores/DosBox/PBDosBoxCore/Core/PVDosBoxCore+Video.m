@@ -44,7 +44,7 @@
 # pragma mark - Properties
 
 - (CGSize)bufferSize {
-    return CGSizeMake(640, 480);
+    return CGSizeMake(1024, 768);
 }
 
 - (CGRect)screenRect {
@@ -52,7 +52,7 @@
 }
 
 - (CGSize)aspectSize {
-    return CGSizeMake(640, 480);
+    return CGSizeMake(4, 3);
 }
 
 //- (BOOL)rendersToOpenGL {
