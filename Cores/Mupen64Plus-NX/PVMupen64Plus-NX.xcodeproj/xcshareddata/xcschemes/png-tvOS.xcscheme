@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3AF702121916E60000FA7F9"
-               BuildableName = "libpng-tvOS.a"
+               BuildableName = "libmupen64plus-nx-retro.a"
                BlueprintName = "mupen64plus-nx-retro-tvOS"
                ReferencedContainer = "container:PVMupen64Plus-NX.xcodeproj">
             </BuildableReference>
@@ -51,7 +51,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3AF702121916E60000FA7F9"
-            BuildableName = "libpng-tvOS.a"
+            BuildableName = "libmupen64plus-nx-retro.a"
             BlueprintName = "mupen64plus-nx-retro-tvOS"
             ReferencedContainer = "container:PVMupen64Plus-NX.xcodeproj">
          </BuildableReference>
