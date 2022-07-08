@@ -69,6 +69,9 @@
       location = "group:"
       name = "Cores Libretro">
       <FileRef
+         location = "group:Cores/melonDS/PVMelonDS.xcodeproj">
+      </FileRef>
+      <FileRef
          location = "group:Cores/BeetlePSX/PVBeetlePSX.xcodeproj">
       </FileRef>
       <FileRef

@@ -112,3 +112,6 @@
 [submodule "Cores/Yabause/yabause"]
 	path = Cores/Yabause/yabause
 	url = https://github.com/Provenance-Emu/yabause.git
+[submodule "Cores/melonDS/melonDS"]
+	path = Cores/melonDS/melonDS
+	url = https://github.com/Provenance-Emu/melonDS.git

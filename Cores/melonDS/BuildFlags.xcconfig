@@ -1,0 +1,62 @@
+//
+//  BuildFlags.xcconfig
+//  PVMelonDS
+//
+//  Created by Joseph Mattiello on 11/1/18.
+//
+//
+
+// All
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) OBJ_C IOS ARM USE_POSIX_MEMALIGN __RETRO_ARM__ USE_POSIX_MEMALIGN HAVE_WIFI JIT_ARCH=aarch64 HAVE_NEON=1 HAVE_THREADS=1 __LIBRETRO__ -DMELONDS_VERSION GIT_VERSION=0.9.4 HAVE_OPENGLES3=1 JIT_ENABLED=1 ARCHITECTURE_ARM64=1
+OTHER_CFLAGS = $(inherited) -ObjC -ffast-math -ftree-vectorize -fno-strict-aliasing -fpermissive -fomit-frame-pointer -fPIC
+OTHER_LDFLAGS =  $(inherited) -ObjC
+//OTHER_CFLAGS = $(inherited) -mno-thumb -mfpu=neon -fno-operator-names -fno-rtti -ffast-math -ftree-vectorize -fno-strict-aliasing -frename-registers -fno-rtti -fpermissive -fno-operator-names -fsingle-precision-constant
+
+    // Device
+GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*] = $(inherited) TARGET_IPHONE=1
+//OTHER_CFLAGS[sdk=iphoneos*] = $(inherited) -fomit-frame-pointer
+
+// Simulator
+GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*] = $(inherited) TARGET_IPHONE_SIMULATOR=1
+
+// tvOS Device
+GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvos*] = $(inherited) TARGET_IPHONE=1
+//OTHER_CFLAGS[sdk=appletvos*] = $(inherited) -fomit-frame-pointer
+
+// tvOS Simulator
+GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvsimulator*] = $(inherited) TARGET_IPHONE_SIMULATOR=1
+//
+//ifdef JIT_ARCH
+//SOURCES_CXX += $(MELON_DIR)/ARMJIT.cpp \
+//                $(MELON_DIR)/ARMJIT_Memory.cpp \
+//                $(MELON_DIR)/ARM_InstrInfo.cpp \
+//                $(MELON_DIR)/dolphin/CommonFuncs.cpp
+//
+//DEFINES += -DJIT_ENABLED
+//endif
+//ifeq ($(JIT_ARCH), aarch64)
+//SOURCES_CXX += $(MELON_DIR)/dolphin/Arm64Emitter.cpp \
+//                $(MELON_DIR)/dolphin/MathUtil.cpp \
+//                $(MELON_DIR)/ARMJIT_A64/ARMJIT_Compiler.cpp \
+//                $(MELON_DIR)/ARMJIT_A64/ARMJIT_ALU.cpp \
+//                $(MELON_DIR)/ARMJIT_A64/ARMJIT_LoadStore.cpp \
+//                $(MELON_DIR)/ARMJIT_A64/ARMJIT_Branch.cpp
+//SOURCES_S += $(MELON_DIR)/ARMJIT_A64/ARMJIT_Linkage.S
+//INCFLAGS += -I$(MELON_DIR)/ARMJIT_A64/
+//
+//DEFINES += -DARCHITECTURE_ARM64
+//endif
+//
+//ifeq ($(JIT_ARCH), x64)
+//SOURCES_CXX += $(MELON_DIR)/dolphin/x64ABI.cpp \
+//                $(MELON_DIR)/dolphin/x64CPUDetect.cpp \
+//                $(MELON_DIR)/dolphin/x64Emitter.cpp \
+//                $(MELON_DIR)/ARMJIT_x64/ARMJIT_ALU.cpp \
+//                $(MELON_DIR)/ARMJIT_x64/ARMJIT_Branch.cpp \
+//                $(MELON_DIR)/ARMJIT_x64/ARMJIT_Compiler.cpp \
+//                $(MELON_DIR)/ARMJIT_x64/ARMJIT_LoadStore.cpp
+//SOURCES_S += $(MELON_DIR)/ARMJIT_x64/ARMJIT_Linkage.S
+//INCFLAGS += -I$(MELON_DIR)/ARMJIT_x64/
+//
+//DEFINES += -DARCHITECTURE_X64
+//endif
