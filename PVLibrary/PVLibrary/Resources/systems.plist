@@ -2599,6 +2599,7 @@
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>nds</string>
+			<string>ids</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
