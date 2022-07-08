@@ -69,9 +69,6 @@
       location = "group:"
       name = "Cores Libretro">
       <FileRef
-         location = "group:Cores/melonDS/PVMelonDS.xcodeproj">
-      </FileRef>
-      <FileRef
          location = "group:Cores/BeetlePSX/PVBeetlePSX.xcodeproj">
       </FileRef>
       <FileRef
@@ -96,7 +93,13 @@
          location = "group:Cores/Hatari/PVHatari.xcodeproj">
       </FileRef>
       <FileRef
+         location = "group:Cores/melonDS/PVMelonDS.xcodeproj">
+      </FileRef>
+      <FileRef
          location = "group:Cores/Mini_vMac/PVMiniVMac.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/Mupen64Plus-NX/PVMupen64Plus-NX.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/Opera/PVOpera.xcodeproj">

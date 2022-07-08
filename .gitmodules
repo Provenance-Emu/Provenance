@@ -115,3 +115,6 @@
 [submodule "Cores/melonDS/melonDS"]
 	path = Cores/melonDS/melonDS
 	url = https://github.com/Provenance-Emu/melonDS.git
+[submodule "Cores/Mupen64Plus-NX/mupen64plus-libretro-nx"]
+	path = Cores/Mupen64Plus-NX/mupen64plus-libretro-nx
+	url = https://github.com/Provenance-Emu/mupen64plus-libretro-nx.git

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PVCoreIdentifier</key>
+	<string>com.provenance.mupen64plusnx</string>
+	<key>PVPrincipleClass</key>
+	<string>PVMupen64PlusNXCore</string>
+	<key>PVSupportedSystems</key>
+	<array>
+		<string>com.provenance.n64</string>
+	</array>
+	<key>PVProjectName</key>
+	<string>Mupen64Plus-Next
+
+</string>
+	<key>PVProjectURL</key>
+	<string>https://github.com/libretro/mupen64plus-libretro-nx</string>
+	<key>PVProjectVersion</key>
+	<string>0</string>
+</dict>
+</plist>
