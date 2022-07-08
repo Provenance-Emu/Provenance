@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
+		B32296E628783A5100585AD8 /* libfMSX-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B39768F72859E18B00558958 /* libfMSX-libretro.a */; };
+		B32296E728783A5100585AD8 /* libfMSX.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3447F91218BEE3F00557ACE /* libfMSX.a */; };
 		B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C31B2191964F009F4EDC /* AVFoundation.framework */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
@@ -30,12 +32,10 @@
 		B37022CD2872558F00B3F6DA /* PVfMSX.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVfMSX.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B37022CE2872558F00B3F6DA /* PVfMSX.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVfMSX.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B39768F82859E23200558958 /* libfMSX-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libfMSX-libretro.a */; };
-		B39768FB2859E23A00558958 /* libfMSX-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B39768F72859E18B00558958 /* libfMSX-libretro.a */; };
 		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
 		B3A41BEE286E76330054E9A5 /* PVLibRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3A41BF0286E76490054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */; };
 		B3A41BF1286E76490054E9A5 /* PVLibRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3B104AF218F26F400210C39 /* libfMSX.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3447F91218BEE3F00557ACE /* libfMSX.a */; };
 		B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B104B8218F281B00210C39 /* PVSupport.framework */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
@@ -235,7 +235,6 @@
 		B37022BF287253B300B3F6DA /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B37022C0287253B300B3F6DA /* PVfMSX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVfMSX.h; sourceTree = "<group>"; };
 		B37022C1287253B300B3F6DA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B37022C3287253B300B3F6DA /* PVfMSX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVfMSX.h; sourceTree = "<group>"; };
 		B37022C5287253B300B3F6DA /* PVfMSXCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVfMSXCore.h; sourceTree = "<group>"; };
 		B37022C6287253B300B3F6DA /* PVfMSXCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVfMSXCore.mm; sourceTree = "<group>"; };
 		B39768F72859E18B00558958 /* libfMSX-libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libfMSX-libretro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -407,10 +406,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B32296E628783A5100585AD8 /* libfMSX-libretro.a in Frameworks */,
+				B32296E728783A5100585AD8 /* libfMSX.a in Frameworks */,
 				B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */,
 				B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */,
-				B3B104AF218F26F400210C39 /* libfMSX.a in Frameworks */,
-				B39768FB2859E23A00558958 /* libfMSX-libretro.a in Frameworks */,
 				B3447ECD218BEDD200557ACE /* CoreAudio.framework in Frameworks */,
 				B3447ECE218BEDD200557ACE /* AudioToolbox.framework in Frameworks */,
 				B3447ED0218BEDD200557ACE /* libz.tbd in Frameworks */,
@@ -483,7 +482,6 @@
 				B3EBABF62872971F00EAEB37 /* fmsx-libretro */,
 				B37022BE287253B300B3F6DA /* PVfMSX */,
 				B37022C4287253B300B3F6DA /* PVfMSXCore */,
-				B37022C3287253B300B3F6DA /* PVfMSX.h */,
 				B37022BD287253B300B3F6DA /* PVfMSX-Prefix.pch */,
 				B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */,
 				B3C7621B20783242009950E4 /* Frameworks */,
