@@ -271,6 +271,8 @@
 					<string>cdi</string>
 					<string>gdi</string>
 					<string>bios</string>
+					<string>msx</string>
+					<string>col</string>
 				</array>
 			</dict>
 		</dict>
@@ -303,7 +305,9 @@
 				<key>public.filename-extension</key>
 				<array>
 					<string>ROM</string>
+					<string>col</string>
 					<string>rom</string>
+					<string>msx</string>
 					<string>cue</string>
 					<string>bin</string>
 					<string>a78</string>
@@ -353,6 +357,8 @@
 			<array/>
 			<key>UTTypeIdentifier</key>
 			<string>com.provenance.rom</string>
+			<key>UTTypeTagSpecification</key>
+			<dict/>
 		</dict>
 		<dict>
 			<key>UTITagTypeSpecification</key>

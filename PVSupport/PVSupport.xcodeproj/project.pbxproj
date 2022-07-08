@@ -158,7 +158,7 @@
 		B3532C3721A925C2006CDA0F /* SortOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3521A925C1006CDA0F /* SortOption.swift */; };
 		B35E6C38207EE15D0040709A /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C36207EE15D0040709A /* CoreOptions.swift */; };
 		B364D4B42870E5F600B93A4B /* libretro.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC6D92867202D00B60497 /* libretro.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B364D4B52870E5F600B93A4B /* libretro.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC6D92867202D00B60497 /* libretro.h */; };
+		B364D4B52870E5F600B93A4B /* libretro.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC6D92867202D00B60497 /* libretro.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3702311287256DA00B3F6DA /* retro_inline.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC6C02867202D00B60497 /* retro_inline.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3702312287256DA00B3F6DA /* retro_inline.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC6C02867202D00B60497 /* retro_inline.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B372638426EA015700E95488 /* CocoaLumberjack+swift-log.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E8326C67F420088AC32 /* CocoaLumberjack+swift-log.swift */; };
@@ -179,8 +179,6 @@
 		B3A41BDF286E76110054E9A5 /* PVLibRetro.h in Headers */ = {isa = PBXBuildFile; fileRef = B392849028670348003BAC21 /* PVLibRetro.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A41BE0286E76110054E9A5 /* PVLibRetroCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3928497286703CD003BAC21 /* PVLibRetroCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A41BE2286E76110054E9A5 /* PVLibRetroCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B3928498286703CD003BAC21 /* PVLibRetroCore.m */; };
-		B3A41BE4286E76110054E9A5 /* libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B322512D286C4728001FDF42 /* libretro.a */; };
-		B3A41BE5286E76110054E9A5 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96ED81D62C5E7003F1E93 /* PVSupport.framework */; };
 		B3A4FB5A278FE45D00A65248 /* OEGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A4FB59278FE45C00A65248 /* OEGeometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A4FB5B278FE45D00A65248 /* OEGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A4FB59278FE45C00A65248 /* OEGeometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A4FB5C278FE45D00A65248 /* OEGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A4FB59278FE45C00A65248 /* OEGeometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -218,6 +216,9 @@
 		B3B1A742279021C4004D1EF2 /* AHAP in Resources */ = {isa = PBXBuildFile; fileRef = B3B1A73F279021C4004D1EF2 /* AHAP */; };
 		B3B3D17428712EE1008A0E2F /* msg_hash.c in Sources */ = {isa = PBXBuildFile; fileRef = B322515C286C6F29001FDF42 /* msg_hash.c */; };
 		B3B492CB26B3A96B000B426B /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = B3B492CA26B3A96B000B426B /* Reachability */; };
+		B3C8A69428781C6E0037A946 /* msg_hash.c in Sources */ = {isa = PBXBuildFile; fileRef = B322515C286C6F29001FDF42 /* msg_hash.c */; };
+		B3C8A69528781D460037A946 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96E9E1D62C3A3003F1E93 /* PVSupport.framework */; };
+		B3C8A69A28781D4E0037A946 /* libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BDA286E75DD0054E9A5 /* libretro.a */; };
 		B3C96EA71D62C3BE003F1E93 /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4E718C1A6C699F005CA80F /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EA81D62C3C3003F1E93 /* OEGameAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69117F748F80031B1C9 /* OEGameAudio.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EAC1D62C3C3003F1E93 /* TPCircularBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69517F748F80031B1C9 /* TPCircularBuffer.c */; };
@@ -281,12 +282,19 @@
 			remoteGlobalIDString = B3C96EBE1D62C5E7003F1E93;
 			remoteInfo = "PVSupport-iOS";
 		};
-		B3A41BDD286E76110054E9A5 /* PBXContainerItemProxy */ = {
+		B3C8A69728781D460037A946 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1ACEA63C17F7467D0031B1C9 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = B3C96EBE1D62C5E7003F1E93;
-			remoteInfo = "PVSupport-iOS";
+			remoteGlobalIDString = B3C96E9D1D62C3A3003F1E93;
+			remoteInfo = "PVSupport-tvOS";
+		};
+		B3C8A69B28781D4E0037A946 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1ACEA63C17F7467D0031B1C9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3A41BD0286E75DD0054E9A5;
+			remoteInfo = "retro-tvOS";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -309,6 +317,16 @@
 			files = (
 				B3A41BD5286E75DD0054E9A5 /* retro.h in CopyFiles */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3C8A69928781D470037A946 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -1243,8 +1261,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3A41BE4286E76110054E9A5 /* libretro.a in Frameworks */,
-				B3A41BE5286E76110054E9A5 /* PVSupport.framework in Frameworks */,
+				B3C8A69A28781D4E0037A946 /* libretro.a in Frameworks */,
+				B3C8A69528781D460037A946 /* PVSupport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3643,11 +3661,13 @@
 				B3A41BE1286E76110054E9A5 /* Sources */,
 				B3A41BE3286E76110054E9A5 /* Frameworks */,
 				B3A41BE6286E76110054E9A5 /* Resources */,
+				B3C8A69928781D470037A946 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				B3A41BDC286E76110054E9A5 /* PBXTargetDependency */,
+				B3C8A69828781D460037A946 /* PBXTargetDependency */,
+				B3C8A69C28781D4E0037A946 /* PBXTargetDependency */,
 			);
 			name = "PVLibRetro-tvOS";
 			productName = PVLibRetro;
@@ -3913,6 +3933,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B342325A286EB4060033EFA5 /* dylib.c in Sources */,
+				B3C8A69428781C6E0037A946 /* msg_hash.c in Sources */,
 				B3A41BD2286E75DD0054E9A5 /* retro.m in Sources */,
 				B3423261286EB5CB0033EFA5 /* dynamic_dummy.c in Sources */,
 			);
@@ -4101,10 +4122,15 @@
 			target = B3C96EBE1D62C5E7003F1E93 /* PVSupport-iOS */;
 			targetProxy = B392849D286703F2003BAC21 /* PBXContainerItemProxy */;
 		};
-		B3A41BDC286E76110054E9A5 /* PBXTargetDependency */ = {
+		B3C8A69828781D460037A946 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3C96EBE1D62C5E7003F1E93 /* PVSupport-iOS */;
-			targetProxy = B3A41BDD286E76110054E9A5 /* PBXContainerItemProxy */;
+			target = B3C96E9D1D62C3A3003F1E93 /* PVSupport-tvOS */;
+			targetProxy = B3C8A69728781D460037A946 /* PBXContainerItemProxy */;
+		};
+		B3C8A69C28781D4E0037A946 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3A41BD0286E75DD0054E9A5 /* retro-tvOS */;
+			targetProxy = B3C8A69B28781D4E0037A946 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -4894,6 +4920,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -4929,6 +4956,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -4964,6 +4992,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -4999,6 +5028,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
@@ -5055,6 +5085,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
@@ -5109,6 +5140,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;

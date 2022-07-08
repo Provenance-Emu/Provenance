@@ -191,6 +191,48 @@
 		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
 		B3C76225207833DE009950E4 /* PVMelonDSCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVMelonDSCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C76226207833DE009950E4 /* PVMelonDSCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVMelonDSCore.mm */; };
+		B3C8A666287808C10037A946 /* NDS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33806942877B5080009C732 /* NDS.cpp */; };
+		B3C8A667287808C20037A946 /* NDS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33806942877B5080009C732 /* NDS.cpp */; };
+		B3C8A668287809340037A946 /* MathUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33806672877B5080009C732 /* MathUtil.cpp */; };
+		B3C8A669287809340037A946 /* MathUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33806672877B5080009C732 /* MathUtil.cpp */; };
+		B3C8A66A2878093A0037A946 /* Arm64Emitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33806712877B5080009C732 /* Arm64Emitter.cpp */; };
+		B3C8A66B2878093E0037A946 /* Arm64Emitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33806712877B5080009C732 /* Arm64Emitter.cpp */; };
+		B3C8A66C287809920037A946 /* teakra_c.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33805CC2877B5080009C732 /* teakra_c.cpp */; };
+		B3C8A66D287809920037A946 /* disassembler_c.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33805F32877B5080009C732 /* disassembler_c.cpp */; };
+		B3C8A66E287809930037A946 /* teakra_c.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33805CC2877B5080009C732 /* teakra_c.cpp */; };
+		B3C8A66F287809930037A946 /* disassembler_c.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33805F32877B5080009C732 /* disassembler_c.cpp */; };
+		B3C8A670287809B00037A946 /* btdmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B338060F2877B5080009C732 /* btdmp.cpp */; };
+		B3C8A671287809B00037A946 /* disassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33805D02877B5080009C732 /* disassembler.cpp */; };
+		B3C8A672287809B00037A946 /* apbp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33805F12877B5080009C732 /* apbp.cpp */; };
+		B3C8A673287809B00037A946 /* ahbm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33805CB2877B5080009C732 /* ahbm.cpp */; };
+		B3C8A674287809B00037A946 /* dma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33805D12877B5080009C732 /* dma.cpp */; };
+		B3C8A675287809B00037A946 /* parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33806052877B5080009C732 /* parser.cpp */; };
+		B3C8A676287809B00037A946 /* mmio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33805CD2877B5080009C732 /* mmio.cpp */; };
+		B3C8A677287809B00037A946 /* processor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33805DD2877B5080009C732 /* processor.cpp */; };
+		B3C8A678287809B00037A946 /* teakra.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33805F22877B5080009C732 /* teakra.cpp */; };
+		B3C8A679287809B00037A946 /* memory_interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33805CF2877B5080009C732 /* memory_interface.cpp */; };
+		B3C8A67A287809B00037A946 /* test_generator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33805FC2877B5080009C732 /* test_generator.cpp */; };
+		B3C8A67B287809B00037A946 /* timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33805E12877B5080009C732 /* timer.cpp */; };
+		B3C8A67C287809B10037A946 /* btdmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B338060F2877B5080009C732 /* btdmp.cpp */; };
+		B3C8A67D287809B10037A946 /* disassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33805D02877B5080009C732 /* disassembler.cpp */; };
+		B3C8A67E287809B10037A946 /* apbp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33805F12877B5080009C732 /* apbp.cpp */; };
+		B3C8A67F287809B10037A946 /* ahbm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33805CB2877B5080009C732 /* ahbm.cpp */; };
+		B3C8A680287809B10037A946 /* dma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33805D12877B5080009C732 /* dma.cpp */; };
+		B3C8A681287809B10037A946 /* parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33806052877B5080009C732 /* parser.cpp */; };
+		B3C8A682287809B10037A946 /* mmio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33805CD2877B5080009C732 /* mmio.cpp */; };
+		B3C8A683287809B10037A946 /* processor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33805DD2877B5080009C732 /* processor.cpp */; };
+		B3C8A684287809B10037A946 /* teakra.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33805F22877B5080009C732 /* teakra.cpp */; };
+		B3C8A685287809B10037A946 /* memory_interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33805CF2877B5080009C732 /* memory_interface.cpp */; };
+		B3C8A686287809B10037A946 /* test_generator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33805FC2877B5080009C732 /* test_generator.cpp */; };
+		B3C8A687287809B10037A946 /* timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33805E12877B5080009C732 /* timer.cpp */; };
+		B3C8A68A28780AB90037A946 /* ff.c in Sources */ = {isa = PBXBuildFile; fileRef = B338059F2877B5080009C732 /* ff.c */; };
+		B3C8A68B28780AB90037A946 /* ff.c in Sources */ = {isa = PBXBuildFile; fileRef = B338059F2877B5080009C732 /* ff.c */; };
+		B3C8A68D28780AE70037A946 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A68C28780AE30037A946 /* libpthread.tbd */; };
+		B3C8A68F28780AEF0037A946 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A68E28780AEF0037A946 /* libpthread.tbd */; };
+		B3C8A69028780B9A0037A946 /* diskio.c in Sources */ = {isa = PBXBuildFile; fileRef = B33805A62877B5080009C732 /* diskio.c */; };
+		B3C8A69128780B9B0037A946 /* diskio.c in Sources */ = {isa = PBXBuildFile; fileRef = B33805A62877B5080009C732 /* diskio.c */; };
+		B3C8A69228780D5C0037A946 /* encoding_utf.c in Sources */ = {isa = PBXBuildFile; fileRef = B33806B32877B5090009C732 /* encoding_utf.c */; };
+		B3C8A69328780D5C0037A946 /* encoding_utf.c in Sources */ = {isa = PBXBuildFile; fileRef = B33806B32877B5090009C732 /* encoding_utf.c */; };
 		B3DDF56D26E9B90400CE47F0 /* libMelonDS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3447F91218BEE3F00557ACE /* libMelonDS.a */; };
 /* End PBXBuildFile section */
 
@@ -956,6 +998,8 @@
 		B3C76223207833DE009950E4 /* PVMelonDSCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVMelonDSCore.h; sourceTree = "<group>"; };
 		B3C76224207833DE009950E4 /* PVMelonDSCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVMelonDSCore.mm; sourceTree = "<group>"; };
 		B3C7622720783510009950E4 /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
+		B3C8A68C28780AE30037A946 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/lib/libpthread.tbd; sourceTree = DEVELOPER_DIR; };
+		B3C8A68E28780AEF0037A946 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/usr/lib/libpthread.tbd; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -963,6 +1007,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3C8A68D28780AE70037A946 /* libpthread.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -987,6 +1032,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3C8A68F28780AEF0037A946 /* libpthread.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1323,66 +1369,66 @@
 		B33805C22877B5080009C732 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				B33805C32877B5080009C732 /* common_types.h */,
-				B33805C42877B5080009C732 /* icu.h */,
-				B33805C52877B5080009C732 /* apbp.md */,
-				B33805C62877B5080009C732 /* ahbm.md */,
-				B33805C72877B5080009C732 /* test_generator */,
-				B33805CA2877B5080009C732 /* dma.h */,
 				B33805CB2877B5080009C732 /* ahbm.cpp */,
-				B33805CC2877B5080009C732 /* teakra_c.cpp */,
-				B33805CD2877B5080009C732 /* mmio.cpp */,
-				B33805CE2877B5080009C732 /* CMakeLists.txt */,
-				B33805CF2877B5080009C732 /* memory_interface.cpp */,
+				B33805F12877B5080009C732 /* apbp.cpp */,
+				B338060F2877B5080009C732 /* btdmp.cpp */,
+				B33805F32877B5080009C732 /* disassembler_c.cpp */,
 				B33805D02877B5080009C732 /* disassembler.cpp */,
 				B33805D12877B5080009C732 /* dma.cpp */,
-				B33805D22877B5080009C732 /* matcher.h */,
-				B33805D32877B5080009C732 /* test_verifier */,
-				B33805D62877B5080009C732 /* mmio.h */,
-				B33805D72877B5080009C732 /* processor.h */,
-				B33805D82877B5080009C732 /* mod_test_generator */,
-				B33805DB2877B5080009C732 /* processor_general.md */,
-				B33805DC2877B5080009C732 /* parser.h */,
-				B33805DD2877B5080009C732 /* processor.cpp */,
-				B33805DE2877B5080009C732 /* memory_interface.h */,
-				B33805DF2877B5080009C732 /* interpreter.h */,
-				B33805E02877B5080009C732 /* btdmp.md */,
-				B33805E12877B5080009C732 /* timer.cpp */,
-				B33805E22877B5080009C732 /* decoder.h */,
-				B33805E32877B5080009C732 /* mmio.md */,
-				B33805E42877B5080009C732 /* test.h */,
-				B33805E52877B5080009C732 /* bit.h */,
-				B33805E62877B5080009C732 /* operand.h */,
-				B33805E72877B5080009C732 /* sio.md */,
-				B33805E82877B5080009C732 /* btdmp.h */,
-				B33805E92877B5080009C732 /* pmu.md */,
-				B33805EA2877B5080009C732 /* README.md */,
-				B33805EB2877B5080009C732 /* timer.h */,
-				B33805EC2877B5080009C732 /* coff_reader */,
-				B33805F02877B5080009C732 /* icu.md */,
-				B33805F12877B5080009C732 /* apbp.cpp */,
-				B33805F22877B5080009C732 /* teakra.cpp */,
-				B33805F32877B5080009C732 /* disassembler_c.cpp */,
-				B33805F42877B5080009C732 /* register.md */,
-				B33805F52877B5080009C732 /* crash.h */,
-				B33805F62877B5080009C732 /* decoder.md */,
-				B33805F72877B5080009C732 /* core_timing.h */,
-				B33805F82877B5080009C732 /* ocem.md */,
-				B33805F92877B5080009C732 /* test_generator.h */,
-				B33805FA2877B5080009C732 /* dma.md */,
-				B33805FB2877B5080009C732 /* miu.md */,
-				B33805FC2877B5080009C732 /* test_generator.cpp */,
-				B33805FD2877B5080009C732 /* register.h */,
-				B33805FE2877B5080009C732 /* dsp1_reader */,
-				B33806012877B5080009C732 /* step2_test_generator */,
-				B33806042877B5080009C732 /* timer.md */,
+				B33805CF2877B5080009C732 /* memory_interface.cpp */,
+				B33805CD2877B5080009C732 /* mmio.cpp */,
 				B33806052877B5080009C732 /* parser.cpp */,
-				B33806062877B5080009C732 /* cru.md */,
+				B33805DD2877B5080009C732 /* processor.cpp */,
+				B33805CC2877B5080009C732 /* teakra_c.cpp */,
+				B33805F22877B5080009C732 /* teakra.cpp */,
+				B33805FC2877B5080009C732 /* test_generator.cpp */,
+				B33805E12877B5080009C732 /* timer.cpp */,
 				B33806072877B5080009C732 /* ahbm.h */,
-				B33806082877B5080009C732 /* shared_memory.h */,
-				B33806092877B5080009C732 /* makedsp1 */,
 				B338060E2877B5080009C732 /* apbp.h */,
-				B338060F2877B5080009C732 /* btdmp.cpp */,
+				B33805E52877B5080009C732 /* bit.h */,
+				B33805E82877B5080009C732 /* btdmp.h */,
+				B33805C32877B5080009C732 /* common_types.h */,
+				B33805F72877B5080009C732 /* core_timing.h */,
+				B33805F52877B5080009C732 /* crash.h */,
+				B33805E22877B5080009C732 /* decoder.h */,
+				B33805CA2877B5080009C732 /* dma.h */,
+				B33805C42877B5080009C732 /* icu.h */,
+				B33805DF2877B5080009C732 /* interpreter.h */,
+				B33805D22877B5080009C732 /* matcher.h */,
+				B33805DE2877B5080009C732 /* memory_interface.h */,
+				B33805D62877B5080009C732 /* mmio.h */,
+				B33805E62877B5080009C732 /* operand.h */,
+				B33805DC2877B5080009C732 /* parser.h */,
+				B33805D72877B5080009C732 /* processor.h */,
+				B33805FD2877B5080009C732 /* register.h */,
+				B33806082877B5080009C732 /* shared_memory.h */,
+				B33805F92877B5080009C732 /* test_generator.h */,
+				B33805E42877B5080009C732 /* test.h */,
+				B33805EB2877B5080009C732 /* timer.h */,
+				B33805C62877B5080009C732 /* ahbm.md */,
+				B33805C52877B5080009C732 /* apbp.md */,
+				B33805E02877B5080009C732 /* btdmp.md */,
+				B33806062877B5080009C732 /* cru.md */,
+				B33805F62877B5080009C732 /* decoder.md */,
+				B33805FA2877B5080009C732 /* dma.md */,
+				B33805F02877B5080009C732 /* icu.md */,
+				B33805FB2877B5080009C732 /* miu.md */,
+				B33805E32877B5080009C732 /* mmio.md */,
+				B33805F82877B5080009C732 /* ocem.md */,
+				B33805E92877B5080009C732 /* pmu.md */,
+				B33805DB2877B5080009C732 /* processor_general.md */,
+				B33805EA2877B5080009C732 /* README.md */,
+				B33805F42877B5080009C732 /* register.md */,
+				B33805E72877B5080009C732 /* sio.md */,
+				B33806042877B5080009C732 /* timer.md */,
+				B33805CE2877B5080009C732 /* CMakeLists.txt */,
+				B33805EC2877B5080009C732 /* coff_reader */,
+				B33805FE2877B5080009C732 /* dsp1_reader */,
+				B33806092877B5080009C732 /* makedsp1 */,
+				B33805D82877B5080009C732 /* mod_test_generator */,
+				B33806012877B5080009C732 /* step2_test_generator */,
+				B33805C72877B5080009C732 /* test_generator */,
+				B33805D32877B5080009C732 /* test_verifier */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -1550,25 +1596,25 @@
 		B33806602877B5080009C732 /* dolphin */ = {
 			isa = PBXGroup;
 			children = (
-				B33806612877B5080009C732 /* BitSet.h */,
-				B33806622877B5080009C732 /* Align.h */,
-				B33806632877B5080009C732 /* x64Reg.h */,
-				B33806642877B5080009C732 /* Arm64Emitter.h */,
-				B33806652877B5080009C732 /* x64Emitter.cpp */,
-				B33806662877B5080009C732 /* license_dolphin.txt */,
-				B33806672877B5080009C732 /* MathUtil.cpp */,
-				B33806682877B5080009C732 /* x64Emitter.h */,
-				B33806692877B5080009C732 /* CommonFuncs.cpp */,
-				B338066A2877B5080009C732 /* ArmCommon.h */,
-				B338066B2877B5080009C732 /* BitUtils.h */,
-				B338066C2877B5080009C732 /* CPUDetect.h */,
-				B338066D2877B5080009C732 /* Compat.h */,
-				B338066E2877B5080009C732 /* x64ABI.cpp */,
-				B338066F2877B5080009C732 /* x64ABI.h */,
-				B33806702877B5080009C732 /* MathUtil.h */,
 				B33806712877B5080009C732 /* Arm64Emitter.cpp */,
-				B33806722877B5080009C732 /* CommonFuncs.h */,
+				B33806692877B5080009C732 /* CommonFuncs.cpp */,
+				B33806672877B5080009C732 /* MathUtil.cpp */,
+				B338066E2877B5080009C732 /* x64ABI.cpp */,
 				B33806732877B5080009C732 /* x64CPUDetect.cpp */,
+				B33806652877B5080009C732 /* x64Emitter.cpp */,
+				B33806622877B5080009C732 /* Align.h */,
+				B33806642877B5080009C732 /* Arm64Emitter.h */,
+				B338066A2877B5080009C732 /* ArmCommon.h */,
+				B33806612877B5080009C732 /* BitSet.h */,
+				B338066B2877B5080009C732 /* BitUtils.h */,
+				B33806722877B5080009C732 /* CommonFuncs.h */,
+				B338066D2877B5080009C732 /* Compat.h */,
+				B338066C2877B5080009C732 /* CPUDetect.h */,
+				B33806702877B5080009C732 /* MathUtil.h */,
+				B338066F2877B5080009C732 /* x64ABI.h */,
+				B33806682877B5080009C732 /* x64Emitter.h */,
+				B33806632877B5080009C732 /* x64Reg.h */,
+				B33806662877B5080009C732 /* license_dolphin.txt */,
 			);
 			path = dolphin;
 			sourceTree = "<group>";
@@ -2759,6 +2805,8 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3C8A68C28780AE30037A946 /* libpthread.tbd */,
+				B3C8A68E28780AEF0037A946 /* libpthread.tbd */,
 				B364D4BA2870E7DE00B93A4B /* PVLibRetro.framework */,
 				B364D4B62870E7D300B93A4B /* PVLibRetro.framework */,
 				B35E6BF1207CD2670040709A /* AudioToolbox.framework */,
@@ -2961,10 +3009,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3C8A666287808C10037A946 /* NDS.cpp in Sources */,
 				B33809002877B6A00009C732 /* ffunicode.c in Sources */,
 				B33808A42877B5E70009C732 /* CP15.cpp in Sources */,
 				B33808C42877B6090009C732 /* Wifi.cpp in Sources */,
 				B33808E92877B64F0009C732 /* compat_posix_string.c in Sources */,
+				B3C8A69028780B9A0037A946 /* diskio.c in Sources */,
 				B33808DE2877B62D0009C732 /* input.cpp in Sources */,
 				B338089F2877B5E70009C732 /* ARM.cpp in Sources */,
 				B33808FA2877B67C0009C732 /* vfs_implementation.c in Sources */,
@@ -2975,7 +3025,10 @@
 				B33808EA2877B64F0009C732 /* compat_strcasestr.c in Sources */,
 				B33809162877BA350009C732 /* ARMJIT_LoadStore.cpp in Sources */,
 				B33809042877B6A80009C732 /* sha1.c in Sources */,
+				B3C8A66C287809920037A946 /* teakra_c.cpp in Sources */,
 				B33809142877BA350009C732 /* ARMJIT_Compiler.cpp in Sources */,
+				B3C8A66D287809920037A946 /* disassembler_c.cpp in Sources */,
+				B3C8A674287809B00037A946 /* dma.cpp in Sources */,
 				B33808A22877B5E70009C732 /* DSi_DSP.cpp in Sources */,
 				B33808932877B5E70009C732 /* DSi.cpp in Sources */,
 				B33808A02877B5E70009C732 /* ARCodeFile.cpp in Sources */,
@@ -2985,11 +3038,14 @@
 				B33808F72877B6700009C732 /* stdstring.c in Sources */,
 				B338089C2877B5E70009C732 /* DSi_NDMA.cpp in Sources */,
 				B33808A52877B5E70009C732 /* DSi_AES.cpp in Sources */,
+				B3C8A677287809B00037A946 /* processor.cpp in Sources */,
+				B3C8A673287809B00037A946 /* ahbm.cpp in Sources */,
 				B33809132877BA350009C732 /* ARMJIT_Branch.cpp in Sources */,
 				B33808DD2877B62D0009C732 /* libretro.cpp in Sources */,
 				B33808942877B5E70009C732 /* DSi_Camera.cpp in Sources */,
 				B33808FE2877B68B0009C732 /* aes.c in Sources */,
 				B33809152877BA350009C732 /* ARMJIT_ALU.cpp in Sources */,
+				B3C8A672287809B00037A946 /* apbp.cpp in Sources */,
 				B33808D92877B61B0009C732 /* Util_ROM.cpp in Sources */,
 				B33808972877B5E70009C732 /* ARMInterpreter_ALU.cpp in Sources */,
 				B33808C62877B6090009C732 /* RTC.cpp in Sources */,
@@ -2997,35 +3053,47 @@
 				B33808C82877B6090009C732 /* NDSCart_SRAMManager.cpp in Sources */,
 				B33808C12877B6090009C732 /* GPU3D_Soft.cpp in Sources */,
 				B338090A2877B9F10009C732 /* ARMJIT.cpp in Sources */,
+				B3C8A675287809B00037A946 /* parser.cpp in Sources */,
+				B3C8A676287809B00037A946 /* mmio.cpp in Sources */,
+				B3C8A670287809B00037A946 /* btdmp.cpp in Sources */,
+				B3C8A67B287809B00037A946 /* timer.cpp in Sources */,
 				B33808962877B5E70009C732 /* DMA.cpp in Sources */,
 				B33808F12877B6680009C732 /* file_stream.c in Sources */,
 				B33808C72877B6090009C732 /* GBACart.cpp in Sources */,
 				B33808BF2877B6090009C732 /* GPU.cpp in Sources */,
 				B33809072877B99C0009C732 /* rthreads.c in Sources */,
 				B338089A2877B5E70009C732 /* DSi_NAND.cpp in Sources */,
+				B3C8A68A28780AB90037A946 /* ff.c in Sources */,
 				B33808BD2877B6090009C732 /* NDSCart.cpp in Sources */,
 				B33808BE2877B6090009C732 /* Savestate.cpp in Sources */,
 				B33808E02877B62D0009C732 /* utils.cpp in Sources */,
 				B33808CA2877B6090009C732 /* SPU.cpp in Sources */,
 				B33808A62877B5E70009C732 /* DSi_I2C.cpp in Sources */,
+				B3C8A69228780D5C0037A946 /* encoding_utf.c in Sources */,
 				B33808C02877B6090009C732 /* GPU2D.cpp in Sources */,
 				B33808F32877B6680009C732 /* memory_stream.c in Sources */,
+				B3C8A678287809B00037A946 /* teakra.cpp in Sources */,
 				B33808E82877B64F0009C732 /* fopen_utf8.c in Sources */,
 				B33809082877B9A20009C732 /* rsemaphore.c in Sources */,
 				B33808A72877B5E70009C732 /* DSi_SPI_TSC.cpp in Sources */,
 				B33808FC2877B6860009C732 /* xxhash.c in Sources */,
+				B3C8A679287809B00037A946 /* memory_interface.cpp in Sources */,
+				B3C8A67A287809B00037A946 /* test_generator.cpp in Sources */,
 				B33808E72877B64F0009C732 /* compat_strl.c in Sources */,
 				B33809122877BA350009C732 /* ARMJIT_Linkage.S in Sources */,
 				B33808952877B5E70009C732 /* CRC32.cpp in Sources */,
+				B3C8A668287809340037A946 /* MathUtil.cpp in Sources */,
 				B33808DB2877B62D0009C732 /* screenlayout.cpp in Sources */,
 				B33808DF2877B62D0009C732 /* platform.cpp in Sources */,
 				B33808A32877B5E70009C732 /* ARMInterpreter_LoadStore.cpp in Sources */,
+				B3C8A671287809B00037A946 /* disassembler.cpp in Sources */,
 				B338089B2877B5E70009C732 /* DSi_SD.cpp in Sources */,
 				B33808A12877B5E70009C732 /* AREngine.cpp in Sources */,
 				B338089E2877B5E70009C732 /* DSi_NWifi.cpp in Sources */,
 				B338090C2877B9F10009C732 /* CommonFuncs.cpp in Sources */,
 				B33809012877B6A00009C732 /* ffsystem.c in Sources */,
 				B33808982877B5E70009C732 /* ARMInterpreter_Branch.cpp in Sources */,
+				B3C8A66A2878093A0037A946 /* Arm64Emitter.cpp in Sources */,
 				B33808C52877B6090009C732 /* GPU2D_Soft.cpp in Sources */,
 				B338090B2877B9F10009C732 /* ARMJIT_Memory.cpp in Sources */,
 				B33808C22877B6090009C732 /* GPU3D.cpp in Sources */,
@@ -3047,10 +3115,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3C8A667287808C20037A946 /* NDS.cpp in Sources */,
 				B33809022877B6A00009C732 /* ffunicode.c in Sources */,
 				B33808B92877B5E80009C732 /* CP15.cpp in Sources */,
 				B33808D22877B6090009C732 /* Wifi.cpp in Sources */,
 				B33808ED2877B64F0009C732 /* compat_posix_string.c in Sources */,
+				B3C8A69128780B9B0037A946 /* diskio.c in Sources */,
 				B33808E42877B62D0009C732 /* input.cpp in Sources */,
 				B33808B42877B5E80009C732 /* ARM.cpp in Sources */,
 				B33808FB2877B67C0009C732 /* vfs_implementation.c in Sources */,
@@ -3061,7 +3131,10 @@
 				B33808EE2877B64F0009C732 /* compat_strcasestr.c in Sources */,
 				B338091B2877BA360009C732 /* ARMJIT_LoadStore.cpp in Sources */,
 				B33809052877B6A80009C732 /* sha1.c in Sources */,
+				B3C8A66E287809930037A946 /* teakra_c.cpp in Sources */,
 				B33809192877BA360009C732 /* ARMJIT_Compiler.cpp in Sources */,
+				B3C8A66F287809930037A946 /* disassembler_c.cpp in Sources */,
+				B3C8A680287809B10037A946 /* dma.cpp in Sources */,
 				B33808B72877B5E80009C732 /* DSi_DSP.cpp in Sources */,
 				B33808A82877B5E80009C732 /* DSi.cpp in Sources */,
 				B33808B52877B5E80009C732 /* ARCodeFile.cpp in Sources */,
@@ -3071,11 +3144,14 @@
 				B33808F92877B6740009C732 /* stdstring.c in Sources */,
 				B33808B12877B5E80009C732 /* DSi_NDMA.cpp in Sources */,
 				B33808BA2877B5E80009C732 /* DSi_AES.cpp in Sources */,
+				B3C8A683287809B10037A946 /* processor.cpp in Sources */,
+				B3C8A67F287809B10037A946 /* ahbm.cpp in Sources */,
 				B33809182877BA360009C732 /* ARMJIT_Branch.cpp in Sources */,
 				B33808E32877B62D0009C732 /* libretro.cpp in Sources */,
 				B33808A92877B5E80009C732 /* DSi_Camera.cpp in Sources */,
 				B33808FF2877B68D0009C732 /* aes.c in Sources */,
 				B338091A2877BA360009C732 /* ARMJIT_ALU.cpp in Sources */,
+				B3C8A67E287809B10037A946 /* apbp.cpp in Sources */,
 				B33808DA2877B61B0009C732 /* Util_ROM.cpp in Sources */,
 				B33808AC2877B5E80009C732 /* ARMInterpreter_ALU.cpp in Sources */,
 				B33808D42877B6090009C732 /* RTC.cpp in Sources */,
@@ -3083,35 +3159,47 @@
 				B33808D62877B6090009C732 /* NDSCart_SRAMManager.cpp in Sources */,
 				B33808CF2877B6090009C732 /* GPU3D_Soft.cpp in Sources */,
 				B338090E2877B9F20009C732 /* ARMJIT.cpp in Sources */,
+				B3C8A681287809B10037A946 /* parser.cpp in Sources */,
+				B3C8A682287809B10037A946 /* mmio.cpp in Sources */,
+				B3C8A67C287809B10037A946 /* btdmp.cpp in Sources */,
+				B3C8A687287809B10037A946 /* timer.cpp in Sources */,
 				B33808AB2877B5E80009C732 /* DMA.cpp in Sources */,
 				B33808F42877B6690009C732 /* file_stream.c in Sources */,
 				B33808D52877B6090009C732 /* GBACart.cpp in Sources */,
 				B33808CD2877B6090009C732 /* GPU.cpp in Sources */,
 				B33809062877B99C0009C732 /* rthreads.c in Sources */,
 				B33808AF2877B5E80009C732 /* DSi_NAND.cpp in Sources */,
+				B3C8A68B28780AB90037A946 /* ff.c in Sources */,
 				B33808CB2877B6090009C732 /* NDSCart.cpp in Sources */,
 				B33808CC2877B6090009C732 /* Savestate.cpp in Sources */,
 				B33808E62877B62D0009C732 /* utils.cpp in Sources */,
 				B33808D82877B6090009C732 /* SPU.cpp in Sources */,
 				B33808BB2877B5E80009C732 /* DSi_I2C.cpp in Sources */,
+				B3C8A69328780D5C0037A946 /* encoding_utf.c in Sources */,
 				B33808CE2877B6090009C732 /* GPU2D.cpp in Sources */,
 				B33808F62877B6690009C732 /* memory_stream.c in Sources */,
+				B3C8A684287809B10037A946 /* teakra.cpp in Sources */,
 				B33808EC2877B64F0009C732 /* fopen_utf8.c in Sources */,
 				B33809092877B9A20009C732 /* rsemaphore.c in Sources */,
 				B33808BC2877B5E80009C732 /* DSi_SPI_TSC.cpp in Sources */,
 				B33808FD2877B6860009C732 /* xxhash.c in Sources */,
+				B3C8A685287809B10037A946 /* memory_interface.cpp in Sources */,
+				B3C8A686287809B10037A946 /* test_generator.cpp in Sources */,
 				B33808EB2877B64F0009C732 /* compat_strl.c in Sources */,
 				B33809172877BA360009C732 /* ARMJIT_Linkage.S in Sources */,
 				B33808AA2877B5E80009C732 /* CRC32.cpp in Sources */,
+				B3C8A669287809340037A946 /* MathUtil.cpp in Sources */,
 				B33808E12877B62D0009C732 /* screenlayout.cpp in Sources */,
 				B33808E52877B62D0009C732 /* platform.cpp in Sources */,
 				B33808B82877B5E80009C732 /* ARMInterpreter_LoadStore.cpp in Sources */,
+				B3C8A67D287809B10037A946 /* disassembler.cpp in Sources */,
 				B33808B02877B5E80009C732 /* DSi_SD.cpp in Sources */,
 				B33808B62877B5E80009C732 /* AREngine.cpp in Sources */,
 				B33808B32877B5E80009C732 /* DSi_NWifi.cpp in Sources */,
 				B33809102877B9F20009C732 /* CommonFuncs.cpp in Sources */,
 				B33809032877B6A00009C732 /* ffsystem.c in Sources */,
 				B33808AD2877B5E80009C732 /* ARMInterpreter_Branch.cpp in Sources */,
+				B3C8A66B2878093E0037A946 /* Arm64Emitter.cpp in Sources */,
 				B33808D32877B6090009C732 /* GPU2D_Soft.cpp in Sources */,
 				B338090F2877B9F20009C732 /* ARMJIT_Memory.cpp in Sources */,
 				B33808D02877B6090009C732 /* GPU3D.cpp in Sources */,
@@ -3177,7 +3265,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -3228,6 +3316,7 @@
 					"\"$(SRCROOT)/melonDS/src/ARMJIT_A64\"",
 					"\"$(SRCROOT)/melonDS/src/ARMJIT_x64\"",
 					"\"$(SRCROOT)/melonDS/src/dolphin\"",
+					"\"$(SRCROOT)/melonDS/src/teakra/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -3296,6 +3385,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
 				TARGETED_DEVICE_FAMILY = 3;
 			};
 			name = Archive;
@@ -3354,6 +3444,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
 				TARGETED_DEVICE_FAMILY = 3;
 			};
 			name = Debug;
@@ -3382,6 +3473,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
 				TARGETED_DEVICE_FAMILY = 3;
 			};
 			name = Release;
@@ -3423,7 +3515,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -3476,6 +3568,7 @@
 					"\"$(SRCROOT)/melonDS/src/ARMJIT_A64\"",
 					"\"$(SRCROOT)/melonDS/src/ARMJIT_x64\"",
 					"\"$(SRCROOT)/melonDS/src/dolphin\"",
+					"\"$(SRCROOT)/melonDS/src/teakra/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -3495,7 +3588,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -3546,6 +3639,7 @@
 					"\"$(SRCROOT)/melonDS/src/ARMJIT_A64\"",
 					"\"$(SRCROOT)/melonDS/src/ARMJIT_x64\"",
 					"\"$(SRCROOT)/melonDS/src/dolphin\"",
+					"\"$(SRCROOT)/melonDS/src/teakra/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;

@@ -462,6 +462,14 @@ PV_OBJC_DIRECT_MEMBERS
     {
         return MTLPixelFormatB5G6R5Unorm;
     }
+    else if (pixelFormat == GL_RGB && pixelType == GL_UNSIGNED_SHORT_8_8_APPLE)
+    {
+        return MTLPixelFormatRGBA8Sint;
+    }
+    else if (pixelFormat == GL_RGB && pixelType == GL_UNSIGNED_SHORT_5_5_5_1)
+    {
+        return MTLPixelFormatB5G6R5Unorm;
+    }
     
     assert(!"Unknown GL pixelFormat. Add me");
     return MTLPixelFormatInvalid;

@@ -99,6 +99,11 @@
 	}
 	return self;
 }
+
+- (void *)getVariable:(const char *)variable {
+    ILOG(@"%s", variable);
+    return NULL;
+}
 //
 //- (void)dealloc {
 //#if !__has_feature(objc_arc)

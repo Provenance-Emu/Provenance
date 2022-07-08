@@ -63,16 +63,20 @@
     
     int _videoWidth, _videoHeight;
     int16_t _pad[2][12];
+    
+    // MARK: - Retro Structs
+    struct retro_core_t      core;
+    unsigned                 core_poll_type;
+    bool                     core_input_polled;
+    bool                     core_has_set_input_descriptors;
+
+    enum retro_pixel_format pix_fmt;
 }
+- (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player;
 - (void)pollControllers;
+
+- (void *)getVariable:(const char *)variable;
 @end
-
-
-// MARK: - Retro Structs
-static struct retro_core_t      core;
-static unsigned                 core_poll_type;
-static bool                     core_input_polled;
-static bool                     core_has_set_input_descriptors = false;
 
 static struct retro_callbacks   retro_ctx;
 //static retro_video_refresh_t video_cb;
@@ -117,8 +121,7 @@ static slock_t *_runloop_msg_queue_lock           = NULL;
 
 static char path_libretro[PATH_MAX_LENGTH];
 
-char *config_get_active_core_path_ptr(void)
-{
+char *config_get_active_core_path_ptr(void) {
     return path_libretro;
 }
 
@@ -127,23 +130,39 @@ char *config_get_active_core_path_ptr(void)
 //   return path_libretro;
 //}
 
-bool config_active_core_path_is_empty(void)
-{
+NSString *privateFrameworkPath(void) {
+    NSBundle *bundle = [NSBundle bundleForClass:[_current class]];
+    //    const char* path = [bundle.executablePath fileSystemRepresentation];
+    NSString *bundleName = bundle.infoDictionary[@"CFBundleName"];
+    NSString *executableName = bundle.infoDictionary[@"CFBundleExecutable"];
+    
+    NSString *frameworkPath = [NSString stringWithFormat:@"%@.framework/%@", bundleName, executableName];
+    NSString *privateFrameworkPath = [[[NSBundle mainBundle] privateFrameworksPath] stringByAppendingPathComponent:frameworkPath];
+    DLOG(@"%@", privateFrameworkPath);
+    return privateFrameworkPath;
+}
+
+const char *config_get_active_core_path(void) {
+
+    return [privateFrameworkPath() fileSystemRepresentation];
+}
+
+bool config_active_core_path_is_empty(void) {
     return !path_libretro[0];
 }
 
-size_t config_get_active_core_path_size(void)
-{
-    return sizeof(path_libretro);
+size_t config_get_active_core_path_size(void) {
+    DLOG(@"");
+    return privateFrameworkPath().length; //sizeof(path_libretro);
 }
 
-void config_set_active_core_path(const char *path)
-{
+void config_set_active_core_path(const char *path) {
+    DLOG(@"%s", path);
     strlcpy(path_libretro, path, sizeof(path_libretro));
 }
 
-void config_clear_active_core_path(void)
-{
+void config_clear_active_core_path(void) {
+    DLOG(@"");
     *path_libretro = '\0';
 }
 
@@ -199,26 +218,29 @@ int16_t input_state(unsigned port, unsigned device,
 
 static void core_input_state_poll_maybe(void)
 {
-    if (core_poll_type == POLL_TYPE_NORMAL)
+    GET_CURRENT_OR_RETURN();
+    if (current->core_poll_type == POLL_TYPE_NORMAL)
         input_poll();
 }
 
 static int16_t core_input_state_poll(unsigned port,
                                      unsigned device, unsigned idx, unsigned id)
 {
-    if (core_poll_type == POLL_TYPE_LATE)
+    GET_CURRENT_OR_RETURN(0);
+    if (current->core_poll_type == POLL_TYPE_LATE)
     {
-        if (!core_input_polled)
+        if (!current->core_input_polled)
             input_poll();
         
-        core_input_polled = true;
+        current->core_input_polled = true;
     }
     return input_state(port, device, idx, id);
 }
 
 void core_set_input_state(retro_ctx_input_state_info_t *info)
 {
-    core.retro_set_input_state(info->cb);
+    GET_CURRENT_OR_RETURN();
+    current->core.retro_set_input_state(info->cb);
 }
 
 
@@ -312,6 +334,8 @@ int16_t input_state(unsigned port, unsigned device,
  **/
 static bool core_init_libretro_cbs(void *data)
 {
+    GET_CURRENT_OR_RETURN(false);
+
     struct retro_callbacks *cbs = (struct retro_callbacks*)data;
 #ifdef HAVE_NETPLAY
     global_t            *global = global_get_ptr();
@@ -320,11 +344,11 @@ static bool core_init_libretro_cbs(void *data)
     if (!cbs)
         return false;
     
-    core.retro_set_video_refresh(video_driver_frame);
+    current->core.retro_set_video_refresh(video_driver_frame);
     //   core.retro_set_audio_sample(audio_driver_sample);
     //   core.retro_set_audio_sample_batch(audio_driver_sample_batch);
-    core.retro_set_input_state(core_input_state_poll);
-    core.retro_set_input_poll(core_input_state_poll_maybe);
+    current->core.retro_set_input_state(core_input_state_poll);
+    current->core.retro_set_input_poll(core_input_state_poll_maybe);
     
     core_set_default_callbacks(cbs);
     
@@ -418,59 +442,64 @@ bool core_set_rewind_callbacks(void)
     return true;
 }
 
-bool core_set_cheat(retro_ctx_cheat_info_t *info)
-{
-    core.retro_cheat_set(info->index, info->enabled, info->code);
+bool core_set_cheat(retro_ctx_cheat_info_t *info) {
+    GET_CURRENT_OR_RETURN(false);
+    current->core.retro_cheat_set(info->index, info->enabled, info->code);
     return true;
 }
 
-bool core_reset_cheat(void)
-{
-    core.retro_cheat_reset();
+bool core_reset_cheat(void) {
+    GET_CURRENT_OR_RETURN(false);
+    current->core.retro_cheat_reset();
     return true;
 }
 
 bool core_api_version(retro_ctx_api_info_t *api)
 {
+    GET_CURRENT_OR_RETURN(false);
     if (!api)
         return false;
-    api->version = core.retro_api_version();
+    api->version = current->core.retro_api_version();
     return true;
 }
 
 bool core_set_poll_type(unsigned *type)
 {
-    core_poll_type = *type;
+    GET_CURRENT_OR_RETURN(false);
+    current->core_poll_type = *type;
     return true;
 }
 
 void core_uninit_symbols(void)
 {
-    uninit_libretro_sym(&core);
+    GET_CURRENT_OR_RETURN();
+    uninit_libretro_sym(&current->core);
 }
 
 bool core_init_symbols(enum rarch_core_type *type)
 {
+    GET_CURRENT_OR_RETURN(false);
     if (!type)
         return false;
-    init_libretro_sym(*type, &core);
+    init_libretro_sym(*type, &current->core);
     return true;
 }
 
-bool core_set_controller_port_device(retro_ctx_controller_info_t *pad)
-{
+bool core_set_controller_port_device(retro_ctx_controller_info_t *pad) {
+    GET_CURRENT_OR_RETURN(false);
     if (!pad)
         return false;
-    core.retro_set_controller_port_device(pad->port, pad->device);
+    current->core.retro_set_controller_port_device(pad->port, pad->device);
     return true;
 }
 
-bool core_get_memory(retro_ctx_memory_info_t *info)
-{
+bool core_get_memory(retro_ctx_memory_info_t *info) {
+    GET_CURRENT_OR_RETURN(false);
+
     if (!info)
         return false;
-    info->size  = core.retro_get_memory_size(info->id);
-    info->data  = core.retro_get_memory_data(info->id);
+    info->size  = current->core.retro_get_memory_size(info->id);
+    info->data  = current->core.retro_get_memory_data(info->id);
     return true;
 }
 
@@ -485,17 +514,19 @@ static void video_configure(const struct retro_game_geometry * geom) {
 
 bool core_load_game(retro_ctx_load_content_info_t *load_info)
 {
+    GET_CURRENT_OR_RETURN(false);
+
     if (!load_info)
         return false;
     
     BOOL loaded = false;
     if (load_info->special != nil) {
-        loaded = core.retro_load_game_special(load_info->special->id, load_info->info, load_info->content->size);
+        loaded = current->core.retro_load_game_special(load_info->special->id, load_info->info, load_info->content->size);
     } else {
 //        if(load_info->content != nil && load_info->content->elems != nil) {
 //            core.retro_load_game(*load_info->content->elems[0].data);
 //        } else {
-        loaded = core.retro_load_game(load_info->info);
+        loaded = current->core.retro_load_game(load_info->info);
 //        }
     }
     
@@ -525,7 +556,7 @@ bool core_load_game(retro_ctx_load_content_info_t *load_info)
     //    };
     
     
-    core.retro_get_system_av_info(&av);
+    current->core.retro_get_system_av_info(&av);
     ILOG(@"Video: %ix%i\n", av.geometry.base_width, av.geometry.base_height);
     
     video_configure(&av.geometry);
@@ -533,42 +564,42 @@ bool core_load_game(retro_ctx_load_content_info_t *load_info)
     //    audio_init(av.timing.sample_rate);
 }
 
-bool core_get_system_info(struct retro_system_info *system)
-{
+bool core_get_system_info(struct retro_system_info *system) {
+    GET_CURRENT_OR_RETURN(false);
     if (!system)
         return false;
-    core.retro_get_system_info(system);
+    current->core.retro_get_system_info(system);
     return true;
 }
 
-bool core_unserialize(retro_ctx_serialize_info_t *info)
-{
+bool core_unserialize(retro_ctx_serialize_info_t *info) {
+    GET_CURRENT_OR_RETURN(false);
     if (!info)
         return false;
-    if (!core.retro_unserialize(info->data_const, info->size))
+    if (!current->core.retro_unserialize(info->data_const, info->size))
         return false;
     return true;
 }
 
-bool core_serialize(retro_ctx_serialize_info_t *info)
-{
+bool core_serialize(retro_ctx_serialize_info_t *info) {
+    GET_CURRENT_OR_RETURN(false);
     if (!info)
         return false;
-    if (!core.retro_serialize(info->data, info->size))
+    if (!current->core.retro_serialize(info->data, info->size))
         return false;
     return true;
 }
 
-bool core_serialize_size(retro_ctx_size_info_t *info)
-{
+bool core_serialize_size(retro_ctx_size_info_t *info) {
+    GET_CURRENT_OR_RETURN(false);
     if (!info)
         return false;
-    info->size = core.retro_serialize_size();
+    info->size = current->core.retro_serialize_size();
     return true;
 }
 
-bool core_frame(retro_ctx_frame_info_t *info)
-{
+bool core_frame(retro_ctx_frame_info_t *info) {
+    GET_CURRENT_OR_RETURN(false);
     if (!info || !retro_ctx.frame_cb)
         return false;
     
@@ -577,74 +608,74 @@ bool core_frame(retro_ctx_frame_info_t *info)
     return true;
 }
 
-bool core_poll(void)
-{
+bool core_poll(void) {
+    GET_CURRENT_OR_RETURN(false);
     if (!retro_ctx.poll_cb)
         return false;
     retro_ctx.poll_cb();
     return true;
 }
 
-bool core_set_environment(retro_ctx_environ_info_t *info)
-{
+bool core_set_environment(retro_ctx_environ_info_t *info) {
+    GET_CURRENT_OR_RETURN(false);
     if (!info)
         return false;
-    core.retro_set_environment(info->env);
+    current->core.retro_set_environment(info->env);
     return true;
 }
 
-bool core_get_system_av_info(struct retro_system_av_info *av_info)
-{
+bool core_get_system_av_info(struct retro_system_av_info *av_info) {
+    GET_CURRENT_OR_RETURN(false);
     if (!av_info)
         return false;
-    core.retro_get_system_av_info(av_info);
+    current->core.retro_get_system_av_info(av_info);
     return true;
 }
 
-bool core_reset(void)
-{
-    core.retro_reset();
+bool core_reset(void) {
+    GET_CURRENT_OR_RETURN(false);
+    current->core.retro_reset();
     return true;
 }
 
-bool core_init(void)
-{
-    core.retro_init();
+bool core_init(void) {
+    GET_CURRENT_OR_RETURN(false);
+    current->core.retro_init();
     return true;
 }
 
-bool core_unload(void)
-{
-    core.retro_deinit();
+bool core_unload(void) {
+    GET_CURRENT_OR_RETURN(false);
+    current->core.retro_deinit();
     return true;
 }
 
-bool core_has_set_input_descriptor(void)
-{
-    return core_has_set_input_descriptors;
+bool core_has_set_input_descriptor(void) {
+    GET_CURRENT_OR_RETURN(false);
+    return current->core_has_set_input_descriptors;
 }
 
-void core_set_input_descriptors(void)
-{
-    core_has_set_input_descriptors = true;
+void core_set_input_descriptors(void) {
+    GET_CURRENT_OR_RETURN();
+    current->core_has_set_input_descriptors = true;
 }
 
-void core_unset_input_descriptors(void)
-{
-    core_has_set_input_descriptors = false;
+void core_unset_input_descriptors(void) {
+    GET_CURRENT_OR_RETURN();
+    current->core_has_set_input_descriptors = false;
 }
 
 static settings_t *configuration_settings = NULL;
 
-settings_t *config_get_ptr(void)
-{
+settings_t *config_get_ptr(void) {
     return configuration_settings;
 }
 
-bool core_load(void)
-{
+bool core_load(void) {
+    GET_CURRENT_OR_RETURN(false);
+
     settings_t *settings = config_get_ptr();
-    core_poll_type = settings->input.poll_type_behavior;
+    current->core_poll_type = settings->input.poll_type_behavior;
     
     if (!core_verify_api_version())
         return false;
@@ -665,8 +696,9 @@ struct retro_system_av_info *video_viewport_get_system_av_info(void)
 }
 
 
-bool core_verify_api_version(void)
-{
+bool core_verify_api_version(void) {
+    GET_CURRENT_OR_RETURN(false);
+
     //   unsigned api_version = core.retro_api_version();
     //   RARCH_LOG("%s: %u\n",
     //         msg_hash_to_str(MSG_VERSION_OF_LIBRETRO_API),
@@ -1353,17 +1385,6 @@ void video_driver_frame(const void *data, unsigned width,
     //   video_driver_frame_count++;
 }
 
-const char *config_get_active_core_path(void) {
-    NSBundle *bundle = [NSBundle bundleForClass:[_current class]];
-    //    const char* path = [bundle.executablePath fileSystemRepresentation];
-    NSString *bundleName = bundle.infoDictionary[@"CFBundleName"];
-    NSString *executableName = bundle.infoDictionary[@"CFBundleExecutable"];
-    
-    NSString *frameworkPath = [NSString stringWithFormat:@"%@.framework/%@", bundleName, executableName];
-    NSString *rspPath = [[[NSBundle mainBundle] privateFrameworksPath] stringByAppendingPathComponent:frameworkPath];
-    NSLog(@"%@", rspPath);
-    return [rspPath fileSystemRepresentation];
-}
 /**
  * init_libretro_sym:
  * @type                        : Type of core to be loaded.
@@ -1384,8 +1405,9 @@ void init_libretro_sym(enum rarch_core_type type, struct retro_core_t *current_c
 
 void retro_set_environment(retro_environment_t cb)
 {
+    GET_CURRENT_OR_RETURN();
     environ_cb = cb;
-    core.retro_set_environment(cb);
+    current->core.retro_set_environment(cb);
 }
 
 static void core_log(enum retro_log_level level, const char * fmt, ...) {
@@ -1446,10 +1468,10 @@ static bool environment_callback(unsigned cmd, void *data) {
         }
             break;
         case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY : {
-            NSString *appSupportPath = [strongCurrent BIOSPath];
+            NSString *BIOSPath = [strongCurrent BIOSPath];
             
-            *(const char **)data = [appSupportPath UTF8String];
-            DLOG(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", appSupportPath);
+            *(const char **)data = [BIOSPath UTF8String];
+            DLOG(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", BIOSPath);
             break;
         }
         case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY : {
@@ -1460,16 +1482,75 @@ static bool environment_callback(unsigned cmd, void *data) {
             break;
         }
         case RETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY : {
-            NSString *appSupportPath = [strongCurrent batterySavesPath];
+            NSString *batterySavesPath = [strongCurrent batterySavesPath];
             
-            *(const char **)data = [appSupportPath UTF8String];
-            DLOG(@"Environ CONTENT_DIRECTORY: \"%@\".\n", appSupportPath);
+            *(const char **)data = [batterySavesPath UTF8String];
+            DLOG(@"Environ CONTENT_DIRECTORY: \"%@\".\n", batterySavesPath);
             break;
         }
             
         case RETRO_ENVIRONMENT_SET_PIXEL_FORMAT: {
-            DLOG(@"");
-            //            *(retro_pixel_format *)data = [strongCurrent pixelFormat];
+            enum retro_pixel_format pix_fmt =
+               *(const enum retro_pixel_format*)data;
+
+            switch (pix_fmt)
+            {
+               case RETRO_PIXEL_FORMAT_0RGB1555:
+                    DLOG(@"Environ SET_PIXEL_FORMAT: 0RGB1555.\n");
+                  break;
+
+               case RETRO_PIXEL_FORMAT_RGB565:
+                    DLOG(@"Environ SET_PIXEL_FORMAT: RGB565.\n");
+                  break;
+               case RETRO_PIXEL_FORMAT_XRGB8888:
+                    DLOG(@"Environ SET_PIXEL_FORMAT: XRGB8888.\n");
+                  break;
+               default:
+                    ELOG(@"Environ SET_PIXEL_FORMAT: UNKNOWN.\n");
+                  return false;
+            }
+
+            strongCurrent->pix_fmt = pix_fmt;
+            break;
+         }
+            
+        case RETRO_ENVIRONMENT_SET_VARIABLES:
+        {
+            // We could potentionally ask the user what options they want
+            const struct retro_variable* envs = (const struct retro_variable*)data;
+            int i=0;
+            const struct retro_variable *currentEnv;
+            do {
+                currentEnv = &envs[i];
+                ILOG(@"Environ SET_VARIABLES: {\"%s\",\"%s\"}.\n", currentEnv->key, currentEnv->value);
+                i++;
+            } while(currentEnv->key != NULL && currentEnv->value != NULL);
+
+            break;
+
+        }
+        case RETRO_ENVIRONMENT_GET_VARIABLE:
+        {
+            struct retro_variable *var = (struct retro_variable*)data;
+
+           void *value = [strongCurrent getVariable:var->key];
+            var->value = value;
+            break;
+        }
+        case RETRO_ENVIRONMENT_SET_MINIMUM_AUDIO_LATENCY:
+            return true;
+        case RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE:
+            return false;
+        case RETRO_ENVIRONMENT_GET_MESSAGE_INTERFACE_VERSION:
+        {
+            *((unsigned*)data) = 1;
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_MESSAGE:
+        case RETRO_ENVIRONMENT_SET_MESSAGE_EXT:
+        {
+            const char* msg = ((struct retro_message*)data)->msg;
+            ILOG(@"%s", msg);
             return true;
         }
         default : {
@@ -1771,9 +1852,10 @@ static void load_symbols(enum rarch_core_type type, struct retro_core_t *current
             break;
     }
 }
+#define PITCH_SHIFT  2
 
 @implementation PVLibRetroCore
-static void audio_callback(int16_t left, int16_t right)
+static void RETRO_CALLCONV audio_callback(int16_t left, int16_t right)
 {
     __strong PVLibRetroCore *strongCurrent = _current;
     
@@ -1783,7 +1865,7 @@ static void audio_callback(int16_t left, int16_t right)
     strongCurrent = nil;
 }
 
-static size_t audio_batch_callback(const int16_t *data, size_t frames)
+static size_t RETRO_CALLCONV audio_batch_callback(const int16_t *data, size_t frames)
 {
     __strong PVLibRetroCore *strongCurrent = _current;
     
@@ -1794,18 +1876,31 @@ static size_t audio_batch_callback(const int16_t *data, size_t frames)
     return frames;
 }
 
-static void video_callback(const void *data, unsigned width, unsigned height, size_t pitch)
+static void RETRO_CALLCONV video_callback(const void *data, unsigned width, unsigned height, size_t pitch)
 {
     __strong PVLibRetroCore *strongCurrent = _current;
+
+    static dispatch_queue_t serialQueue;
+//    static dispatch_group_t group;
+    //    static CFAbsoluteTime lastTime;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, 0);
+        serialQueue = dispatch_queue_create("com.provenance.video", queueAttributes);
+        
+        printf("vid: width: %i height: %i, pitch: %zu. _videoWidth: %d, _videoHeight: %d\n", width, height, pitch, strongCurrent->_videoWidth, strongCurrent->_videoHeight);
+        
+        //        group = dispatch_group_create();
+        //        lastTime = CFAbsoluteTimeGetCurrent();
+    });
     
-//    strongCurrent->_videoWidth  = width;
-//    strongCurrent->_videoHeight = height;
-//    
-    dispatch_queue_t the_queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     
-    dispatch_apply(height, the_queue, ^(size_t y){
-        const uint32_t *src = (uint32_t*)data + y * (pitch >> 2); //pitch is in bytes not pixels
-        uint32_t *dst = strongCurrent->videoBuffer + y * 720;
+    strongCurrent->_videoWidth  = width;
+    strongCurrent->_videoHeight = height;
+    unsigned short pitch_shift = PITCH_SHIFT; //pitch % 256; // PITCH_SHIFT
+    dispatch_apply(height, serialQueue, ^(size_t y){
+        const uint32_t *src = (uint32_t*)data + y * (pitch >> pitch_shift); //pitch is in bytes not pixels
+        uint32_t *dst = strongCurrent->videoBuffer + y * width;
         
         memcpy(dst, src, sizeof(uint32_t)*width);
     });
@@ -1813,14 +1908,14 @@ static void video_callback(const void *data, unsigned width, unsigned height, si
     strongCurrent = nil;
 }
 
-static void input_poll_callback(void)
+static void RETRO_CALLCONV input_poll_callback(void)
 {
     __strong PVLibRetroCore *strongCurrent = _current;
     [strongCurrent pollControllers];
     //DLOG(@"poll callback");
 }
 
-static int16_t input_state_callback(unsigned port, unsigned device, unsigned index, unsigned _id)
+static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned device, unsigned index, unsigned _id)
 {
     //DLOG(@"polled input: port: %d device: %d id: %d", port, device, id);
     
@@ -1831,24 +1926,24 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
     {
         if (strongCurrent.controller1)
         {
-            //            value = [strongCurrent controllerValueForButtonID:_id forPlayer:port];
+            value = [strongCurrent controllerValueForButtonID:_id forPlayer:port];
         }
         
         if (value == 0)
         {
-            //            value = strongCurrent->_pad[0][_id];
+            value = strongCurrent->_pad[0][_id];
         }
     }
     else if(port == 1 & device == RETRO_DEVICE_JOYPAD)
     {
         if (strongCurrent.controller2)
         {
-            //            value = [strongCurrent controllerValueForButtonID:_id forPlayer:port];
+            value = [strongCurrent controllerValueForButtonID:_id forPlayer:port];
         }
         
         if (value == 0)
         {
-            //            value = strongCurrent->_pad[1][_id];
+            value = strongCurrent->_pad[1][_id];
         }
     }
     
@@ -1860,19 +1955,28 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
 - (instancetype)init {
     if((self = [super init])) {
         _current = self;
-        
-        videoBufferA = (uint32_t *)malloc(720 * 576 * sizeof(uint32_t));
-        videoBufferB = (uint32_t *)malloc(720 * 576 * sizeof(uint32_t));
-        videoBuffer = videoBufferA;
-        
         const char* path = [[NSBundle bundleForClass:[self class]].bundlePath fileSystemRepresentation];
         config_set_active_core_path(path);
         //        load_dynamic_core();
         init_libretro_sym(CORE_TYPE_PLAIN, &core);
         retro_set_environment(environment_callback);
+        
+        
+//        struct retro_system_info info;
+//        core_get_info(&info);
+//        std::cout << "Loaded core " << info.library_name << " version " << info.library_version << std::endl;
+//        std::cout << "Core needs fullpath " << info.need_fullpath << std::endl;
+//        std::cout << "Running for " << maxframes << " frames with frame timeout of ";
+//        std::cout << frametimeout << " seconds" << std::endl;
+        
         //        libretro_get_system_info(path,
         //        libretro_get_system_info_lib
         core.retro_init();
+        
+        
+        videoBufferA = (uint32_t *)malloc(1280 * 1024 * sizeof(uint32_t));
+        videoBufferB = (uint32_t *)malloc(1280 * 1024 * sizeof(uint32_t));
+        videoBuffer = videoBufferA;
         
         //		retro_set_audio_sample(audio_callback);
         //		retro_set_audio_sample_batch(audio_batch_callback);
@@ -1891,7 +1995,7 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
 }
 
 - (void)dealloc {
-    core.retro_deinit();
+    core_unload();
 }
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {
@@ -1909,7 +2013,9 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
     info2.content = nil;
     info2.special = nil;
     BOOL loaded = core_load_game(&info2);
-    
+   
+        core.retro_reset();
+
     return loaded;
 }
 
@@ -1950,6 +2056,7 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
 
 - (void)stopEmulation {
     core.retro_unload_game();
+//    core.retro_deinit();
     [super stopEmulation];
 }
 
@@ -1985,13 +2092,13 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
 }
 
 - (CGRect)screenRect {
-    //    static struct retro_system_av_info av_info;
-    //    core.retro_get_system_av_info(&av_info);
-    //    unsigned height = av_info.geometry.base_height;
-    //    unsigned width = av_info.geometry.base_width;
-    //
-    unsigned height = _videoHeight;
-    unsigned width = _videoWidth;
+    static struct retro_system_av_info av_info;
+    core.retro_get_system_av_info(&av_info);
+    unsigned height = av_info.geometry.base_height;
+    unsigned width = av_info.geometry.base_width;
+
+//    unsigned height = _videoHeight;
+//    unsigned width = _videoWidth;
     
     return CGRectMake(0, 0, width, height);
 }
@@ -2029,7 +2136,17 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
 }
 
 - (GLenum)pixelFormat {
-    return GL_BGRA;
+    switch (pix_fmt)
+    {
+       case RETRO_PIXEL_FORMAT_0RGB1555:
+            return GL_UNSIGNED_SHORT_5_5_5_1;
+       case RETRO_PIXEL_FORMAT_RGB565:
+            return GL_RGB565;
+       case RETRO_PIXEL_FORMAT_XRGB8888:
+            return GL_UNSIGNED_SHORT_8_8_APPLE;
+       default:
+            return GL_RGBA;
+    }
 }
 
 - (GLenum)pixelType {
@@ -2037,6 +2154,18 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
 }
 
 - (GLenum)internalPixelFormat {
+    switch (pix_fmt)
+    {
+       case RETRO_PIXEL_FORMAT_0RGB1555:
+            return GL_UNSIGNED_SHORT_5_5_5_1;
+       case RETRO_PIXEL_FORMAT_RGB565:
+            return GL_RGB565;
+       case RETRO_PIXEL_FORMAT_XRGB8888:
+            return GL_RGBA8;
+       default:
+            return GL_RGBA;
+    }
+
     return GL_RGBA;
 }
 
@@ -2055,11 +2184,267 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
 
 @end
 
+# pragma mark - Options
+@implementation PVLibRetroCore (Options)
+- (void *)getVariable:(const char *)variable {
+    WLOG(@"This should be done in sub class: %s", variable);
+    return NULL;
+}
+@end
+
 # pragma mark - Controls
 @implementation PVLibRetroCore (Controls)
 - (void)pollControllers {
     // TODO: This should warn or something if not in subclass
+    for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++) {
+        GCController *controller = nil;
+        
+        if (self.controller1 && playerIndex == 0) {
+            controller = self.controller1;
+        }
+        else if (self.controller2 && playerIndex == 1)
+        {
+            controller = self.controller2;
+        }
+        
+        if ([controller extendedGamepad]) {
+            GCExtendedGamepad *gamepad     = [controller extendedGamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
+            
+            /* TODO: To support paddles we would need to circumvent libRetro's emulation of analog controls or drop libRetro and talk to stella directly like OpenEMU did */
+            
+            // D-Pad
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_UP]    = (dpad.up.isPressed    || gamepad.leftThumbstick.up.isPressed);
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_DOWN]  = (dpad.down.isPressed  || gamepad.leftThumbstick.down.isPressed);
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_LEFT]  = (dpad.left.isPressed  || gamepad.leftThumbstick.left.isPressed);
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_RIGHT] = (dpad.right.isPressed || gamepad.leftThumbstick.right.isPressed);
+
+            // #688, use second thumb to control second player input if no controller active
+            // some games used both joysticks for 1 player optionally
+            if(playerIndex == 0 && self.controller2 == nil) {
+                _pad[1][RETRO_DEVICE_ID_JOYPAD_UP]    = gamepad.rightThumbstick.up.isPressed;
+                _pad[1][RETRO_DEVICE_ID_JOYPAD_DOWN]  = gamepad.rightThumbstick.down.isPressed;
+                _pad[1][RETRO_DEVICE_ID_JOYPAD_LEFT]  = gamepad.rightThumbstick.left.isPressed;
+                _pad[1][RETRO_DEVICE_ID_JOYPAD_RIGHT] = gamepad.rightThumbstick.right.isPressed;
+            }
+
+            // Fire
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = gamepad.buttonA.isPressed;
+            // Trigger
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] =  gamepad.buttonB.isPressed || gamepad.rightTrigger.isPressed;
+            // Booster
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_X] = gamepad.buttonX.isPressed || gamepad.buttonY.isPressed || gamepad.leftTrigger.isPressed;
+            
+            // Reset
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START]  = gamepad.rightShoulder.isPressed;
+            
+            // Select
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_SELECT] = gamepad.leftShoulder.isPressed;
+   
+            /*
+             #define RETRO_DEVICE_ID_JOYPAD_B        0 == JoystickZeroFire1
+             #define RETRO_DEVICE_ID_JOYPAD_Y        1 == Unmapped
+             #define RETRO_DEVICE_ID_JOYPAD_SELECT   2 == ConsoleSelect
+             #define RETRO_DEVICE_ID_JOYPAD_START    3 == ConsoleReset
+             #define RETRO_DEVICE_ID_JOYPAD_UP       4 == Up
+             #define RETRO_DEVICE_ID_JOYPAD_DOWN     5 == Down
+             #define RETRO_DEVICE_ID_JOYPAD_LEFT     6 == Left
+             #define RETRO_DEVICE_ID_JOYPAD_RIGHT    7 == Right
+             #define RETRO_DEVICE_ID_JOYPAD_A        8 == JoystickZeroFire2
+             #define RETRO_DEVICE_ID_JOYPAD_X        9 == JoystickZeroFire3
+             #define RETRO_DEVICE_ID_JOYPAD_L       10 == ConsoleLeftDiffA
+             #define RETRO_DEVICE_ID_JOYPAD_R       11 == ConsoleRightDiffA
+             #define RETRO_DEVICE_ID_JOYPAD_L2      12 == ConsoleLeftDiffB
+             #define RETRO_DEVICE_ID_JOYPAD_R2      13 == ConsoleRightDiffB
+             #define RETRO_DEVICE_ID_JOYPAD_L3      14 == ConsoleColor
+             #define RETRO_DEVICE_ID_JOYPAD_R3      15 == ConsoleBlackWhite
+             */
+        } else if ([controller gamepad]) {
+            GCGamepad *gamepad = [controller gamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
+            
+            // D-Pad
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_UP]    = dpad.up.isPressed;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_DOWN]  = dpad.down.isPressed;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_LEFT]  = dpad.left.isPressed;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_RIGHT] = dpad.right.isPressed;
+            
+            // Fire
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = gamepad.buttonA.isPressed;
+            // Trigger
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] =  gamepad.buttonB.isPressed;
+            // Booster
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_X] = gamepad.buttonX.isPressed || gamepad.buttonY.isPressed;
+            
+            // Reset
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START]  = gamepad.rightShoulder.isPressed;
+            
+            // Select
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_SELECT] = gamepad.leftShoulder.isPressed;
+            
+        }
+#if TARGET_OS_TV
+        else if ([controller microGamepad]) {
+            GCMicroGamepad *gamepad = [controller microGamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
+            
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_UP]    = dpad.up.value > 0.5;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_DOWN]  = dpad.down.value > 0.5;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_LEFT]  = dpad.left.value > 0.5;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_RIGHT] = dpad.right.value > 0.5;
+
+            // Fire
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = gamepad.buttonX.isPressed;
+            // Trigger
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] = gamepad.buttonA.isPressed;
+        }
+#endif
+    }
 }
+
+- (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player
+{
+    // TODO: This should warn or something if not in subclass
+
+    GCController *controller = nil;
+
+    if (player == 0)
+    {
+        controller = self.controller1;
+    }
+    else
+    {
+        controller = self.controller2;
+    }
+
+    if ([controller extendedGamepad])
+    {
+        GCExtendedGamepad *gamepad = [controller extendedGamepad];
+        GCControllerDirectionPad *dpad = [gamepad dpad];
+        if (PVSettingsModel.shared.use8BitdoM30) // Maps the Sega Controls to the 8BitDo M30 if enabled in Settings / Controller
+        { switch (buttonID) {
+            case PVSega32XButtonUp:
+                return [[[gamepad leftThumbstick] up] value] > 0.1;
+            case PVSega32XButtonDown:
+                return [[[gamepad leftThumbstick] down] value] > 0.1;
+            case PVSega32XButtonLeft:
+                return [[[gamepad leftThumbstick] left] value] > 0.1;
+            case PVSega32XButtonRight:
+                return [[[gamepad leftThumbstick] right] value] > 0.1;
+            case PVSega32XButtonA:
+                return [[gamepad buttonA] isPressed];
+            case PVSega32XButtonB:
+                return [[gamepad buttonB] isPressed];
+            case PVSega32XButtonC:
+                return [[gamepad rightShoulder] isPressed];
+            case PVSega32XButtonX:
+                return [[gamepad buttonX] isPressed];
+            case PVSega32XButtonY:
+                return [[gamepad buttonY] isPressed];
+            case PVSega32XButtonZ:
+                return [[gamepad leftShoulder] isPressed];
+            case PVSega32XButtonMode:
+                return [[gamepad leftTrigger] isPressed];
+            case PVSega32XButtonStart:
+#if TARGET_OS_TV
+                return [[gamepad buttonMenu] isPressed]?:[[gamepad rightTrigger] isPressed];
+#else
+                return [[gamepad rightTrigger] isPressed];
+#endif
+            default:
+                break;
+        }}
+        { switch (buttonID) {
+            case PVSega32XButtonUp:
+                return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] isPressed];
+            case PVSega32XButtonDown:
+                return [[dpad down] isPressed]?:[[[gamepad leftThumbstick] down] isPressed];
+            case PVSega32XButtonLeft:
+                return [[dpad left] isPressed]?:[[[gamepad leftThumbstick] left] isPressed];
+            case PVSega32XButtonRight:
+                return [[dpad right] isPressed]?:[[[gamepad leftThumbstick] right] isPressed];
+            case PVSega32XButtonA:
+                return [[gamepad buttonX] isPressed];
+            case PVSega32XButtonB:
+                return [[gamepad buttonA] isPressed];
+            case PVSega32XButtonC:
+                return [[gamepad buttonB] isPressed];
+            case PVSega32XButtonX:
+                return [[gamepad buttonY] isPressed];
+            case PVSega32XButtonY:
+                return [[gamepad leftShoulder] isPressed];
+            case PVSega32XButtonZ:
+                return [[gamepad rightShoulder] isPressed];
+            case PVSega32XButtonStart:
+                return [[gamepad rightTrigger] isPressed];
+             case PVSega32XButtonMode:
+                return [[gamepad leftTrigger] isPressed];
+            default:
+                break;
+        }}
+    }
+    else if ([controller gamepad])
+    {
+        GCGamepad *gamepad = [controller gamepad];
+        GCControllerDirectionPad *dpad = [gamepad dpad];
+        switch (buttonID) {
+            case PVSega32XButtonUp:
+                return [[dpad up] isPressed];
+            case PVSega32XButtonDown:
+                return [[dpad down] isPressed];
+            case PVSega32XButtonLeft:
+                return [[dpad left] isPressed];
+            case PVSega32XButtonRight:
+                return [[dpad right] isPressed];
+            case PVSega32XButtonA:
+                return [[gamepad buttonY] isPressed];
+            case PVSega32XButtonB:
+                return [[gamepad buttonX] isPressed];
+            case PVSega32XButtonC:
+                return [[gamepad buttonA] isPressed];
+            case PVSega32XButtonX:
+                return [[gamepad buttonB] isPressed];
+            case PVSega32XButtonY:
+                return [[gamepad leftShoulder] isPressed];
+            case PVSega32XButtonZ:
+                return [[gamepad rightShoulder] isPressed];
+            default:
+                break;
+        }
+    }
+#if TARGET_OS_TV
+    else if ([controller microGamepad])
+    {
+        GCMicroGamepad *gamepad = [controller microGamepad];
+        GCControllerDirectionPad *dpad = [gamepad dpad];
+        switch (buttonID) {
+            case PVSega32XButtonUp:
+                return [[dpad up] value] > 0.5;
+                break;
+            case PVSega32XButtonDown:
+                return [[dpad down] value] > 0.5;
+                break;
+            case PVSega32XButtonLeft:
+                return [[dpad left] value] > 0.5;
+                break;
+            case PVSega32XButtonRight:
+                return [[dpad right] value] > 0.5;
+                break;
+            case PVSega32XButtonA:
+                return [[gamepad buttonX] isPressed];
+                break;
+            case PVSega32XButtonB:
+                return [[gamepad buttonA] isPressed];
+                break;
+            default:
+                break;
+        }
+    }
+#endif
+
+    return 0;
+}
+
 @end
 
 # pragma mark - Save States

@@ -13,8 +13,8 @@
 	<key>PVProjectName</key>
 	<string>EP128Emu</string>
 	<key>PVProjectURL</key>
-	<string>https://github.com/alekmaul/EP128Emu</string>
+	<string>http://ep128emu.sourceforge.net/about.html</string>
 	<key>PVProjectVersion</key>
-	<string>0</string>
+	<string>2.0.11</string>
 </dict>
 </plist>

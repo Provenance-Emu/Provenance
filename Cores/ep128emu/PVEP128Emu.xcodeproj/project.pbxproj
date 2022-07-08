@@ -1249,7 +1249,6 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = ep128emu;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -1269,7 +1268,6 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = ep128emu;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -1341,6 +1339,7 @@
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "$(inherited)";
 				SDKROOT = iphoneos;
 				TVOS_DEPLOYMENT_TARGET = 11.0;
 				VALIDATE_PRODUCT = YES;
@@ -1430,7 +1429,6 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = ep128emu;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -1450,7 +1448,6 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = ep128emu;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -1472,10 +1469,6 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"$(inherited)",
-				);
 				PRODUCT_NAME = "ep128emu-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -1496,10 +1489,6 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"$(inherited)",
-				);
 				PRODUCT_NAME = "ep128emu-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -1519,10 +1508,6 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"$(inherited)",
 				);
 				PRODUCT_NAME = "ep128emu-libretro";
 				SKIP_INSTALL = YES;
@@ -1611,7 +1596,6 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = ep128emu;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -1632,7 +1616,6 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = ep128emu;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -1653,7 +1636,6 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "ep128emu-libretro";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -1674,7 +1656,6 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "ep128emu-libretro";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -1695,7 +1676,6 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "ep128emu-libretro";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -1771,6 +1751,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "$(inherited)";
 				SDKROOT = iphoneos;
 				TVOS_DEPLOYMENT_TARGET = 11.0;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
@@ -1844,6 +1825,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "$(inherited)";
 				SDKROOT = iphoneos;
 				TVOS_DEPLOYMENT_TARGET = 11.0;
 				VALIDATE_PRODUCT = YES;

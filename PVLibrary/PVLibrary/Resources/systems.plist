@@ -26,7 +26,18 @@
 		<key>PVPortable</key>
 		<true/>
 		<key>PVRequiresBIOS</key>
-		<false/>
+		<true/>
+		<key>PVBIOSNames</key>
+		<array>
+			<dict>
+				<key>Description</key>
+				<string>ppge_atlas.zim (PPSSPP Data ROM)</string>
+				<key>MD5</key>
+				<string>a93fc411c1ce7d001a2a812643c70085</string>
+				<key>Name</key>
+				<string>ppge_atlas.zim</string>
+			</dict>
+		</array>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>pbp</string>
@@ -652,10 +663,6 @@
 		<true/>
 		<key>PVPortable</key>
 		<false/>
-		<key>PVRequiresBIOS</key>
-		<false/>
-		<key>PVBIOSNames</key>
-		<array/>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>cue</string>
@@ -665,6 +672,11 @@
 			<string>elf</string>
 			<string>iso</string>
 			<string>isz</string>
+			<string>m3u</string>
+			<string>gz</string>
+			<string>nrg</string>
+			<string>mdf</string>
+			<string>ciso</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
@@ -2617,6 +2629,8 @@
 						<string>A</string>
 						<key>PVControlFrame</key>
 						<string>{{116,60},{60,60}}</string>
+						<key>PVControlTint</key>
+						<string>#c82522</string>
 					</dict>
 					<dict>
 						<key>PVControlType</key>
@@ -2625,6 +2639,28 @@
 						<string>B</string>
 						<key>PVControlFrame</key>
 						<string>{{60,116},{60,60}}</string>
+						<key>PVControlTint</key>
+						<string>#eeb944</string>
+					</dict>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>X</string>
+						<key>PVControlFrame</key>
+						<string>{{60,4},{60,60}}</string>
+						<key>PVControlTint</key>
+						<string>#07236e</string>
+					</dict>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>Y</string>
+						<key>PVControlFrame</key>
+						<string>{{4,60},{60,60}}</string>
+						<key>PVControlTint</key>
+						<string>#1d703a</string>
 					</dict>
 				</array>
 			</dict>
@@ -3640,6 +3676,7 @@
 			<string>exe</string>
 			<string>com</string>
 			<string>bat</string>
+			<string>conf</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
@@ -3718,10 +3755,12 @@
 		<key>PVDatabaseID</key>
 		<string>-1</string>
 		<key>PVRequiresBIOS</key>
-		<false/>
+		<true/>
 		<key>PVBIOSNames</key>
 		<array>
 			<dict>
+				<key>Optional</key>
+				<false/>
 				<key>Description</key>
 				<string>MSX BIOS</string>
 				<key>MD5</key>
@@ -3732,6 +3771,8 @@
 				<integer>0</integer>
 			</dict>
 			<dict>
+				<key>Optional</key>
+				<false/>
 				<key>Description</key>
 				<string>MSX2 BIOS </string>
 				<key>MD5</key>
@@ -3742,6 +3783,8 @@
 				<integer>0</integer>
 			</dict>
 			<dict>
+				<key>Optional</key>
+				<false/>
 				<key>Description</key>
 				<string>MSX2 ExtROM</string>
 				<key>MD5</key>
@@ -3752,6 +3795,8 @@
 				<integer>0</integer>
 			</dict>
 			<dict>
+				<key>Optional</key>
+				<false/>
 				<key>Description</key>
 				<string>MSX2+ BIOS</string>
 				<key>MD5</key>
@@ -3762,6 +3807,8 @@
 				<integer>0</integer>
 			</dict>
 			<dict>
+				<key>Optional</key>
+				<false/>
 				<key>Description</key>
 				<string>MSX2+ ExtROM</string>
 				<key>MD5</key>
@@ -3841,10 +3888,8 @@
 			<string>msx</string>
 			<string>mx2</string>
 			<string>mx1</string>
-			<string>img</string>
-			<string>dmk</string>
 			<string>rom</string>
-			<string>cue</string>
+			<string>m3u</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
@@ -4289,6 +4334,101 @@
 	</dict>
 	<dict>
 		<key>PVRequiresBIOS</key>
+		<false/>
+		<key>PVBIOSNames</key>
+		<array>
+			<dict>
+				<key>Description</key>
+				<string>ColecoVision BIOS</string>
+				<key>MD5</key>
+				<string>2c66f5911e5b42b8ebe113403548eee7</string>
+				<key>Name</key>
+				<string>colecovision.rom</string>
+				<key>Size</key>
+				<integer>8192</integer>
+				<key>Optional</key>
+				<false/>
+			</dict>
+		</array>
+		<key>PVManufacturer</key>
+		<string>Enterprise</string>
+		<key>PVSystemName</key>
+		<string>Enterprise 128</string>
+		<key>PVSystemShortName</key>
+		<string>ep128</string>
+		<key>PVReleaseYear</key>
+		<string>1985</string>
+		<key>PVBit</key>
+		<string>8</string>
+		<key>PVPortable</key>
+		<false/>
+		<key>PVSystemIdentifier</key>
+		<string>com.provenance.ep128</string>
+		<key>PVDatabaseID</key>
+		<string>-1</string>
+		<key>PVSupportedExtensions</key>
+		<array>
+			<string>rom</string>
+			<string>com</string>
+			<string>bas</string>
+		</array>
+		<key>PVControlLayout</key>
+		<array>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVButtonGroup</string>
+				<key>PVControlSize</key>
+				<string>{200,180}</string>
+				<key>PVGroupedButtons</key>
+				<array>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>L</string>
+						<key>PVControlFrame</key>
+						<string>{{8,24},{60,60}}</string>
+						<key>PVControlTint</key>
+						<string>#f96763</string>
+					</dict>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>R</string>
+						<key>PVControlFrame</key>
+						<string>{{76,16},{60,60}}</string>
+						<key>PVControlTint</key>
+						<string>#f96763</string>
+					</dict>
+				</array>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVStartButton</string>
+				<key>PVControlTitle</key>
+				<string>Pause</string>
+				<key>PVControlSize</key>
+				<string>{62,22}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVSelectButton</string>
+				<key>PVControlTitle</key>
+				<string>Option</string>
+				<key>PVControlSize</key>
+				<string>{62,22}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVDPad</string>
+				<key>PVControlSize</key>
+				<string>{180,180}</string>
+			</dict>
+		</array>
+	</dict>
+	<dict>
+		<key>PVRequiresBIOS</key>
 		<true/>
 		<key>PVBIOSNames</key>
 		<array>
@@ -4379,6 +4519,79 @@
 				<string>PVDPad</string>
 				<key>PVControlSize</key>
 				<string>{180,180}</string>
+			</dict>
+		</array>
+	</dict>
+	<dict>
+		<key>PVManufacturer</key>
+		<string>Watara</string>
+		<key>PVSystemName</key>
+		<string>Supervision</string>
+		<key>PVSystemShortName</key>
+		<string>Supervision</string>
+		<key>PVReleaseYear</key>
+		<string>1992</string>
+		<key>PVBit</key>
+		<string>8</string>
+		<key>PVPortable</key>
+		<true/>
+		<key>PVSystemIdentifier</key>
+		<string>com.provenance.supervision</string>
+		<key>PVDatabaseID</key>
+		<string>0</string>
+		<key>PVSupportedExtensions</key>
+		<array>
+			<string>bin</string>
+			<string>sv</string>
+		</array>
+		<key>PVControlLayout</key>
+		<array>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVButtonGroup</string>
+				<key>PVControlSize</key>
+				<string>{180, 180}</string>
+				<key>PVGroupedButtons</key>
+				<array>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>A</string>
+						<key>PVControlFrame</key>
+						<string>{{116,60},{60,60}}</string>
+					</dict>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>B</string>
+						<key>PVControlFrame</key>
+						<string>{{60,116},{60,60}}</string>
+					</dict>
+				</array>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVDPad</string>
+				<key>PVControlSize</key>
+				<string>{180,180}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVStartButton</string>
+				<key>PVControlTitle</key>
+				<string>Start</string>
+				<key>PVControlSize</key>
+				<string>{60,42}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVSelectButton</string>
+				<key>PVControlTitle</key>
+				<string>Select</string>
+				<key>PVControlSize</key>
+				<string>{60,42}</string>
 			</dict>
 		</array>
 	</dict>
