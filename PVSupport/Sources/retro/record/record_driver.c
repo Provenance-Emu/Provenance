@@ -18,6 +18,8 @@
 
 #include <file/file_path.h>
 #include <string/stdstring.h>
+#include <math.h>
+#include <retro_math.h>
 
 #include "record_driver.h"
 

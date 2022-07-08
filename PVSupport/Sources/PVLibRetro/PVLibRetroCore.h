@@ -31,7 +31,10 @@ static __weak PVLibRetroCore *_current;
 __attribute__((weak_import))
 @interface PVLibRetroCore : PVEmulatorCore {
 }
+- (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player;
+- (void)pollControllers;
 
+- (void *)getVariable:(const char *)variable;
 @end
 
 #define SYMBOL(x) \

@@ -48,11 +48,11 @@
 }
 
 - (CGRect)screenRect {
-    return CGRectMake(0, 0, 640, 480);
+    return CGRectMake(0, 0, 320, 200);
 }
 
 - (CGSize)aspectSize {
-    return CGSizeMake(4, 3);
+    return CGSizeMake(5, 4);
 }
 
 //- (BOOL)rendersToOpenGL {

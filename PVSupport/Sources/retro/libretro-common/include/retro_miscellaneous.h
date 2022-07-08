@@ -25,6 +25,7 @@
 
 #define RARCH_MAX_SUBSYSTEMS 10
 #define RARCH_MAX_SUBSYSTEM_ROMS 10
+#define RARCH_SCALE_BASE 256
 
 #include <stdint.h>
 #include <boolean.h>

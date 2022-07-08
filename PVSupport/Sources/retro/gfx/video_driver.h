@@ -31,6 +31,12 @@
 
 #include "../input/input_driver.h"
 
+#define MEASURE_FRAME_TIME_SAMPLES_COUNT (2 * 1024)
+
+#define TIME_TO_FPS(last_time, new_time, frames) ((1000000.0f * (frames)) / ((new_time) - (last_time)))
+
+#define FPS_UPDATE_INTERVAL 256
+
 RETRO_BEGIN_DECLS
 
 enum texture_filter_type
@@ -261,6 +267,104 @@ struct aspect_ratio_elem
    char name[64];
    float value;
 };
+
+
+typedef struct video_driver_state
+{
+   struct
+   {
+      retro_time_t samples[MEASURE_FRAME_TIME_SAMPLES_COUNT];
+      uint64_t count;
+   } frame_time;
+
+   enum retro_pixel_format pix_fmt;
+
+   unsigned video_width;
+   unsigned video_height;
+   float aspect_ratio;
+
+   struct
+   {
+      const void *data;
+      unsigned width;
+      unsigned height;
+      size_t pitch;
+   } frame_cache;
+
+   struct
+   {
+      rarch_softfilter_t *filter;
+
+      void *buffer;
+      unsigned scale;
+      unsigned out_bpp;
+      bool out_rgb32;
+   } filter;
+} video_driver_state_t;
+
+typedef struct video_pixel_scaler
+{
+   struct scaler_ctx *scaler;
+   void *scaler_out;
+} video_pixel_scaler_t;
+
+
+char rotation_lut[4][32] =
+{
+   "Normal",
+   "90 deg",
+   "180 deg",
+   "270 deg"
+};
+
+struct aspect_ratio_elem aspectratio_lut[ASPECT_RATIO_END] = {
+   { "4:3",           1.3333f },
+   { "16:9",          1.7778f },
+   { "16:10",         1.6f },
+   { "16:15",         16.0f / 15.0f },
+   { "1:1",           1.0f },
+   { "2:1",           2.0f },
+   { "3:2",           1.5f },
+   { "3:4",           0.75f },
+   { "4:1",           4.0f },
+   { "4:4",           1.0f },
+   { "5:4",           1.25f },
+   { "6:5",           1.2f },
+   { "7:9",           0.7777f },
+   { "8:3",           2.6666f },
+   { "8:7",           1.1428f },
+   { "19:12",         1.5833f },
+   { "19:14",         1.3571f },
+   { "30:17",         1.7647f },
+   { "32:9",          3.5555f },
+   { "Config",        0.0f },
+   { "Square pixel",  1.0f },
+   { "Core provided", 1.0f },
+   { "Custom",        0.0f }
+};
+
+/* Opaque handles to currently running window.
+ * Used by e.g. input drivers which bind to a window.
+ * Drivers are responsible for setting these if an input driver
+ * could potentially make use of this. */
+static uintptr_t video_driver_display;
+static uintptr_t video_driver_window;
+static enum rarch_display_type video_driver_display_type;
+static char video_driver_title_buf[64];
+
+static uint64_t video_driver_frame_count;
+
+static void *video_driver_data       = NULL;
+static video_driver_t *current_video = NULL;
+
+/* Interface for "poking". */
+static const video_poke_interface_t *video_driver_poke = NULL;
+
+static video_driver_state_t video_driver_state;
+
+/* Used for 16-bit -> 16-bit conversions that take place before
+ * being passed to video driver. */
+static video_pixel_scaler_t *video_driver_scaler_ptr = NULL;
 
 extern struct aspect_ratio_elem aspectratio_lut[ASPECT_RATIO_END];
 
@@ -555,6 +659,67 @@ extern video_driver_t video_drm;
 extern video_driver_t video_xshm;
 extern video_driver_t video_null;
 
+static bool video_driver_frame_filter(const void *data,
+      unsigned width, unsigned height,
+      size_t pitch,
+      unsigned *output_width, unsigned *output_height,
+                                      unsigned *output_pitch);
+
 RETRO_END_DECLS
 
+static const video_driver_t *video_drivers[] = {
+#ifdef HAVE_VULKAN
+   &video_vulkan,
+#endif
+#ifdef HAVE_OPENGL
+   &video_gl,
+#endif
+#ifdef XENON
+   &video_xenon360,
+#endif
+#if defined(HAVE_D3D)
+   &video_d3d,
+#endif
+#ifdef HAVE_VITA2D
+   &video_vita2d,
+#endif
+#ifdef PSP
+   &video_psp1,
+#endif
+#ifdef _3DS
+   &video_ctr,
+#endif
+#ifdef HAVE_SDL
+   &video_sdl,
+#endif
+#ifdef HAVE_SDL2
+   &video_sdl2,
+#endif
+#ifdef HAVE_XVIDEO
+   &video_xvideo,
+#endif
+#ifdef GEKKO
+   &video_gx,
+#endif
+#ifdef HAVE_VG
+   &video_vg,
+#endif
+#ifdef HAVE_OMAP
+   &video_omap,
+#endif
+#ifdef HAVE_EXYNOS
+   &video_exynos,
+#endif
+#ifdef HAVE_DISPMANX
+   &video_dispmanx,
+#endif
+#ifdef HAVE_SUNXI
+   &video_sunxi,
+#endif
+#ifdef HAVE_PLAIN_DRM
+   &video_drm,
+#endif
+   &video_null,
+   NULL,
+};
 #endif

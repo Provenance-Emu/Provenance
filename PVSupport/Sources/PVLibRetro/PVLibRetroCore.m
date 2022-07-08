@@ -32,8 +32,13 @@
 #include "runloop.h"
 #include "performance_counters.h"
 #include "system.h"
+#include "record/record_driver.h"
 //#include "queues/message_queue.h"
-//#include "gfx/video_context_driver.h"
+#include "gfx/video_driver.h"
+#include "gfx/video_context_driver.h"
+#include "gfx/scaler/scaler.h"
+//#include "gfx/video_frame.h"
+
 #include <retro_assert.h>
 
 #include "core.h"
@@ -72,11 +77,11 @@
 
     enum retro_pixel_format pix_fmt;
 }
-- (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player;
-- (void)pollControllers;
 
-- (void *)getVariable:(const char *)variable;
 @end
+
+video_driver_t video_gl;
+video_driver_t video_null;
 
 static struct retro_callbacks   retro_ctx;
 //static retro_video_refresh_t video_cb;
@@ -1323,66 +1328,72 @@ bool runloop_ctl(enum runloop_ctl_state state, void *data) {
  *
  * Video frame render callback function.
  **/
+
+extern video_pixel_scaler_t *video_driver_scaler_ptr;
+extern bool video_pixel_frame_scale(const void *data,
+      unsigned width, unsigned height,
+                                    size_t pitch);
+extern video_driver_state_t video_driver_state;
 void video_driver_frame(const void *data, unsigned width,
                         unsigned height, size_t pitch)
 {
-    //   static char video_driver_msg[256];
-    //   unsigned output_width  = 0;
-    //   unsigned output_height = 0;
-    //   unsigned  output_pitch = 0;
-    //   const char *msg        = NULL;
-    //   settings_t *settings   = config_get_ptr();
-    //
-    //   runloop_ctl(RUNLOOP_CTL_MSG_QUEUE_PULL,   &msg);
-    //
-    //   if (!video_driver_is_active())
-    //      return;
-    //
-    //   if (video_driver_scaler_ptr &&
-    //         video_pixel_frame_scale(data, width, height, pitch))
-    //   {
-    //      data                = video_driver_scaler_ptr->scaler_out;
-    //      pitch               = video_driver_scaler_ptr->scaler->out_stride;
-    //   }
-    //
-    //   video_driver_cached_frame_set(data, width, height, pitch);
-    //
-    //   /* Slightly messy code,
-    //    * but we really need to do processing before blocking on VSync
-    //    * for best possible scheduling.
-    //    */
-    //   if (
-    //         (
-    //             !video_driver_state.filter.filter
-    //          || !settings->video.post_filter_record
-    //          || !data
-    //          || video_driver_has_gpu_record()
-    //         )
-    //      )
-    //      recording_dump_frame(data, width, height, pitch);
-    //
-    //   if (video_driver_frame_filter(data, width, height, pitch,
-    //            &output_width, &output_height, &output_pitch))
-    //   {
-    //      data   = video_driver_state.filter.buffer;
-    //      width  = output_width;
-    //      height = output_height;
-    //      pitch  = output_pitch;
-    //   }
-    //
-    //   video_driver_msg[0] = '\0';
-    //   if (msg)
-    //      strlcpy(video_driver_msg, msg, sizeof(video_driver_msg));
-    //
-    //   if (!current_video || !current_video->frame(
-    //            video_driver_data, data, width, height,
-    //            video_driver_frame_count,
-    //            pitch, video_driver_msg))
-    //   {
-    //      video_driver_unset_active();
-    //   }
-    //
-    //   video_driver_frame_count++;
+       static char video_driver_msg[256];
+       unsigned output_width  = 0;
+       unsigned output_height = 0;
+       unsigned  output_pitch = 0;
+       const char *msg        = NULL;
+       settings_t *settings   = config_get_ptr();
+    
+       runloop_ctl(RUNLOOP_CTL_MSG_QUEUE_PULL,   &msg);
+    
+       if (!video_driver_is_active())
+          return;
+    
+       if (video_driver_scaler_ptr &&
+             video_pixel_frame_scale(data, width, height, pitch))
+       {
+          data                = video_driver_scaler_ptr->scaler_out;
+          pitch               = video_driver_scaler_ptr->scaler->out_stride;
+       }
+    
+       video_driver_cached_frame_set(data, width, height, pitch);
+    
+       /* Slightly messy code,
+        * but we really need to do processing before blocking on VSync
+        * for best possible scheduling.
+        */
+       if (
+             (
+                 !video_driver_state.filter.filter
+              || !settings->video.post_filter_record
+              || !data
+              || video_driver_has_gpu_record()
+             )
+          )
+          recording_dump_frame(data, width, height, pitch);
+    
+       if (video_driver_frame_filter(data, width, height, pitch,
+                &output_width, &output_height, &output_pitch))
+       {
+          data   = video_driver_state.filter.buffer;
+          width  = output_width;
+          height = output_height;
+          pitch  = output_pitch;
+       }
+    
+       video_driver_msg[0] = '\0';
+       if (msg)
+          strlcpy(video_driver_msg, msg, sizeof(video_driver_msg));
+    
+       if (!current_video || !current_video->frame(
+                video_driver_data, data, width, height,
+                video_driver_frame_count,
+                pitch, video_driver_msg))
+       {
+          video_driver_unset_active();
+       }
+    
+       video_driver_frame_count++;
 }
 
 /**
@@ -2055,16 +2066,18 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 }
 
 - (void)stopEmulation {
-    core.retro_unload_game();
-//    core.retro_deinit();
     [super stopEmulation];
+
+    core.retro_unload_game();
+    core.retro_reset();
+//    core.retro_deinit();
 }
 
 - (NSTimeInterval)frameInterval {
-    //    static struct retro_system_av_info av_info;
-    //    core.retro_get_system_av_info(&av_info);
-    //    return 1.0 / av_info.timing.fps;
-    return 60.0;
+    static struct retro_system_av_info av_info;
+    core.retro_get_system_av_info(&av_info);
+    NSTimeInterval fps = av_info.timing.fps ?: 60;
+    return fps;
 }
 
 # pragma mark - Video
@@ -2139,11 +2152,11 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
     switch (pix_fmt)
     {
        case RETRO_PIXEL_FORMAT_0RGB1555:
-            return GL_UNSIGNED_SHORT_5_5_5_1;
+            return GL_RGBA; // GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT
        case RETRO_PIXEL_FORMAT_RGB565:
             return GL_RGB565;
        case RETRO_PIXEL_FORMAT_XRGB8888:
-            return GL_UNSIGNED_SHORT_8_8_APPLE;
+            return GL_RGBA8; // GL_RGBA8
        default:
             return GL_RGBA;
     }
