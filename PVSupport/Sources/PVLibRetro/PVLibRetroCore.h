@@ -30,11 +30,30 @@ static __weak PVLibRetroCore *_current;
 
 __attribute__((weak_import))
 @interface PVLibRetroCore : PVEmulatorCore {
+    @public
+    unsigned short pitch_shift;
+    
+    uint32_t *videoBuffer;
+    uint32_t *videoBufferA;
+    uint32_t *videoBufferB;
+    
+    int16_t _pad[2][12];
+    
+    // MARK: - Retro Structs
+    unsigned                 core_poll_type;
+    bool                     core_input_polled;
+    bool                     core_has_set_input_descriptors;
+    struct retro_system_av_info av_info;
+    enum retro_pixel_format pix_fmt;
 }
 - (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player;
 - (void)pollControllers;
 
 - (void *)getVariable:(const char *)variable;
+
+@property (nonatomic, readonly) CGFloat videoWidth;
+@property (nonatomic, readonly) CGFloat videoHeight;
+
 @end
 
 #define SYMBOL(x) \

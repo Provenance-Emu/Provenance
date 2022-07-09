@@ -68,7 +68,7 @@ static bool font_renderer_stb_create_atlas(stb_font_renderer_t *self,
 
    if (width > 2048 || height > 2048)
    {
-      RARCH_WARN("[stb] Font atlas too big: %ux%u\n", width, height);
+      WLOG(@"[stb] Font atlas too big: %ux%u\n", width, height);
       goto error;
    }
 

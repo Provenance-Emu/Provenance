@@ -153,7 +153,7 @@ void x11_suspend_screensaver(Window wnd, bool enable)
    if (screensaver_na)
       return;
 
-   RARCH_LOG("Suspending screensaver (X11).\n");
+   VLOG(@"Suspending screensaver (X11).\n");
 
    snprintf(cmd, sizeof(cmd), "xdg-screensaver suspend 0x%x", (int)wnd);
 
@@ -161,12 +161,12 @@ void x11_suspend_screensaver(Window wnd, bool enable)
    if (ret == -1)
    {
       screensaver_na = true;
-      RARCH_WARN("Failed to launch xdg-screensaver.\n");
+      WLOG(@"Failed to launch xdg-screensaver.\n");
    }
    else if (WEXITSTATUS(ret))
    {
       screensaver_na = true;
-      RARCH_WARN("Could not suspend screen saver.\n");
+      WLOG(@"Could not suspend screen saver.\n");
    }
 }
 
@@ -252,7 +252,7 @@ static XineramaScreenInfo *x11_query_screens(Display *dpy, int *num_screens)
       return NULL;
 
    XineramaQueryVersion(dpy, &major, &minor);
-   RARCH_LOG("[X11]: Xinerama version: %d.%d.\n", major, minor);
+   VLOG(@"[X11]: Xinerama version: %d.%d.\n", major, minor);
 
    if (!XineramaIsActive(dpy))
       return NULL;
@@ -267,7 +267,7 @@ bool x11_get_xinerama_coord(Display *dpy, int screen,
    bool ret = false;
 
    XineramaScreenInfo *info = x11_query_screens(dpy, &num_screens);
-   RARCH_LOG("[X11]: Xinerama screens: %d.\n", num_screens);
+   VLOG(@"[X11]: Xinerama screens: %d.\n", num_screens);
 
    for (i = 0; i < num_screens; i++)
    {
@@ -294,7 +294,7 @@ unsigned x11_get_xinerama_monitor(Display *dpy, int x, int y,
    int largest_area   = 0;
 
    XineramaScreenInfo *info = x11_query_screens(dpy, &num_screens);
-   RARCH_LOG("[X11]: Xinerama screens: %d.\n", num_screens);
+   VLOG(@"[X11]: Xinerama screens: %d.\n", num_screens);
 
    for (i = 0; i < num_screens; i++)
    {
@@ -335,7 +335,7 @@ bool x11_create_input_context(Display *dpy, Window win, XIM *xim, XIC *xic)
 
    if (!*xim)
    {
-      RARCH_ERR("[X11]: Failed to open input method.\n");
+      ELOG(@"[X11]: Failed to open input method.\n");
       return false;
    }
 
@@ -344,7 +344,7 @@ bool x11_create_input_context(Display *dpy, Window win, XIM *xim, XIC *xic)
 
    if (!*xic)
    {
-      RARCH_ERR("[X11]: Failed to create input context.\n");
+      ELOG(@"[X11]: Failed to create input context.\n");
       return false;
    }
 
@@ -613,6 +613,6 @@ void x11_save_last_used_monitor(Window win)
    g_x11_screen = x11_get_xinerama_monitor(g_x11_dpy, x, y,
          target.width, target.height);
 
-   RARCH_LOG("[X11]: Saved monitor #%u.\n", g_x11_screen);
+   VLOG(@"[X11]: Saved monitor #%u.\n", g_x11_screen);
 #endif
 }

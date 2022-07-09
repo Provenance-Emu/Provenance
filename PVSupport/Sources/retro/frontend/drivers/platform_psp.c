@@ -91,7 +91,7 @@ static void frontend_psp_get_environment_settings(int *argc, char *argv[],
    strlcpy(eboot_path, argv[0], sizeof(eboot_path));
    fill_pathname_basedir(g_defaults.dir.port, argv[0], sizeof(g_defaults.dir.port));
 #endif
-   RARCH_LOG("port dir: [%s]\n", g_defaults.dir.port);
+   VLOG(@"port dir: [%s]\n", g_defaults.dir.port);
 
    strlcpy(g_defaults.dir.content_history,
          g_defaults.dir.port, sizeof(g_defaults.dir.content_history));
@@ -156,11 +156,11 @@ static void frontend_psp_get_environment_settings(int *argc, char *argv[],
          args->content_path   = path;
          args->libretro_path  = NULL;
 
-         RARCH_LOG("argv[0]: %s\n", argv[0]);
-         RARCH_LOG("argv[1]: %s\n", argv[1]);
-         RARCH_LOG("argv[2]: %s\n", argv[2]);
+         VLOG(@"argv[0]: %s\n", argv[0]);
+         VLOG(@"argv[1]: %s\n", argv[1]);
+         VLOG(@"argv[2]: %s\n", argv[2]);
 
-         RARCH_LOG("Auto-start game %s.\n", argv[1]);
+         VLOG(@"Auto-start game %s.\n", argv[1]);
       }
    }
 #endif
@@ -266,7 +266,7 @@ static void frontend_psp_exec(const char *path, bool should_load_game)
    }
 #endif
 
-   RARCH_LOG("Attempt to load executable: [%s].\n", path);
+   VLOG(@"Attempt to load executable: [%s].\n", path);
 
    exitspawn_kernel(path, args, argp);
 
@@ -279,15 +279,15 @@ static bool frontend_psp_set_fork(enum frontend_fork fork_mode)
    switch (fork_mode)
    {
       case FRONTEND_FORK_CORE:
-         RARCH_LOG("FRONTEND_FORK_CORE\n");
+         VLOG(@"FRONTEND_FORK_CORE\n");
          psp_fork_mode  = fork_mode;
          break;
       case FRONTEND_FORK_CORE_WITH_ARGS:
-         RARCH_LOG("FRONTEND_FORK_CORE_WITH_ARGS\n");
+         VLOG(@"FRONTEND_FORK_CORE_WITH_ARGS\n");
          psp_fork_mode  = fork_mode;
          break;
       case FRONTEND_FORK_RESTART:
-         RARCH_LOG("FRONTEND_FORK_RESTART\n");
+         VLOG(@"FRONTEND_FORK_RESTART\n");
          /* NOTE: We don't implement Salamander, so just turn
           * this into FRONTEND_FORK_CORE. */
          psp_fork_mode  = FRONTEND_FORK_CORE;

@@ -531,7 +531,7 @@ static bool apply_patch_content(uint8_t **buf,
       return false;
    }
 
-   RARCH_LOG("Found %s file in \"%s\", attempting to patch ...\n",
+   VLOG(@"Found %s file in \"%s\", attempting to patch ...\n",
          patch_desc, patch_path);
 
    target_size = ret_size * 4; /* Just to be sure. */
@@ -540,7 +540,7 @@ static bool apply_patch_content(uint8_t **buf,
 
    if (!patched_content)
    {
-      RARCH_ERR("%s\n",
+      ELOG(@"%s\n",
             msg_hash_to_str(MSG_FAILED_TO_ALLOCATE_MEMORY_FOR_PATCHED_CONTENT));
       goto error;
    }
@@ -550,13 +550,13 @@ static bool apply_patch_content(uint8_t **buf,
 
    if (err == PATCH_SUCCESS)
    {
-      RARCH_LOG("%s (%s).\n",
+      VLOG(@"%s (%s).\n",
             msg_hash_to_str(MSG_FATAL_ERROR_RECEIVED_IN),
             patch_desc);
       success = true;
    }
    else
-      RARCH_ERR("%s %s: %s #%u\n",
+      ELOG(@"%s %s: %s #%u\n",
             msg_hash_to_str(MSG_FAILED_TO_PATCH),
             patch_desc,
             msg_hash_to_str(MSG_ERROR),
@@ -632,7 +632,7 @@ void patch_content(uint8_t **buf, ssize_t *size)
          + global->patch.bps_pref 
          + global->patch.ups_pref > 1)
    {
-      RARCH_WARN("%s\n",
+      WLOG(@"%s\n",
             msg_hash_to_str(MSG_SEVERAL_PATCHES_ARE_EXPLICITLY_DEFINED));
       return;
    }
@@ -641,7 +641,7 @@ void patch_content(uint8_t **buf, ssize_t *size)
          && !try_bps_patch(buf, size) 
          && !try_ups_patch(buf, size))
    {
-      RARCH_LOG("%s\n",
+      VLOG(@"%s\n",
             msg_hash_to_str(MSG_DID_NOT_FIND_A_VALID_CONTENT_PATCH));
    }
 }

@@ -84,7 +84,7 @@ static void xv_set_nonblock_state(void *data, bool state)
    if (atom != None && xv->port)
       XvSetPortAttribute(g_x11_dpy, xv->port, atom, !state);
    else
-      RARCH_WARN("Failed to set SYNC_TO_VBLANK attribute.\n");
+      WLOG(@"Failed to set SYNC_TO_VBLANK attribute.\n");
 }
 
 static INLINE void xv_calculate_yuv(uint8_t *y, uint8_t *u, uint8_t *v,
@@ -147,7 +147,7 @@ static void xv_init_font(xv_t *xv, const char *font_path, unsigned font_size)
             r, g, b);
    }
    else
-      RARCH_LOG("Could not initialize fonts.\n");
+      VLOG(@"Could not initialize fonts.\n");
 }
 
 /* We render @ 2x scale to combat chroma downsampling.
@@ -444,7 +444,7 @@ static void *xv_init(const video_info_t *video,
 
    if (!XShmQueryExtension(g_x11_dpy))
    {
-      RARCH_ERR("XVideo: XShm extension not found.\n");
+      ELOG(@"XVideo: XShm extension not found.\n");
       goto error;
    }
 
@@ -474,14 +474,14 @@ static void *xv_init(const video_info_t *video,
       xv->depth    = adaptor_info[i].formats->depth;
       xv->visualid = adaptor_info[i].formats->visual_id;
 
-      RARCH_LOG("XVideo: Found suitable XvPort #%u\n", (unsigned)xv->port);
+      VLOG(@"XVideo: Found suitable XvPort #%u\n", (unsigned)xv->port);
       break;
    }
    XvFreeAdaptorInfo(adaptor_info);
 
    if (xv->port == 0)
    {
-      RARCH_ERR("XVideo: Failed to find valid XvPort or format.\n");
+      ELOG(@"XVideo: Failed to find valid XvPort or format.\n");
       goto error;
    }
 
@@ -497,7 +497,7 @@ static void *xv_init(const video_info_t *video,
 
    if (visualmatches < 1 || !visualinfo->visual)
    {
-      RARCH_ERR("XVideo: Unable to find Xv-compatible visual.\n");
+      ELOG(@"XVideo: Unable to find Xv-compatible visual.\n");
       goto error;
    }
 
@@ -549,7 +549,7 @@ static void *xv_init(const video_info_t *video,
 
    if (!xv->image)
    {
-      RARCH_ERR("XVideo: XShmCreateImage failed.\n");
+      ELOG(@"XVideo: XShmCreateImage failed.\n");
       goto error;
    }
 
@@ -561,7 +561,7 @@ static void *xv_init(const video_info_t *video,
 
    if (!XShmAttach(g_x11_dpy, &xv->shminfo))
    {
-      RARCH_ERR("XVideo: XShmAttach failed.\n");
+      ELOG(@"XVideo: XShmAttach failed.\n");
       goto error;
    }
    XSync(g_x11_dpy, False);
@@ -624,7 +624,7 @@ static bool xv_check_resize(xv_t *xv, unsigned width, unsigned height)
 
       if (xv->image == None)
       {
-         RARCH_ERR("Failed to create image.\n");
+         ELOG(@"Failed to create image.\n");
          return false;
       }
 
@@ -636,7 +636,7 @@ static bool xv_check_resize(xv_t *xv, unsigned width, unsigned height)
 
       if (xv->shminfo.shmid < 0)
       {
-         RARCH_ERR("Failed to init SHM.\n");
+         ELOG(@"Failed to init SHM.\n");
          return false;
       }
 
@@ -646,7 +646,7 @@ static bool xv_check_resize(xv_t *xv, unsigned width, unsigned height)
 
       if (!XShmAttach(g_x11_dpy, &xv->shminfo))
       {
-         RARCH_ERR("Failed to reattch XvShm image.\n");
+         ELOG(@"Failed to reattch XvShm image.\n");
          return false;
       }
       XSync(g_x11_dpy, False);

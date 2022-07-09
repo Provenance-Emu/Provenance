@@ -159,7 +159,7 @@ static INLINE bool gl_query_extension(const char *ext)
       ret = str && strstr(str, ext);
    }
 
-   RARCH_LOG("Querying GL extension: %s => %s\n",
+   VLOG(@"Querying GL extension: %s => %s\n",
          ext, ret ? "exists" : "doesn't exist");
    return ret;
 }
@@ -196,7 +196,7 @@ static void gl_overlay_vertex_geom(void *data,
 
    if (image > gl->overlays)
    {
-      RARCH_ERR("Invalid overlay id: %u\n", image);
+      ELOG(@"Invalid overlay id: %u\n", image);
       return;
    }
 
@@ -436,7 +436,7 @@ bool gl_check_capability(enum gl_capability_enum enum_idx)
 #ifndef HAVE_OPENGLES
          if (vendor && renderer && (strstr(vendor, "ATI") || strstr(renderer, "ATI")))
          {
-            RARCH_LOG("[GL]: ATI card detected, skipping check for GL_RGB565 support.\n");
+            VLOG(@"[GL]: ATI card detected, skipping check for GL_RGB565 support.\n");
             return false;
          }
 
@@ -451,7 +451,7 @@ bool gl_check_capability(enum gl_capability_enum enum_idx)
 
          if (gl_query_extension("GL_EXT_unpack_subimage"))
          {
-            RARCH_LOG("[GL]: Extension GL_EXT_unpack_subimage, can copy textures faster using UNPACK_ROW_LENGTH.\n");
+            VLOG(@"[GL]: Extension GL_EXT_unpack_subimage, can copy textures faster using UNPACK_ROW_LENGTH.\n");
             return true;
          }
 #endif
@@ -657,7 +657,7 @@ void gl_set_viewport(void *data, unsigned viewport_width,
    }
 
 #if 0
-   RARCH_LOG("Setting viewport @ %ux%u\n", viewport_width, viewport_height);
+   VLOG(@"Setting viewport @ %ux%u\n", viewport_width, viewport_height);
 #endif
 }
 
@@ -674,7 +674,7 @@ static bool gl_shader_init(gl_t *gl)
 
    if (!gl)
    {
-      RARCH_ERR("Invalid GL instance passed.\n");
+      ELOG(@"Invalid GL instance passed.\n");
       return false;
    }
 
@@ -697,7 +697,7 @@ static bool gl_shader_init(gl_t *gl)
 #endif
 
       default:
-         RARCH_ERR("[GL]: Not loading any shader, or couldn't find valid shader backend. Continuing without shaders.\n");
+         ELOG(@"[GL]: Not loading any shader, or couldn't find valid shader backend. Continuing without shaders.\n");
          return true;
    }
 
@@ -710,7 +710,7 @@ static bool gl_shader_init(gl_t *gl)
    if (video_shader_driver_init(&init_data))
       return true;
 
-   RARCH_ERR("[GL]: Failed to initialize shader, falling back to stock.\n");
+   ELOG(@"[GL]: Failed to initialize shader, falling back to stock.\n");
 
    init_data.shader = NULL;
    init_data.path   = NULL;
@@ -931,7 +931,7 @@ static void gl_init_textures(gl_t *gl, const video_info_t *video)
       }
       else
       {
-         RARCH_WARN("[GL]: 32-bit FBO not supported. Falling back to 16-bit.\n");
+         WLOG(@"[GL]: 32-bit FBO not supported. Falling back to 16-bit.\n");
          internal_fmt = GL_RGB;
          texture_type = GL_RGB;
          texture_fmt  = GL_UNSIGNED_SHORT_5_6_5;
@@ -992,7 +992,7 @@ static INLINE void gl_copy_frame(gl_t *gl, const void *frame,
 
       if (img == EGL_NO_IMAGE_KHR)
       {
-         RARCH_ERR("[GL]: Failed to create EGL image.\n");
+         ELOG(@"[GL]: Failed to create EGL image.\n");
          return;
       }
 
@@ -1747,7 +1747,7 @@ static void gl_set_nonblock_state(void *data, bool state)
    if (!gl)
       return;
 
-   RARCH_LOG("[GL]: VSync => %s\n", state ? "off" : "on");
+   VLOG(@"[GL]: VSync => %s\n", state ? "off" : "on");
 
    context_bind_hw_render(false);
 
@@ -1772,10 +1772,10 @@ static bool resolve_extensions(gl_t *gl, const char *context_ident)
    
    if (gl_query_core_context_in_use())
    {
-      RARCH_LOG("[GL]: Using Core GL context.\n");
+      VLOG(@"[GL]: Using Core GL context.\n");
       if (!gl_check_capability(GL_CAPS_VAO))
       {
-         RARCH_ERR("[GL]: Failed to initialize VAOs.\n");
+         ELOG(@"[GL]: Failed to initialize VAOs.\n");
          return false;
       }
       glGenVertexArrays(1, &gl->vao);
@@ -1795,7 +1795,7 @@ static bool resolve_extensions(gl_t *gl, const char *context_ident)
 #ifdef HAVE_GL_SYNC
    gl->have_sync = gl_check_capability(GL_CAPS_SYNC);
    if (gl->have_sync && settings->video.hard_sync)
-      RARCH_LOG("[GL]: Using ARB_sync to reduce latency.\n");
+      VLOG(@"[GL]: Using ARB_sync to reduce latency.\n");
 #endif
 
    video_driver_unset_rgba();
@@ -1805,7 +1805,7 @@ static bool resolve_extensions(gl_t *gl, const char *context_ident)
    if (!gl_check_capability(GL_CAPS_BGRA8888))
    {
       video_driver_set_rgba();
-      RARCH_WARN("[GL]: GLES implementation does not have BGRA8888 extension.\n"
+      WLOG(@"[GL]: GLES implementation does not have BGRA8888 extension.\n"
                  "32-bit path will require conversion.\n");
    }
 
@@ -1821,7 +1821,7 @@ static bool resolve_extensions(gl_t *gl, const char *context_ident)
 
 #ifdef GL_DEBUG
    /* Useful for debugging, but kinda obnoxious otherwise. */
-   RARCH_LOG("[GL]: Supported extensions:\n");
+   VLOG(@"[GL]: Supported extensions:\n");
 
    if (gl_query_core_context_in_use())
    {
@@ -1832,7 +1832,7 @@ static bool resolve_extensions(gl_t *gl, const char *context_ident)
       {
          const char *ext = (const char*)glGetStringi(GL_EXTENSIONS, i);
          if (ext)
-            RARCH_LOG("\t%s\n", ext);
+            VLOG(@"\t%s\n", ext);
       }
 #endif
    }
@@ -1846,7 +1846,7 @@ static bool resolve_extensions(gl_t *gl, const char *context_ident)
          struct string_list *list = string_split(ext, " ");
 
          for (i = 0; i < list->size; i++)
-            RARCH_LOG("\t%s\n", list->elems[i].data);
+            VLOG(@"\t%s\n", list->elems[i].data);
          string_list_free(list);
       }
    }
@@ -1880,7 +1880,7 @@ static INLINE void gl_set_texture_fmts(gl_t *gl, bool rgb32)
 #ifndef HAVE_OPENGLES
    else if (gl->have_es2_compat)
    {
-      RARCH_LOG("[GL]: Using GL_RGB565 for texture uploads.\n");
+      VLOG(@"[GL]: Using GL_RGB565 for texture uploads.\n");
       gl->internal_fmt = RARCH_GL_INTERNAL_FORMAT16_565;
       gl->texture_type = RARCH_GL_TEXTURE_TYPE16_565;
       gl->texture_fmt  = RARCH_GL_FORMAT16_565;
@@ -1909,7 +1909,7 @@ static void gl_init_pbo_readback(gl_t *gl)
    if (!gl->pbo_readback_enable)
       return;
 
-   RARCH_LOG("[GL]: Async PBO readback enabled.\n");
+   VLOG(@"[GL]: Async PBO readback enabled.\n");
 
    glGenBuffers(4, gl->pbo_readback);
    for (i = 0; i < 4; i++)
@@ -1936,7 +1936,7 @@ static void gl_init_pbo_readback(gl_t *gl)
    if (!scaler_ctx_gen_filter(scaler))
    {
       gl->pbo_readback_enable = false;
-      RARCH_ERR("Failed to initialize pixel conversion for PBO.\n");
+      ELOG(@"Failed to initialize pixel conversion for PBO.\n");
       glDeleteBuffers(4, gl->pbo_readback);
    }
 #endif
@@ -2078,13 +2078,13 @@ static void DEBUG_CALLBACK_TYPE gl_debug_cb(GLenum source, GLenum type,
    switch (severity)
    {
       case GL_DEBUG_SEVERITY_HIGH:
-         RARCH_ERR("[GL debug (High, %s, %s)]: %s\n", src, typestr, message);
+         ELOG(@"[GL debug (High, %s, %s)]: %s\n", src, typestr, message);
          break;
       case GL_DEBUG_SEVERITY_MEDIUM:
-         RARCH_WARN("[GL debug (Medium, %s, %s)]: %s\n", src, typestr, message);
+         WLOG(@"[GL debug (Medium, %s, %s)]: %s\n", src, typestr, message);
          break;
       case GL_DEBUG_SEVERITY_LOW:
-         RARCH_LOG("[GL debug (Low, %s, %s)]: %s\n", src, typestr, message);
+         VLOG(@"[GL debug (Low, %s, %s)]: %s\n", src, typestr, message);
          break;
    }
 }
@@ -2104,7 +2104,7 @@ static void gl_begin_debug(gl_t *gl)
 #endif
    }
    else
-      RARCH_ERR("Neither GL_KHR_debug nor GL_ARB_debug_output are implemented. Cannot start GL debugging.\n");
+      ELOG(@"Neither GL_KHR_debug nor GL_ARB_debug_output are implemented. Cannot start GL debugging.\n");
 }
 #endif
 
@@ -2138,7 +2138,7 @@ static void *gl_init(const video_info_t *video, const input_driver_t **input, vo
 
    gl->video_info        = *video;
 
-   RARCH_LOG("Found GL context: %s\n", ctx_driver->ident);
+   VLOG(@"Found GL context: %s\n", ctx_driver->ident);
 
    video_context_driver_get_video_size(&mode);
 
@@ -2147,7 +2147,7 @@ static void *gl_init(const video_info_t *video, const input_driver_t **input, vo
    mode.width  = 0;
    mode.height = 0;
 
-   RARCH_LOG("Detecting screen resolution %ux%u.\n", full_x, full_y);
+   VLOG(@"Detecting screen resolution %ux%u.\n", full_x, full_y);
 
    interval = video->vsync ? settings->video.swap_interval : 0;
 
@@ -2176,8 +2176,8 @@ static void *gl_init(const video_info_t *video, const input_driver_t **input, vo
    renderer = (const char*)glGetString(GL_RENDERER);
    version  = (const char*)glGetString(GL_VERSION);
 
-   RARCH_LOG("[GL]: Vendor: %s, Renderer: %s.\n", vendor, renderer);
-   RARCH_LOG("[GL]: Version: %s.\n", version);
+   VLOG(@"[GL]: Vendor: %s, Renderer: %s.\n", vendor, renderer);
+   VLOG(@"[GL]: Version: %s.\n", version);
 
    if (!string_is_empty(version))
       sscanf(version, "%d.%d", &gl->version_major, &gl->version_minor);
@@ -2216,7 +2216,7 @@ static void *gl_init(const video_info_t *video, const input_driver_t **input, vo
 
    video_driver_get_size(&temp_width, &temp_height);
 
-   RARCH_LOG("GL: Using resolution %ux%u\n", temp_width, temp_height);
+   VLOG(@"GL: Using resolution %ux%u\n", temp_width, temp_height);
 
    hwr = video_driver_get_hw_context();
 
@@ -2256,11 +2256,11 @@ static void *gl_init(const video_info_t *video, const input_driver_t **input, vo
 
    video_shader_driver_get_ident(&ident_info);
 
-   RARCH_LOG("[GL]: Default shader backend found: %s.\n", ident_info.ident);
+   VLOG(@"[GL]: Default shader backend found: %s.\n", ident_info.ident);
 
    if (!gl_shader_init(gl))
    {
-      RARCH_ERR("[GL]: Shader initialization failed.\n");
+      ELOG(@"[GL]: Shader initialization failed.\n");
       goto error;
    }
 
@@ -2277,8 +2277,8 @@ static void *gl_init(const video_info_t *video, const input_driver_t **input, vo
    if (!video_shader_driver_info(&shader_info))
       goto error;
 
-   RARCH_LOG("[GL]: Using %u textures.\n", gl->textures);
-   RARCH_LOG("[GL]: Loaded %u program(s).\n",
+   VLOG(@"[GL]: Using %u textures.\n", gl->textures);
+   VLOG(@"[GL]: Loaded %u program(s).\n",
          shader_info.num);
 
    gl->tex_w = gl->tex_h = (RARCH_SCALE_BASE * video->input_scale);
@@ -2361,7 +2361,7 @@ static void *gl_init(const video_info_t *video, const input_driver_t **input, vo
       if (!font_driver_init_first(NULL, NULL, gl, *settings->path.font 
             ? settings->path.font : NULL, settings->video.font_size, false,
             FONT_DRIVER_RENDER_OPENGL_API))
-         RARCH_ERR("[GL]: Failed to initialize font renderer.\n");
+         ELOG(@"[GL]: Failed to initialize font renderer.\n");
    }
 
 #ifdef HAVE_GL_ASYNC_READBACK
@@ -2519,7 +2519,7 @@ static bool gl_set_shader(void *data,
 #endif
 
       default:
-         RARCH_ERR("[GL]: Cannot find shader core for path: %s.\n", path);
+         ELOG(@"[GL]: Cannot find shader core for path: %s.\n", path);
          goto error;
    }
 
@@ -2539,7 +2539,7 @@ static bool gl_set_shader(void *data,
 
       video_shader_driver_init(&init_data);
 
-      RARCH_WARN("[GL]: Failed to set multipass shader. Falling back to stock.\n");
+      WLOG(@"[GL]: Failed to set multipass shader. Falling back to stock.\n");
 
       goto error;
    }
@@ -2562,7 +2562,7 @@ static bool gl_set_shader(void *data,
       glDeleteBuffers(1, &gl->pbo);
 #endif
       gl->textures = textures;
-      RARCH_LOG("[GL]: Using %u textures.\n", gl->textures);
+      VLOG(@"[GL]: Using %u textures.\n", gl->textures);
       gl->tex_index = 0;
       gl_init_textures(gl, &gl->video_info);
       gl_init_textures_data(gl);
@@ -2667,7 +2667,7 @@ static bool gl_read_viewport(void *data, uint8_t *buffer)
 
       if (!ptr)
       {
-         RARCH_ERR("[GL]: Failed to map pixel unpack buffer.\n");
+         ELOG(@"[GL]: Failed to map pixel unpack buffer.\n");
          goto error;
       }
 

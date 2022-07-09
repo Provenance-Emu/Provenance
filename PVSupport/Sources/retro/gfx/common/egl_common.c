@@ -57,7 +57,7 @@ void egl_report_error(void)
          break;
    }
 
-   RARCH_ERR("[EGL]: #0x%x, %s\n", (unsigned)error, str);
+   ELOG(@"[EGL]: #0x%x, %s\n", (unsigned)error, str);
 }
 
 gfx_ctx_proc_t egl_get_proc_address(const char *symbol)
@@ -144,10 +144,10 @@ void egl_set_swap_interval(egl_ctx_data_t *egl, unsigned interval)
    if (!(eglGetCurrentContext()))
       return;
 
-   RARCH_LOG("[EGL]: eglSwapInterval(%u)\n", interval);
+   VLOG(@"[EGL]: eglSwapInterval(%u)\n", interval);
    if (!eglSwapInterval(egl->dpy, interval))
    {
-      RARCH_ERR("[EGL]: eglSwapInterval() failed.\n");
+      ELOG(@"[EGL]: eglSwapInterval() failed.\n");
       egl_report_error();
    }
 }
@@ -177,14 +177,14 @@ bool egl_init_context(egl_ctx_data_t *egl,
    egl->dpy = eglGetDisplay(display);
    if (!egl->dpy)
    {
-      RARCH_ERR("[EGL]: Couldn't get EGL display.\n");
+      ELOG(@"[EGL]: Couldn't get EGL display.\n");
       return false;
    }
 
    if (!eglInitialize(egl->dpy, major, minor))
       return false;
 
-   RARCH_LOG("[EGL]: EGL version: %d.%d\n", *major, *minor);
+   VLOG(@"[EGL]: EGL version: %d.%d\n", *major, *minor);
 
    if (!eglChooseConfig(egl->dpy, attrib_ptr, &egl->config, 1, n) || *n != 1)
       return false;
@@ -208,7 +208,7 @@ bool egl_create_context(egl_ctx_data_t *egl, const EGLint *egl_attribs)
    {
       egl->hw_ctx = eglCreateContext(egl->dpy, egl->config, egl->ctx,
             egl_attribs);
-      RARCH_LOG("[EGL]: Created shared context: %p.\n", (void*)egl->hw_ctx);
+      VLOG(@"[EGL]: Created shared context: %p.\n", (void*)egl->hw_ctx);
 
       if (egl->hw_ctx == EGL_NO_CONTEXT)
          return false;;
@@ -228,7 +228,7 @@ bool egl_create_surface(egl_ctx_data_t *egl, void *native_window)
    if (!eglMakeCurrent(egl->dpy, egl->surf, egl->surf, egl->ctx))
       return false;
 
-   RARCH_LOG("[EGL]: Current context: %p.\n", (void*)eglGetCurrentContext());
+   VLOG(@"[EGL]: Current context: %p.\n", (void*)eglGetCurrentContext());
 
    return true;
 }
@@ -238,7 +238,7 @@ bool egl_get_native_visual_id(egl_ctx_data_t *egl, EGLint *value)
    if (!eglGetConfigAttrib(egl->dpy, egl->config,
          EGL_NATIVE_VISUAL_ID, value))
    {
-      RARCH_ERR("[EGL]: egl_get_native_visual_id failed.\n");
+      ELOG(@"[EGL]: egl_get_native_visual_id failed.\n");
       return false;
    }
 
@@ -249,7 +249,7 @@ bool egl_has_config(egl_ctx_data_t *egl)
 {
    if (!egl->config)
    {
-      RARCH_ERR("[EGL]: No EGL configurations available.\n");
+      ELOG(@"[EGL]: No EGL configurations available.\n");
       return false;
    }
    return true;

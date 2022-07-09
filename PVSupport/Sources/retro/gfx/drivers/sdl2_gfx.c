@@ -107,7 +107,7 @@ static void sdl2_init_font(sdl2_video_t *vid, const char *font_path,
    if (!font_renderer_create_default((const void**)&vid->font_driver, &vid->font_data,
                                     *font_path ? font_path : NULL, font_size))
    {
-      RARCH_WARN("[SDL]: Could not initialize fonts.\n");
+      WLOG(@"[SDL]: Could not initialize fonts.\n");
       return;
    }
 
@@ -151,7 +151,7 @@ static void sdl2_init_font(sdl2_video_t *vid, const char *font_path,
       SDL_SetTextureBlendMode(vid->font.tex, SDL_BLENDMODE_ADD);
    }
    else
-      RARCH_WARN("[SDL]: Failed to initialize font texture: %s\n", SDL_GetError());
+      WLOG(@"[SDL]: Failed to initialize font texture: %s\n", SDL_GetError());
 
    SDL_FreePalette(pal);
    SDL_FreeSurface(tmp);
@@ -246,7 +246,7 @@ static void sdl2_init_renderer(sdl2_video_t *vid)
 
    if (!vid->renderer)
    {
-      RARCH_ERR("[SDL]: Failed to initialize renderer: %s", SDL_GetError());
+      ELOG(@"[SDL]: Failed to initialize renderer: %s", SDL_GetError());
       return;
    }
 
@@ -366,7 +366,7 @@ static void sdl_refresh_input_size(sdl2_video_t *vid, bool menu, bool rgb32,
 
       if (!target->tex)
       {
-         RARCH_ERR("Failed to create %s texture: %s\n", menu ? "menu" : "main",
+         ELOG(@"Failed to create %s texture: %s\n", menu ? "menu" : "main",
                    SDL_GetError());
          return;
       }
@@ -406,28 +406,28 @@ static void *sdl2_gfx_init(const video_info_t *video,
    if (!vid)
       return NULL;
 
-   RARCH_LOG("[SDL]: Available renderers (change with $SDL_RENDER_DRIVER):\n");
+   VLOG(@"[SDL]: Available renderers (change with $SDL_RENDER_DRIVER):\n");
    for (i = 0; i < SDL_GetNumRenderDrivers(); ++i)
    {
       SDL_RendererInfo renderer;
       if (SDL_GetRenderDriverInfo(i, &renderer) == 0)
-         RARCH_LOG("\t%s\n", renderer.name);
+         VLOG(@"\t%s\n", renderer.name);
    }
 
-   RARCH_LOG("[SDL]: Available displays:\n");
+   VLOG(@"[SDL]: Available displays:\n");
    for(i = 0; i < SDL_GetNumVideoDisplays(); ++i)
    {
       SDL_DisplayMode mode;
 
       if (SDL_GetCurrentDisplayMode(i, &mode) < 0)
-         RARCH_LOG("\tDisplay #%i mode: unknown.\n", i);
+         VLOG(@"\tDisplay #%i mode: unknown.\n", i);
       else
-         RARCH_LOG("\tDisplay #%i mode: %ix%i@%ihz.\n", i, mode.w, mode.h,
+         VLOG(@"\tDisplay #%i mode: %ix%i@%ihz.\n", i, mode.w, mode.h,
                    mode.refresh_rate);
    }
 
    if (!video->fullscreen)
-      RARCH_LOG("[SDL]: Creating window @ %ux%u\n", video->width, video->height);
+      VLOG(@"[SDL]: Creating window @ %ux%u\n", video->width, video->height);
 
 
    if (video->fullscreen)
@@ -440,7 +440,7 @@ static void *sdl2_gfx_init(const video_info_t *video,
 
    if (!vid->window)
    {
-      RARCH_ERR("[SDL]: Failed to init SDL window: %s\n", SDL_GetError());
+      ELOG(@"[SDL]: Failed to init SDL window: %s\n", SDL_GetError());
       goto error;
    }
 
@@ -636,7 +636,7 @@ static bool sdl2_gfx_read_viewport(void *data, uint8_t *buffer)
 
    if (!bgr24)
    {
-      RARCH_WARN("Failed to convert viewport data to BGR24: %s", SDL_GetError());
+      WLOG(@"Failed to convert viewport data to BGR24: %s", SDL_GetError());
       return false;
    }
 
@@ -723,7 +723,7 @@ static void sdl2_poke_set_osd_msg(void *data, const char *msg,
 {
    sdl2_video_t *vid = (sdl2_video_t*)data;
    sdl2_render_msg(vid, msg);
-   RARCH_LOG("[SDL]: OSD MSG: %s\n", msg);
+   VLOG(@"[SDL]: OSD MSG: %s\n", msg);
 }
 
 static void sdl2_show_mouse(void *data, bool state)

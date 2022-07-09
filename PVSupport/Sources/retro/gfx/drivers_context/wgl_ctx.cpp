@@ -134,7 +134,7 @@ static void create_gl_context(HWND hwnd, bool *quit)
 
    if (g_hrc)
    {
-      RARCH_LOG("[WGL]: Using cached GL context.\n");
+      VLOG(@"[WGL]: Using cached GL context.\n");
       video_driver_set_video_cache_context_ack();
    }
    else
@@ -149,7 +149,7 @@ static void create_gl_context(HWND hwnd, bool *quit)
          {
             if (!wglShareLists(g_hrc, g_hw_hrc))
             {
-               RARCH_LOG("[WGL]: Failed to share contexts.\n");
+               VLOG(@"[WGL]: Failed to share contexts.\n");
                *quit = true;
             }
          }
@@ -219,20 +219,20 @@ static void create_gl_context(HWND hwnd, bool *quit)
                *quit = true;
          }
          else
-            RARCH_ERR("[WGL]: Failed to create core context. Falling back to legacy context.\n");
+            ELOG(@"[WGL]: Failed to create core context. Falling back to legacy context.\n");
 
          if (g_use_hw_ctx)
          {
             g_hw_hrc = pcreate_context(g_hdc, context, attribs);
             if (!g_hw_hrc)
             {
-               RARCH_ERR("[WGL]: Failed to create shared context.\n");
+               ELOG(@"[WGL]: Failed to create shared context.\n");
                *quit = true;
             }
          }
       }
       else
-         RARCH_ERR("[WGL]: wglCreateContextAttribsARB not supported.\n");
+         ELOG(@"[WGL]: wglCreateContextAttribsARB not supported.\n");
    }
 }
 #endif
@@ -286,9 +286,9 @@ static void gfx_ctx_wgl_swap_interval(void *data, unsigned interval)
          if (!p_swap_interval)
             return;
 
-         RARCH_LOG("[WGL]: wglSwapInterval(%u)\n", g_interval);
+         VLOG(@"[WGL]: wglSwapInterval(%u)\n", g_interval);
          if (!p_swap_interval(g_interval))
-            RARCH_WARN("[WGL]: wglSwapInterval() failed.\n");
+            WLOG(@"[WGL]: wglSwapInterval() failed.\n");
 #endif
          break;
 
@@ -367,7 +367,7 @@ static bool gfx_ctx_wgl_set_resize(void *data,
 #ifdef HAVE_VULKAN
          if (!vulkan_create_swapchain(&g_vk, width, height, g_interval))
          {
-            RARCH_ERR("[Win32/Vulkan]: Failed to update swapchain.\n");
+            ELOG(@"[Win32/Vulkan]: Failed to update swapchain.\n");
             return false;
          }
 
@@ -527,7 +527,7 @@ static bool gfx_ctx_wgl_set_video_mode(void *data,
 {
    if (!win32_set_video_mode(NULL, width, height, fullscreen))
    {
-      RARCH_ERR("[WGL]: win32_set_video_mode failed.\n");
+      ELOG(@"[WGL]: win32_set_video_mode failed.\n");
       goto error;
    }
 

@@ -78,13 +78,13 @@ static bool init_playback(bsv_movie_t *handle, const char *path)
 
    if (!handle->file)
    {
-      RARCH_ERR("Could not open BSV file for playback, path : \"%s\".\n", path);
+      ELOG("Could not open BSV file for playback, path : \"%s\".\n", path);
       return false;
    }
 
    if (fread(header, sizeof(uint32_t), 4, handle->file) != 4)
    {
-      RARCH_ERR("%s\n", msg_hash_to_str(MSG_COULD_NOT_READ_MOVIE_HEADER));
+      ELOG("%s\n", msg_hash_to_str(MSG_COULD_NOT_READ_MOVIE_HEADER));
       return false;
    }
 
@@ -93,14 +93,14 @@ static bool init_playback(bsv_movie_t *handle, const char *path)
    if (swap_if_little32(header[MAGIC_INDEX]) != BSV_MAGIC
          && swap_if_big32(header[MAGIC_INDEX]) != BSV_MAGIC)
    {
-      RARCH_ERR("%s\n", msg_hash_to_str(MSG_MOVIE_FILE_IS_NOT_A_VALID_BSV1_FILE));
+      ELOG("%s\n", msg_hash_to_str(MSG_MOVIE_FILE_IS_NOT_A_VALID_BSV1_FILE));
       return false;
    }
 
    content_get_crc(&content_crc_ptr);
 
    if (swap_if_big32(header[CRC_INDEX]) != *content_crc_ptr)
-      RARCH_WARN("%s.\n", msg_hash_to_str(MSG_CRC32_CHECKSUM_MISMATCH));
+      WLOG("%s.\n", msg_hash_to_str(MSG_CRC32_CHECKSUM_MISMATCH));
 
    state_size = swap_if_big32(header[STATE_SIZE_INDEX]);
 
@@ -116,7 +116,7 @@ static bool init_playback(bsv_movie_t *handle, const char *path)
 
       if (fread(handle->state, 1, state_size, handle->file) != state_size)
       {
-         RARCH_ERR("%s\n", msg_hash_to_str(MSG_COULD_NOT_READ_STATE_FROM_MOVIE));
+         ELOG("%s\n", msg_hash_to_str(MSG_COULD_NOT_READ_STATE_FROM_MOVIE));
          return false;
       }
 
@@ -129,7 +129,7 @@ static bool init_playback(bsv_movie_t *handle, const char *path)
          core_unserialize(&serial_info);
       }
       else
-         RARCH_WARN("%s\n",
+         WLOG("%s\n",
                msg_hash_to_str(MSG_MOVIE_FORMAT_DIFFERENT_SERIALIZER_VERSION));
    }
 
@@ -148,7 +148,7 @@ static bool init_record(bsv_movie_t *handle, const char *path)
    handle->file       = fopen(path, "wb");
    if (!handle->file)
    {
-      RARCH_ERR("Could not open BSV file for recording, path : \"%s\".\n", path);
+      ELOG("Could not open BSV file for recording, path : \"%s\".\n", path);
       return false;
    }
 
@@ -308,7 +308,7 @@ static void bsv_movie_init_state(void)
       if (!(bsv_movie_init_handle(bsv_movie_state.movie_start_path,
                   RARCH_MOVIE_PLAYBACK)))
       {
-         RARCH_ERR("%s: \"%s\".\n",
+         ELOG("%s: \"%s\".\n",
                msg_hash_to_str(MSG_FAILED_TO_LOAD_MOVIE_FILE),
                bsv_movie_state.movie_start_path);
          retroarch_fail(1, "event_init_movie()");
@@ -317,7 +317,7 @@ static void bsv_movie_init_state(void)
       bsv_movie_state.movie_playback = true;
       runloop_msg_queue_push(msg_hash_to_str(MSG_STARTING_MOVIE_PLAYBACK),
             2, 180, false);
-      RARCH_LOG("%s.\n", msg_hash_to_str(MSG_STARTING_MOVIE_PLAYBACK));
+      VLOG("%s.\n", msg_hash_to_str(MSG_STARTING_MOVIE_PLAYBACK));
       settings->rewind_granularity = 1;
    }
    else if (bsv_movie_ctl(BSV_MOVIE_CTL_START_RECORDING, NULL))
@@ -334,12 +334,12 @@ static void bsv_movie_init_state(void)
          runloop_msg_queue_push(
                msg_hash_to_str(MSG_FAILED_TO_START_MOVIE_RECORD),
                1, 180, true);
-         RARCH_ERR("%s.\n", msg_hash_to_str(MSG_FAILED_TO_START_MOVIE_RECORD));
+         ELOG("%s.\n", msg_hash_to_str(MSG_FAILED_TO_START_MOVIE_RECORD));
          return;
       }
 
       runloop_msg_queue_push(msg, 1, 180, true);
-      RARCH_LOG("%s \"%s\".\n",
+      VLOG("%s \"%s\".\n",
             msg_hash_to_str(MSG_STARTING_MOVIE_RECORD_TO),
             bsv_movie_state.movie_start_path);
       settings->rewind_granularity = 1;

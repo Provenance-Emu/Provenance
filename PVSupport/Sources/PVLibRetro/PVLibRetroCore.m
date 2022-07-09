@@ -61,21 +61,8 @@
 
 @interface PVLibRetroCore ()
 {
-@public
-    uint32_t *videoBuffer;
-    uint32_t *videoBufferA;
-    uint32_t *videoBufferB;
-    
-    int _videoWidth, _videoHeight;
-    int16_t _pad[2][12];
-    
-    // MARK: - Retro Structs
+    @public
     struct retro_core_t      core;
-    unsigned                 core_poll_type;
-    bool                     core_input_polled;
-    bool                     core_has_set_input_descriptors;
-
-    enum retro_pixel_format pix_fmt;
 }
 
 @end
@@ -510,12 +497,12 @@ bool core_get_memory(retro_ctx_memory_info_t *info) {
 
 
 
-static void video_configure(const struct retro_game_geometry * geom) {
-    __strong PVLibRetroCore *strongCurrent = _current;
-    
-    strongCurrent->_videoWidth  = geom->max_width;
-    strongCurrent->_videoHeight = geom->max_height;
-}
+//static void video_configure(const struct retro_game_geometry * geom) {
+//    __strong PVLibRetroCore *strongCurrent = _current;
+//
+//    strongCurrent->_videoWidth  = geom->max_width;
+//    strongCurrent->_videoHeight = geom->max_height;
+//}
 
 bool core_load_game(retro_ctx_load_content_info_t *load_info)
 {
@@ -563,8 +550,8 @@ bool core_load_game(retro_ctx_load_content_info_t *load_info)
     
     current->core.retro_get_system_av_info(&av);
     ILOG(@"Video: %ix%i\n", av.geometry.base_width, av.geometry.base_height);
-    
-    video_configure(&av.geometry);
+    current->av_info = av;
+//    video_configure(&av.geometry);
     return true;
     //    audio_init(av.timing.sample_rate);
 }
@@ -809,7 +796,7 @@ void audio_driver_unset_callback(void)
 }
 
 bool runloop_ctl(enum runloop_ctl_state state, void *data) {
-    NSLog(@"runloop_ctl : %i", state);
+    VLOG(@"runloop_ctl : %i", state);
     switch (state)
     {
             //       case RUNLOOP_CTL_SHADER_DIR_DEINIT:
@@ -1333,67 +1320,68 @@ extern video_pixel_scaler_t *video_driver_scaler_ptr;
 extern bool video_pixel_frame_scale(const void *data,
       unsigned width, unsigned height,
                                     size_t pitch);
-extern video_driver_state_t video_driver_state;
+//extern video_driver_state_t video_driver_state;
 void video_driver_frame(const void *data, unsigned width,
                         unsigned height, size_t pitch)
 {
-       static char video_driver_msg[256];
-       unsigned output_width  = 0;
-       unsigned output_height = 0;
-       unsigned  output_pitch = 0;
-       const char *msg        = NULL;
-       settings_t *settings   = config_get_ptr();
-    
-       runloop_ctl(RUNLOOP_CTL_MSG_QUEUE_PULL,   &msg);
-    
-       if (!video_driver_is_active())
-          return;
-    
-       if (video_driver_scaler_ptr &&
-             video_pixel_frame_scale(data, width, height, pitch))
-       {
-          data                = video_driver_scaler_ptr->scaler_out;
-          pitch               = video_driver_scaler_ptr->scaler->out_stride;
-       }
-    
-       video_driver_cached_frame_set(data, width, height, pitch);
-    
-       /* Slightly messy code,
-        * but we really need to do processing before blocking on VSync
-        * for best possible scheduling.
-        */
-       if (
-             (
-                 !video_driver_state.filter.filter
-              || !settings->video.post_filter_record
-              || !data
-              || video_driver_has_gpu_record()
-             )
-          )
-          recording_dump_frame(data, width, height, pitch);
-    
-       if (video_driver_frame_filter(data, width, height, pitch,
-                &output_width, &output_height, &output_pitch))
-       {
-          data   = video_driver_state.filter.buffer;
-          width  = output_width;
-          height = output_height;
-          pitch  = output_pitch;
-       }
-    
-       video_driver_msg[0] = '\0';
-       if (msg)
-          strlcpy(video_driver_msg, msg, sizeof(video_driver_msg));
-    
-       if (!current_video || !current_video->frame(
-                video_driver_data, data, width, height,
-                video_driver_frame_count,
-                pitch, video_driver_msg))
-       {
-          video_driver_unset_active();
-       }
-    
-       video_driver_frame_count++;
+    NAssert(@"Shouldn't be here, or need to impliment");
+//       static char video_driver_msg[256];
+//       unsigned output_width  = 0;
+//       unsigned output_height = 0;
+//       unsigned  output_pitch = 0;
+//       const char *msg        = NULL;
+//       settings_t *settings   = config_get_ptr();
+//
+//       runloop_ctl(RUNLOOP_CTL_MSG_QUEUE_PULL,   &msg);
+//
+//       if (!video_driver_is_active())
+//          return;
+//
+//       if (video_driver_scaler_ptr &&
+//             video_pixel_frame_scale(data, width, height, pitch))
+//       {
+//          data                = video_driver_scaler_ptr->scaler_out;
+//          pitch               = video_driver_scaler_ptr->scaler->out_stride;
+//       }
+//
+//       video_driver_cached_frame_set(data, width, height, pitch);
+//
+//       /* Slightly messy code,
+//        * but we really need to do processing before blocking on VSync
+//        * for best possible scheduling.
+//        */
+//       if (
+//             (
+//                 !video_driver_state.filter.filter
+//              || !settings->video.post_filter_record
+//              || !data
+//              || video_driver_has_gpu_record()
+//             )
+//          )
+//          recording_dump_frame(data, width, height, pitch);
+//
+//       if (video_driver_frame_filter(data, width, height, pitch,
+//                &output_width, &output_height, &output_pitch))
+//       {
+//          data   = video_driver_state.filter.buffer;
+//          width  = output_width;
+//          height = output_height;
+//          pitch  = output_pitch;
+//       }
+//
+//       video_driver_msg[0] = '\0';
+//       if (msg)
+//          strlcpy(video_driver_msg, msg, sizeof(video_driver_msg));
+//
+//       if (!current_video || !current_video->frame(
+//                video_driver_data, data, width, height,
+//                video_driver_frame_count,
+//                pitch, video_driver_msg))
+//       {
+//          video_driver_unset_active();
+//       }
+//
+//       video_driver_frame_count++;
 }
 
 /**
@@ -1473,6 +1461,95 @@ static bool environment_callback(unsigned cmd, void *data) {
     __strong PVLibRetroCore *strongCurrent = _current;
     
     switch(cmd) {
+        case RETRO_ENVIRONMENT_SET_ROTATION:
+                                                        /* const unsigned * --
+                                                        * Sets screen rotation of graphics.
+                                                        * Valid values are 0, 1, 2, 3, which rotates screen by 0, 90, 180,
+                                                        * 270 degrees counter-clockwise respectively.
+                                                        */
+        case RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE:
+                                                      /* const struct retro_disk_control_callback * --
+                                                       * Sets an interface which frontend can use to eject and insert
+                                                       * disk images.
+                                                       * This is used for games which consist of multiple images and
+                                                       * must be manually swapped out by the user (e.g. PSX).
+                                                       */
+        case RETRO_ENVIRONMENT_SET_HW_RENDER:
+                                                      /* struct retro_hw_render_callback * --
+                                                       * Sets an interface to let a libretro core render with
+                                                       * hardware acceleration.
+                                                       * Should be called in retro_load_game().
+                                                       * If successful, libretro cores will be able to render to a
+                                                       * frontend-provided framebuffer.
+                                                       * The size of this framebuffer will be at least as large as
+                                                       * max_width/max_height provided in get_av_info().
+                                                       * If HW rendering is used, pass only RETRO_HW_FRAME_BUFFER_VALID or
+                                                       * NULL to retro_video_refresh_t.
+                                                       */
+        case RETRO_ENVIRONMENT_GET_RUMBLE_INTERFACE:
+                                           /* struct retro_rumble_interface * --
+                                            * Gets an interface which is used by a libretro core to set
+                                            * state of rumble motors in controllers.
+                                            * A strong and weak motor is supported, and they can be
+                                            * controlled indepedently.
+                                            * Should be called from either retro_init() or retro_load_game().
+                                            * Should not be called from retro_set_environment().
+                                            * Returns false if rumble functionality is unavailable.
+                                            */
+        case RETRO_ENVIRONMENT_GET_INPUT_DEVICE_CAPABILITIES:
+                                           /* uint64_t * --
+                                            * Gets a bitmask telling which device type are expected to be
+                                            * handled properly in a call to retro_input_state_t.
+                                            * Devices which are not handled or recognized always return
+                                            * 0 in retro_input_state_t.
+                                            * Example bitmask: caps = (1 << RETRO_DEVICE_JOYPAD) | (1 << RETRO_DEVICE_ANALOG).
+                                            * Should only be called in retro_run().
+                                            */
+        case RETRO_ENVIRONMENT_GET_SENSOR_INTERFACE:
+                                           /* struct retro_sensor_interface * --
+                                            * Gets access to the sensor interface.
+                                            * The purpose of this interface is to allow
+                                            * setting state related to sensors such as polling rate,
+                                            * enabling/disable it entirely, etc.
+                                            * Reading sensor state is done via the normal
+                                            * input_state_callback API.
+                                            */
+        case RETRO_ENVIRONMENT_GET_CAMERA_INTERFACE:
+                                           /* struct retro_camera_callback * --
+                                            * Gets an interface to a video camera driver.
+                                            * A libretro core can use this interface to get access to a
+                                            * video camera.
+                                            * New video frames are delivered in a callback in same
+                                            * thread as retro_run().
+                                            *
+                                            * GET_CAMERA_INTERFACE should be called in retro_load_game().
+                                            *
+                                            * Depending on the camera implementation used, camera frames
+                                            * will be delivered as a raw framebuffer,
+                                            * or as an OpenGL texture directly.
+                                            *
+                                            * The core has to tell the frontend here which types of
+                                            * buffers can be handled properly.
+                                            * An OpenGL texture can only be handled when using a
+                                            * libretro GL core (SET_HW_RENDER).
+                                            * It is recommended to use a libretro GL core when
+                                            * using camera interface.
+                                            *
+                                            * The camera is not started automatically. The retrieved start/stop
+                                            * functions must be used to explicitly
+                                            * start and stop the camera driver.
+                                            */
+        case RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE :
+                                           /* struct retro_location_callback * --
+                                            * Gets access to the location interface.
+                                            * The purpose of this interface is to be able to retrieve
+                                            * location-based information from the host device,
+                                            * such as current latitude / longitude.
+                                            */
+            break;
+        case RETRO_ENVIRONMENT_GET_CAN_DUPE:
+            *(bool *)data = true;
+            break;
         case RETRO_ENVIRONMENT_GET_LOG_INTERFACE: {
             struct retro_log_callback* cb = (struct retro_log_callback*)data;
             cb->log = core_log;
@@ -1492,14 +1569,13 @@ static bool environment_callback(unsigned cmd, void *data) {
             DLOG(@"Environ SAVE_DIRECTORY: \"%@\".\n", appSupportPath);
             break;
         }
-        case RETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY : {
+        case RETRO_ENVIRONMENT_GET_CORE_ASSETS_DIRECTORY : {
             NSString *batterySavesPath = [strongCurrent batterySavesPath];
             
             *(const char **)data = [batterySavesPath UTF8String];
             DLOG(@"Environ CONTENT_DIRECTORY: \"%@\".\n", batterySavesPath);
             break;
         }
-            
         case RETRO_ENVIRONMENT_SET_PIXEL_FORMAT: {
             enum retro_pixel_format pix_fmt =
                *(const enum retro_pixel_format*)data;
@@ -1524,7 +1600,6 @@ static bool environment_callback(unsigned cmd, void *data) {
             strongCurrent->pix_fmt = pix_fmt;
             break;
          }
-            
         case RETRO_ENVIRONMENT_SET_VARIABLES:
         {
             // We could potentionally ask the user what options they want
@@ -1562,6 +1637,45 @@ static bool environment_callback(unsigned cmd, void *data) {
         {
             const char* msg = ((struct retro_message*)data)->msg;
             ILOG(@"%s", msg);
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO:
+        {
+                                                       /* const struct retro_system_av_info * --
+                                                        * Sets a new av_info structure. This can only be called from
+                                                        * within retro_run().
+                                                        * This should *only* be used if the core is completely altering the
+                                                        * internal resolutions, aspect ratios, timings, sampling rate, etc.
+                                                        * Calling this can require a full reinitialization of video/audio
+                                                        * drivers in the frontend,
+                                                        *
+                                                        * so it is important to call it very sparingly, and usually only with
+                                                        * the users explicit consent.
+                                                        * An eventual driver reinitialize will happen so that video and
+                                                        * audio callbacks
+                                                        * happening after this call within the same retro_run() call will
+                                                        * target the newly initialized driver.
+                                                        *
+                                                        * This callback makes it possible to support configurable resolutions
+                                                        * in games, which can be useful to
+                                                        * avoid setting the "worst case" in max_width/max_height.
+                                                        *
+                                                        * ***HIGHLY RECOMMENDED*** Do not call this callback every time
+                                                        * resolution changes in an emulator core if it's
+                                                        * expected to be a temporary change, for the reasons of possible
+                                                        * driver reinitialization.
+                                                        * This call is not a free pass for not trying to provide
+                                                        * correct values in retro_get_system_av_info(). If you need to change
+                                                        * things like aspect ratio or nominal width/height,
+                                                        * use RETRO_ENVIRONMENT_SET_GEOMETRY, which is a softer variant
+                                                        * of SET_SYSTEM_AV_INFO.
+                                                        *
+                                                        * If this returns false, the frontend does not acknowledge a
+                                                        * changed av_info struct.
+                                                        */
+            struct retro_system_av_info info = *(const struct retro_system_av_info*)data;
+            strongCurrent->av_info = info;
+            ILOG(@"%s", info.geometry.max_width, info.geometry.max_height, info.geometry.base_width, info.geometry.base_height, info.geometry.aspect_ratio, info.timing.sample_rate, info.timing.fps);
             return true;
         }
         default : {
@@ -1889,31 +2003,26 @@ static size_t RETRO_CALLCONV audio_batch_callback(const int16_t *data, size_t fr
 
 static void RETRO_CALLCONV video_callback(const void *data, unsigned width, unsigned height, size_t pitch)
 {
+//    if (!video_driver_is_active())
+//       return;
+    
     __strong PVLibRetroCore *strongCurrent = _current;
-
+    
     static dispatch_queue_t serialQueue;
-//    static dispatch_group_t group;
-    //    static CFAbsoluteTime lastTime;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, 0);
+        dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_CONCURRENT, QOS_CLASS_USER_INTERACTIVE, 0);
         serialQueue = dispatch_queue_create("com.provenance.video", queueAttributes);
         
-        printf("vid: width: %i height: %i, pitch: %zu. _videoWidth: %d, _videoHeight: %d\n", width, height, pitch, strongCurrent->_videoWidth, strongCurrent->_videoHeight);
-        
-        //        group = dispatch_group_create();
-        //        lastTime = CFAbsoluteTimeGetCurrent();
+        DLOG(@"vid: width: %i height: %i, pitch: %zu. _videoWidth: %f, _videoHeight: %f\n", width, height, pitch, strongCurrent.videoWidth, strongCurrent.videoHeight);
     });
     
-    
-    strongCurrent->_videoWidth  = width;
-    strongCurrent->_videoHeight = height;
-    unsigned short pitch_shift = PITCH_SHIFT; //pitch % 256; // PITCH_SHIFT
+//    uint16_t pitch_shift = strongCurrent->pitch_shift; //PITCH_SHIFT; //pitch % 256; // PITCH_SHIFT
     dispatch_apply(height, serialQueue, ^(size_t y){
-        const uint32_t *src = (uint32_t*)data + y * (pitch >> pitch_shift); //pitch is in bytes not pixels
-        uint32_t *dst = strongCurrent->videoBuffer + y * width;
+        const uint16_t *src = (uint16_t*)data + y * (pitch >> 1); //pitch is in bytes not pixels
+        uint16_t *dst = strongCurrent->videoBuffer + y * width;
         
-        memcpy(dst, src, sizeof(uint32_t)*width);
+        memcpy(dst, src, sizeof(uint16_t)*width);
     });
     
     strongCurrent = nil;
@@ -1965,6 +2074,7 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 
 - (instancetype)init {
     if((self = [super init])) {
+        pitch_shift = PITCH_SHIFT;
         _current = self;
         const char* path = [[NSBundle bundleForClass:[self class]].bundlePath fileSystemRepresentation];
         config_set_active_core_path(path);
@@ -1972,7 +2082,8 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
         init_libretro_sym(CORE_TYPE_PLAIN, &core);
         retro_set_environment(environment_callback);
         
-        
+        memset(_pad, 0, sizeof(int16_t) * 10);
+
 //        struct retro_system_info info;
 //        core_get_info(&info);
 //        std::cout << "Loaded core " << info.library_name << " version " << info.library_version << std::endl;
@@ -2074,31 +2185,31 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 }
 
 - (NSTimeInterval)frameInterval {
-    static struct retro_system_av_info av_info;
-    core.retro_get_system_av_info(&av_info);
     NSTimeInterval fps = av_info.timing.fps ?: 60;
+    VLOG(@"%f", fps);
     return fps;
 }
 
 # pragma mark - Video
+- (void)swapBuffers {
+    if (videoBuffer == videoBufferA) {
+        videoBuffer = videoBufferB;
+    } else {
+        videoBuffer = videoBufferA;
+    }
+}
 
-//- (void)swapBuffers
-//{
-//    if (bitmap.data == (uint8_t*)videoBufferA)
-//    {
-//        videoBuffer = videoBufferA;
-//        bitmap.data = (uint8_t*)videoBufferB;
-//    }
-//    else
-//    {
-//        videoBuffer = videoBufferB;
-//        bitmap.data = (uint8_t*)videoBufferA;
-//    }
-//}
-//
-//-(BOOL)isDoubleBuffered {
-//    return YES;
-//}
+-(BOOL)isDoubleBuffered {
+    return YES;
+}
+
+- (CGFloat)videoWidth {
+    return av_info.geometry.base_width;
+}
+
+- (CGFloat)videoHeight {
+    return av_info.geometry.base_height;
+}
 
 - (const void *)videoBuffer {
     return videoBuffer;

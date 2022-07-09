@@ -177,7 +177,7 @@ static bool set_ubo_texture_offset(slang_reflection *reflection,
    {
       if (active_offset != offset)
       {
-         RARCH_ERR("[slang]: Vertex and fragment have different offsets for same semantic %s #%u (%u vs. %u).\n",
+         ELOG(@"[slang]: Vertex and fragment have different offsets for same semantic %s #%u (%u vs. %u).\n",
                texture_semantic_uniform_names[semantic],
                index,
                unsigned(active_offset),
@@ -203,7 +203,7 @@ static bool set_ubo_float_parameter_offset(slang_reflection *reflection,
    {
       if (active_offset != offset)
       {
-         RARCH_ERR("[slang]: Vertex and fragment have different offsets for same parameter #%u (%u vs. %u).\n",
+         ELOG(@"[slang]: Vertex and fragment have different offsets for same parameter #%u (%u vs. %u).\n",
                index,
                unsigned(active_offset),
                unsigned(offset));
@@ -213,7 +213,7 @@ static bool set_ubo_float_parameter_offset(slang_reflection *reflection,
 
    if (sem.num_components != num_components && (sem.uniform || sem.push_constant))
    {
-      RARCH_ERR("[slang]: Vertex and fragment have different components for same parameter #%u (%u vs. %u).\n",
+      ELOG(@"[slang]: Vertex and fragment have different components for same parameter #%u (%u vs. %u).\n",
             index,
             unsigned(sem.num_components),
             unsigned(num_components));
@@ -237,7 +237,7 @@ static bool set_ubo_offset(slang_reflection *reflection, slang_semantic semantic
    {
       if (active_offset != offset)
       {
-         RARCH_ERR("[slang]: Vertex and fragment have different offsets for same semantic %s (%u vs. %u).\n",
+         ELOG(@"[slang]: Vertex and fragment have different offsets for same semantic %s (%u vs. %u).\n",
                semantic_uniform_names[semantic],
                unsigned(active_offset),
                unsigned(offset));
@@ -248,7 +248,7 @@ static bool set_ubo_offset(slang_reflection *reflection, slang_semantic semantic
 
    if (sem.num_components != num_components && (sem.uniform || sem.push_constant))
    {
-      RARCH_ERR("[slang]: Vertex and fragment have different components for same semantic %s (%u vs. %u).\n",
+      ELOG(@"[slang]: Vertex and fragment have different components for same semantic %s (%u vs. %u).\n",
             semantic_uniform_names[semantic],
             unsigned(sem.num_components),
             unsigned(num_components));
@@ -313,7 +313,7 @@ static bool add_active_buffer_ranges(const Compiler &compiler, const Resource &r
 
       if (tex_sem == SLANG_TEXTURE_SEMANTIC_PASS_OUTPUT && tex_sem_index >= reflection->pass_number)
       {
-         RARCH_ERR("[slang]: Non causal filter chain detected. Shader is trying to use output from pass #%u, but this shader is pass #%u.\n",
+         ELOG(@"[slang]: Non causal filter chain detected. Shader is trying to use output from pass #%u, but this shader is pass #%u.\n",
                tex_sem_index, reflection->pass_number);
          return false;
       }
@@ -322,7 +322,7 @@ static bool add_active_buffer_ranges(const Compiler &compiler, const Resource &r
       {
          if (!validate_type_for_semantic(type, sem))
          {
-            RARCH_ERR("[slang]: Underlying type of semantic is invalid.\n");
+            ELOG(@"[slang]: Underlying type of semantic is invalid.\n");
             return false;
          }
 
@@ -343,7 +343,7 @@ static bool add_active_buffer_ranges(const Compiler &compiler, const Resource &r
       {
          if (!validate_type_for_texture_semantic(type))
          {
-            RARCH_ERR("[slang]: Underlying type of texture semantic is invalid.\n");
+            ELOG(@"[slang]: Underlying type of texture semantic is invalid.\n");
             return false;
          }
 
@@ -352,7 +352,7 @@ static bool add_active_buffer_ranges(const Compiler &compiler, const Resource &r
       }
       else
       {
-         RARCH_ERR("[slang]: Unknown semantic found.\n");
+         ELOG(@"[slang]: Unknown semantic found.\n");
          return false;
       }
    }
@@ -375,26 +375,26 @@ static bool slang_reflect(const Compiler &vertex_compiler, const Compiler &fragm
          !fragment.storage_images.empty() ||
          !fragment.atomic_counters.empty())
    {
-      RARCH_ERR("[slang]: Invalid resource type detected.\n");
+      ELOG(@"[slang]: Invalid resource type detected.\n");
       return false;
    }
 
    // Validate vertex input.
    if (vertex.stage_inputs.size() != 2)
    {
-      RARCH_ERR("[slang]: Vertex must have two attributes.\n");
+      ELOG(@"[slang]: Vertex must have two attributes.\n");
       return false;
    }
 
    if (fragment.stage_outputs.size() != 1)
    {
-      RARCH_ERR("[slang]: Multiple render targets not supported.\n");
+      ELOG(@"[slang]: Multiple render targets not supported.\n");
       return false;
    }
 
    if (fragment_compiler.get_decoration(fragment.stage_outputs[0].id, spv::DecorationLocation) != 0)
    {
-      RARCH_ERR("[slang]: Render target must use location = 0.\n");
+      ELOG(@"[slang]: Render target must use location = 0.\n");
       return false;
    }
 
@@ -404,33 +404,33 @@ static bool slang_reflect(const Compiler &vertex_compiler, const Compiler &fragm
 
    if (location_mask != 0x3)
    {
-      RARCH_ERR("[slang]: The two vertex attributes do not use location = 0 and location = 1.\n");
+      ELOG(@"[slang]: The two vertex attributes do not use location = 0 and location = 1.\n");
       return false;
    }
 
    // Validate the single uniform buffer.
    if (vertex.uniform_buffers.size() > 1)
    {
-      RARCH_ERR("[slang]: Vertex must use zero or one uniform buffer.\n");
+      ELOG(@"[slang]: Vertex must use zero or one uniform buffer.\n");
       return false;
    }
 
    if (fragment.uniform_buffers.size() > 1)
    {
-      RARCH_ERR("[slang]: Fragment must use zero or one uniform buffer.\n");
+      ELOG(@"[slang]: Fragment must use zero or one uniform buffer.\n");
       return false;
    }
 
    // Validate the single push constant buffer.
    if (vertex.push_constant_buffers.size() > 1)
    {
-      RARCH_ERR("[slang]: Vertex must use zero or one push constant buffers.\n");
+      ELOG(@"[slang]: Vertex must use zero or one push constant buffers.\n");
       return false;
    }
 
    if (fragment.push_constant_buffers.size() > 1)
    {
-      RARCH_ERR("[slang]: Fragment must use zero or one push cosntant buffer.\n");
+      ELOG(@"[slang]: Fragment must use zero or one push cosntant buffer.\n");
       return false;
    }
 
@@ -442,14 +442,14 @@ static bool slang_reflect(const Compiler &vertex_compiler, const Compiler &fragm
    if (vertex_ubo &&
          vertex_compiler.get_decoration(vertex_ubo, spv::DecorationDescriptorSet) != 0)
    {
-      RARCH_ERR("[slang]: Resources must use descriptor set #0.\n");
+      ELOG(@"[slang]: Resources must use descriptor set #0.\n");
       return false;
    }
 
    if (fragment_ubo &&
          fragment_compiler.get_decoration(fragment_ubo, spv::DecorationDescriptorSet) != 0)
    {
-      RARCH_ERR("[slang]: Resources must use descriptor set #0.\n");
+      ELOG(@"[slang]: Resources must use descriptor set #0.\n");
       return false;
    }
 
@@ -463,7 +463,7 @@ static bool slang_reflect(const Compiler &vertex_compiler, const Compiler &fragm
          fragment_ubo_binding != -1u &&
          vertex_ubo_binding != fragment_ubo_binding)
    {
-      RARCH_ERR("[slang]: Vertex and fragment uniform buffer must have same binding.\n");
+      ELOG(@"[slang]: Vertex and fragment uniform buffer must have same binding.\n");
       return false;
    }
 
@@ -471,7 +471,7 @@ static bool slang_reflect(const Compiler &vertex_compiler, const Compiler &fragm
 
    if (has_ubo && ubo_binding >= SLANG_NUM_BINDINGS)
    {
-      RARCH_ERR("[slang]: Binding %u is out of range.\n", ubo_binding);
+      ELOG(@"[slang]: Binding %u is out of range.\n", ubo_binding);
       return false;
    }
 
@@ -512,7 +512,7 @@ static bool slang_reflect(const Compiler &vertex_compiler, const Compiler &fragm
    // Validate push constant size against Vulkan's minimum spec to avoid cross-vendor issues.
    if (reflection->push_constant_size > 128)
    {
-      RARCH_ERR("[slang]: Exceeded maximum size of 128 bytes for push constant buffer.\n");
+      ELOG(@"[slang]: Exceeded maximum size of 128 bytes for push constant buffer.\n");
       return false;
    }
 
@@ -538,19 +538,19 @@ static bool slang_reflect(const Compiler &vertex_compiler, const Compiler &fragm
 
       if (set != 0)
       {
-         RARCH_ERR("[slang]: Resources must use descriptor set #0.\n");
+         ELOG(@"[slang]: Resources must use descriptor set #0.\n");
          return false;
       }
 
       if (binding >= SLANG_NUM_BINDINGS)
       {
-         RARCH_ERR("[slang]: Binding %u is out of range.\n", ubo_binding);
+         ELOG(@"[slang]: Binding %u is out of range.\n", ubo_binding);
          return false;
       }
 
       if (binding_mask & (1 << binding))
       {
-         RARCH_ERR("[slang]: Binding %u is already in use.\n", binding);
+         ELOG(@"[slang]: Binding %u is already in use.\n", binding);
          return false;
       }
       binding_mask |= 1 << binding;
@@ -561,7 +561,7 @@ static bool slang_reflect(const Compiler &vertex_compiler, const Compiler &fragm
       
       if (index == SLANG_INVALID_TEXTURE_SEMANTIC)
       {
-         RARCH_ERR("[slang]: Non-semantic textures not supported yet.\n");
+         ELOG(@"[slang]: Non-semantic textures not supported yet.\n");
          return false;
       }
 
@@ -572,24 +572,24 @@ static bool slang_reflect(const Compiler &vertex_compiler, const Compiler &fragm
       semantic.texture = true;
    }
 
-   RARCH_LOG("[slang]: Reflection\n");
-   RARCH_LOG("[slang]:   Textures:\n");
+   VLOG(@"[slang]: Reflection\n");
+   VLOG(@"[slang]:   Textures:\n");
    for (unsigned i = 0; i < SLANG_NUM_TEXTURE_SEMANTICS; i++)
    {
       unsigned index = 0;
       for (auto &sem : reflection->semantic_textures[i])
       {
          if (sem.texture)
-            RARCH_LOG("[slang]:      %s (#%u)\n", texture_semantic_names[i], index);
+            VLOG(@"[slang]:      %s (#%u)\n", texture_semantic_names[i], index);
          index++;
       }
    }
 
-   RARCH_LOG("[slang]:\n");
-   RARCH_LOG("[slang]:   Uniforms (Vertex: %s, Fragment: %s):\n",
+   VLOG(@"[slang]:\n");
+   VLOG(@"[slang]:   Uniforms (Vertex: %s, Fragment: %s):\n",
          reflection->ubo_stage_mask & SLANG_STAGE_VERTEX_MASK ? "yes": "no",
          reflection->ubo_stage_mask & SLANG_STAGE_FRAGMENT_MASK ? "yes": "no");
-   RARCH_LOG("[slang]:   Push Constants (Vertex: %s, Fragment: %s):\n",
+   VLOG(@"[slang]:   Push Constants (Vertex: %s, Fragment: %s):\n",
          reflection->push_constant_stage_mask & SLANG_STAGE_VERTEX_MASK ? "yes": "no",
          reflection->push_constant_stage_mask & SLANG_STAGE_FRAGMENT_MASK ? "yes": "no");
 
@@ -597,13 +597,13 @@ static bool slang_reflect(const Compiler &vertex_compiler, const Compiler &fragm
    {
       if (reflection->semantics[i].uniform)
       {
-         RARCH_LOG("[slang]:      %s (Offset: %u)\n", semantic_uniform_names[i],
+         VLOG(@"[slang]:      %s (Offset: %u)\n", semantic_uniform_names[i],
                unsigned(reflection->semantics[i].ubo_offset));
       }
 
       if (reflection->semantics[i].push_constant)
       {
-         RARCH_LOG("[slang]:      %s (PushOffset: %u)\n", semantic_uniform_names[i],
+         VLOG(@"[slang]:      %s (PushOffset: %u)\n", semantic_uniform_names[i],
                unsigned(reflection->semantics[i].push_constant_offset));
       }
    }
@@ -615,14 +615,14 @@ static bool slang_reflect(const Compiler &vertex_compiler, const Compiler &fragm
       {
          if (sem.uniform)
          {
-            RARCH_LOG("[slang]:      %s (#%u) (Offset: %u)\n", texture_semantic_uniform_names[i],
+            VLOG(@"[slang]:      %s (#%u) (Offset: %u)\n", texture_semantic_uniform_names[i],
                   index,
                   unsigned(sem.ubo_offset));
          }
 
          if (sem.push_constant)
          {
-            RARCH_LOG("[slang]:      %s (#%u) (PushOffset: %u)\n", texture_semantic_uniform_names[i],
+            VLOG(@"[slang]:      %s (#%u) (PushOffset: %u)\n", texture_semantic_uniform_names[i],
                   index,
                   unsigned(sem.push_constant_offset));
          }
@@ -630,15 +630,15 @@ static bool slang_reflect(const Compiler &vertex_compiler, const Compiler &fragm
       }
    }
 
-   RARCH_LOG("[slang]:\n");
-   RARCH_LOG("[slang]:   Parameters:\n");
+   VLOG(@"[slang]:\n");
+   VLOG(@"[slang]:   Parameters:\n");
    unsigned i = 0;
    for (auto &param : reflection->semantic_float_parameters)
    {
       if (param.uniform)
-         RARCH_LOG("[slang]:     #%u (Offset: %u)\n", i, param.ubo_offset);
+         VLOG(@"[slang]:     #%u (Offset: %u)\n", i, param.ubo_offset);
       if (param.push_constant)
-         RARCH_LOG("[slang]:     #%u (PushOffset: %u)\n", i, param.push_constant_offset);
+         VLOG(@"[slang]:     #%u (PushOffset: %u)\n", i, param.push_constant_offset);
       i++;
    }
 
@@ -660,7 +660,7 @@ bool slang_reflect_spirv(const std::vector<uint32_t> &vertex,
                vertex_resources, fragment_resources,
                reflection))
       {
-         RARCH_ERR("[slang]: Failed to reflect SPIR-V. Resource usage is inconsistent with expectations.\n");
+         ELOG(@"[slang]: Failed to reflect SPIR-V. Resource usage is inconsistent with expectations.\n");
          return false;
       }
 
@@ -668,7 +668,7 @@ bool slang_reflect_spirv(const std::vector<uint32_t> &vertex,
    }
    catch (const std::exception &e)
    {
-      RARCH_ERR("[slang]: spir2cross threw exception: %s.\n", e.what());
+      ELOG(@"[slang]: spir2cross threw exception: %s.\n", e.what());
       return false;
    }
 }

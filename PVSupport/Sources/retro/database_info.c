@@ -180,7 +180,7 @@ int database_info_build_query(char *s, size_t len,
          add_quotes = false;
          break;
       default:
-         RARCH_LOG("Unknown label: %s\n", label);
+         VLOG(@"Unknown label: %s\n", label);
          break;
    }
 
@@ -197,7 +197,7 @@ int database_info_build_query(char *s, size_t len,
    database_info_build_query_add_bracket_close(s, len);
 
 #if 0
-   RARCH_LOG("query: %s\n", s);
+   VLOG(@"query: %s\n", s);
 #endif
 
    return 0;
@@ -346,7 +346,7 @@ static int database_cursor_iterate(libretrodb_cursor_t *cur,
             db_info->md5 = bin_to_hex_alloc((uint8_t*)val->val.binary.buff, val->val.binary.len);
             break;
          default:
-            RARCH_LOG("Unknown key: %s\n", str);
+            VLOG(@"Unknown key: %s\n", str);
             break;
       }
    }

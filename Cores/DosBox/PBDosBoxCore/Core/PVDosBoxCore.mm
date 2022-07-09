@@ -36,6 +36,7 @@
 
 - (instancetype)init {
 	if (self = [super init]) {
+        pitch_shift = 4;
 	}
 
 	_current = self;
@@ -106,7 +107,7 @@
     ILOG(@"%s", variable);
     
     
-#define V(x) strcmp(variable, "x")
+#define V(x) strcmp(variable, x) == 0
     if (V("dosbox_pure_force60fps")) {
         // true|false
         // "Enable this to force output at 60FPS. Use this if you encounter screen tearing or vsync issues.", NULL

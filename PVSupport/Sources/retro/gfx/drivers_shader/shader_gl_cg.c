@@ -223,18 +223,18 @@ static void cg_error_handler(CGcontext ctx, CGerror error, void *data)
    switch (error)
    {
       case CG_INVALID_PARAM_HANDLE_ERROR:
-         RARCH_ERR("CG: Invalid param handle.\n");
+         ELOG(@"CG: Invalid param handle.\n");
          break;
 
       case CG_INVALID_PARAMETER_ERROR:
-         RARCH_ERR("CG: Invalid parameter.\n");
+         ELOG(@"CG: Invalid parameter.\n");
          break;
 
       default:
          break;
    }
 
-   RARCH_ERR("CG error: \"%s\"\n", cgGetErrorString(error));
+   ELOG(@"CG error: \"%s\"\n", cgGetErrorString(error));
 }
 #endif
 
@@ -430,7 +430,7 @@ static void gl_cg_deinit_progs(void *data)
    if (!cg)
       return;
 
-   RARCH_LOG("CG: Destroying programs.\n");
+   VLOG(@"CG: Destroying programs.\n");
    cgGLUnbindProgram(cg->cgFProf);
    cgGLUnbindProgram(cg->cgVProf);
 
@@ -483,7 +483,7 @@ static void gl_cg_deinit_context_state(void *data)
    cg_shader_data_t *cg = (cg_shader_data_t*)data;
    if (cg->cgCtx)
    {
-      RARCH_LOG("CG: Destroying context.\n");
+      VLOG(@"CG: Destroying context.\n");
       cgDestroyContext(cg->cgCtx);
    }
    cg->cgCtx = NULL;
@@ -558,11 +558,11 @@ static bool gl_cg_compile_program(
 
    if (!program->fprg || !program->vprg)
    {
-      RARCH_ERR("CG error: %s\n", cgGetErrorString(cgGetError()));
+      ELOG(@"CG error: %s\n", cgGetErrorString(cgGetError()));
       if (listing_f)
-         RARCH_ERR("Fragment:\n%s\n", listing_f);
+         ELOG(@"Fragment:\n%s\n", listing_f);
       else if (listing_v)
-         RARCH_ERR("Vertex:\n%s\n", listing_v);
+         ELOG(@"Vertex:\n%s\n", listing_v);
 
       ret = false;
       goto end;
@@ -595,7 +595,7 @@ static void gl_cg_set_program_base_attrib(void *data, unsigned i)
       if (!semantic)
          continue;
 
-      RARCH_LOG("CG: Found semantic \"%s\" in prog #%u.\n", semantic, i);
+      VLOG(@"CG: Found semantic \"%s\" in prog #%u.\n", semantic, i);
 
       semantic_hash = djb2_calculate(semantic);
 
@@ -644,7 +644,7 @@ static bool gl_cg_load_stock(void *data)
    return true;
 
 error:
-   RARCH_ERR("Failed to compile passthrough shader, is something wrong with your environment?\n");
+   ELOG(@"Failed to compile passthrough shader, is something wrong with your environment?\n");
    return false;
 }
 
@@ -668,7 +668,7 @@ static bool gl_cg_load_plain(void *data, const char *path)
       program_info.combined = path;
       program_info.is_file  = true;
 
-      RARCH_LOG("Loading Cg file: %s\n", path);
+      VLOG(@"Loading Cg file: %s\n", path);
       strlcpy(cg->shader->pass[0].source.path, path,
             sizeof(cg->shader->pass[0].source.path));
       if (!gl_cg_compile_program(data, 1, &cg->prg[1], &program_info))
@@ -676,7 +676,7 @@ static bool gl_cg_load_plain(void *data, const char *path)
    }
    else
    {
-      RARCH_LOG("Loading stock Cg file.\n");
+      VLOG(@"Loading stock Cg file.\n");
       cg->prg[1] = cg->prg[0];
    }
 
@@ -715,7 +715,7 @@ static bool gl_cg_load_imports(void *data)
       if ((memtype != -1u) && 
             (cg->shader->variable[i].addr >= mem_info.size))
       {
-         RARCH_ERR("Address out of bounds.\n");
+         ELOG(@"Address out of bounds.\n");
          return false;
       }
    }
@@ -743,7 +743,7 @@ static bool gl_cg_load_imports(void *data)
 
    cg->state_tracker = state_tracker_init(&tracker_info);
    if (!cg->state_tracker)
-      RARCH_WARN("Failed to initialize state tracker.\n");
+      WLOG(@"Failed to initialize state tracker.\n");
 
    return true;
 }
@@ -756,7 +756,7 @@ static bool gl_cg_load_shader(void *data, unsigned i)
    program_info.combined = cg->shader->pass[i].source.path;
    program_info.is_file  = true;
 
-   RARCH_LOG("Loading Cg shader: \"%s\".\n",
+   VLOG(@"Loading Cg shader: \"%s\".\n",
          cg->shader->pass[i].source.path);
 
    if (!gl_cg_compile_program(data, i + 1, &cg->prg[i + 1],&program_info))
@@ -774,11 +774,11 @@ static bool gl_cg_load_preset(void *data, const char *path)
    if (!gl_cg_load_stock(cg))
       return false;
 
-   RARCH_LOG("Loading Cg meta-shader: %s\n", path);
+   VLOG(@"Loading Cg meta-shader: %s\n", path);
    conf = config_file_new(path);
    if (!conf)
    {
-      RARCH_ERR("Failed to load preset.\n");
+      ELOG(@"Failed to load preset.\n");
       return false;
    }
 
@@ -791,7 +791,7 @@ static bool gl_cg_load_preset(void *data, const char *path)
 
    if (!video_shader_read_conf_cgp(conf, cg->shader))
    {
-      RARCH_ERR("Failed to parse CGP file.\n");
+      ELOG(@"Failed to parse CGP file.\n");
       config_file_free(conf);
       return false;
    }
@@ -802,7 +802,7 @@ static bool gl_cg_load_preset(void *data, const char *path)
 
    if (cg->shader->passes > GFX_MAX_SHADERS - 3)
    {
-      RARCH_WARN("Too many shaders ... Capping shader amount to %d.\n",
+      WLOG(@"Too many shaders ... Capping shader amount to %d.\n",
             GFX_MAX_SHADERS - 3);
       cg->shader->passes = GFX_MAX_SHADERS - 3;
    }
@@ -818,20 +818,20 @@ static bool gl_cg_load_preset(void *data, const char *path)
    {
       if (!gl_cg_load_shader(cg, i))
       {
-         RARCH_ERR("Failed to load shaders ...\n");
+         ELOG(@"Failed to load shaders ...\n");
          return false;
       }
    }
 
    if (!gl_load_luts(cg->shader, cg->lut_textures))
    {
-      RARCH_ERR("Failed to load lookup textures ...\n");
+      ELOG(@"Failed to load lookup textures ...\n");
       return false;
    }
 
    if (!gl_cg_load_imports(cg))
    {
-      RARCH_ERR("Failed to load imports ...\n");
+      ELOG(@"Failed to load imports ...\n");
       return false;
    }
 
@@ -996,7 +996,7 @@ static void *gl_cg_init(void *data, const char *path)
 
    if (!cg->cgCtx)
    {
-      RARCH_ERR("Failed to create Cg context.\n");
+      ELOG(@"Failed to create Cg context.\n");
       goto error;
    }
 
@@ -1012,12 +1012,12 @@ static void *gl_cg_init(void *data, const char *path)
          cg->cgFProf == CG_PROFILE_UNKNOWN ||
          cg->cgVProf == CG_PROFILE_UNKNOWN)
    {
-      RARCH_ERR("Invalid profile type\n");
+      ELOG(@"Invalid profile type\n");
       goto error;
    }
 
-   RARCH_LOG("[Cg]: Vertex profile: %s\n",   cgGetProfileString(cg->cgVProf));
-   RARCH_LOG("[Cg]: Fragment profile: %s\n", cgGetProfileString(cg->cgFProf));
+   VLOG(@"[Cg]: Vertex profile: %s\n",   cgGetProfileString(cg->cgVProf));
+   VLOG(@"[Cg]: Fragment profile: %s\n", cgGetProfileString(cg->cgFProf));
    cgGLSetOptimalOptions(cg->cgFProf);
    cgGLSetOptimalOptions(cg->cgVProf);
    cgGLEnableProfile(cg->cgFProf);

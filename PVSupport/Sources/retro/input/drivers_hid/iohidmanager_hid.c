@@ -308,7 +308,7 @@ static void iohidmanager_hid_device_add_autodetect(unsigned idx,
    strlcpy(params.driver, driver_name, sizeof(params.driver));
 
    input_config_autoconfigure_joypad(&params);
-   RARCH_LOG("Port %d: %s.\n", idx, device_name);
+   VLOG(@"Port %d: %s.\n", idx, device_name);
 }
 
 static void iohidmanager_hid_device_add(void *data, IOReturn result,

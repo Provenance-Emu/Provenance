@@ -723,12 +723,12 @@ bool input_driver_find_driver(void)
    else
    {
       unsigned d;
-      RARCH_ERR("Couldn't find any input driver named \"%s\"\n",
+      printf("Couldn't find any input driver named \"%s\"\n",
             settings->input.driver);
       RARCH_LOG_OUTPUT("Available input drivers are:\n");
       for (d = 0; input_driver_find_handle(d); d++)
          RARCH_LOG_OUTPUT("\t%s\n", input_driver_find_ident(d));
-      RARCH_WARN("Going to default to first input driver...\n");
+      printf("Going to default to first input driver...\n");
 
       current_input = (const input_driver_t*)
          input_driver_find_handle(0);
@@ -843,7 +843,7 @@ bool input_driver_init_command(void)
    if (settings->stdin_cmd_enable 
          && input_driver_grab_stdin())
    {
-      RARCH_WARN("stdin command interface is desired, but input driver has already claimed stdin.\n"
+      printf("stdin command interface is desired, but input driver has already claimed stdin.\n"
             "Cannot use this command interface.\n");
    }
 
@@ -856,7 +856,7 @@ bool input_driver_init_command(void)
             settings->network_cmd_enable,
             settings->network_cmd_port))
    {
-      RARCH_ERR("Failed to initialize command interface.\n");
+      printf("Failed to initialize command interface.\n");
       return false;
    }
 
@@ -896,7 +896,7 @@ bool input_driver_init_remote(void)
 
    if (!input_driver_remote)
    {
-      RARCH_ERR("Failed to initialize remote gamepad interface.\n");
+      printf("Failed to initialize remote gamepad interface.\n");
       return false;
    }
 

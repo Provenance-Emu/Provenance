@@ -324,7 +324,7 @@ static bool xdk_renderchain_init_shader(void *data, void *renderchain_data)
       return false;
 
 #if defined(HAVE_HLSL)
-   RARCH_LOG("D3D]: Using HLSL shader backend.\n");
+   VLOG(@"D3D]: Using HLSL shader backend.\n");
    shader_path = settings->path.shader;
    const shader_backend_t *shader = &hlsl_backend;
 

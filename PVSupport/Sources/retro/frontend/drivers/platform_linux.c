@@ -131,7 +131,7 @@ int system_property_get(const char *command,
    return length;
 
 error:
-   RARCH_ERR("Could not create pipe.\n");
+   ELOG(@"Could not create pipe.\n");
    return 0;
 }
 
@@ -145,7 +145,7 @@ void android_app_write_cmd(struct android_app *android_app, int8_t cmd)
       return;
 
    if (write(android_app->msgwrite, &cmd, sizeof(cmd)) != sizeof(cmd))
-      RARCH_ERR("Failure writing android_app cmd: %s\n", strerror(errno));
+      ELOG(@"Failure writing android_app cmd: %s\n", strerror(errno));
 }
 
 static void android_app_set_input(struct android_app *android_app,
@@ -203,7 +203,7 @@ static void android_app_free(struct android_app* android_app)
    slock_lock(android_app->mutex);
 
    sthread_join(android_app->thread);
-   RARCH_LOG("Joined with RetroArch native thread.\n");
+   VLOG(@"Joined with RetroArch native thread.\n");
 
    slock_unlock(android_app->mutex);
 
@@ -217,20 +217,20 @@ static void android_app_free(struct android_app* android_app)
 
 static void onDestroy(ANativeActivity* activity)
 {
-   RARCH_LOG("onDestroy: %p\n", activity);
+   VLOG(@"onDestroy: %p\n", activity);
    android_app_free((struct android_app*)activity->instance);
 }
 
 static void onStart(ANativeActivity* activity)
 {
-   RARCH_LOG("Start: %p\n", activity);
+   VLOG(@"Start: %p\n", activity);
    android_app_set_activity_state((struct android_app*)
          activity->instance, APP_CMD_START);
 }
 
 static void onResume(ANativeActivity* activity)
 {
-   RARCH_LOG("Resume: %p\n", activity);
+   VLOG(@"Resume: %p\n", activity);
    android_app_set_activity_state((struct android_app*)
          activity->instance, APP_CMD_RESUME);
 }
@@ -242,7 +242,7 @@ static void* onSaveInstanceState(
    struct android_app* android_app = (struct android_app*)
       activity->instance;
 
-   RARCH_LOG("SaveInstanceState: %p\n", activity);
+   VLOG(@"SaveInstanceState: %p\n", activity);
 
    slock_lock(android_app->mutex);
 
@@ -267,35 +267,35 @@ static void* onSaveInstanceState(
 
 static void onPause(ANativeActivity* activity)
 {
-   RARCH_LOG("Pause: %p\n", activity);
+   VLOG(@"Pause: %p\n", activity);
    android_app_set_activity_state((struct android_app*)
          activity->instance, APP_CMD_PAUSE);
 }
 
 static void onStop(ANativeActivity* activity)
 {
-   RARCH_LOG("Stop: %p\n", activity);
+   VLOG(@"Stop: %p\n", activity);
    android_app_set_activity_state((struct android_app*)
          activity->instance, APP_CMD_STOP);
 }
 
 static void onConfigurationChanged(ANativeActivity *activity)
 {
-   RARCH_LOG("ConfigurationChanged: %p\n", activity);
+   VLOG(@"ConfigurationChanged: %p\n", activity);
    android_app_write_cmd((struct android_app*)
          activity->instance, APP_CMD_CONFIG_CHANGED);
 }
 
 static void onLowMemory(ANativeActivity* activity)
 {
-   RARCH_LOG("LowMemory: %p\n", activity);
+   VLOG(@"LowMemory: %p\n", activity);
    android_app_write_cmd((struct android_app*)
          activity->instance, APP_CMD_LOW_MEMORY);
 }
 
 static void onWindowFocusChanged(ANativeActivity* activity, int focused)
 {
-   RARCH_LOG("WindowFocusChanged: %p -- %d\n", activity, focused);
+   VLOG(@"WindowFocusChanged: %p -- %d\n", activity, focused);
    android_app_write_cmd((struct android_app*)activity->instance,
          focused ? APP_CMD_GAINED_FOCUS : APP_CMD_LOST_FOCUS);
 }
@@ -303,27 +303,27 @@ static void onWindowFocusChanged(ANativeActivity* activity, int focused)
 static void onNativeWindowCreated(ANativeActivity* activity,
       ANativeWindow* window)
 {
-   RARCH_LOG("NativeWindowCreated: %p -- %p\n", activity, window);
+   VLOG(@"NativeWindowCreated: %p -- %p\n", activity, window);
    android_app_set_window((struct android_app*)activity->instance, window);
 }
 
 static void onNativeWindowDestroyed(ANativeActivity* activity,
       ANativeWindow* window)
 {
-   RARCH_LOG("NativeWindowDestroyed: %p -- %p\n", activity, window);
+   VLOG(@"NativeWindowDestroyed: %p -- %p\n", activity, window);
    android_app_set_window((struct android_app*)activity->instance, NULL);
 }
 
 static void onInputQueueCreated(ANativeActivity* activity, AInputQueue* queue)
 {
-   RARCH_LOG("InputQueueCreated: %p -- %p\n", activity, queue);
+   VLOG(@"InputQueueCreated: %p -- %p\n", activity, queue);
    android_app_set_input((struct android_app*)activity->instance, queue);
 }
 
 static void onInputQueueDestroyed(ANativeActivity* activity,
       AInputQueue* queue)
 {
-   RARCH_LOG("InputQueueDestroyed: %p -- %p\n", activity, queue);
+   VLOG(@"InputQueueDestroyed: %p -- %p\n", activity, queue);
    android_app_set_input((struct android_app*)activity->instance, NULL);
 }
 
@@ -336,7 +336,7 @@ JNIEnv *jni_thread_getenv(void)
 
    if (status < 0)
    {
-      RARCH_ERR("jni_thread_getenv: Failed to attach current thread.\n");
+      ELOG(@"jni_thread_getenv: Failed to attach current thread.\n");
       return NULL;
    }
    pthread_setspecific(thread_key, (void*)env);
@@ -348,7 +348,7 @@ static void jni_thread_destruct(void *value)
 {
    JNIEnv *env = (JNIEnv*)value;
    struct android_app *android_app = (struct android_app*)g_android;
-   RARCH_LOG("jni_thread_destruct()\n");
+   VLOG(@"jni_thread_destruct()\n");
 
    if (!env)
       return;
@@ -395,7 +395,7 @@ static struct android_app* android_app_create(ANativeActivity* activity,
 
    if (!android_app)
    {
-      RARCH_ERR("Failed to initialize android_app\n");
+      ELOG(@"Failed to initialize android_app\n");
       return NULL;
    }
    android_app->activity = activity;
@@ -412,7 +412,7 @@ static struct android_app* android_app_create(ANativeActivity* activity,
 
    if (pipe(msgpipe))
    {
-      RARCH_ERR("could not create pipe: %s.\n", strerror(errno));
+      ELOG(@"could not create pipe: %s.\n", strerror(errno));
       if(android_app->savedState)
         free(android_app->savedState);
       free(android_app);
@@ -440,7 +440,7 @@ static struct android_app* android_app_create(ANativeActivity* activity,
 void ANativeActivity_onCreate(ANativeActivity* activity,
       void* savedState, size_t savedStateSize)
 {
-   RARCH_LOG("Creating Native Activity: %p\n", activity);
+   VLOG(@"Creating Native Activity: %p\n", activity);
    activity->callbacks->onDestroy               = onDestroy;
    activity->callbacks->onStart                 = onStart;
    activity->callbacks->onResume                = onResume;
@@ -461,7 +461,7 @@ void ANativeActivity_onCreate(ANativeActivity* activity,
          | AWINDOW_FLAG_FULLSCREEN, 0);
 
    if (pthread_key_create(&thread_key, jni_thread_destruct))
-      RARCH_ERR("Error initializing pthread_key\n");
+      ELOG(@"Error initializing pthread_key\n");
 
    activity->instance = android_app_create(activity,
          savedState, savedStateSize);
@@ -1076,7 +1076,7 @@ static int frontend_linux_get_rating(void)
    char device_model[PROP_VALUE_MAX] = {0};
    frontend_android_get_name(device_model, sizeof(device_model));
 
-   RARCH_LOG("ro.product.model: (%s).\n", device_model);
+   VLOG(@"ro.product.model: (%s).\n", device_model);
 
    if (device_is_xperia_play(device_model))
       return 6;
@@ -1757,7 +1757,7 @@ static void android_app_destroy(struct android_app *android_app)
 {
    JNIEnv *env = NULL;
 
-   RARCH_LOG("android_app_destroy\n");
+   VLOG(@"android_app_destroy\n");
    free_saved_state(android_app);
 
    slock_lock(android_app->mutex);
@@ -1820,7 +1820,7 @@ static void frontend_linux_init(void *data)
    memset(&g_android, 0, sizeof(g_android));
    g_android = (struct android_app*)android_app;
 
-   RARCH_LOG("Waiting for Android Native Window to be initialized ...\n");
+   VLOG(@"Waiting for Android Native Window to be initialized ...\n");
 
    while (!android_app->window)
    {
@@ -1832,7 +1832,7 @@ static void frontend_linux_init(void *data)
       }
    }
 
-   RARCH_LOG("Android Native Window initialized.\n");
+   VLOG(@"Android Native Window initialized.\n");
 
    env = jni_thread_getenv();
    if (!env)
@@ -1886,15 +1886,15 @@ static bool frontend_linux_set_fork(enum frontend_fork fork_mode)
    switch (fork_mode)
    {
       case FRONTEND_FORK_CORE:
-         RARCH_LOG("FRONTEND_FORK_CORE\n");
+         VLOG(@"FRONTEND_FORK_CORE\n");
          linux_fork_mode  = fork_mode;
          break;
       case FRONTEND_FORK_CORE_WITH_ARGS:
-         RARCH_LOG("FRONTEND_FORK_CORE_WITH_ARGS\n");
+         VLOG(@"FRONTEND_FORK_CORE_WITH_ARGS\n");
          linux_fork_mode  = fork_mode;
          break;
       case FRONTEND_FORK_RESTART:
-         RARCH_LOG("FRONTEND_FORK_RESTART\n");
+         VLOG(@"FRONTEND_FORK_RESTART\n");
          linux_fork_mode  = FRONTEND_FORK_CORE;
 
          {

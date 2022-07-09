@@ -45,11 +45,11 @@ static bool find_float_format(snd_pcm_t *pcm, void *data)
 
    if (snd_pcm_hw_params_test_format(pcm, params, SND_PCM_FORMAT_FLOAT) == 0)
    {
-      RARCH_LOG("ALSA: Using floating point format.\n");
+      VLOG(@"ALSA: Using floating point format.\n");
       return true;
    }
 
-   RARCH_LOG("ALSA: Using signed 16-bit format.\n");
+   VLOG(@"ALSA: Using signed 16-bit format.\n");
    return false;
 }
 
@@ -115,17 +115,17 @@ static void *alsa_init(const char *device, unsigned rate, unsigned latency)
    if (snd_pcm_hw_params_get_period_size(params, &buffer_size, NULL))
       snd_pcm_hw_params_get_period_size_min(params, &buffer_size, NULL);
 
-   RARCH_LOG("ALSA: Period size: %d frames\n", (int)buffer_size);
+   VLOG(@"ALSA: Period size: %d frames\n", (int)buffer_size);
 
    if (snd_pcm_hw_params_get_buffer_size(params, &buffer_size))
       snd_pcm_hw_params_get_buffer_size_max(params, &buffer_size);
 
-   RARCH_LOG("ALSA: Buffer size: %d frames\n", (int)buffer_size);
+   VLOG(@"ALSA: Buffer size: %d frames\n", (int)buffer_size);
 
    alsa->buffer_size = snd_pcm_frames_to_bytes(alsa->pcm, buffer_size);
    alsa->can_pause = snd_pcm_hw_params_can_pause(params);
 
-   RARCH_LOG("ALSA: Can pause: %s.\n", alsa->can_pause ? "yes" : "no");
+   VLOG(@"ALSA: Can pause: %s.\n", alsa->can_pause ? "yes" : "no");
 
    if (snd_pcm_sw_params_malloc(&sw_params) < 0)
       goto error;
@@ -146,7 +146,7 @@ static void *alsa_init(const char *device, unsigned rate, unsigned latency)
    return alsa;
 
 error:
-   RARCH_ERR("ALSA: Failed to initialize...\n");
+   ELOG(@"ALSA: Failed to initialize...\n");
    if (params)
       snd_pcm_hw_params_free(params);
 
@@ -186,7 +186,7 @@ static ssize_t alsa_write(void *data, const void *buf_, size_t size_)
          {
             if (snd_pcm_recover(alsa->pcm, rc, 1) < 0)
             {
-               RARCH_ERR("[ALSA]: (#1) Failed to recover from error (%s)\n",
+               ELOG(@"[ALSA]: (#1) Failed to recover from error (%s)\n",
                      snd_strerror(rc));
                return -1;
             }
@@ -200,7 +200,7 @@ static ssize_t alsa_write(void *data, const void *buf_, size_t size_)
       {
          if (snd_pcm_recover(alsa->pcm, frames, 1) < 0)
          {
-            RARCH_ERR("[ALSA]: (#2) Failed to recover from error (%s)\n",
+            ELOG(@"[ALSA]: (#2) Failed to recover from error (%s)\n",
                   snd_strerror(frames));
             return -1;
          }
@@ -210,7 +210,7 @@ static ssize_t alsa_write(void *data, const void *buf_, size_t size_)
       else if (frames == -EAGAIN && !alsa->nonblock)
       {
          /* Definitely not supposed to happen. */
-         RARCH_WARN("[ALSA]: poll() was signaled, but EAGAIN returned from write.\n"
+         WLOG(@"[ALSA]: poll() was signaled, but EAGAIN returned from write.\n"
                "Your ALSA driver might be subtly broken.\n");
 
          if (eagain_retry)
@@ -224,7 +224,7 @@ static ssize_t alsa_write(void *data, const void *buf_, size_t size_)
          return written;
       else if (frames < 0)
       {
-         RARCH_ERR("[ALSA]: Unknown error occurred (%s).\n",
+         ELOG(@"[ALSA]: Unknown error occurred (%s).\n",
                snd_strerror(frames));
          return -1;
       }
@@ -281,7 +281,7 @@ static bool alsa_start(void *data)
 
       if (ret < 0)
       {
-         RARCH_ERR("[ALSA]: Failed to unpause: %s.\n",
+         ELOG(@"[ALSA]: Failed to unpause: %s.\n",
                snd_strerror(ret));
          return false;
       }
@@ -316,7 +316,7 @@ static size_t alsa_write_avail(void *data)
    if (avail < 0)
    {
 #if 0
-      RARCH_WARN("[ALSA]: snd_pcm_avail() failed: %s\n",
+      WLOG(@"[ALSA]: snd_pcm_avail() failed: %s\n",
             snd_strerror(avail));
 #endif
       return alsa->buffer_size;

@@ -298,22 +298,22 @@ static INLINE bool gl_check_error(void)
    switch (error)
    {
       case GL_INVALID_ENUM:
-         RARCH_ERR("GL: Invalid enum.\n");
+         ELOG(@"GL: Invalid enum.\n");
          break;
       case GL_INVALID_VALUE:
-         RARCH_ERR("GL: Invalid value.\n");
+         ELOG(@"GL: Invalid value.\n");
          break;
       case GL_INVALID_OPERATION:
-         RARCH_ERR("GL: Invalid operation.\n");
+         ELOG(@"GL: Invalid operation.\n");
          break;
       case GL_OUT_OF_MEMORY:
-         RARCH_ERR("GL: Out of memory.\n");
+         ELOG(@"GL: Out of memory.\n");
          break;
       case GL_NO_ERROR:
          return true;
    }
 
-   RARCH_ERR("Non specified GL error.\n");
+   ELOG(@"Non specified GL error.\n");
    return false;
 }
 

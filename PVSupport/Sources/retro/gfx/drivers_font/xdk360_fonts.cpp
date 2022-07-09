@@ -557,7 +557,7 @@ static void *xdk360_init_font(void *video_data,
 
    if (dwFileVersion != FONTFILEVERSION)
    {
-      RARCH_ERR("Incorrect version number on font file.\n");
+      ELOG(@"Incorrect version number on font file.\n");
       goto error;
    }
 
@@ -583,10 +583,10 @@ static void *xdk360_init_font(void *video_data,
       goto error;
    }
 
-   RARCH_LOG("Successfully initialized D3D9 HLSL fonts.\n");
+   VLOG(@"Successfully initialized D3D9 HLSL fonts.\n");
    return font;
 error:
-   RARCH_ERR("Could not initialize D3D9 HLSL fonts.\n");
+   ELOG(@"Could not initialize D3D9 HLSL fonts.\n");
    if (font)
       free(font);
    return NULL;

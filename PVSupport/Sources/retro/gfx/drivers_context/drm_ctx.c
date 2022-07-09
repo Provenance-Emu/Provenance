@@ -115,7 +115,7 @@ static struct drm_fb *drm_fb_get_from_bo(struct gbm_bo *bo)
    stride = gbm_bo_get_stride(bo);
    handle = gbm_bo_get_handle(bo).u32;
 
-   RARCH_LOG("[KMS]: New FB: %ux%u (stride: %u).\n",
+   VLOG(@"[KMS]: New FB: %ux%u (stride: %u).\n",
          width, height, stride);
 
    ret = drmModeAddFB(g_drm_fd, width, height, 24, 32,
@@ -127,7 +127,7 @@ static struct drm_fb *drm_fb_get_from_bo(struct gbm_bo *bo)
    return fb;
 
 error:
-   RARCH_ERR("[KMS]: Failed to create FB: %s\n", strerror(errno));
+   ELOG(@"[KMS]: Failed to create FB: %s\n", strerror(errno));
    free(fb);
    return NULL;
 }
@@ -138,7 +138,7 @@ static void gfx_ctx_drm_swap_interval(void *data, unsigned interval)
    drm->interval           = interval;
 
    if (interval > 1)
-      RARCH_WARN("[KMS]: Swap intervals > 1 currently not supported. Will use swap interval of 1.\n");
+      WLOG(@"[KMS]: Swap intervals > 1 currently not supported. Will use swap interval of 1.\n");
 }
 
 static void gfx_ctx_drm_check_window(void *data, bool *quit,
@@ -171,7 +171,7 @@ static void drm_flip_handler(int fd, unsigned frame,
    {
       unsigned missed = frame - last_page_flip - 1;
       if (missed)
-         RARCH_LOG("[KMS]: Missed %u VBlank(s) (Frame: %u, DRM frame: %u).\n",
+         VLOG(@"[KMS]: Missed %u VBlank(s) (Frame: %u, DRM frame: %u).\n",
                missed, frame - first_page_flip, frame);
    }
 
@@ -373,7 +373,7 @@ nextgpu:
 
    if (!gpu_descriptors || gpu_index == gpu_descriptors->size)
    {
-      RARCH_ERR("[KMS]: Couldn't find a suitable DRM device.\n");
+      ELOG(@"[KMS]: Couldn't find a suitable DRM device.\n");
       goto error;
    }
    gpu = gpu_descriptors->elems[gpu_index++].data;
@@ -381,7 +381,7 @@ nextgpu:
    drm->drm    = filestream_open(gpu, RFILE_MODE_READ_WRITE, -1);
    if (!drm->drm)
    {
-      RARCH_WARN("[KMS]: Couldn't open DRM device.\n");
+      WLOG(@"[KMS]: Couldn't open DRM device.\n");
       goto nextgpu;
    }
 
@@ -407,7 +407,7 @@ nextgpu:
 
    if (!g_gbm_dev)
    {
-      RARCH_WARN("[KMS]: Couldn't create GBM device.\n");
+      WLOG(@"[KMS]: Couldn't create GBM device.\n");
       goto nextgpu;
    }
 
@@ -670,7 +670,7 @@ static bool gfx_ctx_drm_set_video_mode(void *data,
 
    if (!g_drm_mode)
    {
-      RARCH_ERR("[KMS/EGL]: Did not find suitable video mode for %u x %u.\n",
+      ELOG(@"[KMS/EGL]: Did not find suitable video mode for %u x %u.\n",
             width, height);
       goto error;
    }
@@ -688,7 +688,7 @@ static bool gfx_ctx_drm_set_video_mode(void *data,
 
    if (!g_gbm_surface)
    {
-      RARCH_ERR("[KMS/EGL]: Couldn't create GBM surface.\n");
+      ELOG(@"[KMS/EGL]: Couldn't create GBM surface.\n");
       goto error;
    }
 

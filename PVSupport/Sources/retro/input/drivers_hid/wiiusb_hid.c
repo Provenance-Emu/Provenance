@@ -265,13 +265,13 @@ static int wiiusb_hid_add_adapter(void *data, usb_device_entry *dev)
    if (!hid)
    {
       free(adapter);
-      RARCH_ERR("Allocation of adapter failed.\n");
+      ELOG(@"Allocation of adapter failed.\n");
       return -1;
    }
 
    if (USB_OpenDevice(dev->device_id, dev->vid, dev->pid, &adapter->handle) < 0)
    {
-      RARCH_ERR("Error opening device 0x%p (VID/PID: %04x:%04x).\n",
+      ELOG(@"Error opening device 0x%p (VID/PID: %04x:%04x).\n",
            dev->device_id, dev->vid, dev->pid);
       free(adapter);
       return -1;
@@ -284,7 +284,7 @@ static int wiiusb_hid_add_adapter(void *data, usb_device_entry *dev)
 
    if (adapter->endpoint_in == 0)
    {
-      RARCH_ERR("Could not find HID config for device.\n");
+      ELOG(@"Could not find HID config for device.\n");
       goto error;
    }
 
@@ -294,7 +294,7 @@ static int wiiusb_hid_add_adapter(void *data, usb_device_entry *dev)
 
    if (!adapter->send_control_buffer)
    {
-      RARCH_ERR("Error creating send control buffer.\n");
+      ELOG(@"Error creating send control buffer.\n");
       goto error;
    }
 
@@ -309,7 +309,7 @@ static int wiiusb_hid_add_adapter(void *data, usb_device_entry *dev)
 
    if (!pad_connection_has_interface(hid->connections, adapter->slot))
    {
-      RARCH_ERR(" Interface not found.\n");
+      ELOG(@" Interface not found.\n");
       goto error;
    }
 
@@ -320,9 +320,9 @@ static int wiiusb_hid_add_adapter(void *data, usb_device_entry *dev)
 
    /*  Get the name from the interface */
    device_name = wiiusb_hid_joypad_name(hid, adapter->slot);
-   RARCH_LOG("Interface found: [%s].\n", device_name);
+   VLOG(@"Interface found: [%s].\n", device_name);
 
-   RARCH_LOG("Device 0x%p attached (VID/PID: %04x:%04x).\n",
+   VLOG(@"Device 0x%p attached (VID/PID: %04x:%04x).\n",
          adapter->device_id, desc.idVendor, desc.idProduct);
 
    wiiusb_hid_device_add_autodetect(adapter->slot,
@@ -573,7 +573,7 @@ static void *wiiusb_hid_init(void)
 
    if (!hid->poll_thread)
    {
-      RARCH_ERR("Error initializing poll thread.\n");
+      ELOG(@"Error initializing poll thread.\n");
       goto error;
    }
 

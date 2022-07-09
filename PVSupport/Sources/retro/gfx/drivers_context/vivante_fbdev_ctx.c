@@ -99,7 +99,7 @@ static void *gfx_ctx_vivante_init(void *video_driver)
    return viv;
 
 error:
-   RARCH_ERR("[Vivante fbdev]: EGL error: %d.\n", eglGetError());
+   ELOG(@"[Vivante fbdev]: EGL error: %d.\n", eglGetError());
    gfx_ctx_vivante_destroy(viv);
    return NULL;
 }
@@ -196,7 +196,7 @@ static bool gfx_ctx_vivante_set_video_mode(void *data,
    return true;
 
 error:
-   RARCH_ERR("[Vivante fbdev]: EGL error: %d.\n", eglGetError());
+   ELOG(@"[Vivante fbdev]: EGL error: %d.\n", eglGetError());
    gfx_ctx_vivante_destroy(data);
    return false;
 }

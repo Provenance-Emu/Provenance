@@ -297,7 +297,7 @@ static void *coreaudio_init(const char *device,
    if (real_desc.mFormatID != stream_desc.mFormatID)
       goto error;
 
-   RARCH_LOG("[CoreAudio]: Using output sample rate of %.1f Hz\n",
+   VLOG(@"[CoreAudio]: Using output sample rate of %.1f Hz\n",
          (float)real_desc.mSampleRate);
    settings->audio.out_rate = real_desc.mSampleRate;
 
@@ -328,7 +328,7 @@ static void *coreaudio_init(const char *device,
    if (!dev->buffer)
       goto error;
 
-   RARCH_LOG("[CoreAudio]: Using buffer size of %u bytes: (latency = %u ms)\n",
+   VLOG(@"[CoreAudio]: Using buffer size of %u bytes: (latency = %u ms)\n",
          (unsigned)fifo_size, latency);
 
    if (AudioOutputUnitStart(dev->dev) != noErr)
@@ -337,7 +337,7 @@ static void *coreaudio_init(const char *device,
    return dev;
 
 error:
-   RARCH_ERR("[CoreAudio]: Failed to initialize driver ...\n");
+   ELOG(@"[CoreAudio]: Failed to initialize driver ...\n");
    coreaudio_free(dev);
    return NULL;
 }

@@ -238,15 +238,15 @@ bool playlist_push(playlist_t *playlist,
          static char base_path[PATH_MAX_LENGTH] = {0};
          fill_pathname_base_noext(base_path, core_path, sizeof(base_path));
          core_name = base_path;
-         RARCH_LOG("core_name is now: %s\n", core_name);
+         VLOG(@"core_name is now: %s\n", core_name);
       }
 
-      RARCH_LOG("core_name: %s.\n", string_is_empty(core_name) ? "N/A" : core_name);
-      RARCH_LOG("core_path: %s.\n", string_is_empty(core_path) ? "N/A" : core_path);
+      VLOG(@"core_name: %s.\n", string_is_empty(core_name) ? "N/A" : core_name);
+      VLOG(@"core_path: %s.\n", string_is_empty(core_path) ? "N/A" : core_path);
 
       if (string_is_empty(core_path) || string_is_empty(core_name))
       {
-         RARCH_ERR("cannot push NULL or empty core name into the playlist.\n");
+         ELOG(@"cannot push NULL or empty core name into the playlist.\n");
          return false;
       }
    }
@@ -326,11 +326,11 @@ void playlist_write_file(playlist_t *playlist)
 
    file = fopen(playlist->conf_path, "w");
 
-   RARCH_LOG("Trying to write to playlist file: %s\n", playlist->conf_path);
+   VLOG(@"Trying to write to playlist file: %s\n", playlist->conf_path);
 
    if (!file)
    {
-      RARCH_ERR("Failed to write to playlist file: %s\n", playlist->conf_path);
+      ELOG(@"Failed to write to playlist file: %s\n", playlist->conf_path);
       return;
    }
 

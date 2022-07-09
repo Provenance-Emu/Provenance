@@ -18,3 +18,4 @@ FOUNDATION_EXPORT const unsigned char PVLibRetroVersionString[];
 #import <PVLibretro/PVLibRetroCore.h>
 #import <PVLibretro/libretro.h>
 #import <PVLibretro/retro_inline.h>
+//#import <PVLibretro/dynamic.h>

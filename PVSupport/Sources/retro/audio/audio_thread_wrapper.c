@@ -53,7 +53,7 @@ static void audio_thread_loop(void *data)
    if (!thr)
       return;
 
-   RARCH_LOG("[Audio Thread]: Initializing audio driver.\n");
+   VLOG(@"[Audio Thread]: Initializing audio driver.\n");
    thr->driver_data   = thr->driver->init(thr->device, thr->out_rate, thr->latency);
    slock_lock(thr->lock);
    thr->inited        = thr->driver_data ? 1 : -1;
@@ -72,7 +72,7 @@ static void audio_thread_loop(void *data)
       scond_wait(thr->cond, thr->lock);
    slock_unlock(thr->lock);
 
-   RARCH_LOG("[Audio Thread]: Starting audio.\n");
+   VLOG(@"[Audio Thread]: Starting audio.\n");
 
    for (;;)
    {
@@ -105,7 +105,7 @@ static void audio_thread_loop(void *data)
       audio_driver_callback();
    }
 
-   RARCH_LOG("[Audio Thread]: Tearing down driver.\n");
+   VLOG(@"[Audio Thread]: Tearing down driver.\n");
    thr->driver->free(thr->driver_data);
 }
 

@@ -163,7 +163,7 @@ void *get_chosen_screen(void)
 
    if (settings->video.monitor_index >= screens.count)
    {
-      RARCH_WARN("video_monitor_index is greater than the number of connected monitors; using main screen instead.");
+      WLOG(@"video_monitor_index is greater than the number of connected monitors; using main screen instead.");
 #if __has_feature(objc_arc)
       return (__bridge void*)screens;
 #else

@@ -281,9 +281,15 @@ static void video_callback(const void *data, unsigned width, unsigned height, si
     strongCurrent->_videoWidth  = width;
     strongCurrent->_videoHeight = height;
     
-    dispatch_queue_t the_queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     
-    dispatch_apply(height, the_queue, ^(size_t y){
+    static dispatch_queue_t memory_queue;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_CONCURRENT, QOS_CLASS_USER_INTERACTIVE, 0);
+        memory_queue = dispatch_queue_create("com.provenance.video", queueAttributes);
+    });
+        
+    dispatch_apply(height, memory_queue, ^(size_t y){
         const uint32_t *src = (uint32_t*)data + y * (pitch >> 2); //pitch is in bytes not pixels
         uint32_t *dst = strongCurrent->videoBuffer + y * 720;
         

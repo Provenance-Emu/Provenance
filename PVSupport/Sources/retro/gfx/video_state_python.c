@@ -283,10 +283,10 @@ py_state_t *py_state_new(const char *script,
    py_state_t *handle;
    PyObject *hook;
 
-   RARCH_LOG("Initializing Python runtime ...\n");
+   VLOG(@"Initializing Python runtime ...\n");
    PyImport_AppendInittab("rarch", &PyInit_Retro);
    Py_Initialize();
-   RARCH_LOG("Initialized Python runtime.\n");
+   VLOG(@"Initialized Python runtime.\n");
 
    handle = (py_state_t*)calloc(1, sizeof(*handle));
    hook = NULL;
@@ -309,7 +309,7 @@ py_state_t *py_state_new(const char *script,
 
       if (!ret || len < 0)
       {
-         RARCH_ERR("Python: Failed to read script\n");
+         ELOG(@"Python: Failed to read script\n");
          free(script_);
          goto error;
       }
@@ -327,11 +327,11 @@ py_state_t *py_state_new(const char *script,
       }
    }
 
-   RARCH_LOG("Python: Script loaded.\n");
+   VLOG(@"Python: Script loaded.\n");
    handle->dict = PyModule_GetDict(handle->main);
    if (!handle->dict)
    {
-      RARCH_ERR("Python: PyModule_GetDict() failed.\n");
+      ELOG(@"Python: PyModule_GetDict() failed.\n");
       goto error;
    }
    Py_INCREF(handle->dict);
@@ -339,14 +339,14 @@ py_state_t *py_state_new(const char *script,
    hook = PyDict_GetItemString(handle->dict, pyclass);
    if (!hook)
    {
-      RARCH_ERR("Python: PyDict_GetItemString() failed.\n");
+      ELOG(@"Python: PyDict_GetItemString() failed.\n");
       goto error;
    }
 
    handle->inst = PyObject_CallFunction(hook, NULL);
    if (!handle->inst)
    {
-      RARCH_ERR("Python: PyObject_CallFunction() failed.\n");
+      ELOG(@"Python: PyObject_CallFunction() failed.\n");
       goto error;
    }
    Py_INCREF(handle->inst);
@@ -404,7 +404,7 @@ float py_state_get(py_state_t *handle, const char *id,
    {
       if (!handle->warned_ret)
       {
-         RARCH_WARN("Didn't get return value from script. Bug?\n");
+         WLOG(@"Didn't get return value from script. Bug?\n");
          PyErr_Print();
          PyErr_Clear();
       }

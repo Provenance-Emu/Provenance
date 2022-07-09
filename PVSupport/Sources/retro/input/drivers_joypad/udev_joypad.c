@@ -227,7 +227,7 @@ static int udev_add_pad(struct udev_device *dev, unsigned p, int fd, const char 
 
    if (ioctl(fd, EVIOCGNAME(sizeof(pad->ident)), pad->ident) < 0)
    {
-      RARCH_LOG("[udev]: Failed to get pad name: %s.\n", pad->ident);
+      VLOG(@"[udev]: Failed to get pad name: %s.\n", pad->ident);
       return -1;
    }
 
@@ -242,7 +242,7 @@ static int udev_add_pad(struct udev_device *dev, unsigned p, int fd, const char 
    if ((buf = udev_device_get_sysattr_value(parent, "idProduct")) != NULL)
       pad->pid = strtol(buf, NULL, 16);
 
-   RARCH_LOG("[udev]: Plugged pad: %s (%u:%u) on port #%u.\n",
+   VLOG(@"[udev]: Plugged pad: %s (%u:%u) on port #%u.\n",
              pad->ident, pad->vid, pad->pid, p);
 
    if (fstat(fd, &st) < 0)
@@ -307,11 +307,11 @@ static int udev_add_pad(struct udev_device *dev, unsigned p, int fd, const char 
    if (ioctl(fd, EVIOCGBIT(EV_FF, sizeof(ffbit)), ffbit) >= 0)
    {
       if (test_bit(FF_RUMBLE, ffbit))
-         RARCH_LOG("[udev]: Pad #%u (%s) supports force feedback.\n",
+         VLOG(@"[udev]: Pad #%u (%s) supports force feedback.\n",
                p, path);
 
       if (ioctl(fd, EVIOCGEFFECTS, &pad->num_effects) >= 0)
-         RARCH_LOG("[udev]: Pad #%u (%s) supports %d force feedback effects.\n", p, path, pad->num_effects);
+         VLOG(@"[udev]: Pad #%u (%s) supports %d force feedback effects.\n", p, path, pad->num_effects);
    }
 
    return ret;
@@ -331,7 +331,7 @@ static void udev_check_device(struct udev_device *dev, const char *path, bool ho
    {
       if (st.st_rdev == udev_pads[i].device)
       {
-         RARCH_LOG("[udev]: Device ID %u is already plugged.\n", (unsigned)st.st_rdev);
+         VLOG(@"[udev]: Device ID %u is already plugged.\n", (unsigned)st.st_rdev);
          return;
       }
    }
@@ -349,7 +349,7 @@ static void udev_check_device(struct udev_device *dev, const char *path, bool ho
    switch (ret)
    {
       case -1:
-         RARCH_ERR("[udev]: Failed to add pad: %s.\n", path);
+         ELOG(@"[udev]: Failed to add pad: %s.\n", path);
          close(fd);
          break;
       case 1:
@@ -363,7 +363,7 @@ static void udev_check_device(struct udev_device *dev, const char *path, bool ho
 
             snprintf(msg, sizeof(msg), "Device #%u (%s) connected.", pad, path);
             runloop_msg_queue_push(msg, 0, 60, false);
-            RARCH_LOG("[udev]: %s\n", msg);
+            VLOG(@"[udev]: %s\n", msg);
          }
          break;
    }
@@ -433,12 +433,12 @@ static void udev_joypad_handle_hotplug(void)
 
    if (string_is_equal(action, "add"))
    {
-      RARCH_LOG("[udev]: Hotplug add: %s.\n", devnode);
+      VLOG(@"[udev]: Hotplug add: %s.\n", devnode);
       udev_check_device(dev, devnode, true);
    }
    else if (string_is_equal(action, "remove"))
    {
-      RARCH_LOG("[udev]: Hotplug remove: %s.\n", devnode);
+      VLOG(@"[udev]: Hotplug remove: %s.\n", devnode);
       udev_joypad_remove_device(devnode);
    }
 
@@ -485,7 +485,7 @@ static bool udev_set_rumble(unsigned i, enum retro_rumble_effect effect, uint16_
 
       if (ioctl(pad->fd, EVIOCSFF, &e) < 0)
       {
-         RARCH_ERR("Failed to set rumble effect on pad #%u.\n", i);
+         ELOG(@"Failed to set rumble effect on pad #%u.\n", i);
          return false;
       }
 
@@ -506,7 +506,7 @@ static bool udev_set_rumble(unsigned i, enum retro_rumble_effect effect, uint16_
 
       if (write(pad->fd, &play, sizeof(play)) < (ssize_t)sizeof(play))
       {
-         RARCH_ERR("[udev]: Failed to play rumble effect #%u on pad #%u.\n",
+         ELOG(@"[udev]: Failed to play rumble effect #%u on pad #%u.\n",
                effect, i);
          return false;
       }

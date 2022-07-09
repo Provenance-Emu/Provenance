@@ -104,7 +104,7 @@ static uint32_t find_memory_type(
          return i;
    }
 
-   RARCH_ERR("[Vulkan]: Failed to find valid memory type. This should never happen.");
+   ELOG(@"[Vulkan]: Failed to find valid memory type. This should never happen.");
    abort();
 }
 
@@ -796,7 +796,7 @@ bool vulkan_filter_chain::init_history()
 
    if (required_images < 2)
    {
-      RARCH_LOG("[Vulkan filter chain]: Not using frame history.\n");
+      VLOG(@"[Vulkan filter chain]: Not using frame history.\n");
       return true;
    }
 
@@ -811,7 +811,7 @@ bool vulkan_filter_chain::init_history()
                max_input_size, original_format, 1));
    }
 
-   RARCH_LOG("[Vulkan filter chain]: Using history of %u frames.\n", required_images);
+   VLOG(@"[Vulkan filter chain]: Using history of %u frames.\n", required_images);
 
    // On first frame, we need to clear the textures to a known state, but we need
    // a command buffer for that, so just defer to first frame.
@@ -845,12 +845,12 @@ bool vulkan_filter_chain::init_feedback()
          return false;
 
       if (use_feedback)
-         RARCH_LOG("[Vulkan filter chain]: Using framebuffer feedback for pass #%u.\n", i);
+         VLOG(@"[Vulkan filter chain]: Using framebuffer feedback for pass #%u.\n", i);
    }
 
    if (!use_feedbacks)
    {
-      RARCH_LOG("[Vulkan filter chain]: Not using framebuffer feedback.\n");
+      VLOG(@"[Vulkan filter chain]: Not using framebuffer feedback.\n");
       return true;
    }
 
@@ -865,7 +865,7 @@ static bool set_unique_map(M &m, const string &name, const P &p)
    auto itr = m.find(name);
    if (itr != end(m))
    {
-      RARCH_ERR("[slang]: Alias \"%s\" already exists.\n",
+      ELOG(@"[slang]: Alias \"%s\" already exists.\n",
             name.c_str());
       return false;
    }
@@ -961,7 +961,7 @@ bool vulkan_filter_chain::init()
    for (unsigned i = 0; i < passes.size(); i++)
    {
       auto &pass = passes[i];
-      RARCH_LOG("[slang]: Building pass #%u (%s)\n", i,
+      VLOG(@"[slang]: Building pass #%u (%s)\n", i,
             pass->get_name().empty() ? 
             msg_hash_to_str(MENU_ENUM_LABEL_VALUE_NOT_AVAILABLE) : 
             pass->get_name().c_str());
@@ -1417,7 +1417,7 @@ bool Pass::init_pipeline_layout()
       if (reflection.push_constant_stage_mask & SLANG_STAGE_FRAGMENT_MASK)
          push_range.stageFlags |= VK_SHADER_STAGE_FRAGMENT_BIT;
 
-      RARCH_LOG("[Vulkan]: Push Constant Block: %u bytes.\n", reflection.push_constant_size);
+      VLOG(@"[Vulkan]: Push Constant Block: %u bytes.\n", reflection.push_constant_size);
 
       layout_info.pushConstantRangeCount = 1;
       layout_info.pPushConstantRanges = &push_range;
@@ -2174,7 +2174,7 @@ Framebuffer::Framebuffer(
    format(format),
    max_levels(max(max_levels, 1u))
 {
-   RARCH_LOG("[Vulkan filter chain]: Creating framebuffer %u x %u (max %u level(s)).\n",
+   VLOG(@"[Vulkan filter chain]: Creating framebuffer %u x %u (max %u level(s)).\n",
          max_size.width, max_size.height, max_levels);
    init_render_pass();
    init(nullptr);
@@ -2488,7 +2488,7 @@ void Framebuffer::set_size(DeferredDisposer &disposer, const Size2D &size)
 {
    this->size = size;
 
-   RARCH_LOG("[Vulkan filter chain]: Updating framebuffer size %u x %u.\n",
+   VLOG(@"[Vulkan filter chain]: Updating framebuffer size %u x %u.\n",
          size.width, size.height);
 
    {
@@ -2825,7 +2825,7 @@ static bool vulkan_filter_chain_load_luts(
       auto image = vulkan_filter_chain_load_lut(cmd, info, chain, &shader->lut[i]);
       if (!image)
       {
-         RARCH_ERR("[Vulkan]: Failed to load LUT \"%s\".\n", shader->lut[i].path);
+         ELOG(@"[Vulkan]: Failed to load LUT \"%s\".\n", shader->lut[i].path);
          goto error;
       }
 
@@ -2891,7 +2891,7 @@ vulkan_filter_chain_t *vulkan_filter_chain_create_from_preset(
       glslang_output output;
       if (!glslang_compile_shader(pass->source.path, &output))
       {
-         RARCH_ERR("Failed to compile shader: \"%s\".\n",
+         ELOG(@"Failed to compile shader: \"%s\".\n",
                pass->source.path);
          return nullptr;
       }
@@ -2900,7 +2900,7 @@ vulkan_filter_chain_t *vulkan_filter_chain_create_from_preset(
       {
          if (shader->num_parameters >= GFX_MAX_PARAMETERS)
          {
-            RARCH_ERR("[Vulkan]: Exceeded maximum number of parameters.\n");
+            ELOG(@"[Vulkan]: Exceeded maximum number of parameters.\n");
             return nullptr;
          }
 
@@ -2918,7 +2918,7 @@ vulkan_filter_chain_t *vulkan_filter_chain_create_from_preset(
                 meta_param.maximum != itr->maximum ||
                 meta_param.step != itr->step)
             {
-               RARCH_ERR("[Vulkan]: Duplicate parameters found for \"%s\", but arguments do not match.\n",
+               ELOG(@"[Vulkan]: Duplicate parameters found for \"%s\", but arguments do not match.\n",
                      itr->id);
                return nullptr;
             }
@@ -3001,12 +3001,12 @@ vulkan_filter_chain_t *vulkan_filter_chain_create_from_preset(
             pass_info.rt_format = tmpinfo.swapchain.format;
 
             if (explicit_format)
-               RARCH_WARN("[slang]: Using explicit format for last pass in chain, but it is not rendered to framebuffer, using swapchain format instead.\n");
+               WLOG(@"[slang]: Using explicit format for last pass in chain, but it is not rendered to framebuffer, using swapchain format instead.\n");
          }
          else
          {
             pass_info.rt_format = glslang_format_to_vk(output.meta.rt_format);
-            RARCH_LOG("[slang]: Using render target format %s for pass output #%u.\n",
+            VLOG(@"[slang]: Using render target format %s for pass output #%u.\n",
                   glslang_format_to_string(output.meta.rt_format), i);
          }
       }
@@ -3021,7 +3021,7 @@ vulkan_filter_chain_t *vulkan_filter_chain_create_from_preset(
          ///
 
          pass_info.rt_format = glslang_format_to_vk(output.meta.rt_format);
-         RARCH_LOG("[slang]: Using render target format %s for pass output #%u.\n",
+         VLOG(@"[slang]: Using render target format %s for pass output #%u.\n",
                glslang_format_to_string(output.meta.rt_format), i);
 
          switch (pass->fbo.type_x)

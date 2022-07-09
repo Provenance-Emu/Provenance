@@ -111,7 +111,7 @@ static void video_callback(const void *data, unsigned width, unsigned height, si
         const stellabuffer_t *src = (stellabuffer_t*)data + y * (pitch >> STELLA_PITCH_SHIFT); //pitch is in bytes not pixels
         
         //uint16_t *dst = current->videoBuffer + y * current->videoWidth;
-        stellabuffer_t *dst = strongCurrent->_videoBuffer + y * strongCurrent->_videoWidth;
+        stellabuffer_t *dst = strongCurrent->_videoBuffer + y * width;
         
         memcpy(dst, src, sizeof(stellabuffer_t)*width);
     });

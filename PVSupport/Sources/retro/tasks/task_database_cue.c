@@ -418,7 +418,7 @@ int detect_system(intfstream_t *fd, const char **system_name)
 
       if (read < 0)
       {
-         RARCH_LOG("Could not read data at offset %d: %s\n",
+         VLOG(@"Could not read data at offset %d: %s\n",
                MAGIC_NUMBERS[i].offset, strerror(errno));
          rv = -errno;
          goto clean;
@@ -448,7 +448,7 @@ int detect_system(intfstream_t *fd, const char **system_name)
       }
    }
 
-   RARCH_LOG("%s\n", msg_hash_to_str(MSG_COULD_NOT_FIND_COMPATIBLE_SYSTEM));
+   VLOG(@"%s\n", msg_hash_to_str(MSG_COULD_NOT_FIND_COMPATIBLE_SYSTEM));
    rv = -EINVAL;
 
 clean:
@@ -517,12 +517,12 @@ int cue_find_track(const char *cue_path, bool first,
    if (!intfstream_open(fd, cue_path,
             RETRO_VFS_FILE_ACCESS_READ, RETRO_VFS_FILE_ACCESS_HINT_NONE))
    {
-      RARCH_LOG("Could not open CUE file '%s': %s\n", cue_path,
+      VLOG(@"Could not open CUE file '%s': %s\n", cue_path,
             strerror(errno));
       goto error;
    }
 
-   RARCH_LOG("Parsing CUE file '%s'...\n", cue_path);
+   VLOG(@"Parsing CUE file '%s'...\n", cue_path);
 
    tmp_token[0] = '\0';
 
@@ -570,7 +570,7 @@ int cue_find_track(const char *cue_path, bool first,
 
          if (sscanf(tmp_token, "%02d:%02d:%02d", &m, &s, &f) < 3)
          {
-            RARCH_LOG("Error parsing time stamp '%s'\n", tmp_token);
+            VLOG(@"Error parsing time stamp '%s'\n", tmp_token);
             goto error;
          }
 
@@ -668,12 +668,12 @@ int gdi_find_track(const char *gdi_path, bool first,
    if (!intfstream_open(fd, gdi_path,
             RETRO_VFS_FILE_ACCESS_READ, RETRO_VFS_FILE_ACCESS_HINT_NONE))
    {
-      RARCH_LOG("Could not open GDI file '%s': %s\n", gdi_path,
+      VLOG(@"Could not open GDI file '%s': %s\n", gdi_path,
             strerror(errno));
       goto error;
    }
 
-   RARCH_LOG("Parsing GDI file '%s'...\n", gdi_path);
+   VLOG(@"Parsing GDI file '%s'...\n", gdi_path);
 
    tmp_token[0] = '\0';
 

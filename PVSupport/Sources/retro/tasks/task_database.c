@@ -156,7 +156,7 @@ static int intfstream_get_serial(intfstream_t *fd, char *serial)
     if (detect_serial_ascii_game(fd, serial))
     {
       /* ASCII serial (Wii) was detected. */
-      RARCH_LOG("%s '%s'\n", msg_hash_to_str(MSG_FOUND_DISK_LABEL), serial);
+      VLOG(@"%s '%s'\n", msg_hash_to_str(MSG_FOUND_DISK_LABEL), serial);
       return 0;
     }
 
@@ -168,19 +168,19 @@ static int intfstream_get_serial(intfstream_t *fd, char *serial)
   {
     if (detect_psp_game(fd, serial) == 0)
       return 0;
-    RARCH_LOG("%s '%s'\n", msg_hash_to_str(MSG_FOUND_DISK_LABEL), serial);
+    VLOG(@"%s '%s'\n", msg_hash_to_str(MSG_FOUND_DISK_LABEL), serial);
   }
   else if (string_is_equal(system_name, "ps1"))
   {
     if (detect_ps1_game(fd, serial) == 0)
       return 0;
-    RARCH_LOG("%s '%s'\n", msg_hash_to_str(MSG_FOUND_DISK_LABEL), serial);
+    VLOG(@"%s '%s'\n", msg_hash_to_str(MSG_FOUND_DISK_LABEL), serial);
   }
   else if (string_is_equal(system_name, "gc"))
   {
     if (detect_gc_game(fd, serial) == 0)
       return 0;
-    RARCH_LOG("%s '%s'\n", msg_hash_to_str(MSG_FOUND_DISK_LABEL), serial);
+    VLOG(@"%s '%s'\n", msg_hash_to_str(MSG_FOUND_DISK_LABEL), serial);
   }
   else
     return 0;
@@ -261,13 +261,13 @@ static int task_database_cue_get_serial(const char *name, char* serial)
 
    if (rv < 0)
    {
-      RARCH_LOG("%s: %s\n",
+      VLOG(@"%s: %s\n",
             msg_hash_to_str(MSG_COULD_NOT_FIND_VALID_DATA_TRACK),
             strerror(-rv));
       return 0;
    }
 
-   RARCH_LOG("%s\n", msg_hash_to_str(MSG_READING_FIRST_DATA_TRACK));
+   VLOG(@"%s\n", msg_hash_to_str(MSG_READING_FIRST_DATA_TRACK));
 
    return intfstream_file_get_serial(track_path, offset, size, serial);
 }
@@ -283,13 +283,13 @@ static int task_database_gdi_get_serial(const char *name, char* serial)
 
    if (rv < 0)
    {
-      RARCH_LOG("%s: %s\n",
+      VLOG(@"%s: %s\n",
             msg_hash_to_str(MSG_COULD_NOT_FIND_VALID_DATA_TRACK),
             strerror(-rv));
       return 0;
    }
 
-   RARCH_LOG("%s\n", msg_hash_to_str(MSG_READING_FIRST_DATA_TRACK));
+   VLOG(@"%s\n", msg_hash_to_str(MSG_READING_FIRST_DATA_TRACK));
 
    return intfstream_file_get_serial(track_path, 0, SIZE_MAX, serial);
 }
@@ -384,20 +384,20 @@ static int task_database_cue_get_crc(const char *name, uint32_t *crc)
 
    if (rv < 0)
    {
-      RARCH_LOG("%s: %s\n",
+      VLOG(@"%s: %s\n",
             msg_hash_to_str(MSG_COULD_NOT_FIND_VALID_DATA_TRACK),
             strerror(-rv));
       return 0;
    }
 
-   RARCH_LOG("CUE '%s' primary track: %s\n (%lu, %lu)\n",name, track_path, (unsigned long) offset, (unsigned long) size);
+   VLOG(@"CUE '%s' primary track: %s\n (%lu, %lu)\n",name, track_path, (unsigned long) offset, (unsigned long) size);
 
-   RARCH_LOG("%s\n", msg_hash_to_str(MSG_READING_FIRST_DATA_TRACK));
+   VLOG(@"%s\n", msg_hash_to_str(MSG_READING_FIRST_DATA_TRACK));
 
    rv = intfstream_file_get_crc(track_path, offset, (size_t)size, crc);
    if (rv == 1)
    {
-      RARCH_LOG("CUE '%s' crc: %x\n", name, *crc);
+      VLOG(@"CUE '%s' crc: %x\n", name, *crc);
    }
    return rv;
 }
@@ -413,19 +413,19 @@ static int task_database_gdi_get_crc(const char *name, uint32_t *crc)
 
    if (rv < 0)
    {
-      RARCH_LOG("%s: %s\n", msg_hash_to_str(MSG_COULD_NOT_FIND_VALID_DATA_TRACK),
+      VLOG(@"%s: %s\n", msg_hash_to_str(MSG_COULD_NOT_FIND_VALID_DATA_TRACK),
                 strerror(-rv));
       return 0;
    }
 
-   RARCH_LOG("GDI '%s' primary track: %s\n", name, track_path);
+   VLOG(@"GDI '%s' primary track: %s\n", name, track_path);
 
-   RARCH_LOG("%s\n", msg_hash_to_str(MSG_READING_FIRST_DATA_TRACK));
+   VLOG(@"%s\n", msg_hash_to_str(MSG_READING_FIRST_DATA_TRACK));
 
    rv = intfstream_file_get_crc(track_path, 0, SIZE_MAX, crc);
    if (rv == 1)
    {
-      RARCH_LOG("GDI '%s' crc: %x\n", name, *crc);
+      VLOG(@"GDI '%s' crc: %x\n", name, *crc);
    }
    return rv;
 }
@@ -444,7 +444,7 @@ static bool task_database_chd_get_crc(const char *name, uint32_t *crc)
    rv = intfstream_get_crc(fd, crc);
    if (rv)
    {
-      RARCH_LOG("CHD '%s' crc: %x\n", name, *crc);
+      VLOG(@"CHD '%s' crc: %x\n", name, *crc);
    }
    if (fd)
    {
@@ -474,7 +474,7 @@ static void task_database_cue_prune(database_info_handle_t *db,
          if (db->list->elems[i].data
                && string_is_equal(path, db->list->elems[i].data))
          {
-            RARCH_LOG("Pruning file referenced by cue: %s\n", path);
+            VLOG(@"Pruning file referenced by cue: %s\n", path);
             free(db->list->elems[i].data);
             db->list->elems[i].data = NULL;
          }
@@ -504,7 +504,7 @@ static void gdi_prune(database_info_handle_t *db, const char *name)
          if (db->list->elems[i].data
                && string_is_equal(path, db->list->elems[i].data))
          {
-            RARCH_LOG("Pruning file referenced by gdi: %s\n", path);
+            VLOG(@"Pruning file referenced by gdi: %s\n", path);
             free(db->list->elems[i].data);
             db->list->elems[i].data = NULL;
          }
@@ -759,15 +759,15 @@ static int database_info_list_iterate_found_match(
 
 #if defined(RARCH_INTERNAL)
 #if 0
-   RARCH_LOG("Found match in database !\n");
+   VLOG(@"Found match in database !\n");
 
-   RARCH_LOG("Path: %s\n", db_path);
-   RARCH_LOG("CRC : %s\n", db_crc);
-   RARCH_LOG("Playlist Path: %s\n", db_playlist_path);
-   RARCH_LOG("Entry Path: %s\n", entry_path);
-   RARCH_LOG("Playlist not NULL: %d\n", playlist != NULL);
-   RARCH_LOG("ZIP entry: %s\n", archive_name);
-   RARCH_LOG("entry path str: %s\n", entry_path_str);
+   VLOG(@"Path: %s\n", db_path);
+   VLOG(@"CRC : %s\n", db_crc);
+   VLOG(@"Playlist Path: %s\n", db_playlist_path);
+   VLOG(@"Entry Path: %s\n", entry_path);
+   VLOG(@"Playlist not NULL: %d\n", playlist != NULL);
+   VLOG(@"ZIP entry: %s\n", archive_name);
+   VLOG(@"entry path str: %s\n", entry_path_str);
 #endif
 #else
    fprintf(stderr, "Found match in database !\n");
@@ -917,7 +917,7 @@ static int task_database_iterate_crc_lookup(
       if (db_info_entry && db_info_entry->crc32)
       {
 #if 0
-         RARCH_LOG("CRC32: 0x%08X , entry CRC32: 0x%08X (%s).\n",
+         VLOG(@"CRC32: 0x%08X , entry CRC32: 0x%08X (%s).\n",
                db_state->crc, db_info_entry->crc32, db_info_entry->name);
 #endif
          if (db_state->archive_crc == db_info_entry->crc32)
@@ -1051,7 +1051,7 @@ static int task_database_iterate_serial_lookup(
       if (db_info_entry && db_info_entry->serial)
       {
 #if 0
-         RARCH_LOG("serial: %s , entry serial: %s (%s).\n",
+         VLOG(@"serial: %s , entry serial: %s (%s).\n",
                    db_state->serial, db_info_entry->serial,
                    db_info_entry->name);
 #endif

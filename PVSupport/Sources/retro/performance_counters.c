@@ -111,7 +111,7 @@ void rarch_perf_log(void)
    if (!runloop_ctl(RUNLOOP_CTL_IS_PERFCNT_ENABLE, NULL))
       return;
 
-   RARCH_LOG("[PERF]: Performance counters (RetroArch):\n");
+    RARCH_LOG("[PERF]: Performance counters (RetroArch):\n");
    log_counters(perf_counters_rarch, perf_ptr_rarch);
 }
 

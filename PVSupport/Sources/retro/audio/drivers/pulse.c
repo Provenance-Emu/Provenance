@@ -129,7 +129,7 @@ static void underrun_update_cb(pa_stream *s, void *data)
 
    (void)s;
 
-   RARCH_LOG("[PulseAudio]: Underrun (Buffer: %u, Writable size: %u).\n",
+   VLOG(@"[PulseAudio]: Underrun (Buffer: %u, Writable size: %u).\n",
          (unsigned)pa->buffer_size,
          (unsigned)pa_stream_writable_size(pa->stream));
 }
@@ -141,7 +141,7 @@ static void buffer_attr_cb(pa_stream *s, void *data)
    if (server_attr)
       pa->buffer_size = server_attr->tlength;
 
-   RARCH_LOG("[PulseAudio]: Got new buffer size %u.\n", (unsigned)pa->buffer_size);
+   VLOG(@"[PulseAudio]: Got new buffer size %u.\n", (unsigned)pa->buffer_size);
 }
 
 static void *pulse_init(const char *device, unsigned rate, unsigned latency)
@@ -211,7 +211,7 @@ static void *pulse_init(const char *device, unsigned rate, unsigned latency)
    if (server_attr)
    {
       pa->buffer_size = server_attr->tlength;
-      RARCH_LOG("[PulseAudio]: Requested %u bytes buffer, got %u.\n",
+      VLOG(@"[PulseAudio]: Requested %u bytes buffer, got %u.\n",
             (unsigned)buffer_attr.tlength,
             (unsigned)pa->buffer_size);
    }
@@ -263,7 +263,7 @@ static bool pulse_stop(void *data)
    bool ret;
    pa_t *pa = (pa_t*)data;
 
-   RARCH_LOG("[PulseAudio]: Pausing.\n");
+   VLOG(@"[PulseAudio]: Pausing.\n");
 
    pa->success = true; /* In case of spurious wakeup. Not critical. */
    pa_threaded_mainloop_lock(pa->mainloop);
@@ -289,7 +289,7 @@ static bool pulse_start(void *data)
    bool ret;
    pa_t *pa = (pa_t*)data;
 
-   RARCH_LOG("[PulseAudio]: Unpausing.\n");
+   VLOG(@"[PulseAudio]: Unpausing.\n");
 
    pa->success = true; /* In case of spurious wakeup. Not critical. */
    pa_threaded_mainloop_lock(pa->mainloop);

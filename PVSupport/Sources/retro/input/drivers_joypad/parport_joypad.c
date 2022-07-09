@@ -128,29 +128,29 @@ static bool parport_joypad_init_pad(const char *path, struct parport_joypad *pad
 
    if (pad->fd >= 0)
    {
-      RARCH_LOG("[Joypad]: Found parallel port: %s\n", path);
+      VLOG(@"[Joypad]: Found parallel port: %s\n", path);
 
       /* Parport driver does not log failures with RARCH_ERR because they could be
        * a normal result of connected non-joypad devices. */
       if (ioctl(pad->fd, PPCLAIM) < 0)
       {
-         RARCH_WARN("[Joypad]: Failed to claim %s\n", path);
+         WLOG(@"[Joypad]: Failed to claim %s\n", path);
          goto error;
       }
       if (ioctl(pad->fd, PPSETMODE, &mode) < 0)
       {
-         RARCH_WARN("[Joypad]: Failed to set byte mode on %s\n", path);
+         WLOG(@"[Joypad]: Failed to set byte mode on %s\n", path);
          goto error;
       }
       if (ioctl(pad->fd, PPDATADIR, &datadir) < 0)
       {
-         RARCH_WARN("[Joypad]: Failed to set data direction to input on %s\n", path);
+         WLOG(@"[Joypad]: Failed to set data direction to input on %s\n", path);
          goto error;
       }
 
       if (ioctl(pad->fd, PPRDATA, &data) < 0)
       {
-         RARCH_WARN("[Joypad]: Failed to save original data register on %s\n", path);
+         WLOG(@"[Joypad]: Failed to save original data register on %s\n", path);
          goto error;
       }
       pad->saved_data = data;
@@ -169,8 +169,8 @@ static bool parport_joypad_init_pad(const char *path, struct parport_joypad *pad
       {
          data = pad->saved_data;
          if (ioctl(pad->fd, PPWDATA, &data) < 0)
-            RARCH_WARN("[Joypad]: Failed to restore original data register on %s\n", path);
-         RARCH_WARN("[Joypad]: Failed to save original control register on %s\n", path);
+            WLOG(@"[Joypad]: Failed to restore original data register on %s\n", path);
+         WLOG(@"[Joypad]: Failed to save original control register on %s\n", path);
          goto error;
       }
 
@@ -178,7 +178,7 @@ static bool parport_joypad_init_pad(const char *path, struct parport_joypad *pad
        * Controllers using an alternative power source will still work.
        * Failure to disable interrupts slightly increases CPU usage. */
       if (!set_control)
-         RARCH_WARN("[Joypad]: Failed to clear nStrobe and nIRQ bits on %s\n", path);
+         WLOG(@"[Joypad]: Failed to clear nStrobe and nIRQ bits on %s\n", path);
 
       strlcpy(pad->ident, path, sizeof(settings->input.device_names[0]));
 
@@ -192,7 +192,7 @@ error:
       return false;
    }
 
-   RARCH_WARN("[Joypad]: Failed to open parallel port %s (error: %s).\n", path, strerror(errno));
+   WLOG(@"[Joypad]: Failed to open parallel port %s (error: %s).\n", path, strerror(errno));
    return false;
 }
 
@@ -212,14 +212,14 @@ static void parport_free_pad(struct parport_joypad *pad)
    char data = pad->saved_data;
 
    if (ioctl(pad->fd, PPWDATA, &data) < 0)
-      RARCH_ERR("[Joypad]: Failed to restore original data register on %s\n", pad->ident);
+      ELOG(@"[Joypad]: Failed to restore original data register on %s\n", pad->ident);
 
    data = pad->saved_control;
    if (ioctl(pad->fd, PPWDATA, &data) < 0)
-      RARCH_ERR("[Joypad]: Failed to restore original control register on %s\n", pad->ident);
+      ELOG(@"[Joypad]: Failed to restore original control register on %s\n", pad->ident);
 
    if (ioctl(pad->fd, PPRELEASE) < 0)
-      RARCH_ERR("[Joypad]: Failed to release parallel port %s\n", pad->ident);
+      ELOG(@"[Joypad]: Failed to release parallel port %s\n", pad->ident);
 
    close(pad->fd);
    pad->fd = -1;
@@ -290,7 +290,7 @@ static bool parport_joypad_init(void *data)
                      strlcat(buf, pin, sizeof(buf));
                   }
                }
-               RARCH_WARN("[Joypad]: Pin(s) %son %s were low on init, assuming not connected\n", \
+               WLOG(@"[Joypad]: Pin(s) %son %s were low on init, assuming not connected\n", \
                      buf, path);
             }
             strlcpy(params.name, "Generic Parallel Port device", sizeof(params.name));
@@ -298,7 +298,7 @@ static bool parport_joypad_init(void *data)
          }
          else
          {
-            RARCH_WARN("[Joypad]: All pins low on %s, assuming nothing connected\n", path);
+            WLOG(@"[Joypad]: All pins low on %s, assuming nothing connected\n", path);
             parport_free_pad(pad);
          }
       }

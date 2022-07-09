@@ -337,7 +337,7 @@ void cheat_manager_update(cheat_manager_t *handle, unsigned handle_idx)
          (handle->cheats[handle_idx].desc) : (handle->cheats[handle_idx].code)
          );
    runloop_msg_queue_push(msg, 1, 180, true);
-   RARCH_LOG("%s\n", msg);
+   VLOG(@"%s\n", msg);
 }
 
 void cheat_manager_toggle_index(unsigned i)

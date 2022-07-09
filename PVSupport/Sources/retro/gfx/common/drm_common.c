@@ -53,7 +53,7 @@ bool drm_get_resources(int fd)
    g_drm_resources = drmModeGetResources(fd);
    if (!g_drm_resources)
    {
-      RARCH_WARN("[DRM]: Couldn't get device resources.\n");
+      WLOG(@"[DRM]: Couldn't get device resources.\n");
       return false;
    }
 
@@ -69,7 +69,7 @@ bool drm_get_connector(int fd)
 
    /* Enumerate all connectors. */
 
-   RARCH_LOG("[DRM]: Found %d connectors.\n", g_drm_resources->count_connectors);
+   VLOG(@"[DRM]: Found %d connectors.\n", g_drm_resources->count_connectors);
 
    for (i = 0; (int)i < g_drm_resources->count_connectors; i++)
    {
@@ -79,12 +79,12 @@ bool drm_get_connector(int fd)
       if (conn)
       {
          bool connected = conn->connection == DRM_MODE_CONNECTED;
-         RARCH_LOG("[DRM]: Connector %d connected: %s\n", i, connected ? "yes" : "no");
-         RARCH_LOG("[DRM]: Connector %d has %d modes.\n", i, conn->count_modes);
+         VLOG(@"[DRM]: Connector %d connected: %s\n", i, connected ? "yes" : "no");
+         VLOG(@"[DRM]: Connector %d has %d modes.\n", i, conn->count_modes);
          if (connected && conn->count_modes > 0)
          {
             monitor_index++;
-            RARCH_LOG("[DRM]: Connector %d assigned to monitor index: #%u.\n", i, monitor_index);
+            VLOG(@"[DRM]: Connector %d assigned to monitor index: #%u.\n", i, monitor_index);
          }
          drmModeFreeConnector(conn);
       }
@@ -113,7 +113,7 @@ bool drm_get_connector(int fd)
 
    if (!g_drm_connector)
    {
-      RARCH_WARN("[DRM]: Couldn't get device connector.\n");
+      WLOG(@"[DRM]: Couldn't get device connector.\n");
       return false;
    }
    return true;
@@ -139,13 +139,13 @@ bool drm_get_encoder(int fd)
 
    if (!g_drm_encoder)
    {
-      RARCH_WARN("[DRM]: Couldn't find DRM encoder.\n");
+      WLOG(@"[DRM]: Couldn't find DRM encoder.\n");
       return false;
    }
 
    for (i = 0; (int)i < g_drm_connector->count_modes; i++)
    {
-      RARCH_LOG("[DRM]: Mode %d: (%s) %d x %d, %u Hz\n",
+      VLOG(@"[DRM]: Mode %d: (%s) %d x %d, %u Hz\n",
             i,
             g_drm_connector->modes[i].name,
             g_drm_connector->modes[i].hdisplay,
@@ -162,7 +162,7 @@ void drm_setup(int fd)
    g_connector_id   = g_drm_connector->connector_id;
    g_orig_crtc      = drmModeGetCrtc(fd, g_crtc_id);
    if (!g_orig_crtc)
-      RARCH_WARN("[DRM]: Cannot find original CRTC.\n");
+      WLOG(@"[DRM]: Cannot find original CRTC.\n");
 }
 
 void drm_free(void)

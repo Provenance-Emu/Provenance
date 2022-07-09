@@ -768,7 +768,7 @@ static bool sunxi_gfx_frame(void *data, const void *frame, unsigned width,
       if (width == 0 || height == 0)
          return true;
 
-      RARCH_LOG("video_sunxi: internal resolution changed by core: %ux%u -> %ux%u\n",
+      VLOG(@"video_sunxi: internal resolution changed by core: %ux%u -> %ux%u\n",
             _dispvars->src_width, _dispvars->src_height, width, height);
 
       sunxi_setup_scale(_dispvars, width, height, pitch);

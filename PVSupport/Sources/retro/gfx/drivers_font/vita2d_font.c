@@ -10676,20 +10676,20 @@ typedef struct vita_font
 
 static void *vita2d_font_init_font(void *gl_data, const char *font_path, float font_size)
 {
-   RARCH_LOG("vita2d_font_init()\n");
+   VLOG(@"vita2d_font_init()\n");
 
    vita_font_t *vita = (vita_font_t *)calloc(1, sizeof(vita_font_t));
    
    vita->font = vita2d_load_font_mem(stockfont, stockfont_size);
    vita->size = font_size;
-   RARCH_LOG("vita2d_font_init()\n");
+   VLOG(@"vita2d_font_init()\n");
 
    return vita;
 }
 
 static void vita2d_font_free_font(void *data)
 {
-   RARCH_LOG("vita2d_font_free()\n");
+   VLOG(@"vita2d_font_free()\n");
 
    vita_font_t *vita = (vita_font_t *)data;
    
@@ -10698,7 +10698,7 @@ static void vita2d_font_free_font(void *data)
    
    vita->size = 0;
    
-   RARCH_LOG("vita2d_font_free()\n");
+   VLOG(@"vita2d_font_free()\n");
 }
 
 static void vita2d_font_render_msg(void *data, const char *msg,

@@ -496,7 +496,7 @@ void state_manager_event_init(void)
 
    if (audio_driver_has_callback())
    {
-      RARCH_ERR("%s.\n", msg_hash_to_str(MSG_REWIND_INIT_FAILED));
+      ELOG(@"%s.\n", msg_hash_to_str(MSG_REWIND_INIT_FAILED));
       return;
    }
 
@@ -506,12 +506,12 @@ void state_manager_event_init(void)
 
    if (!rewind_state.size)
    {
-      RARCH_ERR("%s.\n",
+      ELOG(@"%s.\n",
             msg_hash_to_str(MSG_REWIND_INIT_FAILED_THREADED_AUDIO));
       return;
    }
 
-   RARCH_LOG("%s: %u MB\n",
+   VLOG(@"%s: %u MB\n",
          msg_hash_to_str(MSG_REWIND_INIT),
          (unsigned)(settings->rewind_buffer_size / 1000000));
 
@@ -519,7 +519,7 @@ void state_manager_event_init(void)
          settings->rewind_buffer_size);
 
    if (!rewind_state.state)
-      RARCH_WARN("%s.\n", msg_hash_to_str(MSG_REWIND_INIT_FAILED));
+      WLOG(@"%s.\n", msg_hash_to_str(MSG_REWIND_INIT_FAILED));
 
    state_manager_push_where(rewind_state.state, &state);
 

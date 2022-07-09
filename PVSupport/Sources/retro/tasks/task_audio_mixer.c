@@ -575,7 +575,7 @@ error:
    if (t)
       free(t);
 
-   RARCH_ERR("[audio mixer load] Failed to open '%s': %s.\n",
+   ELOG(@"[audio mixer load] Failed to open '%s': %s.\n",
          fullpath, strerror(errno));
 
    return false;
@@ -707,7 +707,7 @@ error:
    if (t)
       free(t);
 
-   RARCH_ERR("[audio mixer load] Failed to open '%s': %s.\n",
+   ELOG(@"[audio mixer load] Failed to open '%s': %s.\n",
          fullpath, strerror(errno));
 
    return false;

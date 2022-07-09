@@ -91,8 +91,8 @@ static void *vita2d_gfx_init(const video_info_t *video,
    *input         = NULL;
    *input_data    = NULL;
 
-   RARCH_LOG("vita2d_gfx_init: w: %i  h: %i\n", video->width, video->height);
-   RARCH_LOG("RARCH_SCALE_BASE: %i input_scale: %i = %i\n",
+   VLOG(@"vita2d_gfx_init: w: %i  h: %i\n", video->width, video->height);
+   VLOG(@"RARCH_SCALE_BASE: %i input_scale: %i = %i\n",
 	RARCH_SCALE_BASE, video->input_scale, RARCH_SCALE_BASE * video->input_scale);
 
    vita2d_init();
@@ -101,12 +101,12 @@ static void *vita2d_gfx_init(const video_info_t *video,
 
    if (video->rgb32)
    {
-      RARCH_LOG("Format: SCE_GXM_TEXTURE_FORMAT_X8U8U8U8_1RGB\n");
+      VLOG(@"Format: SCE_GXM_TEXTURE_FORMAT_X8U8U8U8_1RGB\n");
       vita->format = SCE_GXM_TEXTURE_FORMAT_X8U8U8U8_1RGB;
    }
    else
    {
-      RARCH_LOG("Format: SCE_GXM_TEXTURE_FORMAT_R5G6B5\n");
+      VLOG(@"Format: SCE_GXM_TEXTURE_FORMAT_R5G6B5\n");
       vita->format = SCE_GXM_TEXTURE_FORMAT_R5G6B5;
    }
 
@@ -140,7 +140,7 @@ static void *vita2d_gfx_init(const video_info_t *video,
           ? settings->path.font : NULL, settings->video.font_size, false,
           FONT_DRIVER_RENDER_VITA2D))
    {
-      RARCH_ERR("Font: Failed to initialize font renderer.\n");
+      ELOG(@"Font: Failed to initialize font renderer.\n");
         return false;
    }
    return vita;
@@ -189,7 +189,7 @@ static bool vita2d_gfx_frame(void *data, const void *frame,
 
       if (!vita->texture)
       {
-         RARCH_LOG("Creating texture: %ix%i\n", width, height);
+         VLOG(@"Creating texture: %ix%i\n", width, height);
          vita->width = width;
          vita->height = height;
          vita->texture = vita2d_create_empty_texture_format(width, height, vita->format);
@@ -353,7 +353,7 @@ static void vita2d_gfx_free(void *data)
 
    font_driver_free(NULL);
 
-   RARCH_LOG("vita2d_gfx_free() done\n");
+   VLOG(@"vita2d_gfx_free() done\n");
 }
 
 static bool vita2d_gfx_set_shader(void *data,
@@ -555,12 +555,12 @@ static void vita_set_texture_frame(void *data, const void *frame, bool rgb32,
       if (rgb32)
       {
          vita->menu.texture = vita2d_create_empty_texture(width, height);
-         RARCH_LOG("Creating Frame RGBA8 texture: w: %i  h: %i\n", width, height);
+         VLOG(@"Creating Frame RGBA8 texture: w: %i  h: %i\n", width, height);
       }
       else
       {
          vita->menu.texture = vita2d_create_empty_texture_format(width, height, SCE_GXM_TEXTURE_FORMAT_U4U4U4U4_RGBA);
-         RARCH_LOG("Creating Frame R5G6B5 texture: w: %i  h: %i\n", width, height);
+         VLOG(@"Creating Frame R5G6B5 texture: w: %i  h: %i\n", width, height);
       }
       vita->menu.width  = width;
       vita->menu.height = height;

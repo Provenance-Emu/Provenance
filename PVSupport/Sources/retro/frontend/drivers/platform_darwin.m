@@ -427,8 +427,8 @@ static void frontend_darwin_get_environment_settings(int *argc, char *argv[],
     {
        settings_t *settings = config_get_ptr();
 
-       RARCH_LOG("Assets ZIP found at [%s], setting up bundle assets extraction...\n", assets_zip_path);
-       RARCH_LOG("Extraction dir will be: %s\n", home_dir_buf);
+       VLOG(@"Assets ZIP found at [%s], setting up bundle assets extraction...\n", assets_zip_path);
+       VLOG(@"Extraction dir will be: %s\n", home_dir_buf);
        strlcpy(settings->path.bundle_assets_src, assets_zip_path, sizeof(settings->path.bundle_assets_src));
        strlcpy(settings->path.bundle_assets_dst, home_dir_buf, sizeof(settings->path.bundle_assets_dst));
        settings->bundle_assets_extract_version_current = 130; /* TODO/FIXME: Just hardcode this for now */
@@ -441,13 +441,13 @@ static void frontend_darwin_get_environment_settings(int *argc, char *argv[],
    path_mkdir(bundle_path_buf);
 
    if (access(bundle_path_buf, 0755) != 0)
-      RARCH_ERR("Failed to create or access base directory: %s\n", bundle_path_buf);
+      ELOG(@"Failed to create or access base directory: %s\n", bundle_path_buf);
    else
    {
       path_mkdir(g_defaults.dir.system);
 
       if (access(g_defaults.dir.system, 0755) != 0)
-         RARCH_ERR("Failed to create or access system directory: %s.\n", g_defaults.dir.system);
+         ELOG(@"Failed to create or access system directory: %s.\n", g_defaults.dir.system);
    }
 
    CFRelease(bundle_path);

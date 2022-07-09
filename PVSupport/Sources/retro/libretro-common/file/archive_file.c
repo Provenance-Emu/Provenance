@@ -347,7 +347,7 @@ static int file_archive_parse_file_iterate_step(file_archive_transfer_t *state,
       return ret;
 
 #if 0
-   RARCH_LOG("OFFSET: %u, CSIZE: %u, SIZE: %u.\n", offset + 30 + 
+   VLOG(@"OFFSET: %u, CSIZE: %u, SIZE: %u.\n", offset + 30 + 
          offsetNL + offsetEL, csize, size);
 #endif
 

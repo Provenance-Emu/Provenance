@@ -305,7 +305,7 @@ static bool gfx_ctx_xegl_set_video_mode(void *data,
          true_full = true;
       }
       else
-         RARCH_ERR("[X/EGL]: Entering true fullscreen failed. Will attempt windowed mode.\n");
+         ELOG(@"[X/EGL]: Entering true fullscreen failed. Will attempt windowed mode.\n");
    }
 
    if (settings->video.monitor_index)
@@ -319,9 +319,9 @@ static bool gfx_ctx_xegl_set_video_mode(void *data,
 
       if (x11_get_xinerama_coord(g_x11_dpy, g_x11_screen,
                &x_off, &y_off, &new_width, &new_height))
-         RARCH_LOG("[X/EGL]: Using Xinerama on screen #%u.\n", g_x11_screen);
+         VLOG(@"[X/EGL]: Using Xinerama on screen #%u.\n", g_x11_screen);
       else
-         RARCH_LOG("[X/EGL]: Xinerama is not active on screen.\n");
+         VLOG(@"[X/EGL]: Xinerama is not active on screen.\n");
 
       if (fullscreen)
       {
@@ -331,7 +331,7 @@ static bool gfx_ctx_xegl_set_video_mode(void *data,
    }
 #endif
 
-   RARCH_LOG("[X/EGL]: X = %d, Y = %d, W = %u, H = %u.\n",
+   VLOG(@"[X/EGL]: X = %d, Y = %d, W = %u, H = %u.\n",
          x_off, y_off, width, height);
 
    g_x11_win = XCreateWindow(g_x11_dpy, RootWindow(g_x11_dpy, vi->screen),
@@ -358,7 +358,7 @@ static bool gfx_ctx_xegl_set_video_mode(void *data,
 
    if (true_full)
    {
-      RARCH_LOG("[X/EGL]: Using true fullscreen.\n");
+      VLOG(@"[X/EGL]: Using true fullscreen.\n");
       XMapRaised(g_x11_dpy, g_x11_win);
    }
    else if (fullscreen) 
@@ -366,7 +366,7 @@ static bool gfx_ctx_xegl_set_video_mode(void *data,
       /* We attempted true fullscreen, but failed.
        * Attempt using windowed fullscreen. */
       XMapRaised(g_x11_dpy, g_x11_win);
-      RARCH_LOG("[X/EGL]: Using windowed fullscreen.\n");
+      VLOG(@"[X/EGL]: Using windowed fullscreen.\n");
 
       /* We have to move the window to the screen we 
        * want to go fullscreen on first.

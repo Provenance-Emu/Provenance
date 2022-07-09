@@ -70,7 +70,7 @@ bool epoll_add(int fd, void *device)
    /* Shouldn't happen, but just check it. */
    if (epoll_ctl(g_epoll, EPOLL_CTL_ADD, fd, &event) < 0)
    {
-      RARCH_ERR("Failed to add FD (%d) to epoll list (%s).\n",
+      ELOG(@"Failed to add FD (%d) to epoll list (%s).\n",
             fd, strerror(errno));
       return false;
    }

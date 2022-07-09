@@ -399,7 +399,7 @@ static void retroarch_set_special_paths(char **argv, unsigned num_content)
       fill_pathname_dir(global->name.savestate, global->name.base,
             file_path_str(FILE_PATH_STATE_EXTENSION),
             sizeof(global->name.savestate));
-      RARCH_LOG("%s \"%s\".\n",
+      VLOG(@"%s \"%s\".\n",
             msg_hash_to_str(MSG_REDIRECTING_SAVESTATE_TO),
             global->name.savestate);
    }
@@ -461,7 +461,7 @@ static void retroarch_set_paths_redirect(void)
             path_mkdir(current_savefile_dir);
             if(!path_is_directory(current_savefile_dir))
             {
-               RARCH_LOG("%s %s\n",
+               VLOG(@"%s %s\n",
                      msg_hash_to_str(MSG_REVERTING_SAVEFILE_DIRECTORY_TO),
                      global->dir.savefile);
 
@@ -490,7 +490,7 @@ static void retroarch_set_paths_redirect(void)
             path_mkdir(current_savestate_dir);
             if(!path_is_directory(current_savestate_dir))
             {
-               RARCH_LOG("%s %s\n",
+               VLOG(@"%s %s\n",
                      msg_hash_to_str(MSG_REVERTING_SAVESTATE_DIRECTORY_TO),
                      global->dir.savestate);
                strlcpy(current_savestate_dir,
@@ -523,7 +523,7 @@ static void retroarch_set_paths_redirect(void)
       fill_pathname_dir(global->name.savefile, global->name.base,
             file_path_str(FILE_PATH_SRM_EXTENSION),
             sizeof(global->name.savefile));
-      RARCH_LOG("%s \"%s\".\n",
+      VLOG(@"%s \"%s\".\n",
             msg_hash_to_str(MSG_REDIRECTING_SAVEFILE_TO),
             global->name.savefile);
    }
@@ -533,7 +533,7 @@ static void retroarch_set_paths_redirect(void)
       fill_pathname_dir(global->name.savestate, global->name.base,
             file_path_str(FILE_PATH_STATE_EXTENSION),
             sizeof(global->name.savestate));
-      RARCH_LOG("%s \"%s\".\n",
+      VLOG(@"%s \"%s\".\n",
             msg_hash_to_str(MSG_REDIRECTING_SAVESTATE_TO),
             global->name.savestate);
    }
@@ -543,7 +543,7 @@ static void retroarch_set_paths_redirect(void)
       fill_pathname_dir(global->name.cheatfile, global->name.base,
             file_path_str(FILE_PATH_STATE_EXTENSION),
             sizeof(global->name.cheatfile));
-      RARCH_LOG("%s \"%s\".\n",
+      VLOG(@"%s \"%s\".\n",
             msg_hash_to_str(MSG_REDIRECTING_CHEATFILE_TO),
             global->name.cheatfile);
    }
@@ -739,7 +739,7 @@ static void retroarch_parse_input(int argc, char *argv[])
       int c = getopt_long(argc, argv, optstring, opts, NULL);
 
 #if 0
-      RARCH_LOG("c is: %c, optarg is: [%s]\n", c, string_is_empty(optarg) ? "" : optarg);
+      VLOG(@"c is: %c, optarg is: [%s]\n", c, string_is_empty(optarg) ? "" : optarg);
 #endif
 
       if (c == -1)
@@ -767,7 +767,7 @@ static void retroarch_parse_input(int argc, char *argv[])
 
             if (port < 1 || port > MAX_USERS)
             {
-               RARCH_ERR("Connect device to a valid port.\n");
+               ELOG(@"Connect device to a valid port.\n");
                retroarch_print_help(argv[0]);
                retroarch_fail(1, "retroarch_parse_input()");
             }
@@ -780,7 +780,7 @@ static void retroarch_parse_input(int argc, char *argv[])
             port = strtol(optarg, NULL, 0);
             if (port < 1 || port > MAX_USERS)
             {
-               RARCH_ERR("Connect dualanalog to a valid port.\n");
+               ELOG(@"Connect dualanalog to a valid port.\n");
                retroarch_print_help(argv[0]);
                retroarch_fail(1, "retroarch_parse_input()");
             }
@@ -813,7 +813,7 @@ static void retroarch_parse_input(int argc, char *argv[])
             port = strtol(optarg, NULL, 0);
             if (port < 1 || port > MAX_USERS)
             {
-               RARCH_ERR("Disconnect device from a valid port.\n");
+               ELOG(@"Disconnect device from a valid port.\n");
                retroarch_print_help(argv[0]);
                retroarch_fail(1, "retroarch_parse_input()");
             }
@@ -847,7 +847,7 @@ static void retroarch_parse_input(int argc, char *argv[])
 
                retroarch_override_setting_set(RARCH_OVERRIDE_SETTING_LIBRETRO);
                retroarch_override_setting_set(RARCH_OVERRIDE_SETTING_LIBRETRO_DIRECTORY);
-               RARCH_WARN("Using old --libretro behavior. "
+               WLOG(@"Using old --libretro behavior. "
                      "Setting libretro_directory to \"%s\" instead.\n",
                      optarg);
             }
@@ -861,7 +861,7 @@ static void retroarch_parse_input(int argc, char *argv[])
             }
             else
             {
-               RARCH_WARN("--libretro argument \"%s\" is neither a file nor directory. Ignoring.\n",
+               WLOG(@"--libretro argument \"%s\" is neither a file nor directory. Ignoring.\n",
                      optarg);
             }
 
@@ -894,7 +894,7 @@ static void retroarch_parse_input(int argc, char *argv[])
                global->sram.save_disable = true;
             else if (!string_is_equal(optarg, "load-save"))
             {
-               RARCH_ERR("Invalid argument in --sram-mode.\n");
+               ELOG(@"Invalid argument in --sram-mode.\n");
                retroarch_print_help(argv[0]);
                retroarch_fail(1, "retroarch_parse_input()");
             }
@@ -992,7 +992,7 @@ static void retroarch_parse_input(int argc, char *argv[])
             if (sscanf(optarg, "%ux%u", &global->record.width,
                      &global->record.height) != 2)
             {
-               RARCH_ERR("Wrong format for --size.\n");
+               ELOG(@"Wrong format for --size.\n");
                retroarch_print_help(argv[0]);
                retroarch_fail(1, "retroarch_parse_input()");
             }
@@ -1038,7 +1038,7 @@ static void retroarch_parse_input(int argc, char *argv[])
             retroarch_fail(1, "retroarch_parse_input()");
 
          default:
-            RARCH_ERR("%s\n", msg_hash_to_str(MSG_ERROR_PARSING_ARGUMENTS));
+            ELOG(@"%s\n", msg_hash_to_str(MSG_ERROR_PARSING_ARGUMENTS));
             retroarch_fail(1, "retroarch_parse_input()");
       }
    }
@@ -1047,7 +1047,7 @@ static void retroarch_parse_input(int argc, char *argv[])
    {
       if (optind < argc)
       {
-         RARCH_ERR("--menu was used, but content file was passed as well.\n");
+         ELOG(@"--menu was used, but content file was passed as well.\n");
          retroarch_fail(1, "retroarch_parse_input()");
       }
       else
@@ -1160,7 +1160,7 @@ static void retroarch_init_savefile_paths(void)
                global->name.base,
                file_path_str(FILE_PATH_SRM_EXTENSION),
                sizeof(global->name.savefile));
-         RARCH_LOG("%s \"%s\".\n",
+         VLOG(@"%s \"%s\".\n",
                msg_hash_to_str(MSG_REDIRECTING_SAVEFILE_TO),
                global->name.savefile);
       }
@@ -1276,7 +1276,7 @@ bool retroarch_main_init(int argc, char *argv[])
 
    if (setjmp(error_sjlj_context) > 0)
    {
-      RARCH_ERR("%s: \"%s\"\n",
+      ELOG(@"%s: \"%s\"\n",
             msg_hash_to_str(MSG_FATAL_ERROR_RECEIVED_IN), error_string);
       return false;
    }

@@ -548,10 +548,10 @@ bool d3d_reset(LPDIRECT3DDEVICE dev, D3DPRESENT_PARAMETERS *d3dpp)
       default:
          err = "Unknown";
    }
-   RARCH_WARN("[D3D]: Attempting to recover from dead state (%s).\n",
+   WLOG(@"[D3D]: Attempting to recover from dead state (%s).\n",
          err);
 #else
-   RARCH_WARN("[D3D]: Attempting to recover from dead state.\n");
+   WLOG(@"[D3D]: Attempting to recover from dead state.\n");
 #endif
 
    return false;

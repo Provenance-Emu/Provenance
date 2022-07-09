@@ -383,16 +383,16 @@ bool core_load(void)
 bool core_verify_api_version(void)
 {
    unsigned api_version = core.retro_api_version();
-   RARCH_LOG("%s: %u\n", 
+   VLOG(@"%s: %u\n", 
          msg_hash_to_str(MSG_VERSION_OF_LIBRETRO_API),
          api_version);
-   RARCH_LOG("%s: %u\n",    
+   VLOG(@"%s: %u\n",    
          msg_hash_to_str(MSG_COMPILED_AGAINST_API),
          RETRO_API_VERSION);
 
    if (api_version != RETRO_API_VERSION)
    {
-      RARCH_WARN("%s\n", msg_hash_to_str(MSG_LIBRETRO_ABI_BREAK));
+      WLOG(@"%s\n", msg_hash_to_str(MSG_LIBRETRO_ABI_BREAK));
       return false;
    }
    return true;

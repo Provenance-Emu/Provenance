@@ -133,7 +133,7 @@ static bool android_input_lookup_name_prekitkat(char *buf,
    if (!env)
       goto error;
 
-   RARCH_LOG("Using old lookup");
+   VLOG(@"Using old lookup");
 
    FIND_CLASS(env, class, "android/view/InputDevice");
    if (!class)
@@ -147,7 +147,7 @@ static bool android_input_lookup_name_prekitkat(char *buf,
    CALL_OBJ_STATIC_METHOD_PARAM(env, device, class, method, (jint)id);
    if (!device)
    {
-      RARCH_ERR("Failed to find device for ID: %d\n", id);
+      ELOG(@"Failed to find device for ID: %d\n", id);
       goto error;
    }
 
@@ -158,7 +158,7 @@ static bool android_input_lookup_name_prekitkat(char *buf,
    CALL_OBJ_METHOD(env, name, device, getName);
    if (!name)
    {
-      RARCH_ERR("Failed to find name for device ID: %d\n", id);
+      ELOG(@"Failed to find name for device ID: %d\n", id);
       goto error;
    }
 
@@ -169,7 +169,7 @@ static bool android_input_lookup_name_prekitkat(char *buf,
       strlcpy(buf, str, size);
    (*env)->ReleaseStringUTFChars(env, name, str);
 
-   RARCH_LOG("device name: %s\n", buf);
+   VLOG(@"device name: %s\n", buf);
 
    return true;
 error:
@@ -192,7 +192,7 @@ static bool android_input_lookup_name(char *buf,
    if (!env)
       goto error;
 
-   RARCH_LOG("Using new lookup");
+   VLOG(@"Using new lookup");
 
    FIND_CLASS(env, class, "android/view/InputDevice");
    if (!class)
@@ -206,7 +206,7 @@ static bool android_input_lookup_name(char *buf,
    CALL_OBJ_STATIC_METHOD_PARAM(env, device, class, method, (jint)id);
    if (!device)
    {
-      RARCH_ERR("Failed to find device for ID: %d\n", id);
+      ELOG(@"Failed to find device for ID: %d\n", id);
       goto error;
    }
 
@@ -217,7 +217,7 @@ static bool android_input_lookup_name(char *buf,
    CALL_OBJ_METHOD(env, name, device, getName);
    if (!name)
    {
-      RARCH_ERR("Failed to find name for device ID: %d\n", id);
+      ELOG(@"Failed to find name for device ID: %d\n", id);
       goto error;
    }
 
@@ -228,7 +228,7 @@ static bool android_input_lookup_name(char *buf,
       strlcpy(buf, str, size);
    (*env)->ReleaseStringUTFChars(env, name, str);
 
-   RARCH_LOG("device name: %s\n", buf);
+   VLOG(@"device name: %s\n", buf);
 
    GET_METHOD_ID(env, getVendorId, class, "getVendorId", "()I");
    if (!getVendorId)
@@ -236,7 +236,7 @@ static bool android_input_lookup_name(char *buf,
 
    CALL_INT_METHOD(env, *vendorId, device, getVendorId);
 
-   RARCH_LOG("device vendor id: %d\n", *vendorId);
+   VLOG(@"device vendor id: %d\n", *vendorId);
 
    GET_METHOD_ID(env, getProductId, class, "getProductId", "()I");
    if (!getProductId)
@@ -245,7 +245,7 @@ static bool android_input_lookup_name(char *buf,
    *productId = 0;
    CALL_INT_METHOD(env, *productId, device, getProductId);
 
-   RARCH_LOG("device product id: %d\n", *productId);
+   VLOG(@"device product id: %d\n", *productId);
 
    return true;
 error:
@@ -281,7 +281,7 @@ static void android_input_poll_main_cmd(void)
 
          if (android_app->inputQueue)
          {
-            RARCH_LOG("Attaching input queue to looper");
+            VLOG(@"Attaching input queue to looper");
             AInputQueue_attachLooper(android_app->inputQueue,
                   android_app->looper, LOOPER_ID_INPUT, NULL,
                   NULL);
@@ -381,7 +381,7 @@ static void android_input_poll_main_cmd(void)
          break;
 
       case APP_CMD_DESTROY:
-         RARCH_LOG("APP_CMD_DESTROY\n");
+         VLOG(@"APP_CMD_DESTROY\n");
          android_app->destroyRequested = 1;
          break;
    }
@@ -447,7 +447,7 @@ static bool android_input_init_handle(void)
    if ((p_AMotionEvent_getAxisValue = dlsym(RTLD_DEFAULT,
                "AMotionEvent_getAxisValue")))
    {
-      RARCH_LOG("Set engine_handle_dpad to 'Get Axis Value' (for reading extra analog sticks)");
+      VLOG(@"Set engine_handle_dpad to 'Get Axis Value' (for reading extra analog sticks)");
       engine_handle_dpad = engine_handle_dpad_getaxisvalue;
    }
    pad_id1 = -1;
@@ -476,7 +476,7 @@ static void *android_input_init(void)
  
    frontend_android_get_version_sdk(&sdk);
 
-   RARCH_LOG("sdk version: %d\n", sdk);
+   VLOG(@"sdk version: %d\n", sdk);
 
    if (sdk >= 19)
       engine_lookup_name = android_input_lookup_name;
@@ -487,7 +487,7 @@ static void *android_input_init(void)
 
    if (!android_input_init_handle())
    {
-      RARCH_WARN("Unable to open libandroid.so\n");
+      WLOG(@"Unable to open libandroid.so\n");
    }
 
    android_app->input_alive = true;
@@ -647,18 +647,18 @@ static void handle_hotplug(android_input_data_t *android_data,
 
    frontend_android_get_name(device_model, sizeof(device_model));
 
-   RARCH_LOG("Device model: (%s).\n", device_model);
+   VLOG(@"Device model: (%s).\n", device_model);
 
    if (*port > MAX_PADS)
    {
-      RARCH_ERR("Max number of pads reached.\n");
+      ELOG(@"Max number of pads reached.\n");
       return;
    }
 
    if (!engine_lookup_name(device_name, &vendorId,
             &productId, sizeof(device_name), id))
    {
-      RARCH_ERR("Could not look up device name or IDs.\n");
+      ELOG(@"Could not look up device name or IDs.\n");
       return;
    }
 
@@ -692,10 +692,10 @@ static void handle_hotplug(android_input_data_t *android_data,
       strstr(device_name, "NVIDIA Corporation NVIDIA Controller v01.03")))
    {
       /* only use the hack if the device is one of the built-in devices */
-      RARCH_LOG("Special Device Detected: %s\n", device_model);
+      VLOG(@"Special Device Detected: %s\n", device_model);
       {
 #if 0
-         RARCH_LOG("- Pads Mapped: %d\n- Device Name: %s\n- IDS: %d, %d, %d",
+         VLOG(@"- Pads Mapped: %d\n- Device Name: %s\n- IDS: %d, %d, %d",
                android_data->pads_connected, device_name, id, pad_id1, pad_id2);
 #endif
          /* remove the remote or virtual controller device if it is mapped */
@@ -739,7 +739,7 @@ static void handle_hotplug(android_input_data_t *android_data,
       strstr(device_name, "NVIDIA Corporation NVIDIA Controller v01.01")))
    {
       /* only use the hack if the device is one of the built-in devices */
-      RARCH_LOG("Special Device Detected: %s\n", device_model);
+      VLOG(@"Special Device Detected: %s\n", device_model);
       {
          if ( pad_id1 < 0 )
             pad_id1 = id;
@@ -762,7 +762,7 @@ static void handle_hotplug(android_input_data_t *android_data,
       strstr(device_name,"Playstation3") || strstr(device_name,"XBOX")))
    {
       /* only use the hack if the device is one of the built-in devices */
-      RARCH_LOG("Special Device Detected: %s\n", device_model);
+      VLOG(@"Special Device Detected: %s\n", device_model);
       {
          if ( pad_id1 < 0 )
             pad_id1 = id;
@@ -789,7 +789,7 @@ static void handle_hotplug(android_input_data_t *android_data,
          )
    {
       /* only use the hack if the device is one of the built-in devices */
-      RARCH_LOG("Special Device Detected: %s\n", device_model);
+      VLOG(@"Special Device Detected: %s\n", device_model);
       {
          if ( pad_id1 < 0 )
             pad_id1 = id;
@@ -812,7 +812,7 @@ static void handle_hotplug(android_input_data_t *android_data,
       strstr(device_name, "joy_key") || strstr(device_name, "joystick")))
    {
       /* only use the hack if the device is one of the built-in devices */
-      RARCH_LOG("ARCHOS GAMEPAD Detected: %s\n", device_model);
+      VLOG(@"ARCHOS GAMEPAD Detected: %s\n", device_model);
       {
          if ( pad_id1 < 0 )
             pad_id1 = id;
@@ -883,7 +883,7 @@ static void handle_hotplug(android_input_data_t *android_data,
       bool      autoconfigured;
       autoconfig_params_t params   = {{0}};
 
-      RARCH_LOG("Pads Connected: %d Port: %d\n %s VID/PID: %d/%d\n",
+      VLOG(@"Pads Connected: %d Port: %d\n %s VID/PID: %d/%d\n",
             android_data->pads_connected, *port, name_buf,
             params.vid, params.pid);
 

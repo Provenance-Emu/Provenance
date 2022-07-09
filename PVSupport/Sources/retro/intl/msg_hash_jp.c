@@ -4463,7 +4463,7 @@ const char *msg_hash_to_str_jp(enum msg_hash_enums msg)
          return "Wallpaper opacity";
       default:
 #if 0
-         RARCH_LOG("Unimplemented: [%d]\n", msg);
+         VLOG(@"Unimplemented: [%d]\n", msg);
 #endif
          break;
    }

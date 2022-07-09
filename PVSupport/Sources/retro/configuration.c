@@ -1031,13 +1031,13 @@ static config_file_t *open_default_config_file(void)
       if (!saved)
       {
          /* WARN here to make sure user has a good chance of seeing it. */
-         RARCH_ERR("Failed to create new config file in: \"%s\".\n",
+         ELOG(@"Failed to create new config file in: \"%s\".\n",
                conf_path);
          config_file_free(conf);
          return NULL;
       }
 
-      RARCH_WARN("Created new config file in: \"%s\".\n", conf_path);
+      WLOG(@"Created new config file in: \"%s\".\n", conf_path);
    }
 #elif defined(OSX)
    if (!fill_pathname_application_data(application_data,
@@ -1065,14 +1065,14 @@ static config_file_t *open_default_config_file(void)
       if (!saved)
       {
          /* WARN here to make sure user has a good chance of seeing it. */
-         RARCH_ERR("Failed to create new config file in: \"%s\".\n",
+         ELOG(@"Failed to create new config file in: \"%s\".\n",
                conf_path);
          config_file_free(conf);
 
          return NULL;
       }
 
-      RARCH_WARN("Created new config file in: \"%s\".\n", conf_path);
+      WLOG(@"Created new config file in: \"%s\".\n", conf_path);
    }
 #elif !defined(RARCH_CONSOLE)
    bool has_application_data = fill_pathname_application_data(application_data,
@@ -1082,7 +1082,7 @@ static config_file_t *open_default_config_file(void)
    {
       fill_pathname_join(conf_path, application_data,
             file_path_str(FILE_PATH_MAIN_CONFIG), sizeof(conf_path));
-      RARCH_LOG("Looking for config in: \"%s\".\n", conf_path);
+      VLOG(@"Looking for config in: \"%s\".\n", conf_path);
       conf = config_file_new(conf_path);
    }
 
@@ -1091,7 +1091,7 @@ static config_file_t *open_default_config_file(void)
    {
       fill_pathname_join(conf_path, getenv("HOME"),
             ".retroarch.cfg", sizeof(conf_path));
-      RARCH_LOG("Looking for config in: \"%s\".\n", conf_path);
+      VLOG(@"Looking for config in: \"%s\".\n", conf_path);
       conf = config_file_new(conf_path);
    }
 
@@ -1121,7 +1121,7 @@ static config_file_t *open_default_config_file(void)
 #endif
          conf = config_file_new(skeleton_conf);
          if (conf)
-            RARCH_WARN("Config: using skeleton config \"%s\" as base for a new config file.\n", skeleton_conf);
+            WLOG(@"Config: using skeleton config \"%s\" as base for a new config file.\n", skeleton_conf);
          else
             conf = config_file_new(NULL);
 
@@ -1135,13 +1135,13 @@ static config_file_t *open_default_config_file(void)
          if (!saved)
          {
             /* WARN here to make sure user has a good chance of seeing it. */
-            RARCH_ERR("Failed to create new config file in: \"%s\".\n", conf_path);
+            ELOG(@"Failed to create new config file in: \"%s\".\n", conf_path);
             config_file_free(conf);
 
             return NULL;
          }
 
-         RARCH_WARN("Config: Created new config file in: \"%s\".\n", conf_path);
+         WLOG(@"Config: Created new config file in: \"%s\".\n", conf_path);
       }
    }
 #endif
@@ -1248,7 +1248,7 @@ static void config_file_dump_all(config_file_t *conf)
 
    while (includes)
    {
-      RARCH_LOG("#include \"%s\"\n", includes->path);
+      VLOG(@"#include \"%s\"\n", includes->path);
       includes = includes->next;
    }
 
@@ -1256,7 +1256,7 @@ static void config_file_dump_all(config_file_t *conf)
 
    while (list)
    {
-      RARCH_LOG("%s = \"%s\"%s\n", list->key,
+      VLOG(@"%s = \"%s\"%s\n", list->key,
             list->value, list->readonly ? " (included)" : "");
       list = list->next;
    }
@@ -1527,10 +1527,10 @@ static bool config_load_file(const char *path, bool set_defaults)
    {
       bool ret = config_append_file(conf, extra_path);
 
-      RARCH_LOG("Config: appending config \"%s\"\n", extra_path);
+      VLOG(@"Config: appending config \"%s\"\n", extra_path);
 
       if (!ret)
-         RARCH_ERR("Config: failed to append config \"%s\"\n", extra_path);
+         ELOG(@"Config: failed to append config \"%s\"\n", extra_path);
       extra_path = strtok_r(NULL, "|", &save);
    }
 #if 0
@@ -1984,7 +1984,7 @@ static bool config_load_file(const char *path, bool set_defaults)
          *settings->directory.screenshot = '\0';
       else if (!path_is_directory(settings->directory.screenshot))
       {
-         RARCH_WARN("screenshot_directory is not an existing directory, ignoring ...\n");
+         WLOG(@"screenshot_directory is not an existing directory, ignoring ...\n");
          *settings->directory.screenshot = '\0';
       }
    }
@@ -1992,7 +1992,7 @@ static bool config_load_file(const char *path, bool set_defaults)
    /* Safe-guard against older behavior. */
    if (path_is_directory(config_get_active_core_path()))
    {
-      RARCH_WARN("\"libretro_path\" is a directory, using this for \"libretro_directory\" instead.\n");
+      WLOG(@"\"libretro_path\" is a directory, using this for \"libretro_directory\" instead.\n");
       strlcpy(settings->directory.libretro, config_get_active_core_path(),
             sizeof(settings->directory.libretro));
       config_clear_active_core_path();
@@ -2064,7 +2064,7 @@ static bool config_load_file(const char *path, bool set_defaults)
                sizeof(global->name.savefile));
       }
       else
-         RARCH_WARN("savefile_directory is not a directory, ignoring ...\n");
+         WLOG(@"savefile_directory is not a directory, ignoring ...\n");
    }
 
    if (!retroarch_override_setting_is_set(RARCH_OVERRIDE_SETTING_STATE_PATH) &&
@@ -2085,7 +2085,7 @@ static bool config_load_file(const char *path, bool set_defaults)
                sizeof(global->name.savestate));
       }
       else
-         RARCH_WARN("savestate_directory is not a directory, ignoring ...\n");
+         WLOG(@"savestate_directory is not a directory, ignoring ...\n");
    }
 
    config_read_keybinds_conf(conf);
@@ -2158,13 +2158,13 @@ bool config_load_override(void)
    {
       config_file_free(new_conf);
 
-      RARCH_LOG("Overrides: core-specific overrides found at %s.\n", core_path);
+      VLOG(@"Overrides: core-specific overrides found at %s.\n", core_path);
       strlcpy(global->path.append_config, core_path, sizeof(global->path.append_config));
 
       should_append = true;
    }
    else
-      RARCH_LOG("Overrides: no core-specific overrides found at %s.\n", core_path);
+      VLOG(@"Overrides: no core-specific overrides found at %s.\n", core_path);
 
    /* Create a new config file from game_path */
    new_conf = config_file_new(game_path);
@@ -2174,7 +2174,7 @@ bool config_load_override(void)
    {
       config_file_free(new_conf);
 
-      RARCH_LOG("Overrides: game-specific overrides found at %s.\n", game_path);
+      VLOG(@"Overrides: game-specific overrides found at %s.\n", game_path);
       if (should_append)
       {
          strlcat(global->path.append_config, "|", sizeof(global->path.append_config));
@@ -2186,7 +2186,7 @@ bool config_load_override(void)
       should_append = true;
    }
    else
-      RARCH_LOG("Overrides: no game-specific overrides found at %s.\n", game_path);
+      VLOG(@"Overrides: no game-specific overrides found at %s.\n", game_path);
 
    if (!should_append)
       return false;
@@ -2195,7 +2195,7 @@ bool config_load_override(void)
 #ifdef HAVE_NETPLAY
    if (global->netplay.enable)
    {
-      RARCH_WARN("Overrides: can't use overrides in conjunction with netplay, disabling overrides.\n");
+      WLOG(@"Overrides: can't use overrides in conjunction with netplay, disabling overrides.\n");
       return false;
    }
 #endif
@@ -2246,7 +2246,7 @@ bool config_unload_override(void)
 
    if (config_load_file(global->path.config, false))
    {
-      RARCH_LOG("Overrides: configuration overrides unloaded, original configuration restored.\n");
+      VLOG(@"Overrides: configuration overrides unloaded, original configuration restored.\n");
 
       /* Reset save paths */
       retroarch_override_setting_set(RARCH_OVERRIDE_SETTING_STATE_PATH);
@@ -2301,7 +2301,7 @@ bool config_load_remap(void)
    strlcpy(remap_directory,
          settings->directory.input_remapping,
          sizeof(remap_directory));
-   RARCH_LOG("Remaps: remap directory: %s\n", remap_directory);
+   VLOG(@"Remaps: remap directory: %s\n", remap_directory);
 
    /* Concatenate strings into full paths for core_path, game_path */
    fill_pathname_join_special_ext(core_path,
@@ -2322,7 +2322,7 @@ bool config_load_remap(void)
    /* If a game remap file exists, load it. */
    if (new_conf)
    {
-      RARCH_LOG("Remaps: game-specific remap found at %s.\n", game_path);
+      VLOG(@"Remaps: game-specific remap found at %s.\n", game_path);
       if (input_remapping_load_file(new_conf, game_path))
       {
          runloop_msg_queue_push("Game remap file loaded.", 1, 100, true);
@@ -2331,7 +2331,7 @@ bool config_load_remap(void)
    }
    else
    {
-      RARCH_LOG("Remaps: no game-specific remap found at %s.\n", game_path);
+      VLOG(@"Remaps: no game-specific remap found at %s.\n", game_path);
       input_remapping_set_defaults();
    }
 
@@ -2341,7 +2341,7 @@ bool config_load_remap(void)
    /* If a core remap file exists, load it. */
    if (new_conf)
    {
-      RARCH_LOG("Remaps: core-specific remap found at %s.\n", core_path);
+      VLOG(@"Remaps: core-specific remap found at %s.\n", core_path);
       if (input_remapping_load_file(new_conf, core_path))
       {
          runloop_msg_queue_push("Core remap file loaded.", 1, 100, true);
@@ -2350,7 +2350,7 @@ bool config_load_remap(void)
    }
    else
    {
-      RARCH_LOG("Remaps: no core-specific remap found at %s.\n", core_path);
+      VLOG(@"Remaps: no core-specific remap found at %s.\n", core_path);
       input_remapping_set_defaults();
    }
 
@@ -2424,7 +2424,7 @@ bool config_load_shader_preset(void)
    fill_pathname_join (shader_directory, settings->directory.video_shader,
        "presets", sizeof(shader_directory));
 
-   RARCH_LOG("Shaders: preset directory: %s\n", shader_directory);
+   VLOG(@"Shaders: preset directory: %s\n", shader_directory);
 
    for(idx = FILE_PATH_CGP_EXTENSION; idx < FILE_PATH_SLANGP_EXTENSION; idx++)
    {
@@ -2450,12 +2450,12 @@ bool config_load_shader_preset(void)
 
       if (!new_conf)
       {
-         RARCH_LOG("Shaders: no game-specific preset found at %s.\n", game_path);
+         VLOG(@"Shaders: no game-specific preset found at %s.\n", game_path);
          continue;
       }
 
       /* Game shader preset exists, load it. */
-      RARCH_LOG("Shaders: game-specific shader preset found at %s.\n", game_path);
+      VLOG(@"Shaders: game-specific shader preset found at %s.\n", game_path);
       runloop_ctl(RUNLOOP_CTL_SET_DEFAULT_SHADER_PRESET, settings->path.shader);
       strlcpy(settings->path.shader, game_path, sizeof(settings->path.shader));
       config_file_free(new_conf);
@@ -2480,12 +2480,12 @@ bool config_load_shader_preset(void)
 
       if (!new_conf)
       {
-         RARCH_LOG("Shaders: no core-specific preset found at %s.\n", core_path);
+         VLOG(@"Shaders: no core-specific preset found at %s.\n", core_path);
          continue;
       }
 
       /* Core shader preset exists, load it. */
-      RARCH_LOG("Shaders: core-specific shader preset found at %s.\n", core_path);
+      VLOG(@"Shaders: core-specific shader preset found at %s.\n", core_path);
       runloop_ctl(RUNLOOP_CTL_SET_DEFAULT_SHADER_PRESET, settings->path.shader);
       strlcpy(settings->path.shader, core_path, sizeof(settings->path.shader));
       config_file_free(new_conf);
@@ -2502,19 +2502,19 @@ static void parse_config_file(void)
 
    if (!string_is_empty(global->path.config))
    {
-      RARCH_LOG("Config: loading config from: %s.\n", global->path.config);
+      VLOG(@"Config: loading config from: %s.\n", global->path.config);
    }
    else
    {
-      RARCH_LOG("Loading default config.\n");
+      VLOG(@"Loading default config.\n");
       if (!string_is_empty(global->path.config))
-         RARCH_LOG("Config: found default config: %s.\n", global->path.config);
+         VLOG(@"Config: found default config: %s.\n", global->path.config);
    }
 
    if (ret)
       return;
 
-   RARCH_ERR("Config: couldn't find config at path: \"%s\"\n",
+   ELOG(@"Config: couldn't find config at path: \"%s\"\n",
          global->path.config);
 }
 
@@ -2720,7 +2720,7 @@ static bool config_save_keybinds_file(const char *path)
    if (!conf)
       return false;
 
-   RARCH_LOG("Saving keybinds config at path: \"%s\"\n", path);
+   VLOG(@"Saving keybinds config at path: \"%s\"\n", path);
 
    for (i = 0; i < MAX_USERS; i++)
       save_keybinds_user(conf, i);

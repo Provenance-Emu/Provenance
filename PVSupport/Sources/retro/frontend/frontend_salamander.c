@@ -45,12 +45,12 @@ static void find_first_libretro_core(char *first_file,
 
    if (!list)
    {
-      RARCH_ERR("Couldn't read directory."
+      ELOG(@"Couldn't read directory."
             " Cannot infer default libretro core.\n");
       return;
    }
 
-   RARCH_LOG("Searching for valid libretro implementation in: \"%s\".\n",
+   VLOG(@"Searching for valid libretro implementation in: \"%s\".\n",
          dir);
    
    for (i = 0; i < list->size && !ret; i++)
@@ -59,7 +59,7 @@ static void find_first_libretro_core(char *first_file,
       char salamander_name[PATH_MAX_LENGTH];
       const char *libretro_elem = (const char*)list->elems[i].data;
 
-      RARCH_LOG("Checking library: \"%s\".\n", libretro_elem);
+      VLOG(@"Checking library: \"%s\".\n", libretro_elem);
 
       if (!libretro_elem)
          continue;
@@ -74,7 +74,7 @@ static void find_first_libretro_core(char *first_file,
       {
          if (list->size == (i + 1))
          {
-            RARCH_WARN("Entry is RetroArch Salamander itself, "
+            WLOG(@"Entry is RetroArch Salamander itself, "
                   "but is last entry. No choice but to set it.\n");
             strlcpy(first_file, fname, size_of_first_file);
          }
@@ -83,7 +83,7 @@ static void find_first_libretro_core(char *first_file,
       }
 
       strlcpy(first_file, fname, size_of_first_file);
-      RARCH_LOG("First found libretro core is: \"%s\".\n", first_file);
+      VLOG(@"First found libretro core is: \"%s\".\n", first_file);
       ret = true;
    }
 
@@ -103,12 +103,12 @@ static void find_and_set_first_file(char *s, size_t len,
 
    if (string_is_empty(first_file))
    {
-      RARCH_ERR("Failed last fallback - RetroArch Salamander will exit.\n");
+      ELOG(@"Failed last fallback - RetroArch Salamander will exit.\n");
       return;
    }
 
    fill_pathname_join(s, g_defaults.dir.core, first_file, len);
-   RARCH_LOG("libretro_path now set to: %s.\n", s);
+   VLOG(@"libretro_path now set to: %s.\n", s);
 }
 
 static void salamander_init(char *s, size_t len)
@@ -151,7 +151,7 @@ static void salamander_init(char *s, size_t len)
       find_and_set_first_file(s, len, executable_name);
    }
    else
-      RARCH_LOG("Start [%s] found in retroarch.cfg.\n", s);
+      VLOG(@"Start [%s] found in retroarch.cfg.\n", s);
 
    if (!config_file_exists)
    {

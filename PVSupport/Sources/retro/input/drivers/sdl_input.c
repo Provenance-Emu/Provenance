@@ -55,7 +55,7 @@ static void *sdl_input_init(void)
 
    sdl->joypad = input_joypad_init_driver(settings->input.joypad_driver, sdl);
 
-   RARCH_LOG("[SDL]: Input driver initialized.\n");
+   VLOG(@"[SDL]: Input driver initialized.\n");
    return sdl;
 }
 

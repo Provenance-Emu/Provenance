@@ -183,11 +183,11 @@ static bool xinput_joypad_init(void *data)
 
    if (!g_xinput_dll)
    {
-      RARCH_ERR("Failed to load XInput, ensure DirectX and controller drivers are up to date.\n");
+      ELOG(@"Failed to load XInput, ensure DirectX and controller drivers are up to date.\n");
       return false;
    }
 
-   RARCH_LOG("Found XInput v%s.\n", version);
+   VLOG(@"Found XInput v%s.\n", version);
 
    /* If we get here then an xinput DLL is correctly loaded.
     * First try to load ordinal 100 (XInputGetStateEx).
@@ -205,17 +205,17 @@ static bool xinput_joypad_init(void *data)
 
       if (!g_XInputGetStateEx)
       {
-         RARCH_ERR("Failed to init XInput: DLL is invalid or corrupt.\n");
+         ELOG(@"Failed to init XInput: DLL is invalid or corrupt.\n");
          dylib_close(g_xinput_dll);
          return false; /* DLL was loaded but did not contain the correct function. */
       }
-      RARCH_WARN("XInput: No guide button support.\n");
+      WLOG(@"XInput: No guide button support.\n");
    }
 
    g_XInputSetState = (XInputSetState_t)dylib_proc(g_xinput_dll, "XInputSetState");
    if (!g_XInputSetState)
    {
-      RARCH_ERR("Failed to init XInput: DLL is invalid or corrupt.\n");
+      ELOG(@"Failed to init XInput: DLL is invalid or corrupt.\n");
       dylib_close(g_xinput_dll);
       return false; /* DLL was loaded but did not contain the correct function. */
    }
@@ -229,7 +229,7 @@ static bool xinput_joypad_init(void *data)
    {
       g_xinput_states[i].connected = !(g_XInputGetStateEx(i, &dummy_state) == ERROR_DEVICE_NOT_CONNECTED);
       if (g_xinput_states[i].connected)
-         RARCH_LOG("Found XInput controller, user #%u\n", i);
+         VLOG(@"Found XInput controller, user #%u\n", i);
    }
 
    if ((!g_xinput_states[0].connected) &&

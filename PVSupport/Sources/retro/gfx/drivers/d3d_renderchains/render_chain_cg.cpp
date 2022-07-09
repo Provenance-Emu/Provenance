@@ -161,8 +161,8 @@ static bool d3d9_cg_load_program(void *data,
    const char **vertex_opts   = cgD3D9GetOptimalOptions(vertex_profile);
    cg_renderchain_t *cg_data  = (cg_renderchain_t*)data;
 
-   RARCH_LOG("[D3D Cg]: Vertex profile: %s\n", cgGetProfileString(vertex_profile));
-   RARCH_LOG("[D3D Cg]: Fragment profile: %s\n", cgGetProfileString(fragment_profile));
+   VLOG(@"[D3D Cg]: Vertex profile: %s\n", cgGetProfileString(vertex_profile));
+   VLOG(@"[D3D Cg]: Fragment profile: %s\n", cgGetProfileString(fragment_profile));
 
    if (path_is_file && !string_is_empty(prog))
       *fPrg = cgCreateProgramFromFile(cg_data->cgCtx, CG_SOURCE,
@@ -188,11 +188,11 @@ static bool d3d9_cg_load_program(void *data,
 
    if (!fPrg || !vPrg)
    {
-      RARCH_ERR("CG error: %s\n", cgGetErrorString(cgGetError()));
+      ELOG(@"CG error: %s\n", cgGetErrorString(cgGetError()));
       if (listing_f)
-         RARCH_ERR("Fragment:\n%s\n", listing_f);
+         ELOG(@"Fragment:\n%s\n", listing_f);
       else if (listing_v)
-         RARCH_ERR("Vertex:\n%s\n", listing_v);
+         ELOG(@"Vertex:\n%s\n", listing_v);
       ret = false;
       goto end;
    }
@@ -326,7 +326,7 @@ static bool cg_d3d9_renderchain_init_shader_fvf(void *data, void *pass_data)
       decl[index]     = element;
       indices[index]  = true;
 
-      RARCH_LOG("[FVF]: POSITION semantic found.\n");
+      VLOG(@"[FVF]: POSITION semantic found.\n");
    }
 
    param = d3d9_cg_find_param_from_semantic(cgGetFirstParameter(pass->vPrg, CG_PROGRAM), "TEXCOORD");
@@ -338,7 +338,7 @@ static bool cg_d3d9_renderchain_init_shader_fvf(void *data, void *pass_data)
       static const D3DVERTEXELEMENT tex_coord0    = DECL_FVF_TEXCOORD(1, 3, 0);
       stream_taken[1] = true;
       texcoord0_taken = true;
-      RARCH_LOG("[FVF]: TEXCOORD0 semantic found.\n");
+      VLOG(@"[FVF]: TEXCOORD0 semantic found.\n");
       index           = cgGetParameterResourceIndex(param);
       decl[index]     = tex_coord0;
       indices[index]  = true;
@@ -350,7 +350,7 @@ static bool cg_d3d9_renderchain_init_shader_fvf(void *data, void *pass_data)
       static const D3DVERTEXELEMENT tex_coord1    = DECL_FVF_TEXCOORD(2, 5, 1);
       stream_taken[2] = true;
       texcoord1_taken = true;
-      RARCH_LOG("[FVF]: TEXCOORD1 semantic found.\n");
+      VLOG(@"[FVF]: TEXCOORD1 semantic found.\n");
       index           = cgGetParameterResourceIndex(param);
       decl[index]     = tex_coord1;
       indices[index]  = true;
@@ -364,7 +364,7 @@ static bool cg_d3d9_renderchain_init_shader_fvf(void *data, void *pass_data)
    {
       static const D3DVERTEXELEMENT color = DECL_FVF_COLOR(3, 7, 0);
       stream_taken[3] = true;
-      RARCH_LOG("[FVF]: COLOR0 semantic found.\n");
+      VLOG(@"[FVF]: COLOR0 semantic found.\n");
       index           = cgGetParameterResourceIndex(param);
       decl[index]     = color;
       indices[index]  = true;
@@ -619,7 +619,7 @@ static void d3d9_cg_deinit_progs(void *data)
    if (!cg_data)
 	   return;
 
-   RARCH_LOG("CG: Destroying programs.\n");
+   VLOG(@"CG: Destroying programs.\n");
 
    if (cg_data->passes.size() >= 1)
    {
@@ -683,7 +683,7 @@ static void d3d9_cg_deinit_context_state(void *data)
    cg_renderchain_t *cg_data = (cg_renderchain_t*)data;
    if (cg_data->cgCtx)
    {
-      RARCH_LOG("CG: Destroying context.\n");
+      VLOG(@"CG: Destroying context.\n");
       cgDestroyContext(cg_data->cgCtx);
    }
    cg_data->cgCtx = NULL;
@@ -722,7 +722,7 @@ static bool cg_d3d9_renderchain_init_shader(void *data,
    renderchain->cgCtx = cgCreateContext();
    if (!renderchain->cgCtx)
    {
-      RARCH_ERR("Failed to create Cg context.\n");
+      ELOG(@"Failed to create Cg context.\n");
       return false;
    }
 
@@ -735,45 +735,45 @@ static bool cg_d3d9_renderchain_init_shader(void *data,
 static void renderchain_log_info(void *data, const void *info_data)
 {
    const LinkInfo *info = (const LinkInfo*)info_data;
-   RARCH_LOG("[D3D]: Render pass info:\n");
-   RARCH_LOG("\tTexture width: %u\n", info->tex_w);
-   RARCH_LOG("\tTexture height: %u\n", info->tex_h);
+   VLOG(@"[D3D]: Render pass info:\n");
+   VLOG(@"\tTexture width: %u\n", info->tex_w);
+   VLOG(@"\tTexture height: %u\n", info->tex_h);
 
-   RARCH_LOG("\tScale type (X): ");
+   VLOG(@"\tScale type (X): ");
 
    switch (info->pass->fbo.type_x)
    {
       case RARCH_SCALE_INPUT:
-         RARCH_LOG("Relative @ %fx\n", info->pass->fbo.scale_x);
+         VLOG(@"Relative @ %fx\n", info->pass->fbo.scale_x);
          break;
 
       case RARCH_SCALE_VIEWPORT:
-         RARCH_LOG("Viewport @ %fx\n", info->pass->fbo.scale_x);
+         VLOG(@"Viewport @ %fx\n", info->pass->fbo.scale_x);
          break;
 
       case RARCH_SCALE_ABSOLUTE:
-         RARCH_LOG("Absolute @ %u px\n", info->pass->fbo.abs_x);
+         VLOG(@"Absolute @ %u px\n", info->pass->fbo.abs_x);
          break;
    }
 
-   RARCH_LOG("\tScale type (Y): ");
+   VLOG(@"\tScale type (Y): ");
 
    switch (info->pass->fbo.type_y)
    {
       case RARCH_SCALE_INPUT:
-         RARCH_LOG("Relative @ %fx\n", info->pass->fbo.scale_y);
+         VLOG(@"Relative @ %fx\n", info->pass->fbo.scale_y);
          break;
 
       case RARCH_SCALE_VIEWPORT:
-         RARCH_LOG("Viewport @ %fx\n", info->pass->fbo.scale_y);
+         VLOG(@"Viewport @ %fx\n", info->pass->fbo.scale_y);
          break;
 
       case RARCH_SCALE_ABSOLUTE:
-         RARCH_LOG("Absolute @ %u px\n", info->pass->fbo.abs_y);
+         VLOG(@"Absolute @ %u px\n", info->pass->fbo.abs_y);
          break;
    }
 
-   RARCH_LOG("\tBilinear filter: %s\n",
+   VLOG(@"\tBilinear filter: %s\n",
          info->pass->filter == RARCH_FILTER_LINEAR ? "true" : "false");
 }
 
@@ -851,7 +851,7 @@ static bool cg_d3d9_renderchain_init(void *data,
       return false;
    if (!cg_d3d9_renderchain_init_shader(d3d, chain))
    {
-      RARCH_ERR("Failed to initialize shader subsystem.\n");
+      ELOG(@"Failed to initialize shader subsystem.\n");
       return false;
    }
 
@@ -965,7 +965,7 @@ static void d3d_recompute_pass_sizes(cg_renderchain_t *chain,
    if (!renderchain_set_pass_size(chain, 0,
             current_width, current_height))
    {
-      RARCH_ERR("[D3D]: Failed to set pass size.\n");
+      ELOG(@"[D3D]: Failed to set pass size.\n");
       return;
    }
 
@@ -982,7 +982,7 @@ static void d3d_recompute_pass_sizes(cg_renderchain_t *chain,
       if (!renderchain_set_pass_size(chain, i,
                link_info.tex_w, link_info.tex_h))
       {
-         RARCH_ERR("[D3D]: Failed to set pass size.\n");
+         ELOG(@"[D3D]: Failed to set pass size.\n");
          return;
       }
 
@@ -1074,7 +1074,7 @@ static bool cg_d3d9_renderchain_add_lut(void *data,
             NULL
             );
 
-   RARCH_LOG("[D3D]: LUT texture loaded: %s.\n", path);
+   VLOG(@"[D3D]: LUT texture loaded: %s.\n", path);
 
    info.tex    = lut;
    info.smooth = smooth;

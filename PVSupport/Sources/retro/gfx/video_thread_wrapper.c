@@ -192,7 +192,7 @@ static void *video_thread_init_never_call(const video_info_t *video,
    (void)video;
    (void)input;
    (void)input_data;
-   RARCH_ERR("Sanity check fail! Threaded mustn't be reinit.\n");
+   ELOG(@"Sanity check fail! Threaded mustn't be reinit.\n");
    abort();
    return NULL;
 }
@@ -899,7 +899,7 @@ static void video_thread_free(void *data)
    free(thr->alpha_mod);
    slock_free(thr->alpha_lock);
 
-   RARCH_LOG("Threaded video stats: Frames pushed: %u, Frames dropped: %u.\n",
+   VLOG(@"Threaded video stats: Frames pushed: %u, Frames dropped: %u.\n",
          thr->hit_count, thr->miss_count);
 
    free(thr);

@@ -147,14 +147,14 @@ static bool task_overlay_load_desc(
 
    if (by_pixel && (width == 0 || height == 0))
    {
-      RARCH_ERR("[Overlay]: Base overlay is not set and not using normalized coordinates.\n");
+      ELOG(@"[Overlay]: Base overlay is not set and not using normalized coordinates.\n");
       ret = false;
       goto end;
    }
 
    if (!config_get_array(conf, overlay_desc_key, overlay, sizeof(overlay)))
    {
-      RARCH_ERR("[Overlay]: Didn't find key: %s.\n", overlay_desc_key);
+      ELOG(@"[Overlay]: Didn't find key: %s.\n", overlay_desc_key);
       ret = false;
       goto end;
    }
@@ -162,14 +162,14 @@ static bool task_overlay_load_desc(
    string_list_initialize(&list);
    if (!string_split_noalloc(&list, overlay, ", "))
    {
-      RARCH_ERR("[Overlay]: Failed to split overlay desc.\n");
+      ELOG(@"[Overlay]: Failed to split overlay desc.\n");
       ret = false;
       goto end;
    }
 
    if (list.size < 6)
    {
-      RARCH_ERR("[Overlay]: Overlay desc is invalid. Requires at least 6 tokens.\n");
+      ELOG(@"[Overlay]: Overlay desc is invalid. Requires at least 6 tokens.\n");
       ret = false;
       goto end;
    }
@@ -235,7 +235,7 @@ static bool task_overlay_load_desc(
       desc->hitbox = OVERLAY_HITBOX_RECT;
    else
    {
-      RARCH_ERR("[Overlay]: Hitbox type (%s) is invalid. Use \"radial\" or \"rect\".\n", box);
+      ELOG(@"[Overlay]: Hitbox type (%s) is invalid. Use \"radial\" or \"rect\".\n", box);
       ret = false;
       goto end;
    }
@@ -251,7 +251,7 @@ static bool task_overlay_load_desc(
 
             if (desc->hitbox != OVERLAY_HITBOX_RADIAL)
             {
-               RARCH_ERR("[Overlay]: Analog hitbox type must be \"radial\".\n");
+               ELOG(@"[Overlay]: Analog hitbox type must be \"radial\".\n");
                ret = false;
                goto end;
             }
@@ -346,7 +346,7 @@ static bool task_overlay_resolve_targets(struct overlay *ol,
 
          if (next_idx < 0)
          {
-            RARCH_ERR("[Overlay]: Couldn't find overlay called: \"%s\".\n",
+            ELOG(@"[Overlay]: Couldn't find overlay called: \"%s\".\n",
                   next);
             return false;
          }
@@ -372,7 +372,7 @@ static void task_overlay_resolve_iterate(retro_task_t *task)
    if (!task_overlay_resolve_targets(loader->overlays,
             loader->resolve_pos, loader->size))
    {
-      RARCH_ERR("[Overlay]: Failed to resolve next targets.\n");
+      ELOG(@"[Overlay]: Failed to resolve next targets.\n");
       task_set_cancelled(task, true);
       loader->state   = OVERLAY_STATUS_DEFERRED_ERROR;
       return;
@@ -448,7 +448,7 @@ static void task_overlay_deferred_loading(retro_task_t *task)
                         overlay->config.normalized,
                         overlay->config.alpha_mod, overlay->config.range_mod))
                {
-                  RARCH_ERR("[Overlay]: Failed to load overlay descs for overlay #%u.\n",
+                  ELOG(@"[Overlay]: Failed to load overlay descs for overlay #%u.\n",
                         (unsigned)overlay->pos);
                   task_set_cancelled(task, true);
                   loader->state   = OVERLAY_STATUS_DEFERRED_ERROR;
@@ -512,7 +512,7 @@ static void task_overlay_deferred_load(retro_task_t *task)
       if (!config_get_uint(conf, overlay->config.descs.key,
                &overlay->config.descs.size))
       {
-         RARCH_ERR("[Overlay]: Failed to read number of descs from config key: %s.\n",
+         ELOG(@"[Overlay]: Failed to read number of descs from config key: %s.\n",
                overlay->config.descs.key);
          goto error;
       }
@@ -522,7 +522,7 @@ static void task_overlay_deferred_load(retro_task_t *task)
 
       if (!overlay_desc)
       {
-         RARCH_ERR("[Overlay]: Failed to allocate descs.\n");
+         ELOG(@"[Overlay]: Failed to allocate descs.\n");
          goto error;
       }
 
@@ -559,7 +559,7 @@ static void task_overlay_deferred_load(retro_task_t *task)
 
       if (!texture_img)
       {
-         RARCH_ERR("[Overlay]: Failed to allocate load_images.\n");
+         ELOG(@"[Overlay]: Failed to allocate load_images.\n");
          goto error;
       }
 
@@ -588,7 +588,7 @@ static void task_overlay_deferred_load(retro_task_t *task)
 
          if (!image_texture_load(&image_tex, overlay_resolved_path))
          {
-            RARCH_ERR("[Overlay]: Failed to load image: %s.\n",
+            ELOG(@"[Overlay]: Failed to load image: %s.\n",
                   overlay_resolved_path);
             loader->loading_status = OVERLAY_IMAGE_TRANSFER_ERROR;
             goto error;
@@ -641,7 +641,7 @@ static void task_overlay_deferred_load(retro_task_t *task)
                   &list, overlay->config.rect.array, ", ")  
                || list.size < 4)
          {
-            RARCH_ERR("[Overlay]: Failed to split rect \"%s\" into at least four tokens.\n",
+            ELOG(@"[Overlay]: Failed to split rect \"%s\" into at least four tokens.\n",
                   overlay->config.rect.array);
             string_list_deinitialize(&list);
             goto error;

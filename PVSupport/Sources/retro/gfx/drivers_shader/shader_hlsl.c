@@ -192,11 +192,11 @@ static bool hlsl_compile_program(
 
    if (ret_fp < 0 || ret_vp < 0 || listing_v || listing_f)
    {
-      RARCH_ERR("Cg/HLSL error:\n");
+      ELOG(@"Cg/HLSL error:\n");
       if(listing_f)
-         RARCH_ERR("Fragment:\n%s\n", (char*)listing_f->GetBufferPointer());
+         ELOG(@"Fragment:\n%s\n", (char*)listing_f->GetBufferPointer());
       if(listing_v)
-         RARCH_ERR("Vertex:\n%s\n", (char*)listing_v->GetBufferPointer());
+         ELOG(@"Vertex:\n%s\n", (char*)listing_v->GetBufferPointer());
 
       ret = false;
       goto end;
@@ -226,7 +226,7 @@ static bool hlsl_load_stock(hlsl_shader_data_t *hlsl, void *data)
 
    if (!hlsl_compile_program(hlsl, 0, &hlsl->prg[0], &program_info))
    {
-      RARCH_ERR("Failed to compile passthrough shader, is something wrong with your environment?\n");
+      ELOG(@"Failed to compile passthrough shader, is something wrong with your environment?\n");
       return false;
    }
 
@@ -264,7 +264,7 @@ static bool hlsl_load_shader(hlsl_shader_data_t *hlsl,
    fill_pathname_resolve_relative(path_buf, cgp_path,
       hlsl->cg_shader->pass[i].source.path, sizeof(path_buf));
 
-   RARCH_LOG("Loading Cg/HLSL shader: \"%s\".\n", path_buf);
+   VLOG(@"Loading Cg/HLSL shader: \"%s\".\n", path_buf);
 
    hlsl->d3d = (d3d_video_t*)data;
 
@@ -292,7 +292,7 @@ static bool hlsl_load_plain(hlsl_shader_data_t *hlsl, void *data, const char *pa
       program_info.combined = path;
       program_info.is_file  = true;
 
-      RARCH_LOG("Loading Cg/HLSL file: %s\n", path);
+      VLOG(@"Loading Cg/HLSL file: %s\n", path);
 
       strlcpy(hlsl->cg_shader->pass[0].source.path,
 		  path, sizeof(hlsl->cg_shader->pass[0].source.path));
@@ -303,7 +303,7 @@ static bool hlsl_load_plain(hlsl_shader_data_t *hlsl, void *data, const char *pa
    }
    else
    {
-      RARCH_LOG("Loading stock Cg/HLSL file.\n");
+      VLOG(@"Loading stock Cg/HLSL file.\n");
       hlsl->prg[1] = hlsl->prg[0];
    }
 
@@ -350,7 +350,7 @@ static bool hlsl_load_preset(hlsl_shader_data_t *hlsl, void *data, const char *p
    if (!hlsl_load_stock(hlsl, data))
       return false;
 
-   RARCH_LOG("Loading Cg meta-shader: %s\n", path);
+   VLOG(@"Loading Cg meta-shader: %s\n", path);
 
    conf = config_file_new(path);
 
@@ -364,7 +364,7 @@ static bool hlsl_load_preset(hlsl_shader_data_t *hlsl, void *data, const char *p
 
    if (!video_shader_read_conf_cgp(conf, hlsl->cg_shader))
    {
-      RARCH_ERR("Failed to parse CGP file.\n");
+      ELOG(@"Failed to parse CGP file.\n");
       goto error;
    }
 
@@ -372,7 +372,7 @@ static bool hlsl_load_preset(hlsl_shader_data_t *hlsl, void *data, const char *p
 
    if (hlsl->cg_shader->passes > RARCH_HLSL_MAX_SHADERS - 3)
    {
-      RARCH_WARN("Too many shaders ... Capping shader amount to %d.\n", RARCH_HLSL_MAX_SHADERS - 3);
+      WLOG(@"Too many shaders ... Capping shader amount to %d.\n", RARCH_HLSL_MAX_SHADERS - 3);
       hlsl->cg_shader->passes = RARCH_HLSL_MAX_SHADERS - 3;
    }
 
@@ -386,7 +386,7 @@ static bool hlsl_load_preset(hlsl_shader_data_t *hlsl, void *data, const char *p
    return true;
 
 error:
-   RARCH_ERR("Failed to load preset.\n");
+   ELOG(@"Failed to load preset.\n");
    if (conf)
       config_file_free(conf);
    conf = NULL;

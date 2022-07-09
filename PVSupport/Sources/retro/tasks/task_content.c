@@ -268,7 +268,7 @@ bool content_file_override_set(
          RBUF_RESIZE(p_content->content_override_list,
                num_entries + 1);
 
-         RARCH_LOG("[CONTENT OVERRIDE]: File Extension: '%s' - need_fullpath: %s, persistent_data: %s\n",
+         VLOG(@"[CONTENT OVERRIDE]: File Extension: '%s' - need_fullpath: %s, persistent_data: %s\n",
                ext, overrides[i].need_fullpath ? "TRUE" : "FALSE",
                overrides[i].persistent_data ? "TRUE" : "FALSE");
 
@@ -401,12 +401,12 @@ static void content_file_list_free(
          if (string_is_empty(path))
             continue;
 
-         RARCH_LOG("[CONTENT LOAD]: %s: %s\n",
+         VLOG(@"[CONTENT LOAD]: %s: %s\n",
                msg_hash_to_str(MSG_REMOVING_TEMPORARY_CONTENT_FILE),
                path);
 
          if (filestream_delete(path) != 0)
-            RARCH_ERR("[CONTENT LOAD]: %s: %s.\n",
+            ELOG(@"[CONTENT LOAD]: %s: %s.\n",
                   msg_hash_to_str(MSG_FAILED_TO_REMOVE_TEMPORARY_FILE),
                   path);
       }
@@ -720,7 +720,7 @@ static bool content_file_load_into_memory(
    *data      = NULL;
    *data_size = 0;
 
-   RARCH_LOG("[CONTENT LOAD]: %s: %s\n",
+   VLOG(@"[CONTENT LOAD]: %s: %s\n",
          msg_hash_to_str(MSG_LOADING_CONTENT_FILE), content_path);
 
    /* Read content from file into memory buffer */
@@ -774,7 +774,7 @@ static bool content_file_load_into_memory(
          {
             p_content->rom_crc = encoding_crc32(0, content_data,
                   (size_t)content_size);
-            RARCH_LOG("[CONTENT LOAD]: CRC32: 0x%x\n",
+            VLOG(@"[CONTENT LOAD]: CRC32: 0x%x\n",
                   (unsigned)p_content->rom_crc);
          }
          else
@@ -809,7 +809,7 @@ static bool content_file_extract_from_archive(
    temp_path[0] = '\0';
    msg[0]       = '\0';
 
-   RARCH_LOG("[CONTENT LOAD]: Core requires uncompressed content - "
+   VLOG(@"[CONTENT LOAD]: Core requires uncompressed content - "
          "extracting archive to temporary directory.\n");
 
    /* Attempt to extract file  */
@@ -837,7 +837,7 @@ static bool content_file_extract_from_archive(
    /* Update content path pointer */
    *content_path = temp_path_ptr;
 
-   RARCH_LOG("[CONTENT LOAD]: Content successfully extracted to: %s\n",
+   VLOG(@"[CONTENT LOAD]: Content successfully extracted to: %s\n",
          temp_path);
 
    return true;
@@ -1058,7 +1058,7 @@ static bool content_file_load(
                new_path[0]    = '\0';
                new_basedir[0] = '\0';
 
-               RARCH_LOG("[CONTENT LOAD]: Core does not support VFS"
+               VLOG(@"[CONTENT LOAD]: Core does not support VFS"
                      " - copying to cache directory\n");
 
                if (!string_is_empty(content_ctx->directory_cache))
@@ -1069,7 +1069,7 @@ static bool content_file_load(
                    !path_is_directory(new_basedir) ||
                   !is_path_accessible_using_standard_io(new_basedir))
                {
-                  RARCH_WARN("[CONTENT LOAD]: Tried copying to cache directory, "
+                  WLOG(@"[CONTENT LOAD]: Tried copying to cache directory, "
                         "but cache directory was not set or found. "
                         "Setting cache directory to root of writable app directory...\n");
                   strlcpy(new_basedir, uwp_dir_data, sizeof(new_basedir));
@@ -1107,7 +1107,7 @@ static bool content_file_load(
                used_vfs_fallback_copy = true;
             }
 #endif
-            RARCH_LOG("[CONTENT LOAD]: %s\n", msg_hash_to_str(
+            VLOG(@"[CONTENT LOAD]: %s\n", msg_hash_to_str(
                   MSG_CONTENT_LOADING_SKIPPED_IMPLEMENTATION_WILL_DO_IT));
 
             /* First content file is significant: need to
@@ -1134,7 +1134,7 @@ static bool content_file_load(
             content_path, content_data, content_size,
             CONTENT_FILE_ATTR_GET_PERSISTENT(content->elems[i].attr), i))
       {
-         RARCH_LOG("[CONTENT LOAD]: Failed to process content file: %s\n", content_path);
+         VLOG(@"[CONTENT LOAD]: Failed to process content file: %s\n", content_path);
          if (content_data)
             free((void*)content_data);
          *error_enum = MSG_FAILED_TO_LOAD_CONTENT;
@@ -1367,13 +1367,13 @@ static void content_load_init_wrap(
 
    if (args->content_path)
    {
-      RARCH_LOG("[CORE]: Using content: %s.\n", args->content_path);
+      VLOG(@"[CORE]: Using content: %s.\n", args->content_path);
       argv[(*argc)++] = strdup(args->content_path);
    }
 #ifdef HAVE_MENU
    else
    {
-      RARCH_LOG("[CORE]: %s\n",
+      VLOG(@"[CORE]: %s\n",
             msg_hash_to_str(MSG_NO_CONTENT_STARTING_DUMMY_CORE));
       argv[(*argc)++] = strdup("--menu");
    }
@@ -1412,7 +1412,7 @@ static void content_load_init_wrap(
    {
       int i;
       for (i = 0; i < *argc; i++)
-         RARCH_LOG("[CORE]: Arg #%d: %s\n", i, argv[i]);
+         VLOG(@"[CORE]: Arg #%d: %s\n", i, argv[i]);
    }
 }
 
@@ -1736,7 +1736,7 @@ static bool firmware_update_status(
       firmware_info.directory.system = s;
    }
 
-   RARCH_LOG("[CONTENT LOAD]: Updating firmware status for: %s on %s\n",
+   VLOG(@"[CONTENT LOAD]: Updating firmware status for: %s on %s\n",
          core_info->path,
          firmware_info.directory.system);
 
@@ -1756,7 +1756,7 @@ static bool firmware_update_status(
             msg_hash_to_str(MSG_FIRMWARE),
             100, 500, true, NULL,
             MESSAGE_QUEUE_ICON_DEFAULT, MESSAGE_QUEUE_CATEGORY_INFO);
-      RARCH_LOG("[CONTENT LOAD]: Load content blocked. Reason: %s\n",
+      VLOG(@"[CONTENT LOAD]: Load content blocked. Reason: %s\n",
             msg_hash_to_str(MSG_FIRMWARE));
 
       return true;
@@ -1837,7 +1837,7 @@ bool task_push_start_dummy_core(content_ctx_info_t *content_info)
       if (error_string)
       {
          runloop_msg_queue_push(error_string, 2, 90, true, NULL, MESSAGE_QUEUE_ICON_DEFAULT, MESSAGE_QUEUE_CATEGORY_INFO);
-         RARCH_ERR("[CONTENT LOAD]: %s\n", error_string);
+         ELOG(@"[CONTENT LOAD]: %s\n", error_string);
          free(error_string);
       }
    }
@@ -1984,7 +1984,7 @@ end:
       if (error_string)
       {
          runloop_msg_queue_push(error_string, 2, 90, true, NULL, MESSAGE_QUEUE_ICON_DEFAULT, MESSAGE_QUEUE_CATEGORY_INFO);
-         RARCH_ERR("[CONTENT LOAD]: %s\n", error_string);
+         ELOG(@"[CONTENT LOAD]: %s\n", error_string);
          free(error_string);
       }
 
@@ -2073,7 +2073,7 @@ bool task_push_start_current_core(content_ctx_info_t *content_info)
       if (error_string)
       {
          runloop_msg_queue_push(error_string, 2, 90, true, NULL, MESSAGE_QUEUE_ICON_DEFAULT, MESSAGE_QUEUE_CATEGORY_INFO);
-         RARCH_ERR("[CONTENT LOAD]: %s\n", error_string);
+         ELOG(@"[CONTENT LOAD]: %s\n", error_string);
          free(error_string);
       }
 
@@ -2215,7 +2215,7 @@ bool task_push_load_content_with_new_core_from_menu(
       if (error_string)
       {
          runloop_msg_queue_push(error_string, 2, 90, true, NULL, MESSAGE_QUEUE_ICON_DEFAULT, MESSAGE_QUEUE_CATEGORY_INFO);
-         RARCH_ERR("[CONTENT LOAD]: %s\n", error_string);
+         ELOG(@"[CONTENT LOAD]: %s\n", error_string);
          free(error_string);
       }
 
@@ -2363,7 +2363,7 @@ end:
       if (error_string)
       {
          runloop_msg_queue_push(error_string, 2, 90, true, NULL, MESSAGE_QUEUE_ICON_DEFAULT, MESSAGE_QUEUE_CATEGORY_INFO);
-         RARCH_ERR("[CONTENT LOAD]: %s\n", error_string);
+         ELOG(@"[CONTENT LOAD]: %s\n", error_string);
          free(error_string);
       }
 
@@ -2593,7 +2593,7 @@ void content_set_subsystem(unsigned idx)
       p_content->pending_subsystem_rom_num = subsystem->num_roms;
    }
 
-   RARCH_LOG("[Subsystem]: Setting current subsystem to: %d(%s) Content amount: %d\n",
+   VLOG(@"[Subsystem]: Setting current subsystem to: %d(%s) Content amount: %d\n",
       p_content->pending_subsystem_id,
       p_content->pending_subsystem_ident,
       p_content->pending_subsystem_rom_num);
@@ -2657,7 +2657,7 @@ void content_add_subsystem(const char* path)
    strlcpy(p_content->pending_subsystem_roms[
          p_content->pending_subsystem_rom_id],
          path, pending_size);
-   RARCH_LOG("[Subsystem]: Subsystem id: %d Subsystem ident:"
+   VLOG(@"[Subsystem]: Subsystem id: %d Subsystem ident:"
          " %s Content ID: %d, Content Path: %s\n",
          p_content->pending_subsystem_id,
          p_content->pending_subsystem_ident,
@@ -2687,7 +2687,7 @@ uint32_t content_get_crc(void)
       p_content->pending_rom_crc   = false;
       p_content->rom_crc           = file_crc32(0,
             (const char*)p_content->pending_rom_crc_path);
-      RARCH_LOG("[CONTENT LOAD]: CRC32: 0x%x .\n",
+      VLOG(@"[CONTENT LOAD]: CRC32: 0x%x .\n",
             (unsigned)p_content->rom_crc);
    }
    return p_content->rom_crc;
@@ -2837,7 +2837,7 @@ bool content_init(void)
          case MSG_ERROR_LIBRETRO_CORE_REQUIRES_VFS:
          case MSG_FAILED_TO_LOAD_CONTENT:
          case MSG_ERROR_LIBRETRO_CORE_REQUIRES_CONTENT:
-            RARCH_ERR("[CONTENT LOAD]: %s\n", msg_hash_to_str(error_enum));
+            ELOG(@"[CONTENT LOAD]: %s\n", msg_hash_to_str(error_enum));
             runloop_msg_queue_push(msg_hash_to_str(error_enum), 2, ret ? 1 : 180, false, NULL, MESSAGE_QUEUE_ICON_DEFAULT, MESSAGE_QUEUE_CATEGORY_INFO);
             break;
          case MSG_UNKNOWN:
@@ -2850,11 +2850,11 @@ bool content_init(void)
    {
       if (ret)
       {
-         RARCH_LOG("[CONTENT LOAD]: %s\n", error_string);
+         VLOG(@"[CONTENT LOAD]: %s\n", error_string);
       }
       else
       {
-         RARCH_ERR("[CONTENT LOAD]: %s\n", error_string);
+         ELOG(@"[CONTENT LOAD]: %s\n", error_string);
       }
       /* Do not flush the message queue here
        * > This allows any core-generated error messages

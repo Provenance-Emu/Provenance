@@ -57,7 +57,7 @@ static void alsa_worker_thread(void *data)
    uint8_t *buf = (uint8_t *)calloc(1, alsa->period_size);
    if (!buf)
    {
-      RARCH_ERR("failed to allocate audio buffer");
+      ELOG(@"failed to allocate audio buffer");
       goto end;
    }
 
@@ -83,7 +83,7 @@ static void alsa_worker_thread(void *data)
       {
          if (snd_pcm_recover(alsa->pcm, frames, 1) < 0)
          {
-            RARCH_ERR("[ALSA]: (#2) Failed to recover from error (%s)\n",
+            ELOG(@"[ALSA]: (#2) Failed to recover from error (%s)\n",
                   snd_strerror(frames));
             break;
          }
@@ -92,7 +92,7 @@ static void alsa_worker_thread(void *data)
       }
       else if (frames < 0)
       {
-         RARCH_ERR("[ALSA]: Unknown error occurred (%s).\n",
+         ELOG(@"[ALSA]: Unknown error occurred (%s).\n",
                snd_strerror(frames));
          break;
       }
@@ -117,10 +117,10 @@ static bool alsathread_find_float_format(snd_pcm_t *pcm,
 {
    if (snd_pcm_hw_params_test_format(pcm, params, SND_PCM_FORMAT_FLOAT) == 0)
    {
-      RARCH_LOG("ALSA: Using floating point format.\n");
+      VLOG(@"ALSA: Using floating point format.\n");
       return true;
    }
-   RARCH_LOG("ALSA: Using signed 16-bit format.\n");
+   VLOG(@"ALSA: Using signed 16-bit format.\n");
    return false;
 }
 
@@ -199,10 +199,10 @@ static void *alsa_thread_init(const char *device,
    if (snd_pcm_hw_params_get_period_size(params, &alsa->period_frames, NULL))
       snd_pcm_hw_params_get_period_size_min(
             params, &alsa->period_frames, NULL);
-   RARCH_LOG("ALSA: Period size: %d frames\n", (int)alsa->period_frames);
+   VLOG(@"ALSA: Period size: %d frames\n", (int)alsa->period_frames);
    if (snd_pcm_hw_params_get_buffer_size(params, &buffer_size))
       snd_pcm_hw_params_get_buffer_size_max(params, &buffer_size);
-   RARCH_LOG("ALSA: Buffer size: %d frames\n", (int)buffer_size);
+   VLOG(@"ALSA: Buffer size: %d frames\n", (int)buffer_size);
 
    alsa->buffer_size = snd_pcm_frames_to_bytes(alsa->pcm, buffer_size);
    alsa->period_size = snd_pcm_frames_to_bytes(alsa->pcm, alsa->period_frames);
@@ -226,14 +226,14 @@ static void *alsa_thread_init(const char *device,
    alsa->worker_thread = sthread_create(alsa_worker_thread, alsa);
    if (!alsa->worker_thread)
    {
-      RARCH_ERR("error initializing worker thread");
+      ELOG(@"error initializing worker thread");
       goto error;
    }
 
    return alsa;
 
 error:
-   RARCH_ERR("ALSA: Failed to initialize...\n");
+   ELOG(@"ALSA: Failed to initialize...\n");
    if (params)
       snd_pcm_hw_params_free(params);
 

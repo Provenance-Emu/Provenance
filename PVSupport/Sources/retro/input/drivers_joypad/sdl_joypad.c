@@ -115,7 +115,7 @@ static void sdl_pad_connect(unsigned id)
 
    if (!success)
    {
-      RARCH_ERR("[SDL]: Couldn't open joystick #%u: %s.\n", id, SDL_GetError());
+      ELOG(@"[SDL]: Couldn't open joystick #%u: %s.\n", id, SDL_GetError());
 
       if (pad->joypad)
          SDL_JoystickClose(pad->joypad);
@@ -146,18 +146,18 @@ static void sdl_pad_connect(unsigned id)
 
    input_config_autoconfigure_joypad(&params);
 
-   RARCH_LOG("[SDL]: Device #%u (%04x:%04x) connected: %s.\n", id, vendor,
+   VLOG(@"[SDL]: Device #%u (%04x:%04x) connected: %s.\n", id, vendor,
              product, sdl_pad_name(id));
 
 #ifdef HAVE_SDL2
 
    if (pad->controller)
-      RARCH_LOG("[SDL]: Device #%u supports game controller api.\n", id);
+      VLOG(@"[SDL]: Device #%u supports game controller api.\n", id);
 
    pad->haptic = g_has_haptic ? SDL_HapticOpenFromJoystick(pad->joypad) : NULL;
 
    if (g_has_haptic && !pad->haptic)
-      RARCH_WARN("[SDL]: Couldn't open haptic device of the joypad #%u: %s\n",
+      WLOG(@"[SDL]: Couldn't open haptic device of the joypad #%u: %s\n",
                  id, SDL_GetError());
 
    pad->rumble_effect = -1;
@@ -173,7 +173,7 @@ static void sdl_pad_connect(unsigned id)
       if (SDL_HapticEffectSupported(pad->haptic, &efx) == SDL_FALSE)
       {
          pad->rumble_effect = -2;
-         RARCH_WARN("[SDL]: Device #%u does not support rumble.\n", id);
+         WLOG(@"[SDL]: Device #%u does not support rumble.\n", id);
       }
    }
 #endif
@@ -185,10 +185,10 @@ static void sdl_pad_connect(unsigned id)
 #ifdef HAVE_SDL2
    pad->num_balls   = SDL_JoystickNumBalls(pad->joypad);
 
-   RARCH_LOG("[SDL]: Device #%u has: %u axes, %u buttons, %u hats and %u trackballs.\n",
+   VLOG(@"[SDL]: Device #%u has: %u axes, %u buttons, %u hats and %u trackballs.\n",
              id, pad->num_axes, pad->num_buttons, pad->num_hats, pad->num_balls);
 #else
-   RARCH_LOG("[SDL]: Device #%u has: %u axes, %u buttons, %u hats.\n",
+   VLOG(@"[SDL]: Device #%u has: %u axes, %u buttons, %u hats.\n",
              id, pad->num_axes, pad->num_buttons, pad->num_hats);
 #endif
 }
@@ -245,7 +245,7 @@ static bool sdl_joypad_init(void *data)
 #if HAVE_SDL2
    g_has_haptic = false;
    if (SDL_InitSubSystem(SDL_INIT_HAPTIC) < 0)
-      RARCH_WARN("[SDL]: Failed to initialize haptic device support: %s\n",
+      WLOG(@"[SDL]: Failed to initialize haptic device support: %s\n",
             SDL_GetError());
    else
       g_has_haptic = true;
@@ -413,7 +413,7 @@ static bool sdl_joypad_set_rumble(unsigned pad, enum retro_rumble_effect effect,
       joypad->rumble_effect = SDL_HapticNewEffect(sdl_pads[pad].haptic, &efx);
       if (joypad->rumble_effect < 0)
       {
-         RARCH_WARN("[SDL]: Failed to create rumble effect for joypad %u: %s\n",
+         WLOG(@"[SDL]: Failed to create rumble effect for joypad %u: %s\n",
                     pad, SDL_GetError());
          joypad->rumble_effect = -2;
          return false;
@@ -427,7 +427,7 @@ static bool sdl_joypad_set_rumble(unsigned pad, enum retro_rumble_effect effect,
 
    if (SDL_HapticRunEffect(joypad->haptic, joypad->rumble_effect, 1) < 0)
    {
-      RARCH_WARN("[SDL]: Failed to set rumble effect on joypad %u: %s\n",
+      WLOG(@"[SDL]: Failed to set rumble effect on joypad %u: %s\n",
                           pad, SDL_GetError());
       return false;
    }

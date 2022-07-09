@@ -108,12 +108,12 @@ void find_record_driver(void)
    {
       unsigned d;
 
-      RARCH_ERR("Couldn't find any record driver named \"%s\"\n",
+      printf("Couldn't find any record driver named \"%s\"\n",
             settings->audio.driver);
       RARCH_LOG_OUTPUT("Available record drivers are:\n");
       for (d = 0; record_driver_find_handle(d); d++)
          RARCH_LOG_OUTPUT("\t%s\n", record_driver_find_ident(d));
-      RARCH_WARN("Going to default to first record driver...\n");
+      printf("Going to default to first record driver...\n");
 
       recording_driver = (const record_driver_t*)record_driver_find_handle(0);
 
@@ -198,7 +198,7 @@ void recording_dump_frame(const void *data, unsigned width,
 
       if (!vp.width || !vp.height)
       {
-         RARCH_WARN("%s \n",
+         printf("%s \n",
                msg_hash_to_str(MSG_VIEWPORT_SIZE_CALCULATION_FAILED));
          command_event(CMD_EVENT_GPU_RECORD_DEINIT, NULL);
 
@@ -210,7 +210,7 @@ void recording_dump_frame(const void *data, unsigned width,
       if (vp.width != global->record.gpu_width ||
             vp.height != global->record.gpu_height)
       {
-         RARCH_WARN("%s\n", msg_hash_to_str(MSG_RECORDING_TERMINATED_DUE_TO_RESIZE));
+         printf("%s\n", msg_hash_to_str(MSG_RECORDING_TERMINATED_DUE_TO_RESIZE));
 
          runloop_msg_queue_push(
                msg_hash_to_str(MSG_RECORDING_TERMINATED_DUE_TO_RESIZE),
@@ -308,7 +308,7 @@ bool recording_init(void)
 
    if (rarch_ctl(RARCH_CTL_IS_DUMMY_CORE, NULL))
    {
-      RARCH_WARN("%s\n",
+      printf("%s\n",
             msg_hash_to_str(MSG_USING_LIBRETRO_DUMMY_CORE_RECORDING_SKIPPED));
       return false;
    }
@@ -316,16 +316,17 @@ bool recording_init(void)
    if (!settings->video.gpu_record 
          && video_driver_is_hw_context())
    {
-      RARCH_WARN("%s.\n",
+      printf("%s.\n",
             msg_hash_to_str(MSG_HW_RENDERED_MUST_USE_POSTSHADED_RECORDING));
       return false;
    }
 
-   RARCH_LOG("%s: FPS: %.4f, Sample rate: %.4f\n",
+#if DEBUG
+   printf("%s: FPS: %.4f, Sample rate: %.4f\n",
          msg_hash_to_str(MSG_CUSTOM_TIMING_GIVEN),
          (float)av_info->timing.fps,
          (float)av_info->timing.sample_rate);
-
+#endif
    strlcpy(recording_file, global->record.path, sizeof(recording_file));
 
    if (global->record.use_output_dir)
@@ -357,7 +358,7 @@ bool recording_init(void)
 
       if (!vp.width || !vp.height)
       {
-         RARCH_ERR("Failed to get viewport information from video driver. "
+         printf("Failed to get viewport information from video driver. "
                "Cannot start recording ...\n");
          return false;
       }
@@ -376,10 +377,11 @@ bool recording_init(void)
       params.pix_fmt             = FFEMU_PIX_BGR24;
       global->record.gpu_width   = vp.width;
       global->record.gpu_height  = vp.height;
-
-      RARCH_LOG("%s %u x %u\n", msg_hash_to_str(MSG_DETECTED_VIEWPORT_OF),
+#if DEBUG
+      printf("%s %u x %u\n", msg_hash_to_str(MSG_DETECTED_VIEWPORT_OF),
             vp.width, vp.height);
 
+#endif
       gpu_size = vp.width * vp.height * 3;
       if (!video_driver_gpu_record_init(gpu_size))
          return false;
@@ -416,17 +418,18 @@ bool recording_init(void)
          params.fb_height = next_pow2(max_height);
       }
    }
-
-   RARCH_LOG("%s %s @ %ux%u. (FB size: %ux%u pix_fmt: %u)\n",
+#if DEBUG
+   printf("%s %s @ %ux%u. (FB size: %ux%u pix_fmt: %u)\n",
          msg_hash_to_str(MSG_RECORDING_TO),
          global->record.path,
          params.out_width, params.out_height,
          params.fb_width, params.fb_height,
          (unsigned)params.pix_fmt);
-
+#endif
+    
    if (!record_driver_init_first(&recording_driver, &recording_data, &params))
    {
-      RARCH_ERR("%s\n", msg_hash_to_str(MSG_FAILED_TO_START_RECORDING));
+      printf("%s\n", msg_hash_to_str(MSG_FAILED_TO_START_RECORDING));
       command_event(CMD_EVENT_GPU_RECORD_DEINIT, NULL);
 
       return false;

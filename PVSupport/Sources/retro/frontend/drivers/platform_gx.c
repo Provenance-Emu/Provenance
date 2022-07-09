@@ -426,15 +426,15 @@ static bool frontend_gx_set_fork(enum frontend_fork fork_mode)
    switch (fork_mode)
    {
       case FRONTEND_FORK_CORE:
-         RARCH_LOG("FRONTEND_FORK_CORE\n");
+         VLOG(@"FRONTEND_FORK_CORE\n");
          gx_fork_mode  = fork_mode;
          break;
       case FRONTEND_FORK_CORE_WITH_ARGS:
-         RARCH_LOG("FRONTEND_FORK_CORE_WITH_ARGS\n");
+         VLOG(@"FRONTEND_FORK_CORE_WITH_ARGS\n");
          gx_fork_mode  = fork_mode;
          break;
       case FRONTEND_FORK_RESTART:
-         RARCH_LOG("FRONTEND_FORK_RESTART\n");
+         VLOG(@"FRONTEND_FORK_RESTART\n");
          gx_fork_mode  = fork_mode;
          command_event(CMD_EVENT_QUIT, NULL);
          break;

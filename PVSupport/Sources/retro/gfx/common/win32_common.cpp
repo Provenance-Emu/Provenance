@@ -581,7 +581,7 @@ bool win32_monitor_set_fullscreen(unsigned width, unsigned height, unsigned refr
    devmode.dmDisplayFrequency = refresh;
    devmode.dmFields     = DM_PELSWIDTH | DM_PELSHEIGHT | DM_DISPLAYFREQUENCY;
 
-   RARCH_LOG("[WGL]: Setting fullscreen to %ux%u @ %uHz on device %s.\n", width, height, refresh, dev_name);
+   VLOG(@"[WGL]: Setting fullscreen to %ux%u @ %uHz on device %s.\n", width, height, refresh, dev_name);
    return ChangeDisplaySettingsEx(dev_name, &devmode, NULL, CDS_FULLSCREEN, NULL) == DISP_CHANGE_SUCCESSFUL;
 #endif
 }

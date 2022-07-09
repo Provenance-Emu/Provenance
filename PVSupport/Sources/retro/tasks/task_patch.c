@@ -624,7 +624,7 @@ static bool apply_patch_content(uint8_t **buf,
    uint64_t target_size     = 0;
    uint8_t *patched_content = NULL;
 
-   RARCH_LOG("Found %s file in \"%s\", attempting to patch ...\n",
+   VLOG(@"Found %s file in \"%s\", attempting to patch ...\n",
          patch_desc, patch_path);
 
    if ((err = func((const uint8_t*)patch_data, patch_size, ret_buf,
@@ -650,7 +650,7 @@ static bool apply_patch_content(uint8_t **buf,
       }
    }
    else
-      RARCH_ERR("%s %s: %s #%u\n",
+      ELOG(@"%s %s: %s #%u\n",
             msg_hash_to_str(MSG_FAILED_TO_PATCH),
             patch_desc,
             msg_hash_to_str(MSG_ERROR),
@@ -766,7 +766,7 @@ bool patch_content(
          + (unsigned)is_bps_pref
          + (unsigned)is_ups_pref > 1)
    {
-      RARCH_WARN("%s\n",
+      WLOG(@"%s\n",
             msg_hash_to_str(MSG_SEVERAL_PATCHES_ARE_EXPLICITLY_DEFINED));
       return false;
    }
@@ -837,7 +837,7 @@ bool patch_content(
    }
 
    if(!patch_found)
-      RARCH_LOG("%s\n",
+      VLOG(@"%s\n",
             msg_hash_to_str(MSG_DID_NOT_FIND_A_VALID_CONTENT_PATCH));
 
    return patch_found;

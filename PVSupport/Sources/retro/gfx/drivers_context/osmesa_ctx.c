@@ -160,14 +160,14 @@ static void *osmesa_ctx_init(void *video_driver)
 
    if (!osmesa->ctx) {
 #if defined(HAVE_OSMESA_CREATE_CONTEXT_ATTRIBS) || defined(HAVE_OSMESA_CREATE_CONTEXT_EXT)
-      RARCH_WARN("[osmesa]: Falling back to standard context creation.\n");
+      WLOG(@"[osmesa]: Falling back to standard context creation.\n");
 #endif
       osmesa->ctx = OSMesaCreateContext(g_osmesa_format, NULL);
    }
 
    if (!osmesa->ctx) {
       free(osmesa);
-      RARCH_WARN("[omesa]: Failed to initialize the context driver.\n");
+      WLOG(@"[omesa]: Failed to initialize the context driver.\n");
       return NULL;
    }
 
@@ -256,18 +256,18 @@ static bool osmesa_ctx_set_video_mode(void *data, unsigned width, unsigned heigh
       unlink(g_osmesa_fifo);
       if (mkfifo(g_osmesa_fifo, 0666) == 0)
       {
-         RARCH_WARN("[osmesa]: Please connect the sink to the fifo...\n");
-         RARCH_WARN("[osmesa]: Picture size is %ux%u\n", width, height);
+         WLOG(@"[osmesa]: Please connect the sink to the fifo...\n");
+         WLOG(@"[osmesa]: Picture size is %ux%u\n", width, height);
          osmesa->socket = open(g_osmesa_fifo, O_WRONLY);
 
          if (osmesa->socket)
-            RARCH_WARN("[osmesa]: Initialized fifo at %s\n", g_osmesa_fifo);
+            WLOG(@"[osmesa]: Initialized fifo at %s\n", g_osmesa_fifo);
       }
 
       if (!osmesa->socket || osmesa->socket < 0)
       {
          unlink(g_osmesa_fifo);
-         RARCH_WARN("[osmesa]: Failed to initialize fifo: %s\n", strerror(errno));
+         WLOG(@"[osmesa]: Failed to initialize fifo: %s\n", strerror(errno));
       }
 #endif
       osmesa_fifo_open(osmesa);

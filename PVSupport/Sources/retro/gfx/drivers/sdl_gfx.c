@@ -97,7 +97,7 @@ static void sdl_init_font(sdl_video_t *vid, const char *font_path, unsigned font
             *settings->path.font ? settings->path.font : NULL,
             settings->video.font_size))
    {
-      RARCH_LOG("[SDL]: Could not initialize fonts.\n");
+      VLOG(@"[SDL]: Could not initialize fonts.\n");
       return;
    }
 
@@ -250,10 +250,10 @@ static void *sdl_gfx_init(const video_info_t *video, const input_driver_t **inpu
    retro_assert(video_info);
    full_x = video_info->current_w;
    full_y = video_info->current_h;
-   RARCH_LOG("[SDL]: Detecting desktop resolution %ux%u.\n", full_x, full_y);
+   VLOG(@"[SDL]: Detecting desktop resolution %ux%u.\n", full_x, full_y);
 
    if (!video->fullscreen)
-      RARCH_LOG("[SDL]: Creating window @ %ux%u\n", video->width, video->height);
+      VLOG(@"[SDL]: Creating window @ %ux%u\n", video->width, video->height);
 
    vid->screen = SDL_SetVideoMode(video->width, video->height, 32,
          SDL_HWSURFACE | SDL_HWACCEL | SDL_DOUBLEBUF | (video->fullscreen ? SDL_FULLSCREEN : 0));
@@ -264,7 +264,7 @@ static void *sdl_gfx_init(const video_info_t *video, const input_driver_t **inpu
 
    if (!vid->screen)
    {
-      RARCH_ERR("[SDL]: Failed to init SDL surface: %s\n", SDL_GetError());
+      ELOG(@"[SDL]: Failed to init SDL surface: %s\n", SDL_GetError());
       goto error;
    }
 
@@ -302,7 +302,7 @@ static void *sdl_gfx_init(const video_info_t *video, const input_driver_t **inpu
 
    if (!vid->menu.frame)
    {
-      RARCH_ERR("[SDL]: Failed to init menu surface: %s\n", SDL_GetError());
+      ELOG(@"[SDL]: Failed to init menu surface: %s\n", SDL_GetError());
       goto error;
    }
 

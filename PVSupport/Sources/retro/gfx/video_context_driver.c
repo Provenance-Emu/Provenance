@@ -131,7 +131,7 @@ bool video_context_driver_find_prev_driver(void)
       return true;
    }
 
-   RARCH_WARN("Couldn't find any previous video context driver.\n");
+   WLOG(@"Couldn't find any previous video context driver.\n");
    return false;
 }
 
@@ -153,7 +153,7 @@ bool video_context_driver_find_next_driver(void)
       return true;
    }
 
-   RARCH_WARN("Couldn't find any next video context driver.\n");
+   WLOG(@"Couldn't find any next video context driver.\n");
    return false;
 }
 
@@ -197,7 +197,7 @@ static const gfx_ctx_driver_t *video_context_driver_init(
    }
 
 #ifndef _WIN32
-   RARCH_WARN("Failed to bind API (#%u, version %u.%u) on context driver \"%s\".\n",
+   WLOG(@"Failed to bind API (#%u, version %u.%u) on context driver \"%s\".\n",
          (unsigned)api, major, minor, ctx->ident);
 #endif
 

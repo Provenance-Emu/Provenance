@@ -19,7 +19,7 @@
 
 static void *nullinput_input_init(void)
 {
-   RARCH_ERR("Using the null input driver. RetroArch will ignore you.");
+   printf("Using the null input driver. RetroArch will ignore you.");
    return (void*)-1;
 }
 

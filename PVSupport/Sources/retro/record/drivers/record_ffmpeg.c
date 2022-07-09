@@ -237,28 +237,28 @@ static void ffmpeg_audio_resolve_format(struct ff_audio_info *audio,
       audio->codec->sample_fmt = AV_SAMPLE_FMT_FLTP;
       audio->use_float         = true;
       audio->is_planar         = true;
-      RARCH_LOG("[FFmpeg]: Using sample format FLTP.\n");
+      VLOG(@"[FFmpeg]: Using sample format FLTP.\n");
    }
    else if (ffmpeg_codec_has_sample_format(AV_SAMPLE_FMT_FLT, codec->sample_fmts))
    {
       audio->codec->sample_fmt = AV_SAMPLE_FMT_FLT;
       audio->use_float         = true;
       audio->is_planar         = false;
-      RARCH_LOG("[FFmpeg]: Using sample format FLT.\n");
+      VLOG(@"[FFmpeg]: Using sample format FLT.\n");
    }
    else if (ffmpeg_codec_has_sample_format(AV_SAMPLE_FMT_S16P, codec->sample_fmts))
    {
       audio->codec->sample_fmt = AV_SAMPLE_FMT_S16P;
       audio->use_float         = false;
       audio->is_planar         = true;
-      RARCH_LOG("[FFmpeg]: Using sample format S16P.\n");
+      VLOG(@"[FFmpeg]: Using sample format S16P.\n");
    }
    else if (ffmpeg_codec_has_sample_format(AV_SAMPLE_FMT_S16, codec->sample_fmts))
    {
       audio->codec->sample_fmt = AV_SAMPLE_FMT_S16;
       audio->use_float         = false;
       audio->is_planar         = false;
-      RARCH_LOG("[FFmpeg]: Using sample format S16.\n");
+      VLOG(@"[FFmpeg]: Using sample format S16.\n");
    }
    audio->sample_size = audio->use_float ? sizeof(float) : sizeof(int16_t);
 }
@@ -297,7 +297,7 @@ static void ffmpeg_audio_resolve_sample_rate(ffmpeg_t *handle,
       }
 
       params->sample_rate = best_rate;
-      RARCH_LOG("[FFmpeg]: Using output sampling rate: %d.\n", best_rate);
+      VLOG(@"[FFmpeg]: Using output sampling rate: %d.\n", best_rate);
    }
 }
 
@@ -311,7 +311,7 @@ static bool ffmpeg_init_audio(ffmpeg_t *handle)
          *params->acodec ? params->acodec : "flac");
    if (!codec)
    {
-      RARCH_ERR("[FFmpeg]: Cannot find acodec %s.\n",
+      ELOG(@"[FFmpeg]: Cannot find acodec %s.\n",
             *params->acodec ? params->acodec : "flac");
       return false;
    }
@@ -372,7 +372,7 @@ static bool ffmpeg_init_audio(ffmpeg_t *handle)
          audio->sample_size);
 
 #if 0
-   RARCH_LOG("[FFmpeg]: Audio frame size: %d.\n", audio->codec->frame_size);
+   VLOG(@"[FFmpeg]: Audio frame size: %d.\n", audio->codec->frame_size);
 #endif
 
    if (!audio->buffer)
@@ -405,7 +405,7 @@ static bool ffmpeg_init_video(ffmpeg_t *handle)
 
    if (!codec)
    {
-      RARCH_ERR("[FFmpeg]: Cannot find vcodec %s.\n",
+      ELOG(@"[FFmpeg]: Cannot find vcodec %s.\n",
             *params->vcodec ? params->vcodec : "libx264rgb");
       return false;
    }
@@ -543,7 +543,7 @@ static bool ffmpeg_init_config(struct ff_config_param *params,
    params->conf = config_file_new(config);
    if (!params->conf)
    {
-      RARCH_ERR("Failed to load FFmpeg config \"%s\".\n", config);
+      ELOG(@"Failed to load FFmpeg config \"%s\".\n", config);
       return false;
    }
 
@@ -578,7 +578,7 @@ static bool ffmpeg_init_config(struct ff_config_param *params,
       params->out_pix_fmt = av_get_pix_fmt(pix_fmt);
       if (params->out_pix_fmt == PIX_FMT_NONE)
       {
-         RARCH_ERR("Cannot find pix_fmt \"%s\".\n", pix_fmt);
+         ELOG(@"Cannot find pix_fmt \"%s\".\n", pix_fmt);
          return false;
       }
    }

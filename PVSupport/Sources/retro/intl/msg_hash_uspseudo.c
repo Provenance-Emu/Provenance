@@ -4468,7 +4468,7 @@ const char *msg_hash_to_str_us(enum msg_hash_enums msg)
          return "Wallpâpêr opacîtÿ";
       default:
 #if 0
-         RARCH_LOG("Unimplèmented: [%d]\n", msg);
+         VLOG(@"Unimplèmented: [%d]\n", msg);
 #endif
          break;
    }

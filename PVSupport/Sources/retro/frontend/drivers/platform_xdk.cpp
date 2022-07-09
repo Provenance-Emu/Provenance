@@ -1297,15 +1297,15 @@ static bool frontend_xdk_set_fork(enum frontend_fork fork_mode)
    switch (fork_mode)
    {
       case FRONTEND_FORK_CORE:
-         RARCH_LOG("FRONTEND_FORK_CORE\n");
+         VLOG(@"FRONTEND_FORK_CORE\n");
          xdk_fork_mode  = fork_mode;
          break;
       case FRONTEND_FORK_CORE_WITH_ARGS:
-         RARCH_LOG("FRONTEND_FORK_CORE_WITH_ARGS\n");
+         VLOG(@"FRONTEND_FORK_CORE_WITH_ARGS\n");
          xdk_fork_mode  = fork_mode;
          break;
       case FRONTEND_FORK_RESTART:
-         RARCH_LOG("FRONTEND_FORK_SALAMANDER_RESTART\n");
+         VLOG(@"FRONTEND_FORK_SALAMANDER_RESTART\n");
          /* NOTE: We don't implement Salamander, so just turn
           * this into FRONTEND_FORK_CORE. */
          xdk_fork_mode  = FRONTEND_FORK_CORE;

@@ -123,7 +123,7 @@ static void frontend_ps3_get_environment_settings(int *argc, char *argv[],
          && (!strcmp(argv[2], EMULATOR_CONTENT_DIR)))
    {
       multiman_detected = true;
-      RARCH_LOG("Started from multiMAN, auto-game start enabled.\n");
+      VLOG(@"Started from multiMAN, auto-game start enabled.\n");
    }
    else
 #endif
@@ -147,15 +147,15 @@ static void frontend_ps3_get_environment_settings(int *argc, char *argv[],
             args->content_path   = path;
             args->libretro_path  = NULL;
 
-            RARCH_LOG("argv[0]: %s\n", argv[0]);
-            RARCH_LOG("argv[1]: %s\n", argv[1]);
-            RARCH_LOG("argv[2]: %s\n", argv[2]);
+            VLOG(@"argv[0]: %s\n", argv[0]);
+            VLOG(@"argv[1]: %s\n", argv[1]);
+            VLOG(@"argv[2]: %s\n", argv[2]);
 
-            RARCH_LOG("Auto-start game %s.\n", argv[1]);
+            VLOG(@"Auto-start game %s.\n", argv[1]);
          }
       }
       else
-         RARCH_WARN("Started from Salamander, auto-game start disabled.\n");
+         WLOG(@"Started from Salamander, auto-game start disabled.\n");
 #endif
 
    memset(&size, 0x00, sizeof(CellGameContentSize));
@@ -163,30 +163,30 @@ static void frontend_ps3_get_environment_settings(int *argc, char *argv[],
    ret = cellGameBootCheck(&get_type, &get_attributes, &size, dirName);
    if(ret < 0)
    {
-      RARCH_ERR("cellGameBootCheck() Error: 0x%x.\n", ret);
+      ELOG(@"cellGameBootCheck() Error: 0x%x.\n", ret);
    }
    else
    {
       char content_info_path[PATH_MAX_LENGTH] = {0};
 
-      RARCH_LOG("cellGameBootCheck() OK.\n");
-      RARCH_LOG("Directory name: [%s].\n", dirName);
-      RARCH_LOG(" HDD Free Size (in KB) = [%d] Size (in KB) = [%d] System Size (in KB) = [%d].\n",
+      VLOG(@"cellGameBootCheck() OK.\n");
+      VLOG(@"Directory name: [%s].\n", dirName);
+      VLOG(@" HDD Free Size (in KB) = [%d] Size (in KB) = [%d] System Size (in KB) = [%d].\n",
             size.hddFreeSizeKB, size.sizeKB, size.sysSizeKB);
 
       switch(get_type)
       {
          case CELL_GAME_GAMETYPE_DISC:
-            RARCH_LOG("RetroArch was launched on Optical Disc Drive.\n");
+            VLOG(@"RetroArch was launched on Optical Disc Drive.\n");
             break;
          case CELL_GAME_GAMETYPE_HDD:
-            RARCH_LOG("RetroArch was launched on HDD.\n");
+            VLOG(@"RetroArch was launched on HDD.\n");
             break;
       }
 
       if((get_attributes & CELL_GAME_ATTRIBUTE_APP_HOME) 
             == CELL_GAME_ATTRIBUTE_APP_HOME)
-         RARCH_LOG("RetroArch was launched from host machine (APP_HOME).\n");
+         VLOG(@"RetroArch was launched from host machine (APP_HOME).\n");
 
       ret = cellGameContentPermit(content_info_path, g_defaults.dir.port);
 
@@ -201,12 +201,12 @@ static void frontend_ps3_get_environment_settings(int *argc, char *argv[],
 #endif
 
       if(ret < 0)
-         RARCH_ERR("cellGameContentPermit() Error: 0x%x\n", ret);
+         ELOG(@"cellGameContentPermit() Error: 0x%x\n", ret);
       else
       {
-         RARCH_LOG("cellGameContentPermit() OK.\n");
-         RARCH_LOG("content_info_path : [%s].\n", content_info_path);
-         RARCH_LOG("usrDirPath : [%s].\n", g_defaults.dir.port);
+         VLOG(@"cellGameContentPermit() OK.\n");
+         VLOG(@"content_info_path : [%s].\n", content_info_path);
+         VLOG(@"usrDirPath : [%s].\n", g_defaults.dir.port);
       }
 
       strlcpy(g_defaults.dir.content_history,
@@ -249,7 +249,7 @@ static void frontend_ps3_init(void *data)
 {
    (void)data;
 #ifdef HAVE_SYSUTILS
-   RARCH_LOG("Registering system utility callback...\n");
+   VLOG(@"Registering system utility callback...\n");
    cellSysutilRegisterCallback(0, callback_sysutil_exit, NULL);
 #endif
 
@@ -337,15 +337,15 @@ static bool frontend_ps3_set_fork(enum frontend_fork fork_mode)
    switch (fork_mode)
    {
       case FRONTEND_FORK_CORE:
-         RARCH_LOG("FRONTEND_FORK_CORE\n");
+         VLOG(@"FRONTEND_FORK_CORE\n");
          ps3_fork_mode  = fork_mode;
          break;
       case FRONTEND_FORK_CORE_WITH_ARGS:
-         RARCH_LOG("FRONTEND_FORK_CORE_WITH_ARGS\n");
+         VLOG(@"FRONTEND_FORK_CORE_WITH_ARGS\n");
          ps3_fork_mode  = fork_mode;
          break;
       case FRONTEND_FORK_RESTART:
-         RARCH_LOG("FRONTEND_FORK_RESTART\n");
+         VLOG(@"FRONTEND_FORK_RESTART\n");
          /* NOTE: We don't implement Salamander, so just turn
           * this into FRONTEND_FORK_CORE. */
          ps3_fork_mode  = FRONTEND_FORK_CORE;
@@ -376,7 +376,7 @@ static int frontend_ps3_exec_exitspawn(const char *path,
 
    if(ret <  0)
    {
-      RARCH_WARN("SELF file is not of NPDRM type, trying another approach to boot it...\n");
+      WLOG(@"SELF file is not of NPDRM type, trying another approach to boot it...\n");
       sys_game_process_exitspawn(path, (const char** const)argv,
             envp, NULL, 0, 1000, SYS_PROCESS_PRIMARY_STACK_SIZE_1M);
    }
@@ -395,7 +395,7 @@ static void frontend_ps3_exec(const char *path, bool should_load_game)
 
    (void)should_load_game;
 
-   RARCH_LOG("Attempt to load executable: [%s].\n", path);
+   VLOG(@"Attempt to load executable: [%s].\n", path);
 
 #ifndef IS_SALAMANDER
    runloop_ctl(RUNLOOP_CTL_GET_CONTENT_PATH, &fullpath);

@@ -105,7 +105,7 @@ static void *al_init(const char *device, unsigned rate, unsigned latency)
    if (al->num_buffers < 2)
       al->num_buffers = 2;
 
-   RARCH_LOG("[OpenAL]: Using %u buffers of %u bytes.\n", (unsigned)al->num_buffers, BUFSIZE);
+   VLOG(@"[OpenAL]: Using %u buffers of %u bytes.\n", (unsigned)al->num_buffers, BUFSIZE);
 
    al->buffers = (ALuint*)calloc(al->num_buffers, sizeof(ALuint));
    al->res_buf = (ALuint*)calloc(al->num_buffers, sizeof(ALuint));

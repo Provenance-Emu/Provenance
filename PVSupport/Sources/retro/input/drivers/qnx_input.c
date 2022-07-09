@@ -258,17 +258,17 @@ static void qnx_handle_device(qnx_input_t *qnx,
    qnx_input_autodetect_gamepad(qnx, controller, controller->port);
 
    if (controller->type == SCREEN_EVENT_GAMEPAD)
-      RARCH_LOG("Gamepad Device Connected:\n");
+      VLOG(@"Gamepad Device Connected:\n");
    else if (controller->type == SCREEN_EVENT_JOYSTICK)
-      RARCH_LOG("Joystick Device Connected:\n");
+      VLOG(@"Joystick Device Connected:\n");
    else if (controller->type == SCREEN_EVENT_KEYBOARD)
-      RARCH_LOG("Keyboard Device Connected:\n");
+      VLOG(@"Keyboard Device Connected:\n");
 
-   RARCH_LOG("\tID: %s\n", controller->id);
-   RARCH_LOG("\tVendor  ID: %s\n", controller->vid);
-   RARCH_LOG("\tProduct ID: %s\n", controller->pid);
-   RARCH_LOG("\tButton Count: %d\n", controller->buttonCount);
-   RARCH_LOG("\tAnalog Count: %d\n", controller->analogCount);
+   VLOG(@"\tID: %s\n", controller->id);
+   VLOG(@"\tVendor  ID: %s\n", controller->vid);
+   VLOG(@"\tProduct ID: %s\n", controller->pid);
+   VLOG(@"\tButton Count: %d\n", controller->buttonCount);
+   VLOG(@"\tAnalog Count: %d\n", controller->analogCount);
 }
 
 
@@ -569,7 +569,7 @@ static void qnx_handle_screen_event(qnx_input_t *qnx, bps_event_t *event)
                {
                   if (device == qnx->devices[i].handle)
                   {
-                     RARCH_LOG("Device %s: Disconnected.\n",
+                     VLOG(@"Device %s: Disconnected.\n",
                            qnx->devices[i].id);
                      qnx_init_controller(qnx, &qnx->devices[i]);
                      break;

@@ -40,7 +40,7 @@ static bool read_shader_file(const char *path, vector<string> *output, bool root
 
    if (!filestream_read_file(path, (void**)&buf, &len))
    {
-      RARCH_ERR("Failed to open shader file: \"%s\".\n", path);
+      ELOG(@"Failed to open shader file: \"%s\".\n", path);
       return false;
    }
 
@@ -70,7 +70,7 @@ static bool read_shader_file(const char *path, vector<string> *output, bool root
    {
       if (strstr(lines[0], "#version ") != lines[0])
       {
-         RARCH_ERR("First line of the shader must contain a valid #version string.\n");
+         ELOG(@"First line of the shader must contain a valid #version string.\n");
          return false;
       }
 
@@ -93,7 +93,7 @@ static bool read_shader_file(const char *path, vector<string> *output, bool root
          char *c = (char*)strchr(line, '"');
          if (!c)
          {
-            RARCH_ERR("Invalid include statement \"%s\".\n", line);
+            ELOG(@"Invalid include statement \"%s\".\n", line);
             free(buf);
             return false;
          }
@@ -101,7 +101,7 @@ static bool read_shader_file(const char *path, vector<string> *output, bool root
          char *closing = (char*)strchr(c, '"');
          if (!closing)
          {
-            RARCH_ERR("Invalid include statement \"%s\".\n", line);
+            ELOG(@"Invalid include statement \"%s\".\n", line);
             free(buf);
             return false;
          }
@@ -263,7 +263,7 @@ static bool glslang_parse_meta(const vector<string> &lines, glslang_meta *meta)
       {
          if (!meta->name.empty())
          {
-            RARCH_ERR("[slang]: Trying to declare multiple names for file.\n");
+            ELOG(@"[slang]: Trying to declare multiple names for file.\n");
             return false;
          }
 
@@ -299,7 +299,7 @@ static bool glslang_parse_meta(const vector<string> &lines, glslang_meta *meta)
                    itr->maximum != maximum ||
                    itr->step != step)
                {
-                  RARCH_ERR("[slang]: Duplicate parameters found for \"%s\", but arguments do not match.\n", id);
+                  ELOG(@"[slang]: Duplicate parameters found for \"%s\", but arguments do not match.\n", id);
                   return false;
                }
             }
@@ -308,7 +308,7 @@ static bool glslang_parse_meta(const vector<string> &lines, glslang_meta *meta)
          }
          else
          {
-            RARCH_ERR("[slang]: Invalid #pragma parameter line: \"%s\".\n", line.c_str());
+            ELOG(@"[slang]: Invalid #pragma parameter line: \"%s\".\n", line.c_str());
             return false;
          }
       }
@@ -316,7 +316,7 @@ static bool glslang_parse_meta(const vector<string> &lines, glslang_meta *meta)
       {
          if (meta->rt_format != SLANG_FORMAT_UNKNOWN)
          {
-            RARCH_ERR("[slang]: Trying to declare format multiple times for file.\n");
+            ELOG(@"[slang]: Trying to declare format multiple times for file.\n");
             return false;
          }
 
@@ -327,7 +327,7 @@ static bool glslang_parse_meta(const vector<string> &lines, glslang_meta *meta)
          meta->rt_format = glslang_find_format(str);
          if (meta->rt_format == SLANG_FORMAT_UNKNOWN)
          {
-            RARCH_ERR("[slang]: Failed to find format \"%s\".\n", str);
+            ELOG(@"[slang]: Failed to find format \"%s\".\n", str);
             return false;
          }
       }
@@ -339,7 +339,7 @@ bool glslang_compile_shader(const char *shader_path, glslang_output *output)
 {
    vector<string> lines;
 
-   RARCH_LOG("[slang]: Compiling shader \"%s\".\n", shader_path);
+   VLOG(@"[slang]: Compiling shader \"%s\".\n", shader_path);
    if (!read_shader_file(shader_path, &lines, true))
       return false;
 
@@ -349,14 +349,14 @@ bool glslang_compile_shader(const char *shader_path, glslang_output *output)
    if (!glslang::compile_spirv(build_stage_source(lines, "vertex"),
             glslang::StageVertex, &output->vertex))
    {
-      RARCH_ERR("Failed to compile vertex shader stage.\n");
+      ELOG(@"Failed to compile vertex shader stage.\n");
       return false;
    }
 
    if (!glslang::compile_spirv(build_stage_source(lines, "fragment"),
             glslang::StageFragment, &output->fragment))
    {
-      RARCH_ERR("Failed to compile fragment shader stage.\n");
+      ELOG(@"Failed to compile fragment shader stage.\n");
       return false;
    }
 

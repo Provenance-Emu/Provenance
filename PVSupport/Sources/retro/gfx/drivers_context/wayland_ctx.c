@@ -100,7 +100,7 @@ static void shell_surface_handle_configure(void *data,
    wl->width  = wl->buffer_scale * width;
    wl->height = wl->buffer_scale * height;
 
-   RARCH_LOG("[Wayland]: Surface configure: %u x %u.\n",
+   VLOG(@"[Wayland]: Surface configure: %u x %u.\n",
          wl->width, wl->height);
 }
 
@@ -138,7 +138,7 @@ static void display_handle_geometry(void *data,
    gfx_ctx_wayland_data_t *wl = (gfx_ctx_wayland_data_t*)data;
    wl->physical_width = physical_width;
    wl->physical_height = physical_height;
-   RARCH_LOG("[Wayland]: Physical width: %d mm x %d mm.\n",
+   VLOG(@"[Wayland]: Physical width: %d mm x %d mm.\n",
          physical_width, physical_height);
 }
 
@@ -158,7 +158,7 @@ static void display_handle_mode(void *data,
 
    /* Certain older Wayland implementations report in Hz,
     * but it should be mHz. */
-   RARCH_LOG("[Wayland]: Video mode: %d x %d @ %.4f Hz.\n",
+   VLOG(@"[Wayland]: Video mode: %d x %d @ %.4f Hz.\n",
          width, height, refresh > 1000 ? refresh / 1000.0 : (double)refresh);
 }
 
@@ -175,7 +175,7 @@ static void display_handle_scale(void *data,
 {
    gfx_ctx_wayland_data_t *wl = (gfx_ctx_wayland_data_t*)data;
 
-   RARCH_LOG("[Wayland]: Setting buffer scale factor to %d.\n", factor);
+   VLOG(@"[Wayland]: Setting buffer scale factor to %d.\n", factor);
    wl->buffer_scale = factor;
 }
 
@@ -380,7 +380,7 @@ static bool gfx_ctx_wl_set_resize(void *data, unsigned width, unsigned height)
             wl->vk.context.invalid_swapchain = true;
          else
          {
-            RARCH_ERR("[Wayland/Vulkan]: Failed to update swapchain.\n");
+            ELOG(@"[Wayland/Vulkan]: Failed to update swapchain.\n");
             return false;
          }
 
@@ -543,7 +543,7 @@ static void *gfx_ctx_wl_init(void *video_driver)
 
    if (!wl->dpy)
    {
-      RARCH_ERR("Failed to connect to Wayland server.\n");
+      ELOG(@"Failed to connect to Wayland server.\n");
       goto error;
    }
 
@@ -555,13 +555,13 @@ static void *gfx_ctx_wl_init(void *video_driver)
 
    if (!wl->compositor)
    {
-      RARCH_ERR("Failed to create compositor.\n");
+      ELOG(@"Failed to create compositor.\n");
       goto error;
    }
 
    if (!wl->shell)
    {
-      RARCH_ERR("Failed to create shell.\n");
+      ELOG(@"Failed to create shell.\n");
       goto error;
    }
 

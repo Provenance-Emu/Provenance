@@ -176,7 +176,7 @@ static bool gl_recreate_fbo(
 
    if (glCheckFramebufferStatus(RARCH_GL_FRAMEBUFFER) != RARCH_GL_FRAMEBUFFER_COMPLETE)
    {
-      RARCH_WARN("Failed to reinitialize FBO texture.\n");
+      WLOG(@"Failed to reinitialize FBO texture.\n");
       return false;
    }
 
@@ -225,7 +225,7 @@ static void gl_check_fbo_dimension(gl_t *gl, unsigned i,
       }
    }
 
-   RARCH_LOG("[GL]: Recreating FBO texture #%d: %ux%u\n",
+   VLOG(@"[GL]: Recreating FBO texture #%d: %ux%u\n",
          i, fbo_rect->width, fbo_rect->height);
 }
 
@@ -474,7 +474,7 @@ error:
    glDeleteFramebuffers(gl->fbo_pass, gl->fbo);
    if (gl->fbo_feedback)
       glDeleteFramebuffers(1, &gl->fbo_feedback);
-   RARCH_ERR("Failed to set up frame buffer objects. Multi-pass shading will not work.\n");
+   ELOG(@"Failed to set up frame buffer objects. Multi-pass shading will not work.\n");
    return false;
 }
 
@@ -524,13 +524,13 @@ static void gl_create_fbo_texture(gl_t *gl, unsigned i, GLuint texture)
    if (fp_fbo)
    {
       if (!gl->has_fp_fbo)
-         RARCH_ERR("[GL]: Floating-point FBO was requested, but is not supported. Falling back to UNORM. Result may band/clip/etc.!\n");
+         ELOG(@"[GL]: Floating-point FBO was requested, but is not supported. Falling back to UNORM. Result may band/clip/etc.!\n");
    }
 
 #ifndef HAVE_OPENGLES2
    if (fp_fbo && gl->has_fp_fbo)
    {
-      RARCH_LOG("[GL]: FBO pass #%d is floating-point.\n", i);
+      VLOG(@"[GL]: FBO pass #%d is floating-point.\n", i);
       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F,
             gl->fbo_rect[i].width, gl->fbo_rect[i].height,
             0, GL_RGBA, GL_FLOAT, NULL);
@@ -544,7 +544,7 @@ static void gl_create_fbo_texture(gl_t *gl, unsigned i, GLuint texture)
       if (!fp_fbo && srgb_fbo)
       {
          if (!gl->has_srgb_fbo)
-               RARCH_ERR("[GL]: sRGB FBO was requested, but it is not supported. Falling back to UNORM. Result may have banding!\n");
+               ELOG(@"[GL]: sRGB FBO was requested, but it is not supported. Falling back to UNORM. Result may have banding!\n");
       }
        
       if (settings->video.force_srgb_disable)
@@ -552,7 +552,7 @@ static void gl_create_fbo_texture(gl_t *gl, unsigned i, GLuint texture)
        
       if (srgb_fbo && gl->has_srgb_fbo)
       {
-         RARCH_LOG("[GL]: FBO pass #%d is sRGB.\n", i);
+         VLOG(@"[GL]: FBO pass #%d is sRGB.\n", i);
 #ifdef HAVE_OPENGLES2
          /* EXT defines are same as core GLES3 defines, 
           * but GLES3 variant requires different arguments. */
@@ -662,7 +662,7 @@ void gl_renderchain_recompute_pass_sizes(gl_t *gl,
       }
 
       if (size_modified)
-         RARCH_WARN("FBO textures exceeded maximum size of GPU (%dx%d). Resizing to fit.\n", max_size, max_size);
+         WLOG(@"FBO textures exceeded maximum size of GPU (%dx%d). Resizing to fit.\n", max_size, max_size);
 
       last_width      = fbo_rect->img_width;
       last_height     = fbo_rect->img_height;
@@ -747,7 +747,7 @@ void gl_renderchain_init(gl_t *gl, unsigned fbo_width, unsigned fbo_height)
 
    if (!gl_check_capability(GL_CAPS_FBO))
    {
-      RARCH_ERR("Failed to locate FBO functions. Won't be able to use render-to-texture.\n");
+      ELOG(@"Failed to locate FBO functions. Won't be able to use render-to-texture.\n");
       return;
    }
 
@@ -788,7 +788,7 @@ void gl_renderchain_init(gl_t *gl, unsigned fbo_width, unsigned fbo_height)
    {
       gl->fbo_rect[i].width  = next_pow2(gl->fbo_rect[i].img_width);
       gl->fbo_rect[i].height = next_pow2(gl->fbo_rect[i].img_height);
-      RARCH_LOG("[GL]: Creating FBO %d @ %ux%u\n", i,
+      VLOG(@"[GL]: Creating FBO %d @ %ux%u\n", i,
             gl->fbo_rect[i].width, gl->fbo_rect[i].height);
    }
 
@@ -798,13 +798,13 @@ void gl_renderchain_init(gl_t *gl, unsigned fbo_width, unsigned fbo_height)
    if (gl->fbo_feedback_enable && gl->fbo_feedback_pass 
          < (unsigned)gl->fbo_pass)
    {
-      RARCH_LOG("[GL]: Creating feedback FBO %d @ %ux%u\n", i,
+      VLOG(@"[GL]: Creating feedback FBO %d @ %ux%u\n", i,
             gl->fbo_rect[gl->fbo_feedback_pass].width,
             gl->fbo_rect[gl->fbo_feedback_pass].height);
    }
    else if (gl->fbo_feedback_enable)
    {
-      RARCH_WARN("[GL]: Tried to create feedback FBO of pass #%u, but there are only %d FBO passes. Will use input texture as feedback texture.\n",
+      WLOG(@"[GL]: Tried to create feedback FBO of pass #%u, but there are only %d FBO passes. Will use input texture as feedback texture.\n",
               gl->fbo_feedback_pass, gl->fbo_pass);
       gl->fbo_feedback_enable = false;
    }
@@ -813,7 +813,7 @@ void gl_renderchain_init(gl_t *gl, unsigned fbo_width, unsigned fbo_height)
    if (!gl_create_fbo_targets(gl))
    {
       glDeleteTextures(gl->fbo_pass, gl->fbo_texture);
-      RARCH_ERR("Failed to create FBO targets. Will continue without FBO.\n");
+      ELOG(@"Failed to create FBO targets. Will continue without FBO.\n");
       return;
    }
 
@@ -851,16 +851,16 @@ bool gl_init_hw_render(gl_t *gl, unsigned width, unsigned height)
     * FBOs are "abstract" objects and are not shared. */
    context_bind_hw_render(true);
 
-   RARCH_LOG("[GL]: Initializing HW render (%u x %u).\n", width, height);
+   VLOG(@"[GL]: Initializing HW render (%u x %u).\n", width, height);
    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_fbo_size);
    glGetIntegerv(RARCH_GL_MAX_RENDERBUFFER_SIZE, &max_renderbuffer_size);
-   RARCH_LOG("[GL]: Max texture size: %d px, renderbuffer size: %d px.\n",
+   VLOG(@"[GL]: Max texture size: %d px, renderbuffer size: %d px.\n",
          max_fbo_size, max_renderbuffer_size);
 
    if (!gl_check_capability(GL_CAPS_FBO))
       return false;
 
-   RARCH_LOG("[GL]: Supports FBO (render-to-texture).\n");
+   VLOG(@"[GL]: Supports FBO (render-to-texture).\n");
 
    glBindTexture(GL_TEXTURE_2D, 0);
    glGenFramebuffers(gl->textures, gl->hw_render_fbo);
@@ -871,7 +871,7 @@ bool gl_init_hw_render(gl_t *gl, unsigned width, unsigned height)
 #ifdef HAVE_OPENGLES
    if (!gl_check_capability(GL_CAPS_PACKED_DEPTH_STENCIL))
       return false;
-   RARCH_LOG("[GL]: Supports Packed depth stencil.\n");
+   VLOG(@"[GL]: Supports Packed depth stencil.\n");
 #endif
 
    if (depth)
@@ -923,7 +923,7 @@ bool gl_init_hw_render(gl_t *gl, unsigned width, unsigned height)
       status = glCheckFramebufferStatus(RARCH_GL_FRAMEBUFFER);
       if (status != RARCH_GL_FRAMEBUFFER_COMPLETE)
       {
-         RARCH_ERR("[GL]: Failed to create HW render FBO #%u, error: 0x%u.\n",
+         ELOG(@"[GL]: Failed to create HW render FBO #%u, error: 0x%u.\n",
                i, (unsigned)status);
          return false;
       }
@@ -972,12 +972,12 @@ bool gl_renderchain_add_lut(const struct video_shader *shader,
 
    if (!image_texture_load(&img, shader->lut[i].path))
    {
-      RARCH_ERR("Failed to load texture image from: \"%s\"\n",
+      ELOG(@"Failed to load texture image from: \"%s\"\n",
             shader->lut[i].path);
       return false;
    }
 
-   RARCH_LOG("Loaded texture image from: \"%s\" ...\n",
+   VLOG(@"Loaded texture image from: \"%s\" ...\n",
          shader->lut[i].path);
 
    if (shader->lut[i].filter == RARCH_FILTER_NEAREST)

@@ -23,6 +23,22 @@
 
 #include "core_type.h"
 
+// TODO: Fix logging
+#define RARCH_LOG(...)
+#define RARCH_LOG_OUTPUT(...)
+
+#ifndef ELOG
+#define ELOG(x, ...) printf(x, ##__VA_ARGS__)
+#define WLOG(x, ...) printf(x, ##__VA_ARGS__)
+#if DEBUG
+#define DLOG(x, ...) printf(x, ##__VA_ARGS__)
+#define VLOG(x, ...) printf(x, ##__VA_ARGS__)
+#else
+#define DLOG(...)
+#define VLOG(...)
+#endif
+#endif
+
 RETRO_BEGIN_DECLS
 
 enum rarch_ctl_state

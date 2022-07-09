@@ -56,7 +56,7 @@ static void frontend_ctr_get_environment_settings(int *argc, char *argv[],
 #endif
 
    fill_pathname_basedir(g_defaults.dir.port, elf_path_cst, sizeof(g_defaults.dir.port));
-   RARCH_LOG("port dir: [%s]\n", g_defaults.dir.port);
+   VLOG(@"port dir: [%s]\n", g_defaults.dir.port);
 
    fill_pathname_join(g_defaults.dir.core_assets, g_defaults.dir.port,
          "downloads", sizeof(g_defaults.dir.core_assets));

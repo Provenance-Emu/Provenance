@@ -121,7 +121,7 @@ static bool gl_raster_font_upload_atlas(gl_raster_t *font,
             }
             break;
          default:
-            RARCH_ERR("Unsupported number of components: %u\n",
+            ELOG(@"Unsupported number of components: %u\n",
                   (unsigned)ncomponents);
             free(tmp);
             return false;
@@ -150,7 +150,7 @@ static void *gl_raster_font_init_font(void *data,
    if (!font_renderer_create_default((const void**)&font->font_driver,
             &font->font_data, font_path, font_size))
    {
-      RARCH_WARN("Couldn't initialize font renderer.\n");
+      WLOG(@"Couldn't initialize font renderer.\n");
       free(font);
       return NULL;
    }

@@ -139,12 +139,12 @@ void system_exec_wii(const char *_path, bool should_load_game)
 #endif
    }
 
-   RARCH_LOG("Attempt to load executable: [%s]\n", path);
+   VLOG(@"Attempt to load executable: [%s]\n", path);
 
    fp = fopen(path, "rb");
    if (fp == NULL)
    {
-      RARCH_ERR("Could not open DOL file %s.\n", path);
+      ELOG(@"Could not open DOL file %s.\n", path);
       goto exit;
    }
 
@@ -156,7 +156,7 @@ void system_exec_wii(const char *_path, bool should_load_game)
    dol = malloc(size);
    if (!dol)
    {
-      RARCH_ERR("Could not execute DOL file %s.\n", path);
+      ELOG(@"Could not execute DOL file %s.\n", path);
       fclose(fp);
       goto exit;
    }
@@ -181,7 +181,7 @@ void system_exec_wii(const char *_path, bool should_load_game)
    memcpy(BOOTER_ADDR, booter_start, booter_size);
    DCFlushRange(BOOTER_ADDR, booter_size);
 
-   RARCH_LOG("jumping to %08x\n", (unsigned) BOOTER_ADDR);
+   VLOG(@"jumping to %08x\n", (unsigned) BOOTER_ADDR);
    SYS_ResetSystem(SYS_SHUTDOWN,0,0);
    __lwp_thread_stopmultitasking((void (*)(void)) BOOTER_ADDR);
 

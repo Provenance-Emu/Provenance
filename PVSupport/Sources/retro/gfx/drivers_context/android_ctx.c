@@ -124,7 +124,7 @@ static void *android_gfx_ctx_init(void *video_driver)
       case GFX_CTX_OPENGL_API:
       case GFX_CTX_OPENGL_ES_API:
 #ifdef HAVE_EGL
-         RARCH_LOG("Android EGL: GLES version = %d.\n", g_es3 ? 3 : 2);
+         VLOG(@"Android EGL: GLES version = %d.\n", g_es3 ? 3 : 2);
 
          if (!egl_init_context(&and->egl, EGL_DEFAULT_DISPLAY,
                   &major, &minor, &n, attribs))
@@ -244,7 +244,7 @@ static void android_gfx_ctx_check_window(void *data, bool *quit,
 
    if (new_width != *width || new_height != *height)
    {
-      RARCH_LOG("[Android]: Resizing (%u x %u) -> (%u x %u).\n",
+      VLOG(@"[Android]: Resizing (%u x %u) -> (%u x %u).\n",
               *width, *height, new_width, new_height);
 
       *width  = new_width;
@@ -274,10 +274,10 @@ static bool android_gfx_ctx_set_resize(void *data,
 #ifdef HAVE_VULKAN
          and->width  = ANativeWindow_getWidth(android_app->window);
          and->height = ANativeWindow_getHeight(android_app->window);
-         RARCH_LOG("[Android]: Native window size: %u x %u.\n", and->width, and->height);
+         VLOG(@"[Android]: Native window size: %u x %u.\n", and->width, and->height);
          if (!vulkan_create_swapchain(&and->vk, and->width, and->height, and->swap_interval))
          {
-            RARCH_ERR("[Android]: Failed to update swapchain.\n");
+            ELOG(@"[Android]: Failed to update swapchain.\n");
             return false;
          }
 
@@ -325,11 +325,11 @@ static bool android_gfx_ctx_set_video_mode(void *data,
 #ifdef HAVE_VULKAN
          and->width  = ANativeWindow_getWidth(android_app->window);
          and->height = ANativeWindow_getHeight(android_app->window);
-         RARCH_LOG("[Android]: Native window size: %u x %u.\n", and->width, and->height);
+         VLOG(@"[Android]: Native window size: %u x %u.\n", and->width, and->height);
          if (!vulkan_surface_create(&and->vk, VULKAN_WSI_ANDROID, NULL, android_app->window,
                   and->width, and->height, and->swap_interval))
          {
-            RARCH_ERR("[Android]: Failed to create surface.\n");
+            ELOG(@"[Android]: Failed to create surface.\n");
             return false;
          }
 #endif
@@ -510,7 +510,7 @@ static void android_gfx_ctx_set_swap_interval(void *data, unsigned swap_interval
 #ifdef HAVE_VULKAN
          if (and->swap_interval != swap_interval)
          {
-            RARCH_LOG("[Vulkan]: Setting swap interval: %u.\n", swap_interval);
+            VLOG(@"[Vulkan]: Setting swap interval: %u.\n", swap_interval);
             and->swap_interval = swap_interval;
             if (and->vk.swapchain)
                and->vk.need_new_swapchain = true;

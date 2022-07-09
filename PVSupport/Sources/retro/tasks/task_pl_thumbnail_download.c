@@ -230,7 +230,7 @@ finish:
    /* Log any error messages */
    if (!string_is_empty(err))
    {
-      RARCH_ERR("Download of '%s' failed: %s\n",
+      ELOG(@"Download of '%s' failed: %s\n",
             (transf ? transf->path: "unknown"), err);
    }
 

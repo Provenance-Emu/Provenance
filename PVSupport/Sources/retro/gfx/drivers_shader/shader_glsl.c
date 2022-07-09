@@ -214,7 +214,7 @@ static void gl_glsl_print_shader_log(GLuint obj)
    glGetShaderInfoLog(obj, max_len, &info_len, info_log);
 
    if (info_len > 0)
-      RARCH_LOG("Shader log: %s\n", info_log);
+      VLOG(@"Shader log: %s\n", info_log);
 
    free(info_log);
 }
@@ -236,7 +236,7 @@ static void gl_glsl_print_linker_log(GLuint obj)
    glGetProgramInfoLog(obj, max_len, &info_len, info_log);
 
    if (info_len > 0)
-      RARCH_LOG("Linker log: %s\n", info_log);
+      VLOG(@"Linker log: %s\n", info_log);
 
    free(info_log);
 }
@@ -271,7 +271,7 @@ static bool gl_glsl_compile_shader(glsl_shader_data_t *glsl,
       }
 
       snprintf(version, sizeof(version), "#version %u\n", version_no);
-      RARCH_LOG("[GL]: Using GLSL version %u.\n", version_no);
+      VLOG(@"[GL]: Using GLSL version %u.\n", version_no);
    }
 
    source[0] = version;
@@ -323,7 +323,7 @@ static bool gl_glsl_compile_program(
 
    if (program_info->vertex)
    {
-      RARCH_LOG("Found GLSL vertex shader.\n");
+      VLOG(@"Found GLSL vertex shader.\n");
       program->vprg = glCreateShader(GL_VERTEX_SHADER);
 
       if (!gl_glsl_compile_shader(
@@ -331,7 +331,7 @@ static bool gl_glsl_compile_program(
                program->vprg,
                "#define VERTEX\n#define PARAMETER_UNIFORM\n", program_info->vertex))
       {
-         RARCH_ERR("Failed to compile vertex shader #%u\n", idx);
+         ELOG(@"Failed to compile vertex shader #%u\n", idx);
          goto error;
       }
 
@@ -340,12 +340,12 @@ static bool gl_glsl_compile_program(
 
    if (program_info->fragment)
    {
-      RARCH_LOG("Found GLSL fragment shader.\n");
+      VLOG(@"Found GLSL fragment shader.\n");
       program->fprg = glCreateShader(GL_FRAGMENT_SHADER);
       if (!gl_glsl_compile_shader(glsl, program->fprg,
                "#define FRAGMENT\n#define PARAMETER_UNIFORM\n", program_info->fragment))
       {
-         RARCH_ERR("Failed to compile fragment shader #%u\n", idx);
+         ELOG(@"Failed to compile fragment shader #%u\n", idx);
          goto error;
       }
 
@@ -354,7 +354,7 @@ static bool gl_glsl_compile_program(
 
    if (program_info->vertex || program_info->fragment)
    {
-      RARCH_LOG("Linking GLSL program.\n");
+      VLOG(@"Linking GLSL program.\n");
       if (!gl_glsl_link_program(prog))
          goto error;
 
@@ -378,7 +378,7 @@ static bool gl_glsl_compile_program(
    return true;
 
 error:
-   RARCH_ERR("Failed to link program #%u.\n", idx);
+   ELOG(@"Failed to link program #%u.\n", idx);
    program->id = 0;
    return false;
 }
@@ -433,7 +433,7 @@ static bool gl_glsl_compile_programs(
       if (*pass->source.path && !gl_glsl_load_source_path(
                pass, pass->source.path))
       {
-         RARCH_ERR("Failed to load GLSL shader: %s.\n",
+         ELOG(@"Failed to load GLSL shader: %s.\n",
                pass->source.path);
          return false;
       }
@@ -450,7 +450,7 @@ static bool gl_glsl_compile_programs(
             &program[i], 
             &shader_prog_info))
       {
-         RARCH_ERR("Failed to create GL program #%u.\n", i);
+         ELOG(@"Failed to create GL program #%u.\n", i);
          return false;
       }
    }
@@ -515,7 +515,7 @@ static void gl_glsl_set_attribs(glsl_shader_data_t *glsl,
          glsl->attribs.elems[glsl->attribs.index++] = loc;
       }
       else
-         RARCH_WARN("Attrib array buffer was overflown!\n");
+         WLOG(@"Attrib array buffer was overflown!\n");
    }
 
    glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -706,7 +706,7 @@ static void *gl_glsl_init(void *data, const char *path)
    (void)shader_support;
 
 #ifndef HAVE_OPENGLES
-   RARCH_LOG("Checking GLSL shader support ...\n");
+   VLOG(@"Checking GLSL shader support ...\n");
    shader_support = glCreateProgram && glUseProgram && glCreateShader
       && glDeleteShader && glShaderSource && glCompileShader && glAttachShader
       && glDetachShader && glLinkProgram && glGetUniformLocation
@@ -722,7 +722,7 @@ static void *gl_glsl_init(void *data, const char *path)
 
    if (!shader_support)
    {
-      RARCH_ERR("GLSL shaders aren't supported by your OpenGL driver.\n");
+      ELOG(@"GLSL shaders aren't supported by your OpenGL driver.\n");
       goto error;
    }
 #endif
@@ -756,13 +756,13 @@ static void *gl_glsl_init(void *data, const char *path)
 
       if (!ret)
       {
-         RARCH_ERR("[GL]: Failed to parse GLSL shader.\n");
+         ELOG(@"[GL]: Failed to parse GLSL shader.\n");
          goto error;
       }
    }
    else
    {
-      RARCH_WARN("[GL]: Stock GLSL shaders will be used.\n");
+      WLOG(@"[GL]: Stock GLSL shaders will be used.\n");
       glsl->shader->passes = 1;
       glsl->shader->pass[0].source.string.vertex   = 
          strdup(glsl_core ? stock_vertex_core : stock_vertex_modern);
@@ -795,13 +795,13 @@ static void *gl_glsl_init(void *data, const char *path)
 #ifdef HAVE_OPENGLES
    if (!glsl->shader->modern)
    {
-      RARCH_ERR("[GL]: GLES context is used, but shader is not modern. Cannot use it.\n");
+      ELOG(@"[GL]: GLES context is used, but shader is not modern. Cannot use it.\n");
       goto error;
    }
 #else
    if (glsl_core && !glsl->shader->modern)
    {
-      RARCH_ERR("[GL]: GL core context is used, but shader is not core compatible. Cannot use it.\n");
+      ELOG(@"[GL]: GL core context is used, but shader is not core compatible. Cannot use it.\n");
       goto error;
    }
 #endif
@@ -827,7 +827,7 @@ static void *gl_glsl_init(void *data, const char *path)
 
    if (!gl_glsl_compile_program(glsl, 0, &glsl->prg[0], &shader_prog_info))
    {
-      RARCH_ERR("GLSL stock programs failed to compile.\n");
+      ELOG(@"GLSL stock programs failed to compile.\n");
       goto error;
    }
 
@@ -836,7 +836,7 @@ static void *gl_glsl_init(void *data, const char *path)
 
    if (!gl_load_luts(glsl->shader, glsl->lut_textures))
    {
-      RARCH_ERR("[GL]: Failed to load LUTs.\n");
+      ELOG(@"[GL]: Failed to load LUTs.\n");
       goto error;
    }
 
@@ -845,7 +845,7 @@ static void *gl_glsl_init(void *data, const char *path)
 
 #ifdef GLSL_DEBUG
    if (!gl_check_error())
-      RARCH_WARN("Detected GL error in GLSL.\n");
+      WLOG(@"Detected GL error in GLSL.\n");
 #endif
 
    if (glsl->shader->variables)
@@ -869,7 +869,7 @@ static void *gl_glsl_init(void *data, const char *path)
 
       glsl->state_tracker = state_tracker_init(&info);
       if (!glsl->state_tracker)
-         RARCH_WARN("Failed to init state tracker.\n");
+         WLOG(@"Failed to init state tracker.\n");
    }
    
    glsl->prg[glsl->shader->passes  + 1]     = glsl->prg[0];

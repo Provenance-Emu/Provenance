@@ -465,7 +465,7 @@ static INLINE unsigned vulkan_format_to_bpp(VkFormat format)
          return 1;
 
       default:
-         RARCH_ERR("[Vulkan]: Unknown format.\n");
+         ELOG(@"[Vulkan]: Unknown format.\n");
          abort();
    }
 }

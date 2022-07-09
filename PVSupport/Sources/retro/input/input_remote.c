@@ -84,7 +84,7 @@ static bool input_remote_init_network(input_remote_t *handle,
    if (!network_init())
       return false;
 
-   RARCH_LOG("Bringing up remote interface on port %hu.\n",
+   VLOG(@"Bringing up remote interface on port %hu.\n",
          (unsigned short)port);
 
    fd = socket_init((void**)&res, port, NULL, SOCKET_TYPE_DATAGRAM);
@@ -99,7 +99,7 @@ static bool input_remote_init_network(input_remote_t *handle,
 
    if (!socket_bind(handle->net_fd[user], res))
    {
-      RARCH_ERR("Failed to bind socket.\n");
+      ELOG(@"Failed to bind socket.\n");
       goto error;
    }
 

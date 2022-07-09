@@ -207,7 +207,7 @@ static bool runloop_check_movie_playback(void)
 
    runloop_msg_queue_push(
          msg_hash_to_str(MSG_MOVIE_PLAYBACK_ENDED), 2, 180, false);
-   RARCH_LOG("%s\n", msg_hash_to_str(MSG_MOVIE_PLAYBACK_ENDED));
+   VLOG(@"%s\n", msg_hash_to_str(MSG_MOVIE_PLAYBACK_ENDED));
 
    command_event(CMD_EVENT_BSV_MOVIE_DEINIT, NULL);
 
@@ -225,7 +225,7 @@ static bool runloop_check_movie_record(void)
 
    runloop_msg_queue_push(
          msg_hash_to_str(MSG_MOVIE_RECORD_STOPPED), 2, 180, true);
-   RARCH_LOG("%s\n", msg_hash_to_str(MSG_MOVIE_RECORD_STOPPED));
+   VLOG(@"%s\n", msg_hash_to_str(MSG_MOVIE_RECORD_STOPPED));
 
    command_event(CMD_EVENT_BSV_MOVIE_DEINIT, NULL);
 
@@ -265,7 +265,7 @@ static bool runloop_check_movie_init(void)
    if (bsv_movie_ctl(BSV_MOVIE_CTL_IS_INITED, NULL))
    {
       runloop_msg_queue_push(msg, 2, 180, true);
-      RARCH_LOG("%s \"%s\".\n",
+      VLOG(@"%s \"%s\".\n",
             msg_hash_to_str(MSG_STARTING_MOVIE_RECORD_TO),
             path);
    }
@@ -274,7 +274,7 @@ static bool runloop_check_movie_init(void)
       runloop_msg_queue_push(
             msg_hash_to_str(MSG_FAILED_TO_START_MOVIE_RECORD),
             2, 180, true);
-      RARCH_ERR("%s\n",
+      ELOG(@"%s\n",
             msg_hash_to_str(MSG_FAILED_TO_START_MOVIE_RECORD));
    }
 
@@ -466,7 +466,7 @@ static void runloop_check_stateslots(settings_t *settings,
 
    runloop_msg_queue_push(msg, 2, 180, true);
 
-   RARCH_LOG("%s\n", msg);
+   VLOG(@"%s\n", msg);
 }
 
 static void shader_dir_free(rarch_dir_list_t *dir_list)
@@ -499,7 +499,7 @@ static bool shader_dir_init(rarch_dir_list_t *dir_list)
    dir_list_sort(dir_list->list, false);
 
    for (i = 0; i < dir_list->list->size; i++)
-      RARCH_LOG("%s \"%s\"\n",
+      VLOG(@"%s \"%s\"\n",
             msg_hash_to_str(MSG_FOUND_SHADER),
             dir_list->list->elems[i].data);
    return true;
@@ -567,12 +567,12 @@ static void runloop_check_shader_dir(rarch_dir_list_t *dir_list,
          (unsigned)dir_list->ptr, shader);
    runloop_msg_queue_push(msg, 2, 120, true);
 
-   RARCH_LOG("%s \"%s\".\n",
+   VLOG(@"%s \"%s\".\n",
          msg_hash_to_str(MSG_APPLYING_SHADER),
          shader);
 
    if (!video_driver_set_shader(type, shader))
-      RARCH_WARN("%s\n", msg_hash_to_str(MSG_FAILED_TO_APPLY_SHADER));
+      WLOG(@"%s\n", msg_hash_to_str(MSG_FAILED_TO_APPLY_SHADER));
 }
 
 /**
@@ -597,7 +597,7 @@ static bool rarch_game_specific_options(char **output)
 
    config_file_free(option_file);
    
-   RARCH_LOG("%s %s\n",
+   VLOG(@"%s %s\n",
          msg_hash_to_str(MSG_GAME_SPECIFIC_CORE_OPTIONS_FOUND_AT),
          game_path);
    *output = strdup(game_path);
@@ -1153,9 +1153,9 @@ static bool runloop_check_state(event_cmd_state_t *cmd,
             if (!runloop_core_options || !var)
                return false;
 
-            RARCH_LOG("Environ GET_VARIABLE %s:\n", var->key);
+            VLOG(@"Environ GET_VARIABLE %s:\n", var->key);
             core_option_manager_get(runloop_core_options, var);
-            RARCH_LOG("\t%s\n", var->value ? var->value : 
+            VLOG(@"\t%s\n", var->value ? var->value : 
                   msg_hash_to_str(MENU_ENUM_LABEL_VALUE_NOT_AVAILABLE));
          }
          break;

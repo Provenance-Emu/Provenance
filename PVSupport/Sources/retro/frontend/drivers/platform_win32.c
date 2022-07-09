@@ -60,7 +60,7 @@ static bool gfx_init_dwm(void)
    dwmlib = dylib_load("dwmapi.dll");
    if (!dwmlib)
    {
-      RARCH_LOG("Did not find dwmapi.dll.\n");
+      VLOG(@"Did not find dwmapi.dll.\n");
       return false;
    }
    atexit(gfx_dwm_shutdown);
@@ -69,7 +69,7 @@ static bool gfx_init_dwm(void)
       (HRESULT (WINAPI*)(BOOL))dylib_proc(dwmlib, "DwmEnableMMCSS");
    if (mmcss)
    {
-      RARCH_LOG("Setting multimedia scheduling for DWM.\n");
+      VLOG(@"Setting multimedia scheduling for DWM.\n");
       mmcss(TRUE);
    }
 
@@ -92,13 +92,13 @@ static void gfx_set_dwm(void)
       (HRESULT (WINAPI*)(UINT))dylib_proc(dwmlib, "DwmEnableComposition");
    if (!composition_enable)
    {
-      RARCH_ERR("Did not find DwmEnableComposition ...\n");
+      ELOG(@"Did not find DwmEnableComposition ...\n");
       return;
    }
 
    ret = composition_enable(!settings->video.disable_composition);
    if (FAILED(ret))
-      RARCH_ERR("Failed to set composition state ...\n");
+      ELOG(@"Failed to set composition state ...\n");
    dwm_composition_disabled = settings->video.disable_composition;
 }
 

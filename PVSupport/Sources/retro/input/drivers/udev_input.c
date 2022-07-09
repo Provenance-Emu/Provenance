@@ -283,7 +283,7 @@ static bool add_device(udev_input_t *udev,
 
    /* Shouldn't happen, but just check it. */
    if (epoll_ctl(udev->epfd, EPOLL_CTL_ADD, fd, &event) < 0)
-      RARCH_ERR("Failed to add FD (%d) to epoll list (%s).\n",
+      ELOG(@"Failed to add FD (%d) to epoll list (%s).\n",
             fd, strerror(errno));
 
    return true;
@@ -354,12 +354,12 @@ static void udev_input_handle_hotplug(udev_input_t *udev)
       else if (!strcmp(devtype, "mouse"))
          cb = udev_handle_mouse;
 
-      RARCH_LOG("[udev]: Hotplug add %s: %s.\n", devtype, devnode);
+      VLOG(@"[udev]: Hotplug add %s: %s.\n", devtype, devnode);
       add_device(udev, devnode, cb);
    }
    else if (string_is_equal(action, "remove"))
    {
-      RARCH_LOG("[udev]: Hotplug remove %s: %s.\n", devtype, devnode);
+      VLOG(@"[udev]: Hotplug remove %s: %s.\n", devtype, devnode);
       udev_input_remove_device(udev, devnode);
    }
 
@@ -618,9 +618,9 @@ static bool open_devices(udev_input_t *udev, const char *type, device_handle_cb 
       {
          int fd = open(devnode, O_RDONLY | O_NONBLOCK);
 
-         RARCH_LOG("[udev] Adding device %s as type %s.\n", devnode, type);
+         VLOG(@"[udev] Adding device %s as type %s.\n", devnode, type);
          if (!add_device(udev, devnode, cb))
-            RARCH_ERR("[udev] Failed to open device: %s (%s).\n", devnode, strerror(errno));
+            ELOG(@"[udev] Failed to open device: %s (%s).\n", devnode, strerror(errno));
          close(fd);
       }
 
@@ -642,7 +642,7 @@ static void *udev_input_init(void)
    udev->udev = udev_new();
    if (!udev->udev)
    {
-      RARCH_ERR("Failed to create udev handle.\n");
+      ELOG(@"Failed to create udev handle.\n");
       goto error;
    }
 
@@ -661,32 +661,32 @@ static void *udev_input_init(void)
    udev->epfd = epoll_create(32);
    if (udev->epfd < 0)
    {
-      RARCH_ERR("Failed to create epoll FD.\n");
+      ELOG(@"Failed to create epoll FD.\n");
       goto error;
    }
 
    if (!open_devices(udev, "ID_INPUT_KEYBOARD", udev_handle_keyboard))
    {
-      RARCH_ERR("Failed to open keyboard.\n");
+      ELOG(@"Failed to open keyboard.\n");
       goto error;
    }
 
    if (!open_devices(udev, "ID_INPUT_MOUSE", udev_handle_mouse))
    {
-      RARCH_ERR("Failed to open mouse.\n");
+      ELOG(@"Failed to open mouse.\n");
       goto error;
    }
 
    if (!open_devices(udev, "ID_INPUT_TOUCHPAD", udev_handle_touchpad))
    {
-      RARCH_ERR("Failed to open touchpads.\n");
+      ELOG(@"Failed to open touchpads.\n");
       goto error;
    }
 
    /* If using KMS and we forgot this, 
     * we could lock ourselves out completely. */
    if (!udev->num_devices)
-      RARCH_WARN("[udev]: Couldn't open any keyboard, mouse or touchpad. Are permissions set correctly for /dev/input/event*?\n");
+      WLOG(@"[udev]: Couldn't open any keyboard, mouse or touchpad. Are permissions set correctly for /dev/input/event*?\n");
 
    udev->joypad = input_joypad_init_driver(settings->input.joypad_driver, udev);
    input_keymaps_init_keyboard_lut(rarch_key_map_linux);
