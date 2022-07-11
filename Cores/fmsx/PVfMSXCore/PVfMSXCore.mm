@@ -201,22 +201,22 @@ const struct retro_variable vars[] = {
     ILOG(@"%s", variable);
     
     
-#define V(x) strcmp(variable, "x")
+    #define V(x) strcmp(variable, x) == 0
     if (V("fmsx_video_mode")) {
         // NTSC|PAL|Dynamic
-        char * value = "Dynamic";
+        char *value = strdup("Dynamic");
         return value;
     } else if (V("fmsx_mode")) {
             // MSX2+|MSX1|MSX2
-            char * value = "MSX2+";
+            char * value = strdup("MSX2+");
             return value;
     } else if (V("fmsx_hires")) {
             // Off|Interlaced|Progressive
-            char * value = "Progressive";
+            char *value = strdup("Progressive");
             return value;
     } else if (V("fmsx_overscan")) {
             // No|Yes
-            char * value = "Yes";
+            char *value = strdup("Yes");
             return value;
     } else if (V("fmsx_mapper_type_mode")) {
 //        { "fmsx_mapper_type_mode", "MSX Mapper Type Mode; "
@@ -230,7 +230,7 @@ const struct retro_variable vars[] = {
 //              "GameMaster2|"
 //              "FMPAC"
 //        },
-            char * value = "FMPAC";
+            char *value = strdup("FMPAC");
             return value;
     } else {
         ELOG(@"Unprocessed var: %s", variable);

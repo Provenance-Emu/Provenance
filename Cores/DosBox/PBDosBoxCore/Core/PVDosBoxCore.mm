@@ -112,29 +112,29 @@
         // true|false
         // "Enable this to force output at 60FPS. Use this if you encounter screen tearing or vsync issues.", NULL
 
-        char * value = "true";
+        char *value = strdup("true");
         return value;
     } else if (V("dosbox_pure_perfstats")) {
             // none,simple,detailed
-            char * value = "simple";
+            char *value = strdup("none");
             return value;
     } else if (V("dosbox_pure_perfstats")) {
             // Off|Interlaced|Progressive
-            char * value = "Progressive";
+            char *value = strdup("Progressive");
             return value;
     } else if (V("dosbox_pure_savestate")) {
             // on,rewind,disable
-            char * value = "on";
+            char *value = strdup("on");
             return value;
     } else if (V("dosbox_pure_on_screen_keyboard")) {
             // true,false
             // Enable the On Screen Keyboard feature which can be activated with the L3 button on the controller.
-            char * value = "true";
+            char *value = strdup("true");
             return value;
     } else if (V("dosbox_pure_audiorate")) {
             // "This should match the frontend audio output rate (Hz) setting.", NULL,
 //            char * value = [[NSString stringWithFormat:@"%i", self.audioSampleRate] cStringUsingEncoding:NSUTF8StringEncoding];
-            char * value = "44100";
+            char *value = strdup("44100");
             return value;
     } else if (V("dosbox_pure_machine")) {
 //        { "svga",     "SVGA (Super Video Graphics Array) (default)" },
@@ -144,31 +144,31 @@
 //        { "tandy",    "Tandy (Tandy Graphics Adapter" },
 //        { "hercules", "Hercules (Hercules Graphics Card)" },
 //        { "pcjr",     "PCjr" },
-        char * value = "svga";
+        char *value = strdup("svga");
         return value;
     } else if (V("dosbox_pure_cga")) {
-        char * value = "early_auto";
+        char *value = strdup("early_auto");
         return value;
     } else if (V("dosbox_pure_hercules")) {
-        char * value = "white";
+        char *value = strdup("white");
         return value;
     } else if (V("dosbox_pure_svga")) {
-        char * value = "s3";
+        char *value = strdup("svga_s3");
         return value;
     } else if (V("dosbox_pure_aspect_correction")) {
-        char * value = "false";
+        char *value = strdup("false");
         return value;
     } else if (V("dosbox_pure_memory_size")) {
-        char * value = "16";
+        char *value = strdup("16");
         return value;
     } else if (V("dosbox_pure_cpu_type")) {
-        char * value = "pentium_slow"; // auto
+        char *value = strdup("pentium_slow"); // auto
         return value;
     } else if (V("dosbox_pure_cpu_core")) {
-        char * value = "auto";
+        char *value = strdup("auto");
         return value;
     } else if (V("dosbox_pure_keyboard_layout")) {
-        char * value = "us";
+        char *value = strdup("us");
         return value;
     } else {
         ELOG(@"Unprocessed var: %s", variable);

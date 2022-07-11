@@ -274,7 +274,7 @@ static void writeSaveFile(const char* path, int type)
 }
 
 -(void)copyCartHWCFG {
-    NSBundle *myBundle = [NSBundle bundleForClass:[self class]];
+    NSBundle *myBundle = [NSBundle bundleForClass:[PicodriveGameCore class]];
     NSString *cartPath = [myBundle pathForResource:@"carthw" ofType:@"cfg"];
     
     NSString *systemPath = self.BIOSPath;
@@ -287,9 +287,9 @@ static void writeSaveFile(const char* path, int type)
                                    toPath:destinationPath
                                     error:&error];
         if(!success) {
-            NSLog(@"Error copying carthw.cfg:\n %@", error.localizedDescription);
+            ELOG(@"Error copying carthw.cfg:\n %@\nsource: %@\ndestination: %@", error.localizedDescription, cartPath, destinationPath);
         } else {
-            NSLog(@"Copied default carthw.cfg file into system directory. %@", self.BIOSPath);
+            ILOG(@"Copied default carthw.cfg file into system directory. %@", self.BIOSPath);
         }
     }
 }

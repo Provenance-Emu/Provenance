@@ -2016,10 +2016,12 @@ static void RETRO_CALLCONV video_callback(const void *data, unsigned width, unsi
         
         DLOG(@"vid: width: %i height: %i, pitch: %zu. _videoWidth: %f, _videoHeight: %f\n", width, height, pitch, strongCurrent.videoWidth, strongCurrent.videoHeight);
     });
-    
+    // 512
 //    uint16_t pitch_shift = strongCurrent->pitch_shift; //PITCH_SHIFT; //pitch % 256; // PITCH_SHIFT
     dispatch_apply(height, serialQueue, ^(size_t y){
-        const uint16_t *src = (uint16_t*)data + y * (pitch >> 1); //pitch is in bytes not pixels
+        size_t shifted_pitch = pitch >> 1;              //pitch is in bytes not pixels
+        size_t offset = y * shifted_pitch;
+        const uint16_t *src = (uint16_t*)data + offset;
         uint16_t *dst = strongCurrent->videoBuffer + y * width;
         
         memcpy(dst, src, sizeof(uint16_t)*width);
@@ -2082,7 +2084,7 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
         init_libretro_sym(CORE_TYPE_PLAIN, &core);
         retro_set_environment(environment_callback);
         
-        memset(_pad, 0, sizeof(int16_t) * 10);
+        memset(_pad, 0, sizeof(int16_t) * 24);
 
 //        struct retro_system_info info;
 //        core_get_info(&info);
@@ -2095,9 +2097,8 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
         //        libretro_get_system_info_lib
         core.retro_init();
         
-        
-        videoBufferA = (uint32_t *)malloc(1280 * 1024 * sizeof(uint32_t));
-        videoBufferB = (uint32_t *)malloc(1280 * 1024 * sizeof(uint32_t));
+        videoBufferA = (uint32_t *)malloc(2560 * 2560 * sizeof(uint32_t));
+        videoBufferB = (uint32_t *)malloc(2560 * 2560 * sizeof(uint32_t));
         videoBuffer = videoBufferA;
         
         //		retro_set_audio_sample(audio_callback);

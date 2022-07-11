@@ -281,7 +281,6 @@ static void video_callback(const void *data, unsigned width, unsigned height, si
     strongCurrent->_videoWidth  = width;
     strongCurrent->_videoHeight = height;
     
-    
     static dispatch_queue_t memory_queue;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -291,7 +290,7 @@ static void video_callback(const void *data, unsigned width, unsigned height, si
         
     dispatch_apply(height, memory_queue, ^(size_t y){
         const uint32_t *src = (uint32_t*)data + y * (pitch >> 2); //pitch is in bytes not pixels
-        uint32_t *dst = strongCurrent->videoBuffer + y * 720;
+        uint32_t *dst = strongCurrent->videoBuffer + y * 720; //width
         
         memcpy(dst, src, sizeof(uint32_t)*width);
     });
