@@ -64,17 +64,20 @@ struct CRT_Data
 #define WARP_X ( 1.0 / 96.0 )
 #define WARP_Y ( 1.0 / 36.0 )
 
-#if USE_POW_GAMMA
-    float ToLinear1(float c){return(pow(c, DISPLAY_GAMMA));}
-    float3 ToLinear(float3 c){return float3(ToLinear1(c.r),ToLinear1(c.g),ToLinear1(c.b));}
+#define INLINE inline __attribute__((always_inline))
 
-    float ToDispGamma1(float c){return(pow(c, (1.0/DISPLAY_GAMMA)));}
-    float3 ToDispGamma(float3 c){return float3(ToDispGamma1(c.r),ToDispGamma1(c.g),ToDispGamma1(c.b));}
+
+#if USE_POW_GAMMA
+    INLINE float ToLinear1(float c){return(pow(c, DISPLAY_GAMMA));}
+    INLINE float3 ToLinear(float3 c){return float3(ToLinear1(c.r),ToLinear1(c.g),ToLinear1(c.b));}
+    INLINE float ToDispGamma1(float c){return(pow(c, (1.0/DISPLAY_GAMMA)));}
+    INLINE float3 ToDispGamma(float3 c){return float3(ToDispGamma1(c.r),ToDispGamma1(c.g),ToDispGamma1(c.b));}
 #else
-    float3 ToLinear(float3 c){return c*c;}
-    float3 ToDispGamma(float3 c){return sqrt(c);}
+    INLINE float3 ToLinear(float3 c){return c*c;}
+    INLINE float3 ToDispGamma(float3 c){return sqrt(c);}
 #endif
 
+INLINE
 float2 Warp( float2 uv )
 {
 #if USE_WARP
@@ -86,6 +89,7 @@ float2 Warp( float2 uv )
 #endif
 }
 
+INLINE
 float2 getShadowMaskRes(constant CRT_Data& cbData)
 {
     float2 shadowMaskRes;
@@ -106,6 +110,7 @@ inline Tx mod(Tx x, Ty y)
     return x - y * floor(x / y);
 }
 
+INLINE
 float3 getShadowMaskRGB( constant CRT_Data& cbData, float2 uv )
 {
 #if USE_SHADOWMASK
@@ -120,6 +125,7 @@ float3 getShadowMaskRGB( constant CRT_Data& cbData, float2 uv )
 #endif
 }
 
+INLINE
 float3 sampleRGB( texture2d<float> EmulatedImage, sampler Sampler, constant CRT_Data& cbData, float2 uv, float2 warpedUV )
 {
     float3 inputSample = ToLinear( EmulatedImage.sample(Sampler, UV_TO_INPUTCOORD( warpedUV, cbData )).rgb );
@@ -138,6 +144,7 @@ float3 sampleRGB( texture2d<float> EmulatedImage, sampler Sampler, constant CRT_
     return max( inputSample * scanlineMultiplier, float3( MIN_BRIGHTNESS ) ) * getShadowMaskRGB( cbData, uv );
 }
 
+INLINE
 float3 sampleRow( texture2d<float> EmulatedImage, sampler Sampler, constant CRT_Data& cbData, float2 uv, float3 centerTap )
 {
     float2 leftUV = uv + float2( -1.0 / FINAL_RES.x, 0.0 );
@@ -147,11 +154,13 @@ float3 sampleRow( texture2d<float> EmulatedImage, sampler Sampler, constant CRT_
     + sampleRGB( EmulatedImage, Sampler, cbData, rightUV, Warp( rightUV ) ) * 0.25;
 }
 
+INLINE
 float3 sampleCol( texture2d<float> EmulatedImage, sampler Sampler, constant CRT_Data& cbData, float2 uv, float3 centerTap )
 {
     return sampleRow( EmulatedImage, Sampler, cbData, uv, centerTap );
 }
 
+INLINE
 float3 crtFilter( texture2d<float> EmulatedImage, sampler Sampler, constant CRT_Data& cbData, float2 uv )
 {
     float2 warpedUV = Warp( uv );

@@ -11,7 +11,7 @@
 //  Feel free to tweak, mod, or whatever
 //
 #include <metal_stdlib>
-#import "MetalViewShaders.h"
+#import "../MetalViewShaders.h"
 
 using namespace metal;
 

@@ -7,6 +7,8 @@
 //
 #import <simd/SIMD.h>
 
+#define INLINE inline __attribute__((always_inline))
+
 // input 2D vertex
 typedef struct {
     vector_float2 position;

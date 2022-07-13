@@ -18,6 +18,7 @@ struct MameScreenTestUniforms {
     float factor_u;
     float factor_v;
 };
+
 fragment float4
 mame_screen_test(VertexOutput v [[stage_in]],
                 texture2d<float> texture [[texture(0)]],
@@ -79,6 +80,7 @@ constant float4 six_colors[] = {
     float4(0, 156, 223, 255),
 };
 
+INLINE
 float4 rainbow(float f) {
     float4 color0 = six_colors[(int)floor(f) % 6] * (1.0/255.0);
     float4 color1 = six_colors[(int) ceil(f) % 6] * (1.0/255.0);

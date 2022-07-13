@@ -3,11 +3,13 @@ using namespace metal;
 
 constant bool FlipY [[function_constant(0)]];
 
+#pragma pack(push,4)
 struct Outputs
 {
     float4 outPos [[position]];
     float2 fTexCoord [[user(TEXCOORD0)]];
 };
+#pragma pack(pop)
 
 vertex Outputs fullscreen_vs(uint base [[base_vertex]], uint vid [[vertex_id]])
 {
