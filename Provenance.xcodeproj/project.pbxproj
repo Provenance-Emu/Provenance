@@ -296,10 +296,6 @@
 		B33468D720AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D520AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift */; };
 		B33625FC26EDF88200DC41EA /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FA26EDF88200DC41EA /* MetalKit.framework */; };
 		B33625FD26EDF88200DC41EA /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FB26EDF88200DC41EA /* Metal.framework */; };
-		B3375EC0278EA28E004B0DC0 /* MameShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB5278EA28E004B0DC0 /* MameShaders.metal */; };
-		B3375EC1278EA28E004B0DC0 /* MameShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB5278EA28E004B0DC0 /* MameShaders.metal */; };
-		B3375EC4278EA28E004B0DC0 /* MetalViewShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB7278EA28E004B0DC0 /* MetalViewShaders.metal */; };
-		B3375EC5278EA28E004B0DC0 /* MetalViewShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB7278EA28E004B0DC0 /* MetalViewShaders.metal */; };
 		B3411BF8276B37DE00D85327 /* PVDSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411BF7276B37DE00D85327 /* PVDSControllerViewController.swift */; };
 		B3411BF9276B37DE00D85327 /* PVDSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411BF7276B37DE00D85327 /* PVDSControllerViewController.swift */; };
 		B3411C11276B470B00D85327 /* QuickTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411BFB276B470B00D85327 /* QuickTableViewController.swift */; };
@@ -1162,9 +1158,6 @@
 		B33625F726EDEFF700DC41EA /* MTLViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTLViewController.swift; sourceTree = "<group>"; };
 		B33625FA26EDF88200DC41EA /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/iOSSupport/System/Library/Frameworks/MetalKit.framework; sourceTree = DEVELOPER_DIR; };
 		B33625FB26EDF88200DC41EA /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/Metal.framework; sourceTree = DEVELOPER_DIR; };
-		B3375EB4278EA28E004B0DC0 /* MetalViewShaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalViewShaders.h; sourceTree = "<group>"; };
-		B3375EB5278EA28E004B0DC0 /* MameShaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = MameShaders.metal; sourceTree = "<group>"; };
-		B3375EB7278EA28E004B0DC0 /* MetalViewShaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = MetalViewShaders.metal; sourceTree = "<group>"; };
 		B340E6091E088CF900AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3411BF7276B37DE00D85327 /* PVDSControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVDSControllerViewController.swift; sourceTree = "<group>"; };
 		B3411BFB276B470B00D85327 /* QuickTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuickTableViewController.swift; sourceTree = "<group>"; };
@@ -2206,9 +2199,6 @@
 			isa = PBXGroup;
 			children = (
 				B3427BD7287E8F920054C1B5 /* Shaders */,
-				B3375EB4278EA28E004B0DC0 /* MetalViewShaders.h */,
-				B3375EB5278EA28E004B0DC0 /* MameShaders.metal */,
-				B3375EB7278EA28E004B0DC0 /* MetalViewShaders.metal */,
 				B3427BD4287E7E170054C1B5 /* ShaderManager.swift */,
 			);
 			path = Shaders;
@@ -3341,7 +3331,6 @@
 				B398800D27A521AC004DEFCA /* ConflictsController.swift in Sources */,
 				CF17114E2586A13100258602 /* PVCheatsTableViewCell.swift in Sources */,
 				B3AB37342187F569009D9244 /* PVGBControllerViewController.swift in Sources */,
-				B3375EC4278EA28E004B0DC0 /* MetalViewShaders.metal in Sources */,
 				B3532C3C21A9AC93006CDA0F /* Services.swift in Sources */,
 				1180B3242492AFC900636C8A /* PVGameLibraryUpdatesController.swift in Sources */,
 				B3AB37382187F569009D9244 /* PVGBAControllerViewController.swift in Sources */,
@@ -3351,7 +3340,6 @@
 				B35E6C2F207ED7050040709A /* AppearanceStyle.swift in Sources */,
 				B3A4FB62278FFA0F00A65248 /* LocationManager.swift in Sources */,
 				B35E6C27207ED7050040709A /* AppearanceStyleable.swift in Sources */,
-				B3375EC0278EA28E004B0DC0 /* MameShaders.metal in Sources */,
 				B3D534E220AFF21900A83D4E /* Version.swift in Sources */,
 				B37B71B0278E33B9005FB278 /* MenuButton.swift in Sources */,
 				EF56AA6227A21CBC0097AD05 /* TVAlertController.swift in Sources */,
@@ -3467,7 +3455,6 @@
 				B3532C3D21A9AC93006CDA0F /* Services.swift in Sources */,
 				B31117B0218EB3A900C495A2 /* PVEmulatorViewController.swift in Sources */,
 				1AD481E51BA3546600FDA50A /* PVGLViewController.m in Sources */,
-				B3375EC5278EA28E004B0DC0 /* MetalViewShaders.metal in Sources */,
 				B369B0DD21A3BF7C0064EDCA /* PVSettingsViewController.swift in Sources */,
 				EF474BAA279E63B800578663 /* TVAlertController.swift in Sources */,
 				B382C636278E5055007E61FE /* PVEmulatorViewController+Audio.swift in Sources */,
@@ -3533,7 +3520,6 @@
 				B361F62E27C07AD10080D368 /* PVRootViewModel.swift in Sources */,
 				1AD481E01BA3545400FDA50A /* GCDWebServerDataResponse.m in Sources */,
 				B35E6C2A207ED7050040709A /* AppearanceStyleExtensions.swift in Sources */,
-				B3375EC1278EA28E004B0DC0 /* MameShaders.metal in Sources */,
 				B3437179276B0B650014F87C /* PV3DOControllerViewController.swift in Sources */,
 				1AD481D41BA3542200FDA50A /* PVWebServer.m in Sources */,
 				B3890BF520B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift in Sources */,
