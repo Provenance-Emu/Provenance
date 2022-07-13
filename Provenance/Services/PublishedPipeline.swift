@@ -20,7 +20,7 @@ class PublishedPipeline<Value, Pipeline: Publisher> {
 
     private let pipeline: (AnyPublisher<Value, Never>) -> Pipeline
 
-    init(wrappedValue: Value, _ pipeline: @escaping (AnyPublisher<Value, Never>) -> Pipeline) {
+    init(_ wrappedValue: Value, _ pipeline: @escaping (AnyPublisher<Value, Never>) -> Pipeline) {
         self.wrappedValue = wrappedValue
         self.pipeline = pipeline
     }

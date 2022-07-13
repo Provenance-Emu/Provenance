@@ -204,7 +204,7 @@ PV_OBJC_DIRECT_MEMBERS
     }
 
     [self setupTexture];
-    defaultVertexShader = [self compileShaderResource:@"shaders/default/default_vertex" ofType:GL_VERTEX_SHADER];
+    defaultVertexShader = [self compileShaderResource:@"Shaders/GLES/Vertex/default_vertex" ofType:GL_VERTEX_SHADER];
     [self setupVBOs];
     
     [self setupBlitShader];
@@ -516,14 +516,14 @@ PV_OBJC_DIRECT_MEMBERS
 
 - (void)setupBlitShader
 {
-    blitFragmentShader = [self compileShaderResource:@"shaders/blit/blit_fragment" ofType:GL_FRAGMENT_SHADER];
+    blitFragmentShader = [self compileShaderResource:@"Shaders/GLES/Blitters/blit_fragment" ofType:GL_FRAGMENT_SHADER];
     blitShaderProgram = [self linkVertexShader:defaultVertexShader withFragmentShader:blitFragmentShader];
     blitUniform_EmulatedImage = glGetUniformLocation(blitShaderProgram, "EmulatedImage");
 }
 
 - (void)setupCRTShader
 {
-    crtFragmentShader = [self compileShaderResource:@"shaders/crt/crt_fragment" ofType:GL_FRAGMENT_SHADER];
+    crtFragmentShader = [self compileShaderResource:@"Shaders/GLES/Filters/crt_fragment" ofType:GL_FRAGMENT_SHADER];
     crtShaderProgram = [self linkVertexShader:defaultVertexShader withFragmentShader:crtFragmentShader];
     crtUniform_DisplayRect = glGetUniformLocation(crtShaderProgram, "DisplayRect");
     crtUniform_EmulatedImage = glGetUniformLocation(crtShaderProgram, "EmulatedImage");

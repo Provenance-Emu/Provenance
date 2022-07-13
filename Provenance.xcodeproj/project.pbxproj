@@ -296,24 +296,10 @@
 		B33468D720AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D520AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift */; };
 		B33625FC26EDF88200DC41EA /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FA26EDF88200DC41EA /* MetalKit.framework */; };
 		B33625FD26EDF88200DC41EA /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FB26EDF88200DC41EA /* Metal.framework */; };
-		B3375EBC278EA28E004B0DC0 /* crt_filter_ps.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB2278EA28E004B0DC0 /* crt_filter_ps.metal */; };
-		B3375EBD278EA28E004B0DC0 /* crt_filter_ps.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB2278EA28E004B0DC0 /* crt_filter_ps.metal */; };
-		B3375EBE278EA28E004B0DC0 /* ulTron.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB3278EA28E004B0DC0 /* ulTron.metal */; };
-		B3375EBF278EA28E004B0DC0 /* ulTron.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB3278EA28E004B0DC0 /* ulTron.metal */; };
 		B3375EC0278EA28E004B0DC0 /* MameShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB5278EA28E004B0DC0 /* MameShaders.metal */; };
 		B3375EC1278EA28E004B0DC0 /* MameShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB5278EA28E004B0DC0 /* MameShaders.metal */; };
-		B3375EC2278EA28E004B0DC0 /* blit_ps.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB6278EA28E004B0DC0 /* blit_ps.metal */; };
-		B3375EC3278EA28E004B0DC0 /* blit_ps.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB6278EA28E004B0DC0 /* blit_ps.metal */; };
 		B3375EC4278EA28E004B0DC0 /* MetalViewShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB7278EA28E004B0DC0 /* MetalViewShaders.metal */; };
 		B3375EC5278EA28E004B0DC0 /* MetalViewShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB7278EA28E004B0DC0 /* MetalViewShaders.metal */; };
-		B3375EC6278EA28E004B0DC0 /* fullscreen_vs.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB8278EA28E004B0DC0 /* fullscreen_vs.metal */; };
-		B3375EC7278EA28E004B0DC0 /* fullscreen_vs.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB8278EA28E004B0DC0 /* fullscreen_vs.metal */; };
-		B3375EC8278EA28E004B0DC0 /* megaTron.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB9278EA28E004B0DC0 /* megaTron.metal */; };
-		B3375EC9278EA28E004B0DC0 /* megaTron.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EB9278EA28E004B0DC0 /* megaTron.metal */; };
-		B3375ECA278EA28E004B0DC0 /* simpleCRT.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EBA278EA28E004B0DC0 /* simpleCRT.metal */; };
-		B3375ECB278EA28E004B0DC0 /* simpleCRT.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EBA278EA28E004B0DC0 /* simpleCRT.metal */; };
-		B3375ECC278EA28E004B0DC0 /* lineTron.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EBB278EA28E004B0DC0 /* lineTron.metal */; };
-		B3375ECD278EA28E004B0DC0 /* lineTron.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3375EBB278EA28E004B0DC0 /* lineTron.metal */; };
 		B3411BF8276B37DE00D85327 /* PVDSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411BF7276B37DE00D85327 /* PVDSControllerViewController.swift */; };
 		B3411BF9276B37DE00D85327 /* PVDSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411BF7276B37DE00D85327 /* PVDSControllerViewController.swift */; };
 		B3411C11276B470B00D85327 /* QuickTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411BFB276B470B00D85327 /* QuickTableViewController.swift */; };
@@ -352,6 +338,10 @@
 		B3411C32276B472900D85327 /* SwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C10276B470B00D85327 /* SwitchCell.swift */; };
 		B3411C33276B472900D85327 /* NavigationRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C06276B470B00D85327 /* NavigationRow.swift */; };
 		B3411C34276B472900D85327 /* Subtitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C08276B470B00D85327 /* Subtitle.swift */; };
+		B3427BD5287E7E170054C1B5 /* ShaderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3427BD4287E7E170054C1B5 /* ShaderManager.swift */; };
+		B3427BD6287E7E170054C1B5 /* ShaderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3427BD4287E7E170054C1B5 /* ShaderManager.swift */; };
+		B3427BDA287E95190054C1B5 /* Shaders in Resources */ = {isa = PBXBuildFile; fileRef = B3427BD7287E8F920054C1B5 /* Shaders */; };
+		B3427BDB287E95190054C1B5 /* Shaders in Resources */ = {isa = PBXBuildFile; fileRef = B3427BD7287E8F920054C1B5 /* Shaders */; };
 		B3437176276B0B650014F87C /* PVIntellivisionControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3437173276B0B650014F87C /* PVIntellivisionControllerViewController.swift */; };
 		B3437177276B0B650014F87C /* PVIntellivisionControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3437173276B0B650014F87C /* PVIntellivisionControllerViewController.swift */; };
 		B3437178276B0B650014F87C /* PV3DOControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3437174276B0B650014F87C /* PV3DOControllerViewController.swift */; };
@@ -651,8 +641,6 @@
 		DA5EB00A206C4DEB000B5F30 /* PVGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5EB009206C4DEB000B5F30 /* PVGame+TopShelf.swift */; };
 		DF3751942026B83600EE727E /* PVRSPCXD4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B97B1DED14AE00602746 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		DF3751952026B83600EE727E /* PVRSPCXD4.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B97B1DED14AE00602746 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		DFCD6EBF203762AF00719289 /* shaders in Resources */ = {isa = PBXBuildFile; fileRef = DFCD6EBE203762AE00719289 /* shaders */; };
-		DFCD6EC0203762AF00719289 /* shaders in Resources */ = {isa = PBXBuildFile; fileRef = DFCD6EBE203762AE00719289 /* shaders */; };
 		EF474BA8279CCDD200578663 /* TVFullscreenController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF474BA7279CCDD100578663 /* TVFullscreenController.swift */; };
 		EF474BAA279E63B800578663 /* TVAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF474BA9279E63B700578663 /* TVAlertController.swift */; };
 		EF56AA6227A21CBC0097AD05 /* TVAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF474BA9279E63B700578663 /* TVAlertController.swift */; };
@@ -1174,16 +1162,9 @@
 		B33625F726EDEFF700DC41EA /* MTLViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTLViewController.swift; sourceTree = "<group>"; };
 		B33625FA26EDF88200DC41EA /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/iOSSupport/System/Library/Frameworks/MetalKit.framework; sourceTree = DEVELOPER_DIR; };
 		B33625FB26EDF88200DC41EA /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/Metal.framework; sourceTree = DEVELOPER_DIR; };
-		B3375EB2278EA28E004B0DC0 /* crt_filter_ps.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = crt_filter_ps.metal; sourceTree = "<group>"; };
-		B3375EB3278EA28E004B0DC0 /* ulTron.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = ulTron.metal; sourceTree = "<group>"; };
 		B3375EB4278EA28E004B0DC0 /* MetalViewShaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalViewShaders.h; sourceTree = "<group>"; };
 		B3375EB5278EA28E004B0DC0 /* MameShaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = MameShaders.metal; sourceTree = "<group>"; };
-		B3375EB6278EA28E004B0DC0 /* blit_ps.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = blit_ps.metal; sourceTree = "<group>"; };
 		B3375EB7278EA28E004B0DC0 /* MetalViewShaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = MetalViewShaders.metal; sourceTree = "<group>"; };
-		B3375EB8278EA28E004B0DC0 /* fullscreen_vs.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = fullscreen_vs.metal; sourceTree = "<group>"; };
-		B3375EB9278EA28E004B0DC0 /* megaTron.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = megaTron.metal; sourceTree = "<group>"; };
-		B3375EBA278EA28E004B0DC0 /* simpleCRT.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = simpleCRT.metal; sourceTree = "<group>"; };
-		B3375EBB278EA28E004B0DC0 /* lineTron.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = lineTron.metal; sourceTree = "<group>"; };
 		B340E6091E088CF900AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3411BF7276B37DE00D85327 /* PVDSControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVDSControllerViewController.swift; sourceTree = "<group>"; };
 		B3411BFB276B470B00D85327 /* QuickTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuickTableViewController.swift; sourceTree = "<group>"; };
@@ -1204,6 +1185,8 @@
 		B3411C0D276B470B00D85327 /* DetailText.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailText.swift; sourceTree = "<group>"; };
 		B3411C0F276B470B00D85327 /* TapActionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TapActionCell.swift; sourceTree = "<group>"; };
 		B3411C10276B470B00D85327 /* SwitchCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwitchCell.swift; sourceTree = "<group>"; };
+		B3427BD4287E7E170054C1B5 /* ShaderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderManager.swift; sourceTree = "<group>"; };
+		B3427BD7287E8F920054C1B5 /* Shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Shaders; sourceTree = "<group>"; };
 		B3437173276B0B650014F87C /* PVIntellivisionControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVIntellivisionControllerViewController.swift; sourceTree = "<group>"; };
 		B3437174276B0B650014F87C /* PV3DOControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PV3DOControllerViewController.swift; sourceTree = "<group>"; };
 		B3437175276B0B650014F87C /* PVColecoVisionControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVColecoVisionControllerViewController.swift; sourceTree = "<group>"; };
@@ -1416,7 +1399,6 @@
 		CF17114D2586A13100258602 /* PVCheatsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVCheatsTableViewCell.swift; sourceTree = "<group>"; };
 		DA5EB009206C4DEB000B5F30 /* PVGame+TopShelf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGame+TopShelf.swift"; sourceTree = "<group>"; };
 		DFB603BD2038B6C0001E70F1 /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		DFCD6EBE203762AE00719289 /* shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = shaders; sourceTree = "<group>"; };
 		EF474BA7279CCDD100578663 /* TVFullscreenController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TVFullscreenController.swift; sourceTree = "<group>"; };
 		EF474BA9279E63B700578663 /* TVAlertController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TVAlertController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -2223,16 +2205,11 @@
 		B3375EB1278EA28E004B0DC0 /* Shaders */ = {
 			isa = PBXGroup;
 			children = (
-				B3375EB2278EA28E004B0DC0 /* crt_filter_ps.metal */,
-				B3375EB3278EA28E004B0DC0 /* ulTron.metal */,
+				B3427BD7287E8F920054C1B5 /* Shaders */,
 				B3375EB4278EA28E004B0DC0 /* MetalViewShaders.h */,
 				B3375EB5278EA28E004B0DC0 /* MameShaders.metal */,
-				B3375EB6278EA28E004B0DC0 /* blit_ps.metal */,
 				B3375EB7278EA28E004B0DC0 /* MetalViewShaders.metal */,
-				B3375EB8278EA28E004B0DC0 /* fullscreen_vs.metal */,
-				B3375EB9278EA28E004B0DC0 /* megaTron.metal */,
-				B3375EBA278EA28E004B0DC0 /* simpleCRT.metal */,
-				B3375EBB278EA28E004B0DC0 /* lineTron.metal */,
+				B3427BD4287E7E170054C1B5 /* ShaderManager.swift */,
 			);
 			path = Shaders;
 			sourceTree = "<group>";
@@ -2562,7 +2539,6 @@
 				B3E6DADA20B7AD1500454DD4 /* PVLogViewController.h */,
 				B3E6DADB20B7AD1500454DD4 /* PVLogViewController.m */,
 				B3E6DAE020B7C2F800454DD4 /* PVLogViewController.xib */,
-				DFCD6EBE203762AE00719289 /* shaders */,
 				1F8D523E1D9190E900C29F90 /* PVAvailability.h */,
 				B383F3BE219BBD8700DB6926 /* LogViewable.swift */,
 			);
@@ -2997,10 +2973,10 @@
 				1A3D40A217B2DCE4004DFFFC /* InfoPlist.strings in Resources */,
 				B3296EE826CAC3ED0088AC32 /* Strings.strings in Resources */,
 				B3296EB226CABEE00088AC32 /* Settings.storyboard in Resources */,
-				DFCD6EBF203762AF00719289 /* shaders in Resources */,
 				1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */,
 				378F4A0D1B63D7CD0065FA39 /* GCDWebUploader.bundle in Resources */,
 				B3F43DCF2168075200CDD40A /* Settings.bundle in Resources */,
+				B3427BDB287E95190054C1B5 /* Shaders in Resources */,
 				B3E6DAE120B7C2F800454DD4 /* PVLogViewController.xib in Resources */,
 				B3296EE226CAC2B10088AC32 /* Default.xib in Resources */,
 				B3296EAF26CABEA80088AC32 /* SaveStates.storyboard in Resources */,
@@ -3026,9 +3002,9 @@
 				B3CEC5B22794D8DD004A7CC1 /* Strings.strings in Resources */,
 				B3296EC826CABFCA0088AC32 /* SaveStates.storyboard in Resources */,
 				1AD481C31BA350A400FDA50A /* TVAssets.xcassets in Resources */,
+				B3427BDA287E95190054C1B5 /* Shaders in Resources */,
 				1AD482361BA35A2D00FDA50A /* Assets.xcassets in Resources */,
 				B3F43DD02168075200CDD40A /* Settings.bundle in Resources */,
-				DFCD6EC0203762AF00719289 /* shaders in Resources */,
 				B3296EC326CABFB00088AC32 /* Settings.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3284,7 +3260,6 @@
 				B31117B3218EB3AE00C495A2 /* PVButtonGroupOverlayView.swift in Sources */,
 				B3A320372720974F00F338F6 /* PVGameCubeControllerViewController.swift in Sources */,
 				37EEA2A827BC7E610070E222 /* ConsoleGamesView.swift in Sources */,
-				B3375EBC278EA28E004B0DC0 /* crt_filter_ps.metal in Sources */,
 				B357A43C2709228E002C7C0F /* PVAppDelegate+AppCenter.swift in Sources */,
 				B3AB37402187F569009D9244 /* PVSaturnControllerViewController.swift in Sources */,
 				B382C642278E55C9007E61FE /* PVMetalViewController.m in Sources */,
@@ -3304,7 +3279,6 @@
 				B3A40C7121A67C7800544C20 /* PVGameLibrarySectionFooterView.swift in Sources */,
 				B3AB37452187F569009D9244 /* PVAtari7800ControllerViewController.swift in Sources */,
 				B354E7C6219A7D9D0041F971 /* SystemOverviewViewModel.swift in Sources */,
-				B3375EBE278EA28E004B0DC0 /* ulTron.metal in Sources */,
 				B3411C15276B470B00D85327 /* RowStyle.swift in Sources */,
 				B3F7BE79204A289B000D0B4D /* PVConflictViewController.swift in Sources */,
 				378F4A031B63D7CD0065FA39 /* GCDWebServerRequest.m in Sources */,
@@ -3358,7 +3332,6 @@
 				37EEA29F27BC7E610070E222 /* UIViewController+SideNavigationController.swift in Sources */,
 				378F4A0E1B63D7CD0065FA39 /* GCDWebUploader.m in Sources */,
 				1A2FB10C206EF07C00A1F942 /* PVSaveStateCollectionViewCell.swift in Sources */,
-				B3375EC2278EA28E004B0DC0 /* blit_ps.metal in Sources */,
 				B3AB37422187F569009D9244 /* PVNeoGeoPocketControllerViewController.swift in Sources */,
 				B394C98A20609E180014A65D /* UIColor+Hex.swift in Sources */,
 				42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift in Sources */,
@@ -3384,7 +3357,6 @@
 				EF56AA6227A21CBC0097AD05 /* TVAlertController.swift in Sources */,
 				B343717A276B0B650014F87C /* PVColecoVisionControllerViewController.swift in Sources */,
 				37EEA29A27BC7E610070E222 /* HomeView.swift in Sources */,
-				B3375ECC278EA28E004B0DC0 /* lineTron.metal in Sources */,
 				B35E6C23207ED7050040709A /* UIAppearanceExtensions.swift in Sources */,
 				B35E6C29207ED7050040709A /* AppearanceStyleExtensions.swift in Sources */,
 				B3AB37442187F569009D9244 /* PVNESControllerViewController.swift in Sources */,
@@ -3447,6 +3419,7 @@
 				B33468D620AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift in Sources */,
 				B302F31521713B17000322B9 /* PillPageControl.swift in Sources */,
 				B378224E21D32A360077E86F /* SegueNavigationRow.swift in Sources */,
+				B3427BD5287E7E170054C1B5 /* ShaderManager.swift in Sources */,
 				378F4A091B63D7CD0065FA39 /* GCDWebServerDataResponse.m in Sources */,
 				B385542E20336D02006CA50B /* PVGameMoreInfoViewController.swift in Sources */,
 				B3411C17276B470B00D85327 /* OptionRow.swift in Sources */,
@@ -3458,9 +3431,6 @@
 				CF1710942585917A00258602 /* PVCheatsViewController.swift in Sources */,
 				B3054371272026E800F5257D /* PVPSPControllerViewController.swift in Sources */,
 				B3890BF420B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift in Sources */,
-				B3375ECA278EA28E004B0DC0 /* simpleCRT.metal in Sources */,
-				B3375EC6278EA28E004B0DC0 /* fullscreen_vs.metal in Sources */,
-				B3375EC8278EA28E004B0DC0 /* megaTron.metal in Sources */,
 				B3411C21276B470C00D85327 /* TapActionCell.swift in Sources */,
 				B302F31421713AFD000322B9 /* CenterFlowLayout.swift in Sources */,
 				B3411C22276B470C00D85327 /* SwitchCell.swift in Sources */,
@@ -3474,14 +3444,12 @@
 				B3411C27276B472900D85327 /* RowCompatible.swift in Sources */,
 				CF87D486258ADDD100838AF8 /* PVCheatsHeaderView.swift in Sources */,
 				CF87D487258ADDD100838AF8 /* PVCheatsViewController.swift in Sources */,
-				B3375EC9278EA28E004B0DC0 /* megaTron.metal in Sources */,
 				CF87D488258ADDD100838AF8 /* PVCheatsInfoViewController.swift in Sources */,
 				CF87D489258ADDD100838AF8 /* PVCheatsTableViewCell.swift in Sources */,
 				CF87D47E258ADDA500838AF8 /* PVEmulatorViewController+Cheats.swift in Sources */,
 				B3B104D1218F2EF400210C39 /* PVSaturnControllerViewController.swift in Sources */,
 				1FE10F291D94ECC600A20D1A /* PVAppearanceViewController.swift in Sources */,
 				B3D5E2C0218EC62E0015C690 /* Sections.swift in Sources */,
-				B3375EBF278EA28E004B0DC0 /* ulTron.metal in Sources */,
 				B3B104BF218F2EC000210C39 /* JSButton.swift in Sources */,
 				B382C638278E5055007E61FE /* PVEmulatorViewController+MultiDisc.swift in Sources */,
 				B306E0D02769F2C2001DC52E /* PVOdyssey2ControllerViewController.swift in Sources */,
@@ -3555,11 +3523,9 @@
 				B3B104C0218F2EF400210C39 /* PV32XControllerViewController.swift in Sources */,
 				B354E7C0219A7D250041F971 /* SystemSettingsCell.swift in Sources */,
 				B3411C31276B472900D85327 /* Row.swift in Sources */,
-				B3375EC3278EA28E004B0DC0 /* blit_ps.metal in Sources */,
 				B3411C2A276B472900D85327 /* RowStyle.swift in Sources */,
 				1AD481E21BA3545B00FDA50A /* GCDWebServerFileResponse.m in Sources */,
 				B3532B2C21A78FB2006CDA0F /* PVSwitchCell.swift in Sources */,
-				B3375ECB278EA28E004B0DC0 /* simpleCRT.metal in Sources */,
 				B3D534ED20B001D700A83D4E /* PillPageControl.swift in Sources */,
 				B354E7C7219A7D9D0041F971 /* SystemOverviewViewModel.swift in Sources */,
 				B398800E27A521AC004DEFCA /* ConflictsController.swift in Sources */,
@@ -3576,11 +3542,10 @@
 				1AD481D71BA3543500FDA50A /* GCDWebServer.m in Sources */,
 				1A2FB10A206EE8A700A1F942 /* PVSaveStatesViewController.swift in Sources */,
 				B3411C2D276B472900D85327 /* TapActionCell.swift in Sources */,
+				B3427BD6287E7E170054C1B5 /* ShaderManager.swift in Sources */,
 				B3411C24276B472900D85327 /* RadioSection.swift in Sources */,
-				B3375ECD278EA28E004B0DC0 /* lineTron.metal in Sources */,
 				1AD481DE1BA3544A00FDA50A /* GCDWebServerMultiPartFormRequest.m in Sources */,
 				1AD481DA1BA3543E00FDA50A /* GCDWebServerRequest.m in Sources */,
-				B3375EBD278EA28E004B0DC0 /* crt_filter_ps.metal in Sources */,
 				B3D5E2AF218EC1AE0015C690 /* RealmBindObserver.swift in Sources */,
 				1A2FB110206EF29E00A1F942 /* PVSaveStateHeaderView.swift in Sources */,
 				B35E6C26207ED7050040709A /* UIApplicationExtensions.swift in Sources */,
@@ -3630,7 +3595,6 @@
 				1AD481F61BA3549F00FDA50A /* UIImage+ImageEffects.m in Sources */,
 				B3A320382720974F00F338F6 /* PVGameCubeControllerViewController.swift in Sources */,
 				B33468D720AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift in Sources */,
-				B3375EC7278EA28E004B0DC0 /* fullscreen_vs.metal in Sources */,
 				B3B104C7218F2EF400210C39 /* PVGBControllerViewController.swift in Sources */,
 				B3B104CC218F2EF400210C39 /* PVNESControllerViewController.swift in Sources */,
 				B361F63727C07B390080D368 /* SideNavigationController+NestedTypes.swift in Sources */,
