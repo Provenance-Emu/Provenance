@@ -4,6 +4,8 @@
 MARKETING_VERSION = 2.1.1
 CURRENT_PROJECT_VERSION = 2782
 
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES_SILENCE_DEPRECATION=1
+
 // Vars to be overwritten by `CodeSigning.xcconfig` if exists
 DEVELOPMENT_TEAM = S32Z3HMYVQ
 ORG_IDENTIFIER = org.provenance-emu
