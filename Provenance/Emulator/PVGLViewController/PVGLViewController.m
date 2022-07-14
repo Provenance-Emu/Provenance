@@ -466,7 +466,7 @@ PV_OBJC_DIRECT_MEMBERS
         {
             char* infoLog = (char*)malloc( infoLogLength );
             glGetShaderInfoLog( shader, infoLogLength, NULL, infoLog );
-            printf( "Error compiling shader: %s", infoLog );
+            ELOG(@"Error compiling shader: %s", infoLog );
             free( infoLog );
         }
         
@@ -503,7 +503,7 @@ PV_OBJC_DIRECT_MEMBERS
         {
             char* infoLog = (char*)malloc( infoLogLength );
             glGetProgramInfoLog( shaderProgram, infoLogLength, NULL, infoLog );
-            printf( "Error linking program: %s", infoLog );
+            ELOG(@"Error linking program: %s", infoLog );
             free( infoLog );
         }
         

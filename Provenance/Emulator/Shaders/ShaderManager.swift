@@ -24,41 +24,31 @@ public protocol ShaderProvider {
     var shaders: [Shader] { get }
 }
 
-public class ShaderManager: ShaderProvider {
-    public enum Mode: String, Codable {
-        case metal
-        case gles
-        
-        var directory: String {
-            switch self {
-            case .metal: return "Metal"
-            case .gles: return "GLES"
-            }
-        }
-    }
-    
-    public var mode: Mode = .metal
+public class MetalShaderManager: ShaderProvider {
+
     
     public
-    var shaders: [Shader] {
+    lazy var shaders: [Shader] = {
         return [Shader]()
+    }()
+    
+    public
+    lazy var vertexShaders: [Shader] = {
+        return shaders(forType: .vertex)
+    }()
+    
+    public
+    lazy var filterShaders: [Shader] = {
+        return shaders(forType: .filter)
+    }()
+    
+    public
+    lazy var blitterShaders: [Shader] = {
+        return shaders(forType: .blitter)
+    }()
+    
+    public
+    var shaders(forType type: ShaderType): [Shader] {
+        return shaders.filter{ $0.type == type }
     }
-    
-    // MARK: - Directories
-    lazy var shadersPath: URL = {
-        let typeDir: String = mode.directory
-        return Bundle(for: type(of: self)).resourceURL!.appendingPathComponent("/Shaders/\(typeDir)")
-    }()
-    
-    lazy var blittersPath: URL = {
-        return shadersPath.appendingPathComponent("/Blitters")
-    }()
-
-    lazy var filtersPath: URL = {
-        return shadersPath.appendingPathComponent("/Filters")
-    }()
-
-    lazy var vertexPath: URL = {
-        return shadersPath.appendingPathComponent("/Vertex")
-    }()
 }
