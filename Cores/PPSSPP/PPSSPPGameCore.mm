@@ -161,8 +161,7 @@ private:
     return YES;
 }
 
-- (void)stopEmulation
-{
+- (void)stopEmulation {
     PSP_Shutdown();
 
     NativeShutdownGraphics();
@@ -171,13 +170,11 @@ private:
     [super stopEmulation];
 }
 
-- (void)resetEmulation
-{
+- (void)resetEmulation {
     _shouldReset = YES;
 }
 
-- (void)executeFrame
-{
+- (void)executeFrame {
     if(!_isInitialized)
     {
         // This is where PPSSPP will look for ppge_atlas.zim
@@ -226,8 +223,7 @@ private:
 
 # pragma mark - Video
 
-- (void)swapBuffers
-{
+- (void)swapBuffers {
     [self.renderDelegate didRenderFrameOnAlternateThread];
 }
 
@@ -243,13 +239,11 @@ private:
 //    [self executeFrameSkippingFrame:NO];
 //}
 
-- (CGSize)bufferSize
-{
+- (CGSize)bufferSize {
     return CGSizeMake(RenderWidth, RenderHeight);
 }
 
-- (CGSize)aspectSize
-{
+- (CGSize)aspectSize {
     return CGSizeMake(16, 9);
 }
 
@@ -257,13 +251,11 @@ private:
     return CGRectMake(0, 0, RenderWidth, RenderHeight);
 }
 
-- (NSTimeInterval)frameInterval
-{
+- (NSTimeInterval)frameInterval {
     return _frameInterval ?: 60;
 }
 
-- (BOOL)rendersToOpenGL
-{
+- (BOOL)rendersToOpenGL {
     return YES;
 }
 
@@ -271,35 +263,29 @@ private:
 //    return YES;
 //}
 
-- (const void *)videoBuffer
-{
+- (const void *)videoBuffer {
     return NULL;
 }
 
-- (GLenum)pixelFormat
-{
+- (GLenum)pixelFormat {
     return GL_BGRA;
 }
 
-- (GLenum)pixelType
-{
+- (GLenum)pixelType {
     return GL_UNSIGNED_BYTE;
 }
 
-- (GLenum)internalPixelFormat
-{
+- (GLenum)internalPixelFormat {
     return GL_RGBA;
 }
 
 # pragma mark - Audio
 
-- (NSUInteger)channelCount
-{
+- (NSUInteger)channelCount {
     return AUDIO_CHANNELS;
 }
 
-- (double)audioSampleRate
-{
+- (double)audioSampleRate {
     return AUDIO_FREQ;
 }
 
@@ -312,13 +298,9 @@ static void _PVSaveStateCallback(bool status, std::string message, void *cbUserD
     block(status, nil);
 }
 
-- (BOOL)supportsSaveStates {
-    return NO;
-}
+- (BOOL)supportsSaveStates { return NO; }
 
-- (BOOL)supportsRumble {
-    return YES;
-}
+- (BOOL)supportsRumble { return YES; }
 
 - (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
 {

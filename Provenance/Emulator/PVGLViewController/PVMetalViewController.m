@@ -215,7 +215,12 @@ PV_OBJC_DIRECT_MEMBERS
     [self setupTexture];
     
     [self setupBlitShader];
-    [self setupCRTShader];
+    
+    NSString *metalFilter = PVSettingsModel.shared.metalFilter;
+    Shader *filterShader = [MetalShaderManager.sharedInstance filterShaderForName:metalFilter];
+    if(filterShader) {
+        [self setupFilterShader:filterShader];
+    }
 
     alternateThreadFramebufferBack = 0;
     alternateThreadColorTextureBack = 0;
@@ -462,15 +467,24 @@ PV_OBJC_DIRECT_MEMBERS
     id<MTLLibrary> lib = [_device newDefaultLibrary];
     
     MTLRenderPipelineDescriptor* desc = [MTLRenderPipelineDescriptor new];
-    desc.vertexFunction = [lib newFunctionWithName:@"fullscreen_vs" constantValues:constants error:&error];
-    desc.fragmentFunction = [lib newFunctionWithName:@"blit_ps"];
+    Shader* fillScreenShader = MetalShaderManager.sharedInstance.vertexShaders.firstObject;
+    desc.vertexFunction = [lib newFunctionWithName:fillScreenShader.function constantValues:constants error:&error];
+    
+    if(error) {
+        ELOG(@"%@", error);
+    }
+    
+    Shader* blitterShader = MetalShaderManager.sharedInstance.blitterShaders.firstObject;
+    desc.fragmentFunction = [lib newFunctionWithName:blitterShader.function];
     desc.colorAttachments[0].pixelFormat = self.mtlview.currentDrawable.layer.pixelFormat;
     
     _blitPipeline = [_device newRenderPipelineStateWithDescriptor:desc error:&error];
+    if(error) {
+        ELOG(@"%@", error);
+    }
 }
 
-- (void)setupCRTShader
-{
+- (void)setupFilterShader:(Shader*)filterShader {
     NSError* error;
     
     MTLFunctionConstantValues* constants = [MTLFunctionConstantValues new];
@@ -480,11 +494,19 @@ PV_OBJC_DIRECT_MEMBERS
     id<MTLLibrary> lib = [_device newDefaultLibrary];
     
     MTLRenderPipelineDescriptor* desc = [MTLRenderPipelineDescriptor new];
-    desc.vertexFunction = [lib newFunctionWithName:@"fullscreen_vs" constantValues:constants error:&error];
-    desc.fragmentFunction = [lib newFunctionWithName:@"crt_filter_ps"];
+    Shader* fillScreenShader = MetalShaderManager.sharedInstance.vertexShaders.firstObject;
+    desc.vertexFunction = [lib newFunctionWithName:fillScreenShader.function constantValues:constants error:&error];
+    if(error) {
+        ELOG(@"%@", error);
+    }
+        
+    desc.fragmentFunction = [lib newFunctionWithName:filterShader.function];
     desc.colorAttachments[0].pixelFormat = self.mtlview.currentDrawable.layer.pixelFormat;
     
     _crtFilterPipeline = [_device newRenderPipelineStateWithDescriptor:desc error:&error];
+    if(error) {
+        ELOG(@"%@", error);
+    }
 }
 
 // Mac OS Stuff
