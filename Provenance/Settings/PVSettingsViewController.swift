@@ -160,13 +160,12 @@ final class PVSettingsViewController: PVQuickTableViewController {
             PVSettingsSwitchRow(text: NSLocalizedString("Native Scale", comment: "Native Scale"), key: \PVSettingsModel.nativeScaleEnabled),
             PVSettingsSwitchRow(text: NSLocalizedString("Integer Scaling", comment: "Integer Scaling"), key: \PVSettingsModel.integerScaleEnabled),
             PVSettingsSwitchRow(text: NSLocalizedString("CRT Filter", comment: "CRT Filter"), key: \PVSettingsModel.crtFilterEnabled),
-            PVSettingsOptionRow(text: NSLocalizedString("Metal Filter", comment: "Metal Filter"),
-                                detailText: "Post processing filter when using Metal", 
-                                key: \PVSettingsModel.metalFilter),
-
             PVSettingsSwitchRow(text: NSLocalizedString("Image Smoothing", comment: "Image Smoothing"), key: \PVSettingsModel.imageSmoothing),
             PVSettingsSwitchRow(text: NSLocalizedString("FPS Counter", comment: "FPS Counter"), key: \PVSettingsModel.showFPSCount)
         ])
+        avRows.append(PVSettingsOptionRow(text: NSLocalizedString("Metal Filter", comment: "Metal Filter"),
+                                               detailText: .subtitle("Post processing filter when using Metal"),
+                                               key: \PVSettingsModel.metalFilter))
         #else
         avRows.append(contentsOf: [
             PVSettingsSwitchRow(text: NSLocalizedString("Native Scale", comment: "Native Scale"), key: \PVSettingsModel.nativeScaleEnabled,
