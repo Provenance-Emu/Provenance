@@ -450,6 +450,7 @@
 		B37B71AE278E3198005FB278 /* UIViewController+Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37B71AC278E3198005FB278 /* UIViewController+Alerts.swift */; };
 		B37B71B0278E33B9005FB278 /* MenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37B71AF278E33B9005FB278 /* MenuButton.swift */; };
 		B37B71B1278E33B9005FB278 /* MenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37B71AF278E33B9005FB278 /* MenuButton.swift */; };
+		B37D30B527BCD82B00C01114 /* Moveable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37D30B427BCD82B00C01114 /* Moveable.swift */; };
 		B382C635278E5055007E61FE /* PVEmulatorViewController+Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = B382C632278E5054007E61FE /* PVEmulatorViewController+Audio.swift */; };
 		B382C636278E5055007E61FE /* PVEmulatorViewController+Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = B382C632278E5054007E61FE /* PVEmulatorViewController+Audio.swift */; };
 		B382C637278E5055007E61FE /* PVEmulatorViewController+MultiDisc.swift in Sources */ = {isa = PBXBuildFile; fileRef = B382C633278E5055007E61FE /* PVEmulatorViewController+MultiDisc.swift */; };
@@ -1250,6 +1251,7 @@
 		B378225B21D32FCC0077E86F /* PVSliderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSliderCell.swift; sourceTree = "<group>"; };
 		B37B71AC278E3198005FB278 /* UIViewController+Alerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alerts.swift"; sourceTree = "<group>"; };
 		B37B71AF278E33B9005FB278 /* MenuButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuButton.swift; sourceTree = "<group>"; };
+		B37D30B427BCD82B00C01114 /* Moveable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moveable.swift; sourceTree = "<group>"; };
 		B37D31C9274A57F000D635E0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = en; path = Info.plist; sourceTree = "<group>"; };
 		B37D31CC274A57F000D635E0 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "zh-Hans"; path = Info.plist; sourceTree = "<group>"; };
 		B380EAC12759D689001B8532 /* Build.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Build.xcconfig; sourceTree = "<group>"; };
@@ -1810,6 +1812,7 @@
 				B3AB37F421881CDC009D9244 /* PViCadeControllerViewController.swift */,
 				B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */,
 				C665CD8321FEC68E00C834C6 /* GCControllerExtensions.swift */,
+				B37D30B427BCD82B00C01114 /* Moveable.swift */,
 				B37B71AF278E33B9005FB278 /* MenuButton.swift */,
 			);
 			path = Controller;
@@ -3334,6 +3337,7 @@
 				C665CD8421FEC68E00C834C6 /* GCControllerExtensions.swift in Sources */,
 				378F4A0A1B63D7CD0065FA39 /* GCDWebServerErrorResponse.m in Sources */,
 				B34EADAE218824C2008F52EE /* PViCadeControllerViewController.swift in Sources */,
+				B37D30B527BCD82B00C01114 /* Moveable.swift in Sources */,
 				B3AB373D2187F569009D9244 /* PVPokeMiniControllerViewController.swift in Sources */,
 				1A3D433B17B30BA3004DFFFC /* PVGLViewController.m in Sources */,
 				B3F43DE22169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */,
