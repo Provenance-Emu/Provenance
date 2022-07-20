@@ -8,7 +8,9 @@
 
 import Foundation
 
-final class PVOptionCell: TapActionCell {
+final class PVOptionCell: UITableViewCell {
+    public static let identifier: String = String(describing: PVOptionCell.self)
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.style()
@@ -39,18 +41,22 @@ final class PVOptionCell: TapActionCell {
     }
 }
 
-
-final class PVSettingsOptionRow: OptionRow<PVOptionCell> {
+final class PVSettingsOptionRow: NavigationRow<PVOptionCell> {
     let keyPath: ReferenceWritableKeyPath<PVSettingsModel, String>
-
+    
     required init(text: String,
                   detailText: DetailText? = nil,
+                  icon: Icon? = nil,
                   key: ReferenceWritableKeyPath<PVSettingsModel, String>,
                   customization: ((UITableViewCell, Row & RowStyle) -> Void)? = nil) {
         keyPath = key
         let value = PVSettingsModel.shared[keyPath: key]
-
-        super.init(text: text, detailText: detailText, switchValue: value, customization: customization, action: { row in
+        
+        super.init(text: text,
+                   detailText: detailText,
+                   icon: value,
+                   customization: customization,
+                   action: { row in
             if let row = row as? OptionRowCompatible {
                 PVSettingsModel.shared[keyPath: key] = row.text
             }
