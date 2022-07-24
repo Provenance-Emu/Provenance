@@ -8,8 +8,9 @@
 
 import Foundation
 
-final class PVOptionCell: UITableViewCell {
-    public static let identifier: String = String(describing: PVOptionCell.self)
+public
+final class PVRadioOptionCell: UITableViewCell {
+    public static let identifier: String = String(describing: PVRadioOptionCell.self)
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -41,25 +42,53 @@ final class PVOptionCell: UITableViewCell {
     }
 }
 
-final class PVSettingsOptionRow: NavigationRow<PVOptionCell> {
-    let keyPath: ReferenceWritableKeyPath<PVSettingsModel, String>
+public
+final class PVRadioOptionRow: OptionRow<PVRadioOptionCell> {
     
-    required init(text: String,
-                  detailText: DetailText? = nil,
-                  icon: Icon? = nil,
+}
+
+public
+final class PVSettingsOptionRow: RadioSection {
+    let keyPath: ReferenceWritableKeyPath<PVSettingsModel, String>
+    let _options: [String]
+    let _rows: [PVRadioOptionRow]
+    var selectedValue: String { PVSettingsModel.shared[keyPath: keyPath] }
+    
+//    private func didToggleSelection() -> (Row) -> Void {
+//      return { [weak self] in
+//        if let option = $0 as? OptionRowCompatible {
+//          let state = "\(option.text) is " + (option.isSelected ? "selected" : "deselected")
+//          self?.showDebuggingText(state)
+//        }
+//      }
+//    }
+
+    
+    required init(title: String,
+                  footer: String? = nil,
                   key: ReferenceWritableKeyPath<PVSettingsModel, String>,
-                  customization: ((UITableViewCell, Row & RowStyle) -> Void)? = nil) {
+                  options: [String]) {
+        self._options = options
         keyPath = key
-        let value = PVSettingsModel.shared[keyPath: key]
-        
-        super.init(text: text,
-                   detailText: detailText,
-                   icon: value,
-                   customization: customization,
-                   action: { row in
-            if let row = row as? OptionRowCompatible {
-                PVSettingsModel.shared[keyPath: key] = row.text
+        let _selected = PVSettingsModel.shared[keyPath: keyPath]
+        _rows = options.map {
+            let selected: Bool
+            if $0.lowercased() == "off" {
+                selected = _selected == ""
+            } else {
+                selected = $0 == _selected
             }
-        })
+            return PVRadioOptionRow(text: $0, isSelected: selected, action: { row in
+                if let option = row as? OptionRowCompatible {
+                    if option.isSelected {
+                        var value = option.text
+                        if value.lowercased() == "off" { value = "" }
+                        PVSettingsModel.shared[keyPath: key] = value
+                    }
+                }
+            })
+        }
+        
+        super.init(title: title, options: _rows, footer: footer)
     }
 }

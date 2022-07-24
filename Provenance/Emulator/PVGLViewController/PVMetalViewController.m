@@ -51,7 +51,7 @@
 @property (nonatomic, strong) id<MTLDevice> device;
 @property (nonatomic, strong) id<MTLCommandQueue> commandQueue;
 @property (nonatomic, strong) id<MTLRenderPipelineState> blitPipeline;
-@property (nonatomic, strong) id<MTLRenderPipelineState> crtFilterPipeline;
+@property (nonatomic, strong) id<MTLRenderPipelineState> effectFilterPipeline;
 @property (nonatomic, strong) id<MTLSamplerState> pointSampler;
 @property (nonatomic, strong) id<MTLSamplerState> linearSampler;
 @property (nonatomic, strong) id<MTLTexture> inputTexture;
@@ -91,7 +91,7 @@ PV_OBJC_DIRECT_MEMBERS
     if (backingIOSurface)
         CFRelease(backingIOSurface);
     
-    [[PVSettingsModel shared] removeObserver:self forKeyPath:@"crtFilterEnabled"];
+    [[PVSettingsModel shared] removeObserver:self forKeyPath:@"metalFilter"];
     [[PVSettingsModel shared] removeObserver:self forKeyPath:@"imageSmoothing"];
 }
 
@@ -105,19 +105,27 @@ PV_OBJC_DIRECT_MEMBERS
             self.emulatorCore.renderDelegate = self;
         }
         
-        renderSettings.crtFilterEnabled = [[PVSettingsModel shared] crtFilterEnabled];
+//        renderSettings.crtFilterEnabled = [[PVSettingsModel shared] crtFilterEnabled];
+        renderSettings.crtFilterEnabled = [self filterShaderEnabled];
+
         renderSettings.smoothingEnabled = [[PVSettingsModel shared] imageSmoothing];
         
-        [[PVSettingsModel shared] addObserver:self forKeyPath:@"crtFilterEnabled" options:NSKeyValueObservingOptionNew context:nil];
+        [[PVSettingsModel shared] addObserver:self forKeyPath:@"metalFilter" options:NSKeyValueObservingOptionNew context:nil];
         [[PVSettingsModel shared] addObserver:self forKeyPath:@"imageSmoothing" options:NSKeyValueObservingOptionNew context:nil];
 	}
 
 	return self;
 }
 
+- (BOOL)filterShaderEnabled {
+    NSString *value = PVSettingsModel.shared.metalFilter.lowercaseString;
+    BOOL enabled = !([value isEqualToString:@""] || [value isEqualToString:@"off"]);
+    return enabled;
+}
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-    if ([keyPath isEqualToString:@"crtFilterEnabled"]) {
-        renderSettings.crtFilterEnabled = [[PVSettingsModel shared] crtFilterEnabled];
+    if ([keyPath isEqualToString:@"metalFilter"]) {
+        renderSettings.crtFilterEnabled = [self filterShaderEnabled];
     } else if ([keyPath isEqualToString:@"imageSmoothing"]) {
         renderSettings.smoothingEnabled = [[PVSettingsModel shared] imageSmoothing];
     } else {
@@ -219,7 +227,7 @@ PV_OBJC_DIRECT_MEMBERS
     NSString *metalFilter = PVSettingsModel.shared.metalFilter;
     Shader *filterShader = [MetalShaderManager.sharedInstance filterShaderForName:metalFilter];
     if(filterShader) {
-        [self setupFilterShader:filterShader];
+        [self setupEffectFilterShader:filterShader];
     }
 
     alternateThreadFramebufferBack = 0;
@@ -484,7 +492,7 @@ PV_OBJC_DIRECT_MEMBERS
     }
 }
 
-- (void)setupFilterShader:(Shader*)filterShader {
+- (void)setupEffectFilterShader:(Shader*)filterShader {
     NSError* error;
     
     MTLFunctionConstantValues* constants = [MTLFunctionConstantValues new];
@@ -493,6 +501,7 @@ PV_OBJC_DIRECT_MEMBERS
     
     id<MTLLibrary> lib = [_device newDefaultLibrary];
     
+    // Fill screen shader
     MTLRenderPipelineDescriptor* desc = [MTLRenderPipelineDescriptor new];
     Shader* fillScreenShader = MetalShaderManager.sharedInstance.vertexShaders.firstObject;
     desc.vertexFunction = [lib newFunctionWithName:fillScreenShader.function constantValues:constants error:&error];
@@ -500,10 +509,11 @@ PV_OBJC_DIRECT_MEMBERS
         ELOG(@"%@", error);
     }
         
+    // Filter shader
     desc.fragmentFunction = [lib newFunctionWithName:filterShader.function];
     desc.colorAttachments[0].pixelFormat = self.mtlview.currentDrawable.layer.pixelFormat;
     
-    _crtFilterPipeline = [_device newRenderPipelineStateWithDescriptor:desc error:&error];
+    _effectFilterPipeline = [_device newRenderPipelineStateWithDescriptor:desc error:&error];
     if(error) {
         ELOG(@"%@", error);
     }
@@ -628,7 +638,7 @@ PV_OBJC_DIRECT_MEMBERS
             
             [encoder setFragmentBytes:&cbData length:sizeof(cbData) atIndex:0];
             
-            [encoder setRenderPipelineState:strongself.crtFilterPipeline];
+            [encoder setRenderPipelineState:strongself.effectFilterPipeline];
         }
         else
         {

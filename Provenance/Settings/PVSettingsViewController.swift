@@ -163,9 +163,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
             PVSettingsSwitchRow(text: NSLocalizedString("Image Smoothing", comment: "Image Smoothing"), key: \PVSettingsModel.imageSmoothing),
             PVSettingsSwitchRow(text: NSLocalizedString("FPS Counter", comment: "FPS Counter"), key: \PVSettingsModel.showFPSCount)
         ])
-        avRows.append(PVSettingsOptionRow(text: NSLocalizedString("Metal Filter", comment: "Metal Filter"),
-                                               detailText: .subtitle("Post processing filter when using Metal"),
-                                               key: \PVSettingsModel.metalFilter))
+        
         #else
         avRows.append(contentsOf: [
             PVSettingsSwitchRow(text: NSLocalizedString("Native Scale", comment: "Native Scale"), key: \PVSettingsModel.nativeScaleEnabled,
@@ -194,6 +192,14 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
         let avSection = Section(title: NSLocalizedString("Video Options", comment: "Video Options"), rows: avRows)
 
+        // Metal Filters
+        var shaders: [String] = MetalShaderManager.shared.filterShaders.map { $0.name }
+        shaders.insert("Off", at: 0)
+        let metalSection = PVSettingsOptionRow(title: NSLocalizedString("Metal Filter", comment: "Metal Filter"),
+                                               footer: "Post processing filter when using Metal",
+                                               key: \PVSettingsModel.metalFilter,
+                                               options: shaders)
+        
         // -- Section : Controler
 
         var controllerRows = [TableRow]()
@@ -489,7 +495,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
         let debugSection = Section(title: NSLocalizedString("Debug", comment: ""), rows: debugRows)
 
         // Set table data
-        tableContents = [appSection, coreOptionsSection, savesSection, avSection, controllerSection, librarySection, librarySection2, betaSection, buildSection, extraInfoSection]
+        tableContents = [appSection, coreOptionsSection, savesSection, avSection, metalSection, controllerSection, librarySection, librarySection2, betaSection, buildSection, extraInfoSection]
         #if os(iOS)
             tableContents.append(debugSection)
         #endif
