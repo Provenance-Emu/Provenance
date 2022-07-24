@@ -52,6 +52,7 @@ public final class MetalShaderManager: NSObject, ShaderProvider {
             .init(type: .vertex, name: "Fullscreen", function: "fullscreen_vs"),
             .init(type: .blitter, name: "Blitter", function: "blit_ps"),
             .init(type: .filter, name: "CRT", function: "crt_filter_ps"),
+            .init(type: .filter, name: "Simple CRT", function: "simpleCRT"),
         ]
         return shaders
     }()

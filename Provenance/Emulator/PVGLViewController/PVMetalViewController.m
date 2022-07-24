@@ -45,6 +45,8 @@
     uint _frameCount;
     
     struct RenderSettings renderSettings;
+    
+    
 }
 
 @property (nonatomic, strong) MTKView *mtlview;
@@ -63,6 +65,7 @@
 
 @property (nonatomic, assign) GLESVersion glesVersion;
 
+@property (nonatomic, strong, nullable) Shader* effectFilterShader;
 @end
 
 PV_OBJC_DIRECT_MEMBERS
@@ -493,6 +496,7 @@ PV_OBJC_DIRECT_MEMBERS
 }
 
 - (void)setupEffectFilterShader:(Shader*)filterShader {
+    self.effectFilterShader = filterShader;
     NSError* error;
     
     MTLFunctionConstantValues* constants = [MTLFunctionConstantValues new];
@@ -624,21 +628,46 @@ PV_OBJC_DIRECT_MEMBERS
         
         if (strongself->renderSettings.crtFilterEnabled)
         {
-            struct CRT_Data cbData;
-            cbData.DisplayRect.x = 0;
-            cbData.DisplayRect.y = 0;
-            cbData.DisplayRect.z = screenRect.size.width;
-            cbData.DisplayRect.w = screenRect.size.height;
-            
-            cbData.EmulatedImageSize.x = strongself.inputTexture.width;
-            cbData.EmulatedImageSize.y = strongself.inputTexture.height;
-            
-            cbData.FinalRes.x = view.drawableSize.width;
-            cbData.FinalRes.y = view.drawableSize.height;
-            
-            [encoder setFragmentBytes:&cbData length:sizeof(cbData) atIndex:0];
-            
-            [encoder setRenderPipelineState:strongself.effectFilterPipeline];
+            if ( [strongself->_effectFilterShader.name isEqualToString:@"CRT"]) {
+                struct CRT_Data cbData;
+                cbData.DisplayRect.x = 0;
+                cbData.DisplayRect.y = 0;
+                cbData.DisplayRect.z = screenRect.size.width;
+                cbData.DisplayRect.w = screenRect.size.height;
+                
+                cbData.EmulatedImageSize.x = strongself.inputTexture.width;
+                cbData.EmulatedImageSize.y = strongself.inputTexture.height;
+                
+                cbData.FinalRes.x = view.drawableSize.width;
+                cbData.FinalRes.y = view.drawableSize.height;
+                
+                [encoder setFragmentBytes:&cbData length:sizeof(cbData) atIndex:0];
+                
+                [encoder setRenderPipelineState:strongself.effectFilterPipeline];
+            } else if ( [strongself->_effectFilterShader.name isEqualToString:@"Simple CRT"]) {
+                struct SimpleCrtUniforms cbData;
+                
+                cbData.mame_screen_src_rect.x = 0;
+                cbData.mame_screen_src_rect.y = 0;
+                cbData.mame_screen_src_rect.z = screenRect.size.width;
+                cbData.mame_screen_src_rect.w = screenRect.size.height;
+
+                cbData.mame_screen_dst_rect.x = strongself.inputTexture.width;
+                cbData.mame_screen_dst_rect.y = strongself.inputTexture.height;
+                cbData.mame_screen_dst_rect.z = view.drawableSize.width;
+                cbData.mame_screen_dst_rect.w = view.drawableSize.height;
+
+                cbData.curv_vert = 5.0;
+                cbData.curv_horiz = 4.0;
+                cbData.curv_strength = 0.25;
+                cbData.light_boost = 1.3;
+                cbData.vign_strength = 0.05;
+                cbData.zoom_out = 1.1;
+                cbData.brightness = 1.0;
+                
+                [encoder setFragmentBytes:&cbData length:sizeof(cbData) atIndex:0];
+                [encoder setRenderPipelineState:strongself.effectFilterPipeline];
+            }
         }
         else
         {
