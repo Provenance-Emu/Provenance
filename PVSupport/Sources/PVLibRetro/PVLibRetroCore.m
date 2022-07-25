@@ -1612,12 +1612,39 @@ static bool environment_callback(unsigned cmd, void *data) {
             break;
 
         }
+        case RETRO_ENVIRONMENT_GET_GAME_INFO_EXT:
+        {
+            const struct retro_game_info_ext **game_info_ext =
+                    (const struct retro_game_info_ext **)data;
+            
+            if (!game_info_ext) {
+                ELOG(@"`game_info_ext` is nil.")
+                return false;
+            }
+                
+            
+////            struct retro_game_info_ext *game_info = (struct retro_game_info_ext*)data;
+//            // TODO: Is there a way to pass `retro_game_info_ext` before callbacks?
+//            struct retro_game_info_ext *game_info = malloc(sizeof(struct retro_game_info_ext));
+            NSData *romData = [NSData dataWithContentsOfFile:strongCurrent.romPath];
+            struct retro_game_info_ext *game_info = malloc(sizeof(struct retro_game_info_ext));
+            game_info->persistent_data = true;
+            game_info->data = romData.bytes;
+            game_info->size = romData.length;
+            
+            *game_info_ext = game_info;
+
+//            data = game_info;
+            return true;
+            break;
+        }
         case RETRO_ENVIRONMENT_GET_VARIABLE:
         {
             struct retro_variable *var = (struct retro_variable*)data;
 
            void *value = [strongCurrent getVariable:var->key];
             var->value = value;
+            return true;
             break;
         }
         case RETRO_ENVIRONMENT_SET_MINIMUM_AUDIO_LATENCY:
@@ -2120,13 +2147,14 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 }
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {
+    self.romPath = path;
     NSURL *batterySavesDirectory = [NSURL fileURLWithPath:[self batterySavesPath]];
     NSError *localError;
-    [[NSFileManager defaultManager] createDirectoryAtURL:batterySavesDirectory
+    BOOL status = [[NSFileManager defaultManager] createDirectoryAtURL:batterySavesDirectory
                              withIntermediateDirectories:YES
                                               attributes:nil
                                                    error:&localError];
-    if(error) {
+    if(!status) {
         *error = localError;
         return NO;
     }

@@ -52,16 +52,16 @@ public enum SystemIdentifier: String, CaseIterable {
     case Atari2600 = "com.provenance.2600"
     case Atari5200 = "com.provenance.5200"
     case Atari7800 = "com.provenance.7800"
-	case Atari8bit = "com.provenance.atari8bit"
+    case Atari8bit = "com.provenance.atari8bit"
     case AtariJaguar = "com.provenance.jaguar"
     case AtariJaguarCD = "com.provenance.jaguarcd"
-	case AtariST = "com.provenance.atarist"
+    case AtariST = "com.provenance.atarist"
     case C64 = "com.provenance.c64"
     case ColecoVision = "com.provenance.colecovision"
-    case DS = "com.provenance.ds"
     case DOS = "com.provenance.dos"
     case Dreamcast = "com.provenance.dreamcast"
-	case EP128 = "com.provenance.ep128"
+    case DS = "com.provenance.ds"
+    case EP128 = "com.provenance.ep128"
     case FDS = "com.provenance.fds"
     case GameCube = "com.provenance.gamecube"
     case GameGear = "com.provenance.gamegear"
@@ -73,11 +73,11 @@ public enum SystemIdentifier: String, CaseIterable {
     case Lynx = "com.provenance.lynx"
     case Macintosh = "com.provenance.macintosh"
     case MasterSystem = "com.provenance.mastersystem"
-	case MSX = "com.provenance.msx"
+    case MSX = "com.provenance.msx"
     case MSX2 = "com.provenance.msx2"
     case N64 = "com.provenance.n64"
-    case NES = "com.provenance.nes"
     case NeoGeo = "com.provenance.neogeo"
+    case NES = "com.provenance.nes"
     case NGP = "com.provenance.ngp"
     case NGPC = "com.provenance.ngpc"
     case Odyssey2 = "com.provenance.odyssey2"
@@ -95,16 +95,47 @@ public enum SystemIdentifier: String, CaseIterable {
     case SG1000 = "com.provenance.sg1000"
     case SGFX = "com.provenance.sgfx"
     case SNES = "com.provenance.snes"
-	case Supervision = "com.provenance.supervision"
+    case Supervision = "com.provenance.supervision"
     case Vectrex = "com.provenance.vectrex"
     case VirtualBoy = "com.provenance.vb"
+    case Wii = "com.provenance.wii"
     case WonderSwan = "com.provenance.ws"
     case WonderSwanColor = "com.provenance.wsc"
     case ZXSpectrum = "com.provenance.zxspectrum"
 
     case Unknown
 
-    static public let betas: [SystemIdentifier] = [.ColecoVision, .Dreamcast, .DS, .Atari8bit, .Intellivision, ._3DO, .Vectrex, .PSP, .PS2, .PS3, .GameCube]
+    static public let betas: [SystemIdentifier] =
+    [
+        ._3DO,
+        .Atari8bit,
+        .AtariJaguarCD,
+        .AtariST,
+        .C64,
+        .ColecoVision,
+        .DOS,
+        .Dreamcast,
+        .DS,
+        .EP128,
+        .GameCube,
+        .Intellivision,
+        .Macintosh,
+        .MSX,
+        .MSX2,
+        .Odyssey2,
+
+        .Supervision,
+        .Vectrex,
+        .ZXSpectrum,
+    ]
+    
+    static public let unsupported: [SystemIdentifier] =
+    [
+        .PS2,
+        .PS3,
+        .PSP,
+        .Wii,
+    ]
     // MARK: Assistance accessors for properties
 
     public var system: PVSystem? {

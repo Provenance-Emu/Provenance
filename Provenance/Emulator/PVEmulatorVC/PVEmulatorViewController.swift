@@ -44,8 +44,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
 	let use_metal: Bool = PVSettingsModel.shared.debugOptions.useMetal
     private(set) lazy var gpuViewController: PVGPUViewController = use_metal ? PVMetalViewController(emulatorCore: core) : PVGLViewController(emulatorCore: core)
-    private(set) lazy var controllerViewController: (UIViewController & StartSelectDelegate)? = PVCoreFactory.controllerViewController(forSystem: game.system, core: core)
-
+    private(set) lazy var controllerViewController: (UIViewController & StartSelectDelegate)? = {
+        let controller = PVCoreFactory.controllerViewController(forSystem: game.system, core: core)
+        return controller
+    }()
+    
     var audioInited: Bool = false
     private(set) lazy var gameAudio: OEGameAudio = {
         audioInited = true

@@ -68,6 +68,8 @@ public struct PVGameLibrary {
 
     public func systems(sortedBy sortOptions: SortOptions) -> Observable<[System]> {
         let betaIDs: [SystemIdentifier] = SystemIdentifier.betas
+        let unsuppotedIDs: [SystemIdentifier] = SystemIdentifier.unsupported
+
         return Observable.collection(from: database.all(PVSystem.self))
             .flatMapLatest({ systems -> Observable<[System]> in
                 // Here we actualy observe on the games for each system, since we want to update this when games are added or removed from a system
@@ -78,6 +80,7 @@ public struct PVGameLibrary {
                     let manufacturer = pvSystem.manufacturer
                     let shortName = pvSystem.shortName
                     let isBeta = betaIDs.contains(pvSystem.enumValue)
+                    let unsupported = unsuppotedIDs.contains(pvSystem.enumValue)
                     let sortedGames = pvSystem.games.sorted(by: sortOptions)
                     return Observable.collection(from: sortedGames)
                         .mapMany { $0 }
@@ -87,6 +90,7 @@ public struct PVGameLibrary {
                                 manufacturer: manufacturer,
                                 shortName: shortName,
                                 isBeta: isBeta,
+                                unsupported: unsupported,
                                 sortedGames: games
                             )
                         })
@@ -114,6 +118,7 @@ public struct PVGameLibrary {
         public let manufacturer: String
         public let shortName: String
         public let isBeta: Bool
+        public let unsupported: Bool
         public let sortedGames: [PVGame]
     }
 

@@ -426,7 +426,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             })
             .mapMany({ system, isCollapsed -> Section? in
                 guard !system.sortedGames.isEmpty else { return nil }
-                let header = "\(system.manufacturer) : \(system.shortName)" + (system.isBeta ? " ⚠️ Beta" : "")
+                let header = "\(system.manufacturer) : \(system.shortName)" + (system.isBeta ? " ⚠️ Beta" : "") + (system.unsupported ? " 🚫 Unsupported" : "")
                 let items = isCollapsed ? [] : system.sortedGames.map { Section.Item.game($0) }
 
                 return Section(header: header, items: items,

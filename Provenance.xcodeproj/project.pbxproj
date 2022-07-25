@@ -187,6 +187,8 @@
 		B312805F274C60EC00550720 /* SteamController in Frameworks */ = {isa = PBXBuildFile; productRef = B3D30FC026F0BCE60064603F /* SteamController */; };
 		B313544726E4C0F90047F338 /* PVPS2ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B313544626E4C0F90047F338 /* PVPS2ControllerViewController.swift */; };
 		B313544826E4C0F90047F338 /* PVPS2ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B313544626E4C0F90047F338 /* PVPS2ControllerViewController.swift */; };
+		B3164B77288E25F500E1CBCF /* PVSupervisionControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3164B76288E25F500E1CBCF /* PVSupervisionControllerViewController.swift */; };
+		B3164B78288E25F500E1CBCF /* PVSupervisionControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3164B76288E25F500E1CBCF /* PVSupervisionControllerViewController.swift */; };
 		B31A464F26B4C5060084A1D6 /* PVAltKitService.m in Sources */ = {isa = PBXBuildFile; fileRef = B31A464E26B4C5060084A1D6 /* PVAltKitService.m */; };
 		B32296D22878383200585AD8 /* PVfMSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32296D12878383200585AD8 /* PVfMSX.framework */; };
 		B32296D32878383200585AD8 /* PVfMSX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32296D12878383200585AD8 /* PVfMSX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1184,6 +1186,7 @@
 		B313544626E4C0F90047F338 /* PVPS2ControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVPS2ControllerViewController.swift; sourceTree = "<group>"; };
 		B313544926E4C3B90047F338 /* PVPlay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPlay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B313544C26E4C3BE0047F338 /* PVPlay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPlay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3164B76288E25F500E1CBCF /* PVSupervisionControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVSupervisionControllerViewController.swift; sourceTree = "<group>"; };
 		B316B4D12192652000693472 /* PVReicast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVReicast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B316B4D62192659900693472 /* PVVirtualJaguar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVirtualJaguar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B316B4DB219265B700693472 /* PVVirtualJaguar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVirtualJaguar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2718,6 +2721,7 @@
 				B3AB37232187F568009D9244 /* PVPSXControllerViewController.swift */,
 				B3AB372C2187F568009D9244 /* PVSaturnControllerViewController.swift */,
 				B3AB371E2187F568009D9244 /* PVSNESControllerViewController.swift */,
+				B3164B76288E25F500E1CBCF /* PVSupervisionControllerViewController.swift */,
 				B3AB37252187F568009D9244 /* PVVBControllerViewController.swift */,
 				B343717C276B0FA40014F87C /* PVVectrexControllerViewController.swift */,
 				B3AB37212187F568009D9244 /* PVWonderSwanControllerViewController.swift */,
@@ -3826,6 +3830,7 @@
 				B382C639278E5055007E61FE /* PVEmulatorViewController+Controllers.swift in Sources */,
 				B3437176276B0B650014F87C /* PVIntellivisionControllerViewController.swift in Sources */,
 				1180B305248EB8C300636C8A /* UISearchController+Rx.swift in Sources */,
+				B3164B77288E25F500E1CBCF /* PVSupervisionControllerViewController.swift in Sources */,
 				CF1710942585917A00258602 /* PVCheatsViewController.swift in Sources */,
 				B3054371272026E800F5257D /* PVPSPControllerViewController.swift in Sources */,
 				B3890BF420B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift in Sources */,
@@ -4013,6 +4018,7 @@
 				C665CD8521FEC68E00C834C6 /* GCControllerExtensions.swift in Sources */,
 				B3411C30276B472900D85327 /* OptionRow.swift in Sources */,
 				1A2FB10D206EF07C00A1F942 /* PVSaveStateCollectionViewCell.swift in Sources */,
+				B3164B78288E25F500E1CBCF /* PVSupervisionControllerViewController.swift in Sources */,
 				B35D27022033B44B00F17D58 /* PVGameMoreInfoViewController.swift in Sources */,
 				B3427BF7287EA0CF0054C1B5 /* ulTron.metal in Sources */,
 				1AACCAED1BB61D5600DC21AE /* PVTVSplitViewController.swift in Sources */,

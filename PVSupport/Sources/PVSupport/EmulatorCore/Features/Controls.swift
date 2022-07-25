@@ -1041,6 +1041,48 @@ import Foundation
     func didRelease(_ button: PVIntellivisionButton, forPlayer player: Int)
 }
 
+// MARK: - Supervision
+
+@objc public enum PVSupervisionButton: Int {
+    case up
+    case down
+    case left
+    case right
+    case topAction
+    case bottomLeftAction
+    case bottomRightAction
+    @objc(PVSupervisionButton1)
+    case button1
+    @objc(PVSupervisionButton2)
+    case button2
+    @objc(PVSupervisionButton3)
+    case button3
+    @objc(PVSupervisionButton4)
+    case button4
+    @objc(PVSupervisionButton5)
+    case button5
+    @objc(PVSupervisionButton6)
+    case button6
+    @objc(PVSupervisionButton7)
+    case button7
+    @objc(PVSupervisionButton8)
+    case button8
+    @objc(PVSupervisionButton9)
+    case button9
+    @objc(PVSupervisionButton0)
+    case button0
+    case clear
+    case enter
+    case count
+}
+
+@objc public protocol PVSupervisionSystemResponderClient: ResponderClient, ButtonResponder {
+    @objc(didPushSupervisionButton:forPlayer:)
+    func didPush(_ button: PVSupervisionButton, forPlayer player: Int)
+    @objc(didReleaseSupervisionButton:forPlayer:)
+    func didRelease(_ button: PVSupervisionButton, forPlayer player: Int)
+}
+
 // MARK: - PC DOS
 
 @objc public enum PVDOSButton: Int {

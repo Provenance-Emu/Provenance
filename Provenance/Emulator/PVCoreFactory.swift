@@ -230,6 +230,12 @@ public final class PVCoreFactory: NSObject {
             } else {
                 fatalError("Core doesn't implement PVIntellivisionSystemResponderClient")
             }
+        case .Supervision:
+            if let core = core as? PVSupervisionSystemResponderClient {
+                return PVSupervisionControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else {
+                fatalError("Core doesn't implement PVSupervisionSystemResponderClient")
+            }
         case .Vectrex:
             if let core = core as? PVVectrexSystemResponderClient {
                 return PVVectrexControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
@@ -262,9 +268,15 @@ public final class PVCoreFactory: NSObject {
             }
         case .Unknown:
             ELOG("No known system named: \(system.name) id: \(system.identifier)")
+            assertionFailure("No known system named: \(system.name) id: \(system.identifier)")
+            return nil
+        case .AtariST, .C64, .Macintosh, .Wii:
+            ELOG("No known system named: \(system.name) id: \(system.identifier)")
+            assertionFailure("No known system named: \(system.name) id: \(system.identifier)")
             return nil
         @unknown default:
             ELOG("No known system named: \(system.name) id: \(system.identifier)")
+            assertionFailure("No known system named: \(system.name) id: \(system.identifier)")
             return nil
         }
     }

@@ -59,6 +59,7 @@ __attribute__((weak_import))
 
 @property (nonatomic, readonly) CGFloat videoWidth;
 @property (nonatomic, readonly) CGFloat videoHeight;
+@property (nonatomic, retain, nullable) NSString * romPath;
 
 @end
 
