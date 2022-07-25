@@ -116,7 +116,7 @@ public final class PVCoreFactory: NSObject {
             } else {
                 fatalError("Core doesn't implement PV7800SystemResponderClient")
             }
-        case .AtariJaguar:
+        case .AtariJaguar, .AtariJaguarCD:
             if let core = core as? PVJaguarSystemResponderClient {
                 return PVAtariJaguarControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else {
@@ -247,6 +247,18 @@ public final class PVCoreFactory: NSObject {
                 return PVDOSControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else {
                 fatalError("Core doesn't implement PVDOSSystemResponderClient")
+            }
+        case .ZXSpectrum, .EP128:
+            if let core = core as? PVEP128SystemResponderClient {
+                return PVEP128ControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else {
+                fatalError("Core doesn't implement PVEP128SystemResponderClient")
+            }
+        case .MSX, .MSX2:
+            if let core = core as? PVMSXSystemResponderClient {
+                return PVMSXControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else {
+                fatalError("Core doesn't implement PVMSXSystemResponderClient")
             }
         case .Unknown:
             ELOG("No known system named: \(system.name) id: \(system.identifier)")

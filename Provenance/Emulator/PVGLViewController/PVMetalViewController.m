@@ -432,12 +432,15 @@ PV_OBJC_DIRECT_MEMBERS
         case GL_RGBA:
             return 4 * typeWidth;
             
+        case GL_RGB8:
         case GL_RGBA8:
             return 8 * typeWidth;
 
         case GL_RGB:
             if (pixelType == GL_UNSIGNED_SHORT_5_6_5)
-                return typeWidth;
+                return 2 * typeWidth;
+            else
+                return 2 * typeWidth;
             break;
         default:
             break;
@@ -467,7 +470,7 @@ PV_OBJC_DIRECT_MEMBERS
     }
     else if (pixelFormat == GL_RGB && pixelType == GL_UNSIGNED_SHORT_5_6_5)
     {
-        return MTLPixelFormatB5G6R5Unorm;
+        return MTLPixelFormatRGBA8Unorm; // MTLPixelFormatRGBA8Unorm_sRGB
     }
     else if (pixelFormat == GL_RGB && pixelType == GL_UNSIGNED_SHORT_8_8_APPLE)
     {
@@ -479,11 +482,11 @@ PV_OBJC_DIRECT_MEMBERS
     }
     else if (pixelFormat == GL_RGB && pixelType == GL_UNSIGNED_SHORT_5_5_5_1)
     {
-        return MTLPixelFormatB5G6R5Unorm;
+        return MTLPixelFormatRGBA16Unorm;
     }
     else if (pixelFormat == GL_RGBA && pixelType == GL_UNSIGNED_SHORT_5_6_5)
     {
-        return MTLPixelFormatB5G6R5Unorm;
+        return MTLPixelFormatRGBA16Unorm;
     }
     else if (pixelFormat == GL_RGBA && pixelType == GL_UNSIGNED_SHORT_4_4_4_4)
     {
@@ -496,6 +499,10 @@ PV_OBJC_DIRECT_MEMBERS
     else if (pixelFormat == GL_RGBA8 && pixelType == GL_UNSIGNED_BYTE)
     {
         return MTLPixelFormatRGBA8Unorm;
+    }
+    else if (pixelFormat == GL_RGB565)
+    {
+        return MTLPixelFormatRGBA16Unorm;
     }
     
     ELOG(@"Unknown GL pixelFormat. Add pixelFormat: %0x pixelType: %0x", pixelFormat, pixelType);

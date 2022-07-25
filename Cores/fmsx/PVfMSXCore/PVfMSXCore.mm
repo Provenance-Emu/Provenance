@@ -132,6 +132,20 @@
     return CGSizeMake(1024, 768);
 }
 
+- (GLenum)pixelFormat {
+    return GL_RGB;
+}
+
+- (GLenum)pixelType {
+    return GL_UNSIGNED_SHORT_5_6_5;
+}
+
+- (GLenum)internalPixelFormat {
+    // TODO: use struct retro_pixel_format var, set with, RETRO_ENVIRONMENT_SET_PIXEL_FORMAT
+    return GL_RGB565;
+}
+
+
 //- (GLenum)pixelFormat {
 //    return GL_BGRA;
 //}

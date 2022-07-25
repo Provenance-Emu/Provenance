@@ -67,6 +67,13 @@ public extension PVEmulatorConfiguration {
                     database.refresh()
                     try newCore.add(update: true)
                 }
+            } catch let error as DecodingError {
+                switch error {
+                case let .keyNotFound(key, context):
+                    ELOG("Failed to parse plist \(plist.path), \(key), \(context.codingPath): \(error)")
+                default:
+                    ELOG("Failed to parse plist \(plist.path), : \(error)")
+                }
             } catch {
                 // Handle error
                 ELOG("Failed to parse plist \(plist.path) : \(error)")
@@ -107,6 +114,13 @@ public extension PVEmulatorConfiguration {
                             ELOG("Failed to make new system: \(error)")
                         }
                     }
+                }
+            } catch let error as DecodingError {
+                switch error {
+                case let .keyNotFound(key, context):
+                    ELOG("Failed to parse plist \(plist.path)\n, key:\(key),\n codingPath: \(context.codingPath.map { $0.stringValue }.joined(separator: ","))\nError: \(error)")
+                default:
+                    ELOG("Failed to parse plist \(plist.path), : \(error)")
                 }
             } catch {
                 // Handle error

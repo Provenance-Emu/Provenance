@@ -641,7 +641,7 @@ bool video_driver_texture_unload(uintptr_t *id);
 extern video_driver_t video_gl;
 extern video_driver_t video_vulkan;
 extern video_driver_t video_psp1;
-extern video_driver_t video_vita2d;
+extern video_driver_t video_vita2d; 
 extern video_driver_t video_ctr;
 extern video_driver_t video_d3d;
 extern video_driver_t video_gx;
@@ -659,11 +659,11 @@ extern video_driver_t video_drm;
 extern video_driver_t video_xshm;
 extern video_driver_t video_null;
 
-static bool video_driver_frame_filter(const void *data,
-      unsigned width, unsigned height,
-      size_t pitch,
-      unsigned *output_width, unsigned *output_height,
-                                      unsigned *output_pitch);
+//static bool video_driver_frame_filter(const void *data,
+//      unsigned width, unsigned height,
+//      size_t pitch,
+//      unsigned *output_width, unsigned *output_height,
+//                                      unsigned *output_pitch);
 
 RETRO_END_DECLS
 

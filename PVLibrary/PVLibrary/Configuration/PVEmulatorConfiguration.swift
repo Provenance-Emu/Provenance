@@ -54,7 +54,9 @@ public enum SystemIdentifier: String, CaseIterable {
     case Atari7800 = "com.provenance.7800"
 	case Atari8bit = "com.provenance.atari8bit"
     case AtariJaguar = "com.provenance.jaguar"
+    case AtariJaguarCD = "com.provenance.jaguarcd"
 	case AtariST = "com.provenance.atarist"
+    case C64 = "com.provenance.c64"
     case ColecoVision = "com.provenance.colecovision"
     case DS = "com.provenance.ds"
     case DOS = "com.provenance.dos"
@@ -72,6 +74,7 @@ public enum SystemIdentifier: String, CaseIterable {
     case Macintosh = "com.provenance.macintosh"
     case MasterSystem = "com.provenance.mastersystem"
 	case MSX = "com.provenance.msx"
+    case MSX2 = "com.provenance.msx2"
     case N64 = "com.provenance.n64"
     case NES = "com.provenance.nes"
     case NeoGeo = "com.provenance.neogeo"
@@ -97,6 +100,7 @@ public enum SystemIdentifier: String, CaseIterable {
     case VirtualBoy = "com.provenance.vb"
     case WonderSwan = "com.provenance.ws"
     case WonderSwanColor = "com.provenance.wsc"
+    case ZXSpectrum = "com.provenance.zxspectrum"
 
     case Unknown
 

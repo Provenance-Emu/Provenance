@@ -32,12 +32,12 @@
 #define DC_AXIS_X        (0X20000)
 #define DC_AXIS_Y        (0X20001)
 
-static const int DSMap[]  = {
-    DC_DPAD_UP, DC_DPAD_DOWN, DC_DPAD_LEFT, DC_DPAD_RIGHT,
-    DC_BTN_A, DC_BTN_B, DC_BTN_X, DC_BTN_Y,
-    DC_AXIS_LT, DC_AXIS_RT,
-    DC_BTN_START
-};
+//static const int DSMap[]  = {
+//    DC_DPAD_UP, DC_DPAD_DOWN, DC_DPAD_LEFT, DC_DPAD_RIGHT,
+//    DC_BTN_A, DC_BTN_B, DC_BTN_X, DC_BTN_Y,
+//    DC_AXIS_LT, DC_AXIS_RT,
+//    DC_BTN_START
+//};
 
 typedef unsigned char  u8;
 typedef signed char    s8;

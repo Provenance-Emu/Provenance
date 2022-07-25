@@ -9,6 +9,7 @@
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.ep128</string>
+		<string>com.provenance.zxspectrum</string>
 	</array>
 	<key>PVProjectName</key>
 	<string>EP128Emu</string>

@@ -11,6 +11,7 @@
 #import <PVSupport/PVSupport.h>
 #import <PVSupport/PVSupport-Swift.h>
 #import <PVLibRetro/libretro.h>
+//#import <PVLibRetro/dynamic.h>
 
 #pragma clang diagnostic push
 #pragma clang diagnostic error "-Wall"
@@ -24,6 +25,9 @@
 #import <OpenGL/OpenGL.h>
 #import <GLUT/GLUT.h>
 #endif
+
+typedef struct retro_core_t retro_core_t;
+
 
 @class PVLibRetroCore;
 static __weak PVLibRetroCore *_current;
@@ -39,6 +43,8 @@ __attribute__((weak_import))
     
     int16_t _pad[2][12];
     
+    retro_core_t* core;
+
     // MARK: - Retro Structs
     unsigned                 core_poll_type;
     bool                     core_input_polled;

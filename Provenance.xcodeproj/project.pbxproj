@@ -188,10 +188,6 @@
 		B313544726E4C0F90047F338 /* PVPS2ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B313544626E4C0F90047F338 /* PVPS2ControllerViewController.swift */; };
 		B313544826E4C0F90047F338 /* PVPS2ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B313544626E4C0F90047F338 /* PVPS2ControllerViewController.swift */; };
 		B31A464F26B4C5060084A1D6 /* PVAltKitService.m in Sources */ = {isa = PBXBuildFile; fileRef = B31A464E26B4C5060084A1D6 /* PVAltKitService.m */; };
-		B32296CC2878381C00585AD8 /* PVFBNeo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32296CB2878381C00585AD8 /* PVFBNeo.framework */; };
-		B32296CD2878381C00585AD8 /* PVFBNeo.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32296CB2878381C00585AD8 /* PVFBNeo.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B32296CF2878382500585AD8 /* PVFBNeo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32296CE2878382500585AD8 /* PVFBNeo.framework */; };
-		B32296D02878382500585AD8 /* PVFBNeo.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32296CE2878382500585AD8 /* PVFBNeo.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B32296D22878383200585AD8 /* PVfMSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32296D12878383200585AD8 /* PVfMSX.framework */; };
 		B32296D32878383200585AD8 /* PVfMSX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32296D12878383200585AD8 /* PVfMSX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B32296D52878383800585AD8 /* PVMelonDS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32296D42878383800585AD8 /* PVMelonDS.framework */; };
@@ -482,6 +478,10 @@
 		B3A4FB60278FF84800A65248 /* ApplicationMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A4FB5F278FF84800A65248 /* ApplicationMonitor.swift */; };
 		B3A4FB64278FFA5100A65248 /* PublishedPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A4FB63278FFA5100A65248 /* PublishedPipeline.swift */; };
 		B3A4FB66278FFB6600A65248 /* Result+Conveniences.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A4FB65278FFB6600A65248 /* Result+Conveniences.swift */; };
+		B3A70061288DD24000355823 /* PVEP128ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A70060288DD23F00355823 /* PVEP128ControllerViewController.swift */; };
+		B3A70062288DD24000355823 /* PVEP128ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A70060288DD23F00355823 /* PVEP128ControllerViewController.swift */; };
+		B3A70065288DF1C400355823 /* PVMSXControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A70064288DF1BF00355823 /* PVMSXControllerViewController.swift */; };
+		B3A70066288DF1C400355823 /* PVMSXControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A70064288DF1BF00355823 /* PVMSXControllerViewController.swift */; };
 		B3AB37322187F569009D9244 /* PVSNESControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB371E2187F568009D9244 /* PVSNESControllerViewController.swift */; };
 		B3AB37332187F569009D9244 /* PVAtari2600ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB371F2187F568009D9244 /* PVAtari2600ControllerViewController.swift */; };
 		B3AB37342187F569009D9244 /* PVGBControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37202187F568009D9244 /* PVGBControllerViewController.swift */; };
@@ -562,8 +562,6 @@
 		B3C8A6F5287823DC0037A946 /* PVEP128Emu.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3918FD82873EDC3000838F6 /* PVEP128Emu.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C8A6F6287823DC0037A946 /* PVPotator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FF642F2873EC8000829C14 /* PVPotator.framework */; };
 		B3C8A6F7287823DC0037A946 /* PVPotator.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3FF642F2873EC8000829C14 /* PVPotator.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3C8A6F8287823DC0037A946 /* PVYabause.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FF641C2873EAEB00829C14 /* PVYabause.framework */; };
-		B3C8A6F9287823DC0037A946 /* PVYabause.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3FF641C2873EAEB00829C14 /* PVYabause.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C8A6FA287823DC0037A946 /* PVDesmume2015.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39313832870FCFC00372EBB /* PVDesmume2015.framework */; };
 		B3C8A6FB287823DC0037A946 /* PVDesmume2015.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B39313832870FCFC00372EBB /* PVDesmume2015.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C8A6FC287823DC0037A946 /* PVDosBox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B397692C285A089200558958 /* PVDosBox.framework */; };
@@ -912,7 +910,6 @@
 				B3C8A6B028781E9F0037A946 /* PVLibRetro.framework in Embed Frameworks */,
 				B32296D62878383800585AD8 /* PVMelonDS.framework in Embed Frameworks */,
 				B32296DC2878385600585AD8 /* PVMiniVMac.framework in Embed Frameworks */,
-				B32296D02878382500585AD8 /* PVFBNeo.framework in Embed Frameworks */,
 				B3C8A6B428781EB00037A946 /* PVDosBox.framework in Embed Frameworks */,
 				B32296DF2878385E00585AD8 /* PVPotator.framework in Embed Frameworks */,
 				B32296D32878383200585AD8 /* PVfMSX.framework in Embed Frameworks */,
@@ -929,13 +926,11 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				B32296CD2878381C00585AD8 /* PVFBNeo.framework in Embed Frameworks */,
 				B3C8A6F3287823DC0037A946 /* PVfMSX.framework in Embed Frameworks */,
 				B3C8A6F5287823DC0037A946 /* PVEP128Emu.framework in Embed Frameworks */,
 				B3C8A6F7287823DC0037A946 /* PVPotator.framework in Embed Frameworks */,
 				B3C8A6F1287823DC0037A946 /* PVMiniVMac.framework in Embed Frameworks */,
 				B3C8A6FD287823DC0037A946 /* PVDosBox.framework in Embed Frameworks */,
-				B3C8A6F9287823DC0037A946 /* PVYabause.framework in Embed Frameworks */,
 				B3C8A6FB287823DC0037A946 /* PVDesmume2015.framework in Embed Frameworks */,
 				B3C8A701287824670037A946 /* PVMelonDS.framework in Embed Frameworks */,
 			);
@@ -1418,6 +1413,8 @@
 		B3A4FB61278FFA0F00A65248 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		B3A4FB63278FFA5100A65248 /* PublishedPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublishedPipeline.swift; sourceTree = "<group>"; };
 		B3A4FB65278FFB6600A65248 /* Result+Conveniences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Result+Conveniences.swift"; sourceTree = "<group>"; };
+		B3A70060288DD23F00355823 /* PVEP128ControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVEP128ControllerViewController.swift; sourceTree = "<group>"; };
+		B3A70064288DF1BF00355823 /* PVMSXControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVMSXControllerViewController.swift; sourceTree = "<group>"; };
 		B3AB371E2187F568009D9244 /* PVSNESControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVSNESControllerViewController.swift; sourceTree = "<group>"; };
 		B3AB371F2187F568009D9244 /* PVAtari2600ControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVAtari2600ControllerViewController.swift; sourceTree = "<group>"; };
 		B3AB37202187F568009D9244 /* PVGBControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVGBControllerViewController.swift; sourceTree = "<group>"; };
@@ -1687,7 +1684,6 @@
 				B3C8A6AF28781E9F0037A946 /* PVLibRetro.framework in Frameworks */,
 				B32296D52878383800585AD8 /* PVMelonDS.framework in Frameworks */,
 				B32296DB2878385600585AD8 /* PVMiniVMac.framework in Frameworks */,
-				B32296CF2878382500585AD8 /* PVFBNeo.framework in Frameworks */,
 				B3C8A6B328781EB00037A946 /* PVDosBox.framework in Frameworks */,
 				B32296DE2878385E00585AD8 /* PVPotator.framework in Frameworks */,
 				B32296D22878383200585AD8 /* PVfMSX.framework in Frameworks */,
@@ -1702,7 +1698,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3C8A6FA287823DC0037A946 /* PVDesmume2015.framework in Frameworks */,
-				B32296CC2878381C00585AD8 /* PVFBNeo.framework in Frameworks */,
 				B3C8A6C02878238C0037A946 /* libz.dylib in Frameworks */,
 				B3C8A700287824670037A946 /* PVMelonDS.framework in Frameworks */,
 				B3C8A6C52878238C0037A946 /* libc++.dylib in Frameworks */,
@@ -1714,7 +1709,6 @@
 				B3C8A6F4287823DC0037A946 /* PVEP128Emu.framework in Frameworks */,
 				B3C8A6D02878238C0037A946 /* libstdc++.dylib in Frameworks */,
 				B3C8A6D52878238C0037A946 /* libsqlite3.dylib in Frameworks */,
-				B3C8A6F8287823DC0037A946 /* PVYabause.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2704,12 +2698,14 @@
 				B3411BF7276B37DE00D85327 /* PVDSControllerViewController.swift */,
 				B3976926285A020800558958 /* PVDOSControllerViewController.swift */,
 				B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */,
+				B3A70060288DD23F00355823 /* PVEP128ControllerViewController.swift */,
 				B3A320362720974F00F338F6 /* PVGameCubeControllerViewController.swift */,
 				B3AB37242187F568009D9244 /* PVGBAControllerViewController.swift */,
 				B3AB37202187F568009D9244 /* PVGBControllerViewController.swift */,
 				B3AB372D2187F568009D9244 /* PVGenesisControllerViewController.swift */,
 				B3437173276B0B650014F87C /* PVIntellivisionControllerViewController.swift */,
 				B3AB37282187F568009D9244 /* PVLynxControllerViewController.swift */,
+				B3A70064288DF1BF00355823 /* PVMSXControllerViewController.swift */,
 				B3AB372F2187F568009D9244 /* PVN64ControllerViewController.swift */,
 				B3AB372E2187F568009D9244 /* PVNeoGeoPocketControllerViewController.swift */,
 				B3AB37302187F568009D9244 /* PVNESControllerViewController.swift */,
@@ -3720,6 +3716,7 @@
 				B378224A21D329EC0077E86F /* SettingsRowSwitch.swift in Sources */,
 				B382C635278E5055007E61FE /* PVEmulatorViewController+Audio.swift in Sources */,
 				B382C63D278E514A007E61FE /* PVEmulatorViewController+CoreOptions.swift in Sources */,
+				B3A70061288DD24000355823 /* PVEP128ControllerViewController.swift in Sources */,
 				B3AB37392187F569009D9244 /* PVVBControllerViewController.swift in Sources */,
 				B3437178276B0B650014F87C /* PV3DOControllerViewController.swift in Sources */,
 				B354E7D2219A9C230041F971 /* CoreOptionsViewController.swift in Sources */,
@@ -3803,6 +3800,7 @@
 				B35D26FA20337D1C00F17D58 /* GameLaunchingViewController.swift in Sources */,
 				CF17107125858B5400258602 /* PVEmulatorViewController+Cheats.swift in Sources */,
 				B354E7BF219A7D250041F971 /* SystemSettingsCell.swift in Sources */,
+				B3A70065288DF1C400355823 /* PVMSXControllerViewController.swift in Sources */,
 				B3F64ED8205CD22000C273C7 /* PVControllerSelectionViewController.swift in Sources */,
 				B35E6C25207ED7050040709A /* UIApplicationExtensions.swift in Sources */,
 				B3E3B5D9202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */,
@@ -3913,6 +3911,7 @@
 				B35E6C2E207ED7050040709A /* UIWindowExtensions.swift in Sources */,
 				B3DB11AE205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */,
 				1AD481E31BA3545D00FDA50A /* GCDWebServerStreamedResponse.m in Sources */,
+				B3A70062288DD24000355823 /* PVEP128ControllerViewController.swift in Sources */,
 				1AD481D81BA3543700FDA50A /* GCDWebServerConnection.m in Sources */,
 				B35E6C2C207ED7050040709A /* UITraitCollectionExtensions.swift in Sources */,
 				B3411C33276B472900D85327 /* NavigationRow.swift in Sources */,
@@ -3962,6 +3961,7 @@
 				B354E7D3219A9C230041F971 /* CoreOptionsViewController.swift in Sources */,
 				B3B104C8218F2EF400210C39 /* PVGenesisControllerViewController.swift in Sources */,
 				B3A40C7221A67C7800544C20 /* PVGameLibrarySectionFooterView.swift in Sources */,
+				B3A70066288DF1C400355823 /* PVMSXControllerViewController.swift in Sources */,
 				B3589E32219E8C5B001C5E12 /* LogViewable.swift in Sources */,
 				B3427BFD287EA0CF0054C1B5 /* lineTron.metal in Sources */,
 				B3427BFB287EA0CF0054C1B5 /* simpleCRT.metal in Sources */,

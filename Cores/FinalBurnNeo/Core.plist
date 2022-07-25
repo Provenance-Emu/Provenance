@@ -10,6 +10,7 @@
 	<array>
 		<string>com.provenance.neogeo</string>
 		<string>com.provenance.msx</string>
+		<string>com.provenance.msx2</string>
 		<string>com.provenance.arcade</string>
 		<string>com.provenance.nes</string>
 		<string>com.provenance.colecovision</string>

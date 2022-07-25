@@ -41,7 +41,6 @@
 
 #include <retro_assert.h>
 
-#include "core.h"
 #include "cores/internal_cores.h"
 #include "frontend/frontend_driver.h"
 #include "content.h"
@@ -61,10 +60,8 @@
 
 @interface PVLibRetroCore ()
 {
-    @public
-    struct retro_core_t      core;
+    BOOL loaded;
 }
-
 @end
 
 video_driver_t video_gl;
@@ -232,7 +229,7 @@ static int16_t core_input_state_poll(unsigned port,
 void core_set_input_state(retro_ctx_input_state_info_t *info)
 {
     GET_CURRENT_OR_RETURN();
-    current->core.retro_set_input_state(info->cb);
+    current->core->retro_set_input_state(info->cb);
 }
 
 
@@ -336,11 +333,11 @@ static bool core_init_libretro_cbs(void *data)
     if (!cbs)
         return false;
     
-    current->core.retro_set_video_refresh(video_driver_frame);
-    //   core.retro_set_audio_sample(audio_driver_sample);
-    //   core.retro_set_audio_sample_batch(audio_driver_sample_batch);
-    current->core.retro_set_input_state(core_input_state_poll);
-    current->core.retro_set_input_poll(core_input_state_poll_maybe);
+    current->core->retro_set_video_refresh(video_driver_frame);
+    //   core->retro_set_audio_sample(audio_driver_sample);
+    //   core->retro_set_audio_sample_batch(audio_driver_sample_batch);
+    current->core->retro_set_input_state(core_input_state_poll);
+    current->core->retro_set_input_poll(core_input_state_poll_maybe);
     
     core_set_default_callbacks(cbs);
     
@@ -353,17 +350,17 @@ static bool core_init_libretro_cbs(void *data)
     
     if (global->netplay.is_spectate)
     {
-        core.retro_set_input_state(
+        core->retro_set_input_state(
                                    (global->netplay.is_client ?
                                     input_state_spectate_client : input_state_spectate)
                                    );
     }
     else
     {
-        core.retro_set_video_refresh(video_frame_net);
-        core.retro_set_audio_sample(audio_sample_net);
-        core.retro_set_audio_sample_batch(audio_sample_batch_net);
-        core.retro_set_input_state(input_state_net);
+        core->retro_set_video_refresh(video_frame_net);
+        core->retro_set_audio_sample(audio_sample_net);
+        core->retro_set_audio_sample_batch(audio_sample_batch_net);
+        core->retro_set_input_state(input_state_net);
     }
 #endif
     
@@ -423,26 +420,26 @@ bool core_set_rewind_callbacks(void)
 {
     //   if (state_manager_frame_is_reversed())
     //   {
-    //	  core.retro_set_audio_sample(audio_driver_sample_rewind);
-    //	  core.retro_set_audio_sample_batch(audio_driver_sample_batch_rewind);
+    //	  core->retro_set_audio_sample(audio_driver_sample_rewind);
+    //	  core->retro_set_audio_sample_batch(audio_driver_sample_batch_rewind);
     //   }
     //   else
     //   {
-    //	  core.retro_set_audio_sample(audio_driver_sample);
-    //	  core.retro_set_audio_sample_batch(audio_driver_sample_batch);
+    //	  core->retro_set_audio_sample(audio_driver_sample);
+    //	  core->retro_set_audio_sample_batch(audio_driver_sample_batch);
     //   }
     return true;
 }
 
 bool core_set_cheat(retro_ctx_cheat_info_t *info) {
     GET_CURRENT_OR_RETURN(false);
-    current->core.retro_cheat_set(info->index, info->enabled, info->code);
+    current->core->retro_cheat_set(info->index, info->enabled, info->code);
     return true;
 }
 
 bool core_reset_cheat(void) {
     GET_CURRENT_OR_RETURN(false);
-    current->core.retro_cheat_reset();
+    current->core->retro_cheat_reset();
     return true;
 }
 
@@ -451,7 +448,7 @@ bool core_api_version(retro_ctx_api_info_t *api)
     GET_CURRENT_OR_RETURN(false);
     if (!api)
         return false;
-    api->version = current->core.retro_api_version();
+    api->version = current->core->retro_api_version();
     return true;
 }
 
@@ -481,7 +478,7 @@ bool core_set_controller_port_device(retro_ctx_controller_info_t *pad) {
     GET_CURRENT_OR_RETURN(false);
     if (!pad)
         return false;
-    current->core.retro_set_controller_port_device(pad->port, pad->device);
+    current->core->retro_set_controller_port_device(pad->port, pad->device);
     return true;
 }
 
@@ -490,8 +487,8 @@ bool core_get_memory(retro_ctx_memory_info_t *info) {
 
     if (!info)
         return false;
-    info->size  = current->core.retro_get_memory_size(info->id);
-    info->data  = current->core.retro_get_memory_data(info->id);
+    info->size  = current->core->retro_get_memory_size(info->id);
+    info->data  = current->core->retro_get_memory_data(info->id);
     return true;
 }
 
@@ -513,12 +510,12 @@ bool core_load_game(retro_ctx_load_content_info_t *load_info)
     
     BOOL loaded = false;
     if (load_info->special != nil) {
-        loaded = current->core.retro_load_game_special(load_info->special->id, load_info->info, load_info->content->size);
+        loaded = current->core->retro_load_game_special(load_info->special->id, load_info->info, load_info->content->size);
     } else {
 //        if(load_info->content != nil && load_info->content->elems != nil) {
-//            core.retro_load_game(*load_info->content->elems[0].data);
+//            core->retro_load_game(*load_info->content->elems[0].data);
 //        } else {
-        loaded = current->core.retro_load_game(load_info->info);
+        loaded = current->core->retro_load_game(load_info->info);
 //        }
     }
     
@@ -548,7 +545,7 @@ bool core_load_game(retro_ctx_load_content_info_t *load_info)
     //    };
     
     
-    current->core.retro_get_system_av_info(&av);
+    current->core->retro_get_system_av_info(&av);
     ILOG(@"Video: %ix%i\n", av.geometry.base_width, av.geometry.base_height);
     current->av_info = av;
 //    video_configure(&av.geometry);
@@ -560,7 +557,7 @@ bool core_get_system_info(struct retro_system_info *system) {
     GET_CURRENT_OR_RETURN(false);
     if (!system)
         return false;
-    current->core.retro_get_system_info(system);
+    current->core->retro_get_system_info(system);
     return true;
 }
 
@@ -568,7 +565,7 @@ bool core_unserialize(retro_ctx_serialize_info_t *info) {
     GET_CURRENT_OR_RETURN(false);
     if (!info)
         return false;
-    if (!current->core.retro_unserialize(info->data_const, info->size))
+    if (!current->core->retro_unserialize(info->data_const, info->size))
         return false;
     return true;
 }
@@ -577,7 +574,7 @@ bool core_serialize(retro_ctx_serialize_info_t *info) {
     GET_CURRENT_OR_RETURN(false);
     if (!info)
         return false;
-    if (!current->core.retro_serialize(info->data, info->size))
+    if (!current->core->retro_serialize(info->data, info->size))
         return false;
     return true;
 }
@@ -586,7 +583,7 @@ bool core_serialize_size(retro_ctx_size_info_t *info) {
     GET_CURRENT_OR_RETURN(false);
     if (!info)
         return false;
-    info->size = current->core.retro_serialize_size();
+    info->size = current->core->retro_serialize_size();
     return true;
 }
 
@@ -612,7 +609,7 @@ bool core_set_environment(retro_ctx_environ_info_t *info) {
     GET_CURRENT_OR_RETURN(false);
     if (!info)
         return false;
-    current->core.retro_set_environment(info->env);
+    current->core->retro_set_environment(info->env);
     return true;
 }
 
@@ -620,25 +617,25 @@ bool core_get_system_av_info(struct retro_system_av_info *av_info) {
     GET_CURRENT_OR_RETURN(false);
     if (!av_info)
         return false;
-    current->core.retro_get_system_av_info(av_info);
+    current->core->retro_get_system_av_info(av_info);
     return true;
 }
 
 bool core_reset(void) {
     GET_CURRENT_OR_RETURN(false);
-    current->core.retro_reset();
+    current->core->retro_reset();
     return true;
 }
 
 bool core_init(void) {
     GET_CURRENT_OR_RETURN(false);
-    current->core.retro_init();
+    current->core->retro_init();
     return true;
 }
 
 bool core_unload(void) {
     GET_CURRENT_OR_RETURN(false);
-    current->core.retro_deinit();
+    current->core->retro_deinit();
     return true;
 }
 
@@ -691,7 +688,7 @@ struct retro_system_av_info *video_viewport_get_system_av_info(void)
 bool core_verify_api_version(void) {
     GET_CURRENT_OR_RETURN(false);
 
-    //   unsigned api_version = core.retro_api_version();
+    //   unsigned api_version = core->retro_api_version();
     //   RARCH_LOG("%s: %u\n",
     //         msg_hash_to_str(MSG_VERSION_OF_LIBRETRO_API),
     //         api_version);
@@ -758,7 +755,7 @@ void input_poll(void)
 /**
  * uninit_libretro_sym:
  *
- * Frees libretro core.
+ * Frees libretro core->
  *
  * Frees all core options,
  * associated state, and
@@ -1406,7 +1403,7 @@ void retro_set_environment(retro_environment_t cb)
 {
     GET_CURRENT_OR_RETURN();
     environ_cb = cb;
-    current->core.retro_set_environment(cb);
+    current->core->retro_set_environment(cb);
 }
 
 static void core_log(enum retro_log_level level, const char * fmt, ...) {
@@ -2081,7 +2078,8 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
         const char* path = [[NSBundle bundleForClass:[self class]].bundlePath fileSystemRepresentation];
         config_set_active_core_path(path);
         //        load_dynamic_core();
-        init_libretro_sym(CORE_TYPE_PLAIN, &core);
+        core = malloc(sizeof(retro_core_t));
+        init_libretro_sym(CORE_TYPE_PLAIN, core);
         retro_set_environment(environment_callback);
         
         memset(_pad, 0, sizeof(int16_t) * 24);
@@ -2095,7 +2093,7 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
         
         //        libretro_get_system_info(path,
         //        libretro_get_system_info_lib
-        core.retro_init();
+        core->retro_init();
         
         videoBufferA = (uint32_t *)malloc(2560 * 2560 * sizeof(uint32_t));
         videoBufferB = (uint32_t *)malloc(2560 * 2560 * sizeof(uint32_t));
@@ -2107,11 +2105,11 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
         //		retro_set_input_poll(input_poll_callback);
         //		retro_set_input_state(input_state_callback);
         
-        core.retro_set_audio_sample(audio_callback);
-        core.retro_set_audio_sample_batch(audio_batch_callback);
-        core.retro_set_video_refresh(video_callback);
-        core.retro_set_input_poll(input_poll_callback);
-        core.retro_set_input_state(input_state_callback);
+        core->retro_set_audio_sample(audio_callback);
+        core->retro_set_audio_sample_batch(audio_batch_callback);
+        core->retro_set_video_refresh(video_callback);
+        core->retro_set_input_poll(input_poll_callback);
+        core->retro_set_input_state(input_state_callback);
     }
     
     return self;
@@ -2123,13 +2121,21 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {
     NSURL *batterySavesDirectory = [NSURL fileURLWithPath:[self batterySavesPath]];
-    [[NSFileManager defaultManager] createDirectoryAtURL:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+    NSError *localError;
+    [[NSFileManager defaultManager] createDirectoryAtURL:batterySavesDirectory
+                             withIntermediateDirectories:YES
+                                              attributes:nil
+                                                   error:&localError];
+    if(error) {
+        *error = localError;
+        return NO;
+    }
     
     struct retro_game_info info;
     info.data = [NSData dataWithContentsOfFile:path].bytes;
     info.path = [path fileSystemRepresentation];
     // TODO:: retro_load_game
-//    BOOL loaded = core.retro_load_game(&info); // retro_load_game(&info);
+//    BOOL loaded = core->retro_load_game(&info); // retro_load_game(&info);
     
     struct retro_ctx_load_content_info info2;
     info2.info = &info;
@@ -2137,7 +2143,9 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
     info2.special = nil;
     BOOL loaded = core_load_game(&info2);
    
-        core.retro_reset();
+    core->retro_reset();
+    
+    self->loaded = loaded;
 
     return loaded;
 }
@@ -2156,8 +2164,8 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
             core_input_polled = false;
             break;
     }
-    if (core.retro_run)
-        core.retro_run();
+    if (core->retro_run)
+        core->retro_run();
     if (core_poll_type == POLL_TYPE_LATE && !core_input_polled)
         input_poll();
     //	return true;
@@ -2174,15 +2182,18 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 }
 
 - (void)resetEmulation {
-    core.retro_reset();
+    core->retro_reset();
 }
 
 - (void)stopEmulation {
     [super stopEmulation];
 
-    core.retro_unload_game();
-    core.retro_reset();
-//    core.retro_deinit();
+    core->retro_unload_game();
+    
+    if (self->loaded) {
+        core->retro_reset();
+    }
+//    core->retro_deinit();
 }
 
 - (NSTimeInterval)frameInterval {
@@ -2218,7 +2229,7 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 
 - (CGRect)screenRect {
     static struct retro_system_av_info av_info;
-    core.retro_get_system_av_info(&av_info);
+    core->retro_get_system_av_info(&av_info);
     unsigned height = av_info.geometry.base_height;
     unsigned width = av_info.geometry.base_width;
 
@@ -2230,7 +2241,7 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 
 - (CGSize)aspectSize {
     static struct retro_system_av_info av_info;
-    core.retro_get_system_av_info(&av_info);
+    core->retro_get_system_av_info(&av_info);
     float aspect_ratio = av_info.geometry.aspect_ratio;
     //    unsigned height = av_info.geometry.max_height;
     //    unsigned width = av_info.geometry.max_width;
@@ -2253,7 +2264,7 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 
 - (CGSize)bufferSize {
     static struct retro_system_av_info av_info;
-    core.retro_get_system_av_info(&av_info);
+    core->retro_get_system_av_info(&av_info);
     unsigned height = av_info.geometry.max_height;
     unsigned width = av_info.geometry.max_width;
     
@@ -2298,7 +2309,7 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 
 - (double)audioSampleRate {
     static struct retro_system_av_info av_info;
-    core.retro_get_system_av_info(&av_info);
+    core->retro_get_system_av_info(&av_info);
     double sample_rate = av_info.timing.sample_rate;
     return sample_rate ?: 44100;
 }
@@ -2577,7 +2588,7 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 
 #pragma mark Properties
 -(BOOL)supportsSaveStates {
-    return core.retro_get_memory_size(0) != 0 && core.retro_get_memory_data(0) != NULL;
+    return core->retro_get_memory_size(0) != 0 && core->retro_get_memory_data(0) != NULL;
 }
 
 #pragma mark Methods
@@ -2634,7 +2645,7 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 - (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled {
     unsigned index = 0;
     const char* cCode = [code cStringUsingEncoding:NSUTF8StringEncoding];
-    core.retro_cheat_set(index, enabled, cCode);
+    core->retro_cheat_set(index, enabled, cCode);
     // void retro_cheat_reset(void) { }
     //    void retro_cheat_set(unsigned index, bool enabled, const char *code) { (void)index; (void)enabled; (void)code; }
 }

@@ -11,12 +11,13 @@
 #import <PVSupport/PVEmulatorCore.h>
 #import <PVSupport/PVSupport-Swift.h>
 #import <PVLibRetro/PVLibRetro.h>
+#import <PVLibRetro/PVLibRetroGLESCore.h>
 
 #define GET_CURRENT_AND_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 #define GET_CURRENT_OR_RETURN(...)  __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 
 __attribute__((visibility("default")))
-@interface PVMupen64PlusNXCore : PVLibRetroCore <PVN64SystemResponderClient> {
+@interface PVMupen64PlusNXCore : PVLibRetroGLESCore <PVN64SystemResponderClient> {
 //	uint8_t padData[4][PVDOSButtonCount];
 //	int8_t xAxis[4];
 //	int8_t yAxis[4];

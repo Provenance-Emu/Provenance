@@ -9,6 +9,7 @@
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.msx</string>
+		<string>com.provenance.msx2</string>
 	</array>
 	<key>PVProjectName</key>
 	<string>fMSX</string>
