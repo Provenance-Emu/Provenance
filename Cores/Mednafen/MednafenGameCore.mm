@@ -449,7 +449,7 @@ static void emulation_run(BOOL skipFrame) {
 
     current->videoOffsetX = current->spec.DisplayRect.x;
     current->videoOffsetY = current->spec.DisplayRect.y;
-    if(game->multires) {
+    if(game->multires || current->_systemType == MednaSystemPSX) {
         current->videoWidth = rects[current->spec.DisplayRect.y];
     }
     else {
@@ -457,32 +457,10 @@ static void emulation_run(BOOL skipFrame) {
     }
     current->videoHeight  = current->spec.DisplayRect.h;
     
-//    if(current->_systemType == MednaSystemPSX)
-//    {
-//        current->videoWidth = rects[current->spec.DisplayRect.y];
-//        current->videoOffsetX = current->spec.DisplayRect.x;
-//    }
-//    else if(game->multires)
-//    {
-//        current->videoWidth = rects[current->spec.DisplayRect.y];
-//        current->videoOffsetX = current->spec.DisplayRect.x;
-//    }
-//    else
-//    {
-//        current->videoWidth = current->spec.DisplayRect.w;
-//        current->videoOffsetX = current->spec.DisplayRect.x;
-//    }
-//
-//    current->videoHeight = current->spec.DisplayRect.h;
-//    current->videoOffsetY = current->spec.DisplayRect.y;
-
     update_audio_batch(current->spec.SoundBuf, current->spec.SoundBufSize);
-
-	//delete[] rects;
 }
 
-- (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error
-{
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {
     [self parseOptions];
     [[NSFileManager defaultManager] createDirectoryAtPath:[self batterySavesPath] withIntermediateDirectories:YES attributes:nil error:NULL];
 
@@ -1021,20 +999,17 @@ static void emulation_run(BOOL skipFrame) {
     [super stopEmulation];
 }
 
-- (NSTimeInterval)frameInterval
-{
+- (NSTimeInterval)frameInterval {
     return mednafenCoreTiming ?: 60;
 }
 
 # pragma mark - Video
 
-- (CGRect)screenRect
-{
+- (CGRect)screenRect {
     return CGRectMake(videoOffsetX, videoOffsetY, videoWidth, videoHeight);
 }
 
-- (CGSize)bufferSize
-{
+- (CGSize)bufferSize {
     if ( game == NULL )
     {
         return CGSizeMake(0, 0);
@@ -1045,13 +1020,11 @@ static void emulation_run(BOOL skipFrame) {
     }
 }
 
-- (CGSize)aspectSize
-{
-    return CGSizeMake(mednafenCoreAspect.width,mednafenCoreAspect.height);
+- (CGSize)aspectSize {
+    return CGSizeMake(mednafenCoreAspect.width, mednafenCoreAspect.height);
 }
 
-- (const void *)videoBuffer
-{
+- (const void *)videoBuffer {
     if ( frontBufferSurf == NULL )
     {
         return NULL;
@@ -1500,8 +1473,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     inputBuffer[player][0] &= ~(1 << PSXMap[button]);
 }
 
-- (void)didMovePSXJoystickDirection:(PVPSXButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player
-{
+- (void)didMovePSXJoystickDirection:(PVPSXButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
     // TODO
     // Fix the analog circle-to-square axis range conversion by scaling between a value of 1.00 and 1.50
     // We cannot use MDFNI_SetSetting("psx.input.port1.dualshock.axis_scale", "1.33") directly.

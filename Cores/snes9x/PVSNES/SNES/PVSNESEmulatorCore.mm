@@ -71,6 +71,8 @@ static __weak PVSNESEmulatorCore *_current;
     unsigned char *videoBufferA;
     unsigned char *videoBufferB;
     NSMutableDictionary *cheatList;
+    
+    BOOL isMultitap;
 }
 
 @end
@@ -707,6 +709,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 									 @"3c6a8dc8", // Zero 4 Champ RR-Z (Japan)
 									 ];
 
+        isMultitap = NO;
 		// Automatically enable SNES Mouse, Super Scope, Justifier and Multitap where supported
 		if([snesJustifier containsObject:cartCRC32])
 		{
@@ -729,6 +732,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 			// Controller in Port 1 and Multitap in Port 2
 			S9xSetController(0, CTL_JOYPAD, 0, 0, 0, 0);
 			S9xSetController(1, CTL_MP5,    1, 2, 3, 4);
+            isMultitap = YES;
 		}
 		else if([cartCRC32 isEqual:@"be08d788"])
 		{
@@ -929,8 +933,12 @@ static void FinalizeSamplesAudioCallback(void *) {
     }
 }
 
-- (void)updateControllers
-{
+
+-(NSUInteger)maxNumberPlayers {
+    return isMultitap ? 8 : 4;
+}
+
+- (void)updateControllers {
     GCController *controller = nil;
 
     for (NSInteger player = 1; player <= 2; player++)

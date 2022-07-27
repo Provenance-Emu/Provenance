@@ -119,23 +119,8 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
     if (self = [super init]) {
         mupenWaitToBeginFrameSemaphore = dispatch_semaphore_create(0);
         coreWaitToEndFrameSemaphore    = dispatch_semaphore_create(0);
-        if(RESIZE_TO_FULLSCREEN) {
-            CGSize size = UIApplication.sharedApplication.keyWindow.bounds.size;
-            float widthScale = size.width / WIDTHf;
-            float heightScale = size.height / HEIGHTf ;
-            if (PVSettingsModel.shared.integerScaleEnabled) {
-                widthScale = floor(widthScale);
-                heightScale = floor(heightScale);
-            }
-            float scale = MAX(MIN(widthScale, heightScale), 1);
-            _videoWidth =  scale * WIDTHf;
-            _videoHeight = scale * HEIGHTf;
-            DLOG(@"Upscaling on: scale rounded to (%f)",scale);
-        } else {
-            _videoWidth  = WIDTH;
-            _videoHeight = HEIGHT;
-        }
-
+   
+        [self calculateSize];
 //        controllerMode = {PLUGIN_MEMPAK, PLUGIN_MEMPAK, PLUGIN_MEMPAK, PLUGIN_MEMPAK};
         
         _videoBitDepth = 32; // ignored
@@ -170,6 +155,25 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
     dispatch_release(mupenWaitToBeginFrameSemaphore);
     dispatch_release(coreWaitToEndFrameSemaphore);
 #endif
+}
+
+-(void)calculateSize {
+    if(RESIZE_TO_FULLSCREEN) {
+        CGSize size = UIApplication.sharedApplication.keyWindow.bounds.size;
+        float widthScale = size.width / WIDTHf;
+        float heightScale = size.height / HEIGHTf;
+        if (PVSettingsModel.shared.integerScaleEnabled) {
+            widthScale = floor(widthScale);
+            heightScale = floor(heightScale);
+        }
+        float scale = MAX(MIN(widthScale, heightScale), 1);
+        _videoWidth =  scale * WIDTHf;
+        _videoHeight = scale * HEIGHTf;
+        DLOG(@"Upscaling on: scale rounded to (%f)",scale);
+    } else {
+        _videoWidth  = WIDTH;
+        _videoHeight = HEIGHT;
+    }
 }
 
 -(void)detachCoreLib {
