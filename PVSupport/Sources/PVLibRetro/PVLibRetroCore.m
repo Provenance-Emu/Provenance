@@ -27,6 +27,9 @@
 #endif
 
 #include "dynamic.h"
+#include <dynamic/dylib.h>
+#include <string/stdstring.h>
+
 #include "command.h"
 #include "core_info.h"
 
@@ -39,6 +42,7 @@
 #include "performance_counters.h"
 #include "system.h"
 //#include "gfx/video_context_driver.h"
+#include <retro_assert.h>
 
 #include "cores/internal_cores.h"
 #include "frontend/frontend_driver.h"
@@ -62,6 +66,26 @@ static unsigned            core_poll_type;
 static bool                core_input_polled;
 static bool   core_has_set_input_descriptors = false;
 static struct retro_callbacks retro_ctx;
+
+typedef void *dylib_t;
+typedef void (*function_t)(void);
+
+static dylib_t lib_handle;
+
+void retroarch_fail(int error_code, const char *error) {
+    ELOG(@"Code: %i, Error: %s", error_code, error);
+}
+
+
+#define SYMBOL(x) do { \
+   function_t func = dylib_proc(lib_handle, #x); \
+   memcpy(&current_core->x, &func, sizeof(func)); \
+   if (current_core->x == NULL) { ELOG(@"Failed to load symbol: \"%s\"\n", #x); retroarch_fail(1, "init_libretro_sym()"); } \
+} while (0)
+
+#define SYMBOL_DUMMY(x) current_core->x = libretro_dummy_##x
+
+static void load_symbols(enum rarch_core_type type, struct retro_core_t *current_core);
 
 /**
  * input_poll:
@@ -532,14 +556,14 @@ bool core_verify_api_version(void)
  * Initializes libretro symbols and
  * setups environment callback functions.
  **/
-void init_libretro_sym(enum rarch_core_type type, struct retro_core_t *current_core)
-{
+//void init_libretro_sym(enum rarch_core_type type, struct retro_core_t *current_core)
+//{
    /* Guarantee that we can do "dirty" casting.
     * Every OS that this program supports should pass this. */
 //   retro_assert(sizeof(void*) == sizeof(void (*)(void)));
 //
 //   load_symbols(type, current_core);
-}
+//}
 
 /**
  * input_poll:
@@ -671,6 +695,314 @@ void video_driver_frame(const void *data, unsigned width,
 //   video_driver_frame_count++;
 }
 
+const char *config_get_active_core_path(void) {
+    NSBundle *bundle = [NSBundle bundleForClass:[_current class]];
+    const char* path = [bundle.executablePath cStringUsingEncoding:NSUTF8StringEncoding];
+    return path;
+}
+/**
+ * init_libretro_sym:
+ * @type                        : Type of core to be loaded.
+ *                                If CORE_TYPE_DUMMY, will
+ *                                load dummy symbols.
+ *
+ * Initializes libretro symbols and
+ * setups environment callback functions.
+ **/
+void init_libretro_sym(enum rarch_core_type type, struct retro_core_t *current_core)
+{
+   /* Guarantee that we can do "dirty" casting.
+    * Every OS that this program supports should pass this. */
+   retro_assert(sizeof(void*) == sizeof(void (*)(void)));
+
+   load_symbols(type, current_core);
+}
+
+static void load_dynamic_core(void)
+{
+    
+    ILOG(@"Loading dynamic libretro core from: \"%s\"\n",
+    config_get_active_core_path());
+    const char* corepath = config_get_active_core_path();
+    lib_handle = dylib_load(corepath);
+
+   function_t sym       = dylib_proc(lib_handle, "retro_init");
+
+   if (sym)
+   {
+      /* Try to verify that -lretro was not linked in from other modules
+       * since loading it dynamically and with -l will fail hard. */
+      ELOG(@"Serious problem. RetroArch wants to load libretro cores"
+            "dyamically, but it is already linked.\n");
+       ELOG(@"This could happen if other modules RetroArch depends on "
+            "link against libretro directly.\n");
+       ELOG(@"Proceeding could cause a crash. Aborting ...\n");
+      retroarch_fail(1, "init_libretro_sym()");
+   }
+
+   if (string_is_empty(config_get_active_core_path()))
+   {
+       ELOG(@"RetroArch is built for dynamic libretro cores, but "
+            "libretro_path is not set. Cannot continue.\n");
+      retroarch_fail(1, "init_libretro_sym()");
+   }
+
+   /* Need to use absolute path for this setting. It can be
+    * saved to content history, and a relative path would
+    * break in that scenario. */
+//   path_resolve_realpath(
+//         config_get_active_core_path_ptr(),
+//         config_get_active_core_path_size());
+//
+//   ILOG(@"Loading dynamic libretro core from: \"%s\"\n",
+//         config_get_active_core_path());
+//   lib_handle = dylib_load(config_get_active_core_path());
+   if (!lib_handle)
+   {
+   ELOG(@"Failed to open libretro core: \"%s\"\n",
+            config_get_active_core_path());
+       ELOG(@"Error(s): %s\n", dylib_error());
+      retroarch_fail(1, "load_dynamic()");
+   }
+}
+
+/**
+ * load_symbols:
+ * @type                        : Type of core to be loaded.
+ *                                If CORE_TYPE_DUMMY, will
+ *                                load dummy symbols.
+ *
+ * Setup libretro callback symbols.
+ **/
+static void load_symbols(enum rarch_core_type type, struct retro_core_t *current_core)
+{
+   switch (type)
+   {
+      case CORE_TYPE_PLAIN:
+#ifdef HAVE_DYNAMIC
+         load_dynamic_core();
+#endif
+
+         SYMBOL(retro_init);
+         SYMBOL(retro_deinit);
+
+         SYMBOL(retro_api_version);
+         SYMBOL(retro_get_system_info);
+         SYMBOL(retro_get_system_av_info);
+
+         SYMBOL(retro_set_environment);
+         SYMBOL(retro_set_video_refresh);
+         SYMBOL(retro_set_audio_sample);
+         SYMBOL(retro_set_audio_sample_batch);
+         SYMBOL(retro_set_input_poll);
+         SYMBOL(retro_set_input_state);
+
+         SYMBOL(retro_set_controller_port_device);
+
+         SYMBOL(retro_reset);
+         SYMBOL(retro_run);
+
+         SYMBOL(retro_serialize_size);
+         SYMBOL(retro_serialize);
+         SYMBOL(retro_unserialize);
+
+         SYMBOL(retro_cheat_reset);
+         SYMBOL(retro_cheat_set);
+
+         SYMBOL(retro_load_game);
+         SYMBOL(retro_load_game_special);
+
+         SYMBOL(retro_unload_game);
+         SYMBOL(retro_get_region);
+         SYMBOL(retro_get_memory_data);
+         SYMBOL(retro_get_memory_size);
+         break;
+      case CORE_TYPE_DUMMY:
+         SYMBOL_DUMMY(retro_init);
+         SYMBOL_DUMMY(retro_deinit);
+
+         SYMBOL_DUMMY(retro_api_version);
+         SYMBOL_DUMMY(retro_get_system_info);
+         SYMBOL_DUMMY(retro_get_system_av_info);
+
+         SYMBOL_DUMMY(retro_set_environment);
+         SYMBOL_DUMMY(retro_set_video_refresh);
+         SYMBOL_DUMMY(retro_set_audio_sample);
+         SYMBOL_DUMMY(retro_set_audio_sample_batch);
+         SYMBOL_DUMMY(retro_set_input_poll);
+         SYMBOL_DUMMY(retro_set_input_state);
+
+         SYMBOL_DUMMY(retro_set_controller_port_device);
+
+         SYMBOL_DUMMY(retro_reset);
+         SYMBOL_DUMMY(retro_run);
+
+         SYMBOL_DUMMY(retro_serialize_size);
+         SYMBOL_DUMMY(retro_serialize);
+         SYMBOL_DUMMY(retro_unserialize);
+
+         SYMBOL_DUMMY(retro_cheat_reset);
+         SYMBOL_DUMMY(retro_cheat_set);
+
+         SYMBOL_DUMMY(retro_load_game);
+         SYMBOL_DUMMY(retro_load_game_special);
+
+         SYMBOL_DUMMY(retro_unload_game);
+         SYMBOL_DUMMY(retro_get_region);
+         SYMBOL_DUMMY(retro_get_memory_data);
+         SYMBOL_DUMMY(retro_get_memory_size);
+         break;
+      case CORE_TYPE_FFMPEG:
+#ifdef HAVE_FFMPEG
+         SYMBOL_FFMPEG(retro_init);
+         SYMBOL_FFMPEG(retro_deinit);
+
+         SYMBOL_FFMPEG(retro_api_version);
+         SYMBOL_FFMPEG(retro_get_system_info);
+         SYMBOL_FFMPEG(retro_get_system_av_info);
+
+         SYMBOL_FFMPEG(retro_set_environment);
+         SYMBOL_FFMPEG(retro_set_video_refresh);
+         SYMBOL_FFMPEG(retro_set_audio_sample);
+         SYMBOL_FFMPEG(retro_set_audio_sample_batch);
+         SYMBOL_FFMPEG(retro_set_input_poll);
+         SYMBOL_FFMPEG(retro_set_input_state);
+
+         SYMBOL_FFMPEG(retro_set_controller_port_device);
+
+         SYMBOL_FFMPEG(retro_reset);
+         SYMBOL_FFMPEG(retro_run);
+
+         SYMBOL_FFMPEG(retro_serialize_size);
+         SYMBOL_FFMPEG(retro_serialize);
+         SYMBOL_FFMPEG(retro_unserialize);
+
+         SYMBOL_FFMPEG(retro_cheat_reset);
+         SYMBOL_FFMPEG(retro_cheat_set);
+
+         SYMBOL_FFMPEG(retro_load_game);
+         SYMBOL_FFMPEG(retro_load_game_special);
+
+         SYMBOL_FFMPEG(retro_unload_game);
+         SYMBOL_FFMPEG(retro_get_region);
+         SYMBOL_FFMPEG(retro_get_memory_data);
+         SYMBOL_FFMPEG(retro_get_memory_size);
+#endif
+         break;
+      case CORE_TYPE_IMAGEVIEWER:
+#ifdef HAVE_IMAGEVIEWER
+         SYMBOL_IMAGEVIEWER(retro_init);
+         SYMBOL_IMAGEVIEWER(retro_deinit);
+
+         SYMBOL_IMAGEVIEWER(retro_api_version);
+         SYMBOL_IMAGEVIEWER(retro_get_system_info);
+         SYMBOL_IMAGEVIEWER(retro_get_system_av_info);
+
+         SYMBOL_IMAGEVIEWER(retro_set_environment);
+         SYMBOL_IMAGEVIEWER(retro_set_video_refresh);
+         SYMBOL_IMAGEVIEWER(retro_set_audio_sample);
+         SYMBOL_IMAGEVIEWER(retro_set_audio_sample_batch);
+         SYMBOL_IMAGEVIEWER(retro_set_input_poll);
+         SYMBOL_IMAGEVIEWER(retro_set_input_state);
+
+         SYMBOL_IMAGEVIEWER(retro_set_controller_port_device);
+
+         SYMBOL_IMAGEVIEWER(retro_reset);
+         SYMBOL_IMAGEVIEWER(retro_run);
+
+         SYMBOL_IMAGEVIEWER(retro_serialize_size);
+         SYMBOL_IMAGEVIEWER(retro_serialize);
+         SYMBOL_IMAGEVIEWER(retro_unserialize);
+
+         SYMBOL_IMAGEVIEWER(retro_cheat_reset);
+         SYMBOL_IMAGEVIEWER(retro_cheat_set);
+
+         SYMBOL_IMAGEVIEWER(retro_load_game);
+         SYMBOL_IMAGEVIEWER(retro_load_game_special);
+
+         SYMBOL_IMAGEVIEWER(retro_unload_game);
+         SYMBOL_IMAGEVIEWER(retro_get_region);
+         SYMBOL_IMAGEVIEWER(retro_get_memory_data);
+         SYMBOL_IMAGEVIEWER(retro_get_memory_size);
+#endif
+         break;
+      case CORE_TYPE_NETRETROPAD:
+#if defined(HAVE_NETWORKGAMEPAD) && defined(HAVE_NETPLAY)
+         SYMBOL_NETRETROPAD(retro_init);
+         SYMBOL_NETRETROPAD(retro_deinit);
+
+         SYMBOL_NETRETROPAD(retro_api_version);
+         SYMBOL_NETRETROPAD(retro_get_system_info);
+         SYMBOL_NETRETROPAD(retro_get_system_av_info);
+
+         SYMBOL_NETRETROPAD(retro_set_environment);
+         SYMBOL_NETRETROPAD(retro_set_video_refresh);
+         SYMBOL_NETRETROPAD(retro_set_audio_sample);
+         SYMBOL_NETRETROPAD(retro_set_audio_sample_batch);
+         SYMBOL_NETRETROPAD(retro_set_input_poll);
+         SYMBOL_NETRETROPAD(retro_set_input_state);
+
+         SYMBOL_NETRETROPAD(retro_set_controller_port_device);
+
+         SYMBOL_NETRETROPAD(retro_reset);
+         SYMBOL_NETRETROPAD(retro_run);
+
+         SYMBOL_NETRETROPAD(retro_serialize_size);
+         SYMBOL_NETRETROPAD(retro_serialize);
+         SYMBOL_NETRETROPAD(retro_unserialize);
+
+         SYMBOL_NETRETROPAD(retro_cheat_reset);
+         SYMBOL_NETRETROPAD(retro_cheat_set);
+
+         SYMBOL_NETRETROPAD(retro_load_game);
+         SYMBOL_NETRETROPAD(retro_load_game_special);
+
+         SYMBOL_NETRETROPAD(retro_unload_game);
+         SYMBOL_NETRETROPAD(retro_get_region);
+         SYMBOL_NETRETROPAD(retro_get_memory_data);
+         SYMBOL_NETRETROPAD(retro_get_memory_size);
+#endif
+         break;
+      case CORE_TYPE_VIDEO_PROCESSOR:
+#if defined(HAVE_VIDEO_PROCESSOR)
+         SYMBOL_VIDEOPROCESSOR(retro_init);
+         SYMBOL_VIDEOPROCESSOR(retro_deinit);
+
+         SYMBOL_VIDEOPROCESSOR(retro_api_version);
+         SYMBOL_VIDEOPROCESSOR(retro_get_system_info);
+         SYMBOL_VIDEOPROCESSOR(retro_get_system_av_info);
+
+         SYMBOL_VIDEOPROCESSOR(retro_set_environment);
+         SYMBOL_VIDEOPROCESSOR(retro_set_video_refresh);
+         SYMBOL_VIDEOPROCESSOR(retro_set_audio_sample);
+         SYMBOL_VIDEOPROCESSOR(retro_set_audio_sample_batch);
+         SYMBOL_VIDEOPROCESSOR(retro_set_input_poll);
+         SYMBOL_VIDEOPROCESSOR(retro_set_input_state);
+
+         SYMBOL_VIDEOPROCESSOR(retro_set_controller_port_device);
+
+         SYMBOL_VIDEOPROCESSOR(retro_reset);
+         SYMBOL_VIDEOPROCESSOR(retro_run);
+
+         SYMBOL_VIDEOPROCESSOR(retro_serialize_size);
+         SYMBOL_VIDEOPROCESSOR(retro_serialize);
+         SYMBOL_VIDEOPROCESSOR(retro_unserialize);
+
+         SYMBOL_VIDEOPROCESSOR(retro_cheat_reset);
+         SYMBOL_VIDEOPROCESSOR(retro_cheat_set);
+
+         SYMBOL_VIDEOPROCESSOR(retro_load_game);
+         SYMBOL_VIDEOPROCESSOR(retro_load_game_special);
+
+         SYMBOL_VIDEOPROCESSOR(retro_unload_game);
+         SYMBOL_VIDEOPROCESSOR(retro_get_region);
+         SYMBOL_VIDEOPROCESSOR(retro_get_memory_data);
+         SYMBOL_VIDEOPROCESSOR(retro_get_memory_size);
+#endif
+         break;
+   }
+}
+
 
 @interface PVLibRetroCore ()
 {
@@ -678,14 +1010,19 @@ void video_driver_frame(const void *data, unsigned width,
 @end
 
 @implementation PVLibRetroCore
-static __weak PVLibRetroCore *_current;
 
 - (instancetype)init {
     if((self = [super init])) {
-		core.retro_init();
-    }
+        _current = self;
 
-    _current = self;
+    //        const char* path = [[NSBundle bundleForClass:[self class]].bundlePath cStringUsingEncoding:NSUTF8StringEncoding];
+    //        config_set_active_core_path(path);
+        init_libretro_sym(CORE_TYPE_PLAIN, &core);
+        load_dynamic_core();
+    //        libretro_get_system_info(path,
+    //        libretro_get_system_info_lib
+        core.retro_init();
+    }
 
     return self;
 }

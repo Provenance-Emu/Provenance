@@ -79,6 +79,8 @@
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
+		B3423263286EC1400033EFA5 /* libretro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E80272E2C9800FF72B9 /* libretro.cpp */; };
+		B3423264286EC1400033EFA5 /* libretro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E80272E2C9800FF72B9 /* libretro.cpp */; };
 		B3447E9C218B826F00557ACE /* PVDesmume2015+Audio.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E9A218B826F00557ACE /* PVDesmume2015+Audio.h */; };
 		B3447E9E218B857A00557ACE /* PVDesmume2015Core+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVDesmume2015Core+Controls.mm */; };
 		B3447E9F218B858100557ACE /* PVDesmume2015Core+Controls.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E96218B809200557ACE /* PVDesmume2015Core+Controls.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2493,6 +2495,7 @@
 				B31B306C272E2CAD00FF72B9 /* common.c in Sources */,
 				B31B306B272E2CAD00FF72B9 /* firmware.cpp in Sources */,
 				B31B307B272E2CAD00FF72B9 /* gfx3d.cpp in Sources */,
+				B3423263286EC1400033EFA5 /* libretro.cpp in Sources */,
 				B31B306F272E2CAD00FF72B9 /* thumb_instructions.cpp in Sources */,
 				B31B307F272E2CAD00FF72B9 /* debug.cpp in Sources */,
 				B31B307E272E2CAD00FF72B9 /* version.c in Sources */,
@@ -2546,6 +2549,7 @@
 				B31B3046272E2CAC00FF72B9 /* common.c in Sources */,
 				B31B3045272E2CAC00FF72B9 /* firmware.cpp in Sources */,
 				B31B3055272E2CAC00FF72B9 /* gfx3d.cpp in Sources */,
+				B3423264286EC1400033EFA5 /* libretro.cpp in Sources */,
 				B31B3049272E2CAC00FF72B9 /* thumb_instructions.cpp in Sources */,
 				B31B3059272E2CAC00FF72B9 /* debug.cpp in Sources */,
 				B31B3058272E2CAC00FF72B9 /* version.c in Sources */,

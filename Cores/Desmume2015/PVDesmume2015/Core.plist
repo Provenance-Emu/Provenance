@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>PVCoreIdentifier</key>
-	<string>org.provenance.core.desmume2015</string>
+	<string>com.provenance.core.desmume2015</string>
 	<key>PVPrincipleClass</key>
 	<string>PVDesmume2015Core</string>
 	<key>PVSupportedSystems</key>
@@ -17,6 +17,6 @@
 	<key>PVProjectVersion</key>
 	<string>1.1</string>
 	<key>PVDisabled</key>
-	<true/>
+	<false/>
 </dict>
 </plist>

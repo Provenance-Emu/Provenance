@@ -395,7 +395,7 @@ public struct ClassInfo: CustomStringConvertible, Equatable {
     public let className: String
     public let bundle: Bundle
 
-    public init?(_ classObject: AnyClass?, withSuperclass superclass: String? = nil) {
+    public init?(_ classObject: AnyClass?, withSuperclass superclass: [String]? = nil) {
         guard let classObject = classObject else { return nil }
 
         self.classObject = classObject
@@ -404,7 +404,9 @@ public struct ClassInfo: CustomStringConvertible, Equatable {
         let classString = String(cString: cName)
         className = classString
 
-        if let superclass = superclass, ClassInfo.superClassName(forClass: classObject) != superclass {
+        if let superclass = superclass,
+            let superclassName = ClassInfo.superClassName(forClass: classObject),
+            !superclass.contains(superclassName) {
             return nil
         }
 

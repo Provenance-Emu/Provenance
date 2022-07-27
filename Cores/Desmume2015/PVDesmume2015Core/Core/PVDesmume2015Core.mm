@@ -54,16 +54,16 @@
 //
 #pragma mark - PVDesmume2015Core Begin
 
-@implementation PVDesmume2015Core { }
+@implementation PVDesmume2015Core {
 //	dispatch_semaphore_t mupenWaitToBeginFrameSemaphore;
 //	dispatch_semaphore_t coreWaitToEndFrameSemaphore;
 //    dispatch_semaphore_t coreWaitForExitSemaphore;
 //
 //	NSMutableDictionary *_callbackHandlers;
-//}
-//
-//- (instancetype)init {
-//	if (self = [super init]) {
+}
+
+- (instancetype)init {
+	if (self = [super init]) {
 //		mupenWaitToBeginFrameSemaphore = dispatch_semaphore_create(0);
 //		coreWaitToEndFrameSemaphore    = dispatch_semaphore_create(0);
 //        coreWaitForExitSemaphore       = dispatch_semaphore_create(0);
@@ -81,11 +81,10 @@
 //
 //		_callbackQueue = dispatch_queue_create("org.openemu.Desmume2015.CallbackHandlerQueue", queueAttributes);
 //		_callbackHandlers = [[NSMutableDictionary alloc] init];
-//	}
-//
-//	_current = self;
-//	return self;
-//}
+        _current = self;
+	}
+	return self;
+}
 //
 //- (void)dealloc {
 //#if !__has_feature(objc_arc)

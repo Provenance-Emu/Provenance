@@ -37,5 +37,3 @@
 @property (nonatomic, assign) int videoBitDepth;
 
 @end
-
-extern __weak PVDesmume2015Core *_current;

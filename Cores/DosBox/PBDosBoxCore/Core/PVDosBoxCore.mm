@@ -21,8 +21,6 @@
 #define SIZESOUNDBUFFER 48000 / 60 * 4
 #define OpenEmu 1
 
-__weak PVDosBoxCore *_current = 0;
-
 #pragma mark - Private
 @interface PVDosBoxCore() {
 

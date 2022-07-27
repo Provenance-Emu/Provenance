@@ -9,12 +9,13 @@ import Foundation
 import PVSupport
 import RealmSwift
 import UIKit
+import PVLibRetro
 
 // MARK: - System Scanner
 
 public extension PVEmulatorConfiguration {
     static var coreClasses: [ClassInfo] {
-        let motherClassInfo = ClassInfo(PVEmulatorCore.self)
+        let motherClassInfo = [ClassInfo(PVEmulatorCore.self), ClassInfo(PVLibRetroCore.self)]
         var subclassList = [ClassInfo]()
 
         var count = UInt32(0)
@@ -22,16 +23,24 @@ public extension PVEmulatorConfiguration {
         let classList = UnsafeBufferPointer(start: classListPointer, count: Int(count))
 
         for i in 0 ..< Int(count) {
-            if let classInfo = ClassInfo(classList[i], withSuperclass: "PVEmulatorCore"),
+            if let classInfo = ClassInfo(classList[i], withSuperclass: ["PVEmulatorCore", "PVLibRetroCore"]),
                 let superclassInfo = classInfo.superclassInfo,
-                superclassInfo == motherClassInfo {
+               motherClassInfo.contains(superclassInfo)  {
                 subclassList.append(classInfo)
             }
         }
 
-        return subclassList.filter { $0.className != "PVEmulatorCore" && $0.superclassInfo?.className == "PVEmulatorCore" }
+        let classes = subclassList.map { $0.className }.joined(separator: ",")
+        DLOG("\(classes)")
+        
+        return subclassList.filter {
+            let notMasterClass = $0.className != "PVEmulatorCore"
+            let className: String = $0.superclassInfo?.className ?? ""
+            let inheritsClass = ["PVEmulatorCore","PVLibRetroCore"].contains(className)
+            return notMasterClass && inheritsClass
+        }
     }
-
+    
     class func updateCores(fromPlists plists: [URL]) {
         let database = RomDatabase.sharedInstance
         let decoder = PropertyListDecoder()
@@ -43,7 +52,9 @@ public extension PVEmulatorConfiguration {
                 let supportedSystems = database.all(PVSystem.self, filter: NSPredicate(format: "identifier IN %@", argumentArray: [core.PVSupportedSystems]))
 				if let disabled = core.PVDisabled, disabled, PVSettingsModel.shared.debugOptions.experimentalCores {
                     // Do nothing
+                    ILOG("Skipping disabled core \(core.PVCoreIdentifier)")
                 } else {
+                    DLOG("Importing core \(core.PVCoreIdentifier)")
                     let newCore = PVCore(withIdentifier: core.PVCoreIdentifier, principleClass: core.PVPrincipleClass, supportedSystems: Array(supportedSystems), name: core.PVProjectName, url: core.PVProjectURL, version: core.PVProjectVersion, disabled: core.PVDisabled ?? false)
                     database.refresh()
                     try newCore.add(update: true)

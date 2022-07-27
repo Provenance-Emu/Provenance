@@ -14,6 +14,9 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic error "-Wall"
 
+@class PVLibRetroCore;
+static __weak PVLibRetroCore *_current;
+
 __attribute__((weak_import))
 @interface PVLibRetroCore : PVEmulatorCore {
 }

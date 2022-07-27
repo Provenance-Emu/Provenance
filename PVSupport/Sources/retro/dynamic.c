@@ -337,7 +337,7 @@ static void load_dynamic_core(void)
     * break in that scenario. */
    path_resolve_realpath(
          config_get_active_core_path_ptr(),
-         config_get_active_core_path_size());
+         config_get_active_core_path_size(), true);
 
    RARCH_LOG("Loading dynamic libretro core from: \"%s\"\n",
          config_get_active_core_path());
