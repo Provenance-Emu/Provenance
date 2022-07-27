@@ -28,9 +28,9 @@ private let ReceivedApplicationState: @convention(c) (CFNotificationCenter?, Uns
 @available(iOS 13.0, *)
 class ApplicationMonitor {
     static let shared = ApplicationMonitor()
-
+    #if LocationManager
     let locationManager = LocationManager()
-
+    #endif
     private(set) var isMonitoring = false
 
     private var backgroundTaskID: UIBackgroundTaskIdentifier?

@@ -10,6 +10,7 @@ import CoreLocation
 import Combine
 import UIKit
 
+#if LocationManager
 @available(iOS 13.0, *)
 extension LocationManager {
     typealias Status = Swift.Result<Void, Swift.Error>
@@ -135,3 +136,4 @@ extension LocationManager: CLLocationManagerDelegate {
         self.status = .failure(error)
     }
 }
+#endif

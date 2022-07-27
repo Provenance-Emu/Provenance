@@ -329,7 +329,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
 			PVSettingsSwitchRow(text: NSLocalizedString("Movable Buttons", comment: "Bool option to allow user to move on screen controller buttons"),
 								detailText: .subtitle("Allow user to move on screen controller buttons."),
-								key: \PVSettingsModel.debugOptions.movableButtons)
+								key: \PVSettingsModel.debugOptions.movableButtons),
             
             PVSettingsSwitchRow(text: NSLocalizedString("On screen Joypad", comment: ""),
                                 detailText: .subtitle("Show a touch Joystick pad on supported systems. Layout is strange on some devices while in beta."),
