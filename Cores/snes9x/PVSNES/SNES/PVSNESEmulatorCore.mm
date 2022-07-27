@@ -88,7 +88,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 		memset(soundBuffer, 0, SIZESOUNDBUFFER * sizeof(UInt16));
         _current = self;
         cheatList = [[NSMutableDictionary alloc] init];
-    }
+	}
 	
 	return self;
 }
@@ -136,9 +136,13 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 	
 }
 
-- (void)executeFrame {
-    IPPU.RenderThisFrame = TRUE;
+- (void)executeFrameSkippingFrame:(BOOL)skip {
+    IPPU.RenderThisFrame = !skip;
     S9xMainLoop();
+}
+
+- (void)executeFrame {
+    [self executeFrameSkippingFrame:NO];
 }
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {
@@ -147,20 +151,20 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     memset(&Settings, 0, sizeof(Settings));
 
     Settings.DontSaveOopsSnapshot       = false;
-    Settings.ForcePAL                   = false;
-    Settings.ForceNTSC                  = false;
-    Settings.ForceHeader                = false;
-    Settings.ForceNoHeader              = false;
-    
-    Settings.MouseMaster                = true;
-    Settings.SuperScopeMaster           = true;
-    Settings.MultiPlayer5Master         = true;
-    Settings.JustifierMaster            = true;
+    Settings.ForcePAL      = false;
+    Settings.ForceNTSC     = false;
+    Settings.ForceHeader   = false;
+    Settings.ForceNoHeader = false;
+
+    Settings.MouseMaster            = true;
+    Settings.SuperScopeMaster       = true;
+    Settings.MultiPlayer5Master     = true;
+    Settings.JustifierMaster        = true;
     
     // Sound
     
     Settings.SoundSync                  =  true;
-    Settings.SixteenBitSound            =  true;
+    Settings.SixteenBitSound        = true;
     Settings.Stereo                     =  true;
     Settings.ReverseStereo              =  false;
     Settings.SoundPlaybackRate          =  SAMPLERATE;
@@ -172,7 +176,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
     // Display
 
-    Settings.SupportHiRes               = true;
+    Settings.SupportHiRes           = true;
     Settings.Transparency               = true;
     Settings.DisplayFrameRate           = false;
     Settings.DisplayPressedKeys         = false;
@@ -186,7 +190,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
     // Settings
     
-    Settings.BSXBootup                  = false;
+	Settings.BSXBootup 				= false;
     Settings.TurboMode                  = false;
     Settings.TurboSkipFrames            = 15;
     Settings.MovieTruncate              = false;
@@ -216,16 +220,16 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
         {
         free(videoBuffer);
         }
-    
-    if (videoBufferA)
-        {
-        free(videoBufferA);
-        }
 
+    if (videoBufferA)
+    {
+        free(videoBufferA);
+    }
+    
     if (videoBufferB)
-        {
+    {
         free(videoBufferB);
-        }
+    }
 
     videoBuffer = NULL;
 
@@ -764,7 +768,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
 #pragma mark Video
 
-- (void)swapBuffers {
+- (void)flipBuffers {
     if (GFX.Screen == (short unsigned int *)videoBufferA) {
         videoBuffer = videoBufferA;
         GFX.Screen = (short unsigned int *)videoBufferB;
@@ -772,6 +776,10 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
         videoBuffer = videoBufferB;
         GFX.Screen = (short unsigned int *)videoBufferA;
     }
+}
+TEST THIS
+- (void)swapBuffers {
+    [self.renderDelegate didRenderFrameOnAlternateThread];
 }
 
 - (const void *)videoBuffer {
@@ -884,7 +892,7 @@ static void FinalizeSamplesAudioCallback(void *) {
                             cheatListSuccessfull = NO;
 							[failedCheats addObject:singleCode];
 
-//                            [cheatList removeObjectForKey:code];
+//		[cheatList removeObjectForKey:code];
                             ELOG(@"Code %@ failed", singleCode);
                         }
                     }
