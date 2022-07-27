@@ -7,6 +7,7 @@
 	//
 
 import Foundation
+import CoreHaptics
 
 #if os(iOS) && !targetEnvironment(macCatalyst)
 @_silgen_name("AudioServicesStopSystemSound")
@@ -17,13 +18,55 @@ func AudioServicesStopSystemSound(_ soundID: SystemSoundID)
 func AudioServicesPlaySystemSoundWithVibration(_ soundID: SystemSoundID, _ idk: Any?, _ vibrationPattern: NSDictionary)
 #endif
 
+@available(iOS 13.0, *)
+fileprivate var hapticEngines: [CHHapticEngine?] = Array<CHHapticEngine?>.init(repeating: nil, count: 4)
+
 @objc
 public extension PVEmulatorCore {
 	var supportsRumble: Bool { false }
-
+    
 	func rumble() {
 		rumble(player: 0)
 	}
+    
+    @available(iOS 14.0, tvOS 14.0, *)
+    func hapticEngine(for player: Int) -> CHHapticEngine? {
+        if let engine = hapticEngines[player] {
+            return engine
+        } else if let controller = controller(for: player), let newEngine = controller.haptics?.createEngine(withLocality: .all) {
+            hapticEngines[player] = newEngine
+            newEngine.isAutoShutdownEnabled = true
+            return newEngine
+        } else {
+            return nil
+        }
+    }
+    
+    func controller(for player: Int) -> GCController? {
+        var controller: GCController?
+        switch player {
+        case 1:
+            if let controller1 = self.controller1, controller1.isAttachedToDevice {
+                #if os(iOS) && !targetEnvironment(macCatalyst)
+                rumblePhone()
+                #else
+                VLOG("rumblePhone*(")
+                #endif
+            } else {
+                controller = self.controller1
+            }
+        case 2:
+            controller = self.controller2
+        case 3:
+            controller = self.controller3
+        case 4:
+            controller = self.controller4
+        default:
+            WLOG("No player \(player)")
+            controller = nil
+        }
+        return controller
+    }
 
 	func rumble(player: Int) {
 		guard self.supportsRumble else {
@@ -31,30 +74,15 @@ public extension PVEmulatorCore {
 			return
 		}
 
-		var controller: GCController?
-		switch player {
-		case 1:
-			if let controller1 = self.controller1, controller1.isAttachedToDevice {
-                #if os(iOS) && !targetEnvironment(macCatalyst)
-				rumblePhone()
-                #else
-                VLOG("rumblePhone*(")
-                #endif
-			} else {
-				controller = self.controller1
-			}
-		case 2:
-			controller = self.controller2
-		case 3:
-			controller = self.controller3
-		case 4:
-			controller = self.controller4
-		default:
-			WLOG("No player \(player)")
-			return
-		}
-
+        if #available(iOS 14.0, tvOS 14.0, *) {
+            if let haptics = hapticEngine(for: player) {
+                // TODO: haptic vibrate
+            }
+        } else {
+            // Fallback on earlier versions
+        }
 	}
+    
     #if os(iOS) && !targetEnvironment(macCatalyst)
 	func rumblePhone() {
 

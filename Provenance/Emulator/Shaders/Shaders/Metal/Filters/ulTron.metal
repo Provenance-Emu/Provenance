@@ -23,7 +23,7 @@
 //  Feel free to tweak, mod, or whatever
 //
 #include <metal_stdlib>
-#import "MetalViewShaders.h"
+#import "../MetalViewShaders.h"
 
 using namespace metal;
 
@@ -45,7 +45,7 @@ struct Push
     float shape;
 };
 
-static inline __attribute__((always_inline))
+static INLINE
 float2 Warp(thread float2& pos, constant Push& params)
 {
     pos = (pos * 2.0) - float2(1.0);
@@ -53,7 +53,7 @@ float2 Warp(thread float2& pos, constant Push& params)
     return (pos * 0.5) + float2(0.5);
 }
 
-static inline __attribute__((always_inline))
+static INLINE
 float ToLinear1(thread const float& c, constant Push& params)
 {
 
@@ -69,7 +69,7 @@ float ToLinear1(thread const float& c, constant Push& params)
     return _93;
 }
 
-static inline __attribute__((always_inline))
+static INLINE
 float3 ToLinear(thread const float3& c, constant Push& params)
 {
 
@@ -80,7 +80,7 @@ float3 ToLinear(thread const float3& c, constant Push& params)
 }
 
 
-static inline __attribute__((always_inline))
+static INLINE
 float3 Fetch(thread float2& pos, thread const float2& off, constant Push& params, thread texture2d<float> Source, thread const sampler SourceSmplr)
 {
     pos = (floor((pos * params.SourceSize.zw) + off) + float2(0.5)) / params.SourceSize.zw;
@@ -88,20 +88,20 @@ float3 Fetch(thread float2& pos, thread const float2& off, constant Push& params
     return ToLinear(param, params);
 }
 
-static inline __attribute__((always_inline))
+static INLINE
 float2 Dist(thread float2& pos, constant Push& params)
 {
     pos *= params.SourceSize.zw;
     return -((pos - floor(pos)) - float2(0.5));
 }
 
-static inline __attribute__((always_inline))
+static INLINE
 float Gaus(thread const float& pos, thread const float& scale, constant Push& params)
 {
     return exp2(scale * pow(abs(pos), params.shape));
 }
 
-static inline __attribute__((always_inline))
+static INLINE
 float3 Horz3(thread const float2& pos, thread const float& off, constant Push& params, thread texture2d<float> Source, thread const sampler SourceSmplr)
 {
     float2 param = pos;
@@ -132,7 +132,7 @@ float3 Horz3(thread const float2& pos, thread const float& off, constant Push& p
     return (((b * wb) + (c * wc)) + (d * wd)) / float3((wb + wc) + wd);
 }
 
-static inline __attribute__((always_inline))
+static INLINE
 float3 Horz5(thread const float2& pos, thread const float& off, constant Push& params, thread texture2d<float> Source, thread const sampler SourceSmplr)
 {
     float2 param = pos;
@@ -177,7 +177,7 @@ float3 Horz5(thread const float2& pos, thread const float& off, constant Push& p
     return (((((a * wa) + (b * wb)) + (c * wc)) + (d * wd)) + (e * we)) / float3((((wa + wb) + wc) + wd) + we);
 }
 
-static inline __attribute__((always_inline))
+static INLINE
 float Scan(thread const float2& pos, thread const float& off, constant Push& params)
 {
     float2 param = pos;
@@ -188,7 +188,7 @@ float Scan(thread const float2& pos, thread const float& off, constant Push& par
     return Gaus(param_1, param_2, params);
 }
 
-static inline __attribute__((always_inline))
+static INLINE
 float3 Tri(thread const float2& pos, constant Push& params, thread texture2d<float> Source, thread const sampler SourceSmplr)
 {
     float2 param = pos;
@@ -212,7 +212,7 @@ float3 Tri(thread const float2& pos, constant Push& params, thread texture2d<flo
     return ((a * wa) + (b * wb)) + (c * wc);
 }
 
-static inline __attribute__((always_inline))
+static INLINE
 float3 Horz7(thread const float2& pos, thread const float& off, constant Push& params, thread texture2d<float> Source, thread const sampler SourceSmplr)
 {
     float2 param = pos;
@@ -271,7 +271,7 @@ float3 Horz7(thread const float2& pos, thread const float& off, constant Push& p
     return (((((((a * wa) + (b * wb)) + (c * wc)) + (d * wd)) + (e * we)) + (f * wf)) + (g * wg)) / float3((((((wa + wb) + wc) + wd) + we) + wf) + wg);
 }
 
-static inline __attribute__((always_inline))
+static INLINE
 float BloomScan(thread const float2& pos, thread const float& off, constant Push& params)
 {
     float2 param = pos;
@@ -282,7 +282,7 @@ float BloomScan(thread const float2& pos, thread const float& off, constant Push
     return Gaus(param_1, param_2, params);
 }
 
-static inline __attribute__((always_inline))
+static INLINE
 float3 Bloom(thread const float2& pos, constant Push& params, thread texture2d<float> Source, thread const sampler SourceSmplr)
 {
     float2 param = pos;
@@ -318,7 +318,7 @@ float3 Bloom(thread const float2& pos, constant Push& params, thread texture2d<f
     return ((((a * wa) + (b * wb)) + (c * wc)) + (d * wd)) + (e * we);
 }
 
-static inline __attribute__((always_inline))
+static INLINE
 float3 Mask(thread float2& pos, constant Push& params)
 {
     float3 mask = float3(params.maskDark, params.maskDark, params.maskDark);
@@ -424,7 +424,7 @@ float3 Mask(thread float2& pos, constant Push& params)
     return mask;
 }
 
-static inline __attribute__((always_inline))
+static INLINE
 float ToSrgb1(thread const float& c, constant Push& params)
 {
     float _146;
@@ -439,7 +439,7 @@ float ToSrgb1(thread const float& c, constant Push& params)
     return _146;
 }
 
-static inline __attribute__((always_inline))
+static INLINE
 float3 ToSrgb(thread const float3& c, constant Push& params)
 {
     float param = c.x;

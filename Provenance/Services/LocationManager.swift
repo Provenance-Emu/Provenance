@@ -52,7 +52,7 @@ extension LocationManager {
 
 @available(iOS 13.0, *)
 class LocationManager: NSObject, ObservableObject {
-    @PublishedPipeline({ removeDuplicatesPipeline($0) })
+//    @PublishedPipeline({ removeDuplicatesPipeline($0) })
     var status: Status?
 
     private let locationManager: CLLocationManager

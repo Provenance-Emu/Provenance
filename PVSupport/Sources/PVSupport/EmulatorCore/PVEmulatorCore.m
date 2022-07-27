@@ -186,6 +186,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 	return !_isRunning;
 }
 
+
 - (void)stopEmulation {
     [self stopHaptic];
 	shouldStop = YES;
@@ -410,8 +411,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
     return 0;
 }
 
-- (NSTimeInterval)frameInterval
-{
+- (NSTimeInterval)frameInterval {
 	return defaultFrameInterval;
 }
 
@@ -419,27 +419,23 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
     return NO;
 }
 
-- (void)swapBuffers
-{
+- (void)swapBuffers {
     NSAssert(!self.isDoubleBuffered, @"Cores that are double-buffered must implement swapBuffers!");
 }
 
 #pragma mark - Audio
 
-- (double)audioSampleRate
-{
+- (double)audioSampleRate {
 	[self doesNotImplementSelector:_cmd];
 	return 0;
 }
 
-- (NSUInteger)channelCount
-{
+- (NSUInteger)channelCount {
 	[self doesNotImplementSelector:_cmd];
 	return 0;
 }
 
-- (NSUInteger)audioBufferCount
-{
+- (NSUInteger)audioBufferCount {
 	return 1;
 }
 

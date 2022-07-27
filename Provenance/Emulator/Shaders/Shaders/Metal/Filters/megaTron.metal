@@ -11,7 +11,7 @@
 //  Feel free to tweak, mod, or whatever
 //
 #include <metal_stdlib>
-#import "MetalViewShaders.h"
+#import "../MetalViewShaders.h"
 
 using namespace metal;
 
@@ -29,7 +29,7 @@ struct Push
     float CRT_GAMMA;
 };
 
-static inline __attribute__((always_inline))
+static INLINE
 float4 megaTronTone(thread const float& contrast, thread const float& saturation, thread const float& thin, thread float& mask, constant Push& params)
 {
     if (params.MASK == 0.0)
@@ -50,7 +50,7 @@ float4 megaTronTone(thread const float& contrast, thread const float& saturation
     return ret;
 }
 
-static inline __attribute__((always_inline))
+static INLINE
 float FromSrgbFunc(thread const float& c, constant Push& params)
 {
     float _69;
@@ -65,7 +65,7 @@ float FromSrgbFunc(thread const float& c, constant Push& params)
     return _69;
 }
 
-static inline __attribute__((always_inline))
+static INLINE
 float3 FromSrgb(thread const float3& c, constant Push& params)
 {
     float param = c.x;
@@ -74,7 +74,7 @@ float3 FromSrgb(thread const float3& c, constant Push& params)
     return float3(FromSrgbFunc(param, params), FromSrgbFunc(param_1, params), FromSrgbFunc(param_2, params));
 }
 
-static inline __attribute__((always_inline))
+static INLINE
 float3 megaTronFetch(thread float2& uv, constant Push& params, thread texture2d<float> texture, thread const sampler SourceSmplr)
 {
     uv *= (float2(params.SourceSize.z, params.SourceSize.w) / params.SourceSize.zw);
@@ -82,7 +82,7 @@ float3 megaTronFetch(thread float2& uv, constant Push& params, thread texture2d<
     return FromSrgb(param, params);
 }
 
-static inline __attribute__((always_inline))
+static INLINE
 float3 megaTronMask(thread float2& pos, thread const float& dark, constant Push& params)
 {
     if (params.MASK == 2.0)
@@ -161,13 +161,13 @@ float3 megaTronMask(thread float2& pos, thread const float& dark, constant Push&
     }
 }
 
-static inline __attribute__((always_inline))
+static INLINE
 float megaTronMax3F1(thread const float& a, thread const float& b, thread const float& c)
 {
     return fast::max(a, fast::max(b, c));
 }
 
-static inline __attribute__((always_inline))
+static INLINE
 float3 megaTronFilter(thread const float2& ipos,
                   thread const float2& inputSizeDivOutputSize,
                   thread const float2& halfInputSize,
@@ -257,7 +257,7 @@ float3 megaTronFilter(thread const float2& ipos,
     return ratio * peak;
 }
 
-static inline __attribute__((always_inline))
+static INLINE
 float ToSrgbFunc(thread const float& c)
 {
     float _116;
@@ -272,7 +272,7 @@ float ToSrgbFunc(thread const float& c)
     return _116;
 }
 
-static inline __attribute__((always_inline))
+static INLINE
 float3 ToSrgb(thread const float3& c)
 {
     float param = c.x;

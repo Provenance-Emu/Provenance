@@ -45,13 +45,15 @@
     uint _frameCount;
     
     struct RenderSettings renderSettings;
+    
+    
 }
 
 @property (nonatomic, strong) MTKView *mtlview;
 @property (nonatomic, strong) id<MTLDevice> device;
 @property (nonatomic, strong) id<MTLCommandQueue> commandQueue;
 @property (nonatomic, strong) id<MTLRenderPipelineState> blitPipeline;
-@property (nonatomic, strong) id<MTLRenderPipelineState> crtFilterPipeline;
+@property (nonatomic, strong) id<MTLRenderPipelineState> effectFilterPipeline;
 @property (nonatomic, strong) id<MTLSamplerState> pointSampler;
 @property (nonatomic, strong) id<MTLSamplerState> linearSampler;
 @property (nonatomic, strong) id<MTLTexture> inputTexture;
@@ -63,6 +65,7 @@
 
 @property (nonatomic, assign) GLESVersion glesVersion;
 
+@property (nonatomic, strong, nullable) Shader* effectFilterShader;
 @end
 
 PV_OBJC_DIRECT_MEMBERS
@@ -91,7 +94,7 @@ PV_OBJC_DIRECT_MEMBERS
     if (backingIOSurface)
         CFRelease(backingIOSurface);
     
-    [[PVSettingsModel shared] removeObserver:self forKeyPath:@"crtFilterEnabled"];
+    [[PVSettingsModel shared] removeObserver:self forKeyPath:@"metalFilter"];
     [[PVSettingsModel shared] removeObserver:self forKeyPath:@"imageSmoothing"];
 }
 
@@ -105,19 +108,27 @@ PV_OBJC_DIRECT_MEMBERS
             self.emulatorCore.renderDelegate = self;
         }
         
-        renderSettings.crtFilterEnabled = [[PVSettingsModel shared] crtFilterEnabled];
+//        renderSettings.crtFilterEnabled = [[PVSettingsModel shared] crtFilterEnabled];
+        renderSettings.crtFilterEnabled = [self filterShaderEnabled];
+
         renderSettings.smoothingEnabled = [[PVSettingsModel shared] imageSmoothing];
         
-        [[PVSettingsModel shared] addObserver:self forKeyPath:@"crtFilterEnabled" options:NSKeyValueObservingOptionNew context:nil];
+        [[PVSettingsModel shared] addObserver:self forKeyPath:@"metalFilter" options:NSKeyValueObservingOptionNew context:nil];
         [[PVSettingsModel shared] addObserver:self forKeyPath:@"imageSmoothing" options:NSKeyValueObservingOptionNew context:nil];
 	}
 
 	return self;
 }
 
+- (BOOL)filterShaderEnabled {
+    NSString *value = PVSettingsModel.shared.metalFilter.lowercaseString;
+    BOOL enabled = !([value isEqualToString:@""] || [value isEqualToString:@"off"]);
+    return enabled;
+}
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-    if ([keyPath isEqualToString:@"crtFilterEnabled"]) {
-        renderSettings.crtFilterEnabled = [[PVSettingsModel shared] crtFilterEnabled];
+    if ([keyPath isEqualToString:@"metalFilter"]) {
+        renderSettings.crtFilterEnabled = [self filterShaderEnabled];
     } else if ([keyPath isEqualToString:@"imageSmoothing"]) {
         renderSettings.smoothingEnabled = [[PVSettingsModel shared] imageSmoothing];
     } else {
@@ -215,7 +226,12 @@ PV_OBJC_DIRECT_MEMBERS
     [self setupTexture];
     
     [self setupBlitShader];
-    [self setupCRTShader];
+    
+    NSString *metalFilter = PVSettingsModel.shared.metalFilter;
+    Shader *filterShader = [MetalShaderManager.sharedInstance filterShaderForName:metalFilter];
+    if(filterShader) {
+        [self setupEffectFilterShader:filterShader];
+    }
 
     alternateThreadFramebufferBack = 0;
     alternateThreadColorTextureBack = 0;
@@ -462,15 +478,25 @@ PV_OBJC_DIRECT_MEMBERS
     id<MTLLibrary> lib = [_device newDefaultLibrary];
     
     MTLRenderPipelineDescriptor* desc = [MTLRenderPipelineDescriptor new];
-    desc.vertexFunction = [lib newFunctionWithName:@"fullscreen_vs" constantValues:constants error:&error];
-    desc.fragmentFunction = [lib newFunctionWithName:@"blit_ps"];
+    Shader* fillScreenShader = MetalShaderManager.sharedInstance.vertexShaders.firstObject;
+    desc.vertexFunction = [lib newFunctionWithName:fillScreenShader.function constantValues:constants error:&error];
+    
+    if(error) {
+        ELOG(@"%@", error);
+    }
+    
+    Shader* blitterShader = MetalShaderManager.sharedInstance.blitterShaders.firstObject;
+    desc.fragmentFunction = [lib newFunctionWithName:blitterShader.function];
     desc.colorAttachments[0].pixelFormat = self.mtlview.currentDrawable.layer.pixelFormat;
     
     _blitPipeline = [_device newRenderPipelineStateWithDescriptor:desc error:&error];
+    if(error) {
+        ELOG(@"%@", error);
+    }
 }
 
-- (void)setupCRTShader
-{
+- (void)setupEffectFilterShader:(Shader*)filterShader {
+    self.effectFilterShader = filterShader;
     NSError* error;
     
     MTLFunctionConstantValues* constants = [MTLFunctionConstantValues new];
@@ -479,12 +505,22 @@ PV_OBJC_DIRECT_MEMBERS
     
     id<MTLLibrary> lib = [_device newDefaultLibrary];
     
+    // Fill screen shader
     MTLRenderPipelineDescriptor* desc = [MTLRenderPipelineDescriptor new];
-    desc.vertexFunction = [lib newFunctionWithName:@"fullscreen_vs" constantValues:constants error:&error];
-    desc.fragmentFunction = [lib newFunctionWithName:@"crt_filter_ps"];
+    Shader* fillScreenShader = MetalShaderManager.sharedInstance.vertexShaders.firstObject;
+    desc.vertexFunction = [lib newFunctionWithName:fillScreenShader.function constantValues:constants error:&error];
+    if(error) {
+        ELOG(@"%@", error);
+    }
+        
+    // Filter shader
+    desc.fragmentFunction = [lib newFunctionWithName:filterShader.function];
     desc.colorAttachments[0].pixelFormat = self.mtlview.currentDrawable.layer.pixelFormat;
     
-    _crtFilterPipeline = [_device newRenderPipelineStateWithDescriptor:desc error:&error];
+    _effectFilterPipeline = [_device newRenderPipelineStateWithDescriptor:desc error:&error];
+    if(error) {
+        ELOG(@"%@", error);
+    }
 }
 
 // Mac OS Stuff
@@ -592,21 +628,46 @@ PV_OBJC_DIRECT_MEMBERS
         
         if (strongself->renderSettings.crtFilterEnabled)
         {
-            struct CRT_Data cbData;
-            cbData.DisplayRect.x = 0;
-            cbData.DisplayRect.y = 0;
-            cbData.DisplayRect.z = screenRect.size.width;
-            cbData.DisplayRect.w = screenRect.size.height;
-            
-            cbData.EmulatedImageSize.x = strongself.inputTexture.width;
-            cbData.EmulatedImageSize.y = strongself.inputTexture.height;
-            
-            cbData.FinalRes.x = view.drawableSize.width;
-            cbData.FinalRes.y = view.drawableSize.height;
-            
-            [encoder setFragmentBytes:&cbData length:sizeof(cbData) atIndex:0];
-            
-            [encoder setRenderPipelineState:strongself.crtFilterPipeline];
+            if ( [strongself->_effectFilterShader.name isEqualToString:@"CRT"]) {
+                struct CRT_Data cbData;
+                cbData.DisplayRect.x = 0;
+                cbData.DisplayRect.y = 0;
+                cbData.DisplayRect.z = screenRect.size.width;
+                cbData.DisplayRect.w = screenRect.size.height;
+                
+                cbData.EmulatedImageSize.x = strongself.inputTexture.width;
+                cbData.EmulatedImageSize.y = strongself.inputTexture.height;
+                
+                cbData.FinalRes.x = view.drawableSize.width;
+                cbData.FinalRes.y = view.drawableSize.height;
+                
+                [encoder setFragmentBytes:&cbData length:sizeof(cbData) atIndex:0];
+                
+                [encoder setRenderPipelineState:strongself.effectFilterPipeline];
+            } else if ( [strongself->_effectFilterShader.name isEqualToString:@"Simple CRT"]) {
+                struct SimpleCrtUniforms cbData;
+                
+                cbData.mame_screen_src_rect.x = 0;
+                cbData.mame_screen_src_rect.y = 0;
+                cbData.mame_screen_src_rect.z = screenRect.size.width;
+                cbData.mame_screen_src_rect.w = screenRect.size.height;
+
+                cbData.mame_screen_dst_rect.x = strongself.inputTexture.width;
+                cbData.mame_screen_dst_rect.y = strongself.inputTexture.height;
+                cbData.mame_screen_dst_rect.z = view.drawableSize.width;
+                cbData.mame_screen_dst_rect.w = view.drawableSize.height;
+
+                cbData.curv_vert = 5.0;
+                cbData.curv_horiz = 4.0;
+                cbData.curv_strength = 0.25;
+                cbData.light_boost = 1.3;
+                cbData.vign_strength = 0.05;
+                cbData.zoom_out = 1.1;
+                cbData.brightness = 1.0;
+                
+                [encoder setFragmentBytes:&cbData length:sizeof(cbData) atIndex:0];
+                [encoder setRenderPipelineState:strongself.effectFilterPipeline];
+            }
         }
         else
         {

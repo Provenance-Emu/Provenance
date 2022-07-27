@@ -58,7 +58,8 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 @end
 
 @interface PVEmulatorCore : NSObject {
-	
+    
+@public	
 	OERingBuffer __strong **ringBuffers;
 
 	double _sampleRate;

@@ -239,7 +239,8 @@ public final class PVEmulatorConfiguration: NSObject {
 
     public static func initICloud() {
         DispatchQueue.global(qos: .background).async {
-            ILOG("iCloudContainerDirectory: \(PVEmulatorConfiguration.iCloudContainerDirectory)")
+            let dir = PVEmulatorConfiguration.iCloudContainerDirectory
+            DLOG("iCloudContainerDirectory: \(String(describing: dir))")
         }
     }
 

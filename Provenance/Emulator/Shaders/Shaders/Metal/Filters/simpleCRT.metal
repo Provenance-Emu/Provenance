@@ -11,12 +11,12 @@
 //  Feel free to tweak, mod, or whatever
 //
 #include <metal_stdlib>
-#import "MetalViewShaders.h"
+#import "../MetalViewShaders.h"
 
 using namespace metal;
 
 #pragma pack(push,4)
-struct simpleCrtUniforms {
+struct SimpleCrtUniforms {
     float4 mame_screen_dst_rect;
     float4 mame_screen_src_rect;
     float curv_vert;    // 5.0 default  1.0, 10.0
@@ -32,7 +32,7 @@ struct simpleCrtUniforms {
 fragment float4
 simpleCRT(VertexOutput v [[stage_in]],
                 texture2d<float> texture [[texture(0)]],
-                constant simpleCrtUniforms &uniforms [[buffer(0)]])
+                constant SimpleCrtUniforms &uniforms [[buffer(0)]])
 {
     float4 dst_rect = uniforms.mame_screen_dst_rect;
     float4 src_rect = uniforms.mame_screen_src_rect;
