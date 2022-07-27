@@ -1,10 +1,10 @@
 //
-	//  PVControllerViewController.swift
-	//  Provenance
-	//
-	//  Created by Joe Mattiello on 17/03/2018.
-	//  Copyright (c) 2018 Joe Mattiello. All rights reserved.
-	//
+//  PVControllerViewController.swift
+//  Provenance
+//
+//  Created by Joe Mattiello on 17/03/2018.
+//  Copyright (c) 2018 Joe Mattiello. All rights reserved.
+//
 // Notes:
 // This entire file is one ugly math hack with ordering mattering in parsing.
 // TLDR; refactor this to SwiftUI or constraints
@@ -57,7 +57,7 @@ protocol ControllerVC: StartSelectDelegate, JSButtonDelegate, JSDPadDelegate whe
 	var dPad: JSDPad? {get}
 	var dPad2: JSDPad? {get}
 	var joyPad: JSDPad? { get }
-	var buttonGroup: UIView? {get}
+	var buttonGroup: MovableButtonView? {get}
 	var leftShoulderButton: JSButton? {get}
 	var rightShoulderButton: JSButton? {get}
 	var leftShoulderButton2: JSButton? {get}
@@ -171,7 +171,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 	var dPad: JSDPad?
 	var dPad2: JSDPad?
 	var joyPad: JSDPad?
-	var buttonGroup: UIView?
+	var buttonGroup: MovableButtonView?
 	var leftShoulderButton: JSButton?
 	var rightShoulderButton: JSButton?
 	var leftShoulderButton2: JSButton?
@@ -404,6 +404,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
 	open override func viewDidLayoutSubviews() {
 		super.viewDidLayoutSubviews()
+        if inMoveMode { return }
 #if os(iOS)
 		setupTouchControls()
 		layoutViews()
@@ -424,6 +425,13 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 		volume.frame = CGRect(x: safeAreaInsets.left + volumeXPadding, y: safeAreaInsets.top + volumeYPadding, width: UIScreen.main.bounds.width - (volumeXPadding * 2) - safeAreaInsets.left - safeAreaInsets.right, height: volumeHeight)
 	}
 #endif
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        if inMoveMode {
+            inMoveMode = false
+        }
+        super.viewWillTransition(to: size, with: coordinator)
+    }
 
 	@objc
 	func hideTouchControls(for controller: GCController) {
@@ -461,6 +469,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 	func setupTouchControls() { }
 #else
 	func setupTouchControls() {
+        if inMoveMode { return }
+        
 		let alpha = self.alpha
 
 		for control in controlLayout {
@@ -472,6 +482,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 			let controlOriginY: CGFloat = compactVertical ? view.bounds.size.height - controlSize.height : view.frame.width + (kDPadTopMargin / 2)
 
 			if controlType == Keys.DPad {
+                if let dPad = dPad, dPad.isCustomMoved { continue }
+                
 				let xPadding: CGFloat = 0 // safeAreaInsets.left
 				let bottomPadding: CGFloat = 16
 				let dPadOriginY: CGFloat = min(controlOriginY - bottomPadding, view.frame.height - controlSize.height - bottomPadding)
@@ -541,12 +553,13 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 				let buttonsFrame = CGRect(x: view.bounds.maxX - controlSize.width - xPadding, y: buttonsOriginY, width: controlSize.width, height: controlSize.height)
 
 				if let buttonGroup = self.buttonGroup {
+                    if buttonGroup.isCustomMoved { continue }
 					if let buttonGroup = buttonGroup as? PVButtonGroupOverlayView, buttonGroup.isCustomMoved {
 					} else {
 						buttonGroup.frame = buttonsFrame
 					}
 				} else {
-					let buttonGroup = UIView(frame: buttonsFrame)
+					let buttonGroup = MovableButtonView(frame: buttonsFrame)
 					self.buttonGroup = buttonGroup
 					buttonGroup.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin]
 
@@ -700,6 +713,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 			view.addSubview(rightShoulderButton2)
 		} else {
 			if let rightShoulderButton2 = rightShoulderButton2, let rightShoulderButton = rightShoulderButton {
+                if rightShoulderButton2.isCustomMoved { return }
 				rightShoulderButton2.frame = rightShoulderFrame
 				rightShoulderFrame.origin.y += rightShoulderButton.frame.size.height
 				rightShoulderButton.frame = rightShoulderFrame
@@ -1048,8 +1062,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
             }
             joyPadFrame.origin.y = dPadFrame.maxY
         }
-        dPad.frame = dPadFrame
-        joyPad.frame = joyPadFrame
+        if !dPad.isCustomMoved { dPad.frame = dPadFrame }
+        if !joyPad.isCustomMoved { joyPad.frame = joyPadFrame }
     }
 
 	#endif // os(iOS)
