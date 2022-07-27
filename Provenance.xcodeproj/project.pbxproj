@@ -65,10 +65,6 @@
 		11AFB2B72487C120000A3922 /* UISearchController+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2B62487C120000A3922 /* UISearchController+Rx.swift */; };
 		11BB0A2225AF7DFE004DEDC3 /* PVEmulatorViewController+PauseMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38A2A452102328600374CDD /* PVEmulatorViewController+PauseMenu.swift */; };
 		11BB0A2325AF7DFF004DEDC3 /* PVEmulatorViewController+PauseMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38A2A452102328600374CDD /* PVEmulatorViewController+PauseMenu.swift */; };
-		14C4C1A121EBB0040055C6DC /* PVTGBDual.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14C8EF2121D9443E001B7E37 /* PVTGBDual.framework */; };
-		14C4C1A221EBB0040055C6DC /* PVTGBDual.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 14C8EF2121D9443E001B7E37 /* PVTGBDual.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		1A19EE142080EA2000A9147B /* PVMupen64PlusVideoGlideN64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFB603BD2038B6C0001E70F1 /* PVMupen64PlusVideoGlideN64.framework */; platformFilter = ios; };
-		1A19EE162080EA8000A9147B /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DFB603BD2038B6C0001E70F1 /* PVMupen64PlusVideoGlideN64.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */; };
 		1A2A95AA17F7682400F1CB0D /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2A95A917F7682400F1CB0D /* libstdc++.dylib */; };
 		1A2B0E8C1AD187F4005FB77C /* testdata.txt in Resources */ = {isa = PBXBuildFile; fileRef = 1A2B0E8A1AD187F4005FB77C /* testdata.txt */; };
@@ -162,8 +158,6 @@
 		37EEA2A827BC7E610070E222 /* ConsoleGamesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29927BC7E610070E222 /* ConsoleGamesView.swift */; };
 		37EEA2AB27BC81890070E222 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 37EEA2AA27BC81890070E222 /* Introspect */; };
 		42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */; };
-		55546DF1257D6CA800616332 /* PVTGBDual.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5525388625574D48004B00B6 /* PVTGBDual.framework */; };
-		55546DF2257D6CA800616332 /* PVTGBDual.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5525388625574D48004B00B6 /* PVTGBDual.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B302F31421713AFD000322B9 /* CenterFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D120AB347300092CA6 /* CenterFlowLayout.swift */; };
 		B302F31521713B17000322B9 /* PillPageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534EB20B001D700A83D4E /* PillPageControl.swift */; };
 		B3054371272026E800F5257D /* PVPSPControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3054370272026E800F5257D /* PVPSPControllerViewController.swift */; };
@@ -193,10 +187,6 @@
 		B312805F274C60EC00550720 /* SteamController in Frameworks */ = {isa = PBXBuildFile; productRef = B3D30FC026F0BCE60064603F /* SteamController */; };
 		B313544726E4C0F90047F338 /* PVPS2ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B313544626E4C0F90047F338 /* PVPS2ControllerViewController.swift */; };
 		B313544826E4C0F90047F338 /* PVPS2ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B313544626E4C0F90047F338 /* PVPS2ControllerViewController.swift */; };
-		B316B4D9219265AB00693472 /* PVVirtualJaguar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B316B4D62192659900693472 /* PVVirtualJaguar.framework */; };
-		B316B4DA219265AB00693472 /* PVVirtualJaguar.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B316B4D62192659900693472 /* PVVirtualJaguar.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B316B4DC219265B700693472 /* PVVirtualJaguar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B316B4DB219265B700693472 /* PVVirtualJaguar.framework */; };
-		B316B4DD219265B700693472 /* PVVirtualJaguar.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B316B4DB219265B700693472 /* PVVirtualJaguar.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B31A464F26B4C5060084A1D6 /* PVAltKitService.m in Sources */ = {isa = PBXBuildFile; fileRef = B31A464E26B4C5060084A1D6 /* PVAltKitService.m */; };
 		B324C2FD21919568009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C2FC21919568009F4EDC /* AVFoundation.framework */; };
 		B324C2FE21919585009F4EDC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF705921916F2F000FA7F9 /* Foundation.framework */; };
@@ -209,29 +199,17 @@
 		B324C30C219195BB009F4EDC /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C30B219195BB009F4EDC /* SystemConfiguration.framework */; };
 		B324C312219195CE009F4EDC /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C311219195CE009F4EDC /* CFNetwork.framework */; };
 		B324C314219195E0009F4EDC /* TVServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C313219195E0009F4EDC /* TVServices.framework */; };
-		B324C31E219197D7009F4EDC /* PicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C31D219197D7009F4EDC /* PicoDrive.framework */; };
-		B324C31F219197D7009F4EDC /* PicoDrive.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B324C31D219197D7009F4EDC /* PicoDrive.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B324C5F72191FD89009F4EDC /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701221916C3A000FA7F9 /* PVLibrary.framework */; };
 		B324C5F82191FDAA009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701B21916E38000FA7F9 /* PVSupport.framework */; };
 		B324C5F92191FDB0009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF700F21916C30000FA7F9 /* PVSupport.framework */; };
-		B324C60B2191FFBB009F4EDC /* PVGBA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C60A2191FFBB009F4EDC /* PVGBA.framework */; };
-		B324C60C2191FFBB009F4EDC /* PVGBA.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B324C60A2191FFBB009F4EDC /* PVGBA.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B324C61121920037009F4EDC /* ProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C61021920037009F4EDC /* ProSystem.framework */; };
-		B324C61221920037009F4EDC /* ProSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B324C61021920037009F4EDC /* ProSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B324C61521920384009F4EDC /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C61421920384009F4EDC /* libz.tbd */; };
 		B324C6172192038C009F4EDC /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C6162192038C009F4EDC /* libxml2.tbd */; };
 		B324C619219203A5009F4EDC /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C618219203A5009F4EDC /* libsqlite3.tbd */; };
 		B324C61B219203AF009F4EDC /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C61A219203AF009F4EDC /* libc++.tbd */; };
-		B324C61D21920523009F4EDC /* ProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C61021920037009F4EDC /* ProSystem.framework */; };
-		B324C61E21920523009F4EDC /* ProSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B324C61021920037009F4EDC /* ProSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B324C6222192059E009F4EDC /* PVMednafen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C6212192059E009F4EDC /* PVMednafen.framework */; };
-		B324C6232192059E009F4EDC /* PVMednafen.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B324C6212192059E009F4EDC /* PVMednafen.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B324C64F219216DD009F4EDC /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C64E219216DD009F4EDC /* PVLibrary.framework */; };
 		B324C650219216DD009F4EDC /* PVLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B324C64E219216DD009F4EDC /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B324C651219216FF009F4EDC /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C64E219216DD009F4EDC /* PVLibrary.framework */; };
 		B3270F8227DCB25100E83180 /* Cores.h in Headers */ = {isa = PBXBuildFile; fileRef = B3270F8127DCB25100E83180 /* Cores.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3270F8C27DCB2B200E83180 /* PVFCEU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8B27DCB2B200E83180 /* PVFCEU.framework */; };
-		B3270F8D27DCB2B200E83180 /* PVFCEU.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8B27DCB2B200E83180 /* PVFCEU.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3270F9227DCB2CA00E83180 /* PVFCEU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8B27DCB2B200E83180 /* PVFCEU.framework */; };
 		B3270F9327DCB2CA00E83180 /* PVFCEU.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8B27DCB2B200E83180 /* PVFCEU.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3270F9427DCB2CA00E83180 /* PVPokeMini.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B311B1C327A52F2000D1DE41 /* PVPokeMini.framework */; };
@@ -369,8 +347,6 @@
 		B3532B2C21A78FB2006CDA0F /* PVSwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532B2A21A78FB2006CDA0F /* PVSwitchCell.swift */; };
 		B3532C3C21A9AC93006CDA0F /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3B21A9AC93006CDA0F /* Services.swift */; };
 		B3532C3D21A9AC93006CDA0F /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3B21A9AC93006CDA0F /* Services.swift */; };
-		B354693C1DECDA710018B6F3 /* PVAtari800.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; };
-		B354693D1DECDA710018B6F3 /* PVAtari800.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B354E7BF219A7D250041F971 /* SystemSettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7BE219A7D250041F971 /* SystemSettingsCell.swift */; };
 		B354E7C0219A7D250041F971 /* SystemSettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7BE219A7D250041F971 /* SystemSettingsCell.swift */; };
 		B354E7C2219A7D630041F971 /* SystemSettingsHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7C1219A7D630041F971 /* SystemSettingsHeaderCell.swift */; };
@@ -423,20 +399,8 @@
 		B361F63D27C07BB20080D368 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A9202D2EAE00580FFC /* Theme.swift */; };
 		B369B0DD21A3BF7C0064EDCA /* PVSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB95FFB17C563C100D3E392 /* PVSettingsViewController.swift */; };
 		B369B0DE21A3C1C40064EDCA /* PVLogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E6DADB20B7AD1500454DD4 /* PVLogViewController.m */; };
-		B36C7D5727AE2CF400715677 /* PVAtari800-tvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36C7D5627AE2CF400715677 /* PVAtari800-tvOS.framework */; };
-		B36C7D5827AE2CF500715677 /* PVAtari800-tvOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B36C7D5627AE2CF400715677 /* PVAtari800-tvOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B36D9DF8203562E000D583C4 /* PVControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */; };
 		B36D9DFD203605BC00D583C4 /* PVCoreFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */; };
-		B37263A926EA159400E95488 /* PVMupen64Plus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A426EA159400E95488 /* PVMupen64Plus.framework */; };
-		B37263AA26EA159400E95488 /* PVMupen64Plus.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A426EA159400E95488 /* PVMupen64Plus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B37263AB26EA159400E95488 /* PVMupen64PlusRspHLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A526EA159400E95488 /* PVMupen64PlusRspHLE.framework */; };
-		B37263AC26EA159400E95488 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A526EA159400E95488 /* PVMupen64PlusRspHLE.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B37263AD26EA159400E95488 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A626EA159400E95488 /* PVMupen64PlusVideoGlideN64.framework */; };
-		B37263AE26EA159400E95488 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A626EA159400E95488 /* PVMupen64PlusVideoGlideN64.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B37263AF26EA159400E95488 /* PVMupen64PlusVideoRice.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A726EA159400E95488 /* PVMupen64PlusVideoRice.framework */; };
-		B37263B026EA159400E95488 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A726EA159400E95488 /* PVMupen64PlusVideoRice.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B37263B126EA159500E95488 /* PVRSPCXD4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A826EA159400E95488 /* PVRSPCXD4.framework */; };
-		B37263B226EA159500E95488 /* PVRSPCXD4.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A826EA159400E95488 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B377E67E21252C6600D88973 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
 		B378224A21D329EC0077E86F /* SettingsRowSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378224921D329EC0077E86F /* SettingsRowSwitch.swift */; };
 		B378224B21D329FB0077E86F /* SettingsRowSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378224921D329EC0077E86F /* SettingsRowSwitch.swift */; };
@@ -481,12 +445,6 @@
 		B38D30FD202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
 		B38D30FE202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
 		B390B0EA276B2DB20018E065 /* AltKit in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B390B0E9276B2DB20018E065 /* AltKit */; };
-		B3918FD92873EDC3000838F6 /* PVEP128Emu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3918FD82873EDC3000838F6 /* PVEP128Emu.framework */; };
-		B3918FDA2873EDC3000838F6 /* PVEP128Emu.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3918FD82873EDC3000838F6 /* PVEP128Emu.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3918FDC2873EE5F000838F6 /* PVfMSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3918FDB2873EE5F000838F6 /* PVfMSX.framework */; };
-		B3918FDD2873EE5F000838F6 /* PVfMSX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3918FDB2873EE5F000838F6 /* PVfMSX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3918FDF2873EEA8000838F6 /* PVMiniVMac.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3918FDE2873EEA8000838F6 /* PVMiniVMac.framework */; };
-		B3918FE02873EEA8000838F6 /* PVMiniVMac.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3918FDE2873EEA8000838F6 /* PVMiniVMac.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B391F2BE27C157E600730B53 /* Provenance_ClipApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B391F2BD27C157E600730B53 /* Provenance_ClipApp.swift */; };
 		B391F2C027C157E700730B53 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B391F2BF27C157E600730B53 /* ContentView.swift */; };
 		B391F2C227C157E800730B53 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B391F2C127C157E800730B53 /* Assets.xcassets */; };
@@ -495,12 +453,8 @@
 		B394C98B20609E180014A65D /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = B394C98920609E180014A65D /* UIColor+Hex.swift */; };
 		B3976927285A020800558958 /* PVDOSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3976926285A020800558958 /* PVDOSControllerViewController.swift */; };
 		B3976928285A020800558958 /* PVDOSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3976926285A020800558958 /* PVDOSControllerViewController.swift */; };
-		B397692D285A089200558958 /* PVDosBox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B397692C285A089200558958 /* PVDosBox.framework */; };
-		B397692E285A089200558958 /* PVDosBox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B397692C285A089200558958 /* PVDosBox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B398800D27A521AC004DEFCA /* ConflictsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B398800C27A521AC004DEFCA /* ConflictsController.swift */; };
 		B398800E27A521AC004DEFCA /* ConflictsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B398800C27A521AC004DEFCA /* ConflictsController.swift */; };
-		B3995E4F2058229F001D4985 /* PVFCEU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3995E4E2058229F001D4985 /* PVFCEU.framework */; };
-		B3995E502058229F001D4985 /* PVFCEU.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3995E4E2058229F001D4985 /* PVFCEU.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B39AF05F28754EB8004882FC /* PVAppDelegate+VolumeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39AF05E28754EB8004882FC /* PVAppDelegate+VolumeButton.swift */; };
 		B39DC77D279E79D40017E28D /* TopShelf.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3A320372720974F00F338F6 /* PVGameCubeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A320362720974F00F338F6 /* PVGameCubeControllerViewController.swift */; };
@@ -532,8 +486,6 @@
 		B3AB37432187F569009D9244 /* PVN64ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB372F2187F568009D9244 /* PVN64ControllerViewController.swift */; };
 		B3AB37442187F569009D9244 /* PVNESControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37302187F568009D9244 /* PVNESControllerViewController.swift */; };
 		B3AB37452187F569009D9244 /* PVAtari7800ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37312187F568009D9244 /* PVAtari7800ControllerViewController.swift */; };
-		B3AD689D1D6EA6450021B949 /* PicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD689A1D6EA6180021B949 /* PicoDrive.framework */; };
-		B3AD689E1D6EA6450021B949 /* PicoDrive.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD689A1D6EA6180021B949 /* PicoDrive.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3AE1F762073504400AD06D4 /* PVSaveStateCollectionViewCell~tvOS.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3AE1F752073504400AD06D4 /* PVSaveStateCollectionViewCell~tvOS.xib */; };
 		B3AF701021916C30000FA7F9 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF700F21916C30000FA7F9 /* PVSupport.framework */; };
 		B3AF701121916C30000FA7F9 /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF700F21916C30000FA7F9 /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -543,8 +495,6 @@
 		B3AF701D21916E38000FA7F9 /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701B21916E38000FA7F9 /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3AF705A21916F30000FA7F9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF705921916F2F000FA7F9 /* Foundation.framework */; };
 		B3AF70662191733D000FA7F9 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF70652191733D000FA7F9 /* GameController.framework */; };
-		B3B0860A1E71316A007F39E1 /* PVMednafen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E6091E088CF900AD0E8B /* PVMednafen.framework */; };
-		B3B0860B1E71316A007F39E1 /* PVMednafen.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B340E6091E088CF900AD0E8B /* PVMednafen.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3B104BD218F2DE200210C39 /* PVCoreFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */; };
 		B3B104BE218F2EAA00210C39 /* PVControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */; };
 		B3B104BF218F2EC000210C39 /* JSButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ECE205CD1F100C273C7 /* JSButton.swift */; };
@@ -571,49 +521,86 @@
 		B3B104D4218F2EF400210C39 /* PVWonderSwanControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37212187F568009D9244 /* PVWonderSwanControllerViewController.swift */; };
 		B3B104D5218F2F1700210C39 /* JSDPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ECB205CD1D600C273C7 /* JSDPad.swift */; };
 		B3B104D6218F2F2800210C39 /* PVButtonGroupOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ED1205CD20800C273C7 /* PVButtonGroupOverlayView.swift */; };
-		B3B3B8921DECF8BC00602746 /* PVMupen64Plus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8911DECF8BC00602746 /* PVMupen64Plus.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		B3B3B8931DECF8BC00602746 /* PVMupen64Plus.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8911DECF8BC00602746 /* PVMupen64Plus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3B3B8951DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8941DECF8C200602746 /* PVMupen64PlusVideoRice.framework */; platformFilter = ios; settings = {ATTRIBUTES = (Weak, ); }; };
-		B3B3B8961DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8941DECF8C200602746 /* PVMupen64PlusVideoRice.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3B3B8981DECF8C700602746 /* PVMupen64PlusRspHLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8971DECF8C700602746 /* PVMupen64PlusRspHLE.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		B3B3B8991DECF8C700602746 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8971DECF8C700602746 /* PVMupen64PlusRspHLE.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3B4C956279E6BAB00505424 /* ProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B4C955279E6BAA00505424 /* ProSystem.framework */; };
-		B3B4C957279E6BAB00505424 /* ProSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B4C955279E6BAA00505424 /* ProSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3B923B0202D2EAE00580FFC /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A9202D2EAE00580FFC /* Theme.swift */; };
 		B3C8A6A528781E810037A946 /* CoresRetro.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C8A6A428781E810037A946 /* CoresRetro.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C8A6A828781E840037A946 /* CoresRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6A228781E800037A946 /* CoresRetro.framework */; };
-		B3C8A6A928781E840037A946 /* CoresRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6A228781E800037A946 /* CoresRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A6A828781E840037A946 /* CoresRetro_tvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6A228781E800037A946 /* CoresRetro_tvOS.framework */; };
+		B3C8A6A928781E840037A946 /* CoresRetro_tvOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6A228781E800037A946 /* CoresRetro_tvOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C8A6AF28781E9F0037A946 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6AE28781E9F0037A946 /* PVLibRetro.framework */; };
 		B3C8A6B028781E9F0037A946 /* PVLibRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6AE28781E9F0037A946 /* PVLibRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C8A6B328781EB00037A946 /* PVDosBox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6B228781EB00037A946 /* PVDosBox.framework */; };
 		B3C8A6B428781EB00037A946 /* PVDosBox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6B228781EB00037A946 /* PVDosBox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3C8A6B528781EBC0037A946 /* CoresRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6A228781E800037A946 /* CoresRetro.framework */; };
-		B3C9D4331DEA1B340068D057 /* PVGenesis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; };
-		B3C9D4341DEA1B340068D057 /* PVGenesis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3C9D4AE1DEA74390068D057 /* PVGB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4AD1DEA74390068D057 /* PVGB.framework */; };
-		B3C9D4AF1DEA74390068D057 /* PVGB.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4AD1DEA74390068D057 /* PVGB.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3C9D4B11DEA74500068D057 /* PVGB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4B01DEA74500068D057 /* PVGB.framework */; };
-		B3C9D4B21DEA74500068D057 /* PVGB.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4B01DEA74500068D057 /* PVGB.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3C9D5211DEA787D0068D057 /* PVGBA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5201DEA787D0068D057 /* PVGBA.framework */; };
-		B3C9D5221DEA787D0068D057 /* PVGBA.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5201DEA787D0068D057 /* PVGBA.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3C9D55D1DEA85C60068D057 /* PVSNES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D55C1DEA85C60068D057 /* PVSNES.framework */; };
-		B3C9D55E1DEA85C60068D057 /* PVSNES.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D55C1DEA85C60068D057 /* PVSNES.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3C9D5601DEA85D10068D057 /* PVSNES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D55F1DEA85D10068D057 /* PVSNES.framework */; };
-		B3C9D5611DEA85D10068D057 /* PVSNES.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D55F1DEA85D10068D057 /* PVSNES.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3C9D5E11DEA8A290068D057 /* PVGenesis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5E01DEA8A290068D057 /* PVGenesis.framework */; };
-		B3C9D5E21DEA8A290068D057 /* PVGenesis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5E01DEA8A290068D057 /* PVGenesis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3C9D5E41DEA8AED0068D057 /* PVStella.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5E31DEA8AED0068D057 /* PVStella.framework */; };
-		B3C9D5E51DEA8AED0068D057 /* PVStella.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5E31DEA8AED0068D057 /* PVStella.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3C9D5E71DEAA7E80068D057 /* PVStella.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5E61DEAA7E80068D057 /* PVStella.framework */; };
-		B3C9D5E81DEAA7E80068D057 /* PVStella.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5E61DEAA7E80068D057 /* PVStella.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3CB85BF1E9BFB07009155A6 /* PVPokeMini.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85BE1E9BFB07009155A6 /* PVPokeMini.framework */; };
-		B3CB85C01E9BFB07009155A6 /* PVPokeMini.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85BE1E9BFB07009155A6 /* PVPokeMini.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3CB85C21E9BFB16009155A6 /* PVPokeMini.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85C11E9BFB16009155A6 /* PVPokeMini.framework */; };
-		B3CB85C31E9BFB16009155A6 /* PVPokeMini.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85C11E9BFB16009155A6 /* PVPokeMini.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A6B528781EBC0037A946 /* CoresRetro_tvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6A228781E800037A946 /* CoresRetro_tvOS.framework */; };
+		B3C8A6B9287820860037A946 /* PVDesmume2015.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6B8287820860037A946 /* PVDesmume2015.framework */; };
+		B3C8A6BA287820860037A946 /* PVDesmume2015.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6B8287820860037A946 /* PVDesmume2015.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A6BD2878238C0037A946 /* Cores.h in Headers */ = {isa = PBXBuildFile; fileRef = B3270F8127DCB25100E83180 /* Cores.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3C8A6C02878238C0037A946 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270FB727DCB62C00E83180 /* libz.dylib */; };
+		B3C8A6C52878238C0037A946 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2B0E8D1AD18961005FB77C /* libc++.dylib */; };
+		B3C8A6CE2878238C0037A946 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D717C8D54D0019F6D2 /* libxml2.dylib */; };
+		B3C8A6D02878238C0037A946 /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2A95A917F7682400F1CB0D /* libstdc++.dylib */; };
+		B3C8A6D52878238C0037A946 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AECF4A81966D76100F8704E /* libsqlite3.dylib */; };
+		B3C8A6F0287823DC0037A946 /* PVMiniVMac.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3918FDE2873EEA8000838F6 /* PVMiniVMac.framework */; };
+		B3C8A6F1287823DC0037A946 /* PVMiniVMac.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3918FDE2873EEA8000838F6 /* PVMiniVMac.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A6F2287823DC0037A946 /* PVfMSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3918FDB2873EE5F000838F6 /* PVfMSX.framework */; };
+		B3C8A6F3287823DC0037A946 /* PVfMSX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3918FDB2873EE5F000838F6 /* PVfMSX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A6F4287823DC0037A946 /* PVEP128Emu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3918FD82873EDC3000838F6 /* PVEP128Emu.framework */; };
+		B3C8A6F5287823DC0037A946 /* PVEP128Emu.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3918FD82873EDC3000838F6 /* PVEP128Emu.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A6F6287823DC0037A946 /* PVPotator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FF642F2873EC8000829C14 /* PVPotator.framework */; };
+		B3C8A6F7287823DC0037A946 /* PVPotator.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3FF642F2873EC8000829C14 /* PVPotator.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A6F8287823DC0037A946 /* PVYabause.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FF641C2873EAEB00829C14 /* PVYabause.framework */; };
+		B3C8A6F9287823DC0037A946 /* PVYabause.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3FF641C2873EAEB00829C14 /* PVYabause.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A6FA287823DC0037A946 /* PVDesmume2015.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39313832870FCFC00372EBB /* PVDesmume2015.framework */; };
+		B3C8A6FB287823DC0037A946 /* PVDesmume2015.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B39313832870FCFC00372EBB /* PVDesmume2015.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A6FC287823DC0037A946 /* PVDosBox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B397692C285A089200558958 /* PVDosBox.framework */; };
+		B3C8A6FD287823DC0037A946 /* PVDosBox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B397692C285A089200558958 /* PVDosBox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A700287824670037A946 /* PVMelonDS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6FF287824670037A946 /* PVMelonDS.framework */; };
+		B3C8A701287824670037A946 /* PVMelonDS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6FF287824670037A946 /* PVMelonDS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A703287826EB0037A946 /* PVVecXGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A702287826EB0037A946 /* PVVecXGL.framework */; };
+		B3C8A704287826EB0037A946 /* PVVecXGL.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A702287826EB0037A946 /* PVVecXGL.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A705287827260037A946 /* Cores_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F7F27DCB25100E83180 /* Cores_iOS.framework */; };
+		B3C8A706287827270037A946 /* Cores_iOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F7F27DCB25100E83180 /* Cores_iOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A709287827330037A946 /* CoresRetro-iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6EF2878238C0037A946 /* CoresRetro-iOS.framework */; };
+		B3C8A70A287827330037A946 /* CoresRetro-iOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6EF2878238C0037A946 /* CoresRetro-iOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A70F287828BA0037A946 /* CoresRetro.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C8A6A428781E810037A946 /* CoresRetro.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3C8A71F287828FD0037A946 /* PVMednafen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8E27DCB2CA00E83180 /* PVMednafen.framework */; };
+		B3C8A720287828FD0037A946 /* PVMednafen.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8E27DCB2CA00E83180 /* PVMednafen.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A721287828FD0037A946 /* PicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8F27DCB2CA00E83180 /* PicoDrive.framework */; };
+		B3C8A722287828FD0037A946 /* PicoDrive.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8F27DCB2CA00E83180 /* PicoDrive.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A723287828FD0037A946 /* PVTGBDual.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F9027DCB2CA00E83180 /* PVTGBDual.framework */; };
+		B3C8A724287828FD0037A946 /* PVTGBDual.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F9027DCB2CA00E83180 /* PVTGBDual.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A725287828FD0037A946 /* PVVirtualJaguar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F9127DCB2CA00E83180 /* PVVirtualJaguar.framework */; };
+		B3C8A726287828FD0037A946 /* PVVirtualJaguar.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F9127DCB2CA00E83180 /* PVVirtualJaguar.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A727287828FD0037A946 /* PVFCEU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8B27DCB2B200E83180 /* PVFCEU.framework */; };
+		B3C8A728287828FD0037A946 /* PVFCEU.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8B27DCB2B200E83180 /* PVFCEU.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A729287828FD0037A946 /* PVAtari800-tvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36C7D5627AE2CF400715677 /* PVAtari800-tvOS.framework */; };
+		B3C8A72A287828FD0037A946 /* PVAtari800-tvOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B36C7D5627AE2CF400715677 /* PVAtari800-tvOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A72B287828FD0037A946 /* PVPokeMini.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B311B1C327A52F2000D1DE41 /* PVPokeMini.framework */; };
+		B3C8A72C287828FD0037A946 /* PVPokeMini.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B311B1C327A52F2000D1DE41 /* PVPokeMini.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A72D287828FD0037A946 /* ProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B4C955279E6BAA00505424 /* ProSystem.framework */; };
+		B3C8A72E287828FD0037A946 /* ProSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B4C955279E6BAA00505424 /* ProSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A72F287828FD0037A946 /* PVStella.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF2E276B4CB0003AE510 /* PVStella.framework */; };
+		B3C8A730287828FD0037A946 /* PVStella.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF2E276B4CB0003AE510 /* PVStella.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A731287828FE0037A946 /* PVMupen64Plus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A426EA159400E95488 /* PVMupen64Plus.framework */; };
+		B3C8A732287828FE0037A946 /* PVMupen64Plus.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A426EA159400E95488 /* PVMupen64Plus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A733287828FE0037A946 /* PVMupen64PlusRspHLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A526EA159400E95488 /* PVMupen64PlusRspHLE.framework */; };
+		B3C8A734287828FE0037A946 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A526EA159400E95488 /* PVMupen64PlusRspHLE.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A735287828FE0037A946 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A626EA159400E95488 /* PVMupen64PlusVideoGlideN64.framework */; };
+		B3C8A736287828FE0037A946 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A626EA159400E95488 /* PVMupen64PlusVideoGlideN64.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A737287828FE0037A946 /* PVMupen64PlusVideoRice.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A726EA159400E95488 /* PVMupen64PlusVideoRice.framework */; };
+		B3C8A738287828FE0037A946 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A726EA159400E95488 /* PVMupen64PlusVideoRice.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A739287828FE0037A946 /* PVRSPCXD4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A826EA159400E95488 /* PVRSPCXD4.framework */; };
+		B3C8A73A287828FE0037A946 /* PVRSPCXD4.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A826EA159400E95488 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A73B287828FE0037A946 /* PVGB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4AD1DEA74390068D057 /* PVGB.framework */; };
+		B3C8A73C287828FE0037A946 /* PVGB.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4AD1DEA74390068D057 /* PVGB.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A73D287828FE0037A946 /* PVGBA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5201DEA787D0068D057 /* PVGBA.framework */; };
+		B3C8A73E287828FE0037A946 /* PVGBA.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5201DEA787D0068D057 /* PVGBA.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A73F287828FE0037A946 /* PVGenesis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; };
+		B3C8A740287828FE0037A946 /* PVGenesis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A741287828FE0037A946 /* PVSNES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D55C1DEA85C60068D057 /* PVSNES.framework */; };
+		B3C8A742287828FE0037A946 /* PVSNES.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D55C1DEA85C60068D057 /* PVSNES.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C8A7442878293C0037A946 /* Cores-tvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A71E287828BA0037A946 /* Cores-tvOS.framework */; };
+		B3C8A7452878293C0037A946 /* Cores-tvOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A71E287828BA0037A946 /* Cores-tvOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3CCD2BA21DAA8D30031C42C /* PVEmulatorViewController+Saves.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CCD2B921DAA8D30031C42C /* PVEmulatorViewController+Saves.swift */; };
 		B3CCD2BB21DAA8D30031C42C /* PVEmulatorViewController+Saves.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CCD2B921DAA8D30031C42C /* PVEmulatorViewController+Saves.swift */; };
-		B3CE80002873FB7600B6BB5A /* PVVecXGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CE7FFF2873FB7600B6BB5A /* PVVecXGL.framework */; };
-		B3CE80012873FB7700B6BB5A /* PVVecXGL.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3CE7FFF2873FB7600B6BB5A /* PVVecXGL.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3CEC5B22794D8DD004A7CC1 /* Strings.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3296EEA26CAC3ED0088AC32 /* Strings.strings */; };
 		B3D534E220AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
 		B3D534E320AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
@@ -638,8 +625,6 @@
 		B3E6DAE120B7C2F800454DD4 /* PVLogViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3E6DAE020B7C2F800454DD4 /* PVLogViewController.xib */; };
 		B3EA0CD32070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
 		B3EA0CD42070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
-		B3EBB1F828729DCD00EAEB37 /* PVfMSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EBB1F728729DCD00EAEB37 /* PVfMSX.framework */; };
-		B3EBB1F928729DCD00EAEB37 /* PVfMSX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3EBB1F728729DCD00EAEB37 /* PVfMSX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F43DCF2168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F43DD02168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F43DE22169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */; };
@@ -658,10 +643,6 @@
 		B3F94A4E27093ABC002A71EF /* AppCenterAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = B3F94A4D27093ABC002A71EF /* AppCenterAnalytics */; };
 		B3F94A5027093ABC002A71EF /* AppCenterCrashes in Frameworks */ = {isa = PBXBuildFile; productRef = B3F94A4F27093ABC002A71EF /* AppCenterCrashes */; };
 		B3FB9679276DD7F600F7EDEE /* SteamController in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B3FB9678276DD7F600F7EDEE /* SteamController */; settings = {ATTRIBUTES = (Weak, ); }; };
-		B3FF641D2873EAEB00829C14 /* PVYabause.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FF641C2873EAEB00829C14 /* PVYabause.framework */; };
-		B3FF641E2873EAEB00829C14 /* PVYabause.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3FF641C2873EAEB00829C14 /* PVYabause.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3FF64302873EC8100829C14 /* PVPotator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FF642F2873EC8000829C14 /* PVPotator.framework */; };
-		B3FF64312873EC8100829C14 /* PVPotator.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3FF642F2873EC8000829C14 /* PVPotator.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */; };
 		BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */; };
 		C13CC82923CABE2800463EDD /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13CC82823CABE2800463EDD /* Photos.framework */; };
@@ -680,6 +661,8 @@
 		CF87D488258ADDD100838AF8 /* PVCheatsInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1710B4258610DE00258602 /* PVCheatsInfoViewController.swift */; };
 		CF87D489258ADDD100838AF8 /* PVCheatsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF17114D2586A13100258602 /* PVCheatsTableViewCell.swift */; };
 		DA5EB00A206C4DEB000B5F30 /* PVGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5EB009206C4DEB000B5F30 /* PVGame+TopShelf.swift */; };
+		DFCD6EBF203762AF00719289 /* shaders in Resources */ = {isa = PBXBuildFile; fileRef = DFCD6EBE203762AE00719289 /* shaders */; };
+		DFCD6EC0203762AF00719289 /* shaders in Resources */ = {isa = PBXBuildFile; fileRef = DFCD6EBE203762AE00719289 /* shaders */; };
 		DF3751942026B83600EE727E /* PVRSPCXD4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B97B1DED14AE00602746 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		DF3751952026B83600EE727E /* PVRSPCXD4.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B97B1DED14AE00602746 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EF474BA8279CCDD200578663 /* TVFullscreenController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF474BA7279CCDD100578663 /* TVFullscreenController.swift */; };
@@ -779,6 +762,27 @@
 			remoteGlobalIDString = B3C8A6A128781E800037A946;
 			remoteInfo = CoresRetro;
 		};
+		B3C8A707287827270037A946 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3270F7E27DCB25100E83180;
+			remoteInfo = "Cores-iOS";
+		};
+		B3C8A70B287827330037A946 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3C8A6BB2878238C0037A946;
+			remoteInfo = "CoresRetro-iOS";
+		};
+		B3C8A7462878293C0037A946 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3C8A70D287828BA0037A946;
+			remoteInfo = "Cores-tvOS";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -789,27 +793,9 @@
 			dstSubfolderSpec = 10;
 			files = (
 				B3AF701D21916E38000FA7F9 /* PVSupport.framework in Embed Frameworks */,
+				B3C8A7452878293C0037A946 /* Cores-tvOS.framework in Embed Frameworks */,
 				B324C650219216DD009F4EDC /* PVLibrary.framework in Embed Frameworks */,
-				B3C8A6A928781E840037A946 /* CoresRetro.framework in Embed Frameworks */,
-				B3CB85C31E9BFB16009155A6 /* PVPokeMini.framework in Embed Frameworks */,
-				B37263AE26EA159400E95488 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
-				B3C9D5E21DEA8A290068D057 /* PVGenesis.framework in Embed Frameworks */,
-				B3C9D4B21DEA74500068D057 /* PVGB.framework in Embed Frameworks */,
-				B37263AC26EA159400E95488 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
-				B36C7D5827AE2CF500715677 /* PVAtari800-tvOS.framework in Embed Frameworks */,
-				B324C6232192059E009F4EDC /* PVMednafen.framework in Embed Frameworks */,
-				B37263B026EA159400E95488 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
-				14C4C1A221EBB0040055C6DC /* PVTGBDual.framework in Embed Frameworks */,
-				B3995E502058229F001D4985 /* PVFCEU.framework in Embed Frameworks */,
-				B324C31F219197D7009F4EDC /* PicoDrive.framework in Embed Frameworks */,
-				B316B4DD219265B700693472 /* PVVirtualJaguar.framework in Embed Frameworks */,
-				B3C9D5E51DEA8AED0068D057 /* PVStella.framework in Embed Frameworks */,
-				B3C9D5611DEA85D10068D057 /* PVSNES.framework in Embed Frameworks */,
-				B37263B226EA159500E95488 /* PVRSPCXD4.framework in Embed Frameworks */,
-				B324C61221920037009F4EDC /* ProSystem.framework in Embed Frameworks */,
-				B324C60C2191FFBB009F4EDC /* PVGBA.framework in Embed Frameworks */,
-				B3B4C957279E6BAB00505424 /* ProSystem.framework in Embed Frameworks */,
-				B37263AA26EA159400E95488 /* PVMupen64Plus.framework in Embed Frameworks */,
+				B3C8A6A928781E840037A946 /* CoresRetro_tvOS.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -820,35 +806,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				B3EBB1F928729DCD00EAEB37 /* PVfMSX.framework in Embed Frameworks */,
-				55546DF2257D6CA800616332 /* PVTGBDual.framework in Embed Frameworks */,
-				B3CB85C01E9BFB07009155A6 /* PVPokeMini.framework in Embed Frameworks */,
-				B3C9D4AF1DEA74390068D057 /* PVGB.framework in Embed Frameworks */,
+				B3C8A70A287827330037A946 /* CoresRetro-iOS.framework in Embed Frameworks */,
 				B3AF701121916C30000FA7F9 /* PVSupport.framework in Embed Frameworks */,
-				B3918FDD2873EE5F000838F6 /* PVfMSX.framework in Embed Frameworks */,
-				B3B0860B1E71316A007F39E1 /* PVMednafen.framework in Embed Frameworks */,
-				1A19EE162080EA8000A9147B /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
-				B3B3B8991DECF8C700602746 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
-				B316B4DA219265AB00693472 /* PVVirtualJaguar.framework in Embed Frameworks */,
-				B3270F8D27DCB2B200E83180 /* PVFCEU.framework in Embed Frameworks */,
-				B3AD689E1D6EA6450021B949 /* PicoDrive.framework in Embed Frameworks */,
-				B3C9D55E1DEA85C60068D057 /* PVSNES.framework in Embed Frameworks */,
-				B37F4AF6286E94C70043F1C9 /* PVDesmume2015.framework in Embed Frameworks */,
-				B3C9D5E81DEAA7E80068D057 /* PVStella.framework in Embed Frameworks */,
 				B3AF701421916C3A000FA7F9 /* PVLibrary.framework in Embed Frameworks */,
-				B3FF64312873EC8100829C14 /* PVPotator.framework in Embed Frameworks */,
-				B3CE80012873FB7700B6BB5A /* PVVecXGL.framework in Embed Frameworks */,
-				B324C61E21920523009F4EDC /* ProSystem.framework in Embed Frameworks */,
-				B3918FDA2873EDC3000838F6 /* PVEP128Emu.framework in Embed Frameworks */,
-				B3FF641E2873EAEB00829C14 /* PVYabause.framework in Embed Frameworks */,
-				B354693D1DECDA710018B6F3 /* PVAtari800.framework in Embed Frameworks */,
-				B3C9D5221DEA787D0068D057 /* PVGBA.framework in Embed Frameworks */,
-				DF3751952026B83600EE727E /* PVRSPCXD4.framework in Embed Frameworks */,
-				B3C9D4341DEA1B340068D057 /* PVGenesis.framework in Embed Frameworks */,
-				B3918FE02873EEA8000838F6 /* PVMiniVMac.framework in Embed Frameworks */,
-				B397692E285A089200558958 /* PVDosBox.framework in Embed Frameworks */,
-				B3B3B8961DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
-				B3B3B8931DECF8BC00602746 /* PVMupen64Plus.framework in Embed Frameworks */,
+				B3C8A706287827270037A946 /* Cores_iOS.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -898,6 +859,7 @@
 				B3270FAB27DCB2CA00E83180 /* PVGenesis.framework in Embed Frameworks */,
 				B3270F9B27DCB2CA00E83180 /* PVMupen64Plus.framework in Embed Frameworks */,
 				B3270FA327DCB2CA00E83180 /* PVRSPCXD4.framework in Embed Frameworks */,
+				B3C8A704287826EB0037A946 /* PVVecXGL.framework in Embed Frameworks */,
 				B3270F9F27DCB2CA00E83180 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
 				B3270FB127DCB2CB00E83180 /* PicoDrive.framework in Embed Frameworks */,
 				B3270F9727DCB2CA00E83180 /* ProSystem.framework in Embed Frameworks */,
@@ -936,6 +898,53 @@
 			files = (
 				B3C8A6B028781E9F0037A946 /* PVLibRetro.framework in Embed Frameworks */,
 				B3C8A6B428781EB00037A946 /* PVDosBox.framework in Embed Frameworks */,
+				B3C8A6BA287820860037A946 /* PVDesmume2015.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3C8A6FE287823DC0037A946 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B3C8A6F3287823DC0037A946 /* PVfMSX.framework in Embed Frameworks */,
+				B3C8A6F5287823DC0037A946 /* PVEP128Emu.framework in Embed Frameworks */,
+				B3C8A6F7287823DC0037A946 /* PVPotator.framework in Embed Frameworks */,
+				B3C8A6F1287823DC0037A946 /* PVMiniVMac.framework in Embed Frameworks */,
+				B3C8A6FD287823DC0037A946 /* PVDosBox.framework in Embed Frameworks */,
+				B3C8A6F9287823DC0037A946 /* PVYabause.framework in Embed Frameworks */,
+				B3C8A6FB287823DC0037A946 /* PVDesmume2015.framework in Embed Frameworks */,
+				B3C8A701287824670037A946 /* PVMelonDS.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3C8A743287828FE0037A946 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B3C8A732287828FE0037A946 /* PVMupen64Plus.framework in Embed Frameworks */,
+				B3C8A73C287828FE0037A946 /* PVGB.framework in Embed Frameworks */,
+				B3C8A728287828FD0037A946 /* PVFCEU.framework in Embed Frameworks */,
+				B3C8A72A287828FD0037A946 /* PVAtari800-tvOS.framework in Embed Frameworks */,
+				B3C8A73A287828FE0037A946 /* PVRSPCXD4.framework in Embed Frameworks */,
+				B3C8A72C287828FD0037A946 /* PVPokeMini.framework in Embed Frameworks */,
+				B3C8A726287828FD0037A946 /* PVVirtualJaguar.framework in Embed Frameworks */,
+				B3C8A736287828FE0037A946 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
+				B3C8A724287828FD0037A946 /* PVTGBDual.framework in Embed Frameworks */,
+				B3C8A72E287828FD0037A946 /* ProSystem.framework in Embed Frameworks */,
+				B3C8A734287828FE0037A946 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
+				B3C8A740287828FE0037A946 /* PVGenesis.framework in Embed Frameworks */,
+				B3C8A73E287828FE0037A946 /* PVGBA.framework in Embed Frameworks */,
+				B3C8A722287828FD0037A946 /* PicoDrive.framework in Embed Frameworks */,
+				B3C8A730287828FD0037A946 /* PVStella.framework in Embed Frameworks */,
+				B3C8A738287828FE0037A946 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
+				B3C8A720287828FD0037A946 /* PVMednafen.framework in Embed Frameworks */,
+				B3C8A742287828FE0037A946 /* PVSNES.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1198,7 +1207,7 @@
 		B3270F7127DCB1E500E83180 /* PVDesmume2015.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDesmume2015.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3270F7427DCB1ED00E83180 /* PVPlay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPlay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3270F7727DCB1F500E83180 /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3270F7F27DCB25100E83180 /* Cores.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Cores.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3270F7F27DCB25100E83180 /* Cores_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Cores_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3270F8127DCB25100E83180 /* Cores.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Cores.h; sourceTree = "<group>"; };
 		B3270F8B27DCB2B200E83180 /* PVFCEU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFCEU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3270F8E27DCB2CA00E83180 /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1423,10 +1432,15 @@
 		B3C7CCBF27DCB0B90003F9D2 /* ExperimentalCores.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExperimentalCores.h; sourceTree = "<group>"; };
 		B3C7CCC927DCB0DA0003F9D2 /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C8A6632877DE280037A946 /* PVMelonDS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMelonDS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3C8A6A228781E800037A946 /* CoresRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CoresRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3C8A6A228781E800037A946 /* CoresRetro_tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CoresRetro_tvOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C8A6A428781E810037A946 /* CoresRetro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoresRetro.h; sourceTree = "<group>"; };
 		B3C8A6AE28781E9F0037A946 /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C8A6B228781EB00037A946 /* PVDosBox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDosBox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3C8A6B8287820860037A946 /* PVDesmume2015.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDesmume2015.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3C8A6EF2878238C0037A946 /* CoresRetro-iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "CoresRetro-iOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3C8A6FF287824670037A946 /* PVMelonDS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMelonDS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3C8A702287826EB0037A946 /* PVVecXGL.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVecXGL.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3C8A71E287828BA0037A946 /* Cores-tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "Cores-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D4321DEA1B340068D057 /* PVGenesis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGenesis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D4AD1DEA74390068D057 /* PVGB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D4B01DEA74500068D057 /* PVGB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1515,57 +1529,32 @@
 			buildActionMask = 2147483647;
 			files = (
 				B357A43A27092254002C7C0F /* AppCenterCrashes in Frameworks */,
-				55546DF1257D6CA800616332 /* PVTGBDual.framework in Frameworks */,
-				B316B4D9219265AB00693472 /* PVVirtualJaguar.framework in Frameworks */,
-				B3270F8C27DCB2B200E83180 /* PVFCEU.framework in Frameworks */,
-				B3918FDC2873EE5F000838F6 /* PVfMSX.framework in Frameworks */,
 				B3271BDD276B8B660031AECC /* CoreTelephony.framework in Frameworks */,
 				C13CC82923CABE2800463EDD /* Photos.framework in Frameworks */,
 				B377E67E21252C6600D88973 /* GameController.framework in Frameworks */,
-				B3AD689D1D6EA6450021B949 /* PicoDrive.framework in Frameworks */,
-				DF3751942026B83600EE727E /* PVRSPCXD4.framework in Frameworks */,
-				B3B3B8921DECF8BC00602746 /* PVMupen64Plus.framework in Frameworks */,
+				B3C8A709287827330037A946 /* CoresRetro-iOS.framework in Frameworks */,
 				1A4869D817C8D54D0019F6D2 /* libxml2.dylib in Frameworks */,
 				B33625FC26EDF88200DC41EA /* MetalKit.framework in Frameworks */,
-				B3C9D4AE1DEA74390068D057 /* PVGB.framework in Frameworks */,
 				1180B3182492A94200636C8A /* CoreServices.framework in Frameworks */,
-				B3FF64302873EC8100829C14 /* PVPotator.framework in Frameworks */,
 				1A3D432C17B2FDFE004DFFFC /* libz.dylib in Frameworks */,
 				1A2A95AA17F7682400F1CB0D /* libstdc++.dylib in Frameworks */,
 				1A2B0E8E1AD18961005FB77C /* libc++.dylib in Frameworks */,
-				B37F4AF5286E94C60043F1C9 /* PVDesmume2015.framework in Frameworks */,
-				B3EBB1F828729DCD00EAEB37 /* PVfMSX.framework in Frameworks */,
+				B3C8A705287827260037A946 /* Cores_iOS.framework in Frameworks */,
 				1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */,
-				B3CE80002873FB7600B6BB5A /* PVVecXGL.framework in Frameworks */,
-				B3C9D4331DEA1B340068D057 /* PVGenesis.framework in Frameworks */,
-				B354693C1DECDA710018B6F3 /* PVAtari800.framework in Frameworks */,
 				1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */,
 				B357A43827092254002C7C0F /* AppCenterAnalytics in Frameworks */,
-				B3CB85BF1E9BFB07009155A6 /* PVPokeMini.framework in Frameworks */,
 				1A4869DD17C8D60C0019F6D2 /* CFNetwork.framework in Frameworks */,
-				B397692D285A089200558958 /* PVDosBox.framework in Frameworks */,
-				B3918FDF2873EEA8000838F6 /* PVMiniVMac.framework in Frameworks */,
 				1A4869DF17C8D60C0019F6D2 /* Security.framework in Frameworks */,
 				1A4869E017C8D60C0019F6D2 /* SystemConfiguration.framework in Frameworks */,
 				1A4869D617C8D5450019F6D2 /* CoreData.framework in Frameworks */,
 				B3AF701321916C3A000FA7F9 /* PVLibrary.framework in Frameworks */,
-				B324C61D21920523009F4EDC /* ProSystem.framework in Frameworks */,
 				1A47C94417BC1BC400C27644 /* AudioToolbox.framework in Frameworks */,
 				B3AF701021916C30000FA7F9 /* PVSupport.framework in Frameworks */,
-				1A19EE142080EA2000A9147B /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
 				B3FB9679276DD7F600F7EDEE /* SteamController in Frameworks */,
-				B3B0860A1E71316A007F39E1 /* PVMednafen.framework in Frameworks */,
-				B3918FD92873EDC3000838F6 /* PVEP128Emu.framework in Frameworks */,
-				B3C9D5211DEA787D0068D057 /* PVGBA.framework in Frameworks */,
 				B33625FD26EDF88200DC41EA /* Metal.framework in Frameworks */,
-				B3B3B8951DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Frameworks */,
-				B3FF641D2873EAEB00829C14 /* PVYabause.framework in Frameworks */,
 				1A3D431E17B2F01F004DFFFC /* OpenGLES.framework in Frameworks */,
-				B3B3B8981DECF8C700602746 /* PVMupen64PlusRspHLE.framework in Frameworks */,
-				B3C9D55D1DEA85C60068D057 /* PVSNES.framework in Frameworks */,
 				1A3D409A17B2DCE4004DFFFC /* Foundation.framework in Frameworks */,
 				B3271BDB276B8B2E0031AECC /* OpenGL.framework in Frameworks */,
-				B3C9D5E71DEAA7E80068D057 /* PVStella.framework in Frameworks */,
 				1A3D409C17B2DCE4004DFFFC /* CoreGraphics.framework in Frameworks */,
 				B390B0EA276B2DB20018E065 /* AltKit in Frameworks */,
 				37EEA2AB27BC81890070E222 /* Introspect in Frameworks */,
@@ -1577,13 +1566,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				B324C61B219203AF009F4EDC /* libc++.tbd in Frameworks */,
-				B3C8A6A828781E840037A946 /* CoresRetro.framework in Frameworks */,
+				B3C8A6A828781E840037A946 /* CoresRetro_tvOS.framework in Frameworks */,
 				B324C619219203A5009F4EDC /* libsqlite3.tbd in Frameworks */,
 				B324C6172192038C009F4EDC /* libxml2.tbd in Frameworks */,
 				B312805F274C60EC00550720 /* SteamController in Frameworks */,
 				B324C61521920384009F4EDC /* libz.tbd in Frameworks */,
-				B3B4C956279E6BAB00505424 /* ProSystem.framework in Frameworks */,
-				B36C7D5727AE2CF400715677 /* PVAtari800-tvOS.framework in Frameworks */,
 				B324C312219195CE009F4EDC /* CFNetwork.framework in Frameworks */,
 				B324C30C219195BB009F4EDC /* SystemConfiguration.framework in Frameworks */,
 				B324C30A219195AE009F4EDC /* AudioToolbox.framework in Frameworks */,
@@ -1595,29 +1582,13 @@
 				B324C306219195A0009F4EDC /* OpenGLES.framework in Frameworks */,
 				B324C30321919596009F4EDC /* UIKit.framework in Frameworks */,
 				B324C30421919596009F4EDC /* TVUIKit.framework in Frameworks */,
-				B37263AB26EA159400E95488 /* PVMupen64PlusRspHLE.framework in Frameworks */,
-				B37263B126EA159500E95488 /* PVRSPCXD4.framework in Frameworks */,
 				B324C3002191958D009F4EDC /* CoreGraphics.framework in Frameworks */,
-				B3C8A6B528781EBC0037A946 /* CoresRetro.framework in Frameworks */,
+				B3C8A6B528781EBC0037A946 /* CoresRetro_tvOS.framework in Frameworks */,
 				B324C2FE21919585009F4EDC /* Foundation.framework in Frameworks */,
 				B324C2FD21919568009F4EDC /* AVFoundation.framework in Frameworks */,
+				B3C8A7442878293C0037A946 /* Cores-tvOS.framework in Frameworks */,
 				B3AF70662191733D000FA7F9 /* GameController.framework in Frameworks */,
-				B3C9D4B11DEA74500068D057 /* PVGB.framework in Frameworks */,
-				B324C6222192059E009F4EDC /* PVMednafen.framework in Frameworks */,
-				14C4C1A121EBB0040055C6DC /* PVTGBDual.framework in Frameworks */,
-				B3995E4F2058229F001D4985 /* PVFCEU.framework in Frameworks */,
-				B3CB85C21E9BFB16009155A6 /* PVPokeMini.framework in Frameworks */,
-				B316B4DC219265B700693472 /* PVVirtualJaguar.framework in Frameworks */,
-				B324C31E219197D7009F4EDC /* PicoDrive.framework in Frameworks */,
 				1180B31C2492A96700636C8A /* CoreServices.framework in Frameworks */,
-				B324C60B2191FFBB009F4EDC /* PVGBA.framework in Frameworks */,
-				B37263AD26EA159400E95488 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
-				B3C9D5E11DEA8A290068D057 /* PVGenesis.framework in Frameworks */,
-				B3C9D5601DEA85D10068D057 /* PVSNES.framework in Frameworks */,
-				B3C9D5E41DEA8AED0068D057 /* PVStella.framework in Frameworks */,
-				B37263A926EA159400E95488 /* PVMupen64Plus.framework in Frameworks */,
-				B324C61121920037009F4EDC /* ProSystem.framework in Frameworks */,
-				B37263AF26EA159400E95488 /* PVMupen64PlusVideoRice.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1667,6 +1638,7 @@
 				B3270F9227DCB2CA00E83180 /* PVFCEU.framework in Frameworks */,
 				B3270FA627DCB2CA00E83180 /* PVGB.framework in Frameworks */,
 				B3270FAE27DCB2CB00E83180 /* PVMednafen.framework in Frameworks */,
+				B3C8A703287826EB0037A946 /* PVVecXGL.framework in Frameworks */,
 				B3270FB927DCB62C00E83180 /* libsqlite3.dylib in Frameworks */,
 				B3270FA827DCB2CA00E83180 /* PVGBA.framework in Frameworks */,
 			);
@@ -1685,6 +1657,52 @@
 			files = (
 				B3C8A6AF28781E9F0037A946 /* PVLibRetro.framework in Frameworks */,
 				B3C8A6B328781EB00037A946 /* PVDosBox.framework in Frameworks */,
+				B3C8A6B9287820860037A946 /* PVDesmume2015.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3C8A6BF2878238C0037A946 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3C8A6FA287823DC0037A946 /* PVDesmume2015.framework in Frameworks */,
+				B3C8A6C02878238C0037A946 /* libz.dylib in Frameworks */,
+				B3C8A700287824670037A946 /* PVMelonDS.framework in Frameworks */,
+				B3C8A6C52878238C0037A946 /* libc++.dylib in Frameworks */,
+				B3C8A6FC287823DC0037A946 /* PVDosBox.framework in Frameworks */,
+				B3C8A6F0287823DC0037A946 /* PVMiniVMac.framework in Frameworks */,
+				B3C8A6F2287823DC0037A946 /* PVfMSX.framework in Frameworks */,
+				B3C8A6CE2878238C0037A946 /* libxml2.dylib in Frameworks */,
+				B3C8A6F6287823DC0037A946 /* PVPotator.framework in Frameworks */,
+				B3C8A6F4287823DC0037A946 /* PVEP128Emu.framework in Frameworks */,
+				B3C8A6D02878238C0037A946 /* libstdc++.dylib in Frameworks */,
+				B3C8A6D52878238C0037A946 /* libsqlite3.dylib in Frameworks */,
+				B3C8A6F8287823DC0037A946 /* PVYabause.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3C8A711287828BA0037A946 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3C8A731287828FE0037A946 /* PVMupen64Plus.framework in Frameworks */,
+				B3C8A73B287828FE0037A946 /* PVGB.framework in Frameworks */,
+				B3C8A727287828FD0037A946 /* PVFCEU.framework in Frameworks */,
+				B3C8A729287828FD0037A946 /* PVAtari800-tvOS.framework in Frameworks */,
+				B3C8A739287828FE0037A946 /* PVRSPCXD4.framework in Frameworks */,
+				B3C8A72B287828FD0037A946 /* PVPokeMini.framework in Frameworks */,
+				B3C8A725287828FD0037A946 /* PVVirtualJaguar.framework in Frameworks */,
+				B3C8A735287828FE0037A946 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
+				B3C8A723287828FD0037A946 /* PVTGBDual.framework in Frameworks */,
+				B3C8A72D287828FD0037A946 /* ProSystem.framework in Frameworks */,
+				B3C8A733287828FE0037A946 /* PVMupen64PlusRspHLE.framework in Frameworks */,
+				B3C8A73F287828FE0037A946 /* PVGenesis.framework in Frameworks */,
+				B3C8A73D287828FE0037A946 /* PVGBA.framework in Frameworks */,
+				B3C8A721287828FD0037A946 /* PicoDrive.framework in Frameworks */,
+				B3C8A72F287828FD0037A946 /* PVStella.framework in Frameworks */,
+				B3C8A737287828FE0037A946 /* PVMupen64PlusVideoRice.framework in Frameworks */,
+				B3C8A71F287828FD0037A946 /* PVMednafen.framework in Frameworks */,
+				B3C8A741287828FE0037A946 /* PVSNES.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1801,8 +1819,10 @@
 				B305EEFA276B4C71003AE510 /* Provenance Watch WatchKit App.app */,
 				B305EF05276B4C73003AE510 /* Provenance Watch WatchKit Extension.appex */,
 				B391F2BB27C157E600730B53 /* Provenance Clip.app */,
-				B3270F7F27DCB25100E83180 /* Cores.framework */,
-				B3C8A6A228781E800037A946 /* CoresRetro.framework */,
+				B3270F7F27DCB25100E83180 /* Cores_iOS.framework */,
+				B3C8A6A228781E800037A946 /* CoresRetro_tvOS.framework */,
+				B3C8A6EF2878238C0037A946 /* CoresRetro-iOS.framework */,
+				B3C8A71E287828BA0037A946 /* Cores-tvOS.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1810,6 +1830,9 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3C8A702287826EB0037A946 /* PVVecXGL.framework */,
+				B3C8A6FF287824670037A946 /* PVMelonDS.framework */,
+				B3C8A6B8287820860037A946 /* PVDesmume2015.framework */,
 				B3C8A6B228781EB00037A946 /* PVDosBox.framework */,
 				B3C8A6AE28781E9F0037A946 /* PVLibRetro.framework */,
 				B3C8A6632877DE280037A946 /* PVMelonDS.framework */,
@@ -2834,6 +2857,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3C8A6BC2878238C0037A946 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3C8A6BD2878238C0037A946 /* Cores.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3C8A70E287828BA0037A946 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3C8A70F287828BA0037A946 /* CoresRetro.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
@@ -2854,6 +2893,8 @@
 				B383226426ED9F080029D12F /* PBXTargetDependency */,
 				B3B29D462156183D00903290 /* PBXTargetDependency */,
 				B36FE831218EAAD200F858F3 /* PBXTargetDependency */,
+				B3C8A708287827270037A946 /* PBXTargetDependency */,
+				B3C8A70C287827330037A946 /* PBXTargetDependency */,
 			);
 			name = Provenance;
 			packageProductDependencies = (
@@ -2886,6 +2927,7 @@
 				B3B4C954279E69AD00505424 /* PBXTargetDependency */,
 				B3C8A6A728781E840037A946 /* PBXTargetDependency */,
 				B3C8A6B728781EBC0037A946 /* PBXTargetDependency */,
+				B3C8A7472878293C0037A946 /* PBXTargetDependency */,
 			);
 			name = ProvenanceTV;
 			packageProductDependencies = (
@@ -2968,9 +3010,9 @@
 			productReference = B305EF05276B4C73003AE510 /* Provenance Watch WatchKit Extension.appex */;
 			productType = "com.apple.product-type.watchkit2-extension";
 		};
-		B3270F7E27DCB25100E83180 /* Cores */ = {
+		B3270F7E27DCB25100E83180 /* Cores-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3270F8727DCB25100E83180 /* Build configuration list for PBXNativeTarget "Cores" */;
+			buildConfigurationList = B3270F8727DCB25100E83180 /* Build configuration list for PBXNativeTarget "Cores-iOS" */;
 			buildPhases = (
 				B3270F7A27DCB25100E83180 /* Headers */,
 				B3270F7B27DCB25100E83180 /* Sources */,
@@ -2982,9 +3024,9 @@
 			);
 			dependencies = (
 			);
-			name = Cores;
+			name = "Cores-iOS";
 			productName = Cores;
-			productReference = B3270F7F27DCB25100E83180 /* Cores.framework */;
+			productReference = B3270F7F27DCB25100E83180 /* Cores_iOS.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		B391F2BA27C157E600730B53 /* Provenance Clip */ = {
@@ -3004,9 +3046,9 @@
 			productReference = B391F2BB27C157E600730B53 /* Provenance Clip.app */;
 			productType = "com.apple.product-type.application.on-demand-install-capable";
 		};
-		B3C8A6A128781E800037A946 /* CoresRetro */ = {
+		B3C8A6A128781E800037A946 /* CoresRetro-tvOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3C8A6AA28781E840037A946 /* Build configuration list for PBXNativeTarget "CoresRetro" */;
+			buildConfigurationList = B3C8A6AA28781E840037A946 /* Build configuration list for PBXNativeTarget "CoresRetro-tvOS" */;
 			buildPhases = (
 				B3C8A69D28781E800037A946 /* Headers */,
 				B3C8A69E28781E800037A946 /* Sources */,
@@ -3018,9 +3060,47 @@
 			);
 			dependencies = (
 			);
-			name = CoresRetro;
+			name = "CoresRetro-tvOS";
 			productName = CoresRetro;
-			productReference = B3C8A6A228781E800037A946 /* CoresRetro.framework */;
+			productReference = B3C8A6A228781E800037A946 /* CoresRetro_tvOS.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		B3C8A6BB2878238C0037A946 /* CoresRetro-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3C8A6EB2878238C0037A946 /* Build configuration list for PBXNativeTarget "CoresRetro-iOS" */;
+			buildPhases = (
+				B3C8A6BC2878238C0037A946 /* Headers */,
+				B3C8A6BE2878238C0037A946 /* Sources */,
+				B3C8A6BF2878238C0037A946 /* Frameworks */,
+				B3C8A6D72878238C0037A946 /* Resources */,
+				B3C8A6FE287823DC0037A946 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "CoresRetro-iOS";
+			productName = Cores;
+			productReference = B3C8A6EF2878238C0037A946 /* CoresRetro-iOS.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		B3C8A70D287828BA0037A946 /* Cores-tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3C8A71A287828BA0037A946 /* Build configuration list for PBXNativeTarget "Cores-tvOS" */;
+			buildPhases = (
+				B3C8A70E287828BA0037A946 /* Headers */,
+				B3C8A710287828BA0037A946 /* Sources */,
+				B3C8A711287828BA0037A946 /* Frameworks */,
+				B3C8A715287828BA0037A946 /* Resources */,
+				B3C8A743287828FE0037A946 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Cores-tvOS";
+			productName = CoresRetro;
+			productReference = B3C8A71E287828BA0037A946 /* Cores-tvOS.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		B3E21D6A203211BE009939D3 /* Spotlight */ = {
@@ -3203,8 +3283,10 @@
 				B305EEF6276B4C71003AE510 /* Provenance Watch */,
 				B305EEF9276B4C71003AE510 /* Provenance Watch WatchKit App */,
 				B391F2BA27C157E600730B53 /* Provenance Clip */,
-				B3270F7E27DCB25100E83180 /* Cores */,
-				B3C8A6A128781E800037A946 /* CoresRetro */,
+				B3270F7E27DCB25100E83180 /* Cores-iOS */,
+				B3C8A6BB2878238C0037A946 /* CoresRetro-iOS */,
+				B3C8A70D287828BA0037A946 /* Cores-tvOS */,
+				B3C8A6A128781E800037A946 /* CoresRetro-tvOS */,
 			);
 		};
 /* End PBXProject section */
@@ -3300,6 +3382,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B3C8A6A028781E800037A946 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3C8A6D72878238C0037A946 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3C8A715287828BA0037A946 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3922,6 +4018,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3C8A6BE2878238C0037A946 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3C8A710287828BA0037A946 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3E21D67203211BE009939D3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -4000,13 +4110,28 @@
 		};
 		B3C8A6A728781E840037A946 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3C8A6A128781E800037A946 /* CoresRetro */;
+			target = B3C8A6A128781E800037A946 /* CoresRetro-tvOS */;
 			targetProxy = B3C8A6A628781E840037A946 /* PBXContainerItemProxy */;
 		};
 		B3C8A6B728781EBC0037A946 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3C8A6A128781E800037A946 /* CoresRetro */;
+			target = B3C8A6A128781E800037A946 /* CoresRetro-tvOS */;
 			targetProxy = B3C8A6B628781EBC0037A946 /* PBXContainerItemProxy */;
+		};
+		B3C8A708287827270037A946 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3270F7E27DCB25100E83180 /* Cores-iOS */;
+			targetProxy = B3C8A707287827270037A946 /* PBXContainerItemProxy */;
+		};
+		B3C8A70C287827330037A946 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3C8A6BB2878238C0037A946 /* CoresRetro-iOS */;
+			targetProxy = B3C8A70B287827330037A946 /* PBXContainerItemProxy */;
+		};
+		B3C8A7472878293C0037A946 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3C8A70D287828BA0037A946 /* Cores-tvOS */;
+			targetProxy = B3C8A7462878293C0037A946 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -5874,6 +5999,320 @@
 			};
 			name = Archive;
 		};
+		B3C8A6EC2878238C0037A946 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2780;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"GL_SILENCE_DEPRECATION=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					/usr/include/libxml2,
+				);
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.CoresRetro";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,6";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		B3C8A6ED2878238C0037A946 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 2780;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"GL_SILENCE_DEPRECATION=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					/usr/include/libxml2,
+				);
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.CoresRetro";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,6";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		B3C8A6EE2878238C0037A946 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 2780;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"GL_SILENCE_DEPRECATION=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					/usr/include/libxml2,
+				);
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.CoresRetro";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,6";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Archive;
+		};
+		B3C8A71B287828BA0037A946 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.Cores";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		B3C8A71C287828BA0037A946 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.Cores";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		B3C8A71D287828BA0037A946 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.Cores";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Archive;
+		};
 		B3E21D74203211BE009939D3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */;
@@ -6121,7 +6560,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3270F8727DCB25100E83180 /* Build configuration list for PBXNativeTarget "Cores" */ = {
+		B3270F8727DCB25100E83180 /* Build configuration list for PBXNativeTarget "Cores-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3270F8827DCB25100E83180 /* Debug */,
@@ -6171,12 +6610,32 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3C8A6AA28781E840037A946 /* Build configuration list for PBXNativeTarget "CoresRetro" */ = {
+		B3C8A6AA28781E840037A946 /* Build configuration list for PBXNativeTarget "CoresRetro-tvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3C8A6AB28781E840037A946 /* Debug */,
 				B3C8A6AC28781E840037A946 /* Release */,
 				B3C8A6AD28781E840037A946 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3C8A6EB2878238C0037A946 /* Build configuration list for PBXNativeTarget "CoresRetro-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3C8A6EC2878238C0037A946 /* Debug */,
+				B3C8A6ED2878238C0037A946 /* Release */,
+				B3C8A6EE2878238C0037A946 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3C8A71A287828BA0037A946 /* Build configuration list for PBXNativeTarget "Cores-tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3C8A71B287828BA0037A946 /* Debug */,
+				B3C8A71C287828BA0037A946 /* Release */,
+				B3C8A71D287828BA0037A946 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
