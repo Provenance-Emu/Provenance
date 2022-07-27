@@ -67,6 +67,7 @@ public enum SystemIdentifier: String, CaseIterable {
     case Genesis = "com.provenance.genesis"
     case Intellivision = "com.provenance.intellivision"
     case Lynx = "com.provenance.lynx"
+    case Macintosh = "com.provenance.macintosh"
     case MasterSystem = "com.provenance.mastersystem"
     case N64 = "com.provenance.n64"
     case NES = "com.provenance.nes"

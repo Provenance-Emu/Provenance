@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1330"
+   LastUpgradeVersion = "1340"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C7620F20783162009950E4"
-               BuildableName = "PVFBNeo.framework"
-               BlueprintName = "PVFBNeo-iOS"
-               ReferencedContainer = "container:PVFBNeo.xcodeproj">
+               BuildableName = "PVMiniVMac.framework"
+               BlueprintName = "PVMiniVMac-iOS"
+               ReferencedContainer = "container:PVMiniVMac.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -51,9 +51,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C7620F20783162009950E4"
-            BuildableName = "PVFBNeo.framework"
-            BlueprintName = "PVFBNeo-iOS"
-            ReferencedContainer = "container:PVFBNeo.xcodeproj">
+            BuildableName = "PVMiniVMac.framework"
+            BlueprintName = "PVMiniVMac-iOS"
+            ReferencedContainer = "container:PVMiniVMac.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

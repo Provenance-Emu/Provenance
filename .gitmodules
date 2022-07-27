@@ -82,3 +82,6 @@
 [submodule "Cores/DosBox/dosbox-pure"]
 	path = Cores/DosBox/dosbox-pure
 	url = https://github.com/Provenance-Emu/dosbox-pure.git
+[submodule "Cores/Mini_vMac/libretro-minivmac"]
+	path = Cores/Mini_vMac/libretro-minivmac
+	url = https://github.com/Provenance-Emu/libretro-minivmac.git

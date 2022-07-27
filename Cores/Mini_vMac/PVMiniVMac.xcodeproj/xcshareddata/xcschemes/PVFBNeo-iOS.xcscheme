@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C7620F20783162009950E4"
-               BuildableName = "PVFBNeo.framework"
+               BuildableName = "PVFNeo.framework"
                BlueprintName = "PVFBNeo-iOS"
                ReferencedContainer = "container:PVFBNeo.xcodeproj">
             </BuildableReference>
@@ -51,7 +51,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C7620F20783162009950E4"
-            BuildableName = "PVFBNeo.framework"
+            BuildableName = "PVFNeo.framework"
             BlueprintName = "PVFBNeo-iOS"
             ReferencedContainer = "container:PVFBNeo.xcodeproj">
          </BuildableReference>

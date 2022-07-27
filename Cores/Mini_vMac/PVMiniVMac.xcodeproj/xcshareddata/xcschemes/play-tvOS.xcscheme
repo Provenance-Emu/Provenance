@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1330"
+   LastUpgradeVersion = "1300"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3C7620F20783162009950E4"
-               BuildableName = "PVFBNeo.framework"
-               BlueprintName = "PVFBNeo-iOS"
-               ReferencedContainer = "container:PVFBNeo.xcodeproj">
+               BlueprintIdentifier = "B3447EE8218BEE3F00557ACE"
+               BuildableName = "libplay-tvOS.a"
+               BlueprintName = "play-tvOS"
+               ReferencedContainer = "container:PVDolphinCore.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -50,10 +50,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B3C7620F20783162009950E4"
-            BuildableName = "PVFBNeo.framework"
-            BlueprintName = "PVFBNeo-iOS"
-            ReferencedContainer = "container:PVFBNeo.xcodeproj">
+            BlueprintIdentifier = "B3447EE8218BEE3F00557ACE"
+            BuildableName = "libplay-tvOS.a"
+            BlueprintName = "play-tvOS"
+            ReferencedContainer = "container:PVDolphinCore.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

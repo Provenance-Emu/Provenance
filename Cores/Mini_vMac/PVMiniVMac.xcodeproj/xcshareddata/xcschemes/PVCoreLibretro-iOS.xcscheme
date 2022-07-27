@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1330"
+   LastUpgradeVersion = "1340"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3C7620F20783162009950E4"
-               BuildableName = "PVFBNeo.framework"
-               BlueprintName = "PVFBNeo-iOS"
-               ReferencedContainer = "container:PVFBNeo.xcodeproj">
+               BlueprintIdentifier = "B39769042859E32B00558958"
+               BuildableName = "PVCoreLibretro.framework"
+               BlueprintName = "PVCoreLibretro-iOS"
+               ReferencedContainer = "container:PVDosBox.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -50,10 +50,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B3C7620F20783162009950E4"
-            BuildableName = "PVFBNeo.framework"
-            BlueprintName = "PVFBNeo-iOS"
-            ReferencedContainer = "container:PVFBNeo.xcodeproj">
+            BlueprintIdentifier = "B39769042859E32B00558958"
+            BuildableName = "PVCoreLibretro.framework"
+            BlueprintName = "PVCoreLibretro-iOS"
+            ReferencedContainer = "container:PVDosBox.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
