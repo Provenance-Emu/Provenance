@@ -6,7 +6,6 @@
     #import "Services/PVAltKitService.h"
 #endif
 
-#import "PVAvailability.h"
 #import "PVLogViewController.h"
 #import "PVGLViewController.h"
 #import "PVMetalViewController.h"

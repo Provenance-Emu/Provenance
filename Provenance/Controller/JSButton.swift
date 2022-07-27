@@ -15,18 +15,23 @@ protocol JSButtonDelegate: AnyObject {
     func buttonReleased(_ button: JSButton)
 }
 
-final class JSButton: UIView {
+final class JSButton: MovableButtonView {
+
     private(set) var titleLabel: UILabel!
     private var backgroundImageView: UIImageView! {
         didSet {
-            backgroundImageView.image = backgroundImage
+			DispatchQueue.main.async { [unowned self] in
+				self.backgroundImageView.image = backgroundImage
+			}
         }
     }
 
     var backgroundImage: UIImage? {
         didSet {
             if pressed {
-                backgroundImageView.image = backgroundImage
+				DispatchQueue.main.async { [unowned self] in
+					self.backgroundImageView.image = backgroundImage
+				}
             }
         }
     }
@@ -34,10 +39,23 @@ final class JSButton: UIView {
     var backgroundImagePressed: UIImage? {
         didSet {
             if !pressed {
-                backgroundImageView.image = backgroundImage
+				DispatchQueue.main.async { [unowned self] in
+					self.backgroundImageView.image = backgroundImage
+				}
             }
         }
     }
+
+//	var hitAreaInset: UIEdgeInsets {
+//		let width = frame.size.width
+//		let height = frame.size.height
+//		let widthInset = width * -0.5
+//		let heightInset = height * -0.5
+//		return UIEdgeInsets(top: heightInset,
+//							left: widthInset,
+//							bottom: heightInset,
+//							right: widthInset)
+//	}
 
     var titleEdgeInsets: UIEdgeInsets = .zero {
         didSet {
@@ -61,7 +79,9 @@ final class JSButton: UIView {
                 return
             }
 
-            backgroundImageView?.image = pressed ? backgroundImagePressed : backgroundImage
+			DispatchQueue.main.async { [unowned self] in
+				self.backgroundImageView?.image = pressed ? backgroundImagePressed : backgroundImage
+			}
         }
     }
 
@@ -133,12 +153,26 @@ final class JSButton: UIView {
         }
     }
 
-    override func touchesBegan(_: Set<UITouch>, with _: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+		if !isUserInteractionEnabled {  return }
+
+        if inMoveMode {
+            super.touchesBegan(touches, with: event)
+            return
+        }
+
         delegate?.buttonPressed(self)
         pressed = true
     }
 
-    override func touchesMoved(_ touches: Set<UITouch>, with _: UIEvent?) {
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+		if !isUserInteractionEnabled {  return }
+
+		if inMoveMode {
+			super.touchesMoved(touches, with: event)
+			return
+		}
+
         guard let touch = touches.first else {
             return
         }
@@ -160,12 +194,26 @@ final class JSButton: UIView {
         self.pressed = pressed
     }
 
-    override func touchesEnded(_: Set<UITouch>, with _: UIEvent?) {
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+		if !isUserInteractionEnabled {  return }
+
+		if inMoveMode {
+            super.touchesEnded(touches, with: event)
+            return
+        }
+
         delegate?.buttonReleased(self)
         pressed = false
     }
 
-    override func touchesCancelled(_: Set<UITouch>, with _: UIEvent?) {
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+		if !isUserInteractionEnabled {  return }
+
+		if inMoveMode {
+            super.touchesCancelled(touches, with: event)
+            return
+        }
+
         delegate?.buttonReleased(self)
         pressed = false
     }

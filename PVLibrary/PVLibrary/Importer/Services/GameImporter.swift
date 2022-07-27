@@ -746,6 +746,13 @@ public extension GameImporter {
             // No system found to match this file
             guard var systems = systemsMaybe else {
                 ELOG("No system matched extension {\(fileExtensionLower)}")
+				do {
+					try FileManager.default.moveItem(at: path, to: conflictPath)
+					ILOG("It's a new game, so we moved \(filename) to conflicts dir")
+					self.encounteredConflicts = true
+				} catch {
+					ELOG("Failed to move \(urlPath.path) to conflicts dir")
+				}
                 return
             }
 
@@ -1246,12 +1253,16 @@ extension GameImporter {
     }
 
     public func getArtwork(forGame game: PVGame) {
-        let url = game.originalArtworkURL
+        var url = game.originalArtworkURL
         if url.isEmpty || PVMediaCache.fileExists(forKey: url) {
             return
         }
 
         DLOG("Starting Artwork download for \(url)")
+
+		#warning("Evil hack for bad domain in DB")
+		url = url.replacingOccurrences(of: "gamefaqs1.cbsistatic.com/box/", with:
+	"gamefaqs.gamespot.com/a/box/")
 
         guard let artworkURL = URL(string: url) else {
             return
@@ -1481,6 +1492,15 @@ extension GameImporter {
 
         // Try to move the file to it's home
         do {
+			guard fm.fileExists(atPath: filePath.path) else {
+				ELOG("No file exists at <\(filePath)>")
+				return nil
+			}
+			if fm.fileExists(atPath: destination.path) {
+				#warning("What to do? overwrite? Prompt user?") // Can use a new FileManager with a deleagte to get callbacks for this
+				try fm.removeItem(at: destination)
+			}
+
             try fm.moveItem(at: filePath, to: destination)
             ILOG("Moved file \(filePath.path) to directory \(destination.path)")
         } catch {

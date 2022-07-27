@@ -29,7 +29,7 @@ protocol JSDPadDelegate: AnyObject {
     func dPad(_ dPad: JSDPad, didRelease direction: JSDPadDirection)
 }
 
-final class JSDPad: UIView {
+final class JSDPad: MovableButtonView {
 
     public class func JoyPad(frame: CGRect) -> JSDPad {
         let dpad = JSDPad.init(frame: frame)
@@ -139,29 +139,34 @@ final class JSDPad: UIView {
     func image(for direction: JSDPadDirection) -> UIImage? {
         var image: UIImage?
         switch direction {
-        case .up:
-            image = UIImage(named: "dPad-Up")
-        case .down:
-            image = UIImage(named: "dPad-Down")
-        case .left:
-            image = UIImage(named: "dPad-Left")
-        case .right:
-            image = UIImage(named: "dPad-Right")
-        case .upLeft:
-            image = UIImage(named: "dPad-UpLeft")
-        case .upRight:
-            image = UIImage(named: "dPad-UpRight")
-        case .downLeft:
-            image = UIImage(named: "dPad-DownLeft")
-        case .downRight:
-            image = UIImage(named: "dPad-DownRight")
-        case .none:
-            image = UIImage(named: "dPad-None")
+            case .up:
+                image = UIImage(named: "dPad-Up")
+            case .down:
+                image = UIImage(named: "dPad-Down")
+            case .left:
+                image = UIImage(named: "dPad-Left")
+            case .right:
+                image = UIImage(named: "dPad-Right")
+            case .upLeft:
+                image = UIImage(named: "dPad-UpLeft")
+            case .upRight:
+                image = UIImage(named: "dPad-UpRight")
+            case .downLeft:
+                image = UIImage(named: "dPad-DownLeft")
+            case .downRight:
+                image = UIImage(named: "dPad-DownRight")
+            case .none:
+                image = UIImage(named: "dPad-None")
         }
         return image
     }
 
-    override func touchesBegan(_ touches: Set<UITouch>, with _: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+		if inMoveMode || !isUserInteractionEnabled {
+			super.touchesBegan(touches, with: event)
+			return
+		}
+
         guard let delegate = delegate, let touch = touches.first else {
             return
         }
@@ -187,7 +192,12 @@ final class JSDPad: UIView {
         delegate!.dPad(self, joystick: (x: Float(x), y: Float(y)))
     }
 
-    override func touchesMoved(_ touches: Set<UITouch>, with _: UIEvent?) {
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+		if inMoveMode || !isUserInteractionEnabled {
+			super.touchesMoved(touches, with: event)
+			return
+		}
+
         guard let delegate = delegate, let touch = touches.first else {
             return
         }
@@ -206,7 +216,12 @@ final class JSDPad: UIView {
         }
     }
 
-    override func touchesCancelled(_: Set<UITouch>, with _: UIEvent?) {
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+		if inMoveMode || !isUserInteractionEnabled {
+			super.touchesCancelled(touches, with: event)
+			return
+		}
+
         currentDirection = .none
         dPadImageView.image = image(for: currentDirection)
 
@@ -222,7 +237,12 @@ final class JSDPad: UIView {
         }
     }
 
-    override func touchesEnded(_: Set<UITouch>, with _: UIEvent?) {
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+		if inMoveMode || !isUserInteractionEnabled {
+			super.touchesEnded(touches, with: event)
+			return
+		}
+
         currentDirection = .none
         dPadImageView.image = image(for: currentDirection)
 
