@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.Opera</string>
 	<key>PVPrincipleClass</key>
-	<string>PVOpera</string>
+	<string>PVOperaCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.3do</string>

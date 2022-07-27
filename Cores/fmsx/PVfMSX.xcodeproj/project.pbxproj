@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B301797F207C909E0051B93D /* libfMSX.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libfMSX.a */; };
 		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
 		B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C31B2191964F009F4EDC /* AVFoundation.framework */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
@@ -133,6 +132,10 @@
 		B3EBB1F428729C8000EAEB37 /* rtime.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC902872972000EAEB37 /* rtime.c */; };
 		B3EBB1F528729C8E00EAEB37 /* stdstring.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC922872972000EAEB37 /* stdstring.c */; };
 		B3EBB1F628729C8F00EAEB37 /* stdstring.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC922872972000EAEB37 /* stdstring.c */; };
+		B3EBB1FD2872B1A000EAEB37 /* libfMSX.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libfMSX.a */; };
+		B3EBB1FE2872B1AA00EAEB37 /* libfMSX.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3447F91218BEE3F00557ACE /* libfMSX.a */; };
+		B3EBB2012872B1F600EAEB37 /* encoding_utf.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC3E2872971F00EAEB37 /* encoding_utf.c */; };
+		B3EBB2022872B1F700EAEB37 /* encoding_utf.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC3E2872971F00EAEB37 /* encoding_utf.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -396,6 +399,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3EBB1FD2872B1A000EAEB37 /* libfMSX.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -428,6 +432,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3EBB1FE2872B1AA00EAEB37 /* libfMSX.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -440,7 +445,6 @@
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
-				B301797F207C909E0051B93D /* libfMSX.a in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
 				B39768F82859E23200558958 /* libfMSX-libretro.a in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
@@ -1153,6 +1157,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3EBB1E428729C5000EAEB37 /* compat_strl.c in Sources */,
+				B3EBB2012872B1F600EAEB37 /* encoding_utf.c in Sources */,
 				B3EBB1DF28729C2600EAEB37 /* retro_dirent.c in Sources */,
 				B3EBB1E328729C5000EAEB37 /* fopen_utf8.c in Sources */,
 				B3EBB1DE28729C2600EAEB37 /* file_path.c in Sources */,
@@ -1202,6 +1207,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3EBB1E928729C5100EAEB37 /* compat_strl.c in Sources */,
+				B3EBB2022872B1F700EAEB37 /* encoding_utf.c in Sources */,
 				B3EBB1E228729C2700EAEB37 /* retro_dirent.c in Sources */,
 				B3EBB1E828729C5100EAEB37 /* fopen_utf8.c in Sources */,
 				B3EBB1E128729C2700EAEB37 /* file_path.c in Sources */,

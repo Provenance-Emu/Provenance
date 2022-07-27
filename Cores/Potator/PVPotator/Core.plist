@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.potator</string>
 	<key>PVPrincipleClass</key>
-	<string>PVPotator</string>
+	<string>PVPotatorCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.supervision</string>

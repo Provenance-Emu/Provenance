@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.Yabause</string>
 	<key>PVPrincipleClass</key>
-	<string>PVYabause</string>
+	<string>PVYabauseCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.saturn</string>

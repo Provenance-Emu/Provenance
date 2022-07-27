@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.PCSXRearmed</string>
 	<key>PVPrincipleClass</key>
-	<string>PVPCSXRearmed</string>
+	<string>PVPCSXRearmedCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.psx</string>

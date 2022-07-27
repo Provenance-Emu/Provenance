@@ -1378,27 +1378,27 @@ static void load_dynamic_core(void)
     const char* corepath = config_get_active_core_path();
     lib_handle = dylib_load(corepath);
     
-    function_t sym       = dylib_proc(lib_handle, "retro_init");
+//    function_t sym       = dylib_proc(lib_handle, "retro_init");
     
-    if (sym)
-    {
-        /* Try to verify that -lretro was not linked in from other modules
-         * since loading it dynamically and with -l will fail hard. */
-        ELOG(@"Serious problem. RetroArch wants to load libretro cores"
-             "dyamically, but it is already linked.\n");
-        ELOG(@"This could happen if other modules RetroArch depends on "
-             "link against libretro directly.\n");
-        ELOG(@"Proceeding could cause a crash. Aborting ...\n");
-        retroarch_fail(1, "init_libretro_sym()");
-    }
-    
-    if (string_is_empty(config_get_active_core_path()))
-    {
-        ELOG(@"RetroArch is built for dynamic libretro cores, but "
-             "libretro_path is not set. Cannot continue.\n");
-        retroarch_fail(1, "init_libretro_sym()");
-    }
-    
+//    if (sym)
+//    {
+//        /* Try to verify that -lretro was not linked in from other modules
+//         * since loading it dynamically and with -l will fail hard. */
+//        ELOG(@"Serious problem. RetroArch wants to load libretro cores"
+//             "dyamically, but it is already linked.\n");
+//        ELOG(@"This could happen if other modules RetroArch depends on "
+//             "link against libretro directly.\n");
+//        ELOG(@"Proceeding could cause a crash. Aborting ...\n");
+//        retroarch_fail(1, "init_libretro_sym()");
+//    }
+//
+//    if (string_is_empty(config_get_active_core_path()))
+//    {
+//        ELOG(@"RetroArch is built for dynamic libretro cores, but "
+//             "libretro_path is not set. Cannot continue.\n");
+//        retroarch_fail(1, "init_libretro_sym()");
+//    }
+//
     /* Need to use absolute path for this setting. It can be
      * saved to content history, and a relative path would
      * break in that scenario. */

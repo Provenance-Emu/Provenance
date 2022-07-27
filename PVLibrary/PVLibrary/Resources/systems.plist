@@ -3719,7 +3719,118 @@
 		<key>PVRequiresBIOS</key>
 		<false/>
 		<key>PVBIOSNames</key>
-		<array/>
+		<array>
+			<dict>
+				<key>Description</key>
+				<string>MSX BIOS</string>
+				<key>MD5</key>
+				<string>364a1a579fe5cb8dba54519bcfcdac0d</string>
+				<key>Name</key>
+				<string>MSX.ROM</string>
+				<key>Size</key>
+				<integer>0</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>MSX2 BIOS </string>
+				<key>MD5</key>
+				<string>ec3a01c91f24fbddcbcab0ad301bc9ef</string>
+				<key>Name</key>
+				<string>MSX2.ROM</string>
+				<key>Size</key>
+				<integer>0</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>MSX2 ExtROM</string>
+				<key>MD5</key>
+				<string>2183c2aff17cf4297bdb496de78c2e8a</string>
+				<key>Name</key>
+				<string>MSX2EXT.ROM</string>
+				<key>Size</key>
+				<integer>0</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>MSX2+ BIOS</string>
+				<key>MD5</key>
+				<string>847cc025ffae665487940ff2639540e5</string>
+				<key>Name</key>
+				<string>MSX2P.ROM</string>
+				<key>Size</key>
+				<integer>0</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>MSX2+ ExtROM</string>
+				<key>MD5</key>
+				<string>7c8243c71d8f143b2531f01afa6a05dc</string>
+				<key>Name</key>
+				<string>MSX2PEXT.ROM</string>
+				<key>Size</key>
+				<integer>0</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>DiskROM/BDOS</string>
+				<key>MD5</key>
+				<string>80dcd1ad1a4cf65d64b7ba10504e8190</string>
+				<key>Name</key>
+				<string>DISK.ROM</string>
+				<key>Size</key>
+				<integer>0</integer>
+				<key>Optional</key>
+				<true/>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>FMPAC BIOS</string>
+				<key>MD5</key>
+				<string>6f69cc8b5ed761b03afd78000dfb0e19</string>
+				<key>Name</key>
+				<string>FMPAC.ROM</string>
+				<key>Size</key>
+				<integer>0</integer>
+				<key>Optional</key>
+				<true/>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>MSX-DOS 2</string>
+				<key>MD5</key>
+				<string>6418d091cd6907bbcf940324339e43bb</string>
+				<key>Name</key>
+				<string>MSXDOS2.ROM</string>
+				<key>Size</key>
+				<integer>0</integer>
+				<key>Optional</key>
+				<true/>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>Yamaha Painter</string>
+				<key>MD5</key>
+				<string>403cdea1cbd2bb24fae506941f8f655e</string>
+				<key>Name</key>
+				<string>PAINTER.ROM</string>
+				<key>Size</key>
+				<integer>0</integer>
+				<key>Optional</key>
+				<true/>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>Kanji Font</string>
+				<key>MD5</key>
+				<string>febe8782b466d7c3b16de6d104826b34</string>
+				<key>Name</key>
+				<string>KANJI.ROM</string>
+				<key>Size</key>
+				<integer>0</integer>
+				<key>Optional</key>
+				<true/>
+			</dict>
+		</array>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>cas</string>
@@ -3727,8 +3838,12 @@
 			<string>wav</string>
 			<string>dsk</string>
 			<string>msx</string>
+			<string>mx2</string>
+			<string>mx1</string>
 			<string>img</string>
 			<string>dmk</string>
+			<string>rom</string>
+			<string>cue</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>

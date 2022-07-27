@@ -509,7 +509,6 @@
 		B3A40C7121A67C7800544C20 /* PVGameLibrarySectionFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A40C7021A67C7800544C20 /* PVGameLibrarySectionFooterView.swift */; };
 		B3A40C7221A67C7800544C20 /* PVGameLibrarySectionFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A40C7021A67C7800544C20 /* PVGameLibrarySectionFooterView.swift */; };
 		B3A4FB60278FF84800A65248 /* ApplicationMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A4FB5F278FF84800A65248 /* ApplicationMonitor.swift */; };
-		B3A4FB62278FFA0F00A65248 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A4FB61278FFA0F00A65248 /* LocationManager.swift */; };
 		B3A4FB64278FFA5100A65248 /* PublishedPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A4FB63278FFA5100A65248 /* PublishedPipeline.swift */; };
 		B3A4FB66278FFB6600A65248 /* Result+Conveniences.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A4FB65278FFB6600A65248 /* Result+Conveniences.swift */; };
 		B3AB37322187F569009D9244 /* PVSNESControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB371E2187F568009D9244 /* PVSNESControllerViewController.swift */; };
@@ -628,6 +627,8 @@
 		B3E6DAE120B7C2F800454DD4 /* PVLogViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3E6DAE020B7C2F800454DD4 /* PVLogViewController.xib */; };
 		B3EA0CD32070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
 		B3EA0CD42070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
+		B3EBB1F828729DCD00EAEB37 /* PVfMSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EBB1F728729DCD00EAEB37 /* PVfMSX.framework */; };
+		B3EBB1F928729DCD00EAEB37 /* PVfMSX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3EBB1F728729DCD00EAEB37 /* PVfMSX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F43DCF2168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F43DD02168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F43DE22169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */; };
@@ -793,6 +794,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				B3EBB1F928729DCD00EAEB37 /* PVfMSX.framework in Embed Frameworks */,
 				55546DF2257D6CA800616332 /* PVTGBDual.framework in Embed Frameworks */,
 				B3CB85C01E9BFB07009155A6 /* PVPokeMini.framework in Embed Frameworks */,
 				B3C9D4AF1DEA74390068D057 /* PVGB.framework in Embed Frameworks */,
@@ -1428,6 +1430,7 @@
 		B3E6DADB20B7AD1500454DD4 /* PVLogViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVLogViewController.m; sourceTree = "<group>"; };
 		B3E6DAE020B7C2F800454DD4 /* PVLogViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PVLogViewController.xib; sourceTree = "<group>"; };
 		B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSaveStateInfoViewController.swift; sourceTree = "<group>"; };
+		B3EBB1F728729DCD00EAEB37 /* PVfMSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVfMSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3F43DCE2168075200CDD40A /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemsSettingsTableViewController.swift; sourceTree = "<group>"; };
 		B3F64ECB205CD1D600C273C7 /* JSDPad.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSDPad.swift; sourceTree = "<group>"; };
@@ -1484,6 +1487,7 @@
 				1A2A95AA17F7682400F1CB0D /* libstdc++.dylib in Frameworks */,
 				1A2B0E8E1AD18961005FB77C /* libc++.dylib in Frameworks */,
 				B37F4AF5286E94C60043F1C9 /* PVDesmume2015.framework in Frameworks */,
+				B3EBB1F828729DCD00EAEB37 /* PVfMSX.framework in Frameworks */,
 				1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */,
 				B3C9D4331DEA1B340068D057 /* PVGenesis.framework in Frameworks */,
 				B354693C1DECDA710018B6F3 /* PVAtari800.framework in Frameworks */,
@@ -3475,7 +3479,6 @@
 				B36D9DF8203562E000D583C4 /* PVControllerViewController.swift in Sources */,
 				378F4A021B63D7CD0065FA39 /* GCDWebServerFunctions.m in Sources */,
 				B35E6C2F207ED7050040709A /* AppearanceStyle.swift in Sources */,
-				B3A4FB62278FFA0F00A65248 /* LocationManager.swift in Sources */,
 				B35E6C27207ED7050040709A /* AppearanceStyleable.swift in Sources */,
 				B3D534E220AFF21900A83D4E /* Version.swift in Sources */,
 				B37B71B0278E33B9005FB278 /* MenuButton.swift in Sources */,

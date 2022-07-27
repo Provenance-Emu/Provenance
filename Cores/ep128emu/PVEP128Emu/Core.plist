@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.EP128Emu</string>
 	<key>PVPrincipleClass</key>
-	<string>PVEP128Emu</string>
+	<string>PVEP128EmuCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.ep128</string>

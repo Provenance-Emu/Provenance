@@ -121,7 +121,7 @@
 //- (BOOL)supportsCheatCodes { return NO; }
 
 - (NSTimeInterval)frameInterval {
-    return 13.63;
+    return 60;
 }
 
 - (CGSize)aspectSize {
@@ -129,7 +129,7 @@
 }
 
 - (CGSize)bufferSize {
-    return CGSizeMake(1440, 1080);
+    return CGSizeMake(1024, 768);
 }
 
 - (GLenum)pixelFormat {
@@ -147,6 +147,6 @@
 # pragma mark - Audio
 
 - (double)audioSampleRate {
-    return 22255;
+    return 4800;
 }
 @end

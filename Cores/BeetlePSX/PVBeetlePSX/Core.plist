@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.beetle.psx</string>
 	<key>PVPrincipleClass</key>
-	<string>PVBeetlePSX</string>
+	<string>PVBeetlePSXCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.psx</string>
