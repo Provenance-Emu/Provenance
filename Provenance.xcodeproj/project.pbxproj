@@ -178,6 +178,8 @@
 		B305F08C276B5248003AE510 /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B305F08A276B5248003AE510 /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B306E0CF2769F2C2001DC52E /* PVOdyssey2ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B306E0CE2769F2C2001DC52E /* PVOdyssey2ControllerViewController.swift */; };
 		B306E0D02769F2C2001DC52E /* PVOdyssey2ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B306E0CE2769F2C2001DC52E /* PVOdyssey2ControllerViewController.swift */; };
+		B307830628924D69007E7A2D /* GLES in Resources */ = {isa = PBXBuildFile; fileRef = B3427C0C287EA5030054C1B5 /* GLES */; };
+		B307830728924D6B007E7A2D /* GLES in Resources */ = {isa = PBXBuildFile; fileRef = B3427C0C287EA5030054C1B5 /* GLES */; };
 		B31117B0218EB3A900C495A2 /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */; };
 		B31117B1218EB3AA00C495A2 /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */; };
 		B31117B3218EB3AE00C495A2 /* PVButtonGroupOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ED1205CD20800C273C7 /* PVButtonGroupOverlayView.swift */; };
@@ -395,6 +397,8 @@
 		B35E6C30207ED7050040709A /* AppearanceStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C1F207ED7040040709A /* AppearanceStyle.swift */; };
 		B35E6C31207ED7050040709A /* AppearanceStyleHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C20207ED7050040709A /* AppearanceStyleHelpers.swift */; };
 		B35E6C32207ED7050040709A /* AppearanceStyleHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C20207ED7050040709A /* AppearanceStyleHelpers.swift */; };
+		B3607B81289238ED00509A68 /* PVBeetlePSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3607B80289238ED00509A68 /* PVBeetlePSX.framework */; };
+		B3607B82289238EE00509A68 /* PVBeetlePSX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3607B80289238ED00509A68 /* PVBeetlePSX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B361F62E27C07AD10080D368 /* PVRootViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29627BC7E610070E222 /* PVRootViewModel.swift */; };
 		B361F62F27C07B240080D368 /* ConsoleGamesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29927BC7E610070E222 /* ConsoleGamesView.swift */; };
 		B361F63027C07B240080D368 /* ConsolesWrapperView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29827BC7E610070E222 /* ConsolesWrapperView.swift */; };
@@ -629,8 +633,6 @@
 		B3DB11AB205C7F7B00A6E845 /* UIView+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AA205C7F7B00A6E845 /* UIView+Theming.swift */; };
 		B3DB11AD205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */; };
 		B3DB11AE205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */; };
-		B3E0AB39289214F500DB1E39 /* PVHatari.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E0AB38289214F500DB1E39 /* PVHatari.framework */; };
-		B3E0AB3A289214F500DB1E39 /* PVHatari.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E0AB38289214F500DB1E39 /* PVHatari.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E21D6E203211BE009939D3 /* IndexRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E21D6D203211BE009939D3 /* IndexRequestHandler.swift */; };
 		B3E21D72203211BE009939D3 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3E3B5D9202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */; };
@@ -879,6 +881,7 @@
 				B3270FA527DCB2CA00E83180 /* PVAtari800.framework in Embed Frameworks */,
 				B3270FAD27DCB2CA00E83180 /* PVSNES.framework in Embed Frameworks */,
 				B3270FB327DCB2CB00E83180 /* PVTGBDual.framework in Embed Frameworks */,
+				B3607B82289238EE00509A68 /* PVBeetlePSX.framework in Embed Frameworks */,
 				B3270FA127DCB2CA00E83180 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
 				B3270F9327DCB2CA00E83180 /* PVFCEU.framework in Embed Frameworks */,
 				B3270FA727DCB2CA00E83180 /* PVGB.framework in Embed Frameworks */,
@@ -929,7 +932,6 @@
 				B3C8A6F7287823DC0037A946 /* PVPotator.framework in Embed Frameworks */,
 				B3C8A6F1287823DC0037A946 /* PVMiniVMac.framework in Embed Frameworks */,
 				B3C8A6FD287823DC0037A946 /* PVDosBox.framework in Embed Frameworks */,
-				B3E0AB3A289214F500DB1E39 /* PVHatari.framework in Embed Frameworks */,
 				B3C8A6FB287823DC0037A946 /* PVDesmume2015.framework in Embed Frameworks */,
 				B3C8A701287824670037A946 /* PVMelonDS.framework in Embed Frameworks */,
 			);
@@ -1333,6 +1335,9 @@
 		B35E6C1E207ED7040040709A /* UIWindowExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIWindowExtensions.swift; sourceTree = "<group>"; };
 		B35E6C1F207ED7040040709A /* AppearanceStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppearanceStyle.swift; sourceTree = "<group>"; };
 		B35E6C20207ED7050040709A /* AppearanceStyleHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppearanceStyleHelpers.swift; sourceTree = "<group>"; };
+		B3607B7A289235DD00509A68 /* PVBeetlePSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBeetlePSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3607B7D2892388900509A68 /* PVBeetlePSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBeetlePSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3607B80289238ED00509A68 /* PVBeetlePSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBeetlePSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B361938F221FB93B00F73875 /* Provenance-Free.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Provenance-Free.entitlements"; path = "Provenance/Provenance-Free.entitlements"; sourceTree = SOURCE_ROOT; };
 		B36455EB278E919500B6E87A /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36C7D5627AE2CF400715677 /* PVAtari800-tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = "PVAtari800-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1648,6 +1653,7 @@
 				B3270FBC27DCB62C00E83180 /* libz.dylib in Frameworks */,
 				B3270FAA27DCB2CA00E83180 /* PVGenesis.framework in Frameworks */,
 				B3270F9A27DCB2CA00E83180 /* PVMupen64Plus.framework in Frameworks */,
+				B3607B81289238ED00509A68 /* PVBeetlePSX.framework in Frameworks */,
 				B3270FA227DCB2CA00E83180 /* PVRSPCXD4.framework in Frameworks */,
 				B3270F9E27DCB2CA00E83180 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
 				B3270FB827DCB62C00E83180 /* libc++.dylib in Frameworks */,
@@ -1698,7 +1704,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3E0AB39289214F500DB1E39 /* PVHatari.framework in Frameworks */,
 				B3C8A6FA287823DC0037A946 /* PVDesmume2015.framework in Frameworks */,
 				B3C8A6C02878238C0037A946 /* libz.dylib in Frameworks */,
 				B3C8A700287824670037A946 /* PVMelonDS.framework in Frameworks */,
@@ -1863,6 +1868,9 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3607B80289238ED00509A68 /* PVBeetlePSX.framework */,
+				B3607B7D2892388900509A68 /* PVBeetlePSX.framework */,
+				B3607B7A289235DD00509A68 /* PVBeetlePSX.framework */,
 				B3E0AB38289214F500DB1E39 /* PVHatari.framework */,
 				B32296E3287838AB00585AD8 /* PVVecXGL.framework */,
 				B32296E02878386700585AD8 /* PVYabause.framework */,
@@ -3357,6 +3365,7 @@
 				B3592CE52070B9DE00533593 /* PVSaveStateCollectionViewCell.xib in Resources */,
 				B3296EB526CABF250088AC32 /* Cheats.storyboard in Resources */,
 				B3296EDE26CAC27C0088AC32 /* PVGameLibraryCollectionViewCell.xib in Resources */,
+				B307830628924D69007E7A2D /* GLES in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3365,6 +3374,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1AD481D61BA3542D00FDA50A /* GCDWebUploader.bundle in Resources */,
+				B307830728924D6B007E7A2D /* GLES in Resources */,
 				B3AE1F762073504400AD06D4 /* PVSaveStateCollectionViewCell~tvOS.xib in Resources */,
 				B3890BF920B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib in Resources */,
 				B3F64ECA205CBD1200C273C7 /* licenses.html in Resources */,
