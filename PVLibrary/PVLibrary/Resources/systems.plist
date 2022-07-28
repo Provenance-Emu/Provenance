@@ -666,6 +666,10 @@
 		<array>
 			<string>cue</string>
 			<string>ccd</string>
+			<string>pbp</string>
+			<string>chd</string>
+			<string>m3u</string>
+			<string>toc</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
