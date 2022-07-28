@@ -58,6 +58,41 @@
 
 #define RETRO_API_VERSION 1
 
+char rotation_lut[4][32] =
+{
+   "Normal",
+   "90 deg",
+   "180 deg",
+   "270 deg"
+};
+
+
+struct aspect_ratio_elem aspectratio_lut[ASPECT_RATIO_END] = {
+   { "4:3",           1.3333f },
+   { "16:9",          1.7778f },
+   { "16:10",         1.6f },
+   { "16:15",         16.0f / 15.0f },
+   { "1:1",           1.0f },
+   { "2:1",           2.0f },
+   { "3:2",           1.5f },
+   { "3:4",           0.75f },
+   { "4:1",           4.0f },
+   { "4:4",           1.0f },
+   { "5:4",           1.25f },
+   { "6:5",           1.2f },
+   { "7:9",           0.7777f },
+   { "8:3",           2.6666f },
+   { "8:7",           1.1428f },
+   { "19:12",         1.5833f },
+   { "19:14",         1.3571f },
+   { "30:17",         1.7647f },
+   { "32:9",          3.5555f },
+   { "Config",        0.0f },
+   { "Square pixel",  1.0f },
+   { "Core provided", 1.0f },
+   { "Custom",        0.0f }
+};
+
 @interface PVLibRetroCore ()
 {
     BOOL loaded;
@@ -122,13 +157,12 @@ char *config_get_active_core_path_ptr(void) {
 NSString *privateFrameworkPath(void) {
     NSBundle *bundle = [NSBundle bundleForClass:[_current class]];
     //    const char* path = [bundle.executablePath fileSystemRepresentation];
-    NSString *bundleName = bundle.infoDictionary[@"CFBundleName"];
-    NSString *executableName = bundle.infoDictionary[@"CFBundleExecutable"];
+//    NSString *executableName = bundle.infoDictionary[@"CFBundleExecutable"];
     
-    NSString *frameworkPath = [NSString stringWithFormat:@"%@.framework/%@", bundleName, executableName];
-    NSString *privateFrameworkPath = [[[NSBundle mainBundle] privateFrameworksPath] stringByAppendingPathComponent:frameworkPath];
-    DLOG(@"%@", privateFrameworkPath);
-    return privateFrameworkPath;
+    NSString *frameworkPath = bundle.bundlePath; //[NSString stringWithFormat:@"%@.framework/%@", bundleName, executableName];
+//    NSString *privateFrameworkPath = [[[NSBundle mainBundle] privateFrameworksPath] stringByAppendingPathComponent:frameworkPath];
+//    DLOG(@"%@", privateFrameworkPath);
+    return frameworkPath;
 }
 
 const char *config_get_active_core_path(void) {
@@ -1464,6 +1498,8 @@ static bool environment_callback(unsigned cmd, void *data) {
                                                         * Valid values are 0, 1, 2, 3, which rotates screen by 0, 90, 180,
                                                         * 270 degrees counter-clockwise respectively.
                                                         */
+            ILOG(@"%i", *(const unsigned*)data);
+            return false;
         case RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE:
                                                       /* const struct retro_disk_control_callback * --
                                                        * Sets an interface which frontend can use to eject and insert
@@ -1471,6 +1507,9 @@ static bool environment_callback(unsigned cmd, void *data) {
                                                        * This is used for games which consist of multiple images and
                                                        * must be manually swapped out by the user (e.g. PSX).
                                                        */
+//            const struct retro_disk_control_callback* cb = (const struct retro_disk_control_callback*)data
+//            ILOG(@"%i", cb->data);
+            return false;
         case RETRO_ENVIRONMENT_SET_HW_RENDER:
                                                       /* struct retro_hw_render_callback * --
                                                        * Sets an interface to let a libretro core render with
@@ -1483,7 +1522,10 @@ static bool environment_callback(unsigned cmd, void *data) {
                                                        * If HW rendering is used, pass only RETRO_HW_FRAME_BUFFER_VALID or
                                                        * NULL to retro_video_refresh_t.
                                                        */
-        case RETRO_ENVIRONMENT_GET_RUMBLE_INTERFACE:
+//            struct retro_hw_render_callback* cb = (const struct retro_hw_render_callback*)data;
+//            ILOG(@"%i", cb);
+            return true;
+        case RETRO_ENVIRONMENT_GET_RUMBLE_INTERFACE: {
                                            /* struct retro_rumble_interface * --
                                             * Gets an interface which is used by a libretro core to set
                                             * state of rumble motors in controllers.
@@ -1493,7 +1535,10 @@ static bool environment_callback(unsigned cmd, void *data) {
                                             * Should not be called from retro_set_environment().
                                             * Returns false if rumble functionality is unavailable.
                                             */
-        case RETRO_ENVIRONMENT_GET_INPUT_DEVICE_CAPABILITIES:
+            // TODO: Rumble
+            return false;
+        }
+        case RETRO_ENVIRONMENT_GET_INPUT_DEVICE_CAPABILITIES: {
                                            /* uint64_t * --
                                             * Gets a bitmask telling which device type are expected to be
                                             * handled properly in a call to retro_input_state_t.
@@ -1502,7 +1547,23 @@ static bool environment_callback(unsigned cmd, void *data) {
                                             * Example bitmask: caps = (1 << RETRO_DEVICE_JOYPAD) | (1 << RETRO_DEVICE_ANALOG).
                                             * Should only be called in retro_run().
                                             */
+            // RETRO_DEVICE_MOUSE RETRO_DEVICE_LIGHTGUN RETRO_DEVICE_POINTER RETRO_DEVICE_KEYBOARD
+            uint64_t features = (1 << RETRO_DEVICE_JOYPAD) | (1 << RETRO_DEVICE_ANALOG);
+            if ([strongCurrent conformsToProtocol:@protocol(KeyboardResponder)]) {
+                features  |= 1 << RETRO_DEVICE_KEYBOARD;
+            }
+            if ([strongCurrent conformsToProtocol:@protocol(MouseResponder)]) {
+                features  |= 1 << RETRO_DEVICE_MOUSE;
+            }
+            if ([strongCurrent conformsToProtocol:@protocol(TouchPadResponder)]) {
+                features  |= 1 << RETRO_DEVICE_POINTER;
+            }
+            
+            *(uint64_t *)data = features;
+            return true;
+        }
         case RETRO_ENVIRONMENT_GET_SENSOR_INTERFACE:
+            return false;
                                            /* struct retro_sensor_interface * --
                                             * Gets access to the sensor interface.
                                             * The purpose of this interface is to allow
@@ -1512,6 +1573,7 @@ static bool environment_callback(unsigned cmd, void *data) {
                                             * input_state_callback API.
                                             */
         case RETRO_ENVIRONMENT_GET_CAMERA_INTERFACE:
+            return false;
                                            /* struct retro_camera_callback * --
                                             * Gets an interface to a video camera driver.
                                             * A libretro core can use this interface to get access to a
@@ -1543,35 +1605,37 @@ static bool environment_callback(unsigned cmd, void *data) {
                                             * location-based information from the host device,
                                             * such as current latitude / longitude.
                                             */
-            break;
+            return false;
         case RETRO_ENVIRONMENT_GET_CAN_DUPE:
             *(bool *)data = true;
-            break;
+            return true;
         case RETRO_ENVIRONMENT_GET_LOG_INTERFACE: {
             struct retro_log_callback* cb = (struct retro_log_callback*)data;
             cb->log = core_log;
+            return true;
         }
-            break;
         case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY : {
             NSString *BIOSPath = [strongCurrent BIOSPath];
+            CFStringRef cfString = (CFStringRef)CFBridgingRetain(BIOSPath);
+
+            *(const char **)data = CFStringGetCStringPtr(cfString, kCFStringEncodingUTF8); //[BIOSPath UTF8String];
             
-            *(const char **)data = [BIOSPath UTF8String];
             DLOG(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", BIOSPath);
-            break;
+            return true;
         }
         case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY : {
             NSString *appSupportPath = [strongCurrent saveStatesPath];
             
             *(const char **)data = [appSupportPath UTF8String];
             DLOG(@"Environ SAVE_DIRECTORY: \"%@\".\n", appSupportPath);
-            break;
+            return true;
         }
         case RETRO_ENVIRONMENT_GET_CORE_ASSETS_DIRECTORY : {
             NSString *batterySavesPath = [strongCurrent batterySavesPath];
             
             *(const char **)data = [batterySavesPath UTF8String];
             DLOG(@"Environ CONTENT_DIRECTORY: \"%@\".\n", batterySavesPath);
-            break;
+            return true;
         }
         case RETRO_ENVIRONMENT_SET_PIXEL_FORMAT: {
             enum retro_pixel_format pix_fmt =
@@ -2120,23 +2184,10 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
         
         //        libretro_get_system_info(path,
         //        libretro_get_system_info_lib
-        core->retro_init();
         
         videoBufferA = (uint32_t *)malloc(2560 * 2560 * sizeof(uint32_t));
         videoBufferB = (uint32_t *)malloc(2560 * 2560 * sizeof(uint32_t));
         videoBuffer = videoBufferA;
-        
-        //		retro_set_audio_sample(audio_callback);
-        //		retro_set_audio_sample_batch(audio_batch_callback);
-        //		retro_set_video_refresh(video_callback);
-        //		retro_set_input_poll(input_poll_callback);
-        //		retro_set_input_state(input_state_callback);
-        
-        core->retro_set_audio_sample(audio_callback);
-        core->retro_set_audio_sample_batch(audio_batch_callback);
-        core->retro_set_video_refresh(video_callback);
-        core->retro_set_input_poll(input_poll_callback);
-        core->retro_set_input_state(input_state_callback);
     }
     
     return self;
@@ -2144,6 +2195,16 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 
 - (void)dealloc {
     core_unload();
+}
+
+-(void)coreInit {
+    core->retro_init();
+
+    core->retro_set_audio_sample(audio_callback);
+    core->retro_set_audio_sample_batch(audio_batch_callback);
+    core->retro_set_video_refresh(video_callback);
+    core->retro_set_input_poll(input_poll_callback);
+    core->retro_set_input_state(input_state_callback);
 }
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {
@@ -2158,6 +2219,8 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
         *error = localError;
         return NO;
     }
+
+    [self coreInit];
     
     struct retro_game_info info;
     info.data = [NSData dataWithContentsOfFile:path].bytes;
@@ -2171,7 +2234,9 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
     info2.special = nil;
     BOOL loaded = core_load_game(&info2);
    
-    core->retro_reset();
+    if(loaded) {
+        core->retro_reset();
+    }
     
     self->loaded = loaded;
 

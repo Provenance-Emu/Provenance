@@ -13,8 +13,8 @@
 #import <PVLibRetro/libretro.h>
 //#import <PVLibRetro/dynamic.h>
 
-#pragma clang diagnostic push
-#pragma clang diagnostic error "-Wall"
+//#pragma clang diagnostic push
+//#pragma clang diagnostic error "-Wall"
 
 #if !TARGET_OS_MACCATALYST
 #import <OpenGLES/gltypes.h>
@@ -75,4 +75,4 @@ do { \
 
 #define SYMBOL_DUMMY(x) current_core->x = libretro_dummy_##x
 
-#pragma clang diagnostic pop
+//#pragma clang diagnostic pop

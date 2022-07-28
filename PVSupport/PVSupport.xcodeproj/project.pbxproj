@@ -80,7 +80,6 @@
 		B305EF9C276B4FDD003AE510 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF9B276B4FDC003AE510 /* CoreGraphics.framework */; };
 		B3225132286C4728001FDF42 /* retro.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B322512F286C4728001FDF42 /* retro.h */; };
 		B322514B286C4753001FDF42 /* libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B322512D286C4728001FDF42 /* libretro.a */; };
-		B32299402878C51900585AD8 /* video_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC45B28671EFE00B60497 /* video_driver.c */; };
 		B32299422878CB3C00585AD8 /* input_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC54928671EFF00B60497 /* input_driver.c */; };
 		B32299432878CB3C00585AD8 /* input_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC54928671EFF00B60497 /* input_driver.c */; };
 		B32299462878CF2C00585AD8 /* rthreads.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC7072867202D00B60497 /* rthreads.c */; };
@@ -91,7 +90,6 @@
 		B32299522878D46F00585AD8 /* performance_counters.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC3782867180300B60497 /* performance_counters.c */; };
 		B32299672878DBE000585AD8 /* dynamic.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC36B286717AE00B60497 /* dynamic.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B32299682878DBE300585AD8 /* dynamic.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC36B286717AE00B60497 /* dynamic.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B322996B28792AF100585AD8 /* video_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC45B28671EFE00B60497 /* video_driver.c */; };
 		B322996C28792B4000585AD8 /* movie.c in Sources */ = {isa = PBXBuildFile; fileRef = B3225169286C6F2A001FDF42 /* movie.c */; };
 		B322996D28792B4100585AD8 /* movie.c in Sources */ = {isa = PBXBuildFile; fileRef = B3225169286C6F2A001FDF42 /* movie.c */; };
 		B322996E28792BA000585AD8 /* nullinput.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4ED28671EFF00B60497 /* nullinput.c */; };
@@ -3937,7 +3935,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B322996B28792AF100585AD8 /* video_driver.c in Sources */,
 				B32299462878CF2C00585AD8 /* rthreads.c in Sources */,
 				B342325B286EB4060033EFA5 /* dylib.c in Sources */,
 				B3B3D17428712EE1008A0E2F /* msg_hash.c in Sources */,
@@ -3977,7 +3974,6 @@
 				B3C8A69428781C6E0037A946 /* msg_hash.c in Sources */,
 				B3A41BD2286E75DD0054E9A5 /* retro.m in Sources */,
 				B322996D28792B4100585AD8 /* movie.c in Sources */,
-				B32299402878C51900585AD8 /* video_driver.c in Sources */,
 				B32299432878CB3C00585AD8 /* input_driver.c in Sources */,
 				B3423261286EB5CB0033EFA5 /* dynamic_dummy.c in Sources */,
 				B322994B2878CF6200585AD8 /* input_keyboard.c in Sources */,

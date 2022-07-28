@@ -13,8 +13,8 @@
 #import <PVLibRetro/libretro.h>
 #import <PVLibRetro/PVLibRetroCore.h>
 
-#pragma clang diagnostic push
-#pragma clang diagnostic error "-Wall"
+//#pragma clang diagnostic push
+//#pragma clang diagnostic error "-Wall"
 
 #if !TARGET_OS_MACCATALYST
 #import <OpenGLES/gltypes.h>
@@ -30,3 +30,5 @@ __attribute__((weak_import))
 @interface PVLibRetroGLESCore : PVLibRetroCore
 
 @end
+
+#pragma clang diagnostic pop

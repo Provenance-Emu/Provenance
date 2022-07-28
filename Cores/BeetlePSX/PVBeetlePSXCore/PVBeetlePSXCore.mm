@@ -122,29 +122,29 @@
 - (BOOL)supportsRumble { return YES; }
 - (BOOL)supportsCheatCodes { return YES; }
 
-- (NSTimeInterval)frameInterval {
-    return 60;
-}
-
-- (CGSize)aspectSize {
-    return CGSizeMake(10, 7);
-}
-
-- (CGSize)bufferSize {
-    return CGSizeMake(1024, 1024);
-}
-
-- (GLenum)pixelFormat {
-    return GL_RGBA;
-}
-
-- (GLenum)pixelType {
-    return GL_UNSIGNED_BYTE;
-}
-
-- (GLenum)internalPixelFormat {
-    return GL_RGBA;
-}
+//- (NSTimeInterval)frameInterval {
+//    return 60;
+//}
+//
+//- (CGSize)aspectSize {
+//    return CGSizeMake(10, 7);
+//}
+//
+//- (CGSize)bufferSize {
+//    return CGSizeMake(1024, 1024);
+//}
+//
+//- (GLenum)pixelFormat {
+//    return GL_RGBA;
+//}
+//
+//- (GLenum)pixelType {
+//    return GL_UNSIGNED_BYTE;
+//}
+//
+//- (GLenum)internalPixelFormat {
+//    return GL_RGBA;
+//}
 
 //- (BOOL)isDoubleBuffered {
 //    return YES;
@@ -170,13 +170,11 @@
     
     
 #define V(x) strcmp(variable, x) == 0
-    if (V("dosbox_pure_force60fps")) {
-        // true|false
-        // "Enable this to force output at 60FPS. Use this if you encounter screen tearing or vsync issues.", NULL
-
-        char *value = strdup("true");
+    if (V("beetle_psx_hw_renderer")) {
+        // hardware, hardware_gl, hardware_vk, software
+        char *value = strdup("software");
         return value;
-    } else if (V("renderer_software_fb")) {
+    } else if (V("beetle_psx_hw_renderer_software_fb")) {
 //        "Enable accurate emulation of framebuffer effects (e.g. motion blur, FF7 battle swirl) when using hardware renderers by running a copy of the software renderer at native resolution in the background. If disabled, these operations are omitted (OpenGL) or rendered on the GPU (Vulkan). Disabling can improve performance but may cause severe graphical errors. Leave enabled if unsure.",
 //        NULL,
 //        "video",
@@ -185,7 +183,7 @@
 //           { "disabled", NULL },
 //           { NULL, NULL },
 //        },
-            char *value = strdup("enabled");
+            char *value = strdup("disabled");
             return value;
     } else if (V("dosbox_pure_perfstats")) {
             // Off|Interlaced|Progressive

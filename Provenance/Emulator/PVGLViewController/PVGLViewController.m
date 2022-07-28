@@ -210,7 +210,7 @@ PV_OBJC_DIRECT_MEMBERS
 
     [self setupTexture];
 
-    defaultVertexShader = [self compileShaderResource:@VERTEX_DIR"/default_vertex" ofType:GL_VERTEX_SHADER];
+    defaultVertexShader = [self compileShaderResource:[NSString stringWithFormat:@"%s/default_vertex", VERTEX_DIR] ofType:GL_VERTEX_SHADER];
     [self setupVBOs];
     
     [self setupBlitShader];
@@ -386,15 +386,15 @@ PV_OBJC_DIRECT_MEMBERS
     NSError *error;
     NSString *docsPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, true).firstObject;
     
-    [fm createDirectoryAtPath:[docsPath stringByAppendingPathComponent:@"VERTEX_DIR/"] withIntermediateDirectories:true attributes:nil error:&error];
+    [fm createDirectoryAtPath:[docsPath stringByAppendingPathComponent:@VERTEX_DIR] withIntermediateDirectories:true attributes:nil error:&error];
     if (error) {
         ELOG(@"%@", error.localizedDescription);
     }
-    [fm createDirectoryAtPath:[docsPath stringByAppendingPathComponent:@"BLITTER_DIR/"] withIntermediateDirectories:true attributes:nil error:&error];
+    [fm createDirectoryAtPath:[docsPath stringByAppendingPathComponent:@BLITTER_DIR] withIntermediateDirectories:true attributes:nil error:&error];
     if (error) {
         ELOG(@"%@", error.localizedDescription);
     }
-    [fm createDirectoryAtPath:[docsPath stringByAppendingPathComponent:@"FILTERS_DIR/"] withIntermediateDirectories:true attributes:nil error:&error];
+    [fm createDirectoryAtPath:[docsPath stringByAppendingPathComponent:@FILTER_DIR] withIntermediateDirectories:true attributes:nil error:&error];
     if (error) {
         ELOG(@"%@", error.localizedDescription);
     }
@@ -522,14 +522,14 @@ PV_OBJC_DIRECT_MEMBERS
 
 - (void)setupBlitShader
 {
-    blitFragmentShader = [self compileShaderResource:@BLITTER_DIR"/blit_fragment" ofType:GL_FRAGMENT_SHADER];
+    blitFragmentShader = [self compileShaderResource:[NSString stringWithFormat:@"%s/blit_fragment", BLITTER_DIR] ofType:GL_FRAGMENT_SHADER];
     blitShaderProgram = [self linkVertexShader:defaultVertexShader withFragmentShader:blitFragmentShader];
     blitUniform_EmulatedImage = glGetUniformLocation(blitShaderProgram, "EmulatedImage");
 }
 
 - (void)setupCRTShader
 {
-    crtFragmentShader = [self compileShaderResource:@FILTER_DIR"/crt_fragment" ofType:GL_FRAGMENT_SHADER];
+    crtFragmentShader = [self compileShaderResource:[NSString stringWithFormat:@"%s/crt_fragment", FILTER_DIR] ofType:GL_FRAGMENT_SHADER];
     crtShaderProgram = [self linkVertexShader:defaultVertexShader withFragmentShader:crtFragmentShader];
     crtUniform_DisplayRect = glGetUniformLocation(crtShaderProgram, "DisplayRect");
     crtUniform_EmulatedImage = glGetUniformLocation(crtShaderProgram, "EmulatedImage");
