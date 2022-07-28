@@ -24,8 +24,10 @@ extension Sequence where Iterator.Element : Hashable {
 
 public extension PVEmulatorConfiguration {
     static var coreClasses: [ClassInfo] {
-        let libRetroCoreClass = NSClassFromString("PVLibRetroCore")
-        let motherClassInfo = [ClassInfo(PVEmulatorCore.self), ClassInfo(libRetroCoreClass)]
+        let libRetroCoreClass: AnyClass? = NSClassFromString("PVLibRetroCore")
+        let libRetroGLESCoreClass: AnyClass? = NSClassFromString("PVLibRetroGLESCore")
+
+        let motherClassInfo = [ClassInfo(PVEmulatorCore.self), ClassInfo(libRetroCoreClass), ClassInfo(libRetroGLESCoreClass)]
         var subclassList = [ClassInfo]()
 
         var count = UInt32(0)
@@ -33,20 +35,22 @@ public extension PVEmulatorConfiguration {
         let classList = UnsafeBufferPointer(start: classListPointer, count: Int(count))
 
         for i in 0 ..< Int(count) {
-            if let classInfo = ClassInfo(classList[i], withSuperclass: ["PVEmulatorCore", "PVLibRetroCore"]), let superclassesInfo = classInfo.superclassesInfo, motherClassInfo.intersects(with: motherClassInfo)  {
+            if let classInfo = ClassInfo(classList[i], withSuperclass: ["PVEmulatorCore", "PVLibRetroCore", "PVLibRetroGLESCore"]), let superclassesInfo = classInfo.superclassesInfo, motherClassInfo.intersects(with: motherClassInfo)  {
                 subclassList.append(classInfo)
             }
         }
 
-        let classes = subclassList.map { $0.className }.joined(separator: ",")
-        DLOG("\(classes)")
-        
-        return subclassList.filter {
+        let filteredList = subclassList.filter {
             let notMasterClass = $0.className != "PVEmulatorCore"
             let className: String = $0.superclassInfo?.className ?? ""
-            let inheritsClass = ["PVEmulatorCore","PVLibRetroCore"].contains(className)
+            let inheritsClass = ["PVEmulatorCore","PVLibRetroCore", "PVLibRetroGLESCore"].contains(className)
             return notMasterClass && inheritsClass
         }
+        
+        let classes = filteredList.map { $0.className }.joined(separator: ",")
+        ILOG("\(classes)")
+        
+        return filteredList;
     }
     
     class func updateCores(fromPlists plists: [URL]) {
