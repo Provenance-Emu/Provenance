@@ -131,7 +131,7 @@
 }
 
 - (CGSize)bufferSize {
-    return CGSizeMake(640, 480);
+    return CGSizeMake(1024, 1024);
 }
 
 - (GLenum)pixelFormat {

@@ -613,6 +613,7 @@
 		B338095C2877C6090009C732 /* libmupen64plus-nx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF705221916E87000FA7F9 /* libmupen64plus-nx.a */; };
 		B37263B526EA164900E95488 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A326EA0D6700E95488 /* libz.tbd */; };
 		B3962AED26FBD8A500FAEFC0 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */; platformFilter = maccatalyst; };
+		B39E129A28925CB000016387 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39E129928925CB000016387 /* PVLibRetro.framework */; };
 		B3AE1DD420731F2700AD06D4 /* libdl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AE1DD320731F2700AD06D4 /* libdl.tbd */; };
 		B3AF705821916ED0000FA7F9 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF705721916ED0000FA7F9 /* PVSupport.framework */; };
 		B3C8A65A2877D1A80037A946 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C8A0492877D0B80037A946 /* libretro.c */; };
@@ -740,6 +741,7 @@
 		B3800FF5208522DC00FA03B8 /* libmupen64plus-nx.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libmupen64plus-nx.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
+		B39E129928925CB000016387 /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39E8CB52053B53100380DCD /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Core.plist; path = "PVMupen64Plus-NX/Core.plist"; sourceTree = "<group>"; };
 		B3AE1DD320731F2700AD06D4 /* libdl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libdl.tbd; path = usr/lib/libdl.tbd; sourceTree = SDKROOT; };
 		B3AF703921916E60000FA7F9 /* libmupen64plus-nx-retro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libmupen64plus-nx-retro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2982,6 +2984,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3274E8B2106C19600857F52 /* PVSupport.framework in Frameworks */,
+				B39E129A28925CB000016387 /* PVLibRetro.framework in Frameworks */,
 				B324C62B21920BC2009F4EDC /* libz.tbd in Frameworks */,
 				B3AE1DD420731F2700AD06D4 /* libdl.tbd in Frameworks */,
 				B33809562877C5FE0009C732 /* libmupen64plus-nx.a in Frameworks */,
@@ -3147,6 +3150,7 @@
 		B3B3B8551DECE9D800602746 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B39E129928925CB000016387 /* PVLibRetro.framework */,
 				B32299372878AF8800585AD8 /* libc++.tbd */,
 				B32299392878AFA200585AD8 /* libc.tbd */,
 				B322993A2878AFA200585AD8 /* libc++.1.tbd */,
