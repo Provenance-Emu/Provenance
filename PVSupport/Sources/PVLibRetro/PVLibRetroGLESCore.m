@@ -130,7 +130,7 @@ void input_poll(void);
                 core->retro_run();
             if (core_poll_type == POLL_TYPE_LATE && !core_input_polled)
                 input_poll();
-        } while(!self.isRunning);
+        } while(self.isRunning);
         
         // Unlock rendering thread
         dispatch_semaphore_signal(coreWaitToEndFrameSemaphore);
