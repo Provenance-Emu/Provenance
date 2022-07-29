@@ -194,7 +194,6 @@
 		B31B10FD28949CF70044F0E6 /* Serializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFADC15B4C9A100C6552F /* Serializer.cpp */; };
 		B31B114C28949D160044F0E6 /* libstella-watchOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B31B110528949CF70044F0E6 /* libstella-watchOS.a */; };
 		B31B114F28949D1E0044F0E6 /* libstella-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B31B10BF28949CD00044F0E6 /* libstella-tvOS.a */; };
-		B31B115228949D250044F0E6 /* libstella.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B31B103528949C9A0044F0E6 /* libstella.a */; };
 		B31B11592894A02D0044F0E6 /* PVStellaGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B31B11572894A02D0044F0E6 /* PVStellaGameCore.h */; };
 		B31B115A2894A02D0044F0E6 /* PVStellaGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B31B11572894A02D0044F0E6 /* PVStellaGameCore.h */; };
 		B31B115B2894A02D0044F0E6 /* PVStellaGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B31B11572894A02D0044F0E6 /* PVStellaGameCore.h */; };
@@ -220,6 +219,7 @@
 		B3C96E921D62C23C003F1E93 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96E911D62C23C003F1E93 /* AudioToolbox.framework */; };
 		B3C96E941D62C245003F1E93 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96E931D62C245003F1E93 /* CoreGraphics.framework */; };
 		B3C96EDE1D62C6A8003F1E93 /* PVStella.h in Headers */ = {isa = PBXBuildFile; fileRef = B38FB4C21C839BE500CD73BE /* PVStella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3CD11B72894A93C00B64536 /* libstella.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B31B103528949C9A0044F0E6 /* libstella.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -237,7 +237,7 @@
 			remoteGlobalIDString = B31B107A28949CD00044F0E6;
 			remoteInfo = "stella-tvOS";
 		};
-		B31B115328949D250044F0E6 /* PBXContainerItemProxy */ = {
+		B3CD11B82894A93C00B64536 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
 			proxyType = 1;
@@ -490,7 +490,7 @@
 				B3271BDF276B8C660031AECC /* OpenGL.framework in Frameworks */,
 				B3C96E881D62C20C003F1E93 /* UIKit.framework in Frameworks */,
 				B3C96E871D62C203003F1E93 /* OpenGLES.framework in Frameworks */,
-				B31B115228949D250044F0E6 /* libstella.a in Frameworks */,
+				B3CD11B72894A93C00B64536 /* libstella.a in Frameworks */,
 				B3C96E861D62C1FE003F1E93 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -569,25 +569,25 @@
 		941DFA5A15B4C9A100C6552F /* stella */ = {
 			isa = PBXGroup;
 			children = (
-				941DFA5B15B4C9A100C6552F /* cart */,
 				941DFA9615B4C9A100C6552F /* Console.cpp */,
-				941DFA9715B4C9A100C6552F /* Console.hxx */,
-				941DFA9815B4C9A100C6552F /* input */,
 				940DD91B15B9D3C300542C50 /* FSNode.cpp */,
 				940DD92015B9D59200542C50 /* FSNodePOSIX.cpp */,
-				940DD91C15B9D3C300542C50 /* FSNode.hxx */,
-				940DD91D15B9D3C300542C50 /* SharedPtr.hxx */,
-				941DFAB615B4C9A100C6552F /* properties */,
 				941DFABC15B4C9A100C6552F /* Settings.cpp */,
-				941DFABD15B4C9A100C6552F /* Settings.hxx */,
-				941DFABE15B4C9A100C6552F /* Sound.hxx */,
 				941DFABF15B4C9A100C6552F /* SoundSDL.cpp */,
-				941DFAC015B4C9A100C6552F /* SoundSDL.hxx */,
 				941DFAC115B4C9A100C6552F /* stella.cpp */,
 				941DFAC215B4C9A100C6552F /* stella.h */,
+				941DFA9715B4C9A100C6552F /* Console.hxx */,
+				940DD91C15B9D3C300542C50 /* FSNode.hxx */,
+				941DFABD15B4C9A100C6552F /* Settings.hxx */,
+				940DD91D15B9D3C300542C50 /* SharedPtr.hxx */,
+				941DFABE15B4C9A100C6552F /* Sound.hxx */,
+				941DFAC015B4C9A100C6552F /* SoundSDL.hxx */,
+				941DFADF15B4C9A100C6552F /* Version.hxx */,
+				941DFA5B15B4C9A100C6552F /* cart */,
+				941DFA9815B4C9A100C6552F /* input */,
+				941DFAB615B4C9A100C6552F /* properties */,
 				941DFAC315B4C9A100C6552F /* system */,
 				941DFAD415B4C9A100C6552F /* utility */,
-				941DFADF15B4C9A100C6552F /* Version.hxx */,
 			);
 			path = stella;
 			sourceTree = "<group>";
@@ -905,7 +905,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				B31B115428949D250044F0E6 /* PBXTargetDependency */,
+				B3CD11B92894A93C00B64536 /* PBXTargetDependency */,
 			);
 			name = "PVStella-iOS";
 			productName = Stella;
@@ -1243,10 +1243,10 @@
 			target = B31B107A28949CD00044F0E6 /* stella-tvOS */;
 			targetProxy = B31B115028949D1E0044F0E6 /* PBXContainerItemProxy */;
 		};
-		B31B115428949D250044F0E6 /* PBXTargetDependency */ = {
+		B3CD11B92894A93C00B64536 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B31B103428949C9A0044F0E6 /* stella */;
-			targetProxy = B31B115328949D250044F0E6 /* PBXContainerItemProxy */;
+			targetProxy = B3CD11B82894A93C00B64536 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1280,7 +1280,6 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -1332,7 +1331,6 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -1814,7 +1812,6 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -1836,7 +1833,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -1869,22 +1865,6 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_CFLAGS = (
-					"-fno-strict-overflow",
-					"-ffast-math",
-					"-funroll-loops",
-					"-fPIC",
-					"-DLSB_FIRST",
-					"-DHAVE_MKDIR",
-					"-DSIZEOF_DOUBLE=8",
-					"-DPSS_STYLE=1",
-					"-DMPC_FIXED_POINT",
-					"-DARCH_X86",
-					"-DWANT_STELLA_EMU",
-					"-DSTDC_HEADERS",
-					"-DHAVE_INTTYPES",
-					"-DKeyboard=StellaKeyboard",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Stella";
 				PRODUCT_NAME = PVStella;
 				SKIP_INSTALL = YES;
@@ -1965,7 +1945,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -2003,22 +1982,6 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
-				OTHER_CFLAGS = (
-					"-fno-strict-overflow",
-					"-ffast-math",
-					"-funroll-loops",
-					"-fPIC",
-					"-DLSB_FIRST",
-					"-DHAVE_MKDIR",
-					"-DSIZEOF_DOUBLE=8",
-					"-DPSS_STYLE=1",
-					"-DMPC_FIXED_POINT",
-					"-DARCH_X86",
-					"-DWANT_STELLA_EMU",
-					"-DSTDC_HEADERS",
-					"-DHAVE_INTTYPES",
-					"-DKeyboard=StellaKeyboard",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Stella";
 				PRODUCT_NAME = PVStella;
 				SKIP_INSTALL = YES;
@@ -2032,7 +1995,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -2065,22 +2027,6 @@
 					"@loader_path/Frameworks",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_CFLAGS = (
-					"-fno-strict-overflow",
-					"-ffast-math",
-					"-funroll-loops",
-					"-fPIC",
-					"-DLSB_FIRST",
-					"-DHAVE_MKDIR",
-					"-DSIZEOF_DOUBLE=8",
-					"-DPSS_STYLE=1",
-					"-DMPC_FIXED_POINT",
-					"-DARCH_X86",
-					"-DWANT_STELLA_EMU",
-					"-DSTDC_HEADERS",
-					"-DHAVE_INTTYPES",
-					"-DKeyboard=StellaKeyboard",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Stella";
 				PRODUCT_NAME = PVStella;
 				SKIP_INSTALL = YES;
