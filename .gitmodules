@@ -118,3 +118,9 @@
 [submodule "Cores/Mupen64Plus-NX/mupen64plus-libretro-nx"]
 	path = Cores/Mupen64Plus-NX/mupen64plus-libretro-nx
 	url = https://github.com/Provenance-Emu/mupen64plus-libretro-nx.git
+[submodule "Cores/GameMusicEmu/libretro-gme"]
+	path = Cores/GameMusicEmu/libretro-gme
+	url = https://github.com/Provenance-Emu/libretro-gme.git
+[submodule "Cores/VecX/libretro-vecx"]
+	path = Cores/VecX/libretro-vecx
+	url = https://github.com/Provenance-Emu/libretro-vecx.git

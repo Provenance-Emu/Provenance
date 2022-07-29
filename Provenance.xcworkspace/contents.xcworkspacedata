@@ -72,6 +72,12 @@
          location = "container:"
          name = "Broken">
          <FileRef
+            location = "group:Cores/GameMusicEmu /PVGME.xcodeproj">
+         </FileRef>
+         <FileRef
+            location = "group:Cores/VecX/PVVecX.xcodeproj">
+         </FileRef>
+         <FileRef
             location = "group:Cores/pcsx_rearmed/PVPCSXRearmed.xcodeproj">
          </FileRef>
          <FileRef
