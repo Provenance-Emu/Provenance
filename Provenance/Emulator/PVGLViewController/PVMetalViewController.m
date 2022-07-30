@@ -409,7 +409,7 @@ PV_OBJC_DIRECT_MEMBERS
     {
         case GL_BYTE:
         case GL_UNSIGNED_BYTE:
-            typeWidth = 1;
+            typeWidth = 2;
             break;
         case GL_SHORT:
         case GL_UNSIGNED_SHORT:
@@ -446,7 +446,7 @@ PV_OBJC_DIRECT_MEMBERS
                 case GL_UNSIGNED_SHORT_4_4_4_4:
                 case GL_UNSIGNED_SHORT_5_5_5_1:
                 case GL_UNSIGNED_SHORT_5_6_5:
-                    return 2 * typeWidth;
+                    return 4 * typeWidth;
                 default:
                     return 4 * typeWidth;
             }
