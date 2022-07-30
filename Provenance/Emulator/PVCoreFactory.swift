@@ -86,7 +86,7 @@ public final class PVCoreFactory: NSObject {
             } else {
                 fatalError("Core doesn't implement PVGBSystemResponderClient")
             }
-        case .NES, .FDS:
+        case .NES, .FDS, .Music:
             if let core = core as? PVNESSystemResponderClient {
                 return PVNESControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else {

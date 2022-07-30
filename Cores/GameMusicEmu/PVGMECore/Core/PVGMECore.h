@@ -16,6 +16,6 @@
 #define GET_CURRENT_OR_RETURN(...)  __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 
 __attribute__((visibility("default")))
-@interface PVGMECore : PVLibRetroCore <PVNESSystemResponderClient> {
+@interface PVGMECore : PVLibRetroCore <PVNESSystemResponderClient>
 
 @end
