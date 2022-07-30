@@ -1,0 +1,26 @@
+# Stelladaptor (Pixels Past / Stelladaptor 2600-to-USB Interface)
+KERNEL=="event*", NAME="input/%k", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="beef", ACTION=="add", RUN+="/usr/local/bin/evdev-joystick --e /dev/input/%k --d 0"
+
+# 2600-daptor (Microchip Technology Inc. / 2600-daptor)
+KERNEL=="event*", NAME="input/%k", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="fa1d", ACTION=="add", RUN+="/usr/local/bin/evdev-joystick --e /dev/input/%k --d 0"
+
+# 2600-daptor II (Microchip Technology Inc. / 2600-daptor II)
+KERNEL=="event*", NAME="input/%k", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="f947", ACTION=="add", RUN+="/usr/local/bin/evdev-joystick --e /dev/input/%k --d 0"
+
+# Astro-daptor (Microchip Technology Inc. / Astro-daptor)
+KERNEL=="event*", NAME="input/%k", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="f809", ACTION=="add", RUN+="/usr/local/bin/evdev-joystick --e /dev/input/%k --d 0"
+
+# 5200-daptor (Microchip Technology Inc. / 5200-daptor)
+KERNEL=="event*", NAME="input/%k", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="f6ec", ACTION=="add", RUN+="/usr/local/bin/evdev-joystick --e /dev/input/%k --d 0"
+
+# 2600-daptor D9 (Microchip Technology Inc. / 2600-daptor D9)
+KERNEL=="event*", NAME="input/%k", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="f6eb", ACTION=="add", RUN+="/usr/local/bin/evdev-joystick --e /dev/input/%k --d 0"
+
+# Ultimate 2600-daptor (Microchip Technology Inc. / Ultimate 2600-daptor)
+KERNEL=="event*", NAME="input/%k", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="d4e2", ACTION=="add", RUN+="/usr/local/bin/evdev-joystick --e /dev/input/%k --d 0"
+
+# Ultimate Flashback (Microchip Technology Inc. / Ultimate Flashback)
+KERNEL=="event*", NAME="input/%k", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="edec", ACTION=="add", RUN+="/usr/local/bin/evdev-joystick --e /dev/input/%k --d 0"
+
+# 2600=daptor D9 (Microchip Technology Inc. / 2600=daptor D9)
+KERNEL=="event*", NAME="input/%k", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="edd9", ACTION=="add", RUN+="/usr/local/bin/evdev-joystick --e /dev/input/%k --d 0"

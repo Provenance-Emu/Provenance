@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{D7FCEC7F-33E1-49DD-A4B0-D5FC222250AD}</ProjectGuid>
+    <RootNamespace>stella_libretro</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>7.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup>
+    <XPDeprecationWarning>false</XPDeprecationWarning>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>stella_libretro</TargetName>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <IncludePath>$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <IncludePath>$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <OmitFramePointers>true</OmitFramePointers>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>.\;..\emucore;..\emucore\tia;..\emucore\tia\frame-manager;..\common;..\common\tv_filters;..\gui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__LIB_RETRO__;__WIN32__;NDEBUG;SOUND_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DisableSpecificWarnings>4100;4127;4146;4244;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <AssemblerOutput>NoListing</AssemblerOutput>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)stella_libretro.dll</OutputFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <TargetMachine>MachineX86</TargetMachine>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <OmitFramePointers>true</OmitFramePointers>
+      <AdditionalIncludeDirectories>.\;..\emucore;..\emucore\tia;..\emucore\tia\frame-manager;..\common;..\common\tv_filters;..\gui;..\json;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__LIB_RETRO__;__WIN32__;NDEBUG;SOUND_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DisableSpecificWarnings>4100;4127;4146;4244;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <AssemblerOutput>NoListing</AssemblerOutput>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)stella_libretro.dll</OutputFile>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <TargetMachine>MachineX64</TargetMachine>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\common\JoyMap.cxx" />
+    <ClCompile Include="..\common\KeyMap.cxx" />
+    <ClCompile Include="..\common\Logger.cxx" />
+    <ClCompile Include="..\common\PaletteHandler.cxx" />
+    <ClCompile Include="..\common\PhosphorHandler.cxx" />
+    <ClCompile Include="..\common\repository\CompositeKeyValueRepository.cxx" />
+    <ClCompile Include="..\common\repository\CompositeKVRJsonAdapter.cxx" />
+    <ClCompile Include="..\common\repository\KeyValueRepositoryJsonFile.cxx" />
+    <ClCompile Include="..\common\repository\KeyValueRepositoryPropertyFile.cxx" />
+    <ClCompile Include="..\common\VideoModeHandler.cxx" />
+    <ClCompile Include="..\emucore\Cart3EX.cxx" />
+    <ClCompile Include="..\emucore\CartARM.cxx" />
+    <ClCompile Include="..\emucore\CartCreator.cxx" />
+    <ClCompile Include="..\emucore\CartEnhanced.cxx" />
+    <ClCompile Include="..\emucore\CartFC.cxx" />
+    <ClCompile Include="..\emucore\CartMVC.cxx" />
+    <ClCompile Include="..\emucore\CartTVBoy.cxx" />
+    <ClCompile Include="..\emucore\Lightgun.cxx" />
+    <ClCompile Include="..\emucore\PlusROM.cxx" />
+    <ClCompile Include="..\emucore\QuadTari.cxx" />
+    <ClCompile Include="FBBackendLIBRETRO.cxx" />
+    <ClCompile Include="libretro.cxx" />
+    <ClCompile Include="EventHandlerLIBRETRO.cxx" />
+    <ClCompile Include="FBSurfaceLIBRETRO.cxx" />
+    <ClCompile Include="FSNodeLIBRETRO.cxx" />
+    <ClCompile Include="OSystemLIBRETRO.cxx" />
+    <ClCompile Include="SoundLIBRETRO.cxx" />
+    <ClCompile Include="StellaLIBRETRO.cxx" />
+    <ClCompile Include="..\common\AudioQueue.cxx" />
+    <ClCompile Include="..\common\AudioSettings.cxx" />
+    <ClCompile Include="..\common\Base.cxx" />
+    <ClCompile Include="..\common\DevSettingsHandler.cxx" />
+    <ClCompile Include="..\common\FpsMeter.cxx" />
+    <ClCompile Include="..\common\MouseControl.cxx" />
+    <ClCompile Include="..\common\PhysicalJoystick.cxx" />
+    <ClCompile Include="..\common\PJoystickHandler.cxx" />
+    <ClCompile Include="..\common\PKeyboardHandler.cxx" />
+    <ClCompile Include="..\common\RewindManager.cxx" />
+    <ClCompile Include="..\common\StaggeredLogger.cxx" />
+    <ClCompile Include="..\common\StateManager.cxx" />
+    <ClCompile Include="..\common\TimerManager.cxx" />
+    <ClCompile Include="..\common\repository\KeyValueRepositoryConfigfile.cxx" />
+    <ClCompile Include="..\common\tv_filters\AtariNTSC.cxx" />
+    <ClCompile Include="..\common\tv_filters\NTSCFilter.cxx" />
+    <ClCompile Include="..\emucore\Bankswitch.cxx" />
+    <ClCompile Include="..\emucore\Cart3EPlus.cxx" />
+    <ClCompile Include="..\emucore\Cart4KSC.cxx" />
+    <ClCompile Include="..\emucore\CartBF.cxx" />
+    <ClCompile Include="..\emucore\CartBFSC.cxx" />
+    <ClCompile Include="..\emucore\CartBUS.cxx" />
+    <ClCompile Include="..\emucore\CartCDF.cxx" />
+    <ClCompile Include="..\emucore\CartCM.cxx" />
+    <ClCompile Include="..\emucore\CartCTY.cxx" />
+    <ClCompile Include="..\emucore\CartDetector.cxx" />
+    <ClCompile Include="..\emucore\CartDF.cxx" />
+    <ClCompile Include="..\emucore\CartDFSC.cxx" />
+    <ClCompile Include="..\emucore\CartFA2.cxx" />
+    <ClCompile Include="..\emucore\CartMDM.cxx" />
+    <ClCompile Include="..\emucore\CartWD.cxx" />
+    <ClCompile Include="..\emucore\CompuMate.cxx" />
+    <ClCompile Include="..\emucore\ControllerDetector.cxx" />
+    <ClCompile Include="..\emucore\DispatchResult.cxx" />
+    <ClCompile Include="..\emucore\EmulationTiming.cxx" />
+    <ClCompile Include="..\emucore\EmulationWorker.cxx" />
+    <ClCompile Include="..\emucore\FBSurface.cxx" />
+    <ClCompile Include="..\emucore\MindLink.cxx" />
+    <ClCompile Include="..\emucore\PointingDevice.cxx" />
+    <ClCompile Include="..\emucore\ProfilingRunner.cxx" />
+    <ClCompile Include="..\emucore\TIASurface.cxx" />
+    <ClCompile Include="..\emucore\tia\Audio.cxx" />
+    <ClCompile Include="..\emucore\tia\AudioChannel.cxx" />
+    <ClCompile Include="..\emucore\tia\Background.cxx" />
+    <ClCompile Include="..\emucore\tia\Ball.cxx" />
+    <ClCompile Include="..\emucore\tia\DrawCounterDecodes.cxx" />
+    <ClCompile Include="..\emucore\tia\frame-manager\AbstractFrameManager.cxx" />
+    <ClCompile Include="..\emucore\tia\frame-manager\FrameLayoutDetector.cxx" />
+    <ClCompile Include="..\emucore\tia\frame-manager\FrameManager.cxx" />
+    <ClCompile Include="..\emucore\tia\frame-manager\JitterEmulation.cxx" />
+    <ClCompile Include="..\emucore\tia\LatchedInput.cxx" />
+    <ClCompile Include="..\emucore\tia\Missile.cxx" />
+    <ClCompile Include="..\emucore\tia\AnalogReadout.cxx" />
+    <ClCompile Include="..\emucore\tia\Player.cxx" />
+    <ClCompile Include="..\emucore\tia\Playfield.cxx" />
+    <ClCompile Include="..\emucore\tia\TIA.cxx" />
+    <ClCompile Include="..\emucore\AtariVox.cxx" />
+    <ClCompile Include="..\emucore\Booster.cxx" />
+    <ClCompile Include="..\emucore\Cart.cxx" />
+    <ClCompile Include="..\emucore\Cart0840.cxx" />
+    <ClCompile Include="..\emucore\Cart0FA0.cxx" />
+    <ClCompile Include="..\emucore\Cart2K.cxx" />
+    <ClCompile Include="..\emucore\Cart3E.cxx" />
+    <ClCompile Include="..\emucore\Cart3F.cxx" />
+    <ClCompile Include="..\emucore\Cart4A50.cxx" />
+    <ClCompile Include="..\emucore\Cart4K.cxx" />
+    <ClCompile Include="..\emucore\CartAR.cxx" />
+    <ClCompile Include="..\emucore\CartCV.cxx" />
+    <ClCompile Include="..\emucore\CartDPC.cxx" />
+    <ClCompile Include="..\emucore\CartDPCPlus.cxx" />
+    <ClCompile Include="..\emucore\CartE0.cxx" />
+    <ClCompile Include="..\emucore\CartE7.cxx" />
+    <ClCompile Include="..\emucore\CartEF.cxx" />
+    <ClCompile Include="..\emucore\CartEFSC.cxx" />
+    <ClCompile Include="..\emucore\CartF0.cxx" />
+    <ClCompile Include="..\emucore\CartF4.cxx" />
+    <ClCompile Include="..\emucore\CartF4SC.cxx" />
+    <ClCompile Include="..\emucore\CartF6.cxx" />
+    <ClCompile Include="..\emucore\CartF6SC.cxx" />
+    <ClCompile Include="..\emucore\CartF8.cxx" />
+    <ClCompile Include="..\emucore\CartF8SC.cxx" />
+    <ClCompile Include="..\emucore\CartFA.cxx" />
+    <ClCompile Include="..\emucore\CartFE.cxx" />
+    <ClCompile Include="..\emucore\CartSB.cxx" />
+    <ClCompile Include="..\emucore\CartUA.cxx" />
+    <ClCompile Include="..\emucore\CartX07.cxx" />
+    <ClCompile Include="..\emucore\Console.cxx" />
+    <ClCompile Include="..\emucore\Control.cxx" />
+    <ClCompile Include="..\emucore\Driving.cxx" />
+    <ClCompile Include="..\emucore\EventHandler.cxx" />
+    <ClCompile Include="..\emucore\FrameBuffer.cxx" />
+    <ClCompile Include="..\emucore\FSNode.cxx" />
+    <ClCompile Include="..\emucore\Genesis.cxx" />
+    <ClCompile Include="..\emucore\GlobalKeyHandler.cxx" />
+    <ClCompile Include="..\emucore\Joy2BPlus.cxx" />
+    <ClCompile Include="..\emucore\Joystick.cxx" />
+    <ClCompile Include="..\emucore\Keyboard.cxx" />
+    <ClCompile Include="..\emucore\KidVid.cxx" />
+    <ClCompile Include="..\emucore\M6502.cxx" />
+    <ClCompile Include="..\emucore\M6532.cxx" />
+    <ClCompile Include="..\emucore\MD5.cxx" />
+    <ClCompile Include="..\emucore\MT24LC256.cxx" />
+    <ClCompile Include="..\emucore\OSystem.cxx" />
+    <ClCompile Include="..\emucore\Paddles.cxx" />
+    <ClCompile Include="..\emucore\Props.cxx" />
+    <ClCompile Include="..\emucore\PropsSet.cxx" />
+    <ClCompile Include="..\emucore\SaveKey.cxx" />
+    <ClCompile Include="..\emucore\Serializer.cxx" />
+    <ClCompile Include="..\emucore\Settings.cxx" />
+    <ClCompile Include="..\emucore\Switches.cxx" />
+    <ClCompile Include="..\emucore\System.cxx" />
+    <ClCompile Include="..\emucore\Thumbulator.cxx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\common\AudioQueue.hxx" />
+    <ClInclude Include="..\common\AudioSettings.hxx" />
+    <ClInclude Include="..\common\Base.hxx" />
+    <ClInclude Include="..\common\bspf.hxx" />
+    <ClInclude Include="..\common\FpsMeter.hxx" />
+    <ClInclude Include="..\common\FSNodeFactory.hxx" />
+    <ClInclude Include="..\common\KeyMap.hxx" />
+    <ClInclude Include="..\common\LinkedObjectPool.hxx" />
+    <ClInclude Include="..\common\Logger.hxx" />
+    <ClInclude Include="..\common\MediaFactory.hxx" />
+    <ClInclude Include="..\common\MouseControl.hxx" />
+    <ClInclude Include="..\common\PaletteHandler.hxx" />
+    <ClInclude Include="..\common\PhosphorHandler.hxx" />
+    <ClInclude Include="..\common\PhysicalJoystick.hxx" />
+    <ClInclude Include="..\common\PJoystickHandler.hxx" />
+    <ClInclude Include="..\common\PKeyboardHandler.hxx" />
+    <ClInclude Include="..\common\Rect.hxx" />
+    <ClInclude Include="..\common\repository\CompositeKeyValueRepository.hxx" />
+    <ClInclude Include="..\common\repository\CompositeKeyValueRepositoryNoop.hxx" />
+    <ClInclude Include="..\common\repository\CompositeKVRJsonAdapter.hxx" />
+    <ClInclude Include="..\common\repository\KeyValueRepository.hxx" />
+    <ClInclude Include="..\common\repository\KeyValueRepositoryConfigfile.hxx" />
+    <ClInclude Include="..\common\repository\KeyValueRepositoryFile.hxx" />
+    <ClInclude Include="..\common\repository\KeyValueRepositoryJsonFile.hxx" />
+    <ClInclude Include="..\common\repository\KeyValueRepositoryNoop.hxx" />
+    <ClInclude Include="..\common\repository\KeyValueRepositoryPropertyFile.hxx" />
+    <ClInclude Include="..\common\RewindManager.hxx" />
+    <ClInclude Include="..\common\StaggeredLogger.hxx" />
+    <ClInclude Include="..\common\StateManager.hxx" />
+    <ClInclude Include="..\common\StellaKeys.hxx" />
+    <ClInclude Include="..\common\StringParser.hxx" />
+    <ClInclude Include="..\common\TimerManager.hxx" />
+    <ClInclude Include="..\common\tv_filters\AtariNTSC.hxx" />
+    <ClInclude Include="..\common\tv_filters\NTSCFilter.hxx" />
+    <ClInclude Include="..\common\Variant.hxx" />
+    <ClInclude Include="..\common\Vec.hxx" />
+    <ClInclude Include="..\common\VideoModeHandler.hxx" />
+    <ClInclude Include="..\emucore\AmigaMouse.hxx" />
+    <ClInclude Include="..\emucore\AtariMouse.hxx" />
+    <ClInclude Include="..\emucore\Bankswitch.hxx" />
+    <ClInclude Include="..\emucore\BSType.hxx" />
+    <ClInclude Include="..\emucore\Cart3EPlus.hxx" />
+    <ClInclude Include="..\emucore\Cart3EX.hxx" />
+    <ClInclude Include="..\emucore\Cart4KSC.hxx" />
+    <ClInclude Include="..\emucore\CartARM.hxx" />
+    <ClInclude Include="..\emucore\CartBF.hxx" />
+    <ClInclude Include="..\emucore\CartBFSC.hxx" />
+    <ClInclude Include="..\emucore\CartBUS.hxx" />
+    <ClInclude Include="..\emucore\CartCDF.hxx" />
+    <ClInclude Include="..\emucore\CartCM.hxx" />
+    <ClInclude Include="..\emucore\CartCreator.hxx" />
+    <ClInclude Include="..\emucore\CartCTY.hxx" />
+    <ClInclude Include="..\emucore\CartDetector.hxx" />
+    <ClInclude Include="..\emucore\CartDF.hxx" />
+    <ClInclude Include="..\emucore\CartDFSC.hxx" />
+    <ClInclude Include="..\emucore\CartEnhanced.hxx" />
+    <ClInclude Include="..\emucore\CartFA2.hxx" />
+    <ClInclude Include="..\emucore\CartFC.hxx" />
+    <ClInclude Include="..\emucore\CartMDM.hxx" />
+    <ClInclude Include="..\emucore\CartMVC.hxx" />
+    <ClInclude Include="..\emucore\CartTVBoy.hxx" />
+    <ClInclude Include="..\emucore\CartWD.hxx" />
+    <ClInclude Include="..\emucore\CompuMate.hxx" />
+    <ClInclude Include="..\emucore\ControllerDetector.hxx" />
+    <ClInclude Include="..\emucore\ControlLowLevel.hxx" />
+    <ClInclude Include="..\emucore\DispatchResult.hxx" />
+    <ClInclude Include="..\emucore\EmulationTiming.hxx" />
+    <ClInclude Include="..\emucore\EmulationWorker.hxx" />
+    <ClInclude Include="..\emucore\EventHandlerConstants.hxx" />
+    <ClInclude Include="..\emucore\exception\EmulationWarning.hxx" />
+    <ClInclude Include="..\emucore\exception\FatalEmulationError.hxx" />
+    <ClInclude Include="..\emucore\FBSurface.hxx" />
+    <ClInclude Include="..\emucore\FrameBufferConstants.hxx" />
+    <ClInclude Include="..\emucore\Lightgun.hxx" />
+    <ClInclude Include="..\emucore\MindLink.hxx" />
+    <ClInclude Include="..\emucore\PlusROM.hxx" />
+    <ClInclude Include="..\emucore\PointingDevice.hxx" />
+    <ClInclude Include="..\emucore\ProfilingRunner.hxx" />
+    <ClInclude Include="..\emucore\QuadTari.hxx" />
+    <ClInclude Include="..\emucore\TIASurface.hxx" />
+    <ClInclude Include="..\emucore\tia\Audio.hxx" />
+    <ClInclude Include="..\emucore\tia\AudioChannel.hxx" />
+    <ClInclude Include="..\emucore\tia\Background.hxx" />
+    <ClInclude Include="..\emucore\tia\Ball.hxx" />
+    <ClInclude Include="..\emucore\tia\DelayQueue.hxx" />
+    <ClInclude Include="..\emucore\tia\DelayQueueIterator.hxx" />
+    <ClInclude Include="..\emucore\tia\DelayQueueIteratorImpl.hxx" />
+    <ClInclude Include="..\emucore\tia\DelayQueueMember.hxx" />
+    <ClInclude Include="..\emucore\tia\DrawCounterDecodes.hxx" />
+    <ClInclude Include="..\emucore\tia\frame-manager\AbstractFrameManager.hxx" />
+    <ClInclude Include="..\emucore\tia\frame-manager\FrameLayoutDetector.hxx" />
+    <ClInclude Include="..\emucore\tia\frame-manager\FrameManager.hxx" />
+    <ClInclude Include="..\emucore\tia\frame-manager\JitterEmulation.hxx" />
+    <ClInclude Include="..\emucore\tia\FrameLayout.hxx" />
+    <ClInclude Include="..\emucore\tia\LatchedInput.hxx" />
+    <ClInclude Include="..\emucore\tia\Missile.hxx" />
+    <ClInclude Include="..\emucore\tia\AnalogReadout.hxx" />
+    <ClInclude Include="..\emucore\tia\Player.hxx" />
+    <ClInclude Include="..\emucore\tia\Playfield.hxx" />
+    <ClInclude Include="..\emucore\tia\TIA.hxx" />
+    <ClInclude Include="..\emucore\tia\TIAConstants.hxx" />
+    <ClInclude Include="..\emucore\TrakBall.hxx" />
+    <ClInclude Include="..\common\Stack.hxx" />
+    <ClInclude Include="..\common\Version.hxx" />
+    <ClInclude Include="..\emucore\AtariVox.hxx" />
+    <ClInclude Include="..\emucore\Booster.hxx" />
+    <ClInclude Include="..\emucore\Cart.hxx" />
+    <ClInclude Include="..\emucore\Cart0840.hxx" />
+    <ClInclude Include="..\emucore\Cart0FA0.hxx" />
+    <ClInclude Include="..\emucore\Cart2K.hxx" />
+    <ClInclude Include="..\emucore\Cart3E.hxx" />
+    <ClInclude Include="..\emucore\Cart3F.hxx" />
+    <ClInclude Include="..\emucore\Cart4A50.hxx" />
+    <ClInclude Include="..\emucore\Cart4K.hxx" />
+    <ClInclude Include="..\emucore\CartAR.hxx" />
+    <ClInclude Include="..\emucore\CartCV.hxx" />
+    <ClInclude Include="..\emucore\CartDPC.hxx" />
+    <ClInclude Include="..\emucore\CartDPCPlus.hxx" />
+    <ClInclude Include="..\emucore\CartE0.hxx" />
+    <ClInclude Include="..\emucore\CartE7.hxx" />
+    <ClInclude Include="..\emucore\CartEF.hxx" />
+    <ClInclude Include="..\emucore\CartEFSC.hxx" />
+    <ClInclude Include="..\emucore\CartF0.hxx" />
+    <ClInclude Include="..\emucore\CartF4.hxx" />
+    <ClInclude Include="..\emucore\CartF4SC.hxx" />
+    <ClInclude Include="..\emucore\CartF6.hxx" />
+    <ClInclude Include="..\emucore\CartF6SC.hxx" />
+    <ClInclude Include="..\emucore\CartF8.hxx" />
+    <ClInclude Include="..\emucore\CartF8SC.hxx" />
+    <ClInclude Include="..\emucore\CartFA.hxx" />
+    <ClInclude Include="..\emucore\CartFE.hxx" />
+    <ClInclude Include="..\emucore\CartSB.hxx" />
+    <ClInclude Include="..\emucore\CartUA.hxx" />
+    <ClInclude Include="..\emucore\CartX07.hxx" />
+    <ClInclude Include="..\emucore\Console.hxx" />
+    <ClInclude Include="..\emucore\Control.hxx" />
+    <ClInclude Include="..\emucore\DefProps.hxx" />
+    <ClInclude Include="..\emucore\Device.hxx" />
+    <ClInclude Include="..\emucore\Driving.hxx" />
+    <ClInclude Include="..\emucore\Event.hxx" />
+    <ClInclude Include="..\emucore\EventHandler.hxx" />
+    <ClInclude Include="..\emucore\FrameBuffer.hxx" />
+    <ClInclude Include="..\emucore\FSNode.hxx" />
+    <ClInclude Include="..\emucore\Genesis.hxx" />
+    <ClInclude Include="..\emucore\GlobalKeyHandler.hxx" />
+    <ClInclude Include="..\emucore\Joystick.hxx" />
+    <ClInclude Include="..\emucore\Keyboard.hxx" />
+    <ClInclude Include="..\emucore\KidVid.hxx" />
+    <ClInclude Include="..\emucore\M6502.hxx" />
+    <ClInclude Include="..\emucore\M6532.hxx" />
+    <ClInclude Include="..\emucore\MD5.hxx" />
+    <ClInclude Include="..\emucore\MT24LC256.hxx" />
+    <ClInclude Include="..\emucore\NullDev.hxx" />
+    <ClInclude Include="..\emucore\OSystem.hxx" />
+    <ClInclude Include="..\emucore\Paddles.hxx" />
+    <ClInclude Include="..\emucore\Props.hxx" />
+    <ClInclude Include="..\emucore\PropsSet.hxx" />
+    <ClInclude Include="..\emucore\Random.hxx" />
+    <ClInclude Include="..\emucore\SaveKey.hxx" />
+    <ClInclude Include="..\emucore\Serializable.hxx" />
+    <ClInclude Include="..\emucore\Serializer.hxx" />
+    <ClInclude Include="..\emucore\Settings.hxx" />
+    <ClInclude Include="..\emucore\Sound.hxx" />
+    <ClInclude Include="..\emucore\Switches.hxx" />
+    <ClInclude Include="..\emucore\System.hxx" />
+    <ClInclude Include="..\emucore\Thumbulator.hxx" />
+    <ClInclude Include="..\json\json.hxx" />
+    <ClInclude Include="..\json\json_lib.hxx" />
+    <ClInclude Include="FBBackendLIBRETRO.hxx" />
+    <ClInclude Include="FBSurfaceLIBRETRO.hxx" />
+    <ClInclude Include="SoundLIBRETRO.hxx" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

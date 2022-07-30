@@ -124,3 +124,6 @@
 [submodule "Cores/VecX/libretro-vecx"]
 	path = Cores/VecX/libretro-vecx
 	url = https://github.com/Provenance-Emu/libretro-vecx.git
+[submodule "Cores/Stella/Stella/stella"]
+	path = Cores/Stella/Stella/stella
+	url = https://github.com/Provenance-Emu/stella.git
