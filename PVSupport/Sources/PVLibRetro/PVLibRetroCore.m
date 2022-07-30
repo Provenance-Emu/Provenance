@@ -2097,7 +2097,7 @@ static void load_symbols(enum rarch_core_type type, struct retro_core_t *current
             break;
     }
 }
-#define PITCH_SHIFT  2
+#define PITCH_SHIFT 2
 
 @implementation PVLibRetroCore
 static void RETRO_CALLCONV audio_callback(int16_t left, int16_t right)
@@ -2137,14 +2137,14 @@ static void RETRO_CALLCONV video_callback(const void *data, unsigned width, unsi
         DLOG(@"vid: width: %i height: %i, pitch: %zu. _videoWidth: %f, _videoHeight: %f\n", width, height, pitch, strongCurrent.videoWidth, strongCurrent.videoHeight);
     });
     // 512
-//    uint16_t pitch_shift = strongCurrent->pitch_shift; //PITCH_SHIFT; //pitch % 256; // PITCH_SHIFT
+    uint16_t pitch_shift = strongCurrent->pitch_shift; //PITCH_SHIFT; //pitch % 256; // PITCH_SHIFT
     dispatch_apply(height, serialQueue, ^(size_t y){
-        size_t shifted_pitch = pitch >> 1;              //pitch is in bytes not pixels
+        size_t shifted_pitch = pitch >> pitch_shift;              //pitch is in bytes not pixels
         size_t offset = y * shifted_pitch;
-        const uint16_t *src = (uint16_t*)data + offset;
-        uint16_t *dst = strongCurrent->videoBuffer + y * width;
+        const uint32_t *src = (uint16_t*)data + offset;
+        uint32_t *dst = strongCurrent->videoBuffer + y * width;
         
-        memcpy(dst, src, sizeof(uint16_t)*width);
+        memcpy(dst, src, sizeof(uint32_t)*width);
     });
     
     strongCurrent = nil;
@@ -2426,7 +2426,11 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
     return GL_RGBA;
 }
 
-- (GLenum)pixelType { return GL_UNSIGNED_BYTE; }
+- (GLenum)pixelType {
+    // GL_UNSIGNED_SHORT_5_6_5
+    // GL_UNSIGNED_BYTE
+    return GL_UNSIGNED_SHORT;
+}
 
 # pragma mark - Audio
 
