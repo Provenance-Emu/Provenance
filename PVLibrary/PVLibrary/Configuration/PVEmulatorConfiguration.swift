@@ -75,6 +75,7 @@ public enum SystemIdentifier: String, CaseIterable {
     case MasterSystem = "com.provenance.mastersystem"
     case MSX = "com.provenance.msx"
     case MSX2 = "com.provenance.msx2"
+    case Music = "com.provenance.music"
     case N64 = "com.provenance.n64"
     case NeoGeo = "com.provenance.neogeo"
     case NES = "com.provenance.nes"

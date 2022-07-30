@@ -3196,7 +3196,17 @@
 		<string>-1</string>
 		<key>PVSupportedExtensions</key>
 		<array>
-			<string>nes</string>
+			<string>ay</string>
+			<string>gbs</string>
+			<string>gym</string>
+			<string>hes</string>
+			<string>kss</string>
+			<string>nsf</string>
+			<string>nsfe</string>
+			<string>sap</string>
+			<string>spc</string>
+			<string>vgm</string>
+			<string>vgz</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
