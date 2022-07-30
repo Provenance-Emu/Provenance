@@ -13,7 +13,7 @@
 
 #pragma mark - Properties
 -(BOOL)supportsSaveStates {
-    return YES;
+    return NO;
 }
 
 #pragma mark - Methods

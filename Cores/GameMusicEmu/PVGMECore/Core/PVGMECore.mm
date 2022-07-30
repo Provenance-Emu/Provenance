@@ -55,57 +55,9 @@
 //}
 
 #pragma mark - Running
-//- (void)startEmulation {
-//	if (!_isInitialized)
-//	{
-//		[self.renderDelegate willRenderFrameOnAlternateThread];
-//        _isInitialized = true;
-//		_frameInterval = dol_host->GetFrameInterval();
-//	}
-//	[super startEmulation];
-//
-	//Disable the OE framelimiting
-//	[self.renderDelegate suspendFPSLimiting];
-//	if(!self.isRunning) {
-//		[super startEmulation];
-////        [NSThread detachNewThreadSelector:@selector(runReicastRenderThread) toTarget:self withObject:nil];
-//	}
-//}
-
-//- (void)setPauseEmulation:(BOOL)flag {
-//	[super setPauseEmulation:flag];
-//}
-//
-//- (void)stopEmulation {
-//	_isInitialized = false;
-//
-//	self->shouldStop = YES;
-////	dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
-////    dispatch_semaphore_wait(coreWaitForExitSemaphore, DISPATCH_TIME_FOREVER);
-//	[self.frontBufferCondition lock];
-//	[self.frontBufferCondition signal];
-//	[self.frontBufferCondition unlock];
-//
-//	[super stopEmulation];
-//}
-//
-//- (void)resetEmulation {
-//	//	dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
-//	[self.frontBufferCondition lock];
-//	[self.frontBufferCondition signal];
-//	[self.frontBufferCondition unlock];
-//}
-
-//# pragma mark - Cheats
-//- (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled {
-//}
-//
-//- (BOOL)supportsRumble { return NO; }
-//- (BOOL)supportsCheatCodes { return NO; }
 #pragma mark - Options
 - (void *)getVariable:(const char *)variable {
     ILOG(@"%s", variable);
-    
     
 #define V(x) strcmp(variable, x) == 0
     if (V("GME_pure_force60fps")) {

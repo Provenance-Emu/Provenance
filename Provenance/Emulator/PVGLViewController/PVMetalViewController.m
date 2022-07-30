@@ -435,7 +435,10 @@ PV_OBJC_DIRECT_MEMBERS
         case GL_RGB8:
         case GL_RGBA8:
             return 8 * typeWidth;
-
+        case GL_RGB5_A1:
+            return 2 * typeWidth;
+        case GL_RGB565:
+            return 2 * typeWidth;
         case GL_RGB:
             if (pixelType == GL_UNSIGNED_SHORT_5_6_5)
                 return 2 * typeWidth;
@@ -446,7 +449,7 @@ PV_OBJC_DIRECT_MEMBERS
             break;
     }
     
-    assert(!"Unknown GL pixelFormat. Add me");
+    assert(!"Unknown GL pixelFormat %x. Add me", pixelFormat);
     return 1;
 }
 

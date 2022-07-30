@@ -29,6 +29,8 @@
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
+		B380C2712894F63C007B76FD /* PVGMECore+Saves.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAA218BC59D00557ACE /* PVGMECore+Saves.m */; };
+		B380C2722894F63C007B76FD /* PVGMECore+Saves.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAA218BC59D00557ACE /* PVGMECore+Saves.m */; };
 		B39768FB2859E23A00558958 /* libgme-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B39768F72859E18B00558958 /* libgme-libretro.a */; };
 		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
 		B3A41BF0286E76490054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */; };
@@ -205,11 +207,7 @@
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
-		B3C8A65E2877D62F0037A946 /* PVGMECore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVGMECore+Controls.mm */; };
-		B3C8A65F2877D6350037A946 /* PVGMECore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVGMECore+Controls.mm */; };
 		B3C8A6602877D6510037A946 /* PVGMECore+Video.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVGMECore+Video.m */; };
-		B3C8A6612877D6B30037A946 /* PVGMECore+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVGMECore+Audio.m */; };
-		B3C8A6622877D6B40037A946 /* PVGMECore+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVGMECore+Audio.m */; };
 		B3D3E7522894DC890016EB85 /* libgme-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libgme-libretro.a */; };
 		B3D3E7552894DC890016EB85 /* libgme.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libgme.a */; };
 		B3D3E7582894DC8F0016EB85 /* libgme-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B39768F72859E18B00558958 /* libgme-libretro.a */; };
@@ -1420,9 +1418,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3135BA326E4CD080047F338 /* PVGMECore.mm in Sources */,
+				B380C2722894F63C007B76FD /* PVGMECore+Saves.m in Sources */,
 				B3C8A6602877D6510037A946 /* PVGMECore+Video.m in Sources */,
-				B3C8A6622877D6B40037A946 /* PVGMECore+Audio.m in Sources */,
-				B3C8A65E2877D62F0037A946 /* PVGMECore+Controls.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1536,8 +1533,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3135B9B26E4CAD40047F338 /* PVGMECore.mm in Sources */,
-				B3C8A65F2877D6350037A946 /* PVGMECore+Controls.mm in Sources */,
-				B3C8A6612877D6B30037A946 /* PVGMECore+Audio.m in Sources */,
+				B380C2712894F63C007B76FD /* PVGMECore+Saves.m in Sources */,
 				B3EBB2032872B65700EAEB37 /* PVGMECore+Video.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
