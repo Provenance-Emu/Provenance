@@ -430,26 +430,36 @@ PV_OBJC_DIRECT_MEMBERS
     {
         case GL_BGRA:
         case GL_RGBA:
+            switch (pixelType) {
+                case GL_UNSIGNED_BYTE:
+                case GL_UNSIGNED_SHORT_4_4_4_4:
+                case GL_UNSIGNED_SHORT_5_5_5_1:
+                case GL_UNSIGNED_SHORT_5_6_5:
+                    return 2 * typeWidth;
+                default:
+                    return 4 * typeWidth;
+            }
+        case GL_RGB565:
+        case GL_RGB:
+            switch (pixelType) {
+                case GL_UNSIGNED_BYTE:
+                case GL_UNSIGNED_SHORT_4_4_4_4:
+                case GL_UNSIGNED_SHORT_5_5_5_1:
+                case GL_UNSIGNED_SHORT_5_6_5:
+                    return 2 * typeWidth;
+                default:
+                    return 4 * typeWidth;
+            }
+        case GL_RGB5_A1:
             return 4 * typeWidth;
-            
         case GL_RGB8:
         case GL_RGBA8:
             return 8 * typeWidth;
-        case GL_RGB5_A1:
-            return 2 * typeWidth;
-        case GL_RGB565:
-            return 2 * typeWidth;
-        case GL_RGB:
-            if (pixelType == GL_UNSIGNED_SHORT_5_6_5)
-                return 2 * typeWidth;
-            else
-                return 2 * typeWidth;
-            break;
         default:
             break;
     }
     
-    assert(!"Unknown GL pixelFormat %x. Add me", pixelFormat);
+    NSAssert(false, @"Unknown GL pixelFormat %x. Add me", pixelFormat);
     return 1;
 }
 

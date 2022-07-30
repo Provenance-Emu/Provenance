@@ -1628,17 +1628,18 @@ static bool environment_callback(unsigned cmd, void *data) {
             DLOG(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", BIOSPath);
             return true;
         }
-        case RETRO_ENVIRONMENT_GET_CURRENT_SOFTWARE_FRAMEBUFFER : {
-            struct retro_framebuffer* fb = (struct retro_framebuffer*)data;
-            fb->data = [strongCurrent videoBuffer];            
-            return true;
-        }
-            // TODO: When/if vulkan support add this
-//        case RETRO_ENVIRONMENT_GET_HW_RENDER_INTERFACE : {
-//            struct retro_hw_render_interface* rend = (struct retro_hw_render_interface*)data;
-//
+//        case RETRO_ENVIRONMENT_GET_CURRENT_SOFTWARE_FRAMEBUFFER : {
+//            const struct retro_framebuffer *fb =
+//                    (const struct retro_framebuffer *)data;
+//            fb->data = (void *)[strongCurrent videoBuffer];
 //            return true;
 //        }
+//            // TODO: When/if vulkan support add this
+////        case RETRO_ENVIRONMENT_GET_HW_RENDER_INTERFACE : {
+////            struct retro_hw_render_interface* rend = (struct retro_hw_render_interface*)data;
+////
+////            return true;
+////        }
         case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY : {
             NSString *appSupportPath = [strongCurrent saveStatesPath];
             
@@ -1701,20 +1702,35 @@ static bool environment_callback(unsigned cmd, void *data) {
                 ELOG(@"`game_info_ext` is nil.")
                 return false;
             }
-                
             
-////            struct retro_game_info_ext *game_info = (struct retro_game_info_ext*)data;
-//            // TODO: Is there a way to pass `retro_game_info_ext` before callbacks?
-//            struct retro_game_info_ext *game_info = malloc(sizeof(struct retro_game_info_ext));
-            NSData *romData = [NSData dataWithContentsOfFile:strongCurrent.romPath];
+            ////            struct retro_game_info_ext *game_info = (struct retro_game_info_ext*)data;
+            //            // TODO: Is there a way to pass `retro_game_info_ext` before callbacks?
             struct retro_game_info_ext *game_info = malloc(sizeof(struct retro_game_info_ext));
             game_info->persistent_data = true;
-            game_info->data = romData.bytes;
+            
+            //            void *buffer = malloc(romData.length);
+            //            [romData getBytes:buffer length:romData.length];
+            //
+            //            game_info->data = buffer;
+            NSData *romData = [NSData dataWithContentsOfFile:strongCurrent.romPath];
+            CFDataRef cfData = (CFDataRef)CFBridgingRetain(romData);
+            game_info->data = CFDataGetBytePtr(cfData);
             game_info->size = romData.length;
             
-            *game_info_ext = game_info;
+            const char *c_full_path = [strongCurrent.romPath cStringUsingEncoding:NSUTF8StringEncoding];
+            game_info->full_path = c_full_path;
+            
+            const char *c_dir = [[strongCurrent.romPath stringByDeletingLastPathComponent] cStringUsingEncoding:NSUTF8StringEncoding];
+            game_info->dir = c_dir;
+            
+            const char *c_rom_name = [[strongCurrent.romPath.lastPathComponent stringByDeletingPathExtension] cStringUsingEncoding:NSUTF8StringEncoding];
+            game_info->name = c_rom_name;
+            
+            const char *c_extension = [[strongCurrent.romPath.lastPathComponent pathExtension] cStringUsingEncoding:NSUTF8StringEncoding];
+            game_info->ext = c_extension;
 
-//            data = game_info;
+            *game_info_ext = game_info;
+//            *game_info_ext = &game_info;
             return true;
             break;
         }
@@ -2299,9 +2315,9 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 
     core->retro_unload_game();
     
-    if (self->loaded) {
-        core->retro_reset();
-    }
+//    if (self->loaded) {
+//        core->retro_reset();
+//    }
 //    core->retro_deinit();
 }
 

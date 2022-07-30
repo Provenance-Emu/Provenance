@@ -124,25 +124,25 @@
     return 13.63;
 }
 
-- (CGSize)aspectSize {
-    return CGSizeMake(4, 3);
-}
-
-- (CGSize)bufferSize {
-    return CGSizeMake(1440, 1080);
-}
-
-- (GLenum)pixelFormat {
-    return GL_BGRA;
-}
-
-- (GLenum)pixelType {
-    return GL_UNSIGNED_BYTE;
-}
-
-- (GLenum)internalPixelFormat {
-    return GL_RGBA;
-}
+//- (CGSize)aspectSize {
+//    return CGSizeMake(4, 3);
+//}
+//
+//- (CGSize)bufferSize {
+//    return CGSizeMake(1440, 1080);
+//}
+//
+//- (GLenum)pixelFormat {
+//    return GL_BGRA;
+//}
+//
+//- (GLenum)pixelType {
+//    return GL_UNSIGNED_BYTE;
+//}
+//
+//- (GLenum)internalPixelFormat {
+//    return GL_RGBA;
+//}
 
 # pragma mark - Audio
 

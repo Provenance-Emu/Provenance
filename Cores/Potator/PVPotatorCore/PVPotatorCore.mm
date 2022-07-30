@@ -47,45 +47,11 @@
 
 #pragma mark - PVEmulatorCore
 //- (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {
-//	NSBundle *coreBundle = [NSBundle bundleForClass:[self class]];
-//	const char *dataPath;
-//
-//    [self initControllBuffers];
-//
-//	// TODO: Proper path
-//	NSString *configPath = self.saveStatesPath;
-//	dataPath = [[coreBundle resourcePath] fileSystemRepresentation];
-//
-//	[[NSFileManager defaultManager] createDirectoryAtPath:configPath
-//                              withIntermediateDirectories:YES
-//                                               attributes:nil
-//                                                    error:nil];
-//
-//	NSString *batterySavesDirectory = self.batterySavesPath;
-//	[[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory
-//                              withIntermediateDirectories:YES
-//                                               attributes:nil
-//                                                    error:NULL];
-//
 //    return YES;
 //}
 
 #pragma mark - Running
 //- (void)startEmulation {
-//	if (!_isInitialized)
-//	{
-//		[self.renderDelegate willRenderFrameOnAlternateThread];
-//        _isInitialized = true;
-//		_frameInterval = dol_host->GetFrameInterval();
-//	}
-//	[super startEmulation];
-//
-	//Disable the OE framelimiting
-//	[self.renderDelegate suspendFPSLimiting];
-//	if(!self.isRunning) {
-//		[super startEmulation];
-////        [NSThread detachNewThreadSelector:@selector(runReicastRenderThread) toTarget:self withObject:nil];
-//	}
 //}
 
 //- (void)setPauseEmulation:(BOOL)flag {
@@ -93,23 +59,9 @@
 //}
 //
 //- (void)stopEmulation {
-//	_isInitialized = false;
-//
-//	self->shouldStop = YES;
-////	dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
-////    dispatch_semaphore_wait(coreWaitForExitSemaphore, DISPATCH_TIME_FOREVER);
-//	[self.frontBufferCondition lock];
-//	[self.frontBufferCondition signal];
-//	[self.frontBufferCondition unlock];
-//
-//	[super stopEmulation];
 //}
 //
 //- (void)resetEmulation {
-//	//	dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
-//	[self.frontBufferCondition lock];
-//	[self.frontBufferCondition signal];
-//	[self.frontBufferCondition unlock];
 //}
 
 //# pragma mark - Cheats
@@ -119,40 +71,40 @@
 //- (BOOL)supportsRumble { return NO; }
 //- (BOOL)supportsCheatCode { return NO; }
 
-- (NSTimeInterval)frameInterval {
-    return 60.0;
-}
+//- (NSTimeInterval)frameInterval {
+//    return 60.0;
+//}
+//
+//- (CGSize)aspectSize {
+//    return CGSizeMake(1, 1);
+//}
+//
+//- (CGSize)bufferSize {
+//    return CGSizeMake(160, 160);
+//}
 
-- (CGSize)aspectSize {
-    return CGSizeMake(1, 1);
-}
-
-- (CGSize)bufferSize {
-    return CGSizeMake(160, 160);
-}
-
-- (GLenum)pixelFormat {
-    return GL_RGB;
-}
-
-- (GLenum)pixelType {
-    return GL_UNSIGNED_SHORT_5_6_5;
-}
-
-- (GLenum)internalPixelFormat {
-    return GL_RGB565;
-}
+//- (GLenum)pixelFormat {
+//    return GL_RGB;
+//}
+//
+//- (GLenum)pixelType {
+//    return GL_UNSIGNED_SHORT_5_6_5;
+//}
+//
+//- (GLenum)internalPixelFormat {
+//    return GL_RGB565;
+//}
 
 # pragma mark - Audio
 
-- (double)audioSampleRate {
-    return 44100;
-}
-
-- (NSUInteger)channelCount {
-    // TODO: Test 1
-    return 2;
-}
+//- (double)audioSampleRate {
+//    return 44100;
+//}
+//
+//- (NSUInteger)channelCount {
+//    // TODO: Test 1
+//    return 2;
+//}
 
 #pragma mark - Options
 - (void *)getVariable:(const char *)variable {
@@ -160,13 +112,7 @@
     
     
 #define V(x) strcmp(variable, x) == 0
-    if (V("dosbox_pure_force60fps")) {
-        // true|false
-        // "Enable this to force output at 60FPS. Use this if you encounter screen tearing or vsync issues.", NULL
-
-        char *value = strdup("true");
-        return value;
-    } else if (V("potator_palette")) {
+    if (V("potator_palette")) {
             // none,simple,detailed
             char *value = strdup("potator_green");
             return value;
