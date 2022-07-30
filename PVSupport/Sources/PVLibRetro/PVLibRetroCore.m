@@ -157,9 +157,14 @@ char *config_get_active_core_path_ptr(void) {
 NSString *privateFrameworkPath(void) {
     NSBundle *bundle = [NSBundle bundleForClass:[_current class]];
     //    const char* path = [bundle.executablePath fileSystemRepresentation];
-//    NSString *executableName = bundle.infoDictionary[@"CFBundleExecutable"];
+    NSString *executableName = bundle.infoDictionary[@"CFBundleExecutable"];
     
-    NSString *frameworkPath = bundle.bundlePath; //[NSString stringWithFormat:@"%@.framework/%@", bundleName, executableName];
+    NSString *frameworkPath = [NSString stringWithFormat:@"%@/%@", bundle.bundlePath, executableName];
+    
+    NSArray *fileNames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:frameworkPath error:nil];
+    for (NSString *fileName in fileNames) {
+        ILOG(@"%@", fileName);
+    }
 //    NSString *privateFrameworkPath = [[[NSBundle mainBundle] privateFrameworksPath] stringByAppendingPathComponent:frameworkPath];
 //    DLOG(@"%@", privateFrameworkPath);
     return frameworkPath;
@@ -1781,10 +1786,10 @@ static bool environment_callback(unsigned cmd, void *data) {
 
 static void load_dynamic_core(void)
 {
-    
-    ILOG(@"Loading dynamic libretro core from: \"%s\"\n",
-         config_get_active_core_path());
     const char* corepath = config_get_active_core_path();
+
+    ILOG(@"Loading dynamic libretro core from: \"%s\"\n",
+         corepath);
     lib_handle = dylib_load(corepath);
     
     //    function_t sym       = dylib_proc(lib_handle, "retro_init");
