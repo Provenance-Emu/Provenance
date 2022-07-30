@@ -40,6 +40,30 @@
 		B3547B642058591100CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B622058591000CFF7D8 /* Core.plist */; };
 		B365107E21782E95008FDB7B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B365107D21782E95008FDB7B /* libz.tbd */; };
 		B365108021782E9E008FDB7B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B365107F21782E9E008FDB7B /* libz.tbd */; };
+		B380EA2F28952D2900968304 /* snppucolor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FADF8279BCE900013AAD8 /* snppucolor.cpp */; };
+		B380EA3028952D2900968304 /* snspcdisasm.c in Sources */ = {isa = PBXBuildFile; fileRef = B33FAE14279BCE900013AAD8 /* snspcdisasm.c */; };
+		B380EA3128952D2900968304 /* snspc.c in Sources */ = {isa = PBXBuildFile; fileRef = B33FADEF279BCE900013AAD8 /* snspc.c */; };
+		B380EA3228952D2900968304 /* snspc_c.c in Sources */ = {isa = PBXBuildFile; fileRef = B33FADEA279BCE900013AAD8 /* snspc_c.c */; };
+		B380EA3328952D2900968304 /* snppurender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FADE9279BCE900013AAD8 /* snppurender.cpp */; };
+		B380EA3428952D2900968304 /* snmemmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FADF7279BCE900013AAD8 /* snmemmap.cpp */; };
+		B380EA3528952D2900968304 /* snppuobj.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FAE12279BCE900013AAD8 /* snppuobj.cpp */; };
+		B380EA3628952D2900968304 /* snesreg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FADFC279BCE900013AAD8 /* snesreg.cpp */; };
+		B380EA3728952D2900968304 /* sncpu.c in Sources */ = {isa = PBXBuildFile; fileRef = B33FADE5279BCE900013AAD8 /* sncpu.c */; };
+		B380EA3828952D2900968304 /* snppu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FADED279BCE900013AAD8 /* snppu.cpp */; };
+		B380EA3928952D2900968304 /* snspcdsp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FAE16279BCE900013AAD8 /* snspcdsp.cpp */; };
+		B380EA3A28952D2900968304 /* snio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FADE7279BCE900013AAD8 /* snio.cpp */; };
+		B380EA3B28952D2900968304 /* snspctimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FADFD279BCE900013AAD8 /* snspctimer.cpp */; };
+		B380EA3C28952D2900968304 /* sncpu_c.c in Sources */ = {isa = PBXBuildFile; fileRef = B33FAE06279BCE900013AAD8 /* sncpu_c.c */; };
+		B380EA3E28952D2900968304 /* snrom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FAE15279BCE900013AAD8 /* snrom.cpp */; };
+		B380EA3F28952D2900968304 /* snppurender8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FAE09279BCE900013AAD8 /* snppurender8.cpp */; };
+		B380EA4028952D2900968304 /* snspcrom.c in Sources */ = {isa = PBXBuildFile; fileRef = B33FAE0D279BCE900013AAD8 /* snspcrom.c */; };
+		B380EA4128952D2900968304 /* sndma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FADF6279BCE900013AAD8 /* sndma.cpp */; };
+		B380EA4228952D2A00968304 /* snspcbrr.c in Sources */ = {isa = PBXBuildFile; fileRef = B33FAE20279BCE900013AAD8 /* snspcbrr.c */; };
+		B380EA4328952D2A00968304 /* snppublend_c.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FAE0F279BCE900013AAD8 /* snppublend_c.cpp */; };
+		B380EA4428952D2A00968304 /* snspcio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FAE13279BCE900013AAD8 /* snspcio.cpp */; };
+		B380EA4528952D2A00968304 /* snstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FAE08279BCE900013AAD8 /* snstate.cpp */; };
+		B380EA4628952D2A00968304 /* snes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FAE18279BCE900013AAD8 /* snes.cpp */; };
+		B380EA4728952D2A00968304 /* sndisasm.c in Sources */ = {isa = PBXBuildFile; fileRef = B33FAE10279BCE900013AAD8 /* sndisasm.c */; };
 		B3C39C092895292D00B8DCD5 /* rendersurface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FB290279BCE930013AAD8 /* rendersurface.cpp */; };
 		B3C39C0A2895292D00B8DCD5 /* rendersurface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FB290279BCE930013AAD8 /* rendersurface.cpp */; };
 		B3C39C0D2895296400B8DCD5 /* surface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FB26D279BCE930013AAD8 /* surface.cpp */; };
@@ -3355,9 +3379,33 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B380EA4728952D2A00968304 /* sndisasm.c in Sources */,
+				B380EA2F28952D2900968304 /* snppucolor.cpp in Sources */,
+				B380EA4628952D2A00968304 /* snes.cpp in Sources */,
+				B380EA3028952D2900968304 /* snspcdisasm.c in Sources */,
+				B380EA4228952D2A00968304 /* snspcbrr.c in Sources */,
+				B380EA4028952D2900968304 /* snspcrom.c in Sources */,
+				B380EA3C28952D2900968304 /* sncpu_c.c in Sources */,
+				B380EA4328952D2A00968304 /* snppublend_c.cpp in Sources */,
+				B380EA3528952D2900968304 /* snppuobj.cpp in Sources */,
+				B380EA3428952D2900968304 /* snmemmap.cpp in Sources */,
+				B380EA3E28952D2900968304 /* snrom.cpp in Sources */,
 				B33FADA7279BCA9E0013AAD8 /* snesticle_tvOS.swift in Sources */,
+				B380EA3928952D2900968304 /* snspcdsp.cpp in Sources */,
+				B380EA3128952D2900968304 /* snspc.c in Sources */,
+				B380EA4128952D2900968304 /* sndma.cpp in Sources */,
+				B380EA3B28952D2900968304 /* snspctimer.cpp in Sources */,
+				B380EA3F28952D2900968304 /* snppurender8.cpp in Sources */,
 				B3C39C0E2895296500B8DCD5 /* surface.cpp in Sources */,
+				B380EA3A28952D2900968304 /* snio.cpp in Sources */,
+				B380EA4528952D2A00968304 /* snstate.cpp in Sources */,
 				B3C39C0A2895292D00B8DCD5 /* rendersurface.cpp in Sources */,
+				B380EA3828952D2900968304 /* snppu.cpp in Sources */,
+				B380EA3628952D2900968304 /* snesreg.cpp in Sources */,
+				B380EA3728952D2900968304 /* sncpu.c in Sources */,
+				B380EA3328952D2900968304 /* snppurender.cpp in Sources */,
+				B380EA4428952D2A00968304 /* snspcio.cpp in Sources */,
+				B380EA3228952D2900968304 /* snspc_c.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

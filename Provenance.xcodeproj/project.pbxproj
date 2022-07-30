@@ -435,6 +435,8 @@
 		B37D30B527BCD82B00C01114 /* Moveable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37D30B427BCD82B00C01114 /* Moveable.swift */; };
 		B380C26D2894EC2F007B76FD /* PVVecX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B380C26C2894EC2F007B76FD /* PVVecX.framework */; };
 		B380C26E2894EC2F007B76FD /* PVVecX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B380C26C2894EC2F007B76FD /* PVVecX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B380EA2D28952B4500968304 /* PVSnesticle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F6B27DCB1C500E83180 /* PVSnesticle.framework */; };
+		B380EA2E28952B4500968304 /* PVSnesticle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F6B27DCB1C500E83180 /* PVSnesticle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B382C635278E5055007E61FE /* PVEmulatorViewController+Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = B382C632278E5054007E61FE /* PVEmulatorViewController+Audio.swift */; };
 		B382C636278E5055007E61FE /* PVEmulatorViewController+Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = B382C632278E5054007E61FE /* PVEmulatorViewController+Audio.swift */; };
 		B382C637278E5055007E61FE /* PVEmulatorViewController+MultiDisc.swift in Sources */ = {isa = PBXBuildFile; fileRef = B382C633278E5055007E61FE /* PVEmulatorViewController+MultiDisc.swift */; };
@@ -889,6 +891,7 @@
 				B3270FAD27DCB2CA00E83180 /* PVSNES.framework in Embed Frameworks */,
 				B3270FB327DCB2CB00E83180 /* PVTGBDual.framework in Embed Frameworks */,
 				B3270FA127DCB2CA00E83180 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
+				B380EA2E28952B4500968304 /* PVSnesticle.framework in Embed Frameworks */,
 				B3270F9327DCB2CA00E83180 /* PVFCEU.framework in Embed Frameworks */,
 				B3270FA727DCB2CA00E83180 /* PVGB.framework in Embed Frameworks */,
 				B3270FAF27DCB2CB00E83180 /* PVMednafen.framework in Embed Frameworks */,
@@ -1666,6 +1669,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3270FBC27DCB62C00E83180 /* libz.dylib in Frameworks */,
+				B380EA2D28952B4500968304 /* PVSnesticle.framework in Frameworks */,
 				B3270FAA27DCB2CA00E83180 /* PVGenesis.framework in Frameworks */,
 				B3270F9A27DCB2CA00E83180 /* PVMupen64Plus.framework in Frameworks */,
 				B3270FA227DCB2CA00E83180 /* PVRSPCXD4.framework in Frameworks */,
