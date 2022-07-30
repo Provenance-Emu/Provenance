@@ -49,6 +49,10 @@ typedef                         uint32_t     stellabuffer_t;
 #define STELLA_PIXEL_FORMAT     GL_BGRA
 #define STELLA_INTERNAL_FORMAT  GL_RGBA
 
+#define STELLA_WIDTH 160
+#define STELLA_HEIGHT 256
+
+
 const NSUInteger A2600EmulatorValues[] = {
     RETRO_DEVICE_ID_JOYPAD_UP,
     RETRO_DEVICE_ID_JOYPAD_DOWN,
@@ -219,9 +223,6 @@ static void writeSaveFile(const char* path, int type) {
 - (instancetype)init {
     if((self = [super init]))
     {
-        if(_videoBuffer)
-            free(_videoBuffer);
-        _videoBuffer = (stellabuffer_t*)malloc(160 * 256 * 4);
         _cheats = [NSMutableArray new];
     }
     
@@ -273,10 +274,12 @@ static void writeSaveFile(const char* path, int type) {
     retro_run();
 }
 
-- (BOOL)loadFileAtPath: (NSString*) path
-{
+- (BOOL)loadFileAtPath: (NSString*) path {
 	memset(_pad, 0, sizeof(int16_t) * NUMBER_OF_PADS * NUMBER_OF_PAD_INPUTS);
-    
+    if(_videoBuffer)
+        free(_videoBuffer);
+    _videoBuffer = (stellabuffer_t*)malloc(STELLA_WIDTH * STELLA_HEIGHT * 4);
+
     const void *data;
     size_t size;
     self.romName = [[[path lastPathComponent] componentsSeparatedByString:@"."] objectAtIndex:0]; //[path copy];
@@ -464,7 +467,7 @@ static void writeSaveFile(const char* path, int type) {
 }
 
 - (CGSize)bufferSize {
-    return CGSizeMake(160, 256);
+    return CGSizeMake(STELLA_WIDTH, STELLA_HEIGHT);
     
 //    __strong PVStellaGameCore *strongCurrent = _current;
     //return CGSizeMake(strongCurrent->_videoWidth, strongCurrent->_videoHeight);
