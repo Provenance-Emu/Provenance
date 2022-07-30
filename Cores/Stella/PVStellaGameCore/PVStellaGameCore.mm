@@ -66,12 +66,12 @@ const NSUInteger A2600EmulatorValues[] = {
 #define NUMBER_OF_PADS 2
 #define NUMBER_OF_PAD_INPUTS 16
 
-@interface PVStellaGameCore () {
+@interface PVStellaGameCore () <GameWithCheat> {
     stellabuffer_t *_videoBuffer;
     int _videoWidth, _videoHeight;
     int16_t _pad[NUMBER_OF_PADS][NUMBER_OF_PAD_INPUTS];
 }
-
+@property (nonatomic, strong) NSMutableArray<NSString*>* cheats;
 @end
 
 static __weak PVStellaGameCore *_current;
@@ -182,8 +182,8 @@ static void loadSaveFile(const char* path, int type) {
         return;
     }
     
-    size_t size = stella_retro_get_memory_size(type);
-    void *data  = stella_retro_get_memory_data(type);
+    size_t size = retro_get_memory_size(type);
+    void *data  = retro_get_memory_data(type);
     
     if (size == 0 || !data) {
         fclose(file);
@@ -199,32 +199,30 @@ static void loadSaveFile(const char* path, int type) {
     fclose(file);
 }
 
-static void writeSaveFile(const char* path, int type)
-{
-    size_t size = stella_retro_get_memory_size(type);
-    void *data = stella_retro_get_memory_data(type);
+static void writeSaveFile(const char* path, int type) {
+    size_t size = retro_get_memory_size(type);
+    void *data = retro_get_memory_data(type);
     
-    if ( data && size > 0 )
-    {
+    if ( data && size > 0 ) {
         FILE *file = fopen(path, "wb");
-        if ( file != NULL )
-        {
+        if ( file != NULL ) {
             DLOG(@"Saving state %s. Size: %d bytes.", path, (int)size);
-            stella_retro_serialize(data, size);
-            if ( fwrite(data, sizeof(uint8_t), size, file) != size )
+            retro_serialize(data, size);
+            if ( fwrite(data, sizeof(uint8_t), size, file) != size ) {
                 DLOG(@"Did not save state properly.");
+            }
             fclose(file);
         }
     }
 }
 
-- (id)init
-{
+- (instancetype)init {
     if((self = [super init]))
     {
         if(_videoBuffer)
             free(_videoBuffer);
         _videoBuffer = (stellabuffer_t*)malloc(160 * 256 * 4);
+        _cheats = [NSMutableArray new];
     }
     
 	_current = self;
@@ -232,14 +230,39 @@ static void writeSaveFile(const char* path, int type)
 	return self;
 }
 
-#pragma mark Exectuion
+#pragma mark - Exectuion
 
-- (void)executeFrame
-{
+- (void)resetEmulation {
+    retro_reset();
+}
+
+- (void)stopEmulation {
+    if ([self.batterySavesPath length])
+    {
+        [[NSFileManager defaultManager] createDirectoryAtPath:self.batterySavesPath withIntermediateDirectories:YES attributes:nil error:NULL];
+        NSString *filePath = [self.batterySavesPath stringByAppendingPathComponent:[self.romName stringByAppendingPathExtension:@"sav"]];
+        [self writeSaveFile:filePath forType:RETRO_MEMORY_SAVE_RAM];
+    }
+    
+    [super stopEmulation];
+    
+    double delayInSeconds = 0.1;
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+        retro_unload_game();
+        retro_deinit();
+    });
+}
+
+- (void)dealloc {
+    free(_videoBuffer);
+}
+
+- (void)executeFrame {
     if (self.controller1 || self.controller2) {
         [self pollControllers];
     }
-    stella_retro_run();
+    retro_run();
 }
 
 - (void)executeFrameSkippingFrame: (BOOL) skip
@@ -247,7 +270,7 @@ static void writeSaveFile(const char* path, int type)
     if (!skip && (self.controller1 || self.controller2)) {
         [self pollControllers];
     }
-    stella_retro_run();
+    retro_run();
 }
 
 - (BOOL)loadFileAtPath: (NSString*) path
@@ -266,14 +289,14 @@ static void writeSaveFile(const char* path, int type)
     const char *meta = NULL;
     
     //memory.copy(data, size);
-    stella_retro_set_environment(environment_callback);
-	stella_retro_init();
+    retro_set_environment(environment_callback);
+	retro_init();
 	
-    stella_retro_set_audio_sample(audio_callback);
-    stella_retro_set_audio_sample_batch(audio_batch_callback);
-    stella_retro_set_video_refresh(video_callback);
-    stella_retro_set_input_poll(input_poll_callback);
-    stella_retro_set_input_state(input_state_callback);
+    retro_set_audio_sample(audio_callback);
+    retro_set_audio_sample_batch(audio_batch_callback);
+    retro_set_video_refresh(video_callback);
+    retro_set_input_poll(input_poll_callback);
+    retro_set_input_state(input_state_callback);
     
     
     const char *fullPath = [path UTF8String];
@@ -284,7 +307,7 @@ static void writeSaveFile(const char* path, int type)
     info.size = size;
     info.meta = meta;
     
-    if (stella_retro_load_game(&info))
+    if (retro_load_game(&info))
     {
         if ([self.batterySavesPath length])
         {
@@ -296,13 +319,13 @@ static void writeSaveFile(const char* path, int type)
         }
         
         struct retro_system_av_info info;
-        stella_retro_get_system_av_info(&info);
+        retro_get_system_av_info(&info);
         
         _frameInterval = info.timing.fps;
         _sampleRate = info.timing.sample_rate;
         
-        stella_retro_get_region();
-        stella_retro_run();
+        retro_get_region();
+        retro_run();
         
         return YES;
     }
@@ -310,84 +333,8 @@ static void writeSaveFile(const char* path, int type)
     return NO;
 }
 
-- (BOOL)loadSaveFile:(NSString *)path forType:(int)type
-{
-    size_t size = stella_retro_get_memory_size(type);
-    void *ramData = stella_retro_get_memory_data(type);
-    
-    if (size == 0 || !ramData)
-    {
-        return NO;
-    }
-    
-    NSData *data = [NSData dataWithContentsOfFile:path];
-    if (!data || ![data length])
-    {
-        DLOG(@"Couldn't load save file.");
-		return NO;
-    }
-    
-    [data getBytes:ramData length:size];
-	return YES;
-}
+#pragma mark - Input
 
-- (BOOL)writeSaveFile:(NSString *)path forType:(int)type {
-    size_t size = stella_retro_get_memory_size(type);
-    void *ramData = stella_retro_get_memory_data(type);
-
-    if (ramData && (size > 0)) {
-        stella_retro_serialize(ramData, size);
-        NSData *data = [NSData dataWithBytes:ramData length:size];
-        BOOL success = [data writeToFile:path atomically:YES];
-        if (!success)
-        {
-            DLOG(@"Error writing save file");
-        }
-		return success;
-	} else {
-		ELOG(@"Stella ramdata is invalid");
-		return NO;
-	}
-}
-
-- (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error   {
-	NSDictionary *userInfo = @{
-							   NSLocalizedDescriptionKey: @"Failed to save state.",
-							   NSLocalizedFailureReasonErrorKey: @"Stella does not support save states.",
-							   NSLocalizedRecoverySuggestionErrorKey: @"Check for future updates on ticket #753."
-							   };
-
-	if(error != NULL) {
-	NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-											code:PVEmulatorCoreErrorCodeCouldNotSaveState
-										userInfo:userInfo];
-
-	*error = newError;
-	}
-	return NO;
-//	return [self writeSaveFile:fileName forType:RETRO_MEMORY_SAVE_RAM];
-}
-
-- (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error   {
-	if(error != NULL) {
-	NSDictionary *userInfo = @{
-							   NSLocalizedDescriptionKey: @"Failed to load state.",
-							   NSLocalizedFailureReasonErrorKey: @"Stella does not support save states.",
-							   NSLocalizedRecoverySuggestionErrorKey: @"Check for future updates on ticket #753."
-							   };
-
-	NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-											code:PVEmulatorCoreErrorCodeCouldNotLoadState
-										userInfo:userInfo];
-
-	*error = newError;
-	}
-	return NO;
-//	return [self loadSaveFile:fileName forType:RETRO_MEMORY_SAVE_RAM];
-}
-
-
-#pragma mark Input
 - (void)pollControllers {
     for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++) {
         GCController *controller = nil;
@@ -503,7 +450,7 @@ static void writeSaveFile(const char* path, int type)
     _pad[player][A2600EmulatorValues[button]] = 0;
 }
 
-#pragma mark Video
+#pragma mark - Video
 - (const void *)videoBuffer
 {
     return _videoBuffer;
@@ -528,39 +475,7 @@ static void writeSaveFile(const char* path, int type)
 //    return CGSizeMake(STELLA_WIDTH * 2, STELLA_HEIGHT);
 }
 
-//- (void)setupEmulation
-//{
-//}
-
-- (void)resetEmulation
-{
-    stella_retro_reset();
-}
-
-- (void)stopEmulation
-{
-    if ([self.batterySavesPath length])
-    {
-        [[NSFileManager defaultManager] createDirectoryAtPath:self.batterySavesPath withIntermediateDirectories:YES attributes:nil error:NULL];
-        NSString *filePath = [self.batterySavesPath stringByAppendingPathComponent:[self.romName stringByAppendingPathExtension:@"sav"]];
-        [self writeSaveFile:filePath forType:RETRO_MEMORY_SAVE_RAM];
-    }
-    
-    [super stopEmulation];
-    
-    double delayInSeconds = 0.1;
-    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-        stella_retro_unload_game();
-        stella_retro_deinit();
-    });
-}
-
-- (void)dealloc
-{
-    free(_videoBuffer);
-}
-
+#pragma mark - Video
 - (GLenum)pixelFormat
 {
     return STELLA_PIXEL_FORMAT;
@@ -576,6 +491,7 @@ static void writeSaveFile(const char* path, int type)
     return STELLA_INTERNAL_FORMAT;
 }
 
+#pragma mark - Audio
 - (double)audioSampleRate
 {
     return _sampleRate ? _sampleRate : 31400;
@@ -586,13 +502,146 @@ static void writeSaveFile(const char* path, int type)
     return _frameInterval ? _frameInterval : 60.0;
 }
 
-- (NSUInteger)channelCount
-{
-    return 2;
+- (NSUInteger)channelCount { return 2; }
+
+#pragma mark - Saves
+-(BOOL)supportsSaveStates {
+	return YES;
 }
 
--(BOOL)supportsSaveStates {
-	return NO;
+- (void)loadSaveFile:(NSString *)path forType:(int)type {
+    size_t size = retro_get_memory_size(type);
+    void *ramData = retro_get_memory_data(type);
+    
+    if (size == 0 || !ramData)
+    {
+        return;
+    }
+    
+    NSData *data = [NSData dataWithContentsOfFile:path];
+    if (!data || ![data length])
+    {
+        WLOG(@"Couldn't load save file.");
+    }
+    
+    [data getBytes:ramData length:size];
+}
+
+- (BOOL)writeSaveFile:(NSString *)path forType:(int)type
+{
+    size_t size = retro_get_memory_size(type);
+    void *ramData = retro_get_memory_data(type);
+    
+    if (ramData && (size > 0))
+    {
+        retro_serialize(ramData, size);
+        NSData *data = [NSData dataWithBytes:ramData length:size];
+        BOOL success = [data writeToFile:path atomically:YES];
+        if (!success)
+        {
+            ELOG(@"Error writing save file");
+        }
+        return success;
+    } else {
+        return NO;
+    }
+}
+
+
+- (BOOL)saveStateToFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error
+{
+    @synchronized(self) {
+        int serial_size = retro_serialize_size();
+        uint8_t *serial_data = (uint8_t *) malloc(serial_size);
+        
+        retro_serialize(serial_data, serial_size);
+        
+        NSError *error = nil;
+        NSData *saveStateData = [NSData dataWithBytes:serial_data length:serial_size];
+        free(serial_data);
+        BOOL success = [saveStateData writeToFile:path
+                                          options:NSDataWritingAtomic
+                                            error:&error];
+        if (!success) {
+            ELOG(@"Error saving state: %@", [error localizedDescription]);
+            return NO;
+        }
+        
+        return YES;
+    }
+}
+
+- (BOOL)loadStateFromFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error
+{
+    @synchronized(self) {
+        NSData *saveStateData = [NSData dataWithContentsOfFile:path];
+        if (!saveStateData)
+        {
+            if(error != NULL) {
+                NSDictionary *userInfo = @{
+                                           NSLocalizedDescriptionKey: @"Failed to load save state.",
+                                           NSLocalizedFailureReasonErrorKey: @"Genesis failed to read savestate data.",
+                                           NSLocalizedRecoverySuggestionErrorKey: @"Check that the path is correct and file exists."
+                                           };
+
+                NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                        code:PVEmulatorCoreErrorCodeCouldNotLoadState
+                                                    userInfo:userInfo];
+                *error = newError;
+            }
+            ELOG(@"Unable to load save state from path: %@", path);
+            return NO;
+        }
+        
+        if (!retro_unserialize([saveStateData bytes], [saveStateData length]))
+        {
+            if(error != NULL) {
+                NSDictionary *userInfo = @{
+                    NSLocalizedDescriptionKey: @"Failed to load save state.",
+                    NSLocalizedFailureReasonErrorKey: @"Genesis failed to load savestate data.",
+                    NSLocalizedRecoverySuggestionErrorKey: @"Check that the path is correct and file exists."
+                };
+
+                NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                        code:PVEmulatorCoreErrorCodeCouldNotLoadState
+                                                    userInfo:userInfo];
+                *error = newError;
+            }
+            DLOG(@"Unable to load save state");
+            return NO;
+        }
+        
+        return YES;
+    }
+}
+
+@end
+
+#pragma mark - Cheats
+
+@implementation PVStellaGameCore (GameWithCheat)
+
+-(BOOL)supportsCheatCode {
+    return YES;
+}
+
+- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled  error:(NSError**)error {
+    @synchronized(self) {
+
+        BOOL cheatListSuccessfull = NO;
+
+        NSUInteger foundIndex = [self.cheats indexOfObjectIdenticalTo:code];
+        NSUInteger index = foundIndex != NSNotFound ?: self.cheats.count;
+
+        [self.cheats insertObject:code atIndex:index];
+        
+        const char* _Nullable code_c = [code cStringUsingEncoding:NSUTF8StringEncoding];
+        cheatListSuccessfull = retro_cheat_set(index, enabled, code_c);
+
+        ILOG(@"Applied Cheat Code %@ %@ %@", code, type, cheatListSuccessfull ? @"Success" : @"Failed");
+
+        return cheatListSuccessfull;
+    }
 }
 
 @end

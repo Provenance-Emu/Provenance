@@ -84,10 +84,11 @@ bool PropertiesSet::getMD5(const string& md5, Properties& properties,
 
       if(cmp == 0)  // found it
       {
-        for(uInt8 p = 0; p < static_cast<uInt8>(PropType::NumTypes); ++p)
-          if(DefProps[i][p][0] != 0)
-            properties.set(PropType{p}, DefProps[i][p]);
-
+          for(uInt8 p = 0; p < static_cast<uInt8>(PropType::NumTypes); ++p) {
+              if(DefProps[i][p][0] != 0) {
+                  properties.set(PropType{p}, DefProps[i][p]);
+              }
+          }
         found = true;
         break;
       }

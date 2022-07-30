@@ -7,9 +7,9 @@
 //
 
 // All
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) LSB_FIRST=1 HAVE_MKDIR=1 SIZEOF_DOUBLE=8 PSS_STYLE=1 MPC_FIXED_POINT ARCH_X86 WANT_STELLA_EMU=1 STDC_HEADERS=1 HAVE_INTTYPES=1 Keyboard=StellaKeyboard SDL_SUPPORT _GLIBCXX_USE_CXX11_ABI=1 UNIX DARWIN BSPF_UNIX MACOS_KEYS GUI_SUPPORT SOUND_SUPPORT JOYSTICK_SUPPORT CHEATCODE_SUPPORT PNG_SUPPORT ZIP_SUPPORT
-
-OTHER_CFLAGS = $(inherited) -ObjC -fno-strict-overflow -ffast-math -funroll-loops -fPIC -Wno-multichar -Wunused
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) LSB_FIRST=1 HAVE_MKDIR=1 SIZEOF_DOUBLE=8 PSS_STYLE=1 MPC_FIXED_POINT ARCH_X86 WANT_STELLA_EMU=1 STDC_HEADERS=1 HAVE_INTTYPES=1 Keyboard=StellaKeyboard _GLIBCXX_USE_CXX11_ABI=1 UNIX=1 DARWIN=1 MACOS_KEYS=1 SOUND_SUPPORT=1 JOYSTICK_SUPPORT CHEATCODE_SUPPORT __LIB_RETRO__=1 IOS ARM
+// PNG_SUPPORT BSPF_UNIX GUI_SUPPORT SDL_SUPPORT ZIP_SUPPORT
+OTHER_CFLAGS = $(inherited) -ObjC -fno-strict-overflow -ffast-math -funroll-loops -fPIC -Wno-multichar -Wunused -fno-aligned-allocation
 OTHER_CXXFLAGS = $(inherited) -ObjC -Wno-multichar -Wunused -Woverloaded-virtual -Wnon-virtual-dtor
 OTHER_CFLAGS[configuration=Release] = $(inherited) -flto
 OTHER_CXXFLAGS[configuration=Release] = $(inherited) -flto -fno-rtti -Wno-poison-system-directories

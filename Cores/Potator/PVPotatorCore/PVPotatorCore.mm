@@ -117,7 +117,7 @@
 //}
 //
 //- (BOOL)supportsRumble { return NO; }
-//- (BOOL)supportsCheatCodes { return NO; }
+//- (BOOL)supportsCheatCode { return NO; }
 
 - (NSTimeInterval)frameInterval {
     return 60.0;

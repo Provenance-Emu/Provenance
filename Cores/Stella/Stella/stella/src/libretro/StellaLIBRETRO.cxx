@@ -28,6 +28,7 @@
 #include "Switches.hxx"
 #include "TIA.hxx"
 #include "TIASurface.hxx"
+#include "CheatManager.hxx"
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 StellaLIBRETRO::StellaLIBRETRO()
@@ -404,4 +405,10 @@ void StellaLIBRETRO::setAudioStereo(int mode)
     myOSystem->settings().setValue(AudioSettings::SETTING_STEREO, audio_mode);
     myOSystem->console().initializeAudio();
   }
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+bool StellaLIBRETRO::setCheat(unsigned index, bool enabled, const char *code)
+{
+    return myOSystem->cheat().add("", code, enabled, index);
 }

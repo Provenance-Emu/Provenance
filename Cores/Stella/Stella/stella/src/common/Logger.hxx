@@ -26,7 +26,7 @@
 class Logger {
 
   public:
-
+#undef DEBUG
     enum class Level {
       ERR = 0, // cannot use ERROR???
       INFO = 1,

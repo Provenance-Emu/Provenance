@@ -3866,7 +3866,7 @@ RETRO_API bool retro_serialize(void *data, size_t size);
 RETRO_API bool retro_unserialize(const void *data, size_t size);
 
 RETRO_API void retro_cheat_reset(void);
-RETRO_API void retro_cheat_set(unsigned index, bool enabled, const char *code);
+RETRO_API bool retro_cheat_set(unsigned index, bool enabled, const char *code);
 
 /* Loads a game.
  * Return true to indicate successful loading and false to indicate load failure.

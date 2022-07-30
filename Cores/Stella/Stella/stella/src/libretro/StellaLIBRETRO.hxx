@@ -114,6 +114,7 @@ class StellaLIBRETRO
 
   public:
     void   setROM(const char* path, const void* data, size_t size);
+    bool   setCheat(unsigned index, bool enabled, const char *code);
 
     void   setConsoleFormat(uInt32 mode);
 

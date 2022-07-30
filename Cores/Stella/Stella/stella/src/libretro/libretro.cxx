@@ -758,6 +758,7 @@ void retro_cheat_reset()
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-void retro_cheat_set(unsigned index, bool enabled, const char *code)
+bool retro_cheat_set(unsigned index, bool enabled, const char *code)
 {
+    return stella.setCheat(index, enabled, code);
 }

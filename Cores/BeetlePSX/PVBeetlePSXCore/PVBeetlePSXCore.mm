@@ -120,7 +120,7 @@
 
 - (BOOL)supportsSaveStates { return NO; }
 - (BOOL)supportsRumble { return YES; }
-- (BOOL)supportsCheatCodes { return YES; }
+- (BOOL)supportsCheatCode { return YES; }
 
 //- (NSTimeInterval)frameInterval {
 //    return 60;

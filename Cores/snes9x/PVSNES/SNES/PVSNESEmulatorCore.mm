@@ -860,7 +860,7 @@ static void FinalizeSamplesAudioCallback(void *) {
             cheatList[code] = @YES;
         else
             [cheatList removeObjectForKey:code];
-        NSLog(@"Applying Cheat Code %@ %@ %@", code, type, cheatList);
+        ILOG(@"Applying Cheat Code %@ %@ %@", code, type, cheatList);
         
 
         S9xDeleteCheats();
@@ -876,13 +876,13 @@ static void FinalizeSamplesAudioCallback(void *) {
             {
                 // Handle multi-line cheats
                 multipleCodes = [key componentsSeparatedByString:@"+"];
-                NSLog(@"Multiple Codes %@", multipleCodes);
+                ILOG(@"Multiple Codes %@", multipleCodes);
                 for (NSString *singleCode in multipleCodes) {
                     // Sanitize for PAR codes that might contain colons
                     const char *cheatCode = [[singleCode stringByReplacingOccurrencesOfString:@":" withString:@""] UTF8String];
                     if (singleCode != nil && singleCode.length > 0) {
                         if (S9xAddCheatGroup("Provenance", cheatCode) >= 0) {
-                            NSLog(@"Code %@ applied successfully", singleCode);
+                            ILOG(@"Code %@ applied successfully", singleCode);
                             S9xEnableCheatGroup(Cheat.g.size () - 1);
                         } else {
                             cheatListSuccessfull = NO;

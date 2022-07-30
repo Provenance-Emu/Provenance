@@ -101,7 +101,7 @@
 //}
 //
 //- (BOOL)supportsRumble { return NO; }
-//- (BOOL)supportsCheatCodes { return NO; }
+//- (BOOL)supportsCheatCode { return NO; }
 #pragma mark - Options
 - (void *)getVariable:(const char *)variable {
     ILOG(@"%s", variable);
