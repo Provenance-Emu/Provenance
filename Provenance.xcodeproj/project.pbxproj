@@ -433,6 +433,8 @@
 		B37B71B0278E33B9005FB278 /* MenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37B71AF278E33B9005FB278 /* MenuButton.swift */; };
 		B37B71B1278E33B9005FB278 /* MenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37B71AF278E33B9005FB278 /* MenuButton.swift */; };
 		B37D30B527BCD82B00C01114 /* Moveable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37D30B427BCD82B00C01114 /* Moveable.swift */; };
+		B380C26D2894EC2F007B76FD /* PVVecX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B380C26C2894EC2F007B76FD /* PVVecX.framework */; };
+		B380C26E2894EC2F007B76FD /* PVVecX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B380C26C2894EC2F007B76FD /* PVVecX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B382C635278E5055007E61FE /* PVEmulatorViewController+Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = B382C632278E5054007E61FE /* PVEmulatorViewController+Audio.swift */; };
 		B382C636278E5055007E61FE /* PVEmulatorViewController+Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = B382C632278E5054007E61FE /* PVEmulatorViewController+Audio.swift */; };
 		B382C637278E5055007E61FE /* PVEmulatorViewController+MultiDisc.swift in Sources */ = {isa = PBXBuildFile; fileRef = B382C633278E5055007E61FE /* PVEmulatorViewController+MultiDisc.swift */; };
@@ -932,6 +934,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				B380C26E2894EC2F007B76FD /* PVVecX.framework in Embed Frameworks */,
 				B39E12A92892600500016387 /* PVLibRetro.framework in Embed Frameworks */,
 				B3C8A6F3287823DC0037A946 /* PVfMSX.framework in Embed Frameworks */,
 				B3C8A6F5287823DC0037A946 /* PVEP128Emu.framework in Embed Frameworks */,
@@ -1372,6 +1375,7 @@
 		B37D31C9274A57F000D635E0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = en; path = Info.plist; sourceTree = "<group>"; };
 		B37D31CC274A57F000D635E0 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "zh-Hans"; path = Info.plist; sourceTree = "<group>"; };
 		B37F4AF4286E94C60043F1C9 /* PVDesmume2015.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDesmume2015.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B380C26C2894EC2F007B76FD /* PVVecX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVecX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B380EAC12759D689001B8532 /* Build.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Build.xcconfig; sourceTree = "<group>"; };
 		B380EAC22759D692001B8532 /* CodeSigning.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CodeSigning.xcconfig; sourceTree = "<group>"; };
 		B380EAC32759D69A001B8532 /* CodeSigning.xcconfig.sample */ = {isa = PBXFileReference; lastKnownFileType = text; path = CodeSigning.xcconfig.sample; sourceTree = "<group>"; };
@@ -1723,6 +1727,7 @@
 				B3C8A6F0287823DC0037A946 /* PVMiniVMac.framework in Frameworks */,
 				B3C8A6F2287823DC0037A946 /* PVfMSX.framework in Frameworks */,
 				B38E0EE72892853D004720DA /* PVMelonDS.framework in Frameworks */,
+				B380C26D2894EC2F007B76FD /* PVVecX.framework in Frameworks */,
 				B3C8A6CE2878238C0037A946 /* libxml2.dylib in Frameworks */,
 				B3C8A6F6287823DC0037A946 /* PVPotator.framework in Frameworks */,
 				B3C8A6F4287823DC0037A946 /* PVEP128Emu.framework in Frameworks */,
@@ -1882,6 +1887,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B380C26C2894EC2F007B76FD /* PVVecX.framework */,
 				B3D3E7612894DEBE0016EB85 /* PVGME.framework */,
 				B3D3E75E2894DEAB0016EB85 /* PVGME.framework */,
 				B38E0F10289290E5004720DA /* PVPCSXRearmed.framework */,
@@ -5241,6 +5247,7 @@
 		B3270F8827DCB25100E83180 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -5254,7 +5261,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2780;
+				CURRENT_PROJECT_VERSION = 2782;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -5284,7 +5291,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = "$(MARKETING_VERSION)";
+				MARKETING_VERSION = 2.1.1;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Cores";
 				PRODUCT_NAME = Cores;
@@ -5300,6 +5307,7 @@
 		B3270F8927DCB25100E83180 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -5314,7 +5322,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2780;
+				CURRENT_PROJECT_VERSION = 2782;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -5344,7 +5352,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = "$(MARKETING_VERSION)";
+				MARKETING_VERSION = 2.1.1;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Cores";
 				PRODUCT_NAME = Cores;
@@ -5359,6 +5367,7 @@
 		B3270F8A27DCB25100E83180 /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -5373,7 +5382,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2780;
+				CURRENT_PROJECT_VERSION = 2782;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -5403,7 +5412,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = "$(MARKETING_VERSION)";
+				MARKETING_VERSION = 2.1.1;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Cores";
 				PRODUCT_NAME = Cores;

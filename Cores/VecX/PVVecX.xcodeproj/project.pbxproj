@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B301797F207C909E0051B93D /* libdos-box.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libdos-box.a */; };
+		B301797F207C909E0051B93D /* libvecx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libvecx.a */; };
 		B3135B9B26E4CAD40047F338 /* PVVecXCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVVecXCore.mm */; };
 		B3135B9C26E4CC290047F338 /* PVVecXCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVVecXCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3135BA126E4CC620047F338 /* PVVecX.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVVecX.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -30,11 +30,18 @@
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
-		B39768F82859E23200558958 /* libdos-box-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libdos-box-libretro.a */; };
-		B39768FB2859E23A00558958 /* libdos-box-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B39768F72859E18B00558958 /* libdos-box-libretro.a */; };
+		B380C2592894E846007B76FD /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C19B2894D32900CF98C7 /* libretro.c */; };
+		B380C25A2894E84A007B76FD /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C19B2894D32900CF98C7 /* libretro.c */; };
+		B380C2662894EB16007B76FD /* glsym_es2.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1AE2894D32A00CF98C7 /* glsym_es2.c */; };
+		B380C2672894EB16007B76FD /* glsym_es2.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1AE2894D32A00CF98C7 /* glsym_es2.c */; };
+		B380C2692894EB37007B76FD /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B380C2682894EB37007B76FD /* OpenGL.framework */; platformFilter = maccatalyst; };
+		B380C26A2894EBAB007B76FD /* rglgen.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1AF2894D32A00CF98C7 /* rglgen.c */; };
+		B380C26B2894EBAB007B76FD /* rglgen.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1AF2894D32A00CF98C7 /* rglgen.c */; };
+		B39768F82859E23200558958 /* libvecx-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libvecx-libretro.a */; };
+		B39768FB2859E23A00558958 /* libvecx-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B39768F72859E18B00558958 /* libvecx-libretro.a */; };
 		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
 		B3A41BF0286E76490054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */; };
-		B3B104AF218F26F400210C39 /* libdos-box.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3447F91218BEE3F00557ACE /* libdos-box.a */; };
+		B3B104AF218F26F400210C39 /* libvecx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3447F91218BEE3F00557ACE /* libvecx.a */; };
 		B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B104B8218F281B00210C39 /* PVSupport.framework */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
@@ -44,6 +51,12 @@
 		B3C8A6602877D6510037A946 /* PVVecXCore+Video.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVVecXCore+Video.m */; };
 		B3C8A6612877D6B30037A946 /* PVVecXCore+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVVecXCore+Audio.m */; };
 		B3C8A6622877D6B40037A946 /* PVVecXCore+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVVecXCore+Audio.m */; };
+		B3D3E7652894E5310016EB85 /* e6809.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1CD2894D32A00CF98C7 /* e6809.c */; };
+		B3D3E7662894E5310016EB85 /* e8910.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1A02894D32900CF98C7 /* e8910.c */; };
+		B3D3E7672894E5310016EB85 /* vecx.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C19A2894D32900CF98C7 /* vecx.c */; };
+		B3D3E7692894E5310016EB85 /* e6809.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1CD2894D32A00CF98C7 /* e6809.c */; };
+		B3D3E76A2894E5310016EB85 /* e8910.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1A02894D32900CF98C7 /* e8910.c */; };
+		B3D3E76B2894E5310016EB85 /* vecx.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C19A2894D32900CF98C7 /* vecx.c */; };
 		B3EBB2032872B65700EAEB37 /* PVVecXCore+Video.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVVecXCore+Video.m */; };
 /* End PBXBuildFile section */
 
@@ -104,10 +117,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		B30178D3207C901D0051B93D /* libdos-box.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libdos-box.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B30178D3207C901D0051B93D /* libvecx.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libvecx.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3135BAA26E4CDC50047F338 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
 		B324C31B2191964F009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
-		B3344BC32859E088006E6B3A /* libdos-box-libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libdos-box-libretro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3344BC32859E088006E6B3A /* libvecx-libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libvecx-libretro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B339468820783F41008DBAB4 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = usr/lib/libpthread.tbd; sourceTree = SDKROOT; };
 		B339468A20783F48008DBAB4 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		B3447E96218B809200557ACE /* PVVecXCore+Controls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVVecXCore+Controls.h"; sourceTree = "<group>"; };
@@ -121,13 +134,14 @@
 		B3447EB2218BC69700557ACE /* PVVecXCore+Audio.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVVecXCore+Audio.m"; sourceTree = "<group>"; };
 		B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
 		B3447EE6218BEDD200557ACE /* PVVecX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVVecX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3447F91218BEE3F00557ACE /* libdos-box.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libdos-box.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3447F91218BEE3F00557ACE /* libvecx.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libvecx.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B35E6BEF207CD2610040709A /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		B35E6BF1207CD2670040709A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
 		B35E6BF4207CD2740040709A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
-		B39768F72859E18B00558958 /* libdos-box-libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libdos-box-libretro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B380C2682894EB37007B76FD /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
+		B39768F72859E18B00558958 /* libvecx-libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libvecx-libretro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39769132859E3A300558958 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39769172859E3AD00558958 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B39769182859E3AD00558958 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -216,8 +230,8 @@
 			files = (
 				B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */,
 				B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */,
-				B3B104AF218F26F400210C39 /* libdos-box.a in Frameworks */,
-				B39768FB2859E23A00558958 /* libdos-box-libretro.a in Frameworks */,
+				B3B104AF218F26F400210C39 /* libvecx.a in Frameworks */,
+				B39768FB2859E23A00558958 /* libvecx-libretro.a in Frameworks */,
 				B3447ECD218BEDD200557ACE /* CoreAudio.framework in Frameworks */,
 				B3447ECE218BEDD200557ACE /* AudioToolbox.framework in Frameworks */,
 				B3447ED0218BEDD200557ACE /* libz.tbd in Frameworks */,
@@ -249,11 +263,12 @@
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
+				B380C2692894EB37007B76FD /* OpenGL.framework in Frameworks */,
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
-				B301797F207C909E0051B93D /* libdos-box.a in Frameworks */,
+				B301797F207C909E0051B93D /* libvecx.a in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
-				B39768F82859E23200558958 /* libdos-box-libretro.a in Frameworks */,
+				B39768F82859E23200558958 /* libvecx-libretro.a in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
 				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
@@ -298,11 +313,11 @@
 			isa = PBXGroup;
 			children = (
 				B3C7621020783162009950E4 /* PVVecX.framework */,
-				B30178D3207C901D0051B93D /* libdos-box.a */,
+				B30178D3207C901D0051B93D /* libvecx.a */,
 				B3447EE6218BEDD200557ACE /* PVVecX.framework */,
-				B3447F91218BEE3F00557ACE /* libdos-box.a */,
-				B3344BC32859E088006E6B3A /* libdos-box-libretro.a */,
-				B39768F72859E18B00558958 /* libdos-box-libretro.a */,
+				B3447F91218BEE3F00557ACE /* libvecx.a */,
+				B3344BC32859E088006E6B3A /* libvecx-libretro.a */,
+				B39768F72859E18B00558958 /* libvecx-libretro.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -320,6 +335,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B380C2682894EB37007B76FD /* OpenGL.framework */,
 				B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */,
 				B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */,
 				B39769172859E3AD00558958 /* CoreFoundation.framework */,
@@ -519,7 +535,7 @@
 			);
 			name = "vecx-iOS";
 			productName = reicast;
-			productReference = B30178D3207C901D0051B93D /* libdos-box.a */;
+			productReference = B30178D3207C901D0051B93D /* libvecx.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		B3344B522859E088006E6B3A /* vecx-libretro-iOS */ = {
@@ -536,7 +552,7 @@
 			);
 			name = "vecx-libretro-iOS";
 			productName = reicast;
-			productReference = B3344BC32859E088006E6B3A /* libdos-box-libretro.a */;
+			productReference = B3344BC32859E088006E6B3A /* libvecx-libretro.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		B3447EC0218BEDD200557ACE /* PVVecX-tvOS */ = {
@@ -572,7 +588,7 @@
 			);
 			name = "vecx-tvOS";
 			productName = reicast;
-			productReference = B3447F91218BEE3F00557ACE /* libdos-box.a */;
+			productReference = B3447F91218BEE3F00557ACE /* libvecx.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		B39768ED2859E18B00558958 /* vecx-libretro-tvOS */ = {
@@ -589,7 +605,7 @@
 			);
 			name = "vecx-libretro-tvOS";
 			productName = reicast;
-			productReference = B39768F72859E18B00558958 /* libdos-box-libretro.a */;
+			productReference = B39768F72859E18B00558958 /* libvecx-libretro.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		B3C7620F20783162009950E4 /* PVVecX-iOS */ = {
@@ -689,6 +705,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3D3E76A2894E5310016EB85 /* e8910.c in Sources */,
+				B380C26A2894EBAB007B76FD /* rglgen.c in Sources */,
+				B3D3E76B2894E5310016EB85 /* vecx.c in Sources */,
+				B3D3E7692894E5310016EB85 /* e6809.c in Sources */,
+				B380C2662894EB16007B76FD /* glsym_es2.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -696,6 +717,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B380C2592894E846007B76FD /* libretro.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -714,6 +736,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3D3E7662894E5310016EB85 /* e8910.c in Sources */,
+				B380C26B2894EBAB007B76FD /* rglgen.c in Sources */,
+				B3D3E7672894E5310016EB85 /* vecx.c in Sources */,
+				B3D3E7652894E5310016EB85 /* e6809.c in Sources */,
+				B380C2672894EB16007B76FD /* glsym_es2.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -721,6 +748,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B380C25A2894E84A007B76FD /* libretro.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -758,13 +786,7 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/VecX-pure/include\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "dos-box";
+				PRODUCT_NAME = vecx;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -778,13 +800,7 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/VecX-pure/include\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "dos-box";
+				PRODUCT_NAME = vecx;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -845,7 +861,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/VecX-pure/include\"",
+					"\"$(SRCROOT)/libretro-vecx/libretro-common/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -869,13 +885,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVVecX/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -903,12 +912,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVVecX/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -933,13 +936,7 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/VecX-pure/include\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "dos-box";
+				PRODUCT_NAME = vecx;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -953,13 +950,7 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/VecX-pure/include\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "dos-box";
+				PRODUCT_NAME = vecx;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -974,13 +965,7 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/VecX-pure/include\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "dos-box-libretro";
+				PRODUCT_NAME = "vecx-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -994,13 +979,7 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/VecX-pure/include\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "dos-box-libretro";
+				PRODUCT_NAME = "vecx-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1014,13 +993,7 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/VecX-pure/include\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "dos-box-libretro";
+				PRODUCT_NAME = "vecx-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1038,12 +1011,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVVecX/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -1072,12 +1039,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVVecX/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -1102,13 +1063,7 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/VecX-pure/include\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "dos-box";
+				PRODUCT_NAME = vecx;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -1123,13 +1078,7 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/VecX-pure/include\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "dos-box";
+				PRODUCT_NAME = vecx;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -1144,13 +1093,7 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/VecX-pure/include\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "dos-box-libretro";
+				PRODUCT_NAME = "vecx-libretro";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -1165,13 +1108,7 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/VecX-pure/include\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "dos-box-libretro";
+				PRODUCT_NAME = "vecx-libretro";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -1186,13 +1123,7 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/VecX-pure/include\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "dos-box-libretro";
+				PRODUCT_NAME = "vecx-libretro";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -1259,7 +1190,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/VecX-pure/include\"",
+					"\"$(SRCROOT)/libretro-vecx/libretro-common/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -1326,7 +1257,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/VecX-pure/include\"",
+					"\"$(SRCROOT)/libretro-vecx/libretro-common/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -1351,13 +1282,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVVecX/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -1385,13 +1309,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVVecX/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;

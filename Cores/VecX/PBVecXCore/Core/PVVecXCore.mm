@@ -108,55 +108,44 @@
     
     
 #define V(x) strcmp(variable, x) == 0
-    if (V("VecX_pure_force60fps")) {
-        // true|false
-        // "Enable this to force output at 60FPS. Use this if you encounter screen tearing or vsync issues.", NULL
-
-        char *value = strdup("true");
+    if (V("vecx_use_hw")) {
+        char *value = strdup("Hardware");
         return value;
-    } else if (V("VecX_pure_perfstats")) {
-            // none,simple,detailed
-            char *value = strdup("none");
-            return value;
-    } else if (V("VecX_pure_perfstats")) {
-            // Off|Interlaced|Progressive
-            char *value = strdup("Progressive");
-            return value;
-    } else if (V("VecX_pure_savestate")) {
-            // on,rewind,disable
-            char *value = strdup("on");
-            return value;
-    } else if (V("VecX_pure_on_screen_keyboard")) {
-            // true,false
-            // Enable the On Screen Keyboard feature which can be activated with the L3 button on the controller.
-            char *value = strdup("true");
-            return value;
-    } else if (V("VecX_pure_audiorate")) {
-            // "This should match the frontend audio output rate (Hz) setting.", NULL,
-//            char * value = [[NSString stringWithFormat:@"%i", self.audioSampleRate] cStringUsingEncoding:NSUTF8StringEncoding];
-            char *value = strdup("44100");
-            return value;
-    } else if (V("VecX_pure_machine")) {
-//        { "svga",     "SVGA (Super Video Graphics Array) (default)" },
-//        { "vga",      "VGA (Video Graphics Array)" },
-//        { "ega",      "EGA (Enhanced Graphics Adapter" },
-//        { "cga",      "CGA (Color Graphics Adapter)" },
-//        { "tandy",    "Tandy (Tandy Graphics Adapter" },
-//        { "hercules", "Hercules (Hercules Graphics Card)" },
-//        { "pcjr",     "PCjr" },
-        char *value = strdup("svga");
+    } else if (V("vecx_res_multi")) {
+        // Internal Resolution Multiplier
+        // 1,2,3,4
+        char *value = strdup("2");
         return value;
-    } else if (V("VecX_pure_cga")) {
-        char *value = strdup("early_auto");
+    } else if (V("vecx_res_hw")) {
+        // Hardware Rendering Resolution
+        // 824x1024|434x540|515x640|580x720|618x768|845x1050|869x1080|966x1200|1159x1440|1648x2048
+        char *value = strdup("869x1080");
         return value;
-    } else if (V("VecX_pure_hercules")) {
-        char *value = strdup("white");
+    } else if (V("vecx_line_brightness")) {
+        char *value = strdup("4");
         return value;
-    } else if (V("VecX_pure_svga")) {
-        char *value = strdup("svga_s3");
+    } else if (V("vecx_line_width")) {
+        char *value = strdup("4");
         return value;
-    } else if (V("VecX_pure_aspect_correction")) {
-        char *value = strdup("false");
+    } else if (V("vecx_bloom_brightness")) {
+        char *value = strdup("4");
+        return value;
+    } else if (V("vecx_bloom_width")) {
+        char *value = strdup("8x");
+        return value;
+    } else if (V("vecx_scale_x")) {
+        // "Scale vector display horizontally; 1|0.845|0.85|0.855|0.86|0.865|0.87|0.875|0.88|0.885|0.89|0.895|0.90|0.905|0.91|0.915|0.92|0.925|0.93|0.935|0.94|0.945|0.95|0.955|0.96|0.965|0.97|0.975|0.98|0.985|0.99|0.995|1.005|1.01"
+        char *value = strdup("1");
+        return value;
+    } else if (V("vecx_scale_y")) {
+        // "Scale vector display vertically; 1|0.845|0.85|0.855|0.86|0.865|0.87|0.875|0.88|0.885|0.89|0.895|0.90|0.905|0.91|0.915|0.92|0.925|0.93|0.935|0.94|0.945|0.95|0.955|0.96|0.965|0.97|0.975|0.98|0.985|0.99|0.995|1.005|1.01"
+        char *value = strdup("1");
+        return value;
+    } else if (V("vecx_shift_x")) {
+        char *value = strdup("0");
+        return value;
+    } else if (V("vecx_shift_y")) {
+        char *value = strdup("0");
         return value;
     } else if (V("VecX_pure_memory_size")) {
         char *value = strdup("16");
