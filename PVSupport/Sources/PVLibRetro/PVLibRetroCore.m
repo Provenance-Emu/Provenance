@@ -1628,6 +1628,17 @@ static bool environment_callback(unsigned cmd, void *data) {
             DLOG(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", BIOSPath);
             return true;
         }
+        case RETRO_ENVIRONMENT_GET_CURRENT_SOFTWARE_FRAMEBUFFER : {
+            struct retro_framebuffer* fb = (struct retro_framebuffer*)data;
+            fb->data = [strongCurrent videoBuffer];            
+            return true;
+        }
+            // TODO: When/if vulkan support add this
+//        case RETRO_ENVIRONMENT_GET_HW_RENDER_INTERFACE : {
+//            struct retro_hw_render_interface* rend = (struct retro_hw_render_interface*)data;
+//
+//            return true;
+//        }
         case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY : {
             NSString *appSupportPath = [strongCurrent saveStatesPath];
             
@@ -2373,7 +2384,7 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
     switch (pix_fmt)
     {
        case RETRO_PIXEL_FORMAT_0RGB1555:
-            return GL_RGBA; // GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT
+            return GL_RGB5_A1; // GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT
        case RETRO_PIXEL_FORMAT_RGB565:
             return GL_RGB565;
        case RETRO_PIXEL_FORMAT_XRGB8888:
@@ -2383,15 +2394,11 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
     }
 }
 
-- (GLenum)pixelType {
-    return GL_UNSIGNED_BYTE;
-}
-
 - (GLenum)internalPixelFormat {
     switch (pix_fmt)
     {
        case RETRO_PIXEL_FORMAT_0RGB1555:
-            return GL_UNSIGNED_SHORT_5_5_5_1;
+            return GL_RGB5_A1;
        case RETRO_PIXEL_FORMAT_RGB565:
             return GL_RGB565;
        case RETRO_PIXEL_FORMAT_XRGB8888:
@@ -2402,6 +2409,8 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 
     return GL_RGBA;
 }
+
+- (GLenum)pixelType { return GL_UNSIGNED_BYTE; }
 
 # pragma mark - Audio
 
