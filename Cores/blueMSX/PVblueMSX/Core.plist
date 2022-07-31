@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PVCoreIdentifier</key>
+	<string>com.provenance.blueMSX</string>
+	<key>PVPrincipleClass</key>
+	<string>PVblueMSXCore</string>
+	<key>PVSupportedSystems</key>
+	<array>
+		<string>com.provenance.msx</string>
+		<string>com.provenance.msx2</string>
+	</array>
+	<key>PVProjectName</key>
+	<string>blueMSX</string>
+	<key>PVProjectURL</key>
+	<string>http://fms.komkon.org/blueMSX/</string>
+	<key>PVProjectVersion</key>
+	<string>0</string>
+</dict>
+</plist>

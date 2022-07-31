@@ -467,7 +467,7 @@ PV_OBJC_DIRECT_MEMBERS
 {
     if (pixelFormat == GL_BGRA && (pixelType == GL_UNSIGNED_BYTE || pixelType == 0x8367 /* GL_UNSIGNED_INT_8_8_8_8_REV */))
     {
-        return MTLPixelFormatBGRA8Unorm;
+        return MTLPixelFormatBGRA8Unorm; // MTLPixelFormatBGRA8Unorm_sRGB
     }
     else if (pixelFormat == GL_RGB && pixelType == GL_UNSIGNED_BYTE)
     {
@@ -483,15 +483,15 @@ PV_OBJC_DIRECT_MEMBERS
     }
     else if (pixelFormat == GL_RGB && pixelType == GL_UNSIGNED_SHORT_5_6_5)
     {
-        return MTLPixelFormatRGBA8Unorm; // MTLPixelFormatRGBA8Unorm_sRGB
+        return MTLPixelFormatRGBA16Unorm; // MTLPixelFormatRGBA8Unorm_sRGB
     }
     else if (pixelFormat == GL_RGB && pixelType == GL_UNSIGNED_SHORT_8_8_APPLE)
     {
-        return MTLPixelFormatRGBA8Sint;
+        return MTLPixelFormatRGBA16Unorm;
     }
     else if (pixelFormat == GL_RGBA && pixelType == GL_UNSIGNED_SHORT_8_8_APPLE)
     {
-        return MTLPixelFormatRGBA8Sint;
+        return MTLPixelFormatRGBA16Unorm;
     }
     else if (pixelFormat == GL_RGB && pixelType == GL_UNSIGNED_SHORT_5_5_5_1)
     {
@@ -509,9 +509,18 @@ PV_OBJC_DIRECT_MEMBERS
     {
         return MTLPixelFormatA1BGR5Unorm;
     }
-    else if (pixelFormat == GL_RGBA8 && pixelType == GL_UNSIGNED_BYTE)
+    else if (pixelFormat == GL_RGBA8)
     {
-        return MTLPixelFormatRGBA8Unorm;
+        if(pixelType == GL_UNSIGNED_BYTE) { // 8bit
+            return MTLPixelFormatRGBA8Unorm;
+        } else if(pixelType == GL_UNSIGNED_SHORT) // 16bit  {msx vs
+//            MTLPixelFormatRGB10A2Unorm = 90,
+//            MTLPixelFormatRGB10A2Uint  = 91,
+//
+//            MTLPixelFormatRG11B10Float = 92,
+//            MTLPixelFormatRGB9E5Float = 93,
+            return
+        }
     }
     else if (pixelFormat == GL_RGB565)
     {

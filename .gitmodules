@@ -127,3 +127,21 @@
 [submodule "Cores/Stella/Stella/stella"]
 	path = Cores/Stella/Stella/stella
 	url = https://github.com/Provenance-Emu/stella.git
+[submodule "Cores/SameDuck/SameBoy"]
+	path = Cores/SameDuck/SameBoy
+	url = https://github.com/Provenance-Emu/SameBoy.git
+[submodule "Cores/blueMSX/blueMSX-libretro"]
+	path = Cores/blueMSX/blueMSX-libretro
+	url = https://github.com/Provenance-Emu/blueMSX-libretro.git
+[submodule "Cores/fuse/fuse-libretro"]
+	path = Cores/fuse/fuse-libretro
+	url = https://github.com/Provenance-Emu/fuse-libretro.git
+[submodule "Cores/Gearcoleco/Gearcoleco"]
+	path = Cores/Gearcoleco/Gearcoleco
+	url = https://github.com/Provenance-Emu/Gearcoleco.git
+[submodule "Cores/Citra/citra"]
+	path = Cores/Citra/citra
+	url = https://github.com/Provenance-Emu/citra.git
+[submodule "Cores/FreeIntv/FreeIntv"]
+	path = Cores/FreeIntv/FreeIntv
+	url = https://github.com/Provenance-Emu/FreeIntv.git

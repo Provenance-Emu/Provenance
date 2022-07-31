@@ -3111,11 +3111,6 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = hatari;
 				SKIP_INSTALL = YES;
@@ -3131,11 +3126,6 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = hatari;
 				SKIP_INSTALL = YES;
@@ -3202,12 +3192,13 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/../hatari/hatari/src/includes\"",
-					"\"$(SRCROOT)/hatari/libretro/include\"",
-					"\"$(SRCROOT)/hatari/src/cpu\"",
 					"\"$(SRCROOT)/../hatari/hatari/src/falcon\"",
 					"\"$(SRCROOT)/../hatari/hatari/src/debug\"",
+					"\"$(SRCROOT)/../hatari/hatari/src/uae-cpu\"",
+					"\"$(SRCROOT)/../hatari/hatari/src/cpu\"",
 					"\"$(SRCROOT)/../hatari/hatari/libretro\"",
 					"\"$(SRCROOT)/../hatari/hatari/libretro/include\"",
+					"\"$(SRCROOT)/../hatari/hatari/libretro/gui-retro\"",
 					"\"$(SRCROOT)/../hatari/hatari/libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/../hatari/hatari/libretro/libretro-common/libco\"",
 					"\"$(SRCROOT)/../hatari/hatari/libretro/libretro-common/include/compat/zlib\"",
@@ -3234,13 +3225,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVHatari/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -3268,12 +3252,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVHatari/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -3298,11 +3276,6 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = hatari;
 				SKIP_INSTALL = YES;
@@ -3318,11 +3291,6 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = hatari;
 				SDKROOT = appletvos;
@@ -3339,11 +3307,6 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "hatari-libretro";
 				SKIP_INSTALL = YES;
@@ -3359,11 +3322,6 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "hatari-libretro";
 				SKIP_INSTALL = YES;
@@ -3379,11 +3337,6 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "hatari-libretro";
 				SKIP_INSTALL = YES;
@@ -3403,12 +3356,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVHatari/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -3437,12 +3384,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVHatari/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -3467,11 +3408,6 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = hatari;
 				SDKROOT = appletvos;
@@ -3488,11 +3424,6 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = hatari;
 				SDKROOT = appletvos;
@@ -3509,11 +3440,6 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "hatari-libretro";
 				SDKROOT = appletvos;
@@ -3530,11 +3456,6 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "hatari-libretro";
 				SDKROOT = appletvos;
@@ -3551,11 +3472,6 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "hatari-libretro";
 				SDKROOT = appletvos;
@@ -3625,12 +3541,13 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/../hatari/hatari/src/includes\"",
-					"\"$(SRCROOT)/hatari/libretro/include\"",
-					"\"$(SRCROOT)/hatari/src/cpu\"",
 					"\"$(SRCROOT)/../hatari/hatari/src/falcon\"",
 					"\"$(SRCROOT)/../hatari/hatari/src/debug\"",
+					"\"$(SRCROOT)/../hatari/hatari/src/uae-cpu\"",
+					"\"$(SRCROOT)/../hatari/hatari/src/cpu\"",
 					"\"$(SRCROOT)/../hatari/hatari/libretro\"",
 					"\"$(SRCROOT)/../hatari/hatari/libretro/include\"",
+					"\"$(SRCROOT)/../hatari/hatari/libretro/gui-retro\"",
 					"\"$(SRCROOT)/../hatari/hatari/libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/../hatari/hatari/libretro/libretro-common/libco\"",
 					"\"$(SRCROOT)/../hatari/hatari/libretro/libretro-common/include/compat/zlib\"",
@@ -3704,12 +3621,13 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/../hatari/hatari/src/includes\"",
-					"\"$(SRCROOT)/hatari/libretro/include\"",
-					"\"$(SRCROOT)/hatari/src/cpu\"",
 					"\"$(SRCROOT)/../hatari/hatari/src/falcon\"",
 					"\"$(SRCROOT)/../hatari/hatari/src/debug\"",
+					"\"$(SRCROOT)/../hatari/hatari/src/uae-cpu\"",
+					"\"$(SRCROOT)/../hatari/hatari/src/cpu\"",
 					"\"$(SRCROOT)/../hatari/hatari/libretro\"",
 					"\"$(SRCROOT)/../hatari/hatari/libretro/include\"",
+					"\"$(SRCROOT)/../hatari/hatari/libretro/gui-retro\"",
 					"\"$(SRCROOT)/../hatari/hatari/libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/../hatari/hatari/libretro/libretro-common/libco\"",
 					"\"$(SRCROOT)/../hatari/hatari/libretro/libretro-common/include/compat/zlib\"",
@@ -3737,13 +3655,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVHatari/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -3771,13 +3682,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVHatari/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;

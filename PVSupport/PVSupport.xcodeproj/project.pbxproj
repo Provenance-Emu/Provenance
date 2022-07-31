@@ -78,6 +78,14 @@
 		B305EF8B276B4E41003AE510 /* CocoaLumberjackSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B305EF42276B4E41003AE510 /* CocoaLumberjackSwift */; };
 		B305EF9A276B4F0A003AE510 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF99276B4F0A003AE510 /* GameKit.framework */; };
 		B305EF9C276B4FDD003AE510 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF9B276B4FDC003AE510 /* CoreGraphics.framework */; };
+		B30681502895D407003E465F /* PVLibRetroCore+Cheats.m in Sources */ = {isa = PBXBuildFile; fileRef = B306814C2895D405003E465F /* PVLibRetroCore+Cheats.m */; };
+		B30681512895D407003E465F /* PVLibRetroCore+Cheats.m in Sources */ = {isa = PBXBuildFile; fileRef = B306814C2895D405003E465F /* PVLibRetroCore+Cheats.m */; };
+		B30681522895D407003E465F /* PVLibRetroCore+Video.m in Sources */ = {isa = PBXBuildFile; fileRef = B306814D2895D406003E465F /* PVLibRetroCore+Video.m */; };
+		B30681532895D407003E465F /* PVLibRetroCore+Video.m in Sources */ = {isa = PBXBuildFile; fileRef = B306814D2895D406003E465F /* PVLibRetroCore+Video.m */; };
+		B30681542895D407003E465F /* PVLibRetroCore+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = B306814E2895D406003E465F /* PVLibRetroCore+Audio.m */; };
+		B30681552895D407003E465F /* PVLibRetroCore+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = B306814E2895D406003E465F /* PVLibRetroCore+Audio.m */; };
+		B30681562895D407003E465F /* PVLibRetroCore+Options.m in Sources */ = {isa = PBXBuildFile; fileRef = B306814F2895D407003E465F /* PVLibRetroCore+Options.m */; };
+		B30681572895D407003E465F /* PVLibRetroCore+Options.m in Sources */ = {isa = PBXBuildFile; fileRef = B306814F2895D407003E465F /* PVLibRetroCore+Options.m */; };
 		B3225132286C4728001FDF42 /* retro.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B322512F286C4728001FDF42 /* retro.h */; };
 		B322514B286C4753001FDF42 /* libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B322512D286C4728001FDF42 /* libretro.a */; };
 		B32299422878CB3C00585AD8 /* input_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC54928671EFF00B60497 /* input_driver.c */; };
@@ -369,6 +377,10 @@
 		B305EF91276B4E41003AE510 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B305EF99276B4F0A003AE510 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.3.sdk/System/Library/Frameworks/GameKit.framework; sourceTree = DEVELOPER_DIR; };
 		B305EF9B276B4FDC003AE510 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.3.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
+		B306814C2895D405003E465F /* PVLibRetroCore+Cheats.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVLibRetroCore+Cheats.m"; sourceTree = "<group>"; };
+		B306814D2895D406003E465F /* PVLibRetroCore+Video.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVLibRetroCore+Video.m"; sourceTree = "<group>"; };
+		B306814E2895D406003E465F /* PVLibRetroCore+Audio.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVLibRetroCore+Audio.m"; sourceTree = "<group>"; };
+		B306814F2895D407003E465F /* PVLibRetroCore+Options.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVLibRetroCore+Options.m"; sourceTree = "<group>"; };
 		B3173802278419A2002D3ACD /* Build.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Build.xcconfig; path = ../Build.xcconfig; sourceTree = "<group>"; };
 		B322512D286C4728001FDF42 /* libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libretro.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B322512F286C4728001FDF42 /* retro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = retro.h; sourceTree = "<group>"; };
@@ -3342,6 +3354,10 @@
 			children = (
 				B3928497286703CD003BAC21 /* PVLibRetroCore.h */,
 				B3928498286703CD003BAC21 /* PVLibRetroCore.m */,
+				B306814E2895D406003E465F /* PVLibRetroCore+Audio.m */,
+				B306814C2895D405003E465F /* PVLibRetroCore+Cheats.m */,
+				B306814F2895D407003E465F /* PVLibRetroCore+Options.m */,
+				B306814D2895D406003E465F /* PVLibRetroCore+Video.m */,
 				B3DF963D288D6B5800300A38 /* PVLibRetroGLESCore.h */,
 				B3DF963E288D6B5800300A38 /* PVLibRetroGLESCore.m */,
 			);
@@ -3960,6 +3976,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B30681562895D407003E465F /* PVLibRetroCore+Options.m in Sources */,
+				B30681502895D407003E465F /* PVLibRetroCore+Cheats.m in Sources */,
+				B30681542895D407003E465F /* PVLibRetroCore+Audio.m in Sources */,
+				B30681522895D407003E465F /* PVLibRetroCore+Video.m in Sources */,
 				B3DF9641288D6B5800300A38 /* PVLibRetroGLESCore.m in Sources */,
 				B392849A286703CD003BAC21 /* PVLibRetroCore.m in Sources */,
 			);
@@ -3986,6 +4006,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B30681572895D407003E465F /* PVLibRetroCore+Options.m in Sources */,
+				B30681512895D407003E465F /* PVLibRetroCore+Cheats.m in Sources */,
+				B30681552895D407003E465F /* PVLibRetroCore+Audio.m in Sources */,
+				B30681532895D407003E465F /* PVLibRetroCore+Video.m in Sources */,
 				B3DF9642288D6B5800300A38 /* PVLibRetroGLESCore.m in Sources */,
 				B3A41BE2286E76110054E9A5 /* PVLibRetroCore.m in Sources */,
 			);
