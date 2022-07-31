@@ -102,6 +102,9 @@
          location = "container:"
          name = "Broken">
          <FileRef
+            location = "group:Cores/TIC80/PVTIC80.xcodeproj">
+         </FileRef>
+         <FileRef
             location = "group:Cores/Citra/PVCitra.xcodeproj">
          </FileRef>
          <FileRef
