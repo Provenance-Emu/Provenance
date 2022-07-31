@@ -16,8 +16,45 @@
    <Group
       location = "container:"
       name = "Cores">
+      <Group
+         location = "container:"
+         name = "Broken">
+         <FileRef
+            location = "group:/Users/jmattiello/Workspace/Provenance/Provenance/Cores/4DO/PV4DO.xcodeproj">
+         </FileRef>
+         <FileRef
+            location = "group:/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Bliss/PVBliss.xcodeproj">
+         </FileRef>
+         <FileRef
+            location = "group:/Users/jmattiello/Workspace/Provenance/Provenance/Cores/CrabEMU/PVCrabEmu.xcodeproj">
+         </FileRef>
+         <FileRef
+            location = "group:Cores/Dolphin/PVDolphin.xcodeproj">
+         </FileRef>
+         <FileRef
+            location = "group:Cores/DuckStation/PVDuckStation.xcodeproj">
+         </FileRef>
+         <FileRef
+            location = "group:Cores/O2EM/PVO2EM.xcodeproj">
+         </FileRef>
+         <FileRef
+            location = "group:Cores/Play/PVPlayCore.xcodeproj">
+         </FileRef>
+         <FileRef
+            location = "group:Cores/PPSSPP/PVPPSSPP.xcodeproj">
+         </FileRef>
+         <FileRef
+            location = "group:Cores/snesticle/PVSnesticle.xcodeproj">
+         </FileRef>
+      </Group>
+      <FileRef
+         location = "group:Cores/4DO/PV4DO.xcodeproj">
+      </FileRef>
       <FileRef
          location = "group:Cores/Atari800/PVAtari800.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/Bliss/PVBliss.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/FCEU/PVFCEU.xcodeproj">
@@ -149,37 +186,6 @@
       </FileRef>
       <FileRef
          location = "group:Cores/VecX/PVVecX.xcodeproj">
-      </FileRef>
-   </Group>
-   <Group
-      location = "container:"
-      name = "Cores Development">
-      <FileRef
-         location = "group:/Users/jmattiello/Workspace/Provenance/Provenance/Cores/4DO/PV4DO.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Bliss/PVBliss.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:/Users/jmattiello/Workspace/Provenance/Provenance/Cores/CrabEMU/PVCrabEmu.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/Dolphin/PVDolphin.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/DuckStation/PVDuckStation.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/O2EM/PVO2EM.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/Play/PVPlayCore.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/PPSSPP/PVPPSSPP.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/snesticle/PVSnesticle.xcodeproj">
       </FileRef>
    </Group>
 </Workspace>

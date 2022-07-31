@@ -589,6 +589,35 @@ PV_OBJC_DIRECT_MEMBERS
     }
 }
 
+// MARK: - fsh Shaders
++ (GLuint)programWithVertexShader:(NSString*)vsh fragmentShader:(NSString*)fsh
+{
+    // Build shaders
+    GLuint vertex_shader = [self shaderWithContents:vsh type:GL_VERTEX_SHADER];
+    GLuint fragment_shader = [self shaderWithContents:fsh type:GL_FRAGMENT_SHADER];
+    // Create program
+    GLuint program = glCreateProgram();
+    // Attach shaders
+    glAttachShader(program, vertex_shader);
+    glAttachShader(program, fragment_shader);
+    // Link program
+    glLinkProgram(program);
+    // Check for errors
+    GLint status;
+    glGetProgramiv(program, GL_LINK_STATUS, &status);
+    if (status == GL_FALSE) {
+        GLchar messages[1024];
+        glGetProgramInfoLog(program, sizeof(messages), 0, &messages[0]);
+        NSLog(@"%@:- GLSL Program Error: %s", self, messages);
+    }
+    // Delete shaders
+    glDeleteShader(vertex_shader);
+    glDeleteShader(fragment_shader);
+
+    return program;
+}
+
+
 // Mac OS Stuff
 // MARK: - MTKViewDelegate
 
@@ -733,8 +762,16 @@ PV_OBJC_DIRECT_MEMBERS
                 
                 [encoder setFragmentBytes:&cbData length:sizeof(cbData) atIndex:0];
                 [encoder setRenderPipelineState:strongself.effectFilterPipeline];
-            } else if ( [strongself->_effectFilterShader.name isEqualToString:@"SameBoy"]) {
+            } else if ( [strongself->_effectFilterShader.name containsString:@".fsh"]) {
                 
+                static NSString * const vertex_shader = @"\n\
+                #version 150 \n\
+                in vec4 aPosition;\n\
+                void main(void) {\n\
+                    gl_Position = aPosition;\n\
+                }\n\
+                ";
+
                 NSString* (^shaderSourceForName)(NSString* name) = ^{
                     return [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:name
                                                                                               ofType:@"fsh"
@@ -743,10 +780,12 @@ PV_OBJC_DIRECT_MEMBERS
                                                         error:nil];
                 };
                 
+                NSString* shaderName = [strongself->_effectFilterShader.name stringByDeletingPathExtension];
+                
                 // Program
                 NSString *fragment_shader = shaderSourceForName(@"MasterShader");
                 fragment_shader = [fragment_shader stringByReplacingOccurrencesOfString:@"{filter}"
-                                                                             withString:[[self class] shaderSourceForName:shaderName]];
+                                                                             withString:shaderSourceForName(shaderName)];
                 program = [[self class] programWithVertexShader:vertex_shader fragmentShader:fragment_shader];
                 // Attributes
                 position_attribute = glGetAttribLocation(program, "aPosition");
