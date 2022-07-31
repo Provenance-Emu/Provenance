@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B30F1C3C289681E1004D40BF /* fileformat.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1952894D28800CF98C7 /* fileformat.c */; };
+		B30F1C3D289681E1004D40BF /* player.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1972894D28800CF98C7 /* player.c */; };
+		B30F1C3E289681E1004D40BF /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1902894D28700CF98C7 /* libretro.c */; };
+		B30F1C3F289681E1004D40BF /* graphics.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1922894D28700CF98C7 /* graphics.c */; };
+		B30F1C40289681E2004D40BF /* playlist.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1932894D28800CF98C7 /* playlist.c */; };
 		B3135B9B26E4CAD40047F338 /* PVGMECore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVGMECore.mm */; };
 		B3135B9C26E4CC290047F338 /* PVGMECore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVGMECore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3135BA126E4CC620047F338 /* PVGME.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVGME.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -34,18 +39,12 @@
 		B39768FB2859E23A00558958 /* libgme-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B39768F72859E18B00558958 /* libgme-libretro.a */; };
 		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
 		B3A41BF0286E76490054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */; };
-		B3B104AF218F26F400210C39 /* libgme.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3447F91218BEE3F00557ACE /* libgme.a */; };
 		B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B104B8218F281B00210C39 /* PVSupport.framework */; };
 		B3C2CCAC2894D78E00DE3B94 /* player.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1972894D28800CF98C7 /* player.c */; };
 		B3C2CCAD2894D78E00DE3B94 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1902894D28700CF98C7 /* libretro.c */; };
 		B3C2CCAE2894D78E00DE3B94 /* playlist.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1932894D28800CF98C7 /* playlist.c */; };
 		B3C2CCAF2894D78E00DE3B94 /* fileformat.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1952894D28800CF98C7 /* fileformat.c */; };
 		B3C2CCB02894D78E00DE3B94 /* graphics.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1922894D28700CF98C7 /* graphics.c */; };
-		B3C2CCB12894D78E00DE3B94 /* player.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1972894D28800CF98C7 /* player.c */; };
-		B3C2CCB22894D78E00DE3B94 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1902894D28700CF98C7 /* libretro.c */; };
-		B3C2CCB32894D78E00DE3B94 /* playlist.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1932894D28800CF98C7 /* playlist.c */; };
-		B3C2CCB42894D78E00DE3B94 /* fileformat.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1952894D28800CF98C7 /* fileformat.c */; };
-		B3C2CCB52894D78E00DE3B94 /* graphics.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1922894D28700CF98C7 /* graphics.c */; };
 		B3C2CCD22894D7E400DE3B94 /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1792894D28700CF98C7 /* zutil.c */; };
 		B3C2CCD32894D7E400DE3B94 /* gzclose.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1832894D28700CF98C7 /* gzclose.c */; };
 		B3C2CCD42894D7E400DE3B94 /* inflate.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1632894D28700CF98C7 /* inflate.c */; };
@@ -74,20 +73,6 @@
 		B3C2CCEB2894D7E700DE3B94 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C16D2894D28700CF98C7 /* unzip.c */; };
 		B3C2CCEC2894D7E700DE3B94 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1702894D28700CF98C7 /* ioapi.c */; };
 		B3C2CCED2894D7E700DE3B94 /* inffast.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1852894D28700CF98C7 /* inffast.c */; };
-		B3C2CCEE2894D7EF00DE3B94 /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1792894D28700CF98C7 /* zutil.c */; };
-		B3C2CCEF2894D7EF00DE3B94 /* gzclose.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1832894D28700CF98C7 /* gzclose.c */; };
-		B3C2CCF02894D7EF00DE3B94 /* inflate.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1632894D28700CF98C7 /* inflate.c */; };
-		B3C2CCF12894D7EF00DE3B94 /* gzlib.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C17D2894D28700CF98C7 /* gzlib.c */; };
-		B3C2CCF22894D7EF00DE3B94 /* adler32.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1862894D28700CF98C7 /* adler32.c */; };
-		B3C2CCF32894D7EF00DE3B94 /* trees.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1822894D28700CF98C7 /* trees.c */; };
-		B3C2CCF42894D7EF00DE3B94 /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1762894D28700CF98C7 /* crc32.c */; };
-		B3C2CCF52894D7EF00DE3B94 /* deflate.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1652894D28700CF98C7 /* deflate.c */; };
-		B3C2CCF62894D7EF00DE3B94 /* gzread.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1682894D28700CF98C7 /* gzread.c */; };
-		B3C2CCF72894D7EF00DE3B94 /* inftrees.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C17F2894D28700CF98C7 /* inftrees.c */; };
-		B3C2CCF82894D7EF00DE3B94 /* gzwrite.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1812894D28700CF98C7 /* gzwrite.c */; };
-		B3C2CCF92894D7EF00DE3B94 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C16D2894D28700CF98C7 /* unzip.c */; };
-		B3C2CCFA2894D7EF00DE3B94 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1702894D28700CF98C7 /* ioapi.c */; };
-		B3C2CCFB2894D7EF00DE3B94 /* inffast.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1852894D28700CF98C7 /* inffast.c */; };
 		B3C2CCFC2894D81500DE3B94 /* compat_posix_string.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1312894D28700CF98C7 /* compat_posix_string.c */; };
 		B3C2CCFD2894D81500DE3B94 /* compat_snprintf.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1332894D28700CF98C7 /* compat_snprintf.c */; };
 		B3C2CCFE2894D81500DE3B94 /* fopen_utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1342894D28700CF98C7 /* fopen_utf8.c */; };
@@ -243,13 +228,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = B39768ED2859E18B00558958;
 			remoteInfo = "gme-libretro-tvOS";
-		};
-		B3D3E75C2894DC8F0016EB85 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3C7620720783162009950E4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3447EE8218BEE3F00557ACE;
-			remoteInfo = "gme-tvOS";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -563,7 +541,6 @@
 			files = (
 				B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */,
 				B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */,
-				B3B104AF218F26F400210C39 /* libgme.a in Frameworks */,
 				B39768FB2859E23A00558958 /* libgme-libretro.a in Frameworks */,
 				B3447ECD218BEDD200557ACE /* CoreAudio.framework in Frameworks */,
 				B3D3E75B2894DC8F0016EB85 /* libgme.a in Frameworks */,
@@ -1187,7 +1164,6 @@
 			dependencies = (
 				B39768FD2859E23A00558958 /* PBXTargetDependency */,
 				B3D3E75A2894DC8F0016EB85 /* PBXTargetDependency */,
-				B3D3E75D2894DC8F0016EB85 /* PBXTargetDependency */,
 			);
 			name = "PVGME-tvOS";
 			productName = PVReicast;
@@ -1506,25 +1482,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3C2CCF72894D7EF00DE3B94 /* inftrees.c in Sources */,
-				B3C2CCF32894D7EF00DE3B94 /* trees.c in Sources */,
-				B3C2CCF12894D7EF00DE3B94 /* gzlib.c in Sources */,
-				B3C2CCEE2894D7EF00DE3B94 /* zutil.c in Sources */,
-				B3C2CCB52894D78E00DE3B94 /* graphics.c in Sources */,
-				B3C2CCB22894D78E00DE3B94 /* libretro.c in Sources */,
-				B3C2CCFA2894D7EF00DE3B94 /* ioapi.c in Sources */,
-				B3C2CCF82894D7EF00DE3B94 /* gzwrite.c in Sources */,
-				B3C2CCF52894D7EF00DE3B94 /* deflate.c in Sources */,
-				B3C2CCB12894D78E00DE3B94 /* player.c in Sources */,
-				B3C2CCB42894D78E00DE3B94 /* fileformat.c in Sources */,
-				B3C2CCF62894D7EF00DE3B94 /* gzread.c in Sources */,
-				B3C2CCF92894D7EF00DE3B94 /* unzip.c in Sources */,
-				B3C2CCFB2894D7EF00DE3B94 /* inffast.c in Sources */,
-				B3C2CCF02894D7EF00DE3B94 /* inflate.c in Sources */,
-				B3C2CCB32894D78E00DE3B94 /* playlist.c in Sources */,
-				B3C2CCF42894D7EF00DE3B94 /* crc32.c in Sources */,
-				B3C2CCEF2894D7EF00DE3B94 /* gzclose.c in Sources */,
-				B3C2CCF22894D7EF00DE3B94 /* adler32.c in Sources */,
+				B30F1C3F289681E1004D40BF /* graphics.c in Sources */,
+				B30F1C40289681E2004D40BF /* playlist.c in Sources */,
+				B30F1C3D289681E1004D40BF /* player.c in Sources */,
+				B30F1C3E289681E1004D40BF /* libretro.c in Sources */,
+				B30F1C3C289681E1004D40BF /* fileformat.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1560,11 +1522,6 @@
 			isa = PBXTargetDependency;
 			target = B39768ED2859E18B00558958 /* gme-libretro-tvOS */;
 			targetProxy = B3D3E7592894DC8F0016EB85 /* PBXContainerItemProxy */;
-		};
-		B3D3E75D2894DC8F0016EB85 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3447EE8218BEE3F00557ACE /* gme-tvOS */;
-			targetProxy = B3D3E75C2894DC8F0016EB85 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
