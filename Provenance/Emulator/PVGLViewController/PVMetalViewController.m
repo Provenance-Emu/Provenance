@@ -733,8 +733,49 @@ PV_OBJC_DIRECT_MEMBERS
                 
                 [encoder setFragmentBytes:&cbData length:sizeof(cbData) atIndex:0];
                 [encoder setRenderPipelineState:strongself.effectFilterPipeline];
+            } else if ( [strongself->_effectFilterShader.name isEqualToString:@"SameBoy"]) {
+                
+                NSString* (^shaderSourceForName)(NSString* name) = ^{
+                    return [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:name
+                                                                                              ofType:@"fsh"
+                                                                                         inDirectory:@"Shaders"]
+                                                     encoding:NSUTF8StringEncoding
+                                                        error:nil];
+                };
+                
+                // Program
+                NSString *fragment_shader = shaderSourceForName(@"MasterShader");
+                fragment_shader = [fragment_shader stringByReplacingOccurrencesOfString:@"{filter}"
+                                                                             withString:[[self class] shaderSourceForName:shaderName]];
+                program = [[self class] programWithVertexShader:vertex_shader fragmentShader:fragment_shader];
+                // Attributes
+                position_attribute = glGetAttribLocation(program, "aPosition");
+                // Uniforms
+                resolution_uniform = glGetUniformLocation(program, "output_resolution");
+
+                glGenTextures(1, &texture);
+                glBindTexture(GL_TEXTURE_2D, texture);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                glBindTexture(GL_TEXTURE_2D, 0);
+                texture_uniform = glGetUniformLocation(program, "image");
+
+                glGenTextures(1, &previous_texture);
+                glBindTexture(GL_TEXTURE_2D, previous_texture);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                glBindTexture(GL_TEXTURE_2D, 0);
+                previous_texture_uniform = glGetUniformLocation(program, "previous_image");
+
+                frame_blending_mode_uniform = glGetUniformLocation(program, "frame_blending_mode");
+                
+                [encoder setFragmentBytes:&cbData length:sizeof(cbData) atIndex:0];
+                [encoder setRenderPipelineState:strongself.effectFilterPipeline];
             }
-        }
         else
         {
             [encoder setRenderPipelineState:strongself.blitPipeline];

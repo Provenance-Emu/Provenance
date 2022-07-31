@@ -30,6 +30,44 @@
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
+		B367032228962FEA00F75595 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = B306830C2895FB8C003E465F /* memory.c */; };
+		B367032328962FEA00F75595 /* timing.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683242895FB8D003E465F /* timing.c */; };
+		B367032428962FEA00F75595 /* sm83_cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = B306831C2895FB8D003E465F /* sm83_cpu.c */; };
+		B367032528962FEA00F75595 /* display.c in Sources */ = {isa = PBXBuildFile; fileRef = B306830A2895FB8C003E465F /* display.c */; };
+		B367032628962FEA00F75595 /* workboy.c in Sources */ = {isa = PBXBuildFile; fileRef = B306832D2895FB8D003E465F /* workboy.c */; };
+		B367032728962FEA00F75595 /* cheats.c in Sources */ = {isa = PBXBuildFile; fileRef = B306830B2895FB8C003E465F /* cheats.c */; };
+		B367032828962FEA00F75595 /* joypad.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683122895FB8D003E465F /* joypad.c */; };
+		B367032928962FEA00F75595 /* symbol_hash.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683182895FB8D003E465F /* symbol_hash.c */; };
+		B367032A28962FEA00F75595 /* rewind.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683232895FB8D003E465F /* rewind.c */; };
+		B367032B28962FEA00F75595 /* sm83_disassembler.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683212895FB8D003E465F /* sm83_disassembler.c */; };
+		B367032C28962FEA00F75595 /* gb.c in Sources */ = {isa = PBXBuildFile; fileRef = B306830F2895FB8D003E465F /* gb.c */; };
+		B367032D28962FEA00F75595 /* printer.c in Sources */ = {isa = PBXBuildFile; fileRef = B306831B2895FB8D003E465F /* printer.c */; };
+		B367032E28962FEA00F75595 /* camera.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683252895FB8D003E465F /* camera.c */; };
+		B367032F28962FEA00F75595 /* debugger.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683132895FB8D003E465F /* debugger.c */; };
+		B367033028962FEA00F75595 /* random.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683172895FB8D003E465F /* random.c */; };
+		B367033128962FEA00F75595 /* save_state.c in Sources */ = {isa = PBXBuildFile; fileRef = B306831E2895FB8D003E465F /* save_state.c */; };
+		B367033228962FEA00F75595 /* rumble.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683162895FB8D003E465F /* rumble.c */; };
+		B367033328962FEA00F75595 /* apu.c in Sources */ = {isa = PBXBuildFile; fileRef = B306830E2895FB8D003E465F /* apu.c */; };
+		B367033428962FEA00F75595 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = B306830C2895FB8C003E465F /* memory.c */; };
+		B367033528962FEA00F75595 /* timing.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683242895FB8D003E465F /* timing.c */; };
+		B367033628962FEA00F75595 /* sm83_cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = B306831C2895FB8D003E465F /* sm83_cpu.c */; };
+		B367033728962FEA00F75595 /* display.c in Sources */ = {isa = PBXBuildFile; fileRef = B306830A2895FB8C003E465F /* display.c */; };
+		B367033828962FEA00F75595 /* workboy.c in Sources */ = {isa = PBXBuildFile; fileRef = B306832D2895FB8D003E465F /* workboy.c */; };
+		B367033928962FEA00F75595 /* cheats.c in Sources */ = {isa = PBXBuildFile; fileRef = B306830B2895FB8C003E465F /* cheats.c */; };
+		B367033A28962FEA00F75595 /* joypad.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683122895FB8D003E465F /* joypad.c */; };
+		B367033B28962FEA00F75595 /* symbol_hash.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683182895FB8D003E465F /* symbol_hash.c */; };
+		B367033C28962FEA00F75595 /* rewind.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683232895FB8D003E465F /* rewind.c */; };
+		B367033D28962FEA00F75595 /* sm83_disassembler.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683212895FB8D003E465F /* sm83_disassembler.c */; };
+		B367033E28962FEA00F75595 /* gb.c in Sources */ = {isa = PBXBuildFile; fileRef = B306830F2895FB8D003E465F /* gb.c */; };
+		B367033F28962FEA00F75595 /* printer.c in Sources */ = {isa = PBXBuildFile; fileRef = B306831B2895FB8D003E465F /* printer.c */; };
+		B367034028962FEA00F75595 /* camera.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683252895FB8D003E465F /* camera.c */; };
+		B367034128962FEA00F75595 /* debugger.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683132895FB8D003E465F /* debugger.c */; };
+		B367034228962FEA00F75595 /* random.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683172895FB8D003E465F /* random.c */; };
+		B367034328962FEA00F75595 /* save_state.c in Sources */ = {isa = PBXBuildFile; fileRef = B306831E2895FB8D003E465F /* save_state.c */; };
+		B367034428962FEA00F75595 /* rumble.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683162895FB8D003E465F /* rumble.c */; };
+		B367034528962FEA00F75595 /* apu.c in Sources */ = {isa = PBXBuildFile; fileRef = B306830E2895FB8D003E465F /* apu.c */; };
+		B367034628962FFA00F75595 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683432895FB8D003E465F /* libretro.c */; };
+		B367034728962FFA00F75595 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683432895FB8D003E465F /* libretro.c */; };
 		B380C2692894EB37007B76FD /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B380C2682894EB37007B76FD /* OpenGL.framework */; platformFilter = maccatalyst; };
 		B39768F82859E23200558958 /* libSameDuck-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libSameDuck-libretro.a */; };
 		B39768FB2859E23A00558958 /* libSameDuck-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B39768F72859E18B00558958 /* libSameDuck-libretro.a */; };
@@ -496,27 +534,27 @@
 		B30683032895FB8C003E465F /* SameBoy */ = {
 			isa = PBXGroup;
 			children = (
-				B30683042895FB8C003E465F /* build-faq.md */,
-				B30683052895FB8C003E465F /* Misc */,
-				B30683072895FB8C003E465F /* Core */,
-				B30683322895FB8D003E465F /* LICENSE */,
-				B30683332895FB8D003E465F /* QuickLook */,
-				B306833B2895FB8D003E465F /* Makefile */,
-				B306833C2895FB8D003E465F /* OpenDialog */,
-				B30683412895FB8D003E465F /* README.md */,
-				B30683422895FB8D003E465F /* libretro */,
-				B306834B2895FB8D003E465F /* version.mk */,
-				B306834C2895FB8D003E465F /* Cocoa */,
-				B30683932895FB8E003E465F /* .gitignore */,
-				B30683942895FB8E003E465F /* SDL */,
-				B30683A42895FB8E003E465F /* CONTRIBUTING.md */,
-				B30683A52895FB8E003E465F /* JoyKit */,
-				B30683BC2895FB8E003E465F /* .github */,
 				B30683C82895FB8E003E465F /* .gitattributes */,
-				B30683C92895FB8E003E465F /* Shaders */,
+				B30683932895FB8E003E465F /* .gitignore */,
+				B30683322895FB8D003E465F /* LICENSE */,
+				B306833B2895FB8D003E465F /* Makefile */,
+				B30683042895FB8C003E465F /* build-faq.md */,
 				B30683DA2895FB8E003E465F /* CHANGES.md */,
-				B30683DB2895FB8E003E465F /* Tester */,
+				B30683A42895FB8E003E465F /* CONTRIBUTING.md */,
+				B30683412895FB8D003E465F /* README.md */,
+				B306834B2895FB8D003E465F /* version.mk */,
+				B30683BC2895FB8E003E465F /* .github */,
+				B306834C2895FB8D003E465F /* Cocoa */,
+				B30683072895FB8C003E465F /* Core */,
 				B30683DD2895FB8E003E465F /* HexFiend */,
+				B30683A52895FB8E003E465F /* JoyKit */,
+				B30683422895FB8D003E465F /* libretro */,
+				B30683052895FB8C003E465F /* Misc */,
+				B306833C2895FB8D003E465F /* OpenDialog */,
+				B30683332895FB8D003E465F /* QuickLook */,
+				B30683942895FB8E003E465F /* SDL */,
+				B30683C92895FB8E003E465F /* Shaders */,
+				B30683DB2895FB8E003E465F /* Tester */,
 				B30684202895FB8F003E465F /* Windows */,
 			);
 			path = SameBoy;
@@ -533,43 +571,43 @@
 		B30683072895FB8C003E465F /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				B30683082895FB8C003E465F /* sm83_cpu.h */,
-				B30683092895FB8C003E465F /* printer.h */,
-				B306830A2895FB8C003E465F /* display.c */,
-				B306830B2895FB8C003E465F /* cheats.c */,
-				B306830C2895FB8C003E465F /* memory.c */,
-				B306830D2895FB8D003E465F /* save_state.h */,
 				B306830E2895FB8D003E465F /* apu.c */,
-				B306830F2895FB8D003E465F /* gb.c */,
-				B30683102895FB8D003E465F /* workboy.h */,
-				B30683112895FB8D003E465F /* camera.h */,
-				B30683122895FB8D003E465F /* joypad.c */,
-				B30683132895FB8D003E465F /* debugger.c */,
-				B30683142895FB8D003E465F /* timing.h */,
-				B30683152895FB8D003E465F /* rewind.h */,
-				B30683162895FB8D003E465F /* rumble.c */,
-				B30683172895FB8D003E465F /* random.c */,
-				B30683182895FB8D003E465F /* symbol_hash.c */,
-				B30683192895FB8D003E465F /* cheats.h */,
-				B306831A2895FB8D003E465F /* display.h */,
-				B306831B2895FB8D003E465F /* printer.c */,
-				B306831C2895FB8D003E465F /* sm83_cpu.c */,
-				B306831D2895FB8D003E465F /* gb.h */,
-				B306831E2895FB8D003E465F /* save_state.c */,
-				B306831F2895FB8D003E465F /* apu.h */,
-				B30683202895FB8D003E465F /* memory.h */,
-				B30683212895FB8D003E465F /* sm83_disassembler.c */,
-				B30683222895FB8D003E465F /* debugger.h */,
-				B30683232895FB8D003E465F /* rewind.c */,
-				B30683242895FB8D003E465F /* timing.c */,
 				B30683252895FB8D003E465F /* camera.c */,
-				B30683262895FB8D003E465F /* joypad.h */,
-				B30683272895FB8D003E465F /* graphics */,
+				B306830B2895FB8C003E465F /* cheats.c */,
+				B30683132895FB8D003E465F /* debugger.c */,
+				B306830A2895FB8C003E465F /* display.c */,
+				B306830F2895FB8D003E465F /* gb.c */,
+				B30683122895FB8D003E465F /* joypad.c */,
+				B306830C2895FB8C003E465F /* memory.c */,
+				B306831B2895FB8D003E465F /* printer.c */,
+				B30683172895FB8D003E465F /* random.c */,
+				B30683232895FB8D003E465F /* rewind.c */,
+				B30683162895FB8D003E465F /* rumble.c */,
+				B306831E2895FB8D003E465F /* save_state.c */,
+				B306831C2895FB8D003E465F /* sm83_cpu.c */,
+				B30683212895FB8D003E465F /* sm83_disassembler.c */,
+				B30683182895FB8D003E465F /* symbol_hash.c */,
+				B30683242895FB8D003E465F /* timing.c */,
 				B306832D2895FB8D003E465F /* workboy.c */,
-				B306832E2895FB8D003E465F /* symbol_hash.h */,
-				B306832F2895FB8D003E465F /* random.h */,
+				B306831F2895FB8D003E465F /* apu.h */,
+				B30683112895FB8D003E465F /* camera.h */,
+				B30683192895FB8D003E465F /* cheats.h */,
+				B30683222895FB8D003E465F /* debugger.h */,
+				B306831A2895FB8D003E465F /* display.h */,
 				B30683302895FB8D003E465F /* gb_struct_def.h */,
+				B306831D2895FB8D003E465F /* gb.h */,
+				B30683262895FB8D003E465F /* joypad.h */,
+				B30683202895FB8D003E465F /* memory.h */,
+				B30683092895FB8C003E465F /* printer.h */,
+				B306832F2895FB8D003E465F /* random.h */,
+				B30683152895FB8D003E465F /* rewind.h */,
 				B30683312895FB8D003E465F /* rumble.h */,
+				B306830D2895FB8D003E465F /* save_state.h */,
+				B30683082895FB8C003E465F /* sm83_cpu.h */,
+				B306832E2895FB8D003E465F /* symbol_hash.h */,
+				B30683142895FB8D003E465F /* timing.h */,
+				B30683102895FB8D003E465F /* workboy.h */,
+				B30683272895FB8D003E465F /* graphics */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -1214,6 +1252,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B367032A28962FEA00F75595 /* rewind.c in Sources */,
+				B367032C28962FEA00F75595 /* gb.c in Sources */,
+				B367032D28962FEA00F75595 /* printer.c in Sources */,
+				B367032528962FEA00F75595 /* display.c in Sources */,
+				B367033228962FEA00F75595 /* rumble.c in Sources */,
+				B367032B28962FEA00F75595 /* sm83_disassembler.c in Sources */,
+				B367032428962FEA00F75595 /* sm83_cpu.c in Sources */,
+				B367032628962FEA00F75595 /* workboy.c in Sources */,
+				B367032728962FEA00F75595 /* cheats.c in Sources */,
+				B367032828962FEA00F75595 /* joypad.c in Sources */,
+				B367032E28962FEA00F75595 /* camera.c in Sources */,
+				B367032F28962FEA00F75595 /* debugger.c in Sources */,
+				B367033328962FEA00F75595 /* apu.c in Sources */,
+				B367032228962FEA00F75595 /* memory.c in Sources */,
+				B367033128962FEA00F75595 /* save_state.c in Sources */,
+				B367032328962FEA00F75595 /* timing.c in Sources */,
+				B367033028962FEA00F75595 /* random.c in Sources */,
+				B367032928962FEA00F75595 /* symbol_hash.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1221,6 +1277,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B367034628962FFA00F75595 /* libretro.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1239,6 +1296,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B367033C28962FEA00F75595 /* rewind.c in Sources */,
+				B367033E28962FEA00F75595 /* gb.c in Sources */,
+				B367033F28962FEA00F75595 /* printer.c in Sources */,
+				B367033728962FEA00F75595 /* display.c in Sources */,
+				B367034428962FEA00F75595 /* rumble.c in Sources */,
+				B367033D28962FEA00F75595 /* sm83_disassembler.c in Sources */,
+				B367033628962FEA00F75595 /* sm83_cpu.c in Sources */,
+				B367033828962FEA00F75595 /* workboy.c in Sources */,
+				B367033928962FEA00F75595 /* cheats.c in Sources */,
+				B367033A28962FEA00F75595 /* joypad.c in Sources */,
+				B367034028962FEA00F75595 /* camera.c in Sources */,
+				B367034128962FEA00F75595 /* debugger.c in Sources */,
+				B367034528962FEA00F75595 /* apu.c in Sources */,
+				B367033428962FEA00F75595 /* memory.c in Sources */,
+				B367034328962FEA00F75595 /* save_state.c in Sources */,
+				B367033528962FEA00F75595 /* timing.c in Sources */,
+				B367034228962FEA00F75595 /* random.c in Sources */,
+				B367033B28962FEA00F75595 /* symbol_hash.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1246,6 +1321,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B367034728962FFA00F75595 /* libretro.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -2804,7 +2804,10 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = pcsx_rearmed;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -2824,7 +2827,10 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = pcsx_rearmed;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -2933,13 +2939,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVPCSXRearmed/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -2967,12 +2966,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVPCSXRearmed/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -3002,7 +2995,10 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = pcsx_rearmed;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -3022,7 +3018,10 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = pcsx_rearmed;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -3043,7 +3042,10 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = "pcsx_rearmed-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -3063,7 +3065,10 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = "pcsx_rearmed-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -3083,7 +3088,10 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = "pcsx_rearmed-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -3102,12 +3110,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVPCSXRearmed/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -3136,12 +3138,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVPCSXRearmed/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -3171,7 +3167,10 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = pcsx_rearmed;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -3192,7 +3191,10 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = pcsx_rearmed;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -3213,7 +3215,10 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = "pcsx_rearmed-libretro";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -3234,7 +3239,10 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = "pcsx_rearmed-libretro";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -3255,7 +3263,10 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = "pcsx_rearmed-libretro";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -3443,13 +3454,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVPCSXRearmed/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -3477,13 +3481,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVPCSXRearmed/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;

@@ -413,6 +413,38 @@
 		B361F63B27C07B3E0080D368 /* PVRootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA28727BC7E610070E222 /* PVRootViewController.swift */; };
 		B361F63C27C07B3E0080D368 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA28627BC7E610070E222 /* HomeView.swift */; };
 		B361F63D27C07BB20080D368 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A9202D2EAE00580FFC /* Theme.swift */; };
+		B36703492896307E00F75595 /* SameBoy.metal in Sources */ = {isa = PBXBuildFile; fileRef = B36703482896307E00F75595 /* SameBoy.metal */; };
+		B367034A2896307E00F75595 /* SameBoy.metal in Sources */ = {isa = PBXBuildFile; fileRef = B36703482896307E00F75595 /* SameBoy.metal */; };
+		B367035A2896314200F75595 /* NearestNeighbor.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034B2896314000F75595 /* NearestNeighbor.fsh */; };
+		B367035B2896314200F75595 /* NearestNeighbor.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034B2896314000F75595 /* NearestNeighbor.fsh */; };
+		B367035C2896314200F75595 /* AAScale2x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034C2896314000F75595 /* AAScale2x.fsh */; };
+		B367035D2896314200F75595 /* AAScale2x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034C2896314000F75595 /* AAScale2x.fsh */; };
+		B367035E2896314200F75595 /* AAOmniScaleLegacy.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034D2896314000F75595 /* AAOmniScaleLegacy.fsh */; };
+		B367035F2896314200F75595 /* AAOmniScaleLegacy.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034D2896314000F75595 /* AAOmniScaleLegacy.fsh */; };
+		B36703602896314200F75595 /* MonoLCD.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034E2896314100F75595 /* MonoLCD.fsh */; };
+		B36703612896314200F75595 /* MonoLCD.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034E2896314100F75595 /* MonoLCD.fsh */; };
+		B36703622896314200F75595 /* Scale2x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034F2896314100F75595 /* Scale2x.fsh */; };
+		B36703632896314200F75595 /* Scale2x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034F2896314100F75595 /* Scale2x.fsh */; };
+		B36703642896314200F75595 /* SmoothBilinear.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703502896314100F75595 /* SmoothBilinear.fsh */; };
+		B36703652896314200F75595 /* SmoothBilinear.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703502896314100F75595 /* SmoothBilinear.fsh */; };
+		B36703662896314200F75595 /* MasterShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703512896314100F75595 /* MasterShader.fsh */; };
+		B36703672896314200F75595 /* MasterShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703512896314100F75595 /* MasterShader.fsh */; };
+		B36703682896314200F75595 /* HQ2x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703522896314100F75595 /* HQ2x.fsh */; };
+		B36703692896314200F75595 /* HQ2x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703522896314100F75595 /* HQ2x.fsh */; };
+		B367036A2896314200F75595 /* LCD.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703532896314200F75595 /* LCD.fsh */; };
+		B367036B2896314200F75595 /* LCD.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703532896314200F75595 /* LCD.fsh */; };
+		B367036C2896314200F75595 /* CRT.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703542896314200F75595 /* CRT.fsh */; };
+		B367036D2896314200F75595 /* CRT.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703542896314200F75595 /* CRT.fsh */; };
+		B367036E2896314200F75595 /* OmniScale.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703552896314200F75595 /* OmniScale.fsh */; };
+		B367036F2896314200F75595 /* OmniScale.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703552896314200F75595 /* OmniScale.fsh */; };
+		B36703702896314200F75595 /* Bilinear.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703562896314200F75595 /* Bilinear.fsh */; };
+		B36703712896314200F75595 /* Bilinear.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703562896314200F75595 /* Bilinear.fsh */; };
+		B36703722896314200F75595 /* AAScale4x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703572896314200F75595 /* AAScale4x.fsh */; };
+		B36703732896314300F75595 /* AAScale4x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703572896314200F75595 /* AAScale4x.fsh */; };
+		B36703742896314300F75595 /* Scale4x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703582896314200F75595 /* Scale4x.fsh */; };
+		B36703752896314300F75595 /* Scale4x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703582896314200F75595 /* Scale4x.fsh */; };
+		B36703762896314300F75595 /* OmniScaleLegacy.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703592896314200F75595 /* OmniScaleLegacy.fsh */; };
+		B36703772896314300F75595 /* OmniScaleLegacy.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703592896314200F75595 /* OmniScaleLegacy.fsh */; };
 		B369B0DD21A3BF7C0064EDCA /* PVSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB95FFB17C563C100D3E392 /* PVSettingsViewController.swift */; };
 		B369B0DE21A3C1C40064EDCA /* PVLogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E6DADB20B7AD1500454DD4 /* PVLogViewController.m */; };
 		B36D9DF8203562E000D583C4 /* PVControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */; };
@@ -1351,6 +1383,22 @@
 		B3607B80289238ED00509A68 /* PVBeetlePSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBeetlePSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B361938F221FB93B00F73875 /* Provenance-Free.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Provenance-Free.entitlements"; path = "Provenance/Provenance-Free.entitlements"; sourceTree = SOURCE_ROOT; };
 		B36455EB278E919500B6E87A /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B36703482896307E00F75595 /* SameBoy.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = SameBoy.metal; sourceTree = "<group>"; };
+		B367034B2896314000F75595 /* NearestNeighbor.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = NearestNeighbor.fsh; sourceTree = "<group>"; };
+		B367034C2896314000F75595 /* AAScale2x.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = AAScale2x.fsh; sourceTree = "<group>"; };
+		B367034D2896314000F75595 /* AAOmniScaleLegacy.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = AAOmniScaleLegacy.fsh; sourceTree = "<group>"; };
+		B367034E2896314100F75595 /* MonoLCD.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = MonoLCD.fsh; sourceTree = "<group>"; };
+		B367034F2896314100F75595 /* Scale2x.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Scale2x.fsh; sourceTree = "<group>"; };
+		B36703502896314100F75595 /* SmoothBilinear.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = SmoothBilinear.fsh; sourceTree = "<group>"; };
+		B36703512896314100F75595 /* MasterShader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = MasterShader.fsh; sourceTree = "<group>"; };
+		B36703522896314100F75595 /* HQ2x.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = HQ2x.fsh; sourceTree = "<group>"; };
+		B36703532896314200F75595 /* LCD.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = LCD.fsh; sourceTree = "<group>"; };
+		B36703542896314200F75595 /* CRT.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = CRT.fsh; sourceTree = "<group>"; };
+		B36703552896314200F75595 /* OmniScale.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = OmniScale.fsh; sourceTree = "<group>"; };
+		B36703562896314200F75595 /* Bilinear.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Bilinear.fsh; sourceTree = "<group>"; };
+		B36703572896314200F75595 /* AAScale4x.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = AAScale4x.fsh; sourceTree = "<group>"; };
+		B36703582896314200F75595 /* Scale4x.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Scale4x.fsh; sourceTree = "<group>"; };
+		B36703592896314200F75595 /* OmniScaleLegacy.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = OmniScaleLegacy.fsh; sourceTree = "<group>"; };
 		B36C7D5627AE2CF400715677 /* PVAtari800-tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = "PVAtari800-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVControllerViewController.swift; sourceTree = "<group>"; };
 		B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVCoreFactory.swift; sourceTree = "<group>"; };
@@ -2536,11 +2584,27 @@
 		B3427BE0287EA0CE0054C1B5 /* Filters */ = {
 			isa = PBXGroup;
 			children = (
+				B367034D2896314000F75595 /* AAOmniScaleLegacy.fsh */,
+				B367034C2896314000F75595 /* AAScale2x.fsh */,
+				B36703572896314200F75595 /* AAScale4x.fsh */,
+				B36703562896314200F75595 /* Bilinear.fsh */,
+				B36703542896314200F75595 /* CRT.fsh */,
+				B36703522896314100F75595 /* HQ2x.fsh */,
+				B36703532896314200F75595 /* LCD.fsh */,
+				B36703512896314100F75595 /* MasterShader.fsh */,
+				B367034E2896314100F75595 /* MonoLCD.fsh */,
+				B367034B2896314000F75595 /* NearestNeighbor.fsh */,
+				B36703552896314200F75595 /* OmniScale.fsh */,
+				B36703592896314200F75595 /* OmniScaleLegacy.fsh */,
+				B367034F2896314100F75595 /* Scale2x.fsh */,
+				B36703582896314200F75595 /* Scale4x.fsh */,
+				B36703502896314100F75595 /* SmoothBilinear.fsh */,
 				B3427BE1287EA0CE0054C1B5 /* crt_filter_ps.metal */,
-				B3427BE2287EA0CE0054C1B5 /* ulTron.metal */,
-				B3427BE3287EA0CE0054C1B5 /* megaTron.metal */,
-				B3427BE4287EA0CE0054C1B5 /* simpleCRT.metal */,
 				B3427BE5287EA0CE0054C1B5 /* lineTron.metal */,
+				B3427BE3287EA0CE0054C1B5 /* megaTron.metal */,
+				B36703482896307E00F75595 /* SameBoy.metal */,
+				B3427BE4287EA0CE0054C1B5 /* simpleCRT.metal */,
+				B3427BE2287EA0CE0054C1B5 /* ulTron.metal */,
 			);
 			path = Filters;
 			sourceTree = "<group>";
@@ -3375,19 +3439,34 @@
 			files = (
 				1A3D40A217B2DCE4004DFFFC /* InfoPlist.strings in Resources */,
 				B3296EE826CAC3ED0088AC32 /* Strings.strings in Resources */,
+				B36703682896314200F75595 /* HQ2x.fsh in Resources */,
+				B367035C2896314200F75595 /* AAScale2x.fsh in Resources */,
+				B367036A2896314200F75595 /* LCD.fsh in Resources */,
 				B3296EB226CABEE00088AC32 /* Settings.storyboard in Resources */,
 				1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */,
 				378F4A0D1B63D7CD0065FA39 /* GCDWebUploader.bundle in Resources */,
 				B3F43DCF2168075200CDD40A /* Settings.bundle in Resources */,
+				B36703702896314200F75595 /* Bilinear.fsh in Resources */,
+				B367035E2896314200F75595 /* AAOmniScaleLegacy.fsh in Resources */,
 				B3E6DAE120B7C2F800454DD4 /* PVLogViewController.xib in Resources */,
+				B367036E2896314200F75595 /* OmniScale.fsh in Resources */,
+				B36703662896314200F75595 /* MasterShader.fsh in Resources */,
+				B36703722896314200F75595 /* AAScale4x.fsh in Resources */,
 				B3296EE226CAC2B10088AC32 /* Default.xib in Resources */,
 				B3296EAF26CABEA80088AC32 /* SaveStates.storyboard in Resources */,
+				B36703642896314200F75595 /* SmoothBilinear.fsh in Resources */,
 				B38A2A48210233FE00374CDD /* EmulatorActionCell.xib in Resources */,
 				1F8D52481D91993000C29F90 /* licenses.html in Resources */,
+				B367035A2896314200F75595 /* NearestNeighbor.fsh in Resources */,
 				B3296EAA26CABE880088AC32 /* Provenance.storyboard in Resources */,
+				B367036C2896314200F75595 /* CRT.fsh in Resources */,
 				B3592CE52070B9DE00533593 /* PVSaveStateCollectionViewCell.xib in Resources */,
 				B3296EB526CABF250088AC32 /* Cheats.storyboard in Resources */,
 				B3296EDE26CAC27C0088AC32 /* PVGameLibraryCollectionViewCell.xib in Resources */,
+				B36703602896314200F75595 /* MonoLCD.fsh in Resources */,
+				B36703622896314200F75595 /* Scale2x.fsh in Resources */,
+				B36703742896314300F75595 /* Scale4x.fsh in Resources */,
+				B36703762896314300F75595 /* OmniScaleLegacy.fsh in Resources */,
 				B307830628924D69007E7A2D /* GLES in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3397,18 +3476,33 @@
 			buildActionMask = 2147483647;
 			files = (
 				1AD481D61BA3542D00FDA50A /* GCDWebUploader.bundle in Resources */,
+				B36703752896314300F75595 /* Scale4x.fsh in Resources */,
 				B307830728924D6B007E7A2D /* GLES in Resources */,
+				B367035B2896314200F75595 /* NearestNeighbor.fsh in Resources */,
 				B3AE1F762073504400AD06D4 /* PVSaveStateCollectionViewCell~tvOS.xib in Resources */,
+				B36703632896314200F75595 /* Scale2x.fsh in Resources */,
 				B3890BF920B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib in Resources */,
+				B36703652896314200F75595 /* SmoothBilinear.fsh in Resources */,
 				B3F64ECA205CBD1200C273C7 /* licenses.html in Resources */,
+				B367036D2896314200F75595 /* CRT.fsh in Resources */,
+				B367035F2896314200F75595 /* AAOmniScaleLegacy.fsh in Resources */,
 				B3296ECF26CABFDE0088AC32 /* Cheats.storyboard in Resources */,
 				B3296EBE26CABF9F0088AC32 /* Provenance.storyboard in Resources */,
+				B36703712896314200F75595 /* Bilinear.fsh in Resources */,
+				B36703692896314200F75595 /* HQ2x.fsh in Resources */,
+				B36703612896314200F75595 /* MonoLCD.fsh in Resources */,
 				B3CEC5B22794D8DD004A7CC1 /* Strings.strings in Resources */,
+				B36703732896314300F75595 /* AAScale4x.fsh in Resources */,
 				B3296EC826CABFCA0088AC32 /* SaveStates.storyboard in Resources */,
 				1AD481C31BA350A400FDA50A /* TVAssets.xcassets in Resources */,
 				1AD482361BA35A2D00FDA50A /* Assets.xcassets in Resources */,
+				B367036B2896314200F75595 /* LCD.fsh in Resources */,
 				B3F43DD02168075200CDD40A /* Settings.bundle in Resources */,
 				B3296EC326CABFB00088AC32 /* Settings.storyboard in Resources */,
+				B36703672896314200F75595 /* MasterShader.fsh in Resources */,
+				B367035D2896314200F75595 /* AAScale2x.fsh in Resources */,
+				B36703772896314300F75595 /* OmniScaleLegacy.fsh in Resources */,
+				B367036F2896314200F75595 /* OmniScale.fsh in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3785,6 +3879,7 @@
 				B37B71B0278E33B9005FB278 /* MenuButton.swift in Sources */,
 				EF56AA6227A21CBC0097AD05 /* TVAlertController.swift in Sources */,
 				B343717A276B0B650014F87C /* PVColecoVisionControllerViewController.swift in Sources */,
+				B36703492896307E00F75595 /* SameBoy.metal in Sources */,
 				37EEA29A27BC7E610070E222 /* HomeView.swift in Sources */,
 				B3427BF4287EA0CF0054C1B5 /* crt_filter_ps.metal in Sources */,
 				B38D02342884D03B008FBED8 /* SettingsOptionRow.swift in Sources */,
@@ -3949,6 +4044,7 @@
 				B35E6C2E207ED7050040709A /* UIWindowExtensions.swift in Sources */,
 				B3DB11AE205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */,
 				1AD481E31BA3545D00FDA50A /* GCDWebServerStreamedResponse.m in Sources */,
+				B367034A2896307E00F75595 /* SameBoy.metal in Sources */,
 				B3A70062288DD24000355823 /* PVEP128ControllerViewController.swift in Sources */,
 				1AD481D81BA3543700FDA50A /* GCDWebServerConnection.m in Sources */,
 				B35E6C2C207ED7050040709A /* UITraitCollectionExtensions.swift in Sources */,
