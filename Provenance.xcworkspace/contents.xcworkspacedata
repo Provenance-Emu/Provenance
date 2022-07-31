@@ -17,12 +17,6 @@
       location = "container:"
       name = "Cores">
       <FileRef
-         location = "group:Cores/VirtualJaguar/Core-VirtualJaguar.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/O2EM/O2EM.xcodeproj">
-      </FileRef>
-      <FileRef
          location = "group:Cores/Atari800/PVAtari800.xcodeproj">
       </FileRef>
       <FileRef
@@ -44,6 +38,9 @@
          location = "group:Cores/Mupen64Plus/PVMupen64Plus.xcodeproj">
       </FileRef>
       <FileRef
+         location = "group:/Users/jmattiello/Workspace/Provenance/Provenance/Cores/O2EM/PVO2EM.xcodeproj">
+      </FileRef>
+      <FileRef
          location = "group:Cores/PicoDrive/PVPicoDrive.xcodeproj">
       </FileRef>
       <FileRef
@@ -63,6 +60,9 @@
       </FileRef>
       <FileRef
          location = "group:Cores/TGBDual/PVTGBDual.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:/Users/jmattiello/Workspace/Provenance/Provenance/Cores/VirtualJaguar/PVVirtualJaguar.xcodeproj">
       </FileRef>
    </Group>
    <Group

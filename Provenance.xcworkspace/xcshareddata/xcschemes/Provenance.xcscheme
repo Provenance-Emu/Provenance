@@ -87,7 +87,7 @@
                BlueprintIdentifier = "B394C9952060CAB80014A65D"
                BuildableName = "PVVirtualJaguar.framework"
                BlueprintName = "PVVirtualJaguar-iOS"
-               ReferencedContainer = "container:Cores/VirtualJaguar/Core-VirtualJaguar.xcodeproj">
+               ReferencedContainer = "container:Cores/VirtualJaguar/PVVirtualJaguar.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
