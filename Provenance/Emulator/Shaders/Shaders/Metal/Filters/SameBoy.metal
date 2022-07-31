@@ -1,4 +1,11 @@
+//
+//  SameBoy.metal
+//
+// Stolen from SameBoy
+//
+
 #include <metal_stdlib>
+#import "../MetalViewShaders.h"
 #include <simd/simd.h>
 #include <metal_math>
 

@@ -225,7 +225,6 @@
 		B324C64F219216DD009F4EDC /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C64E219216DD009F4EDC /* PVLibrary.framework */; };
 		B324C650219216DD009F4EDC /* PVLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B324C64E219216DD009F4EDC /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B324C651219216FF009F4EDC /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C64E219216DD009F4EDC /* PVLibrary.framework */; };
-		B3270F8227DCB25100E83180 /* Cores.h in Headers */ = {isa = PBXBuildFile; fileRef = B3270F8127DCB25100E83180 /* Cores.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3270F9227DCB2CA00E83180 /* PVFCEU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8B27DCB2B200E83180 /* PVFCEU.framework */; };
 		B3270F9327DCB2CA00E83180 /* PVFCEU.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8B27DCB2B200E83180 /* PVFCEU.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3270F9427DCB2CA00E83180 /* PVPokeMini.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B311B1C327A52F2000D1DE41 /* PVPokeMini.framework */; };
@@ -413,8 +412,6 @@
 		B361F63B27C07B3E0080D368 /* PVRootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA28727BC7E610070E222 /* PVRootViewController.swift */; };
 		B361F63C27C07B3E0080D368 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA28627BC7E610070E222 /* HomeView.swift */; };
 		B361F63D27C07BB20080D368 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A9202D2EAE00580FFC /* Theme.swift */; };
-		B36703492896307E00F75595 /* SameBoy.metal in Sources */ = {isa = PBXBuildFile; fileRef = B36703482896307E00F75595 /* SameBoy.metal */; };
-		B367034A2896307E00F75595 /* SameBoy.metal in Sources */ = {isa = PBXBuildFile; fileRef = B36703482896307E00F75595 /* SameBoy.metal */; };
 		B367035A2896314200F75595 /* NearestNeighbor.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034B2896314000F75595 /* NearestNeighbor.fsh */; };
 		B367035B2896314200F75595 /* NearestNeighbor.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034B2896314000F75595 /* NearestNeighbor.fsh */; };
 		B367035C2896314200F75595 /* AAScale2x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034C2896314000F75595 /* AAScale2x.fsh */; };
@@ -579,7 +576,6 @@
 		B3B104D5218F2F1700210C39 /* JSDPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ECB205CD1D600C273C7 /* JSDPad.swift */; };
 		B3B104D6218F2F2800210C39 /* PVButtonGroupOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ED1205CD20800C273C7 /* PVButtonGroupOverlayView.swift */; };
 		B3B923B0202D2EAE00580FFC /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A9202D2EAE00580FFC /* Theme.swift */; };
-		B3C8A6A528781E810037A946 /* CoresRetro.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C8A6A428781E810037A946 /* CoresRetro.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C8A6A828781E840037A946 /* CoresRetro_tvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6A228781E800037A946 /* CoresRetro_tvOS.framework */; };
 		B3C8A6A928781E840037A946 /* CoresRetro_tvOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6A228781E800037A946 /* CoresRetro_tvOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C8A6AF28781E9F0037A946 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6AE28781E9F0037A946 /* PVLibRetro.framework */; };
@@ -589,7 +585,6 @@
 		B3C8A6B528781EBC0037A946 /* CoresRetro_tvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6A228781E800037A946 /* CoresRetro_tvOS.framework */; };
 		B3C8A6B9287820860037A946 /* PVDesmume2015.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6B8287820860037A946 /* PVDesmume2015.framework */; };
 		B3C8A6BA287820860037A946 /* PVDesmume2015.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6B8287820860037A946 /* PVDesmume2015.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3C8A6BD2878238C0037A946 /* Cores.h in Headers */ = {isa = PBXBuildFile; fileRef = B3270F8127DCB25100E83180 /* Cores.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C8A6C02878238C0037A946 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270FB727DCB62C00E83180 /* libz.dylib */; };
 		B3C8A6C52878238C0037A946 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2B0E8D1AD18961005FB77C /* libc++.dylib */; };
 		B3C8A6CE2878238C0037A946 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D717C8D54D0019F6D2 /* libxml2.dylib */; };
@@ -611,7 +606,6 @@
 		B3C8A706287827270037A946 /* Cores_iOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F7F27DCB25100E83180 /* Cores_iOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C8A709287827330037A946 /* CoresRetro_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6EF2878238C0037A946 /* CoresRetro_iOS.framework */; };
 		B3C8A70A287827330037A946 /* CoresRetro_iOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6EF2878238C0037A946 /* CoresRetro_iOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3C8A70F287828BA0037A946 /* CoresRetro.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C8A6A428781E810037A946 /* CoresRetro.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C8A71F287828FD0037A946 /* PVMednafen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8E27DCB2CA00E83180 /* PVMednafen.framework */; };
 		B3C8A720287828FD0037A946 /* PVMednafen.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8E27DCB2CA00E83180 /* PVMednafen.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C8A721287828FD0037A946 /* PicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8F27DCB2CA00E83180 /* PicoDrive.framework */; };
@@ -661,6 +655,9 @@
 		B3D1809128964477001207AF /* FreeDO.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3D1808F28964476001207AF /* FreeDO.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3D1809328964496001207AF /* FreeDO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D1809228964496001207AF /* FreeDO.framework */; };
 		B3D1809428964497001207AF /* FreeDO.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3D1809228964496001207AF /* FreeDO.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3D180A728964E07001207AF /* CoresRetro.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C8A6A428781E810037A946 /* CoresRetro.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3D180A828964E08001207AF /* CoresRetro.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C8A6A428781E810037A946 /* CoresRetro.h */; };
+		B3D180AA289655B6001207AF /* SameBoy.metal in Resources */ = {isa = PBXBuildFile; fileRef = B36703482896307E00F75595 /* SameBoy.metal */; };
 		B3D3E75F2894DEAB0016EB85 /* PVGME.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D3E75E2894DEAB0016EB85 /* PVGME.framework */; };
 		B3D3E7602894DEAB0016EB85 /* PVGME.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3D3E75E2894DEAB0016EB85 /* PVGME.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3D3E7622894DEBF0016EB85 /* PVGME.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D3E7612894DEBE0016EB85 /* PVGME.framework */; };
@@ -3012,7 +3009,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3270F8227DCB25100E83180 /* Cores.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3020,7 +3016,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3C8A6A528781E810037A946 /* CoresRetro.h in Headers */,
+				B3D180A828964E08001207AF /* CoresRetro.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3028,7 +3024,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3C8A6BD2878238C0037A946 /* Cores.h in Headers */,
+				B3D180A728964E07001207AF /* CoresRetro.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3036,7 +3032,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3C8A70F287828BA0037A946 /* CoresRetro.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3506,6 +3501,7 @@
 				B307830728924D6B007E7A2D /* GLES in Resources */,
 				B367035B2896314200F75595 /* NearestNeighbor.fsh in Resources */,
 				B3AE1F762073504400AD06D4 /* PVSaveStateCollectionViewCell~tvOS.xib in Resources */,
+				B3D180AA289655B6001207AF /* SameBoy.metal in Resources */,
 				B36703632896314200F75595 /* Scale2x.fsh in Resources */,
 				B3890BF920B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib in Resources */,
 				B36703652896314200F75595 /* SmoothBilinear.fsh in Resources */,
@@ -3905,7 +3901,6 @@
 				B37B71B0278E33B9005FB278 /* MenuButton.swift in Sources */,
 				EF56AA6227A21CBC0097AD05 /* TVAlertController.swift in Sources */,
 				B343717A276B0B650014F87C /* PVColecoVisionControllerViewController.swift in Sources */,
-				B36703492896307E00F75595 /* SameBoy.metal in Sources */,
 				37EEA29A27BC7E610070E222 /* HomeView.swift in Sources */,
 				B3427BF4287EA0CF0054C1B5 /* crt_filter_ps.metal in Sources */,
 				B38D02342884D03B008FBED8 /* SettingsOptionRow.swift in Sources */,
@@ -4070,7 +4065,6 @@
 				B35E6C2E207ED7050040709A /* UIWindowExtensions.swift in Sources */,
 				B3DB11AE205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */,
 				1AD481E31BA3545D00FDA50A /* GCDWebServerStreamedResponse.m in Sources */,
-				B367034A2896307E00F75595 /* SameBoy.metal in Sources */,
 				B3A70062288DD24000355823 /* PVEP128ControllerViewController.swift in Sources */,
 				1AD481D81BA3543700FDA50A /* GCDWebServerConnection.m in Sources */,
 				B35E6C2C207ED7050040709A /* UITraitCollectionExtensions.swift in Sources */,

@@ -16,6 +16,8 @@
 //#pragma clang diagnostic push
 //#pragma clang diagnostic error "-Wall"
 
+#define RETRO_API_VERSION 1
+
 #if !TARGET_OS_MACCATALYST
 #import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES3/gl.h>

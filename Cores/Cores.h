@@ -15,7 +15,7 @@ FOUNDATION_EXPORT double CoresRetroVersionNumber;
 FOUNDATION_EXPORT const unsigned char CoresRetroVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <CoresRetro/PublicHeader.h>
-#import <PVblueMSX/PVDosBox.h>
+#import <PVblueMSX/PVblueMSX.h>
 #import <PVDesmume2015/PVDesmume2015.h>
 #import <PVDosBox/PVDosBox.h>
 #import <PVEP128Emu/PVEP128Emu.h>

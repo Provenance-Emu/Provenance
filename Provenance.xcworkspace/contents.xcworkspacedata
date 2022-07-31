@@ -44,6 +44,9 @@
             location = "group:Cores/PPSSPP/PVPPSSPP.xcodeproj">
          </FileRef>
          <FileRef
+            location = "group:Cores/Reicast/PVReicast.xcodeproj">
+         </FileRef>
+         <FileRef
             location = "group:Cores/snesticle/PVSnesticle.xcodeproj">
          </FileRef>
       </Group>
@@ -87,9 +90,6 @@
          location = "group:Cores/ProSystem/PVProSystem.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Cores/Reicast/PVReicast.xcodeproj">
-      </FileRef>
-      <FileRef
          location = "group:Cores/snes9x/PVSNES.xcodeproj">
       </FileRef>
       <FileRef
@@ -110,9 +110,6 @@
          name = "Broken">
          <FileRef
             location = "group:Cores/BeetlePSX/PVBeetlePSX.xcodeproj">
-         </FileRef>
-         <FileRef
-            location = "group:Cores/blueMSX/PVblueMSX.xcodeproj">
          </FileRef>
          <FileRef
             location = "group:Cores/Citra/PVCitra.xcodeproj">

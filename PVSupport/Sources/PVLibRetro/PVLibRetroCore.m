@@ -56,43 +56,6 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic error "-Wall"
 
-#define RETRO_API_VERSION 1
-
-char rotation_lut[4][32] =
-{
-   "Normal",
-   "90 deg",
-   "180 deg",
-   "270 deg"
-};
-
-
-struct aspect_ratio_elem aspectratio_lut[ASPECT_RATIO_END] = {
-   { "4:3",           1.3333f },
-   { "16:9",          1.7778f },
-   { "16:10",         1.6f },
-   { "16:15",         16.0f / 15.0f },
-   { "1:1",           1.0f },
-   { "2:1",           2.0f },
-   { "3:2",           1.5f },
-   { "3:4",           0.75f },
-   { "4:1",           4.0f },
-   { "4:4",           1.0f },
-   { "5:4",           1.25f },
-   { "6:5",           1.2f },
-   { "7:9",           0.7777f },
-   { "8:3",           2.6666f },
-   { "8:7",           1.1428f },
-   { "19:12",         1.5833f },
-   { "19:14",         1.3571f },
-   { "30:17",         1.7647f },
-   { "32:9",          3.5555f },
-   { "Config",        0.0f },
-   { "Square pixel",  1.0f },
-   { "Core provided", 1.0f },
-   { "Custom",        0.0f }
-};
-
 @interface PVLibRetroCore ()
 {
     BOOL loaded;

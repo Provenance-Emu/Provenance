@@ -273,6 +273,10 @@
 		B3D0EE26277FE880002DC0A5 /* HapticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D0EE1F277FE85F002DC0A5 /* HapticsManager.swift */; };
 		B3D0EE28277FE8C9002DC0A5 /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D0EE27277FE8C9002DC0A5 /* CoreHaptics.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3D0EE2A277FE8E1002DC0A5 /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D0EE29277FE8E0002DC0A5 /* CoreHaptics.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		B3D180A328964C40001207AF /* PVLibRetroCore+Controls.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D180A128964C3B001207AF /* PVLibRetroCore+Controls.m */; };
+		B3D180A428964C40001207AF /* PVLibRetroCore+Controls.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D180A128964C3B001207AF /* PVLibRetroCore+Controls.m */; };
+		B3D180A528964C40001207AF /* PVLibRetroCore+Saves.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D180A228964C40001207AF /* PVLibRetroCore+Saves.m */; };
+		B3D180A628964C40001207AF /* PVLibRetroCore+Saves.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D180A228964C40001207AF /* PVLibRetroCore+Saves.m */; };
 		B3D73D3D1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D73D3B1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3D73D3E1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D73D3B1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3D73D401EA15BB20023925B /* NSFileManager+OEHashingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D73D3C1EA15BB20023925B /* NSFileManager+OEHashingAdditions.m */; };
@@ -1231,6 +1235,8 @@
 		B3D0EE1F277FE85F002DC0A5 /* HapticsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HapticsManager.swift; sourceTree = "<group>"; };
 		B3D0EE27277FE8C9002DC0A5 /* CoreHaptics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreHaptics.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.2.sdk/System/Library/Frameworks/CoreHaptics.framework; sourceTree = DEVELOPER_DIR; };
 		B3D0EE29277FE8E0002DC0A5 /* CoreHaptics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreHaptics.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/CoreHaptics.framework; sourceTree = DEVELOPER_DIR; };
+		B3D180A128964C3B001207AF /* PVLibRetroCore+Controls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVLibRetroCore+Controls.m"; sourceTree = "<group>"; };
+		B3D180A228964C40001207AF /* PVLibRetroCore+Saves.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVLibRetroCore+Saves.m"; sourceTree = "<group>"; };
 		B3D73D3B1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+OEHashingAdditions.h"; sourceTree = "<group>"; };
 		B3D73D3C1EA15BB20023925B /* NSFileManager+OEHashingAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+OEHashingAdditions.m"; sourceTree = "<group>"; };
 		B3DF963D288D6B5800300A38 /* PVLibRetroGLESCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVLibRetroGLESCore.h; sourceTree = "<group>"; };
@@ -3356,7 +3362,9 @@
 				B3928498286703CD003BAC21 /* PVLibRetroCore.m */,
 				B306814E2895D406003E465F /* PVLibRetroCore+Audio.m */,
 				B306814C2895D405003E465F /* PVLibRetroCore+Cheats.m */,
+				B3D180A128964C3B001207AF /* PVLibRetroCore+Controls.m */,
 				B306814F2895D407003E465F /* PVLibRetroCore+Options.m */,
+				B3D180A228964C40001207AF /* PVLibRetroCore+Saves.m */,
 				B306814D2895D406003E465F /* PVLibRetroCore+Video.m */,
 				B3DF963D288D6B5800300A38 /* PVLibRetroGLESCore.h */,
 				B3DF963E288D6B5800300A38 /* PVLibRetroGLESCore.m */,
@@ -3976,6 +3984,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3D180A528964C40001207AF /* PVLibRetroCore+Saves.m in Sources */,
+				B3D180A328964C40001207AF /* PVLibRetroCore+Controls.m in Sources */,
 				B30681562895D407003E465F /* PVLibRetroCore+Options.m in Sources */,
 				B30681502895D407003E465F /* PVLibRetroCore+Cheats.m in Sources */,
 				B30681542895D407003E465F /* PVLibRetroCore+Audio.m in Sources */,
@@ -4006,6 +4016,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3D180A628964C40001207AF /* PVLibRetroCore+Saves.m in Sources */,
+				B3D180A428964C40001207AF /* PVLibRetroCore+Controls.m in Sources */,
 				B30681572895D407003E465F /* PVLibRetroCore+Options.m in Sources */,
 				B30681512895D407003E465F /* PVLibRetroCore+Cheats.m in Sources */,
 				B30681552895D407003E465F /* PVLibRetroCore+Audio.m in Sources */,

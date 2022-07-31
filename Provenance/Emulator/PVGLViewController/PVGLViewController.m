@@ -210,7 +210,14 @@ PV_OBJC_DIRECT_MEMBERS
 
     [self setupTexture];
 
-    defaultVertexShader = [self compileShaderResource:[NSString stringWithFormat:@"%s/default_vertex", VERTEX_DIR] ofType:GL_VERTEX_SHADER];
+    NSError *error;
+    defaultVertexShader = [self compileShaderResource:[NSString stringWithFormat:@"%s/default_vertex", VERTEX_DIR] ofType:GL_VERTEX_SHADER error:&error];
+    
+    if(error) {
+        ELOG(@"%@", error.localizedDescription)
+    }
+    assert(defaultVertexShader != GL_NO_ERROR);
+
     [self setupVBOs];
     
     [self setupBlitShader];
@@ -400,8 +407,7 @@ PV_OBJC_DIRECT_MEMBERS
     }
 }
 
-- (GLuint)compileShaderResource:(NSString*)shaderResourceName ofType:(GLenum)shaderType
-{
+- (GLuint)compileShaderResource:(NSString*)shaderResourceName ofType:(GLenum)shaderType error:(NSError**)inError {
     // TODO: check shaderType == GL_VERTEX_SHADER
     NSString *fileName = [shaderResourceName stringByAppendingPathExtension:@"glsl"];
 
@@ -420,6 +426,9 @@ PV_OBJC_DIRECT_MEMBERS
                     toPath:docsPath
                      error:&error];
         if (error) {
+            if(inError) {
+                *inError = error;
+            }
             ELOG(@"%@", error.localizedDescription);
         }
     }
@@ -431,6 +440,11 @@ PV_OBJC_DIRECT_MEMBERS
     }
     if ( shaderPath == NULL )
     {
+        if(inError) {
+            *inError = [NSError errorWithDomain:@"com.provenance.core"
+                                           code:-1
+                                       userInfo:@{NSLocalizedDescriptionKey : @"shaderPath is null"}];
+        }
         ELOG(@"Nil shaderPath");
         return 0;
     }
@@ -442,6 +456,9 @@ PV_OBJC_DIRECT_MEMBERS
     if ( shaderSource == NULL )
     {
         ELOG(@"Nil shaderSource: %@ %@", shaderPath, error.localizedDescription);
+        if(inError) {
+            *inError = [NSError errorWithDomain:@"com.provenance.core" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"shaderSource is null"}];
+        }
         return 0;
     }
     
@@ -449,6 +466,9 @@ PV_OBJC_DIRECT_MEMBERS
     if ( shaderSourceCString == NULL )
     {
         ELOG(@"Nil shaderSourceCString");
+        if(inError) {
+            *inError = [NSError errorWithDomain:@"com.provenance.core" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"shaderSourceCString is null"}];
+        }
         return 0;
     }
     
@@ -456,6 +476,9 @@ PV_OBJC_DIRECT_MEMBERS
     if ( shader == 0 )
     {
         ELOG(@"Nil shader");
+        if(inError) {
+            *inError = [NSError errorWithDomain:@"com.provenance.core" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"shader is null"}];
+        }
         return 0;
     }
     
@@ -472,7 +495,11 @@ PV_OBJC_DIRECT_MEMBERS
         {
             char* infoLog = (char*)malloc( infoLogLength );
             glGetShaderInfoLog( shader, infoLogLength, NULL, infoLog );
-            ELOG(@"Error compiling shader: %s", infoLog );
+            NSString *log = [NSString stringWithCString:infoLog encoding:NSUTF8StringEncoding];
+            ELOG(@"Error compiling shader: %@", log );
+            if(inError) {
+                *inError = [NSError errorWithDomain:@"com.provenance.core" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"Error compiling shader" , NSLocalizedFailureReasonErrorKey:log}];
+            }
             free( infoLog );
         }
         
@@ -522,15 +549,21 @@ PV_OBJC_DIRECT_MEMBERS
 
 - (void)setupBlitShader
 {
-    blitFragmentShader = [self compileShaderResource:[NSString stringWithFormat:@"%s/blit_fragment", BLITTER_DIR] ofType:GL_FRAGMENT_SHADER];
+    NSError *error;
+    blitFragmentShader = [self compileShaderResource:[NSString stringWithFormat:@"%s/blit_fragment", BLITTER_DIR] ofType:GL_FRAGMENT_SHADER error:&error];
+    assert(blitFragmentShader != GL_NO_ERROR);
     blitShaderProgram = [self linkVertexShader:defaultVertexShader withFragmentShader:blitFragmentShader];
+    assert(blitShaderProgram != GL_NO_ERROR);
     blitUniform_EmulatedImage = glGetUniformLocation(blitShaderProgram, "EmulatedImage");
 }
 
 - (void)setupCRTShader
 {
-    crtFragmentShader = [self compileShaderResource:[NSString stringWithFormat:@"%s/crt_fragment", FILTER_DIR] ofType:GL_FRAGMENT_SHADER];
+    NSError *error;
+    crtFragmentShader = [self compileShaderResource:[NSString stringWithFormat:@"%s/crt_fragment", FILTER_DIR] ofType:GL_FRAGMENT_SHADER error:&error];
+    assert(crtFragmentShader != GL_NO_ERROR);
     crtShaderProgram = [self linkVertexShader:defaultVertexShader withFragmentShader:crtFragmentShader];
+    assert(crtShaderProgram != GL_NO_ERROR);
     crtUniform_DisplayRect = glGetUniformLocation(crtShaderProgram, "DisplayRect");
     crtUniform_EmulatedImage = glGetUniformLocation(crtShaderProgram, "EmulatedImage");
     crtUniform_EmulatedImageSize = glGetUniformLocation(crtShaderProgram, "EmulatedImageSize");
