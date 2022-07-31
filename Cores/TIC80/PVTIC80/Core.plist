@@ -8,8 +8,7 @@
 	<string>PVTIC80Core</string>
 	<key>PVSupportedSystems</key>
 	<array>
-		<string>com.provenance.msx</string>
-		<string>com.provenance.msx2</string>
+		<string>com.provenance.tic80</string>
 	</array>
 	<key>PVProjectName</key>
 	<string>TIC80</string>

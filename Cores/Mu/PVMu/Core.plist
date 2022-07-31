@@ -5,13 +5,13 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.Mu</string>
 	<key>PVPrincipleClass</key>
-	<string>PVMu</string>
+	<string>PVMuCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.palmos</string>
 	</array>
 	<key>PVProjectName</key>
-	<string>PVMu</string>
+	<string>Mu</string>
 	<key>PVProjectURL</key>
 	<string>https://meepingsnesroms.github.io</string>
 	<key>PVProjectVersion</key>

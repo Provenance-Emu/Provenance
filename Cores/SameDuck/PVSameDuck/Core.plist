@@ -8,7 +8,7 @@
 	<string>PVSameDuckCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
-		<string>com.provenance.vectrex</string>
+		<string>com.provenance.megaduck</string>
 	</array>
 	<key>PVProjectName</key>
 	<string>SameDuck</string>

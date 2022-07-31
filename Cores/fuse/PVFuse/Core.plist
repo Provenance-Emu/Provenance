@@ -8,13 +8,12 @@
 	<string>PVFuseCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
-		<string>com.provenance.msx</string>
-		<string>com.provenance.msx2</string>
+		<string>com.provenance.zxspectrum</string>
 	</array>
 	<key>PVProjectName</key>
 	<string>Fuse</string>
 	<key>PVProjectURL</key>
-	<string>http://fms.komkon.org/Fuse/</string>
+	<string>http://fuse-emulator.sourceforge.net</string>
 	<key>PVProjectVersion</key>
 	<string>0</string>
 </dict>

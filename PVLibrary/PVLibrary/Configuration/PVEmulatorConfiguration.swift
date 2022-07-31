@@ -49,6 +49,7 @@ public struct SystemDictionaryKeys {
 
 public enum SystemIdentifier: String, CaseIterable {
     case _3DO = "com.provenance.3DO"
+    case _3DS = "com.provenance.3ds"
     case Atari2600 = "com.provenance.2600"
     case Atari5200 = "com.provenance.5200"
     case Atari7800 = "com.provenance.7800"
@@ -73,6 +74,7 @@ public enum SystemIdentifier: String, CaseIterable {
     case Lynx = "com.provenance.lynx"
     case Macintosh = "com.provenance.macintosh"
     case MasterSystem = "com.provenance.mastersystem"
+    case MegaDuck = "com.provenance.megaduck"
     case MSX = "com.provenance.msx"
     case MSX2 = "com.provenance.msx2"
     case Music = "com.provenance.music"
@@ -82,6 +84,7 @@ public enum SystemIdentifier: String, CaseIterable {
     case NGP = "com.provenance.ngp"
     case NGPC = "com.provenance.ngpc"
     case Odyssey2 = "com.provenance.odyssey2"
+    case PalmOS = "com.provenance.palmos"
     case PCE = "com.provenance.pce"
     case PCECD = "com.provenance.pcecd"
     case PCFX = "com.provenance.pcfx"
@@ -97,6 +100,7 @@ public enum SystemIdentifier: String, CaseIterable {
     case SGFX = "com.provenance.sgfx"
     case SNES = "com.provenance.snes"
     case Supervision = "com.provenance.supervision"
+    case TIC80 = "com.provenance.tic80"
     case Vectrex = "com.provenance.vectrex"
     case VirtualBoy = "com.provenance.vb"
     case Wii = "com.provenance.wii"

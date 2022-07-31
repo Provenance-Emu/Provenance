@@ -11,6 +11,9 @@
 @import QuartzCore;
 #import "Provenance-Swift.h"
 
+#define USE_EFFECT 1
+#define USE_DISPLAY_LINK 0
+
 #if !TARGET_OS_MACCATALYST
 #import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES3/gl.h>
@@ -60,6 +63,12 @@
 @property (nonatomic, strong) EAGLContext *alternateThreadGLContext;
 @property (nonatomic, strong) EAGLContext *alternateThreadBufferCopyGLContext;
 
+#if USE_DISPLAY_LINK
+@property (nonatomic, strong) CADisplayLink *displayLink;
+#endif
+#if USE_EFFECT
+@property (nonatomic, strong) GLKBaseEffect *effect;
+#endif
 
 @property (nonatomic, assign) GLESVersion glesVersion;
 
@@ -151,6 +160,11 @@ PV_OBJC_DIRECT_MEMBERS
     }
 }
 
+#if USE_DISPLAY_LINK
+-(void)render {
+    
+}
+
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
@@ -180,6 +194,15 @@ PV_OBJC_DIRECT_MEMBERS
     view.context = self.glContext;
     view.userInteractionEnabled = NO;
 
+#if USE_DISPLAY_LINK
+    self.displayLink = [CADisplayLink displayLinkWithTarget: self selector: @selector(render)];
+    [self.displayLink addToRunLoop: [NSRunLoop currentRunLoop] forMode: NSDefaultRunLoopMode];
+#endif
+    
+#if USE_EFFECT
+    self.effect = [[GLKBaseEffect alloc] init];
+#endif
+    
     GLenum depthFormat = self.emulatorCore.depthFormat;
     switch (depthFormat) {
         case GL_DEPTH_COMPONENT16:
@@ -610,6 +633,19 @@ PV_OBJC_DIRECT_MEMBERS
             glBindTexture(GL_TEXTURE_2D, strongself->texture);
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, videoBufferSize.width, videoBufferSize.height, videoBufferPixelFormat, videoBufferPixelType, videoBuffer);
             frontBufferTex = strongself->texture;
+            
+#if USE_EFFECT
+            if (texture)
+            {
+                self.effect.texture2d0.envMode = GLKTextureEnvModeReplace;
+                self.effect.texture2d0.target = GLKTextureTarget2D;
+                self.effect.texture2d0.name = texture;
+                self.effect.texture2d0.enabled = YES;
+                self.effect.useConstantColor = YES;
+            }
+
+            [self.effect prepareToDraw];
+#endif
         }
         
         if (frontBufferTex)

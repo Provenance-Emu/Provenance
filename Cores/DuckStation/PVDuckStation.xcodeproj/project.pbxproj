@@ -8588,10 +8588,11 @@
 					"\"$(SRCROOT)/duckstation/src\"",
 					"\"$(SRCROOT)/duckstation/dep/glad/include\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 			};
 			name = Debug;
 		};
@@ -8647,10 +8648,11 @@
 					"\"$(SRCROOT)/duckstation/src\"",
 					"\"$(SRCROOT)/duckstation/dep/glad/include\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 			};
 			name = Release;
 		};
@@ -10400,9 +10402,10 @@
 					"\"$(SRCROOT)/duckstation/src\"",
 					"\"$(SRCROOT)/duckstation/dep/glad/include\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 			};
 			name = Archive;
 		};
@@ -10422,6 +10425,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
+				EXCLUDED_ARCHS = "";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					SI_CONVERT_GENERIC,
@@ -10519,6 +10523,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
 				ENABLE_TESTABILITY = YES;
+				EXCLUDED_ARCHS = "";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -10574,6 +10579,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
+				EXCLUDED_ARCHS = "";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					SI_CONVERT_GENERIC,

@@ -9,6 +9,92 @@
 /* Begin PBXBuildFile section */
 		B301797F207C909E0051B93D /* libmu-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libmu-iOS.a */; };
 		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
+		B3231BF3289666CE003CC116 /* w86l488.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682C32895F86E003E465F /* w86l488.c */; };
+		B3231BF4289666CE003CC116 /* sdCard.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683012895F86E003E465F /* sdCard.c */; };
+		B3231BF5289666CE003CC116 /* silkscreen.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682FE2895F86E003E465F /* silkscreen.c */; };
+		B3231BF6289666CE003CC116 /* tps65010.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682E22895F86E003E465F /* tps65010.c */; };
+		B3231BF7289666CE003CC116 /* emulator.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683022895F86E003E465F /* emulator.c */; };
+		B3231BF8289666CE003CC116 /* tsc2101.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682C52895F86E003E465F /* tsc2101.c */; };
+		B3231BF9289666CE003CC116 /* pdiUsbD12.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682F82895F86E003E465F /* pdiUsbD12.c */; };
+		B3231BFA289666CE003CC116 /* flx68000.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683002895F86E003E465F /* flx68000.c */; };
+		B3231BFB289666CE003CC116 /* sed1376.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682FF2895F86E003E465F /* sed1376.c */; };
+		B3231BFC289666CE003CC116 /* dbvz.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682F42895F86E003E465F /* dbvz.c */; };
+		B3231BFD289666CE003CC116 /* ads7846.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682C62895F86E003E465F /* ads7846.c */; };
+		B3231BFE289666CE003CC116 /* m5XXBus.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682C72895F86E003E465F /* m5XXBus.c */; };
+		B3231BFF289666CE003CC116 /* w86l488.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682C32895F86E003E465F /* w86l488.c */; };
+		B3231C00289666CE003CC116 /* sdCard.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683012895F86E003E465F /* sdCard.c */; };
+		B3231C01289666CE003CC116 /* silkscreen.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682FE2895F86E003E465F /* silkscreen.c */; };
+		B3231C02289666CE003CC116 /* tps65010.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682E22895F86E003E465F /* tps65010.c */; };
+		B3231C03289666CE003CC116 /* emulator.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683022895F86E003E465F /* emulator.c */; };
+		B3231C04289666CE003CC116 /* tsc2101.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682C52895F86E003E465F /* tsc2101.c */; };
+		B3231C05289666CE003CC116 /* pdiUsbD12.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682F82895F86E003E465F /* pdiUsbD12.c */; };
+		B3231C06289666CE003CC116 /* flx68000.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683002895F86E003E465F /* flx68000.c */; };
+		B3231C07289666CE003CC116 /* sed1376.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682FF2895F86E003E465F /* sed1376.c */; };
+		B3231C08289666CE003CC116 /* dbvz.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682F42895F86E003E465F /* dbvz.c */; };
+		B3231C09289666CE003CC116 /* ads7846.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682C62895F86E003E465F /* ads7846.c */; };
+		B3231C0A289666CE003CC116 /* m5XXBus.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682C72895F86E003E465F /* m5XXBus.c */; };
+		B3231C0B289666E2003CC116 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B306819C2895F86B003E465F /* libretro.c */; };
+		B3231C0C289666E2003CC116 /* cursors.c in Sources */ = {isa = PBXBuildFile; fileRef = B306819D2895F86B003E465F /* cursors.c */; };
+		B3231C0D289666E3003CC116 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B306819C2895F86B003E465F /* libretro.c */; };
+		B3231C0E289666E3003CC116 /* cursors.c in Sources */ = {isa = PBXBuildFile; fileRef = B306819D2895F86B003E465F /* cursors.c */; };
+		B3231C0F28966754003CC116 /* pxa260_TIMR.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682E42895F86E003E465F /* pxa260_TIMR.c */; };
+		B3231C1028966754003CC116 /* pxa260I2c.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682EE2895F86E003E465F /* pxa260I2c.c */; };
+		B3231C1128966754003CC116 /* pxa260_RTC.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682ED2895F86E003E465F /* pxa260_RTC.c */; };
+		B3231C1228966754003CC116 /* pxa260Timing.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682EB2895F86E003E465F /* pxa260Timing.c */; };
+		B3231C1328966754003CC116 /* pxa260Memctrl.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682F22895F86E003E465F /* pxa260Memctrl.c */; };
+		B3231C1428966754003CC116 /* pxa260.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682EF2895F86E003E465F /* pxa260.c */; };
+		B3231C1528966754003CC116 /* pxa260_GPIO.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682E82895F86E003E465F /* pxa260_GPIO.c */; };
+		B3231C1628966754003CC116 /* pxa260_DSP.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682F02895F86E003E465F /* pxa260_DSP.c */; };
+		B3231C1728966754003CC116 /* pxa260_IC.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682E72895F86E003E465F /* pxa260_IC.c */; };
+		B3231C1828966754003CC116 /* pxa260_PwrClk.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682EA2895F86E003E465F /* pxa260_PwrClk.c */; };
+		B3231C1928966754003CC116 /* pxa260_LCD.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682EC2895F86E003E465F /* pxa260_LCD.c */; };
+		B3231C1A28966754003CC116 /* pxa260_DMA.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682E62895F86E003E465F /* pxa260_DMA.c */; };
+		B3231C1B28966754003CC116 /* pxa260_UART.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682F12895F86E003E465F /* pxa260_UART.c */; };
+		B3231C1C28966754003CC116 /* pxa260Ssp.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682F32895F86E003E465F /* pxa260Ssp.c */; };
+		B3231C1D28966754003CC116 /* pxa260Udc.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682E92895F86E003E465F /* pxa260Udc.c */; };
+		B3231C1E28966754003CC116 /* pxa260_TIMR.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682E42895F86E003E465F /* pxa260_TIMR.c */; };
+		B3231C1F28966754003CC116 /* pxa260I2c.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682EE2895F86E003E465F /* pxa260I2c.c */; };
+		B3231C2028966754003CC116 /* pxa260_RTC.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682ED2895F86E003E465F /* pxa260_RTC.c */; };
+		B3231C2128966754003CC116 /* pxa260Timing.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682EB2895F86E003E465F /* pxa260Timing.c */; };
+		B3231C2228966754003CC116 /* pxa260Memctrl.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682F22895F86E003E465F /* pxa260Memctrl.c */; };
+		B3231C2328966754003CC116 /* pxa260.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682EF2895F86E003E465F /* pxa260.c */; };
+		B3231C2428966754003CC116 /* pxa260_GPIO.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682E82895F86E003E465F /* pxa260_GPIO.c */; };
+		B3231C2528966754003CC116 /* pxa260_DSP.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682F02895F86E003E465F /* pxa260_DSP.c */; };
+		B3231C2628966754003CC116 /* pxa260_IC.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682E72895F86E003E465F /* pxa260_IC.c */; };
+		B3231C2728966754003CC116 /* pxa260_PwrClk.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682EA2895F86E003E465F /* pxa260_PwrClk.c */; };
+		B3231C2828966754003CC116 /* pxa260_LCD.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682EC2895F86E003E465F /* pxa260_LCD.c */; };
+		B3231C2928966754003CC116 /* pxa260_DMA.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682E62895F86E003E465F /* pxa260_DMA.c */; };
+		B3231C2A28966754003CC116 /* pxa260_UART.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682F12895F86E003E465F /* pxa260_UART.c */; };
+		B3231C2B28966754003CC116 /* pxa260Ssp.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682F32895F86E003E465F /* pxa260Ssp.c */; };
+		B3231C2C28966754003CC116 /* pxa260Udc.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682E92895F86E003E465F /* pxa260Udc.c */; };
+		B3231C2D28966761003CC116 /* m68kopnz.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682C22895F86E003E465F /* m68kopnz.c */; };
+		B3231C2E28966761003CC116 /* m68kdasm.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682BE2895F86E003E465F /* m68kdasm.c */; };
+		B3231C2F28966761003CC116 /* m68kopac.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682BF2895F86E003E465F /* m68kopac.c */; };
+		B3231C3028966761003CC116 /* m68kopdm.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682C12895F86E003E465F /* m68kopdm.c */; };
+		B3231C3128966761003CC116 /* m68kcpu.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682BD2895F86E003E465F /* m68kcpu.c */; };
+		B3231C3228966761003CC116 /* m68kops.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682C02895F86E003E465F /* m68kops.c */; };
+		B3231C3328966762003CC116 /* m68kopnz.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682C22895F86E003E465F /* m68kopnz.c */; };
+		B3231C3428966762003CC116 /* m68kdasm.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682BE2895F86E003E465F /* m68kdasm.c */; };
+		B3231C3528966762003CC116 /* m68kopac.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682BF2895F86E003E465F /* m68kopac.c */; };
+		B3231C3628966762003CC116 /* m68kopdm.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682C12895F86E003E465F /* m68kopdm.c */; };
+		B3231C3728966762003CC116 /* m68kcpu.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682BD2895F86E003E465F /* m68kcpu.c */; };
+		B3231C3828966762003CC116 /* m68kops.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682C02895F86E003E465F /* m68kops.c */; };
+		B3231C3928966769003CC116 /* launcher.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682FD2895F86E003E465F /* launcher.c */; };
+		B3231C3A28966769003CC116 /* launcher.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682FD2895F86E003E465F /* launcher.c */; };
+		B3231C3B2896676F003CC116 /* blip_buf.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682F72895F86E003E465F /* blip_buf.c */; };
+		B3231C3C28966770003CC116 /* blip_buf.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682F72895F86E003E465F /* blip_buf.c */; };
+		B3231C3D28966791003CC116 /* mmu.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682E02895F86E003E465F /* mmu.c */; };
+		B3231C3E28966791003CC116 /* disasm.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682CC2895F86E003E465F /* disasm.c */; };
+		B3231C3F28966791003CC116 /* mem.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682CE2895F86E003E465F /* mem.c */; };
+		B3231C4028966791003CC116 /* emuVarPool.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682D62895F86E003E465F /* emuVarPool.c */; };
+		B3231C4128966791003CC116 /* asmcode.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682DF2895F86E003E465F /* asmcode.c */; };
+		B3231C4228966792003CC116 /* mmu.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682E02895F86E003E465F /* mmu.c */; };
+		B3231C4328966792003CC116 /* disasm.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682CC2895F86E003E465F /* disasm.c */; };
+		B3231C4428966792003CC116 /* mem.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682CE2895F86E003E465F /* mem.c */; };
+		B3231C4528966792003CC116 /* emuVarPool.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682D62895F86E003E465F /* emuVarPool.c */; };
+		B3231C4628966792003CC116 /* asmcode.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682DF2895F86E003E465F /* asmcode.c */; };
+		B3231C4728966828003CC116 /* translate_aarch64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B30682D02895F86E003E465F /* translate_aarch64.cpp */; };
+		B3231C4828966829003CC116 /* translate_aarch64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B30682D02895F86E003E465F /* translate_aarch64.cpp */; };
 		B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C31B2191964F009F4EDC /* AVFoundation.framework */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
@@ -348,9 +434,7 @@
 		B30682642895F86D003E465F /* Screenshot_20190426-220702.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Screenshot_20190426-220702.png"; sourceTree = "<group>"; };
 		B30682652895F86D003E465F /* currentBug.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = currentBug.txt; sourceTree = "<group>"; };
 		B30682662895F86D003E465F /* readme.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = readme.md; sourceTree = "<group>"; };
-		B30682672895F86D003E465F /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		B30682692895F86D003E465F /* ISSUE_TEMPLATE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ISSUE_TEMPLATE.md; sourceTree = "<group>"; };
-		B306826A2895F86D003E465F /* .gitattributes */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitattributes; sourceTree = "<group>"; };
 		B306826B2895F86D003E465F /* changelog.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = changelog.txt; sourceTree = "<group>"; };
 		B306826C2895F86D003E465F /* .gitlab-ci.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = ".gitlab-ci.yml"; sourceTree = "<group>"; };
 		B306826E2895F86D003E465F /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
@@ -586,23 +670,21 @@
 		B30681592895F86B003E465F /* Mu */ = {
 			isa = PBXGroup;
 			children = (
-				B306815A2895F86B003E465F /* tools */,
-				B30681992895F86B003E465F /* CMakeLists.txt */,
 				B306819A2895F86B003E465F /* LICENSE */,
-				B306819B2895F86B003E465F /* libretroBuildSystem */,
-				B30681F72895F86C003E465F /* images */,
-				B30681FC2895F86C003E465F /* roadmap.txt */,
-				B30681FD2895F86C003E465F /* include */,
-				B30682472895F86D003E465F /* bugs */,
 				B30682662895F86D003E465F /* readme.md */,
-				B30682672895F86D003E465F /* .gitignore */,
-				B30682682895F86D003E465F /* .github */,
-				B306826A2895F86D003E465F /* .gitattributes */,
 				B306826B2895F86D003E465F /* changelog.txt */,
+				B30681992895F86B003E465F /* CMakeLists.txt */,
+				B30681FC2895F86C003E465F /* roadmap.txt */,
 				B306826C2895F86D003E465F /* .gitlab-ci.yml */,
-				B306826D2895F86D003E465F /* qtBuildSystem */,
+				B30682682895F86D003E465F /* .github */,
 				B30682B42895F86E003E465F /* .idea */,
+				B30682472895F86D003E465F /* bugs */,
+				B30681F72895F86C003E465F /* images */,
+				B30681FD2895F86C003E465F /* include */,
+				B306819B2895F86B003E465F /* libretroBuildSystem */,
+				B306826D2895F86D003E465F /* qtBuildSystem */,
 				B30682BA2895F86E003E465F /* src */,
+				B306815A2895F86B003E465F /* tools */,
 			);
 			path = Mu;
 			sourceTree = "<group>";
@@ -728,18 +810,18 @@
 		B306819B2895F86B003E465F /* libretroBuildSystem */ = {
 			isa = PBXGroup;
 			children = (
-				B306819C2895F86B003E465F /* libretro.c */,
-				B306819D2895F86B003E465F /* cursors.c */,
-				B306819E2895F86B003E465F /* CMakeLists.txt */,
 				B306819F2895F86B003E465F /* Makefile */,
+				B306819D2895F86B003E465F /* cursors.c */,
+				B306819C2895F86B003E465F /* libretro.c */,
+				B30681C92895F86C003E465F /* cursors.h */,
 				B30681A02895F86B003E465F /* mu_libretro.info */,
 				B30681A12895F86B003E465F /* Makefile.libretro */,
 				B30681A22895F86B003E465F /* installRootedAndroid.sh */,
-				B30681A32895F86B003E465F /* libretro-common */,
-				B30681C92895F86C003E465F /* cursors.h */,
+				B306819E2895F86B003E465F /* CMakeLists.txt */,
 				B30681CA2895F86C003E465F /* build */,
 				B30681E12895F86C003E465F /* fixIncludes */,
 				B30681E42895F86C003E465F /* jni */,
+				B30681A32895F86B003E465F /* libretro-common */,
 				B30681E82895F86C003E465F /* overlay */,
 			);
 			path = libretroBuildSystem;
@@ -1359,25 +1441,25 @@
 		B30682BA2895F86E003E465F /* src */ = {
 			isa = PBXGroup;
 			children = (
-				B30682BB2895F86E003E465F /* m68k */,
+				B30682F92895F86E003E465F /* makefile.all */,
+				B30682C62895F86E003E465F /* ads7846.c */,
+				B30682F42895F86E003E465F /* dbvz.c */,
+				B30683022895F86E003E465F /* emulator.c */,
+				B30683002895F86E003E465F /* flx68000.c */,
+				B30682C72895F86E003E465F /* m5XXBus.c */,
+				B30682F82895F86E003E465F /* pdiUsbD12.c */,
+				B30683012895F86E003E465F /* sdCard.c */,
+				B30682FF2895F86E003E465F /* sed1376.c */,
+				B30682FE2895F86E003E465F /* silkscreen.c */,
+				B30682E22895F86E003E465F /* tps65010.c */,
+				B30682C52895F86E003E465F /* tsc2101.c */,
 				B30682C32895F86E003E465F /* w86l488.c */,
 				B30682C42895F86E003E465F /* CMakeLists.txt */,
-				B30682C52895F86E003E465F /* tsc2101.c */,
-				B30682C62895F86E003E465F /* ads7846.c */,
-				B30682C72895F86E003E465F /* m5XXBus.c */,
 				B30682C82895F86E003E465F /* armv5te */,
-				B30682E22895F86E003E465F /* tps65010.c */,
-				B30682E32895F86E003E465F /* pxa260 */,
-				B30682F42895F86E003E465F /* dbvz.c */,
 				B30682F52895F86E003E465F /* audio */,
-				B30682F82895F86E003E465F /* pdiUsbD12.c */,
-				B30682F92895F86E003E465F /* makefile.all */,
 				B30682FA2895F86E003E465F /* fileLauncher */,
-				B30682FE2895F86E003E465F /* silkscreen.c */,
-				B30682FF2895F86E003E465F /* sed1376.c */,
-				B30683002895F86E003E465F /* flx68000.c */,
-				B30683012895F86E003E465F /* sdCard.c */,
-				B30683022895F86E003E465F /* emulator.c */,
+				B30682BB2895F86E003E465F /* m68k */,
+				B30682E32895F86E003E465F /* pxa260 */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -1399,26 +1481,26 @@
 		B30682C82895F86E003E465F /* armv5te */ = {
 			isa = PBXGroup;
 			children = (
-				B30682C92895F86E003E465F /* thumb_interpreter.cpp */,
-				B30682CA2895F86E003E465F /* CMakeLists.txt */,
-				B30682CB2895F86E003E465F /* coproc.cpp */,
-				B30682CC2895F86E003E465F /* disasm.c */,
-				B30682CD2895F86E003E465F /* asmcode_x86_64.S */,
-				B30682CE2895F86E003E465F /* mem.c */,
-				B30682CF2895F86E003E465F /* translate_arm.cpp */,
-				B30682D02895F86E003E465F /* translate_aarch64.cpp */,
-				B30682D12895F86E003E465F /* translate_x86.c */,
-				B30682D22895F86E003E465F /* uArm */,
-				B30682D62895F86E003E465F /* emuVarPool.c */,
-				B30682D72895F86E003E465F /* arm_interpreter.cpp */,
-				B30682D82895F86E003E465F /* translate_x86_64.c */,
-				B30682D92895F86E003E465F /* os */,
-				B30682DC2895F86E003E465F /* asmcode_x86.S */,
-				B30682DD2895F86E003E465F /* cpu.cpp */,
-				B30682DE2895F86E003E465F /* asmcode_aarch64.S */,
 				B30682DF2895F86E003E465F /* asmcode.c */,
+				B30682CC2895F86E003E465F /* disasm.c */,
+				B30682D62895F86E003E465F /* emuVarPool.c */,
+				B30682CE2895F86E003E465F /* mem.c */,
 				B30682E02895F86E003E465F /* mmu.c */,
+				B30682D82895F86E003E465F /* translate_x86_64.c */,
+				B30682D12895F86E003E465F /* translate_x86.c */,
+				B30682D72895F86E003E465F /* arm_interpreter.cpp */,
+				B30682CB2895F86E003E465F /* coproc.cpp */,
+				B30682DD2895F86E003E465F /* cpu.cpp */,
+				B30682C92895F86E003E465F /* thumb_interpreter.cpp */,
+				B30682D02895F86E003E465F /* translate_aarch64.cpp */,
+				B30682CF2895F86E003E465F /* translate_arm.cpp */,
+				B30682DE2895F86E003E465F /* asmcode_aarch64.S */,
 				B30682E12895F86E003E465F /* asmcode_arm.S */,
+				B30682CD2895F86E003E465F /* asmcode_x86_64.S */,
+				B30682DC2895F86E003E465F /* asmcode_x86.S */,
+				B30682CA2895F86E003E465F /* CMakeLists.txt */,
+				B30682D92895F86E003E465F /* os */,
+				B30682D22895F86E003E465F /* uArm */,
 			);
 			path = armv5te;
 			sourceTree = "<group>";
@@ -1445,22 +1527,22 @@
 		B30682E32895F86E003E465F /* pxa260 */ = {
 			isa = PBXGroup;
 			children = (
-				B30682E42895F86E003E465F /* pxa260_TIMR.c */,
-				B30682E52895F86E003E465F /* CMakeLists.txt */,
 				B30682E62895F86E003E465F /* pxa260_DMA.c */,
-				B30682E72895F86E003E465F /* pxa260_IC.c */,
-				B30682E82895F86E003E465F /* pxa260_GPIO.c */,
-				B30682E92895F86E003E465F /* pxa260Udc.c */,
-				B30682EA2895F86E003E465F /* pxa260_PwrClk.c */,
-				B30682EB2895F86E003E465F /* pxa260Timing.c */,
-				B30682EC2895F86E003E465F /* pxa260_LCD.c */,
-				B30682ED2895F86E003E465F /* pxa260_RTC.c */,
-				B30682EE2895F86E003E465F /* pxa260I2c.c */,
-				B30682EF2895F86E003E465F /* pxa260.c */,
 				B30682F02895F86E003E465F /* pxa260_DSP.c */,
+				B30682E82895F86E003E465F /* pxa260_GPIO.c */,
+				B30682E72895F86E003E465F /* pxa260_IC.c */,
+				B30682EC2895F86E003E465F /* pxa260_LCD.c */,
+				B30682EA2895F86E003E465F /* pxa260_PwrClk.c */,
+				B30682ED2895F86E003E465F /* pxa260_RTC.c */,
+				B30682E42895F86E003E465F /* pxa260_TIMR.c */,
 				B30682F12895F86E003E465F /* pxa260_UART.c */,
+				B30682EF2895F86E003E465F /* pxa260.c */,
+				B30682EE2895F86E003E465F /* pxa260I2c.c */,
 				B30682F22895F86E003E465F /* pxa260Memctrl.c */,
 				B30682F32895F86E003E465F /* pxa260Ssp.c */,
+				B30682EB2895F86E003E465F /* pxa260Timing.c */,
+				B30682E92895F86E003E465F /* pxa260Udc.c */,
+				B30682E52895F86E003E465F /* CMakeLists.txt */,
 			);
 			path = pxa260;
 			sourceTree = "<group>";
@@ -1764,6 +1846,47 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3231C1D28966754003CC116 /* pxa260Udc.c in Sources */,
+				B3231C1628966754003CC116 /* pxa260_DSP.c in Sources */,
+				B3231C3028966761003CC116 /* m68kopdm.c in Sources */,
+				B3231C4028966791003CC116 /* emuVarPool.c in Sources */,
+				B3231C3928966769003CC116 /* launcher.c in Sources */,
+				B3231BF5289666CE003CC116 /* silkscreen.c in Sources */,
+				B3231C1B28966754003CC116 /* pxa260_UART.c in Sources */,
+				B3231BFB289666CE003CC116 /* sed1376.c in Sources */,
+				B3231C1828966754003CC116 /* pxa260_PwrClk.c in Sources */,
+				B3231C1C28966754003CC116 /* pxa260Ssp.c in Sources */,
+				B3231C3128966761003CC116 /* m68kcpu.c in Sources */,
+				B3231C1528966754003CC116 /* pxa260_GPIO.c in Sources */,
+				B3231C2F28966761003CC116 /* m68kopac.c in Sources */,
+				B3231C2E28966761003CC116 /* m68kdasm.c in Sources */,
+				B3231BF7289666CE003CC116 /* emulator.c in Sources */,
+				B3231BFD289666CE003CC116 /* ads7846.c in Sources */,
+				B3231C1A28966754003CC116 /* pxa260_DMA.c in Sources */,
+				B3231C1928966754003CC116 /* pxa260_LCD.c in Sources */,
+				B3231BF8289666CE003CC116 /* tsc2101.c in Sources */,
+				B3231C1028966754003CC116 /* pxa260I2c.c in Sources */,
+				B3231C3B2896676F003CC116 /* blip_buf.c in Sources */,
+				B3231C0F28966754003CC116 /* pxa260_TIMR.c in Sources */,
+				B3231C4128966791003CC116 /* asmcode.c in Sources */,
+				B3231C3D28966791003CC116 /* mmu.c in Sources */,
+				B3231C1728966754003CC116 /* pxa260_IC.c in Sources */,
+				B3231BFA289666CE003CC116 /* flx68000.c in Sources */,
+				B3231C1428966754003CC116 /* pxa260.c in Sources */,
+				B3231C3E28966791003CC116 /* disasm.c in Sources */,
+				B3231C1228966754003CC116 /* pxa260Timing.c in Sources */,
+				B3231C4728966828003CC116 /* translate_aarch64.cpp in Sources */,
+				B3231C3F28966791003CC116 /* mem.c in Sources */,
+				B3231BFC289666CE003CC116 /* dbvz.c in Sources */,
+				B3231C2D28966761003CC116 /* m68kopnz.c in Sources */,
+				B3231BF4289666CE003CC116 /* sdCard.c in Sources */,
+				B3231BF6289666CE003CC116 /* tps65010.c in Sources */,
+				B3231BF3289666CE003CC116 /* w86l488.c in Sources */,
+				B3231C1128966754003CC116 /* pxa260_RTC.c in Sources */,
+				B3231BFE289666CE003CC116 /* m5XXBus.c in Sources */,
+				B3231BF9289666CE003CC116 /* pdiUsbD12.c in Sources */,
+				B3231C3228966761003CC116 /* m68kops.c in Sources */,
+				B3231C1328966754003CC116 /* pxa260Memctrl.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1771,6 +1894,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3231C0B289666E2003CC116 /* libretro.c in Sources */,
+				B3231C0C289666E2003CC116 /* cursors.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1786,6 +1911,47 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3231C2C28966754003CC116 /* pxa260Udc.c in Sources */,
+				B3231C2528966754003CC116 /* pxa260_DSP.c in Sources */,
+				B3231C3628966762003CC116 /* m68kopdm.c in Sources */,
+				B3231C4528966792003CC116 /* emuVarPool.c in Sources */,
+				B3231C3A28966769003CC116 /* launcher.c in Sources */,
+				B3231C01289666CE003CC116 /* silkscreen.c in Sources */,
+				B3231C2A28966754003CC116 /* pxa260_UART.c in Sources */,
+				B3231C07289666CE003CC116 /* sed1376.c in Sources */,
+				B3231C2728966754003CC116 /* pxa260_PwrClk.c in Sources */,
+				B3231C2B28966754003CC116 /* pxa260Ssp.c in Sources */,
+				B3231C3728966762003CC116 /* m68kcpu.c in Sources */,
+				B3231C2428966754003CC116 /* pxa260_GPIO.c in Sources */,
+				B3231C3528966762003CC116 /* m68kopac.c in Sources */,
+				B3231C3428966762003CC116 /* m68kdasm.c in Sources */,
+				B3231C03289666CE003CC116 /* emulator.c in Sources */,
+				B3231C09289666CE003CC116 /* ads7846.c in Sources */,
+				B3231C2928966754003CC116 /* pxa260_DMA.c in Sources */,
+				B3231C2828966754003CC116 /* pxa260_LCD.c in Sources */,
+				B3231C04289666CE003CC116 /* tsc2101.c in Sources */,
+				B3231C1F28966754003CC116 /* pxa260I2c.c in Sources */,
+				B3231C3C28966770003CC116 /* blip_buf.c in Sources */,
+				B3231C1E28966754003CC116 /* pxa260_TIMR.c in Sources */,
+				B3231C4628966792003CC116 /* asmcode.c in Sources */,
+				B3231C4228966792003CC116 /* mmu.c in Sources */,
+				B3231C2628966754003CC116 /* pxa260_IC.c in Sources */,
+				B3231C06289666CE003CC116 /* flx68000.c in Sources */,
+				B3231C2328966754003CC116 /* pxa260.c in Sources */,
+				B3231C4328966792003CC116 /* disasm.c in Sources */,
+				B3231C2128966754003CC116 /* pxa260Timing.c in Sources */,
+				B3231C4828966829003CC116 /* translate_aarch64.cpp in Sources */,
+				B3231C4428966792003CC116 /* mem.c in Sources */,
+				B3231C08289666CE003CC116 /* dbvz.c in Sources */,
+				B3231C3328966762003CC116 /* m68kopnz.c in Sources */,
+				B3231C00289666CE003CC116 /* sdCard.c in Sources */,
+				B3231C02289666CE003CC116 /* tps65010.c in Sources */,
+				B3231BFF289666CE003CC116 /* w86l488.c in Sources */,
+				B3231C2028966754003CC116 /* pxa260_RTC.c in Sources */,
+				B3231C0A289666CE003CC116 /* m5XXBus.c in Sources */,
+				B3231C05289666CE003CC116 /* pdiUsbD12.c in Sources */,
+				B3231C3828966762003CC116 /* m68kops.c in Sources */,
+				B3231C2228966754003CC116 /* pxa260Memctrl.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1793,6 +1959,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3231C0D289666E3003CC116 /* libretro.c in Sources */,
+				B3231C0E289666E3003CC116 /* cursors.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1916,8 +2084,10 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/Mu/include\"",
+					"\"$(SRCROOT)/Mu/libretroBuildSystem/libretro-common/include\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CFLAGS = (
 					"$(inherited)",
@@ -1936,7 +2106,7 @@
 					"-DTARGET_NO_NIXPROF",
 				);
 				SDKROOT = iphoneos;
-				TVOS_DEPLOYMENT_TARGET = 11.0;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -2336,13 +2506,15 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/Mu/include\"",
+					"\"$(SRCROOT)/Mu/libretroBuildSystem/libretro-common/include\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-DTARGET_NO_NIXPROF";
 				SDKROOT = iphoneos;
-				TVOS_DEPLOYMENT_TARGET = 11.0;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -2407,8 +2579,10 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/Mu/include\"",
+					"\"$(SRCROOT)/Mu/libretroBuildSystem/libretro-common/include\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
@@ -2428,7 +2602,7 @@
 					"-DTARGET_NO_NIXPROF",
 				);
 				SDKROOT = iphoneos;
-				TVOS_DEPLOYMENT_TARGET = 11.0;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 				VERSIONING_SYSTEM = "apple-generic";

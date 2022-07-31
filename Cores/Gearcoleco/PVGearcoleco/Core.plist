@@ -8,14 +8,13 @@
 	<string>PVGearcolecoCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
-		<string>com.provenance.msx</string>
-		<string>com.provenance.msx2</string>
+		<string>com.provenance.colecovision</string>
 	</array>
 	<key>PVProjectName</key>
 	<string>Gearcoleco</string>
 	<key>PVProjectURL</key>
-	<string>http://fms.komkon.org/Gearcoleco/</string>
+	<string>https://github.com/drhelius/Gearcoleco</string>
 	<key>PVProjectVersion</key>
-	<string>0</string>
+	<string>1.0.0</string>
 </dict>
 </plist>
