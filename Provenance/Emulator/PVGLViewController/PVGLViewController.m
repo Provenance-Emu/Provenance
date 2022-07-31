@@ -162,8 +162,10 @@ PV_OBJC_DIRECT_MEMBERS
 
 #if USE_DISPLAY_LINK
 -(void)render {
-    
+    [self.core executeFrame];
+//    [self.view render];
 }
+#endif
 
 - (void)viewDidLoad
 {
