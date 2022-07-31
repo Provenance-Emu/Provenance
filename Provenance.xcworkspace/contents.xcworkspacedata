@@ -68,36 +68,6 @@
    <Group
       location = "group:"
       name = "Cores Libretro">
-      <FileRef
-         location = "group:Cores/blueMSX/PVblueMSX.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/Desmume2015/PVDesmume2015.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/DosBox/PVDosBox.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/EP128Emu/PVEP128Emu.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/GameMusicEmu/PVGME.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/melonDS/PVMelonDS.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/Mini_vMac/PVMiniVMac.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/Opera/PVOpera.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/Potator/PVPotator.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/VecX/PVVecX.xcodeproj">
-      </FileRef>
       <Group
          location = "container:"
          name = "Broken">
@@ -150,6 +120,36 @@
             location = "group:Cores/Yabause/PVYabause.xcodeproj">
          </FileRef>
       </Group>
+      <FileRef
+         location = "group:Cores/blueMSX/PVblueMSX.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/Desmume2015/PVDesmume2015.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/DosBox/PVDosBox.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/EP128Emu/PVEP128Emu.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/GameMusicEmu/PVGME.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/melonDS/PVMelonDS.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/Mini_vMac/PVMiniVMac.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/Opera/PVOpera.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/Potator/PVPotator.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/VecX/PVVecX.xcodeproj">
+      </FileRef>
    </Group>
    <Group
       location = "container:"
@@ -168,6 +168,9 @@
       </FileRef>
       <FileRef
          location = "group:Cores/DuckStation/PVDuckStation.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/O2EM/PVO2EM.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/Play/PVPlayCore.xcodeproj">

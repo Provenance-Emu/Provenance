@@ -145,3 +145,6 @@
 [submodule "Cores/FreeIntv/FreeIntv"]
 	path = Cores/FreeIntv/FreeIntv
 	url = https://github.com/Provenance-Emu/FreeIntv.git
+[submodule "Cores/Genesis-Plus-GX/PVGenesis/Deps/Genesis-Plus-GX"]
+	path = Cores/Genesis-Plus-GX/PVGenesis/Deps/Genesis-Plus-GX
+	url = https://github.com/Provenance-Emu/Genesis-Plus-GX.git
