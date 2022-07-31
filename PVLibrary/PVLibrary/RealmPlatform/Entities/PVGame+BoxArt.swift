@@ -69,9 +69,9 @@ public extension PVGame {
                 return .ggUSA
             }
 		case    .NES, .Sega32X, .Atari2600, .Atari5200, .Atari7800, .AtariJaguar, .AtariJaguarCD, .WonderSwan, .WonderSwanColor,
-                .MasterSystem, .SG1000, .FDS, .GameCube, .PS2, .Intellivision, .ColecoVision, ._3DO, .Odyssey2, .DOS, .MSX, .MSX2, .C64, .Wii:
+                .MasterSystem, .SG1000, .FDS, .GameCube, .PS2, .Intellivision, .ColecoVision, ._3DO, .Odyssey2, .DOS, .MSX, .MSX2, .C64, .Wii, .PalmOS, .TIC80:
             return .tall
-        case .GBA, .GBC, .Lynx, .NeoGeo, .NGP, .NGPC, .PCECD, .PCFX, .PokemonMini, .PSX, .SegaCD, .VirtualBoy, .DS, .Music:
+        case .GBA, .GBC, .Lynx, .NeoGeo, .NGP, .NGPC, .PCECD, .PCFX, .PokemonMini, .PSX, .SegaCD, .VirtualBoy, .DS, .Music, ._3DS, .MegaDuck:
             return .square
         case .Saturn:
             switch regionName {
