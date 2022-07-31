@@ -1029,8 +1029,11 @@ import Foundation
     case button9
     @objc(PVIntellivisionButton0)
     case button0
+    @objc(PVIntellivisionButtonClear)
     case clear
+    @objc(PVIntellivisionButtonEnter)
     case enter
+    @objc(PVIntellivisionButtonCount)
     case count
 }
 
