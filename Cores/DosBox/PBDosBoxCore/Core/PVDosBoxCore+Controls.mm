@@ -32,7 +32,7 @@
 #define DC_AXIS_X        (0X20000)
 #define DC_AXIS_Y        (0X20001)
 
-static const int GameCubeMap[]  = {
+static const int DOSMap[]  = {
     DC_DPAD_UP, DC_DPAD_DOWN, DC_DPAD_LEFT, DC_DPAD_RIGHT,
     DC_BTN_A, DC_BTN_B, DC_BTN_X, DC_BTN_Y,
     DC_AXIS_LT, DC_AXIS_RT,
@@ -139,34 +139,34 @@ s8 joyx[4], joyy[4];
     }
 }
 
--(void)didPushGameCubeButton:(enum PVGameCubeButton)button forPlayer:(NSInteger)player {
+-(void)didPushDOSButton:(enum PVDOSButton)button forPlayer:(NSInteger)player {
 //	if(_isInitialized)
 //	  {
 //	  }
 }
 
--(void)didReleaseGameCubeButton:(enum PVGameCubeButton)button forPlayer:(NSInteger)player {
+-(void)didReleaseDOSButton:(enum PVDOSButton)button forPlayer:(NSInteger)player {
 //	if(_isInitialized)
 //	  {
 //	  }
 }
 
-- (void)didMoveGameCubeJoystickDirection:(enum PVGameCubeButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
+- (void)didMoveDOSJoystickDirection:(enum PVDOSButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
 //	if(_isInitialized)
 //	  {
 //	  }
 }
 
 -(void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
-    [self didMoveGameCubeJoystickDirection:(enum PVGameCubeButton)button withValue:value forPlayer:player];
+    [self didMoveDOSJoystickDirection:(enum PVDOSButton)button withValue:value forPlayer:player];
 }
 
 - (void)didPush:(NSInteger)button forPlayer:(NSInteger)player {
-    [self didPushGameCubeButton:(PVGameCubeButton)button forPlayer:player];
+    [self didPushDOSButton:(PVDOSButton)button forPlayer:player];
 }
 
 - (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player {
-    [self didReleaseGameCubeButton:(PVGameCubeButton)button forPlayer:player];
+    [self didReleaseDOSButton:(PVDOSButton)button forPlayer:player];
 }
 
 

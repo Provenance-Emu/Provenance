@@ -70,6 +70,17 @@
 
 PV_OBJC_DIRECT_MEMBERS
 @implementation PVMetalViewController
+{
+    GLuint resolution_uniform;
+    GLuint texture_uniform;
+    GLuint previous_texture_uniform;
+    GLuint frame_blending_mode_uniform;
+
+    GLuint position_attribute;
+    GLuint texture;
+    GLuint previous_texture;
+    GLuint program;
+}
 
 + (void)initialize
 {
@@ -409,7 +420,7 @@ PV_OBJC_DIRECT_MEMBERS
     {
         case GL_BYTE:
         case GL_UNSIGNED_BYTE:
-            typeWidth = 1;
+            typeWidth = 2;
             break;
         case GL_SHORT:
         case GL_UNSIGNED_SHORT:
@@ -430,17 +441,36 @@ PV_OBJC_DIRECT_MEMBERS
     {
         case GL_BGRA:
         case GL_RGBA:
-            return 4 * typeWidth;
-            
+            switch (pixelType) {
+                case GL_UNSIGNED_BYTE:
+                case GL_UNSIGNED_SHORT_4_4_4_4:
+                case GL_UNSIGNED_SHORT_5_5_5_1:
+                case GL_UNSIGNED_SHORT_5_6_5:
+                    return 2 * typeWidth;
+                default:
+                    return 4 * typeWidth;
+            }
+        case GL_RGB565:
         case GL_RGB:
-            if (pixelType == GL_UNSIGNED_SHORT_5_6_5)
-                return typeWidth;
-            break;
+            switch (pixelType) {
+                case GL_UNSIGNED_BYTE:
+                case GL_UNSIGNED_SHORT_4_4_4_4:
+                case GL_UNSIGNED_SHORT_5_5_5_1:
+                case GL_UNSIGNED_SHORT_5_6_5:
+                    return 4 * typeWidth;
+                default:
+                    return 4 * typeWidth;
+            }
+        case GL_RGB5_A1:
+            return 4 * typeWidth;
+        case GL_RGB8:
+        case GL_RGBA8:
+            return 8 * typeWidth;
         default:
             break;
     }
     
-    assert(!"Unknown GL pixelFormat. Add me");
+    NSAssert(false, @"Unknown GL pixelFormat %x. Add me", pixelFormat);
     return 1;
 }
 
@@ -448,7 +478,11 @@ PV_OBJC_DIRECT_MEMBERS
 {
     if (pixelFormat == GL_BGRA && (pixelType == GL_UNSIGNED_BYTE || pixelType == 0x8367 /* GL_UNSIGNED_INT_8_8_8_8_REV */))
     {
-        return MTLPixelFormatBGRA8Unorm;
+        return MTLPixelFormatBGRA8Unorm; // MTLPixelFormatBGRA8Unorm_sRGB
+    }
+    else if (pixelFormat == GL_RGB && pixelType == GL_UNSIGNED_BYTE)
+    {
+        return MTLPixelFormatRGBA8Unorm;
     }
     else if (pixelFormat == GL_RGBA && pixelType == GL_UNSIGNED_BYTE)
     {
@@ -460,10 +494,53 @@ PV_OBJC_DIRECT_MEMBERS
     }
     else if (pixelFormat == GL_RGB && pixelType == GL_UNSIGNED_SHORT_5_6_5)
     {
-        return MTLPixelFormatB5G6R5Unorm;
+        return MTLPixelFormatRGBA16Unorm; // MTLPixelFormatRGBA8Unorm_sRGB
+    }
+    else if (pixelFormat == GL_RGB && pixelType == GL_UNSIGNED_SHORT_8_8_APPLE)
+    {
+        return MTLPixelFormatRGBA16Unorm;
+    }
+    else if (pixelFormat == GL_RGBA && pixelType == GL_UNSIGNED_SHORT_8_8_APPLE)
+    {
+        return MTLPixelFormatRGBA16Unorm;
+    }
+    else if (pixelFormat == GL_RGB && pixelType == GL_UNSIGNED_SHORT_5_5_5_1)
+    {
+        return MTLPixelFormatRGBA16Unorm;
+    }
+    else if (pixelFormat == GL_RGBA && pixelType == GL_UNSIGNED_SHORT_5_6_5)
+    {
+        return MTLPixelFormatRGBA16Unorm;
+    }
+    else if (pixelFormat == GL_RGBA && pixelType == GL_UNSIGNED_SHORT_4_4_4_4)
+    {
+        return MTLPixelFormatRGBA16Unorm;
+    }
+    else if (pixelFormat == GL_RGBA && pixelType == GL_UNSIGNED_SHORT_5_5_5_1)
+    {
+        return MTLPixelFormatA1BGR5Unorm;
+    }
+    else if (pixelFormat == GL_RGBA8)
+    {
+        if (pixelType == GL_UNSIGNED_BYTE) { // 8bit
+            return MTLPixelFormatRGBA8Unorm;
+        } else if (pixelType == GL_UNSIGNED_SHORT) { // 16bit
+//            MTLPixelFormatRGB10A2Unorm = 90,
+//            MTLPixelFormatRGB10A2Uint  = 91,
+//
+//            MTLPixelFormatRG11B10Float = 92,
+//            MTLPixelFormatRGB9E5Float = 93,
+            return MTLPixelFormatRGBA32Uint;
+        }
+    }
+    else if (pixelFormat == GL_RGB565)
+    {
+        return MTLPixelFormatRGBA16Unorm;
     }
     
-    assert(!"Unknown GL pixelFormat. Add me");
+    ELOG(@"Unknown GL pixelFormat. Add pixelFormat: %0x pixelType: %0x", pixelFormat, pixelType);
+
+    assert(!"Unknown GL pixelFormat. Add it");
     return MTLPixelFormatInvalid;
 }
 
@@ -523,6 +600,56 @@ PV_OBJC_DIRECT_MEMBERS
     }
 }
 
+// MARK: - fsh Shaders
++ (GLuint)shaderWithContents:(NSString*)contents type:(GLenum)type
+{
+
+    const GLchar *source = [contents UTF8String];
+    // Create the shader object
+    GLuint shader = glCreateShader(type);
+    // Load the shader source
+    glShaderSource(shader, 1, &source, 0);
+    // Compile the shader
+    glCompileShader(shader);
+    // Check for errors
+    GLint status = 0;
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+    if (status == GL_FALSE) {
+        GLchar messages[1024];
+        glGetShaderInfoLog(shader, sizeof(messages), 0, &messages[0]);
+        NSLog(@"%@:- GLSL Shader Error: %s", self, messages);
+    }
+    return shader;
+}
+
++ (GLuint)programWithVertexShader:(NSString*)vsh fragmentShader:(NSString*)fsh
+{
+    // Build shaders
+    GLuint vertex_shader = [self shaderWithContents:vsh type:GL_VERTEX_SHADER];
+    GLuint fragment_shader = [self shaderWithContents:fsh type:GL_FRAGMENT_SHADER];
+    // Create program
+    GLuint program = glCreateProgram();
+    // Attach shaders
+    glAttachShader(program, vertex_shader);
+    glAttachShader(program, fragment_shader);
+    // Link program
+    glLinkProgram(program);
+    // Check for errors
+    GLint status;
+    glGetProgramiv(program, GL_LINK_STATUS, &status);
+    if (status == GL_FALSE) {
+        GLchar messages[1024];
+        glGetProgramInfoLog(program, sizeof(messages), 0, &messages[0]);
+        NSLog(@"%@:- GLSL Program Error: %s", self, messages);
+    }
+    // Delete shaders
+    glDeleteShader(vertex_shader);
+    glDeleteShader(fragment_shader);
+
+    return program;
+}
+
+
 // Mac OS Stuff
 // MARK: - MTKViewDelegate
 
@@ -549,6 +676,7 @@ PV_OBJC_DIRECT_MEMBERS
     void (^renderBlock)(void) = ^()
     {
         MAKESTRONG_RETURN_IF_NIL(self);
+        PVMetalViewController *self = strongself;
         
         id<MTLTexture> outputTex = view.currentDrawable.texture;
         
@@ -564,11 +692,11 @@ PV_OBJC_DIRECT_MEMBERS
         }
         
         id<MTLCommandBuffer> commandBuffer = [strongself.commandQueue commandBuffer];
-        self.previousCommandBuffer = commandBuffer;
+        strongself.previousCommandBuffer = commandBuffer;
         
         CGRect screenRect = strongself.emulatorCore.screenRect;
         
-        [self updateInputTexture];
+        [strongself updateInputTexture];
         
         if (!strongself.emulatorCore.rendersToOpenGL)
         {
@@ -626,8 +754,7 @@ PV_OBJC_DIRECT_MEMBERS
         
         id<MTLRenderCommandEncoder> encoder = [commandBuffer renderCommandEncoderWithDescriptor:desc];
         
-        if (strongself->renderSettings.crtFilterEnabled)
-        {
+        if (strongself->renderSettings.crtFilterEnabled) {
             if ( [strongself->_effectFilterShader.name isEqualToString:@"CRT"]) {
                 struct CRT_Data cbData;
                 cbData.DisplayRect.x = 0;
@@ -651,12 +778,12 @@ PV_OBJC_DIRECT_MEMBERS
                 cbData.mame_screen_src_rect.y = 0;
                 cbData.mame_screen_src_rect.z = screenRect.size.width;
                 cbData.mame_screen_src_rect.w = screenRect.size.height;
-
+                
                 cbData.mame_screen_dst_rect.x = strongself.inputTexture.width;
                 cbData.mame_screen_dst_rect.y = strongself.inputTexture.height;
                 cbData.mame_screen_dst_rect.z = view.drawableSize.width;
                 cbData.mame_screen_dst_rect.w = view.drawableSize.height;
-
+                
                 cbData.curv_vert = 5.0;
                 cbData.curv_horiz = 4.0;
                 cbData.curv_strength = 0.25;
@@ -667,11 +794,95 @@ PV_OBJC_DIRECT_MEMBERS
                 
                 [encoder setFragmentBytes:&cbData length:sizeof(cbData) atIndex:0];
                 [encoder setRenderPipelineState:strongself.effectFilterPipeline];
+            } else if ( [strongself->_effectFilterShader.name containsString:@".fsh"] ) {
+                
+                static NSString * const vertex_shader = @"\n\
+                #version 150 \n\
+                in vec4 aPosition;\n\
+                void main(void) {\n\
+                    gl_Position = aPosition;\n\
+                }\n\
+                ";
+                
+                NSString* (^shaderSourceForName)(NSString*, NSError **) = ^NSString* (NSString* name, NSError** error) {
+                    NSString *file = [[NSBundle mainBundle] pathForResource:name
+                                                                     ofType:@"fsh"
+                                                                inDirectory:@"Shaders"];
+                    return [NSString stringWithContentsOfFile:file
+                                                     encoding:NSUTF8StringEncoding
+                                                        error:error];
+                };
+                
+                NSString* shaderName = [strongself->_effectFilterShader.name stringByDeletingPathExtension];
+                
+                NSError *err;
+                
+                // Program
+                NSString *fragment_shader = shaderSourceForName(@"MasterShader", &err);
+                if (err) {
+                    ELOG(@"%@", err.localizedDescription);
+                    err = NULL;
+                }
+                fragment_shader = [fragment_shader stringByReplacingOccurrencesOfString:@"{filter}"
+                                                                             withString:shaderSourceForName(shaderName, &err)];
+                strongself->program = [PVMetalViewController programWithVertexShader:vertex_shader fragmentShader:fragment_shader];
+                if (err) {
+                    ELOG(@"%@", err.localizedDescription);
+                    err = NULL;
+                }
+                // Attributes
+                strongself->position_attribute = glGetAttribLocation(strongself->program, "aPosition");
+                // Uniforms
+                strongself->resolution_uniform = glGetUniformLocation(strongself->program, "output_resolution");
+                
+                glGenTextures(1, &strongself->texture);
+                glBindTexture(GL_TEXTURE_2D, strongself->texture);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                glBindTexture(GL_TEXTURE_2D, 0);
+                strongself->texture_uniform = glGetUniformLocation(strongself->program, "image");
+                
+                glGenTextures(1, &strongself->previous_texture);
+                glBindTexture(GL_TEXTURE_2D, strongself->previous_texture);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                glBindTexture(GL_TEXTURE_2D, 0);
+                strongself->previous_texture_uniform = glGetUniformLocation(strongself->program, "previous_image");
+                
+                strongself->frame_blending_mode_uniform = glGetUniformLocation(strongself->program, "frame_blending_mode");
+                
+                // Program
+                
+                glUseProgram(strongself->program);
+                
+                GLuint vao;
+                glGenVertexArrays(1, &vao);
+                glBindVertexArray(vao);
+                
+                GLuint vbo;
+                glGenBuffers(1, &vbo);
+                
+                // Attributes
+                
+                static GLfloat const quad[16] = {
+                    -1.f, -1.f, 0, 1,
+                    -1.f, +1.f, 0, 1,
+                    +1.f, -1.f, 0, 1,
+                    +1.f, +1.f, 0, 1,
+                };
+                
+                
+                glBindBuffer(GL_ARRAY_BUFFER, vbo);
+                glBufferData(GL_ARRAY_BUFFER, sizeof(quad), quad, GL_STATIC_DRAW);
+                glEnableVertexAttribArray(strongself->position_attribute);
+                glVertexAttribPointer(strongself->position_attribute, 4, GL_FLOAT, GL_FALSE, 0, 0);
             }
-        }
-        else
-        {
-            [encoder setRenderPipelineState:strongself.blitPipeline];
+        } else {
+                [encoder setRenderPipelineState:strongself.blitPipeline];
         }
         
         [encoder setFragmentTexture:strongself.inputTexture atIndex:0];
@@ -684,16 +895,13 @@ PV_OBJC_DIRECT_MEMBERS
 //        [commandBuffer presentDrawable:view.currentDrawable afterMinimumDuration:1.0/view.preferredFramesPerSecond];
         [commandBuffer commit];
 
-        if ([strongself->_emulatorCore rendersToOpenGL])
-        {
+        if ([strongself->_emulatorCore rendersToOpenGL]) {
             [strongself->_emulatorCore.frontBufferLock unlock];
         }
     };
 
-    if ([self.emulatorCore rendersToOpenGL])
-    {
-        if ((!self.emulatorCore.isSpeedModified && !self.emulatorCore.isEmulationPaused) || self.emulatorCore.isFrontBufferReady)
-        {
+    if ([self.emulatorCore rendersToOpenGL]) {
+        if ((!self.emulatorCore.isSpeedModified && !self.emulatorCore.isEmulationPaused) || self.emulatorCore.isFrontBufferReady) {
             [self.emulatorCore.frontBufferCondition lock];
             while (UNLIKELY(!self.emulatorCore.isFrontBufferReady) && LIKELY(!self.emulatorCore.isEmulationPaused))
             {
@@ -701,24 +909,18 @@ PV_OBJC_DIRECT_MEMBERS
             }
             BOOL isFrontBufferReady = self.emulatorCore.isFrontBufferReady;
             [self.emulatorCore.frontBufferCondition unlock];
-            if (isFrontBufferReady)
-            {
+            if (isFrontBufferReady) {
                 renderBlock();
-                [_emulatorCore.frontBufferCondition lock];
-                _emulatorCore.isFrontBufferReady = NO;
-                [_emulatorCore.frontBufferCondition signal];
-                [_emulatorCore.frontBufferCondition unlock];
+                [self->_emulatorCore.frontBufferCondition lock];
+                self->_emulatorCore.isFrontBufferReady = NO;
+                [self->_emulatorCore.frontBufferCondition signal];
+                [self->_emulatorCore.frontBufferCondition unlock];
             }
         }
-    }
-    else
-    {
-        if (self.emulatorCore.isSpeedModified)
-        {
+    } else {
+        if (self.emulatorCore.isSpeedModified) {
             renderBlock();
-        }
-        else
-        {
+        } else {
             if (UNLIKELY(self.emulatorCore.isDoubleBuffered))
             {
                 [self.emulatorCore.frontBufferCondition lock];
@@ -726,11 +928,11 @@ PV_OBJC_DIRECT_MEMBERS
                 {
                     [self.emulatorCore.frontBufferCondition wait];
                 }
-                _emulatorCore.isFrontBufferReady = NO;
-                [_emulatorCore.frontBufferLock lock];
+                self->_emulatorCore.isFrontBufferReady = NO;
+                [self->_emulatorCore.frontBufferLock lock];
                 renderBlock();
-                [_emulatorCore.frontBufferLock unlock];
-                [_emulatorCore.frontBufferCondition unlock];
+                [self->_emulatorCore.frontBufferLock unlock];
+                [self->_emulatorCore.frontBufferCondition unlock];
             }
             else
             {

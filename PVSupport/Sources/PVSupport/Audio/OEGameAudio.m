@@ -139,7 +139,7 @@ PV_OBJC_DIRECT_MEMBERS
 		volume = 1;
 
         gameCore = core;
-        [self createGraph];
+//        [self createGraph];
     }
     
     return self;

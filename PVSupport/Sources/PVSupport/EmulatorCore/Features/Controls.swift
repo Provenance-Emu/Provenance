@@ -1029,8 +1029,11 @@ import Foundation
     case button9
     @objc(PVIntellivisionButton0)
     case button0
+    @objc(PVIntellivisionButtonClear)
     case clear
+    @objc(PVIntellivisionButtonEnter)
     case enter
+    @objc(PVIntellivisionButtonCount)
     case count
 }
 
@@ -1040,3 +1043,129 @@ import Foundation
     @objc(didReleaseIntellivisionButton:forPlayer:)
     func didRelease(_ button: PVIntellivisionButton, forPlayer player: Int)
 }
+
+// MARK: - Supervision
+
+@objc public enum PVSupervisionButton: Int {
+    case up
+    case down
+    case left
+    case right
+    case topAction
+    case bottomLeftAction
+    case bottomRightAction
+    @objc(PVSupervisionButton1)
+    case button1
+    @objc(PVSupervisionButton2)
+    case button2
+    @objc(PVSupervisionButton3)
+    case button3
+    @objc(PVSupervisionButton4)
+    case button4
+    @objc(PVSupervisionButton5)
+    case button5
+    @objc(PVSupervisionButton6)
+    case button6
+    @objc(PVSupervisionButton7)
+    case button7
+    @objc(PVSupervisionButton8)
+    case button8
+    @objc(PVSupervisionButton9)
+    case button9
+    @objc(PVSupervisionButton0)
+    case button0
+    case clear
+    case enter
+    case count
+}
+
+@objc public protocol PVSupervisionSystemResponderClient: ResponderClient, ButtonResponder {
+    @objc(didPushSupervisionButton:forPlayer:)
+    func didPush(_ button: PVSupervisionButton, forPlayer player: Int)
+    @objc(didReleaseSupervisionButton:forPlayer:)
+    func didRelease(_ button: PVSupervisionButton, forPlayer player: Int)
+}
+
+// MARK: - PC DOS
+
+@objc public enum PVDOSButton: Int {
+    case up
+    case down
+    case left
+    case right
+    case fire1
+    case fire2
+    case select
+    case pause
+    case reset
+    case leftDiff
+    case rightDiff
+    case count
+}
+
+@objc public protocol PVDOSSystemResponderClient: ResponderClient, ButtonResponder, KeyboardResponder, MouseResponder {
+    @objc(didPushDOSButton:forPlayer:)
+    func didPush(_ button: PVDOSButton, forPlayer player: Int)
+    @objc(didReleaseDOSButton:forPlayer:)
+    func didRelease(_ button: PVDOSButton, forPlayer player: Int)
+
+    func mouseMoved(at point: CGPoint)
+    func leftMouseDown(at point: CGPoint)
+    func leftMouseUp()
+}
+
+// MARK: - MSX
+
+@objc public enum PVMSXButton: Int {
+	case up
+	case down
+	case left
+	case right
+	case fire1
+	case fire2
+	case select
+	case pause
+	case reset
+	case leftDiff
+	case rightDiff
+	case count
+}
+
+@objc public protocol PVMSXSystemResponderClient: ResponderClient, ButtonResponder, KeyboardResponder, MouseResponder {
+	@objc(didPushMSXButton:forPlayer:)
+	func didPush(_ button: PVMSXButton, forPlayer player: Int)
+	@objc(didReleaseMSXButton:forPlayer:)
+	func didRelease(_ button: PVMSXButton, forPlayer player: Int)
+
+	func mouseMoved(at point: CGPoint)
+	func leftMouseDown(at point: CGPoint)
+	func leftMouseUp()
+}
+
+
+// MARK: - EP128
+ @objc public enum PVEP128Button: Int {
+	 case up
+	 case down
+	 case left
+	 case right
+	 case fire1
+	 case fire2
+	 case select
+	 case pause
+	 case reset
+	 case leftDiff
+	 case rightDiff
+	 case count
+ }
+
+ @objc public protocol PVEP128SystemResponderClient: ResponderClient, ButtonResponder, KeyboardResponder, MouseResponder {
+	 @objc(didPushEP128Button:forPlayer:)
+	 func didPush(_ button: PVEP128Button, forPlayer player: Int)
+	 @objc(didReleaseEP128Button:forPlayer:)
+	 func didRelease(_ button: PVEP128Button, forPlayer player: Int)
+
+	 func mouseMoved(at point: CGPoint)
+	 func leftMouseDown(at point: CGPoint)
+	 func leftMouseUp()
+ }

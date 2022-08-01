@@ -149,7 +149,6 @@ void* libPvr_GetRenderTarget() {
 
 void* libPvr_GetRenderSurface() {
     return 0;
-
 }
 
 bool gl_init(void*, void*) {

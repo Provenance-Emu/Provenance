@@ -94,8 +94,6 @@
 /* Begin PBXFileReference section */
 		B30178D3207C901D0051B93D /* libdolphin-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libdolphin-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3135BAA26E4CDC50047F338 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
-		B316BAD026E5C66D0077FE46 /* .git-blame-ignore-revs */ = {isa = PBXFileReference; lastKnownFileType = text; path = ".git-blame-ignore-revs"; sourceTree = "<group>"; };
-		B316BAD226E5C66D0077FE46 /* config */ = {isa = PBXFileReference; lastKnownFileType = text; path = config; sourceTree = "<group>"; };
 		B316BAD426E5C66D0077FE46 /* gameini-ratings-from-wiki.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "gameini-ratings-from-wiki.sh"; sourceTree = "<group>"; };
 		B316BAD526E5C66D0077FE46 /* check-includes.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "check-includes.py"; sourceTree = "<group>"; };
 		B316BAD626E5C66D0077FE46 /* CleanFiles.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = CleanFiles.py; sourceTree = "<group>"; };
@@ -12636,8 +12634,6 @@
 		B316F02C26E5C69B0077FE46 /* GBA-CrystalChronicles-log.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "GBA-CrystalChronicles-log.txt"; sourceTree = "<group>"; };
 		B316F02D26E5C69B0077FE46 /* GBA-MetroidPrime-log.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "GBA-MetroidPrime-log.txt"; sourceTree = "<group>"; };
 		B316F02E26E5C69B0077FE46 /* dsp_rom.ds */ = {isa = PBXFileReference; lastKnownFileType = text; path = dsp_rom.ds; sourceTree = "<group>"; };
-		B316F02F26E5C69B0077FE46 /* .gitmodules */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitmodules; sourceTree = "<group>"; };
-		B316F03026E5C69C0077FE46 /* .editorconfig */ = {isa = PBXFileReference; lastKnownFileType = text; path = .editorconfig; sourceTree = "<group>"; };
 		B316F03226E5C69C0077FE46 /* po.targets */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = po.targets; sourceTree = "<group>"; };
 		B316F03326E5C69C0077FE46 /* po.rules */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = po.rules; sourceTree = "<group>"; };
 		B316F03426E5C69C0077FE46 /* po.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = po.xml; sourceTree = "<group>"; };
@@ -12676,10 +12672,7 @@
 		B316F05626E5C69C0077FE46 /* update-source-strings.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "update-source-strings.sh"; sourceTree = "<group>"; };
 		B316F05726E5C69C0077FE46 /* po.props */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = po.props; sourceTree = "<group>"; };
 		B316F05826E5C69C0077FE46 /* Readme.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Readme.md; sourceTree = "<group>"; };
-		B316F05926E5C69D0077FE46 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		B316F05A26E5C69D0077FE46 /* Contributing.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Contributing.md; sourceTree = "<group>"; };
-		B316F05D26E5C69E0077FE46 /* build.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = build.yml; sourceTree = "<group>"; };
-		B316F05E26E5C69E0077FE46 /* .mailmap */ = {isa = PBXFileReference; lastKnownFileType = text; path = .mailmap; sourceTree = "<group>"; };
 		B316F05F26E5C69F0077FE46 /* license.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = license.txt; sourceTree = "<group>"; };
 		B316F06126E5C69F0077FE46 /* dolphin-emu.spec */ = {isa = PBXFileReference; lastKnownFileType = text; path = "dolphin-emu.spec"; sourceTree = "<group>"; };
 		B316F06226E5C69F0077FE46 /* Dolphin.ico */ = {isa = PBXFileReference; lastKnownFileType = image.ico; path = Dolphin.ico; sourceTree = "<group>"; };
@@ -14799,11 +14792,6 @@
 		B316BACF26E5C66D0077FE46 /* dolphin-ios */ = {
 			isa = PBXGroup;
 			children = (
-				B316F03026E5C69C0077FE46 /* .editorconfig */,
-				B316BAD026E5C66D0077FE46 /* .git-blame-ignore-revs */,
-				B316F05926E5C69D0077FE46 /* .gitignore */,
-				B316F02F26E5C69B0077FE46 /* .gitmodules */,
-				B316F05E26E5C69E0077FE46 /* .mailmap */,
 				B316F86326E5C6BC0077FE46 /* CMakeSettings.json */,
 				B316BAE726E5C66D0077FE46 /* AndroidSetup.md */,
 				B316F05A26E5C69D0077FE46 /* Contributing.md */,
@@ -14811,8 +14799,6 @@
 				B316C71326E5C6750077FE46 /* BuildMacOSUniversalBinary.py */,
 				B316BAE626E5C66D0077FE46 /* CMakeLists.txt */,
 				B316F05F26E5C69F0077FE46 /* license.txt */,
-				B316F05B26E5C69E0077FE46 /* .github */,
-				B316BAD126E5C66D0077FE46 /* .tx */,
 				B316BAE826E5C66D0077FE46 /* CMake */,
 				B316F06E26E5C69F0077FE46 /* Data */,
 				B316EFF826E5C69A0077FE46 /* docs */,
@@ -14823,14 +14809,6 @@
 				B316BAD326E5C66D0077FE46 /* Tools */,
 			);
 			path = "dolphin-ios";
-			sourceTree = "<group>";
-		};
-		B316BAD126E5C66D0077FE46 /* .tx */ = {
-			isa = PBXGroup;
-			children = (
-				B316BAD226E5C66D0077FE46 /* config */,
-			);
-			path = .tx;
 			sourceTree = "<group>";
 		};
 		B316BAD326E5C66D0077FE46 /* Tools */ = {
@@ -36098,22 +36076,6 @@
 				B316F05426E5C69C0077FE46 /* ms.po */,
 			);
 			path = po;
-			sourceTree = "<group>";
-		};
-		B316F05B26E5C69E0077FE46 /* .github */ = {
-			isa = PBXGroup;
-			children = (
-				B316F05C26E5C69E0077FE46 /* workflows */,
-			);
-			path = .github;
-			sourceTree = "<group>";
-		};
-		B316F05C26E5C69E0077FE46 /* workflows */ = {
-			isa = PBXGroup;
-			children = (
-				B316F05D26E5C69E0077FE46 /* build.yml */,
-			);
-			path = workflows;
 			sourceTree = "<group>";
 		};
 		B316F06026E5C69F0077FE46 /* Installer */ = {

@@ -212,7 +212,7 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
     });
 }
 
-- (void)OE_didReceiveStateChangeForParamType:(m64p_core_param)paramType value:(int)newValue
+- (oneway void)OE_didReceiveStateChangeForParamType:(m64p_core_param)paramType value:(int)newValue
 {
     if(paramType == M64CORE_EMU_STATE) _emulatorState = newValue;
 

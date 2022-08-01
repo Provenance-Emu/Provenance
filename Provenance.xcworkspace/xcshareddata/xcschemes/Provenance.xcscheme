@@ -42,6 +42,20 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B392848D28670348003BAC21"
+               BuildableName = "PVLibRetro.framework"
+               BlueprintName = "PVLibRetro-iOS"
+               ReferencedContainer = "container:PVSupport/PVSupport.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C9D4B71DEA77DF0068D057"
                BuildableName = "PVGBA.framework"
                BlueprintName = "PVGBA-iOS"
@@ -73,7 +87,7 @@
                BlueprintIdentifier = "B394C9952060CAB80014A65D"
                BuildableName = "PVVirtualJaguar.framework"
                BlueprintName = "PVVirtualJaguar-iOS"
-               ReferencedContainer = "container:Cores/VirtualJaguar/Core-VirtualJaguar.xcodeproj">
+               ReferencedContainer = "container:Cores/VirtualJaguar/PVVirtualJaguar.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry

@@ -426,7 +426,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             })
             .mapMany({ system, isCollapsed -> Section? in
                 guard !system.sortedGames.isEmpty else { return nil }
-                let header = "\(system.manufacturer) : \(system.shortName)" + (system.isBeta ? " ⚠️ Beta" : "")
+                let header = "\(system.manufacturer) : \(system.shortName)" + (system.isBeta ? " ⚠️ Beta" : "") + (system.unsupported ? " 🚫 Unsupported" : "")
                 let items = isCollapsed ? [] : system.sortedGames.map { Section.Item.game($0) }
 
                 return Section(header: header, items: items,
@@ -811,7 +811,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             let actionSheet = UIAlertController(title: "Select Import Source", message: nil, preferredStyle: .actionSheet)
 
             actionSheet.addAction(UIAlertAction(title: "Cloud & Local Files", style: .default, handler: { _ in
-                let extensions = [UTI.rom, UTI.artwork, UTI.savestate, UTI.zipArchive, UTI.sevenZipArchive, UTI.gnuZipArchive, UTI.image, UTI.jpeg, UTI.png, UTI.bios, UTI.data].map { $0.rawValue }
+                let extensions = [UTI.rom, UTI.artwork, UTI.savestate, UTI.zipArchive, UTI.sevenZipArchive, UTI.gnuZipArchive, UTI.image, UTI.jpeg, UTI.png, UTI.bios, UTI.data, UTI.rar].map { $0.rawValue }
 
                 //        let documentMenu = UIDocumentMenuViewController(documentTypes: extensions, in: .import)
                 //        documentMenu.delegate = self

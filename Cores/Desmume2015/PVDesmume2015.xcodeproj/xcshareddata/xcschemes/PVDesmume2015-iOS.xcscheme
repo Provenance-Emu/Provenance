@@ -4,22 +4,8 @@
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
-      buildImplicitDependencies = "NO">
+      buildImplicitDependencies = "YES">
       <BuildActionEntries>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3C7620F20783162009950E4"
-               BuildableName = "PVDesmume2015.framework"
-               BlueprintName = "PVDesmume2015-iOS"
-               ReferencedContainer = "container:PVDesmume2015.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
          <BuildActionEntry
             buildForTesting = "YES"
             buildForRunning = "YES"
@@ -32,6 +18,48 @@
                BuildableName = "PVSupport.framework"
                BlueprintName = "PVSupport-iOS"
                ReferencedContainer = "container:../../PVSupport/PVSupport.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B392848D28670348003BAC21"
+               BuildableName = "PVLibRetro.framework"
+               BlueprintName = "PVLibRetro-iOS"
+               ReferencedContainer = "container:../../PVSupport/PVSupport.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B30178D2207C901D0051B93D"
+               BuildableName = "libdesmume2015.a"
+               BlueprintName = "desmume2015-iOS"
+               ReferencedContainer = "container:PVDesmume2015.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3C7620F20783162009950E4"
+               BuildableName = "PVDesmume2015.framework"
+               BlueprintName = "PVDesmume2015-iOS"
+               ReferencedContainer = "container:PVDesmume2015.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

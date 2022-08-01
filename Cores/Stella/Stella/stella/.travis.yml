@@ -1,0 +1,63 @@
+# Build matrix / environment variables are explained on:
+# http://about.travis-ci.org/docs/user/build-configuration/
+# This file can be validated on: http://lint.travis-ci.org/
+
+
+language: cpp
+
+
+matrix:
+  include:
+    - os: linux
+      dist: xenial
+      compiler: gcc
+      env: GCC=9 CC=gcc-9 CXX=g++-9
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-9
+            - g++-9
+          update: true
+
+
+    - os: osx
+      osx_image: xcode11.3
+      compiler: clang
+      addons:
+        homebrew:
+          update: true
+
+
+install:
+  - |
+    old_cwd=$(pwd)
+    cd ~
+
+    if [[ "$HOST" == macosx-* ]]; then
+      curl -O https://www.libsdl.org/release/SDL2-2.0.10.tar.gz
+      tar xzf SDL2-2.0.10.tar.gz
+      cd SDL2-2.0.10/Xcode/SDL
+      sed -i -e 's/@rpath//g' SDL.xcodeproj/project.pbxproj
+      xcodebuild -configuration Release
+      mkdir -p ~/Library/Frameworks/
+      ln -s `pwd`/build/Release/SDL2.framework ~/Library/Frameworks/
+    else
+      curl -O https://www.libsdl.org/release/SDL2-2.0.10.tar.gz
+      tar xzf SDL2-2.0.10.tar.gz
+      cd SDL2-2.0.10
+      mkdir build
+      cd build
+      ../configure
+      make
+      sudo make install
+    fi
+
+    cd $old_cwd
+
+
+script:
+  - |
+    ./configure
+    make all

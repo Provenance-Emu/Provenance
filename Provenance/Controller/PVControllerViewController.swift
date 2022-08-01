@@ -255,7 +255,12 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 				label.translatesAutoresizingMaskIntoConstraints = false
 				label.contentMode = .center
 				label.numberOfLines = 2
-				label.font = UIFont.italicSystemFont(ofSize: UIFont.labelFontSize * 2)
+                #if !os(tvOS)
+                let size = UIFont.labelFontSize * 2
+                #else
+                let size: CGFloat = 28
+                #endif
+				label.font = UIFont.italicSystemFont(ofSize: size)
 				label.text = "Drag buttons to Move.\nTap 2 fingers 4 times to close."
 				label.textColor = UIColor.white
 				moveLabel = label

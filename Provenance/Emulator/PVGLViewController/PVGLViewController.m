@@ -11,6 +11,9 @@
 @import QuartzCore;
 #import "Provenance-Swift.h"
 
+#define USE_EFFECT 1
+#define USE_DISPLAY_LINK 0
+
 #if !TARGET_OS_MACCATALYST
 #import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES3/gl.h>
@@ -21,6 +24,11 @@
 @import AppKit;
 @import GLUT;
 #endif
+
+#define SHADER_DIR "GLES"
+#define VERTEX_DIR SHADER_DIR "/Vertex"
+#define BLITTER_DIR SHADER_DIR "/Blitters"
+#define FILTER_DIR SHADER_DIR "/Filters"
 
 @interface PVGLViewController () <PVRenderDelegate>
 {
@@ -55,6 +63,12 @@
 @property (nonatomic, strong) EAGLContext *alternateThreadGLContext;
 @property (nonatomic, strong) EAGLContext *alternateThreadBufferCopyGLContext;
 
+#if USE_DISPLAY_LINK
+@property (nonatomic, strong) CADisplayLink *displayLink;
+#endif
+#if USE_EFFECT
+@property (nonatomic, strong) GLKBaseEffect *effect;
+#endif
 
 @property (nonatomic, assign) GLESVersion glesVersion;
 
@@ -146,6 +160,13 @@ PV_OBJC_DIRECT_MEMBERS
     }
 }
 
+#if USE_DISPLAY_LINK
+-(void)render {
+    [self.core executeFrame];
+//    [self.view render];
+}
+#endif
+
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
@@ -175,6 +196,15 @@ PV_OBJC_DIRECT_MEMBERS
     view.context = self.glContext;
     view.userInteractionEnabled = NO;
 
+#if USE_DISPLAY_LINK
+    self.displayLink = [CADisplayLink displayLinkWithTarget: self selector: @selector(render)];
+    [self.displayLink addToRunLoop: [NSRunLoop currentRunLoop] forMode: NSDefaultRunLoopMode];
+#endif
+    
+#if USE_EFFECT
+    self.effect = [[GLKBaseEffect alloc] init];
+#endif
+    
     GLenum depthFormat = self.emulatorCore.depthFormat;
     switch (depthFormat) {
         case GL_DEPTH_COMPONENT16:
@@ -204,7 +234,15 @@ PV_OBJC_DIRECT_MEMBERS
     }
 
     [self setupTexture];
-    defaultVertexShader = [self compileShaderResource:@"Shaders/Vertex/default_vertex" ofType:GL_VERTEX_SHADER];
+
+    NSError *error;
+    defaultVertexShader = [self compileShaderResource:[NSString stringWithFormat:@"%s/default_vertex", VERTEX_DIR] ofType:GL_VERTEX_SHADER error:&error];
+    
+    if(error) {
+        ELOG(@"%@", error.localizedDescription)
+    }
+    assert(defaultVertexShader != GL_NO_ERROR);
+
     [self setupVBOs];
     
     [self setupBlitShader];
@@ -380,22 +418,21 @@ PV_OBJC_DIRECT_MEMBERS
     NSError *error;
     NSString *docsPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, true).firstObject;
     
-    [fm createDirectoryAtPath:[docsPath stringByAppendingPathComponent:@"Shaders/Vertex/"] withIntermediateDirectories:true attributes:nil error:&error];
+    [fm createDirectoryAtPath:[docsPath stringByAppendingPathComponent:@VERTEX_DIR] withIntermediateDirectories:true attributes:nil error:&error];
     if (error) {
         ELOG(@"%@", error.localizedDescription);
     }
-    [fm createDirectoryAtPath:[docsPath stringByAppendingPathComponent:@"Shaders/Blitters/"] withIntermediateDirectories:true attributes:nil error:&error];
+    [fm createDirectoryAtPath:[docsPath stringByAppendingPathComponent:@BLITTER_DIR] withIntermediateDirectories:true attributes:nil error:&error];
     if (error) {
         ELOG(@"%@", error.localizedDescription);
     }
-    [fm createDirectoryAtPath:[docsPath stringByAppendingPathComponent:@"Shaders/Filters/"] withIntermediateDirectories:true attributes:nil error:&error];
+    [fm createDirectoryAtPath:[docsPath stringByAppendingPathComponent:@FILTER_DIR] withIntermediateDirectories:true attributes:nil error:&error];
     if (error) {
         ELOG(@"%@", error.localizedDescription);
     }
 }
 
-- (GLuint)compileShaderResource:(NSString*)shaderResourceName ofType:(GLenum)shaderType
-{
+- (GLuint)compileShaderResource:(NSString*)shaderResourceName ofType:(GLenum)shaderType error:(NSError**)inError {
     // TODO: check shaderType == GL_VERTEX_SHADER
     NSString *fileName = [shaderResourceName stringByAppendingPathExtension:@"glsl"];
 
@@ -414,6 +451,9 @@ PV_OBJC_DIRECT_MEMBERS
                     toPath:docsPath
                      error:&error];
         if (error) {
+            if(inError) {
+                *inError = error;
+            }
             ELOG(@"%@", error.localizedDescription);
         }
     }
@@ -425,6 +465,11 @@ PV_OBJC_DIRECT_MEMBERS
     }
     if ( shaderPath == NULL )
     {
+        if(inError) {
+            *inError = [NSError errorWithDomain:@"com.provenance.core"
+                                           code:-1
+                                       userInfo:@{NSLocalizedDescriptionKey : @"shaderPath is null"}];
+        }
         ELOG(@"Nil shaderPath");
         return 0;
     }
@@ -436,6 +481,9 @@ PV_OBJC_DIRECT_MEMBERS
     if ( shaderSource == NULL )
     {
         ELOG(@"Nil shaderSource: %@ %@", shaderPath, error.localizedDescription);
+        if(inError) {
+            *inError = [NSError errorWithDomain:@"com.provenance.core" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"shaderSource is null"}];
+        }
         return 0;
     }
     
@@ -443,6 +491,9 @@ PV_OBJC_DIRECT_MEMBERS
     if ( shaderSourceCString == NULL )
     {
         ELOG(@"Nil shaderSourceCString");
+        if(inError) {
+            *inError = [NSError errorWithDomain:@"com.provenance.core" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"shaderSourceCString is null"}];
+        }
         return 0;
     }
     
@@ -450,6 +501,9 @@ PV_OBJC_DIRECT_MEMBERS
     if ( shader == 0 )
     {
         ELOG(@"Nil shader");
+        if(inError) {
+            *inError = [NSError errorWithDomain:@"com.provenance.core" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"shader is null"}];
+        }
         return 0;
     }
     
@@ -466,7 +520,11 @@ PV_OBJC_DIRECT_MEMBERS
         {
             char* infoLog = (char*)malloc( infoLogLength );
             glGetShaderInfoLog( shader, infoLogLength, NULL, infoLog );
-            ELOG(@"Error compiling shader: %s", infoLog );
+            NSString *log = [NSString stringWithCString:infoLog encoding:NSUTF8StringEncoding];
+            ELOG(@"Error compiling shader: %@", log );
+            if(inError) {
+                *inError = [NSError errorWithDomain:@"com.provenance.core" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"Error compiling shader" , NSLocalizedFailureReasonErrorKey:log}];
+            }
             free( infoLog );
         }
         
@@ -516,15 +574,21 @@ PV_OBJC_DIRECT_MEMBERS
 
 - (void)setupBlitShader
 {
-    blitFragmentShader = [self compileShaderResource:@"GLES/Blitters/blit_fragment" ofType:GL_FRAGMENT_SHADER];
+    NSError *error;
+    blitFragmentShader = [self compileShaderResource:[NSString stringWithFormat:@"%s/blit_fragment", BLITTER_DIR] ofType:GL_FRAGMENT_SHADER error:&error];
+    assert(blitFragmentShader != GL_NO_ERROR);
     blitShaderProgram = [self linkVertexShader:defaultVertexShader withFragmentShader:blitFragmentShader];
+    assert(blitShaderProgram != GL_NO_ERROR);
     blitUniform_EmulatedImage = glGetUniformLocation(blitShaderProgram, "EmulatedImage");
 }
 
 - (void)setupCRTShader
 {
-    crtFragmentShader = [self compileShaderResource:@"GLES/Filters/crt_fragment" ofType:GL_FRAGMENT_SHADER];
+    NSError *error;
+    crtFragmentShader = [self compileShaderResource:[NSString stringWithFormat:@"%s/crt_fragment", FILTER_DIR] ofType:GL_FRAGMENT_SHADER error:&error];
+    assert(crtFragmentShader != GL_NO_ERROR);
     crtShaderProgram = [self linkVertexShader:defaultVertexShader withFragmentShader:crtFragmentShader];
+    assert(crtShaderProgram != GL_NO_ERROR);
     crtUniform_DisplayRect = glGetUniformLocation(crtShaderProgram, "DisplayRect");
     crtUniform_EmulatedImage = glGetUniformLocation(crtShaderProgram, "EmulatedImage");
     crtUniform_EmulatedImageSize = glGetUniformLocation(crtShaderProgram, "EmulatedImageSize");
@@ -571,6 +635,19 @@ PV_OBJC_DIRECT_MEMBERS
             glBindTexture(GL_TEXTURE_2D, strongself->texture);
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, videoBufferSize.width, videoBufferSize.height, videoBufferPixelFormat, videoBufferPixelType, videoBuffer);
             frontBufferTex = strongself->texture;
+            
+#if USE_EFFECT
+            if (texture)
+            {
+                self.effect.texture2d0.envMode = GLKTextureEnvModeReplace;
+                self.effect.texture2d0.target = GLKTextureTarget2D;
+                self.effect.texture2d0.name = texture;
+                self.effect.texture2d0.enabled = YES;
+                self.effect.useConstantColor = YES;
+            }
+
+            [self.effect prepareToDraw];
+#endif
         }
         
         if (frontBufferTex)

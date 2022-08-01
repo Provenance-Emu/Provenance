@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Stella
+Comment=A multi-platform Atari 2600 emulator
+Exec=stella %f
+Icon=stella
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Emulator;Game;

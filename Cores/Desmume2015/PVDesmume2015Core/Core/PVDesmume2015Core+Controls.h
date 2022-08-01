@@ -10,16 +10,16 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PVDesmume2015Core (Controls) <PVDreamcastSystemResponderClient>
+@interface PVDesmume2015Core (Controls) <PVDSSystemResponderClient>
 
 - (void)initControllBuffers;
 - (void)pollControllers;
 
 #pragma mark - Control
 
-- (void)didPushDreamcastButton:(enum PVDreamcastButton)button forPlayer:(NSInteger)player;
-- (void)didReleaseDreamcastButton:(enum PVDreamcastButton)button forPlayer:(NSInteger)player;
-- (void)didMoveDreamcastJoystickDirection:(enum PVDreamcastButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player;
+- (void)didPushDSButton:(enum PVDSButton)button forPlayer:(NSInteger)player;
+- (void)didReleaseDSButton:(enum PVDSButton)button forPlayer:(NSInteger)player;
+- (void)didMoveDSJoystickDirection:(enum PVDSButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player;
 - (void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player;
 
 - (void)didPush:(NSInteger)button forPlayer:(NSInteger)player;

@@ -3558,27 +3558,27 @@
 		B3D8A54A26BE55CD0096A354 /* duckstation */ = {
 			isa = PBXGroup;
 			children = (
-				B3D8A54B26BE55CD0096A354 /* gamedb */,
-				B3D8A56726BE55CE0096A354 /* CMakeLists.txt */,
-				B3D8A56826BE55CE0096A354 /* LICENSE */,
-				B3D8A56926BE55CE0096A354 /* NEWS.md */,
-				B3D8A56A26BE55CE0096A354 /* duckstation-uwp.sln */,
+				B3D8A8E726BE55D10096A354 /* .clang-format */,
+				B3D8A8EF26BE55D10096A354 /* .gitattributes */,
+				B3D8A56E26BE55CE0096A354 /* .gitignore */,
 				B3D8A56B26BE55CE0096A354 /* .gitmodules */,
+				B3D8A56826BE55CE0096A354 /* LICENSE */,
+				B3D8A92326BE55D10096A354 /* CMakeSettings.json */,
+				B3D8A56F26BE55CE0096A354 /* CONTRIBUTORS.md */,
+				B3D8A56926BE55CE0096A354 /* NEWS.md */,
 				B3D8A56C26BE55CE0096A354 /* README.md */,
 				B3D8A56D26BE55CE0096A354 /* README.pt-br.md */,
-				B3D8A56E26BE55CE0096A354 /* .gitignore */,
-				B3D8A56F26BE55CE0096A354 /* CONTRIBUTORS.md */,
-				B3D8A57026BE55CE0096A354 /* dep */,
-				B3D8A8DC26BE55D10096A354 /* scripts */,
-				B3D8A8E726BE55D10096A354 /* .clang-format */,
+				B3D8A56A26BE55CE0096A354 /* duckstation-uwp.sln */,
+				B3D8A92426BE55D10096A354 /* duckstation.sln */,
+				B3D8A56726BE55CE0096A354 /* CMakeLists.txt */,
 				B3D8A8E826BE55D10096A354 /* .github */,
-				B3D8A8EF26BE55D10096A354 /* .gitattributes */,
 				B3D8A8F026BE55D10096A354 /* CMakeModules */,
 				B3D8A8FD26BE55D10096A354 /* data */,
-				B3D8A92326BE55D10096A354 /* CMakeSettings.json */,
-				B3D8A92426BE55D10096A354 /* duckstation.sln */,
-				B3D8A92526BE55D10096A354 /* src */,
+				B3D8A57026BE55CE0096A354 /* dep */,
 				B3D8AD2C26BE55D60096A354 /* extras */,
+				B3D8A54B26BE55CD0096A354 /* gamedb */,
+				B3D8A8DC26BE55D10096A354 /* scripts */,
+				B3D8A92526BE55D10096A354 /* src */,
 			);
 			path = duckstation;
 			sourceTree = "<group>";
@@ -5428,17 +5428,17 @@
 		B3D8A92526BE55D10096A354 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				B3D8A92626BE55D10096A354 /* scmversion */,
 				B3D8A92E26BE55D10096A354 /* CMakeLists.txt */,
-				B3D8A92F26BE55D10096A354 /* core */,
-				B3D8A9A926BE55D20096A354 /* duckstation-uwp */,
-				B3D8A9EA26BE55D20096A354 /* frontend-common */,
-				B3D8AA4326BE55D20096A354 /* common-tests */,
-				B3D8AA4B26BE55D30096A354 /* updater */,
 				B3D8AA5326BE55D30096A354 /* common */,
+				B3D8AA4326BE55D20096A354 /* common-tests */,
+				B3D8A92F26BE55D10096A354 /* core */,
+				B3D8AD1626BE55D60096A354 /* duckstation-nogui */,
 				B3D8AB0626BE55D30096A354 /* duckstation-qt */,
 				B3D8AD0C26BE55D60096A354 /* duckstation-regtest */,
-				B3D8AD1626BE55D60096A354 /* duckstation-nogui */,
+				B3D8A9A926BE55D20096A354 /* duckstation-uwp */,
+				B3D8A9EA26BE55D20096A354 /* frontend-common */,
+				B3D8A92626BE55D10096A354 /* scmversion */,
+				B3D8AA4B26BE55D30096A354 /* updater */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -8588,10 +8588,11 @@
 					"\"$(SRCROOT)/duckstation/src\"",
 					"\"$(SRCROOT)/duckstation/dep/glad/include\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 			};
 			name = Debug;
 		};
@@ -8647,10 +8648,11 @@
 					"\"$(SRCROOT)/duckstation/src\"",
 					"\"$(SRCROOT)/duckstation/dep/glad/include\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 			};
 			name = Release;
 		};
@@ -10400,9 +10402,10 @@
 					"\"$(SRCROOT)/duckstation/src\"",
 					"\"$(SRCROOT)/duckstation/dep/glad/include\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 			};
 			name = Archive;
 		};
@@ -10422,6 +10425,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
+				EXCLUDED_ARCHS = "";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					SI_CONVERT_GENERIC,
@@ -10519,6 +10523,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
 				ENABLE_TESTABILITY = YES;
+				EXCLUDED_ARCHS = "";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -10574,6 +10579,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
+				EXCLUDED_ARCHS = "";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					SI_CONVERT_GENERIC,

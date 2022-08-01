@@ -18,12 +18,12 @@ func AudioServicesStopSystemSound(_ soundID: SystemSoundID)
 func AudioServicesPlaySystemSoundWithVibration(_ soundID: SystemSoundID, _ idk: Any?, _ vibrationPattern: NSDictionary)
 #endif
 
-@available(iOS 13.0, *)
+@available(iOS 14.0, tvOS 14.0, *)
 fileprivate var hapticEngines: [CHHapticEngine?] = Array<CHHapticEngine?>.init(repeating: nil, count: 4)
 
 @objc
 public extension PVEmulatorCore {
-	var supportsRumble: Bool { false }
+	@objc var supportsRumble: Bool { false }
     
 	func rumble() {
 		rumble(player: 0)

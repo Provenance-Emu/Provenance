@@ -11,7 +11,7 @@
 @implementation PVDosBoxCore (Audio)
 
 - (NSTimeInterval)frameInterval {
-    return isNTSC ? 60 : 50;
+    return 60;
 }
 
 - (NSUInteger)channelCount {
@@ -19,7 +19,7 @@
 }
 
 - (double)audioSampleRate {
-    return sampleRate;
+    return 44100;
 }
 
 @end

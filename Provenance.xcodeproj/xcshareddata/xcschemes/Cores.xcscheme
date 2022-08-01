@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3270F7E27DCB25100E83180"
-               BuildableName = "Cores.framework"
-               BlueprintName = "Cores"
+               BuildableName = "Cores_iOS.framework"
+               BlueprintName = "Cores-iOS"
                ReferencedContainer = "container:Provenance.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3270F7E27DCB25100E83180"
-            BuildableName = "Cores.framework"
-            BlueprintName = "Cores"
+            BuildableName = "Cores_iOS.framework"
+            BlueprintName = "Cores-iOS"
             ReferencedContainer = "container:Provenance.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

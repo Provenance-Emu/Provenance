@@ -227,7 +227,7 @@
 			<key>UTTypeIdentifier</key>
 			<string>com.provenance.rom</string>
 			<key>UTTypeReferenceURL</key>
-			<string>http://www.provenance-emu.org/</string>
+			<string>https://provenance-emu.com/</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>
@@ -271,6 +271,15 @@
 					<string>cdi</string>
 					<string>gdi</string>
 					<string>bios</string>
+					<string>msx</string>
+					<string>col</string>
+					<string>rar</string>
+					<string>z80</string>
+					<string>tzx</string>
+				</array>
+				<key>public.mime-type</key>
+				<array>
+					<string>com.provenance.rom</string>
 				</array>
 			</dict>
 		</dict>
@@ -292,6 +301,10 @@
 			<array/>
 			<key>UTTypeIdentifier</key>
 			<string>com.provenance.savestate</string>
+			<key>UTTypeReferenceURL</key>
+			<string>https://provenance-emu.com/</string>
+			<key>UTTypeTagSpecification</key>
+			<dict/>
 		</dict>
 		<dict/>
 	</array>
@@ -303,7 +316,9 @@
 				<key>public.filename-extension</key>
 				<array>
 					<string>ROM</string>
+					<string>col</string>
 					<string>rom</string>
+					<string>msx</string>
 					<string>cue</string>
 					<string>bin</string>
 					<string>a78</string>
@@ -341,6 +356,9 @@
 					<string>cdi</string>
 					<string>gdi</string>
 					<string>bios</string>
+					<string>z80</string>
+					<string>tzx</string>
+					<string>rar</string>
 				</array>
 			</dict>
 			<key>UTTypeConformsTo</key>
@@ -353,6 +371,8 @@
 			<array/>
 			<key>UTTypeIdentifier</key>
 			<string>com.provenance.rom</string>
+			<key>UTTypeTagSpecification</key>
+			<dict/>
 		</dict>
 		<dict>
 			<key>UTITagTypeSpecification</key>

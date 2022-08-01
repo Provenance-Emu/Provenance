@@ -220,20 +220,6 @@ LIST_OF_VARIABLES
 	}
 }
 
-- (void)runReicastEmuThread {
-	@autoreleasepool
-	{
-		[self reicastMain];
-
-		// Core returns
-
-		// Unlock rendering thread
-		dispatch_semaphore_signal(coreWaitToEndFrameSemaphore);
-
-		[super stopEmulation];
-	}
-}
-
 - (void)runReicastRenderThread {
     @autoreleasepool
     {
@@ -259,6 +245,21 @@ LIST_OF_VARIABLES
         }
     }
 }
+
+- (void)runReicastEmuThread {
+    @autoreleasepool
+    {
+        [self reicastMain];
+
+        // Core returns
+
+        // Unlock rendering thread
+        dispatch_semaphore_signal(coreWaitToEndFrameSemaphore);
+
+        [super stopEmulation];
+    }
+}
+
 
 - (void)reicastMain {
 	//    #if !TARGET_OS_SIMULATOR
