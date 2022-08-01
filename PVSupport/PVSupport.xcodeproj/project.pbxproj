@@ -181,6 +181,8 @@
 		B35E6C38207EE15D0040709A /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C36207EE15D0040709A /* CoreOptions.swift */; };
 		B364D4B42870E5F600B93A4B /* libretro.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC6D92867202D00B60497 /* libretro.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B364D4B52870E5F600B93A4B /* libretro.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC6D92867202D00B60497 /* libretro.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B36C41052898776C00EAEF59 /* retro_netplay.m in Sources */ = {isa = PBXBuildFile; fileRef = B36C41042898776C00EAEF59 /* retro_netplay.m */; };
+		B36C41062898776C00EAEF59 /* retro_netplay.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B36C41032898776C00EAEF59 /* retro_netplay.h */; };
 		B3702311287256DA00B3F6DA /* retro_inline.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC6C02867202D00B60497 /* retro_inline.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3702312287256DA00B3F6DA /* retro_inline.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC6C02867202D00B60497 /* retro_inline.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B372638426EA015700E95488 /* CocoaLumberjack+swift-log.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E8326C67F420088AC32 /* CocoaLumberjack+swift-log.swift */; };
@@ -336,6 +338,16 @@
 			dstSubfolderSpec = 16;
 			files = (
 				B3225132286C4728001FDF42 /* retro.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B36C40FF2898776C00EAEF59 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+				B36C41062898776C00EAEF59 /* retro_netplay.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1195,6 +1207,9 @@
 		B3532B3E21A7B753006CDA0F /* PVSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSettingsTests.swift; sourceTree = "<group>"; };
 		B3532C3521A925C1006CDA0F /* SortOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortOption.swift; sourceTree = "<group>"; };
 		B35E6C36207EE15D0040709A /* CoreOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreOptions.swift; sourceTree = "<group>"; };
+		B36C41012898776C00EAEF59 /* libretro-netplay.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libretro-netplay.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B36C41032898776C00EAEF59 /* retro_netplay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = retro_netplay.h; sourceTree = "<group>"; };
+		B36C41042898776C00EAEF59 /* retro_netplay.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = retro_netplay.m; sourceTree = "<group>"; };
 		B392848E28670348003BAC21 /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B392849028670348003BAC21 /* PVLibRetro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVLibRetro.h; sourceTree = "<group>"; };
 		B3928497286703CD003BAC21 /* PVLibRetroCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVLibRetroCore.h; sourceTree = "<group>"; };
@@ -1281,6 +1296,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B36C40FE2898776C00EAEF59 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B392848B28670348003BAC21 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1358,6 +1380,7 @@
 				B3532B3321A7B736006CDA0F /* Tests */,
 				1ACEA64A17F7467D0031B1C9 /* Supporting Files */,
 				B392848F28670348003BAC21 /* PVLibRetro */,
+				B36C41022898776C00EAEF59 /* retro-netplay */,
 				1ACEA64617F7467D0031B1C9 /* Frameworks */,
 				1ACEA64517F7467D0031B1C9 /* Products */,
 			);
@@ -1374,6 +1397,7 @@
 				B322512D286C4728001FDF42 /* libretro.a */,
 				B3A41BDA286E75DD0054E9A5 /* libretro.a */,
 				B3A41BEB286E76110054E9A5 /* PVLibRetro.framework */,
+				B36C41012898776C00EAEF59 /* libretro-netplay.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3346,6 +3370,15 @@
 			path = Tests;
 			sourceTree = "<group>";
 		};
+		B36C41022898776C00EAEF59 /* retro-netplay */ = {
+			isa = PBXGroup;
+			children = (
+				B36C41032898776C00EAEF59 /* retro_netplay.h */,
+				B36C41042898776C00EAEF59 /* retro_netplay.m */,
+			);
+			path = "retro-netplay";
+			sourceTree = "<group>";
+		};
 		B392848F28670348003BAC21 /* PVLibRetro */ = {
 			isa = PBXGroup;
 			children = (
@@ -3671,6 +3704,23 @@
 			productReference = B3532B3221A7B736006CDA0F /* PVSupportTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		B36C41002898776C00EAEF59 /* retro-netplay */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B36C410A2898776C00EAEF59 /* Build configuration list for PBXNativeTarget "retro-netplay" */;
+			buildPhases = (
+				B36C40FD2898776C00EAEF59 /* Sources */,
+				B36C40FE2898776C00EAEF59 /* Frameworks */,
+				B36C40FF2898776C00EAEF59 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "retro-netplay";
+			productName = "retro-netplay";
+			productReference = B36C41012898776C00EAEF59 /* libretro-netplay.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		B392848D28670348003BAC21 /* PVLibRetro-iOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B392849528670348003BAC21 /* Build configuration list for PBXNativeTarget "PVLibRetro-iOS" */;
@@ -3806,6 +3856,9 @@
 						CreatedOnToolsVersion = 10.1;
 						LastSwiftMigration = 1020;
 					};
+					B36C41002898776C00EAEF59 = {
+						CreatedOnToolsVersion = 14.0;
+					};
 					B392848D28670348003BAC21 = {
 						CreatedOnToolsVersion = 13.4.1;
 					};
@@ -3844,6 +3897,7 @@
 				B3A41BDB286E76110054E9A5 /* PVLibRetro-tvOS */,
 				B322512C286C4728001FDF42 /* retro-iOS */,
 				B3A41BD0286E75DD0054E9A5 /* retro-tvOS */,
+				B36C41002898776C00EAEF59 /* retro-netplay */,
 			);
 		};
 /* End PBXProject section */
@@ -3977,6 +4031,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3532B3F21A7B753006CDA0F /* PVSettingsTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B36C40FD2898776C00EAEF59 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B36C41052898776C00EAEF59 /* retro_netplay.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4815,6 +4877,83 @@
 			};
 			name = Archive;
 		};
+		B36C41072898776C00EAEF59 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B36C41082898776C00EAEF59 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B36C41092898776C00EAEF59 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Archive;
+		};
 		B392849228670348003BAC21 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -5488,6 +5627,16 @@
 				B3532B3A21A7B736006CDA0F /* Debug */,
 				B3532B3B21A7B736006CDA0F /* Release */,
 				B3532B3C21A7B736006CDA0F /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B36C410A2898776C00EAEF59 /* Build configuration list for PBXNativeTarget "retro-netplay" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B36C41072898776C00EAEF59 /* Debug */,
+				B36C41082898776C00EAEF59 /* Release */,
+				B36C41092898776C00EAEF59 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

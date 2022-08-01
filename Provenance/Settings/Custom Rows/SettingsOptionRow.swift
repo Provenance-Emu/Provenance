@@ -63,7 +63,6 @@ final class PVSettingsOptionRow: RadioSection {
 //      }
 //    }
 
-    
     required init(title: String,
                   footer: String? = nil,
                   key: ReferenceWritableKeyPath<PVSettingsModel, String>,

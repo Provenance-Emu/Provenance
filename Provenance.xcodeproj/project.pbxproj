@@ -462,6 +462,9 @@
 		B36703772896314300F75595 /* OmniScaleLegacy.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703592896314200F75595 /* OmniScaleLegacy.fsh */; };
 		B369B0DD21A3BF7C0064EDCA /* PVSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB95FFB17C563C100D3E392 /* PVSettingsViewController.swift */; };
 		B369B0DE21A3C1C40064EDCA /* PVLogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E6DADB20B7AD1500454DD4 /* PVLogViewController.m */; };
+		B36C40FC2898773100EAEF59 /* Moveable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37D30B427BCD82B00C01114 /* Moveable.swift */; };
+		B36C410B28987A5000EAEF59 /* SettingsOptionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38D02332884D03A008FBED8 /* SettingsOptionRow.swift */; };
+		B36C410C28987A7300EAEF59 /* PVMetalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B382C641278E55C9007E61FE /* PVMetalViewController.m */; };
 		B36D9DF8203562E000D583C4 /* PVControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */; };
 		B36D9DFD203605BC00D583C4 /* PVCoreFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */; };
 		B377E67E21252C6600D88973 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
@@ -4065,10 +4068,12 @@
 				B35E6C32207ED7050040709A /* AppearanceStyleHelpers.swift in Sources */,
 				B3F64ED9205CD22000C273C7 /* PVControllerSelectionViewController.swift in Sources */,
 				1AD481CF1BA3540000FDA50A /* PVGameLibraryCollectionViewCell.swift in Sources */,
+				B36C410B28987A5000EAEF59 /* SettingsOptionRow.swift in Sources */,
 				B34EADAF218824C3008F52EE /* PViCadeControllerViewController.swift in Sources */,
 				B33468D320AB347300092CA6 /* CenterFlowLayout.swift in Sources */,
 				B3B104D4218F2EF400210C39 /* PVWonderSwanControllerViewController.swift in Sources */,
 				B3B104C2218F2EF400210C39 /* PVAtari5200ControllerViewController.swift in Sources */,
+				B36C410C28987A7300EAEF59 /* PVMetalViewController.m in Sources */,
 				B3532C3D21A9AC93006CDA0F /* Services.swift in Sources */,
 				B31117B0218EB3A900C495A2 /* PVEmulatorViewController.swift in Sources */,
 				1AD481E51BA3546600FDA50A /* PVGLViewController.m in Sources */,
@@ -4119,6 +4124,7 @@
 				1AD481E31BA3545D00FDA50A /* GCDWebServerStreamedResponse.m in Sources */,
 				B3A70062288DD24000355823 /* PVEP128ControllerViewController.swift in Sources */,
 				1AD481D81BA3543700FDA50A /* GCDWebServerConnection.m in Sources */,
+				B36C40FC2898773100EAEF59 /* Moveable.swift in Sources */,
 				B35E6C2C207ED7050040709A /* UITraitCollectionExtensions.swift in Sources */,
 				B3411C33276B472900D85327 /* NavigationRow.swift in Sources */,
 				B3427C03287EA0CF0054C1B5 /* MetalViewShaders.metal in Sources */,
