@@ -53,7 +53,20 @@ __attribute__((weak_import))
     bool                     core_has_set_input_descriptors;
     struct retro_system_av_info av_info;
     enum retro_pixel_format pix_fmt;
+    
+    bool supportsAchievements;
+    
+    int16_t mouse_x;
+    int16_t mouse_y;
+    int16_t mouse_wheel_up;
+    int16_t mouse_wheel_down;
+    bool mouseLeft;
+    bool mouseRight;
+    bool mouseMiddle;
+    bool mouse_button_4;
+    bool mouse_button_5;
 }
+
 - (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player;
 - (void)pollControllers;
 

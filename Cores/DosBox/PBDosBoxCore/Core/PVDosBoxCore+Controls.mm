@@ -51,6 +51,57 @@ u8 lt[4];
 u32 vks[4];
 s8 joyx[4], joyy[4];
 
+@implementation PVDosBoxCore (MouseResponder)
+- (BOOL)gameSupportsMouse { return true; }
+- (BOOL)requiresMouse{ return false; }
+
+- (void)didScroll:(GCDeviceCursor *)cursor {
+    if(cursor.yAxis == 0) {
+        self->mouse_wheel_up = 0;
+        self->mouse_wheel_down = 0;
+    } else if (cursor.yAxis.value > 0.0) {
+        self->mouse_wheel_up = cursor.yAxis.value;
+        self->mouse_wheel_down = 0;
+    } else if (cursor.yAxis.value < 0.0) {
+        self->mouse_wheel_up = 0;
+        self->mouse_wheel_down = cursor.yAxis.value * -1;
+    }
+}
+
+- (void)mouseMovedAt:(CGPoint)point {
+    self->mouse_x = point.x;
+    self->mouse_y = point.y;
+}
+
+- (void)leftMouseUp {
+    self->mouseLeft = false;
+}
+
+- (void)leftMouseDownAt:(CGPoint)point {
+    self->mouse_x = point.x;
+    self->mouse_y = point.y;
+    self->mouseLeft = true;
+}
+
+- (void)rightMouseUp {
+    self->mouseRight = false;
+}
+- (void)rightMouseDownAt:(CGPoint)point {
+    self->mouse_x = point.x;
+    self->mouse_y = point.y;
+    self->mouseRight = true;
+}
+- (void)middleMouseUp {
+    self->mouseMiddle = false;
+}
+- (void)middleMouseDownAt:(CGPoint)point {
+    self->mouse_x = point.x;
+    self->mouse_y = point.y;
+    self->mouseMiddle = true;
+}
+
+@end
+
 @implementation PVDosBoxCore (Controls)
 
 - (void)initControllBuffers {

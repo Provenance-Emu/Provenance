@@ -133,24 +133,12 @@
 		B33809072877B99C0009C732 /* rthreads.c in Sources */ = {isa = PBXBuildFile; fileRef = B33808262877B5090009C732 /* rthreads.c */; };
 		B33809082877B9A20009C732 /* rsemaphore.c in Sources */ = {isa = PBXBuildFile; fileRef = B338082B2877B5090009C732 /* rsemaphore.c */; };
 		B33809092877B9A20009C732 /* rsemaphore.c in Sources */ = {isa = PBXBuildFile; fileRef = B338082B2877B5090009C732 /* rsemaphore.c */; };
-		B338090A2877B9F10009C732 /* ARMJIT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B338068B2877B5080009C732 /* ARMJIT.cpp */; };
-		B338090B2877B9F10009C732 /* ARMJIT_Memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B338086D2877B50A0009C732 /* ARMJIT_Memory.cpp */; };
 		B338090C2877B9F10009C732 /* CommonFuncs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33806692877B5080009C732 /* CommonFuncs.cpp */; };
 		B338090D2877B9F10009C732 /* ARM_InstrInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B338068A2877B5080009C732 /* ARM_InstrInfo.cpp */; };
-		B338090E2877B9F20009C732 /* ARMJIT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B338068B2877B5080009C732 /* ARMJIT.cpp */; };
-		B338090F2877B9F20009C732 /* ARMJIT_Memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B338086D2877B50A0009C732 /* ARMJIT_Memory.cpp */; };
 		B33809102877B9F20009C732 /* CommonFuncs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33806692877B5080009C732 /* CommonFuncs.cpp */; };
 		B33809112877B9F20009C732 /* ARM_InstrInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B338068A2877B5080009C732 /* ARM_InstrInfo.cpp */; };
 		B33809122877BA350009C732 /* ARMJIT_Linkage.S in Sources */ = {isa = PBXBuildFile; fileRef = B33808652877B50A0009C732 /* ARMJIT_Linkage.S */; };
-		B33809132877BA350009C732 /* ARMJIT_Branch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33808662877B50A0009C732 /* ARMJIT_Branch.cpp */; };
-		B33809142877BA350009C732 /* ARMJIT_Compiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33808612877B50A0009C732 /* ARMJIT_Compiler.cpp */; };
-		B33809152877BA350009C732 /* ARMJIT_ALU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33808632877B50A0009C732 /* ARMJIT_ALU.cpp */; };
-		B33809162877BA350009C732 /* ARMJIT_LoadStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33808642877B50A0009C732 /* ARMJIT_LoadStore.cpp */; };
 		B33809172877BA360009C732 /* ARMJIT_Linkage.S in Sources */ = {isa = PBXBuildFile; fileRef = B33808652877B50A0009C732 /* ARMJIT_Linkage.S */; };
-		B33809182877BA360009C732 /* ARMJIT_Branch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33808662877B50A0009C732 /* ARMJIT_Branch.cpp */; };
-		B33809192877BA360009C732 /* ARMJIT_Compiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33808612877B50A0009C732 /* ARMJIT_Compiler.cpp */; };
-		B338091A2877BA360009C732 /* ARMJIT_ALU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33808632877B50A0009C732 /* ARMJIT_ALU.cpp */; };
-		B338091B2877BA360009C732 /* ARMJIT_LoadStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33808642877B50A0009C732 /* ARMJIT_LoadStore.cpp */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
 		B3447E9C218B826F00557ACE /* PVMelonDS+Audio.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E9A218B826F00557ACE /* PVMelonDS+Audio.h */; };
@@ -3023,10 +3011,8 @@
 				B33808EF2877B6570009C732 /* file_path.c in Sources */,
 				B33808F22877B6680009C732 /* file_stream_transforms.c in Sources */,
 				B33808EA2877B64F0009C732 /* compat_strcasestr.c in Sources */,
-				B33809162877BA350009C732 /* ARMJIT_LoadStore.cpp in Sources */,
 				B33809042877B6A80009C732 /* sha1.c in Sources */,
 				B3C8A66C287809920037A946 /* teakra_c.cpp in Sources */,
-				B33809142877BA350009C732 /* ARMJIT_Compiler.cpp in Sources */,
 				B3C8A66D287809920037A946 /* disassembler_c.cpp in Sources */,
 				B3C8A674287809B00037A946 /* dma.cpp in Sources */,
 				B33808A22877B5E70009C732 /* DSi_DSP.cpp in Sources */,
@@ -3040,11 +3026,9 @@
 				B33808A52877B5E70009C732 /* DSi_AES.cpp in Sources */,
 				B3C8A677287809B00037A946 /* processor.cpp in Sources */,
 				B3C8A673287809B00037A946 /* ahbm.cpp in Sources */,
-				B33809132877BA350009C732 /* ARMJIT_Branch.cpp in Sources */,
 				B33808DD2877B62D0009C732 /* libretro.cpp in Sources */,
 				B33808942877B5E70009C732 /* DSi_Camera.cpp in Sources */,
 				B33808FE2877B68B0009C732 /* aes.c in Sources */,
-				B33809152877BA350009C732 /* ARMJIT_ALU.cpp in Sources */,
 				B3C8A672287809B00037A946 /* apbp.cpp in Sources */,
 				B33808D92877B61B0009C732 /* Util_ROM.cpp in Sources */,
 				B33808972877B5E70009C732 /* ARMInterpreter_ALU.cpp in Sources */,
@@ -3052,7 +3036,6 @@
 				B33808C92877B6090009C732 /* SPI.cpp in Sources */,
 				B33808C82877B6090009C732 /* NDSCart_SRAMManager.cpp in Sources */,
 				B33808C12877B6090009C732 /* GPU3D_Soft.cpp in Sources */,
-				B338090A2877B9F10009C732 /* ARMJIT.cpp in Sources */,
 				B3C8A675287809B00037A946 /* parser.cpp in Sources */,
 				B3C8A676287809B00037A946 /* mmio.cpp in Sources */,
 				B3C8A670287809B00037A946 /* btdmp.cpp in Sources */,
@@ -3095,7 +3078,6 @@
 				B33808982877B5E70009C732 /* ARMInterpreter_Branch.cpp in Sources */,
 				B3C8A66A2878093A0037A946 /* Arm64Emitter.cpp in Sources */,
 				B33808C52877B6090009C732 /* GPU2D_Soft.cpp in Sources */,
-				B338090B2877B9F10009C732 /* ARMJIT_Memory.cpp in Sources */,
 				B33808C22877B6090009C732 /* GPU3D.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3129,10 +3111,8 @@
 				B33808F02877B6590009C732 /* file_path.c in Sources */,
 				B33808F52877B6690009C732 /* file_stream_transforms.c in Sources */,
 				B33808EE2877B64F0009C732 /* compat_strcasestr.c in Sources */,
-				B338091B2877BA360009C732 /* ARMJIT_LoadStore.cpp in Sources */,
 				B33809052877B6A80009C732 /* sha1.c in Sources */,
 				B3C8A66E287809930037A946 /* teakra_c.cpp in Sources */,
-				B33809192877BA360009C732 /* ARMJIT_Compiler.cpp in Sources */,
 				B3C8A66F287809930037A946 /* disassembler_c.cpp in Sources */,
 				B3C8A680287809B10037A946 /* dma.cpp in Sources */,
 				B33808B72877B5E80009C732 /* DSi_DSP.cpp in Sources */,
@@ -3146,11 +3126,9 @@
 				B33808BA2877B5E80009C732 /* DSi_AES.cpp in Sources */,
 				B3C8A683287809B10037A946 /* processor.cpp in Sources */,
 				B3C8A67F287809B10037A946 /* ahbm.cpp in Sources */,
-				B33809182877BA360009C732 /* ARMJIT_Branch.cpp in Sources */,
 				B33808E32877B62D0009C732 /* libretro.cpp in Sources */,
 				B33808A92877B5E80009C732 /* DSi_Camera.cpp in Sources */,
 				B33808FF2877B68D0009C732 /* aes.c in Sources */,
-				B338091A2877BA360009C732 /* ARMJIT_ALU.cpp in Sources */,
 				B3C8A67E287809B10037A946 /* apbp.cpp in Sources */,
 				B33808DA2877B61B0009C732 /* Util_ROM.cpp in Sources */,
 				B33808AC2877B5E80009C732 /* ARMInterpreter_ALU.cpp in Sources */,
@@ -3158,7 +3136,6 @@
 				B33808D72877B6090009C732 /* SPI.cpp in Sources */,
 				B33808D62877B6090009C732 /* NDSCart_SRAMManager.cpp in Sources */,
 				B33808CF2877B6090009C732 /* GPU3D_Soft.cpp in Sources */,
-				B338090E2877B9F20009C732 /* ARMJIT.cpp in Sources */,
 				B3C8A681287809B10037A946 /* parser.cpp in Sources */,
 				B3C8A682287809B10037A946 /* mmio.cpp in Sources */,
 				B3C8A67C287809B10037A946 /* btdmp.cpp in Sources */,
@@ -3201,7 +3178,6 @@
 				B33808AD2877B5E80009C732 /* ARMInterpreter_Branch.cpp in Sources */,
 				B3C8A66B2878093E0037A946 /* Arm64Emitter.cpp in Sources */,
 				B33808D32877B6090009C732 /* GPU2D_Soft.cpp in Sources */,
-				B338090F2877B9F20009C732 /* ARMJIT_Memory.cpp in Sources */,
 				B33808D02877B6090009C732 /* GPU3D.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

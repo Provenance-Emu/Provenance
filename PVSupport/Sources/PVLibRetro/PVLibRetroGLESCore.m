@@ -124,8 +124,8 @@ void gl_swap() {
 
 - (BOOL)rendersToOpenGL { return YES; }
 - (BOOL)isDoubleBuffered { return YES; }
-- (GLenum)pixelFormat { return GL_UNSIGNED_SHORT_5_6_5; }
-- (GLenum)pixelType { return GL_UNSIGNED_BYTE; }
+- (GLenum)pixelFormat { return GL_RGBA; }
+- (GLenum)pixelType { return GL_UNSIGNED_SHORT_5_6_5; }
 - (GLenum)internalPixelFormat { return GL_RGBA; }
 - (GLenum)depthFormat {
         // 0, GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT24

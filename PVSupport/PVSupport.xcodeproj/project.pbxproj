@@ -111,6 +111,23 @@
 		B3296EA026C685450088AC32 /* DDLogLevel+CustomStringConvertable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E9E26C685450088AC32 /* DDLogLevel+CustomStringConvertable.swift */; };
 		B3296EA226C68CCE0088AC32 /* PVCocoaLumberJackLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296EA126C68CCE0088AC32 /* PVCocoaLumberJackLogging.swift */; };
 		B3296EA326C68CCE0088AC32 /* PVCocoaLumberJackLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296EA126C68CCE0088AC32 /* PVCocoaLumberJackLogging.swift */; };
+		B32E458728993AE500C2E2D0 /* input_config.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC52A28671EFF00B60497 /* input_config.c */; };
+		B32E458828993AE500C2E2D0 /* input_keymaps.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC52B28671EFF00B60497 /* input_keymaps.c */; };
+		B32E458928993AE500C2E2D0 /* input_hid_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC55728671EFF00B60497 /* input_hid_driver.c */; };
+		B32E458A28993AE500C2E2D0 /* input_joypad_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC51B28671EFF00B60497 /* input_joypad_driver.c */; };
+		B32E458B28993AE500C2E2D0 /* input_config.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC52A28671EFF00B60497 /* input_config.c */; };
+		B32E458C28993AE500C2E2D0 /* input_keymaps.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC52B28671EFF00B60497 /* input_keymaps.c */; };
+		B32E458D28993AE500C2E2D0 /* input_hid_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC55728671EFF00B60497 /* input_hid_driver.c */; };
+		B32E458E28993AE500C2E2D0 /* input_joypad_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC51B28671EFF00B60497 /* input_joypad_driver.c */; };
+		B32E45922899AE0300C2E2D0 /* PVEmulatorCore+Accelerometer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32E45912899AE0300C2E2D0 /* PVEmulatorCore+Accelerometer.swift */; };
+		B32E45932899AE0300C2E2D0 /* PVEmulatorCore+Accelerometer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32E45912899AE0300C2E2D0 /* PVEmulatorCore+Accelerometer.swift */; };
+		B32E45952899B92500C2E2D0 /* PVEmulatorCore+Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32E45942899B92500C2E2D0 /* PVEmulatorCore+Camera.swift */; };
+		B32E45972899B94100C2E2D0 /* PVEmulatorCore+Microphone.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32E45962899B94100C2E2D0 /* PVEmulatorCore+Microphone.swift */; };
+		B32E45982899B94100C2E2D0 /* PVEmulatorCore+Microphone.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32E45962899B94100C2E2D0 /* PVEmulatorCore+Microphone.swift */; };
+		B32E45992899B94100C2E2D0 /* PVEmulatorCore+Microphone.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32E45962899B94100C2E2D0 /* PVEmulatorCore+Microphone.swift */; };
+		B32E459B2899B9A200C2E2D0 /* PVEmulatorCore+Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32E459A2899B9A200C2E2D0 /* PVEmulatorCore+Location.swift */; };
+		B32E459C2899B9A200C2E2D0 /* PVEmulatorCore+Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32E459A2899B9A200C2E2D0 /* PVEmulatorCore+Location.swift */; };
+		B32E459D2899B9A200C2E2D0 /* PVEmulatorCore+Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32E459A2899B9A200C2E2D0 /* PVEmulatorCore+Location.swift */; };
 		B336B8F126B3985B00960A81 /* CocoaLumberjackSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B336B8F026B3985B00960A81 /* CocoaLumberjackSwift */; };
 		B336B8F426B398A900960A81 /* Reachability in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B336B8F326B398A900960A81 /* Reachability */; };
 		B336B8F826B3991500960A81 /* CocoaLumberjackSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B336B8F726B3991500960A81 /* CocoaLumberjackSwift */; };
@@ -231,6 +248,27 @@
 		B3AB37EC21881B7B009D9244 /* PViCade8BitdoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378C2187F9A9009D9244 /* PViCade8BitdoController.swift */; };
 		B3AB37ED21881B7B009D9244 /* PViCadeMocuteController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37922187F9A9009D9244 /* PViCadeMocuteController.swift */; };
 		B3AB37EE21881B7B009D9244 /* PViCadeSteelSeriesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37902187F9A9009D9244 /* PViCadeSteelSeriesController.swift */; };
+		B3AC6E922899295200D202AF /* net_retropad_core.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC5A628671EFF00B60497 /* net_retropad_core.c */; };
+		B3AC6E932899297000D202AF /* location_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC5B828671EFF00B60497 /* location_driver.c */; };
+		B3AC6E942899297400D202AF /* location_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC5B828671EFF00B60497 /* location_driver.c */; };
+		B3AC6E9528992A6300D202AF /* task_netplay_lan_scan.c in Sources */ = {isa = PBXBuildFile; fileRef = B32251B1286C827E001FDF42 /* task_netplay_lan_scan.c */; };
+		B3AC6E9628992A6300D202AF /* task_netplay_find_content.c in Sources */ = {isa = PBXBuildFile; fileRef = B322519B286C827D001FDF42 /* task_netplay_find_content.c */; };
+		B3AC6E9728992A6300D202AF /* task_netplay_nat_traversal.c in Sources */ = {isa = PBXBuildFile; fileRef = B322519D286C827D001FDF42 /* task_netplay_nat_traversal.c */; };
+		B3AC6EA028992BA600D202AF /* net_socket_ssl_mbed.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AC6E9928992BA300D202AF /* net_socket_ssl_mbed.c */; };
+		B3AC6EA128992BA600D202AF /* net_http.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AC6E9A28992BA300D202AF /* net_http.c */; };
+		B3AC6EA228992BA600D202AF /* net_http_parse.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AC6E9B28992BA300D202AF /* net_http_parse.c */; };
+		B3AC6EA328992BA600D202AF /* net_ifinfo.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AC6E9C28992BA300D202AF /* net_ifinfo.c */; };
+		B3AC6EA428992BA600D202AF /* net_compat.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AC6E9D28992BA300D202AF /* net_compat.c */; };
+		B3AC6EA628992BA600D202AF /* net_socket.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AC6E9F28992BA300D202AF /* net_socket.c */; };
+		B3AC6EAB2899311500D202AF /* playlist.c in Sources */ = {isa = PBXBuildFile; fileRef = B3225166286C6F29001FDF42 /* playlist.c */; };
+		B3AC6EAC289938E500D202AF /* keyboard_event_apple.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC51028671EFF00B60497 /* keyboard_event_apple.c */; };
+		B3AC6EAD289938E600D202AF /* keyboard_event_apple.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC51028671EFF00B60497 /* keyboard_event_apple.c */; };
+		B3AC6EAE2899392900D202AF /* input_autodetect.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4FE28671EFF00B60497 /* input_autodetect.c */; };
+		B3AC6EAF2899392A00D202AF /* input_autodetect.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4FE28671EFF00B60497 /* input_autodetect.c */; };
+		B3AC6EB028993A1600D202AF /* input_remote.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4EB28671EFF00B60497 /* input_remote.c */; };
+		B3AC6EB128993A1700D202AF /* input_remote.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4EB28671EFF00B60497 /* input_remote.c */; };
+		B3AC6EB228993A2000D202AF /* input_remapping.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC54828671EFF00B60497 /* input_remapping.c */; };
+		B3AC6EB328993A2100D202AF /* input_remapping.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC54828671EFF00B60497 /* input_remapping.c */; };
 		B3AF6FD821916168000FA7F9 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FD721916168000FA7F9 /* GameController.framework */; };
 		B3AF6FDA2191616C000FA7F9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FD92191616C000FA7F9 /* Foundation.framework */; };
 		B3AF6FDD219161BC000FA7F9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FDC219161BC000FA7F9 /* Foundation.framework */; };
@@ -479,6 +517,10 @@
 		B3296E8326C67F420088AC32 /* CocoaLumberjack+swift-log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CocoaLumberjack+swift-log.swift"; sourceTree = "<group>"; };
 		B3296E9E26C685450088AC32 /* DDLogLevel+CustomStringConvertable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DDLogLevel+CustomStringConvertable.swift"; sourceTree = "<group>"; };
 		B3296EA126C68CCE0088AC32 /* PVCocoaLumberJackLogging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVCocoaLumberJackLogging.swift; sourceTree = "<group>"; };
+		B32E45912899AE0300C2E2D0 /* PVEmulatorCore+Accelerometer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVEmulatorCore+Accelerometer.swift"; sourceTree = "<group>"; };
+		B32E45942899B92500C2E2D0 /* PVEmulatorCore+Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVEmulatorCore+Camera.swift"; sourceTree = "<group>"; };
+		B32E45962899B94100C2E2D0 /* PVEmulatorCore+Microphone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVEmulatorCore+Microphone.swift"; sourceTree = "<group>"; };
+		B32E459A2899B9A200C2E2D0 /* PVEmulatorCore+Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVEmulatorCore+Location.swift"; sourceTree = "<group>"; };
 		B33FB2EA279BE0CC0013AAD8 /* CoreOptions+Serialization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CoreOptions+Serialization.swift"; sourceTree = "<group>"; };
 		B33FB2EE279BE0F50013AAD8 /* CoreOptionValueDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreOptionValueDisplay.swift; sourceTree = "<group>"; };
 		B33FB2F2279BE1320013AAD8 /* CoreOptions+Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CoreOptions+Protocols.swift"; sourceTree = "<group>"; };
@@ -1230,6 +1272,13 @@
 		B3AB37912187F9A9009D9244 /* PViCadeGamepad.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PViCadeGamepad.swift; sourceTree = "<group>"; };
 		B3AB37922187F9A9009D9244 /* PViCadeMocuteController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PViCadeMocuteController.swift; sourceTree = "<group>"; };
 		B3AB37B02187FC4B009D9244 /* iCadeReaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iCadeReaderView.swift; sourceTree = "<group>"; };
+		B3AC6E9928992BA300D202AF /* net_socket_ssl_mbed.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = net_socket_ssl_mbed.c; sourceTree = "<group>"; };
+		B3AC6E9A28992BA300D202AF /* net_http.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = net_http.c; sourceTree = "<group>"; };
+		B3AC6E9B28992BA300D202AF /* net_http_parse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = net_http_parse.c; sourceTree = "<group>"; };
+		B3AC6E9C28992BA300D202AF /* net_ifinfo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = net_ifinfo.c; sourceTree = "<group>"; };
+		B3AC6E9D28992BA300D202AF /* net_compat.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = net_compat.c; sourceTree = "<group>"; };
+		B3AC6E9E28992BA300D202AF /* net_socket_ssl_bear.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = net_socket_ssl_bear.c; sourceTree = "<group>"; };
+		B3AC6E9F28992BA300D202AF /* net_socket.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = net_socket.c; sourceTree = "<group>"; };
 		B3AF6FD721916168000FA7F9 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		B3AF6FD92191616C000FA7F9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B3AF6FDC219161BC000FA7F9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -1552,6 +1601,7 @@
 				B34DC6392867202D00B60497 /* libretro-common */,
 				B34DC5B428671EFF00B60497 /* location */,
 				B34DC39228671EFD00B60497 /* managers */,
+				B3AC6E9828992BA300D202AF /* net */,
 				B34DC3E628671EFE00B60497 /* record */,
 			);
 			path = retro;
@@ -3487,6 +3537,20 @@
 			path = CoreOptions;
 			sourceTree = "<group>";
 		};
+		B3AC6E9828992BA300D202AF /* net */ = {
+			isa = PBXGroup;
+			children = (
+				B3AC6E9928992BA300D202AF /* net_socket_ssl_mbed.c */,
+				B3AC6E9A28992BA300D202AF /* net_http.c */,
+				B3AC6E9B28992BA300D202AF /* net_http_parse.c */,
+				B3AC6E9C28992BA300D202AF /* net_ifinfo.c */,
+				B3AC6E9D28992BA300D202AF /* net_compat.c */,
+				B3AC6E9E28992BA300D202AF /* net_socket_ssl_bear.c */,
+				B3AC6E9F28992BA300D202AF /* net_socket.c */,
+			);
+			path = net;
+			sourceTree = "<group>";
+		};
 		B3AF6FDB21916177000FA7F9 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
@@ -3522,6 +3586,10 @@
 				B3FA5D5F1D6B90BD00060D71 /* PVEmulatorCore.h */,
 				B3FA5D601D6B90BD00060D71 /* PVEmulatorCore.m */,
 				B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */,
+				B32E45912899AE0300C2E2D0 /* PVEmulatorCore+Accelerometer.swift */,
+				B32E45942899B92500C2E2D0 /* PVEmulatorCore+Camera.swift */,
+				B32E45962899B94100C2E2D0 /* PVEmulatorCore+Microphone.swift */,
+				B32E459A2899B9A200C2E2D0 /* PVEmulatorCore+Location.swift */,
 			);
 			path = EmulatorCore;
 			sourceTree = "<group>";
@@ -3990,10 +4058,13 @@
 				B305EF74276B4E41003AE510 /* PVProvenanceLogging.m in Sources */,
 				B305EF75276B4E41003AE510 /* PViCadeReader.swift in Sources */,
 				B305EF76276B4E41003AE510 /* RealTimeThread.m in Sources */,
+				B32E45992899B94100C2E2D0 /* PVEmulatorCore+Microphone.swift in Sources */,
+				B32E459D2899B9A200C2E2D0 /* PVEmulatorCore+Location.swift in Sources */,
 				B305EF77276B4E41003AE510 /* DiscSwappable.swift in Sources */,
 				B305EF78276B4E41003AE510 /* NSObject+PVAbstractAdditions.m in Sources */,
 				B3D0EE26277FE880002DC0A5 /* HapticsManager.swift in Sources */,
 				B305EF79276B4E41003AE510 /* PVEmulatorCore.m in Sources */,
+				B32E45932899AE0300C2E2D0 /* PVEmulatorCore+Accelerometer.swift in Sources */,
 				B305EF7A276B4E41003AE510 /* PVLogEntry.m in Sources */,
 				B305EF7B276B4E41003AE510 /* TPCircularBuffer.c in Sources */,
 				B305EF7D276B4E41003AE510 /* PVLogging.m in Sources */,
@@ -4013,16 +4084,25 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3AC6EB028993A1600D202AF /* input_remote.c in Sources */,
+				B3AC6E932899297000D202AF /* location_driver.c in Sources */,
+				B32E458928993AE500C2E2D0 /* input_hid_driver.c in Sources */,
 				B32299462878CF2C00585AD8 /* rthreads.c in Sources */,
 				B342325B286EB4060033EFA5 /* dylib.c in Sources */,
+				B32E458728993AE500C2E2D0 /* input_config.c in Sources */,
+				B3AC6EB228993A2000D202AF /* input_remapping.c in Sources */,
 				B3B3D17428712EE1008A0E2F /* msg_hash.c in Sources */,
 				B322996C28792B4000585AD8 /* movie.c in Sources */,
 				B3A41BCF286E5E660054E9A5 /* retro.m in Sources */,
+				B3AC6EAC289938E500D202AF /* keyboard_event_apple.c in Sources */,
 				B32299422878CB3C00585AD8 /* input_driver.c in Sources */,
+				B32E458A28993AE500C2E2D0 /* input_joypad_driver.c in Sources */,
+				B3AC6EAE2899392900D202AF /* input_autodetect.c in Sources */,
 				B3423260286EB5CA0033EFA5 /* dynamic_dummy.c in Sources */,
 				B322994A2878CF6200585AD8 /* input_keyboard.c in Sources */,
 				B322996E28792BA000585AD8 /* nullinput.c in Sources */,
 				B32299512878D46F00585AD8 /* performance_counters.c in Sources */,
+				B32E458828993AE500C2E2D0 /* input_keymaps.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4039,6 +4119,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				B36C41052898776C00EAEF59 /* retro_netplay.m in Sources */,
+				B3AC6EA228992BA600D202AF /* net_http_parse.c in Sources */,
+				B3AC6EA028992BA600D202AF /* net_socket_ssl_mbed.c in Sources */,
+				B3AC6E9628992A6300D202AF /* task_netplay_find_content.c in Sources */,
+				B3AC6E922899295200D202AF /* net_retropad_core.c in Sources */,
+				B3AC6EAB2899311500D202AF /* playlist.c in Sources */,
+				B3AC6EA428992BA600D202AF /* net_compat.c in Sources */,
+				B3AC6E9528992A6300D202AF /* task_netplay_lan_scan.c in Sources */,
+				B3AC6EA628992BA600D202AF /* net_socket.c in Sources */,
+				B3AC6EA128992BA600D202AF /* net_http.c in Sources */,
+				B3AC6EA328992BA600D202AF /* net_ifinfo.c in Sources */,
+				B3AC6E9728992A6300D202AF /* task_netplay_nat_traversal.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4061,16 +4152,25 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3AC6EB128993A1700D202AF /* input_remote.c in Sources */,
+				B3AC6E942899297400D202AF /* location_driver.c in Sources */,
+				B32E458D28993AE500C2E2D0 /* input_hid_driver.c in Sources */,
 				B32299472878CF2D00585AD8 /* rthreads.c in Sources */,
 				B342325A286EB4060033EFA5 /* dylib.c in Sources */,
+				B32E458B28993AE500C2E2D0 /* input_config.c in Sources */,
+				B3AC6EB328993A2100D202AF /* input_remapping.c in Sources */,
 				B3C8A69428781C6E0037A946 /* msg_hash.c in Sources */,
 				B3A41BD2286E75DD0054E9A5 /* retro.m in Sources */,
 				B322996D28792B4100585AD8 /* movie.c in Sources */,
+				B3AC6EAD289938E600D202AF /* keyboard_event_apple.c in Sources */,
 				B32299432878CB3C00585AD8 /* input_driver.c in Sources */,
+				B32E458E28993AE500C2E2D0 /* input_joypad_driver.c in Sources */,
+				B3AC6EAF2899392A00D202AF /* input_autodetect.c in Sources */,
 				B3423261286EB5CB0033EFA5 /* dynamic_dummy.c in Sources */,
 				B322994B2878CF6200585AD8 /* input_keyboard.c in Sources */,
 				B322996F28792BA000585AD8 /* nullinput.c in Sources */,
 				B32299522878D46F00585AD8 /* performance_counters.c in Sources */,
+				B32E458C28993AE500C2E2D0 /* input_keymaps.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4110,8 +4210,10 @@
 				B3AB37E821881B6E009D9244 /* iCadeControllerSetting.swift in Sources */,
 				B3AB37E121881956009D9244 /* PViCadeController.swift in Sources */,
 				B372638426EA015700E95488 /* CocoaLumberjack+swift-log.swift in Sources */,
+				B32E45982899B94100C2E2D0 /* PVEmulatorCore+Microphone.swift in Sources */,
 				B3AB37DF21881874009D9244 /* PViCadeGamepadDirectionPad.swift in Sources */,
 				B3296E8226C67EFA0088AC32 /* CocoaLumberjack+NSLogger.swift in Sources */,
+				B32E459C2899B9A200C2E2D0 /* PVEmulatorCore+Location.swift in Sources */,
 				B3CDEEC321D4C454000C55F7 /* Controls.swift in Sources */,
 				B3C96EAC1D62C3C3003F1E93 /* TPCircularBuffer.c in Sources */,
 				B3AB37DB21881671009D9244 /* PViCadeGamepadButtonInput.swift in Sources */,
@@ -4161,6 +4263,7 @@
 				B3296E9F26C685450088AC32 /* DDLogLevel+CustomStringConvertable.swift in Sources */,
 				B33FB304279BE21C0013AAD8 /* CoreOptionRange.swift in Sources */,
 				B3AB37B321880FA5009D9244 /* iCadeState.swift in Sources */,
+				B32E459B2899B9A200C2E2D0 /* PVEmulatorCore+Location.swift in Sources */,
 				B34AB57A2106DC6100C45F09 /* CoreOptions.swift in Sources */,
 				B33FB2F3279BE1320013AAD8 /* CoreOptions+Protocols.swift in Sources */,
 				B34AB5762106DC4C00C45F09 /* UIDeviceExtension.swift in Sources */,
@@ -4177,6 +4280,7 @@
 				B33FB2F8279BE1730013AAD8 /* CoreOptionMultiValue.swift in Sources */,
 				B34AB57C2106DC6100C45F09 /* NSFileManager+OEHashingAdditions.m in Sources */,
 				B3AB37DA21881670009D9244 /* PViCadeGamepadButtonInput.swift in Sources */,
+				B32E45952899B92500C2E2D0 /* PVEmulatorCore+Camera.swift in Sources */,
 				B3532C3621A925C2006CDA0F /* SortOption.swift in Sources */,
 				CF87D333258AB6B300838AF8 /* GameWithCheat.swift in Sources */,
 				B3CDEEC521D4C490000C55F7 /* CoreActions.swift in Sources */,
@@ -4190,6 +4294,7 @@
 				B34AB57B2106DC6100C45F09 /* NSObject+PVAbstractAdditions.m in Sources */,
 				B3D0EE20277FE85F002DC0A5 /* HapticsManager.swift in Sources */,
 				B34AB57E2106DC6100C45F09 /* PVEmulatorCore.m in Sources */,
+				B32E45922899AE0300C2E2D0 /* PVEmulatorCore+Accelerometer.swift in Sources */,
 				B34AB5742106DC4100C45F09 /* PVLogEntry.m in Sources */,
 				B34AB5792106DC5300C45F09 /* TPCircularBuffer.c in Sources */,
 				B34AB5752106DC4100C45F09 /* PVLogging.m in Sources */,
@@ -4202,6 +4307,7 @@
 				B3AB37E321881A82009D9244 /* PViCadeGamepad.swift in Sources */,
 				B3296EA226C68CCE0088AC32 /* PVCocoaLumberJackLogging.swift in Sources */,
 				B3447F9B218C1CD200557ACE /* PVSettingsModel.swift in Sources */,
+				B32E45972899B94100C2E2D0 /* PVEmulatorCore+Microphone.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4879,10 +4985,11 @@
 		};
 		B36C41072898776C00EAEF59 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B32299412878C5A000585AD8 /* PVLibRetro-Build.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
@@ -4892,6 +4999,11 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Sources/retro\"",
+					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
+					/opt/homebrew/include,
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -4904,10 +5016,11 @@
 		};
 		B36C41082898776C00EAEF59 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B32299412878C5A000585AD8 /* PVLibRetro-Build.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
@@ -4918,6 +5031,11 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Sources/retro\"",
+					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
+					/opt/homebrew/include,
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -4930,10 +5048,11 @@
 		};
 		B36C41092898776C00EAEF59 /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B32299412878C5A000585AD8 /* PVLibRetro-Build.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
@@ -4944,6 +5063,11 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Sources/retro\"",
+					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
+					/opt/homebrew/include,
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;

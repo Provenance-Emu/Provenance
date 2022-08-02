@@ -5222,16 +5222,56 @@
 	</dict>
 	<dict>
 		<key>PVRequiresBIOS</key>
-		<false/>
+		<true/>
 		<key>PVBIOSNames</key>
 		<array>
 			<dict>
 				<key>Description</key>
-				<string>ColecoVision BIOS</string>
+				<string>ZX Spectrum 128 BIOS 
+Required for ZX Spectrum 128 emulation</string>
 				<key>MD5</key>
-				<string>2c66f5911e5b42b8ebe113403548eee7</string>
+				<string>85fede415f4294cc777517d7eada482e</string>
 				<key>Name</key>
-				<string>colecovision.rom</string>
+				<string>zx128.rom</string>
+				<key>Size</key>
+				<integer>8192</integer>
+				<key>Optional</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>ZX Spectrum 48 BIOS 
+Required for ZX Spectrum 16/48 emulation</string>
+				<key>MD5</key>
+				<string>4c42a2f075212361c3117015b107ff68</string>
+				<key>Name</key>
+				<string>zx48.rom</string>
+				<key>Size</key>
+				<integer>8192</integer>
+				<key>Optional</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>Enterprise 128 Expandible OS 2.1 
+Required for EP128</string>
+				<key>MD5</key>
+				<string>f36f24cbb87745fbd2714e4df881db09</string>
+				<key>Name</key>
+				<string>exos21.rom</string>
+				<key>Size</key>
+				<integer>8192</integer>
+				<key>Optional</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>Enterprise 64 Expandible OS 2.0 
+Required for EP64</string>
+				<key>MD5</key>
+				<string>5ad3baaad3b5156d6b60b34229a676fb</string>
+				<key>Name</key>
+				<string>exos20.rom</string>
 				<key>Size</key>
 				<integer>8192</integer>
 				<key>Optional</key>

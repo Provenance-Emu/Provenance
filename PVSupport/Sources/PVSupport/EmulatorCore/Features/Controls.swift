@@ -51,13 +51,20 @@ import Foundation
     func didScroll(_ cursor: GCDeviceCursor)
 
 	var mouseMovedHandler: GCMouseMoved? { get }
+    @objc(mouseMovedAt:)
 	func mouseMoved(atPoint point: CGPoint)
 
+    @objc(leftMouseDownAt:)
 	func leftMouseDown(atPoint point: CGPoint)
 	func leftMouseUp()
 
+    @objc(rightMouseDownAt:)
 	func rightMouseDown(atPoint point: CGPoint)
 	func rightMouseUp()
+    
+    @objc(middleMouseDownAt:)
+    func middleMouseDown(atPoint point: CGPoint)
+    func middleMouseUp()
 }
 
 @objc public enum Touchpad: Int {

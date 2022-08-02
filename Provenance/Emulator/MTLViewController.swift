@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import MetalKit
 import os
+import CoreGraphics
 
 class MTLViewController: UIViewController {
 
@@ -29,7 +30,7 @@ extension MTLViewController: PVRenderDelegate {
 class PVMTLView: MTKView, MTKViewDelegate {
 	private let queue: DispatchQueue = DispatchQueue.init(label: "renderQueue", qos: .userInteractive)
 	private var hasSuspended: Bool = false
-	private let rgbColorSpace: CGColorSpace = CGColorSpaceCreateDeviceRGB()
+    private let rgbColorSpace: CGColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceITUR_709) //CGColorSpaceCreateDeviceRGB()
 	private let context: CIContext
 	private let commandQueue: MTLCommandQueue
 	private var nearestNeighborRendering: Bool

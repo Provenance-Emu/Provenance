@@ -47,9 +47,9 @@
 //    return CGRectMake(0, 0, self.videoWidth, self.videoHeight);
 //}
 //
-- (CGSize)aspectSize {
-    return CGSizeMake(256, 192);
-}
+//- (CGSize)aspectSize {
+//    return CGSizeMake(256, 192);
+//}
 //
 //- (BOOL)rendersToOpenGL {
 //    return YES;
@@ -77,18 +77,18 @@
 //    return videoBuffer;
 //}
 
-- (GLenum)pixelFormat {
-    return GL_RGB;
-}
+//- (GLenum)pixelFormat {
+//    return GL_BGRA;
+//}
+//
+//- (GLenum)pixelType {
+//    return GL_UNSIGNED_SHORT_5_6_5;
+//}
 
-- (GLenum)pixelType {
-    return GL_UNSIGNED_SHORT_5_6_5;
-}
-
-- (GLenum)internalPixelFormat {
-    // TODO: use struct retro_pixel_format var, set with, RETRO_ENVIRONMENT_SET_PIXEL_FORMAT
-    return GL_RGB565;
-}
+//- (GLenum)internalPixelFormat {
+//    // TODO: use struct retro_pixel_format var, set with, RETRO_ENVIRONMENT_SET_PIXEL_FORMAT
+//    return GL_BGRA;
+//}
 
 //- (GLenum)depthFormat {
 //        // 0, GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT24

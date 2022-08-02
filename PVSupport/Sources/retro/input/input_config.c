@@ -211,7 +211,7 @@ static enum retro_key find_rk_bind(const char *str)
          return input_config_key_map[i].key;
    }
 
-   WLOG(@"Key name %s not found.\n", str);
+//   WLOG(@"Key name %s not found.\n", str);
    return RETROK_UNKNOWN;
 }
 
@@ -266,7 +266,7 @@ static void parse_hat(struct retro_keybind *bind, const char *str)
 
    if (!dir)
    {
-      WLOG(@"Found invalid hat in config!\n");
+//      WLOG(@"Found invalid hat in config!\n");
       return;
    }
 

@@ -95,6 +95,7 @@
 //
 //		_callbackQueue = dispatch_queue_create("org.openemu.Desmume2015.CallbackHandlerQueue", queueAttributes);
 //		_callbackHandlers = [[NSMutableDictionary alloc] init];
+        pitch_shift = 1;
         _current = self;
 	}
 	return self;

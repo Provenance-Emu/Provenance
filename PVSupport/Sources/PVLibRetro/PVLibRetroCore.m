@@ -53,9 +53,6 @@
 #include "msg_hash.h"
 #include "verbosity.h"
 
-#pragma clang diagnostic push
-#pragma clang diagnostic error "-Wall"
-
 @interface PVLibRetroCore ()
 {
     BOOL loaded;
@@ -66,14 +63,19 @@ video_driver_t video_gl;
 video_driver_t video_null;
 
 static struct retro_callbacks   retro_ctx;
-//static retro_video_refresh_t video_cb;
-//static retro_audio_sample_t audio_cb;
-//static retro_audio_sample_batch_t audio_batch_cb;
+static retro_video_refresh_t video_cb;
+static retro_audio_sample_t audio_cb;
+static retro_audio_sample_batch_t audio_batch_cb;
 static retro_environment_t environ_cb;
-//static retro_input_poll_t input_poll_cb;
-//static retro_input_state_t input_state_cb;
-
+static retro_input_poll_t input_poll_cb;
+static retro_input_state_t input_state_cb;
+static struct retro_hw_render_callback* hw_render_callback;
+static struct retro_hw_render_context_negotiation_interface* _hw_render_context_negotiation_interface;
 static dylib_t lib_handle;
+
+static retro_frame_time_callback_t frame_time_callback;
+
+static struct retro_camera_callback camera_callbacks;
 
 // MARK: - Runloop
 //static rarch_dir_list_t runloop_shader_dir;
@@ -184,56 +186,17 @@ void retroarch_fail(int error_code, const char *error) {
 }
 
 static void load_symbols(enum rarch_core_type type, struct retro_core_t *current_core);
+// MARK: - Keyboard
 
+static retro_keyboard_event_t* keyboard_event;
+
+// MARK: - Inputs
 /**
  * input_poll:
  *
  * Input polling callback function.
  **/
 void input_poll(void);
-
-/**
- * input_state:
- * @port                 : user number.
- * @device               : device identifier of user.
- * @idx                  : index value of user.
- * @id                   : identifier of key pressed by user.
- *
- * Input state callback function.
- *
- * Returns: Non-zero if the given key (identified by @id) was pressed by the user
- * (assigned to @port).
- **/
-int16_t input_state(unsigned port, unsigned device,
-                    unsigned idx, unsigned id);
-
-static void core_input_state_poll_maybe(void)
-{
-    GET_CURRENT_OR_RETURN();
-    if (current->core_poll_type == POLL_TYPE_NORMAL)
-        input_poll();
-}
-
-static int16_t core_input_state_poll(unsigned port,
-                                     unsigned device, unsigned idx, unsigned id)
-{
-    GET_CURRENT_OR_RETURN(0);
-    if (current->core_poll_type == POLL_TYPE_LATE)
-    {
-        if (!current->core_input_polled)
-            input_poll();
-        
-        current->core_input_polled = true;
-    }
-    return input_state(port, device, idx, id);
-}
-
-void core_set_input_state(retro_ctx_input_state_info_t *info)
-{
-    GET_CURRENT_OR_RETURN();
-    current->core->retro_set_input_state(info->cb);
-}
-
 
 /**
  * input_state:
@@ -316,6 +279,233 @@ int16_t input_state(unsigned port, unsigned device,
 }
 
 
+static void core_input_state_poll_maybe(void)
+{
+    GET_CURRENT_OR_RETURN();
+    if (current->core_poll_type == POLL_TYPE_NORMAL)
+        input_poll();
+}
+
+static int16_t core_input_state_poll(unsigned port,
+                                     unsigned device, unsigned idx, unsigned id)
+{
+    GET_CURRENT_OR_RETURN(0);
+    if (current->core_poll_type == POLL_TYPE_LATE)
+    {
+        if (!current->core_input_polled)
+            input_poll();
+        
+        current->core_input_polled = true;
+    }
+    return input_state(port, device, idx, id);
+}
+
+void core_set_input_state(retro_ctx_input_state_info_t *info)
+{
+    GET_CURRENT_OR_RETURN();
+    current->core->retro_set_input_state(info->cb);
+}
+
+// MARK: - Sensors
+
+static bool sensor_state(void *data, unsigned port,
+      enum retro_sensor_action action, unsigned event_rate)
+{
+    GET_CURRENT_OR_RETURN(false);
+
+   if (event_rate == 0)
+      event_rate = 60;
+
+   switch (action)
+   {
+       case RETRO_SENSOR_ACCELEROMETER_ENABLE: {
+           return [current startAccelerometers];
+       }
+       case RETRO_SENSOR_ACCELEROMETER_DISABLE: {
+           [current stopAccelerometers];
+           return true;
+       }
+       case RETRO_SENSOR_GYROSCOPE_ENABLE: {
+           return [current startGyro];
+       }
+       case RETRO_SENSOR_GYROSCOPE_DISABLE: {
+           [current stopGyro];
+           return true;
+       }
+       case RETRO_SENSOR_ILLUMINANCE_DISABLE: {
+           return true;
+       }
+       case RETRO_SENSOR_DUMMY:
+       case RETRO_SENSOR_ILLUMINANCE_ENABLE:
+           return false;
+      default:
+         return false;
+   }
+
+   return false;
+}
+
+static float get_sensor_input(void *data,
+      unsigned port,unsigned id)
+{
+   android_input_t      *android      = (android_input_t*)data;
+   android_input_data_t *android_data = (android_input_data_t*)&android->copy;
+
+   switch (id)
+   {
+      case RETRO_SENSOR_ACCELEROMETER_X:
+         return android_data->accelerometer_state.x;
+      case RETRO_SENSOR_ACCELEROMETER_Y:
+         return android_data->accelerometer_state.y;
+      case RETRO_SENSOR_ACCELEROMETER_Z:
+         return android_data->accelerometer_state.z;
+   }
+
+   return 0;
+}
+
+// MARK: - Location
+
+static retro_location_start_t location_start() {
+    GET_CURRENT_OR_RETURN();
+
+}
+
+static retro_location_stop_t location_stop() {
+    GET_CURRENT_OR_RETURN();
+
+}
+
+static retro_location_get_position_t location_get_position(double *lat, double *lon,
+                                                           double *horiz_accuracy, double *vert_accuracy) {
+    GET_CURRENT_OR_RETURN();
+
+}
+
+static retro_location_set_interval_t location_set_interval(unsigned interval_ms,
+                                                           unsigned interval_distance) {
+    GET_CURRENT_OR_RETURN();
+
+}
+
+static retro_location_lifetime_status_t location_initialized() {
+    GET_CURRENT_OR_RETURN();
+
+}
+
+static retro_location_lifetime_status_t location_deinitialized() {
+    GET_CURRENT_OR_RETURN();
+
+}
+
+static retro_location_set_interval_t* locatoin_set_position;
+
+// MARK: - Camera
+/* Starts the camera driver. Can only be called in retro_run(). */
+static retro_camera_start_t camera_start() {
+    GET_CURRENT_OR_RETURN();
+}
+
+/* Stops the camera driver. Can only be called in retro_run(). */
+static retro_camera_stop_t camera_stop() {
+    GET_CURRENT_OR_RETURN();
+
+}
+
+/* Callback which signals when the camera driver is initialized
+ * and/or deinitialized.
+ * retro_camera_start_t can be called in initialized callback.
+ */
+static retro_camera_lifetime_status_t* camera_lifetime_status;
+
+/* A callback for raw framebuffer data. buffer points to an XRGB8888 buffer.
+ * Width, height and pitch are similar to retro_video_refresh_t.
+ * First pixel is top-left origin.
+ */
+static retro_camera_frame_raw_framebuffer_t* camera_raw_framebuffer;
+
+/* A callback for when OpenGL textures are used.
+ *
+ * texture_id is a texture owned by camera driver.
+ * Its state or content should be considered immutable, except for things like
+ * texture filtering and clamping.
+ *
+ * texture_target is the texture target for the GL texture.
+ * These can include e.g. GL_TEXTURE_2D, GL_TEXTURE_RECTANGLE, and possibly
+ * more depending on extensions.
+ *
+ * affine points to a packed 3x3 column-major matrix used to apply an affine
+ * transform to texture coordinates. (affine_matrix * vec3(coord_x, coord_y, 1.0))
+ * After transform, normalized texture coord (0, 0) should be bottom-left
+ * and (1, 1) should be top-right (or (width, height) for RECTANGLE).
+ *
+ * GL-specific typedefs are avoided here to avoid relying on gl.h in
+ * the API definition.
+ */
+static retro_camera_frame_opengl_texture_t* camera_raw_frame_opengl_texture;
+}
+
+// MARK: - MIDI
+
+/* Retrieves the current state of the MIDI input.
+ * Returns true if it's enabled, false otherwise. */
+typedef bool (RETRO_CALLCONV *retro_midi_input_enabled_t)(void);
+
+/* Retrieves the current state of the MIDI output.
+ * Returns true if it's enabled, false otherwise */
+typedef bool (RETRO_CALLCONV *retro_midi_output_enabled_t)(void);
+
+/* Reads next byte from the input stream.
+ * Returns true if byte is read, false otherwise. */
+typedef bool (RETRO_CALLCONV *retro_midi_read_t)(uint8_t *byte);
+
+/* Writes byte to the output stream.
+ * 'delta_time' is in microseconds and represent time elapsed since previous write.
+ * Returns true if byte is written, false otherwise. */
+typedef bool (RETRO_CALLCONV *retro_midi_write_t)(uint8_t byte, uint32_t delta_time);
+
+/* Flushes previously written data.
+ * Returns true if successful, false otherwise. */
+typedef bool (RETRO_CALLCONV *retro_midi_flush_t)(void);
+
+struct retro_midi_interface
+{
+   retro_midi_input_enabled_t input_enabled;
+   retro_midi_output_enabled_t output_enabled;
+   retro_midi_read_t read;
+   retro_midi_write_t write;
+   retro_midi_flush_t flush;
+};
+
+// MARK: - OSD
+struct retro_message_ext messageExt;
+
+// MARK: - Microphone
+
+// MARK: - MIDI
+
+// MARK: - VFS
+
+// MARK: - LED
+
+typedef void (RETRO_CALLCONV *retro_set_led_state_t)(int led, int state);
+struct retro_led_interface
+{
+    retro_set_led_state_t set_led_state;
+};
+
+// MARK: - Controllers
+const struct retro_controller_info* controller_info;
+
+// MARK: - 3D HW
+
+static retro_hw_get_proc_address_t libretro_get_proc_address(const char *sym) {
+    if (sym == NULL)
+        return NULL;
+
+    return dlsym(LibHandle, sym);
+}
+
 /**
  * core_init_libretro_cbs:
  * @data           : pointer to retro_callbacks object
@@ -369,6 +559,129 @@ static bool core_init_libretro_cbs(void *data)
     return true;
 }
 
+static void RETRO_CALLCONV audio_callback(int16_t left, int16_t right)
+{
+    __strong PVLibRetroCore *strongCurrent = _current;
+    
+    [[strongCurrent ringBufferAtIndex:0] write:&left maxLength:2];
+    [[strongCurrent ringBufferAtIndex:0] write:&right maxLength:2];
+    
+    strongCurrent = nil;
+}
+
+static void retro_audio_set_state_callback_t audio_set_state(bool enabled) {
+    GET_CURRENT_OR_RETURN();
+    // TODO: Turn audio on and off, or maybe just mute?
+}
+
+static size_t RETRO_CALLCONV audio_batch_callback(const int16_t *data, size_t frames)
+{
+    __strong PVLibRetroCore *strongCurrent = _current;
+    
+    [[strongCurrent ringBufferAtIndex:0] write:data maxLength:frames << 2];
+    
+    strongCurrent = nil;
+    
+    return frames;
+}
+
+typedef uint8_t video_pixel_t;
+static void RETRO_CALLCONV video_callback(const void *data, unsigned width, unsigned height, size_t pitch)
+{
+//    if (!video_driver_is_active())
+//       return;
+    
+    __strong PVLibRetroCore *strongCurrent = _current;
+    
+    static dispatch_queue_t serialQueue;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_CONCURRENT, QOS_CLASS_USER_INTERACTIVE, 0);
+        serialQueue = dispatch_queue_create("com.provenance.video", queueAttributes);
+        
+        DLOG(@"vid: width: %i height: %i, pitch: %zu. _videoWidth: %f, _videoHeight: %f\n", width, height, pitch, strongCurrent.videoWidth, strongCurrent.videoHeight);
+    });
+    // 512
+    video_pixel_t pitch_shift = strongCurrent->pitch_shift; //PITCH_SHIFT; //pitch % 256; // PITCH_SHIFT
+    dispatch_apply(height, serialQueue, ^(size_t y){
+        size_t shifted_pitch = pitch >> pitch_shift;              //pitch is in bytes not pixels
+        size_t offset = y * shifted_pitch;
+        const video_pixel_t *src = (video_pixel_t*)data + offset;
+        video_pixel_t *dst = strongCurrent->videoBuffer + y * width;
+        
+        memcpy(dst, src, sizeof(video_pixel_t)*width);
+    });
+    
+    strongCurrent = nil;
+}
+
+static void RETRO_CALLCONV input_poll_callback(void)
+{
+    __strong PVLibRetroCore *strongCurrent = _current;
+    [strongCurrent pollControllers];
+    //DLOG(@"poll callback");
+}
+
+static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned device, unsigned index, unsigned _id)
+{
+    //DLOG(@"polled input: port: %d device: %d id: %d", port, device, id);
+    
+    __strong PVLibRetroCore *strongCurrent = _current;
+    int16_t value = 0;
+    
+    if (port == 0 & device == RETRO_DEVICE_JOYPAD)
+    {
+        if (strongCurrent.controller1)
+        {
+            value = [strongCurrent controllerValueForButtonID:_id forPlayer:port];
+        }
+        
+        if (value == 0)
+        {
+            value = strongCurrent->_pad[0][_id];
+        }
+    }
+    else if(port == 1 & device == RETRO_DEVICE_JOYPAD)
+    {
+        if (strongCurrent.controller2)
+        {
+            value = [strongCurrent controllerValueForButtonID:_id forPlayer:port];
+        }
+        
+        if (value == 0)
+        {
+            value = strongCurrent->_pad[1][_id];
+        }
+    }
+    else if(port == 0 & device == RETRO_DEVICE_MOUSE)
+    {
+        switch(_id) {
+            case RETRO_DEVICE_ID_MOUSE_X:
+                value = strongCurrent->mouse_x;
+            case RETRO_DEVICE_ID_MOUSE_Y:
+                value = strongCurrent->mouse_y;
+            case RETRO_DEVICE_ID_MOUSE_LEFT:
+                value = strongCurrent->mouseLeft;
+            case RETRO_DEVICE_ID_MOUSE_RIGHT:
+                value = strongCurrent->mouseRight;
+            case RETRO_DEVICE_ID_MOUSE_MIDDLE:
+                value = strongCurrent->mouseMiddle;
+            case RETRO_DEVICE_ID_MOUSE_WHEELUP:
+                value = strongCurrent->mouse_wheel_up;
+            case RETRO_DEVICE_ID_MOUSE_WHEELDOWN:
+                value = strongCurrent->mouse_wheel_down;
+            case RETRO_DEVICE_ID_MOUSE_BUTTON_4:
+                value = strongCurrent->mouse_button_4;
+            case RETRO_DEVICE_ID_MOUSE_BUTTON_5:
+                value = strongCurrent->mouse_button_5;
+        }
+    }
+    
+    strongCurrent = nil;
+    
+    return value;
+}
+
 /**
  * core_set_default_callbacks:
  * @data           : pointer to retro_callbacks object
@@ -383,8 +696,8 @@ bool core_set_default_callbacks(void *data)
         return false;
     
     cbs->frame_cb        = video_driver_frame;
-    //	cbs->sample_cb       = audio_callback;
-    //	cbs->sample_batch_cb = audio_batch_callback;
+    cbs->sample_cb       = audio_callback;
+    cbs->sample_batch_cb = audio_batch_callback;
     cbs->state_cb        = core_input_state_poll;
     cbs->poll_cb         = input_poll;
     
@@ -790,8 +1103,8 @@ void uninit_libretro_sym(struct retro_core_t *current_core)
 #endif
 void audio_driver_unset_callback(void)
 {
-    //   audio_callback.callback  = NULL;
-    //   audio_callback.set_state = NULL;
+//   audio_callback.callback  = NULL;
+//   audio_callback.set_state = NULL;
 }
 
 bool runloop_ctl(enum runloop_ctl_state state, void *data) {
@@ -1449,6 +1762,23 @@ static void core_log(enum retro_log_level level, const char * fmt, ...) {
         exit(EXIT_FAILURE);
     }
 }
+
+static bool rumble(unsigned port,
+                     enum retro_rumble_effect effect, uint16_t strength) {
+    ILOG(@"Rumble: %i, %i, %i", port, effect, strength);
+    GET_CURRENT_OR_RETURN(false);
+    if(!current.supportsRumble) { return false; }
+    float sharpness = 0;
+    switch(effect) {
+        case RETRO_RUMBLE_DUMMY: sharpness = 0.0;
+        case RETRO_RUMBLE_STRONG: sharpness = 0.9;
+        case RETRO_RUMBLE_WEAK: sharpness = 0.4;
+    }
+
+    [current rumbleWithPlayer:port sharpness:sharpness intensity:strength];
+    return true;
+}
+
 /*
  TODO:
  make an obj-c version this calls
@@ -1468,6 +1798,10 @@ static bool environment_callback(unsigned cmd, void *data) {
                                                         */
             ILOG(@"%i", *(const unsigned*)data);
             return false;
+        case RETRO_ENVIRONMENT_SET_CONTROLLER_INFO: {
+            controller_info = (const struct retro_controller_info*)data;
+            return true;
+        }
         case RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE:
                                                       /* const struct retro_disk_control_callback * --
                                                        * Sets an interface which frontend can use to eject and insert
@@ -1478,21 +1812,46 @@ static bool environment_callback(unsigned cmd, void *data) {
 //            const struct retro_disk_control_callback* cb = (const struct retro_disk_control_callback*)data
 //            ILOG(@"%i", cb->data);
             return false;
-        case RETRO_ENVIRONMENT_SET_HW_RENDER:
-                                                      /* struct retro_hw_render_callback * --
-                                                       * Sets an interface to let a libretro core render with
-                                                       * hardware acceleration.
-                                                       * Should be called in retro_load_game().
-                                                       * If successful, libretro cores will be able to render to a
-                                                       * frontend-provided framebuffer.
-                                                       * The size of this framebuffer will be at least as large as
-                                                       * max_width/max_height provided in get_av_info().
-                                                       * If HW rendering is used, pass only RETRO_HW_FRAME_BUFFER_VALID or
-                                                       * NULL to retro_video_refresh_t.
-                                                       */
-//            struct retro_hw_render_callback* cb = (const struct retro_hw_render_callback*)data;
-//            ILOG(@"%i", cb);
+        case RETRO_ENVIRONMENT_SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE: {
+
+            struct retro_hw_render_context_negotiation_interface* cb = (const struct retro_hw_render_context_negotiation_interface*)data;
+            cb->interface_type = RETRO_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_DUMMY;
+            _hw_render_context_negotiation_interface = cb;
+            ILOG(@"interface_type: %i, interface_version: %i", cb->interface_type, cb->interface_version);
             return true;
+        }
+        case RETRO_ENVIRONMENT_SET_HW_SHARED_CONTEXT: {
+            // *(bool*)data;
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_HW_RENDER: {
+            /* struct retro_hw_render_callback * --
+             * Sets an interface to let a libretro core render with
+             * hardware acceleration.
+             * Should be called in retro_load_game().
+             * If successful, libretro cores will be able to render to a
+             * frontend-provided framebuffer.
+             * The size of this framebuffer will be at least as large as
+             * max_width/max_height provided in get_av_info().
+             * If HW rendering is used, pass only RETRO_HW_FRAME_BUFFER_VALID or
+             * NULL to retro_video_refresh_t.
+             */
+            struct retro_hw_render_callback* cb = (const struct retro_hw_render_callback*)data;
+            hw_render_callback = cb;
+            cb->get_proc_address = video_driver_get_proc_address;
+
+            //            ILOG(@"%i", cb);
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK: {
+            /* const struct retro_keyboard_callback * --
+             * Sets a callback function used to notify core about keyboard events.
+             */
+            struct retro_keyboard_callback* cb = (const struct retro_keyboard_callback*)data;
+            cb->callback = keyboard_event;
+            // TODO: Call this on key events
+            return true;
+        }
         case RETRO_ENVIRONMENT_GET_RUMBLE_INTERFACE: {
                                            /* struct retro_rumble_interface * --
                                             * Gets an interface which is used by a libretro core to set
@@ -1504,7 +1863,70 @@ static bool environment_callback(unsigned cmd, void *data) {
                                             * Returns false if rumble functionality is unavailable.
                                             */
             // TODO: Rumble
+            BOOL suppoortsRumble = strongCurrent.supportsRumble;
+            if(suppoortsRumble) {
+                struct retro_rumble_interface* rumbleInterface = (struct retro_rumble_interface*)data;
+                rumbleInterface->set_rumble_state;
+            }
+            return strongCurrent.supportsRumble;
+        }
+        case RETRO_ENVIRONMENT_GET_VFS_INTERFACE: {
+            /* struct retro_vfs_interface_info * --
+             * Gets access to the VFS interface.
+             * VFS presence needs to be queried prior to load_game or any
+             * get_system/save/other_directory being called to let front end know
+             * core supports VFS before it starts handing out paths.
+             * It is recomended to do so in retro_set_environment
+             */
+            struct retro_vfs_interface_info* vfs = (const struct retro_vfs_interface_info*)data;
+            retro_vfs_interface interface;
+            // TODO: set call backs then return true
+            vfs->iface = interface
             return false;
+        }
+        case RETRO_ENVIRONMENT_GET_LED_INTERFACE: {
+            /* struct retro_led_interface * --
+             * Gets an interface which is used by a libretro core to set
+             * state of LEDs.
+             */
+        }
+//        case RETRO_ENVIRONMENT_GET_AUDIO_VIDEO_ENABLE: {
+//        }
+        case RETRO_ENVIRONMENT_GET_FASTFORWARDING: {
+            /* bool * --
+            * Boolean value that indicates whether or not the frontend is in
+            * fastforwarding mode.
+            */
+            *(bool *)data = strongCurrent.isSpeedModified;
+            return true;
+        }
+        case RETRO_ENVIRONMENT_GET_TARGET_REFRESH_RATE: {
+            /* float * --
+            * Float value that lets us know what target refresh rate
+            * is curently in use by the frontend.
+            *
+            * The core can use the returned value to set an ideal
+            * refresh rate/framerate.
+            */
+            *(float *)data = strongCurrent.frameInterval;
+            return true;
+        }
+        case RETRO_ENVIRONMENT_GET_INPUT_BITMASKS: {
+            /* bool * --
+            * Boolean value that indicates whether or not the frontend supports
+            * input bitmasks being returned by retro_input_state_t. The advantage
+            * of this is that retro_input_state_t has to be only called once to
+            * grab all button states instead of multiple times.
+            *
+            * If it returns true, you can pass RETRO_DEVICE_ID_JOYPAD_MASK as 'id'
+            * to retro_input_state_t (make sure 'device' is set to RETRO_DEVICE_JOYPAD).
+            * It will return a bitmask of all the digital buttons.
+            */
+#warning "Test this trua and false"
+            *(bool *)data = false;
+            return true;
+        }
+        case RETRO_ENVIRONMENT_GET_MIDI_INTERFACE: {
         }
         case RETRO_ENVIRONMENT_GET_INPUT_DEVICE_CAPABILITIES: {
                                            /* uint64_t * --
@@ -1517,6 +1939,7 @@ static bool environment_callback(unsigned cmd, void *data) {
                                             */
             // RETRO_DEVICE_MOUSE RETRO_DEVICE_LIGHTGUN RETRO_DEVICE_POINTER RETRO_DEVICE_KEYBOARD
             uint64_t features = (1 << RETRO_DEVICE_JOYPAD) | (1 << RETRO_DEVICE_ANALOG);
+            // TODO: set RETRO_DEVICE_ANALOG only if dual shocks exist or other alaogue inputs?
             if ([strongCurrent conformsToProtocol:@protocol(KeyboardResponder)]) {
                 features  |= 1 << RETRO_DEVICE_KEYBOARD;
             }
@@ -1526,54 +1949,76 @@ static bool environment_callback(unsigned cmd, void *data) {
             if ([strongCurrent conformsToProtocol:@protocol(TouchPadResponder)]) {
                 features  |= 1 << RETRO_DEVICE_POINTER;
             }
-            
+            // RETRO_DEVICE_LIGHTGUN 
             *(uint64_t *)data = features;
             return true;
         }
-        case RETRO_ENVIRONMENT_GET_SENSOR_INTERFACE:
-            return false;
-                                           /* struct retro_sensor_interface * --
-                                            * Gets access to the sensor interface.
-                                            * The purpose of this interface is to allow
-                                            * setting state related to sensors such as polling rate,
-                                            * enabling/disable it entirely, etc.
-                                            * Reading sensor state is done via the normal
-                                            * input_state_callback API.
-                                            */
-        case RETRO_ENVIRONMENT_GET_CAMERA_INTERFACE:
-            return false;
-                                           /* struct retro_camera_callback * --
-                                            * Gets an interface to a video camera driver.
-                                            * A libretro core can use this interface to get access to a
-                                            * video camera.
-                                            * New video frames are delivered in a callback in same
-                                            * thread as retro_run().
-                                            *
-                                            * GET_CAMERA_INTERFACE should be called in retro_load_game().
-                                            *
-                                            * Depending on the camera implementation used, camera frames
-                                            * will be delivered as a raw framebuffer,
-                                            * or as an OpenGL texture directly.
-                                            *
-                                            * The core has to tell the frontend here which types of
-                                            * buffers can be handled properly.
-                                            * An OpenGL texture can only be handled when using a
-                                            * libretro GL core (SET_HW_RENDER).
-                                            * It is recommended to use a libretro GL core when
-                                            * using camera interface.
-                                            *
-                                            * The camera is not started automatically. The retrieved start/stop
-                                            * functions must be used to explicitly
-                                            * start and stop the camera driver.
-                                            */
-        case RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE :
-                                           /* struct retro_location_callback * --
-                                            * Gets access to the location interface.
-                                            * The purpose of this interface is to be able to retrieve
-                                            * location-based information from the host device,
-                                            * such as current latitude / longitude.
-                                            */
-            return false;
+        case RETRO_ENVIRONMENT_GET_SENSOR_INTERFACE: {
+            /* struct retro_sensor_interface * --
+             * Gets access to the sensor interface.
+             * The purpose of this interface is to allow
+             * setting state related to sensors such as polling rate,
+             * enabling/disable it entirely, etc.
+             * Reading sensor state is done via the normal
+             * input_state_callback API.
+             */
+            struct retro_sensor_interface* sensorInterface = (struct retro_sensor_interface*)data;
+            sensorInterface->get_sensor_input = get_sensor_input;
+            sensorInterface->set_sensor_state = set_sensor_state;
+            return true;
+        }
+        case RETRO_ENVIRONMENT_GET_CAMERA_INTERFACE: {
+            
+            /* struct retro_camera_callback * --
+             * Gets an interface to a video camera driver.
+             * A libretro core can use this interface to get access to a
+             * video camera.
+             * New video frames are delivered in a callback in same
+             * thread as retro_run().
+             *
+             * GET_CAMERA_INTERFACE should be called in retro_load_game().
+             *
+             * Depending on the camera implementation used, camera frames
+             * will be delivered as a raw framebuffer,
+             * or as an OpenGL texture directly.
+             *
+             * The core has to tell the frontend here which types of
+             * buffers can be handled properly.
+             * An OpenGL texture can only be handled when using a
+             * libretro GL core (SET_HW_RENDER).
+             * It is recommended to use a libretro GL core when
+             * using camera interface.
+             *
+             * The camera is not started automatically. The retrieved start/stop
+             * functions must be used to explicitly
+             * start and stop the camera driver.
+             */
+            struct retro_camera_callback* cameraInterface = (struct retro_camera_callback*)data;
+            cameraInterface->start = camera_start;
+            cameraInterface->stop = camera_stop;
+            cameraInterface->frame_opengl_texture = camera_raw_frame_opengl_texture;
+            camera_raw_framebuffer = cameraInterface->frame_raw_framebuffer;
+            cameraInterface-> = camera_lifetime_status;
+
+            return true;
+        }
+        case RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE: {
+            /* struct retro_location_callback * --
+             * Gets access to the location interface.
+             * The purpose of this interface is to be able to retrieve
+             * location-based information from the host device,
+             * such as current latitude / longitude.
+             */
+            struct retro_location_callback* location_callback = (struct retro_location_callback*)data;
+            location_callback->start = location_start;
+            location_callback->stop = location_stop;
+            location_callback->get_position = location_get_position;
+            location_callback->set_interval = location_set_interval;
+            location_callback->initialized = location_initialized;
+            location_callback->deinitialized = location_deinitialized;
+
+            return true;
+        }
         case RETRO_ENVIRONMENT_GET_CAN_DUPE:
             *(bool *)data = true;
             return true;
@@ -1591,23 +2036,201 @@ static bool environment_callback(unsigned cmd, void *data) {
             DLOG(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", BIOSPath);
             return true;
         }
-//        case RETRO_ENVIRONMENT_GET_CURRENT_SOFTWARE_FRAMEBUFFER : {
-//            const struct retro_framebuffer *fb =
-//                    (const struct retro_framebuffer *)data;
-//            fb->data = (void *)[strongCurrent videoBuffer];
+        case RETRO_ENVIRONMENT_GET_CURRENT_SOFTWARE_FRAMEBUFFER : {
+            /* struct retro_framebuffer * --
+             * Returns a preallocated framebuffer which the core can use for rendering
+             * the frame into when not using SET_HW_RENDER.
+             * The framebuffer returned from this call must not be used
+             * after the current call to retro_run() returns.
+             *
+             * The goal of this call is to allow zero-copy behavior where a core
+             * can render directly into video memory, avoiding extra bandwidth cost by copying
+             * memory from core to video memory.
+             *
+             * If this call succeeds and the core renders into it,
+             * the framebuffer pointer and pitch can be passed to retro_video_refresh_t.
+             * If the buffer from GET_CURRENT_SOFTWARE_FRAMEBUFFER is to be used,
+             * the core must pass the exact
+             * same pointer as returned by GET_CURRENT_SOFTWARE_FRAMEBUFFER;
+             * i.e. passing a pointer which is offset from the
+             * buffer is undefined. The width, height and pitch parameters
+             * must also match exactly to the values obtained from GET_CURRENT_SOFTWARE_FRAMEBUFFER.
+             *
+             * It is possible for a frontend to return a different pixel format
+             * than the one used in SET_PIXEL_FORMAT. This can happen if the frontend
+             * needs to perform conversion.
+             *
+             * It is still valid for a core to render to a different buffer
+             * even if GET_CURRENT_SOFTWARE_FRAMEBUFFER succeeds.
+             *
+             * A frontend must make sure that the pointer obtained from this function is
+             * writeable (and readable).
+             */
+           /*
+            void *data;                      /* The framebuffer which the core can render into.
+                                                Set by frontend in GET_CURRENT_SOFTWARE_FRAMEBUFFER.
+                                                The initial contents of data are unspecified.
+            unsigned width;                  /* The framebuffer width used by the core. Set by core.
+            unsigned height;                 /* The framebuffer height used by the core. Set by core.
+            size_t pitch;                    /* The number of bytes between the beginning of a scanline,
+                                                and beginning of the next scanline.
+                                                Set by frontend in GET_CURRENT_SOFTWARE_FRAMEBUFFER.
+            enum retro_pixel_format format;  /* The pixel format the core must use to render into data.
+                                                This format could differ from the format used in
+                                                SET_PIXEL_FORMAT.
+                                                Set by frontend in GET_CURRENT_SOFTWARE_FRAMEBUFFER.
+
+            unsigned access_flags;           /* How the core will access the memory in the framebuffer.
+                                                RETRO_MEMORY_ACCESS_* flags.
+                                                Set by core.
+            unsigned memory_flags;           /* Flags telling core how the memory has been mapped.
+                                                RETRO_MEMORY_TYPE_* flags.
+                                                Set by frontend in GET_CURRENT_SOFTWARE_FRAMEBUFFER.
+            */
+            const struct retro_framebuffer *fb =
+                    (const struct retro_framebuffer *)data;
+            retro_framebuffer->data = [strongCurrent videoBuffer];
+            retro_framebuffer->pitch = strongCurrent->pitch_shift;
+            retro_framebuffer->format = strongCurrent.internalPixelFormat;
+            /*
+             #define RETRO_MEMORY_ACCESS_WRITE (1 << 0)
+                /* The core will write to the buffer provided by retro_framebuffer::data.
+             #define RETRO_MEMORY_ACCESS_READ (1 << 1)
+                /* The core will read from retro_framebuffer::data.
+             #define RETRO_MEMORY_TYPE_CACHED (1 << 0)
+                /* The memory in data is cached.
+                 * If not cached, random writes and/or reading from the buffer is expected to be very slow.
+            */
+            retro_framebuffer->memory_flags = RETRO_MEMORY_TYPE_CACHED;
+            return true;
+        }
+//            // TODO: When/if vulkan support add this
+//        case RETRO_ENVIRONMENT_GET_HW_RENDER_INTERFACE : {
+//            struct retro_hw_render_interface* rend = (struct retro_hw_render_interface*)data;
+//            rend->interface_version = 3.1;
+//            rend->interface_type = RETRO_HW_RENDER_INTERFACE_DUMMY;
 //            return true;
 //        }
-//            // TODO: When/if vulkan support add this
-////        case RETRO_ENVIRONMENT_GET_HW_RENDER_INTERFACE : {
-////            struct retro_hw_render_interface* rend = (struct retro_hw_render_interface*)data;
-////
-////            return true;
-////        }
+        case RETRO_ENVIRONMENT_SET_SUPPORT_ACHIEVEMENTS: {
+            strongCurrent->supportsAchievements = *(bool*)data;
+            return true;
+        }
+//        case RETRO_ENVIRONMENT_SET_CORE_OPTIONS: {
+//            /* const struct retro_core_option_definition ** --
+//             * Allows an implementation to signal the environment
+//             * which variables it might want to check for later using
+//             * GET_VARIABLE.
+//             * This allows the frontend to present these variables to
+//             * a user dynamically.
+//             * This should only be called if RETRO_ENVIRONMENT_GET_CORE_OPTIONS_VERSION
+//             * returns an API version of >= 1.
+//             * This should be called instead of RETRO_ENVIRONMENT_SET_VARIABLES.
+//             * This should be called the first time as early as
+//             * possible (ideally in retro_set_environment).
+//             * Afterwards it may be called again for the core to communicate
+//             * updated options to the frontend, but the number of core
+//             * options must not change from the number in the initial call.
+//             *
+//             * 'data' points to an array of retro_core_option_definition structs
+//             * terminated by a { NULL, NULL, NULL, {{0}}, NULL } element.
+//             * retro_core_option_definition::key should be namespaced to not collide
+//             * with other implementations' keys. e.g. A core called
+//             * 'foo' should use keys named as 'foo_option'.
+//             * retro_core_option_definition::desc should contain a human readable
+//             * description of the key.
+//             * retro_core_option_definition::info should contain any additional human
+//             * readable information text that a typical user may need to
+//             * understand the functionality of the option.
+//             * retro_core_option_definition::values is an array of retro_core_option_value
+//             * structs terminated by a { NULL, NULL } element.
+//             * > retro_core_option_definition::values[index].value is an expected option
+//             *   value.
+//             * > retro_core_option_definition::values[index].label is a human readable
+//             *   label used when displaying the value on screen. If NULL,
+//             *   the value itself is used.
+//             * retro_core_option_definition::default_value is the default core option
+//             * setting. It must match one of the expected option values in the
+//             * retro_core_option_definition::values array. If it does not, or the
+//             * default value is NULL, the first entry in the
+//             * retro_core_option_definition::values array is treated as the default.
+//             *
+//             * The number of possible option values should be very limited,
+//             * and must be less than RETRO_NUM_CORE_OPTION_VALUES_MAX.
+//             * i.e. it should be feasible to cycle through options
+//             * without a keyboard.
+//             *
+//             * Example entry:
+//             * {
+//             *     "foo_option",
+//             *     "Speed hack coprocessor X",
+//             *     "Provides increased performance at the expense of reduced accuracy",
+//             *       {
+//             *         { "false",    NULL },
+//             *         { "true",     NULL },
+//             *         { "unstable", "Turbo (Unstable)" },
+//             *         { NULL, NULL },
+//             *     },
+//             *     "false"
+//             * }
+//             *
+//             * Only strings are operated on. The possible values will
+//             * generally be displayed and stored as-is by the frontend.
+//             */
+//            const struct retro_core_option_definition ** options = (retro_core_option_definition **)data;
+//            // TODO: Core options dynamically here
+//            options->
+//            return true;
+//        }
+        case RETRO_ENVIRONMENT_GET_PREFERRED_HW_RENDER: {
+            /* unsigned * --
+             *
+             * Allows an implementation to ask frontend preferred hardware
+             * context to use. Core should use this information to deal
+             * with what specific context to request with SET_HW_RENDER.
+             *
+             * 'data' points to an unsigned variable
+             */
+            *(unsigned*)data = RETRO_HW_CONTEXT_OPENGLES3; // RETRO_HW_CONTEXT_OPENGLES3
+            return true;
+        }
+//        case RETRO_ENVIRONMENT_SET_DISK_CONTROL_EXT_INTERFACE: {
+//            /* const struct retro_disk_control_ext_callback * --
+//             * Sets an interface which frontend can use to eject and insert
+//             * disk images, and also obtain information about individual
+//             * disk image files registered by the core.
+//             * This is used for games which consist of multiple images and
+//             * must be manually swapped out by the user (e.g. PSX, floppy disk
+//             * based systems).
+//             */
+//            enum retro_disk_control_ext_callback ext =
+//               *(const struct retro_disk_control_ext_callback*)data;
+//            // TODO: THIS
+//            /*    retro_set_eject_state_t set_eject_state;
+//             retro_get_eject_state_t get_eject_state;
+//
+//             retro_get_image_index_t get_image_index;
+//             retro_set_image_index_t set_image_index;
+//             retro_get_num_images_t  get_num_images;
+//
+//             retro_replace_image_index_t replace_image_index;
+//             retro_add_image_index_t add_image_index;
+//
+//             /* NOTE: Frontend will only attempt to record/restore
+//              * last used disk index if both set_initial_image()
+//              * and get_image_path() are implemented
+//             retro_set_initial_image_t set_initial_image; /* Optional - may be NULL
+//
+//             retro_get_image_path_t get_image_path;       /* Optional - may be NULL
+//             retro_get_image_label_t get_image_label;     /* Optional - may be NULL
+//            */
+//            ext->
+//            return true;
+//        }
         case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY : {
             NSString *appSupportPath = [strongCurrent saveStatesPath];
             
             *(const char **)data = [appSupportPath UTF8String];
-            DLOG(@"Environ SAVE_DIRECTORY: \"%@\".\n", appSupportPath);
+            DLOG(@"Environ SAVE_DIRECTORY: \"%s\".\n",  (const char *)data);
             return true;
         }
         case RETRO_ENVIRONMENT_GET_CORE_ASSETS_DIRECTORY : {
@@ -1615,6 +2238,53 @@ static bool environment_callback(unsigned cmd, void *data) {
             
             *(const char **)data = [batterySavesPath UTF8String];
             DLOG(@"Environ CONTENT_DIRECTORY: \"%@\".\n", batterySavesPath);
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK: {
+            /* const struct retro_frame_time_callback * --
+             * Lets the core know how much time has passed since last
+             * invocation of retro_run().
+             * The frontend can tamper with the timing to fake fast-forward,
+             * slow-motion, frame stepping, etc.
+             * In this case the delta time will use the reference value
+             * in frame_time_callback..
+             */
+            const struct retro_frame_time_callback* frame_time =
+               *(const struct retro_frame_time_callback*)data;
+            frame_time_callback = frame_time->callback;
+
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK: {
+            /* const struct retro_audio_callback * --
+             * Sets an interface which is used to notify a libretro core about audio
+             * being available for writing.
+             * The callback can be called from any thread, so a core using this must
+             * have a thread safe audio implementation.
+             * It is intended for games where audio and video are completely
+             * asynchronous and audio can be generated on the fly.
+             * This interface is not recommended for use with emulators which have
+             * highly synchronous audio.
+             *
+             * The callback only notifies about writability; the libretro core still
+             * has to call the normal audio callbacks
+             * to write audio. The audio callbacks must be called from within the
+             * notification callback.
+             * The amount of audio data to write is up to the implementation.
+             * Generally, the audio callback will be called continously in a loop.
+             *
+             * Due to thread safety guarantees and lack of sync between audio and
+             * video, a frontend  can selectively disallow this interface based on
+             * internal configuration. A core using this interface must also
+             * implement the "normal" audio interface.
+             *
+             * A libretro core using SET_AUDIO_CALLBACK should also make use of
+             * SET_FRAME_TIME_CALLBACK.
+             */
+            const struct retro_audio_callback* audio =
+               *(const struct retro_audio_callback*)data;
+            audio->callback = audio_callback;
+            audio->set_state = audio_set_state;
             return true;
         }
         case RETRO_ENVIRONMENT_SET_PIXEL_FORMAT: {
@@ -1637,10 +2307,26 @@ static bool environment_callback(unsigned cmd, void *data) {
                     ELOG(@"Environ SET_PIXEL_FORMAT: UNKNOWN.\n");
                   return false;
             }
-
+            // TODO: Remake gl or metal contexts if changed?
             strongCurrent->pix_fmt = pix_fmt;
+            return true;
             break;
          }
+        case RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS: {
+            const struct retro_input_descriptor *descriptor = (const struct retro_input_descriptor*)data;
+            /*    unsigned port;
+             unsigned device;
+             unsigned index;
+             unsigned id;
+
+             /* Human readable description for parameters.
+              * The pointer must remain valid until
+              * retro_unload_game() is called.
+             const char *description;
+            */
+            VLOG(@"RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS: device:%i index:%i id:%i desc: %s\n", descriptor->device, descriptor->index, descriptor->id, descriptor->description);
+            return true;
+        }
         case RETRO_ENVIRONMENT_SET_VARIABLES:
         {
             // We could potentionally ask the user what options they want
@@ -1656,6 +2342,41 @@ static bool environment_callback(unsigned cmd, void *data) {
             break;
 
         }
+//        case RETRO_ENVIRONMENT_SET_PROC_ADDRESS_CALLBACK: {
+//            /* const struct retro_get_proc_address_interface * --
+//             * Allows a libretro core to announce support for the
+//             * get_proc_address() interface.
+//             * This interface allows for a standard way to extend libretro where
+//             * use of environment calls are too indirect,
+//             * e.g. for cases where the frontend wants to call directly into the core.
+//             *
+//             * If a core wants to expose this interface, SET_PROC_ADDRESS_CALLBACK
+//             * **MUST** be called from within retro_set_environment().
+//             */
+//            const struct retro_get_proc_address_interface* get_proc_address_interface = (const struct retro_get_proc_address_interface*)data;
+//            get_proc_address_interface->get_proc_address = get_proc_address_interface;
+//        }
+        case RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO: {
+            /* const struct retro_subsystem_info * --
+             * This environment call introduces the concept of libretro "subsystems".
+             * A subsystem is a variant of a libretro core which supports
+             * different kinds of games.
+             * The purpose of this is to support e.g. emulators which might
+             * have special needs, e.g. Super Nintendo's Super GameBoy, Sufami Turbo.
+             * It can also be used to pick among subsystems in an explicit way
+             * if the libretro implementation is a multi-system emulator itself.
+             *
+             * Loading a game via a subsystem is done with retro_load_game_special(),
+             * and this environment call allows a libretro core to expose which
+             * subsystems are supported for use with retro_load_game_special().
+             * A core passes an array of retro_game_special_info which is terminated
+             * with a zeroed out retro_game_special_info struct.
+             *
+             * If a core wants to use this functionality, SET_SUBSYSTEM_INFO
+             * **MUST** be called from within retro_set_environment().
+             */
+            
+        }
         case RETRO_ENVIRONMENT_GET_GAME_INFO_EXT:
         {
             const struct retro_game_info_ext **game_info_ext =
@@ -1665,7 +2386,7 @@ static bool environment_callback(unsigned cmd, void *data) {
                 ELOG(@"`game_info_ext` is nil.")
                 return false;
             }
-            
+            // TODO: Zip support?
             ////            struct retro_game_info_ext *game_info = (struct retro_game_info_ext*)data;
             //            // TODO: Is there a way to pass `retro_game_info_ext` before callbacks?
             struct retro_game_info_ext *game_info = malloc(sizeof(struct retro_game_info_ext));
@@ -1706,20 +2427,220 @@ static bool environment_callback(unsigned cmd, void *data) {
             return true;
             break;
         }
-        case RETRO_ENVIRONMENT_SET_MINIMUM_AUDIO_LATENCY:
-            return true;
-        case RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE:
+        case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_V2: {
+            // TODO: Core options in one shot here
             return false;
+        }
+        case RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE: {
+            // TODO: if somethig is set this should return true
+            return false;
+        }
+        case RETRO_ENVIRONMENT_GET_THROTTLE_STATE: {
+            /* struct retro_throttle_state * --
+             * Allows an implementation to get details on the actual rate
+             * the frontend is attempting to call retro_run().
+             */
+            struct retro_throttle_state *throttle_state = (struct retro_throttle_state*)data;
+            /* During normal operation. Rate will be equal to the core's internal FPS.
+            #define RETRO_THROTTLE_NONE              0
+
+            /* While paused or stepping single frames. Rate will be 0.
+            #define RETRO_THROTTLE_FRAME_STEPPING    1
+
+            /* During fast forwarding.
+             * Rate will be 0 if not specifically limited to a maximum speed.
+            #define RETRO_THROTTLE_FAST_FORWARD      2
+
+            /* During slow motion. Rate will be less than the core's internal FPS.
+            #define RETRO_THROTTLE_SLOW_MOTION       3
+
+            /* While rewinding recorded save states. Rate can vary depending on the rewind
+             * speed or be 0 if the frontend is not aiming for a specific rate.
+            #define RETRO_THROTTLE_REWINDING         4
+
+            /* While vsync is active in the video driver and the target refresh rate is
+             * lower than the core's internal FPS. Rate is the target refresh rate.
+            #define RETRO_THROTTLE_VSYNC             5
+
+            /* When the frontend does not throttle in any way. Rate will be 0.
+             * An example could be if no vsync or audio output is active.
+            #define RETRO_THROTTLE_UNBLOCKED         6 */
+            if(strongCurrent.gameSpeed == GameSpeedSlow) {
+                throttle_state->mode = RETRO_THROTTLE_SLOW_MOTION;
+            } else if(strongCurrent.gameSpeed == GameSpeedFast) {
+                throttle_state->mode = RETRO_THROTTLE_FAST_FORWARD;
+            } else {
+                // TODO:
+                throttle_state->mode = RETRO_THROTTLE_VSYNC;
+                // RETRO_THROTTLE_NONE normal
+                // RETRO_THROTTLE_UNBLOCKEDif no audio
+                // RETRO_THROTTLE_VSYNC if vsync
+            }
+            return true;
+        }
+        case RETRO_ENVIRONMENT_GET_LIBRETRO_PATH: {
+            /* const char ** --
+             * Retrieves the absolute path from where this libretro
+             * implementation was loaded.
+             * NULL is returned if the libretro was loaded statically
+             * (i.e. linked statically to frontend), or if the path cannot be
+             * determined.
+             * Mostly useful in cooperation with SET_SUPPORT_NO_GAME as assets can
+             * be loaded without ugly hacks.
+             */
+
+            /* Environment 20 was an obsolete version of SET_AUDIO_CALLBACK.
+             * It was not used by any known core at the time,
+             * and was removed from the API. */
+//            const char **
+            const char **path = (const char**)data;
+            NSString *fPath = [[NSBundle bundleForClass:[self class]].bundleURL.path;
+            *path = [fPath cStringUsingEncoding:NSUTF8StringEncoding];
+            return false;
+        }
+        case RETRO_ENVIRONMENT_SET_MINIMUM_AUDIO_LATENCY: {
+            /* const unsigned * --
+             * Sets minimum frontend audio latency in milliseconds.
+             * Resultant audio latency may be larger than set value,
+             * or smaller if a hardware limit is encountered. A frontend
+             * is expected to honour requests up to 512 ms.
+             *
+             * - If value is less than current frontend
+             *   audio latency, callback has no effect
+             * - If value is zero, default frontend audio
+             *   latency is set
+             *
+             * May be used by a core to increase audio latency and
+             * therefore decrease the probability of buffer under-runs
+             * (crackling) when performing 'intensive' operations.
+             * A core utilising RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK
+             * to implement audio-buffer-based frame skipping may achieve
+             * optimal results by setting the audio latency to a 'high'
+             * (typically 6x or 8x) integer multiple of the expected
+             * frame time.
+             *
+             * WARNING: This can only be called from within retro_run().
+             * Calling this can require a full reinitialization of audio
+             * drivers in the frontend, so it is important to call it very
+             * sparingly, and usually only with the users explicit consent.
+             * An eventual driver reinitialize will happen so that audio
+             * callbacks happening after this call within the same retro_run()
+             * call will target the newly initialized driver.
+             */
+            const unsigned latency = *((const unsigned*)data);
+            ILOG(@"Set latency <STUB> %f", latency);
+            UInt32 propSize = sizeof(Float32);
+            AudioSessionSetProperty(kAudioSessionProperty_CurrentHardwareIOBufferDuration,
+                                    &propSize,
+                                    &latency);
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_FASTFORWARDING_OVERRIDE: {
+            /* const struct retro_fastforwarding_override * --
+             * Used by a libretro core to override the current
+             * fastforwarding mode of the frontend.
+             * If NULL is passed to this function, the frontend
+             * will return true if fastforwarding override
+             * functionality is supported (no change in
+             * fastforwarding state will occur in this case).
+             */
+            const struct retro_fastforwarding_override* fastforwarding_override = *((const struct retro_fastforwarding_override*)data);
+            if(fastforwarding_override == nil) {
+                return true
+            }
+            if(fastforwarding_override->fastforward) {
+                if (fastforwarding_override->ratio < 1.0) {
+                    strongCurrent.gameSpeed = GameSpeedSlow;
+                } else {
+                    strongCurrent.gameSpeed = GameSpeedFast;
+                }
+            } else  {
+                strongCurrent.gameSpeed = GameSpeedNormal;
+            }
+            return true;
+        }
+        case RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK: {
+            /* const struct retro_audio_buffer_status_callback * --
+             * Lets the core know the occupancy level of the frontend
+             * audio buffer. Can be used by a core to attempt frame
+             * skipping in order to avoid buffer under-runs.
+             * A core may pass NULL to disable buffer status reporting
+             * in the frontend.
+             */
+
+            return true;
+        }
+        case RETRO_ENVIRONMENT_GET_INPUT_MAX_USERS: {
+            *((unsigned*)data) = [strongCurrent numberOfUsers];
+            return true;
+        }
         case RETRO_ENVIRONMENT_GET_MESSAGE_INTERFACE_VERSION:
         {
             *((unsigned*)data) = 1;
             return true;
         }
+        case RETRO_ENVIRONMENT_GET_USERNAME:
+        {
+            *((const char**)data) = "usename";
+            return true;
+        }
+        case RETRO_ENVIRONMENT_GET_LANGUAGE:
+        {
+            NSString * languageCode = [NSLocale currentLocale].languageCode;
+            retro_language language = RETRO_LANGUAGE_ENGLISH;
+            if([languageCode isEqualToString:@"en"]) {
+                language = RETRO_LANGUAGE_ENGLISH;
+            } else if([languageCode isEqualToString:@"jp"]) {
+                language = RETRO_LANGUAGE_JAPANESE;
+            } else if([languageCode isEqualToString:@"fr"]) {
+                language = RETRO_LANGUAGE_FRENCH;
+            } else if([languageCode isEqualToString:@"es"]) {
+                language = RETRO_LANGUAGE_SPANISH;
+            } else if([languageCode isEqualToString:@"de"]) {
+                language = RETRO_LANGUAGE_GERMAN;
+            } else if([languageCode isEqualToString:@"it"]) {
+                language = RETRO_LANGUAGE_ITALIAN;
+            } else if([languageCode isEqualToString:@"nl"]) {
+                language = RETRO_LANGUAGE_DUTCH;
+            } else if([languageCode isEqualToString:@"pt-br"]) {
+                language = RETRO_LANGUAGE_PORTUGUESE_BRAZIL;
+            } else if([languageCode isEqualToString:@"pt"]) {
+                language = RETRO_LANGUAGE_PORTUGUESE_PORTUGAL;
+            } else if([languageCode isEqualToString:@"ru"]) {
+                language = RETRO_LANGUAGE_RUSSIAN;
+            } else if([languageCode isEqualToString:@"cn"]) {
+                language = RETRO_LANGUAGE_CHINESE_SIMPLIFIED;
+            } else if([languageCode isEqualToString:@"zh-CHT"] || [languageCode isEqualToString:@"zh-Hant"] || [languageCode isEqualToString:@"zh-HK"]) {
+                language = RETRO_LANGUAGE_CHINESE_TRADITIONAL;
+            } else if([languageCode isEqualToString:@"ko"]) {
+                language = RETRO_LANGUAGE_KOREAN;
+            } else if([languageCode isEqualToString:@"pl"]) {
+                language = RETRO_LANGUAGE_POLISH;
+            } else if([languageCode isEqualToString:@"ar"]) {
+                language = RETRO_LANGUAGE_ARABIC;
+            } else if([languageCode isEqualToString:@"el"]) {
+                language = RETRO_LANGUAGE_GREEK;
+            } else if([languageCode isEqualToString:@"he"]) {
+                language = RETRO_LANGUAGE_HEBREW;
+            } else if([languageCode isEqualToString:@"tr"]) {
+                language = RETRO_LANGUAGE_TURKISH;
+            } else if([languageCode isEqualToString:@"fas"]) {
+                language = RETRO_LANGUAGE_PERSIAN;
+            } else if([languageCode isEqualToString:@"vie"]) {
+                language = RETRO_LANGUAGE_VIETNAMESE;
+            }
+            *((unsigned*)data) = language;
+            ILOG(@"Get lang: %i, %@", language, languageCode);
+            return true;
+        }
         case RETRO_ENVIRONMENT_SET_MESSAGE:
         case RETRO_ENVIRONMENT_SET_MESSAGE_EXT:
         {
-            const char* msg = ((struct retro_message*)data)->msg;
-            ILOG(@"%s", msg);
+            struct retro_message* msg = (struct retro_message*)data;
+            unsigned int frames = msg->frames;
+            const char* txt = msg->msg;
+            // TODO: Make an OSD for number of frames
+            ILOG(@"%s", txt);
             return true;
         }
         case RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO:
@@ -1756,9 +2677,10 @@ static bool environment_callback(unsigned cmd, void *data) {
                                                         * If this returns false, the frontend does not acknowledge a
                                                         * changed av_info struct.
                                                         */
+#warning "May need to review or remove this, read cmments above"
             struct retro_system_av_info info = *(const struct retro_system_av_info*)data;
             strongCurrent->av_info = info;
-            ILOG(@"%s", info.geometry.max_width, info.geometry.max_height, info.geometry.base_width, info.geometry.base_height, info.geometry.aspect_ratio, info.timing.sample_rate, info.timing.fps);
+            ILOG(@"max_width: %i, max_height: %i, base_width: %i, base_height: %i, aspect_ratio: %f, sample_rate: %f, timing.fps: %f", info.geometry.max_width, info.geometry.max_height, info.geometry.base_width, info.geometry.base_height, info.geometry.aspect_ratio, info.timing.sample_rate, info.timing.fps);
             return true;
         }
         default : {
@@ -2063,99 +2985,6 @@ static void load_symbols(enum rarch_core_type type, struct retro_core_t *current
 #define PITCH_SHIFT 2
 
 @implementation PVLibRetroCore
-static void RETRO_CALLCONV audio_callback(int16_t left, int16_t right)
-{
-    __strong PVLibRetroCore *strongCurrent = _current;
-    
-    [[strongCurrent ringBufferAtIndex:0] write:&left maxLength:2];
-    [[strongCurrent ringBufferAtIndex:0] write:&right maxLength:2];
-    
-    strongCurrent = nil;
-}
-
-static size_t RETRO_CALLCONV audio_batch_callback(const int16_t *data, size_t frames)
-{
-    __strong PVLibRetroCore *strongCurrent = _current;
-    
-    [[strongCurrent ringBufferAtIndex:0] write:data maxLength:frames << 2];
-    
-    strongCurrent = nil;
-    
-    return frames;
-}
-
-static void RETRO_CALLCONV video_callback(const void *data, unsigned width, unsigned height, size_t pitch)
-{
-//    if (!video_driver_is_active())
-//       return;
-    
-    __strong PVLibRetroCore *strongCurrent = _current;
-    
-    static dispatch_queue_t serialQueue;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_CONCURRENT, QOS_CLASS_USER_INTERACTIVE, 0);
-        serialQueue = dispatch_queue_create("com.provenance.video", queueAttributes);
-        
-        DLOG(@"vid: width: %i height: %i, pitch: %zu. _videoWidth: %f, _videoHeight: %f\n", width, height, pitch, strongCurrent.videoWidth, strongCurrent.videoHeight);
-    });
-    // 512
-    uint16_t pitch_shift = strongCurrent->pitch_shift; //PITCH_SHIFT; //pitch % 256; // PITCH_SHIFT
-    dispatch_apply(height, serialQueue, ^(size_t y){
-        size_t shifted_pitch = pitch >> pitch_shift;              //pitch is in bytes not pixels
-        size_t offset = y * shifted_pitch;
-        const uint32_t *src = (uint16_t*)data + offset;
-        uint32_t *dst = strongCurrent->videoBuffer + y * width;
-        
-        memcpy(dst, src, sizeof(uint32_t)*width);
-    });
-    
-    strongCurrent = nil;
-}
-
-static void RETRO_CALLCONV input_poll_callback(void)
-{
-    __strong PVLibRetroCore *strongCurrent = _current;
-    [strongCurrent pollControllers];
-    //DLOG(@"poll callback");
-}
-
-static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned device, unsigned index, unsigned _id)
-{
-    //DLOG(@"polled input: port: %d device: %d id: %d", port, device, id);
-    
-    __strong PVLibRetroCore *strongCurrent = _current;
-    int16_t value = 0;
-    
-    if (port == 0 & device == RETRO_DEVICE_JOYPAD)
-    {
-        if (strongCurrent.controller1)
-        {
-            value = [strongCurrent controllerValueForButtonID:_id forPlayer:port];
-        }
-        
-        if (value == 0)
-        {
-            value = strongCurrent->_pad[0][_id];
-        }
-    }
-    else if(port == 1 & device == RETRO_DEVICE_JOYPAD)
-    {
-        if (strongCurrent.controller2)
-        {
-            value = [strongCurrent controllerValueForButtonID:_id forPlayer:port];
-        }
-        
-        if (value == 0)
-        {
-            value = strongCurrent->_pad[1][_id];
-        }
-    }
-    
-    strongCurrent = nil;
-    
-    return value;
-}
 
 - (instancetype)init {
     if((self = [super init])) {
@@ -2170,13 +2999,11 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
         
         memset(_pad, 0, sizeof(int16_t) * 24);
 
-//        struct retro_system_info info;
-//        core_get_info(&info);
-//        std::cout << "Loaded core " << info.library_name << " version " << info.library_version << std::endl;
-//        std::cout << "Core needs fullpath " << info.need_fullpath << std::endl;
-//        std::cout << "Running for " << maxframes << " frames with frame timeout of ";
-//        std::cout << frametimeout << " seconds" << std::endl;
-        
+        struct retro_system_info info;
+        core_get_system_info(&info);
+        ILOG(@"Loaded %s version %s \n" \
+             "Core needs fullpath %i\n",  info.library_name, info.library_version, info.need_fullpath);
+
         //        libretro_get_system_info(path,
         //        libretro_get_system_info_lib
         
@@ -2252,6 +3079,7 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
             core_input_polled = false;
             break;
     }
+//    frame_time_callback(glViewController.timeSinceLastDraw
     if (core->retro_run)
         core->retro_run();
     if (core_poll_type == POLL_TYPE_LATE && !core_input_polled)
@@ -2284,467 +3112,9 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 //    core->retro_deinit();
 }
 
-- (NSTimeInterval)frameInterval {
-    NSTimeInterval fps = av_info.timing.fps ?: 60;
-    VLOG(@"%f", fps);
-    return fps;
-}
-
-# pragma mark - Video
-- (void)swapBuffers {
-    if (videoBuffer == videoBufferA) {
-        videoBuffer = videoBufferB;
-    } else {
-        videoBuffer = videoBufferA;
-    }
-}
-
--(BOOL)isDoubleBuffered {
-    return YES;
-}
-
-- (CGFloat)videoWidth {
-    return av_info.geometry.base_width;
-}
-
-- (CGFloat)videoHeight {
-    return av_info.geometry.base_height;
-}
-
-- (const void *)videoBuffer {
-    return videoBuffer;
-}
-
-- (CGRect)screenRect {
-    static struct retro_system_av_info av_info;
-    core->retro_get_system_av_info(&av_info);
-    unsigned height = av_info.geometry.base_height;
-    unsigned width = av_info.geometry.base_width;
-
-//    unsigned height = _videoHeight;
-//    unsigned width = _videoWidth;
-    
-    return CGRectMake(0, 0, width, height);
-}
-
-- (CGSize)aspectSize {
-    static struct retro_system_av_info av_info;
-    core->retro_get_system_av_info(&av_info);
-    float aspect_ratio = av_info.geometry.aspect_ratio;
-    //    unsigned height = av_info.geometry.max_height;
-    //    unsigned width = av_info.geometry.max_width;
-    if (aspect_ratio == 1.0) {
-        return CGSizeMake(1, 1);
-    } else if (aspect_ratio < 1.2 && aspect_ratio > 1.1) {
-        return CGSizeMake(10, 9);
-    } else if (aspect_ratio < 1.26 && aspect_ratio > 1.24) {
-        return CGSizeMake(5, 4);
-    } else if (aspect_ratio < 1.4 && aspect_ratio > 1.3) {
-        return CGSizeMake(4, 3);
-    } else if (aspect_ratio < 1.6 && aspect_ratio > 1.4) {
-        return CGSizeMake(3, 2);
-    } else if (aspect_ratio < 1.7 && aspect_ratio > 1.6) {
-        return CGSizeMake(16, 9);
-    } else {
-        return CGSizeMake(4, 3);
-    }
-}
-
-- (CGSize)bufferSize {
-    static struct retro_system_av_info av_info;
-    core->retro_get_system_av_info(&av_info);
-    unsigned height = av_info.geometry.max_height;
-    unsigned width = av_info.geometry.max_width;
-    
-    return CGSizeMake(width, height);
-}
-
-- (GLenum)pixelFormat {
-    switch (pix_fmt)
-    {
-       case RETRO_PIXEL_FORMAT_0RGB1555:
-            return GL_RGB5_A1; // GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT
-       case RETRO_PIXEL_FORMAT_RGB565:
-            return GL_RGB565;
-       case RETRO_PIXEL_FORMAT_XRGB8888:
-            return GL_RGBA8; // GL_RGBA8
-       default:
-            return GL_RGBA;
-    }
-}
-
-- (GLenum)internalPixelFormat {
-    switch (pix_fmt)
-    {
-       case RETRO_PIXEL_FORMAT_0RGB1555:
-            return GL_RGB5_A1;
-       case RETRO_PIXEL_FORMAT_RGB565:
-            return GL_RGB565;
-       case RETRO_PIXEL_FORMAT_XRGB8888:
-            return GL_RGBA8;
-       default:
-            return GL_RGBA;
-    }
-
-    return GL_RGBA;
-}
-
-- (GLenum)pixelType {
-    // GL_UNSIGNED_SHORT_5_6_5
-    // GL_UNSIGNED_BYTE
-    return GL_UNSIGNED_SHORT;
-}
-
-# pragma mark - Audio
-
-- (double)audioSampleRate {
-    static struct retro_system_av_info av_info;
-    core->retro_get_system_av_info(&av_info);
-    double sample_rate = av_info.timing.sample_rate;
-    return sample_rate ?: 44100;
-}
-
-- (NSUInteger)channelCount {
-    return 2;
-}
-
-@end
-
-# pragma mark - Options
-@implementation PVLibRetroCore (Options)
-- (void *)getVariable:(const char *)variable {
-    WLOG(@"This should be done in sub class: %s", variable);
-    return NULL;
-}
-@end
-
-# pragma mark - Controls
-@implementation PVLibRetroCore (Controls)
-- (void)pollControllers {
-    // TODO: This should warn or something if not in subclass
-    for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++) {
-        GCController *controller = nil;
-        
-        if (self.controller1 && playerIndex == 0) {
-            controller = self.controller1;
-        }
-        else if (self.controller2 && playerIndex == 1)
-        {
-            controller = self.controller2;
-        }
-        
-        if ([controller extendedGamepad]) {
-            GCExtendedGamepad *gamepad     = [controller extendedGamepad];
-            GCControllerDirectionPad *dpad = [gamepad dpad];
-            
-            /* TODO: To support paddles we would need to circumvent libRetro's emulation of analog controls or drop libRetro and talk to stella directly like OpenEMU did */
-            
-            // D-Pad
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_UP]    = (dpad.up.isPressed    || gamepad.leftThumbstick.up.isPressed);
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_DOWN]  = (dpad.down.isPressed  || gamepad.leftThumbstick.down.isPressed);
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_LEFT]  = (dpad.left.isPressed  || gamepad.leftThumbstick.left.isPressed);
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_RIGHT] = (dpad.right.isPressed || gamepad.leftThumbstick.right.isPressed);
-
-            // #688, use second thumb to control second player input if no controller active
-            // some games used both joysticks for 1 player optionally
-            if(playerIndex == 0 && self.controller2 == nil) {
-                _pad[1][RETRO_DEVICE_ID_JOYPAD_UP]    = gamepad.rightThumbstick.up.isPressed;
-                _pad[1][RETRO_DEVICE_ID_JOYPAD_DOWN]  = gamepad.rightThumbstick.down.isPressed;
-                _pad[1][RETRO_DEVICE_ID_JOYPAD_LEFT]  = gamepad.rightThumbstick.left.isPressed;
-                _pad[1][RETRO_DEVICE_ID_JOYPAD_RIGHT] = gamepad.rightThumbstick.right.isPressed;
-            }
-
-            // Fire
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = gamepad.buttonA.isPressed;
-            // Trigger
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] =  gamepad.buttonB.isPressed || gamepad.rightTrigger.isPressed;
-            // Booster
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_X] = gamepad.buttonX.isPressed || gamepad.buttonY.isPressed || gamepad.leftTrigger.isPressed;
-            
-            // Reset
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START]  = gamepad.rightShoulder.isPressed;
-            
-            // Select
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_SELECT] = gamepad.leftShoulder.isPressed;
-   
-            /*
-             #define RETRO_DEVICE_ID_JOYPAD_B        0 == JoystickZeroFire1
-             #define RETRO_DEVICE_ID_JOYPAD_Y        1 == Unmapped
-             #define RETRO_DEVICE_ID_JOYPAD_SELECT   2 == ConsoleSelect
-             #define RETRO_DEVICE_ID_JOYPAD_START    3 == ConsoleReset
-             #define RETRO_DEVICE_ID_JOYPAD_UP       4 == Up
-             #define RETRO_DEVICE_ID_JOYPAD_DOWN     5 == Down
-             #define RETRO_DEVICE_ID_JOYPAD_LEFT     6 == Left
-             #define RETRO_DEVICE_ID_JOYPAD_RIGHT    7 == Right
-             #define RETRO_DEVICE_ID_JOYPAD_A        8 == JoystickZeroFire2
-             #define RETRO_DEVICE_ID_JOYPAD_X        9 == JoystickZeroFire3
-             #define RETRO_DEVICE_ID_JOYPAD_L       10 == ConsoleLeftDiffA
-             #define RETRO_DEVICE_ID_JOYPAD_R       11 == ConsoleRightDiffA
-             #define RETRO_DEVICE_ID_JOYPAD_L2      12 == ConsoleLeftDiffB
-             #define RETRO_DEVICE_ID_JOYPAD_R2      13 == ConsoleRightDiffB
-             #define RETRO_DEVICE_ID_JOYPAD_L3      14 == ConsoleColor
-             #define RETRO_DEVICE_ID_JOYPAD_R3      15 == ConsoleBlackWhite
-             */
-        } else if ([controller gamepad]) {
-            GCGamepad *gamepad = [controller gamepad];
-            GCControllerDirectionPad *dpad = [gamepad dpad];
-            
-            // D-Pad
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_UP]    = dpad.up.isPressed;
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_DOWN]  = dpad.down.isPressed;
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_LEFT]  = dpad.left.isPressed;
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_RIGHT] = dpad.right.isPressed;
-            
-            // Fire
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = gamepad.buttonA.isPressed;
-            // Trigger
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] =  gamepad.buttonB.isPressed;
-            // Booster
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_X] = gamepad.buttonX.isPressed || gamepad.buttonY.isPressed;
-            
-            // Reset
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START]  = gamepad.rightShoulder.isPressed;
-            
-            // Select
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_SELECT] = gamepad.leftShoulder.isPressed;
-            
-        }
-#if TARGET_OS_TV
-        else if ([controller microGamepad]) {
-            GCMicroGamepad *gamepad = [controller microGamepad];
-            GCControllerDirectionPad *dpad = [gamepad dpad];
-            
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_UP]    = dpad.up.value > 0.5;
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_DOWN]  = dpad.down.value > 0.5;
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_LEFT]  = dpad.left.value > 0.5;
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_RIGHT] = dpad.right.value > 0.5;
-
-            // Fire
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = gamepad.buttonX.isPressed;
-            // Trigger
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] = gamepad.buttonA.isPressed;
-        }
-#endif
-    }
-}
-
-- (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player
-{
-    // TODO: This should warn or something if not in subclass
-
-    GCController *controller = nil;
-
-    if (player == 0)
-    {
-        controller = self.controller1;
-    }
-    else
-    {
-        controller = self.controller2;
-    }
-
-    if ([controller extendedGamepad])
-    {
-        GCExtendedGamepad *gamepad = [controller extendedGamepad];
-        GCControllerDirectionPad *dpad = [gamepad dpad];
-        if (PVSettingsModel.shared.use8BitdoM30) // Maps the Sega Controls to the 8BitDo M30 if enabled in Settings / Controller
-        { switch (buttonID) {
-            case PVSega32XButtonUp:
-                return [[[gamepad leftThumbstick] up] value] > 0.1;
-            case PVSega32XButtonDown:
-                return [[[gamepad leftThumbstick] down] value] > 0.1;
-            case PVSega32XButtonLeft:
-                return [[[gamepad leftThumbstick] left] value] > 0.1;
-            case PVSega32XButtonRight:
-                return [[[gamepad leftThumbstick] right] value] > 0.1;
-            case PVSega32XButtonA:
-                return [[gamepad buttonA] isPressed];
-            case PVSega32XButtonB:
-                return [[gamepad buttonB] isPressed];
-            case PVSega32XButtonC:
-                return [[gamepad rightShoulder] isPressed];
-            case PVSega32XButtonX:
-                return [[gamepad buttonX] isPressed];
-            case PVSega32XButtonY:
-                return [[gamepad buttonY] isPressed];
-            case PVSega32XButtonZ:
-                return [[gamepad leftShoulder] isPressed];
-            case PVSega32XButtonMode:
-                return [[gamepad leftTrigger] isPressed];
-            case PVSega32XButtonStart:
-#if TARGET_OS_TV
-                return [[gamepad buttonMenu] isPressed]?:[[gamepad rightTrigger] isPressed];
-#else
-                return [[gamepad rightTrigger] isPressed];
-#endif
-            default:
-                break;
-        }}
-        { switch (buttonID) {
-            case PVSega32XButtonUp:
-                return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] isPressed];
-            case PVSega32XButtonDown:
-                return [[dpad down] isPressed]?:[[[gamepad leftThumbstick] down] isPressed];
-            case PVSega32XButtonLeft:
-                return [[dpad left] isPressed]?:[[[gamepad leftThumbstick] left] isPressed];
-            case PVSega32XButtonRight:
-                return [[dpad right] isPressed]?:[[[gamepad leftThumbstick] right] isPressed];
-            case PVSega32XButtonA:
-                return [[gamepad buttonX] isPressed];
-            case PVSega32XButtonB:
-                return [[gamepad buttonA] isPressed];
-            case PVSega32XButtonC:
-                return [[gamepad buttonB] isPressed];
-            case PVSega32XButtonX:
-                return [[gamepad buttonY] isPressed];
-            case PVSega32XButtonY:
-                return [[gamepad leftShoulder] isPressed];
-            case PVSega32XButtonZ:
-                return [[gamepad rightShoulder] isPressed];
-            case PVSega32XButtonStart:
-                return [[gamepad rightTrigger] isPressed];
-             case PVSega32XButtonMode:
-                return [[gamepad leftTrigger] isPressed];
-            default:
-                break;
-        }}
-    }
-    else if ([controller gamepad])
-    {
-        GCGamepad *gamepad = [controller gamepad];
-        GCControllerDirectionPad *dpad = [gamepad dpad];
-        switch (buttonID) {
-            case PVSega32XButtonUp:
-                return [[dpad up] isPressed];
-            case PVSega32XButtonDown:
-                return [[dpad down] isPressed];
-            case PVSega32XButtonLeft:
-                return [[dpad left] isPressed];
-            case PVSega32XButtonRight:
-                return [[dpad right] isPressed];
-            case PVSega32XButtonA:
-                return [[gamepad buttonY] isPressed];
-            case PVSega32XButtonB:
-                return [[gamepad buttonX] isPressed];
-            case PVSega32XButtonC:
-                return [[gamepad buttonA] isPressed];
-            case PVSega32XButtonX:
-                return [[gamepad buttonB] isPressed];
-            case PVSega32XButtonY:
-                return [[gamepad leftShoulder] isPressed];
-            case PVSega32XButtonZ:
-                return [[gamepad rightShoulder] isPressed];
-            default:
-                break;
-        }
-    }
-#if TARGET_OS_TV
-    else if ([controller microGamepad])
-    {
-        GCMicroGamepad *gamepad = [controller microGamepad];
-        GCControllerDirectionPad *dpad = [gamepad dpad];
-        switch (buttonID) {
-            case PVSega32XButtonUp:
-                return [[dpad up] value] > 0.5;
-                break;
-            case PVSega32XButtonDown:
-                return [[dpad down] value] > 0.5;
-                break;
-            case PVSega32XButtonLeft:
-                return [[dpad left] value] > 0.5;
-                break;
-            case PVSega32XButtonRight:
-                return [[dpad right] value] > 0.5;
-                break;
-            case PVSega32XButtonA:
-                return [[gamepad buttonX] isPressed];
-                break;
-            case PVSega32XButtonB:
-                return [[gamepad buttonA] isPressed];
-                break;
-            default:
-                break;
-        }
-    }
-#endif
-
-    return 0;
-}
-
-@end
-
-# pragma mark - Save States
-@implementation PVLibRetroCore (Saves)
-
-#pragma mark Properties
--(BOOL)supportsSaveStates {
-    return core->retro_get_memory_size(0) != 0 && core->retro_get_memory_data(0) != NULL;
-}
-
-#pragma mark Methods
-- (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error {
-    @synchronized(self) {
-        // Save
-        //  bool retro_serialize_all(DBPArchive& ar, bool unlock_thread)
-        return YES;
-    }
-}
-
-- (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error {
-    @synchronized(self) {
-        BOOL success = NO; // bool retro_unserialize(const void *data, size_t size)
-        if (!success) {
-            if(error != NULL) {
-                NSDictionary *userInfo = @{
-                    NSLocalizedDescriptionKey: @"Failed to save state.",
-                    NSLocalizedFailureReasonErrorKey: @"Core failed to load save state.",
-                    NSLocalizedRecoverySuggestionErrorKey: @""
-                };
-                
-                NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                                        code:PVEmulatorCoreErrorCodeCouldNotLoadState
-                                                    userInfo:userInfo];
-                
-                *error = newError;
-            }
-        }
-        return success;
-    }
-}
-//
-//- (BOOL)saveStateToFileAtPath:(NSString *)fileName {
-//    return NO;
-//}
-//
-//- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
-//    block(NO, nil);
-//}
-//
-//- (BOOL)loadStateFromFileAtPath:(NSString *)fileName {
-//    return NO;
-//}
-//
-//- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
-//    block(NO, nil);
-//}
-//
-@end
-
-@implementation PVLibRetroCore (Cheats)
-
-- (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled {
-    unsigned index = 0;
-    const char* cCode = [code cStringUsingEncoding:NSUTF8StringEncoding];
-    core->retro_cheat_set(index, enabled, cCode);
-    // void retro_cheat_reset(void) { }
-    //    void retro_cheat_set(unsigned index, bool enabled, const char *code) { (void)index; (void)enabled; (void)code; }
-}
-
 @end
 
 unsigned retro_api_version(void)
 {
     return RETRO_API_VERSION;
 }
-
-#pragma clang diagnostic pop

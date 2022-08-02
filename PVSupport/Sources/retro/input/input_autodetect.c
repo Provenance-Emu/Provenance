@@ -232,7 +232,7 @@ static bool input_autoconfigure_joypad_from_conf_dir(
    if(!list)
       return false;
 
-   VLOG(@"Autodetect: %d profiles found\n", list->size);
+//   RETRO_LOG_INFO("Autodetect: %d profiles found\n", list->size);
 
    for (i = 0; i < list->size; i++)
    {
@@ -256,7 +256,7 @@ static bool input_autoconfigure_joypad_from_conf_dir(
 
          config_get_config_path(conf, conf_path, sizeof(conf_path));
 
-         VLOG(@"Autodetect: selected configuration: %s\n", conf_path);
+//          RETRO_LOG_DEBUG("Autodetect: selected configuration: %s\n", conf_path);
          input_autoconfigure_joypad_add(conf, params);
          config_file_free(conf);
          ret = 1;
@@ -333,8 +333,8 @@ bool input_config_autoconfigure_joypad(autoconfig_params_t *params)
       return true;
 #endif
 
-   VLOG(@"Autodetect: no profiles found for %s (%d/%d)\n",
-         params->name, params->vid, params->pid);
+//    RETRO_LOG_INFO("Autodetect: no profiles found for %s (%d/%d)\n",
+//         params->name, params->vid, params->pid);
    snprintf(msg, sizeof(msg), "%s (%ld/%ld) not configured",
          params->name, (long)params->vid, (long)params->pid);
    runloop_msg_queue_push(msg, 2, 60, false);
@@ -362,5 +362,5 @@ void input_config_autoconfigure_disconnect(unsigned i, const char *ident)
 
    snprintf(msg, sizeof(msg), "Device #%u (%s) disconnected.", i, ident);
    runloop_msg_queue_push(msg, 2, 60, false);
-   VLOG(@"Autodetect: %s\n", msg);
+//    RETRO_LOG_INFO("Autodetect: %s\n", msg);
 }

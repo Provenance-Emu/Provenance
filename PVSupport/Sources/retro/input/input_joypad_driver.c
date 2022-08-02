@@ -140,8 +140,8 @@ const input_device_driver_t *input_joypad_init_driver(
       if (string_is_equal(ident, joypad_drivers[i]->ident)
             && joypad_drivers[i]->init(data))
       {
-         VLOG(@"Found joypad driver: \"%s\".\n",
-               joypad_drivers[i]->ident);
+//         VLOG(@"Found joypad driver: \"%s\".\n",
+//               joypad_drivers[i]->ident);
          return joypad_drivers[i];
       }
    }
@@ -164,8 +164,8 @@ const input_device_driver_t *input_joypad_init_first(void *data)
    {
       if (joypad_drivers[i]->init(data))
       {
-         VLOG(@"Found joypad driver: \"%s\".\n",
-               joypad_drivers[i]->ident);
+//         VLOG(@"Found joypad driver: \"%s\".\n",
+//               joypad_drivers[i]->ident);
          return joypad_drivers[i];
       }
    }

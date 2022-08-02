@@ -125,7 +125,7 @@
         return value;
     } else if (V("melonds_jit_enable")) {
         // JIT Enable (Restart); enabled|disabled
-        char * value = strdup("enabled");
+        char * value = strdup("disabled");
         return value;
     } else if (V("melonds_jit_branch_optimisations")) {
         // JIT Branch optimisations; enabled|disabled

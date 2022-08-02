@@ -105,8 +105,8 @@ const hid_driver_t *input_hid_init_first(void)
 
       if (hid_data)
       {
-         VLOG(@"Found HID driver: \"%s\".\n",
-               hid_drivers[i]->ident);
+//         VLOG(@"Found HID driver: \"%s\".\n",
+//               hid_drivers[i]->ident);
          return hid_drivers[i];
       }
    }

@@ -23,6 +23,17 @@ fileprivate var hapticEngines: [CHHapticEngine?] = Array<CHHapticEngine?>.init(r
 
 @objc
 public extension PVEmulatorCore {
+    @objc var numberOfUsers: UInt {
+        if self.controller4 != nil { return 4 }
+        if self.controller3 != nil { return 3 }
+        if self.controller2 != nil { return 2 }
+        if self.controller1 != nil { return 1 }
+        return 1;
+    }
+}
+
+@objc
+public extension PVEmulatorCore {
 	@objc var supportsRumble: Bool { false }
     
 	func rumble() {
@@ -68,7 +79,7 @@ public extension PVEmulatorCore {
         return controller
     }
 
-	func rumble(player: Int) {
+    func rumble(player: Int, sharpness: Float = 0.5, intensity: Float = 1) {
 		guard self.supportsRumble else {
 			WLOG("Rumble called on core that doesn't support it")
 			return
@@ -76,7 +87,18 @@ public extension PVEmulatorCore {
 
         if #available(iOS 14.0, tvOS 14.0, *) {
             if let haptics = hapticEngine(for: player) {
-                // TODO: haptic vibrate
+                let event = CHHapticEvent(eventType: .hapticTransient, parameters: [
+                  CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.5),
+                  CHHapticEventParameter(parameterID: .hapticIntensity, value: 1)
+                ], relativeTime: 0)
+
+                do {
+                  let pattern = try CHHapticPattern(events: [event], parameters: [])
+                  let player = try haptics.makePlayer(with: pattern)
+                  try player.start(atTime: CHHapticTimeImmediate)
+                } catch {
+                    ELOG("\(error.localizedDescription)")
+                }
             }
         } else {
             // Fallback on earlier versions

@@ -57,55 +57,84 @@
 @implementation PVLibRetroCore (Saves)
 
 #pragma mark Properties
--(BOOL)supportsSaveStates {
-    return core->retro_get_memory_size(0) != 0 && core->retro_get_memory_data(0) != NULL;
+-(BOOL) supportsSaveStates {
+    retro_ctx_size_info_t size;
+    core_serialize_size(&size);
+    
+    retro_ctx_memory_info_t memory;
+    core_get_memory(&memory);
+    return size.size > 0 || memory.data != nil;
 }
 
 #pragma mark Methods
-- (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error {
+
+- (BOOL)saveStateToFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error {
     @synchronized(self) {
-        // Save
-        //  bool retro_serialize_all(DBPArchive& ar, bool unlock_thread)
+        retro_ctx_size_info_t size;
+        core_serialize_size(&size);
+
+        retro_ctx_serialize_info_t info;
+        core_serialize(&info);
+
+        NSError *error = nil;
+        NSData *saveStateData = [NSData dataWithBytes:info.data_const length:size.size];
+        BOOL success = [saveStateData writeToFile:path
+                                          options:NSDataWritingAtomic
+                                            error:&error];
+        if (!success) {
+            ELOG(@"Error saving state: %@", [error localizedDescription]);
+            return NO;
+        }
+        
         return YES;
     }
+    
+    return NO;
 }
 
-- (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error {
+- (BOOL)loadStateFromFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error {
     @synchronized(self) {
-        BOOL success = NO; // bool retro_unserialize(const void *data, size_t size)
-        if (!success) {
+        NSData *saveStateData = [NSData dataWithContentsOfFile:path];
+        if (!saveStateData)
+        {
             if(error != NULL) {
                 NSDictionary *userInfo = @{
-                    NSLocalizedDescriptionKey: @"Failed to save state.",
-                    NSLocalizedFailureReasonErrorKey: @"Core failed to load save state.",
-                    NSLocalizedRecoverySuggestionErrorKey: @""
+                    NSLocalizedDescriptionKey: @"Failed to load save state.",
+                    NSLocalizedFailureReasonErrorKey: @"Genesis failed to read savestate data.",
+                    NSLocalizedRecoverySuggestionErrorKey: @"Check that the path is correct and file exists."
                 };
                 
                 NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
                                                         code:PVEmulatorCoreErrorCodeCouldNotLoadState
                                                     userInfo:userInfo];
-                
                 *error = newError;
             }
+            ELOG(@"Unable to load save state from path: %@", path);
+            return NO;
         }
-        return success;
+        
+        retro_ctx_serialize_info_t info;
+        info.size =  [saveStateData length];
+        info.data = [saveStateData bytes];
+        if (!core_unserialize(&info))
+        {
+            if(error != NULL) {
+                NSDictionary *userInfo = @{
+                    NSLocalizedDescriptionKey: @"Failed to load save state.",
+                    NSLocalizedFailureReasonErrorKey: @"Genesis failed to load savestate data.",
+                    NSLocalizedRecoverySuggestionErrorKey: @"Check that the path is correct and file exists."
+                };
+                
+                NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                        code:PVEmulatorCoreErrorCodeCouldNotLoadState
+                                                    userInfo:userInfo];
+                *error = newError;
+            }
+            DLOG(@"Unable to load save state");
+            return NO;
+        }
+        
+        return YES;
     }
 }
-//
-//- (BOOL)saveStateToFileAtPath:(NSString *)fileName {
-//    return NO;
-//}
-//
-//- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
-//    block(NO, nil);
-//}
-//
-//- (BOOL)loadStateFromFileAtPath:(NSString *)fileName {
-//    return NO;
-//}
-//
-//- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
-//    block(NO, nil);
-//}
-//
 @end

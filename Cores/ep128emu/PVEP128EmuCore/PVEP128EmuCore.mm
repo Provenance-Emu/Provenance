@@ -120,29 +120,29 @@
 //- (BOOL)supportsRumble { return NO; }
 //- (BOOL)supportsCheatCode { return NO; }
 
-- (NSTimeInterval)frameInterval {
-    return 13.63;
-}
-
-- (CGSize)aspectSize {
-    return CGSizeMake(4, 3);
-}
-
-- (CGSize)bufferSize {
-    return CGSizeMake(1440, 1080);
-}
-
-- (GLenum)pixelFormat {
-    return GL_RGB;
-}
-
-- (GLenum)pixelType {
-    return GL_UNSIGNED_SHORT_5_6_5;
-}
-
-- (GLenum)internalPixelFormat {
-    return GL_RGB565;
-}
+//- (NSTimeInterval)frameInterval {
+//    return 13.63;
+//}
+//
+//- (CGSize)aspectSize {
+//    return CGSizeMake(4, 3);
+//}
+//
+//- (CGSize)bufferSize {
+//    return CGSizeMake(1440, 1080);
+//}
+//
+//- (GLenum)pixelFormat {
+//    return GL_RGB;
+//}
+//
+//- (GLenum)pixelType {
+//    return GL_UNSIGNED_SHORT_5_6_5;
+//}
+//
+//- (GLenum)internalPixelFormat {
+//    return GL_RGB565;
+//}
 
 # pragma mark - Audio
 

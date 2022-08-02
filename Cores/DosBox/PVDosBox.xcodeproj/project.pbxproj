@@ -256,8 +256,6 @@
 		B3C8A65E2877D62F0037A946 /* PVDosBoxCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVDosBoxCore+Controls.mm */; };
 		B3C8A65F2877D6350037A946 /* PVDosBoxCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVDosBoxCore+Controls.mm */; };
 		B3C8A6602877D6510037A946 /* PVDosBoxCore+Video.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVDosBoxCore+Video.m */; };
-		B3C8A6612877D6B30037A946 /* PVDosBoxCore+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVDosBoxCore+Audio.m */; };
-		B3C8A6622877D6B40037A946 /* PVDosBoxCore+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVDosBoxCore+Audio.m */; };
 		B3EBB2032872B65700EAEB37 /* PVDosBoxCore+Video.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVDosBoxCore+Video.m */; };
 /* End PBXBuildFile section */
 
@@ -1586,7 +1584,6 @@
 			files = (
 				B3135BA326E4CD080047F338 /* PVDosBoxCore.mm in Sources */,
 				B3C8A6602877D6510037A946 /* PVDosBoxCore+Video.m in Sources */,
-				B3C8A6622877D6B40037A946 /* PVDosBoxCore+Audio.m in Sources */,
 				B3C8A65E2877D62F0037A946 /* PVDosBoxCore+Controls.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1718,7 +1715,6 @@
 			files = (
 				B3135B9B26E4CAD40047F338 /* PVDosBoxCore.mm in Sources */,
 				B3C8A65F2877D6350037A946 /* PVDosBoxCore+Controls.mm in Sources */,
-				B3C8A6612877D6B30037A946 /* PVDosBoxCore+Audio.m in Sources */,
 				B3EBB2032872B65700EAEB37 /* PVDosBoxCore+Video.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

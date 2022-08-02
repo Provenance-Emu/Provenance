@@ -196,9 +196,22 @@ struct aspect_ratio_elem aspectratio_lut[ASPECT_RATIO_END] = {
 }
 
 - (GLenum)pixelType {
-    // GL_UNSIGNED_SHORT_5_6_5
-    // GL_UNSIGNED_BYTE
-    return GL_UNSIGNED_SHORT;
+    /* PixelType */
+    /*      GL_UNSIGNED_BYTE */
+//    #define GL_UNSIGNED_SHORT_4_4_4_4                        0x8033
+//    #define GL_UNSIGNED_SHORT_5_5_5_1                        0x8034
+//    #define GL_UNSIGNED_SHORT_5_6_5
+    switch (pix_fmt)
+    {
+       case RETRO_PIXEL_FORMAT_0RGB1555:
+            return GL_UNSIGNED_SHORT_1_5_5_5_REV;
+       case RETRO_PIXEL_FORMAT_RGB565:
+            return GL_UNSIGNED_SHORT_5_6_5;
+       case RETRO_PIXEL_FORMAT_XRGB8888:
+            return 0x84FA; //GL_UNSIGNED_INT_24_8_OES; // GL_UNSIGNED_INT_24_8, GL_COMPRESSED_RGB8_ETC2
+       default:
+            return GL_UNSIGNED_BYTE;
+    }
 }
 
 @end

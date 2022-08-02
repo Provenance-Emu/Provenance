@@ -350,7 +350,8 @@ PV_OBJC_DIRECT_MEMBERS
 - (void)updateInputTexture
 {
     CGRect screenRect = self.emulatorCore.screenRect;
-    MTLPixelFormat pixelFormat = [self getMTLPixelFormatFromGLPixelFormat:self.emulatorCore.pixelFormat type:self.emulatorCore.pixelType];
+    MTLPixelFormat pixelFormat = [self getMTLPixelFormatFromGLPixelFormat:self.emulatorCore.pixelFormat
+                                                                     type:self.emulatorCore.pixelType];
     
     if (self.emulatorCore.rendersToOpenGL) {
         pixelFormat = MTLPixelFormatRGBA8Unorm;
@@ -420,21 +421,29 @@ PV_OBJC_DIRECT_MEMBERS
     {
         case GL_BYTE:
         case GL_UNSIGNED_BYTE:
-            typeWidth = 2;
+        case GL_RGBA8:
+            typeWidth = 1;
             break;
         case GL_SHORT:
         case GL_UNSIGNED_SHORT:
         case GL_UNSIGNED_SHORT_5_6_5:
+        case GL_RGB565:
             typeWidth = 2;
+            break;
+        case GL_UNSIGNED_INT_24_8:
+            typeWidth = 3;
             break;
         case GL_INT:
         case GL_UNSIGNED_INT:
         case GL_FLOAT:
+        case GL_FIXED:
         case 0x8367: // GL_UNSIGNED_INT_8_8_8_8_REV:
             typeWidth = 4;
             break;
-        default:
-            assert(!"Unknown GL pixelType. Add me");
+        default:{
+            NSString *msg = [NSString stringWithFormat:@"Unknown GL pixelType. Add me 0x%02x", pixelType];
+            assert(![msg cStringUsingEncoding:NSUTF8StringEncoding]);
+        }
     }
     
     switch (pixelFormat)
@@ -476,69 +485,84 @@ PV_OBJC_DIRECT_MEMBERS
 
 - (MTLPixelFormat)getMTLPixelFormatFromGLPixelFormat:(GLenum)pixelFormat type:(GLenum)pixelType
 {
-    if (pixelFormat == GL_BGRA && (pixelType == GL_UNSIGNED_BYTE || pixelType == 0x8367 /* GL_UNSIGNED_INT_8_8_8_8_REV */))
-    {
-        return MTLPixelFormatBGRA8Unorm; // MTLPixelFormatBGRA8Unorm_sRGB
+    /*
+     // Same as above, with minor changes for OpenGL ES. Replaced
+     // GL_UNSIGNED_INT_8_8_8_8 with GL_UNSIGNED_BYTE and
+     // GL_BGR with GL_RGB
+     static constexpr std::array<FormatTuple, 5> fb_format_tuples_oes = {{
+         {GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE},            // RGBA8
+         {GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE},              // RGB8
+         {GL_RGB5_A1, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1}, // RGB5A1
+         {GL_RGB565, GL_RGB, GL_UNSIGNED_SHORT_5_6_5},     // RGB565
+         {GL_RGBA4, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4},   // RGBA4
+     }};
+
+     
+     /* Graphics driver requires RGBA byte order data (ABGR on little-endian) (ARM is little by default)
+      * for 32-bit.
+      * This takes effect for overlay and shader cores that wants to load
+      * data into graphics driver. Kinda hackish to place it here, it is only
+      * used for GLES.
+      * TODO: Refactor this better.
+     static struct retro_hw_render_callback hw_render;
+     static const struct retro_hw_render_context_negotiation_interface *hw_render_context_negotiation;
+     
+     */
+    switch(pixelFormat) {
+        case GL_BGRA:
+            switch (pixelType) {
+                case GL_SRGB8_ALPHA8:
+                case 0x84FA:
+                case GL_UNSIGNED_SHORT_8_8_REV_APPLE:
+                    return MTLPixelFormatBGRA8Unorm;
+                case GL_BYTE:
+                    return MTLPixelFormatBGRA8Unorm; //MTLPixelFormatBGRA8Unorm
+                case GL_UNSIGNED_BYTE:
+                    return MTLPixelFormatBGRA8Unorm;
+                case GL_UNSIGNED_SHORT_4_4_4_4:
+                    return MTLPixelFormatABGR4Unorm;
+                case GL_UNSIGNED_SHORT_5_5_5_1:
+                    return MTLPixelFormatBGR5A1Unorm;
+                case GL_UNSIGNED_SHORT_5_6_5:
+                    return MTLPixelFormatB5G6R5Unorm;
+            }
+        case GL_RGB5_A1:
+        case GL_RGBA8:
+        case GL_RGBA:
+            switch (pixelType) {
+                case GL_UNSIGNED_SHORT_1_5_5_5_REV:
+                    return MTLPixelFormatBGR5A1Unorm;
+                case GL_BGRA8_EXT:
+                    return MTLPixelFormatRGBA8Unorm;
+                case 0x84FA:
+                case GL_UNSIGNED_SHORT_8_8_REV_APPLE:
+                    return MTLPixelFormatRGBA8Unorm;
+                case GL_UNSIGNED_BYTE:
+                    return MTLPixelFormatRGBA8Unorm;
+                case GL_UNSIGNED_SHORT_4_4_4_4:
+                    return MTLPixelFormatRGBA16Unorm;
+                case GL_UNSIGNED_SHORT_5_5_5_1:
+                    return MTLPixelFormatA1BGR5Unorm; // MTLPixelFormatBGR5A1Unorm
+                case GL_UNSIGNED_SHORT_5_6_5:
+                    return MTLPixelFormatRGBA16Unorm;
+            }
+        case GL_RGB565:
+        case GL_RGB:
+            switch (pixelType) {
+                case GL_UNSIGNED_BYTE:
+                    return MTLPixelFormatRGBA8Unorm;
+                case GL_UNSIGNED_SHORT:
+                    return MTLPixelFormatRGBA16Unorm;
+                case GL_UNSIGNED_SHORT_4_4_4_4:
+                    return MTLPixelFormatABGR4Unorm;
+                case GL_UNSIGNED_SHORT_5_5_5_1:
+                    return MTLPixelFormatBGR5A1Unorm;
+                case GL_UNSIGNED_SHORT_5_6_5:
+                    return MTLPixelFormatB5G6R5Unorm;
+            }
     }
-    else if (pixelFormat == GL_RGB && pixelType == GL_UNSIGNED_BYTE)
-    {
-        return MTLPixelFormatRGBA8Unorm;
-    }
-    else if (pixelFormat == GL_RGBA && pixelType == GL_UNSIGNED_BYTE)
-    {
-        return MTLPixelFormatRGBA8Unorm;
-    }
-    else if (pixelFormat == GL_RGBA && pixelType == GL_BYTE)
-    {
-        return MTLPixelFormatRGBA8Snorm;
-    }
-    else if (pixelFormat == GL_RGB && pixelType == GL_UNSIGNED_SHORT_5_6_5)
-    {
-        return MTLPixelFormatRGBA16Unorm; // MTLPixelFormatRGBA8Unorm_sRGB
-    }
-    else if (pixelFormat == GL_RGB && pixelType == GL_UNSIGNED_SHORT_8_8_APPLE)
-    {
-        return MTLPixelFormatRGBA16Unorm;
-    }
-    else if (pixelFormat == GL_RGBA && pixelType == GL_UNSIGNED_SHORT_8_8_APPLE)
-    {
-        return MTLPixelFormatRGBA16Unorm;
-    }
-    else if (pixelFormat == GL_RGB && pixelType == GL_UNSIGNED_SHORT_5_5_5_1)
-    {
-        return MTLPixelFormatRGBA16Unorm;
-    }
-    else if (pixelFormat == GL_RGBA && pixelType == GL_UNSIGNED_SHORT_5_6_5)
-    {
-        return MTLPixelFormatRGBA16Unorm;
-    }
-    else if (pixelFormat == GL_RGBA && pixelType == GL_UNSIGNED_SHORT_4_4_4_4)
-    {
-        return MTLPixelFormatRGBA16Unorm;
-    }
-    else if (pixelFormat == GL_RGBA && pixelType == GL_UNSIGNED_SHORT_5_5_5_1)
-    {
-        return MTLPixelFormatA1BGR5Unorm;
-    }
-    else if (pixelFormat == GL_RGBA8)
-    {
-        if (pixelType == GL_UNSIGNED_BYTE) { // 8bit
-            return MTLPixelFormatRGBA8Unorm;
-        } else if (pixelType == GL_UNSIGNED_SHORT) { // 16bit
-//            MTLPixelFormatRGB10A2Unorm = 90,
-//            MTLPixelFormatRGB10A2Uint  = 91,
-//
-//            MTLPixelFormatRG11B10Float = 92,
-//            MTLPixelFormatRGB9E5Float = 93,
-            return MTLPixelFormatRGBA32Uint;
-        }
-    }
-    else if (pixelFormat == GL_RGB565)
-    {
-        return MTLPixelFormatRGBA16Unorm;
-    }
-    
-    ELOG(@"Unknown GL pixelFormat. Add pixelFormat: %0x pixelType: %0x", pixelFormat, pixelType);
+
+    ELOG(@"Unknown GL pixelFormat. Add pixelFormat: 0x%02x pixelType: 0x%02x", pixelFormat, pixelType);
 
     assert(!"Unknown GL pixelFormat. Add it");
     return MTLPixelFormatInvalid;
@@ -564,7 +588,10 @@ PV_OBJC_DIRECT_MEMBERS
     
     Shader* blitterShader = MetalShaderManager.sharedInstance.blitterShaders.firstObject;
     desc.fragmentFunction = [lib newFunctionWithName:blitterShader.function];
-    desc.colorAttachments[0].pixelFormat = self.mtlview.currentDrawable.layer.pixelFormat;
+    /* This property controls the pixel format of the MTLTexture objects.
+     * The two supported values are MTLPixelFormatBGRA8Unorm and
+     * MTLPixelFormatBGRA8Unorm_sRGB. */
+    desc.colorAttachments[0].pixelFormat = self.mtlview.colorPixelFormat; //self.mtlview.currentDrawable.layer.pixelFormat;
     
     _blitPipeline = [_device newRenderPipelineStateWithDescriptor:desc error:&error];
     if(error) {
@@ -592,7 +619,7 @@ PV_OBJC_DIRECT_MEMBERS
         
     // Filter shader
     desc.fragmentFunction = [lib newFunctionWithName:filterShader.function];
-    desc.colorAttachments[0].pixelFormat = self.mtlview.currentDrawable.layer.pixelFormat;
+    desc.colorAttachments[0].pixelFormat = self.mtlview.colorPixelFormat;;
     
     _effectFilterPipeline = [_device newRenderPipelineStateWithDescriptor:desc error:&error];
     if(error) {
@@ -731,6 +758,8 @@ PV_OBJC_DIRECT_MEMBERS
             
             id<MTLBlitCommandEncoder> encoder = [commandBuffer blitCommandEncoder];
             
+            [encoder optimizeContentsForGPUAccess:outputTex];
+
             [encoder copyFromBuffer:uploadBuffer
                        sourceOffset:0
                   sourceBytesPerRow:outputBytesPerRow
@@ -739,7 +768,8 @@ PV_OBJC_DIRECT_MEMBERS
                            toTexture:strongself.inputTexture
                    destinationSlice:0
                    destinationLevel:0
-                  destinationOrigin:MTLOriginMake(0, 0, 0)];
+                  destinationOrigin:MTLOriginMake(0, 0, 0)
+                            options:MTLBlitOptionNone];
             
             [encoder endEncoding];
         }
@@ -1044,7 +1074,9 @@ PV_OBJC_DIRECT_MEMBERS
     id<MTLBlitCommandEncoder> encoder = [commandBuffer blitCommandEncoder];
     
     CGRect screenRect = self.emulatorCore.screenRect;
-    
+    [encoder optimizeContentsForGPUAccess:backingMTLTexture];
+    [encoder optimizeContentsForCPUAccess:_inputTexture];
+
     [encoder copyFromTexture:backingMTLTexture
                  sourceSlice:0
                  sourceLevel:0

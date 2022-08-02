@@ -36,7 +36,7 @@
 
 - (instancetype)init {
 	if (self = [super init]) {
-        pitch_shift = 4;
+        pitch_shift = 2;
 	}
 
 	_current = self;
@@ -111,7 +111,6 @@
     if (V("dosbox_pure_force60fps")) {
         // true|false
         // "Enable this to force output at 60FPS. Use this if you encounter screen tearing or vsync issues.", NULL
-
         char *value = strdup("true");
         return value;
     } else if (V("dosbox_pure_perfstats")) {
@@ -156,67 +155,76 @@
         char *value = strdup("svga_s3");
         return value;
     } else if (V("dosbox_pure_aspect_correction")) {
-        char *value = strdup("false");
+        char *value = strdup("true");
         return value;
     } else if (V("dosbox_pure_memory_size")) {
-        char *value = strdup("16");
+        char *value = strdup("24");
         return value;
     } else if (V("dosbox_pure_cpu_type")) {
-        char *value = strdup("pentium_slow"); // auto
+        char *value = strdup("auto"); //  pentium_slow
         return value;
     } else if (V("dosbox_pure_cpu_core")) {
         char *value = strdup("auto");
         return value;
     } else if (V("dosbox_pure_keyboard_layout")) {
-        char *value = strdup("us");
+        const char* code = [NSLocale.currentLocale.countryCode cStringUsingEncoding:NSUTF8StringEncoding];
+        char *value = strdup(code);
         return value;
-    } else {
-        ELOG(@"Unprocessed var: %s", variable);
-        return nil;
-    }
-    
-    /*
-     "dosbox_pure_mouse_wheel",
-     "Bind Mouse Wheel To Key", NULL,
-     "Bind mouse wheel up and down to two keyboard keys to be able to use it in DOS games.", NULL,
-     "Input",
-     {
-         { "67/68", "Left-Bracket/Right-Bracket" },
-         { "72/71", "Comma/Period" },
-         { "79/82", "Page-Up/Page-Down" },
-         { "78/81", "Home/End" },
-         { "80/82", "Delete/Page-Down" },
-         { "64/65", "Minus/Equals" },
-         { "69/70", "Semicolon/Quote" },
-         { "99/100", "Numpad Minus/Plus" },
-         { "97/98", "Numpad Divide/Multiply" },
-         { "84/85", "Up/Down" },
-         { "83/86", "Left/Right" },
-         { "11/13", "Q/E" },
-         { "none", "Disable" },
-     },
-     "67/68"
-     
-     "dosbox_pure_cycles",
-     "Emulated Performance", NULL,
-     "The raw performance that DOSBox will try to emulate." "\n\n", NULL, //end of Performance section
-     "Performance",
-     {
-         { "auto",    "AUTO - DOSBox will try to detect performance needs (default)" },
-         { "max",     "MAX - Emulate as many instructions as possible" },
-         { "315",     "8086/8088, 4.77 MHz from 1980 (315 cps)" },
-         { "1320",    "286, 6 MHz from 1982 (1320 cps)" },
-         { "2750",    "286, 12.5 MHz from 1985 (2750 cps)" },
-         { "4720",    "386, 20 MHz from 1987 (4720 cps)" },
-         { "7800",    "386DX, 33 MHz from 1989 (7800 cps)" },
-         { "13400",   "486DX, 33 MHz from 1990 (13400 cps)" },
-         { "26800",   "486DX2, 66 MHz from 1992 (26800 cps)" },
-         { "77000",   "Pentium, 100 MHz from 1995 (77000 cps)" },
-         { "200000",  "Pentium II, 300 MHz from 1997 (200000 cps)" },
-         { "500000",  "Pentium III, 600 MHz from 1999 (500000 cps)" },
-         { "1000000", "AMD Athlon, 1.2 GHz from 2000 (1000000 cps)" },
-     },
-     
+    } else if (V("dosbox_pure_mouse_input")) {
+        char *value = strdup("true");
+        return value;
+    } else if (V("dosbox_pure_keyboard_layout")) {
+        const char *code = [NSLocale.currentLocale.countryCode cStringUsingEncoding:NSUTF8StringEncoding];
+        char *value = strdup(code);
+        return value;
+    } else if (V("dosbox_pure_keyboard_layout")) {
+        /*
+         "The raw performance that DOSBox will try to emulate." "\n\n", NULL, //end of Performance section
+         "Performance",
+         {
+             { "auto",    "AUTO - DOSBox will try to detect performance needs (default)" },
+             { "max",     "MAX - Emulate as many instructions as possible" },
+             { "315",     "8086/8088, 4.77 MHz from 1980 (315 cps)" },
+             { "1320",    "286, 6 MHz from 1982 (1320 cps)" },
+             { "2750",    "286, 12.5 MHz from 1985 (2750 cps)" },
+             { "4720",    "386, 20 MHz from 1987 (4720 cps)" },
+             { "7800",    "386DX, 33 MHz from 1989 (7800 cps)" },
+             { "13400",   "486DX, 33 MHz from 1990 (13400 cps)" },
+             { "26800",   "486DX2, 66 MHz from 1992 (26800 cps)" },
+             { "77000",   "Pentium, 100 MHz from 1995 (77000 cps)" },
+             { "200000",  "Pentium II, 300 MHz from 1997 (200000 cps)" },
+             { "500000",  "Pentium III, 600 MHz from 1999 (500000 cps)" },
+             { "1000000", "AMD Athlon, 1.2 GHz from 2000 (1000000 cps)" },
+         },
+         */
+        char *value = strdup("auto");
+        return value;
+    } else if (V("dosbox_pure_cycles")) {
+        /*
+         "dosbox_pure_cycles",
+         "Emulated Performance", NULL,
+         "The raw performance that DOSBox will try to emulate." "\n\n", NULL, //end of Performance section
+         "Performance",
+         {
+             { "auto",    "AUTO - DOSBox will try to detect performance needs (default)" },
+             { "max",     "MAX - Emulate as many instructions as possible" },
+             { "315",     "8086/8088, 4.77 MHz from 1980 (315 cps)" },
+             { "1320",    "286, 6 MHz from 1982 (1320 cps)" },
+             { "2750",    "286, 12.5 MHz from 1985 (2750 cps)" },
+             { "4720",    "386, 20 MHz from 1987 (4720 cps)" },
+             { "7800",    "386DX, 33 MHz from 1989 (7800 cps)" },
+             { "13400",   "486DX, 33 MHz from 1990 (13400 cps)" },
+             { "26800",   "486DX2, 66 MHz from 1992 (26800 cps)" },
+             { "77000",   "Pentium, 100 MHz from 1995 (77000 cps)" },
+             { "200000",  "Pentium II, 300 MHz from 1997 (200000 cps)" },
+             { "500000",  "Pentium III, 600 MHz from 1999 (500000 cps)" },
+             { "1000000", "AMD Athlon, 1.2 GHz from 2000 (1000000 cps)" },
+         },
+         */
+        char *value = strdup("auto");
+        return value;
+    } else if (V("dosbox_pure_cpu_type")) {
+        /*
          "dosbox_pure_cpu_type",
          "CPU Type", NULL,
          "Emulated CPU type. Auto is the fastest choice." "\n"
@@ -235,29 +243,66 @@
          },
          "auto"
      },
-     {
-         "dosbox_pure_cpu_core",
-         "Advanced > CPU Core", NULL,
-         "Emulation method (DOSBox CPU core) used.", NULL,
-         "System",
+         */
+        char *value = strdup("auto");
+        return value;
+    } else if (V("dosbox_pure_cpu_core")) {
+        /*
          {
-             #if defined(C_DYNAMIC_X86)
-             { "auto", "Auto - Real-mode games use normal, protected-mode games use dynamic" },
-             { "dynamic", "Dynamic - Dynamic recompilation (fast, using dynamic_x86 implementation)" },
-             #elif defined(C_DYNREC)
-             { "auto", "Auto - Real-mode games use normal, protected-mode games use dynamic" },
-             { "dynamic", "Dynamic - Dynamic recompilation (fast, using dynrec implementation)" },
+             "dosbox_pure_cpu_core",
+             "Advanced > CPU Core", NULL,
+             "Emulation method (DOSBox CPU core) used.", NULL,
+             "System",
+             {
+                 #if defined(C_DYNAMIC_X86)
+                 { "auto", "Auto - Real-mode games use normal, protected-mode games use dynamic" },
+                 { "dynamic", "Dynamic - Dynamic recompilation (fast, using dynamic_x86 implementation)" },
+                 #elif defined(C_DYNREC)
+                 { "auto", "Auto - Real-mode games use normal, protected-mode games use dynamic" },
+                 { "dynamic", "Dynamic - Dynamic recompilation (fast, using dynrec implementation)" },
+                 #endif
+                 { "normal", "Normal (interpreter)" },
+                 { "simple", "Simple (interpreter optimized for old real-mode games)" },
+             },
+             #if defined(C_DYNAMIC_X86) || defined(C_DYNREC)
+             "auto"
+             #else
+             "normal"
              #endif
-             { "normal", "Normal (interpreter)" },
-             { "simple", "Simple (interpreter optimized for old real-mode games)" },
          },
-         #if defined(C_DYNAMIC_X86) || defined(C_DYNREC)
-         "auto"
-         #else
-         "normal"
-         #endif
-     },
-     */
+         */
+        char *value = strdup("auto");
+        return value;
+    } else if (V("dosbox_pure_mouse_wheel")) {
+        /*
+         "dosbox_pure_mouse_wheel",
+         "Bind Mouse Wheel To Key", NULL,
+         "Bind mouse wheel up and down to two keyboard keys to be able to use it in DOS games.", NULL,
+         "Input",
+         {
+             { "67/68", "Left-Bracket/Right-Bracket" },
+             { "72/71", "Comma/Period" },
+             { "79/82", "Page-Up/Page-Down" },
+             { "78/81", "Home/End" },
+             { "80/82", "Delete/Page-Down" },
+             { "64/65", "Minus/Equals" },
+             { "69/70", "Semicolon/Quote" },
+             { "99/100", "Numpad Minus/Plus" },
+             { "97/98", "Numpad Divide/Multiply" },
+             { "84/85", "Up/Down" },
+             { "83/86", "Left/Right" },
+             { "11/13", "Q/E" },
+             { "none", "Disable" },
+         },
+         "67/68"
+         
+         */
+        char *value = strdup("79/82");
+        return value;
+    } else {
+        WLOG(@"Unprocessed var: %s", variable);
+        return nil;
+    }
 #undef V
     return NULL;
 }
