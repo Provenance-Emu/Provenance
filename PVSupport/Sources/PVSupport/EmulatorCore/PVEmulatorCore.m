@@ -13,6 +13,7 @@
 #import "PVLogging.h"
 #import "DebugUtils.h"
 @import AVFoundation;
+@import AVFAudio;
 @import UIKit;
 
 /* Timing */
@@ -117,6 +118,14 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 			shouldStop = NO;
             self.gameSpeed = GameSpeedNormal;
 			MAKEWEAK(self);
+
+            success =
+            [[AVAudioSession sharedInstance] setPreferredOutputNumberOfChannels:self.channelCount
+                                                                          error:&error];
+            
+            if (!success) {
+                ELOG(@"%@", error.localizedDescription);
+            }
 			[NSThread detachNewThreadWithBlock:^{
 				MAKESTRONG(self);
 				[strongself emulationLoopThread];
@@ -424,6 +433,11 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 }
 
 #pragma mark - Audio
+
+- (void)setAudioEnabled:(BOOL)enabled {
+//    [[PVSettingsModel shared] setVolume:enabled ? 1]
+//    return [[AVAudioSession sharedInstance] sampleRate];
+}
 
 - (double)audioSampleRate {
 	[self doesNotImplementSelector:_cmd];

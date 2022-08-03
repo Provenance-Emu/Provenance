@@ -345,21 +345,21 @@ static bool sensor_state(void *data, unsigned port,
    return false;
 }
 
-static float get_sensor_input(void *data,
+static retro_sensor_get_input_t get_sensor_input(void *data,
       unsigned port,unsigned id)
 {
-   android_input_t      *android      = (android_input_t*)data;
-   android_input_data_t *android_data = (android_input_data_t*)&android->copy;
-
-   switch (id)
-   {
-      case RETRO_SENSOR_ACCELEROMETER_X:
-         return android_data->accelerometer_state.x;
-      case RETRO_SENSOR_ACCELEROMETER_Y:
-         return android_data->accelerometer_state.y;
-      case RETRO_SENSOR_ACCELEROMETER_Z:
-         return android_data->accelerometer_state.z;
-   }
+//   android_input_t      *android      = (android_input_t*)data;
+//   android_input_data_t *android_data = (android_input_data_t*)&android->copy;
+//
+//   switch (id)
+//   {
+//      case RETRO_SENSOR_ACCELEROMETER_X:
+//         return android_data->accelerometer_state.x;
+//      case RETRO_SENSOR_ACCELEROMETER_Y:
+//         return android_data->accelerometer_state.y;
+//      case RETRO_SENSOR_ACCELEROMETER_Z:
+//         return android_data->accelerometer_state.z;
+//   }
 
    return 0;
 }
@@ -367,56 +367,60 @@ static float get_sensor_input(void *data,
 // MARK: - Location
 
 static retro_location_start_t location_start() {
-    GET_CURRENT_OR_RETURN();
-
+    GET_CURRENT_OR_RETURN(false);
+    return false;
 }
 
 static retro_location_stop_t location_stop() {
-    GET_CURRENT_OR_RETURN();
-
+    GET_CURRENT_OR_RETURN(false);
+    return false;
 }
 
 static retro_location_get_position_t location_get_position(double *lat, double *lon,
                                                            double *horiz_accuracy, double *vert_accuracy) {
-    GET_CURRENT_OR_RETURN();
-
+    GET_CURRENT_OR_RETURN(false);
+    return false;
 }
 
 static retro_location_set_interval_t location_set_interval(unsigned interval_ms,
                                                            unsigned interval_distance) {
-    GET_CURRENT_OR_RETURN();
-
+    GET_CURRENT_OR_RETURN(false);
+    return false;
 }
 
-static retro_location_lifetime_status_t location_initialized() {
-    GET_CURRENT_OR_RETURN();
-
-}
-
-static retro_location_lifetime_status_t location_deinitialized() {
-    GET_CURRENT_OR_RETURN();
-
-}
+static retro_location_lifetime_status_t* location_initialized;
+//static retro_location_lifetime_status_t location_initialized() {
+//    GET_CURRENT_OR_RETURN(false);
+//    return false;
+//}
+//
+static retro_location_lifetime_status_t* location_deinitialized;
+//static retro_location_lifetime_status_t location_deinitialized() {
+//    GET_CURRENT_OR_RETURN(false);
+//    return false;
+//}
 
 static retro_location_set_interval_t* locatoin_set_position;
 
 // MARK: - Camera
 /* Starts the camera driver. Can only be called in retro_run(). */
 static retro_camera_start_t camera_start() {
-    GET_CURRENT_OR_RETURN();
+    GET_CURRENT_OR_RETURN(false);
+    return false;
 }
 
 /* Stops the camera driver. Can only be called in retro_run(). */
 static retro_camera_stop_t camera_stop() {
-    GET_CURRENT_OR_RETURN();
-
+    GET_CURRENT_OR_RETURN(false);
+    return false;
 }
 
 /* Callback which signals when the camera driver is initialized
  * and/or deinitialized.
  * retro_camera_start_t can be called in initialized callback.
  */
-static retro_camera_lifetime_status_t* camera_lifetime_status;
+static retro_camera_lifetime_status_t* camera_lifetime_status_initialized;
+static retro_camera_lifetime_status_t* camera_lifetime_status_deinitialized;
 
 /* A callback for raw framebuffer data. buffer points to an XRGB8888 buffer.
  * Width, height and pitch are similar to retro_video_refresh_t.
@@ -443,7 +447,6 @@ static retro_camera_frame_raw_framebuffer_t* camera_raw_framebuffer;
  * the API definition.
  */
 static retro_camera_frame_opengl_texture_t* camera_raw_frame_opengl_texture;
-}
 
 // MARK: - MIDI
 
@@ -468,42 +471,53 @@ typedef bool (RETRO_CALLCONV *retro_midi_write_t)(uint8_t byte, uint32_t delta_t
  * Returns true if successful, false otherwise. */
 typedef bool (RETRO_CALLCONV *retro_midi_flush_t)(void);
 
-struct retro_midi_interface
-{
-   retro_midi_input_enabled_t input_enabled;
-   retro_midi_output_enabled_t output_enabled;
-   retro_midi_read_t read;
-   retro_midi_write_t write;
-   retro_midi_flush_t flush;
-};
+//struct retro_midi_interface
+//{
+//   retro_midi_input_enabled_t input_enabled;
+//   retro_midi_output_enabled_t output_enabled;
+//   retro_midi_read_t read;
+//   retro_midi_write_t write;
+//   retro_midi_flush_t flush;
+//};
 
 // MARK: - OSD
 struct retro_message_ext messageExt;
 
 // MARK: - Microphone
 
-// MARK: - MIDI
-
 // MARK: - VFS
 
 // MARK: - LED
 
-typedef void (RETRO_CALLCONV *retro_set_led_state_t)(int led, int state);
-struct retro_led_interface
-{
-    retro_set_led_state_t set_led_state;
-};
+static retro_set_led_state_t led_set_state(int led, int state) {
+    // TODO: Make something light up
+    GET_CURRENT_OR_RETURN(false);
+    return false;
+}
 
 // MARK: - Controllers
 const struct retro_controller_info* controller_info;
 
 // MARK: - 3D HW
 
-static retro_hw_get_proc_address_t libretro_get_proc_address(const char *sym) {
-    if (sym == NULL)
+static retro_hw_get_proc_address_t libretro_get_proc_address(const char *symbol_name) {
+    if (symbol_name == NULL)
         return NULL;
+    
+    CFURLRef bundle_url = CFURLCreateWithFileSystemPath(kCFAllocatorDefault,
+          CFSTR
+          ("/System/Library/Frameworks/OpenGLES.framework"),
+          kCFURLPOSIXPathStyle, true);
+    CFBundleRef opengl_bundle_ref  = CFBundleCreate(kCFAllocatorDefault, bundle_url);
+    CFStringRef function =  CFStringCreateWithCString(kCFAllocatorDefault, symbol_name,
+          kCFStringEncodingASCII);
+    retro_hw_get_proc_address_t ret = (gfx_ctx_proc_t)CFBundleGetFunctionPointerForName(
+          opengl_bundle_ref, function);
 
-    return dlsym(LibHandle, sym);
+    CFRelease(bundle_url);
+    CFRelease(function);
+    CFRelease(opengl_bundle_ref);
+    return ret;
 }
 
 /**
@@ -559,6 +573,9 @@ static bool core_init_libretro_cbs(void *data)
     return true;
 }
 
+static retro_audio_callback_t* audio_callback_notify;
+static retro_audio_set_state_callback_t* audio_set_state_notify;
+
 static void RETRO_CALLCONV audio_callback(int16_t left, int16_t right)
 {
     __strong PVLibRetroCore *strongCurrent = _current;
@@ -569,9 +586,10 @@ static void RETRO_CALLCONV audio_callback(int16_t left, int16_t right)
     strongCurrent = nil;
 }
 
-static void retro_audio_set_state_callback_t audio_set_state(bool enabled) {
-    GET_CURRENT_OR_RETURN();
+static retro_audio_set_state_callback_t audio_set_state(bool enabled) {
+    GET_CURRENT_OR_RETURN(false);
     // TODO: Turn audio on and off, or maybe just mute?
+    return false;
 }
 
 static size_t RETRO_CALLCONV audio_batch_callback(const int16_t *data, size_t frames)
@@ -1838,7 +1856,7 @@ static bool environment_callback(unsigned cmd, void *data) {
              */
             struct retro_hw_render_callback* cb = (const struct retro_hw_render_callback*)data;
             hw_render_callback = cb;
-            cb->get_proc_address = video_driver_get_proc_address;
+            cb->get_proc_address = libretro_get_proc_address;
 
             //            ILOG(@"%i", cb);
             return true;
@@ -1870,20 +1888,20 @@ static bool environment_callback(unsigned cmd, void *data) {
             }
             return strongCurrent.supportsRumble;
         }
-        case RETRO_ENVIRONMENT_GET_VFS_INTERFACE: {
-            /* struct retro_vfs_interface_info * --
-             * Gets access to the VFS interface.
-             * VFS presence needs to be queried prior to load_game or any
-             * get_system/save/other_directory being called to let front end know
-             * core supports VFS before it starts handing out paths.
-             * It is recomended to do so in retro_set_environment
-             */
-            struct retro_vfs_interface_info* vfs = (const struct retro_vfs_interface_info*)data;
-            retro_vfs_interface interface;
-            // TODO: set call backs then return true
-            vfs->iface = interface
-            return false;
-        }
+//        case RETRO_ENVIRONMENT_GET_VFS_INTERFACE: {
+//            /* struct retro_vfs_interface_info * --
+//             * Gets access to the VFS interface.
+//             * VFS presence needs to be queried prior to load_game or any
+//             * get_system/save/other_directory being called to let front end know
+//             * core supports VFS before it starts handing out paths.
+//             * It is recomended to do so in retro_set_environment
+//             */
+//            struct retro_vfs_interface_info* vfs = (const struct retro_vfs_interface_info*)data;
+//            struct retro_vfs_interface interface;
+//            // TODO: set call backs then return true
+//            vfs->iface = interface;
+//            return false;
+//        }
         case RETRO_ENVIRONMENT_GET_LED_INTERFACE: {
             /* struct retro_led_interface * --
              * Gets an interface which is used by a libretro core to set
@@ -1964,7 +1982,7 @@ static bool environment_callback(unsigned cmd, void *data) {
              */
             struct retro_sensor_interface* sensorInterface = (struct retro_sensor_interface*)data;
             sensorInterface->get_sensor_input = get_sensor_input;
-            sensorInterface->set_sensor_state = set_sensor_state;
+            sensorInterface->set_sensor_state = sensor_state;
             return true;
         }
         case RETRO_ENVIRONMENT_GET_CAMERA_INTERFACE: {
@@ -1996,9 +2014,10 @@ static bool environment_callback(unsigned cmd, void *data) {
             struct retro_camera_callback* cameraInterface = (struct retro_camera_callback*)data;
             cameraInterface->start = camera_start;
             cameraInterface->stop = camera_stop;
-            cameraInterface->frame_opengl_texture = camera_raw_frame_opengl_texture;
             camera_raw_framebuffer = cameraInterface->frame_raw_framebuffer;
-            cameraInterface-> = camera_lifetime_status;
+            camera_raw_frame_opengl_texture = cameraInterface->frame_opengl_texture;
+            camera_lifetime_status_initialized = cameraInterface->initialized;
+            camera_lifetime_status_deinitialized = cameraInterface->deinitialized;
 
             return true;
         }
@@ -2014,8 +2033,8 @@ static bool environment_callback(unsigned cmd, void *data) {
             location_callback->stop = location_stop;
             location_callback->get_position = location_get_position;
             location_callback->set_interval = location_set_interval;
-            location_callback->initialized = location_initialized;
-            location_callback->deinitialized = location_deinitialized;
+            location_initialized = location_callback->initialized;
+            location_deinitialized = location_callback->deinitialized;
 
             return true;
         }
@@ -2087,11 +2106,11 @@ static bool environment_callback(unsigned cmd, void *data) {
                                                 RETRO_MEMORY_TYPE_* flags.
                                                 Set by frontend in GET_CURRENT_SOFTWARE_FRAMEBUFFER.
             */
-            const struct retro_framebuffer *fb =
-                    (const struct retro_framebuffer *)data;
-            retro_framebuffer->data = [strongCurrent videoBuffer];
-            retro_framebuffer->pitch = strongCurrent->pitch_shift;
-            retro_framebuffer->format = strongCurrent.internalPixelFormat;
+            struct retro_framebuffer *fb =
+                    (struct retro_framebuffer *)data;
+            fb->data = [strongCurrent videoBuffer];
+            fb->pitch = strongCurrent->pitch_shift;
+            fb->format = strongCurrent.internalPixelFormat;
             /*
              #define RETRO_MEMORY_ACCESS_WRITE (1 << 0)
                 /* The core will write to the buffer provided by retro_framebuffer::data.
@@ -2101,7 +2120,7 @@ static bool environment_callback(unsigned cmd, void *data) {
                 /* The memory in data is cached.
                  * If not cached, random writes and/or reading from the buffer is expected to be very slow.
             */
-            retro_framebuffer->memory_flags = RETRO_MEMORY_TYPE_CACHED;
+            fb->memory_flags = RETRO_MEMORY_TYPE_CACHED;
             return true;
         }
 //            // TODO: When/if vulkan support add this
@@ -2250,7 +2269,7 @@ static bool environment_callback(unsigned cmd, void *data) {
              * in frame_time_callback..
              */
             const struct retro_frame_time_callback* frame_time =
-               *(const struct retro_frame_time_callback*)data;
+               (const struct retro_frame_time_callback*)data;
             frame_time_callback = frame_time->callback;
 
             return true;
@@ -2282,9 +2301,9 @@ static bool environment_callback(unsigned cmd, void *data) {
              * SET_FRAME_TIME_CALLBACK.
              */
             const struct retro_audio_callback* audio =
-               *(const struct retro_audio_callback*)data;
-            audio->callback = audio_callback;
-            audio->set_state = audio_set_state;
+               (const struct retro_audio_callback*)data;
+            audio_callback_notify = audio->callback;
+            audio_set_state_notify = audio->set_state ;
             return true;
         }
         case RETRO_ENVIRONMENT_SET_PIXEL_FORMAT: {
@@ -2494,7 +2513,8 @@ static bool environment_callback(unsigned cmd, void *data) {
              * and was removed from the API. */
 //            const char **
             const char **path = (const char**)data;
-            NSString *fPath = [[NSBundle bundleForClass:[self class]].bundleURL.path;
+            Class myClass = [strongCurrent class];
+            NSString *fPath = [NSBundle bundleForClass:myClass].bundleURL.path;
             *path = [fPath cStringUsingEncoding:NSUTF8StringEncoding];
             return false;
         }
@@ -2544,9 +2564,9 @@ static bool environment_callback(unsigned cmd, void *data) {
              * functionality is supported (no change in
              * fastforwarding state will occur in this case).
              */
-            const struct retro_fastforwarding_override* fastforwarding_override = *((const struct retro_fastforwarding_override*)data);
+            const struct retro_fastforwarding_override* fastforwarding_override = (const struct retro_fastforwarding_override*)data;
             if(fastforwarding_override == nil) {
-                return true
+                return true;
             }
             if(fastforwarding_override->fastforward) {
                 if (fastforwarding_override->ratio < 1.0) {
@@ -2587,7 +2607,7 @@ static bool environment_callback(unsigned cmd, void *data) {
         case RETRO_ENVIRONMENT_GET_LANGUAGE:
         {
             NSString * languageCode = [NSLocale currentLocale].languageCode;
-            retro_language language = RETRO_LANGUAGE_ENGLISH;
+            enum retro_language language = RETRO_LANGUAGE_ENGLISH;
             if([languageCode isEqualToString:@"en"]) {
                 language = RETRO_LANGUAGE_ENGLISH;
             } else if([languageCode isEqualToString:@"jp"]) {

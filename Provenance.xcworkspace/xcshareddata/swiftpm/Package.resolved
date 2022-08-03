@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/microsoft/appcenter-sdk-apple.git",
       "state" : {
-        "revision" : "8354a50fe01a7e54e196d3b5493b5ab53dd5866a",
-        "version" : "4.4.2"
+        "revision" : "b2dc99cfedead0bad4e6573d86c5228c89cff332",
+        "version" : "4.4.3"
       }
     },
     {
@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift.git",
       "state" : {
-        "revision" : "fd279e0a94b46c5bd65b17e36817a4365c7a5482",
-        "version" : "10.28.2"
+        "revision" : "2d5d121f6cf08aa84eeb076b653131a23f1edd6b",
+        "version" : "10.28.3"
       }
     },
     {
