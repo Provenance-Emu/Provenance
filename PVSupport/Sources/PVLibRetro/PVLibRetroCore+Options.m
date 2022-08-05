@@ -53,6 +53,9 @@
 #include "msg_hash.h"
 #include "verbosity.h"
 
+# pragma mark - Core Options
+
+
 # pragma mark - Options
 @implementation PVLibRetroCore (Options)
 - (void *)getVariable:(const char *)variable {

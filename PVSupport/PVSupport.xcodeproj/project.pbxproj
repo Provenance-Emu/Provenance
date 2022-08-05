@@ -290,6 +290,8 @@
 		B3B1A742279021C4004D1EF2 /* AHAP in Resources */ = {isa = PBXBuildFile; fileRef = B3B1A73F279021C4004D1EF2 /* AHAP */; };
 		B3B3D17428712EE1008A0E2F /* msg_hash.c in Sources */ = {isa = PBXBuildFile; fileRef = B322515C286C6F29001FDF42 /* msg_hash.c */; };
 		B3B492CB26B3A96B000B426B /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = B3B492CA26B3A96B000B426B /* Reachability */; };
+		B3BE75B4289CCF6C0090170D /* PVLibRetroCore+CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3BE75B3289CCF6C0090170D /* PVLibRetroCore+CoreOptions.swift */; };
+		B3BE75B5289CCF6C0090170D /* PVLibRetroCore+CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3BE75B3289CCF6C0090170D /* PVLibRetroCore+CoreOptions.swift */; };
 		B3C8A69428781C6E0037A946 /* msg_hash.c in Sources */ = {isa = PBXBuildFile; fileRef = B322515C286C6F29001FDF42 /* msg_hash.c */; };
 		B3C8A69528781D460037A946 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96E9E1D62C3A3003F1E93 /* PVSupport.framework */; };
 		B3C8A69A28781D4E0037A946 /* libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BDA286E75DD0054E9A5 /* libretro.a */; };
@@ -1300,6 +1302,7 @@
 		B3AF6FDC219161BC000FA7F9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3AF6FDE219161C0000FA7F9 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/GameController.framework; sourceTree = DEVELOPER_DIR; };
 		B3B1A73F279021C4004D1EF2 /* AHAP */ = {isa = PBXFileReference; lastKnownFileType = folder; path = AHAP; sourceTree = "<group>"; };
+		B3BE75B3289CCF6C0090170D /* PVLibRetroCore+CoreOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVLibRetroCore+CoreOptions.swift"; sourceTree = "<group>"; };
 		B3C83E262796211D0020824C /* Performance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Performance.swift; sourceTree = "<group>"; };
 		B3C83E2A279622EB0020824C /* PerformanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceView.swift; sourceTree = "<group>"; };
 		B3C96E9E1D62C3A3003F1E93 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3467,6 +3470,7 @@
 				B306814D2895D406003E465F /* PVLibRetroCore+Video.m */,
 				B3DF963D288D6B5800300A38 /* PVLibRetroGLESCore.h */,
 				B3DF963E288D6B5800300A38 /* PVLibRetroGLESCore.m */,
+				B3BE75B3289CCF6C0090170D /* PVLibRetroCore+CoreOptions.swift */,
 			);
 			path = PVLibRetro;
 			sourceTree = "<group>";
@@ -3949,6 +3953,10 @@
 					};
 					B392848D28670348003BAC21 = {
 						CreatedOnToolsVersion = 13.4.1;
+						LastSwiftMigration = 1400;
+					};
+					B3A41BDB286E76110054E9A5 = {
+						LastSwiftMigration = 1400;
 					};
 					B3C96E9D1D62C3A3003F1E93 = {
 						CreatedOnToolsVersion = 7.3.1;
@@ -4164,6 +4172,7 @@
 				B3D180A528964C40001207AF /* PVLibRetroCore+Saves.m in Sources */,
 				B3D180A328964C40001207AF /* PVLibRetroCore+Controls.m in Sources */,
 				B30681562895D407003E465F /* PVLibRetroCore+Options.m in Sources */,
+				B3BE75B4289CCF6C0090170D /* PVLibRetroCore+CoreOptions.swift in Sources */,
 				B30681502895D407003E465F /* PVLibRetroCore+Cheats.m in Sources */,
 				B30681542895D407003E465F /* PVLibRetroCore+Audio.m in Sources */,
 				B30681522895D407003E465F /* PVLibRetroCore+Video.m in Sources */,
@@ -4205,6 +4214,7 @@
 				B3D180A628964C40001207AF /* PVLibRetroCore+Saves.m in Sources */,
 				B3D180A428964C40001207AF /* PVLibRetroCore+Controls.m in Sources */,
 				B30681572895D407003E465F /* PVLibRetroCore+Options.m in Sources */,
+				B3BE75B5289CCF6C0090170D /* PVLibRetroCore+CoreOptions.swift in Sources */,
 				B30681512895D407003E465F /* PVLibRetroCore+Cheats.m in Sources */,
 				B30681552895D407003E465F /* PVLibRetroCore+Audio.m in Sources */,
 				B30681532895D407003E465F /* PVLibRetroCore+Video.m in Sources */,
@@ -5116,6 +5126,7 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
@@ -5177,6 +5188,7 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
@@ -5237,6 +5249,7 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
@@ -5407,6 +5420,7 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
@@ -5464,6 +5478,7 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
@@ -5520,6 +5535,7 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;

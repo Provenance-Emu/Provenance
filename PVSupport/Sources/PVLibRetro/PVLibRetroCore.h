@@ -30,10 +30,11 @@
 
 typedef struct retro_core_t retro_core_t;
 
-static retro_keyboard_event_t keyboard_event;
+static retro_keyboard_event_t _Nullable keyboard_event;
+static const struct retro_core_options_v2* _Nullable core_options;
 
 @class PVLibRetroCore;
-static __weak PVLibRetroCore *_current;
+static __weak PVLibRetroCore * _Nonnull _current;
 
 __attribute__((weak_import))
 @interface PVLibRetroCore : PVEmulatorCore<KeyboardResponder, MouseResponder, TouchPadResponder> {

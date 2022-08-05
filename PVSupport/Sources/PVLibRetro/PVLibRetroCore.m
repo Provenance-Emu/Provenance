@@ -2112,9 +2112,10 @@ static bool environment_callback(unsigned cmd, void *data) {
         }
         case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY : {
             NSString *BIOSPath = [strongCurrent BIOSPath];
-            CFStringRef cfString = (CFStringRef)CFBridgingRetain(BIOSPath);
-
-            *(const char **)data = CFStringGetCStringPtr(cfString, kCFStringEncodingUTF8); //[BIOSPath UTF8String];
+            char *buffer = calloc(256, sizeof(char));
+            
+            strncpy(buffer, [BIOSPath UTF8String], BIOSPath.length);
+            *(const char **)data = buffer;
             
             DLOG(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", BIOSPath);
             return true;
@@ -2459,13 +2460,21 @@ static bool environment_callback(unsigned cmd, void *data) {
              * If a core wants to use this functionality, SET_SUBSYSTEM_INFO
              * **MUST** be called from within retro_set_environment().
              */
-            
+            const struct retro_subsystem_info *game_info_ext =
+                    (const struct retro_subsystem_info *)data;
+            return false;
         }
         case RETRO_ENVIRONMENT_GET_GAME_INFO_EXT:
         {
             const struct retro_game_info_ext **game_info_ext =
                     (const struct retro_game_info_ext **)data;
             
+//            content_state_t *p_content                       =
+//                  content_state_get_ptr();
+//
+//            const struct retro_game_info_ext **game_info_ext =
+//                  (const struct retro_game_info_ext **)data;
+//
             if (!game_info_ext) {
                 ELOG(@"`game_info_ext` is nil.")
                 return false;
@@ -2480,9 +2489,9 @@ static bool environment_callback(unsigned cmd, void *data) {
             //            [romData getBytes:buffer length:romData.length];
             //
             //            game_info->data = buffer;
-            NSData *romData = [NSData dataWithContentsOfFile:strongCurrent.romPath];
-            CFDataRef cfData = (CFDataRef)CFBridgingRetain(romData);
-            game_info->data = CFDataGetBytePtr(cfData);
+            NSString *romPath = strongCurrent.romPath;
+            NSData *romData = [NSData dataWithContentsOfFile:romPath];
+            game_info->data = romData.bytes;
             game_info->size = romData.length;
             
             const char *c_full_path = [strongCurrent.romPath cStringUsingEncoding:NSUTF8StringEncoding];
@@ -2512,8 +2521,10 @@ static bool environment_callback(unsigned cmd, void *data) {
             break;
         }
         case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_V2: {
-            // TODO: Core options in one shot here
-            return false;
+            const struct retro_core_options_v2* options = (const struct retro_core_options_v2*)data;
+            core_options = options;
+            
+            return true;
         }
         case RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE: {
             // TODO: if somethig is set this should return true
@@ -3211,7 +3222,6 @@ static void load_symbols(enum rarch_core_type type, struct retro_core_t *current
         //        load_dynamic_core();
         core = malloc(sizeof(retro_core_t));
         init_libretro_sym(CORE_TYPE_PLAIN, core);
-        retro_set_environment(environment_callback);
         
         memset(_pad, 0, sizeof(int16_t) * 24);
 
@@ -3236,13 +3246,14 @@ static void load_symbols(enum rarch_core_type type, struct retro_core_t *current
 }
 
 -(void)coreInit {
-    core->retro_init();
-
     core->retro_set_audio_sample(audio_callback);
     core->retro_set_audio_sample_batch(audio_batch_callback);
     core->retro_set_video_refresh(video_callback);
     core->retro_set_input_poll(input_poll_callback);
     core->retro_set_input_state(input_state_callback);
+    core->retro_set_environment(environment_callback);
+    
+    core->retro_init();
 }
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {

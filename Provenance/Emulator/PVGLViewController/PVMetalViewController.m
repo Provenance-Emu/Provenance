@@ -559,6 +559,8 @@ PV_OBJC_DIRECT_MEMBERS
                     return MTLPixelFormatBGR5A1Unorm;
                 case GL_UNSIGNED_SHORT_5_6_5:
                     return MTLPixelFormatB5G6R5Unorm;
+                case GL_UNSIGNED_INT:
+                    return MTLPixelFormatRGBA32Uint;
             }
     }
 

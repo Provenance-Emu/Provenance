@@ -173,6 +173,8 @@
 		B364D4BB2870E7DE00B93A4B /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B364D4BA2870E7DE00B93A4B /* PVLibRetro.framework */; };
 		B39313802870FB9A00372EBB /* libMelonDS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libMelonDS.a */; };
 		B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B104B8218F281B00210C39 /* PVSupport.framework */; };
+		B3BE75B6289CD9660090170D /* PVMelonDSCore+Saves.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAA218BC59D00557ACE /* PVMelonDSCore+Saves.m */; };
+		B3BE75B7289CD9660090170D /* PVMelonDSCore+Saves.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAA218BC59D00557ACE /* PVMelonDSCore+Saves.m */; };
 		B3C7621520783162009950E4 /* PVMelonDS.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVMelonDS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilter = ios; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
@@ -3090,6 +3092,7 @@
 				B338055E287583AB0009C732 /* PVMelonDSCore+Video.m in Sources */,
 				B338055A28757BA60009C732 /* PVMelonDSCore+Controls.mm in Sources */,
 				B338055C287582CB0009C732 /* PVMelonDSCore+Audio.m in Sources */,
+				B3BE75B7289CD9660090170D /* PVMelonDSCore+Saves.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3190,6 +3193,7 @@
 				B338055B28757C3A0009C732 /* PVMelonDSCore+Controls.mm in Sources */,
 				B338055F287583AD0009C732 /* PVMelonDSCore+Video.m in Sources */,
 				B3C76226207833DE009950E4 /* PVMelonDSCore.mm in Sources */,
+				B3BE75B6289CD9660090170D /* PVMelonDSCore+Saves.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
