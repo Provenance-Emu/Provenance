@@ -1894,6 +1894,16 @@ static bool environment_callback(unsigned cmd, void *data) {
             return true;
         }
         case RETRO_ENVIRONMENT_SET_HW_SHARED_CONTEXT: {
+            /* N/A (null) * --
+             * The frontend will try to use a 'shared' hardware context (mostly applicable
+             * to OpenGL) when a hardware context is being set up.
+             *
+             * Returns true if the frontend supports shared hardware contexts and false
+             * if the frontend does not support shared hardware contexts.
+             *
+             * This will do nothing on its own until SET_HW_RENDER env callbacks are
+             * being used.
+             */
             // *(bool*)data;
             return true;
         }
