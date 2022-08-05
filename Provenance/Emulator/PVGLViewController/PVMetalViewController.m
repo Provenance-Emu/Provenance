@@ -147,6 +147,16 @@ PV_OBJC_DIRECT_MEMBERS
     }
 }
 
+//CVReturn displayLinkCallback(CVDisplayLinkRef displayLink,
+//                                    const CVTimeStamp *now, const CVTimeStamp *outputTime,
+//                                    CVOptionFlags flagsIn, CVOptionFlags *flagsOut,
+//                                    void *displayLinkContext)
+//{
+//    [(__bridge FBScreenView *) displayLinkContext renderTexture:YES];
+//    return kCVReturnSuccess;
+//}
+//
+
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
@@ -171,6 +181,7 @@ PV_OBJC_DIRECT_MEMBERS
 
     MTKView *view = [[MTKView alloc] initWithFrame:self.view.bounds device:self.device];
     self.mtlview = view;
+    view.colorPixelFormat =  MTLPixelFormatBGRA8Unorm; // MTLPixelFormatRGBA8Unorm // MTLPixelFormatBGR5A1Unorm
     [self.view addSubview:self.mtlview];
     view.device = self.device;
     view.clearColor = MTLClearColorMake(0.0, 0.0, 0.0, 0.0);
@@ -198,12 +209,9 @@ PV_OBJC_DIRECT_MEMBERS
     GLenum depthFormat = self.emulatorCore.depthFormat;
     switch (depthFormat) {
         case GL_DEPTH_COMPONENT16:
-            if (@available(macOS 10.12, iOS 13.0, *))
-            {
+            if (@available(macOS 10.12, iOS 13.0, *)) {
                 view.depthStencilPixelFormat = MTLPixelFormatDepth16Unorm;
-            }
-            else
-            {
+            } else {
                 view.depthStencilPixelFormat = MTLPixelFormatDepth32Float;
             }
             break;
@@ -276,8 +284,7 @@ PV_OBJC_DIRECT_MEMBERS
     [self setPreferredFramesPerSecond:preferredFPS];
 }
 
-- (void)viewDidLayoutSubviews
-{
+- (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
 
     UIEdgeInsets parentSafeAreaInsets = UIEdgeInsetsZero;
@@ -285,8 +292,7 @@ PV_OBJC_DIRECT_MEMBERS
         parentSafeAreaInsets = self.parentViewController.view.safeAreaInsets;
     }
     
-    if (!CGRectIsEmpty([self.emulatorCore screenRect]))
-    {
+    if (!CGRectIsEmpty([self.emulatorCore screenRect])) {
         CGSize aspectSize = [self.emulatorCore aspectSize];
         CGFloat ratio = 0.0;
         if (aspectSize.width > aspectSize.height) {
@@ -296,12 +302,9 @@ PV_OBJC_DIRECT_MEMBERS
         }
 
         CGSize parentSize = CGSizeZero;
-        if ([self parentViewController])
-        {
+        if ([self parentViewController]) {
             parentSize = [[[self parentViewController] view] bounds].size;
-        }
-        else
-        {
+        } else {
             parentSize = [[self.view window] bounds].size;
         }
 
@@ -331,12 +334,9 @@ PV_OBJC_DIRECT_MEMBERS
         }
 
         CGPoint origin = CGPointMake(roundf((parentSize.width - width) / 2.0), 0.0);
-        if (([self.traitCollection userInterfaceIdiom] == UIUserInterfaceIdiomPhone) && (parentSize.height > parentSize.width))
-        {
+        if (([self.traitCollection userInterfaceIdiom] == UIUserInterfaceIdiomPhone) && (parentSize.height > parentSize.width)) {
             origin.y = parentSafeAreaInsets.top + 40.0f; // directly below menu button at top of screen
-        }
-        else
-        {
+        } else {
             origin.y = roundf((parentSize.height - height) / 2.0); // centered
         }
 
@@ -688,7 +688,7 @@ PV_OBJC_DIRECT_MEMBERS
  @param size New drawable size in pixels
  */
 - (void)mtkView:(nonnull MTKView *)view drawableSizeWillChange:(CGSize)size {
-
+    ILOG(@"<%f, %f>", size.width, size.height);
 }
 
 /*!
@@ -704,6 +704,8 @@ PV_OBJC_DIRECT_MEMBERS
     {
         MAKESTRONG_RETURN_IF_NIL(self);
         PVMetalViewController *self = strongself;
+        
+//        strongself.mtlview.paused = strongself.emulatorCore.isEmulationPaused;
         
         id<MTLTexture> outputTex = view.currentDrawable.texture;
         

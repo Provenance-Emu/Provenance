@@ -208,7 +208,7 @@ struct aspect_ratio_elem aspectratio_lut[ASPECT_RATIO_END] = {
        case RETRO_PIXEL_FORMAT_RGB565:
             return GL_UNSIGNED_SHORT_5_6_5;
        case RETRO_PIXEL_FORMAT_XRGB8888:
-            return 0x84FA; //GL_UNSIGNED_INT_24_8_OES; // GL_UNSIGNED_INT_24_8, GL_COMPRESSED_RGB8_ETC2
+            return GL_UNSIGNED_INT; //GL_UNSIGNED_INT_24_8_OES; // GL_UNSIGNED_INT_24_8, GL_COMPRESSED_RGB8_ETC2
        default:
             return GL_UNSIGNED_BYTE;
     }

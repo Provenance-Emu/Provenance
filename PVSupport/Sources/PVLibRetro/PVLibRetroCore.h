@@ -30,6 +30,8 @@
 
 typedef struct retro_core_t retro_core_t;
 
+static retro_keyboard_event_t keyboard_event;
+
 @class PVLibRetroCore;
 static __weak PVLibRetroCore *_current;
 

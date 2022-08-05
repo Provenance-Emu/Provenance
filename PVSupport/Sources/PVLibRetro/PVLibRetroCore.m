@@ -701,7 +701,7 @@ void video_driver_frame(const void *data, unsigned width,
 //       video_driver_frame_count++;
 }
 
-typedef uint8_t video_pixel_t;
+typedef uint32_t video_pixel_t;
 static void RETRO_CALLCONV video_callback(const void *data, unsigned width, unsigned height, size_t pitch)
 {
 //    if (!video_driver_is_active())
@@ -2382,6 +2382,7 @@ static bool environment_callback(unsigned cmd, void *data) {
 
                case RETRO_PIXEL_FORMAT_RGB565:
                     DLOG(@"Environ SET_PIXEL_FORMAT: RGB565.\n");
+//                    return false;
                   break;
                case RETRO_PIXEL_FORMAT_XRGB8888:
                     DLOG(@"Environ SET_PIXEL_FORMAT: XRGB8888.\n");

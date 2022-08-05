@@ -85,9 +85,9 @@
     return GL_BGRA;
 }
 
-- (GLenum)pixelType {
-    return GL_UNSIGNED_BYTE;
-}
+//- (GLenum)pixelType {
+//    return GL_UNSIGNED_BYTE;
+//}
 
 //- (GLenum)depthFormat {
 //        // 0, GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT24
