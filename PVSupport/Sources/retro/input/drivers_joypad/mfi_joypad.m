@@ -22,11 +22,12 @@
 #include <boolean.h>
 
 #include <AvailabilityMacros.h>
-#import "../include/GameController/GameController.h"
+//#import "../include/GameController/GameController.h"
 
 #ifndef MAX_MFI_CONTROLLERS
 #define MAX_MFI_CONTROLLERS 4
 #endif
+#define MAX_USERS 16
 
 static uint32_t mfi_buttons[MAX_USERS];
 static int16_t  mfi_axes[MAX_USERS][4];
@@ -40,11 +41,11 @@ enum
 
 static bool apple_gamecontroller_available(void)
 {
-   int major, minor;
-   get_ios_version(&major, &minor);
-
-   if (major <= 6)
-      return false;
+//   int major, minor;
+//   get_ios_version(&major, &minor);
+//
+//   if (major <= 6)
+//      return false;
 
    return true;
 }

@@ -62,7 +62,6 @@
 		B33808BF2877B6090009C732 /* GPU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B338088A2877B50A0009C732 /* GPU.cpp */; };
 		B33808C02877B6090009C732 /* GPU2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33806742877B5080009C732 /* GPU2D.cpp */; };
 		B33808C12877B6090009C732 /* GPU3D_Soft.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33806102877B5080009C732 /* GPU3D_Soft.cpp */; };
-		B33808C22877B6090009C732 /* GPU3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33805942877B5080009C732 /* GPU3D.cpp */; };
 		B33808C32877B6090009C732 /* WifiAP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33806982877B5080009C732 /* WifiAP.cpp */; };
 		B33808C42877B6090009C732 /* Wifi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B338087C2877B50A0009C732 /* Wifi.cpp */; };
 		B33808C52877B6090009C732 /* GPU2D_Soft.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33806932877B5080009C732 /* GPU2D_Soft.cpp */; };
@@ -137,8 +136,6 @@
 		B338090D2877B9F10009C732 /* ARM_InstrInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B338068A2877B5080009C732 /* ARM_InstrInfo.cpp */; };
 		B33809102877B9F20009C732 /* CommonFuncs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33806692877B5080009C732 /* CommonFuncs.cpp */; };
 		B33809112877B9F20009C732 /* ARM_InstrInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B338068A2877B5080009C732 /* ARM_InstrInfo.cpp */; };
-		B33809122877BA350009C732 /* ARMJIT_Linkage.S in Sources */ = {isa = PBXBuildFile; fileRef = B33808652877B50A0009C732 /* ARMJIT_Linkage.S */; };
-		B33809172877BA360009C732 /* ARMJIT_Linkage.S in Sources */ = {isa = PBXBuildFile; fileRef = B33808652877B50A0009C732 /* ARMJIT_Linkage.S */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
 		B3447E9C218B826F00557ACE /* PVMelonDS+Audio.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E9A218B826F00557ACE /* PVMelonDS+Audio.h */; };
@@ -223,6 +220,8 @@
 		B3C8A69128780B9B0037A946 /* diskio.c in Sources */ = {isa = PBXBuildFile; fileRef = B33805A62877B5080009C732 /* diskio.c */; };
 		B3C8A69228780D5C0037A946 /* encoding_utf.c in Sources */ = {isa = PBXBuildFile; fileRef = B33806B32877B5090009C732 /* encoding_utf.c */; };
 		B3C8A69328780D5C0037A946 /* encoding_utf.c in Sources */ = {isa = PBXBuildFile; fileRef = B33806B32877B5090009C732 /* encoding_utf.c */; };
+		B3D808C1289CF0DB005CAAFC /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D808C0289CF0DB005CAAFC /* OpenGL.framework */; platformFilter = maccatalyst; };
+		B3D808CE289CF5A2005CAAFC /* GPU3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33805942877B5080009C732 /* GPU3D.cpp */; };
 		B3DDF56D26E9B90400CE47F0 /* libMelonDS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3447F91218BEE3F00557ACE /* libMelonDS.a */; };
 /* End PBXBuildFile section */
 
@@ -990,6 +989,7 @@
 		B3C7622720783510009950E4 /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B3C8A68C28780AE30037A946 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/lib/libpthread.tbd; sourceTree = DEVELOPER_DIR; };
 		B3C8A68E28780AEF0037A946 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.4.sdk/usr/lib/libpthread.tbd; sourceTree = DEVELOPER_DIR; };
+		B3D808C0289CF0DB005CAAFC /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1035,6 +1035,7 @@
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
+				B3D808C1289CF0DB005CAAFC /* OpenGL.framework in Frameworks */,
 				B39313802870FB9A00372EBB /* libMelonDS.a in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
 				B364D4B72870E7D300B93A4B /* PVLibRetro.framework in Frameworks */,
@@ -2795,6 +2796,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3D808C0289CF0DB005CAAFC /* OpenGL.framework */,
 				B3C8A68C28780AE30037A946 /* libpthread.tbd */,
 				B3C8A68E28780AEF0037A946 /* libpthread.tbd */,
 				B364D4BA2870E7DE00B93A4B /* PVLibRetro.framework */,
@@ -2999,6 +3001,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3D808CE289CF5A2005CAAFC /* GPU3D.cpp in Sources */,
 				B3C8A666287808C10037A946 /* NDS.cpp in Sources */,
 				B33809002877B6A00009C732 /* ffunicode.c in Sources */,
 				B33808A42877B5E70009C732 /* CP15.cpp in Sources */,
@@ -3065,7 +3068,6 @@
 				B3C8A679287809B00037A946 /* memory_interface.cpp in Sources */,
 				B3C8A67A287809B00037A946 /* test_generator.cpp in Sources */,
 				B33808E72877B64F0009C732 /* compat_strl.c in Sources */,
-				B33809122877BA350009C732 /* ARMJIT_Linkage.S in Sources */,
 				B33808952877B5E70009C732 /* CRC32.cpp in Sources */,
 				B3C8A668287809340037A946 /* MathUtil.cpp in Sources */,
 				B33808DB2877B62D0009C732 /* screenlayout.cpp in Sources */,
@@ -3080,7 +3082,6 @@
 				B33808982877B5E70009C732 /* ARMInterpreter_Branch.cpp in Sources */,
 				B3C8A66A2878093A0037A946 /* Arm64Emitter.cpp in Sources */,
 				B33808C52877B6090009C732 /* GPU2D_Soft.cpp in Sources */,
-				B33808C22877B6090009C732 /* GPU3D.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3166,7 +3167,6 @@
 				B3C8A685287809B10037A946 /* memory_interface.cpp in Sources */,
 				B3C8A686287809B10037A946 /* test_generator.cpp in Sources */,
 				B33808EB2877B64F0009C732 /* compat_strl.c in Sources */,
-				B33809172877BA360009C732 /* ARMJIT_Linkage.S in Sources */,
 				B33808AA2877B5E80009C732 /* CRC32.cpp in Sources */,
 				B3C8A669287809340037A946 /* MathUtil.cpp in Sources */,
 				B33808E12877B62D0009C732 /* screenlayout.cpp in Sources */,
@@ -3291,12 +3291,13 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/melonDS/src\"",
-					"\"$(SRCROOT)/melonDS/src/libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/melonDS/src/libretro\"",
+					"\"$(SRCROOT)/melonDS/src/libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/melonDS/src/ARMJIT_A64\"",
 					"\"$(SRCROOT)/melonDS/src/ARMJIT_x64\"",
 					"\"$(SRCROOT)/melonDS/src/dolphin\"",
 					"\"$(SRCROOT)/melonDS/src/teakra/include\"",
+					"\"$(SRCROOT)/melonDS/src/teakra/src\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -3543,12 +3544,13 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/melonDS/src\"",
-					"\"$(SRCROOT)/melonDS/src/libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/melonDS/src/libretro\"",
+					"\"$(SRCROOT)/melonDS/src/libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/melonDS/src/ARMJIT_A64\"",
 					"\"$(SRCROOT)/melonDS/src/ARMJIT_x64\"",
 					"\"$(SRCROOT)/melonDS/src/dolphin\"",
 					"\"$(SRCROOT)/melonDS/src/teakra/include\"",
+					"\"$(SRCROOT)/melonDS/src/teakra/src\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -3614,12 +3616,13 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/melonDS/src\"",
-					"\"$(SRCROOT)/melonDS/src/libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/melonDS/src/libretro\"",
+					"\"$(SRCROOT)/melonDS/src/libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/melonDS/src/ARMJIT_A64\"",
 					"\"$(SRCROOT)/melonDS/src/ARMJIT_x64\"",
 					"\"$(SRCROOT)/melonDS/src/dolphin\"",
 					"\"$(SRCROOT)/melonDS/src/teakra/include\"",
+					"\"$(SRCROOT)/melonDS/src/teakra/src\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;

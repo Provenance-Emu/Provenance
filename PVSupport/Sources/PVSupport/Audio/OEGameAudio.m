@@ -272,7 +272,7 @@ PV_OBJC_DIRECT_MEMBERS
 
         err = AUGraphConnectNodeInput(mGraph, mConverterNode, 0, mMixerNode, i);
         if(err) { ELOG(@"Couldn't connect the converter to the mixer"); }
-        else { ELOG(@"Connected the converter to the mixer"); }
+        else { ILOG(@"Connected the converter to the mixer"); }
     }
     // connect the player to the output unit (stream format will propagate)
          
@@ -284,7 +284,8 @@ PV_OBJC_DIRECT_MEMBERS
     }
     
     //AudioUnitSetParameter(mOutputUnit, kAudioUnitParameterUnit_LinearGain, kAudioUnitScope_Global, 0, [[[GameDocumentController sharedDocumentController] preferenceController] volume] ,0);
-    AudioUnitSetParameter(mOutputUnit, kAudioUnitParameterUnit_LinearGain, kAudioUnitScope_Global, 0, 1.0 ,0);
+    err = AudioUnitSetParameter(mOutputUnit, kAudioUnitParameterUnit_LinearGain, kAudioUnitScope_Global, 0, 1.0 ,0);
+    if(err){ ELOG(@"couldn't set device parameters"); }
 
     AudioDeviceID outputDeviceID = [_outputDeviceID unsignedIntValue];
 //    if(outputDeviceID != 0)
@@ -303,13 +304,11 @@ PV_OBJC_DIRECT_MEMBERS
     [self setVolume:[self volume]];
 }
 
-- (AudioDeviceID)outputDeviceID
-{
+- (AudioDeviceID)outputDeviceID {
     return [_outputDeviceID unsignedIntValue];
 }
 
-- (void)setOutputDeviceID:(AudioDeviceID)outputDeviceID
-{
+- (void)setOutputDeviceID:(AudioDeviceID)outputDeviceID {
     AudioDeviceID currentID = [self outputDeviceID];
     if(outputDeviceID != currentID)
     {

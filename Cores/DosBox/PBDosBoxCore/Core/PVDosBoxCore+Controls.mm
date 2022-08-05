@@ -66,38 +66,46 @@ s8 joyx[4], joyy[4];
         self->mouse_wheel_up = 0;
         self->mouse_wheel_down = cursor.yAxis.value * -1;
     }
+    [super didScroll:cursor];
 }
 
 - (void)mouseMovedAt:(CGPoint)point {
     self->mouse_x = point.x;
     self->mouse_y = point.y;
+    [super mouseMovedAt:point];
 }
 
 - (void)leftMouseUp {
     self->mouseLeft = false;
+    [super leftMouseUp];
 }
 
 - (void)leftMouseDownAt:(CGPoint)point {
     self->mouse_x = point.x;
     self->mouse_y = point.y;
     self->mouseLeft = true;
+    [super leftMouseDownAt:point];
 }
 
 - (void)rightMouseUp {
     self->mouseRight = false;
+    [super rightMouseUp];
 }
 - (void)rightMouseDownAt:(CGPoint)point {
     self->mouse_x = point.x;
     self->mouse_y = point.y;
     self->mouseRight = true;
+    [super rightMouseDownAt:point];
 }
 - (void)middleMouseUp {
     self->mouseMiddle = false;
+    [super middleMouseUp];
 }
 - (void)middleMouseDownAt:(CGPoint)point {
     self->mouse_x = point.x;
     self->mouse_y = point.y;
     self->mouseMiddle = true;
+    [super middleMouseDownAt:point];
 }
 
 @end

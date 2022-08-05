@@ -19,11 +19,14 @@
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #include <string.h>
+#include <stdlib.h>
+#include <sys/syscall.h>
 #include <sys/time.h>
-
+#include "input_defines.h"
 #ifdef __APPLE__
 #include <CoreFoundation/CFRunLoop.h>
 #endif
+#include <malloc/malloc.h>
 
 #include <boolean.h>
 #include <rthreads/rthreads.h>
@@ -737,6 +740,8 @@ static bool btstack_loaded;
 
 static bool inquiry_off;
 static bool inquiry_running;
+#define MAX_USERS 16
+
 static struct btstack_hid_adapter g_connections[MAX_USERS];
 
 struct btpad_queue_command commands[64];
@@ -1030,7 +1035,7 @@ static void btpad_packet_handler(uint8_t packet_type,
          switch (packet[0])
          {
             case BTSTACK_EVENT_STATE:
-               VLOG(@"[BTstack]: HCI State %d.\n", packet[2]);
+//               // VLOG("[BTstack]: HCI State %d.\n", packet[2]);
 
                switch (packet[2])
                {                  
@@ -1063,12 +1068,12 @@ static void btpad_packet_handler(uint8_t packet_type,
                if (COMMAND_COMPLETE_EVENT(packet, (*hci_read_bd_addr_ptr)))
                {
                   bt_flip_addr_ptr(event_addr, &packet[6]);
-                  if (!packet[5])
-                     VLOG(@"[BTpad]: Local address is %s.\n",
-                           bd_addr_to_str_ptr(event_addr));
-                  else
-                     VLOG(@"[BTpad]: Failed to get local address (Status: %02X).\n",
-                           packet[5]);
+//                  if (!packet[5])
+                     // VLOG(@"[BTpad]: Local address is %s.\n",
+//                           bd_addr_to_str_ptr(event_addr));
+//                  else
+                     // VLOG(@"[BTpad]: Failed to get local address (Status: %02X).\n",
+//                           packet[5]);
                }
                break;
 
@@ -1084,7 +1089,7 @@ static void btpad_packet_handler(uint8_t packet_type,
                   if (!connection)
                      return;
 
-                  VLOG(@"[BTpad]: Inquiry found device\n");
+//                  // VLOG(@"[BTpad]: Inquiry found device\n");
                   memset(connection, 0, sizeof(struct btstack_hid_adapter));
 
                   memcpy(connection->address, event_addr, sizeof(bd_addr_t));
@@ -1121,11 +1126,11 @@ static void btpad_packet_handler(uint8_t packet_type,
                   {
                      if (!connection)
                      {
-                        VLOG(@"[BTpad]: Got L2CAP 'Channel Opened' event for unrecognized device.\n");
+                        // VLOG(@"[BTpad]: Got L2CAP 'Channel Opened' event for unrecognized device.\n");
                         break;
                      }
 
-                     VLOG(@"[BTpad]: L2CAP channel opened: (PSM: %02X)\n", psm);
+                     // VLOG(@"[BTpad]: L2CAP channel opened: (PSM: %02X)\n", psm);
                      connection->handle         = handle;
 
                      switch (psm)
@@ -1137,18 +1142,18 @@ static void btpad_packet_handler(uint8_t packet_type,
                            connection->channels[1] = channel_id;
                            break;
                         default:
-                           VLOG(@"[BTpad]: Got unknown L2CAP PSM, ignoring (PSM: %02X).\n", psm);
+                           // VLOG(@"[BTpad]: Got unknown L2CAP PSM, ignoring (PSM: %02X).\n", psm);
                            break;
                      }
 
                      if (connection->channels[0] && connection->channels[1])
                      {
-                        VLOG(@"[BTpad]: Got both L2CAP channels, requesting name.\n");
+                        // VLOG(@"[BTpad]: Got both L2CAP channels, requesting name.\n");
                         btpad_queue_hci_remote_name_request(cmd, connection->address, 0, 0, 0);
                      }
                   }
-                  else
-                     VLOG(@"[BTpad]: Got failed L2CAP 'Channel Opened' event (PSM: %02X, Status: %02X).\n", psm, packet[2]);
+//                  else
+                     // VLOG(@"[BTpad]: Got failed L2CAP 'Channel Opened' event (PSM: %02X, Status: %02X).\n", psm, packet[2]);
                }
                break;
 
@@ -1171,7 +1176,7 @@ static void btpad_packet_handler(uint8_t packet_type,
                      if (!connection)
                         break;
 
-                     VLOG(@"[BTpad]: Got new incoming connection\n");
+                     // VLOG(@"[BTpad]: Got new incoming connection\n");
 
                      memset(connection, 0,
                            sizeof(struct btstack_hid_adapter));
@@ -1183,8 +1188,8 @@ static void btpad_packet_handler(uint8_t packet_type,
                      connection->state = BTPAD_CONNECTING;
                   }
 
-                  VLOG(@"[BTpad]: Incoming L2CAP connection (PSM: %02X).\n",
-                        psm);
+//                  // VLOG(@"[BTpad]: Incoming L2CAP connection (PSM: %02X).\n",
+//                        psm);
                   bt_send_cmd_ptr(l2cap_accept_connection_ptr, channel_id);
                }
                break;
@@ -1199,11 +1204,11 @@ static void btpad_packet_handler(uint8_t packet_type,
 
                   if (!connection)
                   {
-                     VLOG(@"[BTpad]: Got unexpected remote name, ignoring.\n");
+                     // VLOG("[BTpad]: Got unexpected remote name, ignoring.\n");
                      break;
                   }
 
-                  VLOG(@"[BTpad]: Got %.200s.\n", (char*)&packet[9]);
+                  // VLOG("[BTpad]: Got %.200s.\n", (char*)&packet[9]);
 
                   connection->slot  = pad_connection_pad_init(&slots[connection->slot],
                         (char*)packet + 9, 0, 0, connection, &btpad_connection_send_control);
@@ -1212,7 +1217,7 @@ static void btpad_packet_handler(uint8_t packet_type,
                break;
 
             case HCI_EVENT_PIN_CODE_REQUEST:
-               VLOG(@"[BTpad]: Sending Wiimote PIN.\n");
+               // VLOG(@"[BTpad]: Sending Wiimote PIN.\n");
 
                bt_flip_addr_ptr(event_addr, &packet[2]);
                btpad_queue_hci_pin_code_request_reply(cmd, event_addr, &packet[2]);
@@ -1234,15 +1239,15 @@ static void btpad_packet_handler(uint8_t packet_type,
                         btpad_close_connection(connection);
                      }
                   }
-                  else
-                     VLOG(@"[BTpad]: Got failed 'Disconnection Complete' event (Status: %02X).\n", packet[2]);
+//                  else
+                     // VLOG(@"[BTpad]: Got failed 'Disconnection Complete' event (Status: %02X).\n", packet[2]);
                }
                break;
 
             case L2CAP_EVENT_SERVICE_REGISTERED:
-               if (packet[2])
-                  VLOG(@"[BTpad]: Got failed 'Service Registered' event (PSM: %02X, Status: %02X).\n",
-                        READ_BT_16(packet, 3), packet[2]);
+//               if (packet[2])
+                  // VLOG(@"[BTpad]: Got failed 'Service Registered' event (PSM: %02X, Status: %02X).\n",
+//                        READ_BT_16(packet, 3), packet[2]);
                break;
          }
          break;
@@ -1298,7 +1303,7 @@ static void btstack_thread_stop(void *data)
 
 static void btstack_thread_func(void* data)
 {
-   VLOG(@"[BTstack]: Thread started");
+   // VLOG(@"[BTstack]: Thread started");
 
    if (bt_open_ptr())
       return;
@@ -1309,15 +1314,15 @@ static void btstack_thread_func(void* data)
    CFRunLoopAddSource(CFRunLoopGetCurrent(), btstack_quit_source, kCFRunLoopCommonModes);
 #endif
 
-   VLOG(@"[BTstack]: Turning on...\n");
+   // VLOG(@"[BTstack]: Turning on...\n");
    bt_send_cmd_ptr(btstack_set_power_mode_ptr, HCI_POWER_ON);
 
-   VLOG(@"BTstack: Thread running...\n");
+   // VLOG(@"BTstack: Thread running...\n");
 #ifdef __APPLE__
    CFRunLoopRun();
 #endif
 
-   VLOG(@"[BTstack]: Thread done.\n");
+   // VLOG(@"[BTstack]: Thread done.\n");
 
 #ifdef __APPLE__
    CFRunLoopSourceInvalidate(btstack_quit_source);

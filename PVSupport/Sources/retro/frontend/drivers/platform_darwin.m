@@ -305,7 +305,7 @@ static void frontend_darwin_get_name(char *s, size_t len)
 static void frontend_darwin_get_os(char *s, size_t len, int *major, int *minor)
 {
 #if defined(IOS)
-   get_ios_version(major, minor);
+//   get_ios_version(major, minor);
    strlcpy(s, "iOS", len);
 #elif defined(OSX)
     if ([[NSProcessInfo processInfo] respondsToSelector:@selector(operatingSystemVersion)])
@@ -355,13 +355,13 @@ static void frontend_darwin_get_environment_settings(int *argc, char *argv[],
    strlcat(home_dir_buf, "/RetroArch", sizeof(home_dir_buf));
    fill_pathname_join(g_defaults.dir.shader, home_dir_buf, "shaders_glsl", sizeof(g_defaults.dir.shader));
 #if TARGET_OS_IPHONE
-    int major, minor;
-    get_ios_version(&major, &minor);
-    if (major >= 10 ) {
+//    int major, minor;
+//    get_ios_version(&major, &minor);
+//    if (major >= 10 ) {
         fill_pathname_join(g_defaults.dir.core, bundle_path_buf, "modules", sizeof(g_defaults.dir.core));
-    } else {
-        fill_pathname_join(g_defaults.dir.core, home_dir_buf, "cores", sizeof(g_defaults.dir.core));
-    }
+//    } else {
+//        fill_pathname_join(g_defaults.dir.core, home_dir_buf, "cores", sizeof(g_defaults.dir.core));
+//    }
 #else
    fill_pathname_join(g_defaults.dir.core, home_dir_buf, "cores", sizeof(g_defaults.dir.core));
 #endif
@@ -418,21 +418,21 @@ static void frontend_darwin_get_environment_settings(int *argc, char *argv[],
 
 #if TARGET_OS_IPHONE
     char assets_zip_path[PATH_MAX_LENGTH];
-    if (major > 8)
+//    if (major > 8)
        strlcpy(g_defaults.path.buildbot_server_url, "http://buildbot.libretro.com/nightly/apple/ios9/latest/", sizeof(g_defaults.path.buildbot_server_url));
 
     fill_pathname_join(assets_zip_path, bundle_path_buf, "assets.zip", sizeof(assets_zip_path));
     
-    if (path_file_exists(assets_zip_path))
-    {
-       settings_t *settings = config_get_ptr();
-
-       VLOG(@"Assets ZIP found at [%s], setting up bundle assets extraction...\n", assets_zip_path);
-       VLOG(@"Extraction dir will be: %s\n", home_dir_buf);
-       strlcpy(settings->path.bundle_assets_src, assets_zip_path, sizeof(settings->path.bundle_assets_src));
-       strlcpy(settings->path.bundle_assets_dst, home_dir_buf, sizeof(settings->path.bundle_assets_dst));
-       settings->bundle_assets_extract_version_current = 130; /* TODO/FIXME: Just hardcode this for now */
-    }
+//    if (path_file_exists(assets_zip_path))
+//    {
+//       settings_t *settings = config_get_ptr();
+//
+//       VLOG(@"Assets ZIP found at [%s], setting up bundle assets extraction...\n", assets_zip_path);
+//       VLOG(@"Extraction dir will be: %s\n", home_dir_buf);
+//       strlcpy(settings->path.bundle_assets_src, assets_zip_path, sizeof(settings->path.bundle_assets_src));
+//       strlcpy(settings->path.bundle_assets_dst, home_dir_buf, sizeof(settings->path.bundle_assets_dst));
+//       settings->bundle_assets_extract_version_current = 130; /* TODO/FIXME: Just hardcode this for now */
+//    }
 #endif
 
    CFTemporaryDirectory(temp_dir, sizeof(temp_dir));
@@ -440,14 +440,14 @@ static void frontend_darwin_get_environment_settings(int *argc, char *argv[],
 
    path_mkdir(bundle_path_buf);
 
-   if (access(bundle_path_buf, 0755) != 0)
-      ELOG(@"Failed to create or access base directory: %s\n", bundle_path_buf);
-   else
-   {
+    if (access(bundle_path_buf, 0755) != 0) {
+        ELOG(@"Failed to create or access base directory: %s\n", bundle_path_buf);
+    } else {
       path_mkdir(g_defaults.dir.system);
 
-      if (access(g_defaults.dir.system, 0755) != 0)
-         ELOG(@"Failed to create or access system directory: %s.\n", g_defaults.dir.system);
+        if (access(g_defaults.dir.system, 0755) != 0) {
+            ELOG(@"Failed to create or access system directory: %s.\n", g_defaults.dir.system);
+        }
    }
 
    CFRelease(bundle_path);

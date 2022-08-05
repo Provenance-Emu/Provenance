@@ -59,6 +59,8 @@ typedef unsigned int   u32;
 //    bzero(&lt, sizeof(lt));
 }
 
+- (BOOL)gameSupportsTouchpad { return YES; }
+
 #pragma mark - Control
 //
 //- (void)pollControllers {

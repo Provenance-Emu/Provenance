@@ -43,23 +43,17 @@
 
 # pragma mark - Properties
 
-//- (CGSize)bufferSize {
-//    CGSize size = CGSizeMake(av_info.geometry.max_width, av_info.geometry.max_height);
-//    DLOG(@"<%i, %i>", size.width, size.height);
-//    return size;
-//}
-//
-//- (CGRect)screenRect {
-//    CGRect rect = CGRectMake(0, 0, av_info.geometry.base_width, av_info.geometry.base_height);
-//    DLOG(@"<%i, %i>", rect.size.width, rect.size.height);
-//    return rect;
-//}
-//
-//- (CGSize)aspectSize {
-//    CGSize size = CGSizeMake(1, av_info.geometry.aspect_ratio);
-//    DLOG(@"<%i, %i>", size.width, size.height);
-//    return size;
-//}
+- (CGSize)bufferSize {
+    return CGSizeMake(320, 240);
+}
+
+- (CGRect)screenRect {
+    return CGRectMake(0, 0, 320, 240);
+}
+
+- (CGSize)aspectSize {
+    return CGSizeMake(4, 3);
+}
 
 //- (BOOL)rendersToOpenGL {
 //    return YES;
@@ -73,17 +67,17 @@
 //    return NULL;
 //}
 
-//- (GLenum)pixelFormat {
-//    return GL_RGBA;
-//}
-//
-//- (GLenum)pixelType {
-//    return GL_UNSIGNED_BYTE;
-//}
-//
-//- (GLenum)internalPixelFormat {
-//    return GL_RGBA;
-//}
+- (GLenum)pixelFormat {
+    return GL_RGB;
+}
+
+- (GLenum)pixelType {
+    return GL_UNSIGNED_BYTE;
+}
+
+- (GLenum)internalPixelFormat {
+    return GL_RGBA;
+}
 //
 //- (GLenum)depthFormat {
 //        // 0, GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT24

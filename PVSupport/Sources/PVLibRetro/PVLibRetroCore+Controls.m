@@ -204,6 +204,95 @@ char * keyStringForKeyCode(int keyCode)
 
 @end
 
+# pragma mark - Touch
+@implementation PVLibRetroCore (TouchPadResponder)
+//- (GCControllerButtonTouchedChangedHandler)touchedChangedHandler {
+//
+//}
+//
+//- (GCControllerButtonValueChangedHandler)valueChangedHandler {
+//
+//}
+//
+//- (GCControllerButtonValueChangedHandler)pressedChangedHandler {
+//
+//}
+
+@end
+
+# pragma mark - Mouse
+
+@implementation PVLibRetroCore (MouseResponder)
+//- (BOOL)gameSupportsMouse { return true; }
+//- (BOOL)requiresMouse{ return false; }
+
+- (void)didScroll:(GCDeviceCursor *)cursor {
+    if(cursor.yAxis == 0) {
+        self->mouse_wheel_up = 0;
+        self->mouse_wheel_down = 0;
+        input_state_callback(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_WHEELUP);
+        input_state_callback(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_WHEELDOWN);
+    } else if (cursor.yAxis.value > 0.0) {
+        self->mouse_wheel_up = cursor.yAxis.value;
+        self->mouse_wheel_down = 0;
+        input_state_callback(0, RETRO_DEVICE_MOUSE, self->mouse_wheel_up, RETRO_DEVICE_ID_MOUSE_WHEELUP);
+        input_state_callback(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_WHEELDOWN);
+    } else if (cursor.yAxis.value < 0.0) {
+        self->mouse_wheel_up = 0;
+        self->mouse_wheel_down = cursor.yAxis.value * -1;
+        input_state_callback(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_WHEELUP);
+        input_state_callback(0, RETRO_DEVICE_MOUSE, self->mouse_wheel_down, RETRO_DEVICE_ID_MOUSE_WHEELDOWN);
+    }
+}
+
+- (void)mouseMovedAt:(CGPoint)point {
+    self->mouse_x = point.x;
+    self->mouse_y = point.y;
+    
+    input_state_callback(0, RETRO_DEVICE_MOUSE, self->mouse_x, RETRO_DEVICE_ID_MOUSE_X);
+    input_state_callback(0, RETRO_DEVICE_MOUSE, self->mouse_y, RETRO_DEVICE_ID_MOUSE_Y);
+}
+
+- (void)leftMouseUp {
+    self->mouseLeft = false;
+    input_state_callback(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_LEFT);
+}
+
+- (void)leftMouseDownAt:(CGPoint)point {
+    self->mouse_x = point.x;
+    self->mouse_y = point.y;
+    self->mouseLeft = true;
+    input_state_callback(0, RETRO_DEVICE_MOUSE, self->mouse_x, RETRO_DEVICE_ID_MOUSE_X);
+    input_state_callback(0, RETRO_DEVICE_MOUSE, self->mouse_y, RETRO_DEVICE_ID_MOUSE_Y);
+    input_state_callback(0, RETRO_DEVICE_MOUSE, 1, RETRO_DEVICE_ID_MOUSE_LEFT);
+}
+
+- (void)rightMouseUp {
+    self->mouseRight = false;
+    input_state_callback(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_RIGHT);
+}
+- (void)rightMouseDownAt:(CGPoint)point {
+    self->mouse_x = point.x;
+    self->mouse_y = point.y;
+    self->mouseRight = true;
+    input_state_callback(0, RETRO_DEVICE_MOUSE, self->mouse_x, RETRO_DEVICE_ID_MOUSE_X);
+    input_state_callback(0, RETRO_DEVICE_MOUSE, self->mouse_y, RETRO_DEVICE_ID_MOUSE_Y);
+    input_state_callback(0, RETRO_DEVICE_MOUSE, 1, RETRO_DEVICE_ID_MOUSE_RIGHT);
+}
+- (void)middleMouseUp {
+    self->mouseMiddle = false;
+    input_state_callback(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_MIDDLE);
+}
+- (void)middleMouseDownAt:(CGPoint)point {
+    self->mouse_x = point.x;
+    self->mouse_y = point.y;
+    self->mouseMiddle = true;
+    input_state_callback(0, RETRO_DEVICE_MOUSE, self->mouse_x, RETRO_DEVICE_ID_MOUSE_X);
+    input_state_callback(0, RETRO_DEVICE_MOUSE, self->mouse_y, RETRO_DEVICE_ID_MOUSE_Y);
+    input_state_callback(0, RETRO_DEVICE_MOUSE, 1, RETRO_DEVICE_ID_MOUSE_MIDDLE);
+}
+
+@end
 # pragma mark - Controls
 @implementation PVLibRetroCore (Controls)
 - (void)pollControllers {

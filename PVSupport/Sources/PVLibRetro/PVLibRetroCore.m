@@ -788,8 +788,8 @@ static size_t RETRO_CALLCONV audio_batch_callback(const int16_t *data, size_t fr
 
 void audio_driver_unset_callback(void)
 {
-//   audio_callback.callback  = NULL;
-//   audio_callback.set_state = NULL;
+    audio_callback_notify  = NULL;
+    audio_set_state_notify = NULL;
 }
 
 // MARK: - Serialization
@@ -876,7 +876,7 @@ static bool core_init_libretro_cbs(void *data)
     return true;
 }
 
-static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned device, unsigned index, unsigned _id)
+int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned device, unsigned index, unsigned _id)
 {
     //DLOG(@"polled input: port: %d device: %d id: %d", port, device, id);
     
@@ -1982,21 +1982,21 @@ static bool environment_callback(unsigned cmd, void *data) {
             *(float *)data = strongCurrent.frameInterval;
             return true;
         }
-        case RETRO_ENVIRONMENT_GET_INPUT_BITMASKS: {
-            /* bool * --
-            * Boolean value that indicates whether or not the frontend supports
-            * input bitmasks being returned by retro_input_state_t. The advantage
-            * of this is that retro_input_state_t has to be only called once to
-            * grab all button states instead of multiple times.
-            *
-            * If it returns true, you can pass RETRO_DEVICE_ID_JOYPAD_MASK as 'id'
-            * to retro_input_state_t (make sure 'device' is set to RETRO_DEVICE_JOYPAD).
-            * It will return a bitmask of all the digital buttons.
-            */
-#warning "Test this trua and false"
-            *(bool *)data = false;
-            return true;
-        }
+//        case RETRO_ENVIRONMENT_GET_INPUT_BITMASKS: {
+//            /* bool * --
+//            * Boolean value that indicates whether or not the frontend supports
+//            * input bitmasks being returned by retro_input_state_t. The advantage
+//            * of this is that retro_input_state_t has to be only called once to
+//            * grab all button states instead of multiple times.
+//            *
+//            * If it returns true, you can pass RETRO_DEVICE_ID_JOYPAD_MASK as 'id'
+//            * to retro_input_state_t (make sure 'device' is set to RETRO_DEVICE_JOYPAD).
+//            * It will return a bitmask of all the digital buttons.
+//            */
+//#warning "Test this trua and false"
+//            *(bool *)data = false;
+//            return true;
+//        }
         case RETRO_ENVIRONMENT_GET_MIDI_INTERFACE: {
             /* struct retro_midi_interface ** --
              * Returns a MIDI interface that can be used for raw data I/O.
@@ -2460,9 +2460,10 @@ static bool environment_callback(unsigned cmd, void *data) {
              * If a core wants to use this functionality, SET_SUBSYSTEM_INFO
              * **MUST** be called from within retro_set_environment().
              */
-            const struct retro_subsystem_info *game_info_ext =
+            const struct retro_subsystem_info *l_subsystem_info =
                     (const struct retro_subsystem_info *)data;
-            return false;
+            subsystem_info = l_subsystem_info;
+            return true;
         }
         case RETRO_ENVIRONMENT_GET_GAME_INFO_EXT:
         {

@@ -95,6 +95,7 @@
 //
 //		_callbackQueue = dispatch_queue_create("org.openemu.MelonDS.CallbackHandlerQueue", queueAttributes);
 //		_callbackHandlers = [[NSMutableDictionary alloc] init];
+        pitch_shift = 1;
         _current = self;
 	}
 	return self;
@@ -109,7 +110,7 @@
     
     if (V("melonds_console_mode")) {
         // Console Mode; DS|DSi
-        char * value = strdup("DS");
+        char * value = strdup("DSi");
         return value;
     } else if (V("melonds_boot_directly")) {
         // Boot game directly; enabled|disabled
@@ -153,7 +154,7 @@
         return value;
     } else if (V("melonds_opengl_filtering")) {
         // "OpenGL filtering; nearest|linear"
-        char * value = strdup("linear");
+        char * value = strdup("nearest");
         return value;
     } else if (V("melonds_opengl_better_polygons")) {
         // OpenGL Improved polygon splitting; disabled|enabled
@@ -161,11 +162,55 @@
         return value;
     } else if (V("melonds_opengl_renderer")) {
         // OpenGL Renderer (Restart); disabled|enabled
+        char * value = strdup("enabled");
+        return value;
+        //   } else if (V("melonds_opengl_resolution")) {
+        //        char * value = strdup("640x480");
+        //        return value;
+        //    }
+#ifdef JIT_ENABLED
+    } else if (V("melonds_jit_enable")) {
+        // "JIT Enable (Restart); enabled|disabled"
         char * value = strdup("disabled");
         return value;
+    } else if (V("melonds_jit_block_size")) {
+        char * value = strdup("2048");
+        return value;
+    }  else if (V("melonds_jit_branch_optimisations")) {
+        //  "JIT Branch optimisations; enabled|disabled"
+        char * value = strdup("enabled");
+        return value;
+    } else if (V("melonds_jit_literal_optimisations")) {
+        // "JIT Literal optimisations; enabled|disabled"
+        char * value = strdup("enabled");
+        return value;
+    } else if (V("melonds_jit_fast_memory")) {
+        // "JIT Fast memory; enabled|disabled"
+        char * value = strdup("enabled");
+        return value;
+#endif
     } else if (V("melonds_hybrid_ratio")) {
         // Hybrid ratio (OpenGL only); 2|3
-        char * value = strdup("3");
+        char * value = strdup("2");
+        return value;
+    } else if (V("melonds_screen_layout")) {
+        // "Screen Layout; Top/Bottom|Bottom/Top|Left/Right|Right/Left|Top Only|Bottom Only|Hybrid Top|Hybrid Bottom"
+        char * value = strdup("Top/Bottom");
+        return value;
+    } else if (V("melonds_screen_gap")) {
+        char * value = strdup("0");
+        return value;
+    } else if (V("melonds_hybrid_small_screen")) {
+        // "Hybrid small screen mode; Bottom|Top|Duplicate"
+        char * value = strdup("Duplicate");
+        return value;
+    } else if (V("melonds_randomize_mac_address")) {
+        // "Randomize MAC address; disabled|enabled"
+        char * value = strdup("disabled");
+        return value;
+    } else if (V("melonds_swapscreen_mode")) {
+        // "Swap Screen mode; Toggle|Hold"
+        char * value = strdup("Toggle");
         return value;
     } else {
         ELOG(@"Unprocessed var: %s", variable);

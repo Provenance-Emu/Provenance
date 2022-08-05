@@ -7,7 +7,7 @@
 //
 
 // CFLAGS/LDFLAGS All
-OTHER_CFLAGS[arch=*] = $(inherited) -pthread -fPIC -ffast-math -ftree-vectorize -fno-strict-aliasing -fpermissive -fomit-frame-pointer -fPIC
+OTHER_CFLAGS[arch=*] = $(inherited) -pthread -fPIC -ffast-math -ftree-vectorize -fno-strict-aliasing -fpermissive -fomit-frame-pointer -fPIC HAVE_COCOATOUCH=1
 OTHER_LDFLAGS= $(inherited)
 // -EGL < android
 

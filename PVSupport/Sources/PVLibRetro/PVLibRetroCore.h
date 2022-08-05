@@ -32,6 +32,8 @@ typedef struct retro_core_t retro_core_t;
 
 static retro_keyboard_event_t _Nullable keyboard_event;
 static const struct retro_core_options_v2* _Nullable core_options;
+static const struct retro_subsystem_info* _Nullable subsystem_info;
+int16_t input_state_callback(unsigned port, unsigned device, unsigned index, unsigned _id);
 
 @class PVLibRetroCore;
 static __weak PVLibRetroCore * _Nonnull _current;

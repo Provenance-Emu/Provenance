@@ -85,17 +85,17 @@
 //    return GL_UNSIGNED_SHORT_5_6_5;
 //}
 
-//- (GLenum)pixelFormat {
-//    return GL_RGBA;
-//}
-//
-//- (GLenum)internalPixelFormat {
-//    return GL_BGRA;
-//}
-//
-//- (GLenum)pixelType {
-//    return GL_UNSIGNED_BYTE;
-//}
+- (GLenum)pixelFormat {
+    return GL_RGBA;
+}
+
+- (GLenum)internalPixelFormat {
+    return GL_BGRA;
+}
+
+- (GLenum)pixelType {
+    return GL_UNSIGNED_SHORT;
+}
 
 //- (GLenum)internalPixelFormat {
 //    // TODO: use struct retro_pixel_format var, set with, RETRO_ENVIRONMENT_SET_PIXEL_FORMAT

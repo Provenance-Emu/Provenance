@@ -88,115 +88,80 @@ s8 joyx[4], joyy[4];
             GCExtendedGamepad *gamepad     = [controller extendedGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
 
-            dpad.up.isPressed ? kcode[playerIndex] &= ~(DC_DPAD_UP) : kcode[playerIndex] |= (DC_DPAD_UP);
-            dpad.down.isPressed ? kcode[playerIndex] &= ~(DC_DPAD_DOWN) : kcode[playerIndex] |= (DC_DPAD_DOWN);
-            dpad.left.isPressed ? kcode[playerIndex] &= ~(DC_DPAD_LEFT) : kcode[playerIndex] |= (DC_DPAD_LEFT);
-            dpad.right.isPressed ? kcode[playerIndex] &= ~(DC_DPAD_RIGHT) : kcode[playerIndex] |= (DC_DPAD_RIGHT);
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_UP] = dpad.up.isPressed;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_DOWN] = dpad.down.isPressed;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_LEFT] = dpad.left.isPressed;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_RIGHT] = dpad.right.isPressed;
 
-            gamepad.buttonA.isPressed ? kcode[playerIndex] &= ~(DC_BTN_A) : kcode[playerIndex] |= (DC_BTN_A);
-            gamepad.buttonB.isPressed ? kcode[playerIndex] &= ~(DC_BTN_B) : kcode[playerIndex] |= (DC_BTN_B);
-            gamepad.buttonX.isPressed ? kcode[playerIndex] &= ~(DC_BTN_X) : kcode[playerIndex] |= (DC_BTN_X);
-            gamepad.buttonY.isPressed ? kcode[playerIndex] &= ~(DC_BTN_Y) : kcode[playerIndex] |= (DC_BTN_Y);
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] = gamepad.buttonA.isPressed;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = gamepad.buttonB.isPressed;
 
-            gamepad.leftShoulder.isPressed ? kcode[playerIndex] &= ~(DC_AXIS_LT) : kcode[playerIndex] |= (DC_AXIS_LT);
-            gamepad.rightShoulder.isPressed ? kcode[playerIndex] &= ~(DC_AXIS_RT) : kcode[playerIndex] |= (DC_AXIS_RT);
-
-            gamepad.leftTrigger.isPressed ? kcode[playerIndex] &= ~(DC_BTN_Z) : kcode[playerIndex] |= (DC_BTN_Z);
-            gamepad.rightTrigger.isPressed ? kcode[playerIndex] &= ~(DC_BTN_START) : kcode[playerIndex] |= (DC_BTN_START);
-
-
-            float xvalue = gamepad.leftThumbstick.xAxis.value;
-            s8 x=(s8)(xvalue*127);
-            joyx[0] = x;
-
-            float yvalue = gamepad.leftThumbstick.yAxis.value;
-            s8 y=(s8)(yvalue*127 * - 1); //-127 ... + 127 range
-            joyy[0] = y;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START] = gamepad.buttonHome.isPressed;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_SELECT] = gamepad.buttonMenu.isPressed;
 
         } else if ([controller gamepad]) {
             GCGamepad *gamepad = [controller gamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
 
-            dpad.up.isPressed ? kcode[playerIndex] &= ~(DC_DPAD_UP) : kcode[playerIndex] |= (DC_DPAD_UP);
-            dpad.down.isPressed ? kcode[playerIndex] &= ~(DC_DPAD_DOWN) : kcode[playerIndex] |= (DC_DPAD_DOWN);
-            dpad.left.isPressed ? kcode[playerIndex] &= ~(DC_DPAD_LEFT) : kcode[playerIndex] |= (DC_DPAD_LEFT);
-            dpad.right.isPressed ? kcode[playerIndex] &= ~(DC_DPAD_RIGHT) : kcode[playerIndex] |= (DC_DPAD_RIGHT);
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_UP] = dpad.up.isPressed;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_DOWN] = dpad.down.isPressed;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_LEFT] = dpad.left.isPressed;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_RIGHT] = dpad.right.isPressed;
 
-            gamepad.buttonA.isPressed ? kcode[playerIndex] &= ~(DC_BTN_A) : kcode[playerIndex] |= (DC_BTN_A);
-            gamepad.buttonB.isPressed ? kcode[playerIndex] &= ~(DC_BTN_B) : kcode[playerIndex] |= (DC_BTN_B);
-            gamepad.buttonX.isPressed ? kcode[playerIndex] &= ~(DC_BTN_X) : kcode[playerIndex] |= (DC_BTN_X);
-            gamepad.buttonY.isPressed ? kcode[playerIndex] &= ~(DC_BTN_Y) : kcode[playerIndex] |= (DC_BTN_Y);
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] = gamepad.buttonA.isPressed;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = gamepad.buttonB.isPressed;
 
-            gamepad.leftShoulder.isPressed ? kcode[playerIndex] &= ~(DC_AXIS_LT) : kcode[playerIndex] |= (DC_AXIS_LT);
-            gamepad.rightShoulder.isPressed ? kcode[playerIndex] &= ~(DC_AXIS_RT) : kcode[playerIndex] |= (DC_AXIS_RT);
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START] = gamepad.buttonX.isPressed;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_SELECT] = gamepad.buttonY.isPressed;
         }
 #if TARGET_OS_TV
         else if ([controller microGamepad]) {
             GCMicroGamepad *gamepad = [controller microGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
+            
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_UP] = dpad.up.isPressed;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_DOWN] = dpad.down.isPressed;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_LEFT] = dpad.left.isPressed;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_RIGHT] = dpad.right.isPressed;
+
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] = gamepad.buttonA.isPressed;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = gamepad.buttonB.isPressed;
+
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START] = gamepad.buttonX.isPressed;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_SELECT] = gamepad.buttonY.isPressed;
         }
 #endif
     }
 }
 
--(void)didPushDOSButton:(enum PVDOSButton)button forPlayer:(NSInteger)player {
-//	if(_isInitialized)
-//	  {
-//	  }
+-(void)didPushNESButton:(enum PVNESButton)button forPlayer:(NSInteger)player {
+    switch (button) {
+        case PVNESButtonUp: _pad[player][RETRO_DEVICE_ID_JOYPAD_UP] = 1;
+        case PVNESButtonDown: _pad[player][RETRO_DEVICE_ID_JOYPAD_DOWN] = 1;
+        case PVNESButtonLeft: _pad[player][RETRO_DEVICE_ID_JOYPAD_LEFT] = 1;
+        case PVNESButtonRight: _pad[player][RETRO_DEVICE_ID_JOYPAD_RIGHT] = 1;
+        case PVNESButtonA: _pad[player][RETRO_DEVICE_ID_JOYPAD_A] = 1;
+        case PVNESButtonB: _pad[player][RETRO_DEVICE_ID_JOYPAD_B] = 1;
+        case PVNESButtonStart: _pad[player][RETRO_DEVICE_ID_JOYPAD_START] = 1;
+        case PVNESButtonSelect: _pad[player][RETRO_DEVICE_ID_JOYPAD_SELECT] = 1;
+        default:
+            break;
+    }
 }
 
--(void)didReleaseDOSButton:(enum PVDOSButton)button forPlayer:(NSInteger)player {
-//	if(_isInitialized)
-//	  {
-//	  }
+-(void)didReleaseNESButton:(enum PVNESButton)button forPlayer:(NSInteger)player {
+    switch (button) {
+        case PVNESButtonUp: _pad[player][RETRO_DEVICE_ID_JOYPAD_UP] = 0;
+        case PVNESButtonDown: _pad[player][RETRO_DEVICE_ID_JOYPAD_DOWN] = 0;
+        case PVNESButtonLeft: _pad[player][RETRO_DEVICE_ID_JOYPAD_LEFT] = 0;
+        case PVNESButtonRight: _pad[player][RETRO_DEVICE_ID_JOYPAD_RIGHT] = 0;
+        case PVNESButtonA: _pad[player][RETRO_DEVICE_ID_JOYPAD_A] = 0;
+        case PVNESButtonB: _pad[player][RETRO_DEVICE_ID_JOYPAD_B] = 0;
+        case PVNESButtonStart: _pad[player][RETRO_DEVICE_ID_JOYPAD_START] = 0;
+        case PVNESButtonSelect: _pad[player][RETRO_DEVICE_ID_JOYPAD_SELECT] = 0;
+        default:
+            break;
+    }
 }
-
-- (void)didMoveDOSJoystickDirection:(enum PVDOSButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
-//	if(_isInitialized)
-//	  {
-//	  }
-}
-
--(void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
-    [self didMoveDOSJoystickDirection:(enum PVDOSButton)button withValue:value forPlayer:player];
-}
-
-- (void)didPush:(NSInteger)button forPlayer:(NSInteger)player {
-    [self didPushDOSButton:(PVDOSButton)button forPlayer:player];
-}
-
-- (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player {
-    [self didReleaseDOSButton:(PVDOSButton)button forPlayer:player];
-}
-
-
-# pragma mark - Input Wii
-//- (oneway void)didMoveWiiJoystickDirection:(OEWiiButton)button withValue:(CGFloat)value forPlayer:(NSUInteger)player
-//{
-//	if(_isInitialized)
-//	{
-//		dol_host->SetAxis(button, value, (int)player);
-//	}
-//}
-//
-//- (oneway void)didPushWiiButton:(OEWiiButton)button forPlayer:(NSUInteger)player
-//{
-//	if(_isInitialized)
-//	{
-//		if (button > OEWiiButtonCount) {
-//			dol_host->processSpecialKeys(button , (int)player);
-//		} else {
-//			dol_host->setButtonState(button, 1, (int)player);
-//		}
-//	}
-//}
-//
-//- (oneway void)didReleaseWiiButton:(OEWiiButton)button forPlayer:(NSUInteger)player
-//{
-//	if(_isInitialized && button != OEWiimoteSideways && button != OEWiimoteUpright)
-//	{
-//		dol_host->setButtonState(button, 0, (int)player);
-//	}
-//}
 
 @end

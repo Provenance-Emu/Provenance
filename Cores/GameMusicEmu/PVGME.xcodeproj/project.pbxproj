@@ -18,6 +18,8 @@
 		B3135BA226E4CC650047F338 /* PVGME.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVGME.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3135BA326E4CD080047F338 /* PVGMECore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVGMECore.mm */; };
 		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
+		B322B7A0289D0D8B00E8E580 /* PVGMECore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVGMECore+Controls.mm */; };
+		B322B7A1289D0D8B00E8E580 /* PVGMECore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVGMECore+Controls.mm */; };
 		B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C31B2191964F009F4EDC /* AVFoundation.framework */; };
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
@@ -1393,6 +1395,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B322B7A1289D0D8B00E8E580 /* PVGMECore+Controls.mm in Sources */,
 				B3135BA326E4CD080047F338 /* PVGMECore.mm in Sources */,
 				B380C2722894F63C007B76FD /* PVGMECore+Saves.m in Sources */,
 				B3C8A6602877D6510037A946 /* PVGMECore+Video.m in Sources */,
@@ -1494,6 +1497,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B322B7A0289D0D8B00E8E580 /* PVGMECore+Controls.mm in Sources */,
 				B3135B9B26E4CAD40047F338 /* PVGMECore.mm in Sources */,
 				B380C2712894F63C007B76FD /* PVGMECore+Saves.m in Sources */,
 				B3EBB2032872B65700EAEB37 /* PVGMECore+Video.m in Sources */,

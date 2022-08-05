@@ -102,6 +102,18 @@
 		B322996D28792B4100585AD8 /* movie.c in Sources */ = {isa = PBXBuildFile; fileRef = B3225169286C6F2A001FDF42 /* movie.c */; };
 		B322996E28792BA000585AD8 /* nullinput.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4ED28671EFF00B60497 /* nullinput.c */; };
 		B322996F28792BA000585AD8 /* nullinput.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4ED28671EFF00B60497 /* nullinput.c */; };
+		B322B780289D021D00E8E580 /* btstack_hid.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC51E28671EFF00B60497 /* btstack_hid.c */; };
+		B322B781289D021E00E8E580 /* btstack_hid.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC51E28671EFF00B60497 /* btstack_hid.c */; };
+		B322B782289D021F00E8E580 /* btstack_hid.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC51E28671EFF00B60497 /* btstack_hid.c */; };
+		B322B783289D03C000E8E580 /* null_hid.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC51F28671EFF00B60497 /* null_hid.c */; };
+		B322B784289D03C100E8E580 /* null_hid.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC51F28671EFF00B60497 /* null_hid.c */; };
+		B322B785289D03CA00E8E580 /* null_hid.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC51F28671EFF00B60497 /* null_hid.c */; };
+		B322B789289D046800E8E580 /* ctr_input.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4FD28671EFF00B60497 /* ctr_input.c */; };
+		B322B78A289D046900E8E580 /* ctr_input.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4FD28671EFF00B60497 /* ctr_input.c */; };
+		B322B78F289D04C900E8E580 /* input_overlay.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC54728671EFF00B60497 /* input_overlay.c */; };
+		B322B790289D04CA00E8E580 /* input_overlay.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC54728671EFF00B60497 /* input_overlay.c */; };
+		B322B791289D052400E8E580 /* cocoa_input.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4F728671EFF00B60497 /* cocoa_input.c */; };
+		B322B792289D052500E8E580 /* cocoa_input.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4F728671EFF00B60497 /* cocoa_input.c */; };
 		B324C3162191963B009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C3152191963B009F4EDC /* AVFoundation.framework */; };
 		B3296E8126C67EFA0088AC32 /* CocoaLumberjack+NSLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E8026C67EF90088AC32 /* CocoaLumberjack+NSLogger.swift */; };
 		B3296E8226C67EFA0088AC32 /* CocoaLumberjack+NSLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E8026C67EF90088AC32 /* CocoaLumberjack+NSLogger.swift */; };
@@ -4117,9 +4129,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3AC6EB028993A1600D202AF /* input_remote.c in Sources */,
+				B322B78F289D04C900E8E580 /* input_overlay.c in Sources */,
 				B3AC6E932899297000D202AF /* location_driver.c in Sources */,
+				B322B783289D03C000E8E580 /* null_hid.c in Sources */,
+				B322B781289D021E00E8E580 /* btstack_hid.c in Sources */,
 				B32E458928993AE500C2E2D0 /* input_hid_driver.c in Sources */,
 				B32299462878CF2C00585AD8 /* rthreads.c in Sources */,
+				B322B789289D046800E8E580 /* ctr_input.c in Sources */,
 				B342325B286EB4060033EFA5 /* dylib.c in Sources */,
 				B32E458728993AE500C2E2D0 /* input_config.c in Sources */,
 				B3AC6EB228993A2000D202AF /* input_remapping.c in Sources */,
@@ -4130,6 +4146,7 @@
 				B32299422878CB3C00585AD8 /* input_driver.c in Sources */,
 				B32E458A28993AE500C2E2D0 /* input_joypad_driver.c in Sources */,
 				B3AC6EAE2899392900D202AF /* input_autodetect.c in Sources */,
+				B322B791289D052400E8E580 /* cocoa_input.c in Sources */,
 				B3423260286EB5CA0033EFA5 /* dynamic_dummy.c in Sources */,
 				B322994A2878CF6200585AD8 /* input_keyboard.c in Sources */,
 				B322996E28792BA000585AD8 /* nullinput.c in Sources */,
@@ -4152,6 +4169,7 @@
 			files = (
 				B36C41052898776C00EAEF59 /* retro_netplay.m in Sources */,
 				B3AC6EA228992BA600D202AF /* net_http_parse.c in Sources */,
+				B322B785289D03CA00E8E580 /* null_hid.c in Sources */,
 				B3AC6EA028992BA600D202AF /* net_socket_ssl_mbed.c in Sources */,
 				B3AC6E9628992A6300D202AF /* task_netplay_find_content.c in Sources */,
 				B3AC6E922899295200D202AF /* net_retropad_core.c in Sources */,
@@ -4159,6 +4177,7 @@
 				B3AC6EA428992BA600D202AF /* net_compat.c in Sources */,
 				B3AC6E9528992A6300D202AF /* task_netplay_lan_scan.c in Sources */,
 				B3AC6EA628992BA600D202AF /* net_socket.c in Sources */,
+				B322B782289D021F00E8E580 /* btstack_hid.c in Sources */,
 				B3AC6EA128992BA600D202AF /* net_http.c in Sources */,
 				B3AC6EA328992BA600D202AF /* net_ifinfo.c in Sources */,
 				B3AC6E9728992A6300D202AF /* task_netplay_nat_traversal.c in Sources */,
@@ -4186,9 +4205,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3AC6EB128993A1700D202AF /* input_remote.c in Sources */,
+				B322B790289D04CA00E8E580 /* input_overlay.c in Sources */,
 				B3AC6E942899297400D202AF /* location_driver.c in Sources */,
+				B322B784289D03C100E8E580 /* null_hid.c in Sources */,
+				B322B780289D021D00E8E580 /* btstack_hid.c in Sources */,
 				B32E458D28993AE500C2E2D0 /* input_hid_driver.c in Sources */,
 				B32299472878CF2D00585AD8 /* rthreads.c in Sources */,
+				B322B78A289D046900E8E580 /* ctr_input.c in Sources */,
 				B342325A286EB4060033EFA5 /* dylib.c in Sources */,
 				B32E458B28993AE500C2E2D0 /* input_config.c in Sources */,
 				B3AC6EB328993A2100D202AF /* input_remapping.c in Sources */,
@@ -4199,6 +4222,7 @@
 				B32299432878CB3C00585AD8 /* input_driver.c in Sources */,
 				B32E458E28993AE500C2E2D0 /* input_joypad_driver.c in Sources */,
 				B3AC6EAF2899392A00D202AF /* input_autodetect.c in Sources */,
+				B322B792289D052500E8E580 /* cocoa_input.c in Sources */,
 				B3423261286EB5CB0033EFA5 /* dynamic_dummy.c in Sources */,
 				B322994B2878CF6200585AD8 /* input_keyboard.c in Sources */,
 				B322996F28792BA000585AD8 /* nullinput.c in Sources */,
