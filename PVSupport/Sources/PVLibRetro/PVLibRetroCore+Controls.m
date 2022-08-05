@@ -6,10 +6,12 @@
 //  Copyright © 2022 Provenance Emu. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 #import "PVLibretro.h"
+@import GameController;
 
 #import <PVSupport/PVSupport-Swift.h>
+#import <UIKit/UIKeyConstants.h>
 
 #include "libretro.h"
 #ifdef HAVE_CONFIG_H
@@ -52,6 +54,21 @@
 #include "general.h"
 #include "msg_hash.h"
 #include "verbosity.h"
+
+# pragma mark - Keyboard
+@implementation PVLibRetroCore (Keyboard)
+- (BOOL)gameSupportsKeyboard { return true; }
+- (BOOL)requiresKeyboard { return false; }
+
+- (void)keyUp:(GCKeyCode)key {
+    
+}
+
+- (void)keyDown:(GCKeyCode)key {
+    
+}
+
+@end
 
 # pragma mark - Controls
 @implementation PVLibRetroCore (Controls)

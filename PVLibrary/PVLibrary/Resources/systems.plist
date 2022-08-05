@@ -478,6 +478,8 @@
 		<true/>
 		<key>PVPortable</key>
 		<false/>
+		<key>PVPlayerCount</key>
+		<string>8</string>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>n64</string>
@@ -3423,6 +3425,8 @@
 		<string>com.provenance.2600</string>
 		<key>PVDatabaseID</key>
 		<string>3</string>
+		<key>PVPlayerCount</key>
+		<string>2</string>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>a26</string>
@@ -3489,6 +3493,8 @@
 		<string>com.provenance.7800</string>
 		<key>PVDatabaseID</key>
 		<string>5</string>
+		<key>PVPlayerCount</key>
+		<string>2</string>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>a78</string>
@@ -3890,6 +3896,8 @@
 		<string>4</string>
 		<key>PVRequiresBIOS</key>
 		<true/>
+		<key>PVPlayerCount</key>
+		<string>2</string>
 		<key>PVBIOSNames</key>
 		<array>
 			<dict>
@@ -5041,7 +5049,7 @@
 		<array>
 			<dict>
 				<key>Description</key>
-				<string>Odyssey2 BIOS - G7000 model BIOS</string>
+				<string>Odyssey² BIOS</string>
 				<key>MD5</key>
 				<string>562d5ebf9e030a40d6fabfc2f33139fd</string>
 				<key>Name</key>
@@ -5092,6 +5100,8 @@
 		<string>1978</string>
 		<key>PVBit</key>
 		<string>8</string>
+		<key>PVPlayerCount</key>
+		<string>1</string>
 		<key>PVPortable</key>
 		<false/>
 		<key>PVSystemIdentifier</key>
@@ -5457,25 +5467,25 @@ Required for EP64</string>
 		<array>
 			<dict>
 				<key>Description</key>
-				<string>Executive ROM</string>
+				<string>Intellivision Executive BIOS</string>
 				<key>MD5</key>
 				<string>62e761035cb657903761800f4437b8af</string>
 				<key>Name</key>
 				<string>exec.bin</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>8192</integer>
 				<key>Optional</key>
 				<false/>
 			</dict>
 			<dict>
 				<key>Description</key>
-				<string>Graphics ROM</string>
+				<string>Intellivision Graphics ROM</string>
 				<key>MD5</key>
 				<string>0cd5946c6473e42e8e4c2137785e427f</string>
 				<key>Name</key>
 				<string>grom.bin</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>2048</integer>
 				<key>Optional</key>
 				<false/>
 			</dict>
@@ -5487,19 +5497,19 @@ Required for EP64</string>
 				<key>Name</key>
 				<string>ECS.BIN</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>24576</integer>
 				<key>Optional</key>
 				<true/>
 			</dict>
 			<dict>
 				<key>Description</key>
-				<string>Intellivoice RESROM</string>
+				<string>Intellivoice ROM</string>
 				<key>MD5</key>
 				<string>d5530f74681ec6e0f282dab42e6b1c5f</string>
 				<key>Name</key>
 				<string>IVOICE.BIN</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>2048</integer>
 				<key>Optional</key>
 				<true/>
 			</dict>
@@ -5514,10 +5524,10 @@ Required for EP64</string>
 		<string>1979</string>
 		<key>PVBit</key>
 		<string>8</string>
-		<key>PVPortable</key>
-		<false/>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.intellivision</string>
+		<key>PVPlayerCount</key>
+		<string>2</string>
 		<key>PVDatabaseID</key>
 		<string>13</string>
 		<key>PVSupportedExtensions</key>
@@ -5655,6 +5665,21 @@ Required for EP64</string>
 		</array>
 	</dict>
 	<dict>
+		<key>PVRequiresBIOS</key>
+		<true/>
+		<key>PVBIOSNames</key>
+		<array>
+			<dict>
+				<key>Description</key>
+				<string>Panasonic REAL 3DO Interactive Multiplayer FZ-10 v1.59.1.1</string>
+				<key>MD5</key>
+				<string>51f2f43ae2f3508a14d9f56597e2d3ce</string>
+				<key>Name</key>
+				<string>panafz10.bin</string>
+				<key>Size</key>
+				<integer>1048576</integer>
+			</dict>
+		</array>
 		<key>PVManufacturer</key>
 		<string>Panasonic</string>
 		<key>PVSystemName</key>
@@ -5671,6 +5696,8 @@ Required for EP64</string>
 		<string>com.provenance.3DO</string>
 		<key>PVDatabaseID</key>
 		<string>1</string>
+		<key>PVPlayerCount</key>
+		<string>8</string>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>cue</string>

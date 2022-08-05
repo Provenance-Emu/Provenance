@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "PVLibretro.h"
 
+@import UIKit.UIKeyConstants;
+
 #import <PVSupport/PVSupport-Swift.h>
 
 #include "libretro.h"
@@ -72,6 +74,9 @@ static retro_input_state_t input_state_cb;
 static struct retro_hw_render_callback* hw_render_callback;
 static struct retro_hw_render_context_negotiation_interface* _hw_render_context_negotiation_interface;
 static dylib_t lib_handle;
+
+static enum retro_hw_render_context_negotiation_interface_type hw_render_interface_type;
+static unsigned hw_render_interface_version;
 
 static retro_frame_time_callback_t frame_time_callback;
 
@@ -188,9 +193,16 @@ void retroarch_fail(int error_code, const char *error) {
 static void load_symbols(enum rarch_core_type type, struct retro_core_t *current_core);
 // MARK: - Keyboard
 
-static retro_keyboard_event_t* keyboard_event;
+static retro_keyboard_event_t keyboard_event;
 
 // MARK: - Inputs
+
+bool core_set_poll_type(unsigned *type) {
+    GET_CURRENT_OR_RETURN(false);
+    current->core_poll_type = *type;
+    return true;
+}
+
 /**
  * input_poll:
  *
@@ -306,9 +318,32 @@ void core_set_input_state(retro_ctx_input_state_info_t *info)
     current->core->retro_set_input_state(info->cb);
 }
 
+bool core_set_controller_port_device(retro_ctx_controller_info_t *pad) {
+    GET_CURRENT_OR_RETURN(false);
+    if (!pad)
+        return false;
+    current->core->retro_set_controller_port_device(pad->port, pad->device);
+    return true;
+}
+
+bool core_poll(void) {
+    GET_CURRENT_OR_RETURN(false);
+    if (!retro_ctx.poll_cb)
+        return false;
+    retro_ctx.poll_cb();
+    return true;
+}
+
+static void RETRO_CALLCONV input_poll_callback(void)
+{
+    VLOG(@"poll callback");
+    GET_CURRENT_OR_RETURN();
+    [current pollControllers];
+}
+
 // MARK: - Sensors
 
-static bool sensor_state(void *data, unsigned port,
+static bool sensor_state(unsigned port,
       enum retro_sensor_action action, unsigned event_rate)
 {
     GET_CURRENT_OR_RETURN(false);
@@ -332,11 +367,13 @@ static bool sensor_state(void *data, unsigned port,
            [current stopGyro];
            return true;
        }
+       case RETRO_SENSOR_ILLUMINANCE_ENABLE:
+           return [current startIlluminance];
        case RETRO_SENSOR_ILLUMINANCE_DISABLE: {
+           [current stopIlluminance];
            return true;
        }
        case RETRO_SENSOR_DUMMY:
-       case RETRO_SENSOR_ILLUMINANCE_ENABLE:
            return false;
       default:
          return false;
@@ -345,88 +382,86 @@ static bool sensor_state(void *data, unsigned port,
    return false;
 }
 
-static retro_sensor_get_input_t get_sensor_input(void *data,
-      unsigned port,unsigned id)
-{
-//   android_input_t      *android      = (android_input_t*)data;
-//   android_input_data_t *android_data = (android_input_data_t*)&android->copy;
-//
-//   switch (id)
-//   {
-//      case RETRO_SENSOR_ACCELEROMETER_X:
-//         return android_data->accelerometer_state.x;
-//      case RETRO_SENSOR_ACCELEROMETER_Y:
-//         return android_data->accelerometer_state.y;
-//      case RETRO_SENSOR_ACCELEROMETER_Z:
-//         return android_data->accelerometer_state.z;
-//   }
+static float get_sensor_input(unsigned port, unsigned id) {
+    GET_CURRENT_OR_RETURN(0);
+    DLOG(@"port %u, id %u", port, id);
+     // TODO: Port to contoller?
+   switch (id)
+   {
+      case RETRO_SENSOR_ACCELEROMETER_X:
+           return [current accelerometerStateX];
+      case RETRO_SENSOR_ACCELEROMETER_Y:
+           return [current accelerometerStateY];
+      case RETRO_SENSOR_ACCELEROMETER_Z:
+           return [current accelerometerStateZ];
+       case RETRO_SENSOR_GYROSCOPE_X:
+           return [current gyroscopeStateX];
+       case RETRO_SENSOR_GYROSCOPE_Y:
+           return [current gyroscopeStateY];
+       case RETRO_SENSOR_GYROSCOPE_Z:
+           return [current gyroscopeStateZ];
+       case RETRO_SENSOR_ILLUMINANCE:
+           return [current illuminance];
+   }
 
    return 0;
 }
 
 // MARK: - Location
 
-static retro_location_start_t location_start() {
+static bool location_start() {
     GET_CURRENT_OR_RETURN(false);
-    return false;
+    return [current locationStart];
 }
 
-static retro_location_stop_t location_stop() {
-    GET_CURRENT_OR_RETURN(false);
-    return false;
+static void location_stop() {
+    GET_CURRENT_OR_RETURN();
+    [current locationStop];
 }
 
-static retro_location_get_position_t location_get_position(double *lat, double *lon,
+static bool location_get_position(double *lat, double *lon,
                                                            double *horiz_accuracy, double *vert_accuracy) {
     GET_CURRENT_OR_RETURN(false);
-    return false;
+    return [current locationGetPositionWithLatitude:lat
+                                          longitude:lon
+                                 horizontalAccuracy:horiz_accuracy
+                                   verticleAccuracy:vert_accuracy];
 }
 
-static retro_location_set_interval_t location_set_interval(unsigned interval_ms,
+static void location_set_interval(unsigned interval_ms,
                                                            unsigned interval_distance) {
-    GET_CURRENT_OR_RETURN(false);
-    return false;
+    GET_CURRENT_OR_RETURN();
+    [_current setLocationInterval:interval_ms distance:interval_distance];
 }
 
-static retro_location_lifetime_status_t* location_initialized;
-//static retro_location_lifetime_status_t location_initialized() {
-//    GET_CURRENT_OR_RETURN(false);
-//    return false;
-//}
-//
-static retro_location_lifetime_status_t* location_deinitialized;
-//static retro_location_lifetime_status_t location_deinitialized() {
-//    GET_CURRENT_OR_RETURN(false);
-//    return false;
-//}
-
-static retro_location_set_interval_t* locatoin_set_position;
+static retro_location_lifetime_status_t location_initialized;
+static retro_location_lifetime_status_t location_deinitialized;
 
 // MARK: - Camera
 /* Starts the camera driver. Can only be called in retro_run(). */
-static retro_camera_start_t camera_start() {
+static bool camera_start() {
     GET_CURRENT_OR_RETURN(false);
-    return false;
+    return [_current cameraStart];
 }
 
 /* Stops the camera driver. Can only be called in retro_run(). */
-static retro_camera_stop_t camera_stop() {
-    GET_CURRENT_OR_RETURN(false);
-    return false;
+static void camera_stop() {
+    GET_CURRENT_OR_RETURN();
+    [_current cameraStop];
 }
 
 /* Callback which signals when the camera driver is initialized
  * and/or deinitialized.
  * retro_camera_start_t can be called in initialized callback.
  */
-static retro_camera_lifetime_status_t* camera_lifetime_status_initialized;
-static retro_camera_lifetime_status_t* camera_lifetime_status_deinitialized;
+static retro_camera_lifetime_status_t camera_lifetime_status_initialized;
+static retro_camera_lifetime_status_t camera_lifetime_status_deinitialized;
 
 /* A callback for raw framebuffer data. buffer points to an XRGB8888 buffer.
  * Width, height and pitch are similar to retro_video_refresh_t.
  * First pixel is top-left origin.
  */
-static retro_camera_frame_raw_framebuffer_t* camera_raw_framebuffer;
+static retro_camera_frame_raw_framebuffer_t camera_raw_framebuffer;
 
 /* A callback for when OpenGL textures are used.
  *
@@ -446,7 +481,7 @@ static retro_camera_frame_raw_framebuffer_t* camera_raw_framebuffer;
  * GL-specific typedefs are avoided here to avoid relying on gl.h in
  * the API definition.
  */
-static retro_camera_frame_opengl_texture_t* camera_raw_frame_opengl_texture;
+static retro_camera_frame_opengl_texture_t camera_raw_frame_opengl_texture;
 
 // MARK: - MIDI
 
@@ -480,8 +515,62 @@ typedef bool (RETRO_CALLCONV *retro_midi_flush_t)(void);
 //   retro_midi_flush_t flush;
 //};
 
+/* Retrieves the current state of the MIDI input.
+ * Returns true if it's enabled, false otherwise. */
+static bool midi_input_enabled() {
+    GET_CURRENT_OR_RETURN(false);
+    return _current.midiInputEnabled;
+}
+
+/* Retrieves the current state of the MIDI output.
+ * Returns true if it's enabled, false otherwise */
+static bool midi_output_enabled() {
+    GET_CURRENT_OR_RETURN(false);
+    return _current.midiOutputEnabled;
+}
+
+/* Reads next byte from the input stream.
+ * Returns true if byte is read, false otherwise. */
+static bool midi_read(uint8_t *byte) {
+    GET_CURRENT_OR_RETURN(false);
+    return [_current midiRead:byte];
+}
+
+/* Writes byte to the output stream.
+ * 'delta_time' is in microseconds and represent time elapsed since previous write.
+ * Returns true if byte is written, false otherwise. */
+static bool midi_write(uint8_t byte, uint32_t delta_time) {
+    GET_CURRENT_OR_RETURN(false);
+    return [_current midiWriteWithByte:byte deltaTime:delta_time];
+}
+
+/* Flushes previously written data.
+ * Returns true if successful, false otherwise. */
+static bool midi_flush() {
+    GET_CURRENT_OR_RETURN(false);
+    return [_current midiFlush];
+}
+
 // MARK: - OSD
 struct retro_message_ext messageExt;
+
+// MARK: - Rumble
+static bool rumble(unsigned port,
+                     enum retro_rumble_effect effect, uint16_t strength) {
+    ILOG(@"Rumble: %i, %i, %i", port, effect, strength);
+    GET_CURRENT_OR_RETURN(false);
+    if(!current.supportsRumble) { return false; }
+    float sharpness = 0;
+    switch(effect) {
+        case RETRO_RUMBLE_DUMMY: sharpness = 0.0;
+        case RETRO_RUMBLE_STRONG: sharpness = 0.9;
+        case RETRO_RUMBLE_WEAK: sharpness = 0.4;
+    }
+
+    [current rumbleWithPlayer:port sharpness:sharpness intensity:strength];
+    return true;
+}
+
 
 // MARK: - Microphone
 
@@ -489,10 +578,9 @@ struct retro_message_ext messageExt;
 
 // MARK: - LED
 
-static retro_set_led_state_t led_set_state(int led, int state) {
-    // TODO: Make something light up
+static bool led_set_state(int led, int state) {
     GET_CURRENT_OR_RETURN(false);
-    return false;
+    return [_current setLEDWithLed:led state:state];
 }
 
 // MARK: - Controllers
@@ -519,6 +607,221 @@ static retro_hw_get_proc_address_t libretro_get_proc_address(const char *symbol_
     CFRelease(opengl_bundle_ref);
     return ret;
 }
+
+// MARK: - Cheats
+
+bool core_set_cheat(retro_ctx_cheat_info_t *info) {
+    GET_CURRENT_OR_RETURN(false);
+    current->core->retro_cheat_set(info->index, info->enabled, info->code);
+    return true;
+}
+
+bool core_reset_cheat(void) {
+    GET_CURRENT_OR_RETURN(false);
+    current->core->retro_cheat_reset();
+    return true;
+}
+
+// MARK: - Video
+/**
+ * video_driver_frame:
+ * @data                 : pointer to data of the video frame.
+ * @width                : width of the video frame.
+ * @height               : height of the video frame.
+ * @pitch                : pitch of the video frame.
+ *
+ * Video frame render callback function.
+ **/
+
+extern video_pixel_scaler_t *video_driver_scaler_ptr;
+extern bool video_pixel_frame_scale(const void *data,
+      unsigned width, unsigned height,
+                                    size_t pitch);
+//extern video_driver_state_t video_driver_state;
+void video_driver_frame(const void *data, unsigned width,
+                        unsigned height, size_t pitch)
+{
+    NAssert(@"Shouldn't be here, or need to impliment");
+//       static char video_driver_msg[256];
+//       unsigned output_width  = 0;
+//       unsigned output_height = 0;
+//       unsigned  output_pitch = 0;
+//       const char *msg        = NULL;
+//       settings_t *settings   = config_get_ptr();
+//
+//       runloop_ctl(RUNLOOP_CTL_MSG_QUEUE_PULL,   &msg);
+//
+//       if (!video_driver_is_active())
+//          return;
+//
+//       if (video_driver_scaler_ptr &&
+//             video_pixel_frame_scale(data, width, height, pitch))
+//       {
+//          data                = video_driver_scaler_ptr->scaler_out;
+//          pitch               = video_driver_scaler_ptr->scaler->out_stride;
+//       }
+//
+//       video_driver_cached_frame_set(data, width, height, pitch);
+//
+//       /* Slightly messy code,
+//        * but we really need to do processing before blocking on VSync
+//        * for best possible scheduling.
+//        */
+//       if (
+//             (
+//                 !video_driver_state.filter.filter
+//              || !settings->video.post_filter_record
+//              || !data
+//              || video_driver_has_gpu_record()
+//             )
+//          )
+//          recording_dump_frame(data, width, height, pitch);
+//
+//       if (video_driver_frame_filter(data, width, height, pitch,
+//                &output_width, &output_height, &output_pitch))
+//       {
+//          data   = video_driver_state.filter.buffer;
+//          width  = output_width;
+//          height = output_height;
+//          pitch  = output_pitch;
+//       }
+//
+//       video_driver_msg[0] = '\0';
+//       if (msg)
+//          strlcpy(video_driver_msg, msg, sizeof(video_driver_msg));
+//
+//       if (!current_video || !current_video->frame(
+//                video_driver_data, data, width, height,
+//                video_driver_frame_count,
+//                pitch, video_driver_msg))
+//       {
+//          video_driver_unset_active();
+//       }
+//
+//       video_driver_frame_count++;
+}
+
+typedef uint8_t video_pixel_t;
+static void RETRO_CALLCONV video_callback(const void *data, unsigned width, unsigned height, size_t pitch)
+{
+//    if (!video_driver_is_active())
+//       return;
+    
+    __strong PVLibRetroCore *strongCurrent = _current;
+    
+    static dispatch_queue_t serialQueue;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_CONCURRENT, QOS_CLASS_USER_INTERACTIVE, 0);
+        serialQueue = dispatch_queue_create("com.provenance.video", queueAttributes);
+        
+        DLOG(@"vid: width: %i height: %i, pitch: %zu. _videoWidth: %f, _videoHeight: %f\n", width, height, pitch, strongCurrent.videoWidth, strongCurrent.videoHeight);
+    });
+    // 512
+    video_pixel_t pitch_shift = strongCurrent->pitch_shift; //PITCH_SHIFT; //pitch % 256; // PITCH_SHIFT
+    dispatch_apply(height, serialQueue, ^(size_t y){
+        size_t shifted_pitch = pitch >> pitch_shift;              //pitch is in bytes not pixels
+        size_t offset = y * shifted_pitch;
+        const video_pixel_t *src = (video_pixel_t*)data + offset;
+        video_pixel_t *dst = (video_pixel_t*)strongCurrent->videoBuffer + y * width;
+        
+        memcpy(dst, src, sizeof(video_pixel_t)*width);
+    });
+    
+    strongCurrent = nil;
+}
+
+struct retro_system_av_info *video_viewport_get_system_av_info(void)
+{
+    static struct retro_system_av_info av_info;
+    
+    return &av_info;
+}
+
+bool core_get_system_av_info(struct retro_system_av_info *av_info) {
+    GET_CURRENT_OR_RETURN(false);
+    if (!av_info)
+        return false;
+    current->core->retro_get_system_av_info(av_info);
+    return true;
+}
+
+//
+//static void video_configure(const struct retro_game_geometry * geom) {
+//    __strong PVLibRetroCore *strongCurrent = _current;
+//
+//    strongCurrent->_videoWidth  = geom->max_width;
+//    strongCurrent->_videoHeight = geom->max_height;
+//}
+
+// MARK: - Audio
+static retro_audio_callback_t audio_callback_notify;
+static retro_audio_set_state_callback_t audio_set_state_notify;
+
+static void RETRO_CALLCONV audio_callback(int16_t left, int16_t right)
+{
+    __strong PVLibRetroCore *strongCurrent = _current;
+    
+    [[strongCurrent ringBufferAtIndex:0] write:&left maxLength:2];
+    [[strongCurrent ringBufferAtIndex:0] write:&right maxLength:2];
+    
+    strongCurrent = nil;
+}
+
+static retro_audio_set_state_callback_t audio_set_state(bool enabled) {
+    GET_CURRENT_OR_RETURN(false);
+    // TODO: Turn audio on and off, or maybe just mute?
+    STUB(@"enabled: %i", enabled);
+    return false;
+}
+
+static size_t RETRO_CALLCONV audio_batch_callback(const int16_t *data, size_t frames)
+{
+    __strong PVLibRetroCore *strongCurrent = _current;
+    
+    [[strongCurrent ringBufferAtIndex:0] write:data maxLength:frames << 2];
+    
+    strongCurrent = nil;
+    
+    return frames;
+}
+
+void audio_driver_unset_callback(void)
+{
+//   audio_callback.callback  = NULL;
+//   audio_callback.set_state = NULL;
+}
+
+// MARK: - Serialization
+
+bool core_unserialize(retro_ctx_serialize_info_t *info) {
+    GET_CURRENT_OR_RETURN(false);
+    if (!info)
+        return false;
+    if (!current->core->retro_unserialize(info->data_const, info->size))
+        return false;
+    return true;
+}
+
+bool core_serialize(retro_ctx_serialize_info_t *info) {
+    GET_CURRENT_OR_RETURN(false);
+    if (!info)
+        return false;
+    if (!current->core->retro_serialize(info->data, info->size))
+        return false;
+    return true;
+}
+
+bool core_serialize_size(retro_ctx_size_info_t *info) {
+    GET_CURRENT_OR_RETURN(false);
+    if (!info)
+        return false;
+    info->size = current->core->retro_serialize_size();
+    return true;
+}
+
+
+// MARK: - Retro
 
 /**
  * core_init_libretro_cbs:
@@ -571,73 +874,6 @@ static bool core_init_libretro_cbs(void *data)
 #endif
     
     return true;
-}
-
-static retro_audio_callback_t* audio_callback_notify;
-static retro_audio_set_state_callback_t* audio_set_state_notify;
-
-static void RETRO_CALLCONV audio_callback(int16_t left, int16_t right)
-{
-    __strong PVLibRetroCore *strongCurrent = _current;
-    
-    [[strongCurrent ringBufferAtIndex:0] write:&left maxLength:2];
-    [[strongCurrent ringBufferAtIndex:0] write:&right maxLength:2];
-    
-    strongCurrent = nil;
-}
-
-static retro_audio_set_state_callback_t audio_set_state(bool enabled) {
-    GET_CURRENT_OR_RETURN(false);
-    // TODO: Turn audio on and off, or maybe just mute?
-    return false;
-}
-
-static size_t RETRO_CALLCONV audio_batch_callback(const int16_t *data, size_t frames)
-{
-    __strong PVLibRetroCore *strongCurrent = _current;
-    
-    [[strongCurrent ringBufferAtIndex:0] write:data maxLength:frames << 2];
-    
-    strongCurrent = nil;
-    
-    return frames;
-}
-
-typedef uint8_t video_pixel_t;
-static void RETRO_CALLCONV video_callback(const void *data, unsigned width, unsigned height, size_t pitch)
-{
-//    if (!video_driver_is_active())
-//       return;
-    
-    __strong PVLibRetroCore *strongCurrent = _current;
-    
-    static dispatch_queue_t serialQueue;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_CONCURRENT, QOS_CLASS_USER_INTERACTIVE, 0);
-        serialQueue = dispatch_queue_create("com.provenance.video", queueAttributes);
-        
-        DLOG(@"vid: width: %i height: %i, pitch: %zu. _videoWidth: %f, _videoHeight: %f\n", width, height, pitch, strongCurrent.videoWidth, strongCurrent.videoHeight);
-    });
-    // 512
-    video_pixel_t pitch_shift = strongCurrent->pitch_shift; //PITCH_SHIFT; //pitch % 256; // PITCH_SHIFT
-    dispatch_apply(height, serialQueue, ^(size_t y){
-        size_t shifted_pitch = pitch >> pitch_shift;              //pitch is in bytes not pixels
-        size_t offset = y * shifted_pitch;
-        const video_pixel_t *src = (video_pixel_t*)data + offset;
-        video_pixel_t *dst = strongCurrent->videoBuffer + y * width;
-        
-        memcpy(dst, src, sizeof(video_pixel_t)*width);
-    });
-    
-    strongCurrent = nil;
-}
-
-static void RETRO_CALLCONV input_poll_callback(void)
-{
-    __strong PVLibRetroCore *strongCurrent = _current;
-    [strongCurrent pollControllers];
-    //DLOG(@"poll callback");
 }
 
 static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned device, unsigned index, unsigned _id)
@@ -764,18 +1000,6 @@ bool core_set_rewind_callbacks(void)
     return true;
 }
 
-bool core_set_cheat(retro_ctx_cheat_info_t *info) {
-    GET_CURRENT_OR_RETURN(false);
-    current->core->retro_cheat_set(info->index, info->enabled, info->code);
-    return true;
-}
-
-bool core_reset_cheat(void) {
-    GET_CURRENT_OR_RETURN(false);
-    current->core->retro_cheat_reset();
-    return true;
-}
-
 bool core_api_version(retro_ctx_api_info_t *api)
 {
     GET_CURRENT_OR_RETURN(false);
@@ -785,17 +1009,10 @@ bool core_api_version(retro_ctx_api_info_t *api)
     return true;
 }
 
-bool core_set_poll_type(unsigned *type)
-{
-    GET_CURRENT_OR_RETURN(false);
-    current->core_poll_type = *type;
-    return true;
-}
-
 void core_uninit_symbols(void)
 {
     GET_CURRENT_OR_RETURN();
-    uninit_libretro_sym(&current->core);
+    uninit_libretro_sym(current->core);
 }
 
 bool core_init_symbols(enum rarch_core_type *type)
@@ -803,15 +1020,7 @@ bool core_init_symbols(enum rarch_core_type *type)
     GET_CURRENT_OR_RETURN(false);
     if (!type)
         return false;
-    init_libretro_sym(*type, &current->core);
-    return true;
-}
-
-bool core_set_controller_port_device(retro_ctx_controller_info_t *pad) {
-    GET_CURRENT_OR_RETURN(false);
-    if (!pad)
-        return false;
-    current->core->retro_set_controller_port_device(pad->port, pad->device);
+    init_libretro_sym(*type, current->core);
     return true;
 }
 
@@ -824,15 +1033,6 @@ bool core_get_memory(retro_ctx_memory_info_t *info) {
     info->data  = current->core->retro_get_memory_data(info->id);
     return true;
 }
-
-
-
-//static void video_configure(const struct retro_game_geometry * geom) {
-//    __strong PVLibRetroCore *strongCurrent = _current;
-//
-//    strongCurrent->_videoWidth  = geom->max_width;
-//    strongCurrent->_videoHeight = geom->max_height;
-//}
 
 bool core_load_game(retro_ctx_load_content_info_t *load_info)
 {
@@ -894,32 +1094,6 @@ bool core_get_system_info(struct retro_system_info *system) {
     return true;
 }
 
-bool core_unserialize(retro_ctx_serialize_info_t *info) {
-    GET_CURRENT_OR_RETURN(false);
-    if (!info)
-        return false;
-    if (!current->core->retro_unserialize(info->data_const, info->size))
-        return false;
-    return true;
-}
-
-bool core_serialize(retro_ctx_serialize_info_t *info) {
-    GET_CURRENT_OR_RETURN(false);
-    if (!info)
-        return false;
-    if (!current->core->retro_serialize(info->data, info->size))
-        return false;
-    return true;
-}
-
-bool core_serialize_size(retro_ctx_size_info_t *info) {
-    GET_CURRENT_OR_RETURN(false);
-    if (!info)
-        return false;
-    info->size = current->core->retro_serialize_size();
-    return true;
-}
-
 bool core_frame(retro_ctx_frame_info_t *info) {
     GET_CURRENT_OR_RETURN(false);
     if (!info || !retro_ctx.frame_cb)
@@ -930,27 +1104,11 @@ bool core_frame(retro_ctx_frame_info_t *info) {
     return true;
 }
 
-bool core_poll(void) {
-    GET_CURRENT_OR_RETURN(false);
-    if (!retro_ctx.poll_cb)
-        return false;
-    retro_ctx.poll_cb();
-    return true;
-}
-
 bool core_set_environment(retro_ctx_environ_info_t *info) {
     GET_CURRENT_OR_RETURN(false);
     if (!info)
         return false;
     current->core->retro_set_environment(info->env);
-    return true;
-}
-
-bool core_get_system_av_info(struct retro_system_av_info *av_info) {
-    GET_CURRENT_OR_RETURN(false);
-    if (!av_info)
-        return false;
-    current->core->retro_get_system_av_info(av_info);
     return true;
 }
 
@@ -1009,14 +1167,6 @@ bool core_load(void) {
     
     return true;
 }
-
-struct retro_system_av_info *video_viewport_get_system_av_info(void)
-{
-    static struct retro_system_av_info av_info;
-    
-    return &av_info;
-}
-
 
 bool core_verify_api_version(void) {
     GET_CURRENT_OR_RETURN(false);
@@ -1119,11 +1269,6 @@ void uninit_libretro_sym(struct retro_core_t *current_core)
 #else
 #define DEFAULT_EXT ""
 #endif
-void audio_driver_unset_callback(void)
-{
-//   audio_callback.callback  = NULL;
-//   audio_callback.set_state = NULL;
-}
 
 bool runloop_ctl(enum runloop_ctl_state state, void *data) {
     VLOG(@"runloop_ctl : %i", state);
@@ -1635,85 +1780,6 @@ bool runloop_ctl(enum runloop_ctl_state state, void *data) {
     return true;
 }
 
-
-/**
- * video_driver_frame:
- * @data                 : pointer to data of the video frame.
- * @width                : width of the video frame.
- * @height               : height of the video frame.
- * @pitch                : pitch of the video frame.
- *
- * Video frame render callback function.
- **/
-
-extern video_pixel_scaler_t *video_driver_scaler_ptr;
-extern bool video_pixel_frame_scale(const void *data,
-      unsigned width, unsigned height,
-                                    size_t pitch);
-//extern video_driver_state_t video_driver_state;
-void video_driver_frame(const void *data, unsigned width,
-                        unsigned height, size_t pitch)
-{
-    NAssert(@"Shouldn't be here, or need to impliment");
-//       static char video_driver_msg[256];
-//       unsigned output_width  = 0;
-//       unsigned output_height = 0;
-//       unsigned  output_pitch = 0;
-//       const char *msg        = NULL;
-//       settings_t *settings   = config_get_ptr();
-//
-//       runloop_ctl(RUNLOOP_CTL_MSG_QUEUE_PULL,   &msg);
-//
-//       if (!video_driver_is_active())
-//          return;
-//
-//       if (video_driver_scaler_ptr &&
-//             video_pixel_frame_scale(data, width, height, pitch))
-//       {
-//          data                = video_driver_scaler_ptr->scaler_out;
-//          pitch               = video_driver_scaler_ptr->scaler->out_stride;
-//       }
-//
-//       video_driver_cached_frame_set(data, width, height, pitch);
-//
-//       /* Slightly messy code,
-//        * but we really need to do processing before blocking on VSync
-//        * for best possible scheduling.
-//        */
-//       if (
-//             (
-//                 !video_driver_state.filter.filter
-//              || !settings->video.post_filter_record
-//              || !data
-//              || video_driver_has_gpu_record()
-//             )
-//          )
-//          recording_dump_frame(data, width, height, pitch);
-//
-//       if (video_driver_frame_filter(data, width, height, pitch,
-//                &output_width, &output_height, &output_pitch))
-//       {
-//          data   = video_driver_state.filter.buffer;
-//          width  = output_width;
-//          height = output_height;
-//          pitch  = output_pitch;
-//       }
-//
-//       video_driver_msg[0] = '\0';
-//       if (msg)
-//          strlcpy(video_driver_msg, msg, sizeof(video_driver_msg));
-//
-//       if (!current_video || !current_video->frame(
-//                video_driver_data, data, width, height,
-//                video_driver_frame_count,
-//                pitch, video_driver_msg))
-//       {
-//          video_driver_unset_active();
-//       }
-//
-//       video_driver_frame_count++;
-}
-
 /**
  * init_libretro_sym:
  * @type                        : Type of core to be loaded.
@@ -1781,22 +1847,6 @@ static void core_log(enum retro_log_level level, const char * fmt, ...) {
     }
 }
 
-static bool rumble(unsigned port,
-                     enum retro_rumble_effect effect, uint16_t strength) {
-    ILOG(@"Rumble: %i, %i, %i", port, effect, strength);
-    GET_CURRENT_OR_RETURN(false);
-    if(!current.supportsRumble) { return false; }
-    float sharpness = 0;
-    switch(effect) {
-        case RETRO_RUMBLE_DUMMY: sharpness = 0.0;
-        case RETRO_RUMBLE_STRONG: sharpness = 0.9;
-        case RETRO_RUMBLE_WEAK: sharpness = 0.4;
-    }
-
-    [current rumbleWithPlayer:port sharpness:sharpness intensity:strength];
-    return true;
-}
-
 /*
  TODO:
  make an obj-c version this calls
@@ -1831,10 +1881,15 @@ static bool environment_callback(unsigned cmd, void *data) {
 //            ILOG(@"%i", cb->data);
             return false;
         case RETRO_ENVIRONMENT_SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE: {
-
-            struct retro_hw_render_context_negotiation_interface* cb = (const struct retro_hw_render_context_negotiation_interface*)data;
-            cb->interface_type = RETRO_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_DUMMY;
-            _hw_render_context_negotiation_interface = cb;
+            /* const struct retro_hw_render_context_negotiation_interface * --
+             * Sets an interface which lets the libretro core negotiate with frontend how a context is created.
+             * The semantics of this interface depends on which API is used in SET_HW_RENDER earlier.
+             * This interface will be used when the frontend is trying to create a HW rendering context,
+             * so it will be used after SET_HW_RENDER, but before the context_reset callback.
+             */
+            const struct retro_hw_render_context_negotiation_interface* cb = (const struct retro_hw_render_context_negotiation_interface*)data;
+            hw_render_interface_type = cb->interface_type;
+            hw_render_interface_version = cb->interface_version;
             ILOG(@"interface_type: %i, interface_version: %i", cb->interface_type, cb->interface_version);
             return true;
         }
@@ -1854,7 +1909,7 @@ static bool environment_callback(unsigned cmd, void *data) {
              * If HW rendering is used, pass only RETRO_HW_FRAME_BUFFER_VALID or
              * NULL to retro_video_refresh_t.
              */
-            struct retro_hw_render_callback* cb = (const struct retro_hw_render_callback*)data;
+            struct retro_hw_render_callback* cb = (struct retro_hw_render_callback*)data;
             hw_render_callback = cb;
             cb->get_proc_address = libretro_get_proc_address;
 
@@ -1865,28 +1920,26 @@ static bool environment_callback(unsigned cmd, void *data) {
             /* const struct retro_keyboard_callback * --
              * Sets a callback function used to notify core about keyboard events.
              */
-            struct retro_keyboard_callback* cb = (const struct retro_keyboard_callback*)data;
-            cb->callback = keyboard_event;
-            // TODO: Call this on key events
+            const struct retro_keyboard_callback* cb = (const struct retro_keyboard_callback*)data;
+            keyboard_event = cb->callback;
             return true;
         }
         case RETRO_ENVIRONMENT_GET_RUMBLE_INTERFACE: {
-                                           /* struct retro_rumble_interface * --
-                                            * Gets an interface which is used by a libretro core to set
-                                            * state of rumble motors in controllers.
-                                            * A strong and weak motor is supported, and they can be
-                                            * controlled indepedently.
-                                            * Should be called from either retro_init() or retro_load_game().
-                                            * Should not be called from retro_set_environment().
-                                            * Returns false if rumble functionality is unavailable.
-                                            */
-            // TODO: Rumble
-            BOOL suppoortsRumble = strongCurrent.supportsRumble;
-            if(suppoortsRumble) {
+           /* struct retro_rumble_interface * --
+            * Gets an interface which is used by a libretro core to set
+            * state of rumble motors in controllers.
+            * A strong and weak motor is supported, and they can be
+            * controlled indepedently.
+            * Should be called from either retro_init() or retro_load_game().
+            * Should not be called from retro_set_environment().
+            * Returns false if rumble functionality is unavailable.
+            */
+            BOOL supportsRumble = strongCurrent.supportsRumble;
+            if (supportsRumble) {
                 struct retro_rumble_interface* rumbleInterface = (struct retro_rumble_interface*)data;
-                rumbleInterface->set_rumble_state;
+                rumbleInterface->set_rumble_state = rumble;
             }
-            return strongCurrent.supportsRumble;
+            return supportsRumble;
         }
 //        case RETRO_ENVIRONMENT_GET_VFS_INTERFACE: {
 //            /* struct retro_vfs_interface_info * --
@@ -1945,6 +1998,17 @@ static bool environment_callback(unsigned cmd, void *data) {
             return true;
         }
         case RETRO_ENVIRONMENT_GET_MIDI_INTERFACE: {
+            /* struct retro_midi_interface ** --
+             * Returns a MIDI interface that can be used for raw data I/O.
+             */
+
+            struct retro_midi_interface* midiInterface = (struct retro_midi_interface*)data;
+            midiInterface->read = midi_read;
+            midiInterface->write = midi_write;
+            midiInterface->flush = midi_flush;
+            midiInterface->input_enabled = midi_input_enabled;
+            midiInterface->output_enabled = midi_output_enabled;
+            return true;
         }
         case RETRO_ENVIRONMENT_GET_INPUT_DEVICE_CAPABILITIES: {
                                            /* uint64_t * --
@@ -2086,23 +2150,23 @@ static bool environment_callback(unsigned cmd, void *data) {
              * writeable (and readable).
              */
            /*
-            void *data;                      /* The framebuffer which the core can render into.
+            void *data;                      The framebuffer which the core can render into.
                                                 Set by frontend in GET_CURRENT_SOFTWARE_FRAMEBUFFER.
                                                 The initial contents of data are unspecified.
-            unsigned width;                  /* The framebuffer width used by the core. Set by core.
-            unsigned height;                 /* The framebuffer height used by the core. Set by core.
-            size_t pitch;                    /* The number of bytes between the beginning of a scanline,
+            unsigned width;                  The framebuffer width used by the core. Set by core.
+            unsigned height;                 The framebuffer height used by the core. Set by core.
+            size_t pitch;                    The number of bytes between the beginning of a scanline,
                                                 and beginning of the next scanline.
                                                 Set by frontend in GET_CURRENT_SOFTWARE_FRAMEBUFFER.
-            enum retro_pixel_format format;  /* The pixel format the core must use to render into data.
+            enum retro_pixel_format format;  The pixel format the core must use to render into data.
                                                 This format could differ from the format used in
                                                 SET_PIXEL_FORMAT.
                                                 Set by frontend in GET_CURRENT_SOFTWARE_FRAMEBUFFER.
 
-            unsigned access_flags;           /* How the core will access the memory in the framebuffer.
+            unsigned access_flags;           How the core will access the memory in the framebuffer.
                                                 RETRO_MEMORY_ACCESS_* flags.
                                                 Set by core.
-            unsigned memory_flags;           /* Flags telling core how the memory has been mapped.
+            unsigned memory_flags;           Flags telling core how the memory has been mapped.
                                                 RETRO_MEMORY_TYPE_* flags.
                                                 Set by frontend in GET_CURRENT_SOFTWARE_FRAMEBUFFER.
             */
@@ -2113,11 +2177,11 @@ static bool environment_callback(unsigned cmd, void *data) {
             fb->format = strongCurrent.internalPixelFormat;
             /*
              #define RETRO_MEMORY_ACCESS_WRITE (1 << 0)
-                /* The core will write to the buffer provided by retro_framebuffer::data.
+                The core will write to the buffer provided by retro_framebuffer::data.
              #define RETRO_MEMORY_ACCESS_READ (1 << 1)
-                /* The core will read from retro_framebuffer::data.
+                The core will read from retro_framebuffer::data.
              #define RETRO_MEMORY_TYPE_CACHED (1 << 0)
-                /* The memory in data is cached.
+                The memory in data is cached.
                  * If not cached, random writes and/or reading from the buffer is expected to be very slow.
             */
             fb->memory_flags = RETRO_MEMORY_TYPE_CACHED;
@@ -2463,25 +2527,25 @@ static bool environment_callback(unsigned cmd, void *data) {
             /* During normal operation. Rate will be equal to the core's internal FPS.
             #define RETRO_THROTTLE_NONE              0
 
-            /* While paused or stepping single frames. Rate will be 0.
+               While paused or stepping single frames. Rate will be 0.
             #define RETRO_THROTTLE_FRAME_STEPPING    1
 
-            /* During fast forwarding.
+               During fast forwarding.
              * Rate will be 0 if not specifically limited to a maximum speed.
             #define RETRO_THROTTLE_FAST_FORWARD      2
 
-            /* During slow motion. Rate will be less than the core's internal FPS.
+               During slow motion. Rate will be less than the core's internal FPS.
             #define RETRO_THROTTLE_SLOW_MOTION       3
 
-            /* While rewinding recorded save states. Rate can vary depending on the rewind
+               While rewinding recorded save states. Rate can vary depending on the rewind
              * speed or be 0 if the frontend is not aiming for a specific rate.
             #define RETRO_THROTTLE_REWINDING         4
 
-            /* While vsync is active in the video driver and the target refresh rate is
+               While vsync is active in the video driver and the target refresh rate is
              * lower than the core's internal FPS. Rate is the target refresh rate.
             #define RETRO_THROTTLE_VSYNC             5
 
-            /* When the frontend does not throttle in any way. Rate will be 0.
+               When the frontend does not throttle in any way. Rate will be 0.
              * An example could be if no vsync or audio output is active.
             #define RETRO_THROTTLE_UNBLOCKED         6 */
             if(strongCurrent.gameSpeed == GameSpeedSlow) {
@@ -2551,7 +2615,7 @@ static bool environment_callback(unsigned cmd, void *data) {
             ILOG(@"Set latency <STUB> %f", latency);
             UInt32 propSize = sizeof(Float32);
             AudioSessionSetProperty(kAudioSessionProperty_CurrentHardwareIOBufferDuration,
-                                    &propSize,
+                                    propSize,
                                     &latency);
             return true;
         }
@@ -2591,7 +2655,7 @@ static bool environment_callback(unsigned cmd, void *data) {
             return true;
         }
         case RETRO_ENVIRONMENT_GET_INPUT_MAX_USERS: {
-            *((unsigned*)data) = [strongCurrent numberOfUsers];
+            *((unsigned*)data) = (unsigned)[strongCurrent numberOfUsers];
             return true;
         }
         case RETRO_ENVIRONMENT_GET_MESSAGE_INTERFACE_VERSION:
@@ -2660,8 +2724,9 @@ static bool environment_callback(unsigned cmd, void *data) {
             unsigned int frames = msg->frames;
             const char* txt = msg->msg;
             // TODO: Make an OSD for number of frames
-            ILOG(@"%s", txt);
-            return true;
+            ILOG(@"msg: %s, frames:%i", txt, frames);
+            return [_current osdSetMessage:[NSString stringWithCString:txt encoding:NSUTF8StringEncoding]
+                                 forFrames:frames];
         }
         case RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO:
         {
@@ -3008,6 +3073,136 @@ static void load_symbols(enum rarch_core_type type, struct retro_core_t *current
 
 - (instancetype)init {
     if((self = [super init])) {
+        virtualPhysicalKeyMap = @{
+            @(UIKeyboardHIDUsageKeypad0) : @(RETROK_KP0),
+            @(UIKeyboardHIDUsageKeypad1) : @(RETROK_KP1),
+            @(UIKeyboardHIDUsageKeypad2) : @(RETROK_KP2),
+            @(UIKeyboardHIDUsageKeypad3) : @(RETROK_KP3),
+            @(UIKeyboardHIDUsageKeypad4) : @(RETROK_KP4),
+            @(UIKeyboardHIDUsageKeypad5) : @(RETROK_KP5),
+            @(UIKeyboardHIDUsageKeypad6) : @(RETROK_KP6),
+            @(UIKeyboardHIDUsageKeypad7) : @(RETROK_KP7),
+            @(UIKeyboardHIDUsageKeypad8) : @(RETROK_KP8),
+            @(UIKeyboardHIDUsageKeypad9) : @(RETROK_KP9),
+
+            @(UIKeyboardHIDUsageKeyboard0) : @(RETROK_0),
+            @(UIKeyboardHIDUsageKeyboard1) : @(RETROK_1),
+            @(UIKeyboardHIDUsageKeyboard2) : @(RETROK_2),
+            @(UIKeyboardHIDUsageKeyboard3) : @(RETROK_3),
+            @(UIKeyboardHIDUsageKeyboard4) : @(RETROK_4),
+            @(UIKeyboardHIDUsageKeyboard5) : @(RETROK_5),
+            @(UIKeyboardHIDUsageKeyboard6) : @(RETROK_6),
+            @(UIKeyboardHIDUsageKeyboard7) : @(RETROK_7),
+            @(UIKeyboardHIDUsageKeyboard8) : @(RETROK_8),
+            @(UIKeyboardHIDUsageKeyboard9) : @(RETROK_9),
+            
+            @(UIKeyboardHIDUsageKeyboardA) : @(RETROK_a),
+            @(UIKeyboardHIDUsageKeyboardB) : @(RETROK_b),
+            @(UIKeyboardHIDUsageKeyboardC) : @(RETROK_c),
+            @(UIKeyboardHIDUsageKeyboardD) : @(RETROK_d),
+            @(UIKeyboardHIDUsageKeyboardE) : @(RETROK_e),
+            @(UIKeyboardHIDUsageKeyboardF) : @(RETROK_f),
+            @(UIKeyboardHIDUsageKeyboardG) : @(RETROK_g),
+            @(UIKeyboardHIDUsageKeyboardH) : @(RETROK_h),
+            @(UIKeyboardHIDUsageKeyboardI) : @(RETROK_i),
+            @(UIKeyboardHIDUsageKeyboardJ) : @(RETROK_j),
+            @(UIKeyboardHIDUsageKeyboardK) : @(RETROK_k),
+            @(UIKeyboardHIDUsageKeyboardL) : @(RETROK_l),
+            @(UIKeyboardHIDUsageKeyboardM) : @(RETROK_m),
+            @(UIKeyboardHIDUsageKeyboardN) : @(RETROK_n),
+            @(UIKeyboardHIDUsageKeyboardO) : @(RETROK_o),
+            @(UIKeyboardHIDUsageKeyboardP) : @(RETROK_p),
+            @(UIKeyboardHIDUsageKeyboardQ) : @(RETROK_q),
+            @(UIKeyboardHIDUsageKeyboardR) : @(RETROK_r),
+            @(UIKeyboardHIDUsageKeyboardS) : @(RETROK_s),
+            @(UIKeyboardHIDUsageKeyboardT) : @(RETROK_t),
+            @(UIKeyboardHIDUsageKeyboardU) : @(RETROK_u),
+            @(UIKeyboardHIDUsageKeyboardV) : @(RETROK_v),
+            @(UIKeyboardHIDUsageKeyboardW) : @(RETROK_w),
+            @(UIKeyboardHIDUsageKeyboardX) : @(RETROK_x),
+            @(UIKeyboardHIDUsageKeyboardY) : @(RETROK_y),
+            @(UIKeyboardHIDUsageKeyboardZ) : @(RETROK_z),
+            
+            @(UIKeyboardHIDUsageKeypadAsterisk) : @(RETROK_KP_MULTIPLY),
+            @(UIKeyboardHIDUsageKeypadEnter) : @(RETROK_KP_ENTER),
+            @(UIKeyboardHIDUsageKeypadEqualSign) : @(RETROK_EQUALS),
+            @(UIKeyboardHIDUsageKeypadPlus) : @(RETROK_KP_PLUS),
+            @(UIKeyboardHIDUsageKeypadHyphen) : @(RETROK_KP_MINUS),
+            @(UIKeyboardHIDUsageKeypadComma) : @(RETROK_COMMA),
+            @(UIKeyboardHIDUsageKeypadPeriod) : @(RETROK_KP_PERIOD),
+            @(UIKeyboardHIDUsageKeypadSlash) : @(RETROK_KP_DIVIDE),
+            
+            @(UIKeyboardHIDUsageKeyboardScrollLock) : @(RETROK_SCROLLOCK),
+            @(UIKeyboardHIDUsageKeyboardCapsLock) : @(RETROK_CAPSLOCK),
+            @(UIKeyboardHIDUsageKeypadNumLock) : @(RETROK_NUMLOCK),
+
+            @(UIKeyboardHIDUsageKeyboardSpacebar) : @(RETROK_SPACE),
+            @(UIKeyboardHIDUsageKeyboardDeleteOrBackspace) : @(RETROK_BACKSPACE),
+            @(UIKeyboardHIDUsageKeyboardGraveAccentAndTilde) : @(RETROK_TILDE),
+            @(UIKeyboardHIDUsageKeyboardDeleteForward) : @(RETROK_DELETE),
+            @(UIKeyboardHIDUsageKeyboardTab) : @(RETROK_TAB),
+            @(UIKeyboardHIDUsageKeyboardPause) : @(RETROK_PAUSE),
+        //            @(UIKeyboardHIDUsageKeyboardSlash) : @(RETROK_QUESTION),
+            @(UIKeyboardHIDUsageKeyboardPeriod) : @(RETROK_PERIOD),
+            @(UIKeyboardHIDUsageKeyboardReturnOrEnter) : @(RETROK_RETURN),
+            @(UIKeyboardHIDUsageKeyboardHyphen) : @(RETROK_MINUS),
+            @(UIKeyboardHIDUsageKeyboardSlash) : @(RETROK_SLASH),
+
+            @(UIKeyboardHIDUsageKeyboardOpenBracket) : @(RETROK_LEFTBRACE),
+            @(UIKeyboardHIDUsageKeyboardBackslash) : @(RETROK_BACKSLASH),
+        //            @(UIKeyboardHIDUsageKeyboardBackslash) : @(RETROK_BAR), // |
+            @(UIKeyboardHIDUsageKeyboardCloseBracket) : @(RETROK_RIGHTBRACE),
+            @(UIKeyboardHIDUsageKeyboardQuote) : @(RETROK_QUOTE),
+
+            @(UIKeyboardHIDUsageKeyboardLeftAlt) : @(RETROK_LALT),
+            @(UIKeyboardHIDUsageKeyboardLeftGUI) : @(RETROK_LMETA), // RETROK_LSUPER
+            @(UIKeyboardHIDUsageKeyboardLeftShift) : @(RETROK_LSHIFT),
+            @(UIKeyboardHIDUsageKeyboardLeftControl) : @(RETROK_LCTRL),
+
+            @(UIKeyboardHIDUsageKeyboardRightAlt) : @(RETROK_RALT),
+            @(UIKeyboardHIDUsageKeyboardRightGUI) : @(RETROK_RMETA),
+            @(UIKeyboardHIDUsageKeyboardRightShift) : @(RETROK_RSHIFT),
+            @(UIKeyboardHIDUsageKeyboardRightControl) : @(RETROK_RCTRL),
+            
+            @(UIKeyboardHIDUsageKeyboardLeftArrow) : @(RETROK_LEFT),
+            @(UIKeyboardHIDUsageKeyboardRightArrow) : @(RETROK_RIGHT),
+            @(UIKeyboardHIDUsageKeyboardUpArrow) : @(RETROK_UP),
+            @(UIKeyboardHIDUsageKeyboardDownArrow) : @(RETROK_DOWN),
+
+            @(UIKeyboardHIDUsageKeyboardF1) : @(RETROK_F1),
+            @(UIKeyboardHIDUsageKeyboardF2) : @(RETROK_F2),
+            @(UIKeyboardHIDUsageKeyboardF3) : @(RETROK_F3),
+            @(UIKeyboardHIDUsageKeyboardF4) : @(RETROK_F4),
+            @(UIKeyboardHIDUsageKeyboardF5) : @(RETROK_F5),
+            @(UIKeyboardHIDUsageKeyboardF6) : @(RETROK_F6),
+            @(UIKeyboardHIDUsageKeyboardF7) : @(RETROK_F7),
+            @(UIKeyboardHIDUsageKeyboardF8) : @(RETROK_F8),
+            @(UIKeyboardHIDUsageKeyboardF9) : @(RETROK_F9),
+            @(UIKeyboardHIDUsageKeyboardF10) : @(RETROK_F10),
+            @(UIKeyboardHIDUsageKeyboardF11) : @(RETROK_F11),
+            @(UIKeyboardHIDUsageKeyboardF12) : @(RETROK_F12),
+            @(UIKeyboardHIDUsageKeyboardF13) : @(RETROK_F13),
+            @(UIKeyboardHIDUsageKeyboardF14) : @(RETROK_F14),
+            @(UIKeyboardHIDUsageKeyboardF15) : @(RETROK_F15),
+            
+            @(UIKeyboardHIDUsageKeyboardHelp) : @(RETROK_HELP),
+            @(UIKeyboardHIDUsageKeyboardPrintScreen) : @(RETROK_PRINT),
+            
+            @(UIKeyboardHIDUsageKeyboardUndo) : @(RETROK_UNDO),
+            
+            @(UIKeyboardHIDUsageKeyboardPageUp) : @(RETROK_PAGEUP),
+            @(UIKeyboardHIDUsageKeyboardPageDown) : @(RETROK_PAGEDOWN),
+            @(UIKeyboardHIDUsageKeyboardInsert) : @(RETROK_INSERT),
+            @(UIKeyboardHIDUsageKeyboardHome) : @(RETROK_HOME),
+            @(UIKeyboardHIDUsageKeyboardEnd) : @(RETROK_END),
+            
+            @(UIKeyboardHIDUsageKeyboardPower) : @(RETROK_POWER),
+            @(UIKeyboardHIDUsageKeyboardMenu) : @(RETROK_MENU),
+            @(UIKeyboardHIDUsageKeyboardClearOrAgain) : @(RETROK_CLEAR),
+
+            // TODO: There's more codes to add if you want 100%
+        };
+        
         pitch_shift = PITCH_SHIFT;
         _current = self;
         const char* path = [[NSBundle bundleForClass:[self class]].bundlePath fileSystemRepresentation];

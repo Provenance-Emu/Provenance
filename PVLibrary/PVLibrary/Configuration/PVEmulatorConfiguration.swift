@@ -25,6 +25,7 @@ public struct SystemDictionaryKeys {
     public static let SupportsRumble = "PVSupportsRumble"
     public static let ScreenType = "PVScreenType"
     public static let Portable = "PVPortable"
+    public static let PlayerCount = "PVPlayerCount"
 
     public struct ControllerLayoutKeys {
         public static let Button = "PVButton"

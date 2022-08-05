@@ -698,7 +698,7 @@
 		B305EF9E276B50DF003AE510 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/iOSSupport/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
 		B305EFA0276B5112003AE510 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.2.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
 		B305F081276B512D003AE510 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B305F082276B5152003AE510 /* PVLibrary-tvOS copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PVLibrary-tvOS copy-Info.plist"; path = "/Users/jmattiello/Workspace/Provenance/Provenance/PVLibrary/PVLibrary-tvOS copy-Info.plist"; sourceTree = "<absolute>"; };
+		B305F082276B5152003AE510 /* PVLibrary-watchOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PVLibrary-watchOS-Info.plist"; path = "/Users/jmattiello/Workspace/Provenance/Provenance/PVLibrary/PVLibrary/PVLibrary-watchOS-Info.plist"; sourceTree = "<absolute>"; };
 		B305F083276B5229003AE510 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3067F4A2106B5A20091437F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B3067F732106B9130091437F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -740,7 +740,7 @@
 		B354E7CE219A8EAF0041F971 /* LibrarySerializer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibrarySerializer.swift; sourceTree = "<group>"; };
 		B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3579D122106B11D00DDEBD6 /* PVLibrary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVLibrary.h; sourceTree = "<group>"; };
-		B3579D132106B11D00DDEBD6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B3579D132106B11D00DDEBD6 /* PVLibrary-iOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PVLibrary-iOS-Info.plist"; sourceTree = "<group>"; };
 		B3579D1E2106B4D600DDEBD6 /* OESQLiteDatabase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OESQLiteDatabase.h; sourceTree = "<group>"; };
 		B3579D1F2106B4D600DDEBD6 /* RomDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RomDatabase.swift; sourceTree = "<group>"; };
 		B3579D202106B4D600DDEBD6 /* OESQLiteDatabase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OESQLiteDatabase.m; sourceTree = "<group>"; };
@@ -768,6 +768,7 @@
 		B378227C21D41E310077E86F /* GamePackage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamePackage.swift; sourceTree = "<group>"; };
 		B378227F21D41E460077E86F /* PackageResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackageResult.swift; sourceTree = "<group>"; };
 		B378228421D41E9B0077E86F /* LibrarySerializerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySerializerError.swift; sourceTree = "<group>"; };
+		B37EC388289C57BC0062FD31 /* PVLibrary-tvOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PVLibrary-tvOS-Info.plist"; sourceTree = "<group>"; };
 		B383F3BB219BB29600DB6926 /* iCloudSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iCloudSync.swift; sourceTree = "<group>"; };
 		B3AF460B21071CA5002211EE /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		B3AF460C21071CA5002211EE /* CHANGELOG */ = {isa = PBXFileReference; lastKnownFileType = text; path = CHANGELOG; sourceTree = "<group>"; };
@@ -1302,7 +1303,6 @@
 				B3C04B622107867200E7AF79 /* Tests */,
 				B3579D102106B11D00DDEBD6 /* Products */,
 				B3067F492106B5A20091437F /* Frameworks */,
-				B305F082276B5152003AE510 /* PVLibrary-tvOS copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1332,7 +1332,9 @@
 				B3AF460A21071CA5002211EE /* LzmaSDKObjC */,
 				B3AF47DB21072AD3002211EE /* Resources */,
 				B3579D122106B11D00DDEBD6 /* PVLibrary.h */,
-				B3579D132106B11D00DDEBD6 /* Info.plist */,
+				B3579D132106B11D00DDEBD6 /* PVLibrary-iOS-Info.plist */,
+				B37EC388289C57BC0062FD31 /* PVLibrary-tvOS-Info.plist */,
+				B305F082276B5152003AE510 /* PVLibrary-watchOS-Info.plist */,
 			);
 			path = PVLibrary;
 			sourceTree = "<group>";
@@ -2767,7 +2769,7 @@
 					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
-				INFOPLIST_FILE = "PVLibrary-tvOS copy-Info.plist";
+				INFOPLIST_FILE = "PVLibrary/PVLibrary-watchOS-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2806,7 +2808,7 @@
 					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
-				INFOPLIST_FILE = "PVLibrary-tvOS copy-Info.plist";
+				INFOPLIST_FILE = "PVLibrary/PVLibrary-watchOS-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2845,7 +2847,7 @@
 					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
-				INFOPLIST_FILE = "PVLibrary-tvOS copy-Info.plist";
+				INFOPLIST_FILE = "PVLibrary/PVLibrary-watchOS-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2948,7 +2950,7 @@
 					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
-				INFOPLIST_FILE = PVLibrary/Info.plist;
+				INFOPLIST_FILE = "PVLibrary/PVLibrary-iOS-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2990,7 +2992,7 @@
 					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
-				INFOPLIST_FILE = PVLibrary/Info.plist;
+				INFOPLIST_FILE = "PVLibrary/PVLibrary-tvOS-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3183,7 +3185,7 @@
 					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
-				INFOPLIST_FILE = PVLibrary/Info.plist;
+				INFOPLIST_FILE = "PVLibrary/PVLibrary-iOS-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3227,7 +3229,7 @@
 					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
-				INFOPLIST_FILE = PVLibrary/Info.plist;
+				INFOPLIST_FILE = "PVLibrary/PVLibrary-iOS-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3268,7 +3270,7 @@
 					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
-				INFOPLIST_FILE = PVLibrary/Info.plist;
+				INFOPLIST_FILE = "PVLibrary/PVLibrary-tvOS-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3307,7 +3309,7 @@
 					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
-				INFOPLIST_FILE = PVLibrary/Info.plist;
+				INFOPLIST_FILE = "PVLibrary/PVLibrary-tvOS-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

@@ -53,6 +53,8 @@ public extension ControlLayoutEntry {
     }
 }
 
+// MARK: Systems.plist
+
 public struct SytemPlistEntry: Codable, Equatable, Hashable {
     public private(set) var PVSystemIdentifier: String
     public private(set) var PVDatabaseID: String
@@ -62,6 +64,7 @@ public struct SytemPlistEntry: Codable, Equatable, Hashable {
     public private(set) var PVReleaseYear: String
     public private(set) var PVSystemName: String
     public private(set) var PVSystemShortName: String
+    public private(set) var PVPlayerCount: String?
     public private(set) var PVSystemShortNameAlt: String?
     public private(set) var PVBIOSNames: [SystemPlistBIOSEntry]?
     public private(set) var PVSupportedExtensions: [String]

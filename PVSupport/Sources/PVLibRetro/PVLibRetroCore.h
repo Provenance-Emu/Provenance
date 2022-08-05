@@ -30,12 +30,11 @@
 
 typedef struct retro_core_t retro_core_t;
 
-
 @class PVLibRetroCore;
 static __weak PVLibRetroCore *_current;
 
 __attribute__((weak_import))
-@interface PVLibRetroCore : PVEmulatorCore {
+@interface PVLibRetroCore : PVEmulatorCore<KeyboardResponder, MouseResponder, TouchPadResponder> {
     @public
     unsigned short pitch_shift;
     
@@ -65,6 +64,8 @@ __attribute__((weak_import))
     bool mouseMiddle;
     bool mouse_button_4;
     bool mouse_button_5;
+    
+    NSDictionary<NSNumber*,NSNumber*> *virtualPhysicalKeyMap;
 }
 
 - (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player;
