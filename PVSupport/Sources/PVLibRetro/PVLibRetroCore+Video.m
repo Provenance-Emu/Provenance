@@ -179,6 +179,29 @@ struct aspect_ratio_elem aspectratio_lut[ASPECT_RATIO_END] = {
     }
 }
 
+/*
+ Bits per pixel
+ RETRO_PIXEL_FORMAT_0RGB1555 = 8 * sizeof(uint16_t)
+ RETRO_PIXEL_FORMAT_XRGB8888 = 8 * sizeof(uint32_t)
+ RETRO_PIXEL_FORMAT_RGB565 = 8 * sizeof(uint16_t);
+ 
+ // Table of equivalent formats across CoreVideo, Metal, and OpenGL
+ static const AAPLTextureFormatInfo AAPLInteropFormatTable[] =
+ {
+   // Core Video Pixel Format,        Metal Pixel Format,      GL internalformat, GL format,  GL type
+   { kCVPixelFormatType_32BGRA,       MTLPixelFormatBGRA8Unorm,   GL_RGBA,      GL_BGRA_EXT, GL_UNSIGNED_INT_8_8_8_8_REV },
+ #if TARGET_IOS
+   { kCVPixelFormatType_32BGRA,       MTLPixelFormatBGRA8Unorm_sRGB, GL_RGBA,      GL_BGRA_EXT, GL_UNSIGNED_INT_8_8_8_8_REV },
+ #else
+   { kCVPixelFormatType_ARGB2101010LEPacked, MTLPixelFormatBGR10A2Unorm,  GL_RGB10_A2,    GL_BGRA,   GL_UNSIGNED_INT_2_10_10_10_REV },
+   { kCVPixelFormatType_32BGRA,       MTLPixelFormatBGRA8Unorm_sRGB, GL_SRGB8_ALPHA8,  GL_BGRA,   GL_UNSIGNED_INT_8_8_8_8_REV },
+   { kCVPixelFormatType_64RGBAHalf,     MTLPixelFormatRGBA16Float,   GL_RGBA,      GL_RGBA,   GL_HALF_FLOAT },
+ #endif
+ };
+ 
+ note: Is there a specific format you would like to find a mapping for. There is no document describing this and some formats can be expressed in each API but there is no 1:1 mapping. For instance, compressed or YCbCr formats usually need additional properties. There are also some properties of some formats, such as colorspace and chroma subsampling, that apply in one API which can only be partially expressed in other APIs.
+ */
+
 - (GLenum)internalPixelFormat {
     switch (pix_fmt)
     {
