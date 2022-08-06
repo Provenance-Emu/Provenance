@@ -11,6 +11,8 @@
 		<string>appclips:provenance.app</string>
 		<string>appclips:provenance-emu.com</string>
 	</array>
+	<key>com.apple.developer.driverkit.communicates-with-drivers</key>
+	<true/>
 	<key>com.apple.developer.icloud-container-identifiers</key>
 	<array>
 		<string>$(ICLOUD_CONTAINER_IDENTIFIER)</string>
@@ -23,6 +25,10 @@
 	<true/>
 	<key>com.apple.developer.networking.multipath</key>
 	<true/>
+	<key>com.apple.developer.sensorkit.reader.allow</key>
+	<array>
+		<string>ambient-light-sensor</string>
+	</array>
 	<key>com.apple.developer.siri</key>
 	<true/>
 	<key>com.apple.developer.ubiquity-container-identifiers</key>
@@ -67,9 +73,5 @@
 	<true/>
 	<key>com.apple.security.personal-information.photos-library</key>
 	<true/>
-    <key>com.apple.developer.sensorkit.reader.allow</key>
-        <array>
-            <string>ambient-light-sensor</string>
-    </array>
 </dict>
 </plist>

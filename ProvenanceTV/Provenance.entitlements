@@ -4,6 +4,17 @@
 <dict>
 	<key>aps-environment</key>
 	<string>development</string>
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>webcredentials:provenance-emu.com</string>
+		<string>webcredentials:provenance.app</string>
+		<string>applinks:provenance-emu.com</string>
+		<string>applinks:provenance.app</string>
+		<string>appclips:provenance.app</string>
+		<string>appclips:provenance-emu.com</string>
+	</array>
+	<key>com.apple.developer.game-center</key>
+	<true/>
 	<key>com.apple.developer.icloud-container-identifiers</key>
 	<array/>
 	<key>com.apple.developer.kernel.extended-virtual-addressing</key>
