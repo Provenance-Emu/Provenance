@@ -13,9 +13,14 @@ fileprivate var g_authorized: Bool = false
 
 @objc
 public extension PVEmulatorCore {
+    #if os(iOS)
     var microphoneIsAvailable: Bool { return true }
+    #else
+    var microphoneIsAvailable: Bool { return false }
+    #endif
     
     func requestMicrophoneAccess() {
+#if os(iOS)
         let authStatus = AVCaptureDevice.authorizationStatus(for: .audio)
         switch authStatus {
         case .authorized:
@@ -35,5 +40,8 @@ public extension PVEmulatorCore {
         @unknown default:
             fatalError()
         }
+#else
+        assertionFailure("Shouldn't be here on this platform")
+#endif
     }
 }

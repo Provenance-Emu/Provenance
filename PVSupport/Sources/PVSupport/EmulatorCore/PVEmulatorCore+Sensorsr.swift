@@ -7,10 +7,18 @@
 //
 
 import Foundation
-import CoreMotion
 import UIKit
 
+#if canImport(CoreMotion)
+import CoreMotion
+
 fileprivate let g_motion:CMMotionManager = CMMotionManager()
+fileprivate var g_acceleration: CMAcceleration = .init(x: 0, y: 0, z: 0)
+fileprivate var g_magnetometerData: CMMagnetometerData? = nil
+fileprivate var g_gyroData: CMGyroData? = nil
+fileprivate var g_deviceMotion: CMDeviceMotion? = nil
+#endif
+
 fileprivate var g_timer: Timer? = nil
 fileprivate var sensorsEnabled: SensorsEnabled = .init(rawValue: 0) {
     didSet {
@@ -31,11 +39,6 @@ struct SensorsEnabled: OptionSet {
 
     static let all: SensorsEnabled = [.accelerometer, .gyro, .magnetometer, .deviceMotion]
 }
-
-fileprivate var g_acceleration: CMAcceleration = .init(x: 0, y: 0, z: 0)
-fileprivate var g_magnetometerData: CMMagnetometerData? = nil
-fileprivate var g_gyroData: CMGyroData? = nil
-fileprivate var g_deviceMotion: CMDeviceMotion? = nil
 
 @objc public extension PVEmulatorCore {
     var motion: CMMotionManager {
@@ -227,7 +230,9 @@ fileprivate var g_deviceMotion: CMDeviceMotion? = nil
 
 // MARK: - Illuminance
 
+#if canImport(SensorKit)
 import SensorKit
+#endif
 
 fileprivate var g_illuminance: Float = 0
 

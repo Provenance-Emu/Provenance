@@ -353,6 +353,8 @@ static bool sensor_state(unsigned port,
 
    switch (action)
    {
+#if TARGET_OS_TV
+#else
        case RETRO_SENSOR_ACCELEROMETER_ENABLE: {
            return [current startAccelerometers];
        }
@@ -375,6 +377,7 @@ static bool sensor_state(unsigned port,
        }
        case RETRO_SENSOR_DUMMY:
            return false;
+#endif
       default:
          return false;
    }
@@ -386,6 +389,8 @@ static float get_sensor_input(unsigned port, unsigned id) {
     GET_CURRENT_OR_RETURN(0);
     DLOG(@"port %u, id %u", port, id);
      // TODO: Port to contoller?
+#if TARGET_OS_TV
+#else
    switch (id)
    {
       case RETRO_SENSOR_ACCELEROMETER_X:
@@ -403,6 +408,7 @@ static float get_sensor_input(unsigned port, unsigned id) {
        case RETRO_SENSOR_ILLUMINANCE:
            return [current illuminance];
    }
+#endif
 
    return 0;
 }
@@ -2634,6 +2640,9 @@ static bool environment_callback(unsigned cmd, void *data) {
              * callbacks happening after this call within the same retro_run()
              * call will target the newly initialized driver.
              */
+#if TARGET_OS_TV
+            return false;
+#else
             const unsigned latency = *((const unsigned*)data);
             ILOG(@"Set latency <STUB> %f", latency);
             UInt32 propSize = sizeof(Float32);
@@ -2641,6 +2650,7 @@ static bool environment_callback(unsigned cmd, void *data) {
                                     propSize,
                                     &latency);
             return true;
+#endif
         }
         case RETRO_ENVIRONMENT_SET_FASTFORWARDING_OVERRIDE: {
             /* const struct retro_fastforwarding_override * --

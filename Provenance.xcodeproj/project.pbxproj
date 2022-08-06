@@ -97,7 +97,6 @@
 		B311B1C227A52F1700D1DE41 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B311B1C127A52F1700D1DE41 /* UIKit.framework */; };
 		B311B1C427A52F2000D1DE41 /* PVPokeMini.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B311B1C327A52F2000D1DE41 /* PVPokeMini.framework */; };
 		B311B1C527A52F2000D1DE41 /* PVPokeMini.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B311B1C327A52F2000D1DE41 /* PVPokeMini.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B312805F274C60EC00550720 /* SteamController in Frameworks */ = {isa = PBXBuildFile; productRef = B3D30FC026F0BCE60064603F /* SteamController */; };
 		B32296D22878383200585AD8 /* PVfMSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32296D12878383200585AD8 /* PVfMSX.framework */; };
 		B32296D32878383200585AD8 /* PVfMSX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32296D12878383200585AD8 /* PVfMSX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B32296D52878383800585AD8 /* PVMelonDS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32296D42878383800585AD8 /* PVMelonDS.framework */; };
@@ -665,6 +664,88 @@
 		B355E47E289E0C1C00D23D64 /* UIButton+Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355E47C289E0C1400D23D64 /* UIButton+Haptics.swift */; };
 		B355E47F289E121F00D23D64 /* GLES in Resources */ = {isa = PBXBuildFile; fileRef = B3427C0C287EA5030054C1B5 /* GLES */; };
 		B355E480289E122B00D23D64 /* GLES in Resources */ = {isa = PBXBuildFile; fileRef = B3427C0C287EA5030054C1B5 /* GLES */; };
+		B355E484289E1ACB00D23D64 /* MetalViewShaders.h in Headers */ = {isa = PBXBuildFile; fileRef = B3427BE6287EA0CE0054C1B5 /* MetalViewShaders.h */; };
+		B355E486289E1ACB00D23D64 /* UIImage+ImageEffects.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A65D1C419917D55004E1777 /* UIImage+ImageEffects.h */; };
+		B355E49B289E1BA500D23D64 /* TVMLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E487289E1BA300D23D64 /* TVMLKit.framework */; };
+		B355E49C289E1BA500D23D64 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E488289E1BA300D23D64 /* CoreServices.framework */; };
+		B355E49D289E1BA500D23D64 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E489289E1BA400D23D64 /* CoreMIDI.framework */; };
+		B355E49E289E1BA500D23D64 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E48A289E1BA400D23D64 /* MetalKit.framework */; };
+		B355E49F289E1BA500D23D64 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E48B289E1BA400D23D64 /* SystemConfiguration.framework */; };
+		B355E4A0289E1BA500D23D64 /* OSLog.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E48C289E1BA400D23D64 /* OSLog.framework */; };
+		B355E4A1289E1BA500D23D64 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E48D289E1BA400D23D64 /* CoreLocation.framework */; };
+		B355E4A2289E1BA500D23D64 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E48E289E1BA400D23D64 /* CoreGraphics.framework */; };
+		B355E4A3289E1BA500D23D64 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E48F289E1BA400D23D64 /* Security.framework */; };
+		B355E4A4289E1BA500D23D64 /* TVServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E490289E1BA400D23D64 /* TVServices.framework */; };
+		B355E4A5289E1BA500D23D64 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E491289E1BA400D23D64 /* AVFoundation.framework */; };
+		B355E4A6289E1BA500D23D64 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E492289E1BA400D23D64 /* CoreData.framework */; };
+		B355E4A7289E1BA500D23D64 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E493289E1BA500D23D64 /* Metal.framework */; };
+		B355E4A8289E1BA500D23D64 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E494289E1BA500D23D64 /* Photos.framework */; };
+		B355E4A9289E1BA500D23D64 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E495289E1BA500D23D64 /* SwiftUI.framework */; };
+		B355E4AA289E1BA600D23D64 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E496289E1BA500D23D64 /* UIKit.framework */; };
+		B355E4AB289E1BA600D23D64 /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E497289E1BA500D23D64 /* CoreHaptics.framework */; };
+		B355E4AC289E1BA600D23D64 /* TVUIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E498289E1BA500D23D64 /* TVUIKit.framework */; };
+		B355E4AD289E1BA600D23D64 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E499289E1BA500D23D64 /* OpenGLES.framework */; };
+		B355E4AE289E1BA600D23D64 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E49A289E1BA500D23D64 /* CoreSpotlight.framework */; };
+		B355E4B0289E1BAD00D23D64 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E4AF289E1BAD00D23D64 /* PVSupport.framework */; };
+		B355E4B2289E1BB400D23D64 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E4B1289E1BB400D23D64 /* PVLibrary.framework */; };
+		B355E4B4289E1BBD00D23D64 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E4B3289E1BBC00D23D64 /* libsqlite3.tbd */; };
+		B355E4B6289E1BC300D23D64 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = B355E4B5289E1BC300D23D64 /* Introspect */; };
+		B355E4B8289E1BCB00D23D64 /* AppCenterAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = B355E4B7289E1BCB00D23D64 /* AppCenterAnalytics */; };
+		B355E4BA289E1BCB00D23D64 /* AppCenterCrashes in Frameworks */ = {isa = PBXBuildFile; productRef = B355E4B9289E1BCB00D23D64 /* AppCenterCrashes */; };
+		B355E4BE289E1BD300D23D64 /* SteamController in Frameworks */ = {isa = PBXBuildFile; productRef = B355E4BD289E1BD300D23D64 /* SteamController */; };
+		B355E4C0289E1BDE00D23D64 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E4BF289E1BDE00D23D64 /* libc++.tbd */; };
+		B355E4C2289E1BE700D23D64 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E4C1289E1BE600D23D64 /* libz.tbd */; };
+		B355E4C4289E1BF100D23D64 /* AltKit in Frameworks */ = {isa = PBXBuildFile; productRef = B355E4C3289E1BF100D23D64 /* AltKit */; };
+		B355E4CC289E245D00D23D64 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270FB727DCB62C00E83180 /* libz.dylib */; };
+		B355E4CD289E245D00D23D64 /* PVGenesis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; };
+		B355E4CE289E245D00D23D64 /* PVMupen64Plus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A426EA159400E95488 /* PVMupen64Plus.framework */; };
+		B355E4CF289E245D00D23D64 /* PVRSPCXD4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A826EA159400E95488 /* PVRSPCXD4.framework */; };
+		B355E4D0289E245D00D23D64 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A626EA159400E95488 /* PVMupen64PlusVideoGlideN64.framework */; };
+		B355E4D1289E245D00D23D64 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2B0E8D1AD18961005FB77C /* libc++.dylib */; };
+		B355E4D2289E245D00D23D64 /* PicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8F27DCB2CA00E83180 /* PicoDrive.framework */; };
+		B355E4D3289E245D00D23D64 /* ProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B4C955279E6BAA00505424 /* ProSystem.framework */; };
+		B355E4D4289E245D00D23D64 /* PVStella.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF2E276B4CB0003AE510 /* PVStella.framework */; };
+		B355E4D5289E245D00D23D64 /* PVPokeMini.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B311B1C327A52F2000D1DE41 /* PVPokeMini.framework */; };
+		B355E4D6289E245D00D23D64 /* FreeDO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D1809228964496001207AF /* FreeDO.framework */; };
+		B355E4D7289E245D00D23D64 /* PVVirtualJaguar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F9127DCB2CA00E83180 /* PVVirtualJaguar.framework */; };
+		B355E4D8289E245D00D23D64 /* PVMupen64PlusRspHLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A526EA159400E95488 /* PVMupen64PlusRspHLE.framework */; };
+		B355E4D9289E245D00D23D64 /* PVAtari800.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; };
+		B355E4DA289E245D00D23D64 /* PVSNES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D55C1DEA85C60068D057 /* PVSNES.framework */; };
+		B355E4DB289E245D00D23D64 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D717C8D54D0019F6D2 /* libxml2.dylib */; };
+		B355E4DC289E245D00D23D64 /* PVTGBDual.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F9027DCB2CA00E83180 /* PVTGBDual.framework */; };
+		B355E4DD289E245D00D23D64 /* PVBliss.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D1800828963AD3001207AF /* PVBliss.framework */; };
+		B355E4DE289E245D00D23D64 /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2A95A917F7682400F1CB0D /* libstdc++.dylib */; };
+		B355E4DF289E245D00D23D64 /* PVMupen64PlusVideoRice.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A726EA159400E95488 /* PVMupen64PlusVideoRice.framework */; };
+		B355E4E0289E245D00D23D64 /* PVFCEU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8B27DCB2B200E83180 /* PVFCEU.framework */; };
+		B355E4E1289E245D00D23D64 /* PVGB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4AD1DEA74390068D057 /* PVGB.framework */; };
+		B355E4E2289E245D00D23D64 /* PVMednafen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8E27DCB2CA00E83180 /* PVMednafen.framework */; };
+		B355E4E3289E245D00D23D64 /* PVO2EM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30F1C36289677CA004D40BF /* PVO2EM.framework */; };
+		B355E4E4289E245D00D23D64 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AECF4A81966D76100F8704E /* libsqlite3.dylib */; };
+		B355E4E5289E245D00D23D64 /* PVGBA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5201DEA787D0068D057 /* PVGBA.framework */; };
+		B355E4E8289E245D00D23D64 /* PVGenesis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B355E4E9289E245D00D23D64 /* PVMupen64Plus.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A426EA159400E95488 /* PVMupen64Plus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B355E4EA289E245D00D23D64 /* PVRSPCXD4.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A826EA159400E95488 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B355E4EB289E245D00D23D64 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A626EA159400E95488 /* PVMupen64PlusVideoGlideN64.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B355E4EC289E245D00D23D64 /* PVO2EM.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B30F1C36289677CA004D40BF /* PVO2EM.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B355E4ED289E245D00D23D64 /* PicoDrive.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8F27DCB2CA00E83180 /* PicoDrive.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B355E4EE289E245D00D23D64 /* FreeDO.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3D1809228964496001207AF /* FreeDO.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B355E4EF289E245D00D23D64 /* ProSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B4C955279E6BAA00505424 /* ProSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B355E4F0289E245D00D23D64 /* PVStella.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF2E276B4CB0003AE510 /* PVStella.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B355E4F1289E245D00D23D64 /* PVPokeMini.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B311B1C327A52F2000D1DE41 /* PVPokeMini.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B355E4F2289E245D00D23D64 /* PVVirtualJaguar.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F9127DCB2CA00E83180 /* PVVirtualJaguar.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B355E4F3289E245D00D23D64 /* PVBliss.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3D1800828963AD3001207AF /* PVBliss.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B355E4F4289E245D00D23D64 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A526EA159400E95488 /* PVMupen64PlusRspHLE.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B355E4F5289E245D00D23D64 /* PVAtari800.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B355E4F6289E245D00D23D64 /* PVSNES.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D55C1DEA85C60068D057 /* PVSNES.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B355E4F7289E245D00D23D64 /* PVTGBDual.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F9027DCB2CA00E83180 /* PVTGBDual.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B355E4F8289E245D00D23D64 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A726EA159400E95488 /* PVMupen64PlusVideoRice.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B355E4F9289E245D00D23D64 /* PVFCEU.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8B27DCB2B200E83180 /* PVFCEU.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B355E4FA289E245D00D23D64 /* PVGB.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4AD1DEA74390068D057 /* PVGB.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B355E4FB289E245D00D23D64 /* PVMednafen.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8E27DCB2CA00E83180 /* PVMednafen.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B355E4FC289E245D00D23D64 /* PVGBA.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5201DEA787D0068D057 /* PVGBA.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B355E509289E289300D23D64 /* DriverKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E508289E289300D23D64 /* DriverKit.framework */; };
+		B355E50C289E289700D23D64 /* USBGamePad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B355E50B289E289700D23D64 /* USBGamePad.cpp */; };
+		B355E50E289E289700D23D64 /* USBGamePad.iig in Sources */ = {isa = PBXBuildFile; fileRef = B355E50D289E289700D23D64 /* USBGamePad.iig */; };
 		B380C26D2894EC2F007B76FD /* PVVecX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B380C26C2894EC2F007B76FD /* PVVecX.framework */; };
 		B380C26E2894EC2F007B76FD /* PVVecX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B380C26C2894EC2F007B76FD /* PVVecX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B38E0EE72892853D004720DA /* PVMelonDS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6632877DE280037A946 /* PVMelonDS.framework */; };
@@ -774,8 +855,6 @@
 		B3F43DCF2168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F43DD02168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F64ECA205CBD1200C273C7 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
-		B3F94A4E27093ABC002A71EF /* AppCenterAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = B3F94A4D27093ABC002A71EF /* AppCenterAnalytics */; };
-		B3F94A5027093ABC002A71EF /* AppCenterCrashes in Frameworks */ = {isa = PBXBuildFile; productRef = B3F94A4F27093ABC002A71EF /* AppCenterCrashes */; };
 		BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */; };
 		BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */; };
 		DA5EB00A206C4DEB000B5F30 /* PVGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5EB009206C4DEB000B5F30 /* PVGame+TopShelf.swift */; };
@@ -823,6 +902,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = B328F445289DD85B00CA4500;
 			remoteInfo = "PVApp-watchOS";
+		};
+		B355E510289E289700D23D64 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B355E506289E289200D23D64;
+			remoteInfo = USBGamePad;
 		};
 		B36FE830218EAAD200F858F3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1024,6 +1110,47 @@
 				B328F5D1289DD91F00CA4500 /* PVApp.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B355E4E7289E245D00D23D64 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B355E4E8289E245D00D23D64 /* PVGenesis.framework in Embed Frameworks */,
+				B355E4E9289E245D00D23D64 /* PVMupen64Plus.framework in Embed Frameworks */,
+				B355E4EA289E245D00D23D64 /* PVRSPCXD4.framework in Embed Frameworks */,
+				B355E4EB289E245D00D23D64 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
+				B355E4EC289E245D00D23D64 /* PVO2EM.framework in Embed Frameworks */,
+				B355E4ED289E245D00D23D64 /* PicoDrive.framework in Embed Frameworks */,
+				B355E4EE289E245D00D23D64 /* FreeDO.framework in Embed Frameworks */,
+				B355E4EF289E245D00D23D64 /* ProSystem.framework in Embed Frameworks */,
+				B355E4F0289E245D00D23D64 /* PVStella.framework in Embed Frameworks */,
+				B355E4F1289E245D00D23D64 /* PVPokeMini.framework in Embed Frameworks */,
+				B355E4F2289E245D00D23D64 /* PVVirtualJaguar.framework in Embed Frameworks */,
+				B355E4F3289E245D00D23D64 /* PVBliss.framework in Embed Frameworks */,
+				B355E4F4289E245D00D23D64 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
+				B355E4F5289E245D00D23D64 /* PVAtari800.framework in Embed Frameworks */,
+				B355E4F6289E245D00D23D64 /* PVSNES.framework in Embed Frameworks */,
+				B355E4F7289E245D00D23D64 /* PVTGBDual.framework in Embed Frameworks */,
+				B355E4F8289E245D00D23D64 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
+				B355E4F9289E245D00D23D64 /* PVFCEU.framework in Embed Frameworks */,
+				B355E4FA289E245D00D23D64 /* PVGB.framework in Embed Frameworks */,
+				B355E4FB289E245D00D23D64 /* PVMednafen.framework in Embed Frameworks */,
+				B355E4FC289E245D00D23D64 /* PVGBA.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B355E517289E289F00D23D64 /* Embed System Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(SYSTEM_EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			name = "Embed System Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B39DC780279E79D40017E28D /* Embed App Extensions */ = {
@@ -1504,6 +1631,37 @@
 		B354E7C5219A7D9D0041F971 /* SystemOverviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemOverviewViewModel.swift; sourceTree = "<group>"; };
 		B354E7D1219A9C230041F971 /* CoreOptionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreOptionsViewController.swift; sourceTree = "<group>"; };
 		B355E47C289E0C1400D23D64 /* UIButton+Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Haptics.swift"; sourceTree = "<group>"; };
+		B355E487289E1BA300D23D64 /* TVMLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TVMLKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.0.sdk/System/Library/Frameworks/TVMLKit.framework; sourceTree = DEVELOPER_DIR; };
+		B355E488289E1BA300D23D64 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.0.sdk/System/Library/Frameworks/CoreServices.framework; sourceTree = DEVELOPER_DIR; };
+		B355E489289E1BA400D23D64 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.0.sdk/System/Library/Frameworks/CoreMIDI.framework; sourceTree = DEVELOPER_DIR; };
+		B355E48A289E1BA400D23D64 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.0.sdk/System/Library/Frameworks/MetalKit.framework; sourceTree = DEVELOPER_DIR; };
+		B355E48B289E1BA400D23D64 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.0.sdk/System/Library/Frameworks/SystemConfiguration.framework; sourceTree = DEVELOPER_DIR; };
+		B355E48C289E1BA400D23D64 /* OSLog.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OSLog.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.0.sdk/System/Library/Frameworks/OSLog.framework; sourceTree = DEVELOPER_DIR; };
+		B355E48D289E1BA400D23D64 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.0.sdk/System/Library/Frameworks/CoreLocation.framework; sourceTree = DEVELOPER_DIR; };
+		B355E48E289E1BA400D23D64 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.0.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
+		B355E48F289E1BA400D23D64 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.0.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
+		B355E490289E1BA400D23D64 /* TVServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TVServices.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.0.sdk/System/Library/Frameworks/TVServices.framework; sourceTree = DEVELOPER_DIR; };
+		B355E491289E1BA400D23D64 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.0.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
+		B355E492289E1BA400D23D64 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.0.sdk/System/Library/Frameworks/CoreData.framework; sourceTree = DEVELOPER_DIR; };
+		B355E493289E1BA500D23D64 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.0.sdk/System/Library/Frameworks/Metal.framework; sourceTree = DEVELOPER_DIR; };
+		B355E494289E1BA500D23D64 /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.0.sdk/System/Library/Frameworks/Photos.framework; sourceTree = DEVELOPER_DIR; };
+		B355E495289E1BA500D23D64 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.0.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
+		B355E496289E1BA500D23D64 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		B355E497289E1BA500D23D64 /* CoreHaptics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreHaptics.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.0.sdk/System/Library/Frameworks/CoreHaptics.framework; sourceTree = DEVELOPER_DIR; };
+		B355E498289E1BA500D23D64 /* TVUIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TVUIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.0.sdk/System/Library/Frameworks/TVUIKit.framework; sourceTree = DEVELOPER_DIR; };
+		B355E499289E1BA500D23D64 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.0.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
+		B355E49A289E1BA500D23D64 /* CoreSpotlight.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreSpotlight.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.0.sdk/System/Library/Frameworks/CoreSpotlight.framework; sourceTree = DEVELOPER_DIR; };
+		B355E4AF289E1BAD00D23D64 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B355E4B1289E1BB400D23D64 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B355E4B3289E1BBC00D23D64 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.0.sdk/usr/lib/libsqlite3.tbd; sourceTree = DEVELOPER_DIR; };
+		B355E4BF289E1BDE00D23D64 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.0.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
+		B355E4C1289E1BE600D23D64 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.0.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
+		B355E501289E245D00D23D64 /* Cores-watchOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "Cores-watchOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B355E507289E289200D23D64 /* Provenance.dext */ = {isa = PBXFileReference; explicitFileType = "wrapper.driver-extension"; includeInIndex = 0; path = Provenance.dext; sourceTree = BUILT_PRODUCTS_DIR; };
+		B355E508289E289300D23D64 /* DriverKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DriverKit.framework; path = Library/Frameworks/DriverKit.framework; sourceTree = DEVELOPER_DIR; };
+		B355E50B289E289700D23D64 /* USBGamePad.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = USBGamePad.cpp; sourceTree = "<group>"; };
+		B355E50D289E289700D23D64 /* USBGamePad.iig */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.iig; path = USBGamePad.iig; sourceTree = "<group>"; };
+		B355E50F289E289700D23D64 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3579D0221069B4E00DDEBD6 /* Spotlight.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Spotlight.entitlements; sourceTree = "<group>"; };
 		B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVAppDelegate+AppCenter.swift"; sourceTree = "<group>"; };
 		B3592CE42070B9DE00533593 /* PVSaveStateCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PVSaveStateCollectionViewCell.xib; sourceTree = "<group>"; };
@@ -1791,15 +1949,12 @@
 				B324C619219203A5009F4EDC /* libsqlite3.tbd in Frameworks */,
 				B328F5CC289DD90500CA4500 /* PVApp.framework in Frameworks */,
 				B324C6172192038C009F4EDC /* libxml2.tbd in Frameworks */,
-				B312805F274C60EC00550720 /* SteamController in Frameworks */,
 				B324C61521920384009F4EDC /* libz.tbd in Frameworks */,
 				B324C312219195CE009F4EDC /* CFNetwork.framework in Frameworks */,
 				B324C30C219195BB009F4EDC /* SystemConfiguration.framework in Frameworks */,
 				B324C30A219195AE009F4EDC /* AudioToolbox.framework in Frameworks */,
 				B324C64F219216DD009F4EDC /* PVLibrary.framework in Frameworks */,
 				B3AF701C21916E38000FA7F9 /* PVSupport.framework in Frameworks */,
-				B3F94A5027093ABC002A71EF /* AppCenterCrashes in Frameworks */,
-				B3F94A4E27093ABC002A71EF /* AppCenterAnalytics in Frameworks */,
 				B324C308219195A8009F4EDC /* GLKit.framework in Frameworks */,
 				B324C306219195A0009F4EDC /* OpenGLES.framework in Frameworks */,
 				B324C30321919596009F4EDC /* UIKit.framework in Frameworks */,
@@ -1906,6 +2061,36 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B355E4C4289E1BF100D23D64 /* AltKit in Frameworks */,
+				B355E4C2289E1BE700D23D64 /* libz.tbd in Frameworks */,
+				B355E4C0289E1BDE00D23D64 /* libc++.tbd in Frameworks */,
+				B355E4B4289E1BBD00D23D64 /* libsqlite3.tbd in Frameworks */,
+				B355E4B2289E1BB400D23D64 /* PVLibrary.framework in Frameworks */,
+				B355E4B0289E1BAD00D23D64 /* PVSupport.framework in Frameworks */,
+				B355E49B289E1BA500D23D64 /* TVMLKit.framework in Frameworks */,
+				B355E49C289E1BA500D23D64 /* CoreServices.framework in Frameworks */,
+				B355E49D289E1BA500D23D64 /* CoreMIDI.framework in Frameworks */,
+				B355E49E289E1BA500D23D64 /* MetalKit.framework in Frameworks */,
+				B355E49F289E1BA500D23D64 /* SystemConfiguration.framework in Frameworks */,
+				B355E4A0289E1BA500D23D64 /* OSLog.framework in Frameworks */,
+				B355E4A1289E1BA500D23D64 /* CoreLocation.framework in Frameworks */,
+				B355E4A2289E1BA500D23D64 /* CoreGraphics.framework in Frameworks */,
+				B355E4A3289E1BA500D23D64 /* Security.framework in Frameworks */,
+				B355E4BE289E1BD300D23D64 /* SteamController in Frameworks */,
+				B355E4A4289E1BA500D23D64 /* TVServices.framework in Frameworks */,
+				B355E4B6289E1BC300D23D64 /* Introspect in Frameworks */,
+				B355E4A5289E1BA500D23D64 /* AVFoundation.framework in Frameworks */,
+				B355E4A6289E1BA500D23D64 /* CoreData.framework in Frameworks */,
+				B355E4A7289E1BA500D23D64 /* Metal.framework in Frameworks */,
+				B355E4BA289E1BCB00D23D64 /* AppCenterCrashes in Frameworks */,
+				B355E4A8289E1BA500D23D64 /* Photos.framework in Frameworks */,
+				B355E4A9289E1BA500D23D64 /* SwiftUI.framework in Frameworks */,
+				B355E4AA289E1BA600D23D64 /* UIKit.framework in Frameworks */,
+				B355E4AB289E1BA600D23D64 /* CoreHaptics.framework in Frameworks */,
+				B355E4AC289E1BA600D23D64 /* TVUIKit.framework in Frameworks */,
+				B355E4AD289E1BA600D23D64 /* OpenGLES.framework in Frameworks */,
+				B355E4B8289E1BCB00D23D64 /* AppCenterAnalytics in Frameworks */,
+				B355E4AE289E1BA600D23D64 /* CoreSpotlight.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1921,6 +2106,47 @@
 			buildActionMask = 2147483647;
 			files = (
 				B328F5D0289DD91F00CA4500 /* PVApp.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B355E4CB289E245D00D23D64 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B355E4CC289E245D00D23D64 /* libz.dylib in Frameworks */,
+				B355E4CD289E245D00D23D64 /* PVGenesis.framework in Frameworks */,
+				B355E4CE289E245D00D23D64 /* PVMupen64Plus.framework in Frameworks */,
+				B355E4CF289E245D00D23D64 /* PVRSPCXD4.framework in Frameworks */,
+				B355E4D0289E245D00D23D64 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
+				B355E4D1289E245D00D23D64 /* libc++.dylib in Frameworks */,
+				B355E4D2289E245D00D23D64 /* PicoDrive.framework in Frameworks */,
+				B355E4D3289E245D00D23D64 /* ProSystem.framework in Frameworks */,
+				B355E4D4289E245D00D23D64 /* PVStella.framework in Frameworks */,
+				B355E4D5289E245D00D23D64 /* PVPokeMini.framework in Frameworks */,
+				B355E4D6289E245D00D23D64 /* FreeDO.framework in Frameworks */,
+				B355E4D7289E245D00D23D64 /* PVVirtualJaguar.framework in Frameworks */,
+				B355E4D8289E245D00D23D64 /* PVMupen64PlusRspHLE.framework in Frameworks */,
+				B355E4D9289E245D00D23D64 /* PVAtari800.framework in Frameworks */,
+				B355E4DA289E245D00D23D64 /* PVSNES.framework in Frameworks */,
+				B355E4DB289E245D00D23D64 /* libxml2.dylib in Frameworks */,
+				B355E4DC289E245D00D23D64 /* PVTGBDual.framework in Frameworks */,
+				B355E4DD289E245D00D23D64 /* PVBliss.framework in Frameworks */,
+				B355E4DE289E245D00D23D64 /* libstdc++.dylib in Frameworks */,
+				B355E4DF289E245D00D23D64 /* PVMupen64PlusVideoRice.framework in Frameworks */,
+				B355E4E0289E245D00D23D64 /* PVFCEU.framework in Frameworks */,
+				B355E4E1289E245D00D23D64 /* PVGB.framework in Frameworks */,
+				B355E4E2289E245D00D23D64 /* PVMednafen.framework in Frameworks */,
+				B355E4E3289E245D00D23D64 /* PVO2EM.framework in Frameworks */,
+				B355E4E4289E245D00D23D64 /* libsqlite3.dylib in Frameworks */,
+				B355E4E5289E245D00D23D64 /* PVGBA.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B355E504289E289200D23D64 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B355E509289E289300D23D64 /* DriverKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2101,6 +2327,7 @@
 				B3270F8027DCB25100E83180 /* Cores */,
 				B3C8A6A328781E810037A946 /* CoresRetro */,
 				B328F42F289DD82C00CA4500 /* PVApp */,
+				B355E50A289E289700D23D64 /* USBGamePad */,
 				1A3D409617B2DCE4004DFFFC /* Frameworks */,
 				1A3D409517B2DCE4004DFFFC /* Products */,
 			);
@@ -2125,6 +2352,8 @@
 				B328F42E289DD82A00CA4500 /* PVApp.framework */,
 				B328F444289DD84200CA4500 /* PVApp.framework */,
 				B328F44F289DD85B00CA4500 /* PVApp.framework */,
+				B355E501289E245D00D23D64 /* Cores-watchOS.framework */,
+				B355E507289E289200D23D64 /* Provenance.dext */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2132,6 +2361,31 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B355E4C1289E1BE600D23D64 /* libz.tbd */,
+				B355E4BF289E1BDE00D23D64 /* libc++.tbd */,
+				B355E4B3289E1BBC00D23D64 /* libsqlite3.tbd */,
+				B355E4B1289E1BB400D23D64 /* PVLibrary.framework */,
+				B355E4AF289E1BAD00D23D64 /* PVSupport.framework */,
+				B355E491289E1BA400D23D64 /* AVFoundation.framework */,
+				B355E492289E1BA400D23D64 /* CoreData.framework */,
+				B355E48E289E1BA400D23D64 /* CoreGraphics.framework */,
+				B355E497289E1BA500D23D64 /* CoreHaptics.framework */,
+				B355E48D289E1BA400D23D64 /* CoreLocation.framework */,
+				B355E489289E1BA400D23D64 /* CoreMIDI.framework */,
+				B355E488289E1BA300D23D64 /* CoreServices.framework */,
+				B355E49A289E1BA500D23D64 /* CoreSpotlight.framework */,
+				B355E493289E1BA500D23D64 /* Metal.framework */,
+				B355E48A289E1BA400D23D64 /* MetalKit.framework */,
+				B355E499289E1BA500D23D64 /* OpenGLES.framework */,
+				B355E48C289E1BA400D23D64 /* OSLog.framework */,
+				B355E494289E1BA500D23D64 /* Photos.framework */,
+				B355E48F289E1BA400D23D64 /* Security.framework */,
+				B355E495289E1BA500D23D64 /* SwiftUI.framework */,
+				B355E48B289E1BA400D23D64 /* SystemConfiguration.framework */,
+				B355E487289E1BA300D23D64 /* TVMLKit.framework */,
+				B355E490289E1BA400D23D64 /* TVServices.framework */,
+				B355E498289E1BA500D23D64 /* TVUIKit.framework */,
+				B355E496289E1BA500D23D64 /* UIKit.framework */,
 				B328F607289DDC5700CA4500 /* libc++.tbd */,
 				B328F604289DDAA400CA4500 /* PVLibrary.framework */,
 				B328F600289DDA9600CA4500 /* PVSupport.framework */,
@@ -2262,6 +2516,7 @@
 				C13CC82823CABE2800463EDD /* Photos.framework */,
 				1A4DF9F91C0E411500DDBC20 /* iOS */,
 				1A4DF9F81C0E40FE00DDBC20 /* tvOS */,
+				B355E508289E289300D23D64 /* DriverKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -2907,6 +3162,16 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
+		B355E50A289E289700D23D64 /* USBGamePad */ = {
+			isa = PBXGroup;
+			children = (
+				B355E50B289E289700D23D64 /* USBGamePad.cpp */,
+				B355E50D289E289700D23D64 /* USBGamePad.iig */,
+				B355E50F289E289700D23D64 /* Info.plist */,
+			);
+			path = USBGamePad;
+			sourceTree = "<group>";
+		};
 		B35D667D21814EAB0005A992 /* Story Boards */ = {
 			isa = PBXGroup;
 			children = (
@@ -3237,7 +3502,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				B328F43C289DD84200CA4500 /* PVApp.h in Headers */,
+				B355E486289E1ACB00D23D64 /* UIImage+ImageEffects.h in Headers */,
 				B328F613289DDDCB00CA4500 /* PVMetalViewController.h in Headers */,
+				B355E484289E1ACB00D23D64 /* MetalViewShaders.h in Headers */,
 				B328F617289DDDF400CA4500 /* PVWebServer.h in Headers */,
 				B328F615289DDDE500CA4500 /* MBProgressHUD.h in Headers */,
 				B328F61B289DEE1E00CA4500 /* PVGPUViewController.h in Headers */,
@@ -3252,6 +3519,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				B328F447289DD85B00CA4500 /* PVApp.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B355E4C9289E245D00D23D64 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B355E502289E289200D23D64 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3291,6 +3572,7 @@
 				1A44C0AD1D0A1DE80018751A /* Script: Set Build Number */,
 				1AAE7D3F1BC86C41003066C0 /* Embed Frameworks */,
 				B3E21D77203211BE009939D3 /* Embed App Extensions */,
+				B355E517289E289F00D23D64 /* Embed System Extensions */,
 			);
 			buildRules = (
 			);
@@ -3301,6 +3583,7 @@
 				B3C8A708287827270037A946 /* PBXTargetDependency */,
 				B3C8A70C287827330037A946 /* PBXTargetDependency */,
 				B328F433289DD82C00CA4500 /* PBXTargetDependency */,
+				B355E511289E289700D23D64 /* PBXTargetDependency */,
 			);
 			name = Provenance;
 			packageProductDependencies = (
@@ -3333,9 +3616,6 @@
 			);
 			name = ProvenanceTV;
 			packageProductDependencies = (
-				B3D30FC026F0BCE60064603F /* SteamController */,
-				B3F94A4D27093ABC002A71EF /* AppCenterAnalytics */,
-				B3F94A4F27093ABC002A71EF /* AppCenterCrashes */,
 			);
 			productName = ProvenanceTV;
 			productReference = 1AD481B41BA350A400FDA50A /* Provenance.app */;
@@ -3473,6 +3753,13 @@
 			dependencies = (
 			);
 			name = "PVApp-tvOS";
+			packageProductDependencies = (
+				B355E4B5289E1BC300D23D64 /* Introspect */,
+				B355E4B7289E1BCB00D23D64 /* AppCenterAnalytics */,
+				B355E4B9289E1BCB00D23D64 /* AppCenterCrashes */,
+				B355E4BD289E1BD300D23D64 /* SteamController */,
+				B355E4C3289E1BF100D23D64 /* AltKit */,
+			);
 			productName = PVApp;
 			productReference = B328F444289DD84200CA4500 /* PVApp.framework */;
 			productType = "com.apple.product-type.framework";
@@ -3494,6 +3781,43 @@
 			productName = PVApp;
 			productReference = B328F44F289DD85B00CA4500 /* PVApp.framework */;
 			productType = "com.apple.product-type.framework";
+		};
+		B355E4C8289E245D00D23D64 /* Cores-watchOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B355E4FD289E245D00D23D64 /* Build configuration list for PBXNativeTarget "Cores-watchOS" */;
+			buildPhases = (
+				B355E4C9289E245D00D23D64 /* Headers */,
+				B355E4CA289E245D00D23D64 /* Sources */,
+				B355E4CB289E245D00D23D64 /* Frameworks */,
+				B355E4E6289E245D00D23D64 /* Resources */,
+				B355E4E7289E245D00D23D64 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Cores-watchOS";
+			productName = Cores;
+			productReference = B355E501289E245D00D23D64 /* Cores-watchOS.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		B355E506289E289200D23D64 /* USBGamePad */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B355E513289E289F00D23D64 /* Build configuration list for PBXNativeTarget "USBGamePad" */;
+			buildPhases = (
+				B355E502289E289200D23D64 /* Headers */,
+				B355E503289E289200D23D64 /* Sources */,
+				B355E504289E289200D23D64 /* Frameworks */,
+				B355E505289E289200D23D64 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = USBGamePad;
+			productName = USBGamePad;
+			productReference = B355E507289E289200D23D64 /* Provenance.dext */;
+			productType = "com.apple.product-type.driver-extension";
 		};
 		B391F2BA27C157E600730B53 /* Provenance Clip */ = {
 			isa = PBXNativeTarget;
@@ -3677,6 +4001,9 @@
 					B328F42D289DD82900CA4500 = {
 						CreatedOnToolsVersion = 14.0;
 					};
+					B355E506289E289200D23D64 = {
+						CreatedOnToolsVersion = 14.0;
+					};
 					B383225D26ED9C530029D12F = {
 						CreatedOnToolsVersion = 13.0;
 					};
@@ -3757,8 +4084,10 @@
 				B391F2BA27C157E600730B53 /* Provenance Clip */,
 				B3270F7E27DCB25100E83180 /* Cores-iOS */,
 				B3C8A70D287828BA0037A946 /* Cores-tvOS */,
+				B355E4C8289E245D00D23D64 /* Cores-watchOS */,
 				B3C8A6BB2878238C0037A946 /* CoresRetro-iOS */,
 				B3C8A6A128781E800037A946 /* CoresRetro-tvOS */,
+				B355E506289E289200D23D64 /* USBGamePad */,
 			);
 		};
 /* End PBXProject section */
@@ -3891,6 +4220,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B328F44A289DD85B00CA4500 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B355E4E6289E245D00D23D64 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B355E505289E289200D23D64 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -4557,6 +4900,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B355E4CA289E245D00D23D64 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B355E503289E289200D23D64 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B355E50E289E289700D23D64 /* USBGamePad.iig in Sources */,
+				B355E50C289E289700D23D64 /* USBGamePad.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B391F2B727C157E600730B53 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -4637,6 +4996,11 @@
 			isa = PBXTargetDependency;
 			target = B328F445289DD85B00CA4500 /* PVApp-watchOS */;
 			targetProxy = B328F5D2289DD92100CA4500 /* PBXContainerItemProxy */;
+		};
+		B355E511289E289700D23D64 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B355E506289E289200D23D64 /* USBGamePad */;
+			targetProxy = B355E510289E289700D23D64 /* PBXContainerItemProxy */;
 		};
 		B36FE831218EAAD200F858F3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -5155,6 +5519,7 @@
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = ProvenanceTV/en.lproj/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -5205,6 +5570,7 @@
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = ProvenanceTV/en.lproj/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -6083,7 +6449,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -6098,7 +6464,8 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Debug;
@@ -6133,7 +6500,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -6147,7 +6514,8 @@
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
@@ -6182,7 +6550,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -6196,7 +6564,8 @@
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Archive;
@@ -6244,7 +6613,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 4;
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Debug;
@@ -6293,7 +6662,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 4;
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
@@ -6342,8 +6711,300 @@
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 4;
 				VERSION_INFO_PREFIX = "";
+			};
+			name = Archive;
+		};
+		B355E4FE289E245D00D23D64 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2782;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"GL_SILENCE_DEPRECATION=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					/usr/include/libxml2,
+				);
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 2.1.1;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Cores";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		B355E4FF289E245D00D23D64 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 2782;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"GL_SILENCE_DEPRECATION=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					/usr/include/libxml2,
+				);
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 2.1.1;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Cores";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		B355E500289E245D00D23D64 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 2782;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"GL_SILENCE_DEPRECATION=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					/usr/include/libxml2,
+				);
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 2.1.1;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Cores";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Archive;
+		};
+		B355E514289E289F00D23D64 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DRIVERKIT_DEPLOYMENT_TARGET = 22.0;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = USBGamePad/Info.plist;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.USBGamePad";
+				PRODUCT_NAME = "$(inherited)";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SDKROOT = driverkit;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Debug;
+		};
+		B355E515289E289F00D23D64 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DRIVERKIT_DEPLOYMENT_TARGET = 22.0;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = USBGamePad/Info.plist;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.USBGamePad";
+				PRODUCT_NAME = "$(inherited)";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SDKROOT = driverkit;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Release;
+		};
+		B355E516289E289F00D23D64 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DRIVERKIT_DEPLOYMENT_TARGET = 22.0;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = USBGamePad/Info.plist;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.USBGamePad";
+				PRODUCT_NAME = "$(inherited)";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SDKROOT = driverkit;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 			};
 			name = Archive;
 		};
@@ -6487,6 +7148,7 @@
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = ProvenanceTV/en.lproj/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -7617,6 +8279,26 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		B355E4FD289E245D00D23D64 /* Build configuration list for PBXNativeTarget "Cores-watchOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B355E4FE289E245D00D23D64 /* Debug */,
+				B355E4FF289E245D00D23D64 /* Release */,
+				B355E500289E245D00D23D64 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B355E513289E289F00D23D64 /* Build configuration list for PBXNativeTarget "USBGamePad" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B355E514289E289F00D23D64 /* Debug */,
+				B355E515289E289F00D23D64 /* Release */,
+				B355E516289E289F00D23D64 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		B383225E26ED9C530029D12F /* Build configuration list for PBXAggregateTarget "Check Git Submodules" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -7770,20 +8452,30 @@
 			package = 37EEA2A927BC81880070E222 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
 			productName = Introspect;
 		};
-		B3D30FC026F0BCE60064603F /* SteamController */ = {
+		B355E4B5289E1BC300D23D64 /* Introspect */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B3D30FBD26F0B4CD0064603F /* XCRemoteSwiftPackageReference "SteamController" */;
-			productName = SteamController;
+			package = 37EEA2A927BC81880070E222 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
+			productName = Introspect;
 		};
-		B3F94A4D27093ABC002A71EF /* AppCenterAnalytics */ = {
+		B355E4B7289E1BCB00D23D64 /* AppCenterAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B357A43627092253002C7C0F /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */;
 			productName = AppCenterAnalytics;
 		};
-		B3F94A4F27093ABC002A71EF /* AppCenterCrashes */ = {
+		B355E4B9289E1BCB00D23D64 /* AppCenterCrashes */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B357A43627092253002C7C0F /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */;
 			productName = AppCenterCrashes;
+		};
+		B355E4BD289E1BD300D23D64 /* SteamController */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3D30FBD26F0B4CD0064603F /* XCRemoteSwiftPackageReference "SteamController" */;
+			productName = SteamController;
+		};
+		B355E4C3289E1BF100D23D64 /* AltKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B390B0E8276B2DB20018E065 /* XCRemoteSwiftPackageReference "AltKit" */;
+			productName = AltKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

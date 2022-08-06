@@ -9,6 +9,17 @@
 import Foundation
 import AVFoundation
 
+#if os(tvOS)
+@objc
+public extension PVEmulatorCore {
+    var cameraIsAvailable: Bool { false }
+    func requestCameraAccess() { assertionFailure("tvOS Not Supported") }
+    @objc func cameraStart() -> Bool {
+        assertionFailure("tvOS Not Supported")
+        return false }
+    @objc func cameraStop() { assertionFailure("tvOS Not Supported") }
+}
+#else
 public typealias retro_camera_lifetime_status_t = () -> Void
 public typealias retro_camera_frame_raw_framebuffer_t = () -> Void
 public typealias retro_camera_frame_opengl_texture_t = (_ texture_id : UInt16, _ texture_target : UInt16, _ affine : inout Float) -> Void
@@ -61,3 +72,4 @@ public extension PVEmulatorCore {
         
     }
 }
+#endif

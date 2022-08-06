@@ -9,9 +9,9 @@
 import Foundation
 
 fileprivate let kSetLEDFadeID: UInt32 = 3 // setLEDFade(int, int, int, int *)
+
+@available(iOS 14.0, tvOS 14.0, *)
 @objc public extension PVEmulatorCore {
-    
-    @available(iOS 14.0, *)
     @objc
     func setLED(led : Int, state : Int) -> Bool {
         DLOG("led index \(led) state \(state)")

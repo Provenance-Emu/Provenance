@@ -125,10 +125,8 @@ s8 joyx[4], joyy[4];
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_RIGHT] = dpad.right.isPressed;
 
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] = gamepad.buttonA.isPressed;
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = gamepad.buttonB.isPressed;
-
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START] = gamepad.buttonX.isPressed;
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_SELECT] = gamepad.buttonY.isPressed;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = gamepad.buttonX.isPressed;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START] = gamepad.buttonMenu;
         }
 #endif
     }

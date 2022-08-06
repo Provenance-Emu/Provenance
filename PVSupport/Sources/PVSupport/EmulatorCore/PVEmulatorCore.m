@@ -24,6 +24,14 @@
 //#define PVTimestamp() CACurrentMediaTime()
 #define GetSecondsSince(x) (PVTimestamp() - x)
 
+#if TARGET_OS_TV
+#define HAS_HAPTICS 0
+#elif TARGET_OS_IOS
+#define HAS_HAPTICS 1
+#else
+#define HAS_HAPTICS 0
+#endif
+
 static Class PVEmulatorCoreClass = Nil;
 static NSTimeInterval defaultFrameInterval = 60.0;
 
@@ -41,7 +49,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 @property (nonatomic, assign) CGFloat  framerateMultiplier;
 @property (nonatomic, assign, readwrite) BOOL isRunning;
 @property (nonatomic, assign) BOOL isDoubleBufferedCached;
-#if TARGET_OS_IOS
+#if HAS_HAPTICS
 @property (nonatomic, strong, readwrite, nullable) UIImpactFeedbackGenerator* rumbleGenerator;
 #endif
 @end
@@ -106,10 +114,13 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 - (void)startEmulation {
 	if ([self class] != PVEmulatorCoreClass) {
 		if (!_isRunning) {
-#if !TARGET_OS_TV
-            [self startHaptic];
             NSError *error;
-			BOOL success = [self setPreferredSampleRate:[self audioSampleRate] error:&error];
+            BOOL success;
+#if HAS_HAPTICS
+            [self startHaptic];
+#endif
+#if !TARGET_OS_TV
+			success = [self setPreferredSampleRate:[self audioSampleRate] error:&error];
             if(!success || error != nil) {
                 ELOG(@"%@", error.localizedDescription);
             }
@@ -118,10 +129,9 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 			shouldStop = NO;
             self.gameSpeed = GameSpeedNormal;
 			MAKEWEAK(self);
-
-            success =
-            [[AVAudioSession sharedInstance] setPreferredOutputNumberOfChannels:self.channelCount
-                                                                          error:&error];
+            
+            success = [[AVAudioSession sharedInstance] setPreferredOutputNumberOfChannels:self.channelCount
+                                                                                    error:&error];
             
             if (!success) {
                 ELOG(@"%@", error.localizedDescription);
@@ -138,7 +148,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 	[self doesNotImplementSelector:_cmd];
 }
 
-#if !TARGET_OS_TV
+#if HAS_HAPTICS
 -(BOOL)startHaptic {
     if (!NSThread.isMainThread) {
         __block BOOL started = NO;

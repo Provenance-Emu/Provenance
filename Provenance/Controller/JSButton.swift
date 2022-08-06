@@ -89,6 +89,9 @@ final class JSButton: MovableButtonView {
 
     func setEnabled(_ enabled: Bool) {
         isUserInteractionEnabled = enabled
+        #if os(iOS)
+        self.feedbackOnTouchDown = enabled
+        #endif
     }
 
     override init(frame: CGRect) {
@@ -132,7 +135,9 @@ final class JSButton: MovableButtonView {
         tintColor = UIColor.white
         
         // Haptics
+        #if os(iOS)
         self.feedbackOnTouchDown = true
+        #endif
     }
 
     deinit {
