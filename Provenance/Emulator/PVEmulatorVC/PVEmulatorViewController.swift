@@ -940,7 +940,10 @@ class VideoProvider: NSObject {
 
     func getFrameJPEGData() -> Data? {
         let layerImage = UIGraphicsImageRenderer(bounds: sourceView.bounds).image { context in
+            sourceView.layer.drawsAsynchronously = true
             sourceView.layer.draw(in: context.cgContext)
+            // TODO: Test these 2 different ways to draw
+//            sourceView.drawHierarchy(in: sourceView.bounds, afterScreenUpdates: true)
         }
         
         let cropRect = sourceView.bounds.inset(by: .init(top: 2, left: 2, bottom: 2, right: 2))
