@@ -31,6 +31,8 @@ public struct SystemOptions: OptionSet, Codable {
     public static let cds = SystemOptions(rawValue: 1 << 0)
     public static let portable = SystemOptions(rawValue: 1 << 1)
     public static let rumble = SystemOptions(rawValue: 1 << 2)
+    public static let mouse = SystemOptions(rawValue: 1 << 3)
+    public static let keyboard SystemOptions(rawValue: 1 << 4)
 }
 
 @objcMembers
@@ -54,6 +56,10 @@ public final class PVSystem: Object, Identifiable, SystemProtocol {
     public dynamic var portableSystem: Bool = false
 
     public dynamic var supportsRumble: Bool = false
+    
+    public dynamic var requiresMouse: Bool = false
+    public dynamic var requiresKeyboard: Bool = false
+
     public dynamic var _screenType: String = ScreenType.unknown.rawValue
 
     public var options: SystemOptions {
@@ -61,6 +67,8 @@ public final class PVSystem: Object, Identifiable, SystemProtocol {
         if usesCDs { systemOptions.append(.cds) }
         if portableSystem { systemOptions.append(.portable) }
         if supportsRumble { systemOptions.append(.rumble) }
+        if requiresMouse { systemOptions.append(.mouse) }
+        if requiresKeyboard { systemOptions.append(.keyboard) }
 
         return SystemOptions(systemOptions)
     }

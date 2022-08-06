@@ -3985,6 +3985,11 @@
 		<string>Atari</string>
 		<key>PVSystemName</key>
 		<string>Atari 8bit Computer</string>
+		<key>PVImporterOptions</key>
+		<dict>
+			<key>PVImporterUseFolders</key>
+			<true/>
+		</dict>
 		<key>PVSystemShortName</key>
 		<string>Atari8bit</string>
 		<key>PVReleaseYear</key>
@@ -4114,6 +4119,11 @@
 		<string>AtariST</string>
 		<key>PVReleaseYear</key>
 		<string>1985</string>
+		<key>PVImporterOptions</key>
+		<dict>
+			<key>PVImporterUseFolders</key>
+			<true/>
+		</dict>
 		<key>PVBit</key>
 		<string>16</string>
 		<key>PVPortable</key>
@@ -4204,6 +4214,11 @@
 	<dict>
 		<key>PVRequiresMouse</key>
 		<false/>
+		<key>PVImporterOptions</key>
+		<dict>
+			<key>PVImporterUseFolders</key>
+			<true/>
+		</dict>
 		<key>PVRequiresKeyboard</key>
 		<true/>
 		<key>PVManufacturer</key>
@@ -4499,6 +4514,11 @@
 		<string>42</string>
 		<key>PVRequiresBIOS</key>
 		<true/>
+		<key>PVImporterOptions</key>
+		<dict>
+			<key>PVImporterUseFolders</key>
+			<true/>
+		</dict>
 		<key>PVBIOSNames</key>
 		<array>
 			<dict>
@@ -4650,6 +4670,11 @@
 		<string>Microsoft</string>
 		<key>PVSystemName</key>
 		<string>MSX2</string>
+		<key>PVImporterOptions</key>
+		<dict>
+			<key>PVImporterUseFolders</key>
+			<true/>
+		</dict>
 		<key>PVSystemShortName</key>
 		<string>MSX2</string>
 		<key>PVReleaseYear</key>
@@ -4861,6 +4886,11 @@
 		<false/>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.macintosh</string>
+		<key>PVImporterOptions</key>
+		<dict>
+			<key>PVImporterUseFolders</key>
+			<true/>
+		</dict>
 		<key>PVDatabaseID</key>
 		<string>-1</string>
 		<key>PVRequiresBIOS</key>

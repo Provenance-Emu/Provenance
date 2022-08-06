@@ -25,6 +25,10 @@ public struct ControlGroupButton: Codable, Equatable, Hashable {
     public let PVControlTint: String?
 }
 
+public struct PVImporterOptions: Codable, Equatable, Hashable {
+    public private(set) var PVImporterUseFolders: Bool?
+}
+
 public struct ControlLayoutEntry: Codable, Equatable, Hashable {
     public let PVControlType: String
     public let PVControlSize: String
@@ -74,6 +78,10 @@ public struct SytemPlistEntry: Codable, Equatable, Hashable {
     public private(set) var PVPortable: Bool?
     public private(set) var PVScreenType: String?
     public private(set) var PVSupportsRumble: Bool?
+    public private(set) var PVImporterOptions: PVImporterOptions?
+        
+    public private(set) var PVRequiresMouse: Bool?
+    public private(set) var PVRequiresKeyboard: Bool?
 }
 
 // MARK: Core.plist

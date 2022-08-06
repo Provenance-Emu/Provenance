@@ -26,6 +26,10 @@ public struct SystemDictionaryKeys {
     public static let ScreenType = "PVScreenType"
     public static let Portable = "PVPortable"
     public static let PlayerCount = "PVPlayerCount"
+    public static let ImporterOptions = "PVImporterOptions"
+    public static let RequiresMouse = "PVRequiresMouse"
+    public static let RequiresKeyboard = "PVRequiresKeyboard"
+
 
     public struct ControllerLayoutKeys {
         public static let Button = "PVButton"
@@ -45,6 +49,10 @@ public struct SystemDictionaryKeys {
         public static let ZTriggerButton = "PVZTriggerButton"
         public static let SelectButton = "PVSelectButton"
         public static let StartButton = "PVStartButton"
+    }
+    
+    public struct ImporterOptionsKeys {
+        public static let UseFolders = "PVImporterUseFolders"
     }
 }
 
