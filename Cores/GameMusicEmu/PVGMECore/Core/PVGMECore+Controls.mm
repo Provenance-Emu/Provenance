@@ -126,7 +126,7 @@ s8 joyx[4], joyy[4];
 
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] = gamepad.buttonA.isPressed;
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = gamepad.buttonX.isPressed;
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START] = gamepad.buttonMenu;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START] = gamepad.buttonMenu.isPressed;
         }
 #endif
     }
