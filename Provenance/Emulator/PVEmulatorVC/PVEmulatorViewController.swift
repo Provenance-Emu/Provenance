@@ -60,6 +60,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     var secondaryScreen: UIScreen?
     var secondaryWindow: UIWindow?
     var menuGestureRecognizer: UITapGestureRecognizer?
+    
+    // MARK: PiP
+    var pipController: AVPictureInPictureController!
+    var pipPossibleObservation: NSKeyValueObservation?
+    
+    // MARK: -
 
     var isShowingMenu: Bool = false {
         willSet {
@@ -405,6 +411,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 			})
 		}
         enableControllerInput(false)
+
+        #warning("finish me")
+//        if #available(iOS 15, *) {
+//            setupPictureInPicture()
+//        }
     }
 
     public override func viewDidAppear(_: Bool) {
@@ -794,5 +805,226 @@ extension NSNumber {
 
     private convenience init(touchType: UITouch.TouchType) {
         self.init(integerLiteral: touchType.rawValue)
+    }
+}
+
+import AVKit
+fileprivate var g_videoProvider : VideoProvider?
+
+@available(iOS 15.0, *)
+extension PVEmulatorViewController {
+    func setupPictureInPicture() {
+        // Ensure PiP is supported by current device.
+        if AVPictureInPictureController.isPictureInPictureSupported() {
+            g_videoProvider = VideoProvider(withSouceView: gpuViewController.view)
+            let layer = g_videoProvider!.bufferDisplayLayer
+            let displayLayer: AVSampleBufferDisplayLayer = .init(layer: layer)
+            displayLayer.contentsGravity = .resizeAspect
+            
+            let pipContentSource = AVPictureInPictureController.ContentSource(sampleBufferDisplayLayer: displayLayer,
+                                                                              playbackDelegate: self)
+            // Create a new controller, passing the reference to the AVPlayerLayer.
+            pipController = AVPictureInPictureController(contentSource: pipContentSource)
+            pipController.canStartPictureInPictureAutomaticallyFromInline = true
+            pipController.delegate = self
+            
+            pipPossibleObservation = pipController.observe(\AVPictureInPictureController.isPictureInPicturePossible,
+                                                            options: [.initial, .new]) { [weak self] _, change in
+                // Update the PiP button's enabled state.
+//                self?.pipButton.isEnabled = change.newValue ?? false
+            }
+        } else {
+            // PiP isn't supported by the current device. Disable the PiP button.
+//            pipButton.isEnabled = false
+        }
+    }
+    
+    @IBAction func togglePictureInPictureMode(_ sender: UIButton) {
+        if pipController.isPictureInPictureActive {
+            pipController.stopPictureInPicture()
+        } else {
+            pipController.startPictureInPicture()
+        }
+    }
+    
+//    func publishNowPlayingMetadata() {
+//        nowPlayingSession.nowPlayingInfoCenter.nowPlayingInfo = nowPlayingInfo
+//        nowPlayingSession.becomeActiveIfPossible()
+//    }
+
+}
+
+extension PVEmulatorViewController : AVPictureInPictureSampleBufferPlaybackDelegate {
+    func pictureInPictureController(_ pictureInPictureController: AVPictureInPictureController, setPlaying playing: Bool) {
+        core.setPauseEmulation(!playing)
+    }
+    
+    func pictureInPictureControllerTimeRangeForPlayback(_ pictureInPictureController: AVPictureInPictureController) -> CMTimeRange {
+        return .invalid
+    }
+    
+    func pictureInPictureControllerIsPlaybackPaused(_ pictureInPictureController: AVPictureInPictureController) -> Bool {
+        return core.isEmulationPaused
+    }
+    
+    func pictureInPictureController(_ pictureInPictureController: AVPictureInPictureController, skipByInterval skipInterval: CMTime, completion completionHandler: @escaping () -> Void) {
+        completionHandler()
+    }
+    
+//    func pictureInPictureController(_ pictureInPictureController: AVPictureInPictureController, skipByInterval skipInterval: CMTime) async {
+//
+//    }
+    
+    func pictureInPictureController(_ pictureInPictureController: AVPictureInPictureController, didTransitionToRenderSize newRenderSize: CMVideoDimensions) {
+        
+    }
+}
+
+extension PVEmulatorViewController : AVPictureInPictureControllerDelegate {
+    func pictureInPictureController(_ pictureInPictureController: AVPictureInPictureController,
+                                    restoreUserInterfaceForPictureInPictureStopWithCompletionHandler completionHandler: @escaping (Bool) -> Void) {
+        // Restore the user interface.
+        completionHandler(true)
+    }
+    
+    func pictureInPictureControllerWillStartPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
+        // Hide the playback controls.
+        // Show the placeholder artwork.
+    }
+
+    func pictureInPictureControllerDidStopPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
+        // Hide the placeholder artwork.
+        // Show the playback controls.
+    }
+}
+
+
+class VideoProvider: NSObject {
+
+    var bufferDisplayLayer: AVSampleBufferDisplayLayer = AVSampleBufferDisplayLayer()
+
+    private var timer: Timer!
+
+    private var sourceView: UIView
+    
+    required init(withSouceView sourceView: UIView) {
+        self.sourceView = sourceView
+        super.init()
+    }
+
+    func start() {
+        let timerBlock: ((Timer) -> Void) = { timer in
+            guard let data = self.getFrameJPEGData() else { return }
+            let frameBuffer = self.sampleBufferFromJPEGData(data)
+            if let buffer = frameBuffer {
+                self.bufferDisplayLayer.enqueue(buffer)
+            } else {
+                WLOG("missing frame")
+            }
+        }
+
+        timer = Timer(timeInterval: 0.3, repeats: true, block: timerBlock)
+        RunLoop.main.add(timer, forMode: .default)
+    }
+
+    func stop() {
+        if timer != nil {
+            timer.invalidate()
+            timer = nil
+        }
+    }
+
+    func isRunning() -> Bool {
+        return timer != nil
+    }
+
+    func getFrameJPEGData() -> Data? {
+        let layerImage = UIGraphicsImageRenderer(bounds: sourceView.bounds).image { context in
+            sourceView.layer.draw(in: context.cgContext)
+        }
+        
+        let cropRect = sourceView.bounds.inset(by: .init(top: 2, left: 2, bottom: 2, right: 2))
+        let croppedImage = UIGraphicsImageRenderer(bounds: .init(origin: .zero, size: cropRect.size)).image { context in
+          layerImage.draw(at: .init(x: (cropRect.size.width - layerImage.size.width) / 2, y: (cropRect.size.height - layerImage.size.height) / 2))
+        }
+        let jpg = croppedImage.jpegData(compressionQuality: 0.5)
+        return jpg
+    }
+
+
+    func sampleBufferFromJPEGData(_ jpegData: Data) -> CMSampleBuffer? {
+
+        let rawPixelSize = CGSize(width: 640, height: 480)
+        var format: CMFormatDescription? = nil
+        let _ = CMVideoFormatDescriptionCreate(allocator: kCFAllocatorDefault, codecType: kCMVideoCodecType_JPEG, width: Int32(rawPixelSize.width), height: Int32(rawPixelSize.height), extensions: nil, formatDescriptionOut: &format)
+
+        do {
+            let cmBlockBuffer = try jpegData.toCMBlockBuffer()
+
+            var size = jpegData.count
+
+            var sampleBuffer: CMSampleBuffer? = nil
+            let nowTime = CMTime(seconds: CACurrentMediaTime(), preferredTimescale: 60)
+            let _1_60_s = CMTime(value: 1, timescale: 60) //CMTime(seconds: 1.0, preferredTimescale: 30)
+            var timingInfo: CMSampleTimingInfo = CMSampleTimingInfo(duration: _1_60_s, presentationTimeStamp: nowTime, decodeTimeStamp: .invalid)
+
+            let _ = CMSampleBufferCreateReady(allocator: kCFAllocatorDefault, dataBuffer: cmBlockBuffer, formatDescription: format, sampleCount: 1, sampleTimingEntryCount: 1, sampleTimingArray: &timingInfo, sampleSizeEntryCount: 1, sampleSizeArray: &size, sampleBufferOut: &sampleBuffer)
+            if sampleBuffer != nil {
+                //print("sending buffer to displayBufferLayer")
+                //self.bufferDisplayLayer.enqueue(sampleBuffer!)
+                return sampleBuffer
+            } else {
+                print("sampleBuffer is nil")
+                return nil
+            }
+        } catch {
+            print("error ugh ", error)
+            return nil
+        }
+    }
+
+}
+
+
+private func freeBlock(_ refCon: UnsafeMutableRawPointer?, doomedMemoryBlock: UnsafeMutableRawPointer, sizeInBytes: Int) -> Void {
+    let unmanagedData = Unmanaged<NSData>.fromOpaque(refCon!)
+    unmanagedData.release()
+}
+
+enum CMEncodingError: Error {
+    case cmBlockCreationFailed
+}
+
+extension Data {
+
+    func toCMBlockBuffer() throws -> CMBlockBuffer {
+        // This block source is a manually retained pointer to our data instance.
+        // The passed FreeBlock function manually releases it when the block buffer gets deallocated.
+        let data = NSMutableData(data: self)
+        var source = CMBlockBufferCustomBlockSource()
+        source.refCon = Unmanaged.passRetained(data).toOpaque()
+        source.FreeBlock = freeBlock
+
+        var blockBuffer: CMBlockBuffer?
+        let result = CMBlockBufferCreateWithMemoryBlock(
+            allocator: kCFAllocatorDefault,
+            memoryBlock: data.mutableBytes,
+            blockLength: data.length,
+            blockAllocator: kCFAllocatorNull,
+            customBlockSource: &source,
+            offsetToData: 0,
+            dataLength: data.length,
+            flags: 0,
+            blockBufferOut: &blockBuffer)
+        if OSStatus(result) != kCMBlockBufferNoErr {
+            throw CMEncodingError.cmBlockCreationFailed
+        }
+
+        guard let buffer = blockBuffer else {
+            throw CMEncodingError.cmBlockCreationFailed
+        }
+
+        assert(CMBlockBufferGetDataLength(buffer) == data.length)
+        return buffer
     }
 }

@@ -621,7 +621,7 @@ PV_OBJC_DIRECT_MEMBERS
         MAKESTRONG_RETURN_IF_NIL(self);
 #if DEBUG
         glClearColor(1.0, 1.0, 1.0, 1.0);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 #endif
         const BOOL rendersToOpenGL = strongself->_emulatorCore.rendersToOpenGL;
         const BOOL crtEnabled = strongself->renderSettings.crtFilterEnabled;

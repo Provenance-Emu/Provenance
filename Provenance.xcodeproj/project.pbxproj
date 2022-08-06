@@ -903,13 +903,6 @@
 			remoteGlobalIDString = B328F445289DD85B00CA4500;
 			remoteInfo = "PVApp-watchOS";
 		};
-		B355E510289E289700D23D64 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B355E506289E289200D23D64;
-			remoteInfo = USBGamePad;
-		};
 		B36FE830218EAAD200F858F3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
@@ -3583,7 +3576,6 @@
 				B3C8A708287827270037A946 /* PBXTargetDependency */,
 				B3C8A70C287827330037A946 /* PBXTargetDependency */,
 				B328F433289DD82C00CA4500 /* PBXTargetDependency */,
-				B355E511289E289700D23D64 /* PBXTargetDependency */,
 			);
 			name = Provenance;
 			packageProductDependencies = (
@@ -4996,11 +4988,6 @@
 			isa = PBXTargetDependency;
 			target = B328F445289DD85B00CA4500 /* PVApp-watchOS */;
 			targetProxy = B328F5D2289DD92100CA4500 /* PBXContainerItemProxy */;
-		};
-		B355E511289E289700D23D64 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B355E506289E289200D23D64 /* USBGamePad */;
-			targetProxy = B355E510289E289700D23D64 /* PBXContainerItemProxy */;
 		};
 		B36FE831218EAAD200F858F3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

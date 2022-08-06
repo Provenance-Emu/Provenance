@@ -73,5 +73,7 @@
 	<true/>
 	<key>com.apple.security.personal-information.photos-library</key>
 	<true/>
+    <key>com.apple.developer.avfoundation.multitasking-camera-access</key>
+    <true/>
 </dict>
 </plist>

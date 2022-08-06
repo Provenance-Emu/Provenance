@@ -38,7 +38,6 @@
     AUGraph     mGraph;
     AUNode      mConverterNode, mMixerNode, mOutputNode;
     AudioUnit   mConverterUnit, mMixerUnit, mOutputUnit;
-    
     float       volume;
 }
 @property (readonly, nonatomic, assign) BOOL running;
@@ -53,5 +52,7 @@
 - (void)pauseAudio;
 - (void)volumeUp;
 - (void)volumeDown;
+
+- (void)setRate:(float)rate;
 
 @end

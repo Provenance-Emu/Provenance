@@ -249,8 +249,8 @@
 
 //    glClearColor(0.0, 1.0, 0.0, 1.0); // green
     glClearColor(0.0, 0.0, 0.0, 1.0); // black
-    glClear(GL_COLOR_BUFFER_BIT);
-    
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 //    printf("*****\n");
 //    printf("screenRect.origin.x: %f\n", screenRect.origin.x);
 //    printf("screenRect.origin.y: %f\n", screenRect.origin.y);

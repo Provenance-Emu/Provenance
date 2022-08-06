@@ -22,6 +22,12 @@
 #import <PVSupport/DebugUtils.h>
 #endif
 
+#pragma mark - Delegates
+@protocol EmulatorAudioDelegate
+-(void)emulatorAudioSampleRateChanged:(double)samplerate;
+@end
+
+
 #pragma mark -
 
 typedef void (^SaveStateCompletion)(BOOL, NSError * _Nullable );
@@ -144,16 +150,6 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
 
 - (void)swapBuffers;
 
-- (void)getAudioBuffer:(void * _Nonnull)buffer
-            frameCount:(uint32_t)frameCount
-           bufferIndex:(NSUInteger)index;
-
-- (NSUInteger)channelCountForBuffer:(NSUInteger)buffer;
-- (NSUInteger)audioBufferSizeForBuffer:(NSUInteger)buffer;
-- (void)setAudioEnabled:(BOOL)enabled;
-- (double)audioSampleRateForBuffer:(NSUInteger)buffer;
-- (OERingBuffer * _Nonnull)ringBufferAtIndex:(NSUInteger)index;
-
 - (BOOL)saveStateToFileAtPath:(NSString * _Nonnull)path
                         error:(NSError * __nullable * __nullable)error DEPRECATED_MSG_ATTRIBUTE("Use saveStateToFileAtPath:completionHandler: instead.");
 
@@ -164,4 +160,21 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
             completionHandler:(nonnull SaveStateCompletion)block;
 - (void)loadStateFromFileAtPath:(NSString *_Nonnull )fileName
               completionHandler:(nonnull SaveStateCompletion)block;
+
+// MARK: - Audio
+#if !TARGET_OS_TV
+- (Float64) getSampleRate;
+- (BOOL) setPreferredSampleRate:(double)preferredSampleRate error:(NSError **)error;
+#endif
+
+- (void)getAudioBuffer:(void * _Nonnull)buffer
+            frameCount:(uint32_t)frameCount
+           bufferIndex:(NSUInteger)index;
+
+- (NSUInteger)channelCountForBuffer:(NSUInteger)buffer;
+- (NSUInteger)audioBufferSizeForBuffer:(NSUInteger)buffer;
+- (double)audioSampleRateForBuffer:(NSUInteger)buffer;
+- (void)setAudioEnabled:(BOOL)enabled;
+- (OERingBuffer * _Nonnull)ringBufferAtIndex:(NSUInteger)index;
+
 @end

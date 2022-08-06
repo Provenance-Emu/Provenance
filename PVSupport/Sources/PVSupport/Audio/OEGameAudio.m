@@ -32,6 +32,7 @@
 #import "PVLogging.h"
 
 @import AVFoundation;
+@import AVFAudio;
 
 typedef struct
 {
@@ -109,6 +110,8 @@ OSStatus RenderCallback(void                       *in,
 {
     OEGameAudioContext *_contexts;
     NSNumber           *_outputDeviceID; // nil if no output device has been set (use default)
+    
+    AVAudioUnitTimePitch *timePitchEffect;
 }
 @property (readwrite, nonatomic, assign) BOOL running;
 @end
@@ -128,7 +131,17 @@ PV_OBJC_DIRECT_MEMBERS
     if(self != nil)
     {
         NSError *error;
-        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient error:&error];
+        AVAudioSessionCategoryOptions options =
+        AVAudioSessionCategoryOptionAllowAirPlay |
+        AVAudioSessionCategoryOptionAllowBluetoothA2DP |
+        AVAudioSessionCategoryOptionAllowBluetooth |
+        AVAudioSessionCategoryOptionMixWithOthers;
+        
+        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord
+                                                mode:AVAudioSessionModeDefault
+                                  routeSharingPolicy:AVAudioSessionRouteSharingPolicyLongFormVideo
+                                             options:options
+                                               error:&error];
         if(error) {
             ELOG(@"Audio Error: %@", error.description);
         } else {
@@ -218,6 +231,8 @@ PV_OBJC_DIRECT_MEMBERS
     err = AUGraphNodeInfo(mGraph, mMixerNode, NULL, &mMixerUnit);
     if(err) ELOG(@"couldn't get player unit from node");
 
+    timePitchEffect = [[AVAudioUnitTimePitch alloc] init];
+    
     desc.componentType = kAudioUnitType_FormatConverter;
     desc.componentSubType = kAudioUnitSubType_AUConverter;
     desc.componentManufacturer = kAudioUnitManufacturer_Apple;
@@ -348,6 +363,10 @@ PV_OBJC_DIRECT_MEMBERS
     if(newVolume<0.0) newVolume = 0.0;
 
     [self setVolume:newVolume];
+}
+
+- (void)setRate:(float)rate {
+    [timePitchEffect setRate:rate];
 }
 
 @end
