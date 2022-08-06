@@ -115,7 +115,7 @@ static void sdl_pad_connect(unsigned id)
 
    if (!success)
    {
-      ELOG(@"[SDL]: Couldn't open joystick #%u: %s.\n", id, SDL_GetError());
+      printf("Error: [SDL]: Couldn't open joystick #%u: %s.\n", id, SDL_GetError());
 
       if (pad->joypad)
          SDL_JoystickClose(pad->joypad);

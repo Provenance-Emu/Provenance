@@ -345,7 +345,7 @@ static void command_parse_sub_msg(command_t *handle, const char *tok)
       if (arg)
       {
          if (!action_map[index].action(arg))
-            ELOG(@"Command \"%s\" failed.\n", arg);
+            printf("Error: Command \"%s\" failed.\n", arg);
       }
       else
          handle->state[map[index].id] = true;
@@ -394,7 +394,7 @@ static bool command_network_init(command_t *handle, uint16_t port)
 
    if (!socket_bind(handle->net_fd, (void*)res))
    {
-      ELOG(@"Failed to bind socket.\n");
+      printf("Error: Failed to bind socket.\n");
       goto error;
    }
 
@@ -467,13 +467,13 @@ static bool command_verify(const char *cmd)
    if (command_get_arg(cmd, NULL, NULL))
       return true;
 
-   ELOG(@"Command \"%s\" is not recognized by the program.\n", cmd);
-   ELOG(@"\tValid commands:\n");
+   printf("Error: Command \"%s\" is not recognized by the program.\n", cmd);
+   printf("Error: \tValid commands:\n");
    for (i = 0; i < sizeof(map) / sizeof(map[0]); i++)
-      ELOG(@"\t\t%s\n", map[i].str);
+      printf("Error: \t\t%s\n", map[i].str);
 
    for (i = 0; i < sizeof(action_map) / sizeof(action_map[0]); i++)
-      ELOG(@"\t\t%s %s\n", action_map[i].str, action_map[i].arg_desc);
+      printf("Error: \t\t%s %s\n", action_map[i].str, action_map[i].arg_desc);
 
    return false;
 }
@@ -864,7 +864,7 @@ static void command_event_disk_control_set_eject(bool new_state, bool print_log)
    if (!string_is_empty(msg))
    {
       if (error)
-         ELOG(@"%s\n", msg);
+         printf("Error: %s\n", msg);
       else
          VLOG(@"%s\n", msg);
 
@@ -923,7 +923,7 @@ static void command_event_disk_control_set_index(unsigned idx)
    if (!string_is_empty(msg))
    {
       if (error)
-         ELOG(@"%s\n", msg);
+         printf("Error: %s\n", msg);
       else
          VLOG(@"%s\n", msg);
       runloop_msg_queue_push(msg, 1, 180, true);
@@ -1014,7 +1014,7 @@ static void command_event_check_disk_prev(
 
    if (!disk_prev_enable)
    {
-      ELOG(@"%s.\n", msg_hash_to_str(MSG_GOT_INVALID_DISK_INDEX));
+      printf("Error: %s.\n", msg_hash_to_str(MSG_GOT_INVALID_DISK_INDEX));
       return;
    }
 
@@ -1047,7 +1047,7 @@ static void command_event_check_disk_next(
 
    if (!disk_next_enable)
    {
-      ELOG(@"%s.\n", msg_hash_to_str(MSG_GOT_INVALID_DISK_INDEX));
+      printf("Error: %s.\n", msg_hash_to_str(MSG_GOT_INVALID_DISK_INDEX));
       return;
    }
 
@@ -1469,7 +1469,7 @@ static bool command_event_save_core_config(void)
    else
    {
       runloop_msg_queue_push(msg_hash_to_str(MSG_CONFIG_DIRECTORY_NOT_SET), 1, 180, true);
-      ELOG(@"%s\n", msg_hash_to_str(MSG_CONFIG_DIRECTORY_NOT_SET));
+      printf("Error: %s\n", msg_hash_to_str(MSG_CONFIG_DIRECTORY_NOT_SET));
       return false;
    }
 
@@ -1547,7 +1547,7 @@ static bool command_event_save_core_config(void)
             "%s \"%s\".",
             msg_hash_to_str(MSG_FAILED_SAVING_CONFIG_TO),
             config_path);
-      ELOG(@"%s\n", msg);
+      printf("Error: %s\n", msg);
    }
 
    runloop_msg_queue_push(msg, 1, 180, true);
@@ -1597,7 +1597,7 @@ void command_event_save_current_config(void)
          snprintf(msg, sizeof(msg), "%s \"%s\".",
                msg_hash_to_str(MSG_FAILED_SAVING_CONFIG_TO),
                global->path.config);
-         ELOG(@"%s\n", msg);
+         printf("Error: %s\n", msg);
       }
 
       runloop_msg_queue_push(msg, 1, 180, true);
@@ -2068,7 +2068,7 @@ bool command_event(enum event_command cmd, void *data)
 
          if (!settings->audio.mute_enable && !audio_driver_start())
          {
-            ELOG(@"Failed to start audio driver. "
+            printf("Error: Failed to start audio driver. "
                   "Will continue without audio.\n");
             audio_driver_unset_active();
          }
@@ -2081,7 +2081,7 @@ bool command_event(enum event_command cmd, void *data)
 
             if (!audio_driver_toggle_mute())
             {
-               ELOG(@"%s.\n",
+               printf("Error: %s.\n",
                      msg_hash_to_str(MSG_FAILED_TO_UNMUTE_AUDIO));
                return false;
             }

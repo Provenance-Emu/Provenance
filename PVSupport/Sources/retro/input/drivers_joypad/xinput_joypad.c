@@ -183,7 +183,7 @@ static bool xinput_joypad_init(void *data)
 
    if (!g_xinput_dll)
    {
-      ELOG(@"Failed to load XInput, ensure DirectX and controller drivers are up to date.\n");
+      printf("Error: Failed to load XInput, ensure DirectX and controller drivers are up to date.\n");
       return false;
    }
 
@@ -205,7 +205,7 @@ static bool xinput_joypad_init(void *data)
 
       if (!g_XInputGetStateEx)
       {
-         ELOG(@"Failed to init XInput: DLL is invalid or corrupt.\n");
+         printf("Error: Failed to init XInput: DLL is invalid or corrupt.\n");
          dylib_close(g_xinput_dll);
          return false; /* DLL was loaded but did not contain the correct function. */
       }
@@ -215,7 +215,7 @@ static bool xinput_joypad_init(void *data)
    g_XInputSetState = (XInputSetState_t)dylib_proc(g_xinput_dll, "XInputSetState");
    if (!g_XInputSetState)
    {
-      ELOG(@"Failed to init XInput: DLL is invalid or corrupt.\n");
+      printf("Error: Failed to init XInput: DLL is invalid or corrupt.\n");
       dylib_close(g_xinput_dll);
       return false; /* DLL was loaded but did not contain the correct function. */
    }

@@ -767,7 +767,7 @@ static void retroarch_parse_input(int argc, char *argv[])
 
             if (port < 1 || port > MAX_USERS)
             {
-               ELOG(@"Connect device to a valid port.\n");
+               printf("Error: Connect device to a valid port.\n");
                retroarch_print_help(argv[0]);
                retroarch_fail(1, "retroarch_parse_input()");
             }
@@ -780,7 +780,7 @@ static void retroarch_parse_input(int argc, char *argv[])
             port = strtol(optarg, NULL, 0);
             if (port < 1 || port > MAX_USERS)
             {
-               ELOG(@"Connect dualanalog to a valid port.\n");
+               printf("Error: Connect dualanalog to a valid port.\n");
                retroarch_print_help(argv[0]);
                retroarch_fail(1, "retroarch_parse_input()");
             }
@@ -813,7 +813,7 @@ static void retroarch_parse_input(int argc, char *argv[])
             port = strtol(optarg, NULL, 0);
             if (port < 1 || port > MAX_USERS)
             {
-               ELOG(@"Disconnect device from a valid port.\n");
+               printf("Error: Disconnect device from a valid port.\n");
                retroarch_print_help(argv[0]);
                retroarch_fail(1, "retroarch_parse_input()");
             }
@@ -894,7 +894,7 @@ static void retroarch_parse_input(int argc, char *argv[])
                global->sram.save_disable = true;
             else if (!string_is_equal(optarg, "load-save"))
             {
-               ELOG(@"Invalid argument in --sram-mode.\n");
+               printf("Error: Invalid argument in --sram-mode.\n");
                retroarch_print_help(argv[0]);
                retroarch_fail(1, "retroarch_parse_input()");
             }
@@ -992,7 +992,7 @@ static void retroarch_parse_input(int argc, char *argv[])
             if (sscanf(optarg, "%ux%u", &global->record.width,
                      &global->record.height) != 2)
             {
-               ELOG(@"Wrong format for --size.\n");
+               printf("Error: Wrong format for --size.\n");
                retroarch_print_help(argv[0]);
                retroarch_fail(1, "retroarch_parse_input()");
             }
@@ -1038,7 +1038,7 @@ static void retroarch_parse_input(int argc, char *argv[])
             retroarch_fail(1, "retroarch_parse_input()");
 
          default:
-            ELOG(@"%s\n", msg_hash_to_str(MSG_ERROR_PARSING_ARGUMENTS));
+            printf("Error: %s\n", msg_hash_to_str(MSG_ERROR_PARSING_ARGUMENTS));
             retroarch_fail(1, "retroarch_parse_input()");
       }
    }
@@ -1047,7 +1047,7 @@ static void retroarch_parse_input(int argc, char *argv[])
    {
       if (optind < argc)
       {
-         ELOG(@"--menu was used, but content file was passed as well.\n");
+         printf("Error: --menu was used, but content file was passed as well.\n");
          retroarch_fail(1, "retroarch_parse_input()");
       }
       else
@@ -1276,7 +1276,7 @@ bool retroarch_main_init(int argc, char *argv[])
 
    if (setjmp(error_sjlj_context) > 0)
    {
-      ELOG(@"%s: \"%s\"\n",
+      printf("Error: %s: \"%s\"\n",
             msg_hash_to_str(MSG_FATAL_ERROR_RECEIVED_IN), error_string);
       return false;
    }

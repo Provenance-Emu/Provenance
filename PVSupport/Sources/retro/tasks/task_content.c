@@ -406,7 +406,7 @@ static void content_file_list_free(
                path);
 
          if (filestream_delete(path) != 0)
-            ELOG(@"[CONTENT LOAD]: %s: %s.\n",
+            printf("Error: [CONTENT LOAD]: %s: %s.\n",
                   msg_hash_to_str(MSG_FAILED_TO_REMOVE_TEMPORARY_FILE),
                   path);
       }
@@ -1837,7 +1837,7 @@ bool task_push_start_dummy_core(content_ctx_info_t *content_info)
       if (error_string)
       {
          runloop_msg_queue_push(error_string, 2, 90, true, NULL, MESSAGE_QUEUE_ICON_DEFAULT, MESSAGE_QUEUE_CATEGORY_INFO);
-         ELOG(@"[CONTENT LOAD]: %s\n", error_string);
+         printf("Error: [CONTENT LOAD]: %s\n", error_string);
          free(error_string);
       }
    }
@@ -1984,7 +1984,7 @@ end:
       if (error_string)
       {
          runloop_msg_queue_push(error_string, 2, 90, true, NULL, MESSAGE_QUEUE_ICON_DEFAULT, MESSAGE_QUEUE_CATEGORY_INFO);
-         ELOG(@"[CONTENT LOAD]: %s\n", error_string);
+         printf("Error: [CONTENT LOAD]: %s\n", error_string);
          free(error_string);
       }
 
@@ -2073,7 +2073,7 @@ bool task_push_start_current_core(content_ctx_info_t *content_info)
       if (error_string)
       {
          runloop_msg_queue_push(error_string, 2, 90, true, NULL, MESSAGE_QUEUE_ICON_DEFAULT, MESSAGE_QUEUE_CATEGORY_INFO);
-         ELOG(@"[CONTENT LOAD]: %s\n", error_string);
+         printf("Error: [CONTENT LOAD]: %s\n", error_string);
          free(error_string);
       }
 
@@ -2215,7 +2215,7 @@ bool task_push_load_content_with_new_core_from_menu(
       if (error_string)
       {
          runloop_msg_queue_push(error_string, 2, 90, true, NULL, MESSAGE_QUEUE_ICON_DEFAULT, MESSAGE_QUEUE_CATEGORY_INFO);
-         ELOG(@"[CONTENT LOAD]: %s\n", error_string);
+         printf("Error: [CONTENT LOAD]: %s\n", error_string);
          free(error_string);
       }
 
@@ -2363,7 +2363,7 @@ end:
       if (error_string)
       {
          runloop_msg_queue_push(error_string, 2, 90, true, NULL, MESSAGE_QUEUE_ICON_DEFAULT, MESSAGE_QUEUE_CATEGORY_INFO);
-         ELOG(@"[CONTENT LOAD]: %s\n", error_string);
+         printf("Error: [CONTENT LOAD]: %s\n", error_string);
          free(error_string);
       }
 
@@ -2837,7 +2837,7 @@ bool content_init(void)
          case MSG_ERROR_LIBRETRO_CORE_REQUIRES_VFS:
          case MSG_FAILED_TO_LOAD_CONTENT:
          case MSG_ERROR_LIBRETRO_CORE_REQUIRES_CONTENT:
-            ELOG(@"[CONTENT LOAD]: %s\n", msg_hash_to_str(error_enum));
+            printf("Error: [CONTENT LOAD]: %s\n", msg_hash_to_str(error_enum));
             runloop_msg_queue_push(msg_hash_to_str(error_enum), 2, ret ? 1 : 180, false, NULL, MESSAGE_QUEUE_ICON_DEFAULT, MESSAGE_QUEUE_CATEGORY_INFO);
             break;
          case MSG_UNKNOWN:
@@ -2854,7 +2854,7 @@ bool content_init(void)
       }
       else
       {
-         ELOG(@"[CONTENT LOAD]: %s\n", error_string);
+         printf("Error: [CONTENT LOAD]: %s\n", error_string);
       }
       /* Do not flush the message queue here
        * > This allows any core-generated error messages

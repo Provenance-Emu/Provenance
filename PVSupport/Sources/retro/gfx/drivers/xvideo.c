@@ -444,7 +444,7 @@ static void *xv_init(const video_info_t *video,
 
    if (!XShmQueryExtension(g_x11_dpy))
    {
-      ELOG(@"XVideo: XShm extension not found.\n");
+      printf("Error: XVideo: XShm extension not found.\n");
       goto error;
    }
 
@@ -481,7 +481,7 @@ static void *xv_init(const video_info_t *video,
 
    if (xv->port == 0)
    {
-      ELOG(@"XVideo: Failed to find valid XvPort or format.\n");
+      printf("Error: XVideo: Failed to find valid XvPort or format.\n");
       goto error;
    }
 
@@ -497,7 +497,7 @@ static void *xv_init(const video_info_t *video,
 
    if (visualmatches < 1 || !visualinfo->visual)
    {
-      ELOG(@"XVideo: Unable to find Xv-compatible visual.\n");
+      printf("Error: XVideo: Unable to find Xv-compatible visual.\n");
       goto error;
    }
 
@@ -549,7 +549,7 @@ static void *xv_init(const video_info_t *video,
 
    if (!xv->image)
    {
-      ELOG(@"XVideo: XShmCreateImage failed.\n");
+      printf("Error: XVideo: XShmCreateImage failed.\n");
       goto error;
    }
 
@@ -561,7 +561,7 @@ static void *xv_init(const video_info_t *video,
 
    if (!XShmAttach(g_x11_dpy, &xv->shminfo))
    {
-      ELOG(@"XVideo: XShmAttach failed.\n");
+      printf("Error: XVideo: XShmAttach failed.\n");
       goto error;
    }
    XSync(g_x11_dpy, False);
@@ -624,7 +624,7 @@ static bool xv_check_resize(xv_t *xv, unsigned width, unsigned height)
 
       if (xv->image == None)
       {
-         ELOG(@"Failed to create image.\n");
+         printf("Error: Failed to create image.\n");
          return false;
       }
 
@@ -636,7 +636,7 @@ static bool xv_check_resize(xv_t *xv, unsigned width, unsigned height)
 
       if (xv->shminfo.shmid < 0)
       {
-         ELOG(@"Failed to init SHM.\n");
+         printf("Error: Failed to init SHM.\n");
          return false;
       }
 
@@ -646,7 +646,7 @@ static bool xv_check_resize(xv_t *xv, unsigned width, unsigned height)
 
       if (!XShmAttach(g_x11_dpy, &xv->shminfo))
       {
-         ELOG(@"Failed to reattch XvShm image.\n");
+         printf("Error: Failed to reattch XvShm image.\n");
          return false;
       }
       XSync(g_x11_dpy, False);

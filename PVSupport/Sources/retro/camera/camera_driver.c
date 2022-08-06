@@ -142,7 +142,7 @@ bool camera_driver_ctl(enum rarch_camera_ctl_state state, void *data)
             else
             {
                unsigned d;
-               ELOG(@"Couldn't find any camera driver named \"%s\"\n",
+               printf("Error: Couldn't find any camera driver named \"%s\"\n",
                      settings->camera.driver);
                RARCH_LOG_OUTPUT("Available camera drivers are:\n");
                for (d = 0; camera_driver_find_handle(d); d++)
@@ -223,7 +223,7 @@ bool camera_driver_ctl(enum rarch_camera_ctl_state state, void *data)
 
         if (!camera_data)
         {
-           ELOG(@"Failed to initialize camera driver. Will continue without camera.\n");
+           printf("Error: Failed to initialize camera driver. Will continue without camera.\n");
            camera_driver_ctl(RARCH_CAMERA_CTL_UNSET_ACTIVE, NULL);
         }
 

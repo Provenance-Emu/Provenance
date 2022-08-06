@@ -283,7 +283,7 @@ static bool add_device(udev_input_t *udev,
 
    /* Shouldn't happen, but just check it. */
    if (epoll_ctl(udev->epfd, EPOLL_CTL_ADD, fd, &event) < 0)
-      ELOG(@"Failed to add FD (%d) to epoll list (%s).\n",
+      printf("Error: Failed to add FD (%d) to epoll list (%s).\n",
             fd, strerror(errno));
 
    return true;
@@ -620,7 +620,7 @@ static bool open_devices(udev_input_t *udev, const char *type, device_handle_cb 
 
          VLOG(@"[udev] Adding device %s as type %s.\n", devnode, type);
          if (!add_device(udev, devnode, cb))
-            ELOG(@"[udev] Failed to open device: %s (%s).\n", devnode, strerror(errno));
+            printf("Error: [udev] Failed to open device: %s (%s).\n", devnode, strerror(errno));
          close(fd);
       }
 
@@ -642,7 +642,7 @@ static void *udev_input_init(void)
    udev->udev = udev_new();
    if (!udev->udev)
    {
-      ELOG(@"Failed to create udev handle.\n");
+      printf("Error: Failed to create udev handle.\n");
       goto error;
    }
 
@@ -661,25 +661,25 @@ static void *udev_input_init(void)
    udev->epfd = epoll_create(32);
    if (udev->epfd < 0)
    {
-      ELOG(@"Failed to create epoll FD.\n");
+      printf("Error: Failed to create epoll FD.\n");
       goto error;
    }
 
    if (!open_devices(udev, "ID_INPUT_KEYBOARD", udev_handle_keyboard))
    {
-      ELOG(@"Failed to open keyboard.\n");
+      printf("Error: Failed to open keyboard.\n");
       goto error;
    }
 
    if (!open_devices(udev, "ID_INPUT_MOUSE", udev_handle_mouse))
    {
-      ELOG(@"Failed to open mouse.\n");
+      printf("Error: Failed to open mouse.\n");
       goto error;
    }
 
    if (!open_devices(udev, "ID_INPUT_TOUCHPAD", udev_handle_touchpad))
    {
-      ELOG(@"Failed to open touchpads.\n");
+      printf("Error: Failed to open touchpads.\n");
       goto error;
    }
 

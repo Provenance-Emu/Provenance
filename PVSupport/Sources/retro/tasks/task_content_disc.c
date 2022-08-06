@@ -131,7 +131,7 @@ static void task_cdrom_dump_handler(retro_task_t *task)
 
             if (!state->file)
             {
-               ELOG(@"[CDROM]: Error opening file for reading: %s\n", cue_path);
+               printf("Error: [CDROM]: Error opening file for reading: %s\n", cue_path);
                task_set_progress(task, 100);
                task_free_title(task);
                task_set_title(task, strdup(msg_hash_to_str(MENU_ENUM_LABEL_VALUE_QT_FILE_READ_OPEN_FAILED)));
@@ -173,7 +173,7 @@ static void task_cdrom_dump_handler(retro_task_t *task)
 
                if (!file)
                {
-                  ELOG(@"[CDROM]: Error opening file for writing: %s\n", output_file);
+                  printf("Error: [CDROM]: Error opening file for writing: %s\n", output_file);
                   task_set_progress(task, 100);
                   task_free_title(task);
                   task_set_title(task, strdup(msg_hash_to_str(MENU_ENUM_LABEL_VALUE_QT_FILE_WRITE_OPEN_FAILED)));
@@ -269,7 +269,7 @@ static void task_cdrom_dump_handler(retro_task_t *task)
 
                if (!state->output_file)
                {
-                  ELOG(@"[CDROM]: Error opening file for writing: %s\n", output_path);
+                  printf("Error: [CDROM]: Error opening file for writing: %s\n", output_path);
                   task_set_progress(task, 100);
                   task_free_title(task);
                   task_set_title(task, strdup(msg_hash_to_str(MENU_ENUM_LABEL_VALUE_QT_FILE_WRITE_OPEN_FAILED)));
@@ -278,7 +278,7 @@ static void task_cdrom_dump_handler(retro_task_t *task)
             }
             else
             {
-               ELOG(@"[CDROM]: Error opening file for writing: %s\n", state->cdrom_path);
+               printf("Error: [CDROM]: Error opening file for writing: %s\n", state->cdrom_path);
                task_set_progress(task, 100);
                task_free_title(task);
                task_set_title(task, strdup(msg_hash_to_str(MENU_ENUM_LABEL_VALUE_QT_FILE_WRITE_OPEN_FAILED)));

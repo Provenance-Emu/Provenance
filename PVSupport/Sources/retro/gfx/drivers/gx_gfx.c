@@ -613,7 +613,7 @@ static void init_vtx(void *data, const video_info_t *video)
 
       if (!g_tex.data)
       {
-         ELOG(@"[GX] Error allocating video texture\n");
+         printf("Error: [GX] Error allocating video texture\n");
          exit(1);
       }
    }

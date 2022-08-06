@@ -104,7 +104,7 @@ static uint32_t find_memory_type(
          return i;
    }
 
-   ELOG(@"[Vulkan]: Failed to find valid memory type. This should never happen.");
+   printf("Error: [Vulkan]: Failed to find valid memory type. This should never happen.");
    abort();
 }
 
@@ -865,7 +865,7 @@ static bool set_unique_map(M &m, const string &name, const P &p)
    auto itr = m.find(name);
    if (itr != end(m))
    {
-      ELOG(@"[slang]: Alias \"%s\" already exists.\n",
+      printf("Error: [slang]: Alias \"%s\" already exists.\n",
             name.c_str());
       return false;
    }
@@ -2825,7 +2825,7 @@ static bool vulkan_filter_chain_load_luts(
       auto image = vulkan_filter_chain_load_lut(cmd, info, chain, &shader->lut[i]);
       if (!image)
       {
-         ELOG(@"[Vulkan]: Failed to load LUT \"%s\".\n", shader->lut[i].path);
+         printf("Error: [Vulkan]: Failed to load LUT \"%s\".\n", shader->lut[i].path);
          goto error;
       }
 
@@ -2891,7 +2891,7 @@ vulkan_filter_chain_t *vulkan_filter_chain_create_from_preset(
       glslang_output output;
       if (!glslang_compile_shader(pass->source.path, &output))
       {
-         ELOG(@"Failed to compile shader: \"%s\".\n",
+         printf("Error: Failed to compile shader: \"%s\".\n",
                pass->source.path);
          return nullptr;
       }
@@ -2900,7 +2900,7 @@ vulkan_filter_chain_t *vulkan_filter_chain_create_from_preset(
       {
          if (shader->num_parameters >= GFX_MAX_PARAMETERS)
          {
-            ELOG(@"[Vulkan]: Exceeded maximum number of parameters.\n");
+            printf("Error: [Vulkan]: Exceeded maximum number of parameters.\n");
             return nullptr;
          }
 
@@ -2918,7 +2918,7 @@ vulkan_filter_chain_t *vulkan_filter_chain_create_from_preset(
                 meta_param.maximum != itr->maximum ||
                 meta_param.step != itr->step)
             {
-               ELOG(@"[Vulkan]: Duplicate parameters found for \"%s\", but arguments do not match.\n",
+               printf("Error: [Vulkan]: Duplicate parameters found for \"%s\", but arguments do not match.\n",
                      itr->id);
                return nullptr;
             }

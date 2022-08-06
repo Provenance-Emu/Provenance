@@ -45,7 +45,7 @@ static void find_first_libretro_core(char *first_file,
 
    if (!list)
    {
-      ELOG(@"Couldn't read directory."
+      printf("Error: Couldn't read directory."
             " Cannot infer default libretro core.\n");
       return;
    }
@@ -103,7 +103,7 @@ static void find_and_set_first_file(char *s, size_t len,
 
    if (string_is_empty(first_file))
    {
-      ELOG(@"Failed last fallback - RetroArch Salamander will exit.\n");
+      printf("Error: Failed last fallback - RetroArch Salamander will exit.\n");
       return;
    }
 

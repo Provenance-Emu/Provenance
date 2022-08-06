@@ -87,7 +87,7 @@ state_tracker_t* state_tracker_init(const struct state_tracker_info *info)
       if (!tracker->py)
       {
          free(tracker);
-         ELOG(@"Failed to init Python script.\n");
+         printf("Error: Failed to init Python script.\n");
          return NULL;
       }
    }
@@ -98,7 +98,7 @@ state_tracker_t* state_tracker_init(const struct state_tracker_info *info)
 
    if (!tracker->info)
    {
-      ELOG(@"Allocation of state tracker info failed.\n");
+      printf("Error: Allocation of state tracker info failed.\n");
       free(tracker);
       return NULL;
    }
@@ -125,7 +125,7 @@ state_tracker_t* state_tracker_init(const struct state_tracker_info *info)
          {
             free(tracker->info);
             free(tracker);
-            ELOG(@"Python semantic was requested, but Python tracker is not loaded.\n");
+            printf("Error: Python semantic was requested, but Python tracker is not loaded.\n");
             return NULL;
          }
          tracker->info[i].py = tracker->py;

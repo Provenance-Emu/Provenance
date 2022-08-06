@@ -99,7 +99,7 @@ static bool input_remote_init_network(input_remote_t *handle,
 
    if (!socket_bind(handle->net_fd[user], res))
    {
-      ELOG(@"Failed to bind socket.\n");
+      printf("Error: Failed to bind socket.\n");
       goto error;
    }
 

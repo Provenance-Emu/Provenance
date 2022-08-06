@@ -63,7 +63,7 @@ int font_renderer_create_default(const void **data, void **handle,
          return 1;
       }
       else
-         ELOG(@"Failed to create rendering backend: %s.\n",
+         printf("Error: Failed to create rendering backend: %s.\n",
                font_backends[i]->ident);
    }
 

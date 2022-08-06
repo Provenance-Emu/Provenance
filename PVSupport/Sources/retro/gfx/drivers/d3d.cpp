@@ -123,7 +123,7 @@ static bool d3d_init_imports(d3d_video_t *d3d)
    state_tracker = state_tracker_init(&tracker_info);
    if (!state_tracker)
    {
-      ELOG(@"Failed to initialize state tracker.\n");
+      printf("Error: Failed to initialize state tracker.\n");
       return false;
    }
 
@@ -156,7 +156,7 @@ static bool d3d_init_chain(d3d_video_t *d3d, const video_info_t *video_info)
    if (!renderchain_init_first(&d3d->renderchain_driver,
 	   &d3d->renderchain_data))
    {
-	   ELOG(@"Renderchain could not be initialized.\n");
+	   printf("Error: Renderchain could not be initialized.\n");
 	   return false;
    }
 
@@ -171,7 +171,7 @@ static bool d3d_init_chain(d3d_video_t *d3d, const video_info_t *video_info)
             d3d->video_info.rgb32)
       )
    {
-      ELOG(@"[D3D]: Failed to init render chain.\n");
+      printf("Error: [D3D]: Failed to init render chain.\n");
       return false;
    }
 
@@ -200,21 +200,21 @@ static bool d3d_init_chain(d3d_video_t *d3d, const video_info_t *video_info)
       if (!d3d->renderchain_driver->add_pass(
                d3d->renderchain_data, &link_info))
       {
-         ELOG(@"[D3D9]: Failed to add pass.\n");
+         printf("Error: [D3D9]: Failed to add pass.\n");
          return false;
       }
    }
 
    if (!d3d_init_luts(d3d))
    {
-      ELOG(@"[D3D9]: Failed to init LUTs.\n");
+      printf("Error: [D3D9]: Failed to init LUTs.\n");
       return false;
    }
 
 #ifndef DONT_HAVE_STATE_TRACKER
    if (!d3d_init_imports(d3d))
    {
-      ELOG(@"[D3D9]: Failed to init imports.\n");
+      printf("Error: [D3D9]: Failed to init imports.\n");
       return false;
    }
 #endif
@@ -260,7 +260,7 @@ static bool d3d_init_multipass(d3d_video_t *d3d)
 
    if (!conf)
    {
-      ELOG(@"Failed to load preset.\n");
+      printf("Error: Failed to load preset.\n");
       return false;
    }
 
@@ -269,7 +269,7 @@ static bool d3d_init_multipass(d3d_video_t *d3d)
    if (!video_shader_read_conf_cgp(conf, &d3d->shader))
    {
       config_file_free(conf);
-      ELOG(@"Failed to parse CGP file.\n");
+      printf("Error: Failed to parse CGP file.\n");
       return false;
    }
 
@@ -622,7 +622,7 @@ static bool d3d_init_base(void *data, const video_info_t *info)
    g_pD3D = D3DCREATE_CTX(D3D_SDK_VERSION);
    if (!g_pD3D)
    {
-      ELOG(@"Failed to create D3D interface.\n");
+      printf("Error: Failed to create D3D interface.\n");
       return false;
    }
 
@@ -649,7 +649,7 @@ static bool d3d_init_base(void *data, const video_info_t *info)
                   &d3dpp,
                   &d3d->dev)))
       {
-         ELOG(@"Failed to initialize device.\n");
+         printf("Error: Failed to initialize device.\n");
          return false;
       }
    }
@@ -802,7 +802,7 @@ static bool d3d_initialize(d3d_video_t *d3d, const video_info_t *info)
 
    if (!d3d_init_chain(d3d, info))
    {
-      ELOG(@"Failed to initialize render chain.\n");
+      printf("Error: Failed to initialize render chain.\n");
       return false;
    }
 
@@ -818,7 +818,7 @@ static bool d3d_initialize(d3d_video_t *d3d, const video_info_t *info)
             d3d, settings->path.font, 0, false,
             FONT_DRIVER_RENDER_DIRECT3D_API))
    {
-      ELOG(@"[D3D]: Failed to initialize font renderer.\n");
+      printf("Error: [D3D]: Failed to initialize font renderer.\n");
       return false;
    }
 
@@ -836,7 +836,7 @@ static bool d3d_restore(void *data)
 
    if (!d3d_initialize(d3d, &d3d->video_info))
    {
-      ELOG(@"[D3D]: Restore error.\n");
+      printf("Error: [D3D]: Restore error.\n");
       return false;
    }
 
@@ -1171,7 +1171,7 @@ static void *d3d_init(const video_info_t *info,
 
    if (!d3d_construct(d3d, info, input, input_data))
    {
-      ELOG(@"[D3D]: Failed to init D3D.\n");
+      printf("Error: [D3D]: Failed to init D3D.\n");
       goto error;
    }
 
@@ -1366,7 +1366,7 @@ static bool d3d_overlay_load(void *data,
 
       if (!overlay->tex)
       {
-         ELOG(@"[D3D]: Failed to create overlay texture\n");
+         printf("Error: [D3D]: Failed to create overlay texture\n");
          return false;
       }
 
@@ -1470,7 +1470,7 @@ static bool d3d_frame(void *data, const void *frame,
 
       if (!d3d_restore(d3d))
       {
-         ELOG(@"[D3D]: Failed to restore.\n");
+         printf("Error: [D3D]: Failed to restore.\n");
          return false;
       }
    }
@@ -1511,7 +1511,7 @@ static bool d3d_frame(void *data, const void *frame,
             frame, frame_width, frame_height,
             pitch, d3d->dev_rotation))
    {
-      ELOG(@"[D3D]: Failed to render scene.\n");
+      printf("Error: [D3D]: Failed to render scene.\n");
       return false;
    }
 
@@ -1594,7 +1594,7 @@ static bool d3d_set_shader(void *data,
 
    if (!d3d_process_shader(d3d) || !d3d_restore(d3d))
    {
-      ELOG(@"[D3D]: Setting shader failed.\n");
+      printf("Error: [D3D]: Setting shader failed.\n");
       d3d->shader_path = old_shader;
       d3d_process_shader(d3d);
       d3d_restore(d3d);
@@ -1632,7 +1632,7 @@ static void d3d_set_menu_texture_frame(void *data,
 
       if (!d3d->menu->tex)
       {
-         ELOG(@"[D3D]: Failed to create menu texture.\n");
+         printf("Error: [D3D]: Failed to create menu texture.\n");
          return;
       }
 

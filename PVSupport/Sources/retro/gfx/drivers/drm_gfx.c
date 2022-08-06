@@ -530,7 +530,7 @@ static void drm_plane_setup(struct drm_surface *surface)
             plane_flags, plane_x, plane_y, plane_w, plane_h,
             src_x<<16, src_y<<16, src_w<<16, src_h<<16))
    {
-      ELOG(@"DRM: failed to enable plane: %s\n", strerror(errno));	
+      printf("Error: DRM: failed to enable plane: %s\n", strerror(errno));	
    }
 
    VLOG(@"DRM: src_w %d, src_h %d, plane_w %d, plane_h %d\n",

@@ -59,7 +59,7 @@
 #define SYMBOL(x) do { \
    function_t func = dylib_proc(lib_handle, #x); \
    memcpy(&current_core->x, &func, sizeof(func)); \
-   if (current_core->x == NULL) { ELOG(@"Failed to load symbol: \"%s\"\n", #x); retroarch_fail(1, "init_libretro_sym()"); } \
+   if (current_core->x == NULL) { printf("Error: Failed to load symbol: \"%s\"\n", #x); retroarch_fail(1, "init_libretro_sym()"); } \
 } while (0)
 
 static dylib_t lib_handle;
@@ -245,10 +245,10 @@ static dylib_t libretro_get_system_info_lib(const char *path,
 
    if (!lib)
    {
-      ELOG(@"%s: \"%s\"\n",
+      printf("Error: %s: \"%s\"\n",
             msg_hash_to_str(MSG_FAILED_TO_OPEN_LIBRETRO_CORE),
             path);
-      ELOG(@"Error(s): %s\n", dylib_error());
+      printf("Error: Error(s): %s\n", dylib_error());
       return NULL;
    }
 
@@ -317,17 +317,17 @@ static void load_dynamic_core(void)
    {
       /* Try to verify that -lretro was not linked in from other modules
        * since loading it dynamically and with -l will fail hard. */
-      ELOG(@"Serious problem. RetroArch wants to load libretro cores"
+      printf("Error: Serious problem. RetroArch wants to load libretro cores"
             "dyamically, but it is already linked.\n");
-      ELOG(@"This could happen if other modules RetroArch depends on "
+      printf("Error: This could happen if other modules RetroArch depends on "
             "link against libretro directly.\n");
-      ELOG(@"Proceeding could cause a crash. Aborting ...\n");
+      printf("Error: Proceeding could cause a crash. Aborting ...\n");
       retroarch_fail(1, "init_libretro_sym()");
    }
 
    if (string_is_empty(config_get_active_core_path()))
    {
-      ELOG(@"RetroArch is built for dynamic libretro cores, but "
+      printf("Error: RetroArch is built for dynamic libretro cores, but "
             "libretro_path is not set. Cannot continue.\n");
       retroarch_fail(1, "init_libretro_sym()");
    }
@@ -344,9 +344,9 @@ static void load_dynamic_core(void)
    lib_handle = dylib_load(config_get_active_core_path());
    if (!lib_handle)
    {
-      ELOG(@"Failed to open libretro core: \"%s\"\n",
+      printf("Error: Failed to open libretro core: \"%s\"\n",
             config_get_active_core_path());
-      ELOG(@"Error(s): %s\n", dylib_error());
+      printf("Error: Error(s): %s\n", dylib_error());
       retroarch_fail(1, "load_dynamic()");
    }
 }
@@ -1132,7 +1132,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
                VLOG(@"Requesting Vulkan context.\n");
                break;
 #else
-               ELOG(@"Requesting Vulkan context, but RetroArch is not compiled against Vulkan. Cannot use HW context.\n");
+               printf("Error: Requesting Vulkan context, but RetroArch is not compiled against Vulkan. Cannot use HW context.\n");
                return false;
 #endif
 
@@ -1157,20 +1157,20 @@ bool rarch_environment_cb(unsigned cmd, void *data)
 #endif
             case RETRO_HW_CONTEXT_OPENGL:
             case RETRO_HW_CONTEXT_OPENGL_CORE:
-               ELOG(@"Requesting OpenGL context, but RetroArch "
+               printf("Error: Requesting OpenGL context, but RetroArch "
                      "is compiled against OpenGLES. Cannot use HW context.\n");
                return false;
 
 #elif defined(HAVE_OPENGL)
             case RETRO_HW_CONTEXT_OPENGLES2:
             case RETRO_HW_CONTEXT_OPENGLES3:
-               ELOG(@"Requesting OpenGLES%u context, but RetroArch "
+               printf("Error: Requesting OpenGLES%u context, but RetroArch "
                      "is compiled against OpenGL. Cannot use HW context.\n",
                      cb->context_type == RETRO_HW_CONTEXT_OPENGLES2 ? 2 : 3);
                return false;
 
             case RETRO_HW_CONTEXT_OPENGLES_VERSION:
-               ELOG(@"Requesting OpenGLES%u.%u context, but RetroArch "
+               printf("Error: Requesting OpenGLES%u.%u context, but RetroArch "
                      "is compiled against OpenGL. Cannot use HW context.\n",
                      cb->version_major, cb->version_minor);
                return false;

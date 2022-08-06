@@ -227,7 +227,7 @@ static int add_adapter(void *data, struct libusb_device *dev)
    if (!hid)
    {
       free(adapter);
-      ELOG(@"Allocation of adapter failed.\n");
+      printf("Error: Allocation of adapter failed.\n");
       return -1;
    }
 
@@ -235,7 +235,7 @@ static int add_adapter(void *data, struct libusb_device *dev)
 
    if (rc != LIBUSB_SUCCESS)
    {
-      ELOG(@"Error getting device descriptor.\n");
+      printf("Error: Error getting device descriptor.\n");
       goto error;
    }
 
@@ -245,7 +245,7 @@ static int add_adapter(void *data, struct libusb_device *dev)
 
    if (adapter->endpoint_in == 0)
    {
-      ELOG(@"Could not find HID config for device.\n");
+      printf("Error: Could not find HID config for device.\n");
       goto error;
    }
 
@@ -253,7 +253,7 @@ static int add_adapter(void *data, struct libusb_device *dev)
 
    if (rc != LIBUSB_SUCCESS)
    {
-      ELOG(@"Error opening device 0x%p (VID/PID: %04x:%04x).\n",
+      printf("Error: Error opening device 0x%p (VID/PID: %04x:%04x).\n",
             (void*)adapter->device, desc.idVendor, desc.idProduct);
       goto error;
    }
@@ -264,7 +264,7 @@ static int add_adapter(void *data, struct libusb_device *dev)
             desc.iManufacturer, adapter->manufacturer_name,
             sizeof(adapter->manufacturer_name));
 #if 0
-      ELOG(@" Adapter Manufacturer name: %s\n",
+      printf("Error:  Adapter Manufacturer name: %s\n",
             adapter->manufacturer_name);
 #endif
    }
@@ -275,7 +275,7 @@ static int add_adapter(void *data, struct libusb_device *dev)
             desc.iProduct, adapter->name,
             sizeof(adapter->name));
 #if 0
-      ELOG(@" Adapter name: %s\n", adapter->name);
+      printf("Error:  Adapter name: %s\n", adapter->name);
 #endif
    }
 
@@ -289,7 +289,7 @@ static int add_adapter(void *data, struct libusb_device *dev)
 
    if (!adapter->send_control_lock || !adapter->send_control_buffer)
    {
-      ELOG(@"Error creating send control buffer.\n");
+      printf("Error: Error creating send control buffer.\n");
       goto error;
    }
 
@@ -302,7 +302,7 @@ static int add_adapter(void *data, struct libusb_device *dev)
 
    if (!pad_connection_has_interface(hid->slots, adapter->slot))
    {
-      ELOG(@" Interface not found (%s).\n", adapter->name);
+      printf("Error:  Interface not found (%s).\n", adapter->name);
       goto error;
    }
 
@@ -311,7 +311,7 @@ static int add_adapter(void *data, struct libusb_device *dev)
    if (libusb_kernel_driver_active(adapter->handle, 0) == 1
          && libusb_detach_kernel_driver(adapter->handle, 0))
    {
-      ELOG(@"Error detaching handle 0x%p from kernel.\n", adapter->handle);
+      printf("Error: Error detaching handle 0x%p from kernel.\n", adapter->handle);
       goto error;
    }
 
@@ -319,7 +319,7 @@ static int add_adapter(void *data, struct libusb_device *dev)
 
    if (rc != LIBUSB_SUCCESS)
    {
-      ELOG(@"Error claiming interface %d .\n", adapter->interface_number);
+      printf("Error: Error claiming interface %d .\n", adapter->interface_number);
       goto error;
    }
 
@@ -334,7 +334,7 @@ static int add_adapter(void *data, struct libusb_device *dev)
 
    if (!adapter->thread)
    {
-      ELOG(@"Error initializing adapter thread.\n");
+      printf("Error: Error initializing adapter thread.\n");
       goto error;
    }
 
@@ -501,7 +501,7 @@ static void libusb_hid_free(void *data)
 
    while(adapters.next)
       if (remove_adapter(hid, adapters.next->device) == -1)
-         ELOG(@"could not remove device %p\n",
+         printf("Error: could not remove device %p\n",
                adapters.next->device);
 
    if (hid->poll_thread)
@@ -581,7 +581,7 @@ static void *libusb_hid_init(void)
 
    if (ret != LIBUSB_SUCCESS)
    {
-      ELOG(@"Error creating a hotplug callback.\n");
+      printf("Error: Error creating a hotplug callback.\n");
       goto error;
    }
 
@@ -589,7 +589,7 @@ static void *libusb_hid_init(void)
 
    if (!hid->poll_thread)
    {
-      ELOG(@"Error creating polling thread");
+      printf("Error: Error creating polling thread");
       goto error;
    }
 

@@ -196,7 +196,7 @@ static void gl_overlay_vertex_geom(void *data,
 
    if (image > gl->overlays)
    {
-      ELOG(@"Invalid overlay id: %u\n", image);
+      printf("Error: Invalid overlay id: %u\n", image);
       return;
    }
 
@@ -674,7 +674,7 @@ static bool gl_shader_init(gl_t *gl)
 
    if (!gl)
    {
-      ELOG(@"Invalid GL instance passed.\n");
+      printf("Error: Invalid GL instance passed.\n");
       return false;
    }
 
@@ -697,7 +697,7 @@ static bool gl_shader_init(gl_t *gl)
 #endif
 
       default:
-         ELOG(@"[GL]: Not loading any shader, or couldn't find valid shader backend. Continuing without shaders.\n");
+         printf("Error: [GL]: Not loading any shader, or couldn't find valid shader backend. Continuing without shaders.\n");
          return true;
    }
 
@@ -710,7 +710,7 @@ static bool gl_shader_init(gl_t *gl)
    if (video_shader_driver_init(&init_data))
       return true;
 
-   ELOG(@"[GL]: Failed to initialize shader, falling back to stock.\n");
+   printf("Error: [GL]: Failed to initialize shader, falling back to stock.\n");
 
    init_data.shader = NULL;
    init_data.path   = NULL;
@@ -992,7 +992,7 @@ static INLINE void gl_copy_frame(gl_t *gl, const void *frame,
 
       if (img == EGL_NO_IMAGE_KHR)
       {
-         ELOG(@"[GL]: Failed to create EGL image.\n");
+         printf("Error: [GL]: Failed to create EGL image.\n");
          return;
       }
 
@@ -1775,7 +1775,7 @@ static bool resolve_extensions(gl_t *gl, const char *context_ident)
       VLOG(@"[GL]: Using Core GL context.\n");
       if (!gl_check_capability(GL_CAPS_VAO))
       {
-         ELOG(@"[GL]: Failed to initialize VAOs.\n");
+         printf("Error: [GL]: Failed to initialize VAOs.\n");
          return false;
       }
       glGenVertexArrays(1, &gl->vao);
@@ -1936,7 +1936,7 @@ static void gl_init_pbo_readback(gl_t *gl)
    if (!scaler_ctx_gen_filter(scaler))
    {
       gl->pbo_readback_enable = false;
-      ELOG(@"Failed to initialize pixel conversion for PBO.\n");
+      printf("Error: Failed to initialize pixel conversion for PBO.\n");
       glDeleteBuffers(4, gl->pbo_readback);
    }
 #endif
@@ -2078,7 +2078,7 @@ static void DEBUG_CALLBACK_TYPE gl_debug_cb(GLenum source, GLenum type,
    switch (severity)
    {
       case GL_DEBUG_SEVERITY_HIGH:
-         ELOG(@"[GL debug (High, %s, %s)]: %s\n", src, typestr, message);
+         printf("Error: [GL debug (High, %s, %s)]: %s\n", src, typestr, message);
          break;
       case GL_DEBUG_SEVERITY_MEDIUM:
          WLOG(@"[GL debug (Medium, %s, %s)]: %s\n", src, typestr, message);
@@ -2104,7 +2104,7 @@ static void gl_begin_debug(gl_t *gl)
 #endif
    }
    else
-      ELOG(@"Neither GL_KHR_debug nor GL_ARB_debug_output are implemented. Cannot start GL debugging.\n");
+      printf("Error: Neither GL_KHR_debug nor GL_ARB_debug_output are implemented. Cannot start GL debugging.\n");
 }
 #endif
 
@@ -2260,7 +2260,7 @@ static void *gl_init(const video_info_t *video, const input_driver_t **input, vo
 
    if (!gl_shader_init(gl))
    {
-      ELOG(@"[GL]: Shader initialization failed.\n");
+      printf("Error: [GL]: Shader initialization failed.\n");
       goto error;
    }
 
@@ -2361,7 +2361,7 @@ static void *gl_init(const video_info_t *video, const input_driver_t **input, vo
       if (!font_driver_init_first(NULL, NULL, gl, *settings->path.font 
             ? settings->path.font : NULL, settings->video.font_size, false,
             FONT_DRIVER_RENDER_OPENGL_API))
-         ELOG(@"[GL]: Failed to initialize font renderer.\n");
+         printf("Error: [GL]: Failed to initialize font renderer.\n");
    }
 
 #ifdef HAVE_GL_ASYNC_READBACK
@@ -2519,7 +2519,7 @@ static bool gl_set_shader(void *data,
 #endif
 
       default:
-         ELOG(@"[GL]: Cannot find shader core for path: %s.\n", path);
+         printf("Error: [GL]: Cannot find shader core for path: %s.\n", path);
          goto error;
    }
 
@@ -2667,7 +2667,7 @@ static bool gl_read_viewport(void *data, uint8_t *buffer)
 
       if (!ptr)
       {
-         ELOG(@"[GL]: Failed to map pixel unpack buffer.\n");
+         printf("Error: [GL]: Failed to map pixel unpack buffer.\n");
          goto error;
       }
 

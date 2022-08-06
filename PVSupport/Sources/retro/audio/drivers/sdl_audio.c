@@ -106,7 +106,7 @@ static void *sdl_audio_init(const char *device,
 
    if (SDL_OpenAudio(&spec, &out) < 0)
    {
-      ELOG(@"Failed to open SDL audio: %s\n", SDL_GetError());
+      printf("Error: Failed to open SDL audio: %s\n", SDL_GetError());
       free(sdl);
       return 0;
    }

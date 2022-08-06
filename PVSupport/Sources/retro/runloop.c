@@ -274,7 +274,7 @@ static bool runloop_check_movie_init(void)
       runloop_msg_queue_push(
             msg_hash_to_str(MSG_FAILED_TO_START_MOVIE_RECORD),
             2, 180, true);
-      ELOG(@"%s\n",
+      printf("Error: %s\n",
             msg_hash_to_str(MSG_FAILED_TO_START_MOVIE_RECORD));
    }
 

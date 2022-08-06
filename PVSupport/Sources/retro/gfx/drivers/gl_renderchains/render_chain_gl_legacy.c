@@ -474,7 +474,7 @@ error:
    glDeleteFramebuffers(gl->fbo_pass, gl->fbo);
    if (gl->fbo_feedback)
       glDeleteFramebuffers(1, &gl->fbo_feedback);
-   ELOG(@"Failed to set up frame buffer objects. Multi-pass shading will not work.\n");
+   printf("Error: Failed to set up frame buffer objects. Multi-pass shading will not work.\n");
    return false;
 }
 
@@ -524,7 +524,7 @@ static void gl_create_fbo_texture(gl_t *gl, unsigned i, GLuint texture)
    if (fp_fbo)
    {
       if (!gl->has_fp_fbo)
-         ELOG(@"[GL]: Floating-point FBO was requested, but is not supported. Falling back to UNORM. Result may band/clip/etc.!\n");
+         printf("Error: [GL]: Floating-point FBO was requested, but is not supported. Falling back to UNORM. Result may band/clip/etc.!\n");
    }
 
 #ifndef HAVE_OPENGLES2
@@ -544,7 +544,7 @@ static void gl_create_fbo_texture(gl_t *gl, unsigned i, GLuint texture)
       if (!fp_fbo && srgb_fbo)
       {
          if (!gl->has_srgb_fbo)
-               ELOG(@"[GL]: sRGB FBO was requested, but it is not supported. Falling back to UNORM. Result may have banding!\n");
+               printf("Error: [GL]: sRGB FBO was requested, but it is not supported. Falling back to UNORM. Result may have banding!\n");
       }
        
       if (settings->video.force_srgb_disable)
@@ -747,7 +747,7 @@ void gl_renderchain_init(gl_t *gl, unsigned fbo_width, unsigned fbo_height)
 
    if (!gl_check_capability(GL_CAPS_FBO))
    {
-      ELOG(@"Failed to locate FBO functions. Won't be able to use render-to-texture.\n");
+      printf("Error: Failed to locate FBO functions. Won't be able to use render-to-texture.\n");
       return;
    }
 
@@ -813,7 +813,7 @@ void gl_renderchain_init(gl_t *gl, unsigned fbo_width, unsigned fbo_height)
    if (!gl_create_fbo_targets(gl))
    {
       glDeleteTextures(gl->fbo_pass, gl->fbo_texture);
-      ELOG(@"Failed to create FBO targets. Will continue without FBO.\n");
+      printf("Error: Failed to create FBO targets. Will continue without FBO.\n");
       return;
    }
 
@@ -923,7 +923,7 @@ bool gl_init_hw_render(gl_t *gl, unsigned width, unsigned height)
       status = glCheckFramebufferStatus(RARCH_GL_FRAMEBUFFER);
       if (status != RARCH_GL_FRAMEBUFFER_COMPLETE)
       {
-         ELOG(@"[GL]: Failed to create HW render FBO #%u, error: 0x%u.\n",
+         printf("Error: [GL]: Failed to create HW render FBO #%u, error: 0x%u.\n",
                i, (unsigned)status);
          return false;
       }
@@ -972,7 +972,7 @@ bool gl_renderchain_add_lut(const struct video_shader *shader,
 
    if (!image_texture_load(&img, shader->lut[i].path))
    {
-      ELOG(@"Failed to load texture image from: \"%s\"\n",
+      printf("Error: Failed to load texture image from: \"%s\"\n",
             shader->lut[i].path);
       return false;
    }

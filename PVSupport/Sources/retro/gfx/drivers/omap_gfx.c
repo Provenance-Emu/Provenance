@@ -187,7 +187,7 @@ static int omapfb_detect_screen(omapfb_data_t *pdata)
 
    if (ret != 0)
    {
-      ELOG(@"[video_omap]: can't stat %s.\n", pdata->fbname);
+      printf("Error: [video_omap]: can't stat %s.\n", pdata->fbname);
       return -1;
    }
    fb_id = minor(status.st_rdev);
@@ -196,7 +196,7 @@ static int omapfb_detect_screen(omapfb_data_t *pdata)
    f = fopen(buff, "r");
    if (!f)
    {
-      ELOG(@"[video_omap]: can't open %s.\n", buff);
+      printf("Error: [video_omap]: can't open %s.\n", buff);
       return -1;
    }
 
@@ -204,7 +204,7 @@ static int omapfb_detect_screen(omapfb_data_t *pdata)
    fclose(f);
    if (ret != 1)
    {
-      ELOG(@"[video_omap]: can't parse %s.\n", buff);
+      printf("Error: [video_omap]: can't parse %s.\n", buff);
       return -1;
    }
 
@@ -212,7 +212,7 @@ static int omapfb_detect_screen(omapfb_data_t *pdata)
    ret = omapfb_read_sysfs(buff, manager_name, sizeof(manager_name));
    if (ret < 0)
    {
-      ELOG(@"[video_omap]: can't read manager name.\n");
+      printf("Error: [video_omap]: can't read manager name.\n");
       return -1;
    }
 
@@ -231,7 +231,7 @@ static int omapfb_detect_screen(omapfb_data_t *pdata)
 
          if (ret < 0)
          {
-            ELOG(@"[video_omap]: can't read display name.\n");
+            printf("Error: [video_omap]: can't read display name.\n");
             return -1;
          }
 
@@ -241,7 +241,7 @@ static int omapfb_detect_screen(omapfb_data_t *pdata)
 
    if (ret < 0)
    {
-      ELOG(@"[video_omap]: couldn't find manager.\n");
+      printf("Error: [video_omap]: couldn't find manager.\n");
       return -1;
    }
 
@@ -262,7 +262,7 @@ static int omapfb_detect_screen(omapfb_data_t *pdata)
 
    if (display_id < 0)
    {
-      ELOG(@"[video_omap]: couldn't find display.\n");
+      printf("Error: [video_omap]: couldn't find display.\n");
       return -1;
    }
 
@@ -270,7 +270,7 @@ static int omapfb_detect_screen(omapfb_data_t *pdata)
    f = fopen(buff, "r");
    if (!f)
    {
-      ELOG(@"[video_omap]: can't open %s.\n", buff);
+      printf("Error: [video_omap]: can't open %s.\n", buff);
       return -1;
    }
 
@@ -278,13 +278,13 @@ static int omapfb_detect_screen(omapfb_data_t *pdata)
    fclose(f);
    if (ret != 2)
    {
-      ELOG(@"[video_omap]: can't parse %s (%d).\n", buff, ret);
+      printf("Error: [video_omap]: can't parse %s (%d).\n", buff, ret);
       return -1;
    }
 
    if (w <= 0 || h <= 0)
    {
-      ELOG(@"[video_omap]: unsane dimensions detected (%dx%d).\n", w, h);
+      printf("Error: [video_omap]: unsane dimensions detected (%dx%d).\n", w, h);
       return -1;
    }
 
@@ -307,7 +307,7 @@ static int omapfb_setup_pages(omapfb_data_t *pdata)
 
       if (!pdata->pages)
       {
-         ELOG(@"[video_omap]: pages allocation failed.\n");
+         printf("Error: [video_omap]: pages allocation failed.\n");
          return -1;
       }
    }
@@ -340,7 +340,7 @@ static int omapfb_mmap(omapfb_data_t *pdata)
    if (pdata->fb_mem == MAP_FAILED)
    {
       pdata->fb_mem = NULL;
-      ELOG(@"[video_omap]: framebuffer mmap failed\n");
+      printf("Error: [video_omap]: framebuffer mmap failed\n");
 
       return -1;
    }
@@ -359,19 +359,19 @@ static int omapfb_backup_state(omapfb_data_t *pdata)
 
    if (ioctl(pdata->fd, OMAPFB_QUERY_PLANE, &pdata->saved_state->pi) != 0)
    {
-      ELOG(@"[video_omap]: backup layer (plane) failed\n");
+      printf("Error: [video_omap]: backup layer (plane) failed\n");
       return -1;
    }
 
    if (ioctl(pdata->fd, OMAPFB_QUERY_MEM, &pdata->saved_state->mi) != 0)
    {
-      ELOG(@"[video_omap]: backup layer (mem) failed\n");
+      printf("Error: [video_omap]: backup layer (mem) failed\n");
       return -1;
    }
 
    if (ioctl(pdata->fd, FBIOGET_VSCREENINFO, &pdata->saved_state->si) != 0)
    {
-      ELOG(@"[video_omap]: backup layer (screeninfo) failed\n");
+      printf("Error: [video_omap]: backup layer (screeninfo) failed\n");
       return -1;
    }
 
@@ -380,7 +380,7 @@ static int omapfb_backup_state(omapfb_data_t *pdata)
          MAP_SHARED, pdata->fd, 0);
    if (pdata->saved_state->mem == NULL || mem == MAP_FAILED)
    {
-      ELOG(@"[video_omap]: backup layer (mem backup) failed\n");
+      printf("Error: [video_omap]: backup layer (mem backup) failed\n");
       munmap(mem, pdata->saved_state->mi.size);
       return -1;
    }
@@ -408,13 +408,13 @@ static int omapfb_alloc_mem(omapfb_data_t *pdata)
 
    if (ioctl(pdata->fd, OMAPFB_QUERY_PLANE, &pi) != 0)
    {
-      ELOG(@"[video_omap]: alloc mem (query plane) failed\n");
+      printf("Error: [video_omap]: alloc mem (query plane) failed\n");
       goto error;
    }
 
    if (ioctl(pdata->fd, OMAPFB_QUERY_MEM, &mi) != 0)
    {
-      ELOG(@"[video_omap]: alloc mem (query mem) failed\n");
+      printf("Error: [video_omap]: alloc mem (query mem) failed\n");
       goto error;
    }
 
@@ -424,7 +424,7 @@ static int omapfb_alloc_mem(omapfb_data_t *pdata)
       pi.enabled = 0;
       if (ioctl(pdata->fd, OMAPFB_SETUP_PLANE, &pi) != 0)
       {
-         ELOG(@"[video_omap]: alloc mem (disable plane) failed\n");
+         printf("Error: [video_omap]: alloc mem (disable plane) failed\n");
          goto error;
       }
    }
@@ -446,7 +446,7 @@ static int omapfb_alloc_mem(omapfb_data_t *pdata)
 
       if (ioctl(pdata->fd, OMAPFB_SETUP_MEM, &mi) != 0)
       {
-         ELOG(@"[video_omap]: allocation of %u bytes of VRAM failed\n", mem_size);
+         printf("Error: [video_omap]: allocation of %u bytes of VRAM failed\n", mem_size);
          goto error;
       }
    }
@@ -454,7 +454,7 @@ static int omapfb_alloc_mem(omapfb_data_t *pdata)
    mem = mmap(NULL, mi.size, PROT_WRITE|PROT_READ, MAP_SHARED, pdata->fd, 0);
    if (mem == MAP_FAILED)
    {
-      ELOG(@"[video_omap]: zeroing framebuffer failed\n");
+      printf("Error: [video_omap]: zeroing framebuffer failed\n");
       goto error;
    }
    memset(mem, 0, mi.size);
@@ -489,7 +489,7 @@ static int omapfb_setup_screeninfo(omapfb_data_t *pdata, int width, int height)
 
    if (ioctl(pdata->fd, FBIOPUT_VSCREENINFO, &state->si) != 0)
    {
-      ELOG(@"[video_omap]: setup screeninfo failed\n");
+      printf("Error: [video_omap]: setup screeninfo failed\n");
       return -1;
    }
 
@@ -521,13 +521,13 @@ static int omapfb_setup_plane(omapfb_data_t *pdata, int width, int height)
 
    if (width * height * pdata->bpp * pdata->num_pages > pdata->current_state->mi.size)
    {
-      ELOG(@"omap_video: fb dimensions too large for allocated buffer\n");
+      printf("Error: omap_video: fb dimensions too large for allocated buffer\n");
       return -1;
    }
 
    if (ioctl(pdata->fd, OMAPFB_QUERY_PLANE, &pi) != 0)
    {
-      ELOG(@"[video_omap]: setup plane (query) failed\n");
+      printf("Error: [video_omap]: setup plane (query) failed\n");
       return -1;
    }
 
@@ -540,7 +540,7 @@ static int omapfb_setup_plane(omapfb_data_t *pdata, int width, int height)
 
    if (ioctl(pdata->fd, OMAPFB_SETUP_PLANE, &pi) != 0)
    {
-      ELOG(@"[video_omap]: setup plane (param = %d %d %d %d) failed\n", x, y, w, h);
+      printf("Error: [video_omap]: setup plane (param = %d %d %d %d) failed\n", x, y, w, h);
       return -1;
    }
 
@@ -555,7 +555,7 @@ static int omapfb_enable_plane(omapfb_data_t *pdata)
 
    if (ioctl(pdata->fd, OMAPFB_QUERY_PLANE, &pi) != 0)
    {
-      ELOG(@"[video_omap]: enable plane (query) failed\n");
+      printf("Error: [video_omap]: enable plane (query) failed\n");
       return -1;
    }
 
@@ -563,7 +563,7 @@ static int omapfb_enable_plane(omapfb_data_t *pdata)
 
    if (ioctl(pdata->fd, OMAPFB_SETUP_PLANE, &pi) != 0)
    {
-      ELOG(@"[video_omap]: enable plane failed\n");
+      printf("Error: [video_omap]: enable plane failed\n");
       return -1;
    }
 
@@ -578,7 +578,7 @@ static int omapfb_init(omapfb_data_t *pdata, unsigned bpp)
 
    if (fd == -1)
    {
-      ELOG(@"[video_omap]: can't open framebuffer device\n");
+      printf("Error: [video_omap]: can't open framebuffer device\n");
       return -1;
    }
 
@@ -975,7 +975,7 @@ fail_omapfb:
    free(vid->omap);
 fail:
    free(vid);
-   ELOG(@"[video_omap]: initialization failed\n");
+   printf("Error: [video_omap]: initialization failed\n");
    return NULL;
 }
 
@@ -993,7 +993,7 @@ static bool omap_gfx_frame(void *data, const void *frame, unsigned width,
 
       if (omapfb_set_mode(vid->omap, width, height) != 0)
       {
-         ELOG(@"[video_omap]: mode set failed\n");
+         printf("Error: [video_omap]: mode set failed\n");
          return false;
       }
 

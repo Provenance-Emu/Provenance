@@ -192,7 +192,7 @@ static const blissbox_pad_type_t* input_autoconfigure_get_blissbox_pad_type_win3
 
    if (hDeviceInfo == INVALID_HANDLE_VALUE)
    {
-      ELOG(@"[Autoconf]: Error in SetupDiGetClassDevs: %d.\n",
+      printf("Error: [Autoconf]: Error in SetupDiGetClassDevs: %d.\n",
             GetLastError());
       goto done;
    }
@@ -238,7 +238,7 @@ static const blissbox_pad_type_t* input_autoconfigure_get_blissbox_pad_type_win3
          /* Check for some other error */
          if (!bResult)
          {
-            ELOG(@"[Autoconf]: Error in SetupDiEnumDeviceInterfaces: %d.\n", GetLastError());
+            printf("Error: [Autoconf]: Error in SetupDiEnumDeviceInterfaces: %d.\n", GetLastError());
             goto done;
          }
 
@@ -267,13 +267,13 @@ static const blissbox_pad_type_t* input_autoconfigure_get_blissbox_pad_type_win3
 
                if (!pInterfaceDetailData)
                {
-                  ELOG(@"[Autoconf]: Error allocating memory for the device detail buffer.\n");
+                  printf("Error: [Autoconf]: Error allocating memory for the device detail buffer.\n");
                   goto done;
                }
             }
             else
             {
-               ELOG(@"[Autoconf]: Other error: %d.\n", GetLastError());
+               printf("Error: [Autoconf]: Other error: %d.\n", GetLastError());
                goto done;
             }
          }
@@ -320,7 +320,7 @@ static const blissbox_pad_type_t* input_autoconfigure_get_blissbox_pad_type_win3
 
    if (!lp_device_path)
    {
-      ELOG(@"[Autoconf]: No devicepath. Error %d.", GetLastError());
+      printf("Error: [Autoconf]: No devicepath. Error %d.", GetLastError());
       goto done;
    }
 
@@ -354,7 +354,7 @@ found:
 
       if (hDeviceHandle == INVALID_HANDLE_VALUE)
       {
-         ELOG(@"[Autoconf]: Can't open device for reading and writing: %d.", GetLastError());
+         printf("Error: [Autoconf]: Can't open device for reading and writing: %d.", GetLastError());
          runloop_msg_queue_push("Bliss-Box already in use. Please make sure other programs are not using it.", 2, 300, false, NULL, MESSAGE_QUEUE_ICON_DEFAULT, MESSAGE_QUEUE_CATEGORY_INFO);
          goto done;
       }
@@ -370,7 +370,7 @@ done:
    pInterfaceDetailData = NULL;
 
    if (!bResult)
-      ELOG(@"[Autoconf]: Could not destroy device info list.\n");
+      printf("Error: [Autoconf]: Could not destroy device info list.\n");
 
    /* Device is not connected */
    if (!hDeviceHandle || hDeviceHandle == INVALID_HANDLE_VALUE)
@@ -408,7 +408,7 @@ static const blissbox_pad_type_t* input_autoconfigure_get_blissbox_pad_type_libu
 
    if (ret < 0)
    {
-      ELOG(@"[Autoconf]: Could not initialize libusb.\n");
+      printf("Error: [Autoconf]: Could not initialize libusb.\n");
       return NULL;
    }
 
@@ -416,7 +416,7 @@ static const blissbox_pad_type_t* input_autoconfigure_get_blissbox_pad_type_libu
 
    if (!autoconfig_libusb_handle)
    {
-      ELOG(@"[Autoconf]: Could not find or open libusb device %d:%d.\n", vid, pid);
+      printf("Error: [Autoconf]: Could not find or open libusb device %d:%d.\n", vid, pid);
       goto error;
    }
 
@@ -428,7 +428,7 @@ static const blissbox_pad_type_t* input_autoconfigure_get_blissbox_pad_type_libu
 
    if (ret < 0)
    {
-      ELOG(@"[Autoconf]: Error during libusb_set_configuration.\n");
+      printf("Error: [Autoconf]: Error during libusb_set_configuration.\n");
       goto error;
    }
 
@@ -436,14 +436,14 @@ static const blissbox_pad_type_t* input_autoconfigure_get_blissbox_pad_type_libu
 
    if (ret < 0)
    {
-      ELOG(@"[Autoconf]: Error during libusb_claim_interface.\n");
+      printf("Error: [Autoconf]: Error during libusb_claim_interface.\n");
       goto error;
    }
 
    ret = libusb_control_transfer(autoconfig_libusb_handle, USB_CTRL_IN, USB_HID_GET_REPORT, BLISSBOX_USB_FEATURE_REPORT_ID, 0, answer, USB_PACKET_CTRL_LEN, USB_TIMEOUT);
 
    if (ret < 0)
-      ELOG(@"[Autoconf]: Error during libusb_control_transfer.\n");
+      printf("Error: [Autoconf]: Error during libusb_control_transfer.\n");
 
    libusb_release_interface(autoconfig_libusb_handle, 0);
 

@@ -212,14 +212,14 @@ static void parport_free_pad(struct parport_joypad *pad)
    char data = pad->saved_data;
 
    if (ioctl(pad->fd, PPWDATA, &data) < 0)
-      ELOG(@"[Joypad]: Failed to restore original data register on %s\n", pad->ident);
+      printf("Error: [Joypad]: Failed to restore original data register on %s\n", pad->ident);
 
    data = pad->saved_control;
    if (ioctl(pad->fd, PPWDATA, &data) < 0)
-      ELOG(@"[Joypad]: Failed to restore original control register on %s\n", pad->ident);
+      printf("Error: [Joypad]: Failed to restore original control register on %s\n", pad->ident);
 
    if (ioctl(pad->fd, PPRELEASE) < 0)
-      ELOG(@"[Joypad]: Failed to release parallel port %s\n", pad->ident);
+      printf("Error: [Joypad]: Failed to release parallel port %s\n", pad->ident);
 
    close(pad->fd);
    pad->fd = -1;

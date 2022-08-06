@@ -1031,7 +1031,7 @@ static config_file_t *open_default_config_file(void)
       if (!saved)
       {
          /* WARN here to make sure user has a good chance of seeing it. */
-         ELOG(@"Failed to create new config file in: \"%s\".\n",
+         printf("Error: Failed to create new config file in: \"%s\".\n",
                conf_path);
          config_file_free(conf);
          return NULL;
@@ -1065,7 +1065,7 @@ static config_file_t *open_default_config_file(void)
       if (!saved)
       {
          /* WARN here to make sure user has a good chance of seeing it. */
-         ELOG(@"Failed to create new config file in: \"%s\".\n",
+         printf("Error: Failed to create new config file in: \"%s\".\n",
                conf_path);
          config_file_free(conf);
 
@@ -1135,7 +1135,7 @@ static config_file_t *open_default_config_file(void)
          if (!saved)
          {
             /* WARN here to make sure user has a good chance of seeing it. */
-            ELOG(@"Failed to create new config file in: \"%s\".\n", conf_path);
+            printf("Error: Failed to create new config file in: \"%s\".\n", conf_path);
             config_file_free(conf);
 
             return NULL;
@@ -1530,7 +1530,7 @@ static bool config_load_file(const char *path, bool set_defaults)
       VLOG(@"Config: appending config \"%s\"\n", extra_path);
 
       if (!ret)
-         ELOG(@"Config: failed to append config \"%s\"\n", extra_path);
+         printf("Error: Config: failed to append config \"%s\"\n", extra_path);
       extra_path = strtok_r(NULL, "|", &save);
    }
 #if 0
@@ -2514,7 +2514,7 @@ static void parse_config_file(void)
    if (ret)
       return;
 
-   ELOG(@"Config: couldn't find config at path: \"%s\"\n",
+   printf("Error: Config: couldn't find config at path: \"%s\"\n",
          global->path.config);
 }
 

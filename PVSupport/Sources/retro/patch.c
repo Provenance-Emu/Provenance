@@ -541,7 +541,7 @@ static bool apply_patch_content(uint8_t **buf,
 
    if (!patched_content)
    {
-//      ELOG(@"%s\n",
+//      printf("Error: %s\n",
 //            msg_hash_to_str(MSG_FAILED_TO_ALLOCATE_MEMORY_FOR_PATCHED_CONTENT));
       goto error;
    }
@@ -557,7 +557,7 @@ static bool apply_patch_content(uint8_t **buf,
       success = true;
    }
 //   else
-//      ELOG(@"%s %s: %s #%u\n",
+//      printf("Error: %s %s: %s #%u\n",
 //            msg_hash_to_str(MSG_FAILED_TO_PATCH),
 //            patch_desc,
 //            msg_hash_to_str(MSG_ERROR),

@@ -57,7 +57,7 @@ static void alsa_worker_thread(void *data)
    uint8_t *buf = (uint8_t *)calloc(1, alsa->period_size);
    if (!buf)
    {
-      ELOG(@"failed to allocate audio buffer");
+      printf("Error: failed to allocate audio buffer");
       goto end;
    }
 
@@ -83,7 +83,7 @@ static void alsa_worker_thread(void *data)
       {
          if (snd_pcm_recover(alsa->pcm, frames, 1) < 0)
          {
-            ELOG(@"[ALSA]: (#2) Failed to recover from error (%s)\n",
+            printf("Error: [ALSA]: (#2) Failed to recover from error (%s)\n",
                   snd_strerror(frames));
             break;
          }
@@ -92,7 +92,7 @@ static void alsa_worker_thread(void *data)
       }
       else if (frames < 0)
       {
-         ELOG(@"[ALSA]: Unknown error occurred (%s).\n",
+         printf("Error: [ALSA]: Unknown error occurred (%s).\n",
                snd_strerror(frames));
          break;
       }
@@ -226,14 +226,14 @@ static void *alsa_thread_init(const char *device,
    alsa->worker_thread = sthread_create(alsa_worker_thread, alsa);
    if (!alsa->worker_thread)
    {
-      ELOG(@"error initializing worker thread");
+      printf("Error: error initializing worker thread");
       goto error;
    }
 
    return alsa;
 
 error:
-   ELOG(@"ALSA: Failed to initialize...\n");
+   printf("Error: ALSA: Failed to initialize...\n");
    if (params)
       snd_pcm_hw_params_free(params);
 

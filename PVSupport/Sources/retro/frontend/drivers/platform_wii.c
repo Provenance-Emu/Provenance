@@ -144,7 +144,7 @@ void system_exec_wii(const char *_path, bool should_load_game)
    fp = fopen(path, "rb");
    if (fp == NULL)
    {
-      ELOG(@"Could not open DOL file %s.\n", path);
+      printf("Error: Could not open DOL file %s.\n", path);
       goto exit;
    }
 
@@ -156,7 +156,7 @@ void system_exec_wii(const char *_path, bool should_load_game)
    dol = malloc(size);
    if (!dol)
    {
-      ELOG(@"Could not execute DOL file %s.\n", path);
+      printf("Error: Could not execute DOL file %s.\n", path);
       fclose(fp);
       goto exit;
    }

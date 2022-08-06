@@ -259,7 +259,7 @@ static void *xa_init(const char *device, unsigned rate, unsigned latency)
    xa->xa = xaudio2_new(rate, 2, xa->bufsize, device_index);
    if (!xa->xa)
    {
-      ELOG(@"Failed to init XAudio2.\n");
+      printf("Error: Failed to init XAudio2.\n");
       free(xa);
       return NULL;
    }

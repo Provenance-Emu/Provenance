@@ -219,20 +219,20 @@ static void create_gl_context(HWND hwnd, bool *quit)
                *quit = true;
          }
          else
-            ELOG(@"[WGL]: Failed to create core context. Falling back to legacy context.\n");
+            printf("Error: [WGL]: Failed to create core context. Falling back to legacy context.\n");
 
          if (g_use_hw_ctx)
          {
             g_hw_hrc = pcreate_context(g_hdc, context, attribs);
             if (!g_hw_hrc)
             {
-               ELOG(@"[WGL]: Failed to create shared context.\n");
+               printf("Error: [WGL]: Failed to create shared context.\n");
                *quit = true;
             }
          }
       }
       else
-         ELOG(@"[WGL]: wglCreateContextAttribsARB not supported.\n");
+         printf("Error: [WGL]: wglCreateContextAttribsARB not supported.\n");
    }
 }
 #endif
@@ -367,7 +367,7 @@ static bool gfx_ctx_wgl_set_resize(void *data,
 #ifdef HAVE_VULKAN
          if (!vulkan_create_swapchain(&g_vk, width, height, g_interval))
          {
-            ELOG(@"[Win32/Vulkan]: Failed to update swapchain.\n");
+            printf("Error: [Win32/Vulkan]: Failed to update swapchain.\n");
             return false;
          }
 
@@ -527,7 +527,7 @@ static bool gfx_ctx_wgl_set_video_mode(void *data,
 {
    if (!win32_set_video_mode(NULL, width, height, fullscreen))
    {
-      ELOG(@"[WGL]: win32_set_video_mode failed.\n");
+      printf("Error: [WGL]: win32_set_video_mode failed.\n");
       goto error;
    }
 

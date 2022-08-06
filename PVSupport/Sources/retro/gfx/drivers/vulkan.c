@@ -683,7 +683,7 @@ static bool vulkan_init_default_filter_chain(vk_t *vk)
 
    if (!vk->filter_chain)
    {
-      ELOG(@"Failed to create filter chain.\n");
+      printf("Error: Failed to create filter chain.\n");
       return false;
    }
 
@@ -717,7 +717,7 @@ static bool vulkan_init_filter_chain_preset(vk_t *vk, const char *shader_path)
 
    if (!vk->filter_chain)
    {
-      ELOG(@"[Vulkan]: Failed to create preset: \"%s\".\n", shader_path);
+      printf("Error: [Vulkan]: Failed to create preset: \"%s\".\n", shader_path);
       return false;
    }
 
@@ -1010,7 +1010,7 @@ static void vulkan_init_readback(vk_t *vk)
    if (!scaler_ctx_gen_filter(&vk->readback.scaler))
    {
       vk->readback.streamed = false;
-      ELOG(@"[Vulkan]: Failed to initialize scaler context.\n");
+      printf("Error: [Vulkan]: Failed to initialize scaler context.\n");
    }
 }
 
@@ -1037,7 +1037,7 @@ static void *vulkan_init(const video_info_t *video,
    ctx_driver = vulkan_get_context(vk);
    if (!ctx_driver)
    {
-      ELOG(@"[Vulkan]: Failed to get Vulkan context.\n");
+      printf("Error: [Vulkan]: Failed to get Vulkan context.\n");
       goto error;
    }
 
@@ -1068,7 +1068,7 @@ static void *vulkan_init(const video_info_t *video,
 
    if (!video_context_driver_set_video_mode(&mode))
    {
-      ELOG(@"[Vulkan]: Failed to set video mode.\n");
+      printf("Error: [Vulkan]: Failed to set video mode.\n");
       goto error;
    }
 
@@ -1103,7 +1103,7 @@ static void *vulkan_init(const video_info_t *video,
 
    if (!vulkan_init_filter_chain(vk))
    {
-      ELOG(@"[Vulkan]: Failed to init filter chain.\n");
+      printf("Error: [Vulkan]: Failed to init filter chain.\n");
       goto error;
    }
 
@@ -1116,7 +1116,7 @@ static void *vulkan_init(const video_info_t *video,
       if (!font_driver_init_first(NULL, NULL, vk, *settings->path.font 
             ? settings->path.font : NULL, settings->video.font_size, false,
             FONT_DRIVER_RENDER_VULKAN_API))
-         ELOG(@"[Vulkan]: Failed to initialize font renderer.\n");
+         printf("Error: [Vulkan]: Failed to initialize font renderer.\n");
    }
 
    vulkan_init_readback(vk);
@@ -1137,7 +1137,7 @@ static void vulkan_update_filter_chain(vk_t *vk)
    };
 
    if (!vulkan_filter_chain_update_swapchain_info(vk->filter_chain, &info))
-      ELOG(@"Failed to update filter chain info. This will probably lead to a crash ...\n");
+      printf("Error: Failed to update filter chain info. This will probably lead to a crash ...\n");
 }
 
 static void vulkan_check_swapchain(vk_t *vk)
@@ -1250,7 +1250,7 @@ static bool vulkan_set_shader(void *data,
 
    if (!vulkan_init_filter_chain_preset(vk, path))
    {
-      ELOG(@"[Vulkan]: Failed to create filter chain: \"%s\". Falling back to stock.\n", path);
+      printf("Error: [Vulkan]: Failed to create filter chain: \"%s\". Falling back to stock.\n", path);
       vulkan_init_default_filter_chain(vk);
       return false;
    }
@@ -1669,7 +1669,7 @@ static bool vulkan_frame(void *data, const void *frame,
          /* Does this make that this can happen at all? */
          if (!vk->hw.image)
          {
-            ELOG(@"[Vulkan]: HW image is not set. Buggy core?\n");
+            printf("Error: [Vulkan]: HW image is not set. Buggy core?\n");
             return false;
          }
 

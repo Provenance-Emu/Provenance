@@ -102,15 +102,15 @@ static bool init_mmap(void *data)
    if (xioctl(v4l->fd, (uint8_t)VIDIOC_REQBUFS, &req) == -1)
    {
       if (errno == EINVAL)
-         ELOG(@"%s does not support memory mapping.\n", v4l->dev_name);
+         printf("Error: %s does not support memory mapping.\n", v4l->dev_name);
       else
-         ELOG(@"xioctl of VIDIOC_REQBUFS failed.\n");
+         printf("Error: xioctl of VIDIOC_REQBUFS failed.\n");
       return false;
    }
 
    if (req.count < 2)
    {
-      ELOG(@"Insufficient buffer memory on %s.\n", v4l->dev_name);
+      printf("Error: Insufficient buffer memory on %s.\n", v4l->dev_name);
       return false;
    }
 
@@ -118,7 +118,7 @@ static bool init_mmap(void *data)
 
    if (!v4l->buffers)
    {
-      ELOG(@"Out of memory allocating V4L2 buffers.\n");
+      printf("Error: Out of memory allocating V4L2 buffers.\n");
       return false;
    }
 
@@ -134,7 +134,7 @@ static bool init_mmap(void *data)
 
       if (xioctl(v4l->fd, (uint8_t)VIDIOC_QUERYBUF, &buf) == -1)
       {
-         ELOG(@"Error - xioctl VIDIOC_QUERYBUF.\n");
+         printf("Error: Error - xioctl VIDIOC_QUERYBUF.\n");
          return false;
       }
 
@@ -146,7 +146,7 @@ static bool init_mmap(void *data)
 
       if (v4l->buffers[v4l->n_buffers].start == MAP_FAILED)
       {
-         ELOG(@"Error - mmap.\n");
+         printf("Error: Error - mmap.\n");
          return false;
       }
    }
@@ -165,21 +165,21 @@ static bool init_device(void *data)
    if (xioctl(v4l->fd, (uint8_t)VIDIOC_QUERYCAP, &cap) < 0)
    {
       if (errno == EINVAL)
-         ELOG(@"%s is no V4L2 device.\n", v4l->dev_name);
+         printf("Error: %s is no V4L2 device.\n", v4l->dev_name);
       else
-         ELOG(@"Error - VIDIOC_QUERYCAP.\n");
+         printf("Error: Error - VIDIOC_QUERYCAP.\n");
       return false;
    }
 
    if (!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE))
    {
-      ELOG(@"%s is no video capture device.\n", v4l->dev_name);
+      printf("Error: %s is no video capture device.\n", v4l->dev_name);
       return false;
    }
 
    if (!(cap.capabilities & V4L2_CAP_STREAMING))
    {
-      ELOG(@"%s does not support streaming I/O (V4L2_CAP_STREAMING).\n",
+      printf("Error: %s does not support streaming I/O (V4L2_CAP_STREAMING).\n",
             v4l->dev_name);
       return false;
    }
@@ -205,7 +205,7 @@ static bool init_device(void *data)
 
    if (xioctl(v4l->fd, (uint8_t)VIDIOC_S_FMT, &fmt) < 0)
    {
-      ELOG(@"Error - VIDIOC_S_FMT\n");
+      printf("Error: Error - VIDIOC_S_FMT\n");
       return false;
    }
 
@@ -220,14 +220,14 @@ static bool init_device(void *data)
     */
    if (fmt.fmt.pix.pixelformat != V4L2_PIX_FMT_YUYV)
    {
-      ELOG(@"The V4L2 device doesn't support YUYV.\n");
+      printf("Error: The V4L2 device doesn't support YUYV.\n");
       return false;
    }
 
    if (fmt.fmt.pix.field != V4L2_FIELD_NONE
          && fmt.fmt.pix.field != V4L2_FIELD_INTERLACED)
    {
-      ELOG(@"The V4L2 device doesn't support progressive nor interlaced video.\n");
+      printf("Error: The V4L2 device doesn't support progressive nor interlaced video.\n");
       return false;
    }
 
@@ -242,7 +242,7 @@ static void v4l_stop(void *data)
    enum v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
    if (xioctl(v4l->fd, VIDIOC_STREAMOFF, &type) == -1)
-      ELOG(@"Error - VIDIOC_STREAMOFF.\n");
+      printf("Error: Error - VIDIOC_STREAMOFF.\n");
 
    v4l->ready = false;
 }
@@ -265,7 +265,7 @@ static bool v4l_start(void *data)
 
       if (xioctl(v4l->fd, (uint8_t)VIDIOC_QBUF, &buf) == -1)
       {
-         ELOG(@"Error - VIDIOC_QBUF.\n");
+         printf("Error: Error - VIDIOC_QBUF.\n");
          return false;
       }
    }
@@ -274,7 +274,7 @@ static bool v4l_start(void *data)
 
    if (xioctl(v4l->fd, VIDIOC_STREAMON, &type) == -1)
    {
-      ELOG(@"Error - VIDIOC_STREAMON.\n");
+      printf("Error: Error - VIDIOC_STREAMON.\n");
       return false;
    }
 
@@ -290,7 +290,7 @@ static void v4l_free(void *data)
    unsigned i;
    for (i = 0; i < v4l->n_buffers; i++)
       if (munmap(v4l->buffers[i].start, v4l->buffers[i].length) == -1)
-         ELOG(@"munmap failed.\n");
+         printf("Error: munmap failed.\n");
 
    if (v4l->fd >= 0)
       close(v4l->fd);
@@ -307,7 +307,7 @@ static void *v4l_init(const char *device, uint64_t caps,
 
    if ((caps & (UINT64_C(1) << RETRO_CAMERA_BUFFER_RAW_FRAMEBUFFER)) == 0)
    {
-      ELOG(@"video4linux2 returns raw framebuffers.\n");
+      printf("Error: video4linux2 returns raw framebuffers.\n");
       return NULL;
    }
 
@@ -324,7 +324,7 @@ static void *v4l_init(const char *device, uint64_t caps,
 
    if (!path_is_character_special(v4l->dev_name))
    {
-      ELOG(@"%s is no device.\n", v4l->dev_name);
+      printf("Error: %s is no device.\n", v4l->dev_name);
       goto error;
    }
 
@@ -332,7 +332,7 @@ static void *v4l_init(const char *device, uint64_t caps,
 
    if (v4l->fd == -1)
    {
-      ELOG(@"Cannot open '%s': %d, %s\n", v4l->dev_name,
+      printf("Error: Cannot open '%s': %d, %s\n", v4l->dev_name,
             errno, strerror(errno));
       goto error;
    }
@@ -345,7 +345,7 @@ static void *v4l_init(const char *device, uint64_t caps,
 
    if (!v4l->buffer_output)
    {
-      ELOG(@"Failed to allocate output buffer.\n");
+      printf("Error: Failed to allocate output buffer.\n");
       goto error;
    }
 
@@ -358,14 +358,14 @@ static void *v4l_init(const char *device, uint64_t caps,
 
    if (!scaler_ctx_gen_filter(&v4l->scaler))
    {
-      ELOG(@"Failed to create scaler.\n");
+      printf("Error: Failed to create scaler.\n");
       goto error;
    }
 
    return v4l;
 
 error:
-   ELOG(@"V4L2: Failed to initialize camera.\n");
+   printf("Error: V4L2: Failed to initialize camera.\n");
    v4l_free(v4l);
    return NULL;
 }
@@ -387,7 +387,7 @@ static bool preprocess_image(void *data)
          case EAGAIN:
             return false;
          default:
-            ELOG(@"VIDIOC_DQBUF.\n");
+            printf("Error: VIDIOC_DQBUF.\n");
             return false;
       }
    }
@@ -397,7 +397,7 @@ static bool preprocess_image(void *data)
    process_image(v4l, (const uint8_t*)v4l->buffers[buf.index].start);
 
    if (xioctl(v4l->fd, (uint8_t)VIDIOC_QBUF, &buf) == -1)
-      ELOG(@"VIDIOC_QBUF\n");
+      printf("Error: VIDIOC_QBUF\n");
 
    return true;
 }

@@ -311,7 +311,7 @@ static bool ffmpeg_init_audio(ffmpeg_t *handle)
          *params->acodec ? params->acodec : "flac");
    if (!codec)
    {
-      ELOG(@"[FFmpeg]: Cannot find acodec %s.\n",
+      printf("Error: [FFmpeg]: Cannot find acodec %s.\n",
             *params->acodec ? params->acodec : "flac");
       return false;
    }
@@ -405,7 +405,7 @@ static bool ffmpeg_init_video(ffmpeg_t *handle)
 
    if (!codec)
    {
-      ELOG(@"[FFmpeg]: Cannot find vcodec %s.\n",
+      printf("Error: [FFmpeg]: Cannot find vcodec %s.\n",
             *params->vcodec ? params->vcodec : "libx264rgb");
       return false;
    }
@@ -543,7 +543,7 @@ static bool ffmpeg_init_config(struct ff_config_param *params,
    params->conf = config_file_new(config);
    if (!params->conf)
    {
-      ELOG(@"Failed to load FFmpeg config \"%s\".\n", config);
+      printf("Error: Failed to load FFmpeg config \"%s\".\n", config);
       return false;
    }
 
@@ -578,7 +578,7 @@ static bool ffmpeg_init_config(struct ff_config_param *params,
       params->out_pix_fmt = av_get_pix_fmt(pix_fmt);
       if (params->out_pix_fmt == PIX_FMT_NONE)
       {
-         ELOG(@"Cannot find pix_fmt \"%s\".\n", pix_fmt);
+         printf("Error: Cannot find pix_fmt \"%s\".\n", pix_fmt);
          return false;
       }
    }

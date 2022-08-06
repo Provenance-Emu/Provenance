@@ -186,7 +186,7 @@ static void *gfx_ctx_vc_init(void *video_driver)
 
    if (g_egl_inited)
    {
-      ELOG(@"[VC/EGL]: Attempted to re-initialize driver.\n");
+      printf("Error: [VC/EGL]: Attempted to re-initialize driver.\n");
       return NULL;
    }
 
@@ -509,14 +509,14 @@ static bool gfx_ctx_vc_image_buffer_init(void *data,
    vc->pbuff_surf = eglCreatePbufferSurface(vc->egl.dpy, vc->egl.config, pbufsurface_list);
    if (vc->pbuff_surf == EGL_NO_SURFACE)
    {
-      ELOG(@"[VideoCore:EGLImage] failed to create PbufferSurface\n");
+      printf("Error: [VideoCore:EGLImage] failed to create PbufferSurface\n");
       goto fail;
    }
 
    vc->eglimage_ctx = eglCreateContext(vc->egl.dpy, vc->egl.config, NULL, NULL);
    if (vc->eglimage_ctx == EGL_NO_CONTEXT)
    {
-      ELOG(@"[VideoCore:EGLImage] failed to create context\n");
+      printf("Error: [VideoCore:EGLImage] failed to create context\n");
       goto fail;
    }
 
@@ -524,7 +524,7 @@ static bool gfx_ctx_vc_image_buffer_init(void *data,
    result = eglMakeCurrent(vc->egl.dpy, vc->pbuff_surf, vc->pbuff_surf, vc->eglimage_ctx);
    if (result == EGL_FALSE)
    {
-      ELOG(@"[VideoCore:EGLImage] failed to make context current\n");
+      printf("Error: [VideoCore:EGLImage] failed to make context current\n");
       goto fail;
    }
 

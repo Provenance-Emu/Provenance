@@ -496,7 +496,7 @@ void state_manager_event_init(void)
 
    if (audio_driver_has_callback())
    {
-      ELOG(@"%s.\n", msg_hash_to_str(MSG_REWIND_INIT_FAILED));
+      printf("Error: %s.\n", msg_hash_to_str(MSG_REWIND_INIT_FAILED));
       return;
    }
 
@@ -506,7 +506,7 @@ void state_manager_event_init(void)
 
    if (!rewind_state.size)
    {
-      ELOG(@"%s.\n",
+      printf("Error: %s.\n",
             msg_hash_to_str(MSG_REWIND_INIT_FAILED_THREADED_AUDIO));
       return;
    }

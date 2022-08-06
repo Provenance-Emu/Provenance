@@ -175,14 +175,14 @@ static void *ja_init(const char *device, unsigned rate, unsigned latency)
    jd->ports[1] = jack_port_register(jd->client, "right", JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
    if (jd->ports[0] == NULL || jd->ports[1] == NULL)
    {
-      ELOG(@"Failed to register ports.\n");
+      printf("Error: Failed to register ports.\n");
       goto error;
    }
    
    jports = jack_get_ports(jd->client, NULL, NULL, JackPortIsPhysical | JackPortIsInput);
    if (jports == NULL)
    {
-      ELOG(@"Failed to get ports.\n");
+      printf("Error: Failed to get ports.\n");
       goto error;
    }
 
@@ -195,7 +195,7 @@ static void *ja_init(const char *device, unsigned rate, unsigned latency)
       jd->buffer[i] = jack_ringbuffer_create(bufsize);
       if (jd->buffer[i] == NULL)
       {
-         ELOG(@"Failed to create buffers.\n");
+         printf("Error: Failed to create buffers.\n");
          goto error;
       }
    }
@@ -204,7 +204,7 @@ static void *ja_init(const char *device, unsigned rate, unsigned latency)
 
    if (jack_activate(jd->client) < 0)
    {
-      ELOG(@"Failed to activate Jack...\n");
+      printf("Error: Failed to activate Jack...\n");
       goto error;
    }
 
@@ -212,7 +212,7 @@ static void *ja_init(const char *device, unsigned rate, unsigned latency)
    {
       if (jack_connect(jd->client, jack_port_name(jd->ports[i]), dest_ports[i]))
       {
-         ELOG(@"Failed to connect to Jack port.\n");
+         printf("Error: Failed to connect to Jack port.\n");
          goto error;
       }
    }

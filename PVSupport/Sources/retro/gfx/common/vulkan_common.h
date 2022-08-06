@@ -465,7 +465,7 @@ static INLINE unsigned vulkan_format_to_bpp(VkFormat format)
          return 1;
 
       default:
-         ELOG(@"[Vulkan]: Unknown format.\n");
+         printf("Error: [Vulkan]: Unknown format.\n");
          abort();
    }
 }

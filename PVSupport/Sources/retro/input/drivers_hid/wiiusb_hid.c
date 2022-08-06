@@ -265,13 +265,13 @@ static int wiiusb_hid_add_adapter(void *data, usb_device_entry *dev)
    if (!hid)
    {
       free(adapter);
-      ELOG(@"Allocation of adapter failed.\n");
+      printf("Error: Allocation of adapter failed.\n");
       return -1;
    }
 
    if (USB_OpenDevice(dev->device_id, dev->vid, dev->pid, &adapter->handle) < 0)
    {
-      ELOG(@"Error opening device 0x%p (VID/PID: %04x:%04x).\n",
+      printf("Error: Error opening device 0x%p (VID/PID: %04x:%04x).\n",
            dev->device_id, dev->vid, dev->pid);
       free(adapter);
       return -1;
@@ -284,7 +284,7 @@ static int wiiusb_hid_add_adapter(void *data, usb_device_entry *dev)
 
    if (adapter->endpoint_in == 0)
    {
-      ELOG(@"Could not find HID config for device.\n");
+      printf("Error: Could not find HID config for device.\n");
       goto error;
    }
 
@@ -294,7 +294,7 @@ static int wiiusb_hid_add_adapter(void *data, usb_device_entry *dev)
 
    if (!adapter->send_control_buffer)
    {
-      ELOG(@"Error creating send control buffer.\n");
+      printf("Error: Error creating send control buffer.\n");
       goto error;
    }
 
@@ -309,7 +309,7 @@ static int wiiusb_hid_add_adapter(void *data, usb_device_entry *dev)
 
    if (!pad_connection_has_interface(hid->connections, adapter->slot))
    {
-      ELOG(@" Interface not found.\n");
+      printf("Error:  Interface not found.\n");
       goto error;
    }
 
@@ -573,7 +573,7 @@ static void *wiiusb_hid_init(void)
 
    if (!hid->poll_thread)
    {
-      ELOG(@"Error initializing poll thread.\n");
+      printf("Error: Error initializing poll thread.\n");
       goto error;
    }
 

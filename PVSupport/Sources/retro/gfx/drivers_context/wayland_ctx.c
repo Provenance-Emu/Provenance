@@ -380,7 +380,7 @@ static bool gfx_ctx_wl_set_resize(void *data, unsigned width, unsigned height)
             wl->vk.context.invalid_swapchain = true;
          else
          {
-            ELOG(@"[Wayland/Vulkan]: Failed to update swapchain.\n");
+            printf("Error: [Wayland/Vulkan]: Failed to update swapchain.\n");
             return false;
          }
 
@@ -543,7 +543,7 @@ static void *gfx_ctx_wl_init(void *video_driver)
 
    if (!wl->dpy)
    {
-      ELOG(@"Failed to connect to Wayland server.\n");
+      printf("Error: Failed to connect to Wayland server.\n");
       goto error;
    }
 
@@ -555,13 +555,13 @@ static void *gfx_ctx_wl_init(void *video_driver)
 
    if (!wl->compositor)
    {
-      ELOG(@"Failed to create compositor.\n");
+      printf("Error: Failed to create compositor.\n");
       goto error;
    }
 
    if (!wl->shell)
    {
-      ELOG(@"Failed to create shell.\n");
+      printf("Error: Failed to create shell.\n");
       goto error;
    }
 

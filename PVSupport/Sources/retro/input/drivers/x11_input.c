@@ -56,7 +56,7 @@ static void *x_input_init(void)
 
    if (video_driver_display_type_get() != RARCH_DISPLAY_X11)
    {
-      ELOG(@"Currently active window is not an X11 window. Cannot use this driver.\n");
+      printf("Error: Currently active window is not an X11 window. Cannot use this driver.\n");
       return NULL;
    }
 

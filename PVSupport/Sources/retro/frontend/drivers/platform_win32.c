@@ -92,13 +92,13 @@ static void gfx_set_dwm(void)
       (HRESULT (WINAPI*)(UINT))dylib_proc(dwmlib, "DwmEnableComposition");
    if (!composition_enable)
    {
-      ELOG(@"Did not find DwmEnableComposition ...\n");
+      printf("Error: Did not find DwmEnableComposition ...\n");
       return;
    }
 
    ret = composition_enable(!settings->video.disable_composition);
    if (FAILED(ret))
-      ELOG(@"Failed to set composition state ...\n");
+      printf("Error: Failed to set composition state ...\n");
    dwm_composition_disabled = settings->video.disable_composition;
 }
 

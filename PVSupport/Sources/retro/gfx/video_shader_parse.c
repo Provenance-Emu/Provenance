@@ -141,7 +141,7 @@ static bool video_shader_parse_pass(config_file_t *conf,
    snprintf(shader_name, sizeof(shader_name), "shader%u", i);
    if (!config_get_path(conf, shader_name, tmp_str, sizeof(tmp_str)))
    {
-      ELOG(@"Couldn't parse shader source (%s).\n", shader_name);
+      printf("Error: Couldn't parse shader source (%s).\n", shader_name);
       return false;
    }
 
@@ -228,7 +228,7 @@ static bool video_shader_parse_pass(config_file_t *conf,
             scale->type_x = RARCH_SCALE_ABSOLUTE;
             break;
          default:
-            ELOG(@"Invalid attribute.\n");
+            printf("Error: Invalid attribute.\n");
             return false;
       }
    }
@@ -249,7 +249,7 @@ static bool video_shader_parse_pass(config_file_t *conf,
             scale->type_y = RARCH_SCALE_ABSOLUTE;
             break;
          default:
-            ELOG(@"Invalid attribute.\n");
+            printf("Error: Invalid attribute.\n");
             return false;
       }
    }
@@ -338,7 +338,7 @@ static bool video_shader_parse_textures(config_file_t *conf,
       if (!config_get_array(conf, id, shader->lut[shader->luts].path,
                sizeof(shader->lut[shader->luts].path)))
       {
-         ELOG(@"Cannot find path to texture \"%s\" ...\n", id);
+         printf("Error: Cannot find path to texture \"%s\" ...\n", id);
          return false;
       }
 
@@ -542,7 +542,7 @@ static bool video_shader_parse_imports(config_file_t *conf,
 
       if (!config_get_array(conf, semantic_buf, semantic, sizeof(semantic)))
       {
-         ELOG(@"No semantic for import variable.\n");
+         printf("Error: No semantic for import variable.\n");
          return false;
       }
 
@@ -569,7 +569,7 @@ static bool video_shader_parse_imports(config_file_t *conf,
             var->type = RARCH_STATE_PYTHON;
             break;
          default:
-            ELOG(@"Invalid semantic.\n");
+            printf("Error: Invalid semantic.\n");
             return false;
       }
 
@@ -591,7 +591,7 @@ static bool video_shader_parse_imports(config_file_t *conf,
                   break;
 
                default:
-                  ELOG(@"Invalid input slot for import.\n");
+                  printf("Error: Invalid input slot for import.\n");
                   return false;
             }
          }
@@ -602,7 +602,7 @@ static bool video_shader_parse_imports(config_file_t *conf,
          }
          else
          {
-            ELOG(@"No address assigned to semantic.\n");
+            printf("Error: No address assigned to semantic.\n");
             return false;
          }
       }
@@ -641,13 +641,13 @@ bool video_shader_read_conf_cgp(config_file_t *conf, struct video_shader *shader
    shaders = 0;
    if (!config_get_uint(conf, "shaders", &shaders))
    {
-      ELOG(@"Cannot find \"shaders\" param.\n");
+      printf("Error: Cannot find \"shaders\" param.\n");
       return false;
    }
 
    if (!shaders)
    {
-      ELOG(@"Need to define at least 1 shader.\n");
+      printf("Error: Need to define at least 1 shader.\n");
       return false;
    }
 

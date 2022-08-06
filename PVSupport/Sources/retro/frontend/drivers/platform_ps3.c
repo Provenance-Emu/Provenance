@@ -163,7 +163,7 @@ static void frontend_ps3_get_environment_settings(int *argc, char *argv[],
    ret = cellGameBootCheck(&get_type, &get_attributes, &size, dirName);
    if(ret < 0)
    {
-      ELOG(@"cellGameBootCheck() Error: 0x%x.\n", ret);
+      printf("Error: cellGameBootCheck() Error: 0x%x.\n", ret);
    }
    else
    {
@@ -201,7 +201,7 @@ static void frontend_ps3_get_environment_settings(int *argc, char *argv[],
 #endif
 
       if(ret < 0)
-         ELOG(@"cellGameContentPermit() Error: 0x%x\n", ret);
+         printf("Error: cellGameContentPermit() Error: 0x%x\n", ret);
       else
       {
          VLOG(@"cellGameContentPermit() OK.\n");

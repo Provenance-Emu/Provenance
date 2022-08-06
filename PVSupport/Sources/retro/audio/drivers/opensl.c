@@ -197,7 +197,7 @@ static void *sl_init(const char *device, unsigned rate, unsigned latency)
    return sl;
 
 error:
-   ELOG(@"Couldn't initialize OpenSL ES driver, error code: [%d].\n", (int)res);
+   printf("Error: Couldn't initialize OpenSL ES driver, error code: [%d].\n", (int)res);
    sl_free(sl);
    return NULL;
 }
@@ -275,7 +275,7 @@ static ssize_t sl_write(void *data, const void *buf_, size_t size)
 
          if (res != SL_RESULT_SUCCESS)
          {
-            ELOG(@"[OpenSL]: Failed to write! (Error: 0x%x)\n", (unsigned)res);
+            printf("Error: [OpenSL]: Failed to write! (Error: 0x%x)\n", (unsigned)res);
             return -1;
          }
       }

@@ -296,7 +296,7 @@ static bool gfx_ctx_x_set_resize(void *data,
 #ifdef HAVE_VULKAN
          if (!vulkan_create_swapchain(&x->vk, width, height, x->g_interval))
          {
-            ELOG(@"[X/Vulkan]: Failed to update swapchain.\n");
+            printf("Error: [X/Vulkan]: Failed to update swapchain.\n");
             return false;
          }
 
@@ -483,7 +483,7 @@ static bool gfx_ctx_x_set_video_mode(void *data,
          true_full = true;
       }
       else
-         ELOG(@"[GLX]: Entering true fullscreen failed. Will attempt windowed mode.\n");
+         printf("Error: [GLX]: Entering true fullscreen failed. Will attempt windowed mode.\n");
    }
 
    if (settings->video.monitor_index)
@@ -623,7 +623,7 @@ static bool gfx_ctx_x_set_video_mode(void *data,
                         x->g_fbc, x->g_ctx, True, attribs);
 
                   if (!x->g_hw_ctx)
-                     ELOG(@"[GLX]: Failed to create new shared context.\n");
+                     printf("Error: [GLX]: Failed to create new shared context.\n");
                }
             }
             else
@@ -635,13 +635,13 @@ static bool gfx_ctx_x_set_video_mode(void *data,
                   x->g_hw_ctx = glXCreateNewContext(g_x11_dpy, x->g_fbc,
                         GLX_RGBA_TYPE, x->g_ctx, True);
                   if (!x->g_hw_ctx)
-                     ELOG(@"[GLX]: Failed to create new shared context.\n");
+                     printf("Error: [GLX]: Failed to create new shared context.\n");
                }
             }
 
             if (!x->g_ctx)
             {
-               ELOG(@"[GLX]: Failed to create new context.\n");
+               printf("Error: [GLX]: Failed to create new context.\n");
                goto error;
             }
          }

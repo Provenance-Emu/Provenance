@@ -95,7 +95,7 @@ static void *gfx_ctx_opendingux_init(void *video_driver)
 
 error:
 #ifdef HAVE_EGL
-   ELOG(@"[opendingux fbdev]: EGL error: %d.\n", eglGetError());
+   printf("Error: [opendingux fbdev]: EGL error: %d.\n", eglGetError());
 #endif
    gfx_ctx_opendingux_destroy(viv);
    return NULL;
@@ -188,7 +188,7 @@ static bool gfx_ctx_opendingux_set_video_mode(void *data,
 
 error:
 #ifdef HAVE_EGL
-   ELOG(@"[opendingux fbdev]: EGL error: %d.\n", eglGetError());
+   printf("Error: [opendingux fbdev]: EGL error: %d.\n", eglGetError());
 #endif
    gfx_ctx_opendingux_destroy(data);
    return false;

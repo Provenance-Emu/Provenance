@@ -147,7 +147,7 @@ static bool android_input_lookup_name_prekitkat(char *buf,
    CALL_OBJ_STATIC_METHOD_PARAM(env, device, class, method, (jint)id);
    if (!device)
    {
-      ELOG(@"Failed to find device for ID: %d\n", id);
+      printf("Error: Failed to find device for ID: %d\n", id);
       goto error;
    }
 
@@ -158,7 +158,7 @@ static bool android_input_lookup_name_prekitkat(char *buf,
    CALL_OBJ_METHOD(env, name, device, getName);
    if (!name)
    {
-      ELOG(@"Failed to find name for device ID: %d\n", id);
+      printf("Error: Failed to find name for device ID: %d\n", id);
       goto error;
    }
 
@@ -206,7 +206,7 @@ static bool android_input_lookup_name(char *buf,
    CALL_OBJ_STATIC_METHOD_PARAM(env, device, class, method, (jint)id);
    if (!device)
    {
-      ELOG(@"Failed to find device for ID: %d\n", id);
+      printf("Error: Failed to find device for ID: %d\n", id);
       goto error;
    }
 
@@ -217,7 +217,7 @@ static bool android_input_lookup_name(char *buf,
    CALL_OBJ_METHOD(env, name, device, getName);
    if (!name)
    {
-      ELOG(@"Failed to find name for device ID: %d\n", id);
+      printf("Error: Failed to find name for device ID: %d\n", id);
       goto error;
    }
 
@@ -651,14 +651,14 @@ static void handle_hotplug(android_input_data_t *android_data,
 
    if (*port > MAX_PADS)
    {
-      ELOG(@"Max number of pads reached.\n");
+      printf("Error: Max number of pads reached.\n");
       return;
    }
 
    if (!engine_lookup_name(device_name, &vendorId,
             &productId, sizeof(device_name), id))
    {
-      ELOG(@"Could not look up device name or IDs.\n");
+      printf("Error: Could not look up device name or IDs.\n");
       return;
    }
 

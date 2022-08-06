@@ -116,7 +116,7 @@ bool dinput_init_context(void)
    return true;
 
 error:
-   ELOG(@"Failed to initialize DirectInput.\n");
+   printf("Error: Failed to initialize DirectInput.\n");
    return false;
 }
 
@@ -127,7 +127,7 @@ static void *dinput_init(void)
 
    if (!dinput_init_context())
    {
-      ELOG(@"Failed to start DirectInput driver.\n");
+      printf("Error: Failed to start DirectInput driver.\n");
       return NULL;
    }
 
@@ -138,24 +138,24 @@ static void *dinput_init(void)
 #ifdef __cplusplus
    if (FAILED(IDirectInput8_CreateDevice(g_dinput_ctx, GUID_SysKeyboard, &di->keyboard, NULL)))
    {
-      ELOG(@"Failed to create keyboard device.\n");
+      printf("Error: Failed to create keyboard device.\n");
       di->keyboard = NULL;
    }
 
    if (FAILED(IDirectInput8_CreateDevice(g_dinput_ctx, GUID_SysMouse, &di->mouse, NULL)))
    {
-      ELOG(@"Failed to create mouse device.\n");
+      printf("Error: Failed to create mouse device.\n");
       di->mouse = NULL;
    }
 #else
    if (FAILED(IDirectInput8_CreateDevice(g_dinput_ctx, &GUID_SysKeyboard, &di->keyboard, NULL)))
    {
-      ELOG(@"Failed to create keyboard device.\n");
+      printf("Error: Failed to create keyboard device.\n");
       di->keyboard = NULL;
    }
    if (FAILED(IDirectInput8_CreateDevice(g_dinput_ctx, &GUID_SysMouse, &di->mouse, NULL)))
    {
-      ELOG(@"Failed to create mouse device.\n");
+      printf("Error: Failed to create mouse device.\n");
       di->mouse = NULL;
    }
 #endif
@@ -615,7 +615,7 @@ bool dinput_handle_message(void *dinput, UINT message, WPARAM wParam, LPARAM lPa
 
             if (!new_pointer)
             {
-               ELOG(@"dinput_handle_message: pointer allocation in WM_POINTERDOWN failed.\n");
+               printf("Error: dinput_handle_message: pointer allocation in WM_POINTERDOWN failed.\n");
                return false;
             }
 

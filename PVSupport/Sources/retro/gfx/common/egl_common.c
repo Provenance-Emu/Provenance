@@ -57,7 +57,7 @@ void egl_report_error(void)
          break;
    }
 
-   ELOG(@"[EGL]: #0x%x, %s\n", (unsigned)error, str);
+   printf("Error: [EGL]: #0x%x, %s\n", (unsigned)error, str);
 }
 
 gfx_ctx_proc_t egl_get_proc_address(const char *symbol)
@@ -147,7 +147,7 @@ void egl_set_swap_interval(egl_ctx_data_t *egl, unsigned interval)
    VLOG(@"[EGL]: eglSwapInterval(%u)\n", interval);
    if (!eglSwapInterval(egl->dpy, interval))
    {
-      ELOG(@"[EGL]: eglSwapInterval() failed.\n");
+      printf("Error: [EGL]: eglSwapInterval() failed.\n");
       egl_report_error();
    }
 }
@@ -177,7 +177,7 @@ bool egl_init_context(egl_ctx_data_t *egl,
    egl->dpy = eglGetDisplay(display);
    if (!egl->dpy)
    {
-      ELOG(@"[EGL]: Couldn't get EGL display.\n");
+      printf("Error: [EGL]: Couldn't get EGL display.\n");
       return false;
    }
 
@@ -238,7 +238,7 @@ bool egl_get_native_visual_id(egl_ctx_data_t *egl, EGLint *value)
    if (!eglGetConfigAttrib(egl->dpy, egl->config,
          EGL_NATIVE_VISUAL_ID, value))
    {
-      ELOG(@"[EGL]: egl_get_native_visual_id failed.\n");
+      printf("Error: [EGL]: egl_get_native_visual_id failed.\n");
       return false;
    }
 
@@ -249,7 +249,7 @@ bool egl_has_config(egl_ctx_data_t *egl)
 {
    if (!egl->config)
    {
-      ELOG(@"[EGL]: No EGL configurations available.\n");
+      printf("Error: [EGL]: No EGL configurations available.\n");
       return false;
    }
    return true;

@@ -246,7 +246,7 @@ static void sdl2_init_renderer(sdl2_video_t *vid)
 
    if (!vid->renderer)
    {
-      ELOG(@"[SDL]: Failed to initialize renderer: %s", SDL_GetError());
+      printf("Error: [SDL]: Failed to initialize renderer: %s", SDL_GetError());
       return;
    }
 
@@ -366,7 +366,7 @@ static void sdl_refresh_input_size(sdl2_video_t *vid, bool menu, bool rgb32,
 
       if (!target->tex)
       {
-         ELOG(@"Failed to create %s texture: %s\n", menu ? "menu" : "main",
+         printf("Error: Failed to create %s texture: %s\n", menu ? "menu" : "main",
                    SDL_GetError());
          return;
       }
@@ -440,7 +440,7 @@ static void *sdl2_gfx_init(const video_info_t *video,
 
    if (!vid->window)
    {
-      ELOG(@"[SDL]: Failed to init SDL window: %s\n", SDL_GetError());
+      printf("Error: [SDL]: Failed to init SDL window: %s\n", SDL_GetError());
       goto error;
    }
 

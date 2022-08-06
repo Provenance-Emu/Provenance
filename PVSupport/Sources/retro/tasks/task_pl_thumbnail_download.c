@@ -230,7 +230,7 @@ finish:
    /* Log any error messages */
    if (!string_is_empty(err))
    {
-      ELOG(@"Download of '%s' failed: %s\n",
+      printf("Error: Download of '%s' failed: %s\n",
             (transf ? transf->path: "unknown"), err);
    }
 

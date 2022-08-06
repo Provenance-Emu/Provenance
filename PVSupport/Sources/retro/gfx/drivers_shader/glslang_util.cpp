@@ -40,7 +40,7 @@ static bool read_shader_file(const char *path, vector<string> *output, bool root
 
    if (!filestream_read_file(path, (void**)&buf, &len))
    {
-      ELOG(@"Failed to open shader file: \"%s\".\n", path);
+      printf("Error: Failed to open shader file: \"%s\".\n", path);
       return false;
    }
 
@@ -70,7 +70,7 @@ static bool read_shader_file(const char *path, vector<string> *output, bool root
    {
       if (strstr(lines[0], "#version ") != lines[0])
       {
-         ELOG(@"First line of the shader must contain a valid #version string.\n");
+         printf("Error: First line of the shader must contain a valid #version string.\n");
          return false;
       }
 
@@ -93,7 +93,7 @@ static bool read_shader_file(const char *path, vector<string> *output, bool root
          char *c = (char*)strchr(line, '"');
          if (!c)
          {
-            ELOG(@"Invalid include statement \"%s\".\n", line);
+            printf("Error: Invalid include statement \"%s\".\n", line);
             free(buf);
             return false;
          }
@@ -101,7 +101,7 @@ static bool read_shader_file(const char *path, vector<string> *output, bool root
          char *closing = (char*)strchr(c, '"');
          if (!closing)
          {
-            ELOG(@"Invalid include statement \"%s\".\n", line);
+            printf("Error: Invalid include statement \"%s\".\n", line);
             free(buf);
             return false;
          }
@@ -263,7 +263,7 @@ static bool glslang_parse_meta(const vector<string> &lines, glslang_meta *meta)
       {
          if (!meta->name.empty())
          {
-            ELOG(@"[slang]: Trying to declare multiple names for file.\n");
+            printf("Error: [slang]: Trying to declare multiple names for file.\n");
             return false;
          }
 
@@ -299,7 +299,7 @@ static bool glslang_parse_meta(const vector<string> &lines, glslang_meta *meta)
                    itr->maximum != maximum ||
                    itr->step != step)
                {
-                  ELOG(@"[slang]: Duplicate parameters found for \"%s\", but arguments do not match.\n", id);
+                  printf("Error: [slang]: Duplicate parameters found for \"%s\", but arguments do not match.\n", id);
                   return false;
                }
             }
@@ -308,7 +308,7 @@ static bool glslang_parse_meta(const vector<string> &lines, glslang_meta *meta)
          }
          else
          {
-            ELOG(@"[slang]: Invalid #pragma parameter line: \"%s\".\n", line.c_str());
+            printf("Error: [slang]: Invalid #pragma parameter line: \"%s\".\n", line.c_str());
             return false;
          }
       }
@@ -316,7 +316,7 @@ static bool glslang_parse_meta(const vector<string> &lines, glslang_meta *meta)
       {
          if (meta->rt_format != SLANG_FORMAT_UNKNOWN)
          {
-            ELOG(@"[slang]: Trying to declare format multiple times for file.\n");
+            printf("Error: [slang]: Trying to declare format multiple times for file.\n");
             return false;
          }
 
@@ -327,7 +327,7 @@ static bool glslang_parse_meta(const vector<string> &lines, glslang_meta *meta)
          meta->rt_format = glslang_find_format(str);
          if (meta->rt_format == SLANG_FORMAT_UNKNOWN)
          {
-            ELOG(@"[slang]: Failed to find format \"%s\".\n", str);
+            printf("Error: [slang]: Failed to find format \"%s\".\n", str);
             return false;
          }
       }
@@ -349,14 +349,14 @@ bool glslang_compile_shader(const char *shader_path, glslang_output *output)
    if (!glslang::compile_spirv(build_stage_source(lines, "vertex"),
             glslang::StageVertex, &output->vertex))
    {
-      ELOG(@"Failed to compile vertex shader stage.\n");
+      printf("Error: Failed to compile vertex shader stage.\n");
       return false;
    }
 
    if (!glslang::compile_spirv(build_stage_source(lines, "fragment"),
             glslang::StageFragment, &output->fragment))
    {
-      ELOG(@"Failed to compile fragment shader stage.\n");
+      printf("Error: Failed to compile fragment shader stage.\n");
       return false;
    }
 

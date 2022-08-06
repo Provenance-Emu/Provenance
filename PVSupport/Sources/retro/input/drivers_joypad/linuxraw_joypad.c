@@ -102,7 +102,7 @@ static bool linuxraw_joypad_init_pad(const char *path, struct linuxraw_joypad *p
          }
       }
       else
-         ELOG(@"[Device]: Didn't find ident of %s.\n", path);
+         printf("Error: [Device]: Didn't find ident of %s.\n", path);
 
       if (!epoll_add(pad->fd, pad))
          goto error;
@@ -111,7 +111,7 @@ static bool linuxraw_joypad_init_pad(const char *path, struct linuxraw_joypad *p
    }
 
 error:
-   ELOG(@"[Device]: Failed to open pad %s (error: %s).\n", path, strerror(errno));
+   printf("Error: [Device]: Failed to open pad %s (error: %s).\n", path, strerror(errno));
    return false;
 }
 

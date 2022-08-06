@@ -64,14 +64,14 @@ static void *alsa_qsa_init(const char *device,
    if ((err = snd_pcm_open_preferred(&alsa->pcm, &card, &dev,
                SND_PCM_OPEN_PLAYBACK)) < 0)
    {
-      ELOG(@"[ALSA QSA]: Audio open error: %s\n",
+      printf("Error: [ALSA QSA]: Audio open error: %s\n",
             snd_strerror(err));
       goto error;
    }
 
    if((err = snd_pcm_nonblock_mode(alsa->pcm, 1)) < 0)
    {
-      ELOG(@"[ALSA QSA]: Can't set blocking mode: %s\n",
+      printf("Error: [ALSA QSA]: Can't set blocking mode: %s\n",
             snd_strerror(err));
       goto error;
    }
@@ -80,7 +80,7 @@ static void *alsa_qsa_init(const char *device,
    pi.channel = SND_PCM_CHANNEL_PLAYBACK;
    if ((err = snd_pcm_channel_info(alsa->pcm, &pi)) < 0)
    {
-      ELOG(@"[ALSA QSA]: snd_pcm_channel_info failed: %s\n",
+      printf("Error: [ALSA QSA]: snd_pcm_channel_info failed: %s\n",
             snd_strerror(err));
       goto error;
    }
@@ -108,7 +108,7 @@ static void *alsa_qsa_init(const char *device,
 
    if ((err = snd_pcm_channel_params(alsa->pcm, &params)) < 0)
    {
-      ELOG(@"[ALSA QSA]: Channel Parameter Error: %s\n",
+      printf("Error: [ALSA QSA]: Channel Parameter Error: %s\n",
             snd_strerror(err));
       goto error;
    }
@@ -117,7 +117,7 @@ static void *alsa_qsa_init(const char *device,
 
    if ((err = snd_pcm_channel_setup(alsa->pcm, &setup)) < 0)
    {
-      ELOG(@"[ALSA QSA]: Channel Parameter Read Back Error: %s\n",
+      printf("Error: [ALSA QSA]: Channel Parameter Read Back Error: %s\n",
             snd_strerror(err));
       goto error;
    }
@@ -135,7 +135,7 @@ static void *alsa_qsa_init(const char *device,
    if ((err = snd_pcm_channel_prepare(alsa->pcm,
                SND_PCM_CHANNEL_PLAYBACK)) < 0)
    {
-      ELOG(@"[ALSA QSA]: Channel Prepare Error: %s\n",
+      printf("Error: [ALSA QSA]: Channel Prepare Error: %s\n",
             snd_strerror(err));
       goto error;
    }
@@ -175,7 +175,7 @@ static int check_pcm_status(void *data, int channel_type)
    {
       if (status.status == SND_PCM_STATUS_UNSECURE)
       {
-         ELOG(@"check_pcm_status got SND_PCM_STATUS_UNSECURE, aborting playback\n");
+         printf("Error: check_pcm_status got SND_PCM_STATUS_UNSECURE, aborting playback\n");
          ret = -EPROTO;
       }
       else if (status.status == SND_PCM_STATUS_UNDERRUN)
@@ -183,7 +183,7 @@ static int check_pcm_status(void *data, int channel_type)
          VLOG(@"check_pcm_status: SNDP_CM_STATUS_UNDERRUN.\n");
          if ((ret = snd_pcm_channel_prepare(alsa->pcm, channel_type)) < 0)
          {
-            ELOG(@"Invalid state detected for underrun on snd_pcm_channel_prepare: %s\n",
+            printf("Error: Invalid state detected for underrun on snd_pcm_channel_prepare: %s\n",
                   snd_strerror(ret));
             ret = -EPROTO;
          }
@@ -193,7 +193,7 @@ static int check_pcm_status(void *data, int channel_type)
          VLOG(@"check_pcm_status: SNDP_CM_STATUS_OVERRUN.\n");
          if ((ret = snd_pcm_channel_prepare(alsa->pcm, channel_type)) < 0)
          {
-            ELOG(@"Invalid state detected for overrun on snd_pcm_channel_prepare: %s\n",
+            printf("Error: Invalid state detected for overrun on snd_pcm_channel_prepare: %s\n",
                   snd_strerror(ret));
             ret = -EPROTO;
          }
@@ -203,7 +203,7 @@ static int check_pcm_status(void *data, int channel_type)
          VLOG(@"check_pcm_status: SNDP_CM_STATUS_CHANGE.\n");
          if ((ret = snd_pcm_channel_prepare(alsa->pcm, channel_type)) < 0)
          {
-            ELOG(@"Invalid state detected for change on snd_pcm_channel_prepare: %s\n",
+            printf("Error: Invalid state detected for change on snd_pcm_channel_prepare: %s\n",
                   snd_strerror(ret));
             ret = -EPROTO;
          }
@@ -211,7 +211,7 @@ static int check_pcm_status(void *data, int channel_type)
    }
    else
    {
-      ELOG(@"check_pcm_status failed: %s\n", snd_strerror(ret));
+      printf("Error: check_pcm_status failed: %s\n", snd_strerror(ret));
       if (ret == -ESRCH)
          ret = -EBADF;
    }
@@ -301,7 +301,7 @@ static bool alsa_qsa_start(void *data)
 
       if (ret < 0)
       {
-         ELOG(@"[ALSA QSA]: Failed to unpause: %s.\n",
+         printf("Error: [ALSA QSA]: Failed to unpause: %s.\n",
                snd_strerror(ret));
          return false;
       }
@@ -320,7 +320,7 @@ static void alsa_qsa_set_nonblock_state(void *data, bool state)
 
    if((err = snd_pcm_nonblock_mode(alsa->pcm, state)) < 0)
    {
-      ELOG(@"Can't set blocking mode to %d: %s\n", state,
+      printf("Error: Can't set blocking mode to %d: %s\n", state,
             snd_strerror(err));
       return;
    }

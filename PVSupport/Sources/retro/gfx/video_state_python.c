@@ -309,7 +309,7 @@ py_state_t *py_state_new(const char *script,
 
       if (!ret || len < 0)
       {
-         ELOG(@"Python: Failed to read script\n");
+         printf("Error: Python: Failed to read script\n");
          free(script_);
          goto error;
       }
@@ -331,7 +331,7 @@ py_state_t *py_state_new(const char *script,
    handle->dict = PyModule_GetDict(handle->main);
    if (!handle->dict)
    {
-      ELOG(@"Python: PyModule_GetDict() failed.\n");
+      printf("Error: Python: PyModule_GetDict() failed.\n");
       goto error;
    }
    Py_INCREF(handle->dict);
@@ -339,14 +339,14 @@ py_state_t *py_state_new(const char *script,
    hook = PyDict_GetItemString(handle->dict, pyclass);
    if (!hook)
    {
-      ELOG(@"Python: PyDict_GetItemString() failed.\n");
+      printf("Error: Python: PyDict_GetItemString() failed.\n");
       goto error;
    }
 
    handle->inst = PyObject_CallFunction(hook, NULL);
    if (!handle->inst)
    {
-      ELOG(@"Python: PyObject_CallFunction() failed.\n");
+      printf("Error: Python: PyObject_CallFunction() failed.\n");
       goto error;
    }
    Py_INCREF(handle->inst);

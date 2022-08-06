@@ -245,7 +245,7 @@ finish:
 
    /* Log any error messages */
    if (!success)
-      ELOG(@"[core updater] Download of core list '%s' failed: %s\n",
+      printf("Error: [core updater] Download of core list '%s' failed: %s\n",
             (transf ? transf->path: "unknown"),
             (err ? err : "unknown"));
 
@@ -551,7 +551,7 @@ static void cb_decompress_task_core_updater_download(
 
    /* Log any error messages */
    if (!string_is_empty(err))
-      ELOG(@"[core updater] %s", err);
+      printf("Error: [core updater] %s", err);
 }
 
 void cb_http_task_core_updater_download(
@@ -645,7 +645,7 @@ finish:
 
    /* Log any error messages */
    if (!string_is_empty(err))
-      ELOG(@"[core updater] Download of '%s' failed: %s\n",
+      printf("Error: [core updater] Download of '%s' failed: %s\n",
             (transf ? transf->path: "unknown"), err);
 
    if (transf)
@@ -763,7 +763,7 @@ static void task_core_updater_download_handler(retro_task_t *task)
                /* This cannot realistically happen...
                 * > If it does, just log an error and initialise
                 *   download */
-               ELOG(@"[core updater] Failed to backup core: %s\n",
+               printf("Error: [core updater] Failed to backup core: %s\n",
                      download_handle->local_core_path);
                download_handle->backup_enabled = false;
                download_handle->status         = CORE_UPDATER_DOWNLOAD_START_TRANSFER;
@@ -1035,7 +1035,7 @@ void *task_push_core_updater_download(
     *   updater list provides 'sane' core paths */
    if (core_info_get_core_lock(list_entry->local_core_path, false))
    {
-      ELOG(@"[core updater] Update disabled - core is locked: %s\n",
+      printf("Error: [core updater] Update disabled - core is locked: %s\n",
             list_entry->local_core_path);
 
       /* If task is not muted, generate notification */

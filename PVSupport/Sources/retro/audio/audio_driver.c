@@ -358,7 +358,7 @@ static bool audio_driver_init_internal(bool audio_cb_inited)
                settings->audio.out_rate, settings->audio.latency,
                current_audio))
       {
-         ELOG(@"Cannot open threaded audio driver ... Exiting ...\n");
+         printf("Error: Cannot open threaded audio driver ... Exiting ...\n");
          retroarch_fail(1, "audio_driver_init_internal()");
       }
    }
@@ -373,7 +373,7 @@ static bool audio_driver_init_internal(bool audio_cb_inited)
 
    if (!audio_driver_context_audio_data)
    {
-      ELOG(@"Failed to initialize audio driver. Will continue without audio.\n");
+      printf("Error: Failed to initialize audio driver. Will continue without audio.\n");
       audio_driver_unset_active();
    }
 
@@ -402,7 +402,7 @@ static bool audio_driver_init_internal(bool audio_cb_inited)
 
    if (!audio_driver_init_resampler())
    {
-      ELOG(@"Failed to initialize resampler \"%s\".\n",
+      printf("Error: Failed to initialize resampler \"%s\".\n",
             settings->audio.resampler);
       audio_driver_unset_active();
    }
@@ -704,7 +704,7 @@ void audio_driver_dsp_filter_init(const char *device)
          device, audio_driver_data.audio_rate.input);
 
    if (!audio_driver_data.dsp)
-      ELOG(@"[DSP]: Failed to initialize DSP filter \"%s\".\n", device);
+      printf("Error: [DSP]: Failed to initialize DSP filter \"%s\".\n", device);
 }
 
 void audio_driver_set_buffer_size(size_t bufsize)
@@ -772,7 +772,7 @@ bool audio_driver_find_driver(void)
    else
    {
       unsigned d;
-      ELOG(@"Couldn't find any audio driver named \"%s\"\n",
+      printf("Error: Couldn't find any audio driver named \"%s\"\n",
             settings->audio.driver);
       RARCH_LOG_OUTPUT("Available audio drivers are:\n");
       for (d = 0; audio_driver_find_handle(d); d++)

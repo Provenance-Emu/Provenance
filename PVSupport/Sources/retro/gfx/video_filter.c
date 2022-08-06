@@ -140,20 +140,20 @@ static bool create_softfilter_graph(rarch_softfilter_t *filt,
 
    if (!config_get_array(filt->conf, key, name, sizeof(name)))
    {
-      ELOG(@"Could not find 'filter' array in config.\n");
+      printf("Error: Could not find 'filter' array in config.\n");
       return false;
    }
 
    if (filt->num_plugs == 0)
    {
-      ELOG(@"No filter plugs found. Exiting...\n");
+      printf("Error: No filter plugs found. Exiting...\n");
       return false;
    }
 
    filt->impl = softfilter_find_implementation(filt, name);
    if (!filt->impl)
    {
-      ELOG(@"Could not find implementation.\n");
+      printf("Error: Could not find implementation.\n");
       return false;
    }
 
@@ -180,7 +180,7 @@ static bool create_softfilter_graph(rarch_softfilter_t *filt,
 
    if (!(input_fmt & input_fmts))
    {
-      ELOG(@"Softfilter does not support input format.\n");
+      printf("Error: Softfilter does not support input format.\n");
       return false;
    }
 
@@ -194,7 +194,7 @@ static bool create_softfilter_graph(rarch_softfilter_t *filt,
       filt->out_pix_fmt = RETRO_PIXEL_FORMAT_RGB565;
    else
    {
-      ELOG(@"Did not find suitable output format for softfilter.\n");
+      printf("Error: Did not find suitable output format for softfilter.\n");
       return false;
    }
 
@@ -208,14 +208,14 @@ static bool create_softfilter_graph(rarch_softfilter_t *filt,
          &userdata);
    if (!filt->impl_data)
    {
-      ELOG(@"Failed to create softfilter state.\n");
+      printf("Error: Failed to create softfilter state.\n");
       return false;
    }
 
    threads = filt->impl->query_num_threads(filt->impl_data);
    if (!threads)
    {
-      ELOG(@"Invalid number of threads.\n");
+      printf("Error: Invalid number of threads.\n");
       return false;
    }
 
@@ -226,7 +226,7 @@ static bool create_softfilter_graph(rarch_softfilter_t *filt,
       calloc(threads, sizeof(*filt->packets));
    if (!filt->packets)
    {
-      ELOG(@"Failed to allocate softfilter packets.\n");
+      printf("Error: Failed to allocate softfilter packets.\n");
       return false;
    }
 
@@ -399,7 +399,7 @@ rarch_softfilter_t *rarch_softfilter_new(const char *filter_config,
    filt->conf = config_file_new(filter_config);
    if (!filt->conf)
    {
-      ELOG(@"[SoftFilter]: Did not find config: %s\n", filter_config);
+      printf("Error: [SoftFilter]: Did not find config: %s\n", filter_config);
       goto error;
    }
 
@@ -413,13 +413,13 @@ rarch_softfilter_t *rarch_softfilter_new(const char *filter_config,
 
    if (!plugs)
    {
-      ELOG(@"[SoftFilter]: Could not build up string list...\n");
+      printf("Error: [SoftFilter]: Could not build up string list...\n");
       goto error;
    }
 #endif
    if (!append_softfilter_plugs(filt, plugs))
    {
-      ELOG(@"[SoftFitler]: Failed to append softfilter plugins...\n");
+      printf("Error: [SoftFitler]: Failed to append softfilter plugins...\n");
       goto error;
    }
 
@@ -430,7 +430,7 @@ rarch_softfilter_t *rarch_softfilter_new(const char *filter_config,
    if (!create_softfilter_graph(filt, in_pixel_format,
             max_width, max_height, cpu_features, threads))
    {
-      ELOG(@"[SoftFitler]: Failed to create softfilter graph...\n");
+      printf("Error: [SoftFitler]: Failed to create softfilter graph...\n");
       goto error;
    }
 

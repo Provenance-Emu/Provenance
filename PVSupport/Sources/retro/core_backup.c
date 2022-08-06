@@ -102,7 +102,7 @@ static bool core_backup_get_backup_dir(
    {
       if (!path_mkdir(backup_dir))
       {
-         ELOG(@"[core backup] Failed to create backup directory: %s.\n", backup_dir);
+         printf("Error: [core backup] Failed to create backup directory: %s.\n", backup_dir);
          return false;
       }
    }

@@ -318,7 +318,7 @@ static int cheevos_http_get(const char **result, size_t *size,
          break;
    }
    
-   ELOG(@"CHEEVOS error getting %s: %s\n", url, msg);
+   printf("Error: CHEEVOS error getting %s: %s\n", url, msg);
    return ret;
 }
 
@@ -594,7 +594,7 @@ static unsigned cheevos_parse_operator(const char **memaddr)
    }
    else
    {
-      ELOG(@"CHEEVOS Unknown operator %c\n", *str);
+      printf("Error: CHEEVOS Unknown operator %c\n", *str);
       op = CHEEVOS_COND_OP_EQUALS;
    }
 
@@ -1393,7 +1393,7 @@ static int cheevos_login(retro_time_t *timeout)
    {
       runloop_msg_queue_push("Missing Retro Achievements account information", 0, 5 * 60, false);
       runloop_msg_queue_push("Please fill in your account information in Settings", 0, 5 * 60, false);
-      ELOG(@"CHEEVOS username and/or password not informed\n");
+      printf("Error: CHEEVOS username and/or password not informed\n");
       return -1;
    }
    
@@ -1428,7 +1428,7 @@ static int cheevos_login(retro_time_t *timeout)
    runloop_msg_queue_push(
          "Please make sure your account information is correct",
          0, 5 * 60, false);
-   ELOG(@"CHEEVOS error getting user token.\n");
+   printf("Error: CHEEVOS error getting user token.\n");
    return -1;
 }
 
@@ -1461,7 +1461,7 @@ static void cheevos_unlocked(void *task_data, void *user_data, const char *error
    {
       char url[256] = {0};
 
-      ELOG(@"CHEEVOS error awarding achievement %u, retrying\n", cheevo->id);
+      printf("Error: CHEEVOS error awarding achievement %u, retrying\n", cheevo->id);
 
       cheevos_make_unlock_url(cheevo, url, sizeof(url));
       task_push_http_transfer(url, true, NULL, cheevos_unlocked, cheevo);
@@ -1556,7 +1556,7 @@ static int cheevos_get_by_game_id(const char **json,
          return 0;
       }
 
-      ELOG(@"CHEEVOS error getting achievements for game id %u\n", game_id);
+      printf("Error: CHEEVOS error getting achievements for game id %u\n", game_id);
    }
 
    return -1;
@@ -1606,7 +1606,7 @@ static unsigned cheevos_get_game_id(unsigned char *hash, retro_time_t *timeout)
       }
    }
 
-   ELOG(@"CHEEVOS error getting game_id\n");
+   printf("Error: CHEEVOS error getting game_id\n");
    return 0;
 }
 
@@ -1639,7 +1639,7 @@ static void cheevos_playing(void *task_data, void *user_data, const char *error)
    {
       char url[256] = {0};
 
-      ELOG(@"CHEEVOS error posting playing game %u activity, will retry\n", game_id);
+      printf("Error: CHEEVOS error posting playing game %u activity, will retry\n", game_id);
 
       cheevos_make_playing_url(game_id, url, sizeof(url));
       task_push_http_transfer(url, true, NULL, cheevos_playing, (void*)(uintptr_t)game_id);
@@ -1698,7 +1698,7 @@ static int cheevos_deactivate__json_number(void *userdata,
       if (found)
          VLOG(@"CHEEVOS deactivated unlocked cheevo %s\n", cheevo->title);
       else
-         ELOG(@"CHEEVOS unknown cheevo to deactivate: %u\n", id);
+         printf("Error: CHEEVOS unknown cheevo to deactivate: %u\n", id);
    }
    
    return 0;
@@ -1761,7 +1761,7 @@ static int cheevos_deactivate_unlocks(unsigned game_id, retro_time_t *timeout)
       }
    }
    
-   ELOG(@"CHEEVOS error deactivating unlocked achievements\n");
+   printf("Error: CHEEVOS error deactivating unlocked achievements\n");
    return -1;
 #else
    VLOG(@"CHEEVOS cheevo deactivation is disabled\n");
@@ -2188,7 +2188,7 @@ found:
    }
    
    runloop_msg_queue_push("Error loading achievements", 0, 5 * 60, false);
-   ELOG(@"CHEEVOS error loading achievements\n", 0, 5 * 60, false);
+   printf("Error: CHEEVOS error loading achievements\n", 0, 5 * 60, false);
    return false;
 }
 

@@ -223,18 +223,18 @@ static void cg_error_handler(CGcontext ctx, CGerror error, void *data)
    switch (error)
    {
       case CG_INVALID_PARAM_HANDLE_ERROR:
-         ELOG(@"CG: Invalid param handle.\n");
+         printf("Error: CG: Invalid param handle.\n");
          break;
 
       case CG_INVALID_PARAMETER_ERROR:
-         ELOG(@"CG: Invalid parameter.\n");
+         printf("Error: CG: Invalid parameter.\n");
          break;
 
       default:
          break;
    }
 
-   ELOG(@"CG error: \"%s\"\n", cgGetErrorString(error));
+   printf("Error: CG error: \"%s\"\n", cgGetErrorString(error));
 }
 #endif
 
@@ -558,11 +558,11 @@ static bool gl_cg_compile_program(
 
    if (!program->fprg || !program->vprg)
    {
-      ELOG(@"CG error: %s\n", cgGetErrorString(cgGetError()));
+      printf("Error: CG error: %s\n", cgGetErrorString(cgGetError()));
       if (listing_f)
-         ELOG(@"Fragment:\n%s\n", listing_f);
+         printf("Error: Fragment:\n%s\n", listing_f);
       else if (listing_v)
-         ELOG(@"Vertex:\n%s\n", listing_v);
+         printf("Error: Vertex:\n%s\n", listing_v);
 
       ret = false;
       goto end;
@@ -644,7 +644,7 @@ static bool gl_cg_load_stock(void *data)
    return true;
 
 error:
-   ELOG(@"Failed to compile passthrough shader, is something wrong with your environment?\n");
+   printf("Error: Failed to compile passthrough shader, is something wrong with your environment?\n");
    return false;
 }
 
@@ -715,7 +715,7 @@ static bool gl_cg_load_imports(void *data)
       if ((memtype != -1u) && 
             (cg->shader->variable[i].addr >= mem_info.size))
       {
-         ELOG(@"Address out of bounds.\n");
+         printf("Error: Address out of bounds.\n");
          return false;
       }
    }
@@ -778,7 +778,7 @@ static bool gl_cg_load_preset(void *data, const char *path)
    conf = config_file_new(path);
    if (!conf)
    {
-      ELOG(@"Failed to load preset.\n");
+      printf("Error: Failed to load preset.\n");
       return false;
    }
 
@@ -791,7 +791,7 @@ static bool gl_cg_load_preset(void *data, const char *path)
 
    if (!video_shader_read_conf_cgp(conf, cg->shader))
    {
-      ELOG(@"Failed to parse CGP file.\n");
+      printf("Error: Failed to parse CGP file.\n");
       config_file_free(conf);
       return false;
    }
@@ -818,20 +818,20 @@ static bool gl_cg_load_preset(void *data, const char *path)
    {
       if (!gl_cg_load_shader(cg, i))
       {
-         ELOG(@"Failed to load shaders ...\n");
+         printf("Error: Failed to load shaders ...\n");
          return false;
       }
    }
 
    if (!gl_load_luts(cg->shader, cg->lut_textures))
    {
-      ELOG(@"Failed to load lookup textures ...\n");
+      printf("Error: Failed to load lookup textures ...\n");
       return false;
    }
 
    if (!gl_cg_load_imports(cg))
    {
-      ELOG(@"Failed to load imports ...\n");
+      printf("Error: Failed to load imports ...\n");
       return false;
    }
 
@@ -996,7 +996,7 @@ static void *gl_cg_init(void *data, const char *path)
 
    if (!cg->cgCtx)
    {
-      ELOG(@"Failed to create Cg context.\n");
+      printf("Error: Failed to create Cg context.\n");
       goto error;
    }
 
@@ -1012,7 +1012,7 @@ static void *gl_cg_init(void *data, const char *path)
          cg->cgFProf == CG_PROFILE_UNKNOWN ||
          cg->cgVProf == CG_PROFILE_UNKNOWN)
    {
-      ELOG(@"Invalid profile type\n");
+      printf("Error: Invalid profile type\n");
       goto error;
    }
 

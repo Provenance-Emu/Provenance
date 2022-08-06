@@ -331,7 +331,7 @@ static bool gl_glsl_compile_program(
                program->vprg,
                "#define VERTEX\n#define PARAMETER_UNIFORM\n", program_info->vertex))
       {
-         ELOG(@"Failed to compile vertex shader #%u\n", idx);
+         printf("Error: Failed to compile vertex shader #%u\n", idx);
          goto error;
       }
 
@@ -345,7 +345,7 @@ static bool gl_glsl_compile_program(
       if (!gl_glsl_compile_shader(glsl, program->fprg,
                "#define FRAGMENT\n#define PARAMETER_UNIFORM\n", program_info->fragment))
       {
-         ELOG(@"Failed to compile fragment shader #%u\n", idx);
+         printf("Error: Failed to compile fragment shader #%u\n", idx);
          goto error;
       }
 
@@ -378,7 +378,7 @@ static bool gl_glsl_compile_program(
    return true;
 
 error:
-   ELOG(@"Failed to link program #%u.\n", idx);
+   printf("Error: Failed to link program #%u.\n", idx);
    program->id = 0;
    return false;
 }
@@ -433,7 +433,7 @@ static bool gl_glsl_compile_programs(
       if (*pass->source.path && !gl_glsl_load_source_path(
                pass, pass->source.path))
       {
-         ELOG(@"Failed to load GLSL shader: %s.\n",
+         printf("Error: Failed to load GLSL shader: %s.\n",
                pass->source.path);
          return false;
       }
@@ -450,7 +450,7 @@ static bool gl_glsl_compile_programs(
             &program[i], 
             &shader_prog_info))
       {
-         ELOG(@"Failed to create GL program #%u.\n", i);
+         printf("Error: Failed to create GL program #%u.\n", i);
          return false;
       }
    }
@@ -722,7 +722,7 @@ static void *gl_glsl_init(void *data, const char *path)
 
    if (!shader_support)
    {
-      ELOG(@"GLSL shaders aren't supported by your OpenGL driver.\n");
+      printf("Error: GLSL shaders aren't supported by your OpenGL driver.\n");
       goto error;
    }
 #endif
@@ -756,7 +756,7 @@ static void *gl_glsl_init(void *data, const char *path)
 
       if (!ret)
       {
-         ELOG(@"[GL]: Failed to parse GLSL shader.\n");
+         printf("Error: [GL]: Failed to parse GLSL shader.\n");
          goto error;
       }
    }
@@ -795,13 +795,13 @@ static void *gl_glsl_init(void *data, const char *path)
 #ifdef HAVE_OPENGLES
    if (!glsl->shader->modern)
    {
-      ELOG(@"[GL]: GLES context is used, but shader is not modern. Cannot use it.\n");
+      printf("Error: [GL]: GLES context is used, but shader is not modern. Cannot use it.\n");
       goto error;
    }
 #else
    if (glsl_core && !glsl->shader->modern)
    {
-      ELOG(@"[GL]: GL core context is used, but shader is not core compatible. Cannot use it.\n");
+      printf("Error: [GL]: GL core context is used, but shader is not core compatible. Cannot use it.\n");
       goto error;
    }
 #endif
@@ -827,7 +827,7 @@ static void *gl_glsl_init(void *data, const char *path)
 
    if (!gl_glsl_compile_program(glsl, 0, &glsl->prg[0], &shader_prog_info))
    {
-      ELOG(@"GLSL stock programs failed to compile.\n");
+      printf("Error: GLSL stock programs failed to compile.\n");
       goto error;
    }
 
@@ -836,7 +836,7 @@ static void *gl_glsl_init(void *data, const char *path)
 
    if (!gl_load_luts(glsl->shader, glsl->lut_textures))
    {
-      ELOG(@"[GL]: Failed to load LUTs.\n");
+      printf("Error: [GL]: Failed to load LUTs.\n");
       goto error;
    }
 

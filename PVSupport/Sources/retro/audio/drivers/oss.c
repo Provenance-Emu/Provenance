@@ -175,7 +175,7 @@ static size_t oss_write_avail(void *data)
 
    if (ioctl(*fd, SNDCTL_DSP_GETOSPACE, &info) < 0)
    {
-      ELOG(@"SNDCTL_DSP_GETOSPACE failed ...\n");
+      printf("Error: SNDCTL_DSP_GETOSPACE failed ...\n");
       return 0;
    }
 
@@ -189,7 +189,7 @@ static size_t oss_buffer_size(void *data)
 
    if (ioctl(*fd, SNDCTL_DSP_GETOSPACE, &info) < 0)
    {
-      ELOG(@"SNDCTL_DSP_GETOSPACE failed ...\n");
+      printf("Error: SNDCTL_DSP_GETOSPACE failed ...\n");
       return 1; /* Return something non-zero to avoid SIGFPE. */
    }
 

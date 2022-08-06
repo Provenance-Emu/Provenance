@@ -131,7 +131,7 @@ int system_property_get(const char *command,
    return length;
 
 error:
-   ELOG(@"Could not create pipe.\n");
+   printf("Error: Could not create pipe.\n");
    return 0;
 }
 
@@ -145,7 +145,7 @@ void android_app_write_cmd(struct android_app *android_app, int8_t cmd)
       return;
 
    if (write(android_app->msgwrite, &cmd, sizeof(cmd)) != sizeof(cmd))
-      ELOG(@"Failure writing android_app cmd: %s\n", strerror(errno));
+      printf("Error: Failure writing android_app cmd: %s\n", strerror(errno));
 }
 
 static void android_app_set_input(struct android_app *android_app,
@@ -336,7 +336,7 @@ JNIEnv *jni_thread_getenv(void)
 
    if (status < 0)
    {
-      ELOG(@"jni_thread_getenv: Failed to attach current thread.\n");
+      printf("Error: jni_thread_getenv: Failed to attach current thread.\n");
       return NULL;
    }
    pthread_setspecific(thread_key, (void*)env);
@@ -395,7 +395,7 @@ static struct android_app* android_app_create(ANativeActivity* activity,
 
    if (!android_app)
    {
-      ELOG(@"Failed to initialize android_app\n");
+      printf("Error: Failed to initialize android_app\n");
       return NULL;
    }
    android_app->activity = activity;
@@ -412,7 +412,7 @@ static struct android_app* android_app_create(ANativeActivity* activity,
 
    if (pipe(msgpipe))
    {
-      ELOG(@"could not create pipe: %s.\n", strerror(errno));
+      printf("Error: could not create pipe: %s.\n", strerror(errno));
       if(android_app->savedState)
         free(android_app->savedState);
       free(android_app);
@@ -461,7 +461,7 @@ void ANativeActivity_onCreate(ANativeActivity* activity,
          | AWINDOW_FLAG_FULLSCREEN, 0);
 
    if (pthread_key_create(&thread_key, jni_thread_destruct))
-      ELOG(@"Error initializing pthread_key\n");
+      printf("Error: Error initializing pthread_key\n");
 
    activity->instance = android_app_create(activity,
          savedState, savedStateSize);

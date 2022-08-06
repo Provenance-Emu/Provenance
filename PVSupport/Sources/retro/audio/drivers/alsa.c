@@ -146,7 +146,7 @@ static void *alsa_init(const char *device, unsigned rate, unsigned latency)
    return alsa;
 
 error:
-   ELOG(@"ALSA: Failed to initialize...\n");
+   printf("Error: ALSA: Failed to initialize...\n");
    if (params)
       snd_pcm_hw_params_free(params);
 
@@ -186,7 +186,7 @@ static ssize_t alsa_write(void *data, const void *buf_, size_t size_)
          {
             if (snd_pcm_recover(alsa->pcm, rc, 1) < 0)
             {
-               ELOG(@"[ALSA]: (#1) Failed to recover from error (%s)\n",
+               printf("Error: [ALSA]: (#1) Failed to recover from error (%s)\n",
                      snd_strerror(rc));
                return -1;
             }
@@ -200,7 +200,7 @@ static ssize_t alsa_write(void *data, const void *buf_, size_t size_)
       {
          if (snd_pcm_recover(alsa->pcm, frames, 1) < 0)
          {
-            ELOG(@"[ALSA]: (#2) Failed to recover from error (%s)\n",
+            printf("Error: [ALSA]: (#2) Failed to recover from error (%s)\n",
                   snd_strerror(frames));
             return -1;
          }
@@ -224,7 +224,7 @@ static ssize_t alsa_write(void *data, const void *buf_, size_t size_)
          return written;
       else if (frames < 0)
       {
-         ELOG(@"[ALSA]: Unknown error occurred (%s).\n",
+         printf("Error: [ALSA]: Unknown error occurred (%s).\n",
                snd_strerror(frames));
          return -1;
       }
@@ -281,7 +281,7 @@ static bool alsa_start(void *data)
 
       if (ret < 0)
       {
-         ELOG(@"[ALSA]: Failed to unpause: %s.\n",
+         printf("Error: [ALSA]: Failed to unpause: %s.\n",
                snd_strerror(ret));
          return false;
       }

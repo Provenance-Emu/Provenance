@@ -335,7 +335,7 @@ bool x11_create_input_context(Display *dpy, Window win, XIM *xim, XIC *xic)
 
    if (!*xim)
    {
-      ELOG(@"[X11]: Failed to open input method.\n");
+      printf("Error: [X11]: Failed to open input method.\n");
       return false;
    }
 
@@ -344,7 +344,7 @@ bool x11_create_input_context(Display *dpy, Window win, XIM *xim, XIC *xic)
 
    if (!*xic)
    {
-      ELOG(@"[X11]: Failed to create input context.\n");
+      printf("Error: [X11]: Failed to create input context.\n");
       return false;
    }
 

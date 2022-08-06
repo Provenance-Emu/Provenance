@@ -188,11 +188,11 @@ static bool d3d9_cg_load_program(void *data,
 
    if (!fPrg || !vPrg)
    {
-      ELOG(@"CG error: %s\n", cgGetErrorString(cgGetError()));
+      printf("Error: CG error: %s\n", cgGetErrorString(cgGetError()));
       if (listing_f)
-         ELOG(@"Fragment:\n%s\n", listing_f);
+         printf("Error: Fragment:\n%s\n", listing_f);
       else if (listing_v)
-         ELOG(@"Vertex:\n%s\n", listing_v);
+         printf("Error: Vertex:\n%s\n", listing_v);
       ret = false;
       goto end;
    }
@@ -722,7 +722,7 @@ static bool cg_d3d9_renderchain_init_shader(void *data,
    renderchain->cgCtx = cgCreateContext();
    if (!renderchain->cgCtx)
    {
-      ELOG(@"Failed to create Cg context.\n");
+      printf("Error: Failed to create Cg context.\n");
       return false;
    }
 
@@ -851,7 +851,7 @@ static bool cg_d3d9_renderchain_init(void *data,
       return false;
    if (!cg_d3d9_renderchain_init_shader(d3d, chain))
    {
-      ELOG(@"Failed to initialize shader subsystem.\n");
+      printf("Error: Failed to initialize shader subsystem.\n");
       return false;
    }
 
@@ -965,7 +965,7 @@ static void d3d_recompute_pass_sizes(cg_renderchain_t *chain,
    if (!renderchain_set_pass_size(chain, 0,
             current_width, current_height))
    {
-      ELOG(@"[D3D]: Failed to set pass size.\n");
+      printf("Error: [D3D]: Failed to set pass size.\n");
       return;
    }
 
@@ -982,7 +982,7 @@ static void d3d_recompute_pass_sizes(cg_renderchain_t *chain,
       if (!renderchain_set_pass_size(chain, i,
                link_info.tex_w, link_info.tex_h))
       {
-         ELOG(@"[D3D]: Failed to set pass size.\n");
+         printf("Error: [D3D]: Failed to set pass size.\n");
          return;
       }
 

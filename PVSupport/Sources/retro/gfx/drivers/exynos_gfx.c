@@ -282,13 +282,13 @@ static struct exynos_bo *exynos_create_mapped_buffer(
 
    if (!buf)
    {
-      ELOG(@"[video_exynos]: failed to create temp buffer object\n");
+      printf("Error: [video_exynos]: failed to create temp buffer object\n");
       return NULL;
    }
 
    if (!exynos_bo_map(buf))
    {
-      ELOG(@"[video_exynos]: failed to map temp buffer object\n");
+      printf("Error: [video_exynos]: failed to map temp buffer object\n");
       exynos_bo_destroy(buf);
       return NULL;
    }
@@ -320,7 +320,7 @@ static int exynos_realloc_buffer(struct exynos_data *pdata,
 
       if (!buf)
       {
-         ELOG(@"[video_exynos]: reallocation failed\n");
+         printf("Error: [video_exynos]: reallocation failed\n");
          return -1;
       }
 
@@ -346,7 +346,7 @@ static int exynos_clear_buffer(struct g2d_context *g2d, struct g2d_image *img)
       ret = g2d_exec(g2d);
 
    if (ret != 0)
-      ELOG(@"[video_exynos]: failed to clear buffer using G2D\n");
+      printf("Error: [video_exynos]: failed to clear buffer using G2D\n");
 
    return ret;
 }
@@ -532,7 +532,7 @@ static int exynos_open(struct exynos_data *pdata)
       snprintf(buf, sizeof(buf), "/dev/dri/card%d", devidx);
    else
    {
-      ELOG(@"[video_exynos]: no compatible DRM device found\n");
+      printf("Error: [video_exynos]: no compatible DRM device found\n");
       return -1;
    }
 
@@ -540,7 +540,7 @@ static int exynos_open(struct exynos_data *pdata)
 
    if (fd < 0)
    {
-      ELOG(@"[video_exynos]: can't open DRM device\n");
+      printf("Error: [video_exynos]: can't open DRM device\n");
       return -1;
    }
 
@@ -604,7 +604,7 @@ static int exynos_init(struct exynos_data *pdata, unsigned bpp)
 
       if (!g_drm_mode)
       {
-         ELOG(@"[video_exynos]: requested resolution (%ux%u) not available\n",
+         printf("Error: [video_exynos]: requested resolution (%ux%u) not available\n",
                settings->video.fullscreen_x, settings->video.fullscreen_y);
          goto fail;
       }
@@ -618,7 +618,7 @@ static int exynos_init(struct exynos_data *pdata, unsigned bpp)
 
    if (g_drm_mode->hdisplay == 0 || g_drm_mode->vdisplay == 0)
    {
-      ELOG(@"[video_exynos]: failed to select sane resolution\n");
+      printf("Error: [video_exynos]: failed to select sane resolution\n");
       goto fail;
    }
 
@@ -674,7 +674,7 @@ static int exynos_alloc(struct exynos_data *pdata)
 
    if (!device)
    {
-      ELOG(@"[video_exynos]: failed to create device from fd\n");
+      printf("Error: [video_exynos]: failed to create device from fd\n");
       return -1;
    }
 
@@ -683,7 +683,7 @@ static int exynos_alloc(struct exynos_data *pdata)
 
    if (!pages)
    {
-      ELOG(@"[video_exynos]: failed to allocate pages\n");
+      printf("Error: [video_exynos]: failed to allocate pages\n");
       goto fail_alloc;
    }
 
@@ -714,7 +714,7 @@ static int exynos_alloc(struct exynos_data *pdata)
       bo = exynos_bo_create(device, pdata->size, flags);
       if (!bo)
       {
-         ELOG(@"[video_exynos]: failed to create buffer object\n");
+         printf("Error: [video_exynos]: failed to create buffer object\n");
          goto fail;
       }
 
@@ -739,7 +739,7 @@ static int exynos_alloc(struct exynos_data *pdata)
                pixel_format, handles, pitches, offsets,
                &pages[i].buf_id, flags))
       {
-         ELOG(@"[video_exynos]: failed to add bo %u to fb\n", i);
+         printf("Error: [video_exynos]: failed to add bo %u to fb\n", i);
          goto fail;
       }
    }
@@ -749,7 +749,7 @@ static int exynos_alloc(struct exynos_data *pdata)
             pages[pdata->num_pages - 1].buf_id,
             0, 0, &g_drm_connector_id, 1, g_drm_mode))
    {
-      ELOG(@"[video_exynos]: initial CRTC setup failed.\n");
+      printf("Error: [video_exynos]: initial CRTC setup failed.\n");
       goto fail;
    }
 
@@ -926,7 +926,7 @@ static int exynos_blit_frame(struct exynos_data *pdata, const void *frame,
             pdata->blit_params[2], pdata->blit_params[3], 0) ||
          g2d_exec(pdata->g2d))
    {
-      ELOG(@"[video_exynos]: failed to blit frame.\n");
+      printf("Error: [video_exynos]: failed to blit frame.\n");
       return -1;
    }
 
@@ -952,7 +952,7 @@ static int exynos_blend_menu(struct exynos_data *pdata,
             pdata->blit_params[3], G2D_OP_INTERPOLATE) ||
          g2d_exec(pdata->g2d))
    {
-      ELOG(@"[video_exynos]: failed to blend menu.\n");
+      printf("Error: [video_exynos]: failed to blend menu.\n");
       return -1;
    }
 
@@ -976,7 +976,7 @@ static int exynos_blend_font(struct exynos_data *pdata)
             G2D_OP_INTERPOLATE) ||
          g2d_exec(pdata->g2d))
    {
-      ELOG(@"[video_exynos]: failed to blend font\n");
+      printf("Error: [video_exynos]: failed to blend font\n");
       return -1;
    }
 
@@ -997,7 +997,7 @@ static int exynos_flip(struct exynos_data *pdata, struct exynos_page *page)
    if (drmModePageFlip(g_drm_fd, g_crtc_id, page->buf_id,
             DRM_MODE_PAGE_FLIP_EVENT, page) != 0)
    {
-      ELOG(@"[video_exynos]: failed to issue page flip\n");
+      printf("Error: [video_exynos]: failed to issue page flip\n");
       return -1;
    }
    else
@@ -1060,7 +1060,7 @@ static int exynos_init_font(struct exynos_video *vid)
    }
    else
    {
-      ELOG(@"[video_exynos]: creating font renderer failed\n");
+      printf("Error: [video_exynos]: creating font renderer failed\n");
       return -1;
    }
 
@@ -1174,25 +1174,25 @@ static void *exynos_gfx_init(const video_info_t *video,
 
    if (exynos_open(vid->data) != 0)
    {
-      ELOG(@"[video_exynos]: opening device failed\n");
+      printf("Error: [video_exynos]: opening device failed\n");
       goto fail;
    }
 
    if (exynos_init(vid->data, fb_bpp) != 0)
    {
-      ELOG(@"[video_exynos]: initialization failed\n");
+      printf("Error: [video_exynos]: initialization failed\n");
       goto fail_init;
    }
 
    if (exynos_alloc(vid->data) != 0)
    {
-      ELOG(@"[video_exynos]: allocation failed\n");
+      printf("Error: [video_exynos]: allocation failed\n");
       goto fail_alloc;
    }
 
    if (exynos_g2d_init(vid->data) != 0)
    {
-      ELOG(@"[video_exynos]: G2D initialization failed\n");
+      printf("Error: [video_exynos]: G2D initialization failed\n");
       goto fail_g2d;
    }
 
@@ -1209,7 +1209,7 @@ static void *exynos_gfx_init(const video_info_t *video,
 
    if (exynos_init_font(vid) != 0)
    {
-      ELOG(@"[video_exynos]: font initialization failed\n");
+      printf("Error: [video_exynos]: font initialization failed\n");
       goto fail_font;
    }
 

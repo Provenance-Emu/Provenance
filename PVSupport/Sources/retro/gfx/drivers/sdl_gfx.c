@@ -264,7 +264,7 @@ static void *sdl_gfx_init(const video_info_t *video, const input_driver_t **inpu
 
    if (!vid->screen)
    {
-      ELOG(@"[SDL]: Failed to init SDL surface: %s\n", SDL_GetError());
+      printf("Error: [SDL]: Failed to init SDL surface: %s\n", SDL_GetError());
       goto error;
    }
 
@@ -302,7 +302,7 @@ static void *sdl_gfx_init(const video_info_t *video, const input_driver_t **inpu
 
    if (!vid->menu.frame)
    {
-      ELOG(@"[SDL]: Failed to init menu surface: %s\n", SDL_GetError());
+      printf("Error: [SDL]: Failed to init menu surface: %s\n", SDL_GetError());
       goto error;
    }
 

@@ -100,19 +100,19 @@ static void *gfx_ctx_qnx_init(void *video_driver)
 
       if (screen_request_events(screen_ctx) != BPS_SUCCESS)
       {
-         ELOG(@"screen_request_events failed.\n");
+         printf("Error: screen_request_events failed.\n");
          goto screen_error;
       }
 
       if (navigator_request_events(0) != BPS_SUCCESS)
       {
-         ELOG(@"navigator_request_events failed.\n");
+         printf("Error: navigator_request_events failed.\n");
          goto screen_error;
       }
 
       if (navigator_rotation_lock(false) != BPS_SUCCESS)
       {
-         ELOG(@"navigator_location_lock failed.\n");
+         printf("Error: navigator_location_lock failed.\n");
          goto screen_error;
       }
    }
@@ -138,7 +138,7 @@ static void *gfx_ctx_qnx_init(void *video_driver)
    {
       if (screen_create_window(&qnx->screen_win, screen_ctx))
       {
-             ELOG(@"screen_create_window failed:.\n");
+             printf("Error: screen_create_window failed:.\n");
 	     goto error;
       }
    }
@@ -146,21 +146,21 @@ static void *gfx_ctx_qnx_init(void *video_driver)
    if (screen_set_window_property_iv(qnx->screen_win,
             SCREEN_PROPERTY_FORMAT, &format))
    {
-      ELOG(@"screen_set_window_property_iv [SCREEN_PROPERTY_FORMAT] failed.\n");
+      printf("Error: screen_set_window_property_iv [SCREEN_PROPERTY_FORMAT] failed.\n");
       goto error;
    }
 
    if (screen_set_window_property_iv(qnx->screen_win,
             SCREEN_PROPERTY_USAGE, &usage))
    {
-      ELOG(@"screen_set_window_property_iv [SCREEN_PROPERTY_USAGE] failed.\n");
+      printf("Error: screen_set_window_property_iv [SCREEN_PROPERTY_USAGE] failed.\n");
       goto error;
    }
 
    if (screen_get_window_property_pv(qnx->screen_win,
             SCREEN_PROPERTY_DISPLAY, (void **)&qnx->screen_disp))
    {
-      ELOG(@"screen_get_window_property_pv [SCREEN_PROPERTY_DISPLAY] failed.\n");
+      printf("Error: screen_get_window_property_pv [SCREEN_PROPERTY_DISPLAY] failed.\n");
       goto error;
    }
 
@@ -169,7 +169,7 @@ static void *gfx_ctx_qnx_init(void *video_driver)
    if (screen_get_display_property_iv(qnx->screen_disp,
             SCREEN_PROPERTY_SIZE, screen_resolution))
    {
-      ELOG(@"screen_get_window_property_iv [SCREEN_PROPERTY_SIZE] failed.\n");
+      printf("Error: screen_get_window_property_iv [SCREEN_PROPERTY_SIZE] failed.\n");
       goto error;
    }
 
@@ -180,14 +180,14 @@ static void *gfx_ctx_qnx_init(void *video_driver)
    if (screen_get_display_property_pv(qnx->screen_disp,
             SCREEN_PROPERTY_MODE, (void**)&screen_mode))
    {
-      ELOG(@"screen_get_display_property_pv [SCREEN_PROPERTY_MODE] failed.\n");
+      printf("Error: screen_get_display_property_pv [SCREEN_PROPERTY_MODE] failed.\n");
       goto error;
    }
 
    if (screen_get_window_property_iv(qnx->screen_win,
             SCREEN_PROPERTY_BUFFER_SIZE, size))
    {
-      ELOG(@"screen_get_window_property_iv [SCREEN_PROPERTY_BUFFER_SIZE] failed.\n");
+      printf("Error: screen_get_window_property_iv [SCREEN_PROPERTY_BUFFER_SIZE] failed.\n");
       goto error;
    }
 
@@ -213,7 +213,7 @@ static void *gfx_ctx_qnx_init(void *video_driver)
    }
    else
    {
-      ELOG(@"Navigator returned an unexpected orientation angle.\n");
+      printf("Error: Navigator returned an unexpected orientation angle.\n");
       goto error;
    }
 
@@ -221,21 +221,21 @@ static void *gfx_ctx_qnx_init(void *video_driver)
    if (screen_set_window_property_iv(qnx->screen_win,
             SCREEN_PROPERTY_BUFFER_SIZE, buffer_size))
    {
-      ELOG(@"screen_set_window_property_iv [SCREEN_PROPERTY_BUFFER_SIZE] failed.\n");
+      printf("Error: screen_set_window_property_iv [SCREEN_PROPERTY_BUFFER_SIZE] failed.\n");
       goto error;
    }
 
    if (screen_set_window_property_iv(qnx->screen_win,
             SCREEN_PROPERTY_ROTATION, &angle))
    {
-      ELOG(@"screen_set_window_property_iv [SCREEN_PROPERTY_ROTATION] failed.\n");
+      printf("Error: screen_set_window_property_iv [SCREEN_PROPERTY_ROTATION] failed.\n");
       goto error;
    }
 #endif
 
    if (screen_create_window_buffers(qnx->screen_win, WINDOW_BUFFERS))
    {
-      ELOG(@"screen_create_window_buffers failed.\n");
+      printf("Error: screen_create_window_buffers failed.\n");
       goto error;
    }
 
@@ -245,7 +245,7 @@ static void *gfx_ctx_qnx_init(void *video_driver)
    return qnx;
 
 error:
-   ELOG(@"EGL error: %d.\n", eglGetError());
+   printf("Error: EGL error: %d.\n", eglGetError());
    gfx_ctx_qnx_destroy(video_driver);
 screen_error:
    screen_stop_events(screen_ctx);

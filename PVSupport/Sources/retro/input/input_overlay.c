@@ -526,7 +526,7 @@ void input_overlay_loaded(void *task_data, void *user_data, const char *err)
 #ifdef HAVE_OVERLAY
    if (!video_driver_overlay_interface(&iface) || !iface)
    {
-//      ELOG(@"Overlay interface is not present in video driver.\n");
+//      printf("Error: Overlay interface is not present in video driver.\n");
       goto abort_load;
    }
 #endif

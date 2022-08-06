@@ -122,7 +122,7 @@ static void *gfx_ctx_mali_fbdev_init(void *video_driver)
    return mali;
 
 error:
-   ELOG(@"[Mali fbdev]: EGL error: %d.\n", eglGetError());
+   printf("Error: [Mali fbdev]: EGL error: %d.\n", eglGetError());
    gfx_ctx_mali_fbdev_destroy(video_driver);
    return NULL;
 }
@@ -184,7 +184,7 @@ static bool gfx_ctx_mali_fbdev_set_video_mode(void *data,
 
    if (ioctl(fb, FBIOGET_VSCREENINFO, &vinfo) < 0)
    {
-      ELOG(@"Error obtaining framebuffer info.\n");
+      printf("Error: Error obtaining framebuffer info.\n");
       goto error;
    }
 
@@ -217,7 +217,7 @@ static bool gfx_ctx_mali_fbdev_set_video_mode(void *data,
 error:
    if (fd)
       filestream_close(fd);
-   ELOG(@"[Mali fbdev]: EGL error: %d.\n", eglGetError());
+   printf("Error: [Mali fbdev]: EGL error: %d.\n", eglGetError());
    gfx_ctx_mali_fbdev_destroy(data);
    return false;
 }

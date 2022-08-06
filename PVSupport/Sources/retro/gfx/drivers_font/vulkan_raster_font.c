@@ -53,7 +53,7 @@ static void *vulkan_raster_font_init_font(void *data,
    if (!font_renderer_create_default((const void**)&font->font_driver,
             &font->font_data, font_path, font_size))
    {
-      WLOG(@"Couldn't initialize font renderer.\n");
+      printf("Error: Couldn't initialize font renderer.\n");
       free(font);
       return NULL;
    }

@@ -349,7 +349,7 @@ static void udev_check_device(struct udev_device *dev, const char *path, bool ho
    switch (ret)
    {
       case -1:
-         ELOG(@"[udev]: Failed to add pad: %s.\n", path);
+         printf("Error: [udev]: Failed to add pad: %s.\n", path);
          close(fd);
          break;
       case 1:
@@ -485,7 +485,7 @@ static bool udev_set_rumble(unsigned i, enum retro_rumble_effect effect, uint16_
 
       if (ioctl(pad->fd, EVIOCSFF, &e) < 0)
       {
-         ELOG(@"Failed to set rumble effect on pad #%u.\n", i);
+         printf("Error: Failed to set rumble effect on pad #%u.\n", i);
          return false;
       }
 
@@ -506,7 +506,7 @@ static bool udev_set_rumble(unsigned i, enum retro_rumble_effect effect, uint16_
 
       if (write(pad->fd, &play, sizeof(play)) < (ssize_t)sizeof(play))
       {
-         ELOG(@"[udev]: Failed to play rumble effect #%u on pad #%u.\n",
+         printf("Error: [udev]: Failed to play rumble effect #%u on pad #%u.\n",
                effect, i);
          return false;
       }

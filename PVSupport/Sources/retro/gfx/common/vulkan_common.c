@@ -53,7 +53,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL vulkan_debug_cb(
 
    if (flags & VK_DEBUG_REPORT_ERROR_BIT_EXT)
    {
-      ELOG(@"[Vulkan]: Error: %s: %s\n",
+      printf("Error: [Vulkan]: Error: %s: %s\n",
             pLayerPrefix, pMessage);
    }
    else if (flags & VK_DEBUG_REPORT_WARNING_BIT_EXT)
@@ -88,7 +88,7 @@ uint32_t vulkan_find_memory_type(
          return i;
    }
 
-   ELOG(@"[Vulkan]: Failed to find valid memory type. This should never happen.");
+   printf("Error: [Vulkan]: Failed to find valid memory type. This should never happen.");
    abort();
 }
 
@@ -107,7 +107,7 @@ uint32_t vulkan_find_memory_type_fallback(
 
    if (host_reqs_first == 0)
    {
-      ELOG(@"[Vulkan]: Failed to find valid memory type. This should never happen.");
+      printf("Error: [Vulkan]: Failed to find valid memory type. This should never happen.");
       abort();
    }
 
@@ -1279,7 +1279,7 @@ static bool vulkan_find_instance_extensions(const char **exts, unsigned num_exts
 
    if (!vulkan_find_extensions(exts, num_exts, properties, property_count))
    {
-      ELOG(@"[Vulkan]: Could not find instance extensions. Will attempt without them.\n");
+      printf("Error: [Vulkan]: Could not find instance extensions. Will attempt without them.\n");
       ret = false;
       goto end;
    }
@@ -1313,7 +1313,7 @@ static bool vulkan_find_device_extensions(VkPhysicalDevice gpu, const char **ext
 
    if (!vulkan_find_extensions(exts, num_exts, properties, property_count))
    {
-      ELOG(@"[Vulkan]: Could not find device extensions. Will attempt without them.\n");
+      printf("Error: [Vulkan]: Could not find device extensions. Will attempt without them.\n");
       ret = false;
       goto end;
    }
@@ -1334,27 +1334,27 @@ static bool vulkan_context_init_gpu(gfx_ctx_vulkan_data_t *vk)
    if (vkEnumeratePhysicalDevices(vk->context.instance,
             &gpu_count, NULL) != VK_SUCCESS)
    {
-      ELOG(@"[Vulkan]: Failed to enumerate physical devices.\n");
+      printf("Error: [Vulkan]: Failed to enumerate physical devices.\n");
       return false;
    }
 
    gpus = (VkPhysicalDevice*)calloc(gpu_count, sizeof(*gpus));
    if (!gpus)
    {
-      ELOG(@"[Vulkan]: Failed to enumerate physical devices.\n");
+      printf("Error: [Vulkan]: Failed to enumerate physical devices.\n");
       return false;
    }
 
    if (vkEnumeratePhysicalDevices(vk->context.instance,
             &gpu_count, gpus) != VK_SUCCESS)
    {
-      ELOG(@"[Vulkan]: Failed to enumerate physical devices.\n");
+      printf("Error: [Vulkan]: Failed to enumerate physical devices.\n");
       return false;
    }
 
    if (gpu_count < 1)
    {
-      ELOG(@"[Vulkan]: Failed to enumerate Vulkan physical device.\n");
+      printf("Error: [Vulkan]: Failed to enumerate Vulkan physical device.\n");
       free(gpus);
       return false;
    }
@@ -1435,7 +1435,7 @@ static bool vulkan_context_init_device(gfx_ctx_vulkan_data_t *vk)
 
          if (context.presentation_queue != context.queue)
          {
-            ELOG(@"[Vulkan]: Present queue != graphics queue. This is currently not supported.\n");
+            printf("Error: [Vulkan]: Present queue != graphics queue. This is currently not supported.\n");
             return false;
          }
       }
@@ -1463,7 +1463,7 @@ static bool vulkan_context_init_device(gfx_ctx_vulkan_data_t *vk)
 
       if (queue_count < 1)
       {
-         ELOG(@"[Vulkan]: Invalid number of queues detected.\n");
+         printf("Error: [Vulkan]: Invalid number of queues detected.\n");
          return false;
       }
 
@@ -1496,7 +1496,7 @@ static bool vulkan_context_init_device(gfx_ctx_vulkan_data_t *vk)
 
       if (!found_queue)
       {
-         ELOG(@"[Vulkan]: Did not find suitable graphics queue.\n");
+         printf("Error: [Vulkan]: Did not find suitable graphics queue.\n");
          return false;
       }
 
@@ -1528,14 +1528,14 @@ static bool vulkan_context_init_device(gfx_ctx_vulkan_data_t *vk)
       else if (vkCreateDevice(vk->context.gpu, &device_info,
                NULL, &vk->context.device) != VK_SUCCESS)
       {
-         ELOG(@"[Vulkan]: Failed to create device.\n");
+         printf("Error: [Vulkan]: Failed to create device.\n");
          return false;
       }
    }
 
    if (!vulkan_load_device_symbols(vk))
    {
-      ELOG(@"[Vulkan]: Failed to load device symbols.\n");
+      printf("Error: [Vulkan]: Failed to load device symbols.\n");
       return false;
    }
 
@@ -1549,7 +1549,7 @@ static bool vulkan_context_init_device(gfx_ctx_vulkan_data_t *vk)
    vk->context.queue_lock = slock_new();
    if (!vk->context.queue_lock)
    {
-      ELOG(@"[Vulkan]: Failed to create queue lock.\n");
+      printf("Error: [Vulkan]: Failed to create queue lock.\n");
       return false;
    }
 #endif
@@ -1630,7 +1630,7 @@ bool vulkan_context_init(gfx_ctx_vulkan_data_t *vk,
 
    if (!vulkan_library)
    {
-      ELOG(@"[Vulkan]: Failed to open Vulkan loader.\n");
+      printf("Error: [Vulkan]: Failed to open Vulkan loader.\n");
       return false;
    }
 
@@ -1641,7 +1641,7 @@ bool vulkan_context_init(gfx_ctx_vulkan_data_t *vk,
 
    if (!GetInstanceProcAddr)
    {
-      ELOG(@"[Vulkan]: Failed to load vkGetInstanceProcAddr symbol, broken loader?\n");
+      printf("Error: [Vulkan]: Failed to load vkGetInstanceProcAddr symbol, broken loader?\n");
       return false;
    }
 
@@ -1649,7 +1649,7 @@ bool vulkan_context_init(gfx_ctx_vulkan_data_t *vk,
 
    if (!vulkan_symbol_wrapper_load_global_symbols())
    {
-      ELOG(@"[Vulkan]: Failed to load global Vulkan symbols, broken loader?\n");
+      printf("Error: [Vulkan]: Failed to load global Vulkan symbols, broken loader?\n");
       return false;
    }
 
@@ -1728,13 +1728,13 @@ bool vulkan_context_init(gfx_ctx_vulkan_data_t *vk,
 
    if (res == VK_ERROR_INCOMPATIBLE_DRIVER)
    {
-      ELOG(@"Failed to create Vulkan instance.\n");
+      printf("Error: Failed to create Vulkan instance.\n");
       return false;
    }
 
    if (!vulkan_load_instance_symbols(vk))
    {
-      ELOG(@"[Vulkan]: Failed to load instance symbols.\n");
+      printf("Error: [Vulkan]: Failed to load instance symbols.\n");
       return false;
    }
 
@@ -1998,7 +1998,7 @@ bool vulkan_surface_create(gfx_ctx_vulkan_data_t *vk,
             if (create(vk->context.instance,
                      &surf_info, NULL, &vk->vk_surface) != VK_SUCCESS)
             {
-               ELOG(@"[Vulkan]: Failed to create Android surface.\n");
+               printf("Error: [Vulkan]: Failed to create Android surface.\n");
                return false;
             }
             VLOG(@"[Vulkan]: Created Android surface: %llu\n",
@@ -2282,7 +2282,7 @@ bool vulkan_create_swapchain(gfx_ctx_vulkan_data_t *vk,
          &present_mode_count, NULL);
    if (present_mode_count < 1 || present_mode_count > 16)
    {
-      ELOG(@"[Vulkan]: Bogus present modes found.\n");
+      printf("Error: [Vulkan]: Bogus present modes found.\n");
       return false;
    }
    vkGetPhysicalDeviceSurfacePresentModesKHR(
@@ -2336,7 +2336,7 @@ bool vulkan_create_swapchain(gfx_ctx_vulkan_data_t *vk,
    {
       if (format_count == 0)
       {
-         ELOG(@"[Vulkan]: Surface has no formats.\n");
+         printf("Error: [Vulkan]: Surface has no formats.\n");
          return false;
       }
 
@@ -2394,7 +2394,7 @@ bool vulkan_create_swapchain(gfx_ctx_vulkan_data_t *vk,
    if (vkCreateSwapchainKHR(vk->context.device,
             &info, NULL, &vk->swapchain) != VK_SUCCESS)
    {
-      ELOG(@"[Vulkan]: Failed to create swapchain.\n");
+      printf("Error: [Vulkan]: Failed to create swapchain.\n");
       return false;
    }
 

@@ -305,7 +305,7 @@ static bool gfx_ctx_xegl_set_video_mode(void *data,
          true_full = true;
       }
       else
-         ELOG(@"[X/EGL]: Entering true fullscreen failed. Will attempt windowed mode.\n");
+         printf("Error: [X/EGL]: Entering true fullscreen failed. Will attempt windowed mode.\n");
    }
 
    if (settings->video.monitor_index)

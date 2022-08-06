@@ -337,7 +337,7 @@ static void *coreaudio_init(const char *device,
    return dev;
 
 error:
-   ELOG(@"[CoreAudio]: Failed to initialize driver ...\n");
+   printf("Error: [CoreAudio]: Failed to initialize driver ...\n");
    coreaudio_free(dev);
    return NULL;
 }

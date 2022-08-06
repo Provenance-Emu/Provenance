@@ -140,7 +140,7 @@ static void *vita2d_gfx_init(const video_info_t *video,
           ? settings->path.font : NULL, settings->video.font_size, false,
           FONT_DRIVER_RENDER_VITA2D))
    {
-      ELOG(@"Font: Failed to initialize font renderer.\n");
+      printf("Error: Font: Failed to initialize font renderer.\n");
         return false;
    }
    return vita;

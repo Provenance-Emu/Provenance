@@ -277,7 +277,7 @@ static bool android_gfx_ctx_set_resize(void *data,
          VLOG(@"[Android]: Native window size: %u x %u.\n", and->width, and->height);
          if (!vulkan_create_swapchain(&and->vk, and->width, and->height, and->swap_interval))
          {
-            ELOG(@"[Android]: Failed to update swapchain.\n");
+            printf("Error: [Android]: Failed to update swapchain.\n");
             return false;
          }
 
@@ -329,7 +329,7 @@ static bool android_gfx_ctx_set_video_mode(void *data,
          if (!vulkan_surface_create(&and->vk, VULKAN_WSI_ANDROID, NULL, android_app->window,
                   and->width, and->height, and->swap_interval))
          {
-            ELOG(@"[Android]: Failed to create surface.\n");
+            printf("Error: [Android]: Failed to create surface.\n");
             return false;
          }
 #endif

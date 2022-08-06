@@ -192,11 +192,11 @@ static bool hlsl_compile_program(
 
    if (ret_fp < 0 || ret_vp < 0 || listing_v || listing_f)
    {
-      ELOG(@"Cg/HLSL error:\n");
+      printf("Error: Cg/HLSL error:\n");
       if(listing_f)
-         ELOG(@"Fragment:\n%s\n", (char*)listing_f->GetBufferPointer());
+         printf("Error: Fragment:\n%s\n", (char*)listing_f->GetBufferPointer());
       if(listing_v)
-         ELOG(@"Vertex:\n%s\n", (char*)listing_v->GetBufferPointer());
+         printf("Error: Vertex:\n%s\n", (char*)listing_v->GetBufferPointer());
 
       ret = false;
       goto end;
@@ -226,7 +226,7 @@ static bool hlsl_load_stock(hlsl_shader_data_t *hlsl, void *data)
 
    if (!hlsl_compile_program(hlsl, 0, &hlsl->prg[0], &program_info))
    {
-      ELOG(@"Failed to compile passthrough shader, is something wrong with your environment?\n");
+      printf("Error: Failed to compile passthrough shader, is something wrong with your environment?\n");
       return false;
    }
 
@@ -364,7 +364,7 @@ static bool hlsl_load_preset(hlsl_shader_data_t *hlsl, void *data, const char *p
 
    if (!video_shader_read_conf_cgp(conf, hlsl->cg_shader))
    {
-      ELOG(@"Failed to parse CGP file.\n");
+      printf("Error: Failed to parse CGP file.\n");
       goto error;
    }
 
@@ -386,7 +386,7 @@ static bool hlsl_load_preset(hlsl_shader_data_t *hlsl, void *data, const char *p
    return true;
 
 error:
-   ELOG(@"Failed to load preset.\n");
+   printf("Error: Failed to load preset.\n");
    if (conf)
       config_file_free(conf);
    conf = NULL;

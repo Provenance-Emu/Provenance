@@ -121,7 +121,7 @@ static bool gl_raster_font_upload_atlas(gl_raster_t *font,
             }
             break;
          default:
-            ELOG(@"Unsupported number of components: %u\n",
+            printf("Error: Unsupported number of components: %u\n",
                   (unsigned)ncomponents);
             free(tmp);
             return false;

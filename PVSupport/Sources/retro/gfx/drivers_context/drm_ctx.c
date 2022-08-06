@@ -127,7 +127,7 @@ static struct drm_fb *drm_fb_get_from_bo(struct gbm_bo *bo)
    return fb;
 
 error:
-   ELOG(@"[KMS]: Failed to create FB: %s\n", strerror(errno));
+   printf("Error: [KMS]: Failed to create FB: %s\n", strerror(errno));
    free(fb);
    return NULL;
 }
@@ -373,7 +373,7 @@ nextgpu:
 
    if (!gpu_descriptors || gpu_index == gpu_descriptors->size)
    {
-      ELOG(@"[KMS]: Couldn't find a suitable DRM device.\n");
+      printf("Error: [KMS]: Couldn't find a suitable DRM device.\n");
       goto error;
    }
    gpu = gpu_descriptors->elems[gpu_index++].data;
@@ -670,7 +670,7 @@ static bool gfx_ctx_drm_set_video_mode(void *data,
 
    if (!g_drm_mode)
    {
-      ELOG(@"[KMS/EGL]: Did not find suitable video mode for %u x %u.\n",
+      printf("Error: [KMS/EGL]: Did not find suitable video mode for %u x %u.\n",
             width, height);
       goto error;
    }
@@ -688,7 +688,7 @@ static bool gfx_ctx_drm_set_video_mode(void *data,
 
    if (!g_gbm_surface)
    {
-      ELOG(@"[KMS/EGL]: Couldn't create GBM surface.\n");
+      printf("Error: [KMS/EGL]: Couldn't create GBM surface.\n");
       goto error;
    }
 

@@ -18,7 +18,7 @@
 
 static void *null_audio_init(const char *device, unsigned rate, unsigned latency)
 {
-   ELOG(@"Using the null audio driver. RetroArch will be silent.");
+   printf("Error: Using the null audio driver. RetroArch will be silent.");
 
    (void)device;
    (void)rate;

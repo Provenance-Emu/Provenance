@@ -537,7 +537,7 @@ bool content_undo_load_state(void)
 
    if (!ret)
    {
-      ELOG(@"[State]: %s \"%s\".\n",
+      printf("Error: [State]: %s \"%s\".\n",
          msg_hash_to_str(MSG_FAILED_TO_UNDO_LOAD_STATE),
          undo_load_buf.path);
    }
@@ -773,7 +773,7 @@ static void task_save_handler(retro_task_t *task)
 
       if (state->undo_save)
       {
-         ELOG(@"[State]: %s \"%s\".\n",
+         printf("Error: [State]: %s \"%s\".\n",
             msg_hash_to_str(MSG_FAILED_TO_UNDO_SAVE_STATE),
             undo_save_buf.path);
 
@@ -1269,7 +1269,7 @@ static void content_load_state_cb(retro_task_t *task,
    return;
 
 error:
-   ELOG(@"[State]: %s \"%s\".\n",
+   printf("Error: [State]: %s \"%s\".\n",
          msg_hash_to_str(MSG_FAILED_TO_LOAD_STATE),
          load_data->path);
    if (buf)
@@ -1486,7 +1486,7 @@ bool content_save_state(const char *path, bool save_to_disk, bool autosave)
 
       if (!data)
       {
-         ELOG(@"[State]: %s \"%s\".\n",
+         printf("Error: [State]: %s \"%s\".\n",
                msg_hash_to_str(MSG_FAILED_TO_SAVE_STATE_TO),
                path);
          return false;
@@ -1521,7 +1521,7 @@ bool content_save_state(const char *path, bool save_to_disk, bool autosave)
 
       if (!data)
       {
-         ELOG(@"[State]: %s \"%s\".\n",
+         printf("Error: [State]: %s \"%s\".\n",
                msg_hash_to_str(MSG_FAILED_TO_SAVE_STATE_TO),
                path);
          return false;
@@ -1656,7 +1656,7 @@ bool content_rename_state(const char *origin, const char *dest)
    if (!ret)
       return true;
 
-   ELOG(@"[State]: Error %d renaming file \"%s\".\n", ret, origin);
+   printf("Error: [State]: Error %d renaming file \"%s\".\n", ret, origin);
    return false;
 }
 
@@ -1872,7 +1872,7 @@ bool content_load_state_from_ram(void)
 
    if (!ret)
    {
-      ELOG(@"[State]: %s.\n",
+      printf("Error: [State]: %s.\n",
          msg_hash_to_str(MSG_FAILED_TO_LOAD_SRAM));
    }
 
@@ -1903,7 +1903,7 @@ bool content_save_state_to_ram(void)
 
       if (!data)
       {
-         ELOG(@"[State]: %s.\n",
+         printf("Error: [State]: %s.\n",
                msg_hash_to_str(MSG_FAILED_TO_SAVE_SRAM));
          return false;
       }
@@ -1919,7 +1919,7 @@ bool content_save_state_to_ram(void)
 
    if (!data)
    {
-      ELOG(@"[State]: %s.\n",
+      printf("Error: [State]: %s.\n",
             msg_hash_to_str(MSG_FAILED_TO_SAVE_SRAM));
       return false;
    }
@@ -2021,7 +2021,7 @@ bool content_save_ram_file(unsigned slot, bool compress)
 
    if (!write_success)
    {
-      ELOG(@"[SRAM]: %s.\n",
+      printf("Error: [SRAM]: %s.\n",
             msg_hash_to_str(MSG_FAILED_TO_SAVE_SRAM));
       WLOG(@"[SRAM]: Attempting to recover ...\n");
 
