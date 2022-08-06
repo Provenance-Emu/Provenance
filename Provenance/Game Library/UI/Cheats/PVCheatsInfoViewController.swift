@@ -61,7 +61,6 @@ final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
     }
     override func pressesEnded(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
         guard let key = presses.first?.key else { return }
-        NSLog("Receive Ended \(key)")
         if (!isEditingType) {
             let fieldValue=codeTextField.text ?? ""
             switch key.keyCode {

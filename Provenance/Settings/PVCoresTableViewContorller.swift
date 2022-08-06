@@ -62,7 +62,7 @@ final class PVCoresTableViewController: QuickTableViewController {
 
         init(url: URL) {
             self.url = url
-            super.init(nibName: nil, bundle: nil)
+            super.init(nibName: nil, bundle: Bundle.init(for: type(of: self)))
         }
 
         required init?(coder _: NSCoder) {

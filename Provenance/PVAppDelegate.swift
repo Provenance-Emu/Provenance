@@ -12,6 +12,7 @@ import PVLibrary
 import PVSupport
 import RealmSwift
 import RxSwift
+import Logging
 #if !targetEnvironment(macCatalyst) && !os(macOS) // && canImport(SteamController)
 import SteamController
 import UIKit
@@ -74,7 +75,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
             window.rootViewController = sideNav
         } else {
-            let storyboard = UIStoryboard.init(name: "Provenance", bundle: Bundle.main)
+            let storyboard = UIStoryboard.init(name: "Provenance", bundle: Bundle(for: PVAppDelegate.self))
             let vc = storyboard.instantiateInitialViewController()
 
             window.rootViewController = vc

@@ -552,7 +552,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
     func logsActions() {
         // Log Viewer
-        let logViewController = PVLogViewController(nibName: "PVLogViewController", bundle: nil)
+        let logViewController = PVLogViewController(nibName: "PVLogViewController", bundle: Bundle.init(for: type(of: self)))
         logViewController.hideDoneButton()
         navigationController?.pushViewController(logViewController, animated: true)
         logViewController.hideDoneButton()

@@ -130,6 +130,9 @@ final class JSButton: MovableButtonView {
         addObserver(self as NSObject, forKeyPath: "backgroundImagePressed", options: .new, context: nil)
         pressed = false
         tintColor = UIColor.white
+        
+        // Haptics
+        self.feedbackOnTouchDown = true
     }
 
     deinit {

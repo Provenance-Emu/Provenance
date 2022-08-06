@@ -63,7 +63,7 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
             regex = try! NSRegularExpression(pattern: "[+]+", options: NSRegularExpression.Options.caseInsensitive)
             range = NSRange(location: 0, length: modString.count)
             modString = regex.stringByReplacingMatches(in: modString, options: [], range: range, withTemplate: "+")
-            NSLog("Formatted CheatCode \(modString)")
+            DLOG("Formatted CheatCode \(modString)")
 
             if (gameWithCheat.setCheat(code: modString, type:type, enabled:enabled)) {
                 DLOG("Succeeded applying cheat: \(modString) \(type) \(enabled)")
@@ -153,7 +153,7 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
     }
 
     @objc func showCheatsMenu() {
-        guard let cheatsNavController = UIStoryboard(name: "Cheats", bundle: nil).instantiateViewController(withIdentifier: "PVCheatsViewControllerNav") as? UINavigationController else {
+        guard let cheatsNavController = UIStoryboard(name: "Cheats", bundle: Bundle.init(for: type(of: self))).instantiateViewController(withIdentifier: "PVCheatsViewControllerNav") as? UINavigationController else {
             return
         }
 

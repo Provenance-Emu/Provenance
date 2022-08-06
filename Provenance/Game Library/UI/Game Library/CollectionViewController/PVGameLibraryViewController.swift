@@ -22,6 +22,7 @@ import RxCocoa
 import RxDataSources
 import RxSwift
 import UIKit
+import PVSupport
 
 let PVGameLibraryHeaderViewIdentifier = "PVGameLibraryHeaderView"
 let PVGameLibraryFooterViewIdentifier = "PVGameLibraryFooterView"
@@ -486,9 +487,9 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
 
         // TODO: Use nib for cell once we drop iOS 8 and can use layouts
         #if os(iOS)
-            collectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+        collectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: Bundle.init(for: type(of: self))), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
         #else
-            collectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+            collectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: Bundle.init(for: type(of: self))), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
         #endif
         // Adjust collection view layout for iPhone X Safe areas
         // Can remove this when we go iOS 9+ and just use safe areas
@@ -712,7 +713,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         } else if segue.identifier == "gameMoreInfoPageVCSegue" {
             let game = sender as! PVGame
 
-            let firstVC = UIStoryboard(name: "Provenance", bundle: nil).instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
+            let firstVC = UIStoryboard(name: "Provenance", bundle: Bundle.init(for: type(of: self))).instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
             firstVC.game = game
 
             let moreInfoCollectionVC = segue.destination as! GameMoreInfoPageViewController
@@ -1115,7 +1116,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
 
         if !game.saveStates.isEmpty {
             actionSheet.addAction(UIAlertAction(title: "View Save States", symbol:"archivebox", style: .default, handler: { (_: UIAlertAction) -> Void in
-                guard let saveStatesNavController = UIStoryboard(name: "SaveStates", bundle: nil).instantiateViewController(withIdentifier: "PVSaveStatesViewControllerNav") as? UINavigationController else {
+                guard let saveStatesNavController = UIStoryboard(name: "SaveStates", bundle: Bundle.init(for: type(of: self))).instantiateViewController(withIdentifier: "PVSaveStatesViewControllerNav") as? UINavigationController else {
                     return
                 }
 

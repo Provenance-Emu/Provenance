@@ -56,9 +56,9 @@ final class PVSaveStatesViewController: UICollectionViewController {
             title = "Save States"
         #endif
         #if os(tvOS)
-            collectionView?.register(UINib(nibName: "PVSaveStateCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: "SaveStateView")
+            collectionView?.register(UINib(nibName: "PVSaveStateCollectionViewCell~tvOS", bundle: Bundle.init(for: type(of: self))), forCellWithReuseIdentifier: "SaveStateView")
         #else
-            collectionView?.register(UINib(nibName: "PVSaveStateCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "SaveStateView")
+            collectionView?.register(UINib(nibName: "PVSaveStateCollectionViewCell", bundle: Bundle.init(for: type(of: self))), forCellWithReuseIdentifier: "SaveStateView")
         #endif
 
         let allSaves: Results<PVSaveState>

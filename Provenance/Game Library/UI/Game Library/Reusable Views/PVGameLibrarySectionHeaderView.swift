@@ -7,6 +7,7 @@
 //  Copyright (c) 2013 James Addyman. All rights reserved.
 //
 import RxSwift
+import UIKit
 
 internal struct GameLibrarySectionViewModel {
     internal let title: String

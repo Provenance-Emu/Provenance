@@ -33,7 +33,7 @@ class ParentResolverViewController: UIViewController {
 
     init(onResolve: @escaping (UIViewController) -> Void) {
         self.onResolve = onResolve
-        super.init(nibName: nil, bundle: nil)
+        super.init(nibName: nil, bundle: Bundle.init(for: type(of: self)))
     }
 
     required init?(coder: NSCoder) {

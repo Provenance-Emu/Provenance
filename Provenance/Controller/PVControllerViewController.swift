@@ -200,7 +200,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 		emulatorCore = responder
 		self.controlLayout = controlLayout
 		self.system = system
-		super.init(nibName: nil, bundle: nil)
+		super.init(nibName: nil, bundle: Bundle.init(for: type(of: self)))
 	}
 
 	required init?(coder _: NSCoder) {

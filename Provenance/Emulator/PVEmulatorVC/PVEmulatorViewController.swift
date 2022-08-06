@@ -7,11 +7,11 @@
 //  Copyright (c) 2013 James Addyman. All rights reserved.
 //
 
+import UIKit
 import PVLibrary
 import PVSupport
 import QuartzCore
 import RealmSwift
-import UIKit
 
 private weak var staticSelf: PVEmulatorViewController?
 
@@ -80,7 +80,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         self.core = core
         self.game = game
 
-        super.init(nibName: nil, bundle: nil)
+        super.init(nibName: nil, bundle: Bundle.init(for: type(of: self)))
 
         staticSelf = self
 
@@ -679,7 +679,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     }
 
     func showMoreInfo() {
-        guard let moreInfoViewController = UIStoryboard(name: "Provenance", bundle: nil).instantiateViewController(withIdentifier: "gameMoreInfoVC") as? PVGameMoreInfoViewController else { return }
+        guard let moreInfoViewController = UIStoryboard(name: "Provenance", bundle: Bundle.init(for: type(of: self))).instantiateViewController(withIdentifier: "gameMoreInfoVC") as? PVGameMoreInfoViewController else { return }
         moreInfoViewController.game = self.game
         moreInfoViewController.showsPlayButton = false
         let newNav = UINavigationController(rootViewController: moreInfoViewController)

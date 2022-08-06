@@ -87,7 +87,7 @@ extension PVRootViewController: PVMenuDelegate {
         #if os(iOS)
 
         guard
-            let settingsNav = UIStoryboard(name: "Provenance", bundle: nil).instantiateViewController(withIdentifier: "settingsNavigationController") as? UINavigationController,
+            let settingsNav = UIStoryboard(name: "Provenance", bundle: Bundle(for: type(of: self))).instantiateViewController(withIdentifier: "settingsNavigationController") as? UINavigationController,
             let settingsVC = settingsNav.topViewController as? PVSettingsViewController
         else { return }
 

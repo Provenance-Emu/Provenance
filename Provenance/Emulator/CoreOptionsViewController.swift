@@ -18,7 +18,7 @@ final class CoreOptionsViewController: QuickTableViewController {
     init(withCore core: CoreOptional.Type, subOptions: [CoreOption]? = nil) {
         self.core = core
         self.subOptions = subOptions
-        super.init(nibName: nil, bundle: nil)
+        super.init(nibName: nil, bundle: Bundle.init(for: type(of: self)))
     }
 
     struct TableGroup {

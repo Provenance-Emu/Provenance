@@ -7,8 +7,7 @@
 //
 
 @import UIKit;
-
-#import "PVGPUViewController.h"
+#import <PVApp/PVGPUViewController.h>
 
 @interface PVGLViewController : PVGPUViewController
 

@@ -8,7 +8,7 @@
 
 #import "PVMetalViewController.h"
 @import PVSupport;
-#import "Provenance-Swift.h"
+#import <PVApp/PVApp-Swift.h>
 #import <QuartzCore/QuartzCore.h>
 
 #if !TARGET_OS_MACCATALYST
@@ -578,7 +578,12 @@ PV_OBJC_DIRECT_MEMBERS
     bool FlipY = self.emulatorCore.rendersToOpenGL;
     [constants setConstantValue:&FlipY type:MTLDataTypeBool withName:@"FlipY"];
     
-    id<MTLLibrary> lib = [_device newDefaultLibrary];
+    id<MTLLibrary> lib = [_device newDefaultLibraryWithBundle:[NSBundle bundleForClass:[self class]] error:&error];
+    
+    if(error) {
+        ELOG(@"%@", error);
+        assert(error.localizedDescription);
+    }
     
     MTLRenderPipelineDescriptor* desc = [MTLRenderPipelineDescriptor new];
     Shader* fillScreenShader = MetalShaderManager.sharedInstance.vertexShaders.firstObject;
@@ -586,6 +591,7 @@ PV_OBJC_DIRECT_MEMBERS
     
     if(error) {
         ELOG(@"%@", error);
+        assert(error.localizedDescription);
     }
     
     Shader* blitterShader = MetalShaderManager.sharedInstance.blitterShaders.firstObject;
@@ -598,6 +604,7 @@ PV_OBJC_DIRECT_MEMBERS
     _blitPipeline = [_device newRenderPipelineStateWithDescriptor:desc error:&error];
     if(error) {
         ELOG(@"%@", error);
+        assert(error.localizedDescription);
     }
 }
 
@@ -609,7 +616,11 @@ PV_OBJC_DIRECT_MEMBERS
     bool FlipY = self.emulatorCore.rendersToOpenGL;
     [constants setConstantValue:&FlipY type:MTLDataTypeBool withName:@"FlipY"];
     
-    id<MTLLibrary> lib = [_device newDefaultLibrary];
+    id<MTLLibrary> lib = [_device newDefaultLibraryWithBundle:[NSBundle bundleForClass:[self class]] error:&error];
+    if(error) {
+        ELOG(@"%@", error);
+        assert(error);
+    }
     
     // Fill screen shader
     MTLRenderPipelineDescriptor* desc = [MTLRenderPipelineDescriptor new];
@@ -617,22 +628,23 @@ PV_OBJC_DIRECT_MEMBERS
     desc.vertexFunction = [lib newFunctionWithName:fillScreenShader.function constantValues:constants error:&error];
     if(error) {
         ELOG(@"%@", error);
+        assert(error);
     }
         
     // Filter shader
     desc.fragmentFunction = [lib newFunctionWithName:filterShader.function];
-    desc.colorAttachments[0].pixelFormat = self.mtlview.colorPixelFormat;;
+    desc.colorAttachments[0].pixelFormat = self.mtlview.colorPixelFormat;
     
     _effectFilterPipeline = [_device newRenderPipelineStateWithDescriptor:desc error:&error];
     if(error) {
         ELOG(@"%@", error);
+        assert(error);
     }
 }
 
 // MARK: - fsh Shaders
 + (GLuint)shaderWithContents:(NSString*)contents type:(GLenum)type
 {
-
     const GLchar *source = [contents UTF8String];
     // Create the shader object
     GLuint shader = glCreateShader(type);
@@ -646,7 +658,10 @@ PV_OBJC_DIRECT_MEMBERS
     if (status == GL_FALSE) {
         GLchar messages[1024];
         glGetShaderInfoLog(shader, sizeof(messages), 0, &messages[0]);
-        NSLog(@"%@:- GLSL Shader Error: %s", self, messages);
+        NSString *message = [NSString stringWithFormat:@"%@:- GLSL Shader Error: %s", self, messages];
+        ELOG(message);
+        assert(message);
+        return GL_NO_ERROR;
     }
     return shader;
 }
@@ -669,7 +684,10 @@ PV_OBJC_DIRECT_MEMBERS
     if (status == GL_FALSE) {
         GLchar messages[1024];
         glGetProgramInfoLog(program, sizeof(messages), 0, &messages[0]);
-        NSLog(@"%@:- GLSL Program Error: %s", self, messages);
+        NSString *message = [NSString stringWithFormat:@"%@:- GLSL Program Error: %s", self, messages];
+        ELOG(message);
+        assert(message);
+        return GL_NO_ERROR;
     }
     // Delete shaders
     glDeleteShader(vertex_shader);
@@ -677,7 +695,6 @@ PV_OBJC_DIRECT_MEMBERS
 
     return program;
 }
-
 
 // Mac OS Stuff
 // MARK: - MTKViewDelegate
@@ -839,9 +856,9 @@ PV_OBJC_DIRECT_MEMBERS
                 ";
                 
                 NSString* (^shaderSourceForName)(NSString*, NSError **) = ^NSString* (NSString* name, NSError** error) {
-                    NSString *file = [[NSBundle mainBundle] pathForResource:name
-                                                                     ofType:@"fsh"
-                                                                inDirectory:@"Shaders"];
+                    NSString *file = [[NSBundle bundleForClass:[self class]] pathForResource:name
+                                                                                      ofType:@"fsh"
+                                                                                 inDirectory:@"Shaders"];
                     return [NSString stringWithContentsOfFile:file
                                                      encoding:NSUTF8StringEncoding
                                                         error:error];

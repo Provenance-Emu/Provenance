@@ -15,7 +15,7 @@ import UIKit
     extension PVGameLibraryViewController: UIViewControllerPreviewingDelegate {
         func previewingContext(_: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
             if let moreInfoVC = viewControllerToCommit as? PVGameMoreInfoViewController {
-                let moreInfoGamePageVC = UIStoryboard(name: "Provenance", bundle: nil).instantiateViewController(withIdentifier: "gameMoreInfoPageVC") as! GameMoreInfoPageViewController
+                let moreInfoGamePageVC = UIStoryboard(name: "Provenance", bundle: Bundle.init(for: type(of: self))).instantiateViewController(withIdentifier: "gameMoreInfoPageVC") as! GameMoreInfoPageViewController
                 moreInfoGamePageVC.setViewControllers([moreInfoVC], direction: .forward, animated: false, completion: nil)
                 navigationController!.show(moreInfoGamePageVC, sender: self)
             } else if let saveSaveInfoVC = viewControllerToCommit as? PVSaveStateInfoViewController {
@@ -32,7 +32,7 @@ import UIKit
 
 			switch item {
             case .game(let game):
-                let storyBoard = UIStoryboard(name: "Provenance", bundle: nil)
+                let storyBoard = UIStoryboard(name: "Provenance", bundle: Bundle.init(for: type(of: self)))
                 let moreInfoViewController = storyBoard.instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
                 moreInfoViewController.game = game
                 moreInfoViewController.showsPlayButton = true
@@ -41,7 +41,7 @@ import UIKit
                 guard let game: PVGame = (collectionView!.cellForItem(at: indexPath) as? CollectionViewInCollectionViewCell)?.item(at: location)
                     else { return nil }
 
-                let storyBoard = UIStoryboard(name: "Provenance", bundle: nil)
+                let storyBoard = UIStoryboard(name: "Provenance", bundle: Bundle.init(for: type(of: self)))
                 let moreInfoViewController = storyBoard.instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
                 moreInfoViewController.game = game
                 moreInfoViewController.showsPlayButton = true
@@ -49,7 +49,7 @@ import UIKit
             case .saves:
                 guard let save: PVSaveState = (collectionView!.cellForItem(at: indexPath) as? CollectionViewInCollectionViewCell)?.item(at: location)
                     else { return nil }
-                let storyBoard = UIStoryboard(name: "SaveStates", bundle: nil)
+                let storyBoard = UIStoryboard(name: "SaveStates", bundle: Bundle.init(for: type(of: self)))
                 let saveStateInfoVC = storyBoard.instantiateViewController(withIdentifier: "saveStateInfoVC") as! PVSaveStateInfoViewController
                 saveStateInfoVC.saveState = save
                 return saveStateInfoVC
@@ -57,7 +57,7 @@ import UIKit
                 guard let game: PVRecentGame = (collectionView!.cellForItem(at: indexPath) as? CollectionViewInCollectionViewCell)?.item(at: location)
                     else { return nil }
 
-                let storyBoard = UIStoryboard(name: "Provenance", bundle: nil)
+                let storyBoard = UIStoryboard(name: "Provenance", bundle: Bundle.init(for: type(of: self)))
                 let moreInfoViewController = storyBoard.instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
                 moreInfoViewController.game = game.game
                 moreInfoViewController.showsPlayButton = true

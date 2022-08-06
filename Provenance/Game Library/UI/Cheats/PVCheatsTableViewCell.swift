@@ -44,10 +44,8 @@ final class PVCheatsTableViewCell: UITableViewCell {
                 break
             case let .error(error):
                 let reason = (error as NSError).localizedFailureReason ?? ""
-                NSLog("Error Updating CheatCode: \(error.localizedDescription) \(reason)")
+                ELOG("Error Updating CheatCode: \(error.localizedDescription) \(reason)")
             }
-
         }
     }
-
 }

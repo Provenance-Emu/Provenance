@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 final class SegueNavigationRow: NavigationRow<SystemSettingsCell> {
     weak var viewController: UIViewController?

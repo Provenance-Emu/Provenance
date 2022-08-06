@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 @IBDesignable class VerticalAlignLabel: UILabel {
     @IBInspectable var alignmentCode: Int = 0 {

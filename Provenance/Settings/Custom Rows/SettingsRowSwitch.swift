@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import UIKit
+import PVSupport
 
 final class PVSettingsSwitchRow: SwitchRow<PVSwitchCell> {
     let keyPath: ReferenceWritableKeyPath<PVSettingsModel, Bool>

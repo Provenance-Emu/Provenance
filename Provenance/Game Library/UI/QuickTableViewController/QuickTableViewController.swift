@@ -60,7 +60,7 @@ open class QuickTableViewController: UIViewController, UITableViewDataSource, UI
   ///
   /// - Parameter style: A constant that specifies the style of table view that the controller object is to manage.
   public init(style: UITableView.Style) {
-    super.init(nibName: nil, bundle: nil)
+    super.init(nibName: nil, bundle: Bundle.init(for: type(of: self)))
     tableView = UITableView(frame: .zero, style: style)
   }
 

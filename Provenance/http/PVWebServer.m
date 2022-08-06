@@ -119,7 +119,7 @@
 
 -(BOOL)startWWWUploadServer {
     if (_webServer.isRunning) {
-        NSLog(@"Web Server is already running");
+        WLOG(@"Web Server is already running");
         return YES;
     }
     
@@ -142,7 +142,7 @@
     BOOL success = [self.webServer startWithOptions:webSeverOptions
                                               error:&error];
     if (!success) {
-        NSLog(@"Failed to start Web Server with error: %@", error.localizedDescription);
+        ELOG(@"Failed to start Web Server with error: %@", error.localizedDescription);
     }
     
     return success;
@@ -150,7 +150,7 @@
 
 -(BOOL)startWebDavServer {
     if (_webDavServer.isRunning) {
-        NSLog(@"WebDAV Server is already running");
+        WLOG(@"WebDAV Server is already running");
         return YES;
     }
     
@@ -171,7 +171,7 @@
     BOOL success = [self.webDavServer startWithOptions:webDavSeverOptions
                                             error:&error];
     if (!success) {
-        NSLog(@"Failed to start WebDAV Server with error: %@", error.localizedDescription);
+        ELOG(@"Failed to start WebDAV Server with error: %@", error.localizedDescription);
     }
 
     return success;
@@ -213,7 +213,7 @@
             {
                 // Check if interface is en0 which is the wifi connection on the iPhone
                 NSString *interfaceName = [NSString stringWithUTF8String:temp_addr->ifa_name];
-                NSLog(@"Interface name: %@", interfaceName);
+                DLOG(@"Interface name: %@", interfaceName);
                 if ([interfaceName isEqualToString:@"en0"] || [interfaceName isEqualToString:@"en1"])
                 {
                     // Get NSString from C String
@@ -267,22 +267,22 @@
 
 - (void)webUploader:(GCDWebUploader*)uploader didUploadFileAtPath:(NSString*)path
 {
-    NSLog(@"[UPLOAD] %@", path);
+    DLOG(@"[UPLOAD] %@", path);
 }
 
 - (void)webUploader:(GCDWebUploader*)uploader didMoveItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath
 {
-    NSLog(@"[MOVE] %@ -> %@", fromPath, toPath);
+    DLOG(@"[MOVE] %@ -> %@", fromPath, toPath);
 }
 
 - (void)webUploader:(GCDWebUploader*)uploader didDeleteItemAtPath:(NSString*)path
 {
-    NSLog(@"[DELETE] %@", path);
+    DLOG(@"[DELETE] %@", path);
 }
 
 - (void)webUploader:(GCDWebUploader*)uploader didCreateDirectoryAtPath:(NSString*)path
 {
-    NSLog(@"[CREATE] %@", path);
+    DLOG(@"[CREATE] %@", path);
 }
 
 - (void)webServerDidCompleteBonjourRegistration:(GCDWebServer*)server {
@@ -303,35 +303,35 @@
  *  This method is called whenever a file has been uploaded.
  */
 - (void)davServer:(GCDWebDAVServer*)server didUploadFileAtPath:(NSString*)path {
-    NSLog(@"[DAV UPLOAD] %@", path);
+    DLOG(@"[DAV UPLOAD] %@", path);
 }
 
 /**
  *  This method is called whenever a file or directory has been moved.
  */
 - (void)davServer:(GCDWebDAVServer*)server didMoveItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath {
-    NSLog(@"[DAV MOVE] %@ -> %@", fromPath, toPath);
+    DLOG(@"[DAV MOVE] %@ -> %@", fromPath, toPath);
 }
 
 /**
  *  This method is called whenever a file or directory has been copied.
  */
 - (void)davServer:(GCDWebDAVServer*)server didCopyItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath {
-    NSLog(@"[DAV COPY] %@ -> %@", fromPath, toPath);
+    DLOG(@"[DAV COPY] %@ -> %@", fromPath, toPath);
 }
 
 /**
  *  This method is called whenever a file or directory has been deleted.
  */
 - (void)davServer:(GCDWebDAVServer*)server didDeleteItemAtPath:(NSString*)path {
-    NSLog(@"[DAV DELETE] %@", path);
+    DLOG(@"[DAV DELETE] %@", path);
 }
 
 /**
  *  This method is called whenever a directory has been created.
  */
 - (void)davServer:(GCDWebDAVServer*)server didCreateDirectoryAtPath:(NSString*)path {
-    NSLog(@"[DAV CREATE] %@", path);
+    DLOG(@"[DAV CREATE] %@", path);
 }
 
 @end

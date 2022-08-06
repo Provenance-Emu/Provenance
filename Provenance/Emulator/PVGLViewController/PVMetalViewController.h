@@ -7,7 +7,7 @@
 //
 
 @import UIKit;
-#import "PVGPUViewController.h"
+#import <PVApp/PVGPUViewController.h>
 
 @class PVEmulatorCore;
 

@@ -782,7 +782,7 @@ public final class SortOptionsTableViewController: UIViewController {
     public private(set) var tableView: UITableView!
 
     public required init(withTableView tableView: UITableView) {
-        super.init(nibName: nil, bundle: nil)
+        super.init(nibName: nil, bundle: Bundle.init(for: type(of: self)))
 
         self.tableView = tableView
     }

@@ -6,7 +6,7 @@
 //  Copyright © 2018 James Addyman. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 public extension UIView {
     @IBInspectable var ignoresInvertColors: Bool {

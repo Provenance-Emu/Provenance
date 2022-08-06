@@ -9,7 +9,7 @@
 #import "PVGLViewController.h"
 @import PVSupport;
 @import QuartzCore;
-#import "Provenance-Swift.h"
+#import <PVApp/PVApp-Swift.h>
 
 #define USE_EFFECT 1
 #define USE_DISPLAY_LINK 0
@@ -236,10 +236,12 @@ PV_OBJC_DIRECT_MEMBERS
     [self setupTexture];
 
     NSError *error;
-    defaultVertexShader = [self compileShaderResource:[NSString stringWithFormat:@"%s/default_vertex", VERTEX_DIR] ofType:GL_VERTEX_SHADER error:&error];
+    NSString *path = [NSString stringWithFormat:@"%s/default_vertex", VERTEX_DIR];
+    defaultVertexShader = [self compileShaderResource:path ofType:GL_VERTEX_SHADER error:&error];
     
     if(error) {
-        ELOG(@"%@", error.localizedDescription)
+        ELOG(@"%@", error.localizedDescription);
+        assert(error.localizedDescription);
     }
     assert(defaultVertexShader != GL_NO_ERROR);
 
@@ -440,8 +442,8 @@ PV_OBJC_DIRECT_MEMBERS
     NSFileManager *fm = [NSFileManager defaultManager];
     
     NSString* shaderPath;
-    NSString* bundleShaderPath = [[NSBundle mainBundle] pathForResource:shaderResourceName
-                                                                 ofType:@"glsl"];
+    NSString* bundleShaderPath = [[NSBundle bundleForClass:[self class]] pathForResource:shaderResourceName
+                                                                                  ofType:@"glsl"];
     
     if(![fm fileExistsAtPath:docsPath]) {
         [self createShadersDirs];

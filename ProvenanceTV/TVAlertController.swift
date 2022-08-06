@@ -89,7 +89,7 @@ final class TVAlertController: UIViewController, UIAlertControllerProtocol {
     // MARK: init
 
     convenience init(title: String?, message: String?, preferredStyle: UIAlertController.Style) {
-        self.init(nibName:nil, bundle: nil)
+        self.init(nibName:nil, bundle: Bundle.init(for: type(of: self)))
         self.title = title
         self.message = message
         self.preferredStyle = preferredStyle

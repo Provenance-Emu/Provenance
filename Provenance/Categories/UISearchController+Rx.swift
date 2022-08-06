@@ -9,6 +9,7 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import UIKit
 
 private class RxUISearchResultsUpdating: DelegateProxy<UISearchController, UISearchResultsUpdating>, DelegateProxyType, UISearchResultsUpdating {
     static func registerKnownImplementations() {

@@ -7,6 +7,7 @@
 //
 
 #import "PVGPUViewController.h"
+#import <PVSupport/DebugUtils.h>
 
 @interface PVGPUViewController ()
 
