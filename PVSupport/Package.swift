@@ -27,7 +27,10 @@ let package = Package(
         .package(
             name: "Reachability",
             url: "https://github.com/ashleymills/Reachability.swift",
-            .upToNextMajor(from: "5.1.0"))
+            .upToNextMajor(from: "5.1.0")),
+        .package(
+            url: "https://github.com/fpillet/NSLogger",
+            .branch("master")),
     ],
     targets: [
         .target(
@@ -36,18 +39,7 @@ let package = Package(
                 .product(name: "CocoaLumberjack", package: "CocoaLumberjack")],
             path: "Sources/PVSupport",
             sources: [
-                "Audio/OEGameAudio.m",
-                "Audio/OERingBuffer.m",
-                "Audio/TPCircularBuffer.c",
-                "Audio/CARingBuffer/CAAudioTimeStamp.cpp",
-                "Audio/CARingBuffer/CARingBuffer.cpp",
-                "EmulatorCore/PVEmulatorCore.m",
-                "Logging/PVProvenanceLogging.m",
-                "Logging/PVLogEntry.m",
-                "Logging/PVLogging.m",
-                "NSExtensions/NSObject+PVAbstractAdditions.m",
-                "NSExtensions/NSFileManager+OEHashingAdditions.m",
-                "Threads/RealTimeThread.m"],
+                "EmulatorCore/PVEmulatorCore.m"],
             publicHeadersPath: "Public Headers"),
 
         .target(
@@ -59,22 +51,11 @@ let package = Package(
                 .product(name: "CocoaLumberjackSwiftLogBackend", package: "CocoaLumberjack"),
                 "Reachability"],
             exclude: [
-                "Audio/OEGameAudio.m",
-                "Audio/OERingBuffer.m",
-                "Audio/TPCircularBuffer.c",
-                "Audio/CARingBuffer/CAAudioTimeStamp.cpp",
-                "Audio/CARingBuffer/CARingBuffer.cpp",
                 "EmulatorCore/PVEmulatorCore.m",
-                "Logging/PVProvenanceLogging.m",
-                "Logging/PVLogEntry.m",
-                "Logging/PVLogging.m",
-                "NSExtensions/NSObject+PVAbstractAdditions.m",
-                "NSExtensions/NSFileManager+OEHashingAdditions.m",
-                "Threads/RealTimeThread.m"],
-                // "Info.plist",
-                // "MASShortcut.modulemap",
-                // "Prefix.pch"
-            // ],
+                "Info.plist",
+                "MASShortcut.modulemap",
+                "Prefix.pch"
+            ],
             resources: [
                 .process("Controller/AHAP/")
             ]),

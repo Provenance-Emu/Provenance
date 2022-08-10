@@ -233,6 +233,11 @@
 		B3067F742106B9130091437F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3067F732106B9130091437F /* CoreGraphics.framework */; };
 		B30E7AEB26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30E7AEA26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift */; };
 		B30E7AEC26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30E7AEA26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift */; };
+		B3104BE528A46B1D0047278C /* GRDB-dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3104BE428A46B1D0047278C /* GRDB-dynamic */; };
+		B3104BE728A46B400047278C /* GRDB-dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3104BE628A46B400047278C /* GRDB-dynamic */; };
+		B3104BE828A46B400047278C /* GRDB-dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3104BE628A46B400047278C /* GRDB-dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B3104BEA28A46B4D0047278C /* GRDB-dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3104BE928A46B4D0047278C /* GRDB-dynamic */; };
+		B3104BEB28A46B4D0047278C /* GRDB-dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3104BE928A46B4D0047278C /* GRDB-dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B31117AC218EB24300C495A2 /* LzmaSDKObjCReader.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474721071CA6002211EE /* LzmaSDKObjCReader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B31117AD218EB24400C495A2 /* LzmaSDKObjCReader.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474721071CA6002211EE /* LzmaSDKObjCReader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B31117AE218EB25F00C495A2 /* LzmaSDKObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF475221071CA6002211EE /* LzmaSDKObjC.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -651,6 +656,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				B305F085276B5229003AE510 /* PVSupport.framework in Embed Frameworks */,
+				B3104BEB28A46B4D0047278C /* GRDB-dynamic in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -673,6 +679,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				B364D4C42870E81200B93A4B /* PVLibRetro.framework in Embed Frameworks */,
+				B3104BE828A46B400047278C /* GRDB-dynamic in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -703,6 +710,27 @@
 		B3067F4A2106B5A20091437F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B3067F732106B9130091437F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		B30E7AEA26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BehaviorRelay+RangeReplaceableCollection.swift"; sourceTree = "<group>"; };
+		B3104BC828A463EB0047278C /* Repository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repository.swift; sourceTree = "<group>"; };
+		B3104BC928A463EB0047278C /* PVObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVObject.swift; sourceTree = "<group>"; };
+		B3104BCA28A463EB0047278C /* RomDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RomDatabase.swift; sourceTree = "<group>"; };
+		B3104BCC28A463EB0047278C /* RealmRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmRepresentable.swift; sourceTree = "<group>"; };
+		B3104BCD28A463EB0047278C /* DomainConvertibleType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DomainConvertibleType.swift; sourceTree = "<group>"; };
+		B3104BCF28A463EB0047278C /* PVBIOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVBIOS.swift; sourceTree = "<group>"; };
+		B3104BD028A463EB0047278C /* PVLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVLibrary.swift; sourceTree = "<group>"; };
+		B3104BD128A463EB0047278C /* PVSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSystem.swift; sourceTree = "<group>"; };
+		B3104BD228A463EB0047278C /* PVGame+Spotlight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGame+Spotlight.swift"; sourceTree = "<group>"; };
+		B3104BD328A463EB0047278C /* PVGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGame.swift; sourceTree = "<group>"; };
+		B3104BD428A463EB0047278C /* PVCheats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVCheats.swift; sourceTree = "<group>"; };
+		B3104BD528A463EB0047278C /* PVSaveState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSaveState.swift; sourceTree = "<group>"; };
+		B3104BD628A463EB0047278C /* PVGame+BoxArt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGame+BoxArt.swift"; sourceTree = "<group>"; };
+		B3104BD828A463EB0047278C /* PVImageFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVImageFile.swift; sourceTree = "<group>"; };
+		B3104BD928A463EB0047278C /* FileBackedConformance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileBackedConformance.swift; sourceTree = "<group>"; };
+		B3104BDA28A463EB0047278C /* PVFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVFile.swift; sourceTree = "<group>"; };
+		B3104BDB28A463EB0047278C /* PVRecentGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVRecentGame.swift; sourceTree = "<group>"; };
+		B3104BDC28A463EB0047278C /* PVCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVCore.swift; sourceTree = "<group>"; };
+		B3104BDF28A463EB0047278C /* RunLoopThreadScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunLoopThreadScheduler.swift; sourceTree = "<group>"; };
+		B3104BE128A463EB0047278C /* Observable+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Observable+Ext.swift"; sourceTree = "<group>"; };
+		B3104BE228A463EB0047278C /* Realm+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+Ext.swift"; sourceTree = "<group>"; };
 		B317380127841959002D3ACD /* Build.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Build.xcconfig; path = ../Build.xcconfig; sourceTree = "<group>"; };
 		B324C2EC219192FF009F4EDC /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3274E5D2106BA1200857F52 /* PVEmulatorConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVEmulatorConfiguration.swift; sourceTree = "<group>"; };
@@ -1111,6 +1139,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B305F084276B5229003AE510 /* PVSupport.framework in Frameworks */,
+				B3104BEA28A46B4D0047278C /* GRDB-dynamic in Frameworks */,
 				B305F070276B512D003AE510 /* SwiftUI.framework in Frameworks */,
 				B3014FA627B487FD006AC79B /* Differentiator in Frameworks */,
 				B305F071276B512D003AE510 /* SQLite in Frameworks */,
@@ -1129,6 +1158,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B37B4DF027B2292F0068F8D1 /* Differentiator in Frameworks */,
+				B3104BE528A46B1D0047278C /* GRDB-dynamic in Frameworks */,
 				B305EF9F276B50E2003AE510 /* SwiftUI.framework in Frameworks */,
 				B336B90F26B39BCF00960A81 /* SQLite in Frameworks */,
 				B3AF701621916CF3000FA7F9 /* PVSupport.framework in Frameworks */,
@@ -1147,6 +1177,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B305EFA1276B5112003AE510 /* SwiftUI.framework in Frameworks */,
+				B3104BE728A46B400047278C /* GRDB-dynamic in Frameworks */,
 				B336B91126B39BDA00960A81 /* SQLite in Frameworks */,
 				B324C2ED219192FF009F4EDC /* PVSupport.framework in Frameworks */,
 				B3014FA427B487F0006AC79B /* Differentiator in Frameworks */,
@@ -1186,6 +1217,90 @@
 				B3AF6FB621916002000FA7F9 /* tvOS */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B3104BC628A463EB0047278C /* SQLitePlatform */ = {
+			isa = PBXGroup;
+			children = (
+				B3104BC928A463EB0047278C /* PVObject.swift */,
+				B3104BCA28A463EB0047278C /* RomDatabase.swift */,
+				B3104BCB28A463EB0047278C /* Conversion */,
+				B3104BCE28A463EB0047278C /* Entities */,
+				B3104BC728A463EB0047278C /* Repository */,
+				B3104BDD28A463EB0047278C /* Utility */,
+			);
+			path = SQLitePlatform;
+			sourceTree = "<group>";
+		};
+		B3104BC728A463EB0047278C /* Repository */ = {
+			isa = PBXGroup;
+			children = (
+				B3104BC828A463EB0047278C /* Repository.swift */,
+			);
+			path = Repository;
+			sourceTree = "<group>";
+		};
+		B3104BCB28A463EB0047278C /* Conversion */ = {
+			isa = PBXGroup;
+			children = (
+				B3104BCC28A463EB0047278C /* RealmRepresentable.swift */,
+				B3104BCD28A463EB0047278C /* DomainConvertibleType.swift */,
+			);
+			path = Conversion;
+			sourceTree = "<group>";
+		};
+		B3104BCE28A463EB0047278C /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				B3104BCF28A463EB0047278C /* PVBIOS.swift */,
+				B3104BD028A463EB0047278C /* PVLibrary.swift */,
+				B3104BD128A463EB0047278C /* PVSystem.swift */,
+				B3104BD228A463EB0047278C /* PVGame+Spotlight.swift */,
+				B3104BD328A463EB0047278C /* PVGame.swift */,
+				B3104BD428A463EB0047278C /* PVCheats.swift */,
+				B3104BD528A463EB0047278C /* PVSaveState.swift */,
+				B3104BD628A463EB0047278C /* PVGame+BoxArt.swift */,
+				B3104BD728A463EB0047278C /* Files */,
+				B3104BDB28A463EB0047278C /* PVRecentGame.swift */,
+				B3104BDC28A463EB0047278C /* PVCore.swift */,
+			);
+			path = Entities;
+			sourceTree = "<group>";
+		};
+		B3104BD728A463EB0047278C /* Files */ = {
+			isa = PBXGroup;
+			children = (
+				B3104BD828A463EB0047278C /* PVImageFile.swift */,
+				B3104BD928A463EB0047278C /* FileBackedConformance.swift */,
+				B3104BDA28A463EB0047278C /* PVFile.swift */,
+			);
+			path = Files;
+			sourceTree = "<group>";
+		};
+		B3104BDD28A463EB0047278C /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+				B3104BDE28A463EB0047278C /* RxUnits */,
+				B3104BE028A463EB0047278C /* Extensions */,
+			);
+			path = Utility;
+			sourceTree = "<group>";
+		};
+		B3104BDE28A463EB0047278C /* RxUnits */ = {
+			isa = PBXGroup;
+			children = (
+				B3104BDF28A463EB0047278C /* RunLoopThreadScheduler.swift */,
+			);
+			path = RxUnits;
+			sourceTree = "<group>";
+		};
+		B3104BE028A463EB0047278C /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				B3104BE128A463EB0047278C /* Observable+Ext.swift */,
+				B3104BE228A463EB0047278C /* Realm+Ext.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		B3274E5C2106BA1200857F52 /* Configuration */ = {
@@ -1323,6 +1438,7 @@
 				B3579D322106B4D700DDEBD6 /* Importer */,
 				B378228221D41E5A0077E86F /* Serializer */,
 				B354E784219A76C80041F971 /* Domain */,
+				B3104BC628A463EB0047278C /* SQLitePlatform */,
 				B3579D262106B4D700DDEBD6 /* RealmPlatform */,
 				B3274E5C2106BA1200857F52 /* Configuration */,
 				B3579D1D2106B4D600DDEBD6 /* Database */,
@@ -2008,6 +2124,7 @@
 				B305EFA8276B512D003AE510 /* SQLite */,
 				B305EFAA276B512D003AE510 /* ZipArchive */,
 				B3014FA527B487FD006AC79B /* Differentiator */,
+				B3104BE928A46B4D0047278C /* GRDB-dynamic */,
 			);
 			productName = PVLibrary;
 			productReference = B305F081276B512D003AE510 /* PVLibrary.framework */;
@@ -2034,6 +2151,7 @@
 				B3A3204027209B4300F338F6 /* ZipArchive */,
 				B37B4DEF27B2292F0068F8D1 /* Differentiator */,
 				B37B4DF127B2292F0068F8D1 /* RxDataSources */,
+				B3104BE428A46B1D0047278C /* GRDB-dynamic */,
 			);
 			productName = PVLibrary;
 			productReference = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */;
@@ -2060,6 +2178,7 @@
 				B3128065274C658E00550720 /* ZipArchive */,
 				EF7D4AA427B44FA7002528B7 /* RxDataSources */,
 				B3014FA327B487F0006AC79B /* Differentiator */,
+				B3104BE628A46B400047278C /* GRDB-dynamic */,
 			);
 			productName = PVLibrary;
 			productReference = B3C04B4421077B3100E7AF79 /* PVLibrary.framework */;
@@ -2121,6 +2240,7 @@
 				B336B90D26B39BCF00960A81 /* XCRemoteSwiftPackageReference "SQLite.swift" */,
 				B3A3203F27209B4300F338F6 /* XCRemoteSwiftPackageReference "ZipArchive" */,
 				B37B4DEE27B2292F0068F8D1 /* XCRemoteSwiftPackageReference "RxDataSources" */,
+				B3104BE328A46B1C0047278C /* XCRemoteSwiftPackageReference "GRDB.swift" */,
 			);
 			productRefGroup = B3579D102106B11D00DDEBD6 /* Products */;
 			projectDirPath = "";
@@ -3006,7 +3126,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 12.1;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 			};
 			name = Archive;
 		};
@@ -3283,7 +3403,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 12.1;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 			};
 			name = Debug;
 		};
@@ -3322,7 +3442,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 12.1;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 			};
 			name = Release;
 		};
@@ -3456,6 +3576,14 @@
 				version = 2.3.0;
 			};
 		};
+		B3104BE328A46B1C0047278C /* XCRemoteSwiftPackageReference "GRDB.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/groue/GRDB.swift.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		B336B90426B39ABA00960A81 /* XCRemoteSwiftPackageReference "RxRealm" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/RxSwiftCommunity/RxRealm.git";
@@ -3525,6 +3653,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B305EFAB276B512D003AE510 /* XCRemoteSwiftPackageReference "ZipArchive" */;
 			productName = ZipArchive;
+		};
+		B3104BE428A46B1D0047278C /* GRDB-dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3104BE328A46B1C0047278C /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			productName = "GRDB-dynamic";
+		};
+		B3104BE628A46B400047278C /* GRDB-dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3104BE328A46B1C0047278C /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			productName = "GRDB-dynamic";
+		};
+		B3104BE928A46B4D0047278C /* GRDB-dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3104BE328A46B1C0047278C /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			productName = "GRDB-dynamic";
 		};
 		B3128065274C658E00550720 /* ZipArchive */ = {
 			isa = XCSwiftPackageProductDependency;

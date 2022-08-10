@@ -28,6 +28,15 @@
       }
     },
     {
+      "identity" : "grdb.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/groue/GRDB.swift.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "23f4254ae36fa19aecd73047c0577a9f49850d1c"
+      }
+    },
+    {
       "identity" : "nslogger",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/fpillet/NSLogger",
