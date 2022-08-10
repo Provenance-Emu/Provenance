@@ -873,25 +873,6 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             }
         #endif
     }
-
-    func startWebServer() {
-        // start web transfer service
-        if PVWebServer.shared.startServers() {
-            // show alert view
-            showServerActiveAlert()
-        } else {
-			#if targetEnvironment(simulator) || targetEnvironment(macCatalyst)
-			let message = "Check your network connection or settings and free up ports: 8080, 8081."
-			#else
-			let message = "Check your network connection or settings and free up ports: 80, 81."
-			#endif
-            let alert = UIAlertController(title: "Unable to start web server!", message: message, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
-            }))
-            present(alert, animated: true) { () -> Void in }
-        }
-    }
-
     // MARK: - Game Library Management
 
     // TODO: It would be nice to move this and the importer-logic out of the ViewController at some point

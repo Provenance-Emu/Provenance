@@ -16,6 +16,7 @@ import SwiftUI
 import RealmSwift
 import Combine
 import PVLibrary
+import SafariServices
 
 // PVRootViewController serves as a UIKit parent for child SwiftUI menu views.
 
@@ -39,7 +40,7 @@ enum PVNavOption {
 }
 
 @available(iOS 14, tvOS 14, *)
-class PVRootViewController: UIViewController, GameLaunchingViewController, GameSharingViewController {
+class PVRootViewController: UIViewController, GameLaunchingViewController, GameSharingViewController, SFSafariViewControllerDelegate {
 
     let containerView = UIView()
     var viewModel: PVRootViewModel!
@@ -143,7 +144,6 @@ extension UIViewController {
             child.trailingAnchor.constraint(equalTo: parent.trailingAnchor)
         ])
     }
-
 }
 
 #if os(iOS)

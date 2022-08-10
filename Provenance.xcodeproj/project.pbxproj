@@ -2970,15 +2970,15 @@
 		37EEA28427BC7E610070E222 /* NewUI */ = {
 			isa = PBXGroup;
 			children = (
-				37EEA28527BC7E610070E222 /* Home */,
 				37EEA28727BC7E610070E222 /* PVRootViewController.swift */,
 				37EEA28827BC7E610070E222 /* PVRootViewController+DelegateMethods.swift */,
+				37EEA29627BC7E610070E222 /* PVRootViewModel.swift */,
+				37EEA28F27BC7E610070E222 /* Components */,
+				37EEA29727BC7E610070E222 /* Consoles */,
+				37EEA28527BC7E610070E222 /* Home */,
+				37EEA29427BC7E610070E222 /* SideMenu */,
 				37EEA28927BC7E610070E222 /* SideNavigationController */,
 				37EEA28D27BC7E610070E222 /* Utils */,
-				37EEA28F27BC7E610070E222 /* Components */,
-				37EEA29427BC7E610070E222 /* SideMenu */,
-				37EEA29627BC7E610070E222 /* PVRootViewModel.swift */,
-				37EEA29727BC7E610070E222 /* Consoles */,
 			);
 			path = NewUI;
 			sourceTree = "<group>";

@@ -82,7 +82,7 @@ public protocol PVMenuDelegate: AnyObject {
 }
 
 @available(iOS 14, tvOS 14, *)
-extension PVRootViewController: PVMenuDelegate {
+extension PVRootViewController: PVMenuDelegate, WebServerActivatorController {
     func didTapSettings() {
         #if os(iOS)
 
@@ -121,7 +121,7 @@ extension PVRootViewController: PVMenuDelegate {
         }))
 
         let webServerAction = UIAlertAction(title: "Web Server", style: .default, handler: { _ in
-//            self.startWebServer() // TODO: this
+            self.startWebServer()
         })
 
         actionSheet.addAction(webServerAction)
