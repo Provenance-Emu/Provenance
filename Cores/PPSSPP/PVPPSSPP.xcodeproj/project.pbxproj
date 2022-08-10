@@ -1263,7 +1263,7 @@
 					"\"$(SRCROOT)/ppsspp/ext/native/ext/glew\"",
 					"\"$(SRCROOT)/ppsspp/ffmpeg/macosx/x86_64/include\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/ppsspp/ffmpeg/macosx/x86_64/lib\"";
 				LLVM_LTO = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
@@ -1318,7 +1318,7 @@
 					"\"$(SRCROOT)/ppsspp/ext/native/ext/glew\"",
 					"\"$(SRCROOT)/ppsspp/ffmpeg/macosx/x86_64/include\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/ppsspp/ffmpeg/macosx/x86_64/lib\"";
 				LLVM_LTO = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;

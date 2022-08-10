@@ -8,7 +8,6 @@
 
 #import "PVLogging.h"
 #import <sys/utsname.h>
-#import "PVLogEntry.h"
 
 #if SWIFT_PACKAGE
 @import Foundation;
@@ -106,10 +105,6 @@ void PVLog(NSUInteger level, NSUInteger flag, const char* file, const char *func
 #pragma mark -
 #pragma mark Singleton methods
 
-+(void) initialize {
-    __PVLoggingStartupTime = [NSDate date];
-}
-
 +(instancetype)sharedInstance {
     static id sharedInstance = NULL;
     static dispatch_once_t onceToken;
@@ -195,7 +190,8 @@ void PVLog(NSUInteger level, NSUInteger flag, const char* file, const char *func
 
     for(NSObject *object in _history){
         if([object isKindOfClass:[PVLogEntry class]]){
-            [historyString appendFormat:@"%@\n<br>", [(PVLogEntry*)object htmlString]];
+            PVLogEntry* logEntry = (PVLogEntry*)object;
+            [historyString appendFormat:@"%@\n<br>", logEntry.htmlString];
         } else {
             [historyString appendFormat:@"%@\n<br>", object];
         }

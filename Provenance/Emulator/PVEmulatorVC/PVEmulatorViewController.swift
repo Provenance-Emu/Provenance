@@ -63,9 +63,22 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     }()
 
     var audioInited: Bool = false
-    private(set) lazy var gameAudio: OEGameAudio = {
+    private(set) lazy var gameAudio: AudioManager = {
         audioInited = true
-        return OEGameAudio(core: core)
+        let format: AVAudioCommonFormat
+        let bitDepth = core.audioBitDepth
+        switch bitDepth {
+        case 16: format = .pcmFormatInt16
+        case 32: format = .pcmFormatInt32
+        case 64: format = .pcmFormatFloat64
+        default: format = .pcmFormatInt16
+        }
+        let core = self.core
+        let audioFormat = AVAudioFormat(commonFormat: format,
+                                        sampleRate: core.audioSampleRate,
+                                        channels: AVAudioChannelCount(core.channelCount),
+                                        interleaved: true)!
+        return AudioManager(audioFormat: audioFormat)
     }()
 
     var fpsTimer: Timer?
@@ -413,7 +426,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         core.startEmulation()
 
         gameAudio.volume = PVSettingsModel.shared.volume
-        gameAudio.outputDeviceID = 0
+//        gameAudio.outputDeviceID = 0
         gameAudio.start()
         #if os(tvOS)
         // On tvOS the siri-remotes menu-button will default to go back in the hierachy (thus dismissing the emulator), we don't want that behaviour

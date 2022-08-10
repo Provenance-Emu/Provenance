@@ -609,6 +609,7 @@ extension PVControllerManager {
             WLOG("mouseResponder nil")
             return
         }
+        mouseResponder.mouseMoved(atPoint: .init(x: CGFloat(deltaX), y: CGFloat(deltaY)))
     }
     
     func mouseButtonPressChangedHandler(button: GCControllerButtonInput, value: Float, deltaX: Float, pressed: Bool) {

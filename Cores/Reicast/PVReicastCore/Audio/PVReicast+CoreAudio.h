@@ -11,8 +11,6 @@
 #import <AudioUnit/AudioUnit.h>
 #import <AVFoundation/AVFoundation.h>
 #import <PVSupport/PVSupport.h>
-#import <PVSupport/CARingBuffer.h>
-#import <PVSupport/OEGameAudio.h>
 
 typedef struct ReicastAUGraphPlayer {
     AudioStreamBasicDescription streamFormat;

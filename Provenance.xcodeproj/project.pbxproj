@@ -658,12 +658,10 @@
 		B32D8F801EA7FDB900175FBF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409717B2DCE4004DFFFC /* UIKit.framework */; };
 		B32D8F821EA7FDBE00175FBF /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
 		B3383BD328A38332008BD7B1 /* PVApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B328F42E289DD82A00CA4500 /* PVApp.framework */; };
-		B3383BD428A38332008BD7B1 /* CoresRetro_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6EF2878238C0037A946 /* CoresRetro_iOS.framework */; };
 		B3383BD528A38332008BD7B1 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D717C8D54D0019F6D2 /* libxml2.dylib */; };
 		B3383BD628A38332008BD7B1 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D432B17B2FDFE004DFFFC /* libz.dylib */; };
 		B3383BD728A38332008BD7B1 /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2A95A917F7682400F1CB0D /* libstdc++.dylib */; };
 		B3383BD828A38332008BD7B1 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2B0E8D1AD18961005FB77C /* libc++.dylib */; };
-		B3383BD928A38332008BD7B1 /* Cores_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F7F27DCB25100E83180 /* Cores_iOS.framework */; };
 		B3383BDA28A38332008BD7B1 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AECF4A81966D76100F8704E /* libsqlite3.dylib */; };
 		B3383BDB28A38332008BD7B1 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701221916C3A000FA7F9 /* PVLibrary.framework */; };
 		B3383BDC28A38332008BD7B1 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF700F21916C30000FA7F9 /* PVSupport.framework */; };
@@ -674,12 +672,12 @@
 		B3383BE228A38332008BD7B1 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3383BE328A38332008BD7B1 /* Default.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3296EE426CAC2B10088AC32 /* Default.xib */; };
 		B3383BE428A38332008BD7B1 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
-		B3383BE728A38332008BD7B1 /* CoresRetro_iOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6EF2878238C0037A946 /* CoresRetro_iOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3383BE828A38332008BD7B1 /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF700F21916C30000FA7F9 /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3383BE928A38332008BD7B1 /* PVLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701221916C3A000FA7F9 /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3383BEA28A38332008BD7B1 /* PVApp.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B328F42E289DD82A00CA4500 /* PVApp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3383BEB28A38332008BD7B1 /* Cores_iOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F7F27DCB25100E83180 /* Cores_iOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3383BED28A38332008BD7B1 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B3383BFF28A3895A008BD7B1 /* Cores_Lite.h in Headers */ = {isa = PBXBuildFile; fileRef = B3383BFE28A3895A008BD7B1 /* Cores_Lite.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3383C0228A3895B008BD7B1 /* Cores_Lite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3383BFC28A38955008BD7B1 /* Cores_Lite.framework */; platformFilter = ios; };
+		B3383C0328A3895B008BD7B1 /* Cores_Lite.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3383BFC28A38955008BD7B1 /* Cores_Lite.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B35104C42896646800FA401F /* PVBeetlePSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35104C32896646800FA401F /* PVBeetlePSX.framework */; };
 		B35104C52896646800FA401F /* PVBeetlePSX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B35104C32896646800FA401F /* PVBeetlePSX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B35104C72896648500FA401F /* PVVecX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35104C62896648500FA401F /* PVVecX.framework */; };
@@ -790,6 +788,8 @@
 		B3AF701D21916E38000FA7F9 /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701B21916E38000FA7F9 /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3AF705A21916F30000FA7F9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF705921916F2F000FA7F9 /* Foundation.framework */; };
 		B3AF70662191733D000FA7F9 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF70652191733D000FA7F9 /* GameController.framework */; };
+		B3B4F46928A3A2720099D35F /* PVFCEU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B4F46828A3A2720099D35F /* PVFCEU.framework */; };
+		B3B4F46A28A3A2720099D35F /* PVFCEU.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B4F46828A3A2720099D35F /* PVFCEU.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C8A6A828781E840037A946 /* CoresRetro_tvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6A228781E800037A946 /* CoresRetro_tvOS.framework */; };
 		B3C8A6A928781E840037A946 /* CoresRetro_tvOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6A228781E800037A946 /* CoresRetro_tvOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C8A6AF28781E9F0037A946 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6AE28781E9F0037A946 /* PVLibRetro.framework */; };
@@ -948,33 +948,19 @@
 			remoteGlobalIDString = B3B29D3F2156177100903290;
 			remoteInfo = "Create Version files";
 		};
-		B3383BCA28A38332008BD7B1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3E21D6A203211BE009939D3;
-			remoteInfo = Spotlight;
-		};
-		B3383BCC28A38332008BD7B1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3270F7E27DCB25100E83180;
-			remoteInfo = "Cores-iOS";
-		};
-		B3383BCE28A38332008BD7B1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3C8A6BB2878238C0037A946;
-			remoteInfo = "CoresRetro-iOS";
-		};
 		B3383BD028A38332008BD7B1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = B328F42D289DD82900CA4500;
 			remoteInfo = PVApp;
+		};
+		B3383C0028A3895B008BD7B1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3383BFB28A38954008BD7B1;
+			remoteInfo = "Cores-Lite";
 		};
 		B36FE830218EAAD200F858F3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1184,24 +1170,12 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				B3383BE728A38332008BD7B1 /* CoresRetro_iOS.framework in Embed Frameworks */,
 				B3383BE828A38332008BD7B1 /* PVSupport.framework in Embed Frameworks */,
+				B3383C0328A3895B008BD7B1 /* Cores_Lite.framework in Embed Frameworks */,
 				B3383BE928A38332008BD7B1 /* PVLibrary.framework in Embed Frameworks */,
 				B3383BEA28A38332008BD7B1 /* PVApp.framework in Embed Frameworks */,
-				B3383BEB28A38332008BD7B1 /* Cores_iOS.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3383BEC28A38332008BD7B1 /* Embed App Extensions */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 13;
-			files = (
-				B3383BED28A38332008BD7B1 /* Spotlight.appex in Embed App Extensions */,
-			);
-			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B3383BEE28A38332008BD7B1 /* Embed System Extensions */ = {
@@ -1264,6 +1238,17 @@
 				B39DC77D279E79D40017E28D /* TopShelf.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3B4F46B28A3A2740099D35F /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B3B4F46A28A3A2720099D35F /* PVFCEU.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B3C8A6B128781E9F0037A946 /* Embed Frameworks */ = {
@@ -1689,6 +1674,11 @@
 		B3383BF428A38339008BD7B1 /* Provenance-Lite-iOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Provenance-Lite-iOS-Info.plist"; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Provenance-Lite-iOS-Info.plist"; sourceTree = "<absolute>"; };
 		B3383BF528A383D8008BD7B1 /* Build-Lite-iOS.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Build-Lite-iOS.xcconfig"; sourceTree = "<group>"; };
 		B3383BF628A383D9008BD7B1 /* Build-Lite-tvOS.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Build-Lite-tvOS.xcconfig"; sourceTree = "<group>"; };
+		B3383BFC28A38955008BD7B1 /* Cores_Lite.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Cores_Lite.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3383BFE28A3895A008BD7B1 /* Cores_Lite.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Cores_Lite.h; sourceTree = "<group>"; };
+		B3383C0828A38B0A008BD7B1 /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3383C0C28A38B26008BD7B1 /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3383C0D28A38B3E008BD7B1 /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B340E6091E088CF900AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3411BF7276B37DE00D85327 /* PVDSControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVDSControllerViewController.swift; sourceTree = "<group>"; };
 		B3411BFB276B470B00D85327 /* QuickTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuickTableViewController.swift; sourceTree = "<group>"; };
@@ -1922,6 +1912,7 @@
 		B3B3B97E1DED169100602746 /* PVRSPCXD4.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVRSPCXD4.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B3DABB28713AEC008A0E2F /* PVFBNeo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFBNeo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B4C955279E6BAA00505424 /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3B4F46828A3A2720099D35F /* PVFCEU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFCEU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B66A7027B872BA00E2236B /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Strings.strings"; sourceTree = "<group>"; };
 		B3B9239C202D054B00580FFC /* Provenance-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Provenance-Bridging-Header.h"; sourceTree = "<group>"; };
 		B3B9239D202D054B00580FFC /* ProvenanceTV-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ProvenanceTV-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -2222,16 +2213,23 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3383BD328A38332008BD7B1 /* PVApp.framework in Frameworks */,
-				B3383BD428A38332008BD7B1 /* CoresRetro_iOS.framework in Frameworks */,
 				B3383BD528A38332008BD7B1 /* libxml2.dylib in Frameworks */,
 				B3383BD628A38332008BD7B1 /* libz.dylib in Frameworks */,
 				B3383BD728A38332008BD7B1 /* libstdc++.dylib in Frameworks */,
 				B3383BD828A38332008BD7B1 /* libc++.dylib in Frameworks */,
-				B3383BD928A38332008BD7B1 /* Cores_iOS.framework in Frameworks */,
 				B3383BDA28A38332008BD7B1 /* libsqlite3.dylib in Frameworks */,
 				B3383BDB28A38332008BD7B1 /* PVLibrary.framework in Frameworks */,
 				B3383BDC28A38332008BD7B1 /* PVSupport.framework in Frameworks */,
 				B3383BDD28A38332008BD7B1 /* Foundation.framework in Frameworks */,
+				B3383C0228A3895B008BD7B1 /* Cores_Lite.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3383BF928A38954008BD7B1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3B4F46928A3A2720099D35F /* PVFCEU.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2456,6 +2454,7 @@
 				B3C8A6A328781E810037A946 /* CoresRetro */,
 				B328F42F289DD82C00CA4500 /* PVApp */,
 				B355E50A289E289700D23D64 /* USBGamePad */,
+				B3383BFD28A3895A008BD7B1 /* Cores-Lite */,
 				1A3D409617B2DCE4004DFFFC /* Frameworks */,
 				1A3D409517B2DCE4004DFFFC /* Products */,
 				B3383BF428A38339008BD7B1 /* Provenance-Lite-iOS-Info.plist */,
@@ -2484,6 +2483,7 @@
 				B355E501289E245D00D23D64 /* Cores-watchOS.framework */,
 				B355E507289E289200D23D64 /* Provenance.dext */,
 				B3383BF328A38332008BD7B1 /* Provenance-Lite.app */,
+				B3383BFC28A38955008BD7B1 /* Cores_Lite.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2491,6 +2491,10 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3B4F46828A3A2720099D35F /* PVFCEU.framework */,
+				B3383C0D28A38B3E008BD7B1 /* PVMednafen.framework */,
+				B3383C0C28A38B26008BD7B1 /* PVMednafen.framework */,
+				B3383C0828A38B0A008BD7B1 /* PVMednafen.framework */,
 				B355E4C1289E1BE600D23D64 /* libz.tbd */,
 				B355E4BF289E1BDE00D23D64 /* libc++.tbd */,
 				B355E4B3289E1BBC00D23D64 /* libsqlite3.tbd */,
@@ -3128,6 +3132,14 @@
 			path = Shaders;
 			sourceTree = "<group>";
 		};
+		B3383BFD28A3895A008BD7B1 /* Cores-Lite */ = {
+			isa = PBXGroup;
+			children = (
+				B3383BFE28A3895A008BD7B1 /* Cores_Lite.h */,
+			);
+			path = "Cores-Lite";
+			sourceTree = "<group>";
+		};
 		B3411BFA276B470B00D85327 /* QuickTableViewController */ = {
 			isa = PBXGroup;
 			children = (
@@ -3654,6 +3666,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3383BF728A38954008BD7B1 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3383BFF28A3895A008BD7B1 /* Cores_Lite.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B355E4C9289E245D00D23D64 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -3922,7 +3942,6 @@
 				B3383BDE28A38332008BD7B1 /* Resources */,
 				B3383BE528A38332008BD7B1 /* Script: Set Build Number */,
 				B3383BE628A38332008BD7B1 /* Embed Frameworks */,
-				B3383BEC28A38332008BD7B1 /* Embed App Extensions */,
 				B3383BEE28A38332008BD7B1 /* Embed System Extensions */,
 			);
 			buildRules = (
@@ -3930,10 +3949,8 @@
 			dependencies = (
 				B3383BC528A38332008BD7B1 /* PBXTargetDependency */,
 				B3383BC728A38332008BD7B1 /* PBXTargetDependency */,
-				B3383BC928A38332008BD7B1 /* PBXTargetDependency */,
-				B3383BCB28A38332008BD7B1 /* PBXTargetDependency */,
-				B3383BCD28A38332008BD7B1 /* PBXTargetDependency */,
 				B3383BCF28A38332008BD7B1 /* PBXTargetDependency */,
+				B3383C0128A3895B008BD7B1 /* PBXTargetDependency */,
 			);
 			name = "Provenance-Lite";
 			packageProductDependencies = (
@@ -3941,6 +3958,25 @@
 			productName = Provenance;
 			productReference = B3383BF328A38332008BD7B1 /* Provenance-Lite.app */;
 			productType = "com.apple.product-type.application";
+		};
+		B3383BFB28A38954008BD7B1 /* Cores-Lite */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3383C0428A38965008BD7B1 /* Build configuration list for PBXNativeTarget "Cores-Lite" */;
+			buildPhases = (
+				B3383BF728A38954008BD7B1 /* Headers */,
+				B3383BF828A38954008BD7B1 /* Sources */,
+				B3383BF928A38954008BD7B1 /* Frameworks */,
+				B3383BFA28A38954008BD7B1 /* Resources */,
+				B3B4F46B28A3A2740099D35F /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Cores-Lite";
+			productName = "Cores-Lite";
+			productReference = B3383BFC28A38955008BD7B1 /* Cores_Lite.framework */;
+			productType = "com.apple.product-type.framework";
 		};
 		B355E4C8289E245D00D23D64 /* Cores-watchOS */ = {
 			isa = PBXNativeTarget;
@@ -4164,6 +4200,9 @@
 					B328F445289DD85B00CA4500 = {
 						LastSwiftMigration = 1400;
 					};
+					B3383BFB28A38954008BD7B1 = {
+						CreatedOnToolsVersion = 14.0;
+					};
 					B355E506289E289200D23D64 = {
 						CreatedOnToolsVersion = 14.0;
 					};
@@ -4252,6 +4291,7 @@
 				B3C8A6BB2878238C0037A946 /* CoresRetro-iOS */,
 				B3C8A6A128781E800037A946 /* CoresRetro-tvOS */,
 				B355E506289E289200D23D64 /* USBGamePad */,
+				B3383BFB28A38954008BD7B1 /* Cores-Lite */,
 			);
 		};
 /* End PBXProject section */
@@ -4402,6 +4442,13 @@
 				B3383BE228A38332008BD7B1 /* Settings.bundle in Resources */,
 				B3383BE328A38332008BD7B1 /* Default.xib in Resources */,
 				B3383BE428A38332008BD7B1 /* licenses.html in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3383BFA28A38954008BD7B1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5115,6 +5162,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3383BF828A38954008BD7B1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B355E4CA289E245D00D23D64 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -5222,25 +5276,15 @@
 			target = B3B29D3F2156177100903290 /* Create Version files */;
 			targetProxy = B3383BC828A38332008BD7B1 /* PBXContainerItemProxy */;
 		};
-		B3383BC928A38332008BD7B1 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3E21D6A203211BE009939D3 /* Spotlight */;
-			targetProxy = B3383BCA28A38332008BD7B1 /* PBXContainerItemProxy */;
-		};
-		B3383BCB28A38332008BD7B1 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3270F7E27DCB25100E83180 /* Cores-iOS */;
-			targetProxy = B3383BCC28A38332008BD7B1 /* PBXContainerItemProxy */;
-		};
-		B3383BCD28A38332008BD7B1 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3C8A6BB2878238C0037A946 /* CoresRetro-iOS */;
-			targetProxy = B3383BCE28A38332008BD7B1 /* PBXContainerItemProxy */;
-		};
 		B3383BCF28A38332008BD7B1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B328F42D289DD82900CA4500 /* PVApp-iOS */;
 			targetProxy = B3383BD028A38332008BD7B1 /* PBXContainerItemProxy */;
+		};
+		B3383C0128A3895B008BD7B1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3383BFB28A38954008BD7B1 /* Cores-Lite */;
+			targetProxy = B3383C0028A3895B008BD7B1 /* PBXContainerItemProxy */;
 		};
 		B36FE831218EAAD200F858F3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -6378,7 +6422,6 @@
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -6439,7 +6482,6 @@
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -6499,7 +6541,6 @@
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -7108,6 +7149,167 @@
 				VALIDATE_PRODUCT = NO;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = app;
+			};
+			name = Archive;
+		};
+		B3383C0528A38965008BD7B1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.4;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.Cores-Lite";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		B3383C0628A38965008BD7B1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.4;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.Cores-Lite";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		B3383C0728A38965008BD7B1 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.4;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.Cores-Lite";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSION_INFO_PREFIX = "";
 			};
 			name = Archive;
 		};
@@ -8680,6 +8882,16 @@
 				B3383BF028A38332008BD7B1 /* Debug */,
 				B3383BF128A38332008BD7B1 /* Release */,
 				B3383BF228A38332008BD7B1 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3383C0428A38965008BD7B1 /* Build configuration list for PBXNativeTarget "Cores-Lite" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3383C0528A38965008BD7B1 /* Debug */,
+				B3383C0628A38965008BD7B1 /* Release */,
+				B3383C0728A38965008BD7B1 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

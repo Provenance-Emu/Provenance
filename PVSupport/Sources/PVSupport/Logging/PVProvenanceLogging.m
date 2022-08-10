@@ -7,7 +7,7 @@
 //
 
 #import "PVProvenanceLogging.h"
-#import "PVLogEntry.h"
+#import <PVSupport/PVSupport-Swift.h>
 
 @implementation PVProvenanceLogging  {
 @private
@@ -153,10 +153,10 @@
 
             // NSStrings directly convert
         if ( [event isKindOfClass:[NSString class]] ) {
-            newEntry->text = (NSString*)event;
+            newEntry.text = (NSString*)event;
         } else {
                 // All other types need a string conversion
-            newEntry->text = [event description];
+            newEntry.text = [event description];
         }
 
         event = newEntry;

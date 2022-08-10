@@ -7,9 +7,7 @@
 //
 
 #import "PVEmulatorCore.h"
-#import "NSObject+PVAbstractAdditions.h"
-#import "OERingBuffer.h"
-#import "RealTimeThread.h"
+#import <PVSupport/PVSupport-Swift.h>
 #import "PVLogging.h"
 #import "DebugUtils.h"
 @import AVFoundation;
@@ -239,7 +237,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
     [self.emulationLoopThreadLock lock];
 
     //Become a real-time thread:
-    MakeCurrentThreadRealTime();
+    [NSThread setRealTimePriority];
 
     //Emulation loop
     while (UNLIKELY(!shouldStop)) {

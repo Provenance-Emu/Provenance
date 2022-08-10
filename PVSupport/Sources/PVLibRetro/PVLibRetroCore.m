@@ -6,10 +6,11 @@
 //  Copyright © 2022 Provenance Emu. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 #import "PVLibretro.h"
 
 @import UIKit.UIKeyConstants;
+@import AudioToolbox;
 
 #import <PVSupport/PVSupport-Swift.h>
 
