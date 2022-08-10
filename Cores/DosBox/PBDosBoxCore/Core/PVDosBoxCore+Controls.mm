@@ -55,18 +55,28 @@ s8 joyx[4], joyy[4];
 - (BOOL)gameSupportsMouse { return true; }
 - (BOOL)requiresMouse{ return false; }
 
-- (void)didScroll:(GCDeviceCursor *)cursor {
-    if(cursor.yAxis == 0) {
+- (void)didScrollWithXValue:(float)xValue yValue:(float)yValue {
+    if(yValue == 0) {
         self->mouse_wheel_up = 0;
         self->mouse_wheel_down = 0;
-    } else if (cursor.yAxis.value > 0.0) {
-        self->mouse_wheel_up = cursor.yAxis.value;
+    } else if (yValue > 0.0) {
+        self->mouse_wheel_up = yValue;
         self->mouse_wheel_down = 0;
-    } else if (cursor.yAxis.value < 0.0) {
+    } else if (yValue < 0.0) {
         self->mouse_wheel_up = 0;
-        self->mouse_wheel_down = cursor.yAxis.value * -1;
+        self->mouse_wheel_down = yValue * -1;
     }
-    [super didScroll:cursor];
+    if(xValue == 0) {
+        self->mouse_horiz_wheel_up = 0;
+        self->mouse_horiz_wheel_down = 0;
+    } else if (xValue > 0.0) {
+        self->mouse_horiz_wheel_up = xValue;
+        self->mouse_horiz_wheel_down = 0;
+    } else if (xValue < 0.0) {
+        self->mouse_horiz_wheel_up = 0;
+        self->mouse_horiz_wheel_down = xValue * -1;
+    }
+    [super didScrollWithXValue:xValue yValue:yValue];
 }
 
 - (void)mouseMovedAt:(CGPoint)point {
@@ -80,32 +90,42 @@ s8 joyx[4], joyy[4];
     [super leftMouseUp];
 }
 
-- (void)leftMouseDownAt:(CGPoint)point {
-    self->mouse_x = point.x;
-    self->mouse_y = point.y;
+- (void)leftMouseDown {
     self->mouseLeft = true;
-    [super leftMouseDownAt:point];
+    [super leftMouseDown];
 }
 
 - (void)rightMouseUp {
     self->mouseRight = false;
     [super rightMouseUp];
 }
-- (void)rightMouseDownAt:(CGPoint)point {
-    self->mouse_x = point.x;
-    self->mouse_y = point.y;
+- (void)rightMouseDown {
     self->mouseRight = true;
-    [super rightMouseDownAt:point];
+    [super rightMouseDown];
 }
 - (void)middleMouseUp {
     self->mouseMiddle = false;
     [super middleMouseUp];
 }
-- (void)middleMouseDownAt:(CGPoint)point {
-    self->mouse_x = point.x;
-    self->mouse_y = point.y;
+- (void)middleMouseDown {
     self->mouseMiddle = true;
-    [super middleMouseDownAt:point];
+    [super middleMouseDown];
+}
+- (void)auxiliaryMouseUp {
+    self->mouse_button_4 = false;
+    [super auxiliaryMouseUp];
+}
+- (void)auxiliaryMouseDown {
+    self->mouse_button_4 = true;
+    [super auxiliaryMouseDown];
+}
+- (void)auxiliary2MouseUp {
+    self->mouse_button_5 = false;
+    [super auxiliary2MouseUp];
+}
+- (void)auxiliary2MouseDown {
+    self->mouse_button_5 = true;
+    [super auxiliary2MouseDown];
 }
 
 @end

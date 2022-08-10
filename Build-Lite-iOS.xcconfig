@@ -1,0 +1,14 @@
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+
+#include? "Build.xcconfig"
+
+PRODUCT_NAME = Provenance-Lite
+DISPLAY_NAME = Prov-Lite
+
+PRODUCT_BUNDLE_IDENTIFIER   = $(ORG_PREFIX).$(PROJECT_NAME:lower)-Lite
+PRODUCT_BUNDLE_IDENTIFIER[configuration=Debug] = $(ORG_PREFIX).$(PROJECT_NAME:lower)-Lite-Debug
+
+PRODUCT_NAME[configuration=Debug] = Prov-Lite Debug
+DISPLAY_NAME[configuration=Debug] = Prov-Lite Debug

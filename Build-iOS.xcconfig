@@ -2,3 +2,11 @@
 
 IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*] = 14.2
 IPHONEOS_DEPLOYMENT_TARGET = 13.0
+
+PRODUCT_NAME = Provenance
+DISPLAY_NAME = Provenance
+
+PRODUCT_BUNDLE_IDENTIFIER[configuration=Debug] = $(ORG_PREFIX).$(PROJECT_NAME:lower)-Debug
+
+PRODUCT_NAME[configuration=Debug] = Prov Debug
+DISPLAY_NAME[configuration=Debug] = Prov Debug

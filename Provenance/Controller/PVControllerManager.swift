@@ -78,8 +78,31 @@ final class PVControllerManager: NSObject {
         }
     }
 
+
+    // MARK: Keyboard
     var iCadeController: PViCadeController?
     var keyboardController: GCController?
+    weak var keyboardResponder: KeyboardResponder?
+    
+    var keyboardMode: KeyboardMode = .disabled {
+        didSet {
+            switch keyboardMode {
+            case .disabled, .keyboard:
+                if #available(iOS 14.0, *) {
+                    disconnectKeyboardController()
+                } else {
+                    // Fallback on earlier versions
+                }
+            case .controller:
+                if #available(iOS 14.0, *) {
+                    connectKeyboardController()
+                } else {
+                    // Fallback on earlier versions
+                }
+            }
+        }
+    }
+
     var hasControllers: Bool {
         return player1 != nil || player2 != nil || player3 != nil || player4 != nil
     }
@@ -100,7 +123,7 @@ final class PVControllerManager: NSObject {
                     } else if self.player3 == nil || self.player3?.microGamepad != nil {
                         player = 3
                     } else if self.player4 == nil || self.player4?.microGamepad != nil {
-                        player = 1
+                        player = 4
                     } else {
                         completion?()
                         return
@@ -113,7 +136,7 @@ final class PVControllerManager: NSObject {
                     } else if self.player3 == nil {
                         player = 3
                     } else if self.player4 == nil {
-                        player = 1
+                        player = 4
                     } else {
                         completion?()
                         return
@@ -158,6 +181,11 @@ final class PVControllerManager: NSObject {
         // prefer gamepad or extendedGamepad over a microGamepad
         assignControllers()
         setupICade()
+        
+        if #available(iOS 14.0, *) {
+            let mouseHandler = MouseHandler()
+            self.mouseHandler = mouseHandler
+        }
     }
 
     func isAssigned(_ controller: GCController) -> Bool {
@@ -270,20 +298,27 @@ final class PVControllerManager: NSObject {
 
     @available(iOS 14.0, tvOS 14.0, *)
     @objc func handleKeyboardConnect(_ note: Notification?) {
-        #if !targetEnvironment(simulator)
-        if let controller = GCKeyboard.coalesced?.createController() {
-            keyboardController = controller
-            NotificationCenter.default.post(name:.GCControllerDidConnect, object: controller)
-        }
-        #endif
+        connectKeyboardController()
     }
 
     @available(iOS 14.0, tvOS 14.0, *)
     @objc func handleKeyboardDisconnect(_ note: Notification?) {
-        if let controller = keyboardController {
-            keyboardController = nil
-            NotificationCenter.default.post(name:.GCControllerDidDisconnect, object:controller)
+        disconnectKeyboardController()
+    }
+    
+    @available(iOS 14.0, tvOS 14.0, *)
+    private func connectKeyboardController() {
+        if let controller = GCKeyboard.coalesced?.createController(keyboardValueChangedHandler: self.keyboardValueChangedHandler) {
+            keyboardController = controller
+            NotificationCenter.default.post(name:.GCControllerDidConnect, object: controller)
         }
+    }
+    
+    @available(iOS 14.0, tvOS 14.0, *)
+    private func disconnectKeyboardController() {
+        guard keyboardController != nil else { return }
+        keyboardController = nil
+        NotificationCenter.default.post(name:.GCControllerDidDisconnect, object:controller)
     }
 
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
@@ -471,6 +506,164 @@ final class PVControllerManager: NSObject {
         }
     }
 #endif
+}
+
+// MARK: Keyboard
+@available(iOS 14.0, macOS 11.0, *)
+extension PVControllerManager {
+    func keyboardValueChangedHandler(keyboard: GCKeyboardInput, key: GCDeviceButtonInput, keyCode: GCKeyCode, pressed: Bool) {
+        switch keyboardMode {
+        case .disabled: return
+        case .keyboard:
+            keyboardKeyboardValueChangedHandler(keyboard: keyboard, key: key, keyCode: keyCode, pressed: pressed)
+        case .controller:
+            keyboardControllerValueChangedHandler(keyboard: keyboard, key: key, keyCode: keyCode, pressed: pressed)
+        }
+    }
+    private func keyboardKeyboardValueChangedHandler(keyboard: GCKeyboardInput, key: GCDeviceButtonInput, keyCode: GCKeyCode, pressed: Bool) {
+        guard let keyboardResponder = keyboardResponder else {
+            WLOG("keyboardResponder is nil")
+            return
+        }
+        
+        if pressed {
+            keyboardResponder.keyDown(keyCode)
+        } else {
+            keyboardResponder.keyUp(keyCode)
+        }
+    }
+    
+    private func keyboardControllerValueChangedHandler(keyboard: GCKeyboardInput, key: GCDeviceButtonInput, keyCode: GCKeyCode, pressed : Bool) {
+        guard let gamepad = keyboardController?.extendedGamepad else {
+            ELOG("extendedGamepad is nil")
+            return
+        }
+
+        func isPressed(_ code:GCKeyCode) -> Bool {
+            return keyboard.button(forKeyCode:code)?.isPressed ?? false
+        }
+        
+        // DPAD
+        let dpad_x:Float = isPressed(.rightArrow) ? 1.0 : isPressed(.leftArrow) ? -1.0 : 0.0
+        let dpad_y:Float = isPressed(.upArrow)    ? 1.0 : isPressed(.downArrow) ? -1.0 : 0.0
+        gamepad.dpad.setValueForXAxis(dpad_x, yAxis:dpad_y)
+
+        // WASD
+        let left_x:Float = isPressed(.keyD) ? 1.0 : isPressed(.keyA) ? -1.0 : 0.0
+        let left_y:Float = isPressed(.keyW) ? 1.0 : isPressed(.keyS) ? -1.0 : 0.0
+        gamepad.leftThumbstick.setValueForXAxis(left_x, yAxis:left_y)
+
+        // -,=,[,]
+        let right_x:Float = isPressed(.closeBracket) ? 1.0 : isPressed(.openBracket) ? -1.0 : 0.0
+        let right_y:Float = isPressed(.equalSign) ? 1.0 : isPressed(.hyphen) ? -1.0 : 0.0
+        gamepad.rightThumbstick.setValueForXAxis(right_x, yAxis:right_y)
+
+        // ABXY
+        gamepad.buttonA.setValue(isPressed(.spacebar) || isPressed(.returnOrEnter) ? 1.0 : 0.0)
+        gamepad.buttonB.setValue(isPressed(.keyF) || isPressed(.escape) ? 1.0 : 0.0)
+        gamepad.buttonX.setValue(isPressed(.keyQ) ? 1.0 : 0.0)
+        gamepad.buttonY.setValue(isPressed(.keyE) ? 1.0 : 0.0)
+
+        // L1, L2
+        gamepad.leftShoulder.setValue(isPressed(.tab) ? 1.0 : 0.0)
+        gamepad.leftTrigger.setValue(isPressed(.leftShift) ? 1.0 : 0.0)
+
+        // R1, R2
+        gamepad.rightShoulder.setValue(isPressed(.keyR) ? 1.0 : 0.0)
+        gamepad.rightTrigger.setValue(isPressed(.keyV) ? 1.0 : 0.0)
+
+        // MENU, OPTIONS
+        gamepad.buttonMenu.setValue(isPressed(.graveAccentAndTilde) ? 1.0 : 0.0)
+        gamepad.buttonOptions?.setValue(isPressed(.one) ? 1.0 : 0.0)
+
+        // the system does not call this handler in setValue, so call it with the dpad
+        gamepad.valueChangedHandler?(gamepad, gamepad.dpad)
+    }
+}
+
+// MARK: Mouse
+@available(iOS 14.0, *)
+final class MouseHandler {
+    // MARK: Mouse
+    var mouseController: GCMouse?
+    weak var mouseResponder: MouseResponder?
+}
+
+@available(iOS 14.0, macOS 11.0, *)
+extension PVControllerManager {
+    private enum AssociatedKeys {
+        static var mouseHandler = "mouseHandler"
+    }
+
+    var mouseHandler: MouseHandler? {
+        get {
+            return objc_getAssociatedObject(self, &AssociatedKeys.mouseHandler) as? MouseHandler
+        }
+        set {
+            objc_setAssociatedObject(self, &AssociatedKeys.mouseHandler, newValue, .OBJC_ASSOCIATION_RETAIN)
+        }
+    }
+    
+    func mouseMovedHandlerHandler(mouse: GCMouseInput, key: GCControllerButtonInput, deltaX: Float, deltaY: Float) {
+        guard let mouseResponder = self.mouseHandler?.mouseResponder else {
+            WLOG("mouseResponder nil")
+            return
+        }
+    }
+    
+    func mouseButtonPressChangedHandler(button: GCControllerButtonInput, value: Float, deltaX: Float, pressed: Bool) {
+        guard let mouse = self.mouseHandler?.mouseController?.mouseInput else {
+            WLOG("mouseInput nil")
+            return
+        }
+        guard let mouseResponder = self.mouseHandler?.mouseResponder else {
+            WLOG("mouseResponder nil")
+            return
+        }
+
+        if button == mouse.leftButton {
+            if pressed {
+                mouseResponder.leftMouseDown()
+            } else {
+                mouseResponder.leftMouseUp()
+            }
+        } else if button == mouse.rightButton {
+            if pressed {
+                mouseResponder.rightMouseDown()
+            } else {
+                mouseResponder.rightMouseUp()
+            }
+        } else if button == mouse.middleButton {
+            if pressed {
+                mouseResponder.middleMouseDown()
+            } else {
+                mouseResponder.middleMouseUp()
+            }
+        } else if button == mouse.auxiliaryButtons?.first {
+            if pressed {
+                mouseResponder.auxiliaryMouseDown()
+            } else {
+                mouseResponder.auxiliaryMouseUp()
+            }
+        } else if button == mouse.auxiliaryButtons?[1] {
+            if pressed {
+                mouseResponder.auxiliary2MouseDown()
+            } else {
+                mouseResponder.auxiliary2MouseUp()
+            }
+        } else {
+            ELOG("Unknown button")
+        }
+    }
+    
+    func mouseScrollValueChangedHandler(dpad: GCControllerDirectionPad, xValue: Float, yValue: Float) {
+        guard let mouseResponder = self.mouseHandler?.mouseResponder else {
+            WLOG("mouseResponder nil")
+            return
+        }
+        
+        mouseResponder.didScroll(xValue: xValue, yValue: yValue)
+    }
 }
 
 #if os(iOS)
@@ -703,6 +896,14 @@ extension GCController {
             return false
         }
     }
+    
+    var isMouse: Bool {
+        if #available(iOS 14.0, *) {
+            return isSnapshot && vendorName?.contains("Mouse") == true
+        } else {
+            return false
+        }
+    }
 }
 
 // MARK: - Keyboard Controller
@@ -720,62 +921,37 @@ extension GCController {
 //
 @available(iOS 14.0, tvOS 14.0, *)
 extension GCKeyboard {
-    func createController() -> GCController? {
+    func createController(keyboardValueChangedHandler keyChangedHandler: @escaping GCKeyboardValueChangedHandler) -> GCController? {
         guard let keyboard = self.keyboardInput else {return nil}
 
         let controller = GCController.withExtendedGamepad()
-        let gamepad = controller.extendedGamepad!
-
         controller.setValue(self.vendorName ?? "Keyboard", forKey: "vendorName")
-
-        keyboard.keyChangedHandler = {(keyboard, button, key, pressed) -> Void in
-            // print("\(button) \(key) \(pressed)")
-
-            func isPressed(_ code:GCKeyCode) -> Bool {
-                return keyboard.button(forKeyCode:code)?.isPressed ?? false
-            }
-
-            // DPAD
-            let dpad_x:Float = isPressed(.rightArrow) ? 1.0 : isPressed(.leftArrow) ? -1.0 : 0.0
-            let dpad_y:Float = isPressed(.upArrow)    ? 1.0 : isPressed(.downArrow) ? -1.0 : 0.0
-            gamepad.dpad.setValueForXAxis(dpad_x, yAxis:dpad_y)
-
-            // WASD
-            let left_x:Float = isPressed(.keyD) ? 1.0 : isPressed(.keyA) ? -1.0 : 0.0
-            let left_y:Float = isPressed(.keyW) ? 1.0 : isPressed(.keyS) ? -1.0 : 0.0
-            gamepad.leftThumbstick.setValueForXAxis(left_x, yAxis:left_y)
-
-            // -,=,[,]
-            let right_x:Float = isPressed(.closeBracket) ? 1.0 : isPressed(.openBracket) ? -1.0 : 0.0
-            let right_y:Float = isPressed(.equalSign) ? 1.0 : isPressed(.hyphen) ? -1.0 : 0.0
-            gamepad.rightThumbstick.setValueForXAxis(right_x, yAxis:right_y)
-
-            // ABXY
-            gamepad.buttonA.setValue(isPressed(.spacebar) || isPressed(.returnOrEnter) ? 1.0 : 0.0)
-            gamepad.buttonB.setValue(isPressed(.keyF) || isPressed(.escape) ? 1.0 : 0.0)
-            gamepad.buttonX.setValue(isPressed(.keyQ) ? 1.0 : 0.0)
-            gamepad.buttonY.setValue(isPressed(.keyE) ? 1.0 : 0.0)
-
-            // L1, L2
-            gamepad.leftShoulder.setValue(isPressed(.tab) ? 1.0 : 0.0)
-            gamepad.leftTrigger.setValue(isPressed(.leftShift) ? 1.0 : 0.0)
-
-            // R1, R2
-            gamepad.rightShoulder.setValue(isPressed(.keyR) ? 1.0 : 0.0)
-            gamepad.rightTrigger.setValue(isPressed(.keyV) ? 1.0 : 0.0)
-
-            // MENU, OPTIONS
-            gamepad.buttonMenu.setValue(isPressed(.graveAccentAndTilde) ? 1.0 : 0.0)
-            gamepad.buttonOptions?.setValue(isPressed(.one) ? 1.0 : 0.0)
-
-            // the system does not call this handler in setValue, so call it with the dpad
-            gamepad.valueChangedHandler?(gamepad, gamepad.dpad)
-        }
+        keyboard.keyChangedHandler = keyChangedHandler
 
         return controller
     }
 }
 
+// MARK: - Mouse Controller
+@available(iOS 14.0, macOS 11.0, *)
+extension GCMouse {
+    func createController(mouseMovedHandler: @escaping GCMouseMoved, mouseButtonPressChangedHandler: @escaping GCControllerButtonValueChangedHandler) -> GCController? {
+        guard let mouse = self.mouseInput else {return nil}
+
+        let controller = GCController.withExtendedGamepad()
+        controller.setValue(self.vendorName ?? "Mouse", forKey: "vendorName")
+        mouse.mouseMovedHandler = mouseMovedHandler
+        mouse.leftButton.pressedChangedHandler = mouseButtonPressChangedHandler
+        mouse.rightButton?.pressedChangedHandler = mouseButtonPressChangedHandler
+        mouse.middleButton?.pressedChangedHandler = mouseButtonPressChangedHandler
+        mouse.auxiliaryButtons?.forEach{
+            $0.pressedChangedHandler = mouseButtonPressChangedHandler
+        }
+        return controller
+    }
+}
+
+// MARK: - SortOptionsTableViewController
 public final class SortOptionsTableViewController: UIViewController {
     var clearsSelectionOnViewWillAppear: Bool = true
 

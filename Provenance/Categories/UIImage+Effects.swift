@@ -10,13 +10,13 @@ import UIKit
 
 extension UIImage {
     var pixelated: UIImage? {
-        guard let currentCGImage = self.image.cgImage else { return nil }
+        guard let currentCGImage: CGImage = self.cgImage else { return nil }
         let currentCIImage = CIImage(cgImage: currentCGImage)
 
         guard let filter = CIFilter(name: "CIPixellate") else { return nil }
         filter.setValue(currentCIImage, forKey: kCIInputImageKey)
         filter.setValue(12, forKey: kCIInputScaleKey)
-        guard let outputImage = filter?.outputImage else { return nil}
+        guard let outputImage = filter.outputImage else { return nil}
 
         let context = CIContext()
 

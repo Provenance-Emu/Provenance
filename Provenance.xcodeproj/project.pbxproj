@@ -657,6 +657,29 @@
 		B3296EE826CAC3ED0088AC32 /* Strings.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3296EEA26CAC3ED0088AC32 /* Strings.strings */; };
 		B32D8F801EA7FDB900175FBF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409717B2DCE4004DFFFC /* UIKit.framework */; };
 		B32D8F821EA7FDBE00175FBF /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
+		B3383BD328A38332008BD7B1 /* PVApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B328F42E289DD82A00CA4500 /* PVApp.framework */; };
+		B3383BD428A38332008BD7B1 /* CoresRetro_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6EF2878238C0037A946 /* CoresRetro_iOS.framework */; };
+		B3383BD528A38332008BD7B1 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D717C8D54D0019F6D2 /* libxml2.dylib */; };
+		B3383BD628A38332008BD7B1 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D432B17B2FDFE004DFFFC /* libz.dylib */; };
+		B3383BD728A38332008BD7B1 /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2A95A917F7682400F1CB0D /* libstdc++.dylib */; };
+		B3383BD828A38332008BD7B1 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2B0E8D1AD18961005FB77C /* libc++.dylib */; };
+		B3383BD928A38332008BD7B1 /* Cores_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F7F27DCB25100E83180 /* Cores_iOS.framework */; };
+		B3383BDA28A38332008BD7B1 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AECF4A81966D76100F8704E /* libsqlite3.dylib */; };
+		B3383BDB28A38332008BD7B1 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701221916C3A000FA7F9 /* PVLibrary.framework */; };
+		B3383BDC28A38332008BD7B1 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF700F21916C30000FA7F9 /* PVSupport.framework */; };
+		B3383BDD28A38332008BD7B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409917B2DCE4004DFFFC /* Foundation.framework */; };
+		B3383BDF28A38332008BD7B1 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A3D40A017B2DCE4004DFFFC /* InfoPlist.strings */; };
+		B3383BE028A38332008BD7B1 /* Strings.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3296EEA26CAC3ED0088AC32 /* Strings.strings */; };
+		B3383BE128A38332008BD7B1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */; };
+		B3383BE228A38332008BD7B1 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
+		B3383BE328A38332008BD7B1 /* Default.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3296EE426CAC2B10088AC32 /* Default.xib */; };
+		B3383BE428A38332008BD7B1 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
+		B3383BE728A38332008BD7B1 /* CoresRetro_iOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6EF2878238C0037A946 /* CoresRetro_iOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3383BE828A38332008BD7B1 /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF700F21916C30000FA7F9 /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3383BE928A38332008BD7B1 /* PVLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701221916C3A000FA7F9 /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3383BEA28A38332008BD7B1 /* PVApp.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B328F42E289DD82A00CA4500 /* PVApp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3383BEB28A38332008BD7B1 /* Cores_iOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F7F27DCB25100E83180 /* Cores_iOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3383BED28A38332008BD7B1 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B35104C42896646800FA401F /* PVBeetlePSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35104C32896646800FA401F /* PVBeetlePSX.framework */; };
 		B35104C52896646800FA401F /* PVBeetlePSX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B35104C32896646800FA401F /* PVBeetlePSX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B35104C72896648500FA401F /* PVVecX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35104C62896648500FA401F /* PVVecX.framework */; };
@@ -911,6 +934,48 @@
 			remoteGlobalIDString = B328F445289DD85B00CA4500;
 			remoteInfo = "PVApp-watchOS";
 		};
+		B3383BC628A38332008BD7B1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B383225D26ED9C530029D12F;
+			remoteInfo = "Check Git Submodules";
+		};
+		B3383BC828A38332008BD7B1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3B29D3F2156177100903290;
+			remoteInfo = "Create Version files";
+		};
+		B3383BCA28A38332008BD7B1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3E21D6A203211BE009939D3;
+			remoteInfo = Spotlight;
+		};
+		B3383BCC28A38332008BD7B1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3270F7E27DCB25100E83180;
+			remoteInfo = "Cores-iOS";
+		};
+		B3383BCE28A38332008BD7B1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3C8A6BB2878238C0037A946;
+			remoteInfo = "CoresRetro-iOS";
+		};
+		B3383BD028A38332008BD7B1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B328F42D289DD82900CA4500;
+			remoteInfo = PVApp;
+		};
 		B36FE830218EAAD200F858F3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
@@ -1111,6 +1176,42 @@
 				B328F5D1289DD91F00CA4500 /* PVApp.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3383BE628A38332008BD7B1 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B3383BE728A38332008BD7B1 /* CoresRetro_iOS.framework in Embed Frameworks */,
+				B3383BE828A38332008BD7B1 /* PVSupport.framework in Embed Frameworks */,
+				B3383BE928A38332008BD7B1 /* PVLibrary.framework in Embed Frameworks */,
+				B3383BEA28A38332008BD7B1 /* PVApp.framework in Embed Frameworks */,
+				B3383BEB28A38332008BD7B1 /* Cores_iOS.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3383BEC28A38332008BD7B1 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				B3383BED28A38332008BD7B1 /* Spotlight.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3383BEE28A38332008BD7B1 /* Embed System Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(SYSTEM_EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			name = "Embed System Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B355E4E7289E245D00D23D64 /* Embed Frameworks */ = {
@@ -1584,6 +1685,10 @@
 		B33625F726EDEFF700DC41EA /* MTLViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTLViewController.swift; sourceTree = "<group>"; };
 		B33625FA26EDF88200DC41EA /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/iOSSupport/System/Library/Frameworks/MetalKit.framework; sourceTree = DEVELOPER_DIR; };
 		B33625FB26EDF88200DC41EA /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/Metal.framework; sourceTree = DEVELOPER_DIR; };
+		B3383BF328A38332008BD7B1 /* Provenance-Lite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance-Lite.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3383BF428A38339008BD7B1 /* Provenance-Lite-iOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Provenance-Lite-iOS-Info.plist"; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Provenance-Lite-iOS-Info.plist"; sourceTree = "<absolute>"; };
+		B3383BF528A383D8008BD7B1 /* Build-Lite-iOS.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Build-Lite-iOS.xcconfig"; sourceTree = "<group>"; };
+		B3383BF628A383D9008BD7B1 /* Build-Lite-tvOS.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Build-Lite-tvOS.xcconfig"; sourceTree = "<group>"; };
 		B340E6091E088CF900AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3411BF7276B37DE00D85327 /* PVDSControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVDSControllerViewController.swift; sourceTree = "<group>"; };
 		B3411BFB276B470B00D85327 /* QuickTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuickTableViewController.swift; sourceTree = "<group>"; };
@@ -2112,6 +2217,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3383BD228A38332008BD7B1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3383BD328A38332008BD7B1 /* PVApp.framework in Frameworks */,
+				B3383BD428A38332008BD7B1 /* CoresRetro_iOS.framework in Frameworks */,
+				B3383BD528A38332008BD7B1 /* libxml2.dylib in Frameworks */,
+				B3383BD628A38332008BD7B1 /* libz.dylib in Frameworks */,
+				B3383BD728A38332008BD7B1 /* libstdc++.dylib in Frameworks */,
+				B3383BD828A38332008BD7B1 /* libc++.dylib in Frameworks */,
+				B3383BD928A38332008BD7B1 /* Cores_iOS.framework in Frameworks */,
+				B3383BDA28A38332008BD7B1 /* libsqlite3.dylib in Frameworks */,
+				B3383BDB28A38332008BD7B1 /* PVLibrary.framework in Frameworks */,
+				B3383BDC28A38332008BD7B1 /* PVSupport.framework in Frameworks */,
+				B3383BDD28A38332008BD7B1 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B355E4CB289E245D00D23D64 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2311,6 +2434,8 @@
 				B380EAC32759D69A001B8532 /* CodeSigning.xcconfig.sample */,
 				B380EAC22759D692001B8532 /* CodeSigning.xcconfig */,
 				B380EAC12759D689001B8532 /* Build.xcconfig */,
+				B3383BF528A383D8008BD7B1 /* Build-Lite-iOS.xcconfig */,
+				B3383BF628A383D9008BD7B1 /* Build-Lite-tvOS.xcconfig */,
 				B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */,
 				B326758627B1E0BC0033C5D1 /* Build-tvOS.xcconfig */,
 				B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */,
@@ -2333,6 +2458,7 @@
 				B355E50A289E289700D23D64 /* USBGamePad */,
 				1A3D409617B2DCE4004DFFFC /* Frameworks */,
 				1A3D409517B2DCE4004DFFFC /* Products */,
+				B3383BF428A38339008BD7B1 /* Provenance-Lite-iOS-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2357,6 +2483,7 @@
 				B328F44F289DD85B00CA4500 /* PVApp.framework */,
 				B355E501289E245D00D23D64 /* Cores-watchOS.framework */,
 				B355E507289E289200D23D64 /* Provenance.dext */,
+				B3383BF328A38332008BD7B1 /* Provenance-Lite.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3786,6 +3913,35 @@
 			productReference = B328F44F289DD85B00CA4500 /* PVApp.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		B3383BC428A38332008BD7B1 /* Provenance-Lite */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3383BEF28A38332008BD7B1 /* Build configuration list for PBXNativeTarget "Provenance-Lite" */;
+			buildPhases = (
+				B3383BD128A38332008BD7B1 /* Sources */,
+				B3383BD228A38332008BD7B1 /* Frameworks */,
+				B3383BDE28A38332008BD7B1 /* Resources */,
+				B3383BE528A38332008BD7B1 /* Script: Set Build Number */,
+				B3383BE628A38332008BD7B1 /* Embed Frameworks */,
+				B3383BEC28A38332008BD7B1 /* Embed App Extensions */,
+				B3383BEE28A38332008BD7B1 /* Embed System Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B3383BC528A38332008BD7B1 /* PBXTargetDependency */,
+				B3383BC728A38332008BD7B1 /* PBXTargetDependency */,
+				B3383BC928A38332008BD7B1 /* PBXTargetDependency */,
+				B3383BCB28A38332008BD7B1 /* PBXTargetDependency */,
+				B3383BCD28A38332008BD7B1 /* PBXTargetDependency */,
+				B3383BCF28A38332008BD7B1 /* PBXTargetDependency */,
+			);
+			name = "Provenance-Lite";
+			packageProductDependencies = (
+			);
+			productName = Provenance;
+			productReference = B3383BF328A38332008BD7B1 /* Provenance-Lite.app */;
+			productType = "com.apple.product-type.application";
+		};
 		B355E4C8289E245D00D23D64 /* Cores-watchOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B355E4FD289E245D00D23D64 /* Build configuration list for PBXNativeTarget "Cores-watchOS" */;
@@ -4074,6 +4230,7 @@
 			projectRoot = "";
 			targets = (
 				1A3D409317B2DCE4004DFFFC /* Provenance */,
+				B3383BC428A38332008BD7B1 /* Provenance-Lite */,
 				1AD481B31BA350A400FDA50A /* ProvenanceTV */,
 				1AD9AA341ACC988F00EC87A0 /* Provenance Tests */,
 				BE9FDCB61C210B9E0046DF0E /* TopShelf */,
@@ -4235,6 +4392,19 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3383BDE28A38332008BD7B1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3383BDF28A38332008BD7B1 /* InfoPlist.strings in Resources */,
+				B3383BE028A38332008BD7B1 /* Strings.strings in Resources */,
+				B3383BE128A38332008BD7B1 /* Assets.xcassets in Resources */,
+				B3383BE228A38332008BD7B1 /* Settings.bundle in Resources */,
+				B3383BE328A38332008BD7B1 /* Default.xib in Resources */,
+				B3383BE428A38332008BD7B1 /* licenses.html in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B355E4E6289E245D00D23D64 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -4361,6 +4531,29 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "FILE=\"${SRCROOT}/CodeSigning.xcconfig\"\nif [ -e \"${FILE}\" ]\nthen\n\techo \"CodeSigning OK!\"\nelse\n    osascript -e 'display notification \"Copy CodeSigning.xcconfig.sample to CodeSigning.xcconfig and edit with your Apple Developer Account info for proper signing.\" with title \"Code Signing not Configured!\"'\n    echo \"warning: Missing CodeSigning.xcconfig\"\nfi\n";
+		};
+		B3383BE528A38332008BD7B1 /* Script: Set Build Number */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(PROJECT_DIR)/$(INFOPLIST_FILE)",
+				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
+				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
+			);
+			name = "Script: Set Build Number";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+				"$(SRCROOT)/Provenance/.version",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = ". Scripts/set_bundle_build_number.sh Provenance\n";
 		};
 		B383226226ED9C590029D12F /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -4915,6 +5108,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3383BD128A38332008BD7B1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B355E4CA289E245D00D23D64 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -5011,6 +5211,36 @@
 			isa = PBXTargetDependency;
 			target = B328F445289DD85B00CA4500 /* PVApp-watchOS */;
 			targetProxy = B328F5D2289DD92100CA4500 /* PBXContainerItemProxy */;
+		};
+		B3383BC528A38332008BD7B1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B383225D26ED9C530029D12F /* Check Git Submodules */;
+			targetProxy = B3383BC628A38332008BD7B1 /* PBXContainerItemProxy */;
+		};
+		B3383BC728A38332008BD7B1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3B29D3F2156177100903290 /* Create Version files */;
+			targetProxy = B3383BC828A38332008BD7B1 /* PBXContainerItemProxy */;
+		};
+		B3383BC928A38332008BD7B1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3E21D6A203211BE009939D3 /* Spotlight */;
+			targetProxy = B3383BCA28A38332008BD7B1 /* PBXContainerItemProxy */;
+		};
+		B3383BCB28A38332008BD7B1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3270F7E27DCB25100E83180 /* Cores-iOS */;
+			targetProxy = B3383BCC28A38332008BD7B1 /* PBXContainerItemProxy */;
+		};
+		B3383BCD28A38332008BD7B1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3C8A6BB2878238C0037A946 /* CoresRetro-iOS */;
+			targetProxy = B3383BCE28A38332008BD7B1 /* PBXContainerItemProxy */;
+		};
+		B3383BCF28A38332008BD7B1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B328F42D289DD82900CA4500 /* PVApp-iOS */;
+			targetProxy = B3383BD028A38332008BD7B1 /* PBXContainerItemProxy */;
 		};
 		B36FE831218EAAD200F858F3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -6726,6 +6956,161 @@
 			};
 			name = Archive;
 		};
+		B3383BF028A38332008BD7B1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3383BF528A383D8008BD7B1 /* Build-Lite-iOS.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				APP_DISPLAY_NAME = "Prov Debug";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_ENTITLEMENTS = "Provenance/Provenance-Free.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2782;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"GL_SILENCE_DEPRECATION=1",
+					"$(inherited)",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					/usr/include/libxml2,
+				);
+				INFOPLIST_FILE = "Provenance-Lite-iOS-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				MARKETING_VERSION = 2.1.1;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "$(inherited)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_COMPILATION_MODE = singlefile;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Provenance/Provenance-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,6";
+				VALIDATE_PRODUCT = NO;
+				WARNING_LDFLAGS = "";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		B3383BF128A38332008BD7B1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3383BF528A383D8008BD7B1 /* Build-Lite-iOS.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				APP_DISPLAY_NAME = "$(TARGET_NAME)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_ENTITLEMENTS = "Provenance/Provenance-Free.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2782;
+				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"GL_SILENCE_DEPRECATION=1",
+					"$(inherited)",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					/usr/include/libxml2,
+				);
+				INFOPLIST_FILE = "Provenance-Lite-iOS-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				MARKETING_VERSION = 2.1.1;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1  ";
+				OTHER_LDFLAGS = "$(inherited)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Provenance/Provenance-Bridging-Header.h";
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,6";
+				VALIDATE_PRODUCT = NO;
+				WARNING_LDFLAGS = "";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		B3383BF228A38332008BD7B1 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3383BF528A383D8008BD7B1 /* Build-Lite-iOS.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				APP_DISPLAY_NAME = "$(TARGET_NAME)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_ENTITLEMENTS = Provenance/Provenance.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2782;
+				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"GL_SILENCE_DEPRECATION=1",
+					"$(inherited)",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					/usr/include/libxml2,
+				);
+				INFOPLIST_FILE = "Provenance-Lite-iOS-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				MARKETING_VERSION = 2.1.1;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1  ";
+				OTHER_LDFLAGS = "$(inherited)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Provenance/Provenance-Bridging-Header.h";
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,6";
+				VALIDATE_PRODUCT = NO;
+				WARNING_LDFLAGS = "";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Archive;
+		};
 		B355E4FE289E245D00D23D64 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -8285,6 +8670,16 @@
 				B328F44C289DD85B00CA4500 /* Debug */,
 				B328F44D289DD85B00CA4500 /* Release */,
 				B328F44E289DD85B00CA4500 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3383BEF28A38332008BD7B1 /* Build configuration list for PBXNativeTarget "Provenance-Lite" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3383BF028A38332008BD7B1 /* Debug */,
+				B3383BF128A38332008BD7B1 /* Release */,
+				B3383BF228A38332008BD7B1 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
