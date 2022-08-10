@@ -12,15 +12,15 @@ import UIKit
 #if canImport(CoreMotion)
 import CoreMotion
 
-fileprivate let g_motion:CMMotionManager = CMMotionManager()
-fileprivate var g_acceleration: CMAcceleration = .init(x: 0, y: 0, z: 0)
-fileprivate var g_magnetometerData: CMMagnetometerData? = nil
-fileprivate var g_gyroData: CMGyroData? = nil
-fileprivate var g_deviceMotion: CMDeviceMotion? = nil
+private let g_motion:CMMotionManager = CMMotionManager()
+private var g_acceleration: CMAcceleration = .init(x: 0, y: 0, z: 0)
+private var g_magnetometerData: CMMagnetometerData?
+private var g_gyroData: CMGyroData?
+private var g_deviceMotion: CMDeviceMotion?
 #endif
 
-fileprivate var g_timer: Timer? = nil
-fileprivate var sensorsEnabled: SensorsEnabled = .init(rawValue: 0) {
+private var g_timer: Timer?
+private var sensorsEnabled: SensorsEnabled = .init(rawValue: 0) {
     didSet {
         if sensorsEnabled.isEmpty {
             g_timer?.invalidate()
@@ -31,7 +31,7 @@ fileprivate var sensorsEnabled: SensorsEnabled = .init(rawValue: 0) {
 
 struct SensorsEnabled: OptionSet {
     let rawValue: UInt
-    
+
     static let accelerometer = SensorsEnabled(rawValue: 1 << 0)
     static let gyro = SensorsEnabled(rawValue: 1 << 1)
     static let magnetometer = SensorsEnabled(rawValue: 1 << 2)
@@ -44,7 +44,7 @@ struct SensorsEnabled: OptionSet {
     var motion: CMMotionManager {
         return g_motion
     }
-    
+
     var timer: Timer? {
         get {
             if g_timer == nil, !sensorsEnabled.isEmpty {
@@ -54,7 +54,7 @@ struct SensorsEnabled: OptionSet {
                                 block: { [weak self] timer in
                     self?.handleTimer()
                 })
-                g_timer = timer;
+                g_timer = timer
             }
             return g_timer
         }
@@ -63,7 +63,7 @@ struct SensorsEnabled: OptionSet {
             g_timer = newValue
         }
     }
-    
+
     func handleTimer() {
         if sensorsEnabled.contains(.accelerometer) {
             if let data = self.motion.accelerometerData {
@@ -86,21 +86,20 @@ struct SensorsEnabled: OptionSet {
             }
         }
     }
-    
-    @objc var accelerometerStateX: Float { Float(g_acceleration.x) }
-    @objc var accelerometerStateY: Float { Float(g_acceleration.y) }
-    @objc var accelerometerStateZ: Float { Float(g_acceleration.z) }
-    @objc var gyroscopeStateX: Float { Float(g_gyroData?.rotationRate.x ?? 0) }
-    @objc var gyroscopeStateY: Float { Float(g_gyroData?.rotationRate.y ?? 0) }
-    @objc var gyroscopeStateZ: Float { Float(g_gyroData?.rotationRate.z ?? 0) }
 
-    @objc
+    var accelerometerStateX: Float { Float(g_acceleration.x) }
+    var accelerometerStateY: Float { Float(g_acceleration.y) }
+    var accelerometerStateZ: Float { Float(g_acceleration.z) }
+    var gyroscopeStateX: Float { Float(g_gyroData?.rotationRate.x ?? 0) }
+    var gyroscopeStateY: Float { Float(g_gyroData?.rotationRate.y ?? 0) }
+    var gyroscopeStateZ: Float { Float(g_gyroData?.rotationRate.z ?? 0) }
+
     func startAccelerometers() -> Bool {
         // Make sure the accelerometer hardware is available.
         guard self.motion.isAccelerometerAvailable else { return false }
         self.motion.accelerometerUpdateInterval = 1.0 / 60.0  // 60 Hz
         self.motion.startAccelerometerUpdates()
-        
+
         // Configure a timer to fetch the data.
         self.timer = Timer(fire: Date(), interval: (1.0/60.0),
                            repeats: true, block: { (timer) in
@@ -109,13 +108,12 @@ struct SensorsEnabled: OptionSet {
                 g_acceleration = data.acceleration
             }
         })
-        
+
         // Add the timer to the current run loop.
         RunLoop.current.add(self.timer!, forMode: .default)
         return true
     }
-    
-    @objc
+
     func stopAccelerometers() {
         if motion.isAccelerometerActive {
             motion.stopAccelerometerUpdates()
@@ -124,11 +122,10 @@ struct SensorsEnabled: OptionSet {
 }
 
 @objc public extension PVEmulatorCore {
-    @objc
     func startGyro() -> Bool {
         // Make sure the accelerometer hardware is available.
         guard self.motion.isGyroAvailable else { return false }
-        
+
         self.motion.gyroUpdateInterval = 1.0 / frameInterval  // 60 Hz
         self.motion.startGyroUpdates()
         //           let handler: CMGyroHandler = ^{ data, error in
@@ -143,14 +140,13 @@ struct SensorsEnabled: OptionSet {
                 g_gyroData = data
             }
         })
-        
+
         // Add the timer to the current run loop.
         RunLoop.current.add(self.timer!, forMode: .default)
         return true
-        
+
     }
-    
-    @objc
+
     func stopGyro() {
         if motion.isGyroActive {
             motion.stopGyroUpdates()
@@ -159,18 +155,17 @@ struct SensorsEnabled: OptionSet {
 }
 
 @objc public extension PVEmulatorCore {
-    @objc
     func startMagnetometer() -> Bool {
         // Make sure the accelerometer hardware is available.
         guard self.motion.isMagnetometerAvailable else { return false }
-        
+
             self.motion.magnetometerUpdateInterval = 1.0 / frameInterval  // 60 Hz
             self.motion.startMagnetometerUpdates()
             //          let handler: CMMagnetometerHandler = ^{ magnetometerData, error in
             //
             //          }
             //          self.motion.startMagnetometerUpdates(to: .main, withHandler: handler)
-            
+
             // Configure a timer to fetch the data.
             self.timer = Timer(fire: Date(), interval: (1.0/frameInterval),
                                repeats: true, block: { (timer) in
@@ -179,14 +174,13 @@ struct SensorsEnabled: OptionSet {
                     g_magnetometerData = data
                 }
             })
-            
+
             // Add the timer to the current run loop.
             RunLoop.current.add(self.timer!, forMode: .default)
         return true
 
     }
-    
-    @objc
+
     func stopMagnetometer() {
         if motion.isMagnetometerActive {
             motion.stopMagnetometerUpdates()
@@ -195,7 +189,6 @@ struct SensorsEnabled: OptionSet {
 }
 
 @objc public extension PVEmulatorCore {
-    @objc
     func startDeviceMotion() -> Bool {
         // Make sure the accelerometer hardware is available.
         guard self.motion.isDeviceMotionAvailable else { return false }
@@ -205,7 +198,7 @@ struct SensorsEnabled: OptionSet {
         //
         //          }
         //          self.motion.startDeviceMotionUpdates(to: .main, withHandler: handler)
-        
+
         // Configure a timer to fetch the data.
         self.timer = Timer(fire: Date(), interval: (1.0/frameInterval),
                            repeats: true, block: { (timer) in
@@ -214,13 +207,12 @@ struct SensorsEnabled: OptionSet {
                 g_deviceMotion = data
             }
         })
-        
+
         // Add the timer to the current run loop.
         RunLoop.current.add(self.timer!, forMode: .default)
         return true
     }
-    
-    @objc
+
     func stopDeviceMotion() {
         if motion.isDeviceMotionActive {
             motion.stopDeviceMotionUpdates()
@@ -234,18 +226,16 @@ struct SensorsEnabled: OptionSet {
 import SensorKit
 #endif
 
-fileprivate var g_illuminance: Float = 0
+private var g_illuminance: Float = 0
 
 @objc public extension PVEmulatorCore {
 
-    @objc var illuminance: Float { g_illuminance }
+    var illuminance: Float { g_illuminance }
 
-    @objc
     func startIlluminance() -> Bool {
         return false
     }
-    
-    @objc
+
     func stopIlluminance() {
     }
 }

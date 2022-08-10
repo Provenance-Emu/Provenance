@@ -8,16 +8,15 @@
 
 import Foundation
 
-fileprivate let kSetLEDFadeID: UInt32 = 3 // setLEDFade(int, int, int, int *)
+private let kSetLEDFadeID: UInt32 = 3 // setLEDFade(int, int, int, int *)
 
 @available(iOS 14.0, tvOS 14.0, *)
 @objc public extension PVEmulatorCore {
-    @objc
     func setLED(led : Int, state : Int) -> Bool {
         DLOG("led index \(led) state \(state)")
 
         let color: CGColor = state != 0 ? UIColor.white.cgColor : UIColor.black.cgColor
-        
+
         switch led {
         case 0:
             if let light = controller1?.light {

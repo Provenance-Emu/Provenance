@@ -19,27 +19,27 @@ func AudioServicesPlaySystemSoundWithVibration(_ soundID: SystemSoundID, _ idk: 
 #endif
 
 @available(iOS 14.0, tvOS 14.0, *)
-fileprivate var hapticEngines: [CHHapticEngine?] = Array<CHHapticEngine?>.init(repeating: nil, count: 4)
+private var hapticEngines: [CHHapticEngine?] = [CHHapticEngine?].init(repeating: nil, count: 4)
 
 @objc
 public extension PVEmulatorCore {
-    @objc var numberOfUsers: UInt {
+    var numberOfUsers: UInt {
         if self.controller4 != nil { return 4 }
         if self.controller3 != nil { return 3 }
         if self.controller2 != nil { return 2 }
         if self.controller1 != nil { return 1 }
-        return 1;
+        return 1
     }
 }
 
 @objc
 public extension PVEmulatorCore {
-	@objc var supportsRumble: Bool { false }
-    
+	var supportsRumble: Bool { false }
+
 	func rumble() {
 		rumble(player: 0)
 	}
-    
+
     @available(iOS 14.0, tvOS 14.0, *)
     func hapticEngine(for player: Int) -> CHHapticEngine? {
         if let engine = hapticEngines[player] {
@@ -52,7 +52,7 @@ public extension PVEmulatorCore {
             return nil
         }
     }
-    
+
     func controller(for player: Int) -> GCController? {
         var controller: GCController?
         switch player {
@@ -104,7 +104,7 @@ public extension PVEmulatorCore {
             // Fallback on earlier versions
         }
 	}
-    
+
     #if os(iOS) && !targetEnvironment(macCatalyst)
 	func rumblePhone() {
 

@@ -430,7 +430,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 		volume.frame = CGRect(x: safeAreaInsets.left + volumeXPadding, y: safeAreaInsets.top + volumeYPadding, width: UIScreen.main.bounds.width - (volumeXPadding * 2) - safeAreaInsets.left - safeAreaInsets.right, height: volumeHeight)
 	}
 #endif
-    
+
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         if inMoveMode {
             inMoveMode = false
@@ -475,7 +475,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 #else
 	func setupTouchControls() {
         if inMoveMode { return }
-        
+
 		let alpha = self.alpha
 
 		for control in controlLayout {
@@ -488,7 +488,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
 			if controlType == Keys.DPad {
                 if let dPad = dPad, dPad.isCustomMoved { continue }
-                
+
 				let xPadding: CGFloat = 0 // safeAreaInsets.left
 				let bottomPadding: CGFloat = 16
 				let dPadOriginY: CGFloat = min(controlOriginY - bottomPadding, view.frame.height - controlSize.height - bottomPadding)
@@ -529,7 +529,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 				if let dPad2 = dPad2 {
 					dPad2.isHidden = compactVertical
 				}
-    
+
                     adjustJoystick()
                 } else if controlType == Keys.JoyPad, PVSettingsModel.shared.debugOptions.onscreenJoypad {
 				let xPadding: CGFloat = 0 // safeAreaInsets.left
@@ -1055,12 +1055,12 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         }
         var joyPadFrame = joyPad.frame
         var dPadFrame = dPad.frame
-        
+
         let joystickOverDPad = joyPadFrame.minY <= dPadFrame.minY
-        
+
         if joystickOverDPad {
             joyPadFrame.origin.y = dPadFrame.minY - joyPadFrame.size.height
-        } else  {
+        } else {
             let overlap = (dPadFrame.maxY + joyPadFrame.height) - view.frame.height
             if overlap > 1 {
                 dPadFrame.origin.y -= overlap

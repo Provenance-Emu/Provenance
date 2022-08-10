@@ -47,24 +47,26 @@ import Foundation
 	var gameSupportsMouse: Bool { get }
 	var requiresMouse: Bool { get }
 
-    @available(iOS 14.0, tvOS 14.0, *)
-    func didScroll(_ cursor: GCDeviceCursor)
+    func didScroll(xValue: Float, yValue: Float)
 
 	var mouseMovedHandler: GCMouseMoved? { get }
     @objc(mouseMovedAt:)
 	func mouseMoved(atPoint point: CGPoint)
 
-    @objc(leftMouseDownAt:)
-	func leftMouseDown(atPoint point: CGPoint)
+	func leftMouseDown()
 	func leftMouseUp()
 
-    @objc(rightMouseDownAt:)
-	func rightMouseDown(atPoint point: CGPoint)
+	func rightMouseDown()
 	func rightMouseUp()
-    
-    @objc(middleMouseDownAt:)
-    func middleMouseDown(atPoint point: CGPoint)
+
+    func middleMouseDown()
     func middleMouseUp()
+    
+    func auxiliaryMouseDown()
+    func auxiliaryMouseUp()
+    
+    func auxiliary2MouseDown()
+    func auxiliary2MouseUp()
 }
 
 @objc public enum Touchpad: Int {
@@ -499,7 +501,7 @@ import Foundation
     func didPush(_ button: PV5200Button, forPlayer player: Int)
     @objc(didRelease5200Button:forPlayer:)
     func didRelease(_ button: PV5200Button, forPlayer player: Int)
-    
+
     @objc(didMove5200JoystickDirection:withValue:forPlayer:)
     func didMoveJoystick(_ button: PV5200Button, withValue value: CGFloat, forPlayer player: Int)
 }
@@ -1148,7 +1150,6 @@ import Foundation
 	func leftMouseDown(at point: CGPoint)
 	func leftMouseUp()
 }
-
 
 // MARK: - EP128
  @objc public enum PVEP128Button: Int {

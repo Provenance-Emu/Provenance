@@ -32,7 +32,7 @@ public struct SystemOptions: OptionSet, Codable {
     public static let portable = SystemOptions(rawValue: 1 << 1)
     public static let rumble = SystemOptions(rawValue: 1 << 2)
     public static let mouse = SystemOptions(rawValue: 1 << 3)
-    public static let keyboard SystemOptions(rawValue: 1 << 4)
+    public static let keyboard = SystemOptions(rawValue: 1 << 4)
 }
 
 @objcMembers
@@ -56,7 +56,7 @@ public final class PVSystem: Object, Identifiable, SystemProtocol {
     public dynamic var portableSystem: Bool = false
 
     public dynamic var supportsRumble: Bool = false
-    
+
     public dynamic var requiresMouse: Bool = false
     public dynamic var requiresKeyboard: Bool = false
 
@@ -271,6 +271,9 @@ extension System: RealmRepresentable {
             object.usesCDs = usesCDs
             object.supportsRumble = supportsRumble
             object.headerByteSize = headerByteSize
+            
+            object.requiresMouse = requiresMouse
+            object.requiresKeyboard = requiresKeyboard
         })
     }
 }

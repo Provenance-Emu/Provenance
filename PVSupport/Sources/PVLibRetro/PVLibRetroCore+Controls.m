@@ -226,22 +226,38 @@ char * keyStringForKeyCode(int keyCode)
 //- (BOOL)gameSupportsMouse { return true; }
 //- (BOOL)requiresMouse{ return false; }
 
-- (void)didScroll:(GCDeviceCursor *)cursor {
-    if(cursor.yAxis == 0) {
+- (void)didScrollWithXValue:(float)xValue yValue:(float)yValue {
+    if (yValue == 0) {
         self->mouse_wheel_up = 0;
         self->mouse_wheel_down = 0;
         input_state_callback(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_WHEELUP);
         input_state_callback(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_WHEELDOWN);
-    } else if (cursor.yAxis.value > 0.0) {
-        self->mouse_wheel_up = cursor.yAxis.value;
+    } else if (yValue > 0.0) {
+        self->mouse_wheel_up = yValue;
         self->mouse_wheel_down = 0;
         input_state_callback(0, RETRO_DEVICE_MOUSE, self->mouse_wheel_up, RETRO_DEVICE_ID_MOUSE_WHEELUP);
         input_state_callback(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_WHEELDOWN);
-    } else if (cursor.yAxis.value < 0.0) {
+    } else if (yValue < 0.0) {
         self->mouse_wheel_up = 0;
-        self->mouse_wheel_down = cursor.yAxis.value * -1;
+        self->mouse_wheel_down = yValue * -1;
         input_state_callback(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_WHEELUP);
         input_state_callback(0, RETRO_DEVICE_MOUSE, self->mouse_wheel_down, RETRO_DEVICE_ID_MOUSE_WHEELDOWN);
+    }
+    if (xValue == 0) {
+        self->mouse_horiz_wheel_up = 0;
+        self->mouse_horiz_wheel_down = 0;
+        input_state_callback(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_HORIZ_WHEELUP);
+        input_state_callback(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_HORIZ_WHEELDOWN);
+    } else if (xValue > 0.0) {
+        self->mouse_horiz_wheel_up = xValue;
+        self->mouse_horiz_wheel_down = 0;
+        input_state_callback(0, RETRO_DEVICE_MOUSE, self->mouse_horiz_wheel_up, RETRO_DEVICE_ID_MOUSE_HORIZ_WHEELUP);
+        input_state_callback(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_HORIZ_WHEELDOWN);
+    } else if (xValue < 0.0) {
+        self->mouse_horiz_wheel_up = 0;
+        self->mouse_horiz_wheel_down = xValue * -1;
+        input_state_callback(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_HORIZ_WHEELUP);
+        input_state_callback(0, RETRO_DEVICE_MOUSE, self->mouse_horiz_wheel_down, RETRO_DEVICE_ID_MOUSE_HORIZ_WHEELDOWN);
     }
 }
 
@@ -258,12 +274,8 @@ char * keyStringForKeyCode(int keyCode)
     input_state_callback(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_LEFT);
 }
 
-- (void)leftMouseDownAt:(CGPoint)point {
-    self->mouse_x = point.x;
-    self->mouse_y = point.y;
+- (void)leftMouseDown {
     self->mouseLeft = true;
-    input_state_callback(0, RETRO_DEVICE_MOUSE, self->mouse_x, RETRO_DEVICE_ID_MOUSE_X);
-    input_state_callback(0, RETRO_DEVICE_MOUSE, self->mouse_y, RETRO_DEVICE_ID_MOUSE_Y);
     input_state_callback(0, RETRO_DEVICE_MOUSE, 1, RETRO_DEVICE_ID_MOUSE_LEFT);
 }
 
@@ -271,25 +283,32 @@ char * keyStringForKeyCode(int keyCode)
     self->mouseRight = false;
     input_state_callback(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_RIGHT);
 }
-- (void)rightMouseDownAt:(CGPoint)point {
-    self->mouse_x = point.x;
-    self->mouse_y = point.y;
+- (void)rightMouseDown {
     self->mouseRight = true;
-    input_state_callback(0, RETRO_DEVICE_MOUSE, self->mouse_x, RETRO_DEVICE_ID_MOUSE_X);
-    input_state_callback(0, RETRO_DEVICE_MOUSE, self->mouse_y, RETRO_DEVICE_ID_MOUSE_Y);
     input_state_callback(0, RETRO_DEVICE_MOUSE, 1, RETRO_DEVICE_ID_MOUSE_RIGHT);
 }
 - (void)middleMouseUp {
     self->mouseMiddle = false;
     input_state_callback(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_MIDDLE);
 }
-- (void)middleMouseDownAt:(CGPoint)point {
-    self->mouse_x = point.x;
-    self->mouse_y = point.y;
+- (void)middleMouseDown {
     self->mouseMiddle = true;
-    input_state_callback(0, RETRO_DEVICE_MOUSE, self->mouse_x, RETRO_DEVICE_ID_MOUSE_X);
-    input_state_callback(0, RETRO_DEVICE_MOUSE, self->mouse_y, RETRO_DEVICE_ID_MOUSE_Y);
     input_state_callback(0, RETRO_DEVICE_MOUSE, 1, RETRO_DEVICE_ID_MOUSE_MIDDLE);
+}
+- (void)auxiliaryMouseUp {
+    self->mouse_button_4 = false;
+    input_state_callback(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_BUTTON_4);
+}
+- (void)auxiliaryMouseDown {
+    self->mouse_button_4 = true;
+    input_state_callback(0, RETRO_DEVICE_MOUSE, 1, RETRO_DEVICE_ID_MOUSE_BUTTON_4);
+}- (void)auxiliary2MouseUp {
+    self->mouse_button_5 = false;
+    input_state_callback(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_BUTTON_5);
+}
+- (void)auxiliary2MouseDown {
+    self->mouse_button_5 = true;
+    input_state_callback(0, RETRO_DEVICE_MOUSE, 1, RETRO_DEVICE_ID_MOUSE_BUTTON_5);
 }
 
 @end

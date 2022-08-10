@@ -79,7 +79,7 @@ public struct SytemPlistEntry: Codable, Equatable, Hashable {
     public private(set) var PVScreenType: String?
     public private(set) var PVSupportsRumble: Bool?
     public private(set) var PVImporterOptions: PVImporterOptions?
-        
+
     public private(set) var PVRequiresMouse: Bool?
     public private(set) var PVRequiresKeyboard: Bool?
 }

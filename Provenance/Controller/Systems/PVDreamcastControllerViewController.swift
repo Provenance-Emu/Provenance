@@ -72,8 +72,7 @@ class PVDreamcastControllerViewController: PVControllerViewController<PVDreamcas
         }
         super.dPad(dPad, didPress: direction)
     }
-    
-    
+
     override func dPad(_ dPad: JSDPad, joystick value: JoystickValue) {
         var up:CGFloat = value.y < 0.5 ? CGFloat(1 - (value.y * 2)) : 0.0
         var down:CGFloat = value.y > 0.5 ? CGFloat((value.y - 0.5) * 2) : 0.0
@@ -84,7 +83,7 @@ class PVDreamcastControllerViewController: PVControllerViewController<PVDreamcas
         down = min(down, 1.0)
         left = min(left, 1.0)
         right = min(right, 1.0)
-        
+
         up = max(up, 0.0)
         down = max(down, 0.0)
         left = max(left, 0.0)

@@ -163,7 +163,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
             PVSettingsSwitchRow(text: NSLocalizedString("Image Smoothing", comment: "Image Smoothing"), key: \PVSettingsModel.imageSmoothing),
             PVSettingsSwitchRow(text: NSLocalizedString("FPS Counter", comment: "FPS Counter"), key: \PVSettingsModel.showFPSCount)
         ])
-        
+
         #else
         avRows.append(contentsOf: [
             PVSettingsSwitchRow(text: NSLocalizedString("Native Scale", comment: "Native Scale"), key: \PVSettingsModel.nativeScaleEnabled,
@@ -199,7 +199,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
                                                footer: "Post processing filter when using Metal",
                                                key: \PVSettingsModel.metalFilter,
                                                options: shaders)
-        
+
         // -- Section : Controler
 
         var controllerRows = [TableRow]()
@@ -339,10 +339,10 @@ final class PVSettingsViewController: PVQuickTableViewController {
 			PVSettingsSwitchRow(text: NSLocalizedString("Movable Buttons", comment: "Bool option to allow user to move on screen controller buttons"),
 								detailText: .subtitle("Allow user to move on screen controller buttons."),
 								key: \PVSettingsModel.debugOptions.movableButtons),
-            
+
             PVSettingsSwitchRow(text: NSLocalizedString("On screen Joypad", comment: ""),
                                 detailText: .subtitle("Show a touch Joystick pad on supported systems. Layout is strange on some devices while in beta."),
-                                key: \PVSettingsModel.debugOptions.onscreenJoypad),
+                                key: \PVSettingsModel.debugOptions.onscreenJoypad)
         ]
         #else // tvOS
          let betaRows: [TableRow] = [

@@ -9,7 +9,7 @@
 import Foundation
 
 @objc public extension PVEmulatorCore {
-    @objc func osdSetMessage(_ message: String, forFrames: UInt = 0) -> Bool {
+    func osdSetMessage(_ message: String, forFrames: UInt = 0) -> Bool {
         return false
     }
 }

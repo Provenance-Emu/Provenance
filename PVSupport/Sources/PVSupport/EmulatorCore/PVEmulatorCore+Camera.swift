@@ -14,10 +14,10 @@ import AVFoundation
 public extension PVEmulatorCore {
     var cameraIsAvailable: Bool { false }
     func requestCameraAccess() { assertionFailure("tvOS Not Supported") }
-    @objc func cameraStart() -> Bool {
+    func cameraStart() -> Bool {
         assertionFailure("tvOS Not Supported")
         return false }
-    @objc func cameraStop() { assertionFailure("tvOS Not Supported") }
+    func cameraStop() { assertionFailure("tvOS Not Supported") }
 }
 #else
 public typealias retro_camera_lifetime_status_t = () -> Void
@@ -26,13 +26,13 @@ public typealias retro_camera_frame_opengl_texture_t = (_ texture_id : UInt16, _
 public typealias retro_camera_start_t = () -> Bool
 public typealias retro_camera_stop_t = () -> Void
 
-fileprivate var g_authorized: Bool = false
-fileprivate var g_session: AVCaptureDevice.DiscoverySession? = nil
+private var g_authorized: Bool = false
+private var g_session: AVCaptureDevice.DiscoverySession?
 
 @objc
 public extension PVEmulatorCore {
     var cameraIsAvailable: Bool { UIImagePickerController.isSourceTypeAvailable(.camera) && g_authorized }
-    
+
     func requestCameraAccess() {
         let authStatus = AVCaptureDevice.authorizationStatus(for: .video)
         switch authStatus {
@@ -54,22 +54,22 @@ public extension PVEmulatorCore {
             fatalError()
         }
     }
-    
+
     @nonobjc
     func cameraStart(withDesiredSize size: CGSize? = nil) -> Bool {
         guard cameraIsAvailable else { return false }
 //        AVCaptureDeviceDiscoverySession
 //        :AVMediaTypeVideo
 //        AVCaptureDevice.init(uniqueID: String)
-        return false;
+        return false
     }
 
-    @objc func cameraStart() -> Bool {
+    func cameraStart() -> Bool {
         return cameraStart(withDesiredSize: nil)
     }
-    
-    @objc func cameraStop() {
-        
+
+    func cameraStop() {
+
     }
 }
 #endif

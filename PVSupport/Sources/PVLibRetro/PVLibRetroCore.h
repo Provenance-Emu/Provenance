@@ -64,6 +64,9 @@ __attribute__((weak_import))
     int16_t mouse_y;
     int16_t mouse_wheel_up;
     int16_t mouse_wheel_down;
+    int16_t mouse_horiz_wheel_up;
+    int16_t mouse_horiz_wheel_down;
+    
     bool mouseLeft;
     bool mouseRight;
     bool mouseMiddle;

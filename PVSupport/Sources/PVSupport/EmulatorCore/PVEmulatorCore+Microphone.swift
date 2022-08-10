@@ -9,7 +9,7 @@
 import Foundation
 import AVFoundation
 
-fileprivate var g_authorized: Bool = false
+private var g_authorized: Bool = false
 
 @objc
 public extension PVEmulatorCore {
@@ -18,7 +18,7 @@ public extension PVEmulatorCore {
     #else
     var microphoneIsAvailable: Bool { return false }
     #endif
-    
+
     func requestMicrophoneAccess() {
 #if os(iOS)
         let authStatus = AVCaptureDevice.authorizationStatus(for: .audio)

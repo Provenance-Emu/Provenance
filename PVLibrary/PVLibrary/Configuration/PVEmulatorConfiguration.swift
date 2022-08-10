@@ -30,7 +30,6 @@ public struct SystemDictionaryKeys {
     public static let RequiresMouse = "PVRequiresMouse"
     public static let RequiresKeyboard = "PVRequiresKeyboard"
 
-
     public struct ControllerLayoutKeys {
         public static let Button = "PVButton"
         public static let ButtonGroup = "PVButtonGroup"
@@ -50,7 +49,7 @@ public struct SystemDictionaryKeys {
         public static let SelectButton = "PVSelectButton"
         public static let StartButton = "PVStartButton"
     }
-    
+
     public struct ImporterOptionsKeys {
         public static let UseFolders = "PVImporterUseFolders"
     }
@@ -140,15 +139,15 @@ public enum SystemIdentifier: String, CaseIterable {
 
         .Supervision,
         .Vectrex,
-        .ZXSpectrum,
+        .ZXSpectrum
     ]
-    
+
     static public let unsupported: [SystemIdentifier] =
     [
         .PS2,
         .PS3,
         .PSP,
-        .Wii,
+        .Wii
     ]
     // MARK: Assistance accessors for properties
 
@@ -466,11 +465,11 @@ public struct ClassInfo: CustomStringConvertible, Equatable {
 
         bundle = Bundle(for: classObject)
     }
-    
+
     public var superclassesInfo: [ClassInfo]? {
         var classInfos = [ClassInfo]()
         var superClass: ClassInfo? = superclassInfo
-        
+
         while(superClass != nil) {
             if let classInfo = ClassInfo(superClass?.classObject) {
                 classInfos.append(classInfo)
@@ -479,7 +478,7 @@ public struct ClassInfo: CustomStringConvertible, Equatable {
                 superClass = nil
             }
         }
-        
+
         return classInfos.isEmpty ? nil : classInfos
     }
 

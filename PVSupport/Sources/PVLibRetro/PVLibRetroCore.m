@@ -930,6 +930,10 @@ int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned device, unsi
                 value = strongCurrent->mouse_wheel_up;
             case RETRO_DEVICE_ID_MOUSE_WHEELDOWN:
                 value = strongCurrent->mouse_wheel_down;
+            case RETRO_DEVICE_ID_MOUSE_HORIZ_WHEELUP:
+                value = strongCurrent->mouse_horiz_wheel_up;
+            case RETRO_DEVICE_ID_MOUSE_HORIZ_WHEELDOWN:
+                value = strongCurrent->mouse_horiz_wheel_down;
             case RETRO_DEVICE_ID_MOUSE_BUTTON_4:
                 value = strongCurrent->mouse_button_4;
             case RETRO_DEVICE_ID_MOUSE_BUTTON_5:

@@ -62,10 +62,13 @@ public struct System: Codable, SystemProtocol {
 
     public let supportsRumble: Bool
     public let screenType: ScreenType
+    
+    public let requiresKeyboard: Bool
+    public let requiresMouse: Bool
 
     public init(name: String, identifier: String, shortName: String, shortNameAlt: String? = nil, manufacturer: String,
                 releaseYear: Int, bits: SystemBits, headerByteSize: Int, openvgDatabaseID: Int, requiresBIOS: Bool = false,
-                options: SystemOptions, bioses: [BIOS]? = nil, extensions: [String], games: [Game], cores: [Core], userPreferredCore: Core? = nil, usesCDs: Bool = false, portableSystem: Bool = false, supportsRumble: Bool = false, screenType: ScreenType) {
+                options: SystemOptions, bioses: [BIOS]? = nil, extensions: [String], games: [Game], cores: [Core], userPreferredCore: Core? = nil, usesCDs: Bool = false, portableSystem: Bool = false, supportsRumble: Bool = false, screenType: ScreenType, requiresKeyboard: Bool = false, requiresMouse: Bool = false) {
         self.name = name
         self.identifier = identifier
         self.shortName = shortName
@@ -86,6 +89,9 @@ public struct System: Codable, SystemProtocol {
         self.portableSystem = portableSystem
         self.supportsRumble = supportsRumble
         self.screenType = screenType
+        
+        self.requiresKeyboard = requiresKeyboard
+        self.requiresMouse = requiresMouse
     }
 }
 
@@ -156,8 +162,12 @@ public extension System {
 
         let supportsRumble = system.supportsRumble
         let screenType = system.screenType
+        
+        let requiresMouse = system.requiresMouse
+        let requiresKeyboard = system.requiresKeyboard
+        
         self.init(name: name, identifier: identifier, shortName: shortName, shortNameAlt: shortNameAlt, manufacturer: manufacturer,
                   releaseYear: releaseYear, bits: bits, headerByteSize: headerByteSize, openvgDatabaseID: openvgDatabaseID, requiresBIOS: requiresBIOS,
-                  options: options, bioses: bioses, extensions: extensions, games: games, cores: cores, userPreferredCore: userPreferredCore, usesCDs: usesCDs, portableSystem: portableSystem, supportsRumble: supportsRumble, screenType: screenType)
+                  options: options, bioses: bioses, extensions: extensions, games: games, cores: cores, userPreferredCore: userPreferredCore, usesCDs: usesCDs, portableSystem: portableSystem, supportsRumble: supportsRumble, screenType: screenType, requiresKeyboard: requiresKeyboard, requiresMouse: requiresMouse)
     }
 }

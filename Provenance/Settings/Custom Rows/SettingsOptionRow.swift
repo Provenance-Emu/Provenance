@@ -46,7 +46,7 @@ final class PVRadioOptionCell: UITableViewCell {
 
 public
 final class PVRadioOptionRow: OptionRow<PVRadioOptionCell> {
-    
+
 }
 
 public
@@ -55,7 +55,7 @@ final class PVSettingsOptionRow: RadioSection {
     let _options: [String]
     let _rows: [PVRadioOptionRow]
     var selectedValue: String { PVSettingsModel.shared[keyPath: keyPath] }
-    
+
 //    private func didToggleSelection() -> (Row) -> Void {
 //      return { [weak self] in
 //        if let option = $0 as? OptionRowCompatible {
@@ -89,7 +89,7 @@ final class PVSettingsOptionRow: RadioSection {
                 }
             })
         }
-        
+
         super.init(title: title, options: _rows, footer: footer)
     }
 }

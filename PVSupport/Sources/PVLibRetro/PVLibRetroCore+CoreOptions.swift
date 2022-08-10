@@ -8,7 +8,7 @@
 
 import Foundation
 
-///* Array of retro_core_option_v2_category structs,
+/// * Array of retro_core_option_v2_category structs,
 // * terminated by NULL
 // * > If NULL, all entries in definitions array
 // *   will have no category and will be shown at
@@ -16,13 +16,13 @@ import Foundation
 // *   interface
 // * > Will be ignored if frontend does not have
 // *   core option category support */
-//struct retro_core_option_v2_category *categories;
+// struct retro_core_option_v2_category *categories;
 //
-///* Array of retro_core_option_v2_definition structs,
+/// * Array of retro_core_option_v2_definition structs,
 // * terminated by NULL */
-//struct retro_core_option_v2_definition *definitions;
-//struct retro_core_option_v2_definition
-//{
+// struct retro_core_option_v2_definition *definitions;
+// struct retro_core_option_v2_definition
+// {
 //   const char *key;
 //   const char *desc;
 //   const char *desc_categorized;
@@ -31,7 +31,7 @@ import Foundation
 //   const char *category_key;
 //   struct retro_core_option_value values[RETRO_NUM_CORE_OPTION_VALUES_MAX];
 //   const char *default_value;
-//};
+// };
 
 extension PVLibRetroCore: CoreOptional {
     public static var options: [CoreOption] = {
@@ -44,7 +44,7 @@ extension PVLibRetroCore: CoreOptional {
 //        options.append(videoGroup)
         return options
     }()
-    
+
     func test() {
 //        guard let options: retro_core_options_v2 = core_options?.pointee else { return }
 //        core_options?.pointee;

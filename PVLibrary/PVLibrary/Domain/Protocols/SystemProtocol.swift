@@ -38,6 +38,9 @@ public protocol SystemProtocol {
 
     var supportsRumble: Bool { get }
     var screenType: ScreenType { get }
+    
+    var requiresKeyboard: Bool { get }
+    var requiresMouse: Bool { get }
 }
 
 // MARK: Default Implimentations
@@ -48,6 +51,8 @@ extension SystemProtocol {
         if usesCDs { systemOptions.append(.cds) }
         if portableSystem { systemOptions.append(.portable) }
         if supportsRumble { systemOptions.append(.rumble) }
+        if requiresMouse { systemOptions.append(.mouse) }
+        if requiresKeyboard { systemOptions.append(.keyboard) }
 
         return SystemOptions(systemOptions)
     }

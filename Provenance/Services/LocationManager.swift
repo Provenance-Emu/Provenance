@@ -101,7 +101,7 @@ private extension LocationManager {
         return publisher
             .removeDuplicates { (a, b) in
                 switch (a, b) {
-                case (nil, nil), (.success(), .success()): return true
+                case (nil, nil), (.success, .success): return true
                 case (.failure(let errorA as NSError), .failure(let errorB as NSError)): return errorA.domain == errorB.domain && errorA.code == errorB.code
                 case (nil, _), (.success, _), (.failure, _): return false
                 }

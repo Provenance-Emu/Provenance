@@ -127,7 +127,7 @@ struct BiosRowView: SwiftUI.View {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .foregroundColor(Color.yellow)
                         .font(.system(size: 12, weight: .light))
-                case let .mismatch(_):
+                case let .mismatch:
                     Text("Mismatch")
                         .font(.system(size: 12))
                         .foregroundColor(Color.red)
@@ -146,7 +146,7 @@ extension BIOSStatus.State {
     var biosStatusImageName: String {
         switch self {
         case .missing: return "bios_empty"
-        case .mismatch(_):  return "bios_empty"
+        case .mismatch:  return "bios_empty"
         case .match: return "bios_filled"
         }
     }
