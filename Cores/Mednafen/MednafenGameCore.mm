@@ -1628,10 +1628,9 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                 default:
                 break;
             }}
-        {
-			GCDualSenseGamepad *dualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]] ? gamepad : nil;
-
-			switch (buttonID) {
+        GCDualSenseGamepad *dualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]] ? gamepad : nil;
+        if(dualSense) {
+            switch (buttonID) {
             case PVSaturnButtonUp:
                 return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] isPressed];
             case PVSaturnButtonDown:
