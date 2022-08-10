@@ -731,6 +731,9 @@
 		B3104BDF28A463EB0047278C /* RunLoopThreadScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunLoopThreadScheduler.swift; sourceTree = "<group>"; };
 		B3104BE128A463EB0047278C /* Observable+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Observable+Ext.swift"; sourceTree = "<group>"; };
 		B3104BE228A463EB0047278C /* Realm+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+Ext.swift"; sourceTree = "<group>"; };
+		B3104C0D28A474820047278C /* SyncManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncManager.swift; sourceTree = "<group>"; };
+		B3104C0E28A474820047278C /* SyncResultsViewController.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SyncResultsViewController.storyboard; sourceTree = "<group>"; };
+		B3104C0F28A474820047278C /* SyncResultViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncResultViewController.swift; sourceTree = "<group>"; };
 		B317380127841959002D3ACD /* Build.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Build.xcconfig; path = ../Build.xcconfig; sourceTree = "<group>"; };
 		B324C2EC219192FF009F4EDC /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3274E5D2106BA1200857F52 /* PVEmulatorConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVEmulatorConfiguration.swift; sourceTree = "<group>"; };
@@ -1303,6 +1306,16 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		B3104C0C28A474820047278C /* Syncing */ = {
+			isa = PBXGroup;
+			children = (
+				B3104C0D28A474820047278C /* SyncManager.swift */,
+				B3104C0E28A474820047278C /* SyncResultsViewController.storyboard */,
+				B3104C0F28A474820047278C /* SyncResultViewController.swift */,
+			);
+			path = Syncing;
+			sourceTree = "<group>";
+		};
 		B3274E5C2106BA1200857F52 /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
@@ -1435,6 +1448,7 @@
 		B3579D112106B11D00DDEBD6 /* PVLibrary */ = {
 			isa = PBXGroup;
 			children = (
+				B3104C0C28A474820047278C /* Syncing */,
 				B3579D322106B4D700DDEBD6 /* Importer */,
 				B378228221D41E5A0077E86F /* Serializer */,
 				B354E784219A76C80041F971 /* Domain */,

@@ -1498,6 +1498,31 @@
 		B30F1C39289677DC004D40BF /* PVO2EM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVO2EM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3104BC028A415780047278C /* UIForLumberJack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIForLumberJack.swift; sourceTree = "<group>"; };
 		B3104BC328A434610047278C /* PVUIForLumberJack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVUIForLumberJack.swift; sourceTree = "<group>"; };
+		B3104BED28A471F90047278C /* ControllerSkinProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ControllerSkinProtocol.swift; sourceTree = "<group>"; };
+		B3104BEF28A4722E0047278C /* UIScreen+ControllerSkin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScreen+ControllerSkin.swift"; sourceTree = "<group>"; };
+		B3104BF028A472350047278C /* GameController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameController.swift; sourceTree = "<group>"; };
+		B3104BF128A4723A0047278C /* GameControllerInputMappingProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameControllerInputMappingProtocol.swift; sourceTree = "<group>"; };
+		B3104BF528A4724A0047278C /* ControllerSkin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ControllerSkin.swift; sourceTree = "<group>"; };
+		B3104BF628A4724E0047278C /* ControllerSkinTraits.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ControllerSkinTraits.swift; sourceTree = "<group>"; };
+		B3104BF928A472890047278C /* ControllerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ControllerView.swift; sourceTree = "<group>"; };
+		B3104BFA28A472910047278C /* ControllerInputView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ControllerInputView.swift; sourceTree = "<group>"; };
+		B3104BFB28A472950047278C /* StandardGameControllerInput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandardGameControllerInput.swift; sourceTree = "<group>"; };
+		B3104BFD28A4729D0047278C /* TouchInputView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TouchInputView.swift; sourceTree = "<group>"; };
+		B3104BFE28A472AA0047278C /* ImmediatePanGestureRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImmediatePanGestureRecognizer.swift; sourceTree = "<group>"; };
+		B3104BFF28A472B40047278C /* ThumbstickInputView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThumbstickInputView.swift; sourceTree = "<group>"; };
+		B3104C0028A472B90047278C /* ControllerDebugView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ControllerDebugView.swift; sourceTree = "<group>"; };
+		B3104C0128A472C60047278C /* TouchControllerSkin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TouchControllerSkin.swift; sourceTree = "<group>"; };
+		B3104C0228A472CB0047278C /* ButtonsInputView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ButtonsInputView.swift; sourceTree = "<group>"; };
+		B3104C0B28A4734A0047278C /* AnyInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyInput.swift; sourceTree = "<group>"; };
+		B3104C1728A475B10047278C /* Benefit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Benefit.swift; sourceTree = "<group>"; };
+		B3104C1828A475B10047278C /* PatreonAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatreonAPI.swift; sourceTree = "<group>"; };
+		B3104C1928A475B10047278C /* Campaign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Campaign.swift; sourceTree = "<group>"; };
+		B3104C1A28A475B10047278C /* Patron.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Patron.swift; sourceTree = "<group>"; };
+		B3104C1B28A475B10047278C /* Tier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tier.swift; sourceTree = "<group>"; };
+		B3104C1C28A475E30047278C /* PatreonAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatreonAccount.swift; sourceTree = "<group>"; };
+		B3104C1D28A475F90047278C /* PatreonComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatreonComponents.swift; sourceTree = "<group>"; };
+		B3104C1E28A475FA0047278C /* AboutPatreonHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AboutPatreonHeaderView.xib; sourceTree = "<group>"; };
+		B3104C1F28A475FC0047278C /* PatreonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatreonViewController.swift; sourceTree = "<group>"; };
 		B311B01627A52B8B00D1DE41 /* PVUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B311B01927A52B9200D1DE41 /* PVUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B311B01C27A52B9C00D1DE41 /* PVUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2664,6 +2689,7 @@
 				1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */,
 				B3290498270D1F95002707AC /* PVAppDelegate+NitoTV.swift */,
 				B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */,
+				B3104C1628A475B10047278C /* Patreon */,
 				37EEA28427BC7E610070E222 /* NewUI */,
 				1AADCDB117BD997500F53CFE /* Categories */,
 				1A47C94A17BC310700C27644 /* Controller */,
@@ -2697,6 +2723,7 @@
 		1A47C94A17BC310700C27644 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				B3104BEC28A471D30047278C /* ControllerSkin */,
 				B3AB371D2187F568009D9244 /* Systems */,
 				B3F64ECB205CD1D600C273C7 /* JSDPad.swift */,
 				B3F64ECE205CD1F100C273C7 /* JSButton.swift */,
@@ -3064,6 +3091,45 @@
 				B305EF13276B4C73003AE510 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		B3104BEC28A471D30047278C /* ControllerSkin */ = {
+			isa = PBXGroup;
+			children = (
+				B3104C0B28A4734A0047278C /* AnyInput.swift */,
+				B3104C0228A472CB0047278C /* ButtonsInputView.swift */,
+				B3104C0028A472B90047278C /* ControllerDebugView.swift */,
+				B3104BFA28A472910047278C /* ControllerInputView.swift */,
+				B3104BFB28A472950047278C /* StandardGameControllerInput.swift */,
+				B3104BF928A472890047278C /* ControllerView.swift */,
+				B3104BFE28A472AA0047278C /* ImmediatePanGestureRecognizer.swift */,
+				B3104BFF28A472B40047278C /* ThumbstickInputView.swift */,
+				B3104C0128A472C60047278C /* TouchControllerSkin.swift */,
+				B3104BFD28A4729D0047278C /* TouchInputView.swift */,
+				B3104BF528A4724A0047278C /* ControllerSkin.swift */,
+				B3104BF628A4724E0047278C /* ControllerSkinTraits.swift */,
+				B3104BF028A472350047278C /* GameController.swift */,
+				B3104BF128A4723A0047278C /* GameControllerInputMappingProtocol.swift */,
+				B3104BEF28A4722E0047278C /* UIScreen+ControllerSkin.swift */,
+				B3104BED28A471F90047278C /* ControllerSkinProtocol.swift */,
+			);
+			path = ControllerSkin;
+			sourceTree = "<group>";
+		};
+		B3104C1628A475B10047278C /* Patreon */ = {
+			isa = PBXGroup;
+			children = (
+				B3104C1E28A475FA0047278C /* AboutPatreonHeaderView.xib */,
+				B3104C1D28A475F90047278C /* PatreonComponents.swift */,
+				B3104C1F28A475FC0047278C /* PatreonViewController.swift */,
+				B3104C1C28A475E30047278C /* PatreonAccount.swift */,
+				B3104C1728A475B10047278C /* Benefit.swift */,
+				B3104C1828A475B10047278C /* PatreonAPI.swift */,
+				B3104C1928A475B10047278C /* Campaign.swift */,
+				B3104C1A28A475B10047278C /* Patron.swift */,
+				B3104C1B28A475B10047278C /* Tier.swift */,
+			);
+			path = Patreon;
 			sourceTree = "<group>";
 		};
 		B3270F8027DCB25100E83180 /* Cores */ = {
@@ -3551,13 +3617,13 @@
 		B3DBF13A2094669A005935A8 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				1180B3232492AFC900636C8A /* PVGameLibraryUpdatesController.swift */,
-				B3D5E2A9218EC1970015C690 /* RxRealmDataSources */,
-				B3E6DAE020B7C2F800454DD4 /* PVLogViewController.xib */,
 				B383F3BE219BBD8700DB6926 /* LogViewable.swift */,
+				1180B3232492AFC900636C8A /* PVGameLibraryUpdatesController.swift */,
 				B3B4F4BC28A3DA240099D35F /* PVLogViewController.swift */,
-				B3104BC028A415780047278C /* UIForLumberJack.swift */,
 				B3104BC328A434610047278C /* PVUIForLumberJack.swift */,
+				B3104BC028A415780047278C /* UIForLumberJack.swift */,
+				B3E6DAE020B7C2F800454DD4 /* PVLogViewController.xib */,
+				B3D5E2A9218EC1970015C690 /* RxRealmDataSources */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
