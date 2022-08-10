@@ -835,6 +835,14 @@
 		B3C8A742287828FE0037A946 /* PVSNES.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D55C1DEA85C60068D057 /* PVSNES.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C8A7442878293C0037A946 /* Cores_tvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A71E287828BA0037A946 /* Cores_tvOS.framework */; };
 		B3C8A7452878293C0037A946 /* Cores_tvOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A71E287828BA0037A946 /* Cores_tvOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3CB6E6A28A1159600C8300A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */; };
+		B3CB6E6B28A1159900C8300A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */; };
+		B3CB6E6D28A35CD600C8300A /* UIImage+AverageColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CB6E6C28A35CD600C8300A /* UIImage+AverageColor.swift */; };
+		B3CB6E6E28A35CD600C8300A /* UIImage+AverageColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CB6E6C28A35CD600C8300A /* UIImage+AverageColor.swift */; };
+		B3CB6E6F28A35CD600C8300A /* UIImage+AverageColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CB6E6C28A35CD600C8300A /* UIImage+AverageColor.swift */; };
+		B3CB6E7128A35D4F00C8300A /* UIImage+Effects.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CB6E7028A35D4F00C8300A /* UIImage+Effects.swift */; };
+		B3CB6E7228A35D4F00C8300A /* UIImage+Effects.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CB6E7028A35D4F00C8300A /* UIImage+Effects.swift */; };
+		B3CB6E7328A35D4F00C8300A /* UIImage+Effects.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CB6E7028A35D4F00C8300A /* UIImage+Effects.swift */; };
 		B3CEC5B22794D8DD004A7CC1 /* Strings.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3296EEA26CAC3ED0088AC32 /* Strings.strings */; };
 		B3D1800928963AD3001207AF /* PVBliss.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D1800828963AD3001207AF /* PVBliss.framework */; };
 		B3D1800A28963AD4001207AF /* PVBliss.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3D1800828963AD3001207AF /* PVBliss.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1834,6 +1842,8 @@
 		B3C9D5E01DEA8A290068D057 /* PVGenesis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGenesis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D5E31DEA8AED0068D057 /* PVStella.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVStella.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D5E61DEAA7E80068D057 /* PVStella.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVStella.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3CB6E6C28A35CD600C8300A /* UIImage+AverageColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+AverageColor.swift"; sourceTree = "<group>"; };
+		B3CB6E7028A35D4F00C8300A /* UIImage+Effects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Effects.swift"; sourceTree = "<group>"; };
 		B3CB85BE1E9BFB07009155A6 /* PVPokeMini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPokeMini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3CB85C11E9BFB16009155A6 /* PVPokeMini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPokeMini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3CCD2B921DAA8D30031C42C /* PVEmulatorViewController+Saves.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVEmulatorViewController+Saves.swift"; sourceTree = "<group>"; };
@@ -2694,6 +2704,8 @@
 				1180B306248FF8AC00636C8A /* UICollectionView+Rx.swift */,
 				B37B71AC278E3198005FB278 /* UIViewController+Alerts.swift */,
 				B355E47C289E0C1400D23D64 /* UIButton+Haptics.swift */,
+				B3CB6E6C28A35CD600C8300A /* UIImage+AverageColor.swift */,
+				B3CB6E7028A35D4F00C8300A /* UIImage+Effects.swift */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -3993,6 +4005,9 @@
 					B328F42D289DD82900CA4500 = {
 						CreatedOnToolsVersion = 14.0;
 					};
+					B328F445289DD85B00CA4500 = {
+						LastSwiftMigration = 1400;
+					};
 					B355E506289E289200D23D64 = {
 						CreatedOnToolsVersion = 14.0;
 					};
@@ -4159,6 +4174,7 @@
 				B328F62C289DF59400CA4500 /* PVGameLibraryCollectionViewCell.xib in Resources */,
 				B328F62A289DF58100CA4500 /* PVSaveStateCollectionViewCell.xib in Resources */,
 				B328F627289DF56C00CA4500 /* EmulatorActionCell.xib in Resources */,
+				B3CB6E6A28A1159600C8300A /* Assets.xcassets in Resources */,
 				B328F630289DF5C500CA4500 /* CRT.fsh in Resources */,
 				B328F63B289DF5C500CA4500 /* NearestNeighbor.fsh in Resources */,
 				B328F62F289DF5C500CA4500 /* OmniScaleLegacy.fsh in Resources */,
@@ -4207,6 +4223,7 @@
 				B328F624289DF54200CA4500 /* SaveStates.storyboard in Resources */,
 				B328F647289DF5C800CA4500 /* MasterShader.fsh in Resources */,
 				B328F649289DF5C800CA4500 /* Scale4x.fsh in Resources */,
+				B3CB6E6B28A1159900C8300A /* Assets.xcassets in Resources */,
 				B328F63F289DF5C800CA4500 /* CRT.fsh in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4569,6 +4586,7 @@
 				B328F452289DD8C400CA4500 /* SideMenuView.swift in Sources */,
 				B328F4FA289DD8C400CA4500 /* SystemOverviewViewModel.swift in Sources */,
 				B328F4A7289DD8C400CA4500 /* ViewControllerResolver.swift in Sources */,
+				B3CB6E6D28A35CD600C8300A /* UIImage+AverageColor.swift in Sources */,
 				B328F50A289DD8C400CA4500 /* SystemSettingsCell.swift in Sources */,
 				B328F470289DD8C400CA4500 /* UIDevice+Hardware.m in Sources */,
 				B328F49C289DD8C400CA4500 /* CenterFlowLayout.swift in Sources */,
@@ -4591,6 +4609,7 @@
 				B328F4CF289DD8C400CA4500 /* simpleCRT.metal in Sources */,
 				B328F4F3289DD8C400CA4500 /* Theme.swift in Sources */,
 				B328F50E289DD8C400CA4500 /* GCDWebDAVServer.m in Sources */,
+				B3CB6E7128A35D4F00C8300A /* UIImage+Effects.swift in Sources */,
 				B328F451289DD8C400CA4500 /* PVOdyssey2ControllerViewController.swift in Sources */,
 				B328F4B1289DD8C400CA4500 /* SystemsSettingsTableViewController.swift in Sources */,
 				B328F4AE289DD8C400CA4500 /* PVWebServer.m in Sources */,
@@ -4707,6 +4726,7 @@
 				B328F56A289DD8DF00CA4500 /* PVCheatsHeaderView.swift in Sources */,
 				B328F543289DD8DF00CA4500 /* PVVectrexControllerViewController.swift in Sources */,
 				B328F5BF289DD8DF00CA4500 /* ConsoleGamesView.swift in Sources */,
+				B3CB6E7228A35D4F00C8300A /* UIImage+Effects.swift in Sources */,
 				B328F585289DD8DF00CA4500 /* ShaderManager.swift in Sources */,
 				B328F5AD289DD8DF00CA4500 /* PVRootViewController+DelegateMethods.swift in Sources */,
 				B328F550289DD8DF00CA4500 /* PVGameLibraryViewController+CollectionView.swift in Sources */,
@@ -4724,6 +4744,7 @@
 				B328F59D289DD8DF00CA4500 /* TapActionCell.swift in Sources */,
 				B328F59B289DD8DF00CA4500 /* PVGameLibrarySectionFooterView.swift in Sources */,
 				B328F5A4289DD8DF00CA4500 /* lineTron.metal in Sources */,
+				B3CB6E6E28A35CD600C8300A /* UIImage+AverageColor.swift in Sources */,
 				B328F562289DD8DF00CA4500 /* PVColecoVisionControllerViewController.swift in Sources */,
 				B328F5B4289DD8DF00CA4500 /* PVDreamcastControllerViewController.swift in Sources */,
 				B328F5AA289DD8DF00CA4500 /* PVSupervisionControllerViewController.swift in Sources */,
@@ -4889,6 +4910,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3CB6E7328A35D4F00C8300A /* UIImage+Effects.swift in Sources */,
+				B3CB6E6F28A35CD600C8300A /* UIImage+AverageColor.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
