@@ -36,7 +36,7 @@
 #endif
 
 #import "GCDWebServerPrivate.h"
-#import <PVSupport/PVLogging.h>
+#import <PVSupport/PVSupport.h>
 
 #define kHeadersReadCapacity (1 * 1024)
 #define kBodyReadCapacity (256 * 1024)

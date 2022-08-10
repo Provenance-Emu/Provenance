@@ -23,8 +23,3 @@ FOUNDATION_EXPORT const unsigned char PVSupport_FrameworkVersionString[];
 //#else
 #import <PVSupport/DebugUtils.h>
 #import <PVSupport/PVEmulatorCore.h>
-#import <PVSupport/NSFileManager+OEHashingAdditions.h>
-#import <PVSupport/PVLogging.h>
-#import <PVSupport/PVProvenanceLogging.h>
-#import <PVSupport/OEGeometry.h>
-

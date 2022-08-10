@@ -353,7 +353,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 extension PVAppDelegate {
     func _initLogging() {
         // Initialize logging
-        PVLogging.sharedInstance()
+        PVLogging.shared
 
         fileLogger.maximumFileSize = (1024 * 64) // 64 KByte
         fileLogger.logFileManager.maximumNumberOfLogFiles = 1
@@ -362,7 +362,7 @@ extension PVAppDelegate {
 
         #if os(iOS)
             // Debug view logger
-            DDLog.add(PVUIForLumberJack.sharedInstance(), with: .info)
+            DDLog.add(PVUIForLumberJack.shared, with: .info)
             window?.addLogViewerGesture()
         #endif
 
@@ -390,7 +390,6 @@ extension PVAppDelegate {
 }
 
 #if os(iOS) || os(macOS)
-@available(iOS 9.0, macOS 11.0, macCatalyst 11.0, *)
 extension PVGame {
     func asShortcut(isFavorite: Bool) -> UIApplicationShortcutItem {
         let icon: UIApplicationShortcutIcon = isFavorite ? .init(type: .favorite) : .init(type: .play)

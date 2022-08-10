@@ -17,9 +17,8 @@ FOUNDATION_EXPORT const unsigned char PVAppVersionString[];
 
 #import <PVLibrary/PVLibrary.h>
 #import <PVLibrary/PVLibrary-Swift.h>
-#import <PVLibrary/PVLibrary.h>
-#import <PVLibrary/PVLibrary-Swift.h>
-#import <PVApp/PVLogViewController.h>
+#import <PVSupport/PVSupport.h>
+#import <PVSupport/PVSupport-Swift.h>
 
 #if !TARGET_OS_TV
     #import <PVApp/PVAltKitService.h>

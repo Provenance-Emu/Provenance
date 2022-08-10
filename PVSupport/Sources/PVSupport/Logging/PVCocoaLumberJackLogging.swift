@@ -1,6 +1,4 @@
-//  Converted to Swift 5.4 by Swiftify v5.4.24488 - https://swiftify.com/
-//
-//  PVCocoaLumberJackLogging.m
+//  PVCocoaLumberJackLogging.swift
 //  PVSupport
 //
 //  Created by Mattiello, Joseph R on 1/27/14.
@@ -11,7 +9,7 @@
 import Foundation
 
 @objc
-public class PVCocoaLumberJackLogging: NSObject, PVLoggingEntity {
+public final class PVCocoaLumberJackLogging: NSObject, PVLoggingEntity {
     private var fileLogger: DDFileLogger = {
         let fileLogger = DDFileLogger()
         fileLogger.rollingFrequency = 60 * 60 * 24 // 24 hour rolling
@@ -51,7 +49,7 @@ public class PVCocoaLumberJackLogging: NSObject, PVLoggingEntity {
 // #endif
     }
 
-    public func logFilePaths() -> [String]? {
+    public var logFilePaths: [String]? {
         return fileLogger.logFileManager.sortedLogFilePaths
     }
 
