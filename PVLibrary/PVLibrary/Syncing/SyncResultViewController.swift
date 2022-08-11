@@ -346,7 +346,7 @@ private extension SyncResultViewController
     func fetchGameNames() -> [RecordID: String]
     {
         let fetchRequest = Game.fetchRequest() as NSFetchRequest<Game>
-        fetchRequest.propertiesToFetch = [#keyPath(Game.name), #keyPath(Game.identifier)]
+        fetchRequest.propertiesToFetch = [\Game.name, \Game.identifier]
         
         do
         {

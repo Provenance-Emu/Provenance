@@ -7,10 +7,10 @@
 //
 
 import Foundation
-import RealmSwift
+import GRDB
 
 // MARK: - Convenience Accessors
-public extension PVObject where Self: SQLiteObject {
+public extension PVObject where Self: Record {
     static var all: Results<Self> {
         return RomDatabase.sharedInstance.all(Self.self)
     }
@@ -36,4 +36,4 @@ public extension PVObject where Self: SQLiteObject {
 }
 
 // Now all Objects can use PVObject methods
-extension SQLiteObject: PVObject { }
+extension Record: PVObject { }

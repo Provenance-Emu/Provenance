@@ -58,7 +58,7 @@ struct SideMenuView: SwiftUI.View {
     }
 
     func sortedConsoles() -> Results<PVSystem> {
-        return self.consoles.sorted(by: [SortDescriptor(keyPath: #keyPath(PVSystem.name), ascending: viewModel.sortConsolesAscending)])
+        return self.consoles.sorted(by: [SortDescriptor(keyPath: \PVSystem.name, ascending: viewModel.sortConsolesAscending)])
     }
 
     func filteredSearchResults() -> Results<PVGame> {

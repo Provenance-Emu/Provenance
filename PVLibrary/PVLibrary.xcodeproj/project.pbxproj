@@ -233,11 +233,6 @@
 		B3067F742106B9130091437F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3067F732106B9130091437F /* CoreGraphics.framework */; };
 		B30E7AEB26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30E7AEA26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift */; };
 		B30E7AEC26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30E7AEA26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift */; };
-		B3104BE528A46B1D0047278C /* GRDB-dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3104BE428A46B1D0047278C /* GRDB-dynamic */; };
-		B3104BE728A46B400047278C /* GRDB-dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3104BE628A46B400047278C /* GRDB-dynamic */; };
-		B3104BE828A46B400047278C /* GRDB-dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3104BE628A46B400047278C /* GRDB-dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		B3104BEA28A46B4D0047278C /* GRDB-dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3104BE928A46B4D0047278C /* GRDB-dynamic */; };
-		B3104BEB28A46B4D0047278C /* GRDB-dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3104BE928A46B4D0047278C /* GRDB-dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B31117AC218EB24300C495A2 /* LzmaSDKObjCReader.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474721071CA6002211EE /* LzmaSDKObjCReader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B31117AD218EB24400C495A2 /* LzmaSDKObjCReader.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474721071CA6002211EE /* LzmaSDKObjCReader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B31117AE218EB25F00C495A2 /* LzmaSDKObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF475221071CA6002211EE /* LzmaSDKObjC.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -656,7 +651,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				B305F085276B5229003AE510 /* PVSupport.framework in Embed Frameworks */,
-				B3104BEB28A46B4D0047278C /* GRDB-dynamic in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -679,7 +673,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				B364D4C42870E81200B93A4B /* PVLibRetro.framework in Embed Frameworks */,
-				B3104BE828A46B400047278C /* GRDB-dynamic in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1142,7 +1135,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B305F084276B5229003AE510 /* PVSupport.framework in Frameworks */,
-				B3104BEA28A46B4D0047278C /* GRDB-dynamic in Frameworks */,
 				B305F070276B512D003AE510 /* SwiftUI.framework in Frameworks */,
 				B3014FA627B487FD006AC79B /* Differentiator in Frameworks */,
 				B305F071276B512D003AE510 /* SQLite in Frameworks */,
@@ -1161,7 +1153,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B37B4DF027B2292F0068F8D1 /* Differentiator in Frameworks */,
-				B3104BE528A46B1D0047278C /* GRDB-dynamic in Frameworks */,
 				B305EF9F276B50E2003AE510 /* SwiftUI.framework in Frameworks */,
 				B336B90F26B39BCF00960A81 /* SQLite in Frameworks */,
 				B3AF701621916CF3000FA7F9 /* PVSupport.framework in Frameworks */,
@@ -1180,7 +1171,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B305EFA1276B5112003AE510 /* SwiftUI.framework in Frameworks */,
-				B3104BE728A46B400047278C /* GRDB-dynamic in Frameworks */,
 				B336B91126B39BDA00960A81 /* SQLite in Frameworks */,
 				B324C2ED219192FF009F4EDC /* PVSupport.framework in Frameworks */,
 				B3014FA427B487F0006AC79B /* Differentiator in Frameworks */,
@@ -2138,7 +2128,6 @@
 				B305EFA8276B512D003AE510 /* SQLite */,
 				B305EFAA276B512D003AE510 /* ZipArchive */,
 				B3014FA527B487FD006AC79B /* Differentiator */,
-				B3104BE928A46B4D0047278C /* GRDB-dynamic */,
 			);
 			productName = PVLibrary;
 			productReference = B305F081276B512D003AE510 /* PVLibrary.framework */;
@@ -2165,7 +2154,6 @@
 				B3A3204027209B4300F338F6 /* ZipArchive */,
 				B37B4DEF27B2292F0068F8D1 /* Differentiator */,
 				B37B4DF127B2292F0068F8D1 /* RxDataSources */,
-				B3104BE428A46B1D0047278C /* GRDB-dynamic */,
 			);
 			productName = PVLibrary;
 			productReference = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */;
@@ -2192,7 +2180,6 @@
 				B3128065274C658E00550720 /* ZipArchive */,
 				EF7D4AA427B44FA7002528B7 /* RxDataSources */,
 				B3014FA327B487F0006AC79B /* Differentiator */,
-				B3104BE628A46B400047278C /* GRDB-dynamic */,
 			);
 			productName = PVLibrary;
 			productReference = B3C04B4421077B3100E7AF79 /* PVLibrary.framework */;
@@ -3667,21 +3654,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B305EFAB276B512D003AE510 /* XCRemoteSwiftPackageReference "ZipArchive" */;
 			productName = ZipArchive;
-		};
-		B3104BE428A46B1D0047278C /* GRDB-dynamic */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3104BE328A46B1C0047278C /* XCRemoteSwiftPackageReference "GRDB.swift" */;
-			productName = "GRDB-dynamic";
-		};
-		B3104BE628A46B400047278C /* GRDB-dynamic */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3104BE328A46B1C0047278C /* XCRemoteSwiftPackageReference "GRDB.swift" */;
-			productName = "GRDB-dynamic";
-		};
-		B3104BE928A46B4D0047278C /* GRDB-dynamic */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3104BE328A46B1C0047278C /* XCRemoteSwiftPackageReference "GRDB.swift" */;
-			productName = "GRDB-dynamic";
 		};
 		B3128065274C658E00550720 /* ZipArchive */ = {
 			isa = XCSwiftPackageProductDependency;

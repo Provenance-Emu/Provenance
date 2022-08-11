@@ -22,7 +22,7 @@ struct ConsoleGamesView: SwiftUI.View {
 
     @ObservedResults(
         PVGame.self,
-        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: false)
+        sortDescriptor: SortDescriptor(keyPath: \PVGame.title, ascending: false)
     ) var games
 
     init(console: PVSystem, viewModel: PVRootViewModel, rootDelegate: PVRootDelegate) {
@@ -35,7 +35,7 @@ struct ConsoleGamesView: SwiftUI.View {
         // TODO: if filters are on, apply them here before returning
         return games
             .filter(NSPredicate(format: "systemIdentifier == %@", argumentArray: [console.identifier]))
-            .sorted(by: [SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: viewModel.sortGamesAscending)])
+            .sorted(by: [SortDescriptor(keyPath: \PVGame.title, ascending: viewModel.sortGamesAscending)])
     }
 
     // TODO: adjust for landscape

@@ -60,7 +60,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         window.tintColor = .provenanceBlue
         #endif
 
-        if #available(iOS 14, tvOS 14, *), PVSettingsModel.shared.debugOptions.useSwiftUI {
+        if #available(iOS 14, tvOS 14, *), PVSettingsModel.shared.useSwiftUI {
             let viewModel = PVRootViewModel()
             let rootViewController = PVRootViewController.instantiate(
                 updatesController: libraryUpdatesController,
@@ -266,7 +266,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
                             return false
                         }
                     } else {
-                        if let matchedGame = RomDatabase.sharedInstance.all(PVGame.self, where: #keyPath(PVGame.title), value: gameName).first {
+                        if let matchedGame = RomDatabase.sharedInstance.all(PVGame.self, where: \PVGame.title, value: gameName).first {
                             ILOG("Open by name: \(gameName)")
                             shortcutItemGame = matchedGame
                             return true

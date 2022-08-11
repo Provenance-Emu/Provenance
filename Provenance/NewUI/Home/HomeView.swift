@@ -29,23 +29,23 @@ struct HomeView: SwiftUI.View {
     @ObservedResults(
         PVSaveState.self,
         filter: NSPredicate(format: "game != nil && game.system != nil"),
-        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: false)
+        sortDescriptor: SortDescriptor(keyPath: \PVSaveState.date, ascending: false)
     ) var recentSaveStates
 
     @ObservedResults(
         PVRecentGame.self,
-        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
+        sortDescriptor: SortDescriptor(keyPath: \PVRecentGame.lastPlayedDate, ascending: false)
     ) var recentlyPlayedGames
 
     @ObservedResults(
         PVGame.self,
-        filter: NSPredicate(format: "\(#keyPath(PVGame.isFavorite)) == %@", NSNumber(value: true)),
-        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: false)
+        filter: NSPredicate(format: "\(\PVGame.isFavorite) == %@", NSNumber(value: true)),
+        sortDescriptor: SortDescriptor(keyPath: \PVGame.title, ascending: false)
     ) var favorites
 
     @ObservedResults(
         PVGame.self,
-        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: false)
+        sortDescriptor: SortDescriptor(keyPath: \PVGame.playCount, ascending: false)
     ) var mostPlayed
 
     init(gameLibrary: PVGameLibrary, delegate: PVRootDelegate) {

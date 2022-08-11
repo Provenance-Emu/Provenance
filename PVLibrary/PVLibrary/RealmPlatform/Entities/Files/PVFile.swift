@@ -47,15 +47,14 @@ public enum RelativeRoot: Int {
     }
 }
 
-@objcMembers
 public class PVFile: Object, LocalFileProvider, Codable, DomainConvertibleType {
     public typealias DomainType = LocalFile
 
-    internal dynamic var partialPath: String = ""
-    internal dynamic var md5Cache: String?
+    @Persisted(primaryKey: true) internal var partialPath: String = ""
+    @Persisted(indexed: true) internal var md5Cache: String?
     //    @objc private dynamic var crcCache: String?
-    public private(set) dynamic var createdDate = Date()
-    internal dynamic var _relativeRoot: Int = RelativeRoot.documents.rawValue
+    @Persisted(indexed: true) public private(set) var createdDate = Date()
+    @Persisted internal var _relativeRoot: Int = RelativeRoot.documents.rawValue
 
     public convenience init(withPartialPath partialPath: String, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
         self.init()

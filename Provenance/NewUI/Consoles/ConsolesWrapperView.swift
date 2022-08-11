@@ -33,7 +33,7 @@ struct ConsolesWrapperView: SwiftUI.View {
     @ObservedResults(
         PVSystem.self,
         filter: NSPredicate(format: "games.@count > 0"),
-        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSystem.name), ascending: false)
+        sortDescriptor: SortDescriptor(keyPath: \PVSystem.name, ascending: false)
     ) var consoles
 
     init(

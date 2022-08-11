@@ -23,6 +23,20 @@ public protocol PVRootDelegate: AnyObject {
     func root_openSaveState(_ saveState: PVSaveState)
     func root_updateRecentGames(_ game: PVGame)
     func root_presentCoreSelection(forGame game: PVGame, sender: Any?)
+    
+    func root_restoreCover(_ game: PVGame)
+
+    func root_renameGame(_ game: PVGame)
+    func root_shareGame(_ game: PVGame, sender: Any?)
+    
+    func root_toggleFavorite(_ game: PVGame)
+    
+    func root_copyMD5URL(_ game: PVGame)
+    
+    func root_chooseCover(_ game: PVGame)
+    func root_pasteCover(_ game: PVGame)
+    
+    func root_presentGameInfo(_ game: PVGame)
 }
 
 @available(iOS 14, tvOS 14, *)
@@ -30,23 +44,41 @@ extension PVRootViewController: PVRootDelegate {
     func root_canLoad(_ game: PVGame) throws {
         try self.canLoad(game.warmUp())
     }
-
+    
     func root_load(_ game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?) {
         self.load(game.warmUp(), sender: sender, core: core?.warmUp(), saveState: saveState?.warmUp())
     }
-
+    
     func root_openSaveState(_ saveState: PVSaveState) {
         self.openSaveState(saveState.warmUp())
     }
-
+    
     func root_updateRecentGames(_ game: PVGame) {
         self.updateRecentGames(game.warmUp())
     }
-
+    
     func root_presentCoreSelection(forGame game: PVGame, sender: Any?) {
         self.presentCoreSelection(forGame: game.warmUp(), sender: sender)
     }
+    func root_restoreCover(_ game: PVGame) {
+        try! PVMediaCache.deleteImage(forKey: game.customArtworkURL)
 
+        try! RomDatabase.sharedInstance.writeTransaction {
+            game.customArtworkURL = ""
+        }
+
+        let gameRef = ThreadSafeReference(to: game)
+
+        DispatchQueue.global(qos: .userInitiated).async {
+            let realm = try! Realm()
+            guard let game = realm.resolve(gameRef) else {
+                return // game was deleted
+            }
+
+            self.gameImporter?.getArtwork(forGame: game)
+        }
+    }
+    
     func attemptToDelete(game: PVGame) {
         do {
             try self.delete(game: game)
@@ -54,11 +86,52 @@ extension PVRootViewController: PVRootDelegate {
             self.presentError(error.localizedDescription)
         }
     }
-
+    
     func showUnderConstructionAlert() {
         self.presentMessage("Please try again in a future update.", title: "⚠️ Under Construction ⚠️")
     }
+    
+    func root_renameGame(_ game: PVGame) {
+        renameGame(game)
+    }
+    
+    func root_shareGame(_ game: PVGame, sender: Any?) {
+        share(for: game, sender: sender)
+    }
+    
+    func root_toggleFavorite(_ game: PVGame) {
+        toggleFavorite(for: game)
+    }
+    
+    func root_copyMD5URL(_ game: PVGame) {
+        let md5URL = "provenance://open?md5=\(game.md5Hash)"
+        UIPasteboard.general.string = md5URL
+        let alert = UIAlertController(title: nil, message: "URL copied to clipboard.", preferredStyle: .alert)
+        self.present(alert, animated: true)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+            alert.dismiss(animated: true, completion: nil)
+        })
+    }
+    
+    func root_chooseCover(_ game: PVGame) {
+        self.chooseCustomArtwork(for: game, sourceView: nil)
+    }
+    
+    func root_pasteCover(_ game: PVGame) {
+        self.pasteCustomArtwork(for: game)
+    }
+    
+    func root_presentGameInfo(_ game: PVGame) {
+        self.moreInfo(for: game)
+    }
 }
+
+@available(iOS 14, tvOS 14, *)
+extension PVRootViewController : GameEditingViewController {}
+
+@available(iOS 14, tvOS 14, *)
+extension PVRootViewController : GameSharingViewController {}
+
 
 // MARK: - Methods from PVGameLibraryViewController
 

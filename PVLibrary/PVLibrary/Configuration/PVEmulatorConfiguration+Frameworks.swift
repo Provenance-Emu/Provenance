@@ -153,6 +153,11 @@ public extension PVEmulatorConfiguration {
         
         pvSystem.requiresMouse = system.PVRequiresMouse ?? false
         pvSystem.requiresKeyboard = system.PVRequiresKeyboard ?? false
+        var importerOptions = ImporterOptions()
+        if system.PVImporterOptions?.PVImporterUseFolders ?? false {
+            importerOptions.update(with: .useFolders)
+        }
+        pvSystem.importerOptions = importerOptions
 
         if let screenType = system.PVScreenType {
             pvSystem.screenType = ScreenType(rawValue: screenType) ?? .unknown

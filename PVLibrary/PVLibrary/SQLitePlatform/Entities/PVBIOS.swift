@@ -9,20 +9,19 @@
 import Foundation
 import RealmSwift
 
-@objcMembers
 public final class PVBIOS: Object, BIOSFileProvider {
-    public dynamic var system: PVSystem!
+    @Persisted public var system: PVSystem!
 
-    public dynamic var descriptionText: String = ""
+    @Persisted public var descriptionText: String = ""
     public var regions: RegionOptions = .unknown
-    public dynamic var version: String = ""
-    public dynamic var optional: Bool = false
+    @Persisted public var version: String = ""
+    @Persisted public var optional: Bool = false
 
-    public dynamic var expectedMD5: String = ""
-    public dynamic var expectedSize: Int = 0
-    public dynamic var expectedFilename: String = ""
+    @Persisted public var expectedMD5: String = ""
+    @Persisted public var expectedSize: Int = 0
+    @Persisted(primaryKey: true) public var expectedFilename: String = ""
 
-    public dynamic var file: PVFile?
+    @Persisted public var file: PVFile?
     public var fileInfo: PVFile? { return file }
 
     public convenience init(withSystem system: PVSystem, descriptionText: String, optional: Bool = false, expectedMD5: String, expectedSize: Int, expectedFilename: String) {
@@ -33,10 +32,6 @@ public final class PVBIOS: Object, BIOSFileProvider {
         self.expectedMD5 = expectedMD5.uppercased()
         self.expectedSize = expectedSize
         self.expectedFilename = expectedFilename
-    }
-
-    public override static func primaryKey() -> String? {
-        return "expectedFilename"
     }
 }
 

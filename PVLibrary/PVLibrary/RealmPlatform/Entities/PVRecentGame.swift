@@ -9,14 +9,10 @@
 import Foundation
 import RealmSwift
 
-@objcMembers public final class PVRecentGame: Object, Identifiable, PVLibraryEntry {
-    public dynamic var game: PVGame!
-    public dynamic var lastPlayedDate: Date = Date()
-    public dynamic var core: PVCore?
-
-    public override static func indexedProperties() -> [String] {
-        return ["lastPlayedDate"]
-    }
+public final class PVRecentGame: Object, Identifiable, PVLibraryEntry {
+    @Persisted public var game: PVGame!
+    @Persisted(indexed: true) public var lastPlayedDate: Date = Date()
+    @Persisted public var core: PVCore?
 
     public convenience init(withGame game: PVGame, core: PVCore? = nil) {
         self.init()

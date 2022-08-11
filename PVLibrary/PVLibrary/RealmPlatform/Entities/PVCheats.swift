@@ -17,19 +17,18 @@ extension LocalFileProvider where Self: CheatFile {
     public var fileInfo: Self.LocalFileProviderType? { return file }
 }
 
-@objcMembers
 public final class PVCheats: Object, CheatFile, LocalFileProvider {
-    public dynamic var id = UUID().uuidString
-    public dynamic var game: PVGame!
-    public dynamic var core: PVCore!
-    public dynamic var code: String!
-    public dynamic var file: PVFile!
-    public dynamic var date: Date = Date()
-    public dynamic var lastOpened: Date?
-    public dynamic var type: String!
-    public dynamic var enabled: Bool = false
+    @Persisted(primaryKey: true) public var id = UUID().uuidString
+    @Persisted public var game: PVGame!
+    @Persisted public var core: PVCore!
+    @Persisted public var code: String!
+    @Persisted public var file: PVFile!
+    @Persisted(indexed: true) public var date: Date = Date()
+    @Persisted public var lastOpened: Date?
+    @Persisted public var type: String!
+    @Persisted public var enabled: Bool = false
 
-    public dynamic var createdWithCoreVersion: String!
+    @Persisted public var createdWithCoreVersion: String!
 
     public convenience init(withGame game: PVGame, core: PVCore, code: String, type: String, enabled: Bool = false, file: PVFile ) {
         self.init()
@@ -55,10 +54,6 @@ public final class PVCheats: Object, CheatFile, LocalFileProvider {
 
     public static func == (lhs: PVCheats, rhs: PVCheats) -> Bool {
         return lhs.code == rhs.code && lhs.type == rhs.type && lhs.enabled == rhs.enabled
-    }
-
-    public override static func primaryKey() -> String? {
-        return "id"
     }
 }
 

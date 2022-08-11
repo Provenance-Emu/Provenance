@@ -14,8 +14,8 @@ import PVSupport
 import CocoaLumberjackSwift
 
 public final class PVUIForLumberJack: UIForLumberJack {
-    public static let shared: PVUIForLumberJack = PVUIForLumberJack()
-    
+    public static var shared: PVUIForLumberJack = PVUIForLumberJack()
+
     var filteredTableData = [DDLogMessage]()
     
 //    required init() {

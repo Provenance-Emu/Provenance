@@ -58,7 +58,7 @@ public extension Notification.Name {
     }
 #endif
 
-final class PVGameLibraryViewController: GCEventViewController, UITextFieldDelegate, UINavigationControllerDelegate, GameLaunchingViewController, GameSharingViewController, WebServerActivatorController {
+final class PVGameLibraryViewController: GCEventViewController, UITextFieldDelegate, UINavigationControllerDelegate, GameLaunchingViewController, GameSharingViewController, WebServerActivatorController, GameEditingViewController {
     lazy var collectionViewZoom: CGFloat = CGFloat(PVSettingsModel.shared.gameLibraryScale)
 
     let disposeBag = DisposeBag()
@@ -89,7 +89,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
     #if os(iOS)
         var photoLibrary: PHPhotoLibrary?
     #endif
-    var gameForCustomArt: PVGame?
+    weak var gameForCustomArt: PVGame?
 
     @IBOutlet var settingsBarButtonItem: UIBarButtonItem!
     @IBOutlet var getMoreRomsBarButtonItem: UIBarButtonItem!
@@ -101,6 +101,10 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         @IBOutlet var libraryInfoLabel: UILabel!
     #endif
 
+    func reloadData() {
+        self.collectionView?.reloadData()
+    }
+    
     var isInitialAppearance = false
 
     // add or remove the conflict button (iff it is in the storyboard)
@@ -1184,170 +1188,6 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         actionSheet.preferredAction = actionSheet.actions.last
         return actionSheet
     }
-
-    func toggleFavorite(for game: PVGame) {
-        gameLibrary.toggleFavorite(for: game)
-            .observe(on: MainScheduler.instance)
-            .subscribe(onCompleted: {
-                self.collectionView?.reloadData()
-            }, onError: { error in
-                ELOG("Failed to toggle Favorite for game \(game.title)")
-            })
-            .disposed(by: disposeBag)
-    }
-
-    func moreInfo(for game: PVGame) {
-        #if os(iOS)
-            performSegue(withIdentifier: "gameMoreInfoPageVCSegue", sender: game)
-        #else
-            performSegue(withIdentifier: "gameMoreInfoSegue", sender: game)
-        #endif
-    }
-
-    func renameGame(_ game: PVGame) {
-        let alert = UIAlertController(title: "Rename", message: "Enter a new name for \(game.title):", preferredStyle: .alert)
-        alert.addTextField(configurationHandler: { (_ textField: UITextField) -> Void in
-            textField.placeholder = game.title
-            textField.text = game.title
-        })
-
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
-            if let title = alert.textFields?.first?.text {
-                guard !title.isEmpty else {
-                    self.presentError("Cannot set a blank title.")
-                    return
-                }
-
-                RomDatabase.sharedInstance.renameGame(game, toTitle: title)
-            }
-        }))
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
-        present(alert, animated: true) { () -> Void in }
-    }
-
-    func delete(game: PVGame) throws {
-        try RomDatabase.sharedInstance.delete(game: game)
-    }
-
-    #if os(iOS)
-    private func chooseCustomArtwork(for game: PVGame, sourceView: UIView) {
-            weak var weakSelf: PVGameLibraryViewController? = self
-            let imagePickerActionSheet = UIAlertController(title: "Choose Artwork", message: "Choose the location of the artwork.\n\nUse Latest Photo: Use the last image in the camera roll.\nTake Photo: Use the camera to take a photo.\nChoose Photo: Use the camera roll to choose an image.", preferredStyle: .actionSheet)
-
-            let cameraIsAvailable: Bool = UIImagePickerController.isSourceTypeAvailable(.camera)
-            let photoLibraryIsAvaialble: Bool = UIImagePickerController.isSourceTypeAvailable(.photoLibrary)
-
-            let cameraAction = UIAlertAction(title: "Take Photo", style: .default, handler: { action in
-                self.gameForCustomArt = game
-                let pickerController = UIImagePickerController()
-                pickerController.delegate = weakSelf
-                pickerController.allowsEditing = false
-                pickerController.sourceType = .camera
-                self.present(pickerController, animated: true) { () -> Void in }
-            })
-
-            let libraryAction = UIAlertAction(title: "Choose Photo", style: .default, handler: { action in
-                self.gameForCustomArt = game
-                let pickerController = UIImagePickerController()
-                pickerController.delegate = weakSelf
-                pickerController.allowsEditing = false
-                pickerController.sourceType = .photoLibrary
-                self.present(pickerController, animated: true) { () -> Void in }
-            })
-
-            let fetchOptions = PHFetchOptions()
-            fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
-            let fetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
-            // swiftlint:disable:next empty_count
-            if fetchResult.count > 0 {
-                let lastPhoto = fetchResult.lastObject
-
-                imagePickerActionSheet.addAction(UIAlertAction(title: "Use Latest Photo", style: .default, handler: { (action) in
-                    PHImageManager.default().requestImage(for: lastPhoto!, targetSize: CGSize(width: lastPhoto!.pixelWidth, height: lastPhoto!.pixelHeight), contentMode: .aspectFill, options: PHImageRequestOptions(), resultHandler: { (image, _) in
-                        let orientation: UIImage.Orientation = UIImage.Orientation(rawValue: (image?.imageOrientation)!.rawValue)!
-
-                        let lastPhoto2 = UIImage(cgImage: image!.cgImage!, scale: CGFloat(image!.scale), orientation: orientation)
-                        lastPhoto!.requestContentEditingInput(with: PHContentEditingInputRequestOptions()) { (input, _) in
-                            do {
-                                try PVMediaCache.writeImage(toDisk: lastPhoto2, withKey: (input?.fullSizeImageURL!.absoluteString)!)
-                                try RomDatabase.sharedInstance.writeTransaction {
-                                    game.customArtworkURL = (input?.fullSizeImageURL!.absoluteString)!
-                                }
-                            } catch {
-                            ELOG("Failed to set custom artwork URL for game \(game.title) \n \(error.localizedDescription)")
-                            }
-                        }
-                    })
-                }))
-            }
-
-            if cameraIsAvailable || photoLibraryIsAvaialble {
-                if cameraIsAvailable {
-                    imagePickerActionSheet.addAction(cameraAction)
-                }
-                if photoLibraryIsAvaialble {
-                    imagePickerActionSheet.addAction(libraryAction)
-                }
-            }
-            imagePickerActionSheet.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: { (action) in
-                imagePickerActionSheet.dismiss(animated: true, completion: nil)
-            }))
-
-            presentActionSheetViewControllerForPopoverPresentation(imagePickerActionSheet, sourceView: sourceView)
-        }
-
-        private func presentActionSheetViewControllerForPopoverPresentation(_ alertController: UIViewController, sourceView: UIView) {
-
-            if traitCollection.userInterfaceIdiom == .pad {
-                alertController.popoverPresentationController?.sourceView = sourceView
-                alertController.popoverPresentationController?.sourceRect = sourceView.bounds
-            }
-
-            present(alertController, animated: true)
-        }
-
-        private func pasteCustomArtwork(for game: PVGame) {
-            let pb = UIPasteboard.general
-            var pastedImageMaybe: UIImage? = pb.image
-
-            let pastedURL: URL? = pb.url
-
-            if pastedImageMaybe == nil {
-                if let pastedURL = pastedURL {
-                    do {
-                        let data = try Data(contentsOf: pastedURL)
-                        pastedImageMaybe = UIImage(data: data)
-                    } catch {
-                        ELOG("Failed to read pasteboard URL: \(error.localizedDescription)")
-                    }
-                } else {
-                    ELOG("No image or image url in pasteboard")
-                    return
-                }
-            }
-
-            if let pastedImage = pastedImageMaybe {
-                var key: String
-                if let pastedURL = pastedURL {
-                    key = pastedURL.lastPathComponent
-                } else {
-                    key = UUID().uuidString
-                }
-
-                do {
-                    try PVMediaCache.writeImage(toDisk: pastedImage, withKey: key)
-                    try RomDatabase.sharedInstance.writeTransaction {
-                        game.customArtworkURL = key
-                    }
-                } catch {
-                    ELOG("Failed to set custom artwork URL for game \(game.title).\n\(error.localizedDescription)")
-                }
-            } else {
-                ELOG("No pasted image")
-            }
-        }
-
-    #endif
 
     func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, referenceSizeForHeaderInSection _: Int) -> CGSize {
         #if os(tvOS)

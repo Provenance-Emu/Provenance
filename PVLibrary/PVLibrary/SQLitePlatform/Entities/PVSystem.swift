@@ -72,6 +72,14 @@ public final class PVSystem: Object, Identifiable, SystemProtocol {
 
         return SystemOptions(systemOptions)
     }
+    
+    public dynamic var useFolders: Bool = false
+
+    public var importerOptions: ImporterOptions {
+        var importerOptions = [ImporterOptions]()
+        if useFolders { importerOptions.append(.useFolders) }
+        return ImporterOptions(importerOptions)
+    }
 
     public private(set) var supportedExtensions = List<String>()
 
@@ -274,6 +282,8 @@ extension System: RealmRepresentable {
             
             object.requiresMouse = requiresMouse
             object.requiresKeyboard = requiresKeyboard
+            
+            object.useFolders = importerOptions.contains(.useFolders)
         })
     }
 }

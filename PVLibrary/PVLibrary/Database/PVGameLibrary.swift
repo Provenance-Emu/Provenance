@@ -29,27 +29,27 @@ public struct PVGameLibrary {
     public init(database: RomDatabase) {
         self.database = database
 
-        self.saveStatesResults = database.all(PVSaveState.self).filter("game != nil && game.system != nil").sorted(byKeyPath: #keyPath(PVSaveState.lastOpened), ascending: false).sorted(byKeyPath: #keyPath(PVSaveState.date), ascending: false)
+        self.saveStatesResults = database.all(PVSaveState.self).filter("game != nil && game.system != nil").sorted(byKeyPath: "lastOpened", ascending: false).sorted(byKeyPath: "date", ascending: false)
         self.saveStates = Observable
             .collection(from: self.saveStatesResults)
             .mapMany { $0 }
 
-        self.favoritesResults = database.all(PVGame.self, where: #keyPath(PVGame.isFavorite), value: true).sorted(byKeyPath: #keyPath(PVGame.title), ascending: false)
+        self.favoritesResults = database.all(PVGame.self, where: "isFavorite", value: true).sorted(byKeyPath: "title", ascending: false)
         self.favorites = Observable
             .collection(from: self.favoritesResults)
             .mapMany { $0 }
 
-        self.recentsResults = database.all(PVRecentGame.self).sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
+        self.recentsResults = database.all(PVRecentGame.self).sorted(byKeyPath: "lastPlayedDate", ascending: false)
         self.recents = Observable
             .collection(from: recentsResults)
             .mapMany { $0 }
 
-        self.mostPlayedResults = database.all(PVGame.self).sorted(byKeyPath: #keyPath(PVGame.playCount), ascending: false)
+        self.mostPlayedResults = database.all(PVGame.self).sorted(byKeyPath: "playCount", ascending: false)
         self.mostPlayed = Observable
             .collection(from: self.mostPlayedResults)
             .mapMany { $0 }
 
-        self.activeSystems = database.all(PVSystem.self, filter: NSPredicate(format: "games.@count > 0")).sorted(byKeyPath: #keyPath(PVSystem.name), ascending: false)
+        self.activeSystems = database.all(PVSystem.self, filter: NSPredicate(format: "games.@count > 0")).sorted(byKeyPath: "name", ascending: false)
     }
 
     public func search(for searchText: String) -> Observable<[PVGame]> {
@@ -63,7 +63,7 @@ public struct PVGameLibrary {
             titleResults :
             self.database.all(PVGame.self, filter: NSPredicate(format: "genres LIKE[c] %@ OR gameDescription CONTAINS[c] %@ OR regionName LIKE[c] %@ OR developer LIKE[c] %@ or publisher LIKE[c] %@", argumentArray: [searchText, searchText, searchText, searchText, searchText]))
 
-        return results.sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)
+        return results.sorted(byKeyPath: "title", ascending: true)
     }
 
     public func systems(sortedBy sortOptions: SortOptions) -> Observable<[System]> {
@@ -157,19 +157,19 @@ public extension ObservableType where Element: Collection {
 
 extension LinkingObjects where Element: PVGame {
     func sorted(by sortOptions: SortOptions) -> Results<Element> {
-        var sortDescriptors = [SortDescriptor(keyPath: #keyPath(PVGame.isFavorite), ascending: false)]
+        var sortDescriptors = [SortDescriptor(keyPath: \PVGame.isFavorite, ascending: false)]
         switch sortOptions {
         case .title:
             break
         case .importDate:
-            sortDescriptors.append(SortDescriptor(keyPath: #keyPath(PVGame.importDate), ascending: false))
+            sortDescriptors.append(SortDescriptor(keyPath: \PVGame.importDate, ascending: false))
         case .lastPlayed:
-            sortDescriptors.append(SortDescriptor(keyPath: #keyPath(PVGame.lastPlayed), ascending: false))
+            sortDescriptors.append(SortDescriptor(keyPath: \PVGame.lastPlayed, ascending: false))
         case .mostPlayed:
-            sortDescriptors.append(SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: false))
+            sortDescriptors.append(SortDescriptor(keyPath: \PVGame.playCount, ascending: false))
         }
 
-        sortDescriptors.append(SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: true))
+        sortDescriptors.append(SortDescriptor(keyPath: \PVGame.title, ascending: true))
         return sorted(by: sortDescriptors)
     }
 }

@@ -15,9 +15,7 @@ import CocoaLumberjackSwift
 
 public class UIForLumberJack: NSObject, DDLogger {
     public var logFormatter: DDLogFormatter?
-    
-    public let shared: UIForLumberJack = UIForLumberJack()
-    
+        
     public var tableView: UITableView
     public var messages = [DDLogMessage]()
     public var messagesExpanded = Set<Int>.init(minimumCapacity: 20)

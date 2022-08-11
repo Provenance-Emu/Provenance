@@ -95,10 +95,17 @@ final class PVSettingsViewController: PVQuickTableViewController {
         let systemsRow = SegueNavigationRow(text: NSLocalizedString("Systems", comment: "Systems"), viewController: self, segue: "pushSystemSettings")
 
         #if os(tvOS)
-            let appRows: [TableRow] = [systemsRow]
+            var appRows: [TableRow] = [systemsRow]
         #else
-            let appRows: [TableRow] = [autolockRow, systemsRow]
+            var appRows: [TableRow] = [autolockRow, systemsRow]
         #endif
+        
+        if #available(iOS 14.0, tvOS 14.0, macOS 11.0, *) {
+            let useSwiftUIRow = PVSettingsSwitchRow(text: NSLocalizedString("Use Swift UI", comment: "Use Swift UI"),
+                                                            detailText: .subtitle("Use Swift UI on iOS 14+ devices."),
+                                                            key: \PVSettingsModel.useSwiftUI)
+            appRows.append(useSwiftUIRow)
+        }
 
         let appSection = Section(title: NSLocalizedString("App", comment: "App"), rows: appRows)
 
@@ -331,10 +338,6 @@ final class PVSettingsViewController: PVQuickTableViewController {
             PVSettingsSwitchRow(text: NSLocalizedString("Unsupported Cores", comment: "Unsupported Cores"),
                                 detailText: .subtitle("Cores that are in development"),
                                 key: \PVSettingsModel.debugOptions.unsupportedCores),
-
-            PVSettingsSwitchRow(text: NSLocalizedString("Use Swift UI", comment: "Use Swift UI"),
-                                detailText: .subtitle("Swift UI placeholder. Don't use unless you're a developer."),
-                                key: \PVSettingsModel.debugOptions.useSwiftUI),
 
 			PVSettingsSwitchRow(text: NSLocalizedString("Movable Buttons", comment: "Bool option to allow user to move on screen controller buttons"),
 								detailText: .subtitle("Allow user to move on screen controller buttons."),

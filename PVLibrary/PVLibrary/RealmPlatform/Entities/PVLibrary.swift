@@ -13,22 +13,21 @@ import RealmSwift
 // realm doesn't support subclasses, but we could use protocols
 // to define default behavior - joe m
 
-@objcMembers
 public final class PVLibrary: Object {
-    public dynamic var uuid: String = ""
-    public dynamic var name: String = ""
+    @Persisted(primaryKey: true) public var uuid: String = ""
+    @Persisted public var name: String = ""
 
-    public dynamic var isLocal: Bool = true
+    @Persisted public var isLocal: Bool = true
 
     // Remote info
-    public dynamic var ipaddress: String = ""
-    public dynamic var domainname: String = ""
-    public dynamic var bonjourName: String = ""
-    public dynamic var port: Int = 7769 // prov on phone pad
+    @Persisted public var ipaddress: String = ""
+    @Persisted public var domainname: String = ""
+    @Persisted public var bonjourName: String = ""
+    @Persisted public var port: Int = 7769 // prov on phone pad
 
-    public dynamic var lastSeen: Date = Date()
+    @Persisted public var lastSeen: Date = Date()
 
-    public private(set) var games = List<PVGame>()
+    @Persisted public private(set) var games = List<PVGame>()
 }
 
 // PVLibrary - Network

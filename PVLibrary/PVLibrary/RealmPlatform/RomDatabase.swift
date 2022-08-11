@@ -362,6 +362,24 @@ public extension RomDatabase {
     func allGamesSortedBySystemThenTitle() -> Results<PVGame> {
         return realm.objects(PVGame.self).sorted(byKeyPath: "systemIdentifier").sorted(byKeyPath: "title")
     }
+    
+    // KeyPaths
+    func all<T: Object>(_: T.Type, where keyPath: KeyPath<T, String>, beginsWith value: String) -> Results<T> {
+        return realm.objects(T.self).filter(NSPredicate(format: "\(keyPath) BEGINSWITH[cd] %@", value))
+    }
+
+    func all<T: Object>(_: T.Type, where keyPath:  KeyPath<T, Bool>, value: Bool) -> Results<T> {
+        return realm.objects(T.self).filter(NSPredicate(format: "\(keyPath) == %@", NSNumber(value: value)))
+    }
+    
+    func all<T: Object>(_: T.Type, where keyPath: KeyPath<T, String>, value: String) -> Results<T> {
+        return realm.objects(T.self).filter(NSPredicate(format: "\(keyPath) == %@", value))
+    }
+
+    func all<T: Object>(_: T.Type, sortedByKeyPath keyPath: KeyPath<T, String>, ascending: Bool = true) -> Results<T> {
+        return realm.objects(T.self).sorted(by: keyPath, ascending: ascending)
+    }
+
 }
 
 public enum RomDeletionError: Error {

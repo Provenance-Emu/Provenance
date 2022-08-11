@@ -9,16 +9,15 @@
 import Foundation
 import RealmSwift
 
-@objcMembers
 public final class PVCore: Object {
-    public dynamic var identifier: String = ""
-    public dynamic var principleClass: String = ""
-    public var supportedSystems = List<PVSystem>()
+    @Persisted(primaryKey: true) public var identifier: String = ""
+    @Persisted public var principleClass: String = ""
+    @Persisted public var supportedSystems = List<PVSystem>()
 
-    public dynamic var projectName = ""
-    public dynamic var projectURL = ""
-    public dynamic var projectVersion = ""
-    public dynamic var disabled = false
+    @Persisted(indexed: true) public var projectName = ""
+    @Persisted public var projectURL = ""
+    @Persisted public var projectVersion = ""
+    @Persisted public var disabled = false
 
     // Reverse links
     public var saveStates = LinkingObjects(fromType: PVSaveState.self, property: "core")
@@ -33,10 +32,6 @@ public final class PVCore: Object {
         projectURL = url
         projectVersion = version
         self.disabled = disabled
-    }
-
-    public override static func primaryKey() -> String? {
-        return "identifier"
     }
 }
 

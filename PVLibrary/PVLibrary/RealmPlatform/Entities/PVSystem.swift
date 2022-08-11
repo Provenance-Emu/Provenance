@@ -35,32 +35,31 @@ public struct SystemOptions: OptionSet, Codable {
     public static let keyboard = SystemOptions(rawValue: 1 << 4)
 }
 
-@objcMembers
 public final class PVSystem: Object, Identifiable, SystemProtocol {
     public typealias BIOSInfoProviderType = PVBIOS
 
-    public dynamic var name: String = ""
-    public dynamic var shortName: String = ""
-    public dynamic var shortNameAlt: String?
-    public dynamic var manufacturer: String = ""
-    public dynamic var releaseYear: Int = 0
-    public dynamic var bit: Int = 0
+    @Persisted(indexed: true) public var name: String = ""
+    @Persisted public var shortName: String = ""
+    @Persisted public var shortNameAlt: String?
+    @Persisted public var manufacturer: String = ""
+    @Persisted public var releaseYear: Int = 0
+    @Persisted public var bit: Int = 0
     public var bits: SystemBits {
         return SystemBits(rawValue: bit) ?? .unknown
     }
 
-    public dynamic var headerByteSize: Int = 0
-    public dynamic var openvgDatabaseID: Int = 0
-    public dynamic var requiresBIOS: Bool = false
-    public dynamic var usesCDs: Bool = false
-    public dynamic var portableSystem: Bool = false
+    @Persisted public var headerByteSize: Int = 0
+    @Persisted public var openvgDatabaseID: Int = 0
+    @Persisted public var requiresBIOS: Bool = false
+    @Persisted public var usesCDs: Bool = false
+    @Persisted public var portableSystem: Bool = false
 
-    public dynamic var supportsRumble: Bool = false
+    @Persisted public var supportsRumble: Bool = false
 
-    public dynamic var requiresMouse: Bool = false
-    public dynamic var requiresKeyboard: Bool = false
+    @Persisted public var requiresMouse: Bool = false
+    @Persisted public var requiresKeyboard: Bool = false
 
-    public dynamic var _screenType: String = ScreenType.unknown.rawValue
+    @Persisted public var _screenType: String = ScreenType.unknown.rawValue
 
     public var options: SystemOptions {
         var systemOptions = [SystemOptions]()
@@ -72,6 +71,11 @@ public final class PVSystem: Object, Identifiable, SystemProtocol {
 
         return SystemOptions(systemOptions)
     }
+    
+    @Persisted public var useFolders: Bool = false
+    public lazy var importerOptions: ImporterOptions = {
+        return useFolders ? .useFolders : []
+    }()
 
     public private(set) var supportedExtensions = List<String>()
 
@@ -105,13 +109,8 @@ public final class PVSystem: Object, Identifiable, SystemProtocol {
         return Core(with: preferredCore)
     }
 
-    public dynamic var userPreferredCoreID: String?
-
-    public dynamic var identifier: String = ""
-
-    public override static func primaryKey() -> String? {
-        return "identifier"
-    }
+    @Persisted public var userPreferredCoreID: String?
+    @Persisted(primaryKey: true) public var identifier: String = ""
 
     // Hack to store controller layout because I don't want to make
     // all the complex objects it would require. Just store the plist dictionary data
@@ -274,6 +273,9 @@ extension System: RealmRepresentable {
             
             object.requiresMouse = requiresMouse
             object.requiresKeyboard = requiresKeyboard
+            
+            object.useFolders = importerOptions.contains(.useFolders)
+            object.importerOptions = importerOptions
         })
     }
 }

@@ -40,7 +40,7 @@ enum PVNavOption {
 }
 
 @available(iOS 14, tvOS 14, *)
-class PVRootViewController: UIViewController, GameLaunchingViewController, GameSharingViewController, SFSafariViewControllerDelegate {
+final class PVRootViewController: UIViewController, GameLaunchingViewController, GameSharingViewController, SFSafariViewControllerDelegate {
 
     let containerView = UIView()
     var viewModel: PVRootViewModel!
@@ -52,6 +52,8 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
     let disposeBag = DisposeBag()
     var selectedTabCancellable: AnyCancellable?
 
+    weak var gameForCustomArt: PVGame?
+
     lazy var consolesWrapperViewDelegate = ConsolesWrapperViewDelegate()
     var consoleIdentifiersAndNamesMap: [String:String] = [:]
 
@@ -62,6 +64,10 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
         controller.gameImporter = gameImporter
         controller.viewModel = viewModel
         return controller
+    }
+    
+    func reloadData() {
+        // TODO: something to do here? -jm
     }
 
     override func viewDidLoad() {
@@ -125,6 +131,13 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
         self.fillParentView(child: newVC.view, parent: self.containerView)
     }
 }
+
+#if os(iOS)
+@available(iOS 14, *)
+extension PVRootViewController: UINavigationControllerDelegate, UIImagePickerControllerDelegate {
+    
+}
+#endif
 
 // MARK: - Helpers
 extension UIViewController {

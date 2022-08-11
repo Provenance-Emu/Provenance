@@ -8,6 +8,16 @@
 
 import Foundation
 
+public struct ImporterOptions: OptionSet, Codable {
+    public init(rawValue: Int) {
+        self.rawValue = rawValue
+    }
+
+    public let rawValue: Int
+
+    public static let useFolders = ImporterOptions(rawValue: 1 << 0)
+}
+
 public protocol SystemProtocol {
     associatedtype BIOSInfoProviderType: BIOSInfoProvider
 
@@ -41,6 +51,8 @@ public protocol SystemProtocol {
     
     var requiresKeyboard: Bool { get }
     var requiresMouse: Bool { get }
+    
+    var importerOptions: ImporterOptions { get }
 }
 
 // MARK: Default Implimentations

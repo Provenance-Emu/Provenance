@@ -177,7 +177,8 @@ public final class GameImporter {
                 self.romExtensionToSystemsMap = self.updateromExtensionToSystemsMap()
             case let .error(error):
                 // An error occurred while opening the Realm file on the background worker thread
-                fatalError("\(error)")
+                ELOG(error.localizedDescription)
+                assertionFailure(error.localizedDescription)
             }
         }
     }
@@ -560,10 +561,10 @@ public extension GameImporter {
         // First find an exact match incase there are multiples like com.provenance.vb/Teris [US].vb etc,
         // If that's null, ie no matches, do a begins with
         // TODO: Warn / error / ask if more than 1 returned
-        var games = database.all(PVGame.self, where: #keyPath(PVGame.romPath), value: gamePartialPath)
+        var games = database.all(PVGame.self, where: \PVGame.romPath, value: gamePartialPath)
         if games.isEmpty {
             // No reults, so do a beginsWith query
-            games = database.all(PVGame.self, where: #keyPath(PVGame.romPath), beginsWith: gamePartialPath)
+            games = database.all(PVGame.self, where: \PVGame.romPath, beginsWith: gamePartialPath)
         }
 
         guard !games.isEmpty else {
@@ -961,8 +962,8 @@ public extension GameImporter {
                     game.regionName = regionName
                 }
 
-                if let regionID = chosenResult["regionID"] as? Int, overwrite || game.regionID.value == nil {
-                    game.regionID.value = regionID
+                if let regionID = chosenResult["regionID"] as? Int, overwrite || game.regionID == nil {
+                    game.regionID = regionID
                 }
 
                 if let gameDescription = chosenResult["gameDescription"] as? String, !gameDescription.isEmpty, overwrite || game.gameDescription == nil {
@@ -1174,7 +1175,10 @@ extension GameImporter {
 
         let filename = path.lastPathComponent
         let title: String = PVEmulatorConfiguration.stripDiscNames(fromFilename: path.deletingPathExtension().lastPathComponent)
-        let destinationDir = (system.identifier as NSString)
+        var destinationDir = (system.identifier as NSString)
+        if system.importerOptions.contains(.useFolders) {
+            destinationDir.appendingPathComponent("\(title.removingPercentEncoding)/")
+        }
         let partialPath: String = destinationDir.appendingPathComponent(filename)
 
         let file = PVFile(withURL: path)
