@@ -15,6 +15,23 @@ import PVLibrary
 import Introspect
 #endif
 
+extension SystemIdentifier {
+    var icon: String {
+        switch self {
+        case .Atari2600: return "prov_atari_2600"
+        case .Atari5200: return "prov_atari_2600"
+        case .Atari7800: return "prov_atari_2600"
+        case .AtariJaguar: return "prov_atari_jaguar"
+        case .AtariJaguarCD: return "prov_atari_jaguar"
+        case .SNES: return "prov_snes_icon"
+        case .NES: return "prov_nes_icon"
+        case .PSX: return "prov_ps1_icon"
+
+        default: return "prov_snes_icon"
+        }
+    }
+}
+
 @available(iOS 14, tvOS 14, *)
 struct SideMenuView: SwiftUI.View {
 
@@ -64,7 +81,7 @@ struct SideMenuView: SwiftUI.View {
     func filteredSearchResults() -> Results<PVGame> {
         return self.gameLibrary.searchResults(for: self.searchBar.text)
     }
-
+    
     var body: some SwiftUI.View {
         StatusBarProtectionWrapper {
             ScrollView {
@@ -86,7 +103,8 @@ struct SideMenuView: SwiftUI.View {
                         }
                         ForEach(sortedConsoles(), id: \.self) { console in
                             Divider()
-                            MenuItemView(imageName: "prov_snes_icon", rowTitle: console.name) {
+                            let icon = SystemIdentifier(rawValue: console.identifier)!.icon
+                            MenuItemView(imageName: icon, rowTitle: console.name) {
                                 delegate.didTapConsole(with: console.identifier)
                             }
                         }
