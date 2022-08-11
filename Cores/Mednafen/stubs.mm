@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <semaphore.h>
 
-#import <PVSupport/PVLogging.h>
+#import <PVSupport/PVSupport-Swift.h>
 #import <Foundation/Foundation.h>
 void MDFND_DispMessage(char *str)
 {

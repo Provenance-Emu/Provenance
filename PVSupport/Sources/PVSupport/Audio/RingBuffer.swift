@@ -46,21 +46,17 @@ public class RingBuffer: NSObject
         return head
     }
     
-    private let buffer: UnsafeMutableRawPointer
-    private var bufferLength = 0
-    private var tailOffset = 0
-    private var headOffset = 0
-    private var usedBytesCount: Int32 = 0
-    
-    public init?(withLength length: Int)
-    {
-        assert(length > 0)
-        
+    private var buffer: UnsafeMutableRawPointer!
+    private var bufferLength: Int = 0
+
+    public func setBufferLength(_ length: Int) {
         // To handle race conditions, repeat initialization process up to 3 times before failing.
         for _ in 1...NUMBER_OF_BUFFERS
         {
-            let length = round_page(vm_size_t(length))
-            self.bufferLength = Int(length)
+            let round_page = round_page(vm_size_t(length))
+            self.bufferLength = Int(round_page)
+            
+            let length: UInt = UInt(bufferLength)
             
             var bufferAddress: vm_address_t = 0
             guard vm_allocate(mach_task_self_, &bufferAddress, vm_size_t(length * 2), VM_FLAGS_ANYWHERE) == ERR_SUCCESS else { continue }
@@ -86,16 +82,25 @@ public class RingBuffer: NSObject
                 continue
             }
             
+            let address = UInt(bitPattern: buffer)
+            vm_deallocate(mach_task_self_, vm_address_t(address), vm_size_t(self.bufferLength * 2))
             self.buffer = UnsafeMutableRawPointer(bitPattern: UInt(bufferAddress))!
             
             return
         }
-        
-        return nil
     }
     
-    deinit
-    {
+    private var tailOffset = 0
+    private var headOffset = 0
+    private var usedBytesCount: Int32 = 0
+    
+    public init?(withLength length: Int) {
+        assert(length > 0)
+        super.init()
+        setBufferLength(length)
+    }
+    
+    deinit {
         let address = UInt(bitPattern: self.buffer)
         vm_deallocate(mach_task_self_, vm_address_t(address), vm_size_t(self.bufferLength * 2))
     }
