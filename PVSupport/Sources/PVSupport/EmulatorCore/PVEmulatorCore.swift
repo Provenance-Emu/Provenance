@@ -116,7 +116,7 @@ public protocol CoreInterface: NSObjectProtocol {
     var pixelFormat: GLenum { get }
     var pixelType: GLenum { get }
     var internalPixelFormat: GLenum { get }
-    var audioSampleRate: Double { get }
+//    var audioSampleRate: Double { get set }
     var channelCount: UInt { get }
     var audioBufferCount: UInt { get }
     var audioBitDepth: UInt { get }
@@ -165,10 +165,36 @@ public protocol CoreInterface: NSObjectProtocol {
 //
 //}
 
+// MARK: Default Implimentation
+//public extension CoreInterface {
+//    var discCount: UInt { 0 }
+//    var audioBitDepth: UInt { 16 }
+//    var audioBufferCount: UInt { 1 }
+////    var frameInterval: TimeInterval { defaultFrameInterval }
+//
+//    var depthFormat: GLenum { 0 }
+//
+//    var supportsSaveStates: Bool { true }
+//    var isDoubleBuffered: Bool { false }
+//
+////    func audioBufferSize(forBuffer buffer: UInt) -> UInt {
+////        let frameSampleCount: UInt = self.audioSampleRate(forBuffer: buffer) / self.frameInterval
+////        let channelCount: UInt = channelCount(forBuffer: buffer)
+////        let bytesPerSample: UInt = audioBitDepth / 8
+////        return channelCount * bytesPerSample * frameSampleCount
+////    }
+//    
+//    var isSpeedModified: Bool {  return gameSpeed != .normal }
+//}
+
 @objc
 extension PVEmulatorCore: CoreInterface {
 //    public var supportsRumble: Bool { false }
 
+}
+
+@objc public class PVEmulatorCoreSwift: PVEmulatorCore {
+    
 }
 
 @objc

@@ -67,6 +67,9 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
     
 @public	
 	OERingBuffer __strong **ringBuffers;
+    
+    double _sampleRate;
+    NSTimeInterval _frameInterval;
 }
 
 @property (nonatomic, assign) double emulationFPS;
