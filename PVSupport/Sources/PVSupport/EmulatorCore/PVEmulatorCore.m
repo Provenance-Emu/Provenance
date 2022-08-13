@@ -123,7 +123,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
             }
 #endif
 			self.isRunning  = YES;
-			shouldStop = NO;
+            _shouldStop = NO;
             self.gameSpeed = GameSpeedNormal;
 			MAKEWEAK(self);
             
@@ -205,7 +205,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 
 - (void)stopEmulation {
     [self stopHaptic];
-	shouldStop = YES;
+	self.shouldStop = YES;
 	self.isRunning  = NO;
 
     [self setIsFrontBufferReady:NO];
@@ -239,7 +239,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
     [NSThread setRealTimePriority];
 
     //Emulation loop
-    while (UNLIKELY(!shouldStop)) {
+    while (UNLIKELY(!_shouldStop)) {
 
         [self updateControllers];
         
@@ -260,7 +260,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
         }
         frameCount += 1;
 
-        nextEmuTick += gameInterval;
+        nextEmuTick += _gameInterval;
         sleepTime = nextEmuTick - GetSecondsSince(origin);
         
         if (_isDoubleBufferedCached)
@@ -334,9 +334,9 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 - (void)setFramerateMultiplier:(CGFloat)framerateMultiplier {
     if ( _framerateMultiplier != framerateMultiplier ) {
         _framerateMultiplier = framerateMultiplier;
-        NSLog(@"multiplier: %.1f", framerateMultiplier);
+        ILOG(@"multiplier: %.1f", framerateMultiplier);
     }
-    gameInterval = 1.0 / ([self frameInterval] * framerateMultiplier);
+    self.gameInterval = 1.0 / (self.frameInterval * framerateMultiplier);
 }
 
 -(void)setController1:(GCController *)controller1 {

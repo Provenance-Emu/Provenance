@@ -67,12 +67,6 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
     
 @public	
 	OERingBuffer __strong **ringBuffers;
-
-	double _sampleRate;
-	
-	NSTimeInterval gameInterval;
-	NSTimeInterval _frameInterval;
-    BOOL shouldStop;
 }
 
 @property (nonatomic, assign) double emulationFPS;
@@ -81,7 +75,11 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 @property(weak, nullable)     id<PVAudioDelegate>    audioDelegate;
 @property(weak, nullable)     id<PVRenderDelegate>   renderDelegate;
 
+@property (nonatomic, assign) NSTimeInterval gameInterval;
+
 @property (nonatomic, assign, readonly) BOOL isRunning;
+@property (nonatomic, assign) BOOL shouldStop;
+
 @property (nonatomic, copy, nullable) NSString *romName;
 @property (nonatomic, copy, nullable) NSString *saveStatesPath;
 @property (nonatomic, copy, nullable) NSString *batterySavesPath;
@@ -107,7 +105,6 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
 	GLESVersion3
 };
 
-
 @property (nonatomic, assign) GameSpeed gameSpeed;
 @property (nonatomic, readonly, getter=isSpeedModified) BOOL speedModified;
 
@@ -123,6 +120,13 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
 @property (nonatomic, assign) GLESVersion glesVersion;
 @property (nonatomic, readonly) GLenum depthFormat;
 
+//@property (nonatomic, assign) NSTimeInterval frameInterval;
+@property (nonatomic, readonly) NSTimeInterval frameInterval;
+@property (nonatomic, readonly) double audioSampleRate;
+@property (nonatomic, readonly) NSUInteger channelCount;
+@property (nonatomic, readonly) NSUInteger audioBufferCount;
+@property (nonatomic, readonly) NSUInteger audioBitDepth;
+
 @property (nonatomic, readonly) CGRect screenRect;
 @property (nonatomic, readonly) CGSize aspectSize;
 @property (nonatomic, readonly) CGSize bufferSize;
@@ -131,11 +135,6 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
 @property (nonatomic, readonly) GLenum pixelFormat;
 @property (nonatomic, readonly) GLenum pixelType;
 @property (nonatomic, readonly) GLenum internalPixelFormat;
-@property (nonatomic, readonly) NSTimeInterval frameInterval;
-@property (nonatomic, readonly) double audioSampleRate;
-@property (nonatomic, readonly) NSUInteger channelCount;
-@property (nonatomic, readonly) NSUInteger audioBufferCount;
-@property (nonatomic, readonly) NSUInteger audioBitDepth;
 @property (nonatomic, readonly) BOOL isEmulationPaused;
 @property (nonatomic, readonly, nullable) const void * videoBuffer;
 

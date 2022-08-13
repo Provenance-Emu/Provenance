@@ -152,7 +152,7 @@ void gl_swap() {
 - (void)stopEmulation {
     has_init = false;
 
-    self->shouldStop = YES;
+    self.shouldStop = YES;
     dispatch_semaphore_signal(glesWaitToBeginFrameSemaphore);
     dispatch_semaphore_wait(coreWaitForExitSemaphore, DISPATCH_TIME_FOREVER);
 
@@ -264,15 +264,15 @@ static bool video_driver_cached_frame(void)
 //        CFAbsoluteTime lastTime = CFAbsoluteTimeGetCurrent();
 
         while (!has_init) {}
-        while ( !shouldStop )
+        while ( !self.shouldStop )
         {
             [self.frontBufferCondition lock];
-            while (!shouldStop && self.isFrontBufferReady) [self.frontBufferCondition wait];
+            while (!self.shouldStop && self.isFrontBufferReady) [self.frontBufferCondition wait];
             [self.frontBufferCondition unlock];
 
 //            CFAbsoluteTime now = CFAbsoluteTimeGetCurrent();
 //            CFTimeInterval deltaTime = now - lastTime;
-            while ( !shouldStop
+            while ( !self.shouldStop
                    && !video_driver_cached_frame()
 //                   && core_poll()
                    ) {}
@@ -320,7 +320,7 @@ static bool video_driver_cached_frame(void)
             core->retro_run();
         if (core_poll_type == POLL_TYPE_LATE && !core_input_polled)
             input_poll();
-    } while(!shouldStop);
+    } while(!self.shouldStop);
 
     has_init = false;
     

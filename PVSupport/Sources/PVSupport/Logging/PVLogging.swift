@@ -34,7 +34,6 @@ public protocol PVLoggingEntity: AnyObject {
     //    var logFileInfos: [DDLogFileInfo]? { get }
 }
 
-
 public final
 class PVLogging: NSObject {
     
