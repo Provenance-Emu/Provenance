@@ -39,7 +39,7 @@ struct HomeView: SwiftUI.View {
 
     @ObservedResults(
         PVGame.self,
-        filter: NSPredicate(format: "\(\PVGame.isFavorite) == %@", NSNumber(value: true)),
+        filter: NSPredicate(format: "isFavorite == %@", NSNumber(value: true)),
         sortDescriptor: SortDescriptor(keyPath: \PVGame.title, ascending: false)
     ) var favorites
 

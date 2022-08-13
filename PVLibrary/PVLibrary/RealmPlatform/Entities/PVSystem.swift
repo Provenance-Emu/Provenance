@@ -88,9 +88,9 @@ public final class PVSystem: Object, Identifiable, SystemProtocol {
     }
 
     // Reverse Links
-    public private(set) var bioses = LinkingObjects(fromType: PVBIOS.self, property: "system")
-    public private(set) var games = LinkingObjects(fromType: PVGame.self, property: "system")
-    public private(set) var cores = LinkingObjects(fromType: PVCore.self, property: "supportedSystems")
+    @Persisted public private(set) var bioses = LinkingObjects(fromType: PVBIOS.self, property: "system")
+    @Persisted public private(set) var games = LinkingObjects(fromType: PVGame.self, property: "system")
+    @Persisted public private(set) var cores = LinkingObjects(fromType: PVCore.self, property: "supportedSystems")
 
     public var gameStructs: [Game] {
         return games.map { Game(withGame: $0) }
