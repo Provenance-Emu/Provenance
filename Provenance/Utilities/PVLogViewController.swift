@@ -40,12 +40,16 @@ public final class PVLogViewController: UIViewController {
     }
     
     func showLuberJackUI() {
+        guard textView.isHidden else { return }
         textView.isHidden = true
+        DDLog.add(PVUIForLumberJack.shared, with: .info)
         PVUIForLumberJack.shared.showLog(inView: self.contentView)
     }
     
     func hideLuberJackUI() {
+        guard !textView.isHidden else { return }
         textView.isHidden = false
+        DDLog.remove(PVUIForLumberJack.shared)
         PVUIForLumberJack.shared.hideLog()
     }
     

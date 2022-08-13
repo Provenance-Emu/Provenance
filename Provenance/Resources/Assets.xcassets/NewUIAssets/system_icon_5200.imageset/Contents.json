@@ -1,0 +1,15 @@
+{
+  "images" : [
+    {
+      "filename" : "Atari 5200 3-01-02.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

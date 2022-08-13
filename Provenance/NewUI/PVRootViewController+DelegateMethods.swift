@@ -228,11 +228,17 @@ extension PVRootViewController: PVMenuDelegate, WebServerActivatorController {
             }
         }
 
-        let consolesView = ConsolesWrapperView(consolesWrapperViewDelegate: consolesWrapperViewDelegate, viewModel: self.viewModel, rootDelegate: self)
-        self.loadIntoContainer(.console(consoleId: consoleId, title: console.name), newVC: UIHostingController(rootView: consolesView))
+        let consolesView = ConsolesWrapperView(consolesWrapperViewDelegate: consolesWrapperViewDelegate,
+                                               viewModel: self.viewModel,
+                                               rootDelegate: self)
+        self.loadIntoContainer(.console(consoleId: consoleId, title: console.name),
+                               newVC: UIHostingController(rootView: consolesView))
     }
 
-    func didTapCollection(with collection: Int) { /* TODO: collections */ }
+    func didTapCollection(with collection: Int) {
+        /* TODO: collections */
+        STUB()
+    }
 }
 
 #endif

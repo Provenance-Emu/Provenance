@@ -17,18 +17,8 @@ import Introspect
 
 extension SystemIdentifier {
     var icon: String {
-        switch self {
-        case .Atari2600: return "prov_atari_2600"
-        case .Atari5200: return "prov_atari_2600"
-        case .Atari7800: return "prov_atari_2600"
-        case .AtariJaguar: return "prov_atari_jaguar"
-        case .AtariJaguarCD: return "prov_atari_jaguar"
-        case .SNES: return "prov_snes_icon"
-        case .NES: return "prov_nes_icon"
-        case .PSX: return "prov_ps1_icon"
-
-        default: return "prov_snes_icon"
-        }
+        let shortID = rawValue.components(separatedBy: ".").last ?? "unknown"
+        return "system_icon_\(shortID)"
     }
 }
 

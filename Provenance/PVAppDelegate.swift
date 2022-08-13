@@ -362,7 +362,7 @@ extension PVAppDelegate {
 
         #if os(iOS)
             // Debug view logger
-            DDLog.add(PVUIForLumberJack.shared, with: .info)
+//            DDLog.add(PVUIForLumberJack.shared, with: .info)
             window?.addLogViewerGesture()
         #endif
 

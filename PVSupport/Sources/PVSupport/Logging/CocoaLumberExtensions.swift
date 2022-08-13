@@ -82,6 +82,14 @@ public func ELOG(_ message: @autoclosure () -> String, level: DDLogLevel = defau
 //    #endif
 }
 
+public func STUB(level: DDLogLevel = defaultDebugLevel, context: Int = 0, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, tag: Any? = nil, asynchronous async: Bool = false, ddlog: DDLog = DDLog.sharedInstance) {
+    _DDLogMessage("stub", level: level, flag: .error, context: context, file: file, function: function, line: line, tag: tag, asynchronous: async, ddlog: ddlog)
+//    #if ELOGASSERT
+//    let assertMessage : String = String("\(file):\(line) : \(message())")
+//    assertionFailure(assertMessage)
+//    #endif
+}
+
 /// Analogous to the C preprocessor macro `THIS_FILE`.
 // public func CurrentFileName(_ fileName: StaticString = #file) -> String {
 //    // Using string interpolation to prevent integer overflow warning when using StaticString.stringValue

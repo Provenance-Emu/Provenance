@@ -1,0 +1,15 @@
+{
+  "images" : [
+    {
+      "filename" : "Sega GameGear - American Box Framed Logo TM-03.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}
