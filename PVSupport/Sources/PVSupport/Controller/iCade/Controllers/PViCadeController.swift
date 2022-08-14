@@ -6,7 +6,8 @@
 //  Created by Josejulio Martínez on 19/06/15.
 //  Copyright (c) 2015 Josejulio Martínez. All rights reserved.
 //
-#if !os(macOS)
+#if !os(macOS) && !os(watchOS)
+#if canImport(GameController)
 import GameController
 
 public class PViCadeController: GCController {
@@ -119,4 +120,5 @@ public class PViCadeController: GCController {
         }
     }
 }
+#endif
 #endif

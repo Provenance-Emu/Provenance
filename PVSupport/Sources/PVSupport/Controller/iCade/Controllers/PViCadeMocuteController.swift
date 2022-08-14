@@ -6,7 +6,7 @@
 //  Created by Edgar Neto on 8/12/17.
 //  Copyright © 2017 James Addyman. All rights reserved.
 //
-#if !os(macOS)
+#if !os(macOS) && !os(watchOS)
 import Foundation
 
 public final class PViCadeMocuteController: PViCadeController {

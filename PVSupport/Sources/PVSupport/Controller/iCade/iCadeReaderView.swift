@@ -1,4 +1,4 @@
-#if !os(macOS)
+#if !os(macOS) && !os(watchOS)
 #if canImport(UIKit)
 import UIKit
 /*

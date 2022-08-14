@@ -8,12 +8,18 @@
 
 import AVFAudio
 import AVFoundation
+#if canImport(CoreHaptics)
 import CoreHaptics
+#endif
 import Foundation
 import MachO
+#if canImport(Metal)
 import Metal
 import MetalKit
+#endif
+#if canImport(QuartzCore)
 import QuartzCore
+#endif
 #if canImport(OpenGLES)
 import OpenGLES
 #endif
@@ -201,7 +207,8 @@ public protocol CoreInterface: NSObjectProtocol {
 
 #if canImport(OpenGLES)
 import OpenGLES.ES3
-#else
+#endif
+#if canImport(OpenGL)
 import OpenGL
 #endif
 
@@ -635,7 +642,7 @@ public extension NSErrorDomain {
         shouldStop = false
         gameSpeed = .normal
 
-		#if !os(macOS)
+		#if !os(macOS) && !os(watchOS)
         do {
             try AVAudioSession.sharedInstance().setPreferredOutputNumberOfChannels(Int(channelCount))
         } catch {

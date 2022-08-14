@@ -8,7 +8,9 @@
 
 import AVFoundation
 import notify
+#if canImport(AudioToolbox)
 import AudioToolbox
+#endif
 import CoreAudio
 import CoreAudioTypes
 
@@ -85,7 +87,7 @@ internal extension AVAudioFormat
     }
 }
 
-#if !os(macOS)
+#if !os(macOS) && !os(watchOS)
 private extension AVAudioSession
 {
     func setDeltaCategory() throws
@@ -213,7 +215,7 @@ public class AudioManager: NSObject, AudioRendering
         // Temporary. Will be replaced with more accurate RingBuffer in resetAudioEngine().
         self.audioBuffer = RingBuffer(withLength: 4096)!
 
-#if !os(macOS)
+#if !os(macOS) && !os(watchOS)
         do
         {
             // Set category before configuring AVAudioEngine to prevent pausing any currently playing audio from another app.
@@ -242,7 +244,7 @@ public class AudioManager: NSObject, AudioRendering
         self.updateOutputVolume()
         
         NotificationCenter.default.addObserver(self, selector: #selector(AudioManager.resetAudioEngine), name: .AVAudioEngineConfigurationChange, object: nil)
-#if !os(macOS)
+#if !os(macOS) && !os(watchOS)
         NotificationCenter.default.addObserver(self, selector: #selector(AudioManager.resetAudioEngine), name: AVAudioSession.routeChangeNotification, object: nil)
 #endif
     }
@@ -257,7 +259,7 @@ public extension AudioManager
             self?.isMuted = isMuted
         }
 
-		#if !os(macOS)
+		#if !os(macOS) && !os(watchOS)
         do
         {
             try AVAudioSession.sharedInstance().setDeltaCategory()

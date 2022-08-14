@@ -6,7 +6,7 @@
 //  Created by Josejulio Martínez on 10/07/15.
 //  Copyright (c) 2015 Josejulio Martínez. All rights reserved.
 //
-#if !os(macOS)
+#if !os(macOS) && !os(watchOS)
 @objc
 public enum iCadeControllerSetting: Int, CustomStringConvertible, CaseIterable, UserDefaultsRepresentable {
     case disabled

@@ -5,7 +5,7 @@
 //  Created by Joseph Mattiello on 10/29/18.
 //  Copyright (c) 2018 Joseph Mattiello. All rights reserved.
 //
-#if !os(macOS)
+#if !os(macOS) && !os(watchOS)
 public struct iCadeControllerState: OptionSet, Hashable, CustomStringConvertible {
     public let rawValue: Int
 

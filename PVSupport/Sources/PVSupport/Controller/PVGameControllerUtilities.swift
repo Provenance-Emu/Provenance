@@ -7,7 +7,9 @@
 //
 
 import Foundation
+#if canImport(GameController)
 @_exported import GameController
+#endif
 import simd
 
 private let thumbstickSensitivty: Float = 0.2

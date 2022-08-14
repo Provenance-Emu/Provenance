@@ -6,7 +6,7 @@
 //  Created by Simon Frost on 17/11/2015.
 //  Copyright © 2015 James Addyman. All rights reserved.
 //
-#if !os(macOS)
+#if !os(macOS) && !os(watchOS)
 public final class PViCadeSteelSeriesController: PViCadeController {
     override func button(forState button: iCadeControllerState) -> PViCadeGamepadButtonInput? {
         switch button {
