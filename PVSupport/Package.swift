@@ -7,7 +7,7 @@ let package = Package(
     platforms: [
         .iOS(.v13),
         .tvOS(.v13),
-        // .watchOS(.v8),
+        .watchOS(.v8),
         // .macOS(.v11)
     ],
     products: [
@@ -40,7 +40,8 @@ let package = Package(
                 "Reachability"],
             path: "Sources/PVSupport",
             exclude: [
-                "Performance/PerformanceView.swift"],
+                "Performance/PerformanceView.swift",
+                "Performance/Performance.swift"],
             // exclude: [
             //     "EmulatorCore/PVEmulatorCore.m",
             //     "Info.plist",

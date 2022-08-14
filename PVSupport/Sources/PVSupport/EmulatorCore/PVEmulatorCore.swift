@@ -390,7 +390,7 @@ extension CoreInterface {
             try AVAudioSession.sharedInstance().setPreferredSampleRate(preferredSampleRate)
         }
     }
-    
+
     var currentAVSessionSampleRate: Double {
         return AVAudioSession.sharedInstance().sampleRate
     }
@@ -424,20 +424,6 @@ extension CoreInterface {
         // do nothing
     }
 }
-
-//extension CoreInterface {
-//    func ringBuffer(at index: Int) -> RingBuffer {
-//        if index >= ringBuffers.count {
-//            let length: Int = Int(audioBufferSize(forBuffer: index) * 16)
-//            guard let ringBuffer: RingBuffer = RingBuffer(withLength: length) else {
-//                fatalError("Failed to create Audio Ring Buffer. Must die.")
-//            }
-//            ringBuffers.insert(ringBuffer, at: index)
-//        } else {
-//            return ringBuffers[index]
-//        }
-//    }
-//}
 
 public
 extension CoreInterface {
@@ -479,8 +465,9 @@ public extension NSErrorDomain {
         return a
     }()
     
+    #if !os(tvOS)
     public fileprivate(set) var rumbleGenerator: UIImpactFeedbackGenerator? // TODO: Don't use UIImpactFeedbackGenerator
-    
+    #endif
     // MARK: - Public Properties
     public fileprivate(set) var gameInterval: TimeInterval = 60.0 // TODO: 1 / 60.0
     public fileprivate(set) var frameInterval: TimeInterval = 60.0 // TODO: 1 / 60.0
@@ -795,7 +782,7 @@ public extension NSErrorDomain {
 }
 
 @objc
-extension PVEmulatorCore {
+public extension PVEmulatorCore {
     public var numberOfUsers: UInt {
         if self.controller4 != nil { return 4 }
         if self.controller3 != nil { return 3 }
@@ -806,12 +793,12 @@ extension PVEmulatorCore {
 }
 
 @objc
-extension PVEmulatorCore {
-    
+public extension PVEmulatorCore {
+
     public func rumble() {
         rumble(player: 0)
     }
-    
+
     @available(iOS 14.0, tvOS 14.0, *)
     public func hapticEngine(for player: Int) -> CHHapticEngine? {
         if let engine = hapticEngines[player] {
@@ -826,7 +813,7 @@ extension PVEmulatorCore {
             return nil
         }
     }
-    
+
     public func controller(for player: Int) -> GCController? {
         var controller: GCController?
         switch player {
@@ -852,7 +839,7 @@ extension PVEmulatorCore {
         }
         return controller
     }
-    
+
     // MARK: - Haptic Feedback
     // @available(iOS 14.0, tvOS 14.0, *)
     // public func rumble(player: Int) {
@@ -875,7 +862,7 @@ extension PVEmulatorCore {
     //         )
     //     }
     // }
-    
+
 #if os(tvOS)
     @discardableResult
     func startHaptic() -> Bool {
@@ -885,19 +872,10 @@ extension PVEmulatorCore {
     func stopHaptic() {
         // Do nothing
     }
+    func setPauseEmulation(_ paused: Bool) {
+	    self.isRunning = !paused
+	}
 #else
-    public func setPauseEmulation(_ paused: Bool) {
-        self.isRunning = !paused
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            if paused {
-                self.stopHaptic()
-            } else {
-                self.startHaptic()
-            }
-        }
-    }
-    
     @discardableResult
     func startHaptic() -> Bool {
         guard supportsRumble, let controller1 = self.controller1, controller1.isAttachedToDevice  else {
@@ -916,7 +894,7 @@ extension PVEmulatorCore {
         //     }
         // }
     }
-    
+
     func stopHaptic() {
         if Thread.isMainThread {
             DispatchQueue.global().async {
@@ -928,6 +906,18 @@ extension PVEmulatorCore {
 //                rumbleGenerator.prepare()
                 self.rumbleGenerator = nil
 //            }
+        }
+    }
+    
+    func setPauseEmulation(_ paused: Bool) {
+        self.isRunning = !paused
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            if paused {
+                self.stopHaptic()
+            } else {
+                self.startHaptic()
+            }
         }
     }
 #endif
@@ -969,7 +959,7 @@ extension PVEmulatorCore {
 #endif
 }
 
-extension UIDevice {
+public extension UIDevice {
     fileprivate var modelGeneration: String {
         var sysinfo = utsname()
         uname(&sysinfo)
@@ -1000,12 +990,14 @@ public extension PVEmulatorCore {
     @objc func channelCount(forBuffer buffer: Int) -> Int {
         return buffer == 0 ? channelCount : 0
     }
+#if !os(tvOS)
     @objc(setPreferredSampleRate:error:) func setPreferredSampleRate(_ sampleRate: Double) throws {
         let preferredSampleRate = sampleRate > 0 ? sampleRate : AUDIO_SAMPLERATE_DEFAULT
         if preferredSampleRate != currentAVSessionSampleRate {
             try AVAudioSession.sharedInstance().setPreferredSampleRate(preferredSampleRate)
         }
     }
+    #endif
     @objc func resetEmulation() {
         // do nothing
     }

@@ -411,7 +411,7 @@ private extension AudioManager
                     }
                 }
             }
-            
+            #if !os(tvOS)
             do
             {
                 // Explicitly set output port since .defaultToSpeaker option pauses external audio.
@@ -432,6 +432,7 @@ private extension AudioManager
             {
                 print(error)
             }
+            #endif
         }
     }
     

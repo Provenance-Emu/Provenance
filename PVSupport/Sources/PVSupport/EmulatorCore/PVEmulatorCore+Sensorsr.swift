@@ -65,6 +65,7 @@ struct SensorsEnabled: OptionSet {
     }
 
     func handleTimer() {
+        #if !os(tvOS)
         if sensorsEnabled.contains(.accelerometer) {
             if let data = self.motion.accelerometerData {
                 g_acceleration = data.acceleration
@@ -85,6 +86,7 @@ struct SensorsEnabled: OptionSet {
                 g_deviceMotion = data
             }
         }
+        #endif
     }
 
     var accelerometerStateX: Float { Float(g_acceleration.x) }
@@ -188,6 +190,7 @@ struct SensorsEnabled: OptionSet {
     }
 }
 
+@available(iOS 14.0, *)
 @objc public extension PVEmulatorCore {
     func startDeviceMotion() -> Bool {
         // Make sure the accelerometer hardware is available.

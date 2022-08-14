@@ -19,6 +19,7 @@ FOUNDATION_EXPORT double PVSupport_FrameworkVersionNumber;
 //! Project version string for PVSupport Framework.
 FOUNDATION_EXPORT const unsigned char PVSupport_FrameworkVersionString[];
 
-//#if SWIFT_PACKAGE
-//#else
+#if SWIFT_PACKAGE
+#else
 #import <PVSupport/DebugUtils.h>
+#endif
