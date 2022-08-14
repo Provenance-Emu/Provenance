@@ -39,6 +39,8 @@ let package = Package(
                 "NSLogger",
                 "Reachability"],
             path: "Sources/PVSupport",
+            exclude: [
+                "Performance/PerformanceView.swift"],
             // exclude: [
             //     "EmulatorCore/PVEmulatorCore.m",
             //     "Info.plist",

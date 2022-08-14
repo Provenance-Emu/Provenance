@@ -65,7 +65,6 @@ public enum PVEmulatorCoreErrorCode: Int, Error {
 @objc
 public protocol PVAudioDelegate: AnyObject {
     func audioSampleRateDidChange()
-    
 }
 
 @objc
@@ -178,8 +177,8 @@ public protocol CoreInterface: NSObjectProtocol {
     
     func getAudioBuffer(_ buffer: UnsafeMutableRawPointer, frameCount: UInt32, bufferIndex: UInt)
     
-    func channelCount(forBuffer buffer: Int) -> UInt
-    func audioBufferSize(forBuffer buffer: Int) -> UInt
+    func channelCount(forBuffer buffer: Int) -> Int
+    func audioBufferSize(forBuffer buffer: Int) -> Int
     func audioSampleRate(forBuffer buffer: Int) -> Double
     func setAudioEnabled(_ enabled: Bool)
     @objc(ringBufferAtIndex:)
@@ -194,18 +193,18 @@ import OpenGL
 #endif
 
 #if os(tvOS)
-let HAS_HAPTICS = false
+fileprivate let HAS_HAPTICS = false
 #elseif os(iOS)
-let HAS_HAPTICS = true
+fileprivate let HAS_HAPTICS = true
 #else
-let HAS_HAPTICS = false
+fileprivate let HAS_HAPTICS = false
 #endif
 // TODO: FrameInterval should be called, frameRate everywhere since we use fps, not 1/fps
-let defaultFrameInterval: TimeInterval = 60.0  //1.0 / 60.0
+fileprivate let defaultFrameInterval: TimeInterval = 60.0  //1.0 / 60.0
 
 
 // Used to normalize mach clock ticks to nanosec
-var timebase_ratio: Double = 0
+fileprivate var timebase_ratio: Double = 0
 
 public
 extension CoreInterface {
@@ -329,7 +328,7 @@ extension CoreInterface {
     var audioSampleRate: Double {
         return 44100.0
     }
-    var channelCount: UInt {
+    var channelCount: Int {
         return 2
     }
     var audioBufferCount: UInt {
@@ -350,19 +349,18 @@ extension CoreInterface {
     func startEmulation() {
         // do nothing
     }
-    func resetEmulation() {
-        // do nothing
-    }
     func setPauseEmulation(_ paused: Bool) {
         // do nothing
     }
     func stopEmulation() {
         // do nothing
     }
+    func resetEmulation() {
+        // do nothing
+    }
     func executeFrame() {
         // do nothing
     }
-//    @objc(loadFileAtPath:error:)
     func loadFile(atPath path: String) throws {
         // do nothing
     }
@@ -386,7 +384,6 @@ let AUDIO_SAMPLERATE_DEFAULT: Double = 44100.0
 #if !os(tvOS)
 public
 extension CoreInterface {
-//    @objc(setPreferredSampleRate:error:)
     func setPreferredSampleRate(_ sampleRate: Double) throws {
         let preferredSampleRate = sampleRate > 0 ? sampleRate : AUDIO_SAMPLERATE_DEFAULT
         if preferredSampleRate != currentAVSessionSampleRate {
@@ -409,15 +406,15 @@ extension CoreInterface {
 
 public
 extension CoreInterface {
-    func channelCount(forBuffer buffer: Int) -> UInt {
+    func channelCount(forBuffer buffer: Int) -> Int {
         return buffer == 0 ? channelCount : 0
     }
-    func audioBufferSize(forBuffer buffer: Int) -> UInt {
+    func audioBufferSize(forBuffer buffer: Int) -> Int {
         let frameSampleCount: Double = audioSampleRate(forBuffer: buffer) / frameInterval
-        let channelCount: UInt = channelCount(forBuffer: buffer)
-        let bytesPerSample: UInt = audioBitDepth / 8
-        let bytesPerFrame: UInt = bytesPerSample * UInt(channelCount)
-        let bytesPerSecond: UInt = bytesPerFrame * UInt(frameSampleCount)
+        let channelCount: Int = channelCount(forBuffer: buffer)
+        let bytesPerSample: Int = audioBitDepth / 8
+        let bytesPerFrame: Int = bytesPerSample * Int(channelCount)
+        let bytesPerSecond: Int = bytesPerFrame * Int(frameSampleCount)
         return bytesPerSecond
     }
     func audioSampleRate(forBuffer buffer: Int) -> Double {
@@ -790,6 +787,7 @@ public extension NSErrorDomain {
                 fatalError("Failed to create Audio Ring Buffer. Must die.")
             }
             ringBuffers.insert(ringBuffer, at: index)
+            return ringBuffer
         } else {
             return ringBuffers[index]
         }
@@ -987,5 +985,70 @@ extension UIDevice {
         }
         
         return modelGeneration
+    }
+}
+
+// MARK: Protocol fullfillments
+// ObjC classes don't inherit swift default implimentations,
+// so need to copy them again here.
+// TODO: Fix the protocols to not be so big and optional
+@objc
+public extension PVEmulatorCore {
+    @objc func setAudioEnabled(_ enabled: Bool) {
+        // do nothing
+    }
+    @objc func channelCount(forBuffer buffer: Int) -> Int {
+        return buffer == 0 ? channelCount : 0
+    }
+    @objc(setPreferredSampleRate:error:) func setPreferredSampleRate(_ sampleRate: Double) throws {
+        let preferredSampleRate = sampleRate > 0 ? sampleRate : AUDIO_SAMPLERATE_DEFAULT
+        if preferredSampleRate != currentAVSessionSampleRate {
+            try AVAudioSession.sharedInstance().setPreferredSampleRate(preferredSampleRate)
+        }
+    }
+    @objc func resetEmulation() {
+        // do nothing
+    }
+    @objc func executeFrame() {
+        // do nothing
+    }
+//    @objc(loadFileAtPath:error:)
+    @objc(loadFileAtPath:error:) func loadFile(atPath path: String) throws {
+        // do nothing
+    }
+    @objc func updateControllers() {
+        // do nothing
+    }
+    @objc func swapBuffers() {
+        // do nothing
+        assert(!isDoubleBuffered, "Cores that are double-buffered must implement swapBuffers!")
+    }
+    @objc var shouldResyncTime: Bool {
+        get {
+            return false
+        }
+        set {
+            // do nothing
+        }
+    }
+    @objc var isSpeedModified: Bool {
+        gameSpeed != .normal
+    }
+    @objc func getAudioBuffer(_ buffer: UnsafeMutableRawPointer, frameCount: UInt32, bufferIndex: UInt) {
+        // do nothing
+    }
+    @objc func audioSampleRate(forBuffer buffer: Int) -> Double {
+        return buffer == 0 ? audioSampleRate : 0
+    }
+    @objc func audioBufferSize(forBuffer buffer: Int) -> Int {
+        let frameSampleCount: Double = audioSampleRate(forBuffer: buffer) / frameInterval
+        let channelCount: Int = channelCount(forBuffer: buffer)
+        let bytesPerSample: Int = audioBitDepth / 8
+        let bytesPerFrame: Int = bytesPerSample * Int(channelCount)
+        let bytesPerSecond: Int = bytesPerFrame * Int(frameSampleCount)
+        return bytesPerSecond
+    }
+    @objc var channelCount: Int {
+        return 2
     }
 }
