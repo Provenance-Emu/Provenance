@@ -185,3 +185,13 @@ public extension PVFile {
         return url.deletingPathExtension().lastPathComponent
     }
 }
+
+#if canImport(QuickLook)
+import QuickLook
+// MARK: - QLPreviewItem
+extension PVFile: QLPreviewItem {
+    public var previewItemURL: URL? {
+      url
+    }
+}
+#endif

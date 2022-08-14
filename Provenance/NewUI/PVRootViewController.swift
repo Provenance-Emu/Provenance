@@ -76,7 +76,7 @@ final class PVRootViewController: UIViewController, GameLaunchingViewController,
         self.view.addSubview(containerView)
         self.fillParentView(child: containerView, parent: self.view)
 
-        didTapHome()
+        didTapHome(sender: nil)
 
         let hud = MBProgressHUD(view: view)!
         hud.isUserInteractionEnabled = false

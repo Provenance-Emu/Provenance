@@ -626,6 +626,9 @@
 		B3CDEEB421D497CD000C55F7 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEB221D497CD000C55F7 /* Package.swift */; };
 		B3CDEECB21D4CF61000C55F7 /* DirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEECA21D4CF61000C55F7 /* DirectoryWatcher.swift */; };
 		B3CDEECC21D4CF61000C55F7 /* DirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEECA21D4CF61000C55F7 /* DirectoryWatcher.swift */; };
+		B3F9378828A891FF00F393BD /* Data+Hashing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F9378728A891FF00F393BD /* Data+Hashing.swift */; };
+		B3F9378928A891FF00F393BD /* Data+Hashing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F9378728A891FF00F393BD /* Data+Hashing.swift */; };
+		B3F9378A28A891FF00F393BD /* Data+Hashing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F9378728A891FF00F393BD /* Data+Hashing.swift */; };
 		CF17109D2585F97000258602 /* PVCheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF17109C2585F97000258602 /* PVCheats.swift */; };
 		CF17109E2585F97000258602 /* PVCheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF17109C2585F97000258602 /* PVCheats.swift */; };
 		CF1710A12585FA3F00258602 /* Cheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1710A02585FA3F00258602 /* Cheats.swift */; };
@@ -1125,6 +1128,7 @@
 		B3CDEEAF21D493AC000C55F7 /* GameImporter2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameImporter2.swift; sourceTree = "<group>"; };
 		B3CDEEB221D497CD000C55F7 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		B3CDEECA21D4CF61000C55F7 /* DirectoryWatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DirectoryWatcher.swift; sourceTree = "<group>"; };
+		B3F9378728A891FF00F393BD /* Data+Hashing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Hashing.swift"; sourceTree = "<group>"; };
 		CF17109C2585F97000258602 /* PVCheats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVCheats.swift; sourceTree = "<group>"; };
 		CF1710A02585FA3F00258602 /* Cheats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cheats.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1438,6 +1442,7 @@
 		B3579D112106B11D00DDEBD6 /* PVLibrary */ = {
 			isa = PBXGroup;
 			children = (
+				B3F9378628A8903B00F393BD /* ObjC */,
 				B3104C0C28A474820047278C /* Syncing */,
 				B3579D322106B4D700DDEBD6 /* Importer */,
 				B378228221D41E5A0077E86F /* Serializer */,
@@ -1449,7 +1454,6 @@
 				B3579D212106B4D600DDEBD6 /* Game Media */,
 				B3579D352106B4D700DDEBD6 /* NSExtensions */,
 				B3579D232106B4D600DDEBD6 /* Util */,
-				B3AF460A21071CA5002211EE /* LzmaSDKObjC */,
 				B3AF47DB21072AD3002211EE /* Resources */,
 				B3579D122106B11D00DDEBD6 /* PVLibrary.h */,
 				B3579D132106B11D00DDEBD6 /* PVLibrary-iOS-Info.plist */,
@@ -1464,8 +1468,6 @@
 			children = (
 				112E7E2E247EF3840050431C /* PVGameLibrary.swift */,
 				11AFB2B224867482000A3922 /* PVGameLibrary+Migration.swift */,
-				B3579D1E2106B4D600DDEBD6 /* OESQLiteDatabase.h */,
-				B3579D202106B4D600DDEBD6 /* OESQLiteDatabase.m */,
 			);
 			path = Database;
 			sourceTree = "<group>";
@@ -1514,15 +1516,8 @@
 		B3579D352106B4D700DDEBD6 /* NSExtensions */ = {
 			isa = PBXGroup;
 			children = (
-				B3274E7D2106BD7500857F52 /* NSFileManager+Hashing.h */,
-				B3274E7C2106BD7500857F52 /* NSFileManager+Hashing.m */,
-				B3274E672106BAF500857F52 /* UIImage+Scaling.h */,
-				B3274E662106BAF500857F52 /* UIImage+Scaling.m */,
-				B3274E632106BAA200857F52 /* NSString+Hashing.h */,
-				B3274E622106BAA200857F52 /* NSString+Hashing.m */,
-				B3579D362106B4D700DDEBD6 /* NSData+Hashing.h */,
-				B3579D372106B4D700DDEBD6 /* NSData+Hashing.m */,
 				B30E7AEA26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift */,
+				B3F9378728A891FF00F393BD /* Data+Hashing.swift */,
 			);
 			path = NSExtensions;
 			sourceTree = "<group>";
@@ -1580,7 +1575,8 @@
 				B3AF461121071CA5002211EE /* lzma */,
 				B3AF472F21071CA6002211EE /* src */,
 			);
-			path = LzmaSDKObjC;
+			name = LzmaSDKObjC;
+			path = PVLibrary/ObjC/LzmaSDKObjC;
 			sourceTree = SOURCE_ROOT;
 		};
 		B3AF461121071CA5002211EE /* lzma */ = {
@@ -2037,6 +2033,24 @@
 			path = Tests;
 			sourceTree = "<group>";
 		};
+		B3F9378628A8903B00F393BD /* ObjC */ = {
+			isa = PBXGroup;
+			children = (
+				B3AF460A21071CA5002211EE /* LzmaSDKObjC */,
+				B3579D362106B4D700DDEBD6 /* NSData+Hashing.h */,
+				B3579D372106B4D700DDEBD6 /* NSData+Hashing.m */,
+				B3274E7D2106BD7500857F52 /* NSFileManager+Hashing.h */,
+				B3274E7C2106BD7500857F52 /* NSFileManager+Hashing.m */,
+				B3274E632106BAA200857F52 /* NSString+Hashing.h */,
+				B3274E622106BAA200857F52 /* NSString+Hashing.m */,
+				B3579D1E2106B4D600DDEBD6 /* OESQLiteDatabase.h */,
+				B3579D202106B4D600DDEBD6 /* OESQLiteDatabase.m */,
+				B3274E672106BAF500857F52 /* UIImage+Scaling.h */,
+				B3274E662106BAF500857F52 /* UIImage+Scaling.m */,
+			);
+			path = ObjC;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -2369,6 +2383,7 @@
 				B305F001276B512D003AE510 /* ItemNameUtils.cpp in Sources */,
 				B305F002276B512D003AE510 /* LocalFile.swift in Sources */,
 				B305F003276B512D003AE510 /* Lzma2DecMt.c in Sources */,
+				B3F9378A28A891FF00F393BD /* Data+Hashing.swift in Sources */,
 				B305F004276B512D003AE510 /* LzmaSDKObjCFileEncoder.cpp in Sources */,
 				B305F005276B512D003AE510 /* LzmaSDKObjCExtractCallback.mm in Sources */,
 				B305F006276B512D003AE510 /* DllExports2.cpp in Sources */,
@@ -2555,6 +2570,7 @@
 				B3AF47A221071EE9002211EE /* ItemNameUtils.cpp in Sources */,
 				B354E79C219A76C80041F971 /* LocalFile.swift in Sources */,
 				B3AF478121071E85002211EE /* Lzma2DecMt.c in Sources */,
+				B3F9378828A891FF00F393BD /* Data+Hashing.swift in Sources */,
 				B3AF476D21071E2D002211EE /* LzmaSDKObjCFileEncoder.cpp in Sources */,
 				B3AF476421071E28002211EE /* LzmaSDKObjCExtractCallback.mm in Sources */,
 				B3AF47A421071EFC002211EE /* DllExports2.cpp in Sources */,
@@ -2741,6 +2757,7 @@
 				B3C04AD721077B3100E7AF79 /* ItemNameUtils.cpp in Sources */,
 				B354E79D219A76C80041F971 /* LocalFile.swift in Sources */,
 				B3C04AD821077B3100E7AF79 /* Lzma2DecMt.c in Sources */,
+				B3F9378928A891FF00F393BD /* Data+Hashing.swift in Sources */,
 				B3C04AD921077B3100E7AF79 /* LzmaSDKObjCFileEncoder.cpp in Sources */,
 				B3C04ADA21077B3100E7AF79 /* LzmaSDKObjCExtractCallback.mm in Sources */,
 				B3C04ADB21077B3100E7AF79 /* DllExports2.cpp in Sources */,

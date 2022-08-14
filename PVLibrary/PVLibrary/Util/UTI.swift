@@ -17,6 +17,8 @@ public extension UTI {
     static let savestate = UTI(rawValue: "com.provenance.savestate")
     static let sevenZipArchive = UTI(rawValue: "org.7-zip.7-zip-archive")
     static let rar = UTI(rawValue: "com.rarlab.rar-archive")
+    
+    static let importUTIs: [UTI] = [.rom, .savestate, .zipArchive, .sevenZipArchive, .gnuZipArchive, .bios, .data, .rar]
 }
 
 /// Instances of the UTI class represent a specific Universal Type Identifier, e.g. kUTTypeMPEG4.

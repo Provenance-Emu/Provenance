@@ -147,22 +147,39 @@ extension PVRootViewController {
 // MARK: - Menu Delegate
 
 public protocol PVMenuDelegate: AnyObject {
-    func didTapSettings()
-    func didTapHome()
-    func didTapAddGames()
+    func didTapSettings(sender: Any?)
+    func didTapHome(sender: Any?)
+    func didTapAddGames(sender: Any?)
     func didTapConsole(with consoleId: String)
     func didTapCollection(with collection: Int)
+    
+    func didTapCloudFiles()
+    func startWebServer()
 }
 
 @available(iOS 14, tvOS 14, *)
 extension PVRootViewController: PVMenuDelegate, WebServerActivatorController {
-    func didTapSettings() {
+    
+    func didTapCloudFiles() {
+        let extensions = UTI.importUTIs.map { $0.rawValue }
+
+        let documentPicker = PVDocumentPickerViewController(documentTypes: extensions, in: .import)
+        documentPicker.allowsMultipleSelection = true
+        documentPicker.delegate = self
+        self.present(documentPicker, animated: true, completion: nil)
+    }
+
+    func didTapSettings(sender: Any?) {
         #if os(iOS)
 
         guard
             let settingsNav = UIStoryboard(name: "Provenance", bundle: Bundle(for: type(of: self))).instantiateViewController(withIdentifier: "settingsNavigationController") as? UINavigationController,
             let settingsVC = settingsNav.topViewController as? PVSettingsViewController
-        else { return }
+        else {
+            ELOG("settingsNavigationController not found")
+            assertionFailure("settingsNavigationController")
+            return
+        }
 
         settingsVC.conflictsController = updatesController
         self.closeMenu()
@@ -172,20 +189,20 @@ extension PVRootViewController: PVMenuDelegate, WebServerActivatorController {
         #endif
     }
 
-    func didTapHome() {
+    func didTapHome(sender: Any?) {
         self.closeMenu()
         let homeView = HomeView(gameLibrary: self.gameLibrary, delegate: self)
         self.loadIntoContainer(.home, newVC: UIHostingController(rootView: homeView))
     }
 
-    func didTapAddGames() {
+    func didTapAddGames(sender: Any?) {
         self.closeMenu()
         #if os(iOS)
 
         /// from PVGameLibraryViewController#getMoreROMs
         let actionSheet = UIAlertController(title: "Select Import Source", message: nil, preferredStyle: .actionSheet)
         actionSheet.addAction(UIAlertAction(title: "Cloud & Local Files", style: .default, handler: { _ in
-            let extensions = [UTI.rom, UTI.artwork, UTI.savestate, UTI.zipArchive, UTI.sevenZipArchive, UTI.gnuZipArchive, UTI.image, UTI.jpeg, UTI.png, UTI.bios, UTI.data, UTI.rar].map { $0.rawValue }
+            let extensions = UTI.importUTIs.map { $0.rawValue }
 
             let documentPicker = PVDocumentPickerViewController(documentTypes: extensions, in: .import)
             documentPicker.allowsMultipleSelection = true
@@ -196,6 +213,11 @@ extension PVRootViewController: PVMenuDelegate, WebServerActivatorController {
         let webServerAction = UIAlertAction(title: "Web Server", style: .default, handler: { _ in
             self.startWebServer()
         })
+        
+        if traitCollection.userInterfaceIdiom == .pad, let senderView = sender as? UIView ?? self.view {
+            actionSheet.popoverPresentationController?.sourceView = senderView
+            actionSheet.popoverPresentationController?.sourceRect = senderView.bounds
+        }
 
         actionSheet.addAction(webServerAction)
         actionSheet.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))

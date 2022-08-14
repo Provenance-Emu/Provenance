@@ -12,6 +12,59 @@ import RealmSwift
 // Hack for game library having eitehr PVGame or PVRecentGame in containers
 protocol PVLibraryEntry where Self: Object {}
 
+#if canImport(QuickLook)
+import QuickLook
+// MARK: - QLPreviewItem
+extension PVGame: QLPreviewItem {
+    public var previewItemURL: URL? {
+        file.url
+    }
+}
+import QuickLookThumbnailing
+// MARK: - QuickLookThumbnailing
+extension PVGame {
+  func generateThumbnail(completion: @escaping (UIImage) -> Void) {
+    // 1
+    let size = CGSize(width: 128, height: 102)
+    let scale = UIScreen.main.scale
+      var url: URL?
+      if !customArtworkURL.isEmpty {
+          let oaurl = URL.init(fileURLWithPath: customArtworkURL)
+          url = oaurl
+      } else if !originalArtworkURL.isEmpty {
+          let oaurl = URL.init(fileURLWithPath: originalArtworkURL)
+          url = oaurl
+      } else if let originalArtworkFile = originalArtworkFile?.url {
+          let oaurl = originalArtworkFile
+          url = oaurl
+      }
+      guard let url = url else {
+          completion(UIImage())
+          return
+      }
+      
+    // 2
+    let request = QLThumbnailGenerator.Request(
+      fileAt: url,
+      size: size,
+      scale: scale,
+      representationTypes: .all)
+    
+    // 3
+    let generator = QLThumbnailGenerator.shared
+    generator.generateBestRepresentation(for: request) { thumbnail, error in
+      if let thumbnail = thumbnail {
+        completion(thumbnail.uiImage)
+      } else if let error = error {
+        // Handle error
+          ELOG("\(error.localizedDescription)")
+      }
+    }
+  }
+}
+
+#endif
+
 public final class PVGame: Object, Identifiable, PVLibraryEntry {
     @Persisted(indexed: true) public var title: String = ""
     @Persisted public var id = NSUUID().uuidString

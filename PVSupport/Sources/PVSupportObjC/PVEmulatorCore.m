@@ -7,12 +7,15 @@
 //
 
 #import "PVEmulatorCore.h"
+#if SWIFT_PACKAGE
+// @import PVSupport.PVEmulatorCore;
+#else
 #import <PVSupport/PVSupport-Swift.h>
+#endif
 #import "DebugUtils.h"
-@import AVFoundation;
-@import AVFAudio;
-@import UIKit;
-
+#import <AVFoundation/AVFoundation.h>
+#import <AVFAudio/AVFAudio.h>
+// #import <UIKit/UIKit.h>
 /* Timing */
 #include <mach/mach_time.h>
 #import <QuartzCore/QuartzCore.h>
@@ -561,6 +564,14 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 
 -(BOOL)supportsSaveStates {
 	return YES;
+}
+
+#pragma mark - Utility
+
+- (void) doesNotImplementSelector:(SEL)aSelector {
+    NSString *message = [NSString stringWithFormat:@"%@ does not implement %@", [self class], NSStringFromSelector(aSelector)];
+    ELOG(message);
+    fatalError(message);
 }
 
 @end

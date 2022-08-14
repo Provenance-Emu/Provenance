@@ -1,13 +1,13 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.5
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 import PackageDescription
 
 let package = Package(
     name: "PVSupport",
     platforms: [
-        .iOS(.v11),
-        .tvOS(.v11)
-        // .watchOS(.v7),
+        .iOS(.v13),
+        .tvOS(.v13),
+        // .watchOS(.v8),
         // .macOS(.v11)
     ],
     products: [
@@ -30,18 +30,13 @@ let package = Package(
             .upToNextMajor(from: "5.1.0")),
         .package(
             url: "https://github.com/fpillet/NSLogger",
-            .branch("master")),
+            .branch("master"))
     ],
     targets: [
         .target(
             name: "PVSupportObjC",
-            dependencies: [
-                .product(name: "CocoaLumberjack", package: "CocoaLumberjack")],
-            path: "Sources/PVSupport",
-            sources: [
-                "EmulatorCore/PVEmulatorCore.m"],
-            publicHeadersPath: "Public Headers"),
-
+            dependencies: [.product(name: "CocoaLumberjack", package: "CocoaLumberjack")],
+            path: "Sources/PVSupportObjc"),
         .target(
             name: "PVSupport",
             dependencies: [
@@ -49,13 +44,15 @@ let package = Package(
                 .product(name: "CocoaLumberjack", package: "CocoaLumberjack"),
                 .product(name: "CocoaLumberjackSwift", package: "CocoaLumberjack"),
                 .product(name: "CocoaLumberjackSwiftLogBackend", package: "CocoaLumberjack"),
+                "NSLogger",
                 "Reachability"],
-            exclude: [
-                "EmulatorCore/PVEmulatorCore.m",
-                "Info.plist",
-                "MASShortcut.modulemap",
-                "Prefix.pch"
-            ],
+            path: "Sources/PVSupport",
+            // exclude: [
+            //     "EmulatorCore/PVEmulatorCore.m",
+            //     "Info.plist",
+            //     "MASShortcut.modulemap",
+            //     "Prefix.pch"
+            // ],
             resources: [
                 .process("Controller/AHAP/")
             ]),

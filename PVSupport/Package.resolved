@@ -11,6 +11,15 @@
         }
       },
       {
+        "package": "NSLogger",
+        "repositoryURL": "https://github.com/fpillet/NSLogger.git",
+        "state": {
+          "branch": "master",
+          "revision": "3408cce1ff97bef20f3dcf367a02019b5c51d198",
+          "version": null
+        }
+      },
+      {
         "package": "Reachability",
         "repositoryURL": "https://github.com/ashleymills/Reachability.swift",
         "state": {
@@ -24,8 +33,8 @@
         "repositoryURL": "https://github.com/apple/swift-log.git",
         "state": {
           "branch": null,
-          "revision": "5d66f7ba25daf4f94100e7022febf3c75e37a6c7",
-          "version": "1.4.2"
+          "revision": "8fc79cae9d03a5e623c52cc2dbd2df165a7832b0",
+          "version": "1.4.3"
         }
       }
     ]

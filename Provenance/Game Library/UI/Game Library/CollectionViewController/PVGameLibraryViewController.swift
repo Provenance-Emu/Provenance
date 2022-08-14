@@ -816,11 +816,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             let actionSheet = UIAlertController(title: "Select Import Source", message: nil, preferredStyle: .actionSheet)
 
             actionSheet.addAction(UIAlertAction(title: "Cloud & Local Files", style: .default, handler: { _ in
-                let extensions = [UTI.rom, UTI.artwork, UTI.savestate, UTI.zipArchive, UTI.sevenZipArchive, UTI.gnuZipArchive, UTI.image, UTI.jpeg, UTI.png, UTI.bios, UTI.data, UTI.rar].map { $0.rawValue }
-
-                //        let documentMenu = UIDocumentMenuViewController(documentTypes: extensions, in: .import)
-                //        documentMenu.delegate = self
-                //        present(documentMenu, animated: true, completion: nil)
+                let extensions = UTI.importUTIs.map { $0.rawValue }
 
                 let documentPicker = PVDocumentPickerViewController(documentTypes: extensions, in: .import)
                 documentPicker.allowsMultipleSelection = true

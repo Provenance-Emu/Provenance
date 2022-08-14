@@ -37,6 +37,10 @@ struct SideMenuView: SwiftUI.View {
         PVSystem.self,
         filter: NSPredicate(format: "games.@count > 0")
     ) var consoles
+    
+    func sortedConsoles() -> Results<PVSystem> {
+        return self.consoles.sorted(by: [SortDescriptor(keyPath: \PVSystem.name, ascending: viewModel.sortConsolesAscending)])
+    }
 
     @ObservedObject var searchBar: SearchBar = SearchBar()
 
@@ -64,28 +68,44 @@ struct SideMenuView: SwiftUI.View {
         return versionText ?? ""
     }
 
-    func sortedConsoles() -> Results<PVSystem> {
-        return self.consoles.sorted(by: [SortDescriptor(keyPath: \PVSystem.name, ascending: viewModel.sortConsolesAscending)])
-    }
-
     func filteredSearchResults() -> Results<PVGame> {
         return self.gameLibrary.searchResults(for: self.searchBar.text)
     }
+    
+    @State private var importSourceSelectionShow = false
     
     var body: some SwiftUI.View {
         StatusBarProtectionWrapper {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 0) {
                     MenuItemView(imageName: "prov_settings_gear", rowTitle: "Settings") {
-                        delegate.didTapSettings()
+                        delegate.didTapSettings(sender: self)
                     }
                     Divider()
                     MenuItemView(imageName: "prov_home_icon", rowTitle: "Home") {
-                        delegate.didTapHome()
+                        delegate.didTapHome(sender: self)
                     }
                     Divider()
-                    MenuItemView(imageName: "prov_add_games_icon", rowTitle: "Add Games") {
-                        delegate.didTapAddGames()
+                    if #available(iOS 15.0, tvOS 15.0, *) {
+                        MenuItemView(imageName: "prov_add_games_icon", rowTitle: "Add Games") {
+                            //                        delegate.didTapAddGames(sender: self)
+                        }.confirmationDialog(NSLocalizedString("Select Import Source", comment: "Select Import Source"), isPresented: $importSourceSelectionShow) {
+                            Button("Cloud & Local Files") {
+                                delegate.didTapCloudFiles()
+                            }
+                            Button("Web Server") {
+                                delegate.startWebServer()
+                            }
+                            Button(NSLocalizedString("Cancel", comment: "Cancel"), role: .cancel) {
+
+                            }
+                        } message: {
+                            Text("Web server is best for large files (CDs)")
+                        }
+                    } else {
+                        MenuItemView(imageName: "prov_add_games_icon", rowTitle: "Add Games") {
+                            delegate.didTapAddGames(sender: self)
+                        }
                     }
                     if consoles.count > 0 {
                         MenuSectionHeaderView(sectionTitle: "CONSOLES", sortable: consoles.count > 1, sortAscending: viewModel.sortConsolesAscending) {
