@@ -172,6 +172,7 @@ PV_OBJC_DIRECT_MEMBERS
         // TODO: Need to benchmark this
 
         self.glContext.multiThreaded = PVSettingsModel.shared.debugOptions.multiThreadedGL;
+        self.glContext.sharegroup = _emulatorCore.glesShareGroup
 
         [EAGLContext setCurrentContext:self.glContext];
     }

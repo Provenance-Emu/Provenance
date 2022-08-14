@@ -15,9 +15,6 @@ let package = Package(
         .library(
             name: "PVSupport",
             targets: ["PVSupport"]),
-        .library(
-            name: "PVSupportObjC",
-            targets: ["PVSupportObjC"])
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -34,13 +31,8 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "PVSupportObjC",
-            dependencies: [.product(name: "CocoaLumberjack", package: "CocoaLumberjack")],
-            path: "Sources/PVSupportObjc"),
-        .target(
             name: "PVSupport",
             dependencies: [
-                "PVSupportObjC",
                 .product(name: "CocoaLumberjack", package: "CocoaLumberjack"),
                 .product(name: "CocoaLumberjackSwift", package: "CocoaLumberjack"),
                 .product(name: "CocoaLumberjackSwiftLogBackend", package: "CocoaLumberjack"),

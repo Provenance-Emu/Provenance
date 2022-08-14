@@ -17,23 +17,17 @@ let package = Package(
 	platforms: [
 		.iOS(.v11),
 		.tvOS(.v11),
-        .watchOS(.v7),
-		.macOS(.v10_13)
+        // .watchOS(.v7),
+		// .macOS(.v10_13)
 	],
 	products: [
 		// Products define the executables and libraries produced by a package, and make them visible to other packages.
 		.library(
-			name: "PVLibrary",
-			targets: ["PVLibrary"]),
-		.library(
-			name: "PVLibrary-ObjC",
-			targets: ["PVLibrary-ObjC"])
-		// .library(
-		// 	name: "PVSupport",
-		// 	targets: ["PVSupport"]),
-		// .library(
-		// 	name: "PVSupport-ObjC",
-		// 	targets: ["PVSupport-ObjC"])
+			name: "PVApp",
+			targets: ["PVApp"]),
+		.executable(
+			name: "Provenance",
+			targets: ["Provenance"]),
 	],
 	dependencies: [
     //     .package(
@@ -42,23 +36,16 @@ let package = Package(
     ],
 	targets: [
 		.target(
-			name: "PVLibrary",
-			// dependencies: [
-			// 	.product(name: "RxSwift", package: "RxSwift")
-			// ],
-			path: "PVLibrary",
-			exclude: ["Info.plist", "*.m"],
-			cSettings: cSettings,
-			cxxSettings: cxxSettings),
-
+			name: "PVApp",
+			dependencies: [
+				"PVSupport", "PVLibrary"
+			],
+			path: "PVApp")
 		.target(
-			name: "PVLibrary-ObjC",
-			// dependencies: [
-			// 	.product(name: "RxSwift", package: "RxSwift")
-			// ],
-			path: "PVLibrary",
-			exclude: ["Info.plist", "*.swift"],
-			cSettings: cSettings,
-			cxxSettings: cxxSettings)
+			name: "Provenance",
+			dependencies: [
+				"PVApp", "PVSupport", "PVLibrary"
+			],
+			path: "Provenance")
 	]
 )

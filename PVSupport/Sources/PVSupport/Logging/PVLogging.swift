@@ -189,8 +189,7 @@ class PVLogging: NSObject {
         
         if FileManager.default.fileExists(atPath: path) {
             do {
-                let myText = try NSString(contentsOfFile: path, encoding: NSUTF8StringEncoding)
-                return myText as String
+                return try String(contentsOfFile: path, encoding: .utf8)
             } catch {
                 return error.localizedDescription
             }

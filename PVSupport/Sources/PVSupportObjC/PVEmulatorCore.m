@@ -20,7 +20,7 @@
 #include <mach/mach_time.h>
 #import <QuartzCore/QuartzCore.h>
 
-#define PVTimestamp(x) (((double)mach_absolute_time(x)) * 1.0e-09  * timebase_ratio)
+#define PVTimestamp() (((double)mach_absolute_time()) * 1.0e-09  * timebase_ratio)
 //#define PVTimestamp() CACurrentMediaTime()
 #define GetSecondsSince(x) (PVTimestamp() - x)
 
@@ -129,10 +129,10 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
             _shouldStop = NO;
             self.gameSpeed = GameSpeedNormal;
 			MAKEWEAK(self);
-            
+
             success = [[AVAudioSession sharedInstance] setPreferredOutputNumberOfChannels:self.channelCount
                                                                                     error:&error];
-            
+
             if (!success) {
                 ELOG(@"%@", error.localizedDescription);
             }

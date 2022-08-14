@@ -259,15 +259,9 @@
 		B3B4F4C928A3FDF50099D35F /* NSFileManager+OEHashingAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B4F4C828A3FDF50099D35F /* NSFileManager+OEHashingAdditions.swift */; };
 		B3B4F4CA28A3FDF50099D35F /* NSFileManager+OEHashingAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B4F4C828A3FDF50099D35F /* NSFileManager+OEHashingAdditions.swift */; };
 		B3B4F4CB28A3FDF50099D35F /* NSFileManager+OEHashingAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B4F4C828A3FDF50099D35F /* NSFileManager+OEHashingAdditions.swift */; };
-		B3BD067128A897590043D8CE /* PVEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3BD066E28A897590043D8CE /* PVEmulatorCore.h */; };
-		B3BD067228A897590043D8CE /* PVEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3BD066E28A897590043D8CE /* PVEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3BD067328A897590043D8CE /* PVEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3BD066E28A897590043D8CE /* PVEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3BD067428A897590043D8CE /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = B3BD066F28A897590043D8CE /* DebugUtils.h */; };
+		B3BD067428A897590043D8CE /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = B3BD066F28A897590043D8CE /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3BD067528A897590043D8CE /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = B3BD066F28A897590043D8CE /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3BD067628A897590043D8CE /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = B3BD066F28A897590043D8CE /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3BD067728A897590043D8CE /* PVEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B3BD067028A897590043D8CE /* PVEmulatorCore.m */; };
-		B3BD067828A897590043D8CE /* PVEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B3BD067028A897590043D8CE /* PVEmulatorCore.m */; };
-		B3BD067928A897590043D8CE /* PVEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B3BD067028A897590043D8CE /* PVEmulatorCore.m */; };
 		B3BE75B4289CCF6C0090170D /* PVLibRetroCore+CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3BE75B3289CCF6C0090170D /* PVLibRetroCore+CoreOptions.swift */; };
 		B3BE75B5289CCF6C0090170D /* PVLibRetroCore+CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3BE75B3289CCF6C0090170D /* PVLibRetroCore+CoreOptions.swift */; };
 		B3C8A69428781C6E0037A946 /* msg_hash.c in Sources */ = {isa = PBXBuildFile; fileRef = B322515C286C6F29001FDF42 /* msg_hash.c */; };
@@ -3553,7 +3547,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3BD067628A897590043D8CE /* DebugUtils.h in Headers */,
-				B3BD067328A897590043D8CE /* PVEmulatorCore.h in Headers */,
 				B305EF49276B4E41003AE510 /* PVSupport.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3589,7 +3582,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3BD067528A897590043D8CE /* DebugUtils.h in Headers */,
-				B3BD067228A897590043D8CE /* PVEmulatorCore.h in Headers */,
 				B34AB8652106F2F200C45F09 /* PVSupport.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3599,7 +3591,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3BD067428A897590043D8CE /* DebugUtils.h in Headers */,
-				B3BD067128A897590043D8CE /* PVEmulatorCore.h in Headers */,
 				B34AB8642106F2F200C45F09 /* PVSupport.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3957,7 +3948,6 @@
 				B3B4F4B328A3B6940099D35F /* NSObject+PVAbstractAdditions.swift in Sources */,
 				B33FB2ED279BE0CC0013AAD8 /* CoreOptions+Serialization.swift in Sources */,
 				B305EF75276B4E41003AE510 /* PViCadeReader.swift in Sources */,
-				B3BD067928A897590043D8CE /* PVEmulatorCore.m in Sources */,
 				B32E45992899B94100C2E2D0 /* PVEmulatorCore+Microphone.swift in Sources */,
 				B3B4F4B728A3BC9A0099D35F /* PVLogEntry.swift in Sources */,
 				B32E459D2899B9A200C2E2D0 /* PVEmulatorCore+Location.swift in Sources */,
@@ -4147,7 +4137,6 @@
 				B33FB2EC279BE0CC0013AAD8 /* CoreOptions+Serialization.swift in Sources */,
 				B3B4F4B628A3BC990099D35F /* PVLogEntry.swift in Sources */,
 				B3CDEEC021D4C41D000C55F7 /* DiscSwappable.swift in Sources */,
-				B3BD067828A897590043D8CE /* PVEmulatorCore.m in Sources */,
 				B3F0846D2188CA7A00FF39EE /* CocoaLumberExtensions.swift in Sources */,
 				B37EC398289C5C0E0062FD31 /* PVEmulatorCore+OSD.swift in Sources */,
 				B3D0EE21277FE85F002DC0A5 /* HapticsManager.swift in Sources */,
@@ -4203,7 +4192,6 @@
 				B3B4F4B128A3B6940099D35F /* NSObject+PVAbstractAdditions.swift in Sources */,
 				CF87D333258AB6B300838AF8 /* GameWithCheat.swift in Sources */,
 				B3CDEEC521D4C490000C55F7 /* CoreActions.swift in Sources */,
-				B3BD067728A897590043D8CE /* PVEmulatorCore.m in Sources */,
 				B3CEC5BC2794E9FD004A7CC1 /* PVGameControllerUtilities.swift in Sources */,
 				B33FB2EB279BE0CC0013AAD8 /* CoreOptions+Serialization.swift in Sources */,
 				B3B4F4B528A3BC990099D35F /* PVLogEntry.swift in Sources */,
