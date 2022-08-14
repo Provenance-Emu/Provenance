@@ -17,11 +17,8 @@
 		B3014FA627B487FD006AC79B /* Differentiator in Frameworks */ = {isa = PBXBuildFile; productRef = B3014FA527B487FD006AC79B /* Differentiator */; };
 		B305EF9F276B50E2003AE510 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF9E276B50DF003AE510 /* SwiftUI.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B305EFA1276B5112003AE510 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305EFA0276B5112003AE510 /* SwiftUI.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		B305EFAD276B512D003AE510 /* NSData+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D362106B4D700DDEBD6 /* NSData+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B305EFAE276B512D003AE510 /* UIImage+Scaling.h in Headers */ = {isa = PBXBuildFile; fileRef = B3274E672106BAF500857F52 /* UIImage+Scaling.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B305EFAF276B512D003AE510 /* PVLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D122106B11D00DDEBD6 /* PVLibrary.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B305EFB0276B512D003AE510 /* NSFileManager+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = B3274E7D2106BD7500857F52 /* NSFileManager+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B305EFB1276B512D003AE510 /* NSString+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = B3274E632106BAA200857F52 /* NSString+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B305EFB2276B512D003AE510 /* LzmaSDKObjCMutableItem.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474121071CA6002211EE /* LzmaSDKObjCMutableItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B305EFB3276B512D003AE510 /* LzmaSDKObjCTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474421071CA6002211EE /* LzmaSDKObjCTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B305EFB4276B512D003AE510 /* LzmaSDKObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF475221071CA6002211EE /* LzmaSDKObjC.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -50,7 +47,6 @@
 		B305EFCC276B512D003AE510 /* DirectoryWatcher2.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D332106B4D700DDEBD6 /* DirectoryWatcher2.swift */; };
 		B305EFCD276B512D003AE510 /* LibrarySerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CE219A8EAF0041F971 /* LibrarySerializer.swift */; };
 		B305EFCE276B512D003AE510 /* Lzma2Register.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF465E21071CA5002211EE /* Lzma2Register.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305EFCF276B512D003AE510 /* NSData+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B3579D372106B4D700DDEBD6 /* NSData+Hashing.m */; };
 		B305EFD0276B512D003AE510 /* CopyCoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466021071CA5002211EE /* CopyCoder.cpp */; };
 		B305EFD1276B512D003AE510 /* RandGen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF464A21071CA5002211EE /* RandGen.cpp */; };
 		B305EFD2276B512D003AE510 /* Bcj2Coder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466A21071CA6002211EE /* Bcj2Coder.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
@@ -85,10 +81,8 @@
 		B305EFEF276B512D003AE510 /* StringConvert.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF463921071CA5002211EE /* StringConvert.cpp */; };
 		B305EFF0276B512D003AE510 /* BcjRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF465B21071CA5002211EE /* BcjRegister.cpp */; };
 		B305EFF1276B512D003AE510 /* LockedStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46BB21071CA6002211EE /* LockedStream.cpp */; };
-		B305EFF2276B512D003AE510 /* NSString+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B3274E622106BAA200857F52 /* NSString+Hashing.m */; };
 		B305EFF3276B512D003AE510 /* StreamObjects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46CC21071CA6002211EE /* StreamObjects.cpp */; };
 		B305EFF4276B512D003AE510 /* BraIA64.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF470F21071CA6002211EE /* BraIA64.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305EFF5276B512D003AE510 /* NSFileManager+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B3274E7C2106BD7500857F52 /* NSFileManager+Hashing.m */; };
 		B305EFF6276B512D003AE510 /* 7zDecode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46A221071CA6002211EE /* 7zDecode.cpp */; };
 		B305EFF7276B512D003AE510 /* XzIn.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46FA21071CA6002211EE /* XzIn.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
 		B305EFF8276B512D003AE510 /* 7zUpdate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF469C21071CA6002211EE /* 7zUpdate.cpp */; };
@@ -226,8 +220,6 @@
 		B3067F4B2106B5A30091437F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3067F4A2106B5A20091437F /* Foundation.framework */; };
 		B3067F5D2106B8590091437F /* OESQLiteDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D1E2106B4D600DDEBD6 /* OESQLiteDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3067F5E2106B8590091437F /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = B3579D202106B4D600DDEBD6 /* OESQLiteDatabase.m */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3067F632106B8650091437F /* NSData+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D362106B4D700DDEBD6 /* NSData+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3067F642106B8650091437F /* NSData+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B3579D372106B4D700DDEBD6 /* NSData+Hashing.m */; };
 		B3067F652106B8690091437F /* Time Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D242106B4D600DDEBD6 /* Time Utilities.swift */; };
 		B3067F662106B8690091437F /* UTI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D252106B4D600DDEBD6 /* UTI.swift */; };
 		B3067F742106B9130091437F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3067F732106B9130091437F /* CoreGraphics.framework */; };
@@ -241,8 +233,6 @@
 		B324C2ED219192FF009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C2EC219192FF009F4EDC /* PVSupport.framework */; };
 		B3274E602106BA1300857F52 /* PVAppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E5E2106BA1200857F52 /* PVAppConstants.swift */; };
 		B3274E612106BA5B00857F52 /* PVMediaCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D222106B4D600DDEBD6 /* PVMediaCache.swift */; };
-		B3274E642106BAA200857F52 /* NSString+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B3274E622106BAA200857F52 /* NSString+Hashing.m */; };
-		B3274E652106BAA200857F52 /* NSString+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = B3274E632106BAA200857F52 /* NSString+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3274E682106BAF600857F52 /* UIImage+Scaling.m in Sources */ = {isa = PBXBuildFile; fileRef = B3274E662106BAF500857F52 /* UIImage+Scaling.m */; };
 		B3274E692106BAF600857F52 /* UIImage+Scaling.h in Headers */ = {isa = PBXBuildFile; fileRef = B3274E672106BAF500857F52 /* UIImage+Scaling.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3274E6C2106BC1D00857F52 /* PVBIOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D272106B4D700DDEBD6 /* PVBIOS.swift */; };
@@ -258,8 +248,6 @@
 		B3274E792106BC8800857F52 /* PVObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E782106BC8800857F52 /* PVObject.swift */; };
 		B3274E7A2106BCA700857F52 /* RomDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D1F2106B4D600DDEBD6 /* RomDatabase.swift */; };
 		B3274E7B2106BCEE00857F52 /* PVEmulatorConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E5D2106BA1200857F52 /* PVEmulatorConfiguration.swift */; };
-		B3274E7E2106BD7600857F52 /* NSFileManager+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B3274E7C2106BD7500857F52 /* NSFileManager+Hashing.m */; };
-		B3274E7F2106BD7600857F52 /* NSFileManager+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = B3274E7D2106BD7500857F52 /* NSFileManager+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3274E802106BDD300857F52 /* GameImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D342106B4D700DDEBD6 /* GameImporter.swift */; };
 		B3274E842106BF2F00857F52 /* PVImageFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E832106BF2F00857F52 /* PVImageFile.swift */; };
 		B3274E862106BFD000857F52 /* ImportCandidateFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E852106BFD000857F52 /* ImportCandidateFile.swift */; };
@@ -455,11 +443,8 @@
 		B3AF6FBD219160BF000FA7F9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FBC219160BF000FA7F9 /* CoreGraphics.framework */; };
 		B3AF6FBF219160C4000FA7F9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FBE219160C4000FA7F9 /* Foundation.framework */; };
 		B3AF701621916CF3000FA7F9 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701521916CF3000FA7F9 /* PVSupport.framework */; };
-		B3C04A8D21077B3100E7AF79 /* NSData+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D362106B4D700DDEBD6 /* NSData+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C04A8E21077B3100E7AF79 /* UIImage+Scaling.h in Headers */ = {isa = PBXBuildFile; fileRef = B3274E672106BAF500857F52 /* UIImage+Scaling.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C04A8F21077B3100E7AF79 /* PVLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D122106B11D00DDEBD6 /* PVLibrary.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C04A9021077B3100E7AF79 /* NSFileManager+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = B3274E7D2106BD7500857F52 /* NSFileManager+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C04A9121077B3100E7AF79 /* NSString+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = B3274E632106BAA200857F52 /* NSString+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C04A9221077B3100E7AF79 /* LzmaSDKObjCMutableItem.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474121071CA6002211EE /* LzmaSDKObjCMutableItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C04A9321077B3100E7AF79 /* LzmaSDKObjCTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474421071CA6002211EE /* LzmaSDKObjCTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C04A9421077B3100E7AF79 /* LzmaSDKObjCWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF473221071CA6002211EE /* LzmaSDKObjCWriter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -483,7 +468,6 @@
 		B3C04AA921077B3100E7AF79 /* LzmaSDKObjCFileDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF474021071CA6002211EE /* LzmaSDKObjCFileDecoder.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
 		B3C04AAA21077B3100E7AF79 /* DirectoryWatcher2.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D332106B4D700DDEBD6 /* DirectoryWatcher2.swift */; };
 		B3C04AAB21077B3100E7AF79 /* Lzma2Register.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF465E21071CA5002211EE /* Lzma2Register.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04AAC21077B3100E7AF79 /* NSData+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B3579D372106B4D700DDEBD6 /* NSData+Hashing.m */; };
 		B3C04AAD21077B3100E7AF79 /* CopyCoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466021071CA5002211EE /* CopyCoder.cpp */; };
 		B3C04AAE21077B3100E7AF79 /* RandGen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF464A21071CA5002211EE /* RandGen.cpp */; };
 		B3C04AAF21077B3100E7AF79 /* Bcj2Coder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466A21071CA6002211EE /* Bcj2Coder.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
@@ -512,10 +496,8 @@
 		B3C04AC621077B3100E7AF79 /* StringConvert.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF463921071CA5002211EE /* StringConvert.cpp */; };
 		B3C04AC721077B3100E7AF79 /* BcjRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF465B21071CA5002211EE /* BcjRegister.cpp */; };
 		B3C04AC821077B3100E7AF79 /* LockedStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46BB21071CA6002211EE /* LockedStream.cpp */; };
-		B3C04AC921077B3100E7AF79 /* NSString+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B3274E622106BAA200857F52 /* NSString+Hashing.m */; };
 		B3C04ACA21077B3100E7AF79 /* StreamObjects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46CC21071CA6002211EE /* StreamObjects.cpp */; };
 		B3C04ACC21077B3100E7AF79 /* BraIA64.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF470F21071CA6002211EE /* BraIA64.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04ACD21077B3100E7AF79 /* NSFileManager+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B3274E7C2106BD7500857F52 /* NSFileManager+Hashing.m */; };
 		B3C04ACE21077B3100E7AF79 /* 7zDecode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46A221071CA6002211EE /* 7zDecode.cpp */; };
 		B3C04ACF21077B3100E7AF79 /* XzIn.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46FA21071CA6002211EE /* XzIn.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
 		B3C04AD021077B3100E7AF79 /* 7zUpdate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF469C21071CA6002211EE /* 7zUpdate.cpp */; };
@@ -734,13 +716,9 @@
 		B324C2EC219192FF009F4EDC /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3274E5D2106BA1200857F52 /* PVEmulatorConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVEmulatorConfiguration.swift; sourceTree = "<group>"; };
 		B3274E5E2106BA1200857F52 /* PVAppConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVAppConstants.swift; sourceTree = "<group>"; };
-		B3274E622106BAA200857F52 /* NSString+Hashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Hashing.m"; sourceTree = "<group>"; };
-		B3274E632106BAA200857F52 /* NSString+Hashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Hashing.h"; sourceTree = "<group>"; };
 		B3274E662106BAF500857F52 /* UIImage+Scaling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Scaling.m"; sourceTree = "<group>"; };
 		B3274E672106BAF500857F52 /* UIImage+Scaling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Scaling.h"; sourceTree = "<group>"; };
 		B3274E782106BC8800857F52 /* PVObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVObject.swift; sourceTree = "<group>"; };
-		B3274E7C2106BD7500857F52 /* NSFileManager+Hashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+Hashing.m"; sourceTree = "<group>"; };
-		B3274E7D2106BD7500857F52 /* NSFileManager+Hashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+Hashing.h"; sourceTree = "<group>"; };
 		B3274E832106BF2F00857F52 /* PVImageFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVImageFile.swift; sourceTree = "<group>"; };
 		B3274E852106BFD000857F52 /* ImportCandidateFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportCandidateFile.swift; sourceTree = "<group>"; };
 		B343717F276B1E5E0014F87C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/iOSSupport/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -786,8 +764,6 @@
 		B3579D312106B4D700DDEBD6 /* PVCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVCore.swift; sourceTree = "<group>"; };
 		B3579D332106B4D700DDEBD6 /* DirectoryWatcher2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryWatcher2.swift; sourceTree = "<group>"; };
 		B3579D342106B4D700DDEBD6 /* GameImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameImporter.swift; sourceTree = "<group>"; };
-		B3579D362106B4D700DDEBD6 /* NSData+Hashing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSData+Hashing.h"; sourceTree = "<group>"; };
-		B3579D372106B4D700DDEBD6 /* NSData+Hashing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSData+Hashing.m"; sourceTree = "<group>"; };
 		B364D4BE2870E80100B93A4B /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B364D4C22870E81200B93A4B /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B378226D21D409F20077E86F /* Extractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extractor.swift; sourceTree = "<group>"; };
@@ -1129,6 +1105,7 @@
 		B3CDEEB221D497CD000C55F7 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		B3CDEECA21D4CF61000C55F7 /* DirectoryWatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DirectoryWatcher.swift; sourceTree = "<group>"; };
 		B3F9378728A891FF00F393BD /* Data+Hashing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Hashing.swift"; sourceTree = "<group>"; };
+		B3F9E58228A906C800767A44 /* PVSupport */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = PVSupport; path = ../PVSupport; sourceTree = "<group>"; };
 		CF17109C2585F97000258602 /* PVCheats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVCheats.swift; sourceTree = "<group>"; };
 		CF1710A02585FA3F00258602 /* Cheats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cheats.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1420,6 +1397,7 @@
 		B3579D052106B11D00DDEBD6 = {
 			isa = PBXGroup;
 			children = (
+				B3F9E58128A906C800767A44 /* Packages */,
 				B317380127841959002D3ACD /* Build.xcconfig */,
 				B3579D112106B11D00DDEBD6 /* PVLibrary */,
 				B3C04B622107867200E7AF79 /* Tests */,
@@ -2037,18 +2015,20 @@
 			isa = PBXGroup;
 			children = (
 				B3AF460A21071CA5002211EE /* LzmaSDKObjC */,
-				B3579D362106B4D700DDEBD6 /* NSData+Hashing.h */,
-				B3579D372106B4D700DDEBD6 /* NSData+Hashing.m */,
-				B3274E7D2106BD7500857F52 /* NSFileManager+Hashing.h */,
-				B3274E7C2106BD7500857F52 /* NSFileManager+Hashing.m */,
-				B3274E632106BAA200857F52 /* NSString+Hashing.h */,
-				B3274E622106BAA200857F52 /* NSString+Hashing.m */,
 				B3579D1E2106B4D600DDEBD6 /* OESQLiteDatabase.h */,
 				B3579D202106B4D600DDEBD6 /* OESQLiteDatabase.m */,
 				B3274E672106BAF500857F52 /* UIImage+Scaling.h */,
 				B3274E662106BAF500857F52 /* UIImage+Scaling.m */,
 			);
 			path = ObjC;
+			sourceTree = "<group>";
+		};
+		B3F9E58128A906C800767A44 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				B3F9E58228A906C800767A44 /* PVSupport */,
+			);
+			name = Packages;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2058,11 +2038,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B305EFAD276B512D003AE510 /* NSData+Hashing.h in Headers */,
 				B305EFAE276B512D003AE510 /* UIImage+Scaling.h in Headers */,
 				B305EFAF276B512D003AE510 /* PVLibrary.h in Headers */,
-				B305EFB0276B512D003AE510 /* NSFileManager+Hashing.h in Headers */,
-				B305EFB1276B512D003AE510 /* NSString+Hashing.h in Headers */,
 				B305EFB2276B512D003AE510 /* LzmaSDKObjCMutableItem.h in Headers */,
 				B305EFB3276B512D003AE510 /* LzmaSDKObjCTypes.h in Headers */,
 				B305EFB4276B512D003AE510 /* LzmaSDKObjC.h in Headers */,
@@ -2079,11 +2056,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3067F632106B8650091437F /* NSData+Hashing.h in Headers */,
 				B3274E692106BAF600857F52 /* UIImage+Scaling.h in Headers */,
 				B34AB8632106F2E900C45F09 /* PVLibrary.h in Headers */,
-				B3274E7F2106BD7600857F52 /* NSFileManager+Hashing.h in Headers */,
-				B3274E652106BAA200857F52 /* NSString+Hashing.h in Headers */,
 				B3AF475A21071CDB002211EE /* LzmaSDKObjCMutableItem.h in Headers */,
 				B3AF475D21071CFB002211EE /* LzmaSDKObjCTypes.h in Headers */,
 				B31117AE218EB25F00C495A2 /* LzmaSDKObjC.h in Headers */,
@@ -2100,11 +2074,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3C04A8D21077B3100E7AF79 /* NSData+Hashing.h in Headers */,
 				B3C04A8E21077B3100E7AF79 /* UIImage+Scaling.h in Headers */,
 				B3C04A8F21077B3100E7AF79 /* PVLibrary.h in Headers */,
-				B3C04A9021077B3100E7AF79 /* NSFileManager+Hashing.h in Headers */,
-				B3C04A9121077B3100E7AF79 /* NSString+Hashing.h in Headers */,
 				B3C04A9221077B3100E7AF79 /* LzmaSDKObjCMutableItem.h in Headers */,
 				B3C04A9321077B3100E7AF79 /* LzmaSDKObjCTypes.h in Headers */,
 				B31117AF218EB26000C495A2 /* LzmaSDKObjC.h in Headers */,
@@ -2330,7 +2301,6 @@
 				B305EFCC276B512D003AE510 /* DirectoryWatcher2.swift in Sources */,
 				B305EFCD276B512D003AE510 /* LibrarySerializer.swift in Sources */,
 				B305EFCE276B512D003AE510 /* Lzma2Register.cpp in Sources */,
-				B305EFCF276B512D003AE510 /* NSData+Hashing.m in Sources */,
 				B305EFD0276B512D003AE510 /* CopyCoder.cpp in Sources */,
 				B305EFD1276B512D003AE510 /* RandGen.cpp in Sources */,
 				B305EFD2276B512D003AE510 /* Bcj2Coder.cpp in Sources */,
@@ -2365,10 +2335,8 @@
 				B305EFEF276B512D003AE510 /* StringConvert.cpp in Sources */,
 				B305EFF0276B512D003AE510 /* BcjRegister.cpp in Sources */,
 				B305EFF1276B512D003AE510 /* LockedStream.cpp in Sources */,
-				B305EFF2276B512D003AE510 /* NSString+Hashing.m in Sources */,
 				B305EFF3276B512D003AE510 /* StreamObjects.cpp in Sources */,
 				B305EFF4276B512D003AE510 /* BraIA64.c in Sources */,
-				B305EFF5276B512D003AE510 /* NSFileManager+Hashing.m in Sources */,
 				B305EFF6276B512D003AE510 /* 7zDecode.cpp in Sources */,
 				B305EFF7276B512D003AE510 /* XzIn.c in Sources */,
 				B305EFF8276B512D003AE510 /* 7zUpdate.cpp in Sources */,
@@ -2517,7 +2485,6 @@
 				B3AF42F42107145C002211EE /* DirectoryWatcher2.swift in Sources */,
 				B354E7CF219A8EAF0041F971 /* LibrarySerializer.swift in Sources */,
 				B3AF47C021071F76002211EE /* Lzma2Register.cpp in Sources */,
-				B3067F642106B8650091437F /* NSData+Hashing.m in Sources */,
 				B3AF47BC21071F76002211EE /* CopyCoder.cpp in Sources */,
 				B3AF47CB21071F92002211EE /* RandGen.cpp in Sources */,
 				B3AF47B421071F76002211EE /* Bcj2Coder.cpp in Sources */,
@@ -2552,10 +2519,8 @@
 				B3AF47D221071FC0002211EE /* StringConvert.cpp in Sources */,
 				B3AF47B721071F76002211EE /* BcjRegister.cpp in Sources */,
 				B3AF47AC21071F43002211EE /* LockedStream.cpp in Sources */,
-				B3274E642106BAA200857F52 /* NSString+Hashing.m in Sources */,
 				B3AF47B121071F43002211EE /* StreamObjects.cpp in Sources */,
 				B3AF477B21071E85002211EE /* BraIA64.c in Sources */,
-				B3274E7E2106BD7600857F52 /* NSFileManager+Hashing.m in Sources */,
 				B3AF479121071EC1002211EE /* 7zDecode.cpp in Sources */,
 				B3AF479021071E85002211EE /* XzIn.c in Sources */,
 				B3AF479D21071EC1002211EE /* 7zUpdate.cpp in Sources */,
@@ -2704,7 +2669,6 @@
 				B3C04AAA21077B3100E7AF79 /* DirectoryWatcher2.swift in Sources */,
 				B354E7D0219A8EAF0041F971 /* LibrarySerializer.swift in Sources */,
 				B3C04AAB21077B3100E7AF79 /* Lzma2Register.cpp in Sources */,
-				B3C04AAC21077B3100E7AF79 /* NSData+Hashing.m in Sources */,
 				B3C04AAD21077B3100E7AF79 /* CopyCoder.cpp in Sources */,
 				B3C04AAE21077B3100E7AF79 /* RandGen.cpp in Sources */,
 				B3C04AAF21077B3100E7AF79 /* Bcj2Coder.cpp in Sources */,
@@ -2739,10 +2703,8 @@
 				B3C04AC621077B3100E7AF79 /* StringConvert.cpp in Sources */,
 				B3C04AC721077B3100E7AF79 /* BcjRegister.cpp in Sources */,
 				B3C04AC821077B3100E7AF79 /* LockedStream.cpp in Sources */,
-				B3C04AC921077B3100E7AF79 /* NSString+Hashing.m in Sources */,
 				B3C04ACA21077B3100E7AF79 /* StreamObjects.cpp in Sources */,
 				B3C04ACC21077B3100E7AF79 /* BraIA64.c in Sources */,
-				B3C04ACD21077B3100E7AF79 /* NSFileManager+Hashing.m in Sources */,
 				B3C04ACE21077B3100E7AF79 /* 7zDecode.cpp in Sources */,
 				B3C04ACF21077B3100E7AF79 /* XzIn.c in Sources */,
 				B3C04AD021077B3100E7AF79 /* 7zUpdate.cpp in Sources */,
