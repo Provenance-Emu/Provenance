@@ -277,8 +277,9 @@ extension MirroredSettings {
     public dynamic var gameLibraryScale = 1.0
 
     public dynamic var webDavAlwaysOn = false
+	#if !os(macOS)
     public dynamic var myiCadeControllerSetting = iCadeControllerSetting.disabled
-
+	#endif
     public dynamic var controllerOpacity: Double = 0.8
     public dynamic var buttonTints = true
     public dynamic var use8BitdoM30 = false

@@ -5,7 +5,7 @@
 //  Created by Joseph Mattiello on 10/29/18.
 //  Copyright (c) 2018 Joseph Mattiello. All rights reserved.
 //
-
+#if !os(macOS)
 public struct iCadeControllerState: OptionSet, Hashable, CustomStringConvertible {
     public let rawValue: Int
 
@@ -97,3 +97,4 @@ public protocol iCadeEventDelegate: AnyObject {
     func buttonDown(button: iCadeControllerState)
     func buttonUp(button: iCadeControllerState)
 }
+#endif

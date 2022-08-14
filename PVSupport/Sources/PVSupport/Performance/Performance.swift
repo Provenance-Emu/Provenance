@@ -22,7 +22,9 @@
 
 import QuartzCore
 
+#if canImport(UIKit)
 import UIKit
+#endif
 
 /// Memory usage tuple. Contains used and total memory in bytes.
 public typealias MemoryUsage = (used: UInt64, total: UInt64)

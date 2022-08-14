@@ -5,6 +5,7 @@
 //  Created by Joseph Mattiello on 10/29/18.
 //  Copyright (c) 2018 Joseph Mattiello. All rights reserved.
 //
+#if !os(macOS)
 
 import GameController
 
@@ -21,3 +22,4 @@ public final class PViCadeAxisInput: GCControllerAxisInput {
         }
     }
 }
+#endif

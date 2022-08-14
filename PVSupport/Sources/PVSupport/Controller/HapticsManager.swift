@@ -10,13 +10,13 @@ import Foundation
 import GameController
 import CoreHaptics
 
-@available(iOS 14.0, tvOS 14.0, *)
+@available(iOS 14.0, tvOS 14.0, macOS 11.0, *)
 public protocol HapticsManagerDelegate: AnyObject {
     func didConnect(controller: GCController)
     func didDisconnectController()
 }
 
-@available(iOS 14.0, tvOS 14.0, *)
+@available(iOS 14.0, tvOS 14.0, macOS 11.0, *)
 public final class HapticsManager {
 
     private var isSetup = false
@@ -82,20 +82,19 @@ public final class HapticsManager {
             fatalError("Invalid notification object.")
         }
 
-        ILOG("Connected \(controller.productCategory) game controller.")
+		ILOG("Connected \(controller.productCategory) game controller.")
 
         // Create a haptics engine for the controller.
-        guard let engine = createEngine(for: controller, locality: .default) else { return }
-
+		guard let engine = createEngine(for: controller, locality: .default) else { return }
         // Configure the event handlers for the controller buttons.
         delegate?.didConnect(controller: controller)
-
-        self.engineMap[GCHapticsLocality.default] = engine
+		self.engineMap[GCHapticsLocality.default] = engine
         self.controller = controller
     }
 
     /// - Tag: CreateEngine
-    private func createEngine(for controller: GCController, locality: GCHapticsLocality) -> CHHapticEngine? {
+	@available(macOS 11.0, *)
+	private func createEngine(for controller: GCController, locality: GCHapticsLocality) -> CHHapticEngine? {
         // Get the controller's haptics (if one exists), and create a
         // new CGHapticEngine for it, using the default locality.
         guard let engine = controller.haptics?.createEngine(withLocality: locality) else {
@@ -131,7 +130,8 @@ public final class HapticsManager {
     }
 
     /// - Tag: PlayHapticsFile
-    func playHapticsFile(named filename: String, locality: GCHapticsLocality = .default) {
+	@available(macOS 11.0, *)
+	func playHapticsFile(named filename: String, locality: GCHapticsLocality = .default) {
         // Update the engine based on locality.
         guard let controller = controller else {
 			ELOG("Unable to play haptics: no game controller connected")
@@ -170,7 +170,7 @@ public final class HapticsManager {
     }
 }
 
-@available(iOS 14.0, tvOS 14.0, *)
+@available(iOS 14.0, tvOS 14.0, macOS 11.0, *)
 public extension HapticsManager {
 	enum HapticFiles: String {
 		case boing
@@ -203,7 +203,7 @@ public extension HapticsManager {
 	func triple() { play(.triple) }
 }
 
-@available(iOS 13.0, tvOS 14.0, *)
+@available(iOS 13.0, tvOS 14.0, macOS 11.0, *)
 extension CHHapticEngine.StoppedReason {
     var message: String {
         switch self {

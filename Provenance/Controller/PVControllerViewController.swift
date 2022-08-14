@@ -208,7 +208,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 	}
 
 	deinit {
-		NotificationCenter.default.removeObserver(self)
+		NotificationCenter.default.removeObserver(self)k
 		GCController.controllers().forEach {
 			$0.controllerPausedHandler = nil
 		}

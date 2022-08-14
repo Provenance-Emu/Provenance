@@ -7,6 +7,7 @@
 //
 
 import Foundation
+#if canImport(UIKit)
 import UIKit
 
 #if canImport(CoreMotion)
@@ -17,7 +18,6 @@ private var g_acceleration: CMAcceleration = .init(x: 0, y: 0, z: 0)
 private var g_magnetometerData: CMMagnetometerData?
 private var g_gyroData: CMGyroData?
 private var g_deviceMotion: CMDeviceMotion?
-#endif
 
 private var g_timer: Timer?
 private var sensorsEnabled: SensorsEnabled = .init(rawValue: 0) {
@@ -65,7 +65,6 @@ struct SensorsEnabled: OptionSet {
     }
 
     func handleTimer() {
-        #if !os(tvOS)
         if sensorsEnabled.contains(.accelerometer) {
             if let data = self.motion.accelerometerData {
                 g_acceleration = data.acceleration
@@ -86,7 +85,6 @@ struct SensorsEnabled: OptionSet {
                 g_deviceMotion = data
             }
         }
-        #endif
     }
 
     var accelerometerStateX: Float { Float(g_acceleration.x) }
@@ -123,6 +121,7 @@ struct SensorsEnabled: OptionSet {
     }
 }
 
+@available(iOS 13.0, *)
 @objc public extension PVEmulatorCore {
     func startGyro() -> Bool {
         // Make sure the accelerometer hardware is available.
@@ -156,6 +155,7 @@ struct SensorsEnabled: OptionSet {
     }
 }
 
+@available(iOS 13.0, *)
 @objc public extension PVEmulatorCore {
     func startMagnetometer() -> Bool {
         // Make sure the accelerometer hardware is available.
@@ -222,12 +222,13 @@ struct SensorsEnabled: OptionSet {
         }
     }
 }
+#endif
+#endif
 
 // MARK: - Illuminance
 
 #if canImport(SensorKit)
 import SensorKit
-#endif
 
 private var g_illuminance: Float = 0
 
@@ -242,3 +243,4 @@ private var g_illuminance: Float = 0
     func stopIlluminance() {
     }
 }
+#endif

@@ -1,5 +1,6 @@
+#if !os(macOS)
+#if canImport(UIKit)
 import UIKit
-
 /*
  EN      FR      DE
  UP ON,OFF  =   w,e     z,e     w,e
@@ -252,3 +253,5 @@ extension iCadeReaderView: UIKeyInput {
         VLOG("iCade backspace!")
     }
 }
+#endif // UIKit
+#endif // macOS

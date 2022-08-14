@@ -8,7 +8,9 @@ let package = Package(
         .iOS(.v13),
         .tvOS(.v13),
         .watchOS(.v8),
-        // .macOS(.v11)
+		.macCatalyst(.v14),
+		.macOS(.v11),
+//		.driverKit(.v21)
     ],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
@@ -50,7 +52,8 @@ let package = Package(
             // ],
             resources: [
                 .process("Controller/AHAP/")
-            ]),
+            ],
+			swiftSettings: [.define("GLES_SILENCE_DEPRECATION")]),
             // publicHeadersPath: "include"),
 
         // MARK: SwiftPM tests

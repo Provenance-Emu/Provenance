@@ -7,6 +7,8 @@
 //
 
 import Foundation
+#if canImport(UIKit)
+import UIKit
 
 private let kSetLEDFadeID: UInt32 = 3 // setLEDFade(int, int, int, int *)
 
@@ -50,3 +52,4 @@ private let kSetLEDFadeID: UInt32 = 3 // setLEDFade(int, int, int, int *)
         }
     }
 }
+#endif

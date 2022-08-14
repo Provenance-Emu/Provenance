@@ -6,7 +6,7 @@
 //  Created by Josejulio Martínez on 19/06/15.
 //  Copyright (c) 2015 Josejulio Martínez. All rights reserved.
 //
-
+#if !os(macOS)
 import GameController
 
 // TODO: Make a class for gamepad and another for joystick to support dpad and joystick as seperate inputs
@@ -70,3 +70,4 @@ public final class PViCadeGamepadDirectionPad: GCControllerDirectionPad {
         }
     }
 }
+#endif

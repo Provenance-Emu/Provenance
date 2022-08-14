@@ -31,8 +31,11 @@ private var g_session: AVCaptureDevice.DiscoverySession?
 
 @objc
 public extension PVEmulatorCore {
+	#if os(macOS)
+	var cameraIsAvailable: Bool { g_authorized }
+	#else
     var cameraIsAvailable: Bool { UIImagePickerController.isSourceTypeAvailable(.camera) && g_authorized }
-
+	#endif
     func requestCameraAccess() {
         let authStatus = AVCaptureDevice.authorizationStatus(for: .video)
         switch authStatus {

@@ -14,7 +14,7 @@
 //  Created by Josejulio Martínez on 19/06/15.
 //  Copyright (c) 2015 Josejulio Martínez. All rights reserved.
 //
-
+#if !os(macOS)
 import GameController
 
 public final class PViCadeGamepadButtonInput: GCControllerButtonInput {
@@ -61,3 +61,4 @@ public final class PViCadeGamepadButtonInput: GCControllerButtonInput {
         }
     }
 }
+#endif

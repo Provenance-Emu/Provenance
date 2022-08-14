@@ -135,9 +135,9 @@ public enum FileHashError: Error {
     case fileReadError
     case hashError
 }
-public extension FileManager {
 
-    public typealias FileHashes = (md5: String, crc: String)
+public extension FileManager {
+	typealias FileHashes = (md5: String, crc: String)
     func md5File(url: URL, headerSize: Int64 = 0) throws -> FileHashes {
 
         let bufferSize = 1024 * 1024
@@ -192,5 +192,4 @@ public extension FileManager {
             throw error
         }
     }
-
 }

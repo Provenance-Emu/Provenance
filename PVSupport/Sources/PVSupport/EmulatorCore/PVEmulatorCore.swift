@@ -14,7 +14,16 @@ import MachO
 import Metal
 import MetalKit
 import QuartzCore
+#if canImport(OpenGLES)
+import OpenGLES
+#endif
+#if canImport(OpenGL)
+import OpenGL
+import GLUT
+#endif
+#if canImport(UIKit)
 import UIKit
+#endif
 import simd
 
 public typealias SaveStateCompletion = () throws -> (Bool)
@@ -41,7 +50,8 @@ public enum GLESVersion: Int {
     case gles2
     case gles3
     case gles3_1
-    
+
+	#if canImport(OpenGLES)
     public var eaglRenderingAPI: EAGLRenderingAPI {
         switch self {
         case .gles1: return .openGLES1
@@ -49,6 +59,7 @@ public enum GLESVersion: Int {
         case .gles3, .gles3_1: return .openGLES3
         }
     }
+	#endif
 }
 
 @objc
@@ -130,7 +141,9 @@ public protocol CoreInterface: NSObjectProtocol {
     var frontBufferLock: NSLock { get }
     var isFrontBufferReady: Bool { get }
     var glesVersion: GLESVersion { get }
+	#if canImport(OpenGLES)
     var glesShareGroup: EAGLSharegroup? { get set }
+	#endif
     var depthFormat: GLenum { get }
     
     var screenRect: CGRect { get }
@@ -171,7 +184,7 @@ public protocol CoreInterface: NSObjectProtocol {
     ////    @nonobjc func loadStateToFile(atPath path: String, completionHandler block: SaveStateCompletion)
     //
     // MARK: - Audio
-#if !os(tvOS)
+#if !os(tvOS) && !os(macOS)
     func setPreferredSampleRate(_: Double) throws
 #endif
     
@@ -381,7 +394,7 @@ extension CoreInterface {
 
 let AUDIO_SAMPLERATE_DEFAULT: Double = 44100.0
 
-#if !os(tvOS)
+#if !os(tvOS) && !os(macOS)
 public
 extension CoreInterface {
     func setPreferredSampleRate(_ sampleRate: Double) throws {
@@ -439,7 +452,13 @@ public extension NSErrorDomain {
 
 @objcMembers
 @objc public class PVEmulatorCore: NSObject, CoreInterface {
-    public var glesShareGroup: EAGLSharegroup?
+#if canImport(OpenGLES)
+	public var glesShareGroup: EAGLSharegroup! = {
+		let sg = EAGLSharegroup.init()
+		sg.debugLabel = "EMU-Core Group"
+		return sg
+	}()
+#endif
     
     static private let initialized: Bool = {
         if timebase_ratio == 0 {
@@ -465,7 +484,7 @@ public extension NSErrorDomain {
         return a
     }()
     
-    #if !os(tvOS)
+    #if os(iOS)
     public fileprivate(set) var rumbleGenerator: UIImpactFeedbackGenerator? // TODO: Don't use UIImpactFeedbackGenerator
     #endif
     // MARK: - Public Properties
@@ -597,7 +616,7 @@ public extension NSErrorDomain {
             startHaptic()
         }
         
-#if !os(tvOS)
+#if !os(tvOS) && !os(macOS)
         do {
             try setPreferredSampleRate(audioSampleRate)
         } catch {
@@ -615,12 +634,14 @@ public extension NSErrorDomain {
         isRunning = true
         shouldStop = false
         gameSpeed = .normal
-        
+
+		#if !os(macOS)
         do {
             try AVAudioSession.sharedInstance().setPreferredOutputNumberOfChannels(Int(channelCount))
         } catch {
             ELOG("Error setting preferred output number of channels: \(error)")
         }
+		#endif
         
         emulationLoopThreadLock.lock()
 //        let threadAttributes = [
@@ -783,7 +804,7 @@ public extension NSErrorDomain {
 
 @objc
 public extension PVEmulatorCore {
-    public var numberOfUsers: UInt {
+	var numberOfUsers: UInt {
         if self.controller4 != nil { return 4 }
         if self.controller3 != nil { return 3 }
         if self.controller2 != nil { return 2 }
@@ -795,12 +816,12 @@ public extension PVEmulatorCore {
 @objc
 public extension PVEmulatorCore {
 
-    public func rumble() {
+	func rumble() {
         rumble(player: 0)
     }
 
     @available(iOS 14.0, tvOS 14.0, *)
-    public func hapticEngine(for player: Int) -> CHHapticEngine? {
+	func hapticEngine(for player: Int) -> CHHapticEngine? {
         if let engine = hapticEngines[player] {
             return engine
         } else if let controller = controller(for: player),
@@ -814,7 +835,7 @@ public extension PVEmulatorCore {
         }
     }
 
-    public func controller(for player: Int) -> GCController? {
+	func controller(for player: Int) -> GCController? {
         var controller: GCController?
         switch player {
         case 0, 1:
@@ -863,7 +884,7 @@ public extension PVEmulatorCore {
     //     }
     // }
 
-#if os(tvOS)
+#if os(tvOS) || os(macOS)
     @discardableResult
     func startHaptic() -> Bool {
         return false
@@ -922,7 +943,7 @@ public extension PVEmulatorCore {
     }
 #endif
     
-    public func rumble(player: Int, sharpness: Float = 0.5, intensity: Float = 1) {
+	func rumble(player: Int, sharpness: Float = 0.5, intensity: Float = 1) {
         guard self.supportsRumble else {
             WLOG("Rumble called on core that doesn't support it")
             return
@@ -951,7 +972,7 @@ public extension PVEmulatorCore {
     }
     
 #if os(iOS) && !targetEnvironment(macCatalyst)
-    public func rumblePhone() {
+	func rumblePhone() {
         DispatchQueue.main.async { [weak self] in
             self?.rumble(player: 1)
         }
@@ -959,6 +980,7 @@ public extension PVEmulatorCore {
 #endif
 }
 
+#if canImport(UIKit)
 public extension UIDevice {
     fileprivate var modelGeneration: String {
         var sysinfo = utsname()
@@ -977,6 +999,7 @@ public extension UIDevice {
         return modelGeneration
     }
 }
+#endif
 
 // MARK: Protocol fullfillments
 // ObjC classes don't inherit swift default implimentations,
@@ -990,14 +1013,14 @@ public extension PVEmulatorCore {
     @objc func channelCount(forBuffer buffer: Int) -> Int {
         return buffer == 0 ? channelCount : 0
     }
-#if !os(tvOS)
+#if !os(tvOS) && !os(macOS)
     @objc(setPreferredSampleRate:error:) func setPreferredSampleRate(_ sampleRate: Double) throws {
         let preferredSampleRate = sampleRate > 0 ? sampleRate : AUDIO_SAMPLERATE_DEFAULT
         if preferredSampleRate != currentAVSessionSampleRate {
             try AVAudioSession.sharedInstance().setPreferredSampleRate(preferredSampleRate)
         }
     }
-    #endif
+#endif
     @objc func resetEmulation() {
         // do nothing
     }

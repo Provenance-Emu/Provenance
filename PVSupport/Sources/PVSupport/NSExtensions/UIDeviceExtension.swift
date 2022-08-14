@@ -6,6 +6,7 @@
 //  Copyright © 2018 Provenance. All rights reserved.
 //
 
+#if !os(macOS)
 import Foundation
 
 public extension UIDevice {
@@ -63,3 +64,4 @@ public extension UIDevice {
         }
     }
 }
+#endif

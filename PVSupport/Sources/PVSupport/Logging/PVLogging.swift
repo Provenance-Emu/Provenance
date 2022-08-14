@@ -9,7 +9,7 @@
 import Foundation
 import CocoaLumberjackSwift
 
-public protocol PVLoggingEventProtocol: NSObjectProtocol, AnyObject {
+public protocol PVLoggingEventProtocol: NSObjectProtocol {
     func updateHistory(_ sender: PVLogging)
 }
 
@@ -117,8 +117,12 @@ class PVLogging: NSObject {
     public var systemVersionAsAnInteger: Int = {
         var index: Float = 0
         var version = 0
-        
+
+		#if os(macOS)
+		let digits = ["1","2","3"]
+		#else
         let digits = UIDevice.current.systemVersion.components(separatedBy: ".")
+		#endif
         digits.enumerated().forEach {
             if $0 > 2 { return }
             let multiplier = Int(powf(100, 2-index).rounded())
