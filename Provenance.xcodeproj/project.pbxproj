@@ -767,6 +767,13 @@
 		B355E509289E289300D23D64 /* DriverKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E508289E289300D23D64 /* DriverKit.framework */; };
 		B355E50C289E289700D23D64 /* USBGamePad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B355E50B289E289700D23D64 /* USBGamePad.cpp */; };
 		B355E50E289E289700D23D64 /* USBGamePad.iig in Sources */ = {isa = PBXBuildFile; fileRef = B355E50D289E289700D23D64 /* USBGamePad.iig */; };
+		B37D701528AA1A4F0006C5AC /* UIImage+Effects.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37D701428AA1A4F0006C5AC /* UIImage+Effects.swift */; };
+		B37D701628AA1A4F0006C5AC /* UIImage+Effects.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37D701428AA1A4F0006C5AC /* UIImage+Effects.swift */; };
+		B37D701728AA1A4F0006C5AC /* UIImage+Effects.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37D701428AA1A4F0006C5AC /* UIImage+Effects.swift */; };
+		B37D701A28AA274F0006C5AC /* PixelateTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37D701928AA274F0006C5AC /* PixelateTransition.swift */; };
+		B37D701B28AA274F0006C5AC /* PixelateTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37D701928AA274F0006C5AC /* PixelateTransition.swift */; };
+		B37D701C28AA274F0006C5AC /* PixelateTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37D701928AA274F0006C5AC /* PixelateTransition.swift */; };
+		B37D702628AA3C160006C5AC /* SwiftUIX in Frameworks */ = {isa = PBXBuildFile; productRef = B37D702528AA3C160006C5AC /* SwiftUIX */; };
 		B380C26D2894EC2F007B76FD /* PVVecX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B380C26C2894EC2F007B76FD /* PVVecX.framework */; };
 		B380C26E2894EC2F007B76FD /* PVVecX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B380C26C2894EC2F007B76FD /* PVVecX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B38E0EE72892853D004720DA /* PVMelonDS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6632877DE280037A946 /* PVMelonDS.framework */; };
@@ -1848,6 +1855,8 @@
 		B37D30B427BCD82B00C01114 /* Moveable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moveable.swift; sourceTree = "<group>"; };
 		B37D31C9274A57F000D635E0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = en; path = Info.plist; sourceTree = "<group>"; };
 		B37D31CC274A57F000D635E0 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "zh-Hans"; path = Info.plist; sourceTree = "<group>"; };
+		B37D701428AA1A4F0006C5AC /* UIImage+Effects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Effects.swift"; sourceTree = "<group>"; };
+		B37D701928AA274F0006C5AC /* PixelateTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelateTransition.swift; sourceTree = "<group>"; };
 		B37F4AF4286E94C60043F1C9 /* PVDesmume2015.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDesmume2015.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B380C26C2894EC2F007B76FD /* PVVecX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVecX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B380EAC12759D689001B8532 /* Build.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Build.xcconfig; sourceTree = "<group>"; };
@@ -2171,6 +2180,7 @@
 				B328F5FF289DDA8500CA4500 /* CoreGraphics.framework in Frameworks */,
 				B328F5E8289DD9FD00CA4500 /* GameController.framework in Frameworks */,
 				B328F5E9289DD9FD00CA4500 /* GameKit.framework in Frameworks */,
+				B37D702628AA3C160006C5AC /* SwiftUIX in Frameworks */,
 				B328F601289DDA9600CA4500 /* PVSupport.framework in Frameworks */,
 				B328F5E5289DD9F600CA4500 /* Photos.framework in Frameworks */,
 				B328F5EF289DDA1800CA4500 /* Security.framework in Frameworks */,
@@ -3187,6 +3197,8 @@
 		B328F42F289DD82C00CA4500 /* PVApp */ = {
 			isa = PBXGroup;
 			children = (
+				B37D701828AA272E0006C5AC /* Transitions */,
+				B37D701328AA1A320006C5AC /* Extensions */,
 				B328F430289DD82C00CA4500 /* PVApp.h */,
 			);
 			path = PVApp;
@@ -3443,6 +3455,22 @@
 				B37D31CB274A57F000D635E0 /* Info.plist */,
 			);
 			path = "zh-Hans.lproj";
+			sourceTree = "<group>";
+		};
+		B37D701328AA1A320006C5AC /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				B37D701428AA1A4F0006C5AC /* UIImage+Effects.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		B37D701828AA272E0006C5AC /* Transitions */ = {
+			isa = PBXGroup;
+			children = (
+				B37D701928AA274F0006C5AC /* PixelateTransition.swift */,
+			);
+			path = Transitions;
 			sourceTree = "<group>";
 		};
 		B382C63B278E5061007E61FE /* PVEmulatorVC */ = {
@@ -3985,6 +4013,7 @@
 				B328F5DC289DD9AD00CA4500 /* AppCenterCrashes */,
 				B328F5DE289DD9AD00CA4500 /* AltKit */,
 				B328F5E0289DD9AD00CA4500 /* Introspect */,
+				B37D702528AA3C160006C5AC /* SwiftUIX */,
 			);
 			productName = PVApp;
 			productReference = B328F42E289DD82A00CA4500 /* PVApp.framework */;
@@ -4384,6 +4413,7 @@
 				B357A43627092253002C7C0F /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */,
 				B390B0E8276B2DB20018E065 /* XCRemoteSwiftPackageReference "AltKit" */,
 				37EEA2A927BC81880070E222 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
+				B37D702428AA3C150006C5AC /* XCRemoteSwiftPackageReference "SwiftUIX" */,
 			);
 			productRefGroup = 1A3D409517B2DCE4004DFFFC /* Products */;
 			projectDirPath = "";
@@ -4945,6 +4975,7 @@
 				B328F475289DD8C400CA4500 /* fullscreen_vs.metal in Sources */,
 				B328F505289DD8C400CA4500 /* PViCadeControllerViewController.swift in Sources */,
 				B328F47F289DD8C400CA4500 /* PVSaveStateHeaderView.swift in Sources */,
+				B37D701A28AA274F0006C5AC /* PixelateTransition.swift in Sources */,
 				B328F4B7289DD8C400CA4500 /* UIImage+ImageEffects.m in Sources */,
 				B328F4B4289DD8C400CA4500 /* PVGameLibrarySectionFooterView.swift in Sources */,
 				B328F491289DD8C400CA4500 /* SettingsRowSwitch.swift in Sources */,
@@ -5051,6 +5082,7 @@
 				B328F4D4289DD8C400CA4500 /* HomeView.swift in Sources */,
 				B328F4B8289DD8C400CA4500 /* OptionRow.swift in Sources */,
 				B328F4D3289DD8C400CA4500 /* UIApplicationExtensions.swift in Sources */,
+				B37D701528AA1A4F0006C5AC /* UIImage+Effects.swift in Sources */,
 				B328F4E3289DD8C400CA4500 /* MameShaders.metal in Sources */,
 				B328F4B2289DD8C400CA4500 /* Sections.swift in Sources */,
 				B328F4DE289DD8C400CA4500 /* UIColor+Hex.swift in Sources */,
@@ -5134,6 +5166,7 @@
 				B328F583289DD8DF00CA4500 /* PVIntellivisionControllerViewController.swift in Sources */,
 				B328F556289DD8DF00CA4500 /* PVAppDelegate+AppCenter.swift in Sources */,
 				B328F53C289DD8DF00CA4500 /* PVPSPControllerViewController.swift in Sources */,
+				B37D701628AA1A4F0006C5AC /* UIImage+Effects.swift in Sources */,
 				B328F544289DD8DF00CA4500 /* fullscreen_vs.metal in Sources */,
 				B328F552289DD8DF00CA4500 /* PVConflictViewController.swift in Sources */,
 				B328F55F289DD8DF00CA4500 /* AppearanceStyleable.swift in Sources */,
@@ -5183,6 +5216,7 @@
 				B328F569289DD8DF00CA4500 /* UISearchController+Rx.swift in Sources */,
 				B328F54C289DD8DF00CA4500 /* RowCompatible.swift in Sources */,
 				B328F514289DD8DF00CA4500 /* PVMetalViewController.m in Sources */,
+				B37D701B28AA274F0006C5AC /* PixelateTransition.swift in Sources */,
 				B328F575289DD8DF00CA4500 /* PVN64ControllerViewController.swift in Sources */,
 				B328F551289DD8DF00CA4500 /* UIViewController+SideNavigationController.swift in Sources */,
 				B328F5B3289DD8DF00CA4500 /* UILabel+Theming.swift in Sources */,
@@ -5286,6 +5320,8 @@
 			files = (
 				B3CB6E7328A35D4F00C8300A /* UIImage+Effects.swift in Sources */,
 				B3CB6E6F28A35CD600C8300A /* UIImage+AverageColor.swift in Sources */,
+				B37D701C28AA274F0006C5AC /* PixelateTransition.swift in Sources */,
+				B37D701728AA1A4F0006C5AC /* UIImage+Effects.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9320,6 +9356,14 @@
 				minimumVersion = 4.3.0;
 			};
 		};
+		B37D702428AA3C150006C5AC /* XCRemoteSwiftPackageReference "SwiftUIX" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftUIX/SwiftUIX";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.2;
+			};
+		};
 		B390B0E8276B2DB20018E065 /* XCRemoteSwiftPackageReference "AltKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/rileytestut/AltKit";
@@ -9388,6 +9432,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B390B0E8276B2DB20018E065 /* XCRemoteSwiftPackageReference "AltKit" */;
 			productName = AltKit;
+		};
+		B37D702528AA3C160006C5AC /* SwiftUIX */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B37D702428AA3C150006C5AC /* XCRemoteSwiftPackageReference "SwiftUIX" */;
+			productName = SwiftUIX;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
