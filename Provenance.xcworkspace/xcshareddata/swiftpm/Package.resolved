@@ -20,6 +20,15 @@
         }
       },
       {
+        "package": "BitByteData",
+        "repositoryURL": "https://github.com/tsolomko/BitByteData",
+        "state": {
+          "branch": null,
+          "revision": "c119e12decae8f56066df3345a4ac1a05b2f06d5",
+          "version": "2.0.1"
+        }
+      },
+      {
         "package": "CocoaLumberjack",
         "repositoryURL": "https://github.com/CocoaLumberjack/CocoaLumberjack.git",
         "state": {
@@ -125,6 +134,15 @@
           "branch": "master",
           "revision": "55d2fe0484f4cc5ed3535033af6b0218621e37b2",
           "version": null
+        }
+      },
+      {
+        "package": "SWCompression",
+        "repositoryURL": "https://github.com/tsolomko/SWCompression.git",
+        "state": {
+          "branch": null,
+          "revision": "0714d4421e1fa1e02af51cd8e615417a95f0d230",
+          "version": "4.8.1"
         }
       },
       {

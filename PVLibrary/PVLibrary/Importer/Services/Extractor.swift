@@ -10,13 +10,14 @@ import Foundation
 @_exported import PVSupport
 import RxSwift
 import SWCompression
+import Compression
 
-enum CompressionFormats {
+public enum CompressionFormats {
     case lzma
     case zlib
 }
 
-enum ArchiveFormats {
+public enum ArchiveFormats {
     case bzip
     case gzip
     case sevenZip
@@ -24,14 +25,54 @@ enum ArchiveFormats {
     case xz
 }
 
-struct DecompressedEntry {
+public struct DecompressedEntry {
     let data: Data?
     let info: ContainerEntryInfo
 }
 
-enum ExtractionError: Error {
+public enum ExtractionError: Error {
     case unknownCompressionMethod
 }
+
+public protocol Compressor {
+    class func compress(data: Data) throws -> Data
+//    class func decompress(data: Data) async throws -> Data
+}
+
+public protocol Decompressor {
+    class func decompress(data: Data) throws -> Data
+//    class func decompress(data: Data) async throws -> Data
+}
+//
+//public final class ZLIB: Decompressor {
+//    class func decompress(data: Data) throws -> Data {
+//        return try data.decompressed(using: .zlib)
+//    }
+//}
+//
+//public final class LZ4: Decompressor {
+//    class func decompress(data: Data) throws -> Data {
+//        return try data.decompressed(using: .lz4)
+//    }
+//}
+//
+//public final class LZFSE: Decompressor {
+//    class func decompress(data: Data) throws -> Data {
+//        return try data.decompressed(using: .lz4)
+//    }
+//}
+//
+//public final class LZMA: Decompressor {
+//    class func decompress(data: Data) throws -> Data {
+//        data.decompressed(using: .lzma)
+//    }
+//}
+//
+//public final class LZMA2: Decompressor {
+//    class func decompress(data: Data) throws -> Data {
+//
+//    }
+//}
 
 extension SWCompression.CompressionMethod {
     func decompress(data: Data) throws -> Data {
@@ -58,9 +99,10 @@ extension SWCompression.CompressionMethod {
 /// unclear how to decompress containers with mutliple files. It's very manual in compresspressing
 /// and decompressing single instances of Data.
 public final class Extractor {
+    let queueLabel = "com.provenance.extractor"
     static let shared: Extractor = Extractor()
 
-    let dispatchQueue = DispatchQueue(label: "com.provenance.extractor", qos: .utility)
+    let dispatchQueue = DispatchQueue(label: queueLabel, qos: .utility)
     let queue: OperationQueueScheduler = {
         let operationQueue = OperationQueue()
         operationQueue.maxConcurrentOperationCount = 1
@@ -69,10 +111,11 @@ public final class Extractor {
         return scheduler
     }()
 
-    private func data(at path: URL) -> Promise<Data> {
-        return Promise(on: dispatchQueue, { () -> Data in
-            try Data(contentsOf: path, options: .mappedIfSafe)
-        })
+    private func data(at path: URL) async -> Data {
+//        return try await Data(contentsOf: path, options: .mappedIfSafe)
+        return Task {
+            return try Data(contentsOf: path, options: .mappedIfSafe)
+        }
     }
 
     // MAR: - 7Zip

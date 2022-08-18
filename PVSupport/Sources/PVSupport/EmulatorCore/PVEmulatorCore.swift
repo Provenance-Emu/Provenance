@@ -120,14 +120,14 @@ public protocol CoreInterface: NSObjectProtocol {
     // MARK:
     
     var isRunning: Bool { get }
-    @NSCopying var romName: String? { get }
-    @NSCopying  var saveStatesPath: String? { get }
+    var romName: String? { get }
+    var saveStatesPath: String? { get }
     var batterySavesPath: String? { get }
     //    var BIOSPath: String? { get } // How to force objc to be uppcase?
-    @NSCopying var systemIdentifier: String? { get }
-    @NSCopying var coreIdentifier: String? { get }
-    @NSCopying var romMD5: String? { get }
-    @NSCopying var romSerial: String? { get }
+    var systemIdentifier: String? { get }
+    var coreIdentifier: String? { get }
+    var romMD5: String? { get }
+    var romSerial: String? { get }
     var supportsSaveStates: Bool { get }
     var supportsRumble: Bool { get }
     
@@ -515,13 +515,21 @@ public extension NSErrorDomain {
         }
     }
     public var isRunning: Bool = false
+//    @NSCopying
     public var romName: String?
+//    @NSCopying
     public var saveStatesPath: String?
+//    @NSCopying
     public var batterySavesPath: String?
+//    @NSCopying
     public var BIOSPath: String?
+//    @NSCopying
     public var systemIdentifier: String?
+//    @NSCopying
     public var coreIdentifier: String?
+//    @NSCopying
     public var romMD5: String?
+//    @NSCopying
     public var romSerial: String?
     public var supportsSaveStates: Bool = false
     public var supportsRumble: Bool = false

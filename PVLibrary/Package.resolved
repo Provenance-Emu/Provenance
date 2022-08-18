@@ -2,12 +2,30 @@
   "object": {
     "pins": [
       {
+        "package": "BitByteData",
+        "repositoryURL": "https://github.com/tsolomko/BitByteData",
+        "state": {
+          "branch": null,
+          "revision": "c119e12decae8f56066df3345a4ac1a05b2f06d5",
+          "version": "2.0.1"
+        }
+      },
+      {
         "package": "CocoaLumberjack",
         "repositoryURL": "https://github.com/CocoaLumberjack/CocoaLumberjack",
         "state": {
           "branch": null,
           "revision": "80ada1f753b0d53d9b57c465936a7c4169375002",
           "version": "3.7.4"
+        }
+      },
+      {
+        "package": "NSLogger",
+        "repositoryURL": "https://github.com/fpillet/NSLogger",
+        "state": {
+          "branch": "master",
+          "revision": "3408cce1ff97bef20f3dcf367a02019b5c51d198",
+          "version": null
         }
       },
       {
@@ -62,6 +80,15 @@
           "branch": null,
           "revision": "60a65015f6402b7c34b9a924f755ca0a73afeeaa",
           "version": "0.13.1"
+        }
+      },
+      {
+        "package": "SWCompression",
+        "repositoryURL": "https://github.com/tsolomko/SWCompression.git",
+        "state": {
+          "branch": null,
+          "revision": "0714d4421e1fa1e02af51cd8e615417a95f0d230",
+          "version": "4.8.1"
         }
       },
       {

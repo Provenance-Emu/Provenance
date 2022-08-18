@@ -150,6 +150,9 @@
 		B3423261286EB5CB0033EFA5 /* dynamic_dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC59528671EFF00B60497 /* dynamic_dummy.c */; };
 		B3447F9B218C1CD200557ACE /* PVSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3447F9A218C1CD200557ACE /* PVSettingsModel.swift */; };
 		B3447F9C218C1CD200557ACE /* PVSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3447F9A218C1CD200557ACE /* PVSettingsModel.swift */; };
+		B349EA5528AE43C800707CF4 /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = B349EA5428AE43C800707CF4 /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B349EA5628AE43C800707CF4 /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = B349EA5428AE43C800707CF4 /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B349EA5728AE43C800707CF4 /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = B349EA5428AE43C800707CF4 /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B34AB5762106DC4C00C45F09 /* UIDeviceExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E6DADD20B7BF8600454DD4 /* UIDeviceExtension.swift */; };
 		B34AB57A2106DC6100C45F09 /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C36207EE15D0040709A /* CoreOptions.swift */; };
 		B34AB57F2106DC6100C45F09 /* PVEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */; };
@@ -259,9 +262,6 @@
 		B3B4F4C928A3FDF50099D35F /* NSFileManager+OEHashingAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B4F4C828A3FDF50099D35F /* NSFileManager+OEHashingAdditions.swift */; };
 		B3B4F4CA28A3FDF50099D35F /* NSFileManager+OEHashingAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B4F4C828A3FDF50099D35F /* NSFileManager+OEHashingAdditions.swift */; };
 		B3B4F4CB28A3FDF50099D35F /* NSFileManager+OEHashingAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B4F4C828A3FDF50099D35F /* NSFileManager+OEHashingAdditions.swift */; };
-		B3BD067428A897590043D8CE /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = B3BD066F28A897590043D8CE /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3BD067528A897590043D8CE /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = B3BD066F28A897590043D8CE /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3BD067628A897590043D8CE /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = B3BD066F28A897590043D8CE /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3BE75B4289CCF6C0090170D /* PVLibRetroCore+CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3BE75B3289CCF6C0090170D /* PVLibRetroCore+CoreOptions.swift */; };
 		B3BE75B5289CCF6C0090170D /* PVLibRetroCore+CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3BE75B3289CCF6C0090170D /* PVLibRetroCore+CoreOptions.swift */; };
 		B3C8A69428781C6E0037A946 /* msg_hash.c in Sources */ = {isa = PBXBuildFile; fileRef = B322515C286C6F29001FDF42 /* msg_hash.c */; };
@@ -487,6 +487,7 @@
 		B33FB307279BE2460013AAD8 /* CoreOptionValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreOptionValue.swift; sourceTree = "<group>"; };
 		B33FB30C279BE2710013AAD8 /* CoreOptional.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreOptional.swift; sourceTree = "<group>"; };
 		B3447F9A218C1CD200557ACE /* PVSettingsModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVSettingsModel.swift; sourceTree = "<group>"; };
+		B349EA5428AE43C800707CF4 /* DebugUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugUtils.h; sourceTree = "<group>"; };
 		B34DC364286717AD00B60497 /* core_info.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = core_info.h; sourceTree = "<group>"; };
 		B34DC365286717AD00B60497 /* driver.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = driver.c; sourceTree = "<group>"; };
 		B34DC366286717AD00B60497 /* defaults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = defaults.h; sourceTree = "<group>"; };
@@ -1240,9 +1241,6 @@
 		B3B4F4B428A3BC980099D35F /* PVLogEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVLogEntry.swift; sourceTree = "<group>"; };
 		B3B4F4B828A3C79F0099D35F /* PVLogging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVLogging.swift; sourceTree = "<group>"; };
 		B3B4F4C828A3FDF50099D35F /* NSFileManager+OEHashingAdditions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSFileManager+OEHashingAdditions.swift"; sourceTree = "<group>"; };
-		B3BD066E28A897590043D8CE /* PVEmulatorCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVEmulatorCore.h; sourceTree = "<group>"; };
-		B3BD066F28A897590043D8CE /* DebugUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugUtils.h; sourceTree = "<group>"; };
-		B3BD067028A897590043D8CE /* PVEmulatorCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVEmulatorCore.m; sourceTree = "<group>"; };
 		B3BE75B3289CCF6C0090170D /* PVLibRetroCore+CoreOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVLibRetroCore+CoreOptions.swift"; sourceTree = "<group>"; };
 		B3C83E262796211D0020824C /* Performance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Performance.swift; sourceTree = "<group>"; };
 		B3C83E2A279622EB0020824C /* PerformanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceView.swift; sourceTree = "<group>"; };
@@ -1447,6 +1445,7 @@
 		B30E94892793C77700871E57 /* PVSupport */ = {
 			isa = PBXGroup;
 			children = (
+				B349EA5328AE43C800707CF4 /* Public Headers */,
 				B3C83E25279621080020824C /* Performance */,
 				1ACEA69017F748F80031B1C9 /* Audio */,
 				B3AB36DC2187F4C4009D9244 /* Controller */,
@@ -1615,6 +1614,14 @@
 				B3532C3521A925C1006CDA0F /* SortOption.swift */,
 			);
 			path = Settings;
+			sourceTree = "<group>";
+		};
+		B349EA5328AE43C800707CF4 /* Public Headers */ = {
+			isa = PBXGroup;
+			children = (
+				B349EA5428AE43C800707CF4 /* DebugUtils.h */,
+			);
+			path = "Public Headers";
 			sourceTree = "<group>";
 		};
 		B34DC37C28671EFD00B60497 /* frontend */ = {
@@ -3400,7 +3407,6 @@
 			children = (
 				B322512E286C4728001FDF42 /* retro */,
 				B39284962867037B003BAC21 /* PVLibRetro */,
-				B3BD066D28A897590043D8CE /* PVSupportObjC */,
 				B30E94892793C77700871E57 /* PVSupport */,
 			);
 			path = Sources;
@@ -3490,16 +3496,6 @@
 			name = tvOS;
 			sourceTree = "<group>";
 		};
-		B3BD066D28A897590043D8CE /* PVSupportObjC */ = {
-			isa = PBXGroup;
-			children = (
-				B3BD066E28A897590043D8CE /* PVEmulatorCore.h */,
-				B3BD066F28A897590043D8CE /* DebugUtils.h */,
-				B3BD067028A897590043D8CE /* PVEmulatorCore.m */,
-			);
-			path = PVSupportObjC;
-			sourceTree = "<group>";
-		};
 		B3C83E25279621080020824C /* Performance */ = {
 			isa = PBXGroup;
 			children = (
@@ -3546,7 +3542,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3BD067628A897590043D8CE /* DebugUtils.h in Headers */,
+				B349EA5728AE43C800707CF4 /* DebugUtils.h in Headers */,
 				B305EF49276B4E41003AE510 /* PVSupport.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3581,7 +3577,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3BD067528A897590043D8CE /* DebugUtils.h in Headers */,
+				B349EA5628AE43C800707CF4 /* DebugUtils.h in Headers */,
 				B34AB8652106F2F200C45F09 /* PVSupport.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3590,7 +3586,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3BD067428A897590043D8CE /* DebugUtils.h in Headers */,
+				B349EA5528AE43C800707CF4 /* DebugUtils.h in Headers */,
 				B34AB8642106F2F200C45F09 /* PVSupport.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
