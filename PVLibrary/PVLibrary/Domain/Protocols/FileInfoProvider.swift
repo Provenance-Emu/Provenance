@@ -118,7 +118,7 @@ extension LocalFileInfoProvider {
         }
 
         // Lazy make MD5
-        guard let calculatedMD5 = FileManager.default.md5ForFile(atPath: url.path, fromOffset: 0) else {
+        guard let calculatedMD5 = try? FileManager.default.digestsForFile(atPath: url, fromOffset: 0).md5 else {
             return nil
         }
 

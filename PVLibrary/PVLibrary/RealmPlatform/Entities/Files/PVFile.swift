@@ -15,17 +15,17 @@ public enum RelativeRoot: Int {
     case documents
     case caches
     case iCloud
-
-    #if os(tvOS)
-        public static let platformDefault = RelativeRoot.caches
-    #else
-        public static let platformDefault = RelativeRoot.documents
-    #endif
-
+    
+#if os(tvOS)
+    public static let platformDefault = RelativeRoot.caches
+#else
+    public static let platformDefault = RelativeRoot.documents
+#endif
+    
     static let documentsDirectory: URL = PVEmulatorConfiguration.documentsPath
     static let cachesDirectory: URL = PVEmulatorConfiguration.cachesPath
     static var iCloudDocumentsDirectory: URL? { return PVEmulatorConfiguration.iCloudDocumentsDirectory }
-
+    
     var directoryURL: URL {
         switch self {
         case .documents:
@@ -36,12 +36,12 @@ public enum RelativeRoot: Int {
             return RelativeRoot.iCloudDocumentsDirectory ?? Self.platformDefault.directoryURL
         }
     }
-
+    
     func createRelativePath(fromURL url: URL) -> String {
         // We need the dropFirst to remove the leading /
         return String(url.path.replacingOccurrences(of: directoryURL.path, with: "").dropFirst())
     }
-
+    
     func appendingPath(_ path: String) -> URL {
         return URL(fileURLWithPath: path, relativeTo: directoryURL)
     }
@@ -49,19 +49,19 @@ public enum RelativeRoot: Int {
 
 public class PVFile: Object, LocalFileProvider, Codable, DomainConvertibleType {
     public typealias DomainType = LocalFile
-
+    
     @Persisted(primaryKey: true) internal var partialPath: String = ""
     @Persisted(indexed: true) internal var md5Cache: String?
-    //    @objc private dynamic var crcCache: String?
+    @Persisted(indexed: true) internal var crcCache: String?
     @Persisted(indexed: true) public private(set) var createdDate = Date()
     @Persisted internal var _relativeRoot: Int = RelativeRoot.documents.rawValue
-
+    
     public convenience init(withPartialPath partialPath: String, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
         self.init()
         self.relativeRoot = relativeRoot
         self.partialPath = partialPath
     }
-
+    
     public convenience init(withURL url: URL, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
         self.init()
         self.relativeRoot = relativeRoot
@@ -77,7 +77,7 @@ public extension PVFile {
             _relativeRoot = newValue.rawValue
         }
     }
-
+    
     private(set) var url: URL {
         get {
             if partialPath.contains("iCloud") || partialPath.contains("private") {
@@ -101,21 +101,21 @@ public extension PVFile {
             }
         }
     }
-
+    
     private(set) var md5: String? {
         get {
             if let md5 = md5Cache {
                 return md5
             }
-
+            
             // Lazy make MD5
-            guard let calculatedMD5 = try? FileManager.default.md5ForFile(atPath: url, fromOffset: 0) else {
-				ELOG("calculatedMD5 nil")
+            guard let calculatedMD5 = try? FileManager.default.digestsForFile(atPath: url, fromOffset: 0).md5 else {
+                ELOG("calculatedMD5 nil")
                 return nil
             }
-
-            self.md5 = calculatedMD5.md5
-            return calculatedMD5.md5
+            
+            self.md5 = calculatedMD5
+            return calculatedMD5
         }
         set {
             do {
@@ -127,60 +127,60 @@ public extension PVFile {
             }
         }
     }
-
-    //    public private(set) var crc: String? {
-    //        get {
-    //            if let crc = crcCache {
-    //                return crc
-    //            }
-    //
-    //            // Lazy make CRC
-    //            guard let calculatedCRC = FileManager.default.crcForFile(atPath: url.path, fromOffset: 0) else {
-    //                return nil
-    //            }
-    //
-    //            self.crc = calculatedCRC
-    //            return calculatedCRC
-    //        }
-    //        set {
-    //            do {
-    //                try realm?.write {
-    //                    crcCache = newValue
-    //                }
-    //            } catch {
-    //                ELOG("\(error)")
-    //            }
-    //        }
-    //    }
-
+    
+    private(set) var crc: String? {
+        get {
+            if let crc = crcCache {
+                return crc
+            }
+            
+            // Lazy make CRC
+            guard let calculatedCRC = try? FileManager.default.digestsForFile(atPath: url, fromOffset: 0).crc else {
+                return nil
+            }
+            
+            self.crc = calculatedCRC
+            return calculatedCRC
+        }
+        set {
+            do {
+                try realm?.write {
+                    crcCache = newValue
+                }
+            } catch {
+                ELOG("\(error)")
+            }
+        }
+    }
+    
     var size: UInt64 {
         let fileSize: UInt64
         guard FileManager.default.fileExists(atPath: url.path) else {
             ELOG("No file at path: \(url.path)")
             return 0
         }
-
+        
         if let attr = try? FileManager.default.attributesOfItem(atPath: url.path) as NSDictionary {
             fileSize = attr.fileSize()
         } else {
-			ELOG("No attributesOfItem at path: \(url.path)")
+            ELOG("No attributesOfItem at path: \(url.path)")
             fileSize = 0
         }
         return fileSize
     }
-
+    
     var online: Bool {
         return FileManager.default.fileExists(atPath: url.path)
     }
-
+    
     var pathExtension: String {
         return url.pathExtension
     }
-
+    
     var fileName: String {
         return url.lastPathComponent
     }
-
+    
     var fileNameWithoutExtension: String {
         return url.deletingPathExtension().lastPathComponent
     }
@@ -191,7 +191,7 @@ import QuickLook
 // MARK: - QLPreviewItem
 extension PVFile: QLPreviewItem {
     public var previewItemURL: URL? {
-      url
+        url
     }
 }
 #endif

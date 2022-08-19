@@ -20,6 +20,15 @@
         }
       },
       {
+        "package": "CryptoSwift",
+        "repositoryURL": "https://github.com/krzyzanowskim/CryptoSwift",
+        "state": {
+          "branch": null,
+          "revision": "039f56c5d7960f277087a0be51f5eb04ed0ec073",
+          "version": "1.5.1"
+        }
+      },
+      {
         "package": "NSLogger",
         "repositoryURL": "https://github.com/fpillet/NSLogger",
         "state": {
@@ -38,21 +47,39 @@
         }
       },
       {
-        "package": "Realm",
-        "repositoryURL": "https://github.com/realm/realm-cocoa",
-        "state": {
-          "branch": null,
-          "revision": "39177714b95bb5b1b29fffe28f1c7da77eef8e8b",
-          "version": "10.21.1"
-        }
-      },
-      {
         "package": "RealmDatabase",
         "repositoryURL": "https://github.com/realm/realm-core",
         "state": {
           "branch": null,
-          "revision": "f1976f0d96d9b06fbe0afbd60090b1c3966b1e23",
-          "version": "11.8.0"
+          "revision": "2b8def17bb8e0cddbcc754db6b6466b8487feebf",
+          "version": "12.5.0"
+        }
+      },
+      {
+        "package": "Realm",
+        "repositoryURL": "https://github.com/realm/realm-swift.git",
+        "state": {
+          "branch": null,
+          "revision": "a107f5660b0b6067700923af7f107b6af73c546b",
+          "version": "10.28.5"
+        }
+      },
+      {
+        "package": "RxDataSources",
+        "repositoryURL": "https://github.com/RxSwiftCommunity/RxDataSources",
+        "state": {
+          "branch": null,
+          "revision": "90c29b48b628479097fe775ed1966d75ac374518",
+          "version": "5.0.2"
+        }
+      },
+      {
+        "package": "RxReachability",
+        "repositoryURL": "https://github.com/RxSwiftCommunity/RxReachability",
+        "state": {
+          "branch": null,
+          "revision": "8087d7154796406c8981961858b31324743311cf",
+          "version": "1.2.1"
         }
       },
       {
@@ -60,8 +87,8 @@
         "repositoryURL": "https://github.com/RxSwiftCommunity/RxRealm",
         "state": {
           "branch": null,
-          "revision": "d9e612a1bc3788c910b307e49093dec788d102df",
-          "version": "5.0.3"
+          "revision": "a7de576348d48286d8b100a501f757a1c531f1dd",
+          "version": "5.0.5"
         }
       },
       {
@@ -78,13 +105,13 @@
         "repositoryURL": "https://github.com/stephencelis/SQLite.swift",
         "state": {
           "branch": null,
-          "revision": "60a65015f6402b7c34b9a924f755ca0a73afeeaa",
-          "version": "0.13.1"
+          "revision": "4d543d811ee644fa4cc4bfa0be996b4dd6ba0f54",
+          "version": "0.13.3"
         }
       },
       {
         "package": "SWCompression",
-        "repositoryURL": "https://github.com/tsolomko/SWCompression.git",
+        "repositoryURL": "https://github.com/tsolomko/SWCompression",
         "state": {
           "branch": null,
           "revision": "0714d4421e1fa1e02af51cd8e615417a95f0d230",
@@ -96,8 +123,8 @@
         "repositoryURL": "https://github.com/apple/swift-log.git",
         "state": {
           "branch": null,
-          "revision": "5d66f7ba25daf4f94100e7022febf3c75e37a6c7",
-          "version": "1.4.2"
+          "revision": "6fe203dc33195667ce1759bf0182975e4653ba1c",
+          "version": "1.4.4"
         }
       },
       {
@@ -105,8 +132,8 @@
         "repositoryURL": "https://github.com/ZipArchive/ZipArchive",
         "state": {
           "branch": null,
-          "revision": "825ff12a74a94c54e737e279604c27e6740e8a2c",
-          "version": "2.4.2"
+          "revision": "b145c6f3619619fb48715c479643e2f2e0e42d2d",
+          "version": "2.5.2"
         }
       }
     ]

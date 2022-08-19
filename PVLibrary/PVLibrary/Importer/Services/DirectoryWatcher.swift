@@ -30,7 +30,6 @@ public final class DirectoryWatcher: NSObject {
     fileprivate let serialQueue: DispatchQueue = DispatchQueue(label: "org.provenance-emu.provenance.serialExtractorQueue")
 
     fileprivate var previousContents: [URL]?
-    private var reader: LzmaSDKObjCReader?
     private var unzippedFiles = [URL]()
 
     public init(directory: URL, extractionStartedHandler startedHandler: PVExtractionStartedHandler?, extractionUpdatedHandler updatedHandler: PVExtractionUpdatedHandler?, extractionCompleteHandler completeHandler: PVExtractionCompleteHandler?) {
@@ -307,37 +306,37 @@ public final class DirectoryWatcher: NSObject {
         })
     }
 }
-
-extension DirectoryWatcher: LzmaSDKObjCReaderDelegate {
-    public func onLzmaSDKObjCReader(_ reader: LzmaSDKObjCReader, extractProgress progress: Float) {
-        guard let fileURL = reader.fileURL else {
-            ELOG("fileURL of reader was nil")
-            return
-        }
-
-        if progress >= 1 {
-            if extractionCompleteHandler != nil {
-                let unzippedItems = unzippedFiles
-                DispatchQueue.main.async(execute: {[weak self] () -> Void in
-                    self?.extractionCompleteHandler?(unzippedItems)
-                })
-            }
-
-            do {
-                try FileManager.default.removeItem(at: fileURL)
-            } catch {
-                ELOG("Unable to delete file at path \(fileURL.path), because \(error.localizedDescription)")
-            }
-
-            unzippedFiles.removeAll()
-            delayedStartMonitoring()
-        } else {
-            if extractionUpdatedHandler != nil {
-                DispatchQueue.main.async(execute: {[weak self]() -> Void in
-                    let entryNumber = Int(floor(Float(reader.itemsCount) * progress))
-                    self?.extractionUpdatedHandler?(fileURL, entryNumber, Int(reader.itemsCount), progress)
-                })
-            }
-        }
-    }
-}
+//
+//extension DirectoryWatcher: LzmaSDKObjCReaderDelegate {
+//    public func onLzmaSDKObjCReader(_ reader: LzmaSDKObjCReader, extractProgress progress: Float) {
+//        guard let fileURL = reader.fileURL else {
+//            ELOG("fileURL of reader was nil")
+//            return
+//        }
+//
+//        if progress >= 1 {
+//            if extractionCompleteHandler != nil {
+//                let unzippedItems = unzippedFiles
+//                DispatchQueue.main.async(execute: {[weak self] () -> Void in
+//                    self?.extractionCompleteHandler?(unzippedItems)
+//                })
+//            }
+//
+//            do {
+//                try FileManager.default.removeItem(at: fileURL)
+//            } catch {
+//                ELOG("Unable to delete file at path \(fileURL.path), because \(error.localizedDescription)")
+//            }
+//
+//            unzippedFiles.removeAll()
+//            delayedStartMonitoring()
+//        } else {
+//            if extractionUpdatedHandler != nil {
+//                DispatchQueue.main.async(execute: {[weak self]() -> Void in
+//                    let entryNumber = Int(floor(Float(reader.itemsCount) * progress))
+//                    self?.extractionUpdatedHandler?(fileURL, entryNumber, Int(reader.itemsCount), progress)
+//                })
+//            }
+//        }
+//    }
+//}

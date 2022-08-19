@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import PVSupport
 
 public struct ImportCandidateFile: Codable {
     public let filePath: URL
@@ -14,7 +15,7 @@ public struct ImportCandidateFile: Codable {
         if let cached = cache.md5 {
             return cached
         } else {
-            let computed = FileManager.default.md5ForFile(atPath: filePath.path, fromOffset: 0)
+            let computed = try? FileManager.default.digestsForFile(atPath: filePath, fromOffset: 0).md5
             cache.md5 = computed
             return computed
         }

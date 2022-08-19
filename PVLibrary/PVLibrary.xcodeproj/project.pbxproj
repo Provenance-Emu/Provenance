@@ -118,9 +118,6 @@
 		B34A2DCC28AE3DBA00111D90 /* SWCompression in Frameworks */ = {isa = PBXBuildFile; productRef = B34A2DCB28AE3DBA00111D90 /* SWCompression */; };
 		B34A2DCE28AE3DC300111D90 /* SWCompression in Frameworks */ = {isa = PBXBuildFile; productRef = B34A2DCD28AE3DC300111D90 /* SWCompression */; };
 		B34A2DD028AE3DC900111D90 /* SWCompression in Frameworks */ = {isa = PBXBuildFile; productRef = B34A2DCF28AE3DC900111D90 /* SWCompression */; };
-		B34A2DD128AE3DD400111D90 /* Extractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378226D21D409F20077E86F /* Extractor.swift */; };
-		B34A2DD228AE3DD500111D90 /* Extractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378226D21D409F20077E86F /* Extractor.swift */; };
-		B34A2DD328AE3DD500111D90 /* Extractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378226D21D409F20077E86F /* Extractor.swift */; };
 		B34AB8632106F2E900C45F09 /* PVLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D122106B11D00DDEBD6 /* PVLibrary.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B354E78E219A76C80041F971 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E785219A76C80041F971 /* Game.swift */; };
 		B354E78F219A76C80041F971 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E785219A76C80041F971 /* Game.swift */; };
@@ -547,7 +544,6 @@
 			isa = PBXGroup;
 			children = (
 				B3104C0D28A474820047278C /* SyncManager.swift */,
-				B3104C0E28A474820047278C /* SyncResultsViewController.storyboard */,
 				B3104C0F28A474820047278C /* SyncResultViewController.swift */,
 			);
 			path = Syncing;
@@ -809,6 +805,7 @@
 		B3AF47DB21072AD3002211EE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				B3104C0E28A474820047278C /* SyncResultsViewController.storyboard */,
 				B3AF47DC21072AD3002211EE /* openvgdb.sqlite */,
 				B3AF47DD21072AD3002211EE /* systems.plist */,
 			);
@@ -1095,7 +1092,6 @@
 				B305F00B276B512D003AE510 /* BIOS.swift in Sources */,
 				B305F00C276B512D003AE510 /* Realm+Ext.swift in Sources */,
 				B305F00D276B512D003AE510 /* PVRecentGame.swift in Sources */,
-				B34A2DD328AE3DD500111D90 /* Extractor.swift in Sources */,
 				B305F00F276B512D003AE510 /* PVSystem.swift in Sources */,
 				B305F012276B512D003AE510 /* PVLibrary.swift in Sources */,
 				B305F015276B512D003AE510 /* Repository.swift in Sources */,
@@ -1159,7 +1155,6 @@
 				B354E790219A76C80041F971 /* BIOS.swift in Sources */,
 				B354E7B8219A796A0041F971 /* Realm+Ext.swift in Sources */,
 				B3274E732106BC1D00857F52 /* PVRecentGame.swift in Sources */,
-				B34A2DD128AE3DD400111D90 /* Extractor.swift in Sources */,
 				B3274E6E2106BC1D00857F52 /* PVSystem.swift in Sources */,
 				B3274E6D2106BC1D00857F52 /* PVLibrary.swift in Sources */,
 				B354E7A8219A78420041F971 /* Repository.swift in Sources */,
@@ -1223,7 +1218,6 @@
 				B354E791219A76C80041F971 /* BIOS.swift in Sources */,
 				B354E7B9219A796A0041F971 /* Realm+Ext.swift in Sources */,
 				B3C04AE021077B3100E7AF79 /* PVRecentGame.swift in Sources */,
-				B34A2DD228AE3DD500111D90 /* Extractor.swift in Sources */,
 				B3C04AE221077B3100E7AF79 /* PVSystem.swift in Sources */,
 				B3C04AE521077B3100E7AF79 /* PVLibrary.swift in Sources */,
 				B354E7A9219A78420041F971 /* Repository.swift in Sources */,

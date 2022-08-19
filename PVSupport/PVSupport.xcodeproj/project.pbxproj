@@ -189,8 +189,6 @@
 		B3928499286703CD003BAC21 /* PVLibRetroCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3928497286703CD003BAC21 /* PVLibRetroCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B392849A286703CD003BAC21 /* PVLibRetroCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B3928498286703CD003BAC21 /* PVLibRetroCore.m */; };
 		B392849B286703F2003BAC21 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96ED81D62C5E7003F1E93 /* PVSupport.framework */; };
-		B3A41BCF286E5E660054E9A5 /* retro.m in Sources */ = {isa = PBXBuildFile; fileRef = B3225130286C4728001FDF42 /* retro.m */; };
-		B3A41BD2286E75DD0054E9A5 /* retro.m in Sources */ = {isa = PBXBuildFile; fileRef = B3225130286C4728001FDF42 /* retro.m */; };
 		B3A41BD5286E75DD0054E9A5 /* retro.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B322512F286C4728001FDF42 /* retro.h */; };
 		B3A41BDF286E76110054E9A5 /* PVLibRetro.h in Headers */ = {isa = PBXBuildFile; fileRef = B392849028670348003BAC21 /* PVLibRetro.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A41BE0286E76110054E9A5 /* PVLibRetroCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3928497286703CD003BAC21 /* PVLibRetroCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -401,7 +399,6 @@
 		B3173802278419A2002D3ACD /* Build.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Build.xcconfig; path = ../Build.xcconfig; sourceTree = "<group>"; };
 		B322512D286C4728001FDF42 /* libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libretro.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B322512F286C4728001FDF42 /* retro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = retro.h; sourceTree = "<group>"; };
-		B3225130286C4728001FDF42 /* retro.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = retro.m; sourceTree = "<group>"; };
 		B322514D286C6F28001FDF42 /* patch.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = patch.c; sourceTree = "<group>"; };
 		B322514E286C6F28001FDF42 /* content.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = content.h; sourceTree = "<group>"; };
 		B322514F286C6F28001FDF42 /* general.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = general.h; sourceTree = "<group>"; };
@@ -1538,7 +1535,6 @@
 				B322517B286C6F35001FDF42 /* system.h */,
 				B322517D286C6F35001FDF42 /* verbosity.h */,
 				B3225198286C827D001FDF42 /* tasks */,
-				B3225130286C4728001FDF42 /* retro.m */,
 				B34DC39928671EFD00B60497 /* audio */,
 				B34DC55828671EFF00B60497 /* camera */,
 				B34DC56028671EFF00B60497 /* cores */,
@@ -4014,7 +4010,6 @@
 				B3AC6EB228993A2000D202AF /* input_remapping.c in Sources */,
 				B3B3D17428712EE1008A0E2F /* msg_hash.c in Sources */,
 				B322996C28792B4000585AD8 /* movie.c in Sources */,
-				B3A41BCF286E5E660054E9A5 /* retro.m in Sources */,
 				B3AC6EAC289938E500D202AF /* keyboard_event_apple.c in Sources */,
 				B32299422878CB3C00585AD8 /* input_driver.c in Sources */,
 				B32E458A28993AE500C2E2D0 /* input_joypad_driver.c in Sources */,
@@ -4089,7 +4084,6 @@
 				B32E458B28993AE500C2E2D0 /* input_config.c in Sources */,
 				B3AC6EB328993A2100D202AF /* input_remapping.c in Sources */,
 				B3C8A69428781C6E0037A946 /* msg_hash.c in Sources */,
-				B3A41BD2286E75DD0054E9A5 /* retro.m in Sources */,
 				B322996D28792B4100585AD8 /* movie.c in Sources */,
 				B3AC6EAD289938E600D202AF /* keyboard_event_apple.c in Sources */,
 				B32299432878CB3C00585AD8 /* input_driver.c in Sources */,

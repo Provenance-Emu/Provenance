@@ -7,18 +7,14 @@
 //
 
 import PVSupport
+#if canImport(UIKit)
 import UIKit
+#endif
 
 let kPVCachePath = "PVCache"
 
 public extension Notification.Name {
     static let PVMediaCacheWasEmptied = Notification.Name("PVMediaCacheWasEmptiedNotification")
-}
-
-public extension String {
-    var md5Hash: String {
-        return (self as NSString).md5Hash()
-    }
 }
 
 public enum MediaCacheError: Error {
@@ -65,7 +61,7 @@ public final class PVMediaCache: NSObject {
             return nil
         }
 
-        let keyHash: String = key.md5Hash()
+        let keyHash: String = key.md5Hash
         let filePath = cachePath.appendingPathComponent(keyHash, isDirectory: false)
 //        let fileExists: Bool = FileManager.default.fileExists(atPath: filePath.path)
 
@@ -78,7 +74,7 @@ public final class PVMediaCache: NSObject {
             return false
         }
 
-        let keyHash: String = key.md5Hash()
+        let keyHash: String = key.md5Hash
         let filePath = cachePath.appendingPathComponent(keyHash, isDirectory: false)
         return FileManager.default.fileExists(atPath: filePath.path)
     }
@@ -104,7 +100,7 @@ public final class PVMediaCache: NSObject {
             throw MediaCacheError.keyWasEmpty
         }
 
-        let keyHash: String = key.md5Hash()
+        let keyHash: String = key.md5Hash
         let cachePath = self.cachePath.appendingPathComponent(keyHash, isDirectory: false)
 
         do {
@@ -122,7 +118,7 @@ public final class PVMediaCache: NSObject {
             throw MediaCacheError.keyWasEmpty
         }
 
-        let keyHash: String = key.md5Hash()
+        let keyHash: String = key.md5Hash
         let cachePath = self.cachePath.appendingPathComponent(keyHash, isDirectory: false)
 
         memCache.removeObject(forKey: keyHash as NSString)

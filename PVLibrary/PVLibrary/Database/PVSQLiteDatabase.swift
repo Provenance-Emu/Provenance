@@ -64,6 +64,20 @@ public final class PVSQLiteDatabase {
 //            configuration: config)
 //        return config
 //    }
+    lazy var openVGDB: OESQLiteDatabase = {
+        let bundle = ThisBundle
+        let _openVGDB = try! OESQLiteDatabase(url: bundle.url(forResource: "openvgdb", withExtension: "sqlite")!)
+        return _openVGDB
+    }()
+
+    lazy var sqldb: Connection = {
+        let bundle = ThisBundle
+        let sqlFile = bundle.url(forResource: "openvgdb", withExtension: "sqlite")!
+        let sqldb = try! Connection(sqlFile.path, readonly: true)
+        return sqldb
+    }()
+
+    fileprivate let ThisBundle: Bundle = Bundle(for: PVSQLiteDatabase.self)
 }
 
 public extension PVSQLiteDatabase {
@@ -121,23 +135,6 @@ public extension PVSQLiteDatabase {
     func search(romFileName: String, systemID: String? = nil) throws -> [[String: Any]]? {
         return try searchDatabase(usingKey: "romFileName", value: romFileName, systemID: systemID)
     }
-}
-
-public extension PVSQLiteDatabase {
-    lazy var openVGDB: OESQLiteDatabase = {
-        let bundle = ThisBundle
-        let _openVGDB = try! OESQLiteDatabase(url: bundle.url(forResource: "openvgdb", withExtension: "sqlite")!)
-        return _openVGDB
-    }()
-
-    lazy var sqldb: Connection = {
-        let bundle = ThisBundle
-        let sqlFile = bundle.url(forResource: "openvgdb", withExtension: "sqlite")!
-        let sqldb = try! Connection(sqlFile.path, readonly: true)
-        return sqldb
-    }()
-
-    fileprivate let ThisBundle: Bundle = Bundle(for: GameImporter.self)
 }
 
 public extension PVSQLiteDatabase {

@@ -538,7 +538,7 @@ extension GameLaunchingViewController where Self: UIViewController {
                 if biosPathContentsMD5Cache == nil {
                     biosPathContentsMD5Cache = biosPathContents.reduce([String: String](), { (hashDictionary, filename) -> [String: String] in
                         let fullBIOSFileURL = system.biosDirectory.appendingPathComponent(filename, isDirectory: false)
-                        if let hash = FileManager.default.md5ForFile(atPath: fullBIOSFileURL.path, fromOffset: 0), !hash.isEmpty {
+                        if let hash = try? FileManager.default.digestsForFile(atPath: fullBIOSFileURL.path, fromOffset: 0).md5, !hash.isEmpty {
                             // Make mutable
                             var hashDictionary = hashDictionary
                             hashDictionary[hash] = filename
@@ -574,7 +574,7 @@ extension GameLaunchingViewController where Self: UIViewController {
             } else {
                 // Not as important, but log if MD5 is mismatched.
                 // Cores care about filenames for some reason, not MD5s
-                let fileMD5 = FileManager.default.md5ForFile(atPath: system.biosDirectory.appendingPathComponent($0.expectedFilename, isDirectory: false).path, fromOffset: 0) ?? ""
+                let fileMD5 = try? FileManager.default.digestsForFile(atPath: system.biosDirectory.appendingPathComponent($0.expectedFilename, isDirectory: false).path, fromOffset: 0).md5 ?? ""
                 if fileMD5 != $0.expectedMD5.uppercased() {
                     WLOG("MD5 hash for \($0.expectedFilename) didn't match the expected value.\nGot {\(fileMD5)} expected {\($0.expectedMD5.uppercased())}")
                 }

@@ -35,12 +35,12 @@ public enum ExtractionError: Error {
 }
 
 public protocol Compressor {
-    class func compress(data: Data) throws -> Data
+    static func compress(data: Data) throws -> Data
 //    class func decompress(data: Data) async throws -> Data
 }
 
 public protocol Decompressor {
-    class func decompress(data: Data) throws -> Data
+    static func decompress(data: Data) throws -> Data
 //    class func decompress(data: Data) async throws -> Data
 }
 //

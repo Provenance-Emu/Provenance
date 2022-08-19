@@ -185,7 +185,7 @@ public final class GameImporter {
             return nil
         }
 
-        return try? fm.md5ForFile(atPath: romPath, fromOffset: offset)?.md5
+        return try? fm.digestsForFile(atPath: romPath, fromOffset: UInt64(offset)).md5
     }
 
     public func importFiles(atPaths paths: [URL]) -> [URL] {
@@ -610,7 +610,7 @@ public extension GameImporter {
         }
 
         // Hash the image and save to cache
-        let hash: String = (coverArtScaledData as NSData).md5Hash
+        let hash: String = coverArtScaledData.md5Hash
 
         do {
             let destinationURL = try PVMediaCache.writeData(toDisk: coverArtScaledData, withKey: hash)
@@ -838,9 +838,9 @@ public extension GameImporter {
                 offset = 0
             }
 
-            let romFullPath = PVEmulatorConfiguration.documentsPath.appendingPathComponent(game.romPath).path
+            let romFullPath = PVEmulatorConfiguration.documentsPath.appendingPathComponent(game.romPath)
 
-            if let md5Hash = FileManager.default.md5ForFile(atPath: romFullPath, fromOffset: offset) {
+            if let md5Hash = try? FileManager.default.digestsForFile(atPath: romFullPath, fromOffset: UInt64(offset)).md5 {
                 try? database.writeTransaction {
                     game.md5Hash = md5Hash
                 }
@@ -1350,7 +1350,7 @@ extension GameImporter {
             var results: [[String: NSObject]]?
             for currentSystem: String in systemsForExtension {
                 // TODO: Would be better performance to search EVERY system MD5 in a single query?
-                if let gotit = try? self.self.search(md5: fileMD5, systemID: currentSystem) {
+                if let gotit = try? self.search(md5: fileMD5, systemID: currentSystem) {
                     foundSystemIDMaybe = currentSystem
                     results = gotit
                     break
