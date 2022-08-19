@@ -9,6 +9,7 @@
 import Foundation
 @_exported import PVSupport
 import ZipArchive
+import SWCompression
 
 public typealias PVExtractionStartedHandler = (_ path: URL) -> Void
 public typealias PVExtractionUpdatedHandler = (_ path: URL, _ entryNumber: Int, _ total: Int, _ progress: Float) -> Void
@@ -256,20 +257,16 @@ public final class DirectoryWatcher: NSObject {
                 self.unzippedFiles.removeAll()
                 self.delayedStartMonitoring()
             })
+            
         } else if ext == "7z" {
-            let reader = LzmaSDKObjCReader(fileURL: filePath, andType: LzmaSDKObjCFileType7z)
-            self.reader = reader
-            reader.delegate = self
-
+            
             do {
-                try reader.open()
-            } catch {
-                ELOG("7z open error: \(error.localizedDescription)")
-                startMonitoring()
-                return
+                var entries = try SevenZipContainer.open(container: testData)
+                var items = [LzmaSDKObjCItem]()
+
             }
 
-            var items = [LzmaSDKObjCItem]()
+
 
             // Array with selected items.
             // Iterate all archive items, track what items do you need & hold them in array.

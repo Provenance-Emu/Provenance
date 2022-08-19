@@ -11,7 +11,7 @@ import PVSupport
 
 public extension UIImage {
     func scaledImage(withMaxResolution maxResolution: Int) -> UIImage? {
-        guard let imgRef = self.cgImage() else {
+        guard let imgRef = self.cgImage else {
             ELOG("nil cgImage")
             return nil
         }
@@ -19,20 +19,23 @@ public extension UIImage {
         let width = imgRef.width
         let height = imgRef.height
         
-        let transform: CGAffineTransform = .identity
+        var transform: CGAffineTransform = .identity
         var bounds: CGRect = .init(x: 0, y: 0, width: width, height: height)
         if width > maxResolution || height > maxResolution {
-            let ratio = width / height
+            let ratio = CGFloat(width / height)
             if ratio > 1 {
-                bounds.size.width = maxResolution
+                bounds.size.width = CGFloat(maxResolution)
                 bounds.size.height = bounds.size.width / ratio
             } else {
-                bounds.size.height = maxResolution
+                bounds.size.height = CGFloat(maxResolution)
                 bounds.size.width = bounds.size.height * ratio
             }
         }
         
-        let scaleRatio = bounds.size.width / width
+        let widthF: CGFloat = CGFloat(width)
+        let heightF: CGFloat = CGFloat(height)
+        
+        let scaleRatio: CGFloat = bounds.size.width / widthF
         let imageSize: CGSize = .init(width: width, height: height)
         var boundHeight: CGFloat = 0
         
@@ -46,7 +49,7 @@ public extension UIImage {
             transform = CGAffineTransformScale(transform, -1.0, 1.0)
         case .down:                                 // EXIF = 3
             transform = CGAffineTransformMakeTranslation(imageSize.width, imageSize.height)
-            transform = CGAffineTransformRotate(transform, M_PI)
+            transform = CGAffineTransformRotate(transform, Double.pi)
         case .downMirrored:                        // EXIF = 4
             transform = CGAffineTransformMakeTranslation(0.0, imageSize.height)
             transform = CGAffineTransformScale(transform, 1.0, -1.0)
@@ -55,26 +58,26 @@ public extension UIImage {
             bounds.size.height = bounds.size.width
             bounds.size.width = boundHeight
             transform = CGAffineTransformMakeTranslation(0.0, imageSize.width)
-            transform = CGAffineTransformRotate(transform, 3.0 * M_PI / 2.0)
+            transform = CGAffineTransformRotate(transform, 3.0 * Double.pi / 2.0)
         case .leftMirrored:                        // EXIF = 5
             boundHeight = bounds.size.height
             bounds.size.height = bounds.size.width
             bounds.size.width = boundHeight
             transform = CGAffineTransformMakeTranslation(imageSize.height, imageSize.width)
             transform = CGAffineTransformScale(transform, -1.0, 1.0)
-            transform = CGAffineTransformRotate(transform, 3.0 * M_PI / 2.0)
+            transform = CGAffineTransformRotate(transform, 3.0 * Double.pi / 2.0)
         case .right:                                // EXIF = 8
             boundHeight = bounds.size.height
             bounds.size.height = bounds.size.width
             bounds.size.width = boundHeight
             transform = CGAffineTransformMakeTranslation(imageSize.height, 0.0)
-            transform = CGAffineTransformRotate(transform, M_PI / 2.0)
+            transform = CGAffineTransformRotate(transform, Double.pi / 2.0)
         case .rightMirrored:                        // EXIF = 7
             boundHeight = bounds.size.height
             bounds.size.height = bounds.size.width
             bounds.size.width = boundHeight
             transform = CGAffineTransformMakeScale(-1.0, 1.0)
-            transform = CGAffineTransformRotate(transform, M_PI / 2.0)
+            transform = CGAffineTransformRotate(transform, Double.pi / 2.0)
         @unknown default:
             NSException(name: .internalInconsistencyException, reason: "Invalid image orientation").raise()
         }
@@ -84,22 +87,24 @@ public extension UIImage {
             UIGraphicsEndImageContext()
         }
         
-        guard var context: CGContext = UIGraphicsGetCurrentContext() else {
+        guard let  context: CGContext = UIGraphicsGetCurrentContext() else {
             ELOG("UIGraphicsGetCurrentContext() == nil")
             return nil
         }
         
         if orientation == .right || orientation == .left {
             context.scaleBy(x: -scaleRatio, y: scaleRatio)
-            context.translateBy(x: -height, y: 0)
+            context.translateBy(x: -heightF, y: 0)
         } else {
             context.scaleBy(x: scaleRatio, y: -scaleRatio)
-            context.translateBy(x: 0, y: -height)
+            context.translateBy(x: 0, y: -heightF)
         }
         
         context.concatenate(transform)
         
-        CGContextDrawImage(UIGraphicsGetCurrentContext(), CGRectMake(0, 0, width, height), imgRef)
+        let rect = CGRectMake(0, 0, widthF, heightF)
+        context.draw(imgRef, in: rect)
+
         guard let imageCopy = UIGraphicsGetImageFromCurrentImageContext() else {
             ELOG("UIGraphicsGetImageFromCurrentImageContext() == nil")
             return nil

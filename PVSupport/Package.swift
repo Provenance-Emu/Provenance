@@ -31,12 +31,16 @@ let package = Package(
 			.upToNextMajor(from: "5.1.0")),
 		.package(
 			url: "https://github.com/fpillet/NSLogger",
-			.branch("master"))
+			.branch("master")),
+		.package(
+			url: "https://github.com/krzyzanowskim/CryptoSwift",
+			.upToNextMajor(from: "1.5.1"))
 	],
 	targets: [
 		.target(
 			name: "PVSupport",
 			dependencies: [
+				"CryptoSwift",
 				.product(name: "CocoaLumberjack", package: "CocoaLumberjack", condition: .when(platforms: loggingPlatforms)),
 				.product(name: "CocoaLumberjackSwift", package: "CocoaLumberjack", condition: .when(platforms: loggingPlatforms)),
 				.product(name: "CocoaLumberjackSwiftLogBackend", package: "CocoaLumberjack", condition: .when(platforms: loggingPlatforms)),

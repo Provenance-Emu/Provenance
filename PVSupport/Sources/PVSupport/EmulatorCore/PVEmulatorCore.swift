@@ -460,7 +460,7 @@ public extension NSErrorDomain {
 @objcMembers
 @objc public class PVEmulatorCore: NSObject, CoreInterface {
 #if canImport(OpenGLES)
-	public var glesShareGroup: EAGLSharegroup! = {
+	public var glesShareGroup: EAGLSharegroup? = {
 		let sg = EAGLSharegroup.init()
 		sg.debugLabel = "EMU-Core Group"
 		return sg

@@ -134,7 +134,7 @@ public final class GameImporter {
             classInfo.bundle.url(forResource: "Core", withExtension: "plist")
         }
 
-        let bundle = ThisBundle
+        let bundle = Bundle(for: GameImporter.self)
         PVEmulatorConfiguration.updateSystems(fromPlists: [bundle.url(forResource: "systems", withExtension: "plist")!])
         PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
     }
@@ -185,7 +185,7 @@ public final class GameImporter {
             return nil
         }
 
-        return fm.md5ForFile(atPath: romPath.path, fromOffset: offset)
+        return try? fm.md5ForFile(atPath: romPath, fromOffset: offset)?.md5
     }
 
     public func importFiles(atPaths paths: [URL]) -> [URL] {

@@ -196,6 +196,15 @@
 		B3A41BE0286E76110054E9A5 /* PVLibRetroCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3928497286703CD003BAC21 /* PVLibRetroCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A41BE2286E76110054E9A5 /* PVLibRetroCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B3928498286703CD003BAC21 /* PVLibRetroCore.m */; };
 		B3A74C8B20522B04001D3D2E /* PVEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */; };
+		B3A9ED5E28AF10C9008BC9DC /* Data+Hashing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A9ED5D28AF10C9008BC9DC /* Data+Hashing.swift */; };
+		B3A9ED5F28AF10C9008BC9DC /* Data+Hashing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A9ED5D28AF10C9008BC9DC /* Data+Hashing.swift */; };
+		B3A9ED6028AF10C9008BC9DC /* Data+Hashing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A9ED5D28AF10C9008BC9DC /* Data+Hashing.swift */; };
+		B3A9ED6228AF10DA008BC9DC /* String+Hashing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A9ED6128AF10DA008BC9DC /* String+Hashing.swift */; };
+		B3A9ED6328AF10DA008BC9DC /* String+Hashing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A9ED6128AF10DA008BC9DC /* String+Hashing.swift */; };
+		B3A9ED6428AF10DA008BC9DC /* String+Hashing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A9ED6128AF10DA008BC9DC /* String+Hashing.swift */; };
+		B3A9ED6628AF1103008BC9DC /* Hashing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A9ED6528AF1103008BC9DC /* Hashing.swift */; };
+		B3A9ED6728AF1103008BC9DC /* Hashing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A9ED6528AF1103008BC9DC /* Hashing.swift */; };
+		B3A9ED6828AF1103008BC9DC /* Hashing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A9ED6528AF1103008BC9DC /* Hashing.swift */; };
 		B3AB37B321880FA5009D9244 /* iCadeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378B2187F9A9009D9244 /* iCadeState.swift */; };
 		B3AB37B421880FA6009D9244 /* iCadeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378B2187F9A9009D9244 /* iCadeState.swift */; };
 		B3AB37BD218812BB009D9244 /* iCadeReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37B02187FC4B009D9244 /* iCadeReaderView.swift */; };
@@ -259,9 +268,9 @@
 		B3B4F4B928A3C79F0099D35F /* PVLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B4F4B828A3C79F0099D35F /* PVLogging.swift */; };
 		B3B4F4BA28A3C79F0099D35F /* PVLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B4F4B828A3C79F0099D35F /* PVLogging.swift */; };
 		B3B4F4BB28A3C7A00099D35F /* PVLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B4F4B828A3C79F0099D35F /* PVLogging.swift */; };
-		B3B4F4C928A3FDF50099D35F /* NSFileManager+OEHashingAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B4F4C828A3FDF50099D35F /* NSFileManager+OEHashingAdditions.swift */; };
-		B3B4F4CA28A3FDF50099D35F /* NSFileManager+OEHashingAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B4F4C828A3FDF50099D35F /* NSFileManager+OEHashingAdditions.swift */; };
-		B3B4F4CB28A3FDF50099D35F /* NSFileManager+OEHashingAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B4F4C828A3FDF50099D35F /* NSFileManager+OEHashingAdditions.swift */; };
+		B3B4F4C928A3FDF50099D35F /* FileManager+Hashing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B4F4C828A3FDF50099D35F /* FileManager+Hashing.swift */; };
+		B3B4F4CA28A3FDF50099D35F /* FileManager+Hashing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B4F4C828A3FDF50099D35F /* FileManager+Hashing.swift */; };
+		B3B4F4CB28A3FDF50099D35F /* FileManager+Hashing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B4F4C828A3FDF50099D35F /* FileManager+Hashing.swift */; };
 		B3BE75B4289CCF6C0090170D /* PVLibRetroCore+CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3BE75B3289CCF6C0090170D /* PVLibRetroCore+CoreOptions.swift */; };
 		B3BE75B5289CCF6C0090170D /* PVLibRetroCore+CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3BE75B3289CCF6C0090170D /* PVLibRetroCore+CoreOptions.swift */; };
 		B3C8A69428781C6E0037A946 /* msg_hash.c in Sources */ = {isa = PBXBuildFile; fileRef = B322515C286C6F29001FDF42 /* msg_hash.c */; };
@@ -300,6 +309,7 @@
 		B3E6DADF20B7BF8600454DD4 /* UIDeviceExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E6DADD20B7BF8600454DD4 /* UIDeviceExtension.swift */; };
 		B3F0846C2188CA7A00FF39EE /* CocoaLumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F0846B2188CA7A00FF39EE /* CocoaLumberExtensions.swift */; };
 		B3F0846D2188CA7A00FF39EE /* CocoaLumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F0846B2188CA7A00FF39EE /* CocoaLumberExtensions.swift */; };
+		B3FBB40728AF48E700A9648B /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B3FBB40628AF48E700A9648B /* CryptoSwift */; };
 		B3FFF02D26E9E65800A33143 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FFF02C26E9E65800A33143 /* AVFoundation.framework */; };
 		CF87D333258AB6B300838AF8 /* GameWithCheat.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF87D332258AB6B300838AF8 /* GameWithCheat.swift */; };
 		CF87D334258AB6B300838AF8 /* GameWithCheat.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF87D332258AB6B300838AF8 /* GameWithCheat.swift */; };
@@ -1213,6 +1223,9 @@
 		B3A41BDA286E75DD0054E9A5 /* libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libretro.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A41BEB286E76110054E9A5 /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVEmulatorCore.swift; sourceTree = "<group>"; };
+		B3A9ED5D28AF10C9008BC9DC /* Data+Hashing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Hashing.swift"; sourceTree = "<group>"; };
+		B3A9ED6128AF10DA008BC9DC /* String+Hashing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Hashing.swift"; sourceTree = "<group>"; };
+		B3A9ED6528AF1103008BC9DC /* Hashing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hashing.swift; sourceTree = "<group>"; };
 		B3AB37872187F9A9009D9244 /* PViCadeGamepadDirectionPad.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PViCadeGamepadDirectionPad.swift; sourceTree = "<group>"; };
 		B3AB37882187F9A9009D9244 /* iCadeControllerSetting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iCadeControllerSetting.swift; sourceTree = "<group>"; };
 		B3AB37892187F9A9009D9244 /* PViCadeReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PViCadeReader.swift; sourceTree = "<group>"; };
@@ -1240,7 +1253,7 @@
 		B3B4F4B028A3B6940099D35F /* NSObject+PVAbstractAdditions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSObject+PVAbstractAdditions.swift"; sourceTree = "<group>"; };
 		B3B4F4B428A3BC980099D35F /* PVLogEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVLogEntry.swift; sourceTree = "<group>"; };
 		B3B4F4B828A3C79F0099D35F /* PVLogging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVLogging.swift; sourceTree = "<group>"; };
-		B3B4F4C828A3FDF50099D35F /* NSFileManager+OEHashingAdditions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSFileManager+OEHashingAdditions.swift"; sourceTree = "<group>"; };
+		B3B4F4C828A3FDF50099D35F /* FileManager+Hashing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager+Hashing.swift"; sourceTree = "<group>"; };
 		B3BE75B3289CCF6C0090170D /* PVLibRetroCore+CoreOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVLibRetroCore+CoreOptions.swift"; sourceTree = "<group>"; };
 		B3C83E262796211D0020824C /* Performance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Performance.swift; sourceTree = "<group>"; };
 		B3C83E2A279622EB0020824C /* PerformanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceView.swift; sourceTree = "<group>"; };
@@ -1352,6 +1365,7 @@
 				B3D0EE2A277FE8E1002DC0A5 /* CoreHaptics.framework in Frameworks */,
 				B3CA5B5326E9E4DC00687B27 /* CocoaLumberjack in Frameworks */,
 				B336B8F426B398A900960A81 /* Reachability in Frameworks */,
+				B3FBB40728AF48E700A9648B /* CryptoSwift in Frameworks */,
 				B3AF6FDA2191616C000FA7F9 /* Foundation.framework in Frameworks */,
 				B3CEC5C127952165004A7CC1 /* NSLogger in Frameworks */,
 				B3AF6FD821916168000FA7F9 /* GameController.framework in Frameworks */,
@@ -3395,9 +3409,9 @@
 		B3A4FB57278FE2B700A65248 /* NSExtensions */ = {
 			isa = PBXGroup;
 			children = (
+				B3A9ED6928AF1778008BC9DC /* Hashing */,
 				B3E6DADD20B7BF8600454DD4 /* UIDeviceExtension.swift */,
 				B3B4F4B028A3B6940099D35F /* NSObject+PVAbstractAdditions.swift */,
-				B3B4F4C828A3FDF50099D35F /* NSFileManager+OEHashingAdditions.swift */,
 			);
 			path = NSExtensions;
 			sourceTree = "<group>";
@@ -3410,6 +3424,17 @@
 				B30E94892793C77700871E57 /* PVSupport */,
 			);
 			path = Sources;
+			sourceTree = "<group>";
+		};
+		B3A9ED6928AF1778008BC9DC /* Hashing */ = {
+			isa = PBXGroup;
+			children = (
+				B3A9ED5D28AF10C9008BC9DC /* Data+Hashing.swift */,
+				B3B4F4C828A3FDF50099D35F /* FileManager+Hashing.swift */,
+				B3A9ED6128AF10DA008BC9DC /* String+Hashing.swift */,
+				B3A9ED6528AF1103008BC9DC /* Hashing.swift */,
+			);
+			path = Hashing;
 			sourceTree = "<group>";
 		};
 		B3AB36DC2187F4C4009D9244 /* Controller */ = {
@@ -3782,6 +3807,7 @@
 				B3296E8626C67F660088AC32 /* CocoaLumberjackSwiftLogBackend */,
 				B3CA5B5226E9E4DC00687B27 /* CocoaLumberjack */,
 				B3CEC5C027952165004A7CC1 /* NSLogger */,
+				B3FBB40628AF48E700A9648B /* CryptoSwift */,
 			);
 			productName = "PVSupportTV Framework";
 			productReference = B3C96ED81D62C5E7003F1E93 /* PVSupport.framework */;
@@ -3839,6 +3865,7 @@
 				B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */,
 				B336B8F226B398A900960A81 /* XCRemoteSwiftPackageReference "Reachability.swift" */,
 				B3CEC5BF27952163004A7CC1 /* XCRemoteSwiftPackageReference "NSLogger" */,
+				B3FBB40528AF48E600A9648B /* XCRemoteSwiftPackageReference "CryptoSwift" */,
 			);
 			productRefGroup = 1ACEA64517F7467D0031B1C9 /* Products */;
 			projectDirPath = "";
@@ -3913,6 +3940,7 @@
 				B305EF5B276B4E41003AE510 /* PVEmulatorCore.swift in Sources */,
 				B305EF5C276B4E41003AE510 /* PViCadeSteelSeriesController.swift in Sources */,
 				B305EF5D276B4E41003AE510 /* ArchiveSupport.swift in Sources */,
+				B3A9ED6428AF10DA008BC9DC /* String+Hashing.swift in Sources */,
 				B33FB30F279BE2710013AAD8 /* CoreOptional.swift in Sources */,
 				B305EF60276B4E41003AE510 /* PViCade8BitdoController.swift in Sources */,
 				B305EF61276B4E41003AE510 /* PViCadeInputAxis.swift in Sources */,
@@ -3942,6 +3970,7 @@
 				B305EF72276B4E41003AE510 /* CoreActions.swift in Sources */,
 				B3CEC5BE2794E9FD004A7CC1 /* PVGameControllerUtilities.swift in Sources */,
 				B3B4F4B328A3B6940099D35F /* NSObject+PVAbstractAdditions.swift in Sources */,
+				B3A9ED6028AF10C9008BC9DC /* Data+Hashing.swift in Sources */,
 				B33FB2ED279BE0CC0013AAD8 /* CoreOptions+Serialization.swift in Sources */,
 				B305EF75276B4E41003AE510 /* PViCadeReader.swift in Sources */,
 				B32E45992899B94100C2E2D0 /* PVEmulatorCore+Microphone.swift in Sources */,
@@ -3952,8 +3981,9 @@
 				B3D0EE26277FE880002DC0A5 /* HapticsManager.swift in Sources */,
 				B355E4C7289E1EB900D23D64 /* PVEmulatorCore+Camera.swift in Sources */,
 				B37EC399289C5C0E0062FD31 /* PVEmulatorCore+OSD.swift in Sources */,
+				B3A9ED6828AF1103008BC9DC /* Hashing.swift in Sources */,
 				B32E45932899AE0300C2E2D0 /* PVEmulatorCore+Sensorsr.swift in Sources */,
-				B3B4F4CB28A3FDF50099D35F /* NSFileManager+OEHashingAdditions.swift in Sources */,
+				B3B4F4CB28A3FDF50099D35F /* FileManager+Hashing.swift in Sources */,
 				B37EC39C289C5C0F0062FD31 /* PVEmulatorCore+MIDI.swift in Sources */,
 				B3B4F4BB28A3C7A00099D35F /* PVLogging.swift in Sources */,
 				B33FB2FE279BE18F0013AAD8 /* CoreOptionEnumValue.swift in Sources */,
@@ -4094,6 +4124,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3A9ED5F28AF10C9008BC9DC /* Data+Hashing.swift in Sources */,
 				B3AB37EE21881B7B009D9244 /* PViCadeSteelSeriesController.swift in Sources */,
 				B3CDEEBD21D4C3E6000C55F7 /* ArchiveSupport.swift in Sources */,
 				B33FB30E279BE2710013AAD8 /* CoreOptional.swift in Sources */,
@@ -4114,7 +4145,7 @@
 				B336D16E28A399B3004890D9 /* AudioManager.swift in Sources */,
 				B3AB37E121881956009D9244 /* PViCadeController.swift in Sources */,
 				B372638426EA015700E95488 /* CocoaLumberjack+swift-log.swift in Sources */,
-				B3B4F4CA28A3FDF50099D35F /* NSFileManager+OEHashingAdditions.swift in Sources */,
+				B3B4F4CA28A3FDF50099D35F /* FileManager+Hashing.swift in Sources */,
 				B32E45982899B94100C2E2D0 /* PVEmulatorCore+Microphone.swift in Sources */,
 				B3AB37DF21881874009D9244 /* PViCadeGamepadDirectionPad.swift in Sources */,
 				B3296E8226C67EFA0088AC32 /* CocoaLumberjack+NSLogger.swift in Sources */,
@@ -4127,6 +4158,7 @@
 				B33FB2F9279BE1730013AAD8 /* CoreOptionMultiValue.swift in Sources */,
 				B3532C3721A925C2006CDA0F /* SortOption.swift in Sources */,
 				CF87D334258AB6B300838AF8 /* GameWithCheat.swift in Sources */,
+				B3A9ED6728AF1103008BC9DC /* Hashing.swift in Sources */,
 				B3CDEEC621D4C490000C55F7 /* CoreActions.swift in Sources */,
 				B3AB37C0218814A8009D9244 /* PViCadeReader.swift in Sources */,
 				B3CEC5BD2794E9FD004A7CC1 /* PVGameControllerUtilities.swift in Sources */,
@@ -4140,6 +4172,7 @@
 				B3447F9C218C1CD200557ACE /* PVSettingsModel.swift in Sources */,
 				B33FB2FD279BE18F0013AAD8 /* CoreOptionEnumValue.swift in Sources */,
 				B33FB301279BE1E40013AAD8 /* OptionDependency.swift in Sources */,
+				B3A9ED6328AF10DA008BC9DC /* String+Hashing.swift in Sources */,
 				B3AB37ED21881B7B009D9244 /* PViCadeMocuteController.swift in Sources */,
 				B37EC392289C5C0E0062FD31 /* PVEmulatorCore+VFS.swift in Sources */,
 				B3AB37BE218812BC009D9244 /* iCadeReaderView.swift in Sources */,
@@ -4157,6 +4190,7 @@
 				B34AB57F2106DC6100C45F09 /* PVEmulatorCore.swift in Sources */,
 				B3AB37EB21881B7A009D9244 /* PViCadeSteelSeriesController.swift in Sources */,
 				B3CDEEBC21D4C3E6000C55F7 /* ArchiveSupport.swift in Sources */,
+				B3A9ED6228AF10DA008BC9DC /* String+Hashing.swift in Sources */,
 				B33FB30D279BE2710013AAD8 /* CoreOptional.swift in Sources */,
 				B3AB37E921881B7A009D9244 /* PViCade8BitdoController.swift in Sources */,
 				B37EC39A289C5C0F0062FD31 /* PVEmulatorCore+MIDI.swift in Sources */,
@@ -4186,6 +4220,7 @@
 				B32E45952899B92500C2E2D0 /* PVEmulatorCore+Camera.swift in Sources */,
 				B3532C3621A925C2006CDA0F /* SortOption.swift in Sources */,
 				B3B4F4B128A3B6940099D35F /* NSObject+PVAbstractAdditions.swift in Sources */,
+				B3A9ED5E28AF10C9008BC9DC /* Data+Hashing.swift in Sources */,
 				CF87D333258AB6B300838AF8 /* GameWithCheat.swift in Sources */,
 				B3CDEEC521D4C490000C55F7 /* CoreActions.swift in Sources */,
 				B3CEC5BC2794E9FD004A7CC1 /* PVGameControllerUtilities.swift in Sources */,
@@ -4196,8 +4231,9 @@
 				B336D16A28A399B3004890D9 /* RingBuffer.swift in Sources */,
 				B3D0EE20277FE85F002DC0A5 /* HapticsManager.swift in Sources */,
 				B32E45922899AE0300C2E2D0 /* PVEmulatorCore+Sensorsr.swift in Sources */,
+				B3A9ED6628AF1103008BC9DC /* Hashing.swift in Sources */,
 				B37EC38E289C5C0E0062FD31 /* PVEmulatorCore+LED.swift in Sources */,
-				B3B4F4C928A3FDF50099D35F /* NSFileManager+OEHashingAdditions.swift in Sources */,
+				B3B4F4C928A3FDF50099D35F /* FileManager+Hashing.swift in Sources */,
 				B33FB2FC279BE18F0013AAD8 /* CoreOptionEnumValue.swift in Sources */,
 				B3B4F4B928A3C79F0099D35F /* PVLogging.swift in Sources */,
 				B33FB300279BE1E40013AAD8 /* OptionDependency.swift in Sources */,
@@ -4339,6 +4375,7 @@
 				SWIFT_VERSION = 5.0;
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_WORKSPACE = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 8.0;
 			};
 			name = Debug;
 		};
@@ -4394,6 +4431,7 @@
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 8.0;
 			};
 			name = Release;
 		};
@@ -4685,6 +4723,7 @@
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 8.0;
 			};
 			name = Archive;
 		};
@@ -5744,6 +5783,14 @@
 				kind = branch;
 			};
 		};
+		B3FBB40528AF48E600A9648B /* XCRemoteSwiftPackageReference "CryptoSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/krzyzanowskim/CryptoSwift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -5851,6 +5898,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B3CEC5BF27952163004A7CC1 /* XCRemoteSwiftPackageReference "NSLogger" */;
 			productName = NSLogger;
+		};
+		B3FBB40628AF48E700A9648B /* CryptoSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3FBB40528AF48E600A9648B /* XCRemoteSwiftPackageReference "CryptoSwift" */;
+			productName = CryptoSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

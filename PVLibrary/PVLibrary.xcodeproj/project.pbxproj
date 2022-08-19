@@ -220,9 +220,6 @@
 		B3E5449128AE2D470067D3B8 /* UIImage+Scaling.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E5449028AE2D470067D3B8 /* UIImage+Scaling.swift */; };
 		B3E5449228AE2D470067D3B8 /* UIImage+Scaling.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E5449028AE2D470067D3B8 /* UIImage+Scaling.swift */; };
 		B3E5449328AE2D470067D3B8 /* UIImage+Scaling.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E5449028AE2D470067D3B8 /* UIImage+Scaling.swift */; };
-		B3F9378828A891FF00F393BD /* Data+Hashing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F9378728A891FF00F393BD /* Data+Hashing.swift */; };
-		B3F9378928A891FF00F393BD /* Data+Hashing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F9378728A891FF00F393BD /* Data+Hashing.swift */; };
-		B3F9378A28A891FF00F393BD /* Data+Hashing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F9378728A891FF00F393BD /* Data+Hashing.swift */; };
 		CF17109D2585F97000258602 /* PVCheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF17109C2585F97000258602 /* PVCheats.swift */; };
 		CF17109E2585F97000258602 /* PVCheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF17109C2585F97000258602 /* PVCheats.swift */; };
 		CF1710A12585FA3F00258602 /* Cheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1710A02585FA3F00258602 /* Cheats.swift */; };
@@ -374,8 +371,6 @@
 		B3CDEECA21D4CF61000C55F7 /* DirectoryWatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DirectoryWatcher.swift; sourceTree = "<group>"; };
 		B3E5448C28ADFF9B0067D3B8 /* PVSQLiteDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSQLiteDatabase.swift; sourceTree = "<group>"; };
 		B3E5449028AE2D470067D3B8 /* UIImage+Scaling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Scaling.swift"; sourceTree = "<group>"; };
-		B3F9378728A891FF00F393BD /* Data+Hashing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Hashing.swift"; sourceTree = "<group>"; };
-		B3F9E58228A906C800767A44 /* PVSupport */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = PVSupport; path = ../PVSupport; sourceTree = "<group>"; };
 		CF17109C2585F97000258602 /* PVCheats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVCheats.swift; sourceTree = "<group>"; };
 		CF1710A02585FA3F00258602 /* Cheats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cheats.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -668,7 +663,6 @@
 		B3579D052106B11D00DDEBD6 = {
 			isa = PBXGroup;
 			children = (
-				B3F9E58128A906C800767A44 /* Packages */,
 				B317380127841959002D3ACD /* Build.xcconfig */,
 				B3579D112106B11D00DDEBD6 /* PVLibrary */,
 				B3C04B622107867200E7AF79 /* Tests */,
@@ -766,7 +760,6 @@
 			isa = PBXGroup;
 			children = (
 				B30E7AEA26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift */,
-				B3F9378728A891FF00F393BD /* Data+Hashing.swift */,
 				B3E5449028AE2D470067D3B8 /* UIImage+Scaling.swift */,
 			);
 			path = NSExtensions;
@@ -851,14 +844,6 @@
 				B3C04B652107867200E7AF79 /* Info.plist */,
 			);
 			path = Tests;
-			sourceTree = "<group>";
-		};
-		B3F9E58128A906C800767A44 /* Packages */ = {
-			isa = PBXGroup;
-			children = (
-				B3F9E58228A906C800767A44 /* PVSupport */,
-			);
-			name = Packages;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1027,7 +1012,6 @@
 				B336B90D26B39BCF00960A81 /* XCRemoteSwiftPackageReference "SQLite.swift" */,
 				B3A3203F27209B4300F338F6 /* XCRemoteSwiftPackageReference "ZipArchive" */,
 				B37B4DEE27B2292F0068F8D1 /* XCRemoteSwiftPackageReference "RxDataSources" */,
-				B3104BE328A46B1C0047278C /* XCRemoteSwiftPackageReference "GRDB.swift" */,
 				B34A2DCA28AE3DBA00111D90 /* XCRemoteSwiftPackageReference "SWCompression" */,
 			);
 			productRefGroup = B3579D102106B11D00DDEBD6 /* Products */;
@@ -1108,7 +1092,6 @@
 				B305EFFD276B512D003AE510 /* System.swift in Sources */,
 				B305F000276B512D003AE510 /* PVGameLibrary+Migration.swift in Sources */,
 				B305F002276B512D003AE510 /* LocalFile.swift in Sources */,
-				B3F9378A28A891FF00F393BD /* Data+Hashing.swift in Sources */,
 				B305F00B276B512D003AE510 /* BIOS.swift in Sources */,
 				B305F00C276B512D003AE510 /* Realm+Ext.swift in Sources */,
 				B305F00D276B512D003AE510 /* PVRecentGame.swift in Sources */,
@@ -1173,7 +1156,6 @@
 				B354E7C9219A7E470041F971 /* System.swift in Sources */,
 				11AFB2B324867482000A3922 /* PVGameLibrary+Migration.swift in Sources */,
 				B354E79C219A76C80041F971 /* LocalFile.swift in Sources */,
-				B3F9378828A891FF00F393BD /* Data+Hashing.swift in Sources */,
 				B354E790219A76C80041F971 /* BIOS.swift in Sources */,
 				B354E7B8219A796A0041F971 /* Realm+Ext.swift in Sources */,
 				B3274E732106BC1D00857F52 /* PVRecentGame.swift in Sources */,
@@ -1238,7 +1220,6 @@
 				B354E7CA219A7E470041F971 /* System.swift in Sources */,
 				11AFB2B424867482000A3922 /* PVGameLibrary+Migration.swift in Sources */,
 				B354E79D219A76C80041F971 /* LocalFile.swift in Sources */,
-				B3F9378928A891FF00F393BD /* Data+Hashing.swift in Sources */,
 				B354E791219A76C80041F971 /* BIOS.swift in Sources */,
 				B354E7B9219A796A0041F971 /* Realm+Ext.swift in Sources */,
 				B3C04AE021077B3100E7AF79 /* PVRecentGame.swift in Sources */,
@@ -1999,14 +1980,6 @@
 			requirement = {
 				kind = exactVersion;
 				version = 2.3.0;
-			};
-		};
-		B3104BE328A46B1C0047278C /* XCRemoteSwiftPackageReference "GRDB.swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/groue/GRDB.swift.git";
-			requirement = {
-				branch = master;
-				kind = branch;
 			};
 		};
 		B336B90426B39ABA00960A81 /* XCRemoteSwiftPackageReference "RxRealm" */ = {
