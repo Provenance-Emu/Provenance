@@ -471,7 +471,7 @@ public extension NSErrorDomain {
 //}
 
 @objcMembers
-@objc public class PVEmulatorCore: NSObject, CoreInterface {
+@objc open class PVEmulatorCore: NSObject, CoreInterface {
 #if canImport(OpenGLES)
 	public var glesShareGroup: EAGLSharegroup? = {
 		let sg = EAGLSharegroup.init()

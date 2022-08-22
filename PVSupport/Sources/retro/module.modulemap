@@ -1,0 +1,18 @@
+framework module retro {
+//    umbrella header "libretro-common/include/libretro.h"b
+//  umbrella header "./retro_common_api.h"
+    umbrella header "/Users/jmattiello/Workspace/Provenance/Provenance/PVSupport/Sources/retro/retroarch.h"
+
+  export *
+  module * { export * }
+  
+  link "sqlite3"
+  link "z"
+  link framework "Foundation"
+  link framework "CoreFoundation"
+}
+
+//module CAltKit {
+//    umbrella "./include"
+//    export *
+//}
