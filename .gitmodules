@@ -148,3 +148,6 @@
 [submodule "Cores/Mupen64Plus/Plugins/rsp/cxd4"]
 	path = Cores/Mupen64Plus/Plugins/rsp/cxd4
 	url = https://github.com/Provenance-Emu/mupen64plus-rsp-cxd4.git
+[submodule "Cores/TIC80/TIC-80"]
+	path = Cores/TIC80/TIC-80
+	url = https://github.com/Provenance-Emu/TIC-80.git
