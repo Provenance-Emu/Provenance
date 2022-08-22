@@ -7,9 +7,6 @@
 [submodule "PVMupen64Plus/Plugins/mupen64plus-rsp-hle"]
 	path = Cores/Mupen64Plus/Plugins/rsp/hle
 	url = https://github.com/mupen64plus/mupen64plus-rsp-hle.git
-[submodule "PVMupen64Plus/Plugins/mupen64plus-rsp-cxd4"]
-	path = Cores/Mupen64Plus/Plugins/rsp/cxd4
-	url = https://github.com/Provenance-Emu/mupen64plus-rsp-cxd4.git
 [submodule "PVMupen64Plus/Plugins/mupen64plus-video-rice"]
 	path = Cores/Mupen64Plus/Plugins/Video/rice
 	url = https://github.com/Provenance-Emu/mupen64plus-video-rice.git
@@ -148,3 +145,6 @@
 [submodule "Cores/Genesis-Plus-GX/PVGenesis/Deps/Genesis-Plus-GX"]
 	path = Cores/Genesis-Plus-GX/PVGenesis/Deps/Genesis-Plus-GX
 	url = https://github.com/Provenance-Emu/Genesis-Plus-GX.git
+[submodule "Cores/Mupen64Plus/Plugins/rsp/cxd4"]
+	path = Cores/Mupen64Plus/Plugins/rsp/cxd4
+	url = https://github.com/Provenance-Emu/mupen64plus-rsp-cxd4.git
