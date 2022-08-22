@@ -11,8 +11,17 @@ import Foundation
 //import GRDB
 @_exported import SQLite
 
+public final class OpenVGDatabase: PVSQLiteDatabase {
+    static let shared: OpenVGDatabase = OpenVGDatabase()
+    
+    init() {
+        let bundle = Bundle(for: OpenVGDatabase.self)
+        let dbURL = bundle.url(forResource: "openvgdb", withExtension: "sqlite")!
+        try! super.init(withURL: dbURL, readonly: true)
+    }
+}
 
-public final class PVSQLiteDatabase {
+public class PVSQLiteDatabase {
     
     public enum OpenVGDatabaseQueryError: Error {
         case invalidSystemID
@@ -21,9 +30,9 @@ public final class PVSQLiteDatabase {
     
     // MARK: - Public
 
-    public required init(withURL url: URL) throws {
+    public init(withURL url: URL, readonly: Bool = true) throws {
         self.url = url
-        let connection = try Connection(url.path, readonly: true)
+        let connection = try SQLite.Connection(url.path, readonly: readonly)
         self.db = connection
 //        let configuration = configuration(withURL: url)
 //        let queue = try DatabaseQueue(path: ..., configuration: config)
@@ -31,6 +40,7 @@ public final class PVSQLiteDatabase {
     }
     
     public func executeQuery(_ sql: String) throws -> [[String:AnyObject]] {
+//        db.prepare(.)
 //        try dbQueue.read { db in=
     []
 //            if let row = try Row.fetchOne(db, sql: sql, arguments: [1]) {
@@ -47,37 +57,7 @@ public final class PVSQLiteDatabase {
     
     // MARK: - Private
     let url: URL
-
-    let db: Connection
-//    let dbQueue: DatabaseQueue
-//    let configuration: Configuration
-//
-//    private func configuration(withURL url: URL) -> Configuration {
-//       let config = Configuration()
-//        config.readonly = true
-//        config.foreignKeysEnabled = true // Default is already true
-//        config.label = "MyDatabase"      // Useful when your app opens multiple databases
-//        config.maximumReaderCount = 10   // (DatabasePool only) The default is 5
-//
-//        let dbQueue = try DatabaseQueue( // or DatabasePool
-//            path: url.path,
-//            configuration: config)
-//        return config
-//    }
-    lazy var openVGDB: OESQLiteDatabase = {
-        let bundle = ThisBundle
-        let _openVGDB = try! OESQLiteDatabase(url: bundle.url(forResource: "openvgdb", withExtension: "sqlite")!)
-        return _openVGDB
-    }()
-
-    lazy var sqldb: Connection = {
-        let bundle = ThisBundle
-        let sqlFile = bundle.url(forResource: "openvgdb", withExtension: "sqlite")!
-        let sqldb = try! Connection(sqlFile.path, readonly: true)
-        return sqldb
-    }()
-
-    fileprivate let ThisBundle: Bundle = Bundle(for: PVSQLiteDatabase.self)
+    let db: SQLite.Connection
 }
 
 public extension PVSQLiteDatabase {
@@ -99,7 +79,7 @@ public extension PVSQLiteDatabase {
         }
 
         do {
-            results = try openVGDB.executeQuery(queryString)
+            results = try self.executeQuery(queryString)
         } catch {
             ELOG("Failed to execute query: \(error.localizedDescription)")
             throw error
@@ -112,28 +92,19 @@ public extension PVSQLiteDatabase {
         }
     }
     
-    func searchDatabase(usingKey key: String, value: String, systemID: SystemIdentifier) throws -> [[String: NSObject]]? {
-        guard let systemIDInt = PVEmulatorConfiguration.databaseID(forSystemID: systemID.rawValue) else {
-            throw DatabaseQueryError.invalidSystemID
-        }
-
-        return try searchDatabase(usingKey: key, value: value, systemID: systemIDInt)
-    }
-
-    func searchDatabase(usingKey key: String, value: String, systemID: String) throws -> [[String: NSObject]]? {
-        guard let systemIDInt = PVEmulatorConfiguration.databaseID(forSystemID: systemID) else {
-            throw DatabaseQueryError.invalidSystemID
-        }
-
-        return try searchDatabase(usingKey: key, value: value, systemID: systemIDInt)
+    func search(md5: String, systemID: String? = nil) throws -> [[String: NSObject]]? {
+        let systemIDInt: Int? = databaseInt(forID: systemID)
+        return try searchDatabase(usingKey: "romHashMD5", value: md5.uppercased(), systemID: systemIDInt)
     }
     
-    func search(md5: String, systemID: String? = nil) throws -> [[String: Any]]? {
-        return try searchDatabase(usingKey: "romHashMD5", value: md5.uppercased(), systemID: systemID)
+    func search(romFileName: String, systemID: String? = nil) throws -> [[String: NSObject]]? {
+        let systemIDInt: Int? = databaseInt(forID: systemID)
+        return try searchDatabase(usingKey: "romFileName", value: romFileName, systemID: systemIDInt)
     }
     
-    func search(romFileName: String, systemID: String? = nil) throws -> [[String: Any]]? {
-        return try searchDatabase(usingKey: "romFileName", value: romFileName, systemID: systemID)
+    private func databaseInt(forID systemID: String?) -> Int? {
+        guard let systemID = systemID else { return nil }
+        return PVEmulatorConfiguration.databaseID(forSystemID: systemID)
     }
 }
 
@@ -146,7 +117,7 @@ public extension PVSQLiteDatabase {
         let query = roms.select(romID).filter(crcs.contains(romHashCRC))
 
         do {
-            let result = try sqldb.pluck(query)
+            let result = try db.pluck(query)
             let foundROMid = try result?.get(romID)
             return foundROMid
         } catch {

@@ -14,15 +14,30 @@ import Compression
 
 public enum CompressionFormats {
     case lzma
+    case lzma2
+    case lz4
     case zlib
 }
 
-public enum ArchiveFormats {
+public enum ArchiveFormats: String, CaseIterable {
     case bzip
     case gzip
     case sevenZip
+    case rar
     case tar
     case xz
+    
+    public var extensions: [String] {
+        switch self {
+        case .bzip: return ["bz"]
+        case .gzip: return ["gz"]
+        case .sevenZip: return ["7z", "7zip"]
+        case .rar: return ["rar"]
+        case .tar: return ["tar"]
+        case .xz: return ["xz"]
+        }
+    }
+    public static let archiveExtensions: [String] = allCases.map { $0.extensions }.flatMap{ $0 }
 }
 
 public struct DecompressedEntry {
@@ -41,7 +56,12 @@ public protocol Compressor {
 
 public protocol Decompressor {
     static func decompress(data: Data) throws -> Data
-//    class func decompress(data: Data) async throws -> Data
+    static func decompress(data: Data) async throws -> Data
+}
+
+public protocol DecompressableData {
+    func decompress(data: Data) throws -> Data
+    //    class func decompress(data: Data) async throws -> Data
 }
 //
 //public final class ZLIB: Decompressor {
@@ -74,8 +94,10 @@ public protocol Decompressor {
 //    }
 //}
 
-extension SWCompression.CompressionMethod {
-    func decompress(data: Data) throws -> Data {
+
+
+extension SWCompression.CompressionMethod: DecompressableData {
+    public func decompress(data: Data) throws -> Data {
         let decompressedData: Data
         switch self {
         case .bzip2:
@@ -99,10 +121,10 @@ extension SWCompression.CompressionMethod {
 /// unclear how to decompress containers with mutliple files. It's very manual in compresspressing
 /// and decompressing single instances of Data.
 public final class Extractor {
-    let queueLabel = "com.provenance.extractor"
+    static let queueLabel = "com.provenance.extractor"
     static let shared: Extractor = Extractor()
 
-    let dispatchQueue = DispatchQueue(label: queueLabel, qos: .utility)
+    let dispatchQueue = DispatchQueue(label: Extractor.queueLabel, qos: .utility)
     let queue: OperationQueueScheduler = {
         let operationQueue = OperationQueue()
         operationQueue.maxConcurrentOperationCount = 1
@@ -111,60 +133,60 @@ public final class Extractor {
         return scheduler
     }()
 
-    private func data(at path: URL) async -> Data {
-//        return try await Data(contentsOf: path, options: .mappedIfSafe)
-        return Task {
-            return try Data(contentsOf: path, options: .mappedIfSafe)
-        }
-    }
+//    private func data(at path: URL) async -> Data {
+////        return try await Data(contentsOf: path, options: .mappedIfSafe)
+//        return Task {
+//            return try Data(contentsOf: path, options: .mappedIfSafe)
+//        }
+//    }
 
     // MAR: - 7Zip
-    private func openSevenZip(with data: Data) -> Promise<[SevenZipEntry]> {
-        return Promise<[SevenZipEntry]> {
-            try SevenZipContainer.open(container: data)
-        }
-    }
-
-    private func decompress(entries: [SevenZipEntry]) -> Promise<[DecompressedEntry]> {
-        return Promise<[DecompressedEntry]> { () -> [DecompressedEntry] in
-            entries.compactMap {
-                guard let data = $0.data else {
-                    ELOG("Nil data")
-                    return nil
-                }
-
-                return DecompressedEntry(data: data, info: $0.info)
-            }
-        }
-    }
+//    private func openSevenZip(with data: Data) -> Promise<[SevenZipEntry]> {
+//        return Promise<[SevenZipEntry]> {
+//            try SevenZipContainer.open(container: data)
+//        }
+//    }
+//
+//    private func decompress(entries: [SevenZipEntry]) -> Promise<[DecompressedEntry]> {
+//        return Promise<[DecompressedEntry]> { () -> [DecompressedEntry] in
+//            entries.compactMap {
+//                guard let data = $0.data else {
+//                    ELOG("Nil data")
+//                    return nil
+//                }
+//
+//                return DecompressedEntry(data: data, info: $0.info)
+//            }
+//        }
+//    }
 
     // MARK: - Zip
-
-    private func openZip(with data: Data) -> Promise<[ZipEntry]> {
-        return Promise(on: dispatchQueue, { () -> [ZipEntry] in
-            try ZipContainer.open(container: data)
-        })
-    }
-
-    private func decompress(entries: [ZipEntry]) -> Promise<[DecompressedEntry]> {
-        return Promise<[DecompressedEntry]> { () -> [DecompressedEntry] in
-            entries.compactMap {
-                guard let data = $0.data else {
-                    ELOG("Nil data")
-                    return nil
-                }
-
-                do {
-                    let decompressedData: Data = try $0.info.compressionMethod.decompress(data: data)
-                    return DecompressedEntry(data: decompressedData, info: $0.info)
-                } catch let error as ZipError {
-                    ELOG("ZipError failed: \(error)")
-                    return nil
-                } catch {
-                    ELOG("Decompression failed: \(error)")
-                    return nil
-                }
-            }
-        }
-    }
+//
+//    private func openZip(with data: Data) -> Promise<[ZipEntry]> {
+//        return Promise(on: dispatchQueue, { () -> [ZipEntry] in
+//            try ZipContainer.open(container: data)
+//        })
+//    }
+//
+//    private func decompress(entries: [ZipEntry]) -> Promise<[DecompressedEntry]> {
+//        return Promise<[DecompressedEntry]> { () -> [DecompressedEntry] in
+//            entries.compactMap {
+//                guard let data = $0.data else {
+//                    ELOG("Nil data")
+//                    return nil
+//                }
+//
+//                do {
+//                    let decompressedData: Data = try $0.info.compressionMethod.decompress(data: data)
+//                    return DecompressedEntry(data: decompressedData, info: $0.info)
+//                } catch let error as ZipError {
+//                    ELOG("ZipError failed: \(error)")
+//                    return nil
+//                } catch {
+//                    ELOG("Decompression failed: \(error)")
+//                    return nil
+//                }
+//            }
+//        }
+//    }
 }

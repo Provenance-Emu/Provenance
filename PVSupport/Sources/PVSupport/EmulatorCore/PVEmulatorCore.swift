@@ -456,6 +456,19 @@ extension CoreInterface {
 public extension NSErrorDomain {
     static let CoreInterfaceErrorDomain = "CoreInterfaceErrorDomain"
 }
+//
+//@objc
+//@dynamicCallable
+//public final class CoreBridge: NSObject, CoreInterface {
+//    public func dynamicallyCall(withArguments args: [[AnyBSON]]) async throws -> Any {
+//        try await withCheckedThrowingContinuation { continuation in
+//            
+//            continuation.resume(returning: bson)
+//            
+//            continuation.resume(throwing: error ?? Realm.Error.callFailed)
+//        }
+//    }
+//}
 
 @objcMembers
 @objc public class PVEmulatorCore: NSObject, CoreInterface {

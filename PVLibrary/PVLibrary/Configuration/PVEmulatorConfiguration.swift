@@ -381,9 +381,11 @@ public final class PVEmulatorConfiguration: NSObject {
         }
     }
 
-    public static let archiveExtensions: [String] = ["zip", "7z", "rar", "7zip", "gz", "gzip"]
-    public static let artworkExtensions: [String] = ["png", "jpg", "jpeg"]
+    public static let archiveExtensions: [String] = ["zip", "7z", "rar", "7zip", "gz", "gzip", "xz", "tar"]
+    public static let artworkExtensions: [String] = ["png", "jpg", "jpeg", "bmp"]
     public static let specialExtensions: [String] = ["cue", "m3u", "svs", "mcr", "plist", "ccd", "img", "iso", "sub", "bin"]
+    public static let executableExtensions: [String] = ["exe", "com", "bat"]
+
     public static let allKnownExtensions: [String] = {
         archiveExtensions + supportedROMFileExtensions + artworkExtensions + supportedBIOSFileExtensions + Array(supportedCDFileExtensions) + specialExtensions
     }()

@@ -30,7 +30,6 @@
 		B305EFDE276B512D003AE510 /* UTI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D252106B4D600DDEBD6 /* UTI.swift */; };
 		B305EFDF276B512D003AE510 /* Cheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1710A02585FA3F00258602 /* Cheats.swift */; };
 		B305EFE3276B512D003AE510 /* PVBIOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D272106B4D700DDEBD6 /* PVBIOS.swift */; };
-		B305EFE4276B512D003AE510 /* GameImporter2.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEAF21D493AC000C55F7 /* GameImporter2.swift */; };
 		B305EFE9276B512D003AE510 /* DomainConvertibleType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7A0219A77F20041F971 /* DomainConvertibleType.swift */; };
 		B305EFEA276B512D003AE510 /* ImportCandidateFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E852106BFD000857F52 /* ImportCandidateFile.swift */; };
 		B305EFED276B512D003AE510 /* PVMediaCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D222106B4D600DDEBD6 /* PVMediaCache.swift */; };
@@ -169,6 +168,15 @@
 		B37B4DF227B2292F0068F8D1 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = B37B4DF127B2292F0068F8D1 /* RxDataSources */; };
 		B383F3BC219BB29600DB6926 /* iCloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = B383F3BB219BB29600DB6926 /* iCloudSync.swift */; };
 		B383F3BD219BB29600DB6926 /* iCloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = B383F3BB219BB29600DB6926 /* iCloudSync.swift */; };
+		B38AA6DB28B415F200C623F4 /* Extractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378226D21D409F20077E86F /* Extractor.swift */; };
+		B38AA6DC28B415F300C623F4 /* Extractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378226D21D409F20077E86F /* Extractor.swift */; };
+		B38AA6DD28B415F400C623F4 /* Extractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378226D21D409F20077E86F /* Extractor.swift */; };
+		B38AA6DF28B428DB00C623F4 /* URLSession+SynchronousDataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38AA6DE28B428DB00C623F4 /* URLSession+SynchronousDataTask.swift */; };
+		B38AA6E028B428DB00C623F4 /* URLSession+SynchronousDataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38AA6DE28B428DB00C623F4 /* URLSession+SynchronousDataTask.swift */; };
+		B38AA6E128B428DB00C623F4 /* URLSession+SynchronousDataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38AA6DE28B428DB00C623F4 /* URLSession+SynchronousDataTask.swift */; };
+		B38AA6E328B42B4800C623F4 /* Operators.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38AA6E228B42B4800C623F4 /* Operators.swift */; };
+		B38AA6E428B42B4800C623F4 /* Operators.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38AA6E228B42B4800C623F4 /* Operators.swift */; };
+		B38AA6E528B42B4800C623F4 /* Operators.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38AA6E228B42B4800C623F4 /* Operators.swift */; };
 		B3A3204127209B4300F338F6 /* ZipArchive in Frameworks */ = {isa = PBXBuildFile; productRef = B3A3204027209B4300F338F6 /* ZipArchive */; };
 		B3AF42F42107145C002211EE /* DirectoryWatcher2.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D332106B4D700DDEBD6 /* DirectoryWatcher2.swift */; };
 		B3AF47DE21072AD4002211EE /* openvgdb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47DC21072AD3002211EE /* openvgdb.sqlite */; };
@@ -205,8 +213,6 @@
 		B3C04B6F21078D2500E7AF79 /* PVLibrary.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C04B982107991200E7AF79 /* PVEmulatorConfiguration+Frameworks.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C04B972107991100E7AF79 /* PVEmulatorConfiguration+Frameworks.swift */; };
 		B3C04B992107991200E7AF79 /* PVEmulatorConfiguration+Frameworks.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C04B972107991100E7AF79 /* PVEmulatorConfiguration+Frameworks.swift */; };
-		B3CDEEB021D493AC000C55F7 /* GameImporter2.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEAF21D493AC000C55F7 /* GameImporter2.swift */; };
-		B3CDEEB121D493AC000C55F7 /* GameImporter2.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEAF21D493AC000C55F7 /* GameImporter2.swift */; };
 		B3CDEEB321D497CD000C55F7 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEB221D497CD000C55F7 /* Package.swift */; };
 		B3CDEEB421D497CD000C55F7 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEB221D497CD000C55F7 /* Package.swift */; };
 		B3CDEECB21D4CF61000C55F7 /* DirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEECA21D4CF61000C55F7 /* DirectoryWatcher.swift */; };
@@ -353,6 +359,8 @@
 		B378228421D41E9B0077E86F /* LibrarySerializerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySerializerError.swift; sourceTree = "<group>"; };
 		B37EC388289C57BC0062FD31 /* PVLibrary-tvOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PVLibrary-tvOS-Info.plist"; sourceTree = "<group>"; };
 		B383F3BB219BB29600DB6926 /* iCloudSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iCloudSync.swift; sourceTree = "<group>"; };
+		B38AA6DE28B428DB00C623F4 /* URLSession+SynchronousDataTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLSession+SynchronousDataTask.swift"; sourceTree = "<group>"; };
+		B38AA6E228B42B4800C623F4 /* Operators.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operators.swift; sourceTree = "<group>"; };
 		B3AF47DC21072AD3002211EE /* openvgdb.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = openvgdb.sqlite; sourceTree = "<group>"; };
 		B3AF47DD21072AD3002211EE /* systems.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = systems.plist; sourceTree = "<group>"; };
 		B3AF6FBC219160BF000FA7F9 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
@@ -363,7 +371,6 @@
 		B3C04B632107867200E7AF79 /* PVLibraryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVLibraryTests.swift; sourceTree = "<group>"; };
 		B3C04B652107867200E7AF79 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3C04B972107991100E7AF79 /* PVEmulatorConfiguration+Frameworks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVEmulatorConfiguration+Frameworks.swift"; sourceTree = "<group>"; };
-		B3CDEEAF21D493AC000C55F7 /* GameImporter2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameImporter2.swift; sourceTree = "<group>"; };
 		B3CDEEB221D497CD000C55F7 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		B3CDEECA21D4CF61000C55F7 /* DirectoryWatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DirectoryWatcher.swift; sourceTree = "<group>"; };
 		B3E5448C28ADFF9B0067D3B8 /* PVSQLiteDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSQLiteDatabase.swift; sourceTree = "<group>"; };
@@ -757,6 +764,8 @@
 			children = (
 				B30E7AEA26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift */,
 				B3E5449028AE2D470067D3B8 /* UIImage+Scaling.swift */,
+				B38AA6DE28B428DB00C623F4 /* URLSession+SynchronousDataTask.swift */,
+				B38AA6E228B42B4800C623F4 /* Operators.swift */,
 			);
 			path = NSExtensions;
 			sourceTree = "<group>";
@@ -776,7 +785,6 @@
 				B3579D332106B4D700DDEBD6 /* DirectoryWatcher2.swift */,
 				B378226D21D409F20077E86F /* Extractor.swift */,
 				B3579D342106B4D700DDEBD6 /* GameImporter.swift */,
-				B3CDEEAF21D493AC000C55F7 /* GameImporter2.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -1069,6 +1077,7 @@
 				B305EFBF276B512D003AE510 /* PVCore.swift in Sources */,
 				B305EFC5276B512D003AE510 /* PVCheats.swift in Sources */,
 				B305EFC6276B512D003AE510 /* SavePackage.swift in Sources */,
+				B38AA6E528B42B4800C623F4 /* Operators.swift in Sources */,
 				B305EFC8276B512D003AE510 /* PVFile.swift in Sources */,
 				B305EFCC276B512D003AE510 /* DirectoryWatcher2.swift in Sources */,
 				B305EFCD276B512D003AE510 /* LibrarySerializer.swift in Sources */,
@@ -1078,7 +1087,6 @@
 				B305EFDE276B512D003AE510 /* UTI.swift in Sources */,
 				B305EFDF276B512D003AE510 /* Cheats.swift in Sources */,
 				B305EFE3276B512D003AE510 /* PVBIOS.swift in Sources */,
-				B305EFE4276B512D003AE510 /* GameImporter2.swift in Sources */,
 				B305EFE9276B512D003AE510 /* DomainConvertibleType.swift in Sources */,
 				B305EFEA276B512D003AE510 /* ImportCandidateFile.swift in Sources */,
 				B305EFED276B512D003AE510 /* PVMediaCache.swift in Sources */,
@@ -1098,6 +1106,7 @@
 				B305F016276B512D003AE510 /* GameImporter.swift in Sources */,
 				B305F017276B512D003AE510 /* PVEmulatorConfiguration+Frameworks.swift in Sources */,
 				B305F019276B512D003AE510 /* Core.swift in Sources */,
+				B38AA6E128B428DB00C623F4 /* URLSession+SynchronousDataTask.swift in Sources */,
 				B305F01A276B512D003AE510 /* SaveState.swift in Sources */,
 				B305F01B276B512D003AE510 /* Cache.swift in Sources */,
 				B305F01F276B512D003AE510 /* PVGameLibrary.swift in Sources */,
@@ -1107,6 +1116,7 @@
 				B305F02C276B512D003AE510 /* DirectoryWatcher.swift in Sources */,
 				B305F02E276B512D003AE510 /* LibrarySerializerError.swift in Sources */,
 				B305F041276B512D003AE510 /* PVImageFile.swift in Sources */,
+				B38AA6DD28B415F400C623F4 /* Extractor.swift in Sources */,
 				B305F044276B512D003AE510 /* Observable+Ext.swift in Sources */,
 				B305F046276B512D003AE510 /* RunLoopThreadScheduler.swift in Sources */,
 				B305F04A276B512D003AE510 /* BehaviorRelay+RangeReplaceableCollection.swift in Sources */,
@@ -1132,6 +1142,7 @@
 				B3274E752106BC1D00857F52 /* PVCore.swift in Sources */,
 				CF17109D2585F97000258602 /* PVCheats.swift in Sources */,
 				B378227A21D41E1C0077E86F /* SavePackage.swift in Sources */,
+				B38AA6E328B42B4800C623F4 /* Operators.swift in Sources */,
 				B3274E742106BC1D00857F52 /* PVFile.swift in Sources */,
 				B3AF42F42107145C002211EE /* DirectoryWatcher2.swift in Sources */,
 				B354E7CF219A8EAF0041F971 /* LibrarySerializer.swift in Sources */,
@@ -1141,7 +1152,6 @@
 				B3067F662106B8690091437F /* UTI.swift in Sources */,
 				CF1710A12585FA3F00258602 /* Cheats.swift in Sources */,
 				B3274E6C2106BC1D00857F52 /* PVBIOS.swift in Sources */,
-				B3CDEEB021D493AC000C55F7 /* GameImporter2.swift in Sources */,
 				B354E7A3219A77F20041F971 /* DomainConvertibleType.swift in Sources */,
 				B3274E862106BFD000857F52 /* ImportCandidateFile.swift in Sources */,
 				B3274E612106BA5B00857F52 /* PVMediaCache.swift in Sources */,
@@ -1161,6 +1171,7 @@
 				B3274E802106BDD300857F52 /* GameImporter.swift in Sources */,
 				B3C04B982107991200E7AF79 /* PVEmulatorConfiguration+Frameworks.swift in Sources */,
 				B354E794219A76C80041F971 /* Core.swift in Sources */,
+				B38AA6DF28B428DB00C623F4 /* URLSession+SynchronousDataTask.swift in Sources */,
 				B354E796219A76C80041F971 /* SaveState.swift in Sources */,
 				B354E7BB219A7ADC0041F971 /* Cache.swift in Sources */,
 				112E7E2F247EF3840050431C /* PVGameLibrary.swift in Sources */,
@@ -1170,6 +1181,7 @@
 				B3CDEECB21D4CF61000C55F7 /* DirectoryWatcher.swift in Sources */,
 				B378228521D41E9B0077E86F /* LibrarySerializerError.swift in Sources */,
 				B3274E842106BF2F00857F52 /* PVImageFile.swift in Sources */,
+				B38AA6DB28B415F200C623F4 /* Extractor.swift in Sources */,
 				B354E7B6219A796A0041F971 /* Observable+Ext.swift in Sources */,
 				B354E7B4219A796A0041F971 /* RunLoopThreadScheduler.swift in Sources */,
 				B30E7AEB26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift in Sources */,
@@ -1195,6 +1207,7 @@
 				B3C04A9F21077B3100E7AF79 /* PVCore.swift in Sources */,
 				CF17109E2585F97000258602 /* PVCheats.swift in Sources */,
 				B378227B21D41E1C0077E86F /* SavePackage.swift in Sources */,
+				B38AA6E428B42B4800C623F4 /* Operators.swift in Sources */,
 				B3C04AA621077B3100E7AF79 /* PVFile.swift in Sources */,
 				B3C04AAA21077B3100E7AF79 /* DirectoryWatcher2.swift in Sources */,
 				B354E7D0219A8EAF0041F971 /* LibrarySerializer.swift in Sources */,
@@ -1204,7 +1217,6 @@
 				B3C04AB921077B3100E7AF79 /* UTI.swift in Sources */,
 				CF1710A22585FA3F00258602 /* Cheats.swift in Sources */,
 				B3C04ABD21077B3100E7AF79 /* PVBIOS.swift in Sources */,
-				B3CDEEB121D493AC000C55F7 /* GameImporter2.swift in Sources */,
 				B354E7A4219A77F20041F971 /* DomainConvertibleType.swift in Sources */,
 				B3C04AC221077B3100E7AF79 /* ImportCandidateFile.swift in Sources */,
 				B3C04AC521077B3100E7AF79 /* PVMediaCache.swift in Sources */,
@@ -1224,6 +1236,7 @@
 				B3C04AE921077B3100E7AF79 /* GameImporter.swift in Sources */,
 				B3C04B992107991200E7AF79 /* PVEmulatorConfiguration+Frameworks.swift in Sources */,
 				B354E795219A76C80041F971 /* Core.swift in Sources */,
+				B38AA6E028B428DB00C623F4 /* URLSession+SynchronousDataTask.swift in Sources */,
 				B354E797219A76C80041F971 /* SaveState.swift in Sources */,
 				B354E7BC219A7ADC0041F971 /* Cache.swift in Sources */,
 				112E7E30247EF3840050431C /* PVGameLibrary.swift in Sources */,
@@ -1233,6 +1246,7 @@
 				B3CDEECC21D4CF61000C55F7 /* DirectoryWatcher.swift in Sources */,
 				B378228621D41E9B0077E86F /* LibrarySerializerError.swift in Sources */,
 				B3C04B0B21077B3100E7AF79 /* PVImageFile.swift in Sources */,
+				B38AA6DC28B415F300C623F4 /* Extractor.swift in Sources */,
 				B354E7B7219A796A0041F971 /* Observable+Ext.swift in Sources */,
 				B354E7B5219A796A0041F971 /* RunLoopThreadScheduler.swift in Sources */,
 				B30E7AEC26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift in Sources */,
