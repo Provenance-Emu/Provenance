@@ -6,6 +6,56 @@
 //  Copyright (c) 2013 Testut Tech. All rights reserved.
 //
 
+enum PVArchiveType {
+	case zip
+	case rar
+	case sevenZip
+	case gzip
+
+	init?(url: URL) {
+		let ext = url.pathExtension.lowercased()
+		switch ext {
+		case "zip": self = .zip
+		case "rar", "r00", "r01": self = .rar
+		case "7zip", "7z": self = .sevenZip
+		case "gz", "gzip": self = .gzip
+		default: return nil
+		}
+	}
+}
+
+struct PVArchiveFile {
+	let path: URL
+	let type: PVArchiveType
+
+	init?(path: URL) {
+		guard let type =  PVArchiveType(url: path) else {
+			ELOG("Unknown extension \(path.pathExtension)")
+			return nil
+		}
+		self.type = type
+		self.path = path
+	}
+
+	lazy var crcs: [String] = {
+		return []
+	}()
+
+	lazy var md5s: [String] = {
+		return []
+
+	}()
+
+	lazy var filenames: [String] = {
+		return []
+
+	}()
+
+	lazy var extensions: [String] = {
+		return []
+	}()
+}
+
 import Foundation
 @_exported import PVSupport
 import ZipArchive
@@ -263,7 +313,7 @@ public final class DirectoryWatcher: NSObject {
          })
          
      } else if ext == "7z" {
-         
+
          do {
              var entries = try SevenZipContainer.open(container: testData)
              var items = [LzmaSDKObjCItem]()
