@@ -11,6 +11,9 @@
       location = "group:PVLibrary/PVLibrary.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:PVLibRetro/PVLibRetro.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:PVSupport/PVSupport.xcodeproj">
    </FileRef>
    <Group
