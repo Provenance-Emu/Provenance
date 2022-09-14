@@ -993,6 +993,7 @@
 		B367FFFD289627AF00F75595 /* .travis.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .travis.yml; sourceTree = "<group>"; };
 		B367FFFE289627AF00F75595 /* Makefile.wii */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.wii; sourceTree = "<group>"; };
 		B3A9F41F1DE7EB67008450F5 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		B3BA5B5328D1E89300E13149 /* BuildFlags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
 		B3E432041DE6917700D3C91E /* PVGenesis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVGenesis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E432061DE6917700D3C91E /* PVGenesis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVGenesis.h; sourceTree = "<group>"; };
 		B3E432071DE6917700D3C91E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -1076,6 +1077,7 @@
 		1ACEA6A317F74D140031B1C9 = {
 			isa = PBXGroup;
 			children = (
+				B3BA5B5328D1E89300E13149 /* BuildFlags.xcconfig */,
 				1ACEA6B117F74D150031B1C9 /* PVGenesis */,
 				B3E432051DE6917700D3C91E /* PVGenesis */,
 				1ACEA6AE17F74D150031B1C9 /* Frameworks */,
@@ -2906,6 +2908,7 @@
 /* Begin XCBuildConfiguration section */
 		1ACEA6CD17F74D150031B1C9 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3BA5B5328D1E89300E13149 /* BuildFlags.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -2940,7 +2943,22 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"MAXROMSIZE=93444432",
+					"NS_BLOCK_ASSERTIONS=1",
+					LSB_FIRST,
+					HAVE_ZLIB,
+					USE_32BPP_RENDERING,
+					__LIBRETRO__,
+					HAVE_OVERCLOCK,
+					HAVE_OPLL_CORE,
+					HAVE_YM3438_CORE,
+					"INLINE=\"static inline\"",
+					"Z80_OVERCLOCK_SHIFT=20",
+					"M68K_OVERCLOCK_SHIFT=20",
+					"DEBUG=1",
+				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -2953,14 +2971,6 @@
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LLVM_LTO = NO;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"-fPIC",
-					"-DLSB_FIRST",
-					"-DHAVE_ZLIB",
-					"-DUSE_32BPP_RENDERING",
-					"-DNDEBUG",
-					"-D__LIBRETRO__",
-				);
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				TVOS_DEPLOYMENT_TARGET = 13.0;
@@ -2970,6 +2980,7 @@
 		};
 		1ACEA6CE17F74D150031B1C9 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3BA5B5328D1E89300E13149 /* BuildFlags.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -3003,7 +3014,22 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"MAXROMSIZE=93444432",
+					"NS_BLOCK_ASSERTIONS=1",
+					LSB_FIRST,
+					HAVE_ZLIB,
+					USE_32BPP_RENDERING,
+					__LIBRETRO__,
+					HAVE_OVERCLOCK,
+					HAVE_OPLL_CORE,
+					HAVE_YM3438_CORE,
+					"INLINE=\"static inline\"",
+					"Z80_OVERCLOCK_SHIFT=20",
+					"M68K_OVERCLOCK_SHIFT=20",
+					NDEBUG,
+				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -3014,21 +3040,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LLVM_LTO = NO;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"-DNS_BLOCK_ASSERTIONS=1",
-					"-fPIC",
-					"-DLSB_FIRST",
-					"-DHAVE_ZLIB",
-					"-DUSE_32BPP_RENDERING",
-					"-DNDEBUG",
-					"-D__LIBRETRO__",
-					"-DHAVE_OVERCLOCK",
-					"-DHAVE_OPLL_CORE",
-					"-DHAVE_YM3438_CORE",
-					"-DINLINE=\"static inline\"",
-					"-DZ80_OVERCLOCK_SHIFT=20",
-					"-DM68K_OVERCLOCK_SHIFT=20",
-				);
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				TVOS_DEPLOYMENT_TARGET = 13.0;
@@ -3039,6 +3050,7 @@
 		};
 		B324C51A2191A3E4009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3BA5B5328D1E89300E13149 /* BuildFlags.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -3072,7 +3084,22 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"MAXROMSIZE=93444432",
+					"NS_BLOCK_ASSERTIONS=1",
+					LSB_FIRST,
+					HAVE_ZLIB,
+					USE_32BPP_RENDERING,
+					__LIBRETRO__,
+					HAVE_OVERCLOCK,
+					HAVE_OPLL_CORE,
+					HAVE_YM3438_CORE,
+					"INLINE=\"static inline\"",
+					"Z80_OVERCLOCK_SHIFT=20",
+					"M68K_OVERCLOCK_SHIFT=20",
+					NDEBUG,
+				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -3083,21 +3110,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LLVM_LTO = NO;
-				OTHER_CFLAGS = (
-					"-DNS_BLOCK_ASSERTIONS=1",
-					"-fPIC",
-					"-DLSB_FIRST",
-					"-DHAVE_ZLIB",
-					"-DUSE_32BPP_RENDERING",
-					"-DNDEBUG",
-					"-D__LIBRETRO__",
-					"-DHAVE_OVERCLOCK",
-					"-DHAVE_OPLL_CORE",
-					"-DHAVE_YM3438_CORE",
-					"-DINLINE=\"static inline\"",
-					"-DZ80_OVERCLOCK_SHIFT=20",
-					"-DM68K_OVERCLOCK_SHIFT=20",
-				);
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				TVOS_DEPLOYMENT_TARGET = 13.0;
@@ -3174,7 +3186,6 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = NO;
 				GCC_PREFIX_HEADER = "PVGenesis/PVGenesis-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = PVGenesis/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -3211,10 +3222,6 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/PVGenesis/Deps/Genesis-Plus-GX/core\"",
@@ -3301,10 +3308,6 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/PVGenesis/Deps/genplusgx_source\"",
@@ -3394,10 +3397,6 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/PVGenesis/Deps/Genesis-Plus-GX/core\"",
@@ -3487,10 +3486,6 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/PVGenesis/Deps/genplusgx_source\"",
@@ -3682,7 +3677,6 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = NO;
 				GCC_PREFIX_HEADER = "PVGenesis/PVGenesis-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = PVGenesis/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -3730,7 +3724,6 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = NO;
 				GCC_PREFIX_HEADER = "PVGenesis/PVGenesis-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = PVGenesis/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";

@@ -1,0 +1,38 @@
+//
+//  BuildFlags.xcconfig
+//  PVBeetlePSX
+//
+//  Created by Joseph Mattiello on 11/1/18.
+//
+//
+
+// All
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) MAXROMSIZE=93444432 NS_BLOCK_ASSERTIONS=1 LSB_FIRST HAVE_ZLIB USE_32BPP_RENDERING __LIBRETRO__ HAVE_OVERCLOCK HAVE_OPLL_CORE HAVE_YM3438_CORE INLINE="static inline" Z80_OVERCLOCK_SHIFT=20 M68K_OVERCLOCK_SHIFT=20
+
+//:completeSettings = none
+
+// MAXROMSIZE comes from patched libretro for large roms
+OTHER_CFLAGS = $(inherited) -ObjC -fPIC
+//GCC_PREPROCESSOR_DEFINITIONS[configuration=Debug] = $(inherited) DEBUG=1
+//GCC_PREPROCESSOR_DEFINITIONS[configuration=Release] = $(inherited) NDEBUG
+//GCC_PREPROCESSOR_DEFINITIONS[configuration=Archive] = $(inherited) NDEBUG
+
+//// -ffast-math -ftree-vectorize -fno-strict-aliasing -fpermissive -fomit-frame-pointer
+//OTHER_LDFLAGS =  $(inherited) -ObjC -Wl,-all_load -all_load
+//
+//// EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = $(inherited)
+//
+//    // Device
+//GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*] = $(inherited) TARGET_IPHONE=1 NEON=1
+//OTHER_CFLAGS[sdk=iphoneos*] = $(inherited) -mfpu=neon -D__VEC4_OPT -D__NEON_OPT
+//EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*] = $(inherited)
+//
+//// Simulator
+//GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*] = $(inherited) TARGET_IPHONE_SIMULATOR=1
+//
+//// tvOS Device
+//GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvos*] = $(inherited) TARGET_IPHONE=1
+//OTHER_CFLAGS[sdk=appletvos*] = $(inherited)
+//
+//// tvOS Simulator
+//GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvsimulator*] = $(inherited) TARGET_IPHONE_SIMULATOR=1
