@@ -27,7 +27,7 @@ public struct ArchiveSupportOptions: OptionSet {
 
     public static let zip = ArchiveSupportOptions(rawValue: 1 << 0)
     public static let sevenZip = ArchiveSupportOptions(rawValue: 1 << 1)
-    public static let gzip = ArchiveSupportOptions(rawValue: 1 << 1)
+    public static let gzip = ArchiveSupportOptions(rawValue: 1 << 2)
 
-    public static let all: ArchiveSupportOptions = [.zip, .sevenZip]
+    public static let all: ArchiveSupportOptions = [.zip, .sevenZip, .gzip]
 }
