@@ -1263,10 +1263,10 @@
 					"\"$(SRCROOT)/ppsspp/ext/native/ext/glew\"",
 					"\"$(SRCROOT)/ppsspp/ffmpeg/macosx/x86_64/include\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/ppsspp/ffmpeg/macosx/x86_64/lib\"";
 				LLVM_LTO = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				OTHER_CFLAGS = (
 					"-D_DEBUG",
 					"-fno-strict-aliasing",
@@ -1278,6 +1278,7 @@
 					"-U__STRICT_ANSI__",
 				);
 				SDKROOT = iphoneos;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = (
 					"-Wno-multichar",
@@ -1318,10 +1319,10 @@
 					"\"$(SRCROOT)/ppsspp/ext/native/ext/glew\"",
 					"\"$(SRCROOT)/ppsspp/ffmpeg/macosx/x86_64/include\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/ppsspp/ffmpeg/macosx/x86_64/lib\"";
 				LLVM_LTO = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				OTHER_CFLAGS = (
 					"-D_NDEBUG",
 					"-fno-strict-aliasing",
@@ -1333,6 +1334,7 @@
 					"-U__STRICT_ANSI__",
 				);
 				SDKROOT = iphoneos;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = (
 					"-Wno-multichar",
@@ -1414,7 +1416,7 @@
 				PRODUCT_NAME = PVPPSSPP;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 3;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1484,7 +1486,7 @@
 				PRODUCT_NAME = PVPPSSPP;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 3;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";

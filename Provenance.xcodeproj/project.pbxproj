@@ -188,10 +188,6 @@
 		B30F1427289674B1004D40BF /* PVGearcoleco.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B30F1425289674B1004D40BF /* PVGearcoleco.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B30F1429289674CA004D40BF /* PVGearcoleco.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30F1428289674CA004D40BF /* PVGearcoleco.framework */; };
 		B30F142A289674CA004D40BF /* PVGearcoleco.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B30F1428289674CA004D40BF /* PVGearcoleco.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B30F1C37289677CA004D40BF /* PVO2EM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30F1C36289677CA004D40BF /* PVO2EM.framework */; };
-		B30F1C38289677CA004D40BF /* PVO2EM.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B30F1C36289677CA004D40BF /* PVO2EM.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B30F1C3A289677DC004D40BF /* PVO2EM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30F1C39289677DC004D40BF /* PVO2EM.framework */; };
-		B30F1C3B289677DC004D40BF /* PVO2EM.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B30F1C39289677DC004D40BF /* PVO2EM.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B31117B0218EB3A900C495A2 /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */; };
 		B31117B1218EB3AA00C495A2 /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */; };
 		B31117B3218EB3AE00C495A2 /* PVButtonGroupOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ED1205CD20800C273C7 /* PVButtonGroupOverlayView.swift */; };
@@ -936,7 +932,6 @@
 				B3270F9B27DCB2CA00E83180 /* PVMupen64Plus.framework in Embed Frameworks */,
 				B3270FA327DCB2CA00E83180 /* PVRSPCXD4.framework in Embed Frameworks */,
 				B3270F9F27DCB2CA00E83180 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
-				B30F1C38289677CA004D40BF /* PVO2EM.framework in Embed Frameworks */,
 				B3270FB127DCB2CB00E83180 /* PicoDrive.framework in Embed Frameworks */,
 				B3D1809428964497001207AF /* FreeDO.framework in Embed Frameworks */,
 				B3270F9727DCB2CA00E83180 /* ProSystem.framework in Embed Frameworks */,
@@ -1026,7 +1021,6 @@
 				B3C8A73C287828FE0037A946 /* PVGB.framework in Embed Frameworks */,
 				B3C8A728287828FD0037A946 /* PVFCEU.framework in Embed Frameworks */,
 				B3C8A72A287828FD0037A946 /* PVAtari800-tvOS.framework in Embed Frameworks */,
-				B30F1C3B289677DC004D40BF /* PVO2EM.framework in Embed Frameworks */,
 				B3C8A73A287828FE0037A946 /* PVRSPCXD4.framework in Embed Frameworks */,
 				B3D1809128964477001207AF /* FreeDO.framework in Embed Frameworks */,
 				B3C8A72C287828FD0037A946 /* PVPokeMini.framework in Embed Frameworks */,
@@ -1788,7 +1782,6 @@
 				B3270F9227DCB2CA00E83180 /* PVFCEU.framework in Frameworks */,
 				B3270FA627DCB2CA00E83180 /* PVGB.framework in Frameworks */,
 				B3270FAE27DCB2CB00E83180 /* PVMednafen.framework in Frameworks */,
-				B30F1C37289677CA004D40BF /* PVO2EM.framework in Frameworks */,
 				B3270FB927DCB62C00E83180 /* libsqlite3.dylib in Frameworks */,
 				B3270FA827DCB2CA00E83180 /* PVGBA.framework in Frameworks */,
 			);
@@ -1856,7 +1849,6 @@
 				B3C8A73B287828FE0037A946 /* PVGB.framework in Frameworks */,
 				B3C8A727287828FD0037A946 /* PVFCEU.framework in Frameworks */,
 				B3C8A729287828FD0037A946 /* PVAtari800-tvOS.framework in Frameworks */,
-				B30F1C3A289677DC004D40BF /* PVO2EM.framework in Frameworks */,
 				B3C8A739287828FE0037A946 /* PVRSPCXD4.framework in Frameworks */,
 				B3D1809028964476001207AF /* FreeDO.framework in Frameworks */,
 				B3C8A72B287828FD0037A946 /* PVPokeMini.framework in Frameworks */,
@@ -4644,6 +4636,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.0;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = "OpenGLES GLKit";
 				VALID_ARCHS = "$(ARCHS_STANDARD)";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -4701,6 +4694,7 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = "OpenGLES GLKit";
 				VALID_ARCHS = "$(ARCHS_STANDARD)";
@@ -4737,6 +4731,7 @@
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				MARKETING_VERSION = 2.1.1;
@@ -4787,6 +4782,7 @@
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				MARKETING_VERSION = 2.1.1;
@@ -4944,7 +4940,6 @@
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance Tests/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -5004,7 +4999,6 @@
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance Tests/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -5458,7 +5452,7 @@
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -5519,7 +5513,7 @@
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -5579,7 +5573,7 @@
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -5646,6 +5640,7 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = "OpenGLES GLKit";
 				VALID_ARCHS = "$(ARCHS_STANDARD)";
@@ -5681,6 +5676,7 @@
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				MARKETING_VERSION = 2.1.1;
@@ -5787,7 +5783,6 @@
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance Tests/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -6303,7 +6298,7 @@
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -6364,7 +6359,7 @@
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -6424,7 +6419,7 @@
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

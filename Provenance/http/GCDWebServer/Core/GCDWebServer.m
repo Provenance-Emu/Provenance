@@ -177,7 +177,10 @@ static void _ExecuteMainThreadRunLoopSources() {
 
 - (instancetype)init {
   if ((self = [super init])) {
-    _syncQueue = dispatch_queue_create([NSStringFromClass([self class]) UTF8String], DISPATCH_QUEUE_SERIAL);
+      NSString *queueName = NSStringFromClass([self class]);
+      dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, 0);
+
+    _syncQueue = dispatch_queue_create(queueName.UTF8String, queueAttributes);
     _sourceGroup = dispatch_group_create();
     _handlers = [[NSMutableArray alloc] init];
 #if TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
