@@ -86,6 +86,9 @@
 		B30681552895D407003E465F /* PVLibRetroCore+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = B306814E2895D406003E465F /* PVLibRetroCore+Audio.m */; };
 		B30681562895D407003E465F /* PVLibRetroCore+Options.m in Sources */ = {isa = PBXBuildFile; fileRef = B306814F2895D407003E465F /* PVLibRetroCore+Options.m */; };
 		B30681572895D407003E465F /* PVLibRetroCore+Options.m in Sources */ = {isa = PBXBuildFile; fileRef = B306814F2895D407003E465F /* PVLibRetroCore+Options.m */; };
+		B30F8013290516B900F21217 /* ScreenType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30F8012290516B900F21217 /* ScreenType.swift */; };
+		B30F8014290516B900F21217 /* ScreenType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30F8012290516B900F21217 /* ScreenType.swift */; };
+		B30F8015290516B900F21217 /* ScreenType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30F8012290516B900F21217 /* ScreenType.swift */; };
 		B3225132286C4728001FDF42 /* retro.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B322512F286C4728001FDF42 /* retro.h */; };
 		B322514B286C4753001FDF42 /* libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B322512D286C4728001FDF42 /* libretro.a */; };
 		B32299422878CB3C00585AD8 /* input_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC54928671EFF00B60497 /* input_driver.c */; };
@@ -397,6 +400,7 @@
 		B306814D2895D406003E465F /* PVLibRetroCore+Video.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVLibRetroCore+Video.m"; sourceTree = "<group>"; };
 		B306814E2895D406003E465F /* PVLibRetroCore+Audio.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVLibRetroCore+Audio.m"; sourceTree = "<group>"; };
 		B306814F2895D407003E465F /* PVLibRetroCore+Options.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVLibRetroCore+Options.m"; sourceTree = "<group>"; };
+		B30F8012290516B900F21217 /* ScreenType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenType.swift; sourceTree = "<group>"; };
 		B3173802278419A2002D3ACD /* Build.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Build.xcconfig; path = ../Build.xcconfig; sourceTree = "<group>"; };
 		B322512D286C4728001FDF42 /* libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libretro.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B322512F286C4728001FDF42 /* retro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = retro.h; sourceTree = "<group>"; };
@@ -1462,6 +1466,7 @@
 		B30E94892793C77700871E57 /* PVSupport */ = {
 			isa = PBXGroup;
 			children = (
+				B30F80112905169A00F21217 /* System */,
 				1ACEA69017F748F80031B1C9 /* Audio */,
 				B3AB36DC2187F4C4009D9244 /* Controller */,
 				B3AB37F721882119009D9244 /* CoreOptions */,
@@ -1482,6 +1487,14 @@
 				B3532B3E21A7B753006CDA0F /* PVSettingsTests.swift */,
 			);
 			path = PVSupportTests;
+			sourceTree = "<group>";
+		};
+		B30F80112905169A00F21217 /* System */ = {
+			isa = PBXGroup;
+			children = (
+				B30F8012290516B900F21217 /* ScreenType.swift */,
+			);
+			path = System;
 			sourceTree = "<group>";
 		};
 		B322512E286C4728001FDF42 /* retro */ = {
@@ -3968,6 +3981,7 @@
 				B305EF64276B4E41003AE510 /* CoreOptions.swift in Sources */,
 				B33FB2F5279BE1330013AAD8 /* CoreOptions+Protocols.swift in Sources */,
 				B305EF65276B4E41003AE510 /* UIDeviceExtension.swift in Sources */,
+				B30F8015290516B900F21217 /* ScreenType.swift in Sources */,
 				B305EF66276B4E41003AE510 /* SaveStateSupport.swift in Sources */,
 				B305EF67276B4E41003AE510 /* iCadeControllerSetting.swift in Sources */,
 				B305EF68276B4E41003AE510 /* PViCadeController.swift in Sources */,
@@ -4106,6 +4120,7 @@
 				B3AB37B421880FA6009D9244 /* iCadeState.swift in Sources */,
 				B3A74C8B20522B04001D3D2E /* PVEmulatorCore.swift in Sources */,
 				B33FB2F4279BE1330013AAD8 /* CoreOptions+Protocols.swift in Sources */,
+				B30F8014290516B900F21217 /* ScreenType.swift in Sources */,
 				B3CDEEC921D4C4E5000C55F7 /* SaveStateSupport.swift in Sources */,
 				B3AB37E821881B6E009D9244 /* iCadeControllerSetting.swift in Sources */,
 				B3AB37E121881956009D9244 /* PViCadeController.swift in Sources */,
@@ -4164,6 +4179,7 @@
 				B34AB57A2106DC6100C45F09 /* CoreOptions.swift in Sources */,
 				B33FB2F3279BE1320013AAD8 /* CoreOptions+Protocols.swift in Sources */,
 				B34AB5762106DC4C00C45F09 /* UIDeviceExtension.swift in Sources */,
+				B30F8013290516B900F21217 /* ScreenType.swift in Sources */,
 				B3CDEEC821D4C4E5000C55F7 /* SaveStateSupport.swift in Sources */,
 				B3AB37E721881B6D009D9244 /* iCadeControllerSetting.swift in Sources */,
 				B3AB37E021881955009D9244 /* PViCadeController.swift in Sources */,

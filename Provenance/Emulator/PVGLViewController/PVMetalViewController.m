@@ -754,7 +754,10 @@ PV_OBJC_DIRECT_MEMBERS
         
         id<MTLRenderCommandEncoder> encoder = [commandBuffer renderCommandEncoderWithDescriptor:desc];
         
-        if (strongself->renderSettings.crtFilterEnabled) {
+        if (strongself->renderSettings.lcdFilterEnabled && [strongself->_emulatorCore.screenType.lowercaseString containsString:@"lcd"] ) {
+            
+        }
+        else if (strongself->renderSettings.crtFilterEnabled && [strongself->_emulatorCore.screenType.lowercaseString containsString:@"crt"] ) {
             if ( [strongself->_effectFilterShader.name isEqualToString:@"CRT"]) {
                 struct CRT_Data cbData;
                 cbData.DisplayRect.x = 0;

@@ -58,6 +58,8 @@ typedef struct RenderSettings {
 
 @interface PVGPUViewController : BaseViewController
 
+@property (nonatomic, retain, nullable) NSString *screenType;
+
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
 @property (nonatomic, assign) BOOL isPaused;
 @property (nonatomic, assign) double framesPerSecond;

@@ -584,6 +584,9 @@ extension GameLaunchingViewController where Self: UIViewController {
         emulatorViewController.modalPresentationStyle = .fullScreen
 
         present(emulatorViewController, animated: true) { () -> Void in
+            
+            emulatorViewController.gpuViewController.screenType = game.system.screenType.rawValue
+            
             // Open the save state after a bootup delay if the user selected one
             // Use a timer loop on ios 10+ to check if the emulator has started running
             if let saveState = saveState {

@@ -11,8 +11,13 @@
 @import QuartzCore;
 #import "Provenance-Swift.h"
 
+#ifndef USE_EFFECT
 #define USE_EFFECT 1
+#endif
+
+#ifndef USE_DISPLAY_LINK
 #define USE_DISPLAY_LINK 0
+#endif
 
 #if !TARGET_OS_MACCATALYST
 #import <OpenGLES/gltypes.h>
@@ -252,7 +257,8 @@ PV_OBJC_DIRECT_MEMBERS
     
     [self setupBlitShader];
     [self setupCRTShader];
-    
+//    [self setupLCDShader];
+
     alternateThreadFramebufferBack = 0;
     alternateThreadColorTextureBack = 0;
     alternateThreadDepthRenderbuffer = 0;
@@ -600,6 +606,19 @@ PV_OBJC_DIRECT_MEMBERS
     crtUniform_FinalRes = glGetUniformLocation(crtShaderProgram, "FinalRes");
 }
 
+- (void)setupLCDShader
+{
+    NSError *error;
+    crtFragmentShader = [self compileShaderResource:[NSString stringWithFormat:@"%s/crt_fragment", FILTER_DIR] ofType:GL_FRAGMENT_SHADER error:&error];
+    assert(crtFragmentShader != GL_NO_ERROR);
+    crtShaderProgram = [self linkVertexShader:defaultVertexShader withFragmentShader:crtFragmentShader];
+    assert(crtShaderProgram != GL_NO_ERROR);
+    crtUniform_DisplayRect = glGetUniformLocation(crtShaderProgram, "DisplayRect");
+    crtUniform_EmulatedImage = glGetUniformLocation(crtShaderProgram, "EmulatedImage");
+    crtUniform_EmulatedImageSize = glGetUniformLocation(crtShaderProgram, "EmulatedImageSize");
+    crtUniform_FinalRes = glGetUniformLocation(crtShaderProgram, "FinalRes");
+}
+
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
 {
     __block CGRect screenRect;
@@ -627,9 +646,11 @@ PV_OBJC_DIRECT_MEMBERS
         glClear(GL_COLOR_BUFFER_BIT);
 #endif
         const BOOL rendersToOpenGL = strongself->_emulatorCore.rendersToOpenGL;
-        const BOOL crtEnabled = strongself->renderSettings.crtFilterEnabled;
-        const BOOL lcdEnabled = strongself->renderSettings.lcdFilterEnabled;
-
+        const BOOL crtEnabled = strongself->renderSettings.crtFilterEnabled &&
+        ![strongself->_emulatorCore.screenType.lowercaseString containsString:@"lcd"];
+        const BOOL lcdEnabled = strongself->renderSettings.lcdFilterEnabled &&
+        [strongself->_emulatorCore.screenType.lowercaseString containsString:@"lcd"];
+        
         GLuint frontBufferTex;
         if (UNLIKELY(rendersToOpenGL))
         {
@@ -662,7 +683,17 @@ PV_OBJC_DIRECT_MEMBERS
             glBindTexture(GL_TEXTURE_2D, frontBufferTex);
         }
         
-        if (crtEnabled || lcdEnabled)
+        if (crtEnabled)
+        {
+            glUseProgram(strongself->crtShaderProgram);
+            glUniform4f(strongself->crtUniform_DisplayRect, screenRect.origin.x, screenRect.origin.y, screenRect.size.width, screenRect.size.height);
+            glUniform1i(strongself->crtUniform_EmulatedImage, 0);
+            glUniform2f(strongself->crtUniform_EmulatedImageSize, videoBufferSize.width, videoBufferSize.height);
+            float finalResWidth = view.drawableWidth;
+            float finalResHeight = view.drawableHeight;
+            glUniform2f(strongself->crtUniform_FinalRes, finalResWidth, finalResHeight);
+        }
+        else if (lcdEnabled)
         {
             glUseProgram(strongself->crtShaderProgram);
             glUniform4f(strongself->crtUniform_DisplayRect, screenRect.origin.x, screenRect.origin.y, screenRect.size.width, screenRect.size.height);

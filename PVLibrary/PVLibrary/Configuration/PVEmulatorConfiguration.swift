@@ -47,7 +47,7 @@ public struct SystemDictionaryKeys {
     }
 }
 
-public enum SystemIdentifier: String, CaseIterable {
+public enum SystemIdentifier: String, CaseIterable, Codable {
     case _3DO = "com.provenance.3DO"
     case _3DS = "com.provenance.3ds"
     case Atari2600 = "com.provenance.2600"

@@ -13,14 +13,6 @@ import RealmSwift
     import TVServices
 #endif
 
-public enum ScreenType: String, Codable {
-    case unknown = ""
-    case monochromaticLCD = "MonoLCD"
-    case colorLCD = "ColorLCD"
-    case crt = "CRT"
-    case modern = "Modern"
-}
-
 public struct SystemOptions: OptionSet, Codable {
     public init(rawValue: Int) {
         self.rawValue = rawValue

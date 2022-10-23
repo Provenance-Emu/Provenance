@@ -27,6 +27,8 @@
 		<true/>
 		<key>PVRequiresBIOS</key>
 		<true/>
+		<key>PVScreenType</key>
+		<string>ColorLCD</string>
 		<key>PVBIOSNames</key>
 		<array>
 			<dict>
@@ -178,6 +180,8 @@
 		<string>GC</string>
 		<key>PVReleaseYear</key>
 		<string>2001</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVBit</key>
 		<string>128</string>
 		<key>PVSystemIdentifier</key>
@@ -321,6 +325,8 @@
 		<string>Nintendo Wii</string>
 		<key>PVSystemShortName</key>
 		<string>Wii</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVReleaseYear</key>
 		<string>2006</string>
 		<key>PVBit</key>
@@ -472,6 +478,8 @@
 		<string>64</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.n64</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVDatabaseID</key>
 		<string>23</string>
 		<key>PVSupportsRumble</key>
@@ -617,6 +625,8 @@
 		<string>1994</string>
 		<key>PVBit</key>
 		<string>32</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.psx</string>
 		<key>PVDatabaseID</key>
@@ -807,6 +817,8 @@
 		<string>PlayStation 2</string>
 		<key>PVSystemShortName</key>
 		<string>PS2</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVSystemShortNameAlt</key>
 		<string>PS2</string>
 		<key>PVReleaseYear</key>
@@ -968,6 +980,8 @@
 		<string>Atari Lynx</string>
 		<key>PVSystemShortName</key>
 		<string>LYNX</string>
+		<key>PVScreenType</key>
+		<string>ColorLCD</string>
 		<key>PVReleaseYear</key>
 		<string>1989</string>
 		<key>PVBit</key>
@@ -1063,6 +1077,8 @@
 		<string>com.provenance.ngp</string>
 		<key>PVDatabaseID</key>
 		<string>36</string>
+		<key>PVScreenType</key>
+		<string>MonoLCD</string>
 		<key>PVPortable</key>
 		<true/>
 		<key>PVRequiresBIOS</key>
@@ -1127,6 +1143,8 @@
 		<string>24</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.neogeo</string>
+		<key>PVScreenType</key>
+		<string>MonoLCD</string>
 		<key>PVDatabaseID</key>
 		<string>91</string>
 		<key>PVPortable</key>
@@ -1208,6 +1226,8 @@
 		<string>com.provenance.ngpc</string>
 		<key>PVDatabaseID</key>
 		<string>37</string>
+		<key>PVScreenType</key>
+		<string>ColorLCD</string>
 		<key>PVPortable</key>
 		<true/>
 		<key>PVRequiresBIOS</key>
@@ -1272,6 +1292,8 @@
 		<string>1995</string>
 		<key>PVBit</key>
 		<string>32</string>
+		<key>PVScreenType</key>
+		<string>MonoLCD</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.vb</string>
 		<key>PVDatabaseID</key>
@@ -1360,6 +1382,8 @@
 		<string>WS</string>
 		<key>PVSystemShortNames</key>
 		<string>WS</string>
+		<key>PVScreenType</key>
+		<string>DotMatrix</string>
 		<key>PVReleaseYear</key>
 		<string>1999</string>
 		<key>PVBit</key>
@@ -1448,6 +1472,8 @@
 		<string>2000</string>
 		<key>PVBit</key>
 		<string>16</string>
+		<key>PVScreenType</key>
+		<string>ColorLCD</string>
 		<key>PVPortable</key>
 		<true/>
 		<key>PVSystemIdentifier</key>
@@ -1530,6 +1556,8 @@
 		<string>PCE/TG16</string>
 		<key>PVReleaseYear</key>
 		<string>1987</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVBit</key>
 		<string>16</string>
 		<key>PVPortable</key>
@@ -1610,6 +1638,8 @@
 		<string>16</string>
 		<key>PVPortable</key>
 		<false/>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.sgfx</string>
 		<key>PVDatabaseID</key>
@@ -1686,6 +1716,8 @@
 		<string>1988</string>
 		<key>PVPortable</key>
 		<false/>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.pcecd</string>
 		<key>PVDatabaseID</key>
@@ -1778,6 +1810,8 @@
 		<false/>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.pcfx</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVDatabaseID</key>
 		<string>16</string>
 		<key>PVUsesCDs</key>
@@ -1900,6 +1934,8 @@
 		<string>1991</string>
 		<key>PVBit</key>
 		<string>16</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVPortable</key>
 		<false/>
 		<key>PVSystemIdentifier</key>
@@ -2037,6 +2073,8 @@
 		<string>1988</string>
 		<key>PVBit</key>
 		<string>16</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVPortable</key>
 		<false/>
 		<key>PVSystemIdentifier</key>
@@ -2164,6 +2202,8 @@
 		<true/>
 		<key>PVManufacturer</key>
 		<string>Sega</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVSystemName</key>
 		<string>Saturn</string>
 		<key>PVSystemNames</key>
@@ -2296,6 +2336,8 @@
 		<string>Game Gear</string>
 		<key>PVReleaseYear</key>
 		<string>1990</string>
+		<key>PVScreenType</key>
+		<string>ColorLCD</string>
 		<key>PVBit</key>
 		<string>8</string>
 		<key>PVPortable</key>
@@ -2360,6 +2402,8 @@
 		<string>Dreamcast</string>
 		<key>PVSystemShortName</key>
 		<string>DC</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVReleaseYear</key>
 		<string>1999</string>
 		<key>PVBit</key>
@@ -2523,6 +2567,8 @@
 		<string>1985</string>
 		<key>PVBit</key>
 		<string>8</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVPortable</key>
 		<false/>
 		<key>PVSystemIdentifier</key>
@@ -2595,6 +2641,8 @@
 		<string>com.provenance.snes</string>
 		<key>PVDatabaseID</key>
 		<string>26</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>smc</string>
@@ -2706,6 +2754,8 @@
 		<string>32</string>
 		<key>PVPortable</key>
 		<true/>
+		<key>PVScreenType</key>
+		<string>ColorLCD</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.gba</string>
 		<key>PVDatabaseID</key>
@@ -2807,6 +2857,8 @@
 		<string>2004</string>
 		<key>PVBit</key>
 		<string>32</string>
+		<key>PVScreenType</key>
+		<string>ColorLCD</string>
 		<key>PVPortable</key>
 		<true/>
 		<key>PVSystemIdentifier</key>
@@ -2961,6 +3013,8 @@
 		<string>8</string>
 		<key>PVPortable</key>
 		<true/>
+		<key>PVScreenType</key>
+		<string>DotMatrix</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.gb</string>
 		<key>PVDatabaseID</key>
@@ -3031,6 +3085,8 @@
 		<string>1998</string>
 		<key>PVBit</key>
 		<string>8</string>
+		<key>PVScreenType</key>
+		<string>ColorLCD</string>
 		<key>PVPortable</key>
 		<true/>
 		<key>PVSystemIdentifier</key>
@@ -3106,6 +3162,8 @@
 		<string>Nintendo/Famicom</string>
 		<key>PVSystemShortName</key>
 		<string>NES</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVReleaseYear</key>
 		<string>1983</string>
 		<key>PVBit</key>
@@ -3186,6 +3244,8 @@
 		<string>GME</string>
 		<key>PVReleaseYear</key>
 		<string>1980</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVBit</key>
 		<string>0</string>
 		<key>PVPortable</key>
@@ -3276,6 +3336,8 @@
 		<string>8</string>
 		<key>PVPortable</key>
 		<false/>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.fds</string>
 		<key>PVDatabaseID</key>
@@ -3359,6 +3421,8 @@
 		<string>SG-1000</string>
 		<key>PVReleaseYear</key>
 		<string>1983</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVBit</key>
 		<string>8</string>
 		<key>PVPortable</key>
@@ -3417,6 +3481,8 @@
 		<string>1977</string>
 		<key>PVBit</key>
 		<string>8</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVPortable</key>
 		<false/>
 		<key>PVSystemIdentifier</key>
@@ -3481,6 +3547,8 @@
 		<string>A7800</string>
 		<key>PVReleaseYear</key>
 		<string>1986</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVBit</key>
 		<string>8</string>
 		<key>PVPortable</key>
@@ -3572,6 +3640,8 @@
 		<string>Jaguar</string>
 		<key>PVReleaseYear</key>
 		<string>1993</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVBit</key>
 		<string>32</string>
 		<key>PVPortable</key>
@@ -3687,6 +3757,8 @@
 		<string>Jaguar CD</string>
 		<key>PVReleaseYear</key>
 		<string>1993</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVBit</key>
 		<string>32</string>
 		<key>PVPortable</key>
@@ -3777,6 +3849,8 @@
 		<string>1994</string>
 		<key>PVBit</key>
 		<string>32</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVPortable</key>
 		<false/>
 		<key>PVSystemIdentifier</key>
@@ -3882,6 +3956,8 @@
 		<string>1982</string>
 		<key>PVBit</key>
 		<string>8</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVPortable</key>
 		<false/>
 		<key>PVSystemIdentifier</key>
@@ -3981,6 +4057,8 @@
 		<string>Atari8bit</string>
 		<key>PVReleaseYear</key>
 		<string>1982</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVBit</key>
 		<string>8</string>
 		<key>PVPortable</key>
@@ -4104,6 +4182,8 @@
 		<string>Atari ST</string>
 		<key>PVSystemShortName</key>
 		<string>AtariST</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVReleaseYear</key>
 		<string>1985</string>
 		<key>PVBit</key>
@@ -4206,6 +4286,8 @@
 		<string>DOS</string>
 		<key>PVReleaseYear</key>
 		<string>1980</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVBit</key>
 		<string>32</string>
 		<key>PVPortable</key>
@@ -4291,6 +4373,8 @@
 		<string>C64</string>
 		<key>PVReleaseYear</key>
 		<string>1982</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVBit</key>
 		<string>8</string>
 		<key>PVPortable</key>
@@ -4396,6 +4480,8 @@
 		<string>ZX Spectrum</string>
 		<key>PVSystemShortName</key>
 		<string>Z80</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVReleaseYear</key>
 		<string>1980</string>
 		<key>PVBit</key>
@@ -4479,6 +4565,8 @@
 		<string>MSX</string>
 		<key>PVSystemShortName</key>
 		<string>MSX</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVReleaseYear</key>
 		<string>1983</string>
 		<key>PVBit</key>
@@ -4642,6 +4730,8 @@
 		<string>Microsoft</string>
 		<key>PVSystemName</key>
 		<string>MSX2</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVSystemShortName</key>
 		<string>MSX2</string>
 		<key>PVReleaseYear</key>
@@ -4845,6 +4935,8 @@
 		<string>Macintosh</string>
 		<key>PVSystemShortName</key>
 		<string>Mac</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVReleaseYear</key>
 		<string>1984</string>
 		<key>PVBit</key>
@@ -4946,6 +5038,8 @@
 		<string>8</string>
 		<key>PVPortable</key>
 		<true/>
+		<key>PVScreenType</key>
+		<string>DotMatrix</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.pokemonmini</string>
 		<key>PVDatabaseID</key>
@@ -5090,6 +5184,8 @@
 		<string>Odyssey2</string>
 		<key>PVReleaseYear</key>
 		<string>1978</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVBit</key>
 		<string>8</string>
 		<key>PVPortable</key>
@@ -5207,6 +5303,8 @@
 		<string>Vectrex</string>
 		<key>PVReleaseYear</key>
 		<string>1982</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVBit</key>
 		<string>8</string>
 		<key>PVPortable</key>
@@ -5246,6 +5344,8 @@
 		<string>ep128</string>
 		<key>PVReleaseYear</key>
 		<string>1985</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVBit</key>
 		<string>8</string>
 		<key>PVPortable</key>
@@ -5339,6 +5439,8 @@
 		<string>CBS ColecoVision</string>
 		<key>PVSystemShortName</key>
 		<string>ColecoVision</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVReleaseYear</key>
 		<string>1982</string>
 		<key>PVBit</key>
@@ -5470,6 +5572,8 @@
 		<string>Mattel Intellivision</string>
 		<key>PVSystemShortName</key>
 		<string>Intellivision</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVReleaseYear</key>
 		<string>1979</string>
 		<key>PVBit</key>
@@ -5550,6 +5654,8 @@
 		<string>Supervision</string>
 		<key>PVReleaseYear</key>
 		<string>1992</string>
+		<key>PVScreenType</key>
+		<string>DotMatrix</string>
 		<key>PVBit</key>
 		<string>8</string>
 		<key>PVPortable</key>
@@ -5619,6 +5725,8 @@
 		<string>Panasonic</string>
 		<key>PVSystemName</key>
 		<string>3DO</string>
+		<key>PVScreenType</key>
+		<string>CRT</string>
 		<key>PVSystemShortName</key>
 		<string>3DO</string>
 		<key>PVReleaseYear</key>
