@@ -127,6 +127,7 @@ PV_OBJC_DIRECT_MEMBERS
     glDeleteTextures(1, &texture);
     
     [[PVSettingsModel shared] removeObserver:self forKeyPath:@"crtFilterEnabled"];
+    [[PVSettingsModel shared] removeObserver:self forKeyPath:@"lcdFilterEnabled"];
     [[PVSettingsModel shared] removeObserver:self forKeyPath:@"imageSmoothing"];
 }
 
@@ -141,9 +142,11 @@ PV_OBJC_DIRECT_MEMBERS
         }
         
         renderSettings.crtFilterEnabled = [[PVSettingsModel shared] crtFilterEnabled];
+        renderSettings.lcdFilterEnabled = [[PVSettingsModel shared] lcdFilterEnabled];
         renderSettings.smoothingEnabled = [[PVSettingsModel shared] imageSmoothing];
         
         [[PVSettingsModel shared] addObserver:self forKeyPath:@"crtFilterEnabled" options:NSKeyValueObservingOptionNew context:nil];
+        [[PVSettingsModel shared] addObserver:self forKeyPath:@"lcdFilterEnabled" options:NSKeyValueObservingOptionNew context:nil];
         [[PVSettingsModel shared] addObserver:self forKeyPath:@"imageSmoothing" options:NSKeyValueObservingOptionNew context:nil];
 	}
 
@@ -153,6 +156,8 @@ PV_OBJC_DIRECT_MEMBERS
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if ([keyPath isEqualToString:@"crtFilterEnabled"]) {
         renderSettings.crtFilterEnabled = [[PVSettingsModel shared] crtFilterEnabled];
+    } else if ([keyPath isEqualToString:@"lcdFilterEnabled"]) {
+        renderSettings.lcdFilterEnabled = [[PVSettingsModel shared] lcdFilterEnabled];
     } else if ([keyPath isEqualToString:@"imageSmoothing"]) {
         renderSettings.smoothingEnabled = [[PVSettingsModel shared] imageSmoothing];
     } else {
@@ -623,6 +628,7 @@ PV_OBJC_DIRECT_MEMBERS
 #endif
         const BOOL rendersToOpenGL = strongself->_emulatorCore.rendersToOpenGL;
         const BOOL crtEnabled = strongself->renderSettings.crtFilterEnabled;
+        const BOOL lcdEnabled = strongself->renderSettings.lcdFilterEnabled;
 
         GLuint frontBufferTex;
         if (UNLIKELY(rendersToOpenGL))
@@ -656,7 +662,7 @@ PV_OBJC_DIRECT_MEMBERS
             glBindTexture(GL_TEXTURE_2D, frontBufferTex);
         }
         
-        if (crtEnabled)
+        if (crtEnabled || lcdEnabled)
         {
             glUseProgram(strongself->crtShaderProgram);
             glUniform4f(strongself->crtUniform_DisplayRect, screenRect.origin.x, screenRect.origin.y, screenRect.size.width, screenRect.size.height);
