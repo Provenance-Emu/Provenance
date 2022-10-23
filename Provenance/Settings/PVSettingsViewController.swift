@@ -160,6 +160,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
             PVSettingsSwitchRow(text: NSLocalizedString("Native Scale", comment: "Native Scale"), key: \PVSettingsModel.nativeScaleEnabled),
             PVSettingsSwitchRow(text: NSLocalizedString("Integer Scaling", comment: "Integer Scaling"), key: \PVSettingsModel.integerScaleEnabled),
             PVSettingsSwitchRow(text: NSLocalizedString("CRT Filter", comment: "CRT Filter"), key: \PVSettingsModel.crtFilterEnabled),
+            PVSettingsSwitchRow(text: NSLocalizedString("LCD Filter", comment: "LCD Filter"), detailText:.subtitle("Use CRT filter on LCD (mobile) screens. LCD filter coming."), key: \PVSettingsModel.lcdFilterEnabled),
             PVSettingsSwitchRow(text: NSLocalizedString("Image Smoothing", comment: "Image Smoothing"), key: \PVSettingsModel.imageSmoothing),
             PVSettingsSwitchRow(text: NSLocalizedString("FPS Counter", comment: "FPS Counter"), key: \PVSettingsModel.showFPSCount)
         ])
@@ -175,6 +176,10 @@ final class PVSettingsViewController: PVQuickTableViewController {
                 cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
                 }),
             PVSettingsSwitchRow(text: NSLocalizedString("CRT Filter", comment: "CRT Filter"), key: \PVSettingsModel.crtFilterEnabled,
+                customization: { cell, _ in
+                cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+                }),
+            PVSettingsSwitchRow(text: NSLocalizedString("LCD Filter", comment: "LCD Filter"), detailText:.subtitle("Use CRT filter on LCD (mobile) screens. LCD filter coming."), key: \PVSettingsModel.lcdFilterEnabled,
                 customization: { cell, _ in
                 cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
                 }),

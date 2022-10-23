@@ -265,6 +265,7 @@ extension MirroredSettings {
     #endif
     public dynamic var imageSmoothing = false
     public dynamic var crtFilterEnabled = false
+    public dynamic var lcdFilterEnabled = false
     public dynamic var metalFilter:String = ""
     public dynamic var integerScaleEnabled = false
 

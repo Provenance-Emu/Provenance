@@ -44,6 +44,7 @@ struct PVVertex
 
 typedef struct RenderSettings {
     BOOL crtFilterEnabled;
+    BOOL lcdFilterEnabled;
     BOOL smoothingEnabled;
 } RenderSettings;
 
