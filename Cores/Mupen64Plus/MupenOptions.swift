@@ -1,10 +1,10 @@
-	//
-	//  MupenOptions.swift
-	//  PVMupen64Plus
-	//
-	//  Created by Joseph Mattiello on 4/11/18.
-	//  Copyright © 2018 Provenance. All rights reserved.
-	//
+//
+//  MupenOptions.swift
+//  PVMupen64Plus
+//
+//  Created by Joseph Mattiello on 4/11/18.
+//  Copyright © 2018 Provenance. All rights reserved.
+//
 
 import Foundation
 import PVSupport

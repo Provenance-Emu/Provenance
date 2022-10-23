@@ -98,6 +98,8 @@
 		B380101420854EAA00FA03B8 /* TxDbg_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = B380101320854EAA00FA03B8 /* TxDbg_ios.mm */; };
 		B38010152085586900FA03B8 /* libglidenhq-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3800FF5208522DC00FA03B8 /* libglidenhq-iOS.a */; };
 		B3882C141DED279C007183B6 /* libpng-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E4C1DED23C600896D96 /* libpng-iOS.a */; };
+		B395ECFA2904B49F00C9407B /* MupenGameCore+Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = B395ECF92904B49F00C9407B /* MupenGameCore+Resources.swift */; };
+		B395ECFB2904B49F00C9407B /* MupenGameCore+Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = B395ECF92904B49F00C9407B /* MupenGameCore+Resources.swift */; };
 		B3962AEC26FBD89A00FAEFC0 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */; platformFilter = maccatalyst; };
 		B3962AED26FBD8A500FAEFC0 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */; platformFilter = maccatalyst; };
 		B3962AEE26FBD8F100FAEFC0 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */; platformFilter = maccatalyst; };
@@ -1535,6 +1537,7 @@
 		B37EFF3C1C72F43400857158 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3800FF5208522DC00FA03B8 /* libglidenhq-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libglidenhq-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B380101320854EAA00FA03B8 /* TxDbg_ios.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TxDbg_ios.mm; sourceTree = "<group>"; };
+		B395ECF92904B49F00C9407B /* MupenGameCore+Resources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MupenGameCore+Resources.swift"; sourceTree = "<group>"; };
 		B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
 		B3963E60279E835300B00117 /* MupenGameCore+Audio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MupenGameCore+Audio.swift"; sourceTree = "<group>"; };
@@ -2419,6 +2422,7 @@
 				B39C29DC27A12DA20078D028 /* MupenGameCore+Saves.h */,
 				B39C29DD27A12DA30078D028 /* MupenGameCore+Saves.m */,
 				B35E6C3B207EE3750040709A /* MupenOptions.swift */,
+				B395ECF92904B49F00C9407B /* MupenGameCore+Resources.swift */,
 				B3963E63279E866B00B00117 /* MupenGameCore+Video.swift */,
 				B3963E60279E835300B00117 /* MupenGameCore+Audio.swift */,
 			);
@@ -5575,6 +5579,7 @@
 				B3AE1DC3207311E900AD06D4 /* r4300_core.c in Sources */,
 				B3AE1D97207311E900AD06D4 /* game_controller.c in Sources */,
 				B3AE1D85207311E900AD06D4 /* m64282fp.c in Sources */,
+				B395ECFA2904B49F00C9407B /* MupenGameCore+Resources.swift in Sources */,
 				B3AE1D8C207311E900AD06D4 /* dummy_video.c in Sources */,
 				B3AE1DB4207311E900AD06D4 /* rdram.c in Sources */,
 				B3AE1DC5207311E900AD06D4 /* mempak.c in Sources */,
@@ -5754,6 +5759,7 @@
 				B3AE1DEC2073378600AD06D4 /* cic.c in Sources */,
 				B3AE1DE92073378600AD06D4 /* af_rtc.c in Sources */,
 				B3AE1DE12073378600AD06D4 /* flashram.c in Sources */,
+				B395ECFB2904B49F00C9407B /* MupenGameCore+Resources.swift in Sources */,
 				B3AE1E032073378600AD06D4 /* files_macos.c in Sources */,
 				B3AE1E1C2073378600AD06D4 /* m64282fp.c in Sources */,
 				B3AE1E172073378600AD06D4 /* transferpak.c in Sources */,

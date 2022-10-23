@@ -1,5 +1,5 @@
 //
-//  MupenGameCore+Audio.swift
+//  MupenGameCore+Video.swift
 //  PVMupen64Plus
 //
 //  Created by Joseph Mattiello on 1/24/22.

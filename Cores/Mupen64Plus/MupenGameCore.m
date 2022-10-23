@@ -30,6 +30,7 @@
 //#import "MupenGameCore.h"
 #import <PVMupen64Plus/PVMupen64Plus-Swift.h>
 
+#import "MupenGameCore+Resources.h"
 #import "MupenGameCore+Controls.h"
 #import "MupenGameCore+Cheats.h"
 #import "MupenGameCore+Mupen.h"
@@ -242,72 +243,6 @@ static void *dlopen_myself()
     return dlopen(info.dli_fname, RTLD_LAZY | RTLD_GLOBAL);
 }
 
-
-- (void)copyIniFiles:(NSString*)romFolder {
-	NSBundle *coreBundle = [NSBundle mainBundle];
-
-	// Copy default config files if they don't exist
-	NSArray<NSString*>* iniFiles = @[@"GLideN64.ini", @"GLideN64.custom.ini", @"RiceVideoLinux.ini", @"mupen64plus.ini"];
-	NSFileManager *fm = [NSFileManager defaultManager];
-
-	// Create destination folder if missing
-
-	BOOL isDirectory;
-	if (![fm fileExistsAtPath:romFolder isDirectory:&isDirectory]) {
-		ILOG(@"ROM data folder doesn't exist, creating %@", romFolder);
-		NSError *error;
-		BOOL success = [fm createDirectoryAtPath:romFolder withIntermediateDirectories:YES attributes:nil error:&error];
-		if (!success) {
-			ELOG(@"Failed to create destination folder %@. Error: %@", romFolder, error.localizedDescription);
-			return;
-		}
-	}
-
-	for (NSString *iniFile in iniFiles) {
-		NSString *destinationPath = [romFolder stringByAppendingPathComponent:iniFile];
-
-		if (![fm fileExistsAtPath:destinationPath]) {
-			NSString *fileName = [iniFile stringByDeletingPathExtension];
-			NSString *extension = [iniFile pathExtension];
-			NSString *source = [coreBundle pathForResource:fileName
-													ofType:extension];
-			if (source == nil) {
-				ELOG(@"No resource path found for file %@", iniFile);
-				continue;
-			}
-			NSError *error;
-			BOOL success = [fm copyItemAtPath:source
-									   toPath:destinationPath
-										error:&error];
-			if (!success) {
-				ELOG(@"Failed to copy app bundle file %@\n%@", iniFile, error.localizedDescription);
-			} else {
-				ILOG(@"Copied %@ from app bundle to %@", iniFile, destinationPath);
-			}
-		}
-	}
-}
-
--(void)createHiResFolder:(NSString*)romFolder {
-	// Create the directory if this option is enabled to make it easier for users to upload packs
-	BOOL hiResTextures = YES;
-	if (hiResTextures) {
-		// Create the directory for hires_texture, this is a constant in mupen source
-		NSArray<NSString*>* subPaths = @[@"/hires_texture/", @"/cache/", @"/texture_dump/"];
-		for(NSString *subPath in subPaths) {
-			NSString *highResPath = [romFolder stringByAppendingPathComponent:subPath];
-			NSError *error;
-			BOOL success = [[NSFileManager defaultManager] createDirectoryAtPath:highResPath
-													 withIntermediateDirectories:YES
-																	  attributes:nil
-																		   error:&error];
-			if (!success) {
-				ELOG(@"Error creating hi res texture path: %@", error.localizedDescription);
-			}
-		}
-	}
-}
-
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {
     NSBundle *coreBundle = [NSBundle mainBundle];
 
@@ -334,13 +269,30 @@ static void *dlopen_myself()
     
     [self parseOptions];
 
+    NSError *copyError = nil;
 	// Create hires folder placement
-	[self createHiResFolder:romFolder];
+	BOOL err = [self createHiResFolder:romFolder error:&copyError];
+    if (!err) {
+        ELOG(@"%@", [copyError localizedDescription]);
+        if(error != NULL) { *error = copyError; }
+        return false;
+    }
 
 	// Copy default ini files to the config path
-	[self copyIniFiles:configPath];
+    BOOL err2 = [self copyIniFiles:configPath error:&copyError];
+    if (!err2) {
+        ELOG(@"%@", [copyError localizedDescription]);
+        if(error != NULL) { *error = copyError; }
+        return false;
+    }
+
 	// Rice looks in the data path for some reason, fuck it copy it there too - joe m
-	[self copyIniFiles:dataPath];
+    BOOL err3 = [self copyIniFiles:dataPath error:&copyError];
+    if (!err3) {
+        ELOG(@"%@", [copyError localizedDescription]);
+        if(error != NULL) { *error = copyError; }
+        return false;
+    }
 
 	// Setup configs
 	ConfigureAll(romFolder);
