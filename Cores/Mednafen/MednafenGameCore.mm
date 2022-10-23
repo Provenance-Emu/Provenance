@@ -58,6 +58,10 @@
 
 #define GET_CURRENT_OR_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 
+#define DEADZONE 0.1f
+#define OUTSIDE_DEADZONE(x) gamepad.leftThumbstick.x.value > DEADZONE
+#define DPAD_PRESSED(x) [[dpad x] isPressed]?:OUTSIDE_DEADZONE(x)
+
 @interface MednafenGameCore (MultiDisc)
 + (NSDictionary<NSString*,NSNumber*>*_Nonnull)multiDiscPSXGames;
 + (NSDictionary<NSString*,NSNumber*>*_Nonnull)sbiRequiredGames;
@@ -1235,13 +1239,13 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
         GCControllerDirectionPad *dpad = [gamepad dpad];
         switch (buttonID) {
             case PVLynxButtonUp:
-                return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] isPressed];
+                return DPAD_PRESSED(up);
             case PVLynxButtonDown:
-                return [[dpad down] isPressed]?:[[[gamepad leftThumbstick] down] isPressed];
+                return DPAD_PRESSED(down);
             case PVLynxButtonLeft:
-                return [[dpad left] isPressed]?:[[[gamepad leftThumbstick] left] isPressed];
+                return DPAD_PRESSED(left);
             case PVLynxButtonRight:
-                return [[dpad right] isPressed]?:[[[gamepad leftThumbstick] right] isPressed];
+                return DPAD_PRESSED(right);
             case PVLynxButtonA:
                 return [[gamepad buttonB] isPressed]?:[[gamepad buttonX] isPressed]?:[[[gamepad rightThumbstick] right] isPressed]?:[[gamepad rightTrigger] isPressed];
             case PVLynxButtonB:
@@ -1596,13 +1600,13 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
         if (PVSettingsModel.shared.use8BitdoM30) // Maps the Sega Saturn Controls to the 8BitDo M30 if enabled in Settings/Controller
             { switch (buttonID) {
                 case PVSaturnButtonUp:
-                    return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] value] > 0.1;
+                    return DPAD_PRESSED(up);
                 case PVSaturnButtonDown:
-                    return [[dpad down] isPressed]?:[[[gamepad leftThumbstick] down] value] > 0.1;
+                    return DPAD_PRESSED(down);
                 case PVSaturnButtonLeft:
-                    return [[dpad left] isPressed]?:[[[gamepad leftThumbstick] left] value] > 0.1;
+                    return DPAD_PRESSED(left);
                 case PVSaturnButtonRight:
-                    return [[dpad right] isPressed]?:[[[gamepad leftThumbstick] right] value] > 0.1;
+                    return DPAD_PRESSED(right);
                 case PVSaturnButtonA:
                     return [[gamepad buttonA] isPressed];
                 case PVSaturnButtonB:
@@ -1730,13 +1734,13 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 		GCControllerDirectionPad *dpad = [gamepad dpad];
 		switch (buttonID) {
 			case PVGBButtonUp:
-				return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] isPressed];
+                return DPAD_PRESSED(up);
 			case PVGBButtonDown:
-				return [[dpad down] isPressed]?:[[[gamepad leftThumbstick] down] isPressed];
+                return DPAD_PRESSED(down);
 			case PVGBButtonLeft:
-				return [[dpad left] isPressed]?:[[[gamepad leftThumbstick] left] isPressed];
+                return DPAD_PRESSED(left);
 			case PVGBButtonRight:
-				return [[dpad right] isPressed]?:[[[gamepad leftThumbstick] right] isPressed];
+                return DPAD_PRESSED(right);
 			case PVGBButtonB:
 				return [[gamepad buttonA] isPressed]?:[[gamepad buttonY] isPressed];
 			case PVGBButtonA:
@@ -1836,13 +1840,13 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 		GCControllerDirectionPad *dpad = [gamepad dpad];
 		switch (buttonID) {
 			case PVGBAButtonUp:
-				return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] isPressed];
+                return DPAD_PRESSED(up);
 			case PVGBAButtonDown:
-				return [[dpad down] isPressed]?:[[[gamepad leftThumbstick] down] isPressed];
+                return DPAD_PRESSED(down);
 			case PVGBAButtonLeft:
-				return [[dpad left] isPressed]?:[[[gamepad leftThumbstick] left] isPressed];
+                return DPAD_PRESSED(left);
 			case PVGBAButtonRight:
-				return [[dpad right] isPressed]?:[[[gamepad leftThumbstick] right] isPressed];
+                return DPAD_PRESSED(right);
 			case PVGBAButtonB:
 				return [[gamepad buttonA] isPressed]?:[[gamepad buttonY] isPressed];
 			case PVGBAButtonA:
@@ -1917,6 +1921,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 #endif
 	return 0;
 }
+
 #pragma mark SNES Buttons
 - (NSInteger)SNESValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
 	if ([controller extendedGamepad]) {
@@ -1924,17 +1929,17 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 		GCControllerDirectionPad *dpad = [gamepad dpad];
 		switch (buttonID) {
 			case PVSNESButtonUp:
-				return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] isPressed];
+				return DPAD_PRESSED(up);
 			case PVSNESButtonDown:
-				return [[dpad down] isPressed]?:[[[gamepad leftThumbstick] down] isPressed];
+				return DPAD_PRESSED(down);
 			case PVSNESButtonLeft:
-				return [[dpad left] isPressed]?:[[[gamepad leftThumbstick] left] isPressed];
+				return DPAD_PRESSED(left);
 			case PVSNESButtonRight:
-				return [[dpad right] isPressed]?:[[[gamepad leftThumbstick] right] isPressed];
+				return DPAD_PRESSED(right);
 			case PVSNESButtonB:
-				return [[gamepad buttonA] isPressed];
-			case PVSNESButtonA:
 				return [[gamepad buttonB] isPressed];
+			case PVSNESButtonA:
+				return [[gamepad buttonA] isPressed];
 			case PVSNESButtonX:
 				return [[gamepad buttonY] isPressed];
 			case PVSNESButtonY:
@@ -2016,13 +2021,13 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 		GCControllerDirectionPad *dpad = [gamepad dpad];
 		switch (buttonID) {
 			case PVNESButtonUp:
-				return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] isPressed];
+                return DPAD_PRESSED(up);
 			case PVNESButtonDown:
-				return [[dpad down] isPressed]?:[[[gamepad leftThumbstick] down] isPressed];
+                return DPAD_PRESSED(down);
 			case PVNESButtonLeft:
-				return [[dpad left] isPressed]?:[[[gamepad leftThumbstick] left] isPressed];
+                return DPAD_PRESSED(left);
 			case PVNESButtonRight:
-				return [[dpad right] isPressed]?:[[[gamepad leftThumbstick] right] isPressed];
+                return DPAD_PRESSED(right);
 			case PVNESButtonB:
 				return [[gamepad buttonA] isPressed]?:[[gamepad buttonY] isPressed];
 			case PVNESButtonA:
@@ -2096,13 +2101,13 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
         GCControllerDirectionPad *dpad = [gamepad dpad];
         switch (buttonID) {
             case PVNGPButtonUp:
-                return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] isPressed];
+                return DPAD_PRESSED(up);
             case PVNGPButtonDown:
-                return [[dpad down] isPressed]?:[[[gamepad leftThumbstick] down] isPressed];
+                return DPAD_PRESSED(down);
             case PVNGPButtonLeft:
-                return [[dpad left] isPressed]?:[[[gamepad leftThumbstick] left] isPressed];
+                return DPAD_PRESSED(left);
             case PVNGPButtonRight:
-                return [[dpad right] isPressed]?:[[[gamepad leftThumbstick] right] isPressed];
+                return DPAD_PRESSED(right);
             case PVNGPButtonB:
                 return [[gamepad buttonB] isPressed]?:[[gamepad buttonX] isPressed];
             case PVNGPButtonA:
@@ -2175,13 +2180,13 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
         {switch (buttonID) {
 				// D-Pad
 			case PVPCEButtonUp:
-                return [[[gamepad leftThumbstick] up] value] > 0.1;
+                return [[[gamepad leftThumbstick] up] value] > DEADZONE;
             case PVPCEButtonDown:
-                return [[[gamepad leftThumbstick] down] value] > 0.1;
+                return [[[gamepad leftThumbstick] down] value] > DEADZONE;
             case PVPCEButtonLeft:
-                return [[[gamepad leftThumbstick] left] value] > 0.1;
+                return [[[gamepad leftThumbstick] left] value] > DEADZONE;
             case PVPCEButtonRight:
-                return [[[gamepad leftThumbstick] right] value] > 0.1;
+                return [[[gamepad leftThumbstick] right] value] > DEADZONE;
 
 				// Select + Run
             case PVPCEButtonSelect:
@@ -2212,13 +2217,13 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
         {switch (buttonID) { // Non M30 mode
                 // D-Pad
             case PVPCEButtonUp:
-                return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] value] > 0.1;
+                return DPAD_PRESSED(up);
             case PVPCEButtonDown:
-                return [[dpad down] isPressed]?:[[[gamepad leftThumbstick] down] value] > 0.1;
+                return DPAD_PRESSED(down);
             case PVPCEButtonLeft:
-                return [[dpad left] isPressed]?:[[[gamepad leftThumbstick] left] value] > 0.1;
+                return DPAD_PRESSED(left);
             case PVPCEButtonRight:
-                return [[dpad right] isPressed]?:[[[gamepad leftThumbstick] right] value] > 0.1;
+                return DPAD_PRESSED(right);
 
                 // Standard Buttons
             case PVPCEButtonButton1:
@@ -2500,13 +2505,13 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
         GCControllerDirectionPad *dpad = [gamepad dpad];
         switch (buttonID) {
             case PVVBButtonLeftUp:
-                return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] isPressed];
+                return DPAD_PRESSED(up);
             case PVVBButtonLeftDown:
-                return [[dpad down] isPressed]?:[[[gamepad leftThumbstick] down] isPressed];
+                return DPAD_PRESSED(down);
             case PVVBButtonLeftLeft:
-                return [[dpad left] isPressed]?:[[[gamepad leftThumbstick] left] isPressed];
+                return DPAD_PRESSED(left);
             case PVVBButtonLeftRight:
-                return [[dpad right] isPressed]?:[[[gamepad leftThumbstick] right] isPressed];
+                return DPAD_PRESSED(right);
             case PVVBButtonRightUp:
                 return [[[gamepad rightThumbstick] up] isPressed];
             case PVVBButtonRightDown:
