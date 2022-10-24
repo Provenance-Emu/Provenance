@@ -5,7 +5,6 @@
 //  Copyright (c) 2013 James Addyman. All rights reserved.
 //
 
-let TEST_THEMES = false
 import CocoaLumberjackSwift
 import CoreSpotlight
 import PVLibrary
