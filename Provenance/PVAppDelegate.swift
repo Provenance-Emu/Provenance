@@ -176,9 +176,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         #endif
 
         #if os(iOS)
-        if #available(iOS 11, *) {
             PVAltKitService.shared.start()
-        }
 
         if #available(iOS 13, *) {
             ApplicationMonitor.shared.start()
