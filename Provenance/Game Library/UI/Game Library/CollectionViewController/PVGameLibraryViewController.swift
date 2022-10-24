@@ -621,10 +621,6 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         indexPaths?.forEach({ indexPath in
             (self.collectionView?.deselectItem(at: indexPath, animated: true))!
         })
-
-        guard RomDatabase.databaseInitilized else {
-            return
-        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
