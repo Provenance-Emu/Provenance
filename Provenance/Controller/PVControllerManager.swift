@@ -666,11 +666,8 @@ extension GCExtendedGamepad {
         if buttonB.isPressed {state.formUnion([.b])}
         if buttonX.isPressed {state.formUnion([.x])}
         if buttonY.isPressed {state.formUnion([.y])}
-
-        if #available(iOS 13.0, tvOS 13.0, *) {
-            if buttonMenu.isPressed {state.formUnion([.menu])}
-            if buttonOptions?.isPressed == true {state.formUnion([.options])}
-        }
+        if buttonMenu.isPressed {state.formUnion([.menu])}
+        if buttonOptions?.isPressed == true {state.formUnion([.options])}
 
         for pad in [dpad, leftThumbstick, rightThumbstick] {
             if pad.up.isPressed {state.formUnion([.up])}

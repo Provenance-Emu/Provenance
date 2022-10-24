@@ -37,11 +37,7 @@ open class QuickTableViewController: UIViewController, UITableViewDataSource, UI
   /// Returns the table view managed by the controller object.
     #if os(iOS) || os(macOS)
         open var tableView: UITableView! = {
-            if #available(iOS 13.0, *) {
-                return UITableView(frame: .zero, style: .insetGrouped)
-            } else {
-                return UITableView(frame: .zero, style: .grouped)
-            }
+            return UITableView(frame: .zero, style: .insetGrouped)
         }()
     #else
         open var tableView: UITableView = UITableView(frame: .zero, style: .grouped)

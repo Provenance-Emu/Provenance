@@ -11,7 +11,6 @@ import Combine
 import UIKit
 
 #if LocationManager
-@available(iOS 13.0, *)
 extension LocationManager {
     typealias Status = Swift.Result<Void, Swift.Error>
 
@@ -50,7 +49,6 @@ extension LocationManager {
     }
 }
 
-@available(iOS 13.0, *)
 class LocationManager: NSObject, ObservableObject {
 //    @PublishedPipeline({ removeDuplicatesPipeline($0) })
     var status: Status?
@@ -94,7 +92,6 @@ class LocationManager: NSObject, ObservableObject {
     }
 }
 
-@available(iOS 13.0, *)
 private extension LocationManager {
     static func removeDuplicatesPipeline<T: Publisher>(_ publisher: T) -> AnyPublisher<Status?, Never>
     where T.Output == Status?, T.Failure == Never {
@@ -110,7 +107,6 @@ private extension LocationManager {
     }
 }
 
-@available(iOS 13.0, *)
 extension LocationManager: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         switch status {

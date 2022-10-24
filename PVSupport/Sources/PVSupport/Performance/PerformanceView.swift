@@ -51,9 +51,7 @@ internal class PerformanceView: UIWindow, PerformanceViewConfigurator {
 
     required internal init() {
         super.init(frame: PerformanceView.windowFrame(withPrefferedHeight: Constants.prefferedHeight))
-        if #available(iOS 13, *) {
-            self.windowScene = PerformanceView.keyWindowScene()
-        }
+        self.windowScene = PerformanceView.keyWindowScene()
 
         self.configureWindow()
         self.configureMonitoringTextLabel()
@@ -328,14 +326,9 @@ private extension PerformanceView {
     }
 
     class func keyWindow() -> UIWindow? {
-        if #available(iOS 13, *) {
-            return UIApplication.shared.windows.first(where: { $0.isKeyWindow })
-        } else {
-            return UIApplication.shared.keyWindow
-        }
+        return UIApplication.shared.windows.first(where: { $0.isKeyWindow })
     }
 
-    @available(iOS 13, *)
     class func keyWindowScene() -> UIWindowScene? {
         return UIApplication.shared.connectedScenes
             .filter { $0.activationState == .foregroundActive }
