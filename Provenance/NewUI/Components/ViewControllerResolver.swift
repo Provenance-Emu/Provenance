@@ -11,7 +11,7 @@ import Foundation
 import SwiftUI
 
 @available(iOS 14, tvOS 14, *)
-final class ViewControllerResolver: UIViewControllerRepresentable {
+struct ViewControllerResolver: UIViewControllerRepresentable {
 
     let onResolve: (UIViewController) -> Void
 
