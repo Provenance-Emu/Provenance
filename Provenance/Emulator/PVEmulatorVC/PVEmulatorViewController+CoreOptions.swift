@@ -16,9 +16,7 @@ extension PVEmulatorViewController {
         #if os(iOS)
             optionsVC.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissNav))
             // disable iOS 13 swipe to dismiss...
-            if #available(iOS 13.0, *) {
-                nav.isModalInPresentation = true
-            }
+            nav.isModalInPresentation = true
             present(nav, animated: true, completion: nil)
         #else
             let tap = UITapGestureRecognizer(target: self, action: #selector(self.dismissNav))

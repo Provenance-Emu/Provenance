@@ -8,7 +8,6 @@
 
 import Combine
 
-@available(iOS 13.0, *)
 @propertyWrapper
 class PublishedPipeline<Value, Pipeline: Publisher> {
     @Published

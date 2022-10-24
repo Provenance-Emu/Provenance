@@ -20,10 +20,8 @@ extension PVEmulatorViewController {
                 return false
             }
             // show menu for "virtual" controllers
-            if #available(iOS 13.0, tvOS 13.0, *) {
-                if (controller.isSnapshot) {
-                    return false
-                }
+            if (controller.isSnapshot) {
+                return false
             }
             return true
         }

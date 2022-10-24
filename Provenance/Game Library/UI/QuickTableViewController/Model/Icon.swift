@@ -83,7 +83,6 @@ public struct Icon: Equatable {
   /// - Parameters:
   ///   - name: The name of the system symbol image.
   ///   - configuration: The configuration to specify traits and other details that define the variant of image.
-  @available(iOS 13.0, tvOS 13.0, *)
   public static func sfSymbol(_ name: String, withConfiguration configuration: UIImage.Configuration? = nil) -> Self {
     // Make sure the image scales with the Dynamic Type settings.
     let fallback = UIImage.SymbolConfiguration(textStyle: .body)

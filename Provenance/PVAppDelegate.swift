@@ -177,10 +177,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
         #if os(iOS)
             PVAltKitService.shared.start()
-
-        if #available(iOS 13, *) {
             ApplicationMonitor.shared.start()
-        }
         #endif
 
 		DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: { [unowned self] in

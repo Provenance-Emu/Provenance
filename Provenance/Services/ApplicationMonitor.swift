@@ -20,12 +20,10 @@ private extension CFNotificationName {
     static let altstoreAppIsRunning: CFNotificationName = CFNotificationName("com.altstore.AppState.Running.org.provenance-emu.provenance" as CFString)
 }
 
-@available(iOS 13.0, *)
 private let ReceivedApplicationState: @convention(c) (CFNotificationCenter?, UnsafeMutableRawPointer?, CFNotificationName?, UnsafeRawPointer?, CFDictionary?) -> Void = { (center, observer, name, object, userInfo) in
     ApplicationMonitor.shared.receivedApplicationStateRequest()
 }
 
-@available(iOS 13.0, *)
 class ApplicationMonitor {
     static let shared = ApplicationMonitor()
     #if LocationManager
@@ -36,7 +34,6 @@ class ApplicationMonitor {
     private var backgroundTaskID: UIBackgroundTaskIdentifier?
 }
 
-@available(iOS 13.0, *)
 extension ApplicationMonitor {
     func start() {
         guard !self.isMonitoring else { return }
@@ -47,7 +44,6 @@ extension ApplicationMonitor {
     }
 }
 
-@available(iOS 13.0, *)
 private extension ApplicationMonitor {
     func registerForNotifications() {
         let center = CFNotificationCenterGetDarwinNotifyCenter()
@@ -87,7 +83,6 @@ private extension ApplicationMonitor {
     }
 }
 
-@available(iOS 13.0, *)
 private extension ApplicationMonitor {
     func receivedApplicationStateRequest() {
         guard UIApplication.shared.applicationState != .background else { return }

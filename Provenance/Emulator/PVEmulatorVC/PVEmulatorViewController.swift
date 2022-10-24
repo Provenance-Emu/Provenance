@@ -695,9 +695,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         #endif
 
         // disable iOS 13 swipe to dismiss...
-        if #available(iOS 13.0, tvOS 13.0, *) {
-            newNav.isModalInPresentation = true
-        }
+        newNav.isModalInPresentation = true
 
         self.present(newNav, animated: true) { () -> Void in }
         // hideMoreInfo will/should do this!

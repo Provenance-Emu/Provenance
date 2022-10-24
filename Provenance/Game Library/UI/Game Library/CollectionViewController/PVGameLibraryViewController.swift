@@ -206,10 +206,8 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             self.navigationController?.navigationBar.sendSubviewToBack(blurEffectView)
             navigationController?.navigationBar.backgroundColor = UIColor.black.withAlphaComponent(0.5)
             // ironicaly BarButtonItems (unselected background) look better when forced to LightMode
-            if #available(tvOS 13.0, *) {
-                navigationController?.overrideUserInterfaceStyle = .light
-                self.overrideUserInterfaceStyle = .dark
-            }
+            navigationController?.overrideUserInterfaceStyle = .light
+            self.overrideUserInterfaceStyle = .dark
         #endif
 
         // Handle migrating library
@@ -228,9 +226,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             searchController.searchBar.placeholder = "Search"
             searchController.obscuresBackgroundDuringPresentation = false
             searchController.hidesNavigationBarDuringPresentation = false
-            if #available(iOS 13.0, *) {
-                searchController.automaticallyShowsCancelButton = true
-            }
+            searchController.automaticallyShowsCancelButton = true
             navigationItem.hidesSearchBarWhenScrolling = true
             navigationItem.searchController = searchController
 
@@ -267,10 +263,8 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         }
 
         // we cant use a SF Symbol in the Storyboard cuz of back version support, so change it here in code.
-        if #available(iOS 13.0, tvOS 13.0, *) {
-            if let bbi = settingsBarButtonItem {
-                bbi.image = UIImage(systemName:"gear", withConfiguration:UIImage.SymbolConfiguration(font:font))
-            }
+        if let bbi = settingsBarButtonItem {
+            bbi.image = UIImage(systemName:"gear", withConfiguration:UIImage.SymbolConfiguration(font:font))
         }
 
         // Persist some settings, could probably be done in a better way
@@ -978,7 +972,6 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
     }
 
     #if os(iOS)
-    @available(iOS 13.0, *)
     func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         guard useModernContextMenus,
               let cell = collectionView.cellForItem(at: indexPath),
