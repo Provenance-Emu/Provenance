@@ -222,7 +222,6 @@
 		B305F07B276B512D003AE510 /* openvgdb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47DC21072AD3002211EE /* openvgdb.sqlite */; };
 		B305F07C276B512D003AE510 /* systems.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47DD21072AD3002211EE /* systems.plist */; };
 		B305F084276B5229003AE510 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305F083276B5229003AE510 /* PVSupport.framework */; };
-		B305F085276B5229003AE510 /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B305F083276B5229003AE510 /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3067F4B2106B5A30091437F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3067F4A2106B5A20091437F /* Foundation.framework */; };
 		B3067F5D2106B8590091437F /* OESQLiteDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D1E2106B4D600DDEBD6 /* OESQLiteDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3067F5E2106B8590091437F /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = B3579D202106B4D600DDEBD6 /* OESQLiteDatabase.m */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
@@ -307,9 +306,7 @@
 		B354E7CF219A8EAF0041F971 /* LibrarySerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CE219A8EAF0041F971 /* LibrarySerializer.swift */; };
 		B354E7D0219A8EAF0041F971 /* LibrarySerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CE219A8EAF0041F971 /* LibrarySerializer.swift */; };
 		B364D4BF2870E80100B93A4B /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B364D4BE2870E80100B93A4B /* PVLibRetro.framework */; };
-		B364D4C02870E80100B93A4B /* PVLibRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B364D4BE2870E80100B93A4B /* PVLibRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B364D4C32870E81200B93A4B /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B364D4C22870E81200B93A4B /* PVLibRetro.framework */; };
-		B364D4C42870E81200B93A4B /* PVLibRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B364D4C22870E81200B93A4B /* PVLibRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B378227A21D41E1C0077E86F /* SavePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227921D41E1C0077E86F /* SavePackage.swift */; };
 		B378227B21D41E1C0077E86F /* SavePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227921D41E1C0077E86F /* SavePackage.swift */; };
 		B378227D21D41E310077E86F /* GamePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227C21D41E310077E86F /* GamePackage.swift */; };
@@ -644,39 +641,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		B305F086276B5229003AE510 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				B305F085276B5229003AE510 /* PVSupport.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B364D4C12870E80100B93A4B /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				B364D4C02870E80100B93A4B /* PVLibRetro.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B364D4C52870E81200B93A4B /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				B364D4C42870E81200B93A4B /* PVLibRetro.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C04B6C21078CD900E7AF79 /* Copy Framework */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1992,7 +1956,6 @@
 				B305EFBB276B512D003AE510 /* Sources */,
 				B305F06F276B512D003AE510 /* Frameworks */,
 				B305F07A276B512D003AE510 /* Resources */,
-				B305F086276B5229003AE510 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -2019,7 +1982,6 @@
 				B3579D0B2106B11D00DDEBD6 /* Sources */,
 				B3579D0C2106B11D00DDEBD6 /* Frameworks */,
 				B3579D0D2106B11D00DDEBD6 /* Resources */,
-				B364D4C12870E80100B93A4B /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -2045,7 +2007,6 @@
 				B3C04A9B21077B3100E7AF79 /* Sources */,
 				B3C04B3121077B3100E7AF79 /* Frameworks */,
 				B3C04B3E21077B3100E7AF79 /* Resources */,
-				B364D4C52870E81200B93A4B /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
