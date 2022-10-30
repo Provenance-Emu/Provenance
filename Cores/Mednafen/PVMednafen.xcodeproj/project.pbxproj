@@ -1069,6 +1069,8 @@
 		B3AAB43D2073820C0097D86F /* MednafenGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 824088350FFDDCF400F0FE7D /* MednafenGameCore.mm */; };
 		B3AAB43F2073820C0097D86F /* MednafenMultiDisc.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */; };
 		B3AAB4402073820C0097D86F /* MednafenMultiTap.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44BA2039B6D0005BEB14 /* MednafenMultiTap.m */; };
+		B3B8C3BF290E15EC002B839A /* MednafenGameCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3B8C3BE290E15EB002B839A /* MednafenGameCore+Controls.mm */; };
+		B3B8C3C0290E15EC002B839A /* MednafenGameCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3B8C3BE290E15EB002B839A /* MednafenGameCore+Controls.mm */; };
 		B3FBDF01207FF13400E661D1 /* interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE8F20736EE90097D86F /* interface.cpp */; };
 		B3FBDF02207FF19800E661D1 /* generic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE9820736EE90097D86F /* generic.cpp */; };
 		B3FBDF03207FF19800E661D1 /* smemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE9920736EE90097D86F /* smemory.cpp */; };
@@ -4021,6 +4023,7 @@
 		B3AAB3C720736EEC0097D86F /* snes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snes.h; sourceTree = "<group>"; };
 		B3AAB3C820736EEC0097D86F /* cart.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cart.cpp; sourceTree = "<group>"; };
 		B3AAB3CA20736EEC0097D86F /* git.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = git.cpp; sourceTree = "<group>"; };
+		B3B8C3BE290E15EB002B839A /* MednafenGameCore+Controls.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "MednafenGameCore+Controls.mm"; sourceTree = "<group>"; };
 		B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MednafenMultiDisc.m; sourceTree = "<group>"; };
 		B3CF44BA2039B6D0005BEB14 /* MednafenMultiTap.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MednafenMultiTap.m; sourceTree = "<group>"; };
 		B3FBDEF8207FF0E300E661D1 /* libsnes-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libsnes-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4557,6 +4560,7 @@
 				B3AA9D6920736B030097D86F /* mednafen */,
 				824088340FFDDCF400F0FE7D /* MednafenGameCore.h */,
 				824088350FFDDCF400F0FE7D /* MednafenGameCore.mm */,
+				B3B8C3BE290E15EB002B839A /* MednafenGameCore+Controls.mm */,
 				B3A74C8C20522B86001D3D2E /* MednafenGameCore.swift */,
 				B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */,
 				B3CF44BA2039B6D0005BEB14 /* MednafenMultiTap.m */,
@@ -10324,6 +10328,7 @@
 				B3AAB4402073820C0097D86F /* MednafenMultiTap.m in Sources */,
 				B3AAB43D2073820C0097D86F /* MednafenGameCore.mm in Sources */,
 				C66D56112626B12100CDECE9 /* Time_POSIX.cpp in Sources */,
+				B3B8C3BF290E15EC002B839A /* MednafenGameCore+Controls.mm in Sources */,
 				B333559D207B1DC50036A448 /* thread.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -10338,6 +10343,7 @@
 				B33355F5207B3BAD0036A448 /* stubs.mm in Sources */,
 				B33355F3207B3BAD0036A448 /* MednafenGameCore.swift in Sources */,
 				C66D56122626B12100CDECE9 /* Time_POSIX.cpp in Sources */,
+				B3B8C3C0290E15EC002B839A /* MednafenGameCore+Controls.mm in Sources */,
 				B33355F6207B3BAD0036A448 /* MednafenMultiTap.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
