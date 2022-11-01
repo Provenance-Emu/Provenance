@@ -601,9 +601,6 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                 deleteActionView.frame = contentView.bounds
                 backgroundView = UIView(frame: bounds)
                 backgroundView?.isOpaque = true
-                backgroundView?.backgroundColor = Theme.currentTheme.gameLibraryBackground
-                contentView.backgroundColor = Theme.currentTheme.gameLibraryBackground
-                backgroundColor = Theme.currentTheme.gameLibraryBackground
                 isOpaque = true
                 contentView.isOpaque = true
 
