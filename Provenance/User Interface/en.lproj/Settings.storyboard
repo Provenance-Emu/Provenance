@@ -99,7 +99,7 @@
         <scene sceneID="JM2-Wc-sLW">
             <objects>
                 <tableViewController storyboardIdentifier="PVControllerSelectionViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="tYF-TO-B5Z" customClass="PVControllerSelectionViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="qEF-dH-ST0" customClass="SettingsTableView" customModule="Provenance" customModuleProvider="target">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="qEF-dH-ST0">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -144,7 +144,7 @@
         <scene sceneID="fO1-s1-IEl">
             <objects>
                 <tableViewController storyboardIdentifier="PVAppearanceViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="BFd-r1-Ceq" userLabel="Appearance View Controller" customClass="PVAppearanceViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="appearanceSettingsTableView" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="7rZ-mL-ngk" userLabel="Appearance Settings Table View" customClass="SettingsTableView" customModule="Provenance" customModuleProvider="target">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="appearanceSettingsTableView" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="7rZ-mL-ngk" userLabel="Appearance Settings Table View">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -182,7 +182,7 @@
         <scene sceneID="RcS-hP-gKG">
             <objects>
                 <tableViewController storyboardIdentifier="PViCadeControllerViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="g7L-7e-WYC" userLabel="iCade View Controller" customClass="PViCadeControllerViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="pG4-ln-baC" customClass="SettingsTableView" customModule="Provenance" customModuleProvider="target">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="pG4-ln-baC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
