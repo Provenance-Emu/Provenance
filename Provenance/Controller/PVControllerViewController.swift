@@ -867,6 +867,9 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
 		if alwaysRightAlign {
 			selectFrame.origin.x += 80
+			if let dPad = dPad {
+				selectFrame.origin.x = dPad.frame.maxX + (xPadding * 2)
+			}
 		}
         
 		if let selectButton = self.selectButton {
