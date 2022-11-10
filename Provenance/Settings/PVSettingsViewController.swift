@@ -85,19 +85,12 @@ final class PVSettingsViewController: PVQuickTableViewController {
         typealias TableRow = Row & RowStyle
 
         // -- Section : App
-        #if os(tvOS)
-        let autolockRowDetailText:DetailText = .subtitle("This also disables the screensaver.")
-        #else
-        let autolockRowDetailText:DetailText? = nil
-        #endif
-        let autolockRow = PVSettingsSwitchRow(text: NSLocalizedString("Disable Auto Lock", comment: "Disable Auto Lock"), detailText: autolockRowDetailText, key: \PVSettingsModel.disableAutoLock)
-
         let systemsRow = SegueNavigationRow(text: NSLocalizedString("Systems", comment: "Systems"), viewController: self, segue: "pushSystemSettings")
-
-        #if os(tvOS)
-            let appRows: [TableRow] = [systemsRow]
-        #else
+        #if os(iOS)
+            let autolockRow = PVSettingsSwitchRow(text: NSLocalizedString("Disable Auto Lock", comment: "Disable Auto Lock"), detailText: .subtitle("This also disables the screensaver."), key: \PVSettingsModel.disableAutoLock)
             let appRows: [TableRow] = [autolockRow, systemsRow]
+        #else
+            let appRows: [TableRow] = [systemsRow]
         #endif
 
         let appSection = Section(title: NSLocalizedString("App", comment: "App"), rows: appRows)
