@@ -45,7 +45,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
         tableView.reloadData()
 
         #if os(tvOS)
-            tableView.rowHeight = 80
+            tableView.rowHeight = UITableView.automaticDimension
             splitViewController?.view.backgroundColor = .black
             navigationController?.navigationBar.isTranslucent = false
             navigationController?.navigationBar.backgroundColor =  UIColor.black.withAlphaComponent(0.8)
