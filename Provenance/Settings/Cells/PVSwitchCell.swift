@@ -30,10 +30,6 @@ final class PVSwitchCell: SwitchCell {
 		#if !targetEnvironment(macCatalyst)
             switchControl.thumbTintColor = Theme.currentTheme.switchThumb
 		#endif
-        #else
-            bg.backgroundColor = UIColor.clear
-            self.textLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.white : UIColor.black
-            self.detailTextLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.lightGray : UIColor.darkGray
         #endif
         backgroundView = bg
     }
