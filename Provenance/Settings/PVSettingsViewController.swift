@@ -25,6 +25,9 @@ class PVQuickTableViewController: QuickTableViewController {
 
         #if os(iOS)
             (cell as? SliderCell)?.delegate = self
+        #else
+            cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+            cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
         #endif
 
         return cell
@@ -113,33 +116,12 @@ final class PVSettingsViewController: PVQuickTableViewController {
         let coreOptionsSection = Section(title: NSLocalizedString("Core Options", comment: "Core Options"), rows: cores)
 
         // -- Section : Saves
-        #if os(iOS)
         let saveRows: [TableRow] = [
             PVSettingsSwitchRow(text: NSLocalizedString("Auto Save", comment: "Auto Save"), key: \PVSettingsModel.autoSave),
             PVSettingsSwitchRow(text: NSLocalizedString("Timed Auto Saves", comment: "Timed Auto Saves"), key: \PVSettingsModel.timedAutoSaves),
             PVSettingsSwitchRow(text: NSLocalizedString("Auto Load Saves", comment: "Auto Load Saves"), key: \PVSettingsModel.autoLoadSaves),
             PVSettingsSwitchRow(text: NSLocalizedString("Ask to Load Saves", comment: "Ask to Load Saves"), key: \PVSettingsModel.askToAutoLoad)
         ]
-        #else
-        let saveRows: [TableRow] = [
-            PVSettingsSwitchRow(text: NSLocalizedString("Auto Save", comment: "Auto Save"), key: \PVSettingsModel.autoSave,
-                    customization: { cell, _ in
-                    cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
-                    }),
-            PVSettingsSwitchRow(text: NSLocalizedString("Timed Auto Saves", comment: "Timed Auto Saves"), key: \PVSettingsModel.timedAutoSaves,
-                    customization: { cell, _ in
-                    cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
-                    }),
-            PVSettingsSwitchRow(text: NSLocalizedString("Auto Load Saves", comment: "Auto Load Saves"), key: \PVSettingsModel.autoLoadSaves,
-                    customization: { cell, _ in
-                    cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
-                    }),
-            PVSettingsSwitchRow(text: NSLocalizedString("Ask to Load Saves", comment: "Ask to Load Saves"), key: \PVSettingsModel.askToAutoLoad,
-                    customization: { cell, _ in
-                    cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
-                    })
-        ]
-        #endif
 
         let savesSection = Section(title: NSLocalizedString("Saves", comment: "Saves"), rows: saveRows)
 
@@ -149,6 +131,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
         #if os(iOS)
             avRows.append(contentsOf: [PVSettingsSwitchRow(text: NSLocalizedString("Volume HUD", comment: "Volume HUD"), key: \PVSettingsModel.volumeHUD)])
             avRows.append(PVSettingsSliderRow(text: NSLocalizedString("Volume", comment: "Volume"), detailText: nil, valueLimits: (min: 0.0, max: 1.0), key: \PVSettingsModel.volume))
+        #endif
         avRows.append(contentsOf: [
             PVSettingsSwitchRow(text: NSLocalizedString("Native Scale", comment: "Native Scale"), key: \PVSettingsModel.nativeScaleEnabled),
             PVSettingsSwitchRow(text: NSLocalizedString("Integer Scaling", comment: "Integer Scaling"), key: \PVSettingsModel.integerScaleEnabled),
@@ -157,36 +140,6 @@ final class PVSettingsViewController: PVQuickTableViewController {
             PVSettingsSwitchRow(text: NSLocalizedString("Image Smoothing", comment: "Image Smoothing"), key: \PVSettingsModel.imageSmoothing),
             PVSettingsSwitchRow(text: NSLocalizedString("FPS Counter", comment: "FPS Counter"), key: \PVSettingsModel.showFPSCount)
         ])
-        
-        #else
-        avRows.append(contentsOf: [
-            PVSettingsSwitchRow(text: NSLocalizedString("Native Scale", comment: "Native Scale"), key: \PVSettingsModel.nativeScaleEnabled,
-                customization: { cell, _ in
-                cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
-                }),
-            PVSettingsSwitchRow(text: NSLocalizedString("Integer Scaling", comment: "Integer Scaling"), key: \PVSettingsModel.integerScaleEnabled,
-                customization: { cell, _ in
-                cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
-                }),
-            PVSettingsSwitchRow(text: NSLocalizedString("CRT Filter", comment: "CRT Filter"), key: \PVSettingsModel.crtFilterEnabled,
-                customization: { cell, _ in
-                cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
-                }),
-            PVSettingsSwitchRow(text: NSLocalizedString("LCD Filter", comment: "LCD Filter"), detailText:.subtitle("Use CRT filter on LCD (mobile) screens. LCD filter coming."), key: \PVSettingsModel.lcdFilterEnabled,
-                customization: { cell, _ in
-                cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
-                }),
-            PVSettingsSwitchRow(text: NSLocalizedString("Image Smoothing", comment: "Image Smoothing"), key: \PVSettingsModel.imageSmoothing,
-                customization: { cell, _ in
-                cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
-                }),
-            PVSettingsSwitchRow(text: NSLocalizedString("FPS Counter", comment: "FPS Counter"), key: \PVSettingsModel.showFPSCount,
-                customization: { cell, _ in
-                cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
-                })
-        ]
-        )
-        #endif
 
         let avSection = Section(title: NSLocalizedString("Video Options", comment: "Video Options"), rows: avRows)
 
@@ -222,11 +175,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
         ])
         #if os(tvOS)
         controllerRows.append(contentsOf: [
-            PVSettingsSwitchRow(text: NSLocalizedString("Enable 8BitDo M30 Mapping", comment: "Enable 8BitDo M30 Mapping"), detailText: .subtitle("For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X, Saturn and the \nTG16/PC Engine, TG16/PC Engine CD and SuperGrafx systems."), key: \PVSettingsModel.use8BitdoM30,
-            customization: { cell, _ in
-            cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
-            cell.detailTextLabel?.font =  UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
-            })
+            PVSettingsSwitchRow(text: NSLocalizedString("Enable 8BitDo M30 Mapping", comment: "Enable 8BitDo M30 Mapping"), detailText: .subtitle("For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X, Saturn and the \nTG16/PC Engine, TG16/PC Engine CD and SuperGrafx systems."), key: \PVSettingsModel.use8BitdoM30)
         ])
         #endif
 
@@ -252,12 +201,10 @@ final class PVSettingsViewController: PVQuickTableViewController {
                 detailText: .subtitle(""),
                 key: \PVSettingsModel.webDavAlwaysOn,
                 customization: { cell, _ in
-                    cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
                     if PVSettingsModel.shared.webDavAlwaysOn {
                         let subTitleText = "WebDAV: \(PVWebServer.shared.webDavURLString)"
                         let subTitleAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20), NSAttributedString.Key.foregroundColor: UIColor.gray]
                         let subTitleAttrString = NSMutableAttributedString(string: subTitleText, attributes: subTitleAttributes)
-                        // cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
                         cell.detailTextLabel?.attributedText = subTitleAttrString
                     } else {
                         cell.detailTextLabel?.text = nil
@@ -344,57 +291,27 @@ final class PVSettingsViewController: PVQuickTableViewController {
         ]
         #else // tvOS
          let betaRows: [TableRow] = [
-	     	PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"), detailText: .subtitle("Use experimental Metal backend instead of OpenGL"),
-                                key: \PVSettingsModel.debugOptions.useMetal,
-                                    customization: { cell, _ in
-                                    	cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
-                                    	cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
-                                    }
-                               ),
-             PVSettingsSwitchRow(text: NSLocalizedString("iCloud Sync", comment: "iCloud Sync"),
+            PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"), detailText: .subtitle("Use experimental Metal backend instead of OpenGL"),
+                                key: \PVSettingsModel.debugOptions.useMetal),
+            PVSettingsSwitchRow(text: NSLocalizedString("iCloud Sync", comment: "iCloud Sync"),
                                 detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
-                                key: \PVSettingsModel.debugOptions.iCloudSync,
-                                    customization: { cell, _ in
-                                        cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
-                                        cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
-                            }
-            ),
+                                key: \PVSettingsModel.debugOptions.iCloudSync),
 
-             PVSettingsSwitchRow(text: NSLocalizedString("Multi-threaded GL", comment: "Multi-threaded GL"),
+            PVSettingsSwitchRow(text: NSLocalizedString("Multi-threaded GL", comment: "Multi-threaded GL"),
                                 detailText: .subtitle("Use tvOS's EAGLContext multiThreaded. May improve or slow down GL performance."),
-                                key: \PVSettingsModel.debugOptions.multiThreadedGL,
-                                    customization: { cell, _ in
-                                        cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
-                                        cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
-                            }
-            ),
+                                key: \PVSettingsModel.debugOptions.multiThreadedGL),
 
-             PVSettingsSwitchRow(text: NSLocalizedString("4X Multisampling GL", comment: "4X Multisampling GL"),
+            PVSettingsSwitchRow(text: NSLocalizedString("4X Multisampling GL", comment: "4X Multisampling GL"),
                                 detailText: .subtitle("Use tvOS's EAGLContext multisampling. Slower speed (slightly), smoother edges."),
-                                key: \PVSettingsModel.debugOptions.multiSampling,
-                                    customization: { cell, _ in
-                                        cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
-                                        cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
-                                }
-            ),
+                                key: \PVSettingsModel.debugOptions.multiSampling),
 
             PVSettingsSwitchRow(text: NSLocalizedString("Use SwiftUI", comment: "Use SwiftUI"),
                                detailText: .subtitle("Don't use unless you enjoy empty windows."),
-                               key: \PVSettingsModel.debugOptions.multiSampling,
-                                   customization: { cell, _ in
-                                       cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
-                                       cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
-                               }
-           ),
+                               key: \PVSettingsModel.debugOptions.multiSampling),
 
             PVSettingsSwitchRow(text: NSLocalizedString("Use Themes", comment: "Use Themes"),
                                detailText: .subtitle("Use iOS themes on tvOS"),
-                               key: \PVSettingsModel.debugOptions.tvOSThemes,
-                                   customization: { cell, _ in
-                                       cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
-                                       cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
-                               }
-           )
+                               key: \PVSettingsModel.debugOptions.tvOSThemes)
                 ]
         #endif
 
