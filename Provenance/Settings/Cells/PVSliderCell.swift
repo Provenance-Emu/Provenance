@@ -30,10 +30,6 @@ final class PVSliderCell: SliderCell {
             slider.thumbTintColor = Theme.currentTheme.switchThumb
 		#endif
             slider.isContinuous = false
-        #else
-            bg.backgroundColor = UIColor.clear
-            self.textLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.white : UIColor.black
-            self.detailTextLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.lightGray : UIColor.darkGray
         #endif
         backgroundView = bg
     }
