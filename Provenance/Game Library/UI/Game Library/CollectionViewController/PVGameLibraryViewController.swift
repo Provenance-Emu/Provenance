@@ -1368,11 +1368,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
     #endif
 
     func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, referenceSizeForHeaderInSection _: Int) -> CGSize {
-        #if os(tvOS)
-            return CGSize(width: view.bounds.size.width, height: 40)
-        #else
-            return CGSize(width: view.bounds.size.width, height: 40)
-        #endif
+        return CGSize(width: view.bounds.size.width, height: 40)
     }
 
     // MARK: - Image Picker Delegate
