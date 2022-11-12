@@ -48,7 +48,7 @@
         UITableView *tableView    = [[UITableView alloc] init];
         tableView.delegate        = self;
         tableView.dataSource      = self;
-        tableView.backgroundColor = [UIColor blackColor];
+        tableView.backgroundColor = [UIColor systemBackgroundColor];
         tableView.opaque          = YES;
 #if TARGET_OS_IOS
         tableView.separatorStyle  = UITableViewCellSeparatorStyleNone;
@@ -648,7 +648,7 @@
             break;
         case DDLogFlagInfo:
         default:
-            cell.textLabel.textColor = [UIColor whiteColor];
+            cell.textLabel.textColor = [UIColor labelColor];
             break;
     }
     
