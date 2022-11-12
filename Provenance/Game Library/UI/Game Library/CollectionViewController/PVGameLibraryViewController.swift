@@ -201,7 +201,8 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             navigationController?.navigationBar.isTranslucent = false
             let blurEffect = UIBlurEffect(style: UIBlurEffect.Style.dark)
             let blurEffectView = UIVisualEffectView(effect: blurEffect)
-            blurEffectView.frame = (self.navigationController?.navigationBar.bounds)!
+            let bounds = (self.navigationController?.navigationBar.bounds)!
+            blurEffectView.frame = CGRect(x: bounds.minX, y: bounds.minY, width: bounds.width, height: bounds.height + 49)
             self.navigationController?.navigationBar.addSubview(blurEffectView)
             self.navigationController?.navigationBar.sendSubviewToBack(blurEffectView)
             navigationController?.navigationBar.backgroundColor = UIColor.black.withAlphaComponent(0.5)
@@ -493,17 +494,24 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         // Adjust collection view layout for iPhone X Safe areas
         // Can remove this when we go iOS 9+ and just use safe areas
         // in the story board directly - jm
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        let guide = view.safeAreaLayoutGuide
         #if os(iOS)
-            collectionView.translatesAutoresizingMaskIntoConstraints = false
-            let guide = view.safeAreaLayoutGuide
             NSLayoutConstraint.activate([
                 collectionView.trailingAnchor.constraint(equalTo: guide.trailingAnchor),
                 collectionView.leadingAnchor.constraint(equalTo: guide.leadingAnchor),
                 collectionView.topAnchor.constraint(equalTo: view.topAnchor),
                 collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
             ])
-            layout.sectionInsetReference = .fromSafeArea
+        #else
+            NSLayoutConstraint.activate([
+                collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                collectionView.topAnchor.constraint(equalTo: guide.topAnchor, constant: 49),
+                collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            ])
         #endif
+        layout.sectionInsetReference = .fromSafeArea
         // Force touch
         #if os(iOS)
             registerForPreviewing(with: self, sourceView: collectionView)
