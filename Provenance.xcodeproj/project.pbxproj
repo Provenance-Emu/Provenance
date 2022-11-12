@@ -6154,7 +6154,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.CoresRetro";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.CoresRetro";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -6200,7 +6200,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.CoresRetro";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.CoresRetro";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -6247,7 +6247,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.CoresRetro";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.CoresRetro";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -6471,7 +6471,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.Cores";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Cores";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -6517,7 +6517,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.Cores";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Cores";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -6564,7 +6564,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.Cores";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Cores";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
