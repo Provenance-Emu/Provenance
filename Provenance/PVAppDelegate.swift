@@ -5,7 +5,6 @@
 //  Copyright (c) 2013 James Addyman. All rights reserved.
 //
 
-let TEST_THEMES = false
 import CocoaLumberjackSwift
 import CoreSpotlight
 import PVLibrary
@@ -176,13 +175,8 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         #endif
 
         #if os(iOS)
-        if #available(iOS 11, *) {
             PVAltKitService.shared.start()
-        }
-
-        if #available(iOS 13, *) {
             ApplicationMonitor.shared.start()
-        }
         #endif
 
 		DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: { [unowned self] in

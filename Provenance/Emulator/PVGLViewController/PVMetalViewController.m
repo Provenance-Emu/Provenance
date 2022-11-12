@@ -198,14 +198,7 @@ PV_OBJC_DIRECT_MEMBERS
     GLenum depthFormat = self.emulatorCore.depthFormat;
     switch (depthFormat) {
         case GL_DEPTH_COMPONENT16:
-            if (@available(macOS 10.12, iOS 13.0, *))
-            {
-                view.depthStencilPixelFormat = MTLPixelFormatDepth16Unorm;
-            }
-            else
-            {
-                view.depthStencilPixelFormat = MTLPixelFormatDepth32Float;
-            }
+            view.depthStencilPixelFormat = MTLPixelFormatDepth16Unorm;
             break;
         case GL_DEPTH_COMPONENT24:
             view.depthStencilPixelFormat = MTLPixelFormatX32_Stencil8; // fallback to D32 if D24 isn't supported

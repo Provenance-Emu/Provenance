@@ -203,7 +203,7 @@ public extension HapticsManager {
 	func triple() { play(.triple) }
 }
 
-@available(iOS 13.0, tvOS 14.0, *)
+@available(tvOS 14.0, *)
 extension CHHapticEngine.StoppedReason {
     var message: String {
         switch self {

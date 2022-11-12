@@ -195,24 +195,18 @@ public final class Theme {
             }
             return
         }
-        if #available(iOS 13.0, *) {
-            guard
-                let window = UIApplication.shared.keyWindow,
-                let scene = window.windowScene,
-                let manager = scene.statusBarManager else {
-                ELOG("check your tcp/ip's")
-                return
-            }
-            let statusBar1 = statusBarView ?? UIView()
-            statusBar1.frame = manager.statusBarFrame
-            statusBar1.backgroundColor = color
-            statusBarView = statusBar1
-            window.addSubview(statusBar1)
-        } else {
-            if let statusBar1: UIView = UIApplication.shared.value(forKey: "statusBar") as? UIView {
-                statusBar1.backgroundColor = color
-            }
+        guard
+            let window = UIApplication.shared.keyWindow,
+            let scene = window.windowScene,
+            let manager = scene.statusBarManager else {
+            ELOG("check your tcp/ip's")
+            return
         }
+        let statusBar1 = statusBarView ?? UIView()
+        statusBar1.frame = manager.statusBarFrame
+        statusBar1.backgroundColor = color
+        statusBarView = statusBar1
+        window.addSubview(statusBar1)
         #endif
     }
 

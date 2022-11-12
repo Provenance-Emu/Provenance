@@ -477,19 +477,13 @@ extension UIAlertAction {
     convenience init(title: String, symbol:String, style: UIAlertAction.Style, handler: @escaping ((UIAlertAction) -> Void)) {
         self.init(title: title, style: style, handler: handler)
 #if os(iOS)
-        if #available(iOS 13.0, tvOS 13.0, *) {
-            if let image = UIImage(systemName: symbol, withConfiguration: UIImage.SymbolConfiguration(font: _font)) {
-                self.setValue(image, forKey: "image")
-            }
-        }
+    if let image = UIImage(systemName: symbol, withConfiguration: UIImage.SymbolConfiguration(font: _font)) {
+        self.setValue(image, forKey: "image")
+    }
 #endif
     }
     func getImage() -> UIImage? {
-        if #available(iOS 13.0, tvOS 13.0, *) {
-            return self.value(forKey: "image") as? UIImage
-        } else {
-            return nil
-        }
+        return self.value(forKey: "image") as? UIImage
     }
 }
 
@@ -499,7 +493,6 @@ extension UIAlertAction {
 extension UIAlertControllerProtocol {
 
     // convert a UIAlertController to a UIMenu so it can be used as a context menu
-    @available(iOS 13.0, *)
     func convertToMenu() -> UIMenu {
 
         // convert UIAlertActions to UIActions via compactMap

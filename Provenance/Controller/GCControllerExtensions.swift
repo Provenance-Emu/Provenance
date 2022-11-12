@@ -48,17 +48,11 @@ extension GCController {
     }
 
     private var buttonMenu: GCControllerButtonInput? {
-        if #available(iOS 13.0, tvOS 13.0, *) {
-            return extendedGamepad?.buttonMenu ?? microGamepad?.buttonMenu
-        }
-        return nil
+        return extendedGamepad?.buttonMenu ?? microGamepad?.buttonMenu
     }
 
     private var buttonOptions: GCControllerButtonInput? {
-        if #available(iOS 13.0, tvOS 13.0, *) {
-            return extendedGamepad?.buttonOptions
-        }
-        return nil
+        return extendedGamepad?.buttonOptions
     }
 
     private var buttonHome: GCControllerButtonInput? {
