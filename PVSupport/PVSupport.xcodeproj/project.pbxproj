@@ -5019,7 +5019,7 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibRetro";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibRetro";
 				PRODUCT_NAME = PVLibRetro;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -5080,7 +5080,7 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibRetro";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibRetro";
 				PRODUCT_NAME = PVLibRetro;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -5139,7 +5139,7 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibRetro";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibRetro";
 				PRODUCT_NAME = PVLibRetro;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -5300,7 +5300,7 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibRetro";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibRetro";
 				PRODUCT_NAME = PVLibRetro;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -5357,7 +5357,7 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibRetro";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibRetro";
 				PRODUCT_NAME = PVLibRetro;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -5412,7 +5412,7 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVLibRetro";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibRetro";
 				PRODUCT_NAME = PVLibRetro;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
