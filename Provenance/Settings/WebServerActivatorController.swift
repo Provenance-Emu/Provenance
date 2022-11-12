@@ -30,7 +30,7 @@ protocol WebServerActivatorController: AnyObject {
             Upload/Download files to your device at:
 
             \(webServerAddress)  ᵂᵉᵇᵁᴵ
-            \(webDavAddress)  ᵂᵉᵇᴰᵃᵛ
+            \(webDavAddress)  ᵂᵉᵇᴰᴬⱽ
             """
             return message
         }
@@ -78,19 +78,13 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
         let webServerAddress: String = PVWebServer.shared.urlString
         let webDavAddress: String = PVWebServer.shared.webDavURLString
         let message = """
-
-        Read more about how to import
-        ROMs on the Provenance wiki at:
-
+        Read about how to import ROMs on the Provenance wiki at:
         https://wiki.provenance-emu.com
-
-
 
         Upload/Download files to your device at:
 
         \(webServerAddress)  ᵂᵉᵇᵁᴵ
         \(webDavAddress)  ᵂᵉᵇᴰᴬⱽ
-
         """
         return message
     }
