@@ -10,9 +10,9 @@ import Foundation
 
 public enum AppURLKeys: String, Codable {
     case open
+    case save
     
     public enum OpenKeys: String, Codable {
-        case save
         case md5Key = "PVGameMD5Key"
         case system
         case title
@@ -65,24 +65,63 @@ extension PVAppDelegate {
             let sendingAppID = options[.sourceApplication]
             ILOG("App with id <\(sendingAppID ?? "nil")> requested to open url \(url.absoluteString)")
 
-            let action = components.host
+            guard let action = AppURLKeys(rawValue: components.host) else {
+                ELOG("Invalid host/action: \(components.host ?? "nil")")
+                return false
+            }
             
-            if action == "open" {
+            
+            switch action {
+            case .save:
                 guard let queryItems = components.queryItems, !queryItems.isEmpty else {
                     return false
                 }
 
-                let saveItem = queryItems["save"]
+                guard let a = queryItems["action"],
+                      let action = AppURLKeys.SaveKeys(rawValue: a) else {
+                    return false
+                }
+                
                 let md5QueryItem = queryItems["PVGameMD5Key"]
                 let systemItem = queryItems["system"]
                 let nameItem = queryItems["title"]
-
-                if let saveItem = saveItem {
+                
+                let saves = RomDatabase.sharedInstance.all(PVSave.self)
+                var filter: String
+                switch action {
+                case .lastAnySave:
+                    filter = ""
+                case .lastManualSave:
+                    filter = ""
+                case .lastQuickSave:
+                    filter = ""
+                }
+                
+                if let md5QueryItem = md5QueryItem {
                     
-                } else if let md5QueryItem = md5QueryItem,
-                    let value = md5QueryItem.value,
-                    !value.isEmpty,
-                    let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: value)) as PVGame??) {
+                }
+                if let systemItem = systemItem {
+                    
+                }
+                if let nameItem = nameItem {
+                    
+                }
+                return false
+                    //.filter("systemIdentifier == %@ AND title == %@", matchedSystem.identifier, gameName)
+            case .open:
+                
+                guard let queryItems = components.queryItems, !queryItems.isEmpty else {
+                    return false
+                }
+                
+                let md5QueryItem = queryItems["PVGameMD5Key"]
+                let systemItem = queryItems["system"]
+                let nameItem = queryItems["title"]
+                
+                if let md5QueryItem = md5QueryItem,
+                   let value = md5QueryItem.value,
+                   !value.isEmpty,
+                   let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: value)) as PVGame??) {
                     // Match by md5
                     ILOG("Open by md5 \(value)")
                     shortcutItemGame = matchedGame
@@ -117,12 +156,14 @@ extension PVAppDelegate {
                     ELOG("Open Query didn't have acceptable values")
                     return false
                 }
-
-            } else {
-                ELOG("Unsupported host <\(url.host?.removingPercentEncoding ?? "nil")>")
-                return false
             }
-        } else if let components = components, components.path == PVGameControllerKey, let first = components.queryItems?.first, first.name == PVGameMD5Key, let md5Value = first.value, let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
+        } else if
+            let components = components,
+                components.path == PVGameControllerKey,
+                let first = components.queryItems?.first,
+                first.name == PVGameMD5Key,
+                let md5Value = first.value,
+                let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
             shortcutItemGame = matchedGame
             return true
         }

@@ -197,6 +197,4 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidBecomeActive(_: UIApplication) {}
 
     func applicationWillTerminate(_: UIApplication) {}
-
-
 }
