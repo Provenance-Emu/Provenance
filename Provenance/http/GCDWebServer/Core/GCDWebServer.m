@@ -1157,7 +1157,7 @@ static CFHTTPMessageRef _CreateHTTPMessageFromPerformingRequest(NSData* inData, 
     bzero(&addr4, sizeof(addr4));
     addr4.sin_len = sizeof(port);
     addr4.sin_family = AF_INET;
-    addr4.sin_port = htons(8080);
+    addr4.sin_port = htons(port);
     addr4.sin_addr.s_addr = htonl(INADDR_ANY);
     if (connect(httpSocket, (void*)&addr4, sizeof(addr4)) == 0) {
       if (write(httpSocket, inData.bytes, inData.length) == (ssize_t)inData.length) {
