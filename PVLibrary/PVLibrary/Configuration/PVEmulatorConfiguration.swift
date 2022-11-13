@@ -290,17 +290,24 @@ public final class PVEmulatorConfiguration: NSObject {
         }
     }
 
-    static var iCloudContainerDirectoryCached: URL?
+    static var iCloudContainerDirectoryCached: URL? = {
+        if Thread.isMainThread {
+            var container: URL?
+            DispatchQueue.global(qos: .background).sync {
+                container = FileManager.default.url(forUbiquityContainerIdentifier: Constants.iCloud.containerIdentifier)
+            }
+            return container
+        } else {
+            let container = FileManager.default.url(forUbiquityContainerIdentifier: Constants.iCloud.containerIdentifier)
+            return container
+        }
+    }()
+    
     /// This should be called on a background thread
     static var iCloudContainerDirectory: URL? {
-        guard iCloudContainerDirectoryCached == nil else {
+        get {
             return iCloudContainerDirectoryCached
         }
-        if Thread.isMainThread {
-            WLOG("Warning, this should only be called on background threads.")
-        }
-        iCloudContainerDirectoryCached = FileManager.default.url(forUbiquityContainerIdentifier: Constants.iCloud.containerIdentifier)
-        return iCloudContainerDirectoryCached
     }
 
     /// This should be called on a background thread
