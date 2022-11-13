@@ -384,6 +384,10 @@
 		B354E7C7219A7D9D0041F971 /* SystemOverviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7C5219A7D9D0041F971 /* SystemOverviewViewModel.swift */; };
 		B354E7D2219A9C230041F971 /* CoreOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7D1219A9C230041F971 /* CoreOptionsViewController.swift */; };
 		B354E7D3219A9C230041F971 /* CoreOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7D1219A9C230041F971 /* CoreOptionsViewController.swift */; };
+		B355DF8B292088E500E4C858 /* PVAppDelegate+Open.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF8A292088E500E4C858 /* PVAppDelegate+Open.swift */; };
+		B355DF8C292088E500E4C858 /* PVAppDelegate+Open.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF8A292088E500E4C858 /* PVAppDelegate+Open.swift */; };
+		B355DF8E29208A4A00E4C858 /* PVAppDelegate+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF8D29208A4A00E4C858 /* PVAppDelegate+Helpers.swift */; };
+		B355DF8F29208A4A00E4C858 /* PVAppDelegate+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF8D29208A4A00E4C858 /* PVAppDelegate+Helpers.swift */; };
 		B357A43827092254002C7C0F /* AppCenterAnalytics in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B357A43727092254002C7C0F /* AppCenterAnalytics */; };
 		B357A43A27092254002C7C0F /* AppCenterCrashes in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B357A43927092254002C7C0F /* AppCenterCrashes */; };
 		B357A43C2709228E002C7C0F /* PVAppDelegate+AppCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */; };
@@ -1406,6 +1410,8 @@
 		B354E7C1219A7D630041F971 /* SystemSettingsHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSettingsHeaderCell.swift; sourceTree = "<group>"; };
 		B354E7C5219A7D9D0041F971 /* SystemOverviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemOverviewViewModel.swift; sourceTree = "<group>"; };
 		B354E7D1219A9C230041F971 /* CoreOptionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreOptionsViewController.swift; sourceTree = "<group>"; };
+		B355DF8A292088E500E4C858 /* PVAppDelegate+Open.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVAppDelegate+Open.swift"; sourceTree = "<group>"; };
+		B355DF8D29208A4A00E4C858 /* PVAppDelegate+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVAppDelegate+Helpers.swift"; sourceTree = "<group>"; };
 		B3579D0221069B4E00DDEBD6 /* Spotlight.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Spotlight.entitlements; sourceTree = "<group>"; };
 		B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVAppDelegate+AppCenter.swift"; sourceTree = "<group>"; };
 		B3592CE42070B9DE00533593 /* PVSaveStateCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PVSaveStateCollectionViewCell.xib; sourceTree = "<group>"; };
@@ -2113,6 +2119,8 @@
 			children = (
 				B3B9239C202D054B00580FFC /* Provenance-Bridging-Header.h */,
 				1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */,
+				B355DF8D29208A4A00E4C858 /* PVAppDelegate+Helpers.swift */,
+				B355DF8A292088E500E4C858 /* PVAppDelegate+Open.swift */,
 				B3290498270D1F95002707AC /* PVAppDelegate+NitoTV.swift */,
 				B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */,
 				37EEA28427BC7E610070E222 /* NewUI */,
@@ -3860,6 +3868,7 @@
 				B38D30FD202AC26500E9A068 /* GCDWebDAVServer.m in Sources */,
 				B31A464F26B4C5060084A1D6 /* PVAltKitService.m in Sources */,
 				1A3FD78E1AC7744100F8C23C /* MBProgressHUD.m in Sources */,
+				B355DF8E29208A4A00E4C858 /* PVAppDelegate+Helpers.swift in Sources */,
 				B3F64ECC205CD1D600C273C7 /* JSDPad.swift in Sources */,
 				B378225A21D32F970077E86F /* SettingsRowSlider.swift in Sources */,
 				B3AB37362187F569009D9244 /* PVAtariJaguarControllerViewController.swift in Sources */,
@@ -4021,6 +4030,7 @@
 				378F4A091B63D7CD0065FA39 /* GCDWebServerDataResponse.m in Sources */,
 				B385542E20336D02006CA50B /* PVGameMoreInfoViewController.swift in Sources */,
 				B3427BFA287EA0CF0054C1B5 /* simpleCRT.metal in Sources */,
+				B355DF8B292088E500E4C858 /* PVAppDelegate+Open.swift in Sources */,
 				B3411C17276B470B00D85327 /* OptionRow.swift in Sources */,
 				B36D9DFD203605BC00D583C4 /* PVCoreFactory.swift in Sources */,
 				378F4A0C1B63D7CD0065FA39 /* GCDWebServerStreamedResponse.m in Sources */,
@@ -4163,6 +4173,7 @@
 				B3411C2C276B472900D85327 /* Section.swift in Sources */,
 				B3890BFA20B9E513005BB001 /* UILabel+Theming.swift in Sources */,
 				B378224F21D32A360077E86F /* SegueNavigationRow.swift in Sources */,
+				B355DF8F29208A4A00E4C858 /* PVAppDelegate+Helpers.swift in Sources */,
 				B354E7D3219A9C230041F971 /* CoreOptionsViewController.swift in Sources */,
 				B3B104C8218F2EF400210C39 /* PVGenesisControllerViewController.swift in Sources */,
 				B3A40C7221A67C7800544C20 /* PVGameLibrarySectionFooterView.swift in Sources */,
@@ -4215,6 +4226,7 @@
 				1AD481DD1BA3544800FDA50A /* GCDWebServerFileRequest.m in Sources */,
 				B361F63A27C07B3E0080D368 /* PVRootViewController+DelegateMethods.swift in Sources */,
 				C665CD8521FEC68E00C834C6 /* GCControllerExtensions.swift in Sources */,
+				B355DF8C292088E500E4C858 /* PVAppDelegate+Open.swift in Sources */,
 				B3411C30276B472900D85327 /* OptionRow.swift in Sources */,
 				1A2FB10D206EF07C00A1F942 /* PVSaveStateCollectionViewCell.swift in Sources */,
 				B3164B78288E25F500E1CBCF /* PVSupervisionControllerViewController.swift in Sources */,
