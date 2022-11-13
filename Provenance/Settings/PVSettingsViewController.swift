@@ -252,6 +252,14 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
          // Beta options
         #if os(iOS)
+        let swiftUI = PVSettingsSwitchRow(text: NSLocalizedString("Use Swift UI", comment: "Use Swift UI"),
+                                          detailText: .subtitle("Swift UI placeholder. Don't use unless you're a developer."),
+                                          key: \PVSettingsModel.debugOptions.useSwiftUI)
+        if #unavailable(iOS 14, tvOS 14) {
+            swiftUI.switchControl.isEnabled = false
+            swiftUI.detailText = .subtitle("Only available in iOS/tvOS 14+")
+        }
+
         let betaRows: [TableRow] = [
 			PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"),
 								detailText: .subtitle("Use experimental Metal backend instead of OpenGL"),
@@ -277,10 +285,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
                                 detailText: .subtitle("Cores that are in development"),
                                 key: \PVSettingsModel.debugOptions.unsupportedCores),
 
-            PVSettingsSwitchRow(text: NSLocalizedString("Use Swift UI", comment: "Use Swift UI"),
-                                detailText: .subtitle("Swift UI placeholder. Don't use unless you're a developer."),
-                                key: \PVSettingsModel.debugOptions.useSwiftUI),
-
+            swiftUI,
 			PVSettingsSwitchRow(text: NSLocalizedString("Movable Buttons", comment: "Bool option to allow user to move on screen controller buttons"),
 								detailText: .subtitle("Allow user to move on screen controller buttons."),
 								key: \PVSettingsModel.debugOptions.movableButtons),
