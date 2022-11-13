@@ -246,6 +246,10 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             let font = UIFont.boldSystemFont(ofSize: 48)
             let icon = "pv_dark_logo"
             let icon_size = font.capHeight
+
+            if let bbi = settingsBarButtonItem {
+                bbi.image = UIImage(systemName:"gear", withConfiguration:UIImage.SymbolConfiguration(font:font))
+            }
         #endif
         if let icon = UIImage(named:icon)?.resize(to:CGSize(width:0, height:icon_size))
         {
@@ -261,11 +265,6 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             stack.alignment = .center
             stack.frame = CGRect(origin:.zero, size:stack.systemLayoutSizeFitting(.zero))
             navigationItem.titleView = stack
-        }
-
-        // we cant use a SF Symbol in the Storyboard cuz of back version support, so change it here in code.
-        if let bbi = settingsBarButtonItem {
-            bbi.image = UIImage(systemName:"gear", withConfiguration:UIImage.SymbolConfiguration(font:font))
         }
 
         // Persist some settings, could probably be done in a better way
