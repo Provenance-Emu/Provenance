@@ -394,19 +394,15 @@
 		B355DF9C29209B6700E4C858 /* PreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF9B29209B6700E4C858 /* PreviewViewController.swift */; };
 		B355DF9E29209B6700E4C858 /* PreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF9D29209B6700E4C858 /* PreviewProvider.swift */; };
 		B355DFA129209B6700E4C858 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B355DF9F29209B6700E4C858 /* MainInterface.storyboard */; };
-		B355DFA529209B6700E4C858 /* QuickLookPreview.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B355DF9729209B6200E4C858 /* QuickLookPreview.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B355DFD52920A42800E4C858 /* Stickers.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B355DFD42920A42800E4C858 /* Stickers.xcassets */; };
 		B355DFD92920A42800E4C858 /* StickerPack.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B355DFD22920A42200E4C858 /* StickerPack.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B355E0002920AA2100E4C858 /* QuickLookThumbnailing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355DFFF2920AA2100E4C858 /* QuickLookThumbnailing.framework */; };
 		B355E0032920AA2600E4C858 /* ThumbnailProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355E0022920AA2600E4C858 /* ThumbnailProvider.swift */; };
-		B355E0072920AA2600E4C858 /* ThumbnailExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B355DFFE2920AA2100E4C858 /* ThumbnailExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B355E0142920AA9D00E4C858 /* ImportExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355E0132920AA9D00E4C858 /* ImportExtension.swift */; };
-		B355E0182920AA9D00E4C858 /* SpotlightImportExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B355E0112920AA9800E4C858 /* SpotlightImportExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B355E0232920AB8200E4C858 /* UniformTypeIdentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E0222920AB8100E4C858 /* UniformTypeIdentifiers.framework */; };
 		B355E0262920AB8600E4C858 /* FileProviderExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355E0252920AB8600E4C858 /* FileProviderExtension.swift */; };
 		B355E0282920AB8600E4C858 /* FileProviderItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355E0272920AB8600E4C858 /* FileProviderItem.swift */; };
 		B355E02A2920AB8600E4C858 /* FileProviderEnumerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355E0292920AB8600E4C858 /* FileProviderEnumerator.swift */; };
-		B355E02F2920AB8600E4C858 /* FileProviderExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B355E0212920AB8100E4C858 /* FileProviderExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B355E03A2920AC1A00E4C858 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E0392920AC1A00E4C858 /* WidgetKit.framework */; };
 		B355E03B2920AC1A00E4C858 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D54EF42768306200476241 /* SwiftUI.framework */; };
 		B355E03E2920AC1E00E4C858 /* WidgetExtensionBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355E03D2920AC1E00E4C858 /* WidgetExtensionBundle.swift */; };
@@ -734,15 +730,12 @@
 		B3EA0CD42070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
 		B3EEED602920AEB6008E2603 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EEED5F2920AEB6008E2603 /* DeviceActivity.framework */; };
 		B3EEED632920AEBA008E2603 /* DeviceActivityMonitorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EEED622920AEBA008E2603 /* DeviceActivityMonitorExtension.swift */; };
-		B3EEED682920AEBA008E2603 /* ActivityMonitorExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3EEED5E2920AEB6008E2603 /* ActivityMonitorExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3EEED742920AF1E008E2603 /* ActivityReportExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EEED732920AF1E008E2603 /* ActivityReportExtension.swift */; };
 		B3EEED762920AF1E008E2603 /* TotalActivityReport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EEED752920AF1E008E2603 /* TotalActivityReport.swift */; };
 		B3EEED782920AF1E008E2603 /* TotalActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EEED772920AF1E008E2603 /* TotalActivityView.swift */; };
-		B3EEED7D2920AF1E008E2603 /* ActivityReportExtension.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = B3EEED712920AF19008E2603 /* ActivityReportExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3EEED8A2920B006008E2603 /* DriverKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EEED892920B006008E2603 /* DriverKit.framework */; };
 		B3EEED8D2920B00A008E2603 /* ControllerDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EEED8C2920B00A008E2603 /* ControllerDriver.cpp */; };
 		B3EEED8F2920B00A008E2603 /* ControllerDriver.iig in Sources */ = {isa = PBXBuildFile; fileRef = B3EEED8E2920B00A008E2603 /* ControllerDriver.iig */; };
-		B3EEED932920B00A008E2603 /* Provenance.dext in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = B3EEED882920B006008E2603 /* Provenance.dext */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3EEEDA02920B099008E2603 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EEED9F2920B099008E2603 /* Quartz.framework */; };
 		B3EEEDA32920B09F008E2603 /* PreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EEEDA22920B09F008E2603 /* PreviewViewController.swift */; };
 		B3EEEDA52920B09F008E2603 /* PreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EEEDA42920B09F008E2603 /* PreviewProvider.swift */; };
@@ -814,40 +807,12 @@
 			remoteGlobalIDString = B305EF04276B4C73003AE510;
 			remoteInfo = "Provenance Watch WatchKit Extension";
 		};
-		B355DFA329209B6700E4C858 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B355DF9629209B6200E4C858;
-			remoteInfo = QuickLookPreview;
-		};
 		B355DFD72920A42800E4C858 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = B355DFD12920A42100E4C858;
 			remoteInfo = StickerPack;
-		};
-		B355E0052920AA2600E4C858 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B355DFFD2920AA2000E4C858;
-			remoteInfo = ThumbnailExtension;
-		};
-		B355E0162920AA9D00E4C858 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B355E0102920AA9700E4C858;
-			remoteInfo = SpotlightImportExtension;
-		};
-		B355E02D2920AB8600E4C858 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B355E0202920AB8100E4C858;
-			remoteInfo = FileProviderExtension;
 		};
 		B36FE830218EAAD200F858F3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -939,27 +904,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = B3C8A70D287828BA0037A946;
 			remoteInfo = "Cores-tvOS";
-		};
-		B3EEED662920AEBA008E2603 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3EEED5D2920AEB6008E2603;
-			remoteInfo = ActivityMonitorExtension;
-		};
-		B3EEED7B2920AF1E008E2603 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3EEED702920AF19008E2603;
-			remoteInfo = ActivityReportExtension;
-		};
-		B3EEED912920B00A008E2603 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3EEED872920B005008E2603;
-			remoteInfo = ControllerDriver;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -1164,36 +1108,9 @@
 			dstSubfolderSpec = 13;
 			files = (
 				B355DFD92920A42800E4C858 /* StickerPack.appex in Embed App Extensions */,
-				B355E0072920AA2600E4C858 /* ThumbnailExtension.appex in Embed App Extensions */,
-				B355DFA529209B6700E4C858 /* QuickLookPreview.appex in Embed App Extensions */,
-				B3EEED682920AEBA008E2603 /* ActivityMonitorExtension.appex in Embed App Extensions */,
 				B3E21D72203211BE009939D3 /* Spotlight.appex in Embed App Extensions */,
-				B355E0182920AA9D00E4C858 /* SpotlightImportExtension.appex in Embed App Extensions */,
-				B355E02F2920AB8600E4C858 /* FileProviderExtension.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3EEED822920AF25008E2603 /* Embed ExtensionKit Extensions */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
-			dstSubfolderSpec = 16;
-			files = (
-				B3EEED7D2920AF1E008E2603 /* ActivityReportExtension.appex in Embed ExtensionKit Extensions */,
-			);
-			name = "Embed ExtensionKit Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3EEED982920B011008E2603 /* Embed System Extensions */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "$(SYSTEM_EXTENSIONS_FOLDER_PATH)";
-			dstSubfolderSpec = 16;
-			files = (
-				B3EEED932920B00A008E2603 /* Provenance.dext in Embed System Extensions */,
-			);
-			name = "Embed System Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -3549,8 +3466,6 @@
 				1A44C0AD1D0A1DE80018751A /* Script: Set Build Number */,
 				1AAE7D3F1BC86C41003066C0 /* Embed Frameworks */,
 				B3E21D77203211BE009939D3 /* Embed App Extensions */,
-				B3EEED822920AF25008E2603 /* Embed ExtensionKit Extensions */,
-				B3EEED982920B011008E2603 /* Embed System Extensions */,
 			);
 			buildRules = (
 			);
@@ -3560,14 +3475,7 @@
 				B36FE831218EAAD200F858F3 /* PBXTargetDependency */,
 				B3C8A708287827270037A946 /* PBXTargetDependency */,
 				B3C8A70C287827330037A946 /* PBXTargetDependency */,
-				B355DFA429209B6700E4C858 /* PBXTargetDependency */,
 				B355DFD82920A42800E4C858 /* PBXTargetDependency */,
-				B355E0062920AA2600E4C858 /* PBXTargetDependency */,
-				B355E0172920AA9D00E4C858 /* PBXTargetDependency */,
-				B355E02E2920AB8600E4C858 /* PBXTargetDependency */,
-				B3EEED672920AEBA008E2603 /* PBXTargetDependency */,
-				B3EEED7C2920AF1E008E2603 /* PBXTargetDependency */,
-				B3EEED922920B00A008E2603 /* PBXTargetDependency */,
 			);
 			name = Provenance;
 			packageProductDependencies = (
@@ -5226,30 +5134,10 @@
 			target = B305EF04276B4C73003AE510 /* Provenance Watch WatchKit Extension */;
 			targetProxy = B305EF07276B4C73003AE510 /* PBXContainerItemProxy */;
 		};
-		B355DFA429209B6700E4C858 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B355DF9629209B6200E4C858 /* QuickLookPreview */;
-			targetProxy = B355DFA329209B6700E4C858 /* PBXContainerItemProxy */;
-		};
 		B355DFD82920A42800E4C858 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B355DFD12920A42100E4C858 /* StickerPack */;
 			targetProxy = B355DFD72920A42800E4C858 /* PBXContainerItemProxy */;
-		};
-		B355E0062920AA2600E4C858 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B355DFFD2920AA2000E4C858 /* ThumbnailExtension */;
-			targetProxy = B355E0052920AA2600E4C858 /* PBXContainerItemProxy */;
-		};
-		B355E0172920AA9D00E4C858 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B355E0102920AA9700E4C858 /* SpotlightImportExtension */;
-			targetProxy = B355E0162920AA9D00E4C858 /* PBXContainerItemProxy */;
-		};
-		B355E02E2920AB8600E4C858 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B355E0202920AB8100E4C858 /* FileProviderExtension */;
-			targetProxy = B355E02D2920AB8600E4C858 /* PBXContainerItemProxy */;
 		};
 		B36FE831218EAAD200F858F3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -5315,21 +5203,6 @@
 			isa = PBXTargetDependency;
 			target = B3C8A70D287828BA0037A946 /* Cores-tvOS */;
 			targetProxy = B3C8A7462878293C0037A946 /* PBXContainerItemProxy */;
-		};
-		B3EEED672920AEBA008E2603 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3EEED5D2920AEB6008E2603 /* ActivityMonitorExtension */;
-			targetProxy = B3EEED662920AEBA008E2603 /* PBXContainerItemProxy */;
-		};
-		B3EEED7C2920AF1E008E2603 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3EEED702920AF19008E2603 /* ActivityReportExtension */;
-			targetProxy = B3EEED7B2920AF1E008E2603 /* PBXContainerItemProxy */;
-		};
-		B3EEED922920B00A008E2603 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3EEED872920B005008E2603 /* ControllerDriver */;
-			targetProxy = B3EEED912920B00A008E2603 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
