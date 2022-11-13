@@ -46,9 +46,13 @@ public final class PVMediaCache: NSObject {
     }
 
     static var cachePath: URL = {
-        let cachesDir = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!
-
-        let cachePath = URL(fileURLWithPath: cachesDir).appendingPathComponent(kPVCachePath)
+//        #if os(tvOS)
+//        let cachesDir = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!
+//        #else
+//        let cachesDir = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
+//        #endif
+        let cachesDir = PVEmulatorConfiguration.documentsPath
+        let cachePath = cachesDir.appendingPathComponent(kPVCachePath)
 
         do {
             try FileManager.default.createDirectory(at: cachePath, withIntermediateDirectories: true, attributes: nil)
