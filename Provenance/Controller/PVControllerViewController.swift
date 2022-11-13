@@ -478,7 +478,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         
 		let alpha = self.alpha
 
-		for control in controlLayout {
+        for control in controlLayout {
 				// let controlType = control.PVControlType
 				// let controlSize: CGSize = CGSizeFromString(control.PVControlSize)
 			let controlType: String = control.PVControlType
@@ -897,7 +897,13 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 								height: controlSize.height)
 
 		if super.view.bounds.size.width > super.view.bounds.size.height || UIDevice.current.orientation.isLandscape || UIDevice.current.userInterfaceIdiom == .pad {
-			if let buttonGroup = buttonGroup {
+            if let selectButton = selectButton {
+                startFrame = CGRect(x: selectButton.frame.maxX + spacing,
+                                    y: selectButton.frame.origin.y,
+                                    width: controlSize.width,
+                                    height: controlSize.height)
+            }
+			else if let buttonGroup = buttonGroup {
 				if buttonGroup.isHidden {
 					startFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
 					if gripControl {
@@ -914,15 +920,17 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 				}
 			}
 		} else if super.view.bounds.size.width < super.view.bounds.size.height || UIDevice.current.orientation.isPortrait {
-			startFrame = CGRect(x: (view.frame.size.width / 2) + (spacing / 2), y: (buttonGroup?.frame.maxY)! + spacing, width: controlSize.width, height: controlSize.height)
-			if selectButton == nil {
-				startFrame.origin.x -= (spacing / 2) + (controlSize.width / 2)
+			startFrame = CGRect(x: (view.frame.size.width / 2) + (spacing / 2),
+                                y: (buttonGroup?.frame.maxY ?? 0) + spacing,
+                                width: controlSize.width,
+                                height: controlSize.height)
+			if selectButton != nil {
+				startFrame.origin.x += (spacing / 2) + (controlSize.width / 2)
 			}
-
 		}
 
 		if ["PSX", "PS1"].contains(system.shortName.uppercased()) {
-//                startFrame.origin.x += 120
+            startFrame.origin.x += controlSize.width + spacing
 		}
 
 		if startFrame.maxY >= view.frame.size.height {
@@ -1053,6 +1061,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         guard let dPad = dPad, let joyPad = joyPad else {
             return
         }
+        
         var joyPadFrame = joyPad.frame
         var dPadFrame = dPad.frame
         
