@@ -277,8 +277,11 @@ extension MirroredSettings {
 
     public dynamic var showGameTitles = true
     public dynamic var gameLibraryScale = 1.0
-
+#if os(tvOS) || targetEnvironment(simulator)
+    public dynamic var webDavAlwaysOn = true
+#else
     public dynamic var webDavAlwaysOn = false
+#endif
     public dynamic var myiCadeControllerSetting = iCadeControllerSetting.disabled
 
     public dynamic var controllerOpacity: Double = 0.8
