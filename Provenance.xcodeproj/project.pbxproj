@@ -2231,8 +2231,6 @@
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
-				B3EEEDDB2920BCE0008E2603 /* ControllerDriver.entitlements */,
-				B3EEEDDA2920BC3B008E2603 /* SpotlightImportExtension.entitlements */,
 				B380EAC32759D69A001B8532 /* CodeSigning.xcconfig.sample */,
 				B380EAC22759D692001B8532 /* CodeSigning.xcconfig */,
 				B380EAC12759D689001B8532 /* Build.xcconfig */,
@@ -3079,6 +3077,7 @@
 		B355E0122920AA9D00E4C858 /* SpotlightImportExtension */ = {
 			isa = PBXGroup;
 			children = (
+				B3EEEDDA2920BC3B008E2603 /* SpotlightImportExtension.entitlements */,
 				B355E0132920AA9D00E4C858 /* ImportExtension.swift */,
 				B355E0152920AA9D00E4C858 /* Info.plist */,
 			);
@@ -3424,6 +3423,7 @@
 		B3EEED8B2920B00A008E2603 /* ControllerDriver */ = {
 			isa = PBXGroup;
 			children = (
+				B3EEEDDB2920BCE0008E2603 /* ControllerDriver.entitlements */,
 				B3EEED8C2920B00A008E2603 /* ControllerDriver.cpp */,
 				B3EEED8E2920B00A008E2603 /* ControllerDriver.iig */,
 				B3EEED902920B00A008E2603 /* Info.plist */,
@@ -6950,7 +6950,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = SpotlightImportExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Extensions/SpotlightImportExtension/SpotlightImportExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -6994,7 +6994,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = SpotlightImportExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Extensions/SpotlightImportExtension/SpotlightImportExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -7039,7 +7039,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = SpotlightImportExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Extensions/SpotlightImportExtension/SpotlightImportExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -8695,7 +8695,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = ControllerDriver.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Extensions/ControllerDriver/ControllerDriver.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -8731,7 +8731,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = ControllerDriver.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Extensions/ControllerDriver/ControllerDriver.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -8769,7 +8769,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = ControllerDriver.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Extensions/ControllerDriver/ControllerDriver.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
