@@ -44,7 +44,8 @@ public enum RelativeRoot: Int {
 
     func appendingPath(_ path: String) -> URL {
         let directoryURL = self.directoryURL
-        let url = URL(fileURLWithPath: path, relativeTo: directoryURL)
+        let url = directoryURL.appendingPathComponent(path)
+//        let url = URL(fileURLWithPath: path, relativeTo: directoryURL)
         return url
     }
 }
@@ -92,7 +93,7 @@ public extension PVFile {
                 return url
             }
             let root = relativeRoot
-            let resolvedURL = root.appendingPath("/" + partialPath)
+            let resolvedURL = root.appendingPath(partialPath)
             return resolvedURL
         }
         set {
