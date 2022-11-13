@@ -61,7 +61,7 @@ extension URLSession {
 public typealias GameImporterImportStartedHandler = (_ path: String) -> Void
 public typealias GameImporterCompletionHandler = (_ encounteredConflicts: Bool) -> Void
 public typealias GameImporterFinishedImportingGameHandler = (_ md5Hash: String, _ modified: Bool) -> Void
-public typealias GameImporterFinishedGettingArtworkHandler = (_ artworkURL: String) -> Void
+public typealias GameImporterFinishedGettingArtworkHandler = (_ artworkURL: String?) -> Void
 
 public final class GameImporter {
     public var importStartedHandler: GameImporterImportStartedHandler?
@@ -1278,40 +1278,48 @@ extension GameImporter {
         }
 
         let request = URLRequest(url: artworkURL)
-        let urlResponseMaybe: HTTPURLResponse?
 
         // TODO: Is a synchronous data task just a bad idea here?
-        let dataMaybe: Data?
-        do {
-            (dataMaybe, urlResponseMaybe) = try URLSession.shared.synchronousDataTask(urlrequest: request)
-        } catch {
-            DLOG("error downloading artwork from: \(url) -- \(error.localizedDescription)")
-            return
-        }
-
-        guard let data = dataMaybe, let urlResponse = urlResponseMaybe else {
-            ELOG("No response or data")
-            return
-        }
-
-        if urlResponse.statusCode != 200 {
-            DLOG("HTTP Error: \(urlResponse.statusCode). \nResponse: \(urlResponse)")
-        }
-
-        if let artwork = UIImage(data: data) {
-            do {
-                let localURL = try PVMediaCache.writeImage(toDisk: artwork, withKey: url)
-                try RomDatabase.sharedInstance.writeTransaction {
-                    let file = PVImageFile(withURL: localURL, relativeRoot: .iCloud)
-                    game.originalArtworkFile = file
+//        let dataMaybe: Data?
+//        do {
+//            (dataMaybe, urlResponseMaybe) = try URLSession.shared.synchronousDataTask(urlrequest: request)
+//        } catch {
+//            DLOG("error downloading artwork from: \(url) -- \(error.localizedDescription)")
+//            return
+//        }
+        URLSession.shared.dataTask(with: request) { dataMaybe, urlResponseMaybe, error in
+            var artworkURL: String? = nil
+            defer {
+                if self.finishedArtworkHandler != nil {
+                    DispatchQueue.main.sync(execute: { () -> Void in
+                        self.finishedArtworkHandler?(artworkURL)
+                    })
                 }
-            } catch { ELOG("\(error.localizedDescription)") }
-        }
+            }
+            if let error = error {
+                ELOG("Network error: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let data = dataMaybe, let urlResponse = urlResponseMaybe as? HTTPURLResponse else {
+                ELOG("No response or data")
+                return
+            }
 
-        if finishedArtworkHandler != nil {
-            DispatchQueue.main.sync(execute: { () -> Void in
-                self.finishedArtworkHandler?(url)
-            })
+            if urlResponse.statusCode != 200 {
+                DLOG("HTTP Error: \(urlResponse.statusCode). \nResponse: \(urlResponse)")
+            }
+
+            if let artwork = UIImage(data: data) {
+                do {
+                    let localURL = try PVMediaCache.writeImage(toDisk: artwork, withKey: url)
+                    try RomDatabase.sharedInstance.writeTransaction {
+                        let file = PVImageFile(withURL: localURL, relativeRoot: .iCloud)
+                        game.originalArtworkFile = file
+                    }
+                } catch { ELOG("\(error.localizedDescription)") }
+            }
+            artworkURL = url
         }
     }
 
