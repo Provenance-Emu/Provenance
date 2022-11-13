@@ -1252,6 +1252,7 @@ extension GameImporter {
         return nil
     }
 
+    // TODO: Make async?
     public func getArtwork(forGame game: PVGame) {
         var url = game.originalArtworkURL
         if url.isEmpty || PVMediaCache.fileExists(forKey: url) {

@@ -294,7 +294,14 @@ public final class iCloudSync {
             let legacySubDirs = try? fm.contentsOfDirectory(at: legacySavesDirectory, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
 
             legacySubDirs?.forEach {
-                try? fm.setUbiquitous(true, itemAt: $0, destinationURL: PVEmulatorConfiguration.Paths.saveSavesPath.appendingPathComponent($0.lastPathComponent, isDirectory: true))
+                do {
+                    let destinationURL = PVEmulatorConfiguration.Paths.saveSavesPath.appendingPathComponent($0.lastPathComponent, isDirectory: true)
+                    try fm.setUbiquitous(true,
+                                         itemAt: $0,
+                                         destinationURL: destinationURL)
+                } catch {
+                    ELOG("Error: \(error)")
+                }
             }
             //        let saves = realm.objects(PVSaveState.self)
             //        saves.forEach {

@@ -28,7 +28,8 @@ public final class PVImageFile: PVFile {
     public convenience init(withURL url: URL, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
         self.init()
         self.relativeRoot = relativeRoot
-        partialPath = relativeRoot.createRelativePath(fromURL: url)
+        let partialPath = relativeRoot.createRelativePath(fromURL: url)
+        self.partialPath = partialPath
         calculateSizeData()
     }
 

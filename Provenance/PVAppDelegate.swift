@@ -58,7 +58,8 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         window.tintColor = .provenanceBlue
         #endif
 
-        if #available(iOS 14, tvOS 14, *), PVSettingsModel.shared.debugOptions.useSwiftUI {
+        if #available(iOS 14, tvOS 14, *),
+           PVSettingsModel.shared.debugOptions.useSwiftUI {
             let viewModel = PVRootViewModel()
             let rootViewController = PVRootViewController.instantiate(
                 updatesController: libraryUpdatesController,
@@ -160,7 +161,8 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         NotificationCenter.default.rx.notification(.PVRefreshLibrary)
             .flatMapLatest { _ in
                 // Clear the database, then the user has to restart to re-scan
-                gameLibrary.clearLibrary()
+//                gameLibrary.clearLibrary()
+                gameLibrary.clearROMs()
             }
             .subscribe().disposed(by: disposeBag)
 

@@ -135,6 +135,19 @@ public struct PVGameLibrary {
             return Disposables.create()
         }
     }
+    
+    public func clearROMs() -> Completable {
+        Completable.create { observer in
+            do {
+                try self.database.deleteAllGames()
+                observer(.completed)
+            } catch {
+                ELOG("Failed to delete all objects. \(error.localizedDescription)")
+                observer(.error(error))
+            }
+            return Disposables.create()
+        }
+    }
 
     public func gamesForSystem(systemIdentifier: String) -> Results<PVGame> {
         return database.all(PVGame.self).filter(NSPredicate(format: "systemIdentifier == %@", argumentArray: [systemIdentifier]))
@@ -147,6 +160,23 @@ public struct PVGameLibrary {
     public func game(identifier: String) -> PVGame? {
         return database.object(ofType: PVGame.self, wherePrimaryKeyEquals: identifier)
     }
+    
+//    public enum SaveType {
+//        case auto
+//        case manual
+//        case any
+//    }
+//    public func saves(ofType type: SaveType = .any, game: PVGame? = nil) -> [PVSaveState]? {
+//        let saves =
+//        switch type {
+//        case .auto:
+//            return database.all(PVSaveState.self).filter("isAutoSave == YES").sorted(byKeyPath: #keyPath(PVSaveState.lastOpened), ascending: false).sorted(byKeyPath: #keyPath(PVSaveState.date), ascending: false)
+//        case .manual:
+//            return saveStates.filter("isAutosave == NO")
+//        case .any:
+//
+//        }
+//    }
 }
 
 public extension ObservableType where Element: Collection {
