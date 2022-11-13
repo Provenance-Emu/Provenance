@@ -388,6 +388,33 @@
 		B355DF8C292088E500E4C858 /* PVAppDelegate+Open.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF8A292088E500E4C858 /* PVAppDelegate+Open.swift */; };
 		B355DF8E29208A4A00E4C858 /* PVAppDelegate+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF8D29208A4A00E4C858 /* PVAppDelegate+Helpers.swift */; };
 		B355DF8F29208A4A00E4C858 /* PVAppDelegate+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF8D29208A4A00E4C858 /* PVAppDelegate+Helpers.swift */; };
+		B355DF91292095B300E4C858 /* Intents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = B355DF90292095B300E4C858 /* Intents.intentdefinition */; };
+		B355DF92292095B300E4C858 /* Intents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = B355DF90292095B300E4C858 /* Intents.intentdefinition */; };
+		B355DF9929209B6300E4C858 /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355DF9829209B6300E4C858 /* QuickLook.framework */; };
+		B355DF9C29209B6700E4C858 /* PreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF9B29209B6700E4C858 /* PreviewViewController.swift */; };
+		B355DF9E29209B6700E4C858 /* PreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF9D29209B6700E4C858 /* PreviewProvider.swift */; };
+		B355DFA129209B6700E4C858 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B355DF9F29209B6700E4C858 /* MainInterface.storyboard */; };
+		B355DFA529209B6700E4C858 /* QuickLookPreview.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B355DF9729209B6200E4C858 /* QuickLookPreview.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B355DFD52920A42800E4C858 /* Stickers.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B355DFD42920A42800E4C858 /* Stickers.xcassets */; };
+		B355DFD92920A42800E4C858 /* StickerPack.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B355DFD22920A42200E4C858 /* StickerPack.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B355E0002920AA2100E4C858 /* QuickLookThumbnailing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355DFFF2920AA2100E4C858 /* QuickLookThumbnailing.framework */; };
+		B355E0032920AA2600E4C858 /* ThumbnailProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355E0022920AA2600E4C858 /* ThumbnailProvider.swift */; };
+		B355E0072920AA2600E4C858 /* ThumbnailExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B355DFFE2920AA2100E4C858 /* ThumbnailExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B355E0142920AA9D00E4C858 /* ImportExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355E0132920AA9D00E4C858 /* ImportExtension.swift */; };
+		B355E0182920AA9D00E4C858 /* SpotlightImportExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B355E0112920AA9800E4C858 /* SpotlightImportExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B355E0232920AB8200E4C858 /* UniformTypeIdentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E0222920AB8100E4C858 /* UniformTypeIdentifiers.framework */; };
+		B355E0262920AB8600E4C858 /* FileProviderExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355E0252920AB8600E4C858 /* FileProviderExtension.swift */; };
+		B355E0282920AB8600E4C858 /* FileProviderItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355E0272920AB8600E4C858 /* FileProviderItem.swift */; };
+		B355E02A2920AB8600E4C858 /* FileProviderEnumerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355E0292920AB8600E4C858 /* FileProviderEnumerator.swift */; };
+		B355E02F2920AB8600E4C858 /* FileProviderExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B355E0212920AB8100E4C858 /* FileProviderExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B355E03A2920AC1A00E4C858 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E0392920AC1A00E4C858 /* WidgetKit.framework */; };
+		B355E03B2920AC1A00E4C858 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D54EF42768306200476241 /* SwiftUI.framework */; };
+		B355E03E2920AC1E00E4C858 /* WidgetExtensionBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355E03D2920AC1E00E4C858 /* WidgetExtensionBundle.swift */; };
+		B355E0402920AC1E00E4C858 /* WidgetExtensionLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355E03F2920AC1E00E4C858 /* WidgetExtensionLiveActivity.swift */; };
+		B355E0422920AC1E00E4C858 /* WidgetExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355E0412920AC1E00E4C858 /* WidgetExtension.swift */; };
+		B355E0452920AC2000E4C858 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B355E0442920AC2000E4C858 /* Assets.xcassets */; };
+		B355E0472920AC2000E4C858 /* WidgetExtension.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = B355E0432920AC1E00E4C858 /* WidgetExtension.intentdefinition */; };
+		B355E0482920AC2000E4C858 /* WidgetExtension.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = B355E0432920AC1E00E4C858 /* WidgetExtension.intentdefinition */; };
 		B357A43827092254002C7C0F /* AppCenterAnalytics in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B357A43727092254002C7C0F /* AppCenterAnalytics */; };
 		B357A43A27092254002C7C0F /* AppCenterCrashes in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B357A43927092254002C7C0F /* AppCenterCrashes */; };
 		B357A43C2709228E002C7C0F /* PVAppDelegate+AppCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */; };
@@ -705,6 +732,25 @@
 		B3E6DAE120B7C2F800454DD4 /* PVLogViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3E6DAE020B7C2F800454DD4 /* PVLogViewController.xib */; };
 		B3EA0CD32070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
 		B3EA0CD42070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
+		B3EEED602920AEB6008E2603 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EEED5F2920AEB6008E2603 /* DeviceActivity.framework */; };
+		B3EEED632920AEBA008E2603 /* DeviceActivityMonitorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EEED622920AEBA008E2603 /* DeviceActivityMonitorExtension.swift */; };
+		B3EEED682920AEBA008E2603 /* ActivityMonitorExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3EEED5E2920AEB6008E2603 /* ActivityMonitorExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B3EEED742920AF1E008E2603 /* ActivityReportExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EEED732920AF1E008E2603 /* ActivityReportExtension.swift */; };
+		B3EEED762920AF1E008E2603 /* TotalActivityReport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EEED752920AF1E008E2603 /* TotalActivityReport.swift */; };
+		B3EEED782920AF1E008E2603 /* TotalActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EEED772920AF1E008E2603 /* TotalActivityView.swift */; };
+		B3EEED7D2920AF1E008E2603 /* ActivityReportExtension.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = B3EEED712920AF19008E2603 /* ActivityReportExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B3EEED8A2920B006008E2603 /* DriverKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EEED892920B006008E2603 /* DriverKit.framework */; };
+		B3EEED8D2920B00A008E2603 /* ControllerDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EEED8C2920B00A008E2603 /* ControllerDriver.cpp */; };
+		B3EEED8F2920B00A008E2603 /* ControllerDriver.iig in Sources */ = {isa = PBXBuildFile; fileRef = B3EEED8E2920B00A008E2603 /* ControllerDriver.iig */; };
+		B3EEED932920B00A008E2603 /* Provenance.dext in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = B3EEED882920B006008E2603 /* Provenance.dext */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B3EEEDA02920B099008E2603 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EEED9F2920B099008E2603 /* Quartz.framework */; };
+		B3EEEDA32920B09F008E2603 /* PreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EEEDA22920B09F008E2603 /* PreviewViewController.swift */; };
+		B3EEEDA52920B09F008E2603 /* PreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EEEDA42920B09F008E2603 /* PreviewProvider.swift */; };
+		B3EEEDA82920B09F008E2603 /* PreviewViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3EEEDA62920B09F008E2603 /* PreviewViewController.xib */; };
+		B3EEEDB42920B0D5008E2603 /* QuickLookThumbnailing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355DFFF2920AA2100E4C858 /* QuickLookThumbnailing.framework */; };
+		B3EEEDB52920B0D5008E2603 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EEED9F2920B099008E2603 /* Quartz.framework */; };
+		B3EEEDB82920B0DB008E2603 /* ThumbnailProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EEEDB72920B0DB008E2603 /* ThumbnailProvider.swift */; };
+		B3EEEDD02920B56A008E2603 /* BackgroundDownloadHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EEEDCF2920B56A008E2603 /* BackgroundDownloadHandler.swift */; };
 		B3F43DCF2168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F43DD02168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F43DE22169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */; };
@@ -767,6 +813,41 @@
 			proxyType = 1;
 			remoteGlobalIDString = B305EF04276B4C73003AE510;
 			remoteInfo = "Provenance Watch WatchKit Extension";
+		};
+		B355DFA329209B6700E4C858 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B355DF9629209B6200E4C858;
+			remoteInfo = QuickLookPreview;
+		};
+		B355DFD72920A42800E4C858 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B355DFD12920A42100E4C858;
+			remoteInfo = StickerPack;
+		};
+		B355E0052920AA2600E4C858 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B355DFFD2920AA2000E4C858;
+			remoteInfo = ThumbnailExtension;
+		};
+		B355E0162920AA9D00E4C858 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B355E0102920AA9700E4C858;
+			remoteInfo = SpotlightImportExtension;
+		};
+		B355E02D2920AB8600E4C858 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B355E0202920AB8100E4C858;
+			remoteInfo = FileProviderExtension;
 		};
 		B36FE830218EAAD200F858F3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -858,6 +939,27 @@
 			proxyType = 1;
 			remoteGlobalIDString = B3C8A70D287828BA0037A946;
 			remoteInfo = "Cores-tvOS";
+		};
+		B3EEED662920AEBA008E2603 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3EEED5D2920AEB6008E2603;
+			remoteInfo = ActivityMonitorExtension;
+		};
+		B3EEED7B2920AF1E008E2603 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3EEED702920AF19008E2603;
+			remoteInfo = ActivityReportExtension;
+		};
+		B3EEED912920B00A008E2603 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3EEED872920B005008E2603;
+			remoteInfo = ControllerDriver;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -1061,9 +1163,37 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				B355DFD92920A42800E4C858 /* StickerPack.appex in Embed App Extensions */,
+				B355E0072920AA2600E4C858 /* ThumbnailExtension.appex in Embed App Extensions */,
+				B355DFA529209B6700E4C858 /* QuickLookPreview.appex in Embed App Extensions */,
+				B3EEED682920AEBA008E2603 /* ActivityMonitorExtension.appex in Embed App Extensions */,
 				B3E21D72203211BE009939D3 /* Spotlight.appex in Embed App Extensions */,
+				B355E0182920AA9D00E4C858 /* SpotlightImportExtension.appex in Embed App Extensions */,
+				B355E02F2920AB8600E4C858 /* FileProviderExtension.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3EEED822920AF25008E2603 /* Embed ExtensionKit Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = 16;
+			files = (
+				B3EEED7D2920AF1E008E2603 /* ActivityReportExtension.appex in Embed ExtensionKit Extensions */,
+			);
+			name = "Embed ExtensionKit Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3EEED982920B011008E2603 /* Embed System Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(SYSTEM_EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = 16;
+			files = (
+				B3EEED932920B00A008E2603 /* Provenance.dext in Embed System Extensions */,
+			);
+			name = "Embed System Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -1412,6 +1542,41 @@
 		B354E7D1219A9C230041F971 /* CoreOptionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreOptionsViewController.swift; sourceTree = "<group>"; };
 		B355DF8A292088E500E4C858 /* PVAppDelegate+Open.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVAppDelegate+Open.swift"; sourceTree = "<group>"; };
 		B355DF8D29208A4A00E4C858 /* PVAppDelegate+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVAppDelegate+Helpers.swift"; sourceTree = "<group>"; };
+		B355DF90292095B300E4C858 /* Intents.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = Intents.intentdefinition; sourceTree = "<group>"; };
+		B355DF9729209B6200E4C858 /* QuickLookPreview.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = QuickLookPreview.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B355DF9829209B6300E4C858 /* QuickLook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLook.framework; path = System/Library/Frameworks/QuickLook.framework; sourceTree = SDKROOT; };
+		B355DF9B29209B6700E4C858 /* PreviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewViewController.swift; sourceTree = "<group>"; };
+		B355DF9D29209B6700E4C858 /* PreviewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewProvider.swift; sourceTree = "<group>"; };
+		B355DFA029209B6700E4C858 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
+		B355DFA229209B6700E4C858 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B355DFA629209B7200E4C858 /* QuickLookPreview.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = QuickLookPreview.entitlements; sourceTree = "<group>"; };
+		B355DFD22920A42200E4C858 /* StickerPack.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = StickerPack.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B355DFD42920A42800E4C858 /* Stickers.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Stickers.xcassets; sourceTree = "<group>"; };
+		B355DFD62920A42800E4C858 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B355DFFE2920AA2100E4C858 /* ThumbnailExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ThumbnailExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B355DFFF2920AA2100E4C858 /* QuickLookThumbnailing.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLookThumbnailing.framework; path = System/Library/Frameworks/QuickLookThumbnailing.framework; sourceTree = SDKROOT; };
+		B355E0022920AA2600E4C858 /* ThumbnailProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailProvider.swift; sourceTree = "<group>"; };
+		B355E0042920AA2600E4C858 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B355E0082920AA3200E4C858 /* ThumbnailExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ThumbnailExtension.entitlements; sourceTree = "<group>"; };
+		B355E0112920AA9800E4C858 /* SpotlightImportExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SpotlightImportExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B355E0132920AA9D00E4C858 /* ImportExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportExtension.swift; sourceTree = "<group>"; };
+		B355E0152920AA9D00E4C858 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B355E0212920AB8100E4C858 /* FileProviderExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FileProviderExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B355E0222920AB8100E4C858 /* UniformTypeIdentifiers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UniformTypeIdentifiers.framework; path = System/Library/Frameworks/UniformTypeIdentifiers.framework; sourceTree = SDKROOT; };
+		B355E0252920AB8600E4C858 /* FileProviderExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileProviderExtension.swift; sourceTree = "<group>"; };
+		B355E0272920AB8600E4C858 /* FileProviderItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileProviderItem.swift; sourceTree = "<group>"; };
+		B355E0292920AB8600E4C858 /* FileProviderEnumerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileProviderEnumerator.swift; sourceTree = "<group>"; };
+		B355E02B2920AB8600E4C858 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B355E02C2920AB8600E4C858 /* FileProviderExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FileProviderExtension.entitlements; sourceTree = "<group>"; };
+		B355E0382920AC1A00E4C858 /* WidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B355E0392920AC1A00E4C858 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		B355E03D2920AC1E00E4C858 /* WidgetExtensionBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetExtensionBundle.swift; sourceTree = "<group>"; };
+		B355E03F2920AC1E00E4C858 /* WidgetExtensionLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetExtensionLiveActivity.swift; sourceTree = "<group>"; };
+		B355E0412920AC1E00E4C858 /* WidgetExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetExtension.swift; sourceTree = "<group>"; };
+		B355E0432920AC1E00E4C858 /* WidgetExtension.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = WidgetExtension.intentdefinition; sourceTree = "<group>"; };
+		B355E0442920AC2000E4C858 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B355E0462920AC2000E4C858 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B355E04C2920AC2D00E4C858 /* WidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = WidgetExtension.entitlements; path = Extensions/WidgetExtension/WidgetExtension.entitlements; sourceTree = SOURCE_ROOT; };
 		B3579D0221069B4E00DDEBD6 /* Spotlight.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Spotlight.entitlements; sourceTree = "<group>"; };
 		B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVAppDelegate+AppCenter.swift"; sourceTree = "<group>"; };
 		B3592CE42070B9DE00533593 /* PVSaveStateCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PVSaveStateCollectionViewCell.xib; sourceTree = "<group>"; };
@@ -1570,7 +1735,6 @@
 		B3B9239C202D054B00580FFC /* Provenance-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Provenance-Bridging-Header.h"; sourceTree = "<group>"; };
 		B3B9239D202D054B00580FFC /* ProvenanceTV-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ProvenanceTV-Bridging-Header.h"; sourceTree = "<group>"; };
 		B3B923A9202D2EAE00580FFC /* Theme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
-		B3C7CCBF27DCB0B90003F9D2 /* ExperimentalCores.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExperimentalCores.h; sourceTree = "<group>"; };
 		B3C7CCC927DCB0DA0003F9D2 /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C8A6632877DE280037A946 /* PVMelonDS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMelonDS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C8A6A228781E800037A946 /* CoresRetro_tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CoresRetro_tvOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1640,7 +1804,39 @@
 		B3E6DADB20B7AD1500454DD4 /* PVLogViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVLogViewController.m; sourceTree = "<group>"; };
 		B3E6DAE020B7C2F800454DD4 /* PVLogViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PVLogViewController.xib; sourceTree = "<group>"; };
 		B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSaveStateInfoViewController.swift; sourceTree = "<group>"; };
-		B3EBB1F728729DCD00EAEB37 /* PVfMSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVfMSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3EEED5E2920AEB6008E2603 /* ActivityMonitorExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ActivityMonitorExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3EEED5F2920AEB6008E2603 /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = SDKROOT; };
+		B3EEED622920AEBA008E2603 /* DeviceActivityMonitorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceActivityMonitorExtension.swift; sourceTree = "<group>"; };
+		B3EEED642920AEBA008E2603 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B3EEED652920AEBA008E2603 /* ActivityMonitorExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ActivityMonitorExtension.entitlements; sourceTree = "<group>"; };
+		B3EEED712920AF19008E2603 /* ActivityReportExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = ActivityReportExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3EEED732920AF1E008E2603 /* ActivityReportExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityReportExtension.swift; sourceTree = "<group>"; };
+		B3EEED752920AF1E008E2603 /* TotalActivityReport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TotalActivityReport.swift; sourceTree = "<group>"; };
+		B3EEED772920AF1E008E2603 /* TotalActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TotalActivityView.swift; sourceTree = "<group>"; };
+		B3EEED792920AF1E008E2603 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B3EEED7A2920AF1E008E2603 /* ActivityReportExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ActivityReportExtension.entitlements; sourceTree = "<group>"; };
+		B3EEED882920B006008E2603 /* Provenance.dext */ = {isa = PBXFileReference; explicitFileType = "wrapper.driver-extension"; includeInIndex = 0; path = Provenance.dext; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3EEED892920B006008E2603 /* DriverKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DriverKit.framework; path = Library/Frameworks/DriverKit.framework; sourceTree = DEVELOPER_DIR; };
+		B3EEED8C2920B00A008E2603 /* ControllerDriver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ControllerDriver.cpp; sourceTree = "<group>"; };
+		B3EEED8E2920B00A008E2603 /* ControllerDriver.iig */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.iig; path = ControllerDriver.iig; sourceTree = "<group>"; };
+		B3EEED902920B00A008E2603 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B3EEED9E2920B099008E2603 /* QuickLookMacOS.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = QuickLookMacOS.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3EEED9F2920B099008E2603 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = Library/Frameworks/Quartz.framework; sourceTree = DEVELOPER_DIR; };
+		B3EEEDA22920B09F008E2603 /* PreviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewViewController.swift; sourceTree = "<group>"; };
+		B3EEEDA42920B09F008E2603 /* PreviewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewProvider.swift; sourceTree = "<group>"; };
+		B3EEEDA72920B09F008E2603 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreviewViewController.xib; sourceTree = "<group>"; };
+		B3EEEDA92920B09F008E2603 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B3EEEDAA2920B09F008E2603 /* QuickLookMacOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = QuickLookMacOS.entitlements; sourceTree = "<group>"; };
+		B3EEEDB32920B0D5008E2603 /* ThumbnailExtensionMacOS.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ThumbnailExtensionMacOS.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3EEEDB72920B0DB008E2603 /* ThumbnailProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailProvider.swift; sourceTree = "<group>"; };
+		B3EEEDB92920B0DB008E2603 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B3EEEDBA2920B0DB008E2603 /* ThumbnailExtensionMacOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ThumbnailExtensionMacOS.entitlements; sourceTree = "<group>"; };
+		B3EEEDCD2920B563008E2603 /* BackgroundDownloadExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = BackgroundDownloadExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3EEEDCF2920B56A008E2603 /* BackgroundDownloadHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundDownloadHandler.swift; sourceTree = "<group>"; };
+		B3EEEDD12920B56A008E2603 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B3EEEDD22920B56A008E2603 /* BackgroundDownloadExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BackgroundDownloadExtension.entitlements; sourceTree = "<group>"; };
+		B3EEEDDA2920BC3B008E2603 /* SpotlightImportExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SpotlightImportExtension.entitlements; sourceTree = "<group>"; };
+		B3EEEDDB2920BCE0008E2603 /* ControllerDriver.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ControllerDriver.entitlements; sourceTree = "<group>"; };
 		B3F43DCE2168075200CDD40A /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemsSettingsTableViewController.swift; sourceTree = "<group>"; };
 		B3F64ECB205CD1D600C273C7 /* JSDPad.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSDPad.swift; sourceTree = "<group>"; };
@@ -1794,6 +1990,46 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B355DF9429209B6200E4C858 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B355DF9929209B6300E4C858 /* QuickLook.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B355DFFB2920AA2000E4C858 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B355E0002920AA2100E4C858 /* QuickLookThumbnailing.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B355E00E2920AA9700E4C858 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B355E01E2920AB8100E4C858 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B355E0232920AB8200E4C858 /* UniformTypeIdentifiers.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B355E0352920AC1900E4C858 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B355E03B2920AC1A00E4C858 /* SwiftUI.framework in Frameworks */,
+				B355E03A2920AC1A00E4C858 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B391F2B827C157E600730B53 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1885,6 +2121,53 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3EEED5B2920AEB6008E2603 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3EEED602920AEB6008E2603 /* DeviceActivity.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3EEED6E2920AF19008E2603 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3EEED852920B005008E2603 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3EEED8A2920B006008E2603 /* DriverKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3EEED9B2920B098008E2603 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3EEEDA02920B099008E2603 /* Quartz.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3EEEDB02920B0D4008E2603 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3EEEDB42920B0D5008E2603 /* QuickLookThumbnailing.framework in Frameworks */,
+				B3EEEDB52920B0D5008E2603 /* Quartz.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3EEEDCA2920B562008E2603 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BE9FDCB41C210B9E0046DF0E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1948,6 +2231,8 @@
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
+				B3EEEDDB2920BCE0008E2603 /* ControllerDriver.entitlements */,
+				B3EEEDDA2920BC3B008E2603 /* SpotlightImportExtension.entitlements */,
 				B380EAC32759D69A001B8532 /* CodeSigning.xcconfig.sample */,
 				B380EAC22759D692001B8532 /* CodeSigning.xcconfig */,
 				B380EAC12759D689001B8532 /* Build.xcconfig */,
@@ -1959,20 +2244,13 @@
 				B399119226C0F41300E54426 /* README.md */,
 				1A3D409D17B2DCE4004DFFFC /* Provenance */,
 				1AD481B51BA350A400FDA50A /* ProvenanceTV */,
-				B3E21D6C203211BE009939D3 /* Spotlight */,
-				BE9FDCBA1C210B9E0046DF0E /* TopShelf */,
+				B355E0512920AC7600E4C858 /* Extensions */,
 				1AD9AA361ACC988F00EC87A0 /* Provenance Tests */,
 				B3E0A580215647BD004B4322 /* Scripts */,
-				B305EEFE276B4C71003AE510 /* Provenance Watch WatchKit App */,
-				B305EF09276B4C73003AE510 /* Provenance Watch WatchKit Extension */,
-				B391F2BC27C157E600730B53 /* Provenance Clip */,
-				B3C7CCBE27DCB0B90003F9D2 /* ExperimentalCores */,
 				B3270F8027DCB25100E83180 /* Cores */,
 				B3C8A6A328781E810037A946 /* CoresRetro */,
 				1A3D409617B2DCE4004DFFFC /* Frameworks */,
 				1A3D409517B2DCE4004DFFFC /* Products */,
-				B3F43DDA2169BC9C00CDD40A /* Bridging Headers */,
-				B3CE7FF62873F78E00B6BB5A /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1992,6 +2270,18 @@
 				B3C8A6A228781E800037A946 /* CoresRetro_tvOS.framework */,
 				B3C8A6EF2878238C0037A946 /* CoresRetro_iOS.framework */,
 				B3C8A71E287828BA0037A946 /* Cores_tvOS.framework */,
+				B355DF9729209B6200E4C858 /* QuickLookPreview.appex */,
+				B355DFD22920A42200E4C858 /* StickerPack.appex */,
+				B355DFFE2920AA2100E4C858 /* ThumbnailExtension.appex */,
+				B355E0112920AA9800E4C858 /* SpotlightImportExtension.appex */,
+				B355E0212920AB8100E4C858 /* FileProviderExtension.appex */,
+				B355E0382920AC1A00E4C858 /* WidgetExtension.appex */,
+				B3EEED5E2920AEB6008E2603 /* ActivityMonitorExtension.appex */,
+				B3EEED712920AF19008E2603 /* ActivityReportExtension.appex */,
+				B3EEED882920B006008E2603 /* Provenance.dext */,
+				B3EEED9E2920B099008E2603 /* QuickLookMacOS.appex */,
+				B3EEEDB32920B0D5008E2603 /* ThumbnailExtensionMacOS.appex */,
+				B3EEEDCD2920B563008E2603 /* BackgroundDownloadExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2110,6 +2400,13 @@
 				C13CC82823CABE2800463EDD /* Photos.framework */,
 				1A4DF9F91C0E411500DDBC20 /* iOS */,
 				1A4DF9F81C0E40FE00DDBC20 /* tvOS */,
+				B355DF9829209B6300E4C858 /* QuickLook.framework */,
+				B355DFFF2920AA2100E4C858 /* QuickLookThumbnailing.framework */,
+				B355E0222920AB8100E4C858 /* UniformTypeIdentifiers.framework */,
+				B355E0392920AC1A00E4C858 /* WidgetKit.framework */,
+				B3EEED5F2920AEB6008E2603 /* DeviceActivity.framework */,
+				B3EEED892920B006008E2603 /* DriverKit.framework */,
+				B3EEED9F2920B099008E2603 /* Quartz.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -2493,15 +2790,15 @@
 			path = Consoles;
 			sourceTree = "<group>";
 		};
-		B305EEFE276B4C71003AE510 /* Provenance Watch WatchKit App */ = {
+		B305EEFE276B4C71003AE510 /* WatchKit App */ = {
 			isa = PBXGroup;
 			children = (
 				B305EEFF276B4C72003AE510 /* Assets.xcassets */,
 			);
-			path = "Provenance Watch WatchKit App";
+			path = "WatchKit App";
 			sourceTree = "<group>";
 		};
-		B305EF09276B4C73003AE510 /* Provenance Watch WatchKit Extension */ = {
+		B305EF09276B4C73003AE510 /* WatchKit Extension */ = {
 			isa = PBXGroup;
 			children = (
 				B305EF0A276B4C73003AE510 /* ContentView.swift */,
@@ -2511,7 +2808,7 @@
 				B305EF15276B4C73003AE510 /* Info.plist */,
 				B305EF12276B4C73003AE510 /* Preview Content */,
 			);
-			path = "Provenance Watch WatchKit Extension";
+			path = "WatchKit Extension";
 			sourceTree = "<group>";
 		};
 		B305EF12276B4C73003AE510 /* Preview Content */ = {
@@ -2748,6 +3045,96 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
+		B355DF9A29209B6700E4C858 /* QuickLookPreview */ = {
+			isa = PBXGroup;
+			children = (
+				B355DFA629209B7200E4C858 /* QuickLookPreview.entitlements */,
+				B355DF9B29209B6700E4C858 /* PreviewViewController.swift */,
+				B355DF9D29209B6700E4C858 /* PreviewProvider.swift */,
+				B355DF9F29209B6700E4C858 /* MainInterface.storyboard */,
+				B355DFA229209B6700E4C858 /* Info.plist */,
+			);
+			path = QuickLookPreview;
+			sourceTree = "<group>";
+		};
+		B355DFD32920A42600E4C858 /* StickerPack */ = {
+			isa = PBXGroup;
+			children = (
+				B355DFD42920A42800E4C858 /* Stickers.xcassets */,
+				B355DFD62920A42800E4C858 /* Info.plist */,
+			);
+			path = StickerPack;
+			sourceTree = "<group>";
+		};
+		B355E0012920AA2600E4C858 /* ThumbnailExtension */ = {
+			isa = PBXGroup;
+			children = (
+				B355E0082920AA3200E4C858 /* ThumbnailExtension.entitlements */,
+				B355E0022920AA2600E4C858 /* ThumbnailProvider.swift */,
+				B355E0042920AA2600E4C858 /* Info.plist */,
+			);
+			path = ThumbnailExtension;
+			sourceTree = "<group>";
+		};
+		B355E0122920AA9D00E4C858 /* SpotlightImportExtension */ = {
+			isa = PBXGroup;
+			children = (
+				B355E0132920AA9D00E4C858 /* ImportExtension.swift */,
+				B355E0152920AA9D00E4C858 /* Info.plist */,
+			);
+			path = SpotlightImportExtension;
+			sourceTree = "<group>";
+		};
+		B355E0242920AB8600E4C858 /* FileProviderExtension */ = {
+			isa = PBXGroup;
+			children = (
+				B355E0252920AB8600E4C858 /* FileProviderExtension.swift */,
+				B355E0272920AB8600E4C858 /* FileProviderItem.swift */,
+				B355E0292920AB8600E4C858 /* FileProviderEnumerator.swift */,
+				B355E02B2920AB8600E4C858 /* Info.plist */,
+				B355E02C2920AB8600E4C858 /* FileProviderExtension.entitlements */,
+			);
+			path = FileProviderExtension;
+			sourceTree = "<group>";
+		};
+		B355E03C2920AC1E00E4C858 /* WidgetExtension */ = {
+			isa = PBXGroup;
+			children = (
+				B355E0442920AC2000E4C858 /* Assets.xcassets */,
+				B355E0462920AC2000E4C858 /* Info.plist */,
+				B355E04C2920AC2D00E4C858 /* WidgetExtension.entitlements */,
+				B355E0432920AC1E00E4C858 /* WidgetExtension.intentdefinition */,
+				B355E0412920AC1E00E4C858 /* WidgetExtension.swift */,
+				B355E03D2920AC1E00E4C858 /* WidgetExtensionBundle.swift */,
+				B355E03F2920AC1E00E4C858 /* WidgetExtensionLiveActivity.swift */,
+			);
+			path = WidgetExtension;
+			sourceTree = "<group>";
+		};
+		B355E0512920AC7600E4C858 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				B3EEED992920B075008E2603 /* macOS */,
+				B355DF90292095B300E4C858 /* Intents.intentdefinition */,
+				B3EEED612920AEBA008E2603 /* ActivityMonitorExtension */,
+				B3EEED722920AF1E008E2603 /* ActivityReportExtension */,
+				B3EEEDCE2920B56A008E2603 /* BackgroundDownloadExtension */,
+				B3EEED8B2920B00A008E2603 /* ControllerDriver */,
+				B355E0242920AB8600E4C858 /* FileProviderExtension */,
+				B391F2BC27C157E600730B53 /* Provenance Clip */,
+				B355DF9A29209B6700E4C858 /* QuickLookPreview */,
+				B3E21D6C203211BE009939D3 /* Spotlight */,
+				B355E0122920AA9D00E4C858 /* SpotlightImportExtension */,
+				B355DFD32920A42600E4C858 /* StickerPack */,
+				B355E0012920AA2600E4C858 /* ThumbnailExtension */,
+				BE9FDCBA1C210B9E0046DF0E /* TopShelf */,
+				B305EEFE276B4C71003AE510 /* WatchKit App */,
+				B305EF09276B4C73003AE510 /* WatchKit Extension */,
+				B355E03C2920AC1E00E4C858 /* WidgetExtension */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		B35D667D21814EAB0005A992 /* Story Boards */ = {
 			isa = PBXGroup;
 			children = (
@@ -2932,28 +3319,12 @@
 			path = SwiftyAppearance;
 			sourceTree = "<group>";
 		};
-		B3C7CCBE27DCB0B90003F9D2 /* ExperimentalCores */ = {
-			isa = PBXGroup;
-			children = (
-				B3C7CCBF27DCB0B90003F9D2 /* ExperimentalCores.h */,
-			);
-			path = ExperimentalCores;
-			sourceTree = "<group>";
-		};
 		B3C8A6A328781E810037A946 /* CoresRetro */ = {
 			isa = PBXGroup;
 			children = (
 				B3C8A6A428781E810037A946 /* CoresRetro.h */,
 			);
 			path = CoresRetro;
-			sourceTree = "<group>";
-		};
-		B3CE7FF62873F78E00B6BB5A /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				B3EBB1F728729DCD00EAEB37 /* PVfMSX.framework */,
-			);
-			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		B3D5E2A9218EC1970015C690 /* RxRealmDataSources */ = {
@@ -3028,11 +3399,77 @@
 			path = UI;
 			sourceTree = "<group>";
 		};
-		B3F43DDA2169BC9C00CDD40A /* Bridging Headers */ = {
+		B3EEED612920AEBA008E2603 /* ActivityMonitorExtension */ = {
 			isa = PBXGroup;
 			children = (
+				B3EEED622920AEBA008E2603 /* DeviceActivityMonitorExtension.swift */,
+				B3EEED642920AEBA008E2603 /* Info.plist */,
+				B3EEED652920AEBA008E2603 /* ActivityMonitorExtension.entitlements */,
 			);
-			name = "Bridging Headers";
+			path = ActivityMonitorExtension;
+			sourceTree = "<group>";
+		};
+		B3EEED722920AF1E008E2603 /* ActivityReportExtension */ = {
+			isa = PBXGroup;
+			children = (
+				B3EEED732920AF1E008E2603 /* ActivityReportExtension.swift */,
+				B3EEED752920AF1E008E2603 /* TotalActivityReport.swift */,
+				B3EEED772920AF1E008E2603 /* TotalActivityView.swift */,
+				B3EEED792920AF1E008E2603 /* Info.plist */,
+				B3EEED7A2920AF1E008E2603 /* ActivityReportExtension.entitlements */,
+			);
+			path = ActivityReportExtension;
+			sourceTree = "<group>";
+		};
+		B3EEED8B2920B00A008E2603 /* ControllerDriver */ = {
+			isa = PBXGroup;
+			children = (
+				B3EEED8C2920B00A008E2603 /* ControllerDriver.cpp */,
+				B3EEED8E2920B00A008E2603 /* ControllerDriver.iig */,
+				B3EEED902920B00A008E2603 /* Info.plist */,
+			);
+			path = ControllerDriver;
+			sourceTree = "<group>";
+		};
+		B3EEED992920B075008E2603 /* macOS */ = {
+			isa = PBXGroup;
+			children = (
+				B3EEEDA12920B09F008E2603 /* QuickLookMacOS */,
+				B3EEEDB62920B0DB008E2603 /* ThumbnailExtensionMacOS */,
+			);
+			path = macOS;
+			sourceTree = "<group>";
+		};
+		B3EEEDA12920B09F008E2603 /* QuickLookMacOS */ = {
+			isa = PBXGroup;
+			children = (
+				B3EEEDA22920B09F008E2603 /* PreviewViewController.swift */,
+				B3EEEDA42920B09F008E2603 /* PreviewProvider.swift */,
+				B3EEEDA62920B09F008E2603 /* PreviewViewController.xib */,
+				B3EEEDA92920B09F008E2603 /* Info.plist */,
+				B3EEEDAA2920B09F008E2603 /* QuickLookMacOS.entitlements */,
+			);
+			path = QuickLookMacOS;
+			sourceTree = "<group>";
+		};
+		B3EEEDB62920B0DB008E2603 /* ThumbnailExtensionMacOS */ = {
+			isa = PBXGroup;
+			children = (
+				B3EEEDB72920B0DB008E2603 /* ThumbnailProvider.swift */,
+				B3EEEDB92920B0DB008E2603 /* Info.plist */,
+				B3EEEDBA2920B0DB008E2603 /* ThumbnailExtensionMacOS.entitlements */,
+			);
+			path = ThumbnailExtensionMacOS;
+			sourceTree = "<group>";
+		};
+		B3EEEDCE2920B56A008E2603 /* BackgroundDownloadExtension */ = {
+			isa = PBXGroup;
+			children = (
+				B3EEEDCF2920B56A008E2603 /* BackgroundDownloadHandler.swift */,
+				B3EEEDD12920B56A008E2603 /* Info.plist */,
+				B3EEEDD22920B56A008E2603 /* BackgroundDownloadExtension.entitlements */,
+			);
+			path = BackgroundDownloadExtension;
 			sourceTree = "<group>";
 		};
 		BE9FDCBA1C210B9E0046DF0E /* TopShelf */ = {
@@ -3092,6 +3529,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3EEED832920B005008E2603 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
@@ -3105,6 +3549,8 @@
 				1A44C0AD1D0A1DE80018751A /* Script: Set Build Number */,
 				1AAE7D3F1BC86C41003066C0 /* Embed Frameworks */,
 				B3E21D77203211BE009939D3 /* Embed App Extensions */,
+				B3EEED822920AF25008E2603 /* Embed ExtensionKit Extensions */,
+				B3EEED982920B011008E2603 /* Embed System Extensions */,
 			);
 			buildRules = (
 			);
@@ -3114,6 +3560,14 @@
 				B36FE831218EAAD200F858F3 /* PBXTargetDependency */,
 				B3C8A708287827270037A946 /* PBXTargetDependency */,
 				B3C8A70C287827330037A946 /* PBXTargetDependency */,
+				B355DFA429209B6700E4C858 /* PBXTargetDependency */,
+				B355DFD82920A42800E4C858 /* PBXTargetDependency */,
+				B355E0062920AA2600E4C858 /* PBXTargetDependency */,
+				B355E0172920AA9D00E4C858 /* PBXTargetDependency */,
+				B355E02E2920AB8600E4C858 /* PBXTargetDependency */,
+				B3EEED672920AEBA008E2603 /* PBXTargetDependency */,
+				B3EEED7C2920AF1E008E2603 /* PBXTargetDependency */,
+				B3EEED922920B00A008E2603 /* PBXTargetDependency */,
 			);
 			name = Provenance;
 			packageProductDependencies = (
@@ -3248,6 +3702,106 @@
 			productReference = B3270F7F27DCB25100E83180 /* Cores_iOS.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		B355DF9629209B6200E4C858 /* QuickLookPreview */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B355DFA729209B8900E4C858 /* Build configuration list for PBXNativeTarget "QuickLookPreview" */;
+			buildPhases = (
+				B355DF9329209B6200E4C858 /* Sources */,
+				B355DF9429209B6200E4C858 /* Frameworks */,
+				B355DF9529209B6200E4C858 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = QuickLookPreview;
+			productName = QuickLookPreview;
+			productReference = B355DF9729209B6200E4C858 /* QuickLookPreview.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		B355DFD12920A42100E4C858 /* StickerPack */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B355DFDA2920A42F00E4C858 /* Build configuration list for PBXNativeTarget "StickerPack" */;
+			buildPhases = (
+				B355DFD02920A42100E4C858 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = StickerPack;
+			productName = StickerPack;
+			productReference = B355DFD22920A42200E4C858 /* StickerPack.appex */;
+			productType = "com.apple.product-type.app-extension.messages-sticker-pack";
+		};
+		B355DFFD2920AA2000E4C858 /* ThumbnailExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B355E0092920AA4700E4C858 /* Build configuration list for PBXNativeTarget "ThumbnailExtension" */;
+			buildPhases = (
+				B355DFFA2920AA2000E4C858 /* Sources */,
+				B355DFFB2920AA2000E4C858 /* Frameworks */,
+				B355DFFC2920AA2000E4C858 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ThumbnailExtension;
+			productName = ThumbnailExtension;
+			productReference = B355DFFE2920AA2100E4C858 /* ThumbnailExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		B355E0102920AA9700E4C858 /* SpotlightImportExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B355E0192920AAA600E4C858 /* Build configuration list for PBXNativeTarget "SpotlightImportExtension" */;
+			buildPhases = (
+				B355E00D2920AA9700E4C858 /* Sources */,
+				B355E00E2920AA9700E4C858 /* Frameworks */,
+				B355E00F2920AA9700E4C858 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SpotlightImportExtension;
+			productName = SpotlightImportExtension;
+			productReference = B355E0112920AA9800E4C858 /* SpotlightImportExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		B355E0202920AB8100E4C858 /* FileProviderExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B355E0302920AB9000E4C858 /* Build configuration list for PBXNativeTarget "FileProviderExtension" */;
+			buildPhases = (
+				B355E01D2920AB8100E4C858 /* Sources */,
+				B355E01E2920AB8100E4C858 /* Frameworks */,
+				B355E01F2920AB8100E4C858 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FileProviderExtension;
+			productName = FileProviderExtension;
+			productReference = B355E0212920AB8100E4C858 /* FileProviderExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		B355E0372920AC1900E4C858 /* WidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B355E04D2920AC4200E4C858 /* Build configuration list for PBXNativeTarget "WidgetExtension" */;
+			buildPhases = (
+				B355E0342920AC1900E4C858 /* Sources */,
+				B355E0352920AC1900E4C858 /* Frameworks */,
+				B355E0362920AC1900E4C858 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WidgetExtension;
+			productName = WidgetExtensionExtension;
+			productReference = B355E0382920AC1A00E4C858 /* WidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		B391F2BA27C157E600730B53 /* Provenance Clip */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B391F2CF27C157E900730B53 /* Build configuration list for PBXNativeTarget "Provenance Clip" */;
@@ -3341,6 +3895,109 @@
 			productReference = B3E21D6B203211BE009939D3 /* Spotlight.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		B3EEED5D2920AEB6008E2603 /* ActivityMonitorExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3EEED692920AEC0008E2603 /* Build configuration list for PBXNativeTarget "ActivityMonitorExtension" */;
+			buildPhases = (
+				B3EEED5A2920AEB6008E2603 /* Sources */,
+				B3EEED5B2920AEB6008E2603 /* Frameworks */,
+				B3EEED5C2920AEB6008E2603 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ActivityMonitorExtension;
+			productName = ActivityMonitorExtension;
+			productReference = B3EEED5E2920AEB6008E2603 /* ActivityMonitorExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		B3EEED702920AF19008E2603 /* ActivityReportExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3EEED7E2920AF25008E2603 /* Build configuration list for PBXNativeTarget "ActivityReportExtension" */;
+			buildPhases = (
+				B3EEED6D2920AF19008E2603 /* Sources */,
+				B3EEED6E2920AF19008E2603 /* Frameworks */,
+				B3EEED6F2920AF19008E2603 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ActivityReportExtension;
+			productName = ActivityReportExtension;
+			productReference = B3EEED712920AF19008E2603 /* ActivityReportExtension.appex */;
+			productType = "com.apple.product-type.extensionkit-extension";
+		};
+		B3EEED872920B005008E2603 /* ControllerDriver */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3EEED942920B011008E2603 /* Build configuration list for PBXNativeTarget "ControllerDriver" */;
+			buildPhases = (
+				B3EEED832920B005008E2603 /* Headers */,
+				B3EEED842920B005008E2603 /* Sources */,
+				B3EEED852920B005008E2603 /* Frameworks */,
+				B3EEED862920B005008E2603 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ControllerDriver;
+			productName = ControllerDriver;
+			productReference = B3EEED882920B006008E2603 /* Provenance.dext */;
+			productType = "com.apple.product-type.driver-extension";
+		};
+		B3EEED9D2920B098008E2603 /* QuickLookMacOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3EEEDAB2920B09F008E2603 /* Build configuration list for PBXNativeTarget "QuickLookMacOS" */;
+			buildPhases = (
+				B3EEED9A2920B098008E2603 /* Sources */,
+				B3EEED9B2920B098008E2603 /* Frameworks */,
+				B3EEED9C2920B098008E2603 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = QuickLookMacOS;
+			productName = QuickLookMacOS;
+			productReference = B3EEED9E2920B099008E2603 /* QuickLookMacOS.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		B3EEEDB22920B0D4008E2603 /* ThumbnailExtensionMacOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3EEEDBB2920B0DB008E2603 /* Build configuration list for PBXNativeTarget "ThumbnailExtensionMacOS" */;
+			buildPhases = (
+				B3EEEDAF2920B0D4008E2603 /* Sources */,
+				B3EEEDB02920B0D4008E2603 /* Frameworks */,
+				B3EEEDB12920B0D4008E2603 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ThumbnailExtensionMacOS;
+			productName = ThumbnailExtensionMacOS;
+			productReference = B3EEEDB32920B0D5008E2603 /* ThumbnailExtensionMacOS.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		B3EEEDCC2920B562008E2603 /* BackgroundDownloadExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3EEEDD62920B574008E2603 /* Build configuration list for PBXNativeTarget "BackgroundDownloadExtension" */;
+			buildPhases = (
+				B3EEEDC92920B562008E2603 /* Sources */,
+				B3EEEDCA2920B562008E2603 /* Frameworks */,
+				B3EEEDCB2920B562008E2603 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BackgroundDownloadExtension;
+			productName = BackgroundDownloadExtension;
+			productReference = B3EEEDCD2920B563008E2603 /* BackgroundDownloadExtension.appex */;
+			productType = "com.apple.product-type.extensionkit-extension";
+		};
 		BE9FDCB61C210B9E0046DF0E /* TopShelf */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = BE9FDCC51C210B9F0046DF0E /* Build configuration list for PBXNativeTarget "TopShelf" */;
@@ -3368,7 +4025,7 @@
 				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = PV;
 				DefaultBuildSystemTypeForWorkspace = Latest;
-				LastSwiftUpdateCheck = 1320;
+				LastSwiftUpdateCheck = 1410;
 				LastUpgradeCheck = 1300;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
@@ -3427,6 +4084,24 @@
 					B3270F7E27DCB25100E83180 = {
 						CreatedOnToolsVersion = 13.2.1;
 					};
+					B355DF9629209B6200E4C858 = {
+						CreatedOnToolsVersion = 14.1;
+					};
+					B355DFD12920A42100E4C858 = {
+						CreatedOnToolsVersion = 14.1;
+					};
+					B355DFFD2920AA2000E4C858 = {
+						CreatedOnToolsVersion = 14.1;
+					};
+					B355E0102920AA9700E4C858 = {
+						CreatedOnToolsVersion = 14.1;
+					};
+					B355E0202920AB8100E4C858 = {
+						CreatedOnToolsVersion = 14.1;
+					};
+					B355E0372920AC1900E4C858 = {
+						CreatedOnToolsVersion = 14.1;
+					};
 					B383225D26ED9C530029D12F = {
 						CreatedOnToolsVersion = 13.0;
 					};
@@ -3454,6 +4129,24 @@
 							};
 						};
 					};
+					B3EEED5D2920AEB6008E2603 = {
+						CreatedOnToolsVersion = 14.1;
+					};
+					B3EEED702920AF19008E2603 = {
+						CreatedOnToolsVersion = 14.1;
+					};
+					B3EEED872920B005008E2603 = {
+						CreatedOnToolsVersion = 14.1;
+					};
+					B3EEED9D2920B098008E2603 = {
+						CreatedOnToolsVersion = 14.1;
+					};
+					B3EEEDB22920B0D4008E2603 = {
+						CreatedOnToolsVersion = 14.1;
+					};
+					B3EEEDCC2920B562008E2603 = {
+						CreatedOnToolsVersion = 14.1;
+					};
 					BE9FDCB61C210B9E0046DF0E = {
 						CreatedOnToolsVersion = 7.2;
 						SystemCapabilities = {
@@ -3477,6 +4170,7 @@
 				nl,
 				it,
 				"pt-BR",
+				Base,
 			);
 			mainGroup = 1A3D408B17B2DCE4004DFFFC;
 			packageReferences = (
@@ -3492,20 +4186,32 @@
 				1A3D409317B2DCE4004DFFFC /* Provenance */,
 				1AD481B31BA350A400FDA50A /* ProvenanceTV */,
 				1AD9AA341ACC988F00EC87A0 /* Provenance Tests */,
-				BE9FDCB61C210B9E0046DF0E /* TopShelf */,
 				B3E21D6A203211BE009939D3 /* Spotlight */,
+				BE9FDCB61C210B9E0046DF0E /* TopShelf */,
 				B3B29D3F2156177100903290 /* Create Version files */,
 				B3B29D4D21561F0600903290 /* Setup Code-Signing */,
 				B383225D26ED9C530029D12F /* Check Git Submodules */,
 				B30E94832793B8BE00871E57 /* Check CodeSigning */,
-				B305EF04276B4C73003AE510 /* Provenance Watch WatchKit Extension */,
 				B305EEF6276B4C71003AE510 /* Provenance Watch */,
+				B305EF04276B4C73003AE510 /* Provenance Watch WatchKit Extension */,
 				B305EEF9276B4C71003AE510 /* Provenance Watch WatchKit App */,
-				B391F2BA27C157E600730B53 /* Provenance Clip */,
 				B3270F7E27DCB25100E83180 /* Cores-iOS */,
 				B3C8A70D287828BA0037A946 /* Cores-tvOS */,
 				B3C8A6BB2878238C0037A946 /* CoresRetro-iOS */,
 				B3C8A6A128781E800037A946 /* CoresRetro-tvOS */,
+				B3EEED5D2920AEB6008E2603 /* ActivityMonitorExtension */,
+				B3EEED702920AF19008E2603 /* ActivityReportExtension */,
+				B3EEEDCC2920B562008E2603 /* BackgroundDownloadExtension */,
+				B3EEED872920B005008E2603 /* ControllerDriver */,
+				B355E0202920AB8100E4C858 /* FileProviderExtension */,
+				B391F2BA27C157E600730B53 /* Provenance Clip */,
+				B355DF9629209B6200E4C858 /* QuickLookPreview */,
+				B3EEED9D2920B098008E2603 /* QuickLookMacOS */,
+				B355DFD12920A42100E4C858 /* StickerPack */,
+				B355E0102920AA9700E4C858 /* SpotlightImportExtension */,
+				B355DFFD2920AA2000E4C858 /* ThumbnailExtension */,
+				B3EEEDB22920B0D4008E2603 /* ThumbnailExtensionMacOS */,
+				B355E0372920AC1900E4C858 /* WidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -3623,6 +4329,51 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B355DF9529209B6200E4C858 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B355DFA129209B6700E4C858 /* MainInterface.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B355DFD02920A42100E4C858 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B355DFD52920A42800E4C858 /* Stickers.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B355DFFC2920AA2000E4C858 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B355E00F2920AA9700E4C858 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B355E01F2920AB8100E4C858 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B355E0362920AC1900E4C858 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B355E0452920AC2000E4C858 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B391F2B927C157E600730B53 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3647,6 +4398,49 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B3C8A715287828BA0037A946 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3EEED5C2920AEB6008E2603 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3EEED6F2920AF19008E2603 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3EEED862920B005008E2603 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3EEED9C2920B098008E2603 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3EEEDA82920B09F008E2603 /* PreviewViewController.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3EEEDB12920B0D4008E2603 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3EEEDCB2920B562008E2603 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3853,6 +4647,7 @@
 				B3411C11276B470B00D85327 /* QuickTableViewController.swift in Sources */,
 				378F4A001B63D7CD0065FA39 /* GCDWebServer.m in Sources */,
 				B3AB373C2187F569009D9244 /* PVLynxControllerViewController.swift in Sources */,
+				B355E0482920AC2000E4C858 /* WidgetExtension.intentdefinition in Sources */,
 				B31117B3218EB3AE00C495A2 /* PVButtonGroupOverlayView.swift in Sources */,
 				B3A320372720974F00F338F6 /* PVGameCubeControllerViewController.swift in Sources */,
 				B3427C00287EA0CF0054C1B5 /* blit_ps.metal in Sources */,
@@ -3949,6 +4744,7 @@
 				B3532C3C21A9AC93006CDA0F /* Services.swift in Sources */,
 				1180B3242492AFC900636C8A /* PVGameLibraryUpdatesController.swift in Sources */,
 				B3AB37382187F569009D9244 /* PVGBAControllerViewController.swift in Sources */,
+				B355DF91292095B300E4C858 /* Intents.intentdefinition in Sources */,
 				1A5665091D96A18A006EAE01 /* UIDevice+Hardware.m in Sources */,
 				B36D9DF8203562E000D583C4 /* PVControllerViewController.swift in Sources */,
 				378F4A021B63D7CD0065FA39 /* GCDWebServerFunctions.m in Sources */,
@@ -4153,6 +4949,7 @@
 				1AD481D41BA3542200FDA50A /* PVWebServer.m in Sources */,
 				B3890BF520B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift in Sources */,
 				1AD481E11BA3545800FDA50A /* GCDWebServerErrorResponse.m in Sources */,
+				B355DF92292095B300E4C858 /* Intents.intentdefinition in Sources */,
 				B3F43DE32169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */,
 				1AD481D71BA3543500FDA50A /* GCDWebServer.m in Sources */,
 				1A2FB10A206EE8A700A1F942 /* PVSaveStatesViewController.swift in Sources */,
@@ -4265,6 +5062,52 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B355DF9329209B6200E4C858 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B355DF9C29209B6700E4C858 /* PreviewViewController.swift in Sources */,
+				B355DF9E29209B6700E4C858 /* PreviewProvider.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B355DFFA2920AA2000E4C858 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B355E0032920AA2600E4C858 /* ThumbnailProvider.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B355E00D2920AA9700E4C858 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B355E0142920AA9D00E4C858 /* ImportExtension.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B355E01D2920AB8100E4C858 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B355E0262920AB8600E4C858 /* FileProviderExtension.swift in Sources */,
+				B355E0282920AB8600E4C858 /* FileProviderItem.swift in Sources */,
+				B355E02A2920AB8600E4C858 /* FileProviderEnumerator.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B355E0342920AC1900E4C858 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B355E0472920AC2000E4C858 /* WidgetExtension.intentdefinition in Sources */,
+				B355E0402920AC1E00E4C858 /* WidgetExtensionLiveActivity.swift in Sources */,
+				B355E03E2920AC1E00E4C858 /* WidgetExtensionBundle.swift in Sources */,
+				B355E0422920AC1E00E4C858 /* WidgetExtension.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B391F2B727C157E600730B53 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -4303,6 +5146,58 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3EEED5A2920AEB6008E2603 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3EEED632920AEBA008E2603 /* DeviceActivityMonitorExtension.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3EEED6D2920AF19008E2603 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3EEED782920AF1E008E2603 /* TotalActivityView.swift in Sources */,
+				B3EEED742920AF1E008E2603 /* ActivityReportExtension.swift in Sources */,
+				B3EEED762920AF1E008E2603 /* TotalActivityReport.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3EEED842920B005008E2603 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3EEED8D2920B00A008E2603 /* ControllerDriver.cpp in Sources */,
+				B3EEED8F2920B00A008E2603 /* ControllerDriver.iig in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3EEED9A2920B098008E2603 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3EEEDA32920B09F008E2603 /* PreviewViewController.swift in Sources */,
+				B3EEEDA52920B09F008E2603 /* PreviewProvider.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3EEEDAF2920B0D4008E2603 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3EEEDB82920B0DB008E2603 /* ThumbnailProvider.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3EEEDC92920B562008E2603 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3EEEDD02920B56A008E2603 /* BackgroundDownloadHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BE9FDCB31C210B9E0046DF0E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -4330,6 +5225,31 @@
 			isa = PBXTargetDependency;
 			target = B305EF04276B4C73003AE510 /* Provenance Watch WatchKit Extension */;
 			targetProxy = B305EF07276B4C73003AE510 /* PBXContainerItemProxy */;
+		};
+		B355DFA429209B6700E4C858 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B355DF9629209B6200E4C858 /* QuickLookPreview */;
+			targetProxy = B355DFA329209B6700E4C858 /* PBXContainerItemProxy */;
+		};
+		B355DFD82920A42800E4C858 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B355DFD12920A42100E4C858 /* StickerPack */;
+			targetProxy = B355DFD72920A42800E4C858 /* PBXContainerItemProxy */;
+		};
+		B355E0062920AA2600E4C858 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B355DFFD2920AA2000E4C858 /* ThumbnailExtension */;
+			targetProxy = B355E0052920AA2600E4C858 /* PBXContainerItemProxy */;
+		};
+		B355E0172920AA9D00E4C858 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B355E0102920AA9700E4C858 /* SpotlightImportExtension */;
+			targetProxy = B355E0162920AA9D00E4C858 /* PBXContainerItemProxy */;
+		};
+		B355E02E2920AB8600E4C858 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B355E0202920AB8100E4C858 /* FileProviderExtension */;
+			targetProxy = B355E02D2920AB8600E4C858 /* PBXContainerItemProxy */;
 		};
 		B36FE831218EAAD200F858F3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -4395,6 +5315,21 @@
 			isa = PBXTargetDependency;
 			target = B3C8A70D287828BA0037A946 /* Cores-tvOS */;
 			targetProxy = B3C8A7462878293C0037A946 /* PBXContainerItemProxy */;
+		};
+		B3EEED672920AEBA008E2603 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3EEED5D2920AEB6008E2603 /* ActivityMonitorExtension */;
+			targetProxy = B3EEED662920AEBA008E2603 /* PBXContainerItemProxy */;
+		};
+		B3EEED7C2920AF1E008E2603 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3EEED702920AF19008E2603 /* ActivityReportExtension */;
+			targetProxy = B3EEED7B2920AF1E008E2603 /* PBXContainerItemProxy */;
+		};
+		B3EEED922920B00A008E2603 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3EEED872920B005008E2603 /* ControllerDriver */;
+			targetProxy = B3EEED912920B00A008E2603 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -4569,6 +5504,14 @@
 			name = Strings.strings;
 			sourceTree = "<group>";
 		};
+		B355DF9F29209B6700E4C858 /* MainInterface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B355DFA029209B6700E4C858 /* Base */,
+			);
+			name = MainInterface.storyboard;
+			sourceTree = "<group>";
+		};
 		B37D31C8274A57F000D635E0 /* Info.plist */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -4588,6 +5531,14 @@
 				B37D31CC274A57F000D635E0 /* zh-Hans */,
 			);
 			name = Info.plist;
+			sourceTree = "<group>";
+		};
+		B3EEEDA62920B09F008E2603 /* PreviewViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B3EEEDA72920B09F008E2603 /* Base */,
+			);
+			name = PreviewViewController.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -4720,6 +5671,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				APP_DISPLAY_NAME = "Prov Debug";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -4771,6 +5723,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				APP_DISPLAY_NAME = "$(TARGET_NAME)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -5601,6 +6554,800 @@
 			};
 			name = Archive;
 		};
+		B355DFA829209B8900E4C858 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = Extensions/QuickLookPreview/QuickLookPreview.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/QuickLookPreview/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = QuickLookPreview;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.QuickLookPreview";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B355DFA929209B8900E4C858 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = Extensions/QuickLookPreview/QuickLookPreview.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/QuickLookPreview/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = QuickLookPreview;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.QuickLookPreview";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B355DFAA29209B8900E4C858 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = Extensions/QuickLookPreview/QuickLookPreview.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/QuickLookPreview/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = QuickLookPreview;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.QuickLookPreview";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Archive;
+		};
+		B355DFDB2920A42F00E4C858 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "iMessage App Icon";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/StickerPack/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.StickerPack";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B355DFDC2920A42F00E4C858 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "iMessage App Icon";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/StickerPack/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.StickerPack";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B355DFDD2920A42F00E4C858 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "iMessage App Icon";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/StickerPack/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.StickerPack";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Archive;
+		};
+		B355E00A2920AA4700E4C858 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = Extensions/ThumbnailExtension/ThumbnailExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/ThumbnailExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ThumbnailExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ThumbnailExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B355E00B2920AA4700E4C858 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = Extensions/ThumbnailExtension/ThumbnailExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/ThumbnailExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ThumbnailExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ThumbnailExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B355E00C2920AA4700E4C858 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = Extensions/ThumbnailExtension/ThumbnailExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/ThumbnailExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ThumbnailExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ThumbnailExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Archive;
+		};
+		B355E01A2920AAA600E4C858 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = SpotlightImportExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/SpotlightImportExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = SpotlightImportExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.SpotlightImportExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B355E01B2920AAA600E4C858 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = SpotlightImportExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/SpotlightImportExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = SpotlightImportExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.SpotlightImportExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B355E01C2920AAA600E4C858 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = SpotlightImportExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/SpotlightImportExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = SpotlightImportExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.SpotlightImportExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Archive;
+		};
+		B355E0312920AB9000E4C858 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = Extensions/FileProviderExtension/FileProviderExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/FileProviderExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = FileProviderExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.FileProviderExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B355E0322920AB9000E4C858 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = Extensions/FileProviderExtension/FileProviderExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/FileProviderExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = FileProviderExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.FileProviderExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B355E0332920AB9000E4C858 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = Extensions/FileProviderExtension/FileProviderExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/FileProviderExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = FileProviderExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.FileProviderExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Archive;
+		};
+		B355E04E2920AC4200E4C858 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = Extensions/WidgetExtension/WidgetExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/WidgetExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WidgetExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.WidgetExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B355E04F2920AC4200E4C858 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = Extensions/WidgetExtension/WidgetExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/WidgetExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WidgetExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.WidgetExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B355E0502920AC4200E4C858 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = Extensions/WidgetExtension/WidgetExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/WidgetExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WidgetExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.WidgetExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Archive;
+		};
 		B3721CEB21912B7400433E4C /* Archive */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B380EAC12759D689001B8532 /* Build.xcconfig */;
@@ -5661,6 +7408,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B326758527B1E0BB0033C5D1 /* Build-iOS.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				APP_DISPLAY_NAME = "$(TARGET_NAME)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -5821,7 +7569,7 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_ENTITLEMENTS = TopShelf/TopShelf.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Extensions/TopShelf/TopShelf.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
@@ -5834,7 +7582,7 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
-				INFOPLIST_FILE = TopShelf/Info.plist;
+				INFOPLIST_FILE = Extensions/TopShelf/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -5847,7 +7595,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "TopShelf/TopShelf-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Extensions/TopShelf/TopShelf-Bridging-Header.h";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 			};
 			name = Archive;
@@ -5865,7 +7613,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = Spotlight/Spotlight.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Extensions/Spotlight/Spotlight.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
@@ -5874,7 +7622,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = Spotlight/Info.plist;
+				INFOPLIST_FILE = Extensions/Spotlight/Info.plist;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -5890,7 +7638,7 @@
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = EXTENSION;
-				SWIFT_OBJC_BRIDGING_HEADER = "Spotlight/Spotlight-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Extensions/Spotlight/Spotlight-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
@@ -5954,19 +7702,19 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = "Provenance Clip/Provenance_Clip.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "\"Extensions/Provenance Clip/Provenance_Clip.entitlements\"";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_ASSET_PATHS = "\"Provenance Clip/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Extensions/Provenance Clip/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Provenance Clip/Info.plist";
+				INFOPLIST_FILE = "\"Extensions/Provenance Clip/Info.plist\"";
 				INFOPLIST_KEY_CFBundleDisplayName = Provenance;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -6005,21 +7753,21 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = "Provenance Clip/Provenance_Clip.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "\"Extensions/Provenance Clip/Provenance_Clip.entitlements\"";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_ASSET_PATHS = "\"Provenance Clip/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Extensions/Provenance Clip/Preview Content\"";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_PREVIEWS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Provenance Clip/Info.plist";
+				INFOPLIST_FILE = "\"Extensions/Provenance Clip/Info.plist\"";
 				INFOPLIST_KEY_CFBundleDisplayName = Provenance;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -6057,21 +7805,21 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = "Provenance Clip/Provenance_Clip.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "\"Extensions/Provenance Clip/Provenance_Clip.entitlements\"";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_ASSET_PATHS = "\"Provenance Clip/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Extensions/Provenance Clip/Preview Content\"";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_PREVIEWS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Provenance Clip/Info.plist";
+				INFOPLIST_FILE = "\"Extensions/Provenance Clip/Info.plist\"";
 				INFOPLIST_KEY_CFBundleDisplayName = Provenance;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -6593,13 +8341,13 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = Spotlight/Spotlight.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Extensions/Spotlight/Spotlight.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = Spotlight/Info.plist;
+				INFOPLIST_FILE = Extensions/Spotlight/Info.plist;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -6616,7 +8364,7 @@
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG EXTENSION";
 				SWIFT_COMPILATION_MODE = singlefile;
-				SWIFT_OBJC_BRIDGING_HEADER = "Spotlight/Spotlight-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Extensions/Spotlight/Spotlight-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
@@ -6636,7 +8384,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = Spotlight/Spotlight.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Extensions/Spotlight/Spotlight.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -6644,7 +8392,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = Spotlight/Info.plist;
+				INFOPLIST_FILE = Extensions/Spotlight/Info.plist;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -6660,11 +8408,793 @@
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = EXTENSION;
-				SWIFT_OBJC_BRIDGING_HEADER = "Spotlight/Spotlight-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Extensions/Spotlight/Spotlight-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Release;
+		};
+		B3EEED6A2920AEC0008E2603 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = Extensions/ActivityMonitorExtension/ActivityMonitorExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/ActivityMonitorExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ActivityMonitorExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ActivityMonitorExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B3EEED6B2920AEC0008E2603 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = Extensions/ActivityMonitorExtension/ActivityMonitorExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/ActivityMonitorExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ActivityMonitorExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ActivityMonitorExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B3EEED6C2920AEC0008E2603 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = Extensions/ActivityMonitorExtension/ActivityMonitorExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/ActivityMonitorExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ActivityMonitorExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ActivityMonitorExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Archive;
+		};
+		B3EEED7F2920AF25008E2603 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = Extensions/ActivityReportExtension/ActivityReportExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/ActivityReportExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ActivityReportExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ActivityReportExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B3EEED802920AF25008E2603 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = Extensions/ActivityReportExtension/ActivityReportExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/ActivityReportExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ActivityReportExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ActivityReportExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B3EEED812920AF25008E2603 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = Extensions/ActivityReportExtension/ActivityReportExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/ActivityReportExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ActivityReportExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ActivityReportExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Archive;
+		};
+		B3EEED952920B011008E2603 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = ControllerDriver.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DRIVERKIT_DEPLOYMENT_TARGET = 22.1;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/ControllerDriver/Info.plist;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ControllerDriver";
+				PRODUCT_NAME = "$(inherited)";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SDKROOT = driverkit;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Debug;
+		};
+		B3EEED962920B011008E2603 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = ControllerDriver.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DRIVERKIT_DEPLOYMENT_TARGET = 22.1;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/ControllerDriver/Info.plist;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ControllerDriver";
+				PRODUCT_NAME = "$(inherited)";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SDKROOT = driverkit;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Release;
+		};
+		B3EEED972920B011008E2603 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = ControllerDriver.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DRIVERKIT_DEPLOYMENT_TARGET = 22.1;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/ControllerDriver/Info.plist;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ControllerDriver";
+				PRODUCT_NAME = "$(inherited)";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SDKROOT = driverkit;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Archive;
+		};
+		B3EEEDAC2920B09F008E2603 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = Extensions/QuickLookMacOS/QuickLookMacOS.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/QuickLookMacOS/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = QuickLookMacOS;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.QuickLookMacOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		B3EEEDAD2920B09F008E2603 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = Extensions/QuickLookMacOS/QuickLookMacOS.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/QuickLookMacOS/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = QuickLookMacOS;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.QuickLookMacOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		B3EEEDAE2920B09F008E2603 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = Extensions/QuickLookMacOS/QuickLookMacOS.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/QuickLookMacOS/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = QuickLookMacOS;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.QuickLookMacOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Archive;
+		};
+		B3EEEDBC2920B0DB008E2603 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = Extensions/ThumbnailExtensionMacOS/ThumbnailExtensionMacOS.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/ThumbnailExtensionMacOS/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ThumbnailExtensionMacOS;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.ThumbnailExtensionMacOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		B3EEEDBD2920B0DB008E2603 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = Extensions/ThumbnailExtensionMacOS/ThumbnailExtensionMacOS.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/ThumbnailExtensionMacOS/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ThumbnailExtensionMacOS;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.ThumbnailExtensionMacOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		B3EEEDBE2920B0DB008E2603 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = Extensions/ThumbnailExtensionMacOS/ThumbnailExtensionMacOS.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/ThumbnailExtensionMacOS/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ThumbnailExtensionMacOS;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.ThumbnailExtensionMacOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Archive;
+		};
+		B3EEEDD72920B574008E2603 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = Extensions/BackgroundDownloadExtension/BackgroundDownloadExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/BackgroundDownloadExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = BackgroundDownloadExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.BackgroundDownloadExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B3EEEDD82920B574008E2603 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = Extensions/BackgroundDownloadExtension/BackgroundDownloadExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/BackgroundDownloadExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = BackgroundDownloadExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.BackgroundDownloadExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B3EEEDD92920B574008E2603 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = Extensions/BackgroundDownloadExtension/BackgroundDownloadExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Extensions/BackgroundDownloadExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = BackgroundDownloadExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.BackgroundDownloadExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Archive;
 		};
 		BE9FDCC21C210B9F0046DF0E /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -6676,7 +9206,7 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_ENTITLEMENTS = TopShelf/TopShelf.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Extensions/TopShelf/TopShelf.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -6686,7 +9216,7 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
-				INFOPLIST_FILE = TopShelf/Info.plist;
+				INFOPLIST_FILE = Extensions/TopShelf/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -6699,7 +9229,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "TopShelf/TopShelf-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Extensions/TopShelf/TopShelf-Bridging-Header.h";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 			};
 			name = Debug;
@@ -6714,7 +9244,7 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_ENTITLEMENTS = TopShelf/TopShelf.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Extensions/TopShelf/TopShelf.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -6726,7 +9256,7 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
-				INFOPLIST_FILE = TopShelf/Info.plist;
+				INFOPLIST_FILE = Extensions/TopShelf/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -6739,7 +9269,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "TopShelf/TopShelf-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Extensions/TopShelf/TopShelf-Bridging-Header.h";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 			};
 			name = Release;
@@ -6837,6 +9367,66 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		B355DFA729209B8900E4C858 /* Build configuration list for PBXNativeTarget "QuickLookPreview" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B355DFA829209B8900E4C858 /* Debug */,
+				B355DFA929209B8900E4C858 /* Release */,
+				B355DFAA29209B8900E4C858 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B355DFDA2920A42F00E4C858 /* Build configuration list for PBXNativeTarget "StickerPack" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B355DFDB2920A42F00E4C858 /* Debug */,
+				B355DFDC2920A42F00E4C858 /* Release */,
+				B355DFDD2920A42F00E4C858 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B355E0092920AA4700E4C858 /* Build configuration list for PBXNativeTarget "ThumbnailExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B355E00A2920AA4700E4C858 /* Debug */,
+				B355E00B2920AA4700E4C858 /* Release */,
+				B355E00C2920AA4700E4C858 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B355E0192920AAA600E4C858 /* Build configuration list for PBXNativeTarget "SpotlightImportExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B355E01A2920AAA600E4C858 /* Debug */,
+				B355E01B2920AAA600E4C858 /* Release */,
+				B355E01C2920AAA600E4C858 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B355E0302920AB9000E4C858 /* Build configuration list for PBXNativeTarget "FileProviderExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B355E0312920AB9000E4C858 /* Debug */,
+				B355E0322920AB9000E4C858 /* Release */,
+				B355E0332920AB9000E4C858 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B355E04D2920AC4200E4C858 /* Build configuration list for PBXNativeTarget "WidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B355E04E2920AC4200E4C858 /* Debug */,
+				B355E04F2920AC4200E4C858 /* Release */,
+				B355E0502920AC4200E4C858 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		B383225E26ED9C530029D12F /* Build configuration list for PBXAggregateTarget "Check Git Submodules" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -6913,6 +9503,66 @@
 				B3E21D74203211BE009939D3 /* Debug */,
 				B3E21D75203211BE009939D3 /* Release */,
 				B3721CF021912B7400433E4C /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3EEED692920AEC0008E2603 /* Build configuration list for PBXNativeTarget "ActivityMonitorExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3EEED6A2920AEC0008E2603 /* Debug */,
+				B3EEED6B2920AEC0008E2603 /* Release */,
+				B3EEED6C2920AEC0008E2603 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3EEED7E2920AF25008E2603 /* Build configuration list for PBXNativeTarget "ActivityReportExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3EEED7F2920AF25008E2603 /* Debug */,
+				B3EEED802920AF25008E2603 /* Release */,
+				B3EEED812920AF25008E2603 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3EEED942920B011008E2603 /* Build configuration list for PBXNativeTarget "ControllerDriver" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3EEED952920B011008E2603 /* Debug */,
+				B3EEED962920B011008E2603 /* Release */,
+				B3EEED972920B011008E2603 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3EEEDAB2920B09F008E2603 /* Build configuration list for PBXNativeTarget "QuickLookMacOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3EEEDAC2920B09F008E2603 /* Debug */,
+				B3EEEDAD2920B09F008E2603 /* Release */,
+				B3EEEDAE2920B09F008E2603 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3EEEDBB2920B0DB008E2603 /* Build configuration list for PBXNativeTarget "ThumbnailExtensionMacOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3EEEDBC2920B0DB008E2603 /* Debug */,
+				B3EEEDBD2920B0DB008E2603 /* Release */,
+				B3EEEDBE2920B0DB008E2603 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3EEEDD62920B574008E2603 /* Build configuration list for PBXNativeTarget "BackgroundDownloadExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3EEEDD72920B574008E2603 /* Debug */,
+				B3EEEDD82920B574008E2603 /* Release */,
+				B3EEEDD92920B574008E2603 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -11,8 +11,44 @@
 		<string>appclips:provenance.app</string>
 		<string>appclips:provenance-emu.com</string>
 	</array>
+	<key>com.apple.developer.driverkit.communicates-with-drivers</key>
+	<true/>
+	<key>com.apple.developer.game-center</key>
+	<true/>
+	<key>com.apple.developer.group-session</key>
+	<true/>
+	<key>com.apple.developer.icloud-container-identifiers</key>
+	<array>
+		<string>iCloud.org.provenance-emu.provenance</string>
+	</array>
+	<key>com.apple.developer.icloud-services</key>
+	<array>
+		<string>CloudDocuments</string>
+	</array>
 	<key>com.apple.developer.kernel.extended-virtual-addressing</key>
 	<true/>
+	<key>com.apple.developer.kernel.increased-memory-limit</key>
+	<true/>
+	<key>com.apple.developer.networking.multipath</key>
+	<true/>
+	<key>com.apple.developer.nfc.readersession.formats</key>
+	<array>
+		<string>TAG</string>
+	</array>
+	<key>com.apple.developer.shared-with-you</key>
+	<true/>
+	<key>com.apple.developer.shared-with-you.collaboration</key>
+	<true/>
+	<key>com.apple.developer.siri</key>
+	<true/>
+	<key>com.apple.developer.system-extension.install</key>
+	<true/>
+	<key>com.apple.developer.ubiquity-container-identifiers</key>
+	<array>
+		<string>iCloud.org.provenance-emu.provenance</string>
+	</array>
+	<key>com.apple.developer.ubiquity-kvstore-identifier</key>
+	<string>$(TeamIdentifierPrefix)$(CFBundleIdentifier)</string>
 	<key>com.apple.security.cs.allow-dyld-environment-variables</key>
 	<true/>
 	<key>com.apple.security.cs.allow-jit</key>
@@ -25,5 +61,9 @@
 	<true/>
 	<key>com.apple.security.personal-information.photos-library</key>
 	<true/>
+	<key>keychain-access-groups</key>
+	<array>
+		<string>$(AppIdentifierPrefix)org.provenance-emu.provenance</string>
+	</array>
 </dict>
 </plist>

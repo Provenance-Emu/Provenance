@@ -252,13 +252,6 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
          // Beta options
         #if os(iOS)
-        let swiftUI = PVSettingsSwitchRow(text: NSLocalizedString("Use Swift UI", comment: "Use Swift UI"),
-                                          detailText: .subtitle("Swift UI placeholder. Don't use unless you're a developer."),
-                                          key: \PVSettingsModel.debugOptions.useSwiftUI)
-        if #unavailable(iOS 14, tvOS 14) {
-            swiftUI.switchControl.isEnabled = false
-            swiftUI.detailText = .subtitle("Only available in iOS/tvOS 14+")
-        }
 
         let betaRows: [TableRow] = [
 			PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"),
@@ -285,8 +278,27 @@ final class PVSettingsViewController: PVQuickTableViewController {
                                 detailText: .subtitle("Cores that are in development"),
                                 key: \PVSettingsModel.debugOptions.unsupportedCores),
 
-            swiftUI,
-			PVSettingsSwitchRow(text: NSLocalizedString("Movable Buttons", comment: "Bool option to allow user to move on screen controller buttons"),
+            PVSettingsSwitchRow(text: NSLocalizedString("Use Swift UI", comment: "Use Swift UI"),
+                                detailText: .subtitle("Swift UI placeholder. Don't use unless you're a developer."),
+                                key: \PVSettingsModel.debugOptions.useSwiftUI) { cell, row in
+//                                    let swiftUIDetailText: DetailText
+//                                    if #available(iOS 14, tvOS 14, *) {
+//                                        row.
+//                                    } else {
+//                                        swiftUIDetailText = .subtitle("Only available in iOS/tvOS 14+")
+//                                    }
+//
+//                                    var swiftUI =
+//
+//                                    if #available(iOS 14, tvOS 14, *) {
+//                                        swiftUI.isSelectable = true
+//                                    } else {
+//                                        swiftUI.isSelectable = false
+//                                        swiftUI.switchValue = false
+//                                    }
+                                },
+            
+            PVSettingsSwitchRow(text: NSLocalizedString("Movable Buttons", comment: "Bool option to allow user to move on screen controller buttons"),
 								detailText: .subtitle("Allow user to move on screen controller buttons."),
 								key: \PVSettingsModel.debugOptions.movableButtons),
             
@@ -407,9 +419,13 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
         // Debug section
         let debugRows: [TableRow] = [
-            NavigationRow<SystemSettingsCell>(text: NSLocalizedString("Logs", comment: "Logs"), detailText: .subtitle("Live logging information"), icon: nil, customization: nil, action: { _ in
-                self.logsActions()
-            })
+            NavigationRow<SystemSettingsCell>(text: NSLocalizedString("Logs", comment: "Logs"),
+                                              detailText: .subtitle("Live logging information"),
+                                              icon: nil,
+                                              customization: nil,
+                                              action: { _ in
+                                                  self.logsActions()
+                                              })
         ]
 
         let debugSection = Section(title: NSLocalizedString("Debug", comment: ""), rows: debugRows)
@@ -430,7 +446,9 @@ final class PVSettingsViewController: PVQuickTableViewController {
                 showServerActiveAlert()
             } else {
                 // Display error
-                let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or settings and free up ports: 80, 81.", preferredStyle: .alert)
+                let alert = UIAlertController(title: "Unable to start web server!",
+                                              message: "Check your network connection or settings and free up ports: 80, 81.",
+                                              preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
                 }))
                 present(alert, animated: true) { () -> Void in }
@@ -447,21 +465,37 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
     func refreshGameLibraryAction() {
         tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
-        let alert = UIAlertController(title: "Refresh Game Library?", message: "Attempt to reload the artwork and title information for your entire library. This can be a slow process, especially for large libraries. Only do this if you really, really want to try and get more artwork or update the information.\n\n You will need to completely relaunch the App to start the library rebuild process.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (_: UIAlertAction) -> Void in
+        let alert = UIAlertController(title: "Refresh Game Library?",
+                                      message: """
+Attempt to reload the artwork and title information for your entire library. This can be a slow process, especially for large libraries. Only do this if you really, really want to try and get more artwork or update the information.
+
+You will need to completely relaunch the App to start the library rebuild process.
+""",
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Yes",
+                                      style: .default,
+                                      handler: { (_: UIAlertAction) -> Void in
             NotificationCenter.default.post(name: NSNotification.Name.PVRefreshLibrary, object: nil)
         }))
-        alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "No",
+                                      style: .cancel,
+                                      handler: nil))
         present(alert, animated: true) { () -> Void in }
     }
-
+    
     func emptyImageCacheAction() {
         tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
-        let alert = UIAlertController(title: NSLocalizedString("Empty Image Cache?", comment: ""), message: "Empty the image cache to free up disk space. Images will be redownloaded on demand.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Yes", comment: ""), style: .default, handler: { (_: UIAlertAction) -> Void in
+        let alert = UIAlertController(title: NSLocalizedString("Empty Image Cache?", comment: ""),
+                                      message: "Empty the image cache to free up disk space. Images will be redownloaded on demand.",
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Yes", comment: ""),
+                                      style: .default,
+                                      handler: { (_: UIAlertAction) -> Void in
             try? PVMediaCache.empty()
         }))
-        alert.addAction(UIAlertAction(title: NSLocalizedString("No", comment: ""), style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("No", comment: ""),
+                                      style: .cancel,
+                                      handler: nil))
         present(alert, animated: true) { () -> Void in }
     }
 

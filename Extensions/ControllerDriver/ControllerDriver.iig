@@ -1,0 +1,22 @@
+//
+//  ControllerDriver.iig
+//  ControllerDriver
+//
+//  Created by Joseph Mattiello on 11/12/22.
+//  Copyright © 2022 Provenance Emu. All rights reserved.
+//
+
+#ifndef ControllerDriver_h
+#define ControllerDriver_h
+
+#include <Availability.h>
+#include <DriverKit/IOService.iig>
+
+class ControllerDriver: public IOService
+{
+public:
+    virtual kern_return_t
+    Start(IOService * provider) override;
+};
+
+#endif /* ControllerDriver_h */

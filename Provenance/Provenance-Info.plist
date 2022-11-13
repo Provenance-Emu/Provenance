@@ -98,11 +98,11 @@
 		</dict>
 		<dict>
 			<key>ProfileName</key>
-			<string>MicroGamepad</string>
+			<string>DirectionalGamepad</string>
 		</dict>
 		<dict>
 			<key>ProfileName</key>
-			<string>DirectionalGamepad</string>
+			<string>MicroGamepad</string>
 		</dict>
 	</array>
 	<key>GCSupportsControllerUserInteraction</key>
@@ -129,7 +129,49 @@
 		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
+			<key>127.0.0.1</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+			<key>gamefaqs.gamespot.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+			<key>gamespot.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+			<key>github.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
 			<key>localhost</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+			<key>provenance-emu.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+			<key>wiki.provenance-emu.com</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
 				<true/>
@@ -166,8 +208,8 @@
 	</dict>
 	<key>NSUserActivityTypes</key>
 	<array>
-		<string>org.provenance-emu.webserver</string>
 		<string>org.provenance-emu.game.play</string>
+		<string>org.provenance-emu.webserver</string>
 	</array>
 	<key>Revision</key>
 	<string>78dc628</string>
@@ -178,6 +220,7 @@
 		<string>external-accessory</string>
 		<string>fetch</string>
 		<string>location</string>
+		<string>nearby-interaction</string>
 		<string>processing</string>
 		<string>remote-notification</string>
 	</array>

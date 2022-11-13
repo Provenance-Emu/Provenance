@@ -6,7 +6,16 @@
 //  Copyright © 2022 Provenance Emu. All rights reserved.
 //
 
-import Foundation
+import CocoaLumberjackSwift
+import CoreSpotlight
+import PVLibrary
+import PVSupport
+import RealmSwift
+import RxSwift
+#if !targetEnvironment(macCatalyst) && !os(macOS) // && canImport(SteamController)
+import SteamController
+import UIKit
+#endif
 
 public enum AppURLKeys: String, Codable {
     case open
@@ -21,6 +30,24 @@ public enum AppURLKeys: String, Codable {
         case lastQuickSave
         case lastAnySave
         case lastManualSave
+    }
+}
+
+extension Array<URLQueryItem> {
+    subscript(key: String) -> String? {
+        get {
+            return first(where: {$0.name == key})?.value
+        }
+        set(newValue) {
+            
+            if let newValue = newValue {
+                removeAll(where: {$0.name == key})
+                let newItem = URLQueryItem(name: key, value: newValue)
+                append(newItem)
+            } else {
+                removeAll(where: {$0.name == key})
+            }
+        }
     }
 }
 
@@ -65,7 +92,7 @@ extension PVAppDelegate {
             let sendingAppID = options[.sourceApplication]
             ILOG("App with id <\(sendingAppID ?? "nil")> requested to open url \(url.absoluteString)")
 
-            guard let action = AppURLKeys(rawValue: components.host) else {
+            guard let action = AppURLKeys(rawValue: components.host ?? "") else {
                 ELOG("Invalid host/action: \(components.host ?? "nil")")
                 return false
             }
@@ -86,7 +113,7 @@ extension PVAppDelegate {
                 let systemItem = queryItems["system"]
                 let nameItem = queryItems["title"]
                 
-                let saves = RomDatabase.sharedInstance.all(PVSave.self)
+                let saves = RomDatabase.sharedInstance.all(PVSaveState.self)
                 var filter: String
                 switch action {
                 case .lastAnySave:
@@ -118,18 +145,18 @@ extension PVAppDelegate {
                 let systemItem = queryItems["system"]
                 let nameItem = queryItems["title"]
                 
-                if let md5QueryItem = md5QueryItem,
-                   let value = md5QueryItem.value,
-                   !value.isEmpty,
+                if let value = md5QueryItem, !value.isEmpty,
                    let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: value)) as PVGame??) {
                     // Match by md5
                     ILOG("Open by md5 \(value)")
                     shortcutItemGame = matchedGame
                     return true
-                } else if let gameName = nameItem?.value, !gameName.isEmpty {
-                    if let systemItem = systemItem {
+                } else if let gameName = nameItem, !gameName.isEmpty {
+                    if let value = systemItem {
                         // MAtch by name and system
-                        if let value = systemItem.value, !value.isEmpty, let systemMaybe = ((try? Realm().object(ofType: PVSystem.self, forPrimaryKey: value)) as PVSystem??), let matchedSystem = systemMaybe {
+                        if !value.isEmpty,
+                           let systemMaybe = ((try? Realm().object(ofType: PVSystem.self, forPrimaryKey: value)) as PVSystem??),
+                           let matchedSystem = systemMaybe {
                             if let matchedGame = RomDatabase.sharedInstance.all(PVGame.self).filter("systemIdentifier == %@ AND title == %@", matchedSystem.identifier, gameName).first {
                                 ILOG("Open by system \(value), name: \(gameName)")
                                 shortcutItemGame = matchedGame
@@ -139,7 +166,7 @@ extension PVAppDelegate {
                                 return false
                             }
                         } else {
-                            ELOG("Invalid system id \(systemItem.value ?? "nil")")
+                            ELOG("Invalid system id \(systemItem ?? "nil")")
                             return false
                         }
                     } else {

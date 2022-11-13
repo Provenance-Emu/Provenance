@@ -9,6 +9,7 @@
 #import "PVGLViewController.h"
 @import PVSupport;
 @import QuartzCore;
+@import ReplayKit;
 #import "Provenance-Swift.h"
 
 #ifndef USE_EFFECT

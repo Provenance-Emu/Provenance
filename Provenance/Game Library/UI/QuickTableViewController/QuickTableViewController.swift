@@ -217,19 +217,16 @@ open class QuickTableViewController: UIViewController, UITableViewDataSource, UI
 }
 
 #if os(iOS)
+// MARK: - SwitchCellDelegate
 extension QuickTableViewController: SwitchCellDelegate {
-
-  // MARK: - SwitchCellDelegate
-
-  open func switchCell(_ cell: SwitchCell, didToggleSwitch isOn: Bool) {
-    guard
-      let indexPath = tableView.indexPath(for: cell),
-      let row = tableContents[indexPath.section].rows[indexPath.row] as? SwitchRowCompatible
-    else {
-      return
+    public func switchCell(_ cell: SwitchCell, didToggleSwitch isOn: Bool) {
+        guard
+            let indexPath = tableView.indexPath(for: cell),
+            let row = tableContents[indexPath.section].rows[indexPath.row] as? SwitchRowCompatible
+        else {
+            return
+        }
+        row.switchValue = isOn
     }
-    row.switchValue = isOn
-  }
-
 }
 #endif

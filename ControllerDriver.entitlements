@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>com.apple.developer.driverkit.family.hid.device</key>
+	<true/>
+	<key>com.apple.developer.driverkit.family.serial</key>
+	<true/>
+	<key>com.apple.developer.driverkit.transport.usb</key>
+	<array>
+		<dict/>
+	</array>
+</dict>
+</plist>
