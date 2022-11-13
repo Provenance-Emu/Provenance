@@ -893,11 +893,19 @@ public extension GameImporter {
         }
 
         guard let results = resultsMaybe, !results.isEmpty else {
-            DLOG("Unable to find ROM \(game.romPath) in DB")
-            try? database.writeTransaction {
-                game.requiresSync = false
+            // the file maybe exists but was wiped from DB,
+            // try to re-import and rescan if can
+            let urls = importFiles(atPaths: [game.url])
+            if !urls.isEmpty {
+                lookupInfo(for: game, overwrite: overwrite)
+                return
+            } else {
+                DLOG("Unable to find ROM \(game.romPath) in DB")
+                try? database.writeTransaction {
+                    game.requiresSync = false
+                }
+                return
             }
-            return
         }
 
         var chosenResultMaybe: [String: Any]? =
@@ -922,7 +930,7 @@ public extension GameImporter {
         }
 
         guard let chosenResult = chosenResultMaybe else {
-            DLOG("Unable to find ROM \(game.romPath) in DB")
+            DLOG("Unable to find ROM \(game.romPath) in OpenVGDB")
             return
         }
 

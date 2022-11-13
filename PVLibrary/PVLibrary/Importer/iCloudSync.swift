@@ -296,9 +296,16 @@ public final class iCloudSync {
             legacySubDirs?.forEach {
                 do {
                     let destinationURL = PVEmulatorConfiguration.Paths.saveSavesPath.appendingPathComponent($0.lastPathComponent, isDirectory: true)
-                    try fm.setUbiquitous(true,
-                                         itemAt: $0,
-                                         destinationURL: destinationURL)
+                    if !fm.isUbiquitousItem(at: destinationURL) {
+                        try fm.setUbiquitous(true,
+                                             itemAt: $0,
+                                             destinationURL: destinationURL)
+                    } else {
+//                        var resultURL: NSURL?
+//                        try fm.replaceItem(at: destinationURL, withItemAt: $0, backupItemName: nil, resultingItemURL: &resultURL)
+//                        try fm.evictUbiquitousItem(at: destinationURL)
+                        try fm.startDownloadingUbiquitousItem(at: destinationURL)
+                    }
                 } catch {
                     ELOG("Error: \(error)")
                 }

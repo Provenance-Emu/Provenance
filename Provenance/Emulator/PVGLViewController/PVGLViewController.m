@@ -478,7 +478,7 @@ PV_OBJC_DIRECT_MEMBERS
     if ( shaderPath == NULL )
     {
         if(inError) {
-            *inError = [NSError errorWithDomain:@"com.provenance.core"
+            *inError = [NSError errorWithDomain:@"org.provenance.core"
                                            code:-1
                                        userInfo:@{NSLocalizedDescriptionKey : @"shaderPath is null"}];
         }
@@ -494,7 +494,7 @@ PV_OBJC_DIRECT_MEMBERS
     {
         ELOG(@"Nil shaderSource: %@ %@", shaderPath, error.localizedDescription);
         if(inError) {
-            *inError = [NSError errorWithDomain:@"com.provenance.core" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"shaderSource is null"}];
+            *inError = [NSError errorWithDomain:@"org.provenance.core" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"shaderSource is null"}];
         }
         return 0;
     }
@@ -504,7 +504,7 @@ PV_OBJC_DIRECT_MEMBERS
     {
         ELOG(@"Nil shaderSourceCString");
         if(inError) {
-            *inError = [NSError errorWithDomain:@"com.provenance.core" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"shaderSourceCString is null"}];
+            *inError = [NSError errorWithDomain:@"org.provenance.core" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"shaderSourceCString is null"}];
         }
         return 0;
     }
@@ -514,7 +514,7 @@ PV_OBJC_DIRECT_MEMBERS
     {
         ELOG(@"Nil shader");
         if(inError) {
-            *inError = [NSError errorWithDomain:@"com.provenance.core" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"shader is null"}];
+            *inError = [NSError errorWithDomain:@"org.provenance.core" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"shader is null"}];
         }
         return 0;
     }
@@ -535,7 +535,7 @@ PV_OBJC_DIRECT_MEMBERS
             NSString *log = [NSString stringWithCString:infoLog encoding:NSUTF8StringEncoding];
             ELOG(@"Error compiling shader: %@", log );
             if(inError) {
-                *inError = [NSError errorWithDomain:@"com.provenance.core" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"Error compiling shader" , NSLocalizedFailureReasonErrorKey:log}];
+                *inError = [NSError errorWithDomain:@"org.provenance.core" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"Error compiling shader" , NSLocalizedFailureReasonErrorKey:log}];
             }
             free( infoLog );
         }
