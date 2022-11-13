@@ -372,7 +372,8 @@ static void *dlopen_myself()
     BOOL (^LoadPlugin)(m64p_plugin_type, NSString *) = ^(m64p_plugin_type pluginType, NSString *pluginName){
         m64p_dynlib_handle rsp_handle;
         NSString *frameworkPath = [NSString stringWithFormat:@"%@.framework/%@", pluginName,pluginName];
-        NSString *rspPath = [[[NSBundle mainBundle] privateFrameworksPath] stringByAppendingPathComponent:frameworkPath];
+        NSBundle *frameworkBundle = [NSBundle bundleWithIdentifier:@"org.provenance-emu.Cores"];
+        NSString *rspPath = [frameworkBundle.privateFrameworksPath stringByAppendingPathComponent:frameworkPath];
         
         rsp_handle = dlopen([rspPath fileSystemRepresentation], RTLD_LAZY | RTLD_LOCAL);
         ptr_PluginStartup rsp_start = osal_dynlib_getproc(rsp_handle, "PluginStartup");
