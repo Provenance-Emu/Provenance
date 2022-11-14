@@ -370,7 +370,9 @@ final class TVAlertController: UIViewController, UIAlertControllerProtocol {
         btn.setGrowDelta(_inset * 0.25, for: .selected)
 
         let h = font.lineHeight * 1.5
-        btn.addConstraint(NSLayoutConstraint(item:btn, attribute:.height, relatedBy:.equal, toItem:nil, attribute:.notAnAttribute, multiplier:1.0, constant:h))
+        let constraint = NSLayoutConstraint(item:btn, attribute:.height, relatedBy:.equal, toItem:nil, attribute:.notAnAttribute, multiplier:1.0, constant:h)
+        constraint.priority = .defaultHigh
+        btn.addConstraint(constraint)
         btn.layer.cornerRadius = h/4
 
         btn.addTarget(self, action: #selector(buttonPress(_:)), for: .primaryActionTriggered)
