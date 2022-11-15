@@ -195,6 +195,9 @@ final class TVAlertController: UIViewController, UIAlertControllerProtocol {
 
         let menu = UIView()
         menu.addSubview(stack)
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.centerXAnchor.constraint(equalTo:menu.centerXAnchor).isActive = true
+        stack.centerYAnchor.constraint(equalTo:menu.centerYAnchor).isActive = true
         view.addSubview(menu)
 
         menu.layer.cornerRadius = _inset
@@ -370,9 +373,7 @@ final class TVAlertController: UIViewController, UIAlertControllerProtocol {
         btn.setGrowDelta(_inset * 0.25, for: .selected)
 
         let h = font.lineHeight * 1.5
-        let constraint = NSLayoutConstraint(item:btn, attribute:.height, relatedBy:.equal, toItem:nil, attribute:.notAnAttribute, multiplier:1.0, constant:h)
-        constraint.priority = .defaultHigh
-        btn.addConstraint(constraint)
+        btn.addConstraint(NSLayoutConstraint(item:btn, attribute:.height, relatedBy:.equal, toItem:nil, attribute:.notAnAttribute, multiplier:1.0, constant:h))
         btn.layer.cornerRadius = h/4
 
         btn.addTarget(self, action: #selector(buttonPress(_:)), for: .primaryActionTriggered)
