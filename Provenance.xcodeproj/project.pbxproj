@@ -543,6 +543,8 @@
 		B394C98B20609E180014A65D /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = B394C98920609E180014A65D /* UIColor+Hex.swift */; };
 		B3976927285A020800558958 /* PVDOSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3976926285A020800558958 /* PVDOSControllerViewController.swift */; };
 		B3976928285A020800558958 /* PVDOSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3976926285A020800558958 /* PVDOSControllerViewController.swift */; };
+		B3980D812923975500A82429 /* PVPCSXRearmed.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3980D802923975500A82429 /* PVPCSXRearmed.framework */; };
+		B3980D822923975500A82429 /* PVPCSXRearmed.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3980D802923975500A82429 /* PVPCSXRearmed.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B398800D27A521AC004DEFCA /* ConflictsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B398800C27A521AC004DEFCA /* ConflictsController.swift */; };
 		B398800E27A521AC004DEFCA /* ConflictsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B398800C27A521AC004DEFCA /* ConflictsController.swift */; };
 		B39AF05F28754EB8004882FC /* PVAppDelegate+VolumeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39AF05E28754EB8004882FC /* PVAppDelegate+VolumeButton.swift */; };
@@ -1043,6 +1045,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				B3980D822923975500A82429 /* PVPCSXRearmed.framework in Embed Frameworks */,
 				B380C26E2894EC2F007B76FD /* PVVecX.framework in Embed Frameworks */,
 				B39E12A92892600500016387 /* PVLibRetro.framework in Embed Frameworks */,
 				B3C8A6F3287823DC0037A946 /* PVfMSX.framework in Embed Frameworks */,
@@ -1593,6 +1596,7 @@
 		B3976926285A020800558958 /* PVDOSControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVDOSControllerViewController.swift; sourceTree = "<group>"; };
 		B397692C285A089200558958 /* PVDosBox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDosBox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3977533219AB53F00E16AD5 /* Provenance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Provenance.entitlements; path = Provenance/Provenance.entitlements; sourceTree = SOURCE_ROOT; };
+		B3980D802923975500A82429 /* PVPCSXRearmed.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPCSXRearmed.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B398800C27A521AC004DEFCA /* ConflictsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConflictsController.swift; sourceTree = "<group>"; };
 		B399119126C0F41300E54426 /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
 		B399119226C0F41300E54426 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -1994,6 +1998,7 @@
 				B30F13F828967291004D40BF /* PVMu.framework in Frameworks */,
 				B3C8A6F4287823DC0037A946 /* PVEP128Emu.framework in Frameworks */,
 				B30F1426289674B1004D40BF /* PVGearcoleco.framework in Frameworks */,
+				B3980D812923975500A82429 /* PVPCSXRearmed.framework in Frameworks */,
 				B3C8A6D02878238C0037A946 /* libstdc++.dylib in Frameworks */,
 				B3C8A6D52878238C0037A946 /* libsqlite3.dylib in Frameworks */,
 				B3D3E75F2894DEAB0016EB85 /* PVGME.framework in Frameworks */,
@@ -2204,6 +2209,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3980D802923975500A82429 /* PVPCSXRearmed.framework */,
 				B30F1C39289677DC004D40BF /* PVO2EM.framework */,
 				B30F1C36289677CA004D40BF /* PVO2EM.framework */,
 				B30F1428289674CA004D40BF /* PVGearcoleco.framework */,

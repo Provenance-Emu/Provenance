@@ -54,11 +54,7 @@
 		B38E0F0028928AB3004720DA /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA13E2872967500EAEB37 /* main.c */; };
 		B38E0F0328928AD8004720DA /* plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1522872967500EAEB37 /* plugin.c */; };
 		B38E0F0428928AD8004720DA /* plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1522872967500EAEB37 /* plugin.c */; };
-		B38E0F0628928CC8004720DA /* debug.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA17C2872967500EAEB37 /* debug.c */; };
-		B38E0F0728928CC8004720DA /* debug.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA17C2872967500EAEB37 /* debug.c */; };
 		B38E0F0928928D3D004720DA /* emu_if.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA18E2872967500EAEB37 /* emu_if.c */; };
-		B38E0F0E28928E5F004720DA /* gpuPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1C42872967500EAEB37 /* gpuPlugin.m */; };
-		B38E0F0F28928E61004720DA /* gpuPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1C42872967500EAEB37 /* gpuPlugin.m */; };
 		B38E0F1328929345004720DA /* emu_if.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA18E2872967500EAEB37 /* emu_if.c */; };
 		B3918FE82873EF6B000838F6 /* gte.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA19E2872967500EAEB37 /* gte.c */; };
 		B3918FE92873EF6B000838F6 /* ppf.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1AA2872967500EAEB37 /* ppf.c */; };
@@ -126,8 +122,6 @@
 		B391904B2873F0B0000838F6 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA2342872967600EAEB37 /* Makefile */; };
 		B391904C2873F0B0000838F6 /* nullsnd.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA2172872967600EAEB37 /* nullsnd.c */; };
 		B391904D2873F0B0000838F6 /* freeze.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA2162872967600EAEB37 /* freeze.c */; };
-		B391904E2873F134000838F6 /* gpulib_thread_if.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1DF2872967500EAEB37 /* gpulib_thread_if.c */; };
-		B391904F2873F134000838F6 /* gpulib_thread_if.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1DF2872967500EAEB37 /* gpulib_thread_if.c */; };
 		B39190522873F1A7000838F6 /* Lzma86Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3D42872967700EAEB37 /* Lzma86Dec.c */; };
 		B39190532873F1A7000838F6 /* Alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3D12872967700EAEB37 /* Alloc.c */; };
 		B39190542873F1A7000838F6 /* LzFind.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA3CE2872967700EAEB37 /* LzFind.c */; };
@@ -164,6 +158,11 @@
 		B39190792873F292000838F6 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA12B2872967500EAEB37 /* libretro.c */; };
 		B39768F82859E23200558958 /* libpcsx_rearmed-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libpcsx_rearmed-libretro.a */; };
 		B39768FB2859E23A00558958 /* libpcsx_rearmed-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B39768F72859E18B00558958 /* libpcsx_rearmed-libretro.a */; };
+		B3980D7229238C3500A82429 /* libgpulib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3980D5E29238A2000A82429 /* libgpulib.a */; };
+		B3980D7729238D9F00A82429 /* gpuFps.m in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1C22872967500EAEB37 /* gpuFps.m */; };
+		B3980D7A2923908900A82429 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3980D792923908700A82429 /* OpenGL.framework */; platformFilter = maccatalyst; };
+		B3980D7C2923922200A82429 /* cdrcimg.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1E22872967500EAEB37 /* cdrcimg.c */; };
+		B3980D7E2923937400A82429 /* gpuPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1C42872967500EAEB37 /* gpuPlugin.m */; };
 		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
 		B3A41BF0286E76490054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */; };
 		B3B104AF218F26F400210C39 /* libpcsx_rearmed.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3447F91218BEE3F00557ACE /* libpcsx_rearmed.a */; };
@@ -227,6 +226,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3980D5C29238A2000A82429 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -255,6 +263,8 @@
 		B39769132859E3A300558958 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39769172859E3AD00558958 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B39769182859E3AD00558958 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		B3980D5E29238A2000A82429 /* libgpulib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libgpulib.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3980D792923908700A82429 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
 		B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B104B8218F281B00210C39 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -393,7 +403,7 @@
 		B3EBA1B22872967500EAEB37 /* configure */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = configure; sourceTree = "<group>"; };
 		B3EBA1B32872967500EAEB37 /* ChangeLog */ = {isa = PBXFileReference; lastKnownFileType = text; path = ChangeLog; sourceTree = "<group>"; };
 		B3EBA1B42872967500EAEB37 /* AUTHORS */ = {isa = PBXFileReference; lastKnownFileType = text; path = AUTHORS; sourceTree = "<group>"; };
-		B3EBA1B72872967500EAEB37 /* gpuDraw.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = gpuDraw.m; sourceTree = "<group>"; };
+		B3EBA1B72872967500EAEB37 /* gpuDraw.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gpuDraw.c; sourceTree = "<group>"; };
 		B3EBA1B82872967500EAEB37 /* gpuTexture.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gpuTexture.c; sourceTree = "<group>"; };
 		B3EBA1B92872967500EAEB37 /* gpuPrim.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gpuPrim.c; sourceTree = "<group>"; };
 		B3EBA1BA2872967500EAEB37 /* gpulib_if.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gpulib_if.c; sourceTree = "<group>"; };
@@ -404,7 +414,7 @@
 		B3EBA1BF2872967500EAEB37 /* gpuTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gpuTexture.h; sourceTree = "<group>"; };
 		B3EBA1C02872967500EAEB37 /* gpuDraw.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gpuDraw.h; sourceTree = "<group>"; };
 		B3EBA1C12872967500EAEB37 /* gpuPrim.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gpuPrim.h; sourceTree = "<group>"; };
-		B3EBA1C22872967500EAEB37 /* gpuFps.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gpuFps.c; sourceTree = "<group>"; };
+		B3EBA1C22872967500EAEB37 /* gpuFps.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = gpuFps.m; sourceTree = "<group>"; };
 		B3EBA1C32872967500EAEB37 /* hud.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = hud.c; sourceTree = "<group>"; };
 		B3EBA1C42872967500EAEB37 /* gpuPlugin.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = gpuPlugin.m; sourceTree = "<group>"; };
 		B3EBA1C52872967500EAEB37 /* gpuExternals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gpuExternals.h; sourceTree = "<group>"; };
@@ -995,10 +1005,19 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3980D5B29238A2000A82429 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3C7620C20783162009950E4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3980D7A2923908900A82429 /* OpenGL.framework in Frameworks */,
+				B3980D7229238C3500A82429 /* libgpulib.a in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
@@ -1060,6 +1079,7 @@
 				B3447F91218BEE3F00557ACE /* libpcsx_rearmed.a */,
 				B3344BC32859E088006E6B3A /* libpcsx_rearmed-libretro.a */,
 				B39768F72859E18B00558958 /* libpcsx_rearmed-libretro.a */,
+				B3980D5E29238A2000A82429 /* libgpulib.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1067,6 +1087,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3980D792923908700A82429 /* OpenGL.framework */,
 				B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */,
 				B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */,
 				B39769172859E3AD00558958 /* CoreFoundation.framework */,
@@ -1351,15 +1372,15 @@
 		B3EBA1B52872967500EAEB37 /* plugins */ = {
 			isa = PBXGroup;
 			children = (
-				B3EBA1B62872967500EAEB37 /* gpu-gles */,
-				B3EBA1C62872967500EAEB37 /* dfxvideo */,
-				B3EBA1D02872967500EAEB37 /* dfinput */,
-				B3EBA1D62872967500EAEB37 /* gpulib */,
 				B3EBA1E12872967500EAEB37 /* cdrcimg */,
-				B3EBA1E42872967500EAEB37 /* spunull */,
-				B3EBA1E92872967600EAEB37 /* gpu_neon */,
+				B3EBA1D02872967500EAEB37 /* dfinput */,
 				B3EBA1FB2872967600EAEB37 /* dfsound */,
+				B3EBA1C62872967500EAEB37 /* dfxvideo */,
+				B3EBA1E92872967600EAEB37 /* gpu_neon */,
 				B3EBA2192872967600EAEB37 /* gpu_unai */,
+				B3EBA1B62872967500EAEB37 /* gpu-gles */,
+				B3EBA1D62872967500EAEB37 /* gpulib */,
+				B3EBA1E42872967500EAEB37 /* spunull */,
 			);
 			path = plugins;
 			sourceTree = "<group>";
@@ -1368,8 +1389,8 @@
 			isa = PBXGroup;
 			children = (
 				B3EBA1BC2872967500EAEB37 /* Makefile */,
-				B3EBA1B72872967500EAEB37 /* gpuDraw.m */,
-				B3EBA1C22872967500EAEB37 /* gpuFps.c */,
+				B3EBA1B72872967500EAEB37 /* gpuDraw.c */,
+				B3EBA1C22872967500EAEB37 /* gpuFps.m */,
 				B3EBA1BA2872967500EAEB37 /* gpulib_if.c */,
 				B3EBA1B92872967500EAEB37 /* gpuPrim.c */,
 				B3EBA1B82872967500EAEB37 /* gpuTexture.c */,
@@ -1417,16 +1438,16 @@
 		B3EBA1D62872967500EAEB37 /* gpulib */ = {
 			isa = PBXGroup;
 			children = (
-				B3EBA1D72872967500EAEB37 /* gpu.c */,
-				B3EBA1D82872967500EAEB37 /* Makefile.test */,
 				B3EBA1D92872967500EAEB37 /* Makefile */,
-				B3EBA1DA2872967500EAEB37 /* gpulib.mak */,
-				B3EBA1DB2872967500EAEB37 /* gpulib_thread_if.h */,
-				B3EBA1DC2872967500EAEB37 /* gpu.h */,
+				B3EBA1D72872967500EAEB37 /* gpu.c */,
+				B3EBA1DF2872967500EAEB37 /* gpulib_thread_if.c */,
 				B3EBA1DD2872967500EAEB37 /* test.c */,
 				B3EBA1DE2872967500EAEB37 /* vout_pl.c */,
-				B3EBA1DF2872967500EAEB37 /* gpulib_thread_if.c */,
 				B3EBA1E02872967500EAEB37 /* vout_sdl.c */,
+				B3EBA1DC2872967500EAEB37 /* gpu.h */,
+				B3EBA1DB2872967500EAEB37 /* gpulib_thread_if.h */,
+				B3EBA1DA2872967500EAEB37 /* gpulib.mak */,
+				B3EBA1D82872967500EAEB37 /* Makefile.test */,
 			);
 			path = gpulib;
 			sourceTree = "<group>";
@@ -2507,6 +2528,23 @@
 			productReference = B39768F72859E18B00558958 /* libpcsx_rearmed-libretro.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		B3980D5D29238A2000A82429 /* gpulib */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3980D6429238A2000A82429 /* Build configuration list for PBXNativeTarget "gpulib" */;
+			buildPhases = (
+				B3980D5A29238A2000A82429 /* Sources */,
+				B3980D5B29238A2000A82429 /* Frameworks */,
+				B3980D5C29238A2000A82429 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = gpulib;
+			productName = gpulib;
+			productReference = B3980D5E29238A2000A82429 /* libgpulib.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		B3C7620F20783162009950E4 /* PVPCSXRearmed-iOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVPCSXRearmed-iOS" */;
@@ -2540,6 +2578,9 @@
 					B30178D2207C901D0051B93D = {
 						CreatedOnToolsVersion = 9.3;
 						ProvisioningStyle = Automatic;
+					};
+					B3980D5D29238A2000A82429 = {
+						CreatedOnToolsVersion = 14.1;
 					};
 					B3C7620F20783162009950E4 = {
 						CreatedOnToolsVersion = 9.3;
@@ -2576,6 +2617,7 @@
 				B39768ED2859E18B00558958 /* pcsx_rearmed-libretro-tvOS */,
 				B30178D2207C901D0051B93D /* pcsx_rearmed-iOS */,
 				B3447EE8218BEE3F00557ACE /* pcsx_rearmed-tvOS */,
+				B3980D5D29238A2000A82429 /* gpulib */,
 			);
 		};
 /* End PBXProject section */
@@ -2615,7 +2657,6 @@
 				B3918FFF2873EF6B000838F6 /* spu.c in Sources */,
 				B39190412873F0AF000838F6 /* nullsnd.c in Sources */,
 				B391905B2873F1A7000838F6 /* Bra86.c in Sources */,
-				B38E0F0628928CC8004720DA /* debug.c in Sources */,
 				B39190552873F1A7000838F6 /* BraIA64.c in Sources */,
 				B39190682873F1C0000838F6 /* libchdr_huffman.c in Sources */,
 				B391903E2873F0AF000838F6 /* spu.c in Sources */,
@@ -2634,7 +2675,6 @@
 				B39190542873F1A7000838F6 /* LzFind.c in Sources */,
 				B39190742873F219000838F6 /* cspace.c in Sources */,
 				B3918FEE2873EF6B000838F6 /* gte_nf.c in Sources */,
-				B391904E2873F134000838F6 /* gpulib_thread_if.c in Sources */,
 				B3918FEF2873EF6B000838F6 /* psxmem.c in Sources */,
 				B39190582873F1A7000838F6 /* LzmaDec.c in Sources */,
 				B3918FEB2873EF6B000838F6 /* sio.c in Sources */,
@@ -2683,7 +2723,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B37022C72872553D00B3F6DA /* PVPCSXRearmedCore.mm in Sources */,
-				B38E0F0F28928E61004720DA /* gpuPlugin.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2720,7 +2759,6 @@
 				B391905E2873F1A7000838F6 /* LzFind.c in Sources */,
 				B39190752873F219000838F6 /* cspace.c in Sources */,
 				B39190092873EF6B000838F6 /* gte_nf.c in Sources */,
-				B391904F2873F134000838F6 /* gpulib_thread_if.c in Sources */,
 				B391900A2873EF6B000838F6 /* psxmem.c in Sources */,
 				B39190622873F1A7000838F6 /* LzmaDec.c in Sources */,
 				B391904B2873F0B0000838F6 /* Makefile in Sources */,
@@ -2731,7 +2769,6 @@
 				B391906F2873F1C1000838F6 /* libchdr_cdrom.c in Sources */,
 				B39190612873F1A7000838F6 /* Delta.c in Sources */,
 				B39190472873F0B0000838F6 /* registers.c in Sources */,
-				B38E0F0728928CC8004720DA /* debug.c in Sources */,
 				B39190162873EF6B000838F6 /* psxbios.c in Sources */,
 				B39190602873F1A7000838F6 /* CpuArch.c in Sources */,
 				B391900B2873EF6B000838F6 /* cdrom.c in Sources */,
@@ -2767,12 +2804,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3980D5A29238A2000A82429 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3980D7E2923937400A82429 /* gpuPlugin.m in Sources */,
+				B3980D7729238D9F00A82429 /* gpuFps.m in Sources */,
+				B3980D7C2923922200A82429 /* cdrcimg.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3C7620B20783162009950E4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				B37022C82872553E00B3F6DA /* PVPCSXRearmedCore.mm in Sources */,
-				B38E0F0E28928E5F004720DA /* gpuPlugin.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3275,6 +3321,59 @@
 			};
 			name = Archive;
 		};
+		B3980D6529238A2000A82429 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B3980D6629238A2000A82429 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B3980D6729238A2000A82429 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Archive;
+		};
 		B3C7621620783162009950E4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
@@ -3546,6 +3645,16 @@
 				B39768F42859E18B00558958 /* Debug */,
 				B39768F52859E18B00558958 /* Release */,
 				B39768F62859E18B00558958 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3980D6429238A2000A82429 /* Build configuration list for PBXNativeTarget "gpulib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3980D6529238A2000A82429 /* Debug */,
+				B3980D6629238A2000A82429 /* Release */,
+				B3980D6729238A2000A82429 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

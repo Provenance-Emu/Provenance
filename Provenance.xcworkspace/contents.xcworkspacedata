@@ -20,9 +20,6 @@
          location = "container:"
          name = "Broken">
          <FileRef
-            location = "group:Cores/O2EM/PVO2EM.xcodeproj">
-         </FileRef>
-         <FileRef
             location = "group:Cores/4DO/PV4DO.xcodeproj">
          </FileRef>
          <FileRef
@@ -41,6 +38,9 @@
             location = "group:Cores/O2EM/PVO2EM.xcodeproj">
          </FileRef>
          <FileRef
+            location = "group:Cores/O2EM/PVO2EM.xcodeproj">
+         </FileRef>
+         <FileRef
             location = "group:Cores/Play/PVPlayCore.xcodeproj">
          </FileRef>
          <FileRef
@@ -53,9 +53,6 @@
             location = "group:Cores/snesticle/PVSnesticle.xcodeproj">
          </FileRef>
       </Group>
-      <FileRef
-         location = "group:Cores/4DO/PV4DO.xcodeproj">
-      </FileRef>
       <FileRef
          location = "group:Cores/Atari800/PVAtari800.xcodeproj">
       </FileRef>
@@ -136,9 +133,6 @@
             location = "group:Cores/Mupen64Plus-NX/PVMupen64Plus-NX.xcodeproj">
          </FileRef>
          <FileRef
-            location = "group:Cores/pcsx_rearmed/PVPCSXRearmed.xcodeproj">
-         </FileRef>
-         <FileRef
             location = "group:Cores/SameDuck/PVSameDuck.xcodeproj">
          </FileRef>
          <FileRef
@@ -174,6 +168,9 @@
       </FileRef>
       <FileRef
          location = "group:Cores/Mini_vMac/PVMiniVMac.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/pcsx_rearmed/PVPCSXRearmed.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/Mu/PVMu.xcodeproj">

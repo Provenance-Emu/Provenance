@@ -15,6 +15,10 @@
 #define GET_CURRENT_AND_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 #define GET_CURRENT_OR_RETURN(...)  __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 
+/*(
+ TODO: Look into THREAD_RENDERING=1
+ */
+
 __attribute__((visibility("default")))
 @interface PVPCSXRearmedCore : PVLibRetroGLESCore <PVPSXSystemResponderClient> {
 //	uint8_t padData[4][PVDOSButtonCount];
