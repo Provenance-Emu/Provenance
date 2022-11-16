@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
+#import <PVLogging/PVLogging.h>
 #import <PVSupport/PVEmulatorCore.h>
 #import <PVSupport/PVSupport-Swift.h>
 #import <UIKit/UIKit.h>
@@ -323,4 +324,4 @@ void apple_direct_input_keyboard_event(bool down,
 #define USE_RETROARCH_CONTROLLER "Use Retro Arch Controller Overlay"
 #define ENABLE_ANALOG_KEY "Enable WASD -> Analog Key Bindings"
 #define RETROARCH_PVOVERLAY "/RetroArch/overlays/pv_ui_overlay/pv_ui.cfg"
-#define RETROARCH_DEFAULT_OVERLAY "/RetroArch/overlays/gamepads/neo-retropad/neo-retropad.cfg"
+#define RETROARCH_DEFAULT_OVERLAY "/RetroArch/overlays/gamepads/neo-retropad/neo-retropad-clear.cfg"

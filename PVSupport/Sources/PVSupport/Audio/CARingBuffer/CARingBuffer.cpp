@@ -300,7 +300,7 @@ CARingBufferError	CARingBuffer::Fetch(AudioBufferList *abl, UInt32 nFrames, Samp
 
 	CARingBufferError err = ClipTimeBounds(startRead, endRead);
 	if (err) {
-        assert("Fetch ClipTimeBounds erred\n");
+        //assert("Fetch ClipTimeBounds erred\n");
 		CALOG("Fetch ClipTimeBounds erred\n");
 		return err;
 	}

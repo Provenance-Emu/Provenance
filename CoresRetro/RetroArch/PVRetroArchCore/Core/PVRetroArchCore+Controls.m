@@ -64,7 +64,7 @@ void apple_gamecontroller_joypad_disconnect(GCController* controller);
         apple_gamecontroller_joypad_connect([notification object]);
         [self refresh_gamecontrollers];
         [self useRetroArchController:self.retroArchControls];
-        ELOG(@"Binding Controls\n");
+        NSLog(@"Binding Controls\n");
     });
 }
 -(void)controllerDisconnected:(NSNotification *)notification {
@@ -153,7 +153,7 @@ void apple_gamecontroller_joypad_disconnect(GCController* controller);
 }
 -(void)setupControllers {
     _current=self;
-    ELOG(@"Setting up Controller Notification Listeners\n");
+    NSLog(@"Setting up Controller Notification Listeners\n");
     [self initControllBuffers];
     [self useRetroArchController:self.retroArchControls];
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -197,7 +197,7 @@ void apple_gamecontroller_joypad_disconnect(GCController* controller);
         {
             controller = self.controller4;
         }
-        ELOG(@"Controller Vendor Name: %s\n",controller.vendorName.UTF8String);
+        NSLog(@"Controller Vendor Name: %s\n",controller.vendorName.UTF8String);
         if (controller.extendedGamepad != nil && ![controller.vendorName containsString:@"Keyboard"])
         {
             controller.extendedGamepad.buttonA.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
@@ -283,7 +283,7 @@ void apple_gamecontroller_joypad_disconnect(GCController* controller);
 
     NSString *original_overlay = [NSString stringWithUTF8String:settings->paths.path_overlay];
     if (flag) {
-        ELOG(@"Option: Use Retro arch controller\n");
+        NSLog(@"Option: Use Retro arch controller\n");
         if ([original_overlay
              containsString:@RETROARCH_PVOVERLAY]) {
             NSString *overlay=@RETROARCH_DEFAULT_OVERLAY;
@@ -295,12 +295,12 @@ void apple_gamecontroller_joypad_disconnect(GCController* controller);
                         new_overlay.UTF8String
                 );
                 should_update=true;
-                ELOG(@"Updating %s to %s\n", original_overlay.UTF8String, new_overlay.UTF8String);
+                NSLog(@"Updating %s to %s\n", original_overlay.UTF8String, new_overlay.UTF8String);
             }
         }
         [[NSNotificationCenter defaultCenter] postNotificationName:@"HideTouchControls" object:nil userInfo:nil];
     } else {
-        ELOG(@"Option: Don't Use Retro arch controller\n");
+        NSLog(@"Option: Don't Use Retro arch controller\n");
         settings_t *settings                     = config_get_ptr();
         NSString *overlay=@RETROARCH_PVOVERLAY;
         NSString *new_overlay =  [overlay stringByReplacingOccurrencesOfString:@"/RetroArch"
@@ -311,12 +311,12 @@ void apple_gamecontroller_joypad_disconnect(GCController* controller);
                     new_overlay.UTF8String
             );
             should_update=true;
-            ELOG(@"Updating %s to %s\n", original_overlay.UTF8String, new_overlay.UTF8String);
+            NSLog(@"Updating %s to %s\n", original_overlay.UTF8String, new_overlay.UTF8String);
         }
         [[NSNotificationCenter defaultCenter] postNotificationName:@"ShowTouchControls" object:nil userInfo:nil];
     }
     if (should_update) {
-        ELOG(@"Option: Updating Overlay\n");
+        NSLog(@"Option: Updating Overlay\n");
         command_event(CMD_EVENT_OVERLAY_INIT, NULL);
     }
 

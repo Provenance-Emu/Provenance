@@ -1,4 +1,4 @@
-# Install script for directory: ../ppsspp/ext/zstd/build/cmake/tests
+# Install script for directory: ../libretro_ppsspp/ext/zstd/build/cmake/tests
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

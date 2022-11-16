@@ -1,4 +1,4 @@
-# Install script for directory: ../ppsspp/ext/glslang/gtests
+# Install script for directory: ../libretro_ppsspp/ext/glslang/gtests
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

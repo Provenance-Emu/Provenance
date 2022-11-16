@@ -1,4 +1,4 @@
-# Install script for directory: ../ppsspp/ext/glslang/External
+# Install script for directory: ../libretro_ppsspp/ext/glslang/External
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

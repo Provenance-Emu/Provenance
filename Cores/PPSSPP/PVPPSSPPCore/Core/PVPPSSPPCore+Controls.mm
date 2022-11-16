@@ -20,7 +20,6 @@
 #include "Common/System/NativeApp.h"
 #include "Common/TimeUtil.h"
 #include "Common/File/VFS/VFS.h"
-#include "Common/File/VFS/AssetReader.h"
 #include "Common/Input/InputState.h"
 #include "Common/Net/Resolve.h"
 #include "Common/UI/Screen.h"
@@ -233,7 +232,7 @@ extern bool _isInitialized;
 		KeyInput key;
 		key.deviceId = DEVICE_ID_PAD_0;
 		key.flags = action == 1 ? KEY_DOWN : KEY_UP;
-		key.keyCode = (keycode_t)button;
+		key.keyCode = (InputKeyCode)button;
 		NativeKey(key);
 	}
 }
@@ -243,8 +242,7 @@ extern bool _isInitialized;
 	if (_isInitialized) {
 		AxisInput axisInput;
 		axisInput.deviceId = DEVICE_ID_PAD_0;
-		axisInput.flags = 0;
-		axisInput.axisId = axis;
+        axisInput.axisId = axis == 0 ? JOYSTICK_AXIS_X : JOYSTICK_AXIS_Y;
 		axisInput.value = value;
 		NativeAxis(axisInput);
 	}

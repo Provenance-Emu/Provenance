@@ -1,4 +1,4 @@
-# Install script for directory: ../ppsspp/ext/udis86
+# Install script for directory: ../libretro_ppsspp/ext/udis86
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

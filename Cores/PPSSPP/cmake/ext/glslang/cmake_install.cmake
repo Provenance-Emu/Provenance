@@ -1,4 +1,4 @@
-# Install script for directory: ../ppsspp/ext/glslang
+# Install script for directory: ../libretro_ppsspp/ext/glslang
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -58,13 +58,32 @@ if(NOT EFFECTIVE_PLATFORM_NAME)
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  # Include the install script for each subdirectory.
+  # Include the install script for the subdirectory.
   include("../cmake/ext/glslang/External/cmake_install.cmake")
-  include("../cmake/ext/glslang/glslang/cmake_install.cmake")
-  include("../cmake/ext/glslang/OGLCompilersDLL/cmake_install.cmake")
-  include("../cmake/ext/glslang/SPIRV/cmake_install.cmake")
-  include("../cmake/ext/glslang/hlsl/cmake_install.cmake")
-  include("../cmake/ext/glslang/gtests/cmake_install.cmake")
+endif()
 
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("../cmake/ext/glslang/glslang/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("../cmake/ext/glslang/OGLCompilersDLL/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("../cmake/ext/glslang/SPIRV/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("../cmake/ext/glslang/hlsl/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("../cmake/ext/glslang/gtests/cmake_install.cmake")
 endif()
 

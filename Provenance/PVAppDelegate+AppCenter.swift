@@ -11,7 +11,7 @@ import Foundation
 #if canImport(AppCenter)
 import AppCenter
 import AppCenterAnalytics
-import AppCenterCrashes
+//import AppCenterCrashes
 import PVSupport
 
 extension PVAppDelegate {
@@ -24,7 +24,7 @@ extension PVAppDelegate {
         AppCenter.configure(withAppSecret: secretKey)
         if AppCenter.isConfigured {
             AppCenter.startService(Analytics.self)
-            AppCenter.startService(Crashes.self)
+            //AppCenter.startService(Crashes.self)
             ILOG("AppCenter initilized.")
         } else {
             ELOG("AppCenter not configured.")
@@ -34,7 +34,7 @@ extension PVAppDelegate {
 #else
 extension PVAppDelegate {
     public func _initAppCenter() {
-        DLOG("App center not supported on this platform")
+        //DLOG("App center not supported on this platform")
     }
 }
 

@@ -42,6 +42,7 @@
 	BOOL isNTSC;
 	BOOL isPaused;
 	BOOL _isInitialized;
+    BOOL isViewReady;
 	UIViewController *m_view_controller;
 	EAGLContext* m_gl_context;
 	CAMetalLayer* m_metal_layer;
@@ -63,10 +64,12 @@
 @property (nonatomic, assign) int8_t msaa;
 @property (nonatomic, assign) bool fastMemory;
 @property (nonatomic, assign) bool isPaused;
+@property (nonatomic, assign) bool isViewReady;
 - (void) runVM;
 - (void) stopVM:(bool)deinitViews;
 - (void) setupVideo;
 - (void) setupView;
+- (void) setupEmulation;
 - (void) refreshScreenSize;
 - (void) startVM:(UIView *)view;
 - (void) setupControllers;

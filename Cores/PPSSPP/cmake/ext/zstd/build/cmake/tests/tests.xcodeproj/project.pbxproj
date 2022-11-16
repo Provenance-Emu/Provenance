@@ -7,21 +7,49 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		9C2FE12D6226493A89B86940 /* install */ = {
+		35E138004C754BA89FCFF9F6 /* ZERO_CHECK */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 9912A7A108584E78ABB1F4CD /* Build configuration list for PBXAggregateTarget "install" */;
+			buildConfigurationList = 0BBC50CF94574E08ACD0D9E6 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildPhases = (
+				AFBBF81AD78602F0BB03A065 /* Generate CMakeFiles/ZERO_CHECK */,
+			);
+			dependencies = (
+			);
+			name = ZERO_CHECK;
+			productName = ZERO_CHECK;
+		};
+		492AF1C578C644C5851A69FB /* install */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 861D5A00A8F045C6841878DC /* Build configuration list for PBXAggregateTarget "install" */;
 			buildPhases = (
 				93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */,
 			);
 			dependencies = (
-				56FF120F8D8544E3B120575E /* PBXTargetDependency */,
+				18988D144E7D40C2A6197422 /* PBXTargetDependency */,
 			);
 			name = install;
 			productName = install;
 		};
-		CC999B7DD8894553A8463837 /* RUN_TESTS */ = {
+		872B88AC16C241AEBBB9B138 /* ALL_BUILD */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 73742499B71D4DC186AC61B8 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
+			buildConfigurationList = 65211A46D8C04C1EB6DC0947 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildPhases = (
+				E61DB2C4B5BA323B5430F0FF /* Generate CMakeFiles/ALL_BUILD */,
+			);
+			dependencies = (
+				EFAC000CAD6442F3898C4EFC /* PBXTargetDependency */,
+				02511DBCB3EE4A6C9892D276 /* PBXTargetDependency */,
+				91FB3EB7D8994C34B9020076 /* PBXTargetDependency */,
+				B72843D0DDF4401EBFADE6E1 /* PBXTargetDependency */,
+				C64B49CC352243A9A18A5100 /* PBXTargetDependency */,
+				140DAE9A4D1040FE9A1C1950 /* PBXTargetDependency */,
+			);
+			name = ALL_BUILD;
+			productName = ALL_BUILD;
+		};
+		FE9EA17B6F164179AF1C6707 /* RUN_TESTS */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 701C6A7F432647D19E6255CB /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
 			buildPhases = (
 				003C8D08B0008F35F218E126 /* CMake PostBuild Rules */,
 			);
@@ -30,95 +58,68 @@
 			name = RUN_TESTS;
 			productName = RUN_TESTS;
 		};
-		D5C5F59DA0D24BB697F70C76 /* ALL_BUILD */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 20B18C3BEC354F059C928274 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
-			buildPhases = (
-				8ADFCAAEE25E5403DE7DE3A6 /* Generate CMakeFiles/ALL_BUILD */,
-			);
-			dependencies = (
-				4D04504AD7A54766A9A9E138 /* PBXTargetDependency */,
-				401E95BD040F4162B7D1CCF8 /* PBXTargetDependency */,
-				413C961BCCCE413D9C21ADA4 /* PBXTargetDependency */,
-				6446BF66645E4252A730FB3B /* PBXTargetDependency */,
-				B796220A59E441D8A4E2F065 /* PBXTargetDependency */,
-				FD4EF313BC89430781CF00C8 /* PBXTargetDependency */,
-			);
-			name = ALL_BUILD;
-			productName = ALL_BUILD;
-		};
-		F98D9B492C154EF89F56E070 /* ZERO_CHECK */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 1BF40395C73C4FAF8A188209 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
-			buildPhases = (
-				72D3A16BA2FCDDBE3E66BAB7 /* Generate CMakeFiles/ZERO_CHECK */,
-			);
-			dependencies = (
-			);
-			name = ZERO_CHECK;
-			productName = ZERO_CHECK;
-		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		02A7D0AEF75B407686AB625C /* ../ppsspp/ext/zstd/tests/datagencli.c */ = {isa = PBXBuildFile; fileRef = 4F8D973A92A1499188AF19FA /* ../ppsspp/ext/zstd/tests/datagencli.c */; };
-		0D3B3B2837294111AED37DA9 /* ../ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 57FD764B65654623AD8F2075 /* ../ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */; };
-		1F7070B2C5DB4106A07C9C29 /* ../ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXBuildFile; fileRef = 4D11DA6C74A143D2809950FA /* ../ppsspp/ext/zstd/programs/datagen.c */; };
-		24159E7EABD84299BE3760A1 /* ../ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 49869B1A8FD7495C9C6A8B02 /* ../ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */; };
-		27EBD716615C49E9B660FC23 /* ../ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXBuildFile; fileRef = E479BAE7739B4DEFA1A4AC22 /* ../ppsspp/ext/zstd/programs/timefn.c */; };
-		3D39DC63E27540EF955D3640 /* ../ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXBuildFile; fileRef = 7B87BAE13C8A40E6B9D2D88B /* ../ppsspp/ext/zstd/programs/timefn.c */; };
-		43F5D6A74BDC4E4F935E255E /* ../ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = BF17FB3F9F5142199D728819 /* ../ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */; };
-		4E5E24044C8C458484118F38 /* ../ppsspp/ext/zstd/programs/util.c */ = {isa = PBXBuildFile; fileRef = AC26533B78E64DA485EDCD62 /* ../ppsspp/ext/zstd/programs/util.c */; };
-		4F13B0324CB44103A2725407 /* ../ppsspp/ext/zstd/tests/paramgrill.c */ = {isa = PBXBuildFile; fileRef = 372032CAF8DA49BF8EE4FB20 /* ../ppsspp/ext/zstd/tests/paramgrill.c */; };
-		54F0CC56C06F444DBD8778E4 /* ../ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXBuildFile; fileRef = A56E32D573DD4D4F94FD32DE /* ../ppsspp/ext/zstd/programs/datagen.c */; };
-		568DBA798E7647188E86759A /* ../ppsspp/ext/zstd/tests/fullbench.c */ = {isa = PBXBuildFile; fileRef = F33EEEBAC4A14E079EEE0A48 /* ../ppsspp/ext/zstd/tests/fullbench.c */; };
-		5E974FF795BE4D809FC13E1A /* ../ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXBuildFile; fileRef = E8243A13AEBA4FC1A5D6ED6D /* ../ppsspp/ext/zstd/programs/datagen.c */; };
-		5FA6C008D62C4670B28A2E15 /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 31562ABC30EF49C4B5BD445C /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist */; };
-		5FFC1AFB1EF3464CA8C7057E /* ../ppsspp/ext/zstd/tests/zstreamtest.c */ = {isa = PBXBuildFile; fileRef = B4A239D1E27E4B1AA31AD0AF /* ../ppsspp/ext/zstd/tests/zstreamtest.c */; };
-		61BE02A79547450EB1F82208 /* ../ppsspp/ext/zstd/programs/util.c */ = {isa = PBXBuildFile; fileRef = 9950A50AD2BD473497791677 /* ../ppsspp/ext/zstd/programs/util.c */; };
-		6347BCD9DFF247F38356B2D8 /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 9227D4DE4F7C46A195F8BBE6 /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist */; };
-		712A51EA35084071934F73B0 /* ../ppsspp/ext/zstd/programs/benchfn.c */ = {isa = PBXBuildFile; fileRef = D2C2061CA2124FB68E359E39 /* ../ppsspp/ext/zstd/programs/benchfn.c */; };
-		8EC1DE3B5842436DAA833C04 /* ../ppsspp/ext/zstd/tests/fuzzer.c */ = {isa = PBXBuildFile; fileRef = 224D85CADA90494884A14F12 /* ../ppsspp/ext/zstd/tests/fuzzer.c */; };
-		91EC6371195E451A914DE094 /* ../ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXBuildFile; fileRef = 19AB8DF1174742868A9FDFFC /* ../ppsspp/ext/zstd/programs/timefn.c */; };
-		9326C807831A4ECBA95AA7F4 /* ../ppsspp/ext/zstd/tests/seqgen.c */ = {isa = PBXBuildFile; fileRef = 842705251A624134B90BE12C /* ../ppsspp/ext/zstd/tests/seqgen.c */; };
-		A1B0F410956F445ABE6077D5 /* ../ppsspp/ext/zstd/programs/benchzstd.c */ = {isa = PBXBuildFile; fileRef = 3229099B9B4D406F92EEB734 /* ../ppsspp/ext/zstd/programs/benchzstd.c */; };
-		A89D07EA466C453DB43A5F0F /* ../ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXBuildFile; fileRef = FD430A5A1B8F452FB4348C24 /* ../ppsspp/ext/zstd/programs/timefn.c */; };
-		AB0577E6DEA74939ADE4C866 /* ../ppsspp/ext/zstd/programs/benchfn.c */ = {isa = PBXBuildFile; fileRef = A5805F6E319243A69AD0363B /* ../ppsspp/ext/zstd/programs/benchfn.c */; };
-		B3C3555072054F9096159DBC /* ../ppsspp/ext/zstd/programs/benchzstd.c */ = {isa = PBXBuildFile; fileRef = 6EE4C96A2EED4E96B7142B41 /* ../ppsspp/ext/zstd/programs/benchzstd.c */; };
-		C39D71014D2A48D287E65019 /* ../ppsspp/ext/zstd/programs/util.c */ = {isa = PBXBuildFile; fileRef = 3549DDD4E41F49908F2E0DD2 /* ../ppsspp/ext/zstd/programs/util.c */; };
-		C5B9C475935A44F0ABC1AAA4 /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 9E462273B0374153AFC5448C /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist */; };
-		CE595D5B6D0147B3AD2119A7 /* ../ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 5DD38A9465DD4EA1B5960AAD /* ../ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */; };
-		E659823711A94A0383C9E0D4 /* ../ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXBuildFile; fileRef = 16C0DA44802E42B2A1C50998 /* ../ppsspp/ext/zstd/programs/datagen.c */; };
-		EB6C589B7DF24291B34D2B70 /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = BA8C3DC4236247288814B0CB /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist */; };
-		EDC5CD501F474423AC99D4EF /* ../ppsspp/ext/zstd/programs/util.c */ = {isa = PBXBuildFile; fileRef = FC780E76CF234280BB558ABF /* ../ppsspp/ext/zstd/programs/util.c */; };
-		EE04E42A5D31454D8BCD6090 /* ../ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 7DC835FA092E47CFB0BF380B /* ../ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */; };
-		EEEC600888924E74A2E395E9 /* ../ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXBuildFile; fileRef = 5F8A878F4B184ECB9E47D672 /* ../ppsspp/ext/zstd/programs/datagen.c */; };
-		EFB2029AE19A4C9D8D95BD6C /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 3EE68873438D42A18064777A /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist */; };
+		041A1AAE1538468CBD367356 /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 8A8FD4446D414B2F90D8D267 /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist */; };
+		139E472C2F064BF8AE22DD91 /* ../libretro_ppsspp/ext/zstd/tests/fuzzer.c */ = {isa = PBXBuildFile; fileRef = 7EA198DC042448EFAFEB5788 /* ../libretro_ppsspp/ext/zstd/tests/fuzzer.c */; };
+		172BD3598C1F47F184B976B6 /* ../libretro_ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXBuildFile; fileRef = E0172183798C45E29DB6F214 /* ../libretro_ppsspp/ext/zstd/programs/datagen.c */; };
+		328F51A3F2064335A03A65D3 /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 7DD167EDC48D4B638D2A6C37 /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist */; };
+		35A060345638405598AD7A9D /* ../libretro_ppsspp/ext/zstd/tests/seqgen.c */ = {isa = PBXBuildFile; fileRef = 0F46422E2D7447408736E5B8 /* ../libretro_ppsspp/ext/zstd/tests/seqgen.c */; };
+		381093FBD68B4F858886C78E /* ../libretro_ppsspp/ext/zstd/tests/zstreamtest.c */ = {isa = PBXBuildFile; fileRef = 2215D27203224E0EA8E0A4BA /* ../libretro_ppsspp/ext/zstd/tests/zstreamtest.c */; };
+		4508A3CFF67D445484D083E0 /* ../libretro_ppsspp/ext/zstd/tests/fullbench.c */ = {isa = PBXBuildFile; fileRef = A5C233816CCA42BDBD16A7D5 /* ../libretro_ppsspp/ext/zstd/tests/fullbench.c */; };
+		4668B2E5525F441487232B2E /* ../libretro_ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXBuildFile; fileRef = CE90C691B27246D1B2AECB2F /* ../libretro_ppsspp/ext/zstd/programs/timefn.c */; };
+		4F9BB1B22C3F469AA372A6DA /* ../libretro_ppsspp/ext/zstd/programs/util.c */ = {isa = PBXBuildFile; fileRef = 914FDEC96E02430BB65CAE31 /* ../libretro_ppsspp/ext/zstd/programs/util.c */; };
+		5275BDEF96D34C809EFF3CBE /* ../libretro_ppsspp/ext/zstd/programs/benchfn.c */ = {isa = PBXBuildFile; fileRef = B382734E9AA24D3791300BC2 /* ../libretro_ppsspp/ext/zstd/programs/benchfn.c */; };
+		5CC5254D20CE4370A071C717 /* ../libretro_ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 5A1C8CEE4E614ED8AC6C481A /* ../libretro_ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */; };
+		5F7F4F2A24DE478BAE392FB3 /* ../libretro_ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXBuildFile; fileRef = 0673780221E9487CBC182E96 /* ../libretro_ppsspp/ext/zstd/programs/timefn.c */; };
+		61E0D5376AD642949AACFA42 /* ../libretro_ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 0829F9E77CE146FCA6134C20 /* ../libretro_ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */; };
+		6CE8E9EDEA90467CA3F3CE0F /* ../libretro_ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXBuildFile; fileRef = C41A29261387402DB2EB5325 /* ../libretro_ppsspp/ext/zstd/programs/datagen.c */; };
+		727DB898D8F64435BEA71F53 /* ../libretro_ppsspp/ext/zstd/tests/datagencli.c */ = {isa = PBXBuildFile; fileRef = 54824275A47F47ABBA1EDEBF /* ../libretro_ppsspp/ext/zstd/tests/datagencli.c */; };
+		77199C66C75F4414A09FD57B /* ../libretro_ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 5233A00BA855489083A81491 /* ../libretro_ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */; };
+		79DC6EEAF49D4FBCAB5B8C3F /* ../libretro_ppsspp/ext/zstd/tests/external_matchfinder.c */ = {isa = PBXBuildFile; fileRef = D680BBDCD1FB430A86775003 /* ../libretro_ppsspp/ext/zstd/tests/external_matchfinder.c */; };
+		93847BF181CC4C298C43E699 /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = A0FCC1D332364FD2B95BD8F4 /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist */; };
+		9736E3C0900748FCBDBD88F5 /* ../libretro_ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXBuildFile; fileRef = 017639FB388942F59A6B91E4 /* ../libretro_ppsspp/ext/zstd/programs/datagen.c */; };
+		A741DDBA5E3E48F6BDD848B6 /* ../libretro_ppsspp/ext/zstd/programs/benchzstd.c */ = {isa = PBXBuildFile; fileRef = 7A4511D1A38A4BC7AA8EB9FD /* ../libretro_ppsspp/ext/zstd/programs/benchzstd.c */; };
+		A9DDCAEB6C0244169B74E1B8 /* ../libretro_ppsspp/ext/zstd/tests/paramgrill.c */ = {isa = PBXBuildFile; fileRef = 24848E6C6E8341DF87F88CB5 /* ../libretro_ppsspp/ext/zstd/tests/paramgrill.c */; };
+		B4565FB09638406F83377FF0 /* ../libretro_ppsspp/ext/zstd/programs/util.c */ = {isa = PBXBuildFile; fileRef = EF6761997423427990C04E4F /* ../libretro_ppsspp/ext/zstd/programs/util.c */; };
+		CEB3331FF1E9400A9520DF6B /* ../libretro_ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXBuildFile; fileRef = C7D661F27C754912AF5343D5 /* ../libretro_ppsspp/ext/zstd/programs/timefn.c */; };
+		D23EE1EC434347ACBC9623EF /* ../libretro_ppsspp/ext/zstd/programs/benchfn.c */ = {isa = PBXBuildFile; fileRef = 582212A4AA884A8AA50AC2D5 /* ../libretro_ppsspp/ext/zstd/programs/benchfn.c */; };
+		D2C7310E25114EF5B7417843 /* ../libretro_ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = ECA7197F367D420DB31B7FDB /* ../libretro_ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */; };
+		D57BE812898644E4B1C18E86 /* ../libretro_ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXBuildFile; fileRef = A8E5744C8B5841239B5F3ABA /* ../libretro_ppsspp/ext/zstd/programs/datagen.c */; };
+		D58034649B6C4815A661D131 /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 524E3D3AFA7C4561A48D90DE /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist */; };
+		D6AA21A03C9E41FA8CE3167A /* ../libretro_ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 5D740D86FF6749A4AE3E0FC5 /* ../libretro_ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */; };
+		D8E848C2A26040EC938C9451 /* ../libretro_ppsspp/ext/zstd/programs/benchzstd.c */ = {isa = PBXBuildFile; fileRef = 97E943E9E1E64ABB9856717D /* ../libretro_ppsspp/ext/zstd/programs/benchzstd.c */; };
+		E0D14EDA3F6D467CA45F61FF /* ../libretro_ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXBuildFile; fileRef = A04FC7CB26594AE58D4116E9 /* ../libretro_ppsspp/ext/zstd/programs/timefn.c */; };
+		E3A074FE8697463FBC3A7C21 /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 54A26FF665DB43619CB6E3F3 /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist */; };
+		F089A0E6CA2D4EB59B23A34E /* ../libretro_ppsspp/ext/zstd/programs/util.c */ = {isa = PBXBuildFile; fileRef = 44F3844277004D4EB7DE6EF4 /* ../libretro_ppsspp/ext/zstd/programs/util.c */; };
+		F93AA2FFB8684D44AA39AA7E /* ../libretro_ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXBuildFile; fileRef = C1ACB41907F1403A995E8E78 /* ../libretro_ppsspp/ext/zstd/programs/datagen.c */; };
+		FAD51CFC77AD4A839079EAEC /* ../libretro_ppsspp/ext/zstd/programs/util.c */ = {isa = PBXBuildFile; fileRef = EA953ACB81C3479B96D30720 /* ../libretro_ppsspp/ext/zstd/programs/util.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
-		10DDFC8379A740169559816C /* Debug */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Debug;
-		};
-		19515D2051FC40AEA394765C /* Release */ = {
+		2029ECAD4C074213BD68DDD9 /* Release */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = Release;
 		};
-		77AB9C451AF04D32A4223253 /* RelWithDebInfo */ = {
+		3B644732D65F45D9AD0B21B3 /* Debug */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+		6C2F39B9A6464D36B5092D80 /* RelWithDebInfo */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = RelWithDebInfo;
 		};
-		E698ABFBD4E54395BC78F7A1 /* MinSizeRel */ = {
+		7DA1C72450B24911A2CBE372 /* MinSizeRel */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -128,164 +129,165 @@
 /* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
-		11941D7C84094B84B7179A37 /* PBXContainerItemProxy */ = {
+		035E5290504A484593C06EEC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = FE03C12F9AD449A1BB45A0D2 /* Project object */;
+			containerPortal = 338B76E0D3384595812A5013 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 0CC7260814A343A7B2BCB3B2;
-			remoteInfo = fullbench;
-		};
-		1998598D57DB4C24A0CD8102 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FE03C12F9AD449A1BB45A0D2 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = F98D9B492C154EF89F56E070;
+			remoteGlobalIDString = 35E138004C754BA89FCFF9F6;
 			remoteInfo = ZERO_CHECK;
 		};
-		2694E37D31474130A801E12C /* PBXContainerItemProxy */ = {
+		1C080D7CE4F1438189F33CBA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = FE03C12F9AD449A1BB45A0D2 /* Project object */;
+			containerPortal = 338B76E0D3384595812A5013 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = F98D9B492C154EF89F56E070;
+			remoteGlobalIDString = 35E138004C754BA89FCFF9F6;
 			remoteInfo = ZERO_CHECK;
 		};
-		3B4DA4ED65994BAB9E3869FF /* PBXContainerItemProxy */ = {
+		3594F25A92CE4A58B82479A0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = FE03C12F9AD449A1BB45A0D2 /* Project object */;
+			containerPortal = 338B76E0D3384595812A5013 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 305C11E4AE6D479CBCC804BA;
-			remoteInfo = fuzzer;
-		};
-		3E341AB766034094861C871A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FE03C12F9AD449A1BB45A0D2 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = F98D9B492C154EF89F56E070;
+			remoteGlobalIDString = 35E138004C754BA89FCFF9F6;
 			remoteInfo = ZERO_CHECK;
 		};
-		3FFB558E2CA94386A6BDACBA /* PBXContainerItemProxy */ = {
+		569DEE2FA9DE4FE09E8265BC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = FE03C12F9AD449A1BB45A0D2 /* Project object */;
+			containerPortal = 338B76E0D3384595812A5013 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 5DCED3D39BD147E49352E91A;
+			remoteGlobalIDString = 35E138004C754BA89FCFF9F6;
+			remoteInfo = ZERO_CHECK;
+		};
+		5B44CB45B92142D8B5F9D146 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 338B76E0D3384595812A5013 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 42FBB08D515C486B813016B0;
+			remoteInfo = paramgrill;
+		};
+		608A1E7B7CFA45CE8C47E3F7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 338B76E0D3384595812A5013 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EFA27B7302B3440AB02F602B;
 			remoteInfo = zstreamtest;
 		};
-		AB46A53AE76D4E6899698FB2 /* PBXContainerItemProxy */ = {
+		6382D1D1574241CDB372F176 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = FE03C12F9AD449A1BB45A0D2 /* Project object */;
+			containerPortal = 338B76E0D3384595812A5013 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = D5C5F59DA0D24BB697F70C76;
-			remoteInfo = ALL_BUILD;
+			remoteGlobalIDString = B2DEEF019B094EEDABE7DA90;
+			remoteInfo = fuzzer;
 		};
-		BC23AFC574434FB49BF6007A /* PBXContainerItemProxy */ = {
+		74C5C13C39E44EAE86CC539C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = FE03C12F9AD449A1BB45A0D2 /* Project object */;
+			containerPortal = 338B76E0D3384595812A5013 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = F98D9B492C154EF89F56E070;
-			remoteInfo = ZERO_CHECK;
-		};
-		C23B410854A742B89E1B5590 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FE03C12F9AD449A1BB45A0D2 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = F98D9B492C154EF89F56E070;
-			remoteInfo = ZERO_CHECK;
-		};
-		C33F391DE5BB4526B082B61F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FE03C12F9AD449A1BB45A0D2 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = F98D9B492C154EF89F56E070;
-			remoteInfo = ZERO_CHECK;
-		};
-		E457F2BDF07440858A4F0565 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FE03C12F9AD449A1BB45A0D2 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 34CF5C6057C04C019E4E2E56;
+			remoteGlobalIDString = 7174F9D48A34418397BCB4AB;
 			remoteInfo = datagen;
 		};
-		F8844DE9A35E400C88191B1E /* PBXContainerItemProxy */ = {
+		76954B3E9B4B4E4384F953F8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = FE03C12F9AD449A1BB45A0D2 /* Project object */;
+			containerPortal = 338B76E0D3384595812A5013 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = CDF74F47900D47C78B95006E;
-			remoteInfo = paramgrill;
+			remoteGlobalIDString = B5C28C0670404AE0B6B1B24E;
+			remoteInfo = fullbench;
+		};
+		76E4F4EA6C64459F82063065 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 338B76E0D3384595812A5013 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 35E138004C754BA89FCFF9F6;
+			remoteInfo = ZERO_CHECK;
+		};
+		B123385116AA4CE08A369ACD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 338B76E0D3384595812A5013 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 35E138004C754BA89FCFF9F6;
+			remoteInfo = ZERO_CHECK;
+		};
+		D21E4BB0FF4347BCA8A238F0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 338B76E0D3384595812A5013 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 872B88AC16C241AEBBB9B138;
+			remoteInfo = ALL_BUILD;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		168BBC8FE56942BCB5F13221 /* ../ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		16C0DA44802E42B2A1C50998 /* ../ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = datagen.c; path = ../ppsspp/ext/zstd/programs/datagen.c; sourceTree = "<absolute>"; };
-		19AB8DF1174742868A9FDFFC /* ../ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = timefn.c; path = ../ppsspp/ext/zstd/programs/timefn.c; sourceTree = "<absolute>"; };
-		1AB9667149B545E4990F95A0 /* fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
-		224D85CADA90494884A14F12 /* ../ppsspp/ext/zstd/tests/fuzzer.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = fuzzer.c; path = ../ppsspp/ext/zstd/tests/fuzzer.c; sourceTree = "<absolute>"; };
-		31562ABC30EF49C4B5BD445C /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist; sourceTree = "<absolute>"; };
-		3229099B9B4D406F92EEB734 /* ../ppsspp/ext/zstd/programs/benchzstd.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = benchzstd.c; path = ../ppsspp/ext/zstd/programs/benchzstd.c; sourceTree = "<absolute>"; };
-		3549DDD4E41F49908F2E0DD2 /* ../ppsspp/ext/zstd/programs/util.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = util.c; path = ../ppsspp/ext/zstd/programs/util.c; sourceTree = "<absolute>"; };
-		372032CAF8DA49BF8EE4FB20 /* ../ppsspp/ext/zstd/tests/paramgrill.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = paramgrill.c; path = ../ppsspp/ext/zstd/tests/paramgrill.c; sourceTree = "<absolute>"; };
-		3EE68873438D42A18064777A /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist; sourceTree = "<absolute>"; };
-		49869B1A8FD7495C9C6A8B02 /* ../ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		4D11DA6C74A143D2809950FA /* ../ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = datagen.c; path = ../ppsspp/ext/zstd/programs/datagen.c; sourceTree = "<absolute>"; };
-		4F8D973A92A1499188AF19FA /* ../ppsspp/ext/zstd/tests/datagencli.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = datagencli.c; path = ../ppsspp/ext/zstd/tests/datagencli.c; sourceTree = "<absolute>"; };
-		57FD764B65654623AD8F2075 /* ../ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		5DD38A9465DD4EA1B5960AAD /* ../ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		5F8A878F4B184ECB9E47D672 /* ../ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = datagen.c; path = ../ppsspp/ext/zstd/programs/datagen.c; sourceTree = "<absolute>"; };
-		6EE4C96A2EED4E96B7142B41 /* ../ppsspp/ext/zstd/programs/benchzstd.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = benchzstd.c; path = ../ppsspp/ext/zstd/programs/benchzstd.c; sourceTree = "<absolute>"; };
-		7B87BAE13C8A40E6B9D2D88B /* ../ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = timefn.c; path = ../ppsspp/ext/zstd/programs/timefn.c; sourceTree = "<absolute>"; };
-		7DC835FA092E47CFB0BF380B /* ../ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		842705251A624134B90BE12C /* ../ppsspp/ext/zstd/tests/seqgen.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = seqgen.c; path = ../ppsspp/ext/zstd/tests/seqgen.c; sourceTree = "<absolute>"; };
-		9227D4DE4F7C46A195F8BBE6 /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist; sourceTree = "<absolute>"; };
-		9950A50AD2BD473497791677 /* ../ppsspp/ext/zstd/programs/util.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = util.c; path = ../ppsspp/ext/zstd/programs/util.c; sourceTree = "<absolute>"; };
-		9E462273B0374153AFC5448C /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist; sourceTree = "<absolute>"; };
-		A56E32D573DD4D4F94FD32DE /* ../ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = datagen.c; path = ../ppsspp/ext/zstd/programs/datagen.c; sourceTree = "<absolute>"; };
-		A5805F6E319243A69AD0363B /* ../ppsspp/ext/zstd/programs/benchfn.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = benchfn.c; path = ../ppsspp/ext/zstd/programs/benchfn.c; sourceTree = "<absolute>"; };
-		AC26533B78E64DA485EDCD62 /* ../ppsspp/ext/zstd/programs/util.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = util.c; path = ../ppsspp/ext/zstd/programs/util.c; sourceTree = "<absolute>"; };
-		B4A239D1E27E4B1AA31AD0AF /* ../ppsspp/ext/zstd/tests/zstreamtest.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstreamtest.c; path = ../ppsspp/ext/zstd/tests/zstreamtest.c; sourceTree = "<absolute>"; };
-		BA8C3DC4236247288814B0CB /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist; sourceTree = "<absolute>"; };
-		BF17FB3F9F5142199D728819 /* ../ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		D2C2061CA2124FB68E359E39 /* ../ppsspp/ext/zstd/programs/benchfn.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = benchfn.c; path = ../ppsspp/ext/zstd/programs/benchfn.c; sourceTree = "<absolute>"; };
-		E100B77BD5A4462498DF43B3 /* datagen */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = datagen; sourceTree = BUILT_PRODUCTS_DIR; };
-		E3130A92F07C4383B74A74BE /* paramgrill */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = paramgrill; sourceTree = BUILT_PRODUCTS_DIR; };
-		E479BAE7739B4DEFA1A4AC22 /* ../ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = timefn.c; path = ../ppsspp/ext/zstd/programs/timefn.c; sourceTree = "<absolute>"; };
-		E8243A13AEBA4FC1A5D6ED6D /* ../ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = datagen.c; path = ../ppsspp/ext/zstd/programs/datagen.c; sourceTree = "<absolute>"; };
-		EFB447D3F29A4B52AF37BBE0 /* fullbench */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = fullbench; sourceTree = BUILT_PRODUCTS_DIR; };
-		F33EEEBAC4A14E079EEE0A48 /* ../ppsspp/ext/zstd/tests/fullbench.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = fullbench.c; path = ../ppsspp/ext/zstd/tests/fullbench.c; sourceTree = "<absolute>"; };
-		FC780E76CF234280BB558ABF /* ../ppsspp/ext/zstd/programs/util.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = util.c; path = ../ppsspp/ext/zstd/programs/util.c; sourceTree = "<absolute>"; };
-		FD430A5A1B8F452FB4348C24 /* ../ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = timefn.c; path = ../ppsspp/ext/zstd/programs/timefn.c; sourceTree = "<absolute>"; };
-		FE17262CD36A4503865BBF6E /* zstreamtest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = zstreamtest; sourceTree = BUILT_PRODUCTS_DIR; };
+		017639FB388942F59A6B91E4 /* ../libretro_ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = datagen.c; path = ../libretro_ppsspp/ext/zstd/programs/datagen.c; sourceTree = "<absolute>"; };
+		0673780221E9487CBC182E96 /* ../libretro_ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = timefn.c; path = ../libretro_ppsspp/ext/zstd/programs/timefn.c; sourceTree = "<absolute>"; };
+		0829F9E77CE146FCA6134C20 /* ../libretro_ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		0F46422E2D7447408736E5B8 /* ../libretro_ppsspp/ext/zstd/tests/seqgen.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = seqgen.c; path = ../libretro_ppsspp/ext/zstd/tests/seqgen.c; sourceTree = "<absolute>"; };
+		2215D27203224E0EA8E0A4BA /* ../libretro_ppsspp/ext/zstd/tests/zstreamtest.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstreamtest.c; path = ../libretro_ppsspp/ext/zstd/tests/zstreamtest.c; sourceTree = "<absolute>"; };
+		24848E6C6E8341DF87F88CB5 /* ../libretro_ppsspp/ext/zstd/tests/paramgrill.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = paramgrill.c; path = ../libretro_ppsspp/ext/zstd/tests/paramgrill.c; sourceTree = "<absolute>"; };
+		3277E945D7E94F8ABAA2DDAB /* paramgrill */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = paramgrill; sourceTree = BUILT_PRODUCTS_DIR; };
+		44F3844277004D4EB7DE6EF4 /* ../libretro_ppsspp/ext/zstd/programs/util.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = util.c; path = ../libretro_ppsspp/ext/zstd/programs/util.c; sourceTree = "<absolute>"; };
+		5233A00BA855489083A81491 /* ../libretro_ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		524E3D3AFA7C4561A48D90DE /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist; sourceTree = "<absolute>"; };
+		54824275A47F47ABBA1EDEBF /* ../libretro_ppsspp/ext/zstd/tests/datagencli.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = datagencli.c; path = ../libretro_ppsspp/ext/zstd/tests/datagencli.c; sourceTree = "<absolute>"; };
+		54A26FF665DB43619CB6E3F3 /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist; sourceTree = "<absolute>"; };
+		582212A4AA884A8AA50AC2D5 /* ../libretro_ppsspp/ext/zstd/programs/benchfn.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = benchfn.c; path = ../libretro_ppsspp/ext/zstd/programs/benchfn.c; sourceTree = "<absolute>"; };
+		5A1C8CEE4E614ED8AC6C481A /* ../libretro_ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		5CC18D136A9746EDA4585AD0 /* fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
+		5D740D86FF6749A4AE3E0FC5 /* ../libretro_ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		75EC74DB5B32469D90FD63DA /* datagen */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = datagen; sourceTree = BUILT_PRODUCTS_DIR; };
+		7A4511D1A38A4BC7AA8EB9FD /* ../libretro_ppsspp/ext/zstd/programs/benchzstd.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = benchzstd.c; path = ../libretro_ppsspp/ext/zstd/programs/benchzstd.c; sourceTree = "<absolute>"; };
+		7DD167EDC48D4B638D2A6C37 /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist; sourceTree = "<absolute>"; };
+		7EA198DC042448EFAFEB5788 /* ../libretro_ppsspp/ext/zstd/tests/fuzzer.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = fuzzer.c; path = ../libretro_ppsspp/ext/zstd/tests/fuzzer.c; sourceTree = "<absolute>"; };
+		82F7E69AAEFD4642BAC5A43E /* fullbench */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = fullbench; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A8FD4446D414B2F90D8D267 /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist; sourceTree = "<absolute>"; };
+		914FDEC96E02430BB65CAE31 /* ../libretro_ppsspp/ext/zstd/programs/util.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = util.c; path = ../libretro_ppsspp/ext/zstd/programs/util.c; sourceTree = "<absolute>"; };
+		97E943E9E1E64ABB9856717D /* ../libretro_ppsspp/ext/zstd/programs/benchzstd.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = benchzstd.c; path = ../libretro_ppsspp/ext/zstd/programs/benchzstd.c; sourceTree = "<absolute>"; };
+		A04FC7CB26594AE58D4116E9 /* ../libretro_ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = timefn.c; path = ../libretro_ppsspp/ext/zstd/programs/timefn.c; sourceTree = "<absolute>"; };
+		A0FCC1D332364FD2B95BD8F4 /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist; sourceTree = "<absolute>"; };
+		A5C233816CCA42BDBD16A7D5 /* ../libretro_ppsspp/ext/zstd/tests/fullbench.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = fullbench.c; path = ../libretro_ppsspp/ext/zstd/tests/fullbench.c; sourceTree = "<absolute>"; };
+		A8E5744C8B5841239B5F3ABA /* ../libretro_ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = datagen.c; path = ../libretro_ppsspp/ext/zstd/programs/datagen.c; sourceTree = "<absolute>"; };
+		B382734E9AA24D3791300BC2 /* ../libretro_ppsspp/ext/zstd/programs/benchfn.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = benchfn.c; path = ../libretro_ppsspp/ext/zstd/programs/benchfn.c; sourceTree = "<absolute>"; };
+		C1ACB41907F1403A995E8E78 /* ../libretro_ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = datagen.c; path = ../libretro_ppsspp/ext/zstd/programs/datagen.c; sourceTree = "<absolute>"; };
+		C41A29261387402DB2EB5325 /* ../libretro_ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = datagen.c; path = ../libretro_ppsspp/ext/zstd/programs/datagen.c; sourceTree = "<absolute>"; };
+		C7D661F27C754912AF5343D5 /* ../libretro_ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = timefn.c; path = ../libretro_ppsspp/ext/zstd/programs/timefn.c; sourceTree = "<absolute>"; };
+		CE90C691B27246D1B2AECB2F /* ../libretro_ppsspp/ext/zstd/programs/timefn.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = timefn.c; path = ../libretro_ppsspp/ext/zstd/programs/timefn.c; sourceTree = "<absolute>"; };
+		D680BBDCD1FB430A86775003 /* ../libretro_ppsspp/ext/zstd/tests/external_matchfinder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = external_matchfinder.c; path = ../libretro_ppsspp/ext/zstd/tests/external_matchfinder.c; sourceTree = "<absolute>"; };
+		D7710E002E164621A5A7031C /* ../libretro_ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		E0172183798C45E29DB6F214 /* ../libretro_ppsspp/ext/zstd/programs/datagen.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = datagen.c; path = ../libretro_ppsspp/ext/zstd/programs/datagen.c; sourceTree = "<absolute>"; };
+		EA953ACB81C3479B96D30720 /* ../libretro_ppsspp/ext/zstd/programs/util.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = util.c; path = ../libretro_ppsspp/ext/zstd/programs/util.c; sourceTree = "<absolute>"; };
+		ECA7197F367D420DB31B7FDB /* ../libretro_ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		EF6761997423427990C04E4F /* ../libretro_ppsspp/ext/zstd/programs/util.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = util.c; path = ../libretro_ppsspp/ext/zstd/programs/util.c; sourceTree = "<absolute>"; };
+		FEA5C78AD9AD4281B79CD712 /* zstreamtest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = zstreamtest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		22ADF73DC10E499FB5D292F9 /* Frameworks */ = {
+		15C4918CCD1344368922058C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		48E5AD541274424AB40D74AC /* Frameworks */ = {
+		1F1A67653DDC4FE0ACC6FD7F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A1287AD06AAB4FDD941DA6D2 /* Frameworks */ = {
+		7D0D855DE6EF4F8F9441E8DA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D11AB889138646DF8FCAD3B0 /* Frameworks */ = {
+		E9DB2CD0394A4EC0B9C7BCA9 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D37A43FE038A4CEFA051EF24 /* Frameworks */ = {
+		FC9B5B30761C48B0BBAB7148 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -295,324 +297,325 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0771F8D9D6C6472CBFF1D698 = {
+		0763289BB6CF4FEE89CB479C /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				B9F2F1F523324FF6A601F2A9 /* datagen */,
-				7BF271D46B754542A8B91003 /* fullbench */,
-				23FA0CA746654BD3A475FDA9 /* fuzzer */,
-				A834B329E65A4B75B2DDDC6E /* zstreamtest */,
-				8A130FE49241491CA0D0C18C /* paramgrill */,
-				C6F3E658CCDD42D5914EE6B1 /* ALL_BUILD */,
-				35F55CDC095A43E4A447D37E /* Products */,
-				14B2E8BC346E4BEEA441DD32 /* Frameworks */,
-			);
-			sourceTree = "<group>";
-		};
-		1278E4A1B2B443228E8EF1DE /* Source Files */ = {
-			isa = PBXGroup;
-			children = (
-				A56E32D573DD4D4F94FD32DE /* ../ppsspp/ext/zstd/programs/datagen.c */,
-				4F8D973A92A1499188AF19FA /* ../ppsspp/ext/zstd/tests/datagencli.c */,
+				A8E5744C8B5841239B5F3ABA /* ../libretro_ppsspp/ext/zstd/programs/datagen.c */,
+				A04FC7CB26594AE58D4116E9 /* ../libretro_ppsspp/ext/zstd/programs/timefn.c */,
+				44F3844277004D4EB7DE6EF4 /* ../libretro_ppsspp/ext/zstd/programs/util.c */,
+				7EA198DC042448EFAFEB5788 /* ../libretro_ppsspp/ext/zstd/tests/fuzzer.c */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
 		};
-		14B2E8BC346E4BEEA441DD32 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		1F6E5A80B5CC4E2B8C5DA9C2 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				9227D4DE4F7C46A195F8BBE6 /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-		};
-		2154EB4570244493833627E9 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				BA8C3DC4236247288814B0CB /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-		};
-		23FA0CA746654BD3A475FDA9 /* fuzzer */ = {
-			isa = PBXGroup;
-			children = (
-				928F216A49774EFFA60EF33A /* Source Files */,
-				9A8B310292C2467DA94A03AA /* Resources */,
-				5DD38A9465DD4EA1B5960AAD /* ../ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */,
-			);
-			name = fuzzer;
-			sourceTree = "<group>";
-		};
-		2C269080913E48A0B0F9158C /* CMake Rules */ = {
+		2FC07B69A9D94A77BDA75DD1 /* CMake Rules */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = "CMake Rules";
 			sourceTree = "<group>";
 		};
-		3050B9538DA3425AA0510C16 /* Source Files */ = {
+		34C06E5F762340D4AAFB9A05 = {
 			isa = PBXGroup;
 			children = (
-				E8243A13AEBA4FC1A5D6ED6D /* ../ppsspp/ext/zstd/programs/datagen.c */,
-				7B87BAE13C8A40E6B9D2D88B /* ../ppsspp/ext/zstd/programs/timefn.c */,
-				9950A50AD2BD473497791677 /* ../ppsspp/ext/zstd/programs/util.c */,
-				842705251A624134B90BE12C /* ../ppsspp/ext/zstd/tests/seqgen.c */,
-				B4A239D1E27E4B1AA31AD0AF /* ../ppsspp/ext/zstd/tests/zstreamtest.c */,
+				34DBAC621B8F4F0C92A72698 /* datagen */,
+				F01F1EBB9F7844A2B6FE0E67 /* fullbench */,
+				96E3524C75E34EE1975CA20C /* fuzzer */,
+				BD4DEAF412714D7F86FBB7A5 /* zstreamtest */,
+				5763809C5C994C6FAFBDFC42 /* paramgrill */,
+				AEBC3D2E2FAE4CED828F3826 /* ALL_BUILD */,
+				D1C401D53D2044EB872B3831 /* Products */,
+				9E8C460AA55D4680B4EF8FCC /* Frameworks */,
 			);
-			name = "Source Files";
 			sourceTree = "<group>";
 		};
-		35F55CDC095A43E4A447D37E /* Products */ = {
+		34DBAC621B8F4F0C92A72698 /* datagen */ = {
 			isa = PBXGroup;
 			children = (
-				E100B77BD5A4462498DF43B3 /* datagen */,
-				EFB447D3F29A4B52AF37BBE0 /* fullbench */,
-				1AB9667149B545E4990F95A0 /* fuzzer */,
-				E3130A92F07C4383B74A74BE /* paramgrill */,
-				FE17262CD36A4503865BBF6E /* zstreamtest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		38C2625899694B8FBD4E0CA9 /* Source Files */ = {
-			isa = PBXGroup;
-			children = (
-				D2C2061CA2124FB68E359E39 /* ../ppsspp/ext/zstd/programs/benchfn.c */,
-				3229099B9B4D406F92EEB734 /* ../ppsspp/ext/zstd/programs/benchzstd.c */,
-				4D11DA6C74A143D2809950FA /* ../ppsspp/ext/zstd/programs/datagen.c */,
-				FD430A5A1B8F452FB4348C24 /* ../ppsspp/ext/zstd/programs/timefn.c */,
-				FC780E76CF234280BB558ABF /* ../ppsspp/ext/zstd/programs/util.c */,
-				372032CAF8DA49BF8EE4FB20 /* ../ppsspp/ext/zstd/tests/paramgrill.c */,
-			);
-			name = "Source Files";
-			sourceTree = "<group>";
-		};
-		60FFBCEC9B1D44788F4FEE00 /* Source Files */ = {
-			isa = PBXGroup;
-			children = (
-				A5805F6E319243A69AD0363B /* ../ppsspp/ext/zstd/programs/benchfn.c */,
-				6EE4C96A2EED4E96B7142B41 /* ../ppsspp/ext/zstd/programs/benchzstd.c */,
-				16C0DA44802E42B2A1C50998 /* ../ppsspp/ext/zstd/programs/datagen.c */,
-				E479BAE7739B4DEFA1A4AC22 /* ../ppsspp/ext/zstd/programs/timefn.c */,
-				3549DDD4E41F49908F2E0DD2 /* ../ppsspp/ext/zstd/programs/util.c */,
-				F33EEEBAC4A14E079EEE0A48 /* ../ppsspp/ext/zstd/tests/fullbench.c */,
-			);
-			name = "Source Files";
-			sourceTree = "<group>";
-		};
-		7BF271D46B754542A8B91003 /* fullbench */ = {
-			isa = PBXGroup;
-			children = (
-				60FFBCEC9B1D44788F4FEE00 /* Source Files */,
-				1F6E5A80B5CC4E2B8C5DA9C2 /* Resources */,
-				7DC835FA092E47CFB0BF380B /* ../ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */,
-			);
-			name = fullbench;
-			sourceTree = "<group>";
-		};
-		8944514CBA374211B5E5F463 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				31562ABC30EF49C4B5BD445C /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-		};
-		8A130FE49241491CA0D0C18C /* paramgrill */ = {
-			isa = PBXGroup;
-			children = (
-				38C2625899694B8FBD4E0CA9 /* Source Files */,
-				EF4096AB475042778AC19CB7 /* Resources */,
-				BF17FB3F9F5142199D728819 /* ../ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */,
-			);
-			name = paramgrill;
-			sourceTree = "<group>";
-		};
-		928F216A49774EFFA60EF33A /* Source Files */ = {
-			isa = PBXGroup;
-			children = (
-				5F8A878F4B184ECB9E47D672 /* ../ppsspp/ext/zstd/programs/datagen.c */,
-				19AB8DF1174742868A9FDFFC /* ../ppsspp/ext/zstd/programs/timefn.c */,
-				AC26533B78E64DA485EDCD62 /* ../ppsspp/ext/zstd/programs/util.c */,
-				224D85CADA90494884A14F12 /* ../ppsspp/ext/zstd/tests/fuzzer.c */,
-			);
-			name = "Source Files";
-			sourceTree = "<group>";
-		};
-		9A8B310292C2467DA94A03AA /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				3EE68873438D42A18064777A /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-		};
-		A834B329E65A4B75B2DDDC6E /* zstreamtest */ = {
-			isa = PBXGroup;
-			children = (
-				3050B9538DA3425AA0510C16 /* Source Files */,
-				2154EB4570244493833627E9 /* Resources */,
-				49869B1A8FD7495C9C6A8B02 /* ../ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */,
-			);
-			name = zstreamtest;
-			sourceTree = "<group>";
-		};
-		B9F2F1F523324FF6A601F2A9 /* datagen */ = {
-			isa = PBXGroup;
-			children = (
-				1278E4A1B2B443228E8EF1DE /* Source Files */,
-				8944514CBA374211B5E5F463 /* Resources */,
-				57FD764B65654623AD8F2075 /* ../ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */,
+				6E0170336D1E4D709B244131 /* Source Files */,
+				AE4543E0E8084CC3996EDD4E /* Resources */,
+				ECA7197F367D420DB31B7FDB /* ../libretro_ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */,
 			);
 			name = datagen;
 			sourceTree = "<group>";
 		};
-		C6F3E658CCDD42D5914EE6B1 /* ALL_BUILD */ = {
+		55C65C50052548E899BC9F52 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				2C269080913E48A0B0F9158C /* CMake Rules */,
-				168BBC8FE56942BCB5F13221 /* ../ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */,
+				524E3D3AFA7C4561A48D90DE /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		5763809C5C994C6FAFBDFC42 /* paramgrill */ = {
+			isa = PBXGroup;
+			children = (
+				E57D0A6C6B55469FA299B514 /* Source Files */,
+				CDF2E972721F473193C533DC /* Resources */,
+				5233A00BA855489083A81491 /* ../libretro_ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */,
+			);
+			name = paramgrill;
+			sourceTree = "<group>";
+		};
+		6E0170336D1E4D709B244131 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				017639FB388942F59A6B91E4 /* ../libretro_ppsspp/ext/zstd/programs/datagen.c */,
+				54824275A47F47ABBA1EDEBF /* ../libretro_ppsspp/ext/zstd/tests/datagencli.c */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		807DA547325041A2A59793F7 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				E0172183798C45E29DB6F214 /* ../libretro_ppsspp/ext/zstd/programs/datagen.c */,
+				CE90C691B27246D1B2AECB2F /* ../libretro_ppsspp/ext/zstd/programs/timefn.c */,
+				EF6761997423427990C04E4F /* ../libretro_ppsspp/ext/zstd/programs/util.c */,
+				D680BBDCD1FB430A86775003 /* ../libretro_ppsspp/ext/zstd/tests/external_matchfinder.c */,
+				0F46422E2D7447408736E5B8 /* ../libretro_ppsspp/ext/zstd/tests/seqgen.c */,
+				2215D27203224E0EA8E0A4BA /* ../libretro_ppsspp/ext/zstd/tests/zstreamtest.c */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		96E3524C75E34EE1975CA20C /* fuzzer */ = {
+			isa = PBXGroup;
+			children = (
+				0763289BB6CF4FEE89CB479C /* Source Files */,
+				55C65C50052548E899BC9F52 /* Resources */,
+				5A1C8CEE4E614ED8AC6C481A /* ../libretro_ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */,
+			);
+			name = fuzzer;
+			sourceTree = "<group>";
+		};
+		9E8C460AA55D4680B4EF8FCC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A2B5AB472EA6449F95680837 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				7DD167EDC48D4B638D2A6C37 /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		A66637F22E344A0D86689CAA /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8A8FD4446D414B2F90D8D267 /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		AE4543E0E8084CC3996EDD4E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A0FCC1D332364FD2B95BD8F4 /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		AEBC3D2E2FAE4CED828F3826 /* ALL_BUILD */ = {
+			isa = PBXGroup;
+			children = (
+				2FC07B69A9D94A77BDA75DD1 /* CMake Rules */,
+				D7710E002E164621A5A7031C /* ../libretro_ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */,
 			);
 			name = ALL_BUILD;
 			sourceTree = "<group>";
 		};
-		EF4096AB475042778AC19CB7 /* Resources */ = {
+		BD4DEAF412714D7F86FBB7A5 /* zstreamtest */ = {
 			isa = PBXGroup;
 			children = (
-				9E462273B0374153AFC5448C /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist */,
+				807DA547325041A2A59793F7 /* Source Files */,
+				A66637F22E344A0D86689CAA /* Resources */,
+				0829F9E77CE146FCA6134C20 /* ../libretro_ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */,
+			);
+			name = zstreamtest;
+			sourceTree = "<group>";
+		};
+		CDF2E972721F473193C533DC /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				54A26FF665DB43619CB6E3F3 /* ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist */,
 			);
 			name = Resources;
+			sourceTree = "<group>";
+		};
+		CE056CFC36994EC6A309F826 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				B382734E9AA24D3791300BC2 /* ../libretro_ppsspp/ext/zstd/programs/benchfn.c */,
+				7A4511D1A38A4BC7AA8EB9FD /* ../libretro_ppsspp/ext/zstd/programs/benchzstd.c */,
+				C1ACB41907F1403A995E8E78 /* ../libretro_ppsspp/ext/zstd/programs/datagen.c */,
+				0673780221E9487CBC182E96 /* ../libretro_ppsspp/ext/zstd/programs/timefn.c */,
+				914FDEC96E02430BB65CAE31 /* ../libretro_ppsspp/ext/zstd/programs/util.c */,
+				A5C233816CCA42BDBD16A7D5 /* ../libretro_ppsspp/ext/zstd/tests/fullbench.c */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		D1C401D53D2044EB872B3831 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				75EC74DB5B32469D90FD63DA /* datagen */,
+				82F7E69AAEFD4642BAC5A43E /* fullbench */,
+				5CC18D136A9746EDA4585AD0 /* fuzzer */,
+				3277E945D7E94F8ABAA2DDAB /* paramgrill */,
+				FEA5C78AD9AD4281B79CD712 /* zstreamtest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E57D0A6C6B55469FA299B514 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				582212A4AA884A8AA50AC2D5 /* ../libretro_ppsspp/ext/zstd/programs/benchfn.c */,
+				97E943E9E1E64ABB9856717D /* ../libretro_ppsspp/ext/zstd/programs/benchzstd.c */,
+				C41A29261387402DB2EB5325 /* ../libretro_ppsspp/ext/zstd/programs/datagen.c */,
+				C7D661F27C754912AF5343D5 /* ../libretro_ppsspp/ext/zstd/programs/timefn.c */,
+				EA953ACB81C3479B96D30720 /* ../libretro_ppsspp/ext/zstd/programs/util.c */,
+				24848E6C6E8341DF87F88CB5 /* ../libretro_ppsspp/ext/zstd/tests/paramgrill.c */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		F01F1EBB9F7844A2B6FE0E67 /* fullbench */ = {
+			isa = PBXGroup;
+			children = (
+				CE056CFC36994EC6A309F826 /* Source Files */,
+				A2B5AB472EA6449F95680837 /* Resources */,
+				5D740D86FF6749A4AE3E0FC5 /* ../libretro_ppsspp/ext/zstd/build/cmake/tests/CMakeLists.txt */,
+			);
+			name = fullbench;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		0CC7260814A343A7B2BCB3B2 /* fullbench */ = {
+		42FBB08D515C486B813016B0 /* paramgrill */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E2DADFCACA084F588E4E591B /* Build configuration list for PBXNativeTarget "fullbench" */;
+			buildConfigurationList = 0F0256297B0145C2BA399E92 /* Build configuration list for PBXNativeTarget "paramgrill" */;
 			buildPhases = (
-				29F4D8CE86A94741815B5EDB /* Sources */,
-				D37A43FE038A4CEFA051EF24 /* Frameworks */,
+				C355B602040948DD83F38DF7 /* Sources */,
+				FC9B5B30761C48B0BBAB7148 /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				EBDDA58EC1354491B79A05BC /* PBXTargetDependency */,
-			);
-			name = fullbench;
-			productName = fullbench;
-			productReference = EFB447D3F29A4B52AF37BBE0 /* fullbench */;
-			productType = "com.apple.product-type.application";
-		};
-		305C11E4AE6D479CBCC804BA /* fuzzer */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 53942205B452440EB2239066 /* Build configuration list for PBXNativeTarget "fuzzer" */;
-			buildPhases = (
-				64665B49CEBF408CA7711431 /* Sources */,
-				22ADF73DC10E499FB5D292F9 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				ABB73984E8D1468AB751D6F9 /* PBXTargetDependency */,
-			);
-			name = fuzzer;
-			productName = fuzzer;
-			productReference = 1AB9667149B545E4990F95A0 /* fuzzer */;
-			productType = "com.apple.product-type.application";
-		};
-		34CF5C6057C04C019E4E2E56 /* datagen */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 7C7B9793DDCE423F993D4C1D /* Build configuration list for PBXNativeTarget "datagen" */;
-			buildPhases = (
-				C35F2949E698406688F12C1F /* Sources */,
-				D11AB889138646DF8FCAD3B0 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				01357AB945684579B0370BAE /* PBXTargetDependency */,
-			);
-			name = datagen;
-			productName = datagen;
-			productReference = E100B77BD5A4462498DF43B3 /* datagen */;
-			productType = "com.apple.product-type.application";
-		};
-		5DCED3D39BD147E49352E91A /* zstreamtest */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = F2993648219D46D28E948163 /* Build configuration list for PBXNativeTarget "zstreamtest" */;
-			buildPhases = (
-				BFE89C065081468E9A7E4D2E /* Sources */,
-				A1287AD06AAB4FDD941DA6D2 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				62380A8A19B74A34A217AE79 /* PBXTargetDependency */,
-			);
-			name = zstreamtest;
-			productName = zstreamtest;
-			productReference = FE17262CD36A4503865BBF6E /* zstreamtest */;
-			productType = "com.apple.product-type.application";
-		};
-		CDF74F47900D47C78B95006E /* paramgrill */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = F50373D7C3EA4FACBD35DE58 /* Build configuration list for PBXNativeTarget "paramgrill" */;
-			buildPhases = (
-				FD88998A502A4EF491CA0F33 /* Sources */,
-				48E5AD541274424AB40D74AC /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				733E8DD8C8354E6F9054AAD4 /* PBXTargetDependency */,
+				C7E2BE8F0F94421F9E77C401 /* PBXTargetDependency */,
 			);
 			name = paramgrill;
 			productName = paramgrill;
-			productReference = E3130A92F07C4383B74A74BE /* paramgrill */;
+			productReference = 3277E945D7E94F8ABAA2DDAB /* paramgrill */;
+			productType = "com.apple.product-type.application";
+		};
+		7174F9D48A34418397BCB4AB /* datagen */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 78C3D0E50266456EA03B5491 /* Build configuration list for PBXNativeTarget "datagen" */;
+			buildPhases = (
+				2E54E0EBD7E44180A32CE6DE /* Sources */,
+				7D0D855DE6EF4F8F9441E8DA /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				63007E0204994E51B382331A /* PBXTargetDependency */,
+			);
+			name = datagen;
+			productName = datagen;
+			productReference = 75EC74DB5B32469D90FD63DA /* datagen */;
+			productType = "com.apple.product-type.application";
+		};
+		B2DEEF019B094EEDABE7DA90 /* fuzzer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C1CCAC96B338443DAE5F66E6 /* Build configuration list for PBXNativeTarget "fuzzer" */;
+			buildPhases = (
+				7665EBEF7B7E4C7EB683F4DE /* Sources */,
+				1F1A67653DDC4FE0ACC6FD7F /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0405BFE3401B4FFF993D3A24 /* PBXTargetDependency */,
+			);
+			name = fuzzer;
+			productName = fuzzer;
+			productReference = 5CC18D136A9746EDA4585AD0 /* fuzzer */;
+			productType = "com.apple.product-type.application";
+		};
+		B5C28C0670404AE0B6B1B24E /* fullbench */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C044FCDC07D7419BB662E2FC /* Build configuration list for PBXNativeTarget "fullbench" */;
+			buildPhases = (
+				D873F0E6C7CF4D71BF823AFC /* Sources */,
+				15C4918CCD1344368922058C /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0AE65AC06ADF4108BBEF366A /* PBXTargetDependency */,
+			);
+			name = fullbench;
+			productName = fullbench;
+			productReference = 82F7E69AAEFD4642BAC5A43E /* fullbench */;
+			productType = "com.apple.product-type.application";
+		};
+		EFA27B7302B3440AB02F602B /* zstreamtest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6331D43C60C147AABFF09A4B /* Build configuration list for PBXNativeTarget "zstreamtest" */;
+			buildPhases = (
+				2D1D1F1C7AF94540B984D42E /* Sources */,
+				E9DB2CD0394A4EC0B9C7BCA9 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				019D516D3DFA4C09B011E7CD /* PBXTargetDependency */,
+			);
+			name = zstreamtest;
+			productName = zstreamtest;
+			productReference = FEA5C78AD9AD4281B79CD712 /* zstreamtest */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		FE03C12F9AD449A1BB45A0D2 /* Project object */ = {
+		338B76E0D3384595812A5013 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1420;
+				LastUpgradeCheck = 1500;
 			};
-			buildConfigurationList = E5EFE26E4BEB40A39B27455F /* Build configuration list for PBXProject "tests" */;
+			buildConfigurationList = C84AD85A29F14DA6924FB3CC /* Build configuration list for PBXProject "tests" */;
 			buildSettings = {
 			};
 			buildStyles = (
-				10DDFC8379A740169559816C /* Debug */,
-				19515D2051FC40AEA394765C /* Release */,
-				E698ABFBD4E54395BC78F7A1 /* MinSizeRel */,
-				77AB9C451AF04D32A4223253 /* RelWithDebInfo */,
+				3B644732D65F45D9AD0B21B3 /* Debug */,
+				2029ECAD4C074213BD68DDD9 /* Release */,
+				7DA1C72450B24911A2CBE372 /* MinSizeRel */,
+				6C2F39B9A6464D36B5092D80 /* RelWithDebInfo */,
 			);
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
-			mainGroup = 0771F8D9D6C6472CBFF1D698;
-			projectDirPath = ../ppsspp/ext/zstd/build/cmake/tests;
+			mainGroup = 34C06E5F762340D4AAFB9A05;
+			projectDirPath = ../libretro_ppsspp/ext/zstd/build/cmake/tests;
 			projectRoot = "";
 			targets = (
-				D5C5F59DA0D24BB697F70C76 /* ALL_BUILD */,
-				CC999B7DD8894553A8463837 /* RUN_TESTS */,
-				F98D9B492C154EF89F56E070 /* ZERO_CHECK */,
-				34CF5C6057C04C019E4E2E56 /* datagen */,
-				0CC7260814A343A7B2BCB3B2 /* fullbench */,
-				305C11E4AE6D479CBCC804BA /* fuzzer */,
-				9C2FE12D6226493A89B86940 /* install */,
-				CDF74F47900D47C78B95006E /* paramgrill */,
-				5DCED3D39BD147E49352E91A /* zstreamtest */,
+				872B88AC16C241AEBBB9B138 /* ALL_BUILD */,
+				FE9EA17B6F164179AF1C6707 /* RUN_TESTS */,
+				35E138004C754BA89FCFF9F6 /* ZERO_CHECK */,
+				7174F9D48A34418397BCB4AB /* datagen */,
+				B5C28C0670404AE0B6B1B24E /* fullbench */,
+				B2DEEF019B094EEDABE7DA90 /* fuzzer */,
+				492AF1C578C644C5851A69FB /* install */,
+				42FBB08D515C486B813016B0 /* paramgrill */,
+				EFA27B7302B3440AB02F602B /* zstreamtest */,
 			);
 		};
 /* End PBXProject section */
@@ -632,19 +635,19 @@
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
   cd ../cmake/ext/zstd/build/cmake/tests
-  /usr/local/lib/python3.10/site-packages/cmake/data/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  /usr/local/Cellar/cmake/3.26.4/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
   cd ../cmake/ext/zstd/build/cmake/tests
-  /usr/local/lib/python3.10/site-packages/cmake/data/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  /usr/local/Cellar/cmake/3.26.4/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
   cd ../cmake/ext/zstd/build/cmake/tests
-  /usr/local/lib/python3.10/site-packages/cmake/data/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  /usr/local/Cellar/cmake/3.26.4/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
   cd ../cmake/ext/zstd/build/cmake/tests
-  /usr/local/lib/python3.10/site-packages/cmake/data/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  /usr/local/Cellar/cmake/3.26.4/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -664,7 +667,83 @@ fi
 exit 0";
 			showEnvVarsInLog = 0;
 		};
-		72D3A16BA2FCDDBE3E66BAB7 /* Generate CMakeFiles/ZERO_CHECK */ = {
+		87AF4882E018677E2624B544 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		910A41151295C5F9742C25BD = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd ../cmake/ext/zstd/build/cmake/tests
+  /usr/local/Cellar/cmake/3.26.4/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd ../cmake/ext/zstd/build/cmake/tests
+  /usr/local/Cellar/cmake/3.26.4/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd ../cmake/ext/zstd/build/cmake/tests
+  /usr/local/Cellar/cmake/3.26.4/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd ../cmake/ext/zstd/build/cmake/tests
+  /usr/local/Cellar/cmake/3.26.4/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		9B50530E35CC49C82C2FACCF = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		AFBBF81AD78602F0BB03A065 /* Generate CMakeFiles/ZERO_CHECK */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -697,22 +776,7 @@ fi
 ";
 			showEnvVarsInLog = 0;
 		};
-		87AF4882E018677E2624B544 = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# shell script goes here
-exit 0";
-			showEnvVarsInLog = 0;
-		};
-		8ADFCAAEE25E5403DE7DE3A6 /* Generate CMakeFiles/ALL_BUILD */ = {
+		E61DB2C4B5BA323B5430F0FF /* Generate CMakeFiles/ALL_BUILD */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -745,690 +809,138 @@ fi
 ";
 			showEnvVarsInLog = 0;
 		};
-		910A41151295C5F9742C25BD = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# shell script goes here
-exit 0";
-			showEnvVarsInLog = 0;
-		};
-		93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			name = "CMake PostBuild Rules";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e
-if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd ../cmake/ext/zstd/build/cmake/tests
-  /usr/local/lib/python3.10/site-packages/cmake/data/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
-fi
-if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd ../cmake/ext/zstd/build/cmake/tests
-  /usr/local/lib/python3.10/site-packages/cmake/data/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
-fi
-if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd ../cmake/ext/zstd/build/cmake/tests
-  /usr/local/lib/python3.10/site-packages/cmake/data/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
-fi
-if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd ../cmake/ext/zstd/build/cmake/tests
-  /usr/local/lib/python3.10/site-packages/cmake/data/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
-fi
-";
-			showEnvVarsInLog = 0;
-		};
-		9B50530E35CC49C82C2FACCF = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# shell script goes here
-exit 0";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		29F4D8CE86A94741815B5EDB /* Sources */ = {
+		2D1D1F1C7AF94540B984D42E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AB0577E6DEA74939ADE4C866 /* ../ppsspp/ext/zstd/programs/benchfn.c */,
-				B3C3555072054F9096159DBC /* ../ppsspp/ext/zstd/programs/benchzstd.c */,
-				E659823711A94A0383C9E0D4 /* ../ppsspp/ext/zstd/programs/datagen.c */,
-				27EBD716615C49E9B660FC23 /* ../ppsspp/ext/zstd/programs/timefn.c */,
-				C39D71014D2A48D287E65019 /* ../ppsspp/ext/zstd/programs/util.c */,
-				568DBA798E7647188E86759A /* ../ppsspp/ext/zstd/tests/fullbench.c */,
+				172BD3598C1F47F184B976B6 /* ../libretro_ppsspp/ext/zstd/programs/datagen.c */,
+				4668B2E5525F441487232B2E /* ../libretro_ppsspp/ext/zstd/programs/timefn.c */,
+				B4565FB09638406F83377FF0 /* ../libretro_ppsspp/ext/zstd/programs/util.c */,
+				79DC6EEAF49D4FBCAB5B8C3F /* ../libretro_ppsspp/ext/zstd/tests/external_matchfinder.c */,
+				35A060345638405598AD7A9D /* ../libretro_ppsspp/ext/zstd/tests/seqgen.c */,
+				381093FBD68B4F858886C78E /* ../libretro_ppsspp/ext/zstd/tests/zstreamtest.c */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		64665B49CEBF408CA7711431 /* Sources */ = {
+		2E54E0EBD7E44180A32CE6DE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EEEC600888924E74A2E395E9 /* ../ppsspp/ext/zstd/programs/datagen.c */,
-				91EC6371195E451A914DE094 /* ../ppsspp/ext/zstd/programs/timefn.c */,
-				4E5E24044C8C458484118F38 /* ../ppsspp/ext/zstd/programs/util.c */,
-				8EC1DE3B5842436DAA833C04 /* ../ppsspp/ext/zstd/tests/fuzzer.c */,
+				9736E3C0900748FCBDBD88F5 /* ../libretro_ppsspp/ext/zstd/programs/datagen.c */,
+				727DB898D8F64435BEA71F53 /* ../libretro_ppsspp/ext/zstd/tests/datagencli.c */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BFE89C065081468E9A7E4D2E /* Sources */ = {
+		7665EBEF7B7E4C7EB683F4DE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5E974FF795BE4D809FC13E1A /* ../ppsspp/ext/zstd/programs/datagen.c */,
-				3D39DC63E27540EF955D3640 /* ../ppsspp/ext/zstd/programs/timefn.c */,
-				61BE02A79547450EB1F82208 /* ../ppsspp/ext/zstd/programs/util.c */,
-				9326C807831A4ECBA95AA7F4 /* ../ppsspp/ext/zstd/tests/seqgen.c */,
-				5FFC1AFB1EF3464CA8C7057E /* ../ppsspp/ext/zstd/tests/zstreamtest.c */,
+				D57BE812898644E4B1C18E86 /* ../libretro_ppsspp/ext/zstd/programs/datagen.c */,
+				E0D14EDA3F6D467CA45F61FF /* ../libretro_ppsspp/ext/zstd/programs/timefn.c */,
+				F089A0E6CA2D4EB59B23A34E /* ../libretro_ppsspp/ext/zstd/programs/util.c */,
+				139E472C2F064BF8AE22DD91 /* ../libretro_ppsspp/ext/zstd/tests/fuzzer.c */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C35F2949E698406688F12C1F /* Sources */ = {
+		C355B602040948DD83F38DF7 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				54F0CC56C06F444DBD8778E4 /* ../ppsspp/ext/zstd/programs/datagen.c */,
-				02A7D0AEF75B407686AB625C /* ../ppsspp/ext/zstd/tests/datagencli.c */,
+				D23EE1EC434347ACBC9623EF /* ../libretro_ppsspp/ext/zstd/programs/benchfn.c */,
+				D8E848C2A26040EC938C9451 /* ../libretro_ppsspp/ext/zstd/programs/benchzstd.c */,
+				6CE8E9EDEA90467CA3F3CE0F /* ../libretro_ppsspp/ext/zstd/programs/datagen.c */,
+				CEB3331FF1E9400A9520DF6B /* ../libretro_ppsspp/ext/zstd/programs/timefn.c */,
+				FAD51CFC77AD4A839079EAEC /* ../libretro_ppsspp/ext/zstd/programs/util.c */,
+				A9DDCAEB6C0244169B74E1B8 /* ../libretro_ppsspp/ext/zstd/tests/paramgrill.c */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		FD88998A502A4EF491CA0F33 /* Sources */ = {
+		D873F0E6C7CF4D71BF823AFC /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				712A51EA35084071934F73B0 /* ../ppsspp/ext/zstd/programs/benchfn.c */,
-				A1B0F410956F445ABE6077D5 /* ../ppsspp/ext/zstd/programs/benchzstd.c */,
-				1F7070B2C5DB4106A07C9C29 /* ../ppsspp/ext/zstd/programs/datagen.c */,
-				A89D07EA466C453DB43A5F0F /* ../ppsspp/ext/zstd/programs/timefn.c */,
-				EDC5CD501F474423AC99D4EF /* ../ppsspp/ext/zstd/programs/util.c */,
-				4F13B0324CB44103A2725407 /* ../ppsspp/ext/zstd/tests/paramgrill.c */,
+				5275BDEF96D34C809EFF3CBE /* ../libretro_ppsspp/ext/zstd/programs/benchfn.c */,
+				A741DDBA5E3E48F6BDD848B6 /* ../libretro_ppsspp/ext/zstd/programs/benchzstd.c */,
+				F93AA2FFB8684D44AA39AA7E /* ../libretro_ppsspp/ext/zstd/programs/datagen.c */,
+				5F7F4F2A24DE478BAE392FB3 /* ../libretro_ppsspp/ext/zstd/programs/timefn.c */,
+				4F9BB1B22C3F469AA372A6DA /* ../libretro_ppsspp/ext/zstd/programs/util.c */,
+				4508A3CFF67D445484D083E0 /* ../libretro_ppsspp/ext/zstd/tests/fullbench.c */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		01357AB945684579B0370BAE /* PBXTargetDependency */ = {
+		019D516D3DFA4C09B011E7CD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F98D9B492C154EF89F56E070 /* ZERO_CHECK */;
-			targetProxy = C23B410854A742B89E1B5590 /* PBXContainerItemProxy */;
+			target = 35E138004C754BA89FCFF9F6 /* ZERO_CHECK */;
+			targetProxy = B123385116AA4CE08A369ACD /* PBXContainerItemProxy */;
 		};
-		401E95BD040F4162B7D1CCF8 /* PBXTargetDependency */ = {
+		02511DBCB3EE4A6C9892D276 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 34CF5C6057C04C019E4E2E56 /* datagen */;
-			targetProxy = E457F2BDF07440858A4F0565 /* PBXContainerItemProxy */;
+			target = B5C28C0670404AE0B6B1B24E /* fullbench */;
+			targetProxy = 76954B3E9B4B4E4384F953F8 /* PBXContainerItemProxy */;
 		};
-		413C961BCCCE413D9C21ADA4 /* PBXTargetDependency */ = {
+		0405BFE3401B4FFF993D3A24 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0CC7260814A343A7B2BCB3B2 /* fullbench */;
-			targetProxy = 11941D7C84094B84B7179A37 /* PBXContainerItemProxy */;
+			target = 35E138004C754BA89FCFF9F6 /* ZERO_CHECK */;
+			targetProxy = 569DEE2FA9DE4FE09E8265BC /* PBXContainerItemProxy */;
 		};
-		4D04504AD7A54766A9A9E138 /* PBXTargetDependency */ = {
+		0AE65AC06ADF4108BBEF366A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F98D9B492C154EF89F56E070 /* ZERO_CHECK */;
-			targetProxy = 3E341AB766034094861C871A /* PBXContainerItemProxy */;
+			target = 35E138004C754BA89FCFF9F6 /* ZERO_CHECK */;
+			targetProxy = 035E5290504A484593C06EEC /* PBXContainerItemProxy */;
 		};
-		56FF120F8D8544E3B120575E /* PBXTargetDependency */ = {
+		140DAE9A4D1040FE9A1C1950 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D5C5F59DA0D24BB697F70C76 /* ALL_BUILD */;
-			targetProxy = AB46A53AE76D4E6899698FB2 /* PBXContainerItemProxy */;
+			target = 35E138004C754BA89FCFF9F6 /* ZERO_CHECK */;
+			targetProxy = 3594F25A92CE4A58B82479A0 /* PBXContainerItemProxy */;
 		};
-		62380A8A19B74A34A217AE79 /* PBXTargetDependency */ = {
+		18988D144E7D40C2A6197422 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F98D9B492C154EF89F56E070 /* ZERO_CHECK */;
-			targetProxy = 1998598D57DB4C24A0CD8102 /* PBXContainerItemProxy */;
+			target = 872B88AC16C241AEBBB9B138 /* ALL_BUILD */;
+			targetProxy = D21E4BB0FF4347BCA8A238F0 /* PBXContainerItemProxy */;
 		};
-		6446BF66645E4252A730FB3B /* PBXTargetDependency */ = {
+		63007E0204994E51B382331A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 305C11E4AE6D479CBCC804BA /* fuzzer */;
-			targetProxy = 3B4DA4ED65994BAB9E3869FF /* PBXContainerItemProxy */;
+			target = 35E138004C754BA89FCFF9F6 /* ZERO_CHECK */;
+			targetProxy = 76E4F4EA6C64459F82063065 /* PBXContainerItemProxy */;
 		};
-		733E8DD8C8354E6F9054AAD4 /* PBXTargetDependency */ = {
+		91FB3EB7D8994C34B9020076 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F98D9B492C154EF89F56E070 /* ZERO_CHECK */;
-			targetProxy = C33F391DE5BB4526B082B61F /* PBXContainerItemProxy */;
+			target = B2DEEF019B094EEDABE7DA90 /* fuzzer */;
+			targetProxy = 6382D1D1574241CDB372F176 /* PBXContainerItemProxy */;
 		};
-		ABB73984E8D1468AB751D6F9 /* PBXTargetDependency */ = {
+		B72843D0DDF4401EBFADE6E1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F98D9B492C154EF89F56E070 /* ZERO_CHECK */;
-			targetProxy = 2694E37D31474130A801E12C /* PBXContainerItemProxy */;
+			target = EFA27B7302B3440AB02F602B /* zstreamtest */;
+			targetProxy = 608A1E7B7CFA45CE8C47E3F7 /* PBXContainerItemProxy */;
 		};
-		B796220A59E441D8A4E2F065 /* PBXTargetDependency */ = {
+		C64B49CC352243A9A18A5100 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5DCED3D39BD147E49352E91A /* zstreamtest */;
-			targetProxy = 3FFB558E2CA94386A6BDACBA /* PBXContainerItemProxy */;
+			target = 42FBB08D515C486B813016B0 /* paramgrill */;
+			targetProxy = 5B44CB45B92142D8B5F9D146 /* PBXContainerItemProxy */;
 		};
-		EBDDA58EC1354491B79A05BC /* PBXTargetDependency */ = {
+		C7E2BE8F0F94421F9E77C401 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F98D9B492C154EF89F56E070 /* ZERO_CHECK */;
-			targetProxy = BC23AFC574434FB49BF6007A /* PBXContainerItemProxy */;
+			target = 35E138004C754BA89FCFF9F6 /* ZERO_CHECK */;
+			targetProxy = 1C080D7CE4F1438189F33CBA /* PBXContainerItemProxy */;
 		};
-		FD4EF313BC89430781CF00C8 /* PBXTargetDependency */ = {
+		EFAC000CAD6442F3898C4EFC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CDF74F47900D47C78B95006E /* paramgrill */;
-			targetProxy = F8844DE9A35E400C88191B1E /* PBXContainerItemProxy */;
+			target = 7174F9D48A34418397BCB4AB /* datagen */;
+			targetProxy = 74C5C13C39E44EAE86CC539C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		0ADCAC799DBC4866A125FE4C /* MinSizeRel */ = {
+		00E3110198F845A9B6188444 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		13405ACD60D741F59556B2B5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../ppsspp/ext/zstd/build/cmake/tests,../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,../ppsspp/ext/openxr,../ppsspp/Common,../ppsspp/ext/libzip,../ppsspp/ext/libpng17,../ppsspp/ext/zstd/build/cmake/../../tests,../ppsspp/ext/zstd/build/cmake/../../programs,../ppsspp/ext/zstd/build/cmake/../../lib,../ppsspp/ext/zstd/build/cmake/../../lib/common,../ppsspp/ext/zstd/build/cmake/../../lib/compress,../ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes       -D_DEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
-				OTHER_LDFLAGS = ("-L/usr/local/opt/openssl@3/lib -Wl,-headerpad_max_install_names",../cmake/lib/Debug/libzstd.a,"$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = fullbench;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		148D4278DA784185B116693B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		18FFC47BB04E40C98CDF9554 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../ppsspp/ext/zstd/build/cmake/tests,../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,../ppsspp/ext/openxr,../ppsspp/Common,../ppsspp/ext/libzip,../ppsspp/ext/libpng17,../ppsspp/ext/zstd/build/cmake/../../tests,../ppsspp/ext/zstd/build/cmake/../../programs,../ppsspp/ext/zstd/build/cmake/../../lib,../ppsspp/ext/zstd/build/cmake/../../lib/common,../ppsspp/ext/zstd/build/cmake/../../lib/compress,../ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes        -DNDEBUG        -D_NDEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
-				OTHER_LDFLAGS = ("-L/usr/local/opt/openssl@3/lib -Wl,-headerpad_max_install_names",../cmake/lib/RelWithDebInfo/libzstd.a,"$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = fuzzer;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		294C5339892B469780E05347 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		2E661C0ACB4A40E3AD13E040 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		37FF0ABC6A21436B89D24B08 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		3F3D3EE6D97E449B8879C1A1 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../ppsspp/ext/zstd/build/cmake/tests,../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,../ppsspp/ext/openxr,../ppsspp/Common,../ppsspp/ext/libzip,../ppsspp/ext/libpng17,../ppsspp/ext/zstd/build/cmake/../../tests,../ppsspp/ext/zstd/build/cmake/../../programs,../ppsspp/ext/zstd/build/cmake/../../lib,../ppsspp/ext/zstd/build/cmake/../../lib/common,../ppsspp/ext/zstd/build/cmake/../../lib/compress,../ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes        -DNDEBUG        -D_NDEBUG -fPIC -fno-strict-aliasing   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
-				OTHER_LDFLAGS = ("-L/usr/local/opt/openssl@3/lib -Wl,-headerpad_max_install_names",../cmake/lib/RelWithDebInfo/libzstd.a,"-lm","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = paramgrill;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		494F04696D2141D3B3D0F14D /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		52CC0AA55C7240D5A5B7F3CA /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../ppsspp/ext/zstd/build/cmake/tests,../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,../ppsspp/ext/openxr,../ppsspp/Common,../ppsspp/ext/libzip,../ppsspp/ext/libpng17,../ppsspp/ext/zstd/build/cmake/../../tests,../ppsspp/ext/zstd/build/cmake/../../programs,../ppsspp/ext/zstd/build/cmake/../../lib,../ppsspp/ext/zstd/build/cmake/../../lib/common,../ppsspp/ext/zstd/build/cmake/../../lib/compress,../ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
-				OTHER_LDFLAGS = ("-L/usr/local/opt/openssl@3/lib -Wl,-headerpad_max_install_names",../cmake/lib/MinSizeRel/libzstd.a,"$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = fullbench;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		54F982CE639B434D8835CB51 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../ppsspp/ext/zstd/build/cmake/tests,../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,../ppsspp/ext/openxr,../ppsspp/Common,../ppsspp/ext/libzip,../ppsspp/ext/libpng17,../ppsspp/ext/zstd/build/cmake/../../tests,../ppsspp/ext/zstd/build/cmake/../../programs,../ppsspp/ext/zstd/build/cmake/../../lib,../ppsspp/ext/zstd/build/cmake/../../lib/common,../ppsspp/ext/zstd/build/cmake/../../lib/compress,../ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
-				OTHER_LDFLAGS = ("-L/usr/local/opt/openssl@3/lib -Wl,-headerpad_max_install_names",../cmake/lib/Release/libzstd.a,"$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = datagen;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		61755BBE83844C79BE1A0E78 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../ppsspp/ext/zstd/build/cmake/tests,../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,../ppsspp/ext/openxr,../ppsspp/Common,../ppsspp/ext/libzip,../ppsspp/ext/libpng17,../ppsspp/ext/zstd/build/cmake/../../tests,../ppsspp/ext/zstd/build/cmake/../../programs,../ppsspp/ext/zstd/build/cmake/../../lib,../ppsspp/ext/zstd/build/cmake/../../lib/common,../ppsspp/ext/zstd/build/cmake/../../lib/compress,../ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
-				OTHER_LDFLAGS = ("-L/usr/local/opt/openssl@3/lib -Wl,-headerpad_max_install_names",../cmake/lib/MinSizeRel/libzstd.a,"$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = zstreamtest;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		65A3991895694099995195D0 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		6CD63F1BE1E34525BD9CD340 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk;
-				BUILD_DIR = ../lib;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-			};
-			name = Release;
-		};
-		6EF1F87F21454A43B06D3C70 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../ppsspp/ext/zstd/build/cmake/tests,../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,../ppsspp/ext/openxr,../ppsspp/Common,../ppsspp/ext/libzip,../ppsspp/ext/libpng17,../ppsspp/ext/zstd/build/cmake/../../tests,../ppsspp/ext/zstd/build/cmake/../../programs,../ppsspp/ext/zstd/build/cmake/../../lib,../ppsspp/ext/zstd/build/cmake/../../lib/common,../ppsspp/ext/zstd/build/cmake/../../lib/compress,../ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
-				OTHER_LDFLAGS = ("-L/usr/local/opt/openssl@3/lib -Wl,-headerpad_max_install_names",../cmake/lib/Release/libzstd.a,"$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = fuzzer;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		75F200CE7F1B434FB6560B59 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../ppsspp/ext/zstd/build/cmake/tests,../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,../ppsspp/ext/openxr,../ppsspp/Common,../ppsspp/ext/libzip,../ppsspp/ext/libpng17,../ppsspp/ext/zstd/build/cmake/../../tests,../ppsspp/ext/zstd/build/cmake/../../programs,../ppsspp/ext/zstd/build/cmake/../../lib,../ppsspp/ext/zstd/build/cmake/../../lib/common,../ppsspp/ext/zstd/build/cmake/../../lib/compress,../ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
-				OTHER_LDFLAGS = ("-L/usr/local/opt/openssl@3/lib -Wl,-headerpad_max_install_names",../cmake/lib/MinSizeRel/libzstd.a,"$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = datagen;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		7681E7DA7DAF47C7B0D8A087 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../ppsspp/ext/zstd/build/cmake/tests,../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,../ppsspp/ext/openxr,../ppsspp/Common,../ppsspp/ext/libzip,../ppsspp/ext/libpng17,../ppsspp/ext/zstd/build/cmake/../../tests,../ppsspp/ext/zstd/build/cmake/../../programs,../ppsspp/ext/zstd/build/cmake/../../lib,../ppsspp/ext/zstd/build/cmake/../../lib/common,../ppsspp/ext/zstd/build/cmake/../../lib/compress,../ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes       -D_DEBUG -fPIC -fno-strict-aliasing   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
-				OTHER_LDFLAGS = ("-L/usr/local/opt/openssl@3/lib -Wl,-headerpad_max_install_names",../cmake/lib/Debug/libzstd.a,"-lm","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = paramgrill;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		7865A0A3727D4106A4FA80AD /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		7A2E2BB10C1346E29FF2FBE3 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../ppsspp/ext/zstd/build/cmake/tests,../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,../ppsspp/ext/openxr,../ppsspp/Common,../ppsspp/ext/libzip,../ppsspp/ext/libpng17,../ppsspp/ext/zstd/build/cmake/../../tests,../ppsspp/ext/zstd/build/cmake/../../programs,../ppsspp/ext/zstd/build/cmake/../../lib,../ppsspp/ext/zstd/build/cmake/../../lib/common,../ppsspp/ext/zstd/build/cmake/../../lib/compress,../ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
-				OTHER_LDFLAGS = ("-L/usr/local/opt/openssl@3/lib -Wl,-headerpad_max_install_names",../cmake/lib/MinSizeRel/libzstd.a,"-lm","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = paramgrill;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		7D20ACC12FF54DB691E725B3 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../ppsspp/ext/zstd/build/cmake/tests,../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,../ppsspp/ext/openxr,../ppsspp/Common,../ppsspp/ext/libzip,../ppsspp/ext/libpng17,../ppsspp/ext/zstd/build/cmake/../../tests,../ppsspp/ext/zstd/build/cmake/../../programs,../ppsspp/ext/zstd/build/cmake/../../lib,../ppsspp/ext/zstd/build/cmake/../../lib/common,../ppsspp/ext/zstd/build/cmake/../../lib/compress,../ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes       -D_DEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
-				OTHER_LDFLAGS = ("-L/usr/local/opt/openssl@3/lib -Wl,-headerpad_max_install_names",../cmake/lib/Debug/libzstd.a,"$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = fuzzer;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		7F1BC8832DEC43D98781F0B5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		82D0817EC22B4187822004FD /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1445,9 +957,10 @@ exit 0";
 			};
 			name = Release;
 		};
-		87C8EB8D90514C96BFFC7711 /* Debug */ = {
+		0EA48A37DD854B4FB52C5237 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
 				
@@ -1456,14 +969,14 @@ exit 0";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../ppsspp/ext/zstd/build/cmake/tests,../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,../ppsspp/ext/openxr,../ppsspp/Common,../ppsspp/ext/libzip,../ppsspp/ext/libpng17,../ppsspp/ext/zstd/build/cmake/../../tests,../ppsspp/ext/zstd/build/cmake/../../programs,../ppsspp/ext/zstd/build/cmake/../../lib,../ppsspp/ext/zstd/build/cmake/../../lib/common,../ppsspp/ext/zstd/build/cmake/../../lib/compress,../ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/openxr,../libretro_ppsspp/Common,../libretro_ppsspp/ext/libzip,../libretro_ppsspp/ext/libpng17,../libretro_ppsspp/ext/zstd/build/cmake/../../tests,../libretro_ppsspp/ext/zstd/build/cmake/../../programs,../libretro_ppsspp/ext/zstd/build/cmake/../../lib,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/common,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/compress,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
 				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist;
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes       -D_DEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
-				OTHER_LDFLAGS = ("-L/usr/local/opt/openssl@3/lib -Wl,-headerpad_max_install_names",../cmake/lib/Debug/libzstd.a,"$(inherited)");
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes -Qunused-arguments -Wa,--noexecstack       -D_DEBUG -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",../cmake/lib/Debug/libzstd.a,"$(inherited)");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = zstreamtest;
 				SECTORDER_FLAGS = "";
@@ -1473,107 +986,10 @@ exit 0";
 			};
 			name = Debug;
 		};
-		915174F9C72144308DD09061 /* RelWithDebInfo */ = {
+		15C5680572CC4BDDB3D58297 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../ppsspp/ext/zstd/build/cmake/tests,../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,../ppsspp/ext/openxr,../ppsspp/Common,../ppsspp/ext/libzip,../ppsspp/ext/libpng17,../ppsspp/ext/zstd/build/cmake/../../tests,../ppsspp/ext/zstd/build/cmake/../../programs,../ppsspp/ext/zstd/build/cmake/../../lib,../ppsspp/ext/zstd/build/cmake/../../lib/common,../ppsspp/ext/zstd/build/cmake/../../lib/compress,../ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes        -DNDEBUG        -D_NDEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
-				OTHER_LDFLAGS = ("-L/usr/local/opt/openssl@3/lib -Wl,-headerpad_max_install_names",../cmake/lib/RelWithDebInfo/libzstd.a,"$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = zstreamtest;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		92552C29D6994D778716203F /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk;
-				BUILD_DIR = ../lib;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-			};
-			name = RelWithDebInfo;
-		};
-		95DD06FEC0A640E58F16D87D /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../ppsspp/ext/zstd/build/cmake/tests,../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,../ppsspp/ext/openxr,../ppsspp/Common,../ppsspp/ext/libzip,../ppsspp/ext/libpng17,../ppsspp/ext/zstd/build/cmake/../../tests,../ppsspp/ext/zstd/build/cmake/../../programs,../ppsspp/ext/zstd/build/cmake/../../lib,../ppsspp/ext/zstd/build/cmake/../../lib/common,../ppsspp/ext/zstd/build/cmake/../../lib/compress,../ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
-				OTHER_LDFLAGS = ("-L/usr/local/opt/openssl@3/lib -Wl,-headerpad_max_install_names",../cmake/lib/Release/libzstd.a,"$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = zstreamtest;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		98BDAC897603488B9A92EB62 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../ppsspp/ext/zstd/build/cmake/tests,../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,../ppsspp/ext/openxr,../ppsspp/Common,../ppsspp/ext/libzip,../ppsspp/ext/libpng17,../ppsspp/ext/zstd/build/cmake/../../tests,../ppsspp/ext/zstd/build/cmake/../../programs,../ppsspp/ext/zstd/build/cmake/../../lib,../ppsspp/ext/zstd/build/cmake/../../lib/common,../ppsspp/ext/zstd/build/cmake/../../lib/compress,../ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes        -DNDEBUG        -D_NDEBUG -fPIC -fno-strict-aliasing   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
-				OTHER_LDFLAGS = ("-L/usr/local/opt/openssl@3/lib -Wl,-headerpad_max_install_names",../cmake/lib/RelWithDebInfo/libzstd.a,"$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = datagen;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		9ECE3DD194E647CCB0F99FB2 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1583,16 +999,314 @@ exit 0";
 				INSTALL_PATH = "";
 				OTHER_LDFLAGS = ("","$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		15FAE880B07249809D4B0E9D /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/openxr,../libretro_ppsspp/Common,../libretro_ppsspp/ext/libzip,../libretro_ppsspp/ext/libpng17,../libretro_ppsspp/ext/zstd/build/cmake/../../tests,../libretro_ppsspp/ext/zstd/build/cmake/../../programs,../libretro_ppsspp/ext/zstd/build/cmake/../../lib,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/common,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/compress,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes -Qunused-arguments -Wa,--noexecstack        -DNDEBUG        -D_NDEBUG -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",../cmake/lib/RelWithDebInfo/libzstd.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = zstreamtest;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		188D2218755E42B4AC212DD9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/openxr,../libretro_ppsspp/Common,../libretro_ppsspp/ext/libzip,../libretro_ppsspp/ext/libpng17,../libretro_ppsspp/ext/zstd/build/cmake/../../tests,../libretro_ppsspp/ext/zstd/build/cmake/../../programs,../libretro_ppsspp/ext/zstd/build/cmake/../../lib,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/common,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/compress,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes -Qunused-arguments -Wa,--noexecstack     -DNDEBUG     -D_NDEBUG -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",../cmake/lib/Release/libzstd.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = zstreamtest;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		1AB6EA19B0424368B57EFAF5 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		3A2DCB7061214AAEA7E6845D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/openxr,../libretro_ppsspp/Common,../libretro_ppsspp/ext/libzip,../libretro_ppsspp/ext/libpng17,../libretro_ppsspp/ext/zstd/build/cmake/../../tests,../libretro_ppsspp/ext/zstd/build/cmake/../../programs,../libretro_ppsspp/ext/zstd/build/cmake/../../lib,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/common,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/compress,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes -Qunused-arguments -Wa,--noexecstack     -DNDEBUG     -D_NDEBUG -fno-strict-aliasing   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",../cmake/lib/Release/libzstd.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = datagen;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		4935E25444D047B7A94EBEB1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = Debug;
 		};
-		A2D1A7D7C2EA4A579E480C72 /* RelWithDebInfo */ = {
+		4BDDE8F75AEA4D5B8A270E95 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/openxr,../libretro_ppsspp/Common,../libretro_ppsspp/ext/libzip,../libretro_ppsspp/ext/libpng17,../libretro_ppsspp/ext/zstd/build/cmake/../../tests,../libretro_ppsspp/ext/zstd/build/cmake/../../programs,../libretro_ppsspp/ext/zstd/build/cmake/../../lib,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/common,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/compress,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes -Qunused-arguments -Wa,--noexecstack        -DNDEBUG        -D_NDEBUG -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",../cmake/lib/RelWithDebInfo/libzstd.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = fuzzer;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		560B246F530C41329CA6159E /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/openxr,../libretro_ppsspp/Common,../libretro_ppsspp/ext/libzip,../libretro_ppsspp/ext/libpng17,../libretro_ppsspp/ext/zstd/build/cmake/../../tests,../libretro_ppsspp/ext/zstd/build/cmake/../../programs,../libretro_ppsspp/ext/zstd/build/cmake/../../lib,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/common,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/compress,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes -Qunused-arguments -Wa,--noexecstack     -DNDEBUG     -D_NDEBUG -fno-strict-aliasing   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",../cmake/lib/MinSizeRel/libzstd.a,"-lm","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = paramgrill;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		58F0D87612E14346944EA1F0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		597F474C31384ABFBF5C8EBF /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		5FF3BF26B91D467CB06B9939 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/openxr,../libretro_ppsspp/Common,../libretro_ppsspp/ext/libzip,../libretro_ppsspp/ext/libpng17,../libretro_ppsspp/ext/zstd/build/cmake/../../tests,../libretro_ppsspp/ext/zstd/build/cmake/../../programs,../libretro_ppsspp/ext/zstd/build/cmake/../../lib,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/common,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/compress,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes -Qunused-arguments -Wa,--noexecstack        -DNDEBUG        -D_NDEBUG -fno-strict-aliasing   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",../cmake/lib/RelWithDebInfo/libzstd.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = datagen;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		6542D2D7F03347A581C5BAB5 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_REQUIRED = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				BUILD_DIR = ../lib;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = MinSizeRel;
+		};
+		683C19E403FD4A6FB1D8E659 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/openxr,../libretro_ppsspp/Common,../libretro_ppsspp/ext/libzip,../libretro_ppsspp/ext/libpng17,../libretro_ppsspp/ext/zstd/build/cmake/../../tests,../libretro_ppsspp/ext/zstd/build/cmake/../../programs,../libretro_ppsspp/ext/zstd/build/cmake/../../lib,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/common,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/compress,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes -Qunused-arguments -Wa,--noexecstack       -D_DEBUG -fno-strict-aliasing   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",../cmake/lib/Debug/libzstd.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = datagen;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		6FB93830ACCE428DBB1A37DA /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1609,9 +1323,43 @@ exit 0";
 			};
 			name = RelWithDebInfo;
 		};
-		C6B78DDFF2864763ACEEA4FA /* Release */ = {
+		6FBA93F9A37E4E3FA6ED8FF4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_REQUIRED = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk;
+				BUILD_DIR = ../lib;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = Debug;
+		};
+		7E3ABE36702C49A4A0079524 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		80E72B4E7B754F0BB6B6F35C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
 				
@@ -1620,14 +1368,492 @@ exit 0";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../ppsspp/ext/zstd/build/cmake/tests,../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,../ppsspp/ext/openxr,../ppsspp/Common,../ppsspp/ext/libzip,../ppsspp/ext/libpng17,../ppsspp/ext/zstd/build/cmake/../../tests,../ppsspp/ext/zstd/build/cmake/../../programs,../ppsspp/ext/zstd/build/cmake/../../lib,../ppsspp/ext/zstd/build/cmake/../../lib/common,../ppsspp/ext/zstd/build/cmake/../../lib/compress,../ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/openxr,../libretro_ppsspp/Common,../libretro_ppsspp/ext/libzip,../libretro_ppsspp/ext/libpng17,../libretro_ppsspp/ext/zstd/build/cmake/../../tests,../libretro_ppsspp/ext/zstd/build/cmake/../../programs,../libretro_ppsspp/ext/zstd/build/cmake/../../lib,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/common,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/compress,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes -Qunused-arguments -Wa,--noexecstack     -DNDEBUG     -D_NDEBUG -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",../cmake/lib/Release/libzstd.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = fuzzer;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		851E07B3E9B04838839051E6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		85D6DB0E771E4B8097DB296D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/openxr,../libretro_ppsspp/Common,../libretro_ppsspp/ext/libzip,../libretro_ppsspp/ext/libpng17,../libretro_ppsspp/ext/zstd/build/cmake/../../tests,../libretro_ppsspp/ext/zstd/build/cmake/../../programs,../libretro_ppsspp/ext/zstd/build/cmake/../../lib,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/common,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/compress,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes -Qunused-arguments -Wa,--noexecstack       -D_DEBUG -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",../cmake/lib/Debug/libzstd.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = fullbench;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		8F503C7BEF1E41D0A1D8E937 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		AA2CB84CC31A4E8D91A70294 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		AD258099C43C40DA8440C82A /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/openxr,../libretro_ppsspp/Common,../libretro_ppsspp/ext/libzip,../libretro_ppsspp/ext/libpng17,../libretro_ppsspp/ext/zstd/build/cmake/../../tests,../libretro_ppsspp/ext/zstd/build/cmake/../../programs,../libretro_ppsspp/ext/zstd/build/cmake/../../lib,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/common,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/compress,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes -Qunused-arguments -Wa,--noexecstack        -DNDEBUG        -D_NDEBUG -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",../cmake/lib/RelWithDebInfo/libzstd.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = fullbench;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		AF4992EE79684400A082A8E5 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		B20A28604A224D0CBFA2608E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_REQUIRED = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				BUILD_DIR = ../lib;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = Release;
+		};
+		B5BA7DA1397F472EB0FF9E2D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		B911EA3F737A4C2D810C71EB /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/openxr,../libretro_ppsspp/Common,../libretro_ppsspp/ext/libzip,../libretro_ppsspp/ext/libpng17,../libretro_ppsspp/ext/zstd/build/cmake/../../tests,../libretro_ppsspp/ext/zstd/build/cmake/../../programs,../libretro_ppsspp/ext/zstd/build/cmake/../../lib,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/common,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/compress,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes -Qunused-arguments -Wa,--noexecstack     -DNDEBUG     -D_NDEBUG -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",../cmake/lib/MinSizeRel/libzstd.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = fullbench;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		BBDAAC395A35464993E4E617 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		D147D5F4395C478FA2E94AB1 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/openxr,../libretro_ppsspp/Common,../libretro_ppsspp/ext/libzip,../libretro_ppsspp/ext/libpng17,../libretro_ppsspp/ext/zstd/build/cmake/../../tests,../libretro_ppsspp/ext/zstd/build/cmake/../../programs,../libretro_ppsspp/ext/zstd/build/cmake/../../lib,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/common,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/compress,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes -Qunused-arguments -Wa,--noexecstack     -DNDEBUG     -D_NDEBUG -fno-strict-aliasing   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",../cmake/lib/MinSizeRel/libzstd.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = datagen;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		D1BA2226303D411E8D302E19 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/openxr,../libretro_ppsspp/Common,../libretro_ppsspp/ext/libzip,../libretro_ppsspp/ext/libpng17,../libretro_ppsspp/ext/zstd/build/cmake/../../tests,../libretro_ppsspp/ext/zstd/build/cmake/../../programs,../libretro_ppsspp/ext/zstd/build/cmake/../../lib,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/common,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/compress,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes -Qunused-arguments -Wa,--noexecstack     -DNDEBUG     -D_NDEBUG -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",../cmake/lib/Release/libzstd.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = fullbench;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		D2DC3B872E204F909A7AC354 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		D34D02757EDA4ABA8A578155 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/openxr,../libretro_ppsspp/Common,../libretro_ppsspp/ext/libzip,../libretro_ppsspp/ext/libpng17,../libretro_ppsspp/ext/zstd/build/cmake/../../tests,../libretro_ppsspp/ext/zstd/build/cmake/../../programs,../libretro_ppsspp/ext/zstd/build/cmake/../../lib,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/common,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/compress,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
 				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist;
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
-				OTHER_LDFLAGS = ("-L/usr/local/opt/openssl@3/lib -Wl,-headerpad_max_install_names",../cmake/lib/Release/libzstd.a,"-lm","$(inherited)");
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes -Qunused-arguments -Wa,--noexecstack        -DNDEBUG        -D_NDEBUG -fno-strict-aliasing   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",../cmake/lib/RelWithDebInfo/libzstd.a,"-lm","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = paramgrill;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		D791F53414FA47778D0ECB88 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/openxr,../libretro_ppsspp/Common,../libretro_ppsspp/ext/libzip,../libretro_ppsspp/ext/libpng17,../libretro_ppsspp/ext/zstd/build/cmake/../../tests,../libretro_ppsspp/ext/zstd/build/cmake/../../programs,../libretro_ppsspp/ext/zstd/build/cmake/../../lib,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/common,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/compress,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes -Qunused-arguments -Wa,--noexecstack     -DNDEBUG     -D_NDEBUG -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",../cmake/lib/MinSizeRel/libzstd.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = fuzzer;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		DBC6585CDF394C568E12C9B5 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_REQUIRED = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				BUILD_DIR = ../lib;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = RelWithDebInfo;
+		};
+		DCD911FF2BF94BB9ABF70AFA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		E2C73F28D8AE42E493DF16EC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/openxr,../libretro_ppsspp/Common,../libretro_ppsspp/ext/libzip,../libretro_ppsspp/ext/libpng17,../libretro_ppsspp/ext/zstd/build/cmake/../../tests,../libretro_ppsspp/ext/zstd/build/cmake/../../programs,../libretro_ppsspp/ext/zstd/build/cmake/../../lib,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/common,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/compress,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes -Qunused-arguments -Wa,--noexecstack       -D_DEBUG -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",../cmake/lib/Debug/libzstd.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = fuzzer;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		E40E65560FE84DA88969E665 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/openxr,../libretro_ppsspp/Common,../libretro_ppsspp/ext/libzip,../libretro_ppsspp/ext/libpng17,../libretro_ppsspp/ext/zstd/build/cmake/../../tests,../libretro_ppsspp/ext/zstd/build/cmake/../../programs,../libretro_ppsspp/ext/zstd/build/cmake/../../lib,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/common,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/compress,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/zstreamtest.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes -Qunused-arguments -Wa,--noexecstack     -DNDEBUG     -D_NDEBUG -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",../cmake/lib/MinSizeRel/libzstd.a,"$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = zstreamtest;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		E52CDC716BC742538CA933B7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/openxr,../libretro_ppsspp/Common,../libretro_ppsspp/ext/libzip,../libretro_ppsspp/ext/libpng17,../libretro_ppsspp/ext/zstd/build/cmake/../../tests,../libretro_ppsspp/ext/zstd/build/cmake/../../programs,../libretro_ppsspp/ext/zstd/build/cmake/../../lib,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/common,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/compress,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes -Qunused-arguments -Wa,--noexecstack     -DNDEBUG     -D_NDEBUG -fno-strict-aliasing   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",../cmake/lib/Release/libzstd.a,"-lm","$(inherited)");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = paramgrill;
 				SECTORDER_FLAGS = "";
@@ -1637,108 +1863,10 @@ exit 0";
 			};
 			name = Release;
 		};
-		D3FBC9C6A4A1448DA5E0F32D /* MinSizeRel */ = {
+		F962FD8F9D4D4A44AB9F7052 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		DC72ECF7A1C5403DAA79C4E3 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		E45402BCA05949CE9F488162 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk;
-				BUILD_DIR = ../lib;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-			};
-			name = MinSizeRel;
-		};
-		ED55C712A4A84F5883DD031B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../ppsspp/ext/zstd/build/cmake/tests,../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,../ppsspp/ext/openxr,../ppsspp/Common,../ppsspp/ext/libzip,../ppsspp/ext/libpng17,../ppsspp/ext/zstd/build/cmake/../../tests,../ppsspp/ext/zstd/build/cmake/../../programs,../ppsspp/ext/zstd/build/cmake/../../lib,../ppsspp/ext/zstd/build/cmake/../../lib/common,../ppsspp/ext/zstd/build/cmake/../../lib/compress,../ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
-				OTHER_LDFLAGS = ("-L/usr/local/opt/openssl@3/lib -Wl,-headerpad_max_install_names",../cmake/lib/Release/libzstd.a,"$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = fullbench;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		EE8B9D8B9E3D49C2B6C1B7E6 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		F022237A01854AB38F4CA68C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
 				
@@ -1747,226 +1875,137 @@ exit 0";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../ppsspp/ext/zstd/build/cmake/tests,../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,../ppsspp/ext/openxr,../ppsspp/Common,../ppsspp/ext/libzip,../ppsspp/ext/libpng17,../ppsspp/ext/zstd/build/cmake/../../tests,../ppsspp/ext/zstd/build/cmake/../../programs,../ppsspp/ext/zstd/build/cmake/../../lib,../ppsspp/ext/zstd/build/cmake/../../lib/common,../ppsspp/ext/zstd/build/cmake/../../lib/compress,../ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/datagen.dir/Info.plist;
+				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/zstd/build/cmake/tests,../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,../libretro_ppsspp/ext/openxr,../libretro_ppsspp/Common,../libretro_ppsspp/ext/libzip,../libretro_ppsspp/ext/libpng17,../libretro_ppsspp/ext/zstd/build/cmake/../../tests,../libretro_ppsspp/ext/zstd/build/cmake/../../programs,../libretro_ppsspp/ext/zstd/build/cmake/../../lib,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/common,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/compress,../libretro_ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
+				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/paramgrill.dir/Info.plist;
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes       -D_DEBUG -fPIC -fno-strict-aliasing   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
-				OTHER_LDFLAGS = ("-L/usr/local/opt/openssl@3/lib -Wl,-headerpad_max_install_names",../cmake/lib/Debug/libzstd.a,"$(inherited)");
+				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes -Qunused-arguments -Wa,--noexecstack       -D_DEBUG -fno-strict-aliasing   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names",../cmake/lib/Debug/libzstd.a,"-lm","$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = datagen;
+				PRODUCT_NAME = paramgrill;
 				SECTORDER_FLAGS = "";
 				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = Debug;
-		};
-		F1112A806C0E48C29AF1D201 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../ppsspp/ext/zstd/build/cmake/tests,../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,../ppsspp/ext/openxr,../ppsspp/Common,../ppsspp/ext/libzip,../ppsspp/ext/libpng17,../ppsspp/ext/zstd/build/cmake/../../tests,../ppsspp/ext/zstd/build/cmake/../../programs,../ppsspp/ext/zstd/build/cmake/../../lib,../ppsspp/ext/zstd/build/cmake/../../lib/common,../ppsspp/ext/zstd/build/cmake/../../lib/compress,../ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fullbench.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes        -DNDEBUG        -D_NDEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
-				OTHER_LDFLAGS = ("-L/usr/local/opt/openssl@3/lib -Wl,-headerpad_max_install_names",../cmake/lib/RelWithDebInfo/libzstd.a,"$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = fullbench;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		F3F3F74769EE44EDA89E93B5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk;
-				BUILD_DIR = ../lib;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-			};
-			name = Debug;
-		};
-		FA44A11A46094980AC0B96C5 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		FC42764E6D4245FD9EA4F7CA /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'",SHARED_ZLIB,"'XXH_NAMESPACE=ZSTD_'","'ZSTD_LEGACY_SUPPORT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../cmake/ext/zstd/build/cmake/tests,../ppsspp/ext/zstd/build/cmake/tests,../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,../ppsspp/ext/openxr,../ppsspp/Common,../ppsspp/ext/libzip,../ppsspp/ext/libpng17,../ppsspp/ext/zstd/build/cmake/../../tests,../ppsspp/ext/zstd/build/cmake/../../programs,../ppsspp/ext/zstd/build/cmake/../../lib,../ppsspp/ext/zstd/build/cmake/../../lib/common,../ppsspp/ext/zstd/build/cmake/../../lib/compress,../ppsspp/ext/zstd/build/cmake/../../lib/dictBuilder,"$(inherited)");
-				INFOPLIST_FILE = ../cmake/ext/zstd/build/cmake/tests/CMakeFiles/fuzzer.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=11.0 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing -Wno-deprecated-declarations   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar","$(inherited)");
-				OTHER_LDFLAGS = ("-L/usr/local/opt/openssl@3/lib -Wl,-headerpad_max_install_names",../cmake/lib/MinSizeRel/libzstd.a,"$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = fuzzer;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1BF40395C73C4FAF8A188209 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+		0BBC50CF94574E08ACD0D9E6 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				DC72ECF7A1C5403DAA79C4E3 /* Debug */,
-				494F04696D2141D3B3D0F14D /* Release */,
-				D3FBC9C6A4A1448DA5E0F32D /* MinSizeRel */,
-				37FF0ABC6A21436B89D24B08 /* RelWithDebInfo */,
+				58F0D87612E14346944EA1F0 /* Debug */,
+				851E07B3E9B04838839051E6 /* Release */,
+				7E3ABE36702C49A4A0079524 /* MinSizeRel */,
+				8F503C7BEF1E41D0A1D8E937 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		20B18C3BEC354F059C928274 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+		0F0256297B0145C2BA399E92 /* Build configuration list for PBXNativeTarget "paramgrill" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9ECE3DD194E647CCB0F99FB2 /* Debug */,
-				82D0817EC22B4187822004FD /* Release */,
-				EE8B9D8B9E3D49C2B6C1B7E6 /* MinSizeRel */,
-				FA44A11A46094980AC0B96C5 /* RelWithDebInfo */,
+				F962FD8F9D4D4A44AB9F7052 /* Debug */,
+				E52CDC716BC742538CA933B7 /* Release */,
+				560B246F530C41329CA6159E /* MinSizeRel */,
+				D34D02757EDA4ABA8A578155 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		53942205B452440EB2239066 /* Build configuration list for PBXNativeTarget "fuzzer" */ = {
+		6331D43C60C147AABFF09A4B /* Build configuration list for PBXNativeTarget "zstreamtest" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				7D20ACC12FF54DB691E725B3 /* Debug */,
-				6EF1F87F21454A43B06D3C70 /* Release */,
-				FC42764E6D4245FD9EA4F7CA /* MinSizeRel */,
-				18FFC47BB04E40C98CDF9554 /* RelWithDebInfo */,
+				0EA48A37DD854B4FB52C5237 /* Debug */,
+				188D2218755E42B4AC212DD9 /* Release */,
+				E40E65560FE84DA88969E665 /* MinSizeRel */,
+				15FAE880B07249809D4B0E9D /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		73742499B71D4DC186AC61B8 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
+		65211A46D8C04C1EB6DC0947 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				148D4278DA784185B116693B /* Debug */,
-				294C5339892B469780E05347 /* Release */,
-				0ADCAC799DBC4866A125FE4C /* MinSizeRel */,
-				65A3991895694099995195D0 /* RelWithDebInfo */,
+				B5BA7DA1397F472EB0FF9E2D /* Debug */,
+				00E3110198F845A9B6188444 /* Release */,
+				AF4992EE79684400A082A8E5 /* MinSizeRel */,
+				BBDAAC395A35464993E4E617 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		7C7B9793DDCE423F993D4C1D /* Build configuration list for PBXNativeTarget "datagen" */ = {
+		701C6A7F432647D19E6255CB /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F022237A01854AB38F4CA68C /* Debug */,
-				54F982CE639B434D8835CB51 /* Release */,
-				75F200CE7F1B434FB6560B59 /* MinSizeRel */,
-				98BDAC897603488B9A92EB62 /* RelWithDebInfo */,
+				4935E25444D047B7A94EBEB1 /* Debug */,
+				AA2CB84CC31A4E8D91A70294 /* Release */,
+				597F474C31384ABFBF5C8EBF /* MinSizeRel */,
+				15C5680572CC4BDDB3D58297 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		9912A7A108584E78ABB1F4CD /* Build configuration list for PBXAggregateTarget "install" */ = {
+		78C3D0E50266456EA03B5491 /* Build configuration list for PBXNativeTarget "datagen" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				7F1BC8832DEC43D98781F0B5 /* Debug */,
-				7865A0A3727D4106A4FA80AD /* Release */,
-				2E661C0ACB4A40E3AD13E040 /* MinSizeRel */,
-				A2D1A7D7C2EA4A579E480C72 /* RelWithDebInfo */,
+				683C19E403FD4A6FB1D8E659 /* Debug */,
+				3A2DCB7061214AAEA7E6845D /* Release */,
+				D147D5F4395C478FA2E94AB1 /* MinSizeRel */,
+				5FF3BF26B91D467CB06B9939 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		E2DADFCACA084F588E4E591B /* Build configuration list for PBXNativeTarget "fullbench" */ = {
+		861D5A00A8F045C6841878DC /* Build configuration list for PBXAggregateTarget "install" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				13405ACD60D741F59556B2B5 /* Debug */,
-				ED55C712A4A84F5883DD031B /* Release */,
-				52CC0AA55C7240D5A5B7F3CA /* MinSizeRel */,
-				F1112A806C0E48C29AF1D201 /* RelWithDebInfo */,
+				DCD911FF2BF94BB9ABF70AFA /* Debug */,
+				D2DC3B872E204F909A7AC354 /* Release */,
+				1AB6EA19B0424368B57EFAF5 /* MinSizeRel */,
+				6FB93830ACCE428DBB1A37DA /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		E5EFE26E4BEB40A39B27455F /* Build configuration list for PBXProject "tests" */ = {
+		C044FCDC07D7419BB662E2FC /* Build configuration list for PBXNativeTarget "fullbench" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F3F3F74769EE44EDA89E93B5 /* Debug */,
-				6CD63F1BE1E34525BD9CD340 /* Release */,
-				E45402BCA05949CE9F488162 /* MinSizeRel */,
-				92552C29D6994D778716203F /* RelWithDebInfo */,
+				85D6DB0E771E4B8097DB296D /* Debug */,
+				D1BA2226303D411E8D302E19 /* Release */,
+				B911EA3F737A4C2D810C71EB /* MinSizeRel */,
+				AD258099C43C40DA8440C82A /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		F2993648219D46D28E948163 /* Build configuration list for PBXNativeTarget "zstreamtest" */ = {
+		C1CCAC96B338443DAE5F66E6 /* Build configuration list for PBXNativeTarget "fuzzer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				87C8EB8D90514C96BFFC7711 /* Debug */,
-				95DD06FEC0A640E58F16D87D /* Release */,
-				61755BBE83844C79BE1A0E78 /* MinSizeRel */,
-				915174F9C72144308DD09061 /* RelWithDebInfo */,
+				E2C73F28D8AE42E493DF16EC /* Debug */,
+				80E72B4E7B754F0BB6B6F35C /* Release */,
+				D791F53414FA47778D0ECB88 /* MinSizeRel */,
+				4BDDE8F75AEA4D5B8A270E95 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		F50373D7C3EA4FACBD35DE58 /* Build configuration list for PBXNativeTarget "paramgrill" */ = {
+		C84AD85A29F14DA6924FB3CC /* Build configuration list for PBXProject "tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				7681E7DA7DAF47C7B0D8A087 /* Debug */,
-				C6B78DDFF2864763ACEEA4FA /* Release */,
-				7A2E2BB10C1346E29FF2FBE3 /* MinSizeRel */,
-				3F3D3EE6D97E449B8879C1A1 /* RelWithDebInfo */,
+				6FBA93F9A37E4E3FA6ED8FF4 /* Debug */,
+				B20A28604A224D0CBFA2608E /* Release */,
+				6542D2D7F03347A581C5BAB5 /* MinSizeRel */,
+				DBC6585CDF394C568E12C9B5 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = FE03C12F9AD449A1BB45A0D2 /* Project object */;
+	rootObject = 338B76E0D3384595812A5013 /* Project object */;
 }

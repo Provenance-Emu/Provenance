@@ -1,5 +1,5 @@
 # CMake generated Testfile for 
-# Source directory: ../ppsspp/ext/glslang/SPIRV
+# Source directory: ../libretro_ppsspp/ext/glslang/SPIRV
 # Build directory: ../cmake/ext/glslang/SPIRV
 # 
 # This file includes the relevant testing commands required for 

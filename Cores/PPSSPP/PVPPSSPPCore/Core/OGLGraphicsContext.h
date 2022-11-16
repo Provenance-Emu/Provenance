@@ -40,7 +40,6 @@
 #include "Common/Thread/ThreadUtil.h"
 #include "Common/Thread/ThreadManager.h"
 #include "Common/File/VFS/VFS.h"
-#include "Common/File/VFS/AssetReader.h"
 #include "Common/Data/Text/I18n.h"
 #include "Common/StringUtils.h""
 #include "Common/System/Display.h"
@@ -69,7 +68,6 @@
 #include "Core/HLE/sceCtrl.h"
 #include "Core/HLE/sceUtility.h"
 #include "Core/HW/MemoryStick.h"
-#include "Core/Host.h"
 #include "Core/MemMap.h"
 #include "Core/System.h"
 #include "Core/CoreTiming.h"
@@ -89,14 +87,14 @@ public:
         SetGPUBackend(GPUBackend::OPENGL);
         bool success = draw_->CreatePresets();
         if (success) {
-            ELOG(@"Shader preset ok\n");
+            NSLog(@"Shader preset ok\n");
         } else {
-            ELOG(@"Shader preset failed\n");
+            NSLog(@"Shader preset failed\n");
         }
         _assert_msg_(success, "Failed to compile preset shaders");
     }
     ~OGLGraphicsContext() {
-        delete draw_;
+        //delete draw_;
     }
     Draw::DrawContext *GetDrawContext() override {
         return draw_;
@@ -120,7 +118,6 @@ public:
     }
 
     void StopThread() override {
-        renderManager_->WaitUntilQueueIdle();
         renderManager_->StopThread();
     }
 

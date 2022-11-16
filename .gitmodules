@@ -34,9 +34,6 @@
 [submodule "Cores/Play/Play-"]
 	path = Cores/Play/Play-
 	url = https://github.com/Provenance-Emu/Play-.git
-[submodule "Cores/PPSSPP/ppsspp"]
-	path = Cores/PPSSPP/ppsspp
-	url = https://github.com/Provenance-Emu/ppsspp.git
 [submodule "Cores/DuckStation/duckstation"]
 	path = Cores/DuckStation/duckstation
 	url = https://github.com/stenzek/duckstation.git
@@ -175,3 +172,6 @@
 [submodule "Cores/melonDS/melonds-libretro"]
 	path = Cores/melonDS/melonds-libretro
 	url = https://github.com/libretro/melonDS.git
+[submodule "Cores/PPSSPP/libretro_ppsspp"]
+	path = Cores/PPSSPP/libretro_ppsspp
+	url = https://github.com/hrydgard/ppsspp.git

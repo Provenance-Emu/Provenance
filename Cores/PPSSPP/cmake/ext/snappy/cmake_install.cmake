@@ -1,4 +1,4 @@
-# Install script for directory: ../ppsspp/ext/snappy
+# Install script for directory: ../libretro_ppsspp/ext/snappy
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

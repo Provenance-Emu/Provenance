@@ -1,5 +1,5 @@
 # CMake generated Testfile for 
-# Source directory: ../ppsspp/ext/armips
+# Source directory: ../libretro_ppsspp/ext/armips
 # Build directory: ../cmake/ext/armips
 # 
 # This file includes the relevant testing commands required for 

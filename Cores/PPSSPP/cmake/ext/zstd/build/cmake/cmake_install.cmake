@@ -1,4 +1,4 @@
-# Install script for directory: ../ppsspp/ext/zstd/build/cmake
+# Install script for directory: ../libretro_ppsspp/ext/zstd/build/cmake
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -91,7 +91,7 @@ endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/zstd" TYPE FILE FILES
-    "../ppsspp/ext/zstd/build/cmake/zstdConfig.cmake"
+    "../libretro_ppsspp/ext/zstd/build/cmake/zstdConfig.cmake"
     "../cmake/ext/zstd/build/cmake/zstdConfigVersion.cmake"
     )
 endif()

@@ -45,7 +45,7 @@ extension PVRetroArchCore: CoreOptional {
                .init(title: "Angrylion", description: "Angrylion", value: 0),
                .init(title: "GlideN64", description: "GlideN64", value: 1)
           ],
-          defaultValue: 0)
+          defaultValue: 1)
     }()
     //
     public static var options: [CoreOption] {
@@ -107,10 +107,15 @@ extension PVRetroArchCore: CoreOptional {
             self.hasSecondScreen = secondScreen;
         }
         if (self.systemIdentifier != nil) {
+            if (self.systemIdentifier!.contains("psp")) {
+                self.gsPreference = 2; // Use Vulkan PSP
+            }
             if (self.systemIdentifier!.contains("snes") ||
                 self.systemIdentifier!.contains("psx")  ||
                 self.systemIdentifier!.contains("pce") ||
                 self.systemIdentifier!.contains("ds") ||
+                self.systemIdentifier!.contains("psp") ||
+                self.systemIdentifier!.contains("n64") ||
                 self.systemIdentifier!.contains("retroarch")) {
                 self.retroArchControls = retroControl
                 self.hasTouchControls = true
@@ -124,7 +129,7 @@ extension PVRetroArchCore: CoreOptional {
             }
         }
         if (self.coreIdentifier != nil && self.coreIdentifier!.contains("mupen")) {
-            let rdpOpt = PVRetroArchCore.valueForOption(PVRetroArchCore.mupenRDPOption).asInt ?? 0
+            let rdpOpt = PVRetroArchCore.valueForOption(PVRetroArchCore.mupenRDPOption).asInt ?? 1
             if (rdpOpt == 0) {
                 optionValues += "mupen64plus-rdp-plugin = \"angrylion\"\n"
             } else {
@@ -133,18 +138,35 @@ extension PVRetroArchCore: CoreOptional {
             optionValuesFile = "Mupen64Plus-Next/Mupen64Plus-Next.opt"
             optionOverwrite = true
         }
-        if (self.coreIdentifier != nil && self.coreIdentifier!.contains("psx")) {
-            optionValues += "beetle_psx_hw_renderer = \"software\"\n"
+        if (self.coreIdentifier != nil && self.coreIdentifier!.contains("ppsspp")) {
+            optionValues += "ppsspp_cpu_core = \"Interpreter\"\n"
+            optionValues += "ppsspp_internal_resolution = \"1920x1088\"\n"
+            optionValues += "ppsspp_texture_scaling_level = \"5x\"\n"
+            optionValuesFile = "PPSSPP/PPSSPP.opt"
+            optionOverwrite = false
+        }
+        if (self.coreIdentifier != nil && self.coreIdentifier!.contains("psx_hw")) {
+            optionValues += "beetle_psx_hw_renderer = \"hardware_vk\"\n"
             optionValues += "beetle_psx_hw_renderer_software_fb = \"enabled\"\n"
             optionValues += "beetle_psx_hw_pgxp_2d_tol = \"0px\"\n"
             optionValues += "beetle_psx_hw_pgxp_mode = \"memory only\"\n"
             optionValues += "beetle_psx_hw_pgxp_nclip = \"enabled\"\n"
-            optionValues += "beetle_psx_hw_gpu_overclock = \"32x\"\n"
             optionValues += "beetle_psx_hw_internal_resolution = \"4x\"\n"
             optionValues += "beetle_psx_hw_dither_mode = \"internal resolution\"\n"
             optionValues += "beetle_psx_hw_pgxp_texture = \"enabled\"\n"
             optionValues += "beetle_psx_hw_pgxp_vertex = \"enabled\"\n";
             optionValuesFile = "Beetle PSX HW/Beetle PSX HW.opt"
+            optionOverwrite = false
+        } else if (self.coreIdentifier != nil && self.coreIdentifier!.contains("psx")) {
+            optionValues += "beetle_psx_gxp_2d_tol = \"0px\"\n"
+            optionValues += "beetle_psx_pgxp_mode = \"memory only\"\n"
+            optionValues += "beetle_psx_pgxp_nclip = \"enabled\"\n"
+            optionValues += "beetle_psx_gpu_overclock = \"32x\"\n"
+            optionValues += "beetle_psx_internal_resolution = \"4x\"\n"
+            optionValues += "beetle_psx_dither_mode = \"internal resolution\"\n"
+            optionValues += "beetle_psx_pgxp_texture = \"enabled\"\n"
+            optionValues += "beetle_psx_pgxp_vertex = \"enabled\"\n";
+            optionValuesFile = "Beetle PSX/Beetle PSX.opt"
             optionOverwrite = false
         }
         self.coreOptionConfig = optionValues;
@@ -156,11 +178,11 @@ extension PVRetroArchCore: CoreOptional {
 extension PVRetroArchCore: GameWithCheat {
 	@objc public func setCheat(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool) -> Bool {
 		do {
-			ILOG("Calling setCheat \(code) \(type) \(codeType)")
+			NSLog("Calling setCheat \(code) \(type) \(codeType)")
 			try self.setCheat(code, setType: type, setCodeType: codeType, setIndex: cheatIndex, setEnabled: enabled)
 			return true
 		} catch let error {
-			ILOG("Error setCheat \(error)")
+            NSLog("Error setCheat \(error)")
 			return false
 		}
 	}

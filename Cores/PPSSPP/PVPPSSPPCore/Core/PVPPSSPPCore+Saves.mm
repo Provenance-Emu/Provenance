@@ -39,7 +39,6 @@
 #include "Common/Thread/ThreadUtil.h"
 #include "Common/Thread/ThreadManager.h"
 #include "Common/File/VFS/VFS.h"
-#include "Common/File/VFS/AssetReader.h"
 #include "Common/Data/Text/I18n.h"
 #include "Common/StringUtils.h""
 #include "Common/System/Display.h"
@@ -68,7 +67,6 @@
 #include "Core/HLE/sceCtrl.h"
 #include "Core/HLE/sceUtility.h"
 #include "Core/HW/MemoryStick.h"
-#include "Core/Host.h"
 #include "Core/MemMap.h"
 #include "Core/System.h"
 #include "Core/CoreTiming.h"
@@ -108,7 +106,7 @@ static bool processed;
     }, (__bridge void *)self);
     processed=false;
     if (isPaused) {
-        ELOG(@"Processing Save (Should only happen when paused)\n");
+        NSLog(@"Processing Save (Should only happen when paused)\n");
         SaveState::Process();
         processed=true;
     } else {
@@ -130,7 +128,7 @@ static bool processed;
     }, (__bridge void *)self);
     processed=false;
     if (isPaused) {
-        ELOG(@"Processing Save (Should only happen when paused)\n");
+        NSLog(@"Processing Save (Should only happen when paused)\n");
         SaveState::Process();
         processed=true;
     } else {
@@ -140,20 +138,41 @@ static bool processed;
 }
 
 - (BOOL)loadStateFromFileAtPath:(NSString *)fileName {
-	bool success=false;
-	if(_isInitialized) {
-		SaveState::Load(Path([fileName fileSystemRepresentation]), 0, 0, (__bridge void*)self);
-		success=true;
-	}
-	return success;
+    bool success=false;
+    if (!_isInitialized || GetUIState() != UISTATE_INGAME) {
+        autoLoadStatefileName = fileName;
+        [NSThread detachNewThreadSelector:@selector(autoloadWaitThread) toTarget:self withObject:nil];
+    } else {
+        SaveState::Load(Path([fileName fileSystemRepresentation]), 0, 0, (__bridge void*)self);
+        success=true;
+    }
+    return true;
 }
 
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
-	bool success=false;
-	if(_isInitialized && GetUIState() == UISTATE_INGAME) {
-		SaveState::Load(Path([fileName fileSystemRepresentation]), 0, 0, (__bridge void*)self);
-		success=true;
-	}
-    block(success, nil);
+    bool success=false;
+    if (!_isInitialized || GetUIState() != UISTATE_INGAME) {
+        autoLoadStatefileName = fileName;
+        [NSThread detachNewThreadSelector:@selector(autoloadWaitThread) toTarget:self withObject:nil];
+    } else {
+        SaveState::Load(Path([fileName fileSystemRepresentation]), 0, 0, (__bridge void*)self);
+        success=true;
+    }
+    block(true, nil);
+}
+
+
+- (void)autoloadWaitThread
+{
+    @autoreleasepool
+    {
+        //Wait here until we get the signal for full initialization
+        while (!_isInitialized && GetUIState() == UISTATE_INGAME) {
+            sleep_ms(WAIT_INTERVAL);
+        }
+        if(_isInitialized && GetUIState() == UISTATE_INGAME) {
+            SaveState::Load(Path([autoLoadStatefileName fileSystemRepresentation]), 0, 0, (__bridge void*)self);
+        }
+    }
 }
 @end

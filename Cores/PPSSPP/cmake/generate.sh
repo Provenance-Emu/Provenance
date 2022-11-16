@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 rm -fr C*
 if [ ! -d ./ffmpeg ] ; then
-  cp -pR ../ppsspp/ffmpeg .
+  cp -pR ../libretro_ppsspp/ffmpeg .
   cp ffmpeg-ios-build.sh ./ffmpeg
   cd ./ffmpeg
   sh ffmpeg-ios-build.sh
@@ -9,13 +9,12 @@ if [ ! -d ./ffmpeg ] ; then
 fi
 export FFMPEG_DIR=../cmake/ffmpeg/ios/universal/
 #export FFMPEG_DIR=../cmake/ffmpeg
-export LIBZIP_DIR=../ppsspp/ext/native/ext/libzip
+export LIBZIP_DIR=../libretro_ppsspp/ext/native/ext/libzip
 cmake \
-    -DLIBRETRO=ON \
-    -DCMAKE_TOOLCHAIN_FILE=../ppsspp/cmake/Toolchains/ios.cmake \
+    -DCMAKE_TOOLCHAIN_FILE=../libretro_ppsspp/cmake/Toolchains/ios.cmake \
     -DIOS_PLATFORM=OS \
     -DCMAKE_IOS_SDK_ROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk \
-    -H../ppsspp \
+    -H../libretro_ppsspp \
     -B. \
     -GXcode \
     -DCMAKE_PREFIX_PATH=$FFMPEG_DIR \

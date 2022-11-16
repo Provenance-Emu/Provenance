@@ -1,5 +1,5 @@
 # CMake generated Testfile for 
-# Source directory: ../ppsspp/ext/zstd/build/cmake/lib
+# Source directory: ../libretro_ppsspp/ext/zstd/build/cmake/lib
 # Build directory: ../cmake/ext/zstd/build/cmake/lib
 # 
 # This file includes the relevant testing commands required for 

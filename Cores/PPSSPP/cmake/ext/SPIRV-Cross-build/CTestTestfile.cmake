@@ -1,5 +1,5 @@
 # CMake generated Testfile for 
-# Source directory: ../ppsspp/ext/SPIRV-Cross-build
+# Source directory: ../libretro_ppsspp/ext/SPIRV-Cross-build
 # Build directory: ../cmake/ext/SPIRV-Cross-build
 # 
 # This file includes the relevant testing commands required for 

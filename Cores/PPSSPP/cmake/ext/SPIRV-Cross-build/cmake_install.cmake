@@ -1,4 +1,4 @@
-# Install script for directory: ../ppsspp/ext/SPIRV-Cross-build
+# Install script for directory: ../libretro_ppsspp/ext/SPIRV-Cross-build
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
