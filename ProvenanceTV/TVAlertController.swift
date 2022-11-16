@@ -12,8 +12,6 @@ import UIKit
 
 // these are the defaults assuming Dark mode, etc.
 private let _fullscreenColor = UIColor.black.withAlphaComponent(0.8)
-private let _backgroundColor = UIColor(red:0.1, green:0.1, blue:0.1, alpha:1)      // secondarySystemGroupedBackground
-private let _defaultButtonColor = UIColor(white: 0.2, alpha: 1)
 private let _destructiveButtonColor = UIColor.systemRed.withAlphaComponent(0.5)
 private let _borderWidth = 4.0
 private let _fontTitleF = 1.25
@@ -25,11 +23,15 @@ private let _animateDuration = 0.150
     private let _font = UIFont.systemFont(ofSize: 24.0)
     private let _inset:CGFloat = 16.0
     private let _maxTextWidthF:CGFloat = 0.25
+    private let _backgroundColor = UIColor(red:0.1, green:0.1, blue:0.1, alpha:1)      // secondarySystemGroupedBackground
+    private let _defaultButtonColor = UIColor(white: 0.2, alpha: 1)
 #else
     private let _blurFullscreen = true
     private let _font = UIFont.preferredFont(forTextStyle: .body)
     private let _inset:CGFloat = 16.0
     private let _maxTextWidthF:CGFloat = 0.50
+    private let _backgroundColor = UIColor.secondarySystemGroupedBackground
+    private let _defaultButtonColor = UIColor.systemGray4
 #endif
 
 protocol UIAlertControllerProtocol : UIViewController {
@@ -350,7 +352,7 @@ final class TVAlertController: UIViewController, UIAlertControllerProtocol {
         let btn = TVButton()
         btn.tag = idx2tag(idx)
         btn.setAttributedTitle(NSAttributedString(string:action.title ?? "", attributes:[.font:self.font]), for: .normal)
-        btn.setTitleColor(UIColor.white, for: .normal)
+        btn.setTitleColor(UIColor.label, for: .normal)
         btn.setTitleColor(UIColor.gray, for: .disabled)
 
         let spacing = self.spacing
