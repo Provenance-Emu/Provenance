@@ -522,9 +522,7 @@
                     <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <viewLayoutGuide key="safeArea" id="Ef0-JV-dIe"/>
-                    <color key="backgroundColor" systemColor="groupTableViewBackgroundColor"/>
-                    <color key="sectionIndexColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                    <color key="sectionIndexBackgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <color key="backgroundColor" systemColor="systemGroupedBackgroundColor"/>
                     <prototypes>
                         <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="checkmark" indentationWidth="10" reuseIdentifier="sortCell" textLabel="egp-7q-f7P" style="IBUITableViewCellStyleDefault" id="m7k-NW-PMB">
                             <rect key="frame" x="0.0" y="49" width="240" height="43.666667938232422"/>
@@ -542,7 +540,7 @@
                                     </label>
                                 </subviews>
                             </tableViewCellContentView>
-                            <color key="backgroundColor" red="0.1336681545" green="0.13369312880000001" blue="0.13366028669999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                         </tableViewCell>
                         <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="checkmark" indentationWidth="10" reuseIdentifier="viewOptionsCell" textLabel="VpU-YI-9QR" style="IBUITableViewCellStyleDefault" id="bhh-7D-iQS">
                             <rect key="frame" x="0.0" y="92.666667938232422" width="240" height="44"/>
@@ -560,7 +558,7 @@
                                     </label>
                                 </subviews>
                             </tableViewCellContentView>
-                            <color key="backgroundColor" red="0.1336681545" green="0.13369312880000001" blue="0.13366028669999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                         </tableViewCell>
                     </prototypes>
                     <sections/>
@@ -585,11 +583,14 @@
     <resources>
         <image name="gear" width="20" height="20"/>
         <image name="sort" width="20" height="20"/>
-        <systemColor name="groupTableViewBackgroundColor">
+        <systemColor name="secondarySystemBackgroundColor">
             <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemGroupedBackgroundColor">
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemYellowColor">
             <color red="1" green="0.80000000000000004" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
