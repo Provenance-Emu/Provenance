@@ -47,20 +47,9 @@ protocol UIAlertControllerProtocol : UIViewController {
      var preferredStyle: UIAlertController.Style { get }
 }
 
-// take over (aka mock) the UIAlertController initializer and return our class sometimes....
+// take over (aka mock) the UIAlertController initializer and return our class
 func UIAlertController(title: String?, message: String?, preferredStyle style: UIAlertController.Style) -> UIAlertControllerProtocol {
-    #if os(tvOS)
-        return TVAlertController.init(title:title, message: message, preferredStyle: style)
-    #else
-        if style == .alert {
-            // always use system Alert on iOS
-            return UIAlertController.init(title:title, message: message, preferredStyle: style)
-        } else {
-            // maybe use custom ActionSheet
-            // return UIAlertController.init(title:title, message: message, preferredStyle: style)
-            return TVAlertController.init(title:title, message: message, preferredStyle: style)
-        }
-    #endif
+    TVAlertController.init(title:title, message: message, preferredStyle: style)
 }
 
 extension UIAlertController : UIAlertControllerProtocol { }
