@@ -17,11 +17,16 @@
 #import <OpenGLES/ES3/glext.h>
 #import <OpenGLES/EAGL.h>
 #else
-#import <OpenGL/CGLIOSurface.h>
 @import OpenGL;
 @import AppKit;
 @import GLUT;
 @import CoreImage;
+@import OpenGL.IOSurface;
+@import OpenGL.GL3;
+//#import <OpenGL/CGLIOSurface.h>
+@import OpenGL.OpenGLAvailability;
+@import OpenGL.GL;
+@import CoreVideo;
 #endif
 
 // Add SPI https://developer.apple.com/documentation/opengles/eaglcontext/2890259-teximageiosurface?language=objc
@@ -71,6 +76,7 @@
 //@property (nonatomic, strong) NSOpenGLContext *glContext;
 //@property (nonatomic, strong) NSOpenGLContext *alternateThreadGLContext;
 //@property (nonatomic, strong) NSOpenGLContext *alternateThreadBufferCopyGLContext;
+//@property (nonatomic, strong) CADisplayLink *caDisplayLink;
 #endif
 
 @property (nonatomic, assign) GLESVersion glesVersion;
@@ -199,9 +205,12 @@ PV_OBJC_DIRECT_MEMBERS
     view.enableSetNeedsDisplay = NO;
 
      // Setup display link.
-//     CVDisplayLinkCreateWithActiveCGDisplays(&displayLink);
-//     CVDisplayLinkSetOutputCallback(displayLink, &MyDisplayLinkCallback, (__bridge void*)self);
-//     CVDisplayLinkStart(displayLink);
+//    self.caDisplayLink = [UIScreen.mainScreen displayLinkWithTarget:self selector::@selector(displayLinkCalled:)];
+//    _caDisplayLink.preferredFramesPerSecond = 120;
+//
+//     CVDisplayLinkCreateWithActiveCGDisplays(&_caDisplayLink);
+//     CVDisplayLinkSetOutputCallback(_caDisplayLink, &MyDisplayLinkCallback, (__bridge void*)self);
+//     CVDisplayLinkStart(_caDisplayLink);
 
     view.opaque = YES;
     view.layer.opaque = YES;
@@ -884,13 +893,13 @@ PV_OBJC_DIRECT_MEMBERS
                 glUseProgram(strongself->program);
                 
                 GLuint vao;
-#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+//#if !TARGET_OS_OSX
                 glGenVertexArrays(1, &vao);
                 glBindVertexArray(vao);
-#else
-                glGenVertexArraysAPPLE(1, &vao);
-                glBindVertexArrayAPPLE(vao);
-#endif
+//#else  //Not needed because of @import OpenGL.GL3 ?
+//                glGenVertexArraysAPPLE(1, &vao);
+//                glBindVertexArrayAPPLE(vao);
+//#endif
                 
                 GLuint vbo;
                 glGenBuffers(1, &vbo);
@@ -991,6 +1000,10 @@ PV_OBJC_DIRECT_MEMBERS
 {
     self.emulatorCore.glesVersion = self.glesVersion;
 
+//#if TARGET_OS_MACCATALYST || TARGET_OS_OSX
+//    return;
+//#endif
+
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
     self.alternateThreadBufferCopyGLContext = [[EAGLContext alloc] initWithAPI:[self.glContext API] sharegroup:[self.glContext sharegroup]];
         
@@ -1035,6 +1048,7 @@ PV_OBJC_DIRECT_MEMBERS
                                      type:GL_UNSIGNED_BYTE
                                     plane:0];
 #else
+        // TODO: This?
 //        [CAOpenGLLayer layer];
 //        CGLPixelFormatObj *pf;
 //        CGLTexImageIOSurface2D(self.mEAGLContext, GL_TEXTURE_2D, GL_RGBA, width, height, GL_RGBA, GL_UNSIGNED_BYTE, backingIOSurface, 0);
