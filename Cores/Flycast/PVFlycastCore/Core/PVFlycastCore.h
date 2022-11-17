@@ -10,12 +10,12 @@
 #import <PVSupport/PVSupport.h>
 #import <PVSupport/PVEmulatorCore.h>
 #import <PVSupport/PVSupport-Swift.h>
-
+#import <PVLibRetro/PVLibRetro.h>
 
 #define GET_CURRENT_AND_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 #define GET_CURRENT_OR_RETURN(...)  __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 
-@interface PVFlycastCore : PVEmulatorCore <PVDreamcastSystemResponderClient>
+@interface PVFlycastCore : PVLibRetroGLESCore <PVDreamcastSystemResponderClient>
 {
 	uint8_t padData[4][PVDreamcastButtonCount];
 	int8_t xAxis[4];
@@ -38,4 +38,4 @@
 
 @end
 
-extern __weak PVFlycastCore *_current;
+//extern __weak PVFlycastCore *_current;
