@@ -208,7 +208,7 @@ void PVLog(NSUInteger level, NSUInteger flag, const char* file, const char *func
 + (NSInteger) systemVersionAsAnInteger{
     int index = 0;
     NSInteger version = 0;
-
+#if !TARGET_OS_OSX
     NSArray* digits = [[UIDevice currentDevice].systemVersion componentsSeparatedByString:@"."];
     NSEnumerator* enumer = [digits objectEnumerator];
     NSString* number;
@@ -220,6 +220,7 @@ void PVLog(NSUInteger level, NSUInteger flag, const char* file, const char *func
         version += [number intValue]*multipler;
         index++;
     }
+#endif
     return version;
 }
 
@@ -244,17 +245,19 @@ void PVLog(NSUInteger level, NSUInteger flag, const char* file, const char *func
 	NSString *gitTag = [[NSBundle mainBundle] infoDictionary][@"GitTag"];
 	NSString *gitDate = [[NSBundle mainBundle] infoDictionary][@"GitDate"];
 
-
+#if !TARGET_OS_OSX
 	NSString *systemName = [[UIDevice currentDevice] systemName];
-
+#endif
     NSMutableString *info = [NSMutableString new];
 
     [info appendString:@"\n---------------- App Load ----------------------\n"];
     [info appendFormat:@"Load date: %@\n",[NSDate date]];
 	[info appendFormat:@"App: %@\n",appName];
     [info appendFormat:@"System: %@ %@\n", os, machine];
+#if !TARGET_OS_OSX
 	[info appendFormat:@"Device: %@\n", [UIDevice currentDevice].modelName];
     [info appendFormat:@"%@ Version: %@\n",systemName, [UIDevice currentDevice].systemVersion];
+#endif
     [info appendFormat:@"App Id: %@\n",appId];
 	[info appendFormat:@"App Version: %@\n",appVersion];
 	[info appendFormat:@"Build #: %@\n",buildVersion];

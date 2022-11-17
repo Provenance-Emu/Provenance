@@ -1,3 +1,4 @@
+#if canImport(UIKit)
 import UIKit
 
 /*
@@ -252,3 +253,4 @@ extension iCadeReaderView: UIKeyInput {
         VLOG("iCade backspace!")
     }
 }
+#endif

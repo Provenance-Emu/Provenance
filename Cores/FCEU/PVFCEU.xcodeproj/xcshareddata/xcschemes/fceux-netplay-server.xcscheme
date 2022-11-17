@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3341F4F27C1B18C00E001C6"
-               BuildableName = "libfceux-netplay-server-iOS.a"
-               BlueprintName = "fceux-netplay-server-iOS"
+               BuildableName = "libfceux-netplay-server.a"
+               BlueprintName = "fceux-netplay-server"
                ReferencedContainer = "container:PVFCEU.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3341F4F27C1B18C00E001C6"
-            BuildableName = "libfceux-netplay-server-iOS.a"
-            BlueprintName = "fceux-netplay-server-iOS"
+            BuildableName = "libfceux-netplay-server.a"
+            BlueprintName = "fceux-netplay-server"
             ReferencedContainer = "container:PVFCEU.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

@@ -3,167 +3,51 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0592894F1DC194FD0012644D /* RealTimeThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 0592894E1DC194FD0012644D /* RealTimeThread.m */; };
-		B302F8A320B73D6500C5E502 /* PVLogEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89920B73D5F00C5E502 /* PVLogEntry.m */; };
 		B302F8A420B73D6500C5E502 /* PVLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89A20B73D6200C5E502 /* PVLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B302F8A520B73D6500C5E502 /* PVLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89A20B73D6200C5E502 /* PVLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B302F8A620B73D6500C5E502 /* PVLogEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89B20B73D6300C5E502 /* PVLogEntry.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B302F8A720B73D6500C5E502 /* PVLogEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89B20B73D6300C5E502 /* PVLogEntry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B302F8A820B73D6500C5E502 /* PVProvenanceLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89C20B73D6300C5E502 /* PVProvenanceLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B302F8A920B73D6500C5E502 /* PVProvenanceLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89C20B73D6300C5E502 /* PVProvenanceLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B302F8AB20B73D6500C5E502 /* PVProvenanceLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89D20B73D6400C5E502 /* PVProvenanceLogging.m */; };
-		B302F8AD20B73D6500C5E502 /* PVLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89E20B73D6400C5E502 /* PVLogging.m */; };
-		B305EF49276B4E41003AE510 /* PVSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C96EBB1D62C54D003F1E93 /* PVSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B305EF4A276B4E41003AE510 /* OEGameAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69117F748F80031B1C9 /* OEGameAudio.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B305EF4B276B4E41003AE510 /* CABitOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E7F218B7E4B00557ACE /* CABitOperations.h */; };
-		B305EF4C276B4E41003AE510 /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4E718C1A6C699F005CA80F /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B305EF4D276B4E41003AE510 /* PVProvenanceLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89C20B73D6300C5E502 /* PVProvenanceLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B305EF4E276B4E41003AE510 /* OERingBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FA5D591D6B908300060D71 /* OERingBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B305EF50276B4E41003AE510 /* NSObject+PVAbstractAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA6A017F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B305EF51276B4E41003AE510 /* CARingBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E85218B7E4B00557ACE /* CARingBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		B305EF52276B4E41003AE510 /* CAAtomic.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E83218B7E4B00557ACE /* CAAtomic.h */; };
-		B305EF53276B4E41003AE510 /* CAAudioTimeStamp.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E80218B7E4B00557ACE /* CAAudioTimeStamp.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		B305EF54276B4E41003AE510 /* NSFileManager+OEHashingAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D73D3B1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B305EF55276B4E41003AE510 /* PVLogEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89B20B73D6300C5E502 /* PVLogEntry.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B305EF56276B4E41003AE510 /* PVEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FA5D5F1D6B90BD00060D71 /* PVEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B305EF57276B4E41003AE510 /* CAAutoDisposer.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E82218B7E4B00557ACE /* CAAutoDisposer.h */; };
-		B305EF58276B4E41003AE510 /* TPCircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69617F748F80031B1C9 /* TPCircularBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B305EF59276B4E41003AE510 /* PVLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89A20B73D6200C5E502 /* PVLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B305EF5B276B4E41003AE510 /* PVEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */; };
-		B305EF5C276B4E41003AE510 /* PViCadeSteelSeriesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37902187F9A9009D9244 /* PViCadeSteelSeriesController.swift */; };
-		B305EF5D276B4E41003AE510 /* ArchiveSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEBB21D4C3E6000C55F7 /* ArchiveSupport.swift */; };
-		B305EF60276B4E41003AE510 /* PViCade8BitdoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378C2187F9A9009D9244 /* PViCade8BitdoController.swift */; };
-		B305EF61276B4E41003AE510 /* PViCadeInputAxis.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378A2187F9A9009D9244 /* PViCadeInputAxis.swift */; };
-		B305EF62276B4E41003AE510 /* DDLogLevel+CustomStringConvertable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E9E26C685450088AC32 /* DDLogLevel+CustomStringConvertable.swift */; };
-		B305EF63276B4E41003AE510 /* iCadeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378B2187F9A9009D9244 /* iCadeState.swift */; };
-		B305EF64276B4E41003AE510 /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C36207EE15D0040709A /* CoreOptions.swift */; };
-		B305EF65276B4E41003AE510 /* UIDeviceExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E6DADD20B7BF8600454DD4 /* UIDeviceExtension.swift */; };
-		B305EF66276B4E41003AE510 /* SaveStateSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEC721D4C4E5000C55F7 /* SaveStateSupport.swift */; };
-		B305EF67276B4E41003AE510 /* iCadeControllerSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37882187F9A9009D9244 /* iCadeControllerSetting.swift */; };
-		B305EF68276B4E41003AE510 /* PViCadeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378E2187F9A9009D9244 /* PViCadeController.swift */; };
-		B305EF69276B4E41003AE510 /* CocoaLumberjack+swift-log.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E8326C67F420088AC32 /* CocoaLumberjack+swift-log.swift */; };
-		B305EF6A276B4E41003AE510 /* CARingBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3447E81218B7E4B00557ACE /* CARingBuffer.cpp */; };
-		B305EF6B276B4E41003AE510 /* CocoaLumberjack+NSLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E8026C67EF90088AC32 /* CocoaLumberjack+NSLogger.swift */; };
-		B305EF6C276B4E41003AE510 /* Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEC121D4C454000C55F7 /* Controls.swift */; };
-		B305EF6D276B4E41003AE510 /* PViCadeGamepadDirectionPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37872187F9A9009D9244 /* PViCadeGamepadDirectionPad.swift */; };
-		B305EF6E276B4E41003AE510 /* NSFileManager+OEHashingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D73D3C1EA15BB20023925B /* NSFileManager+OEHashingAdditions.m */; };
-		B305EF6F276B4E41003AE510 /* PViCadeGamepadButtonInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378F2187F9A9009D9244 /* PViCadeGamepadButtonInput.swift */; };
-		B305EF70276B4E41003AE510 /* SortOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3521A925C1006CDA0F /* SortOption.swift */; };
-		B305EF71276B4E41003AE510 /* GameWithCheat.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF87D332258AB6B300838AF8 /* GameWithCheat.swift */; };
-		B305EF72276B4E41003AE510 /* CoreActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEC421D4C490000C55F7 /* CoreActions.swift */; };
-		B305EF73276B4E41003AE510 /* CAAudioTimeStamp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3447E84218B7E4B00557ACE /* CAAudioTimeStamp.cpp */; };
-		B305EF74276B4E41003AE510 /* PVProvenanceLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89D20B73D6400C5E502 /* PVProvenanceLogging.m */; };
-		B305EF75276B4E41003AE510 /* PViCadeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37892187F9A9009D9244 /* PViCadeReader.swift */; };
-		B305EF76276B4E41003AE510 /* RealTimeThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 0592894E1DC194FD0012644D /* RealTimeThread.m */; };
-		B305EF77276B4E41003AE510 /* DiscSwappable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEBE21D4C41D000C55F7 /* DiscSwappable.swift */; };
-		B305EF78276B4E41003AE510 /* NSObject+PVAbstractAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6A117F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m */; };
-		B305EF79276B4E41003AE510 /* PVEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FA5D601D6B90BD00060D71 /* PVEmulatorCore.m */; };
-		B305EF7A276B4E41003AE510 /* PVLogEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89920B73D5F00C5E502 /* PVLogEntry.m */; };
-		B305EF7B276B4E41003AE510 /* TPCircularBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69517F748F80031B1C9 /* TPCircularBuffer.c */; };
-		B305EF7D276B4E41003AE510 /* PVLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89E20B73D6400C5E502 /* PVLogging.m */; };
-		B305EF7E276B4E41003AE510 /* PViCadeMocuteController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37922187F9A9009D9244 /* PViCadeMocuteController.swift */; };
-		B305EF7F276B4E41003AE510 /* CocoaLumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F0846B2188CA7A00FF39EE /* CocoaLumberExtensions.swift */; };
-		B305EF80276B4E41003AE510 /* iCadeReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37B02187FC4B009D9244 /* iCadeReaderView.swift */; };
-		B305EF81276B4E41003AE510 /* PViCadeGamepad.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37912187F9A9009D9244 /* PViCadeGamepad.swift */; };
-		B305EF82276B4E41003AE510 /* PVCocoaLumberJackLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296EA126C68CCE0088AC32 /* PVCocoaLumberJackLogging.swift */; };
-		B305EF83276B4E41003AE510 /* PVSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3447F9A218C1CD200557ACE /* PVSettingsModel.swift */; };
-		B305EF85276B4E41003AE510 /* CocoaLumberjack in Frameworks */ = {isa = PBXBuildFile; productRef = B305EF47276B4E41003AE510 /* CocoaLumberjack */; };
-		B305EF87276B4E41003AE510 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FD92191616C000FA7F9 /* Foundation.framework */; };
-		B305EF89276B4E41003AE510 /* CocoaLumberjackSwiftLogBackend in Frameworks */ = {isa = PBXBuildFile; productRef = B305EF46276B4E41003AE510 /* CocoaLumberjackSwiftLogBackend */; };
-		B305EF8A276B4E41003AE510 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FFF02C26E9E65800A33143 /* AVFoundation.framework */; };
-		B305EF8B276B4E41003AE510 /* CocoaLumberjackSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B305EF42276B4E41003AE510 /* CocoaLumberjackSwift */; };
-		B305EF9A276B4F0A003AE510 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF99276B4F0A003AE510 /* GameKit.framework */; };
-		B305EF9C276B4FDD003AE510 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF9B276B4FDC003AE510 /* CoreGraphics.framework */; };
 		B30681502895D407003E465F /* PVLibRetroCore+Cheats.m in Sources */ = {isa = PBXBuildFile; fileRef = B306814C2895D405003E465F /* PVLibRetroCore+Cheats.m */; };
-		B30681512895D407003E465F /* PVLibRetroCore+Cheats.m in Sources */ = {isa = PBXBuildFile; fileRef = B306814C2895D405003E465F /* PVLibRetroCore+Cheats.m */; };
 		B30681522895D407003E465F /* PVLibRetroCore+Video.m in Sources */ = {isa = PBXBuildFile; fileRef = B306814D2895D406003E465F /* PVLibRetroCore+Video.m */; };
-		B30681532895D407003E465F /* PVLibRetroCore+Video.m in Sources */ = {isa = PBXBuildFile; fileRef = B306814D2895D406003E465F /* PVLibRetroCore+Video.m */; };
 		B30681542895D407003E465F /* PVLibRetroCore+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = B306814E2895D406003E465F /* PVLibRetroCore+Audio.m */; };
-		B30681552895D407003E465F /* PVLibRetroCore+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = B306814E2895D406003E465F /* PVLibRetroCore+Audio.m */; };
 		B30681562895D407003E465F /* PVLibRetroCore+Options.m in Sources */ = {isa = PBXBuildFile; fileRef = B306814F2895D407003E465F /* PVLibRetroCore+Options.m */; };
-		B30681572895D407003E465F /* PVLibRetroCore+Options.m in Sources */ = {isa = PBXBuildFile; fileRef = B306814F2895D407003E465F /* PVLibRetroCore+Options.m */; };
 		B30F8013290516B900F21217 /* ScreenType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30F8012290516B900F21217 /* ScreenType.swift */; };
-		B30F8014290516B900F21217 /* ScreenType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30F8012290516B900F21217 /* ScreenType.swift */; };
-		B30F8015290516B900F21217 /* ScreenType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30F8012290516B900F21217 /* ScreenType.swift */; };
 		B3225132286C4728001FDF42 /* retro.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B322512F286C4728001FDF42 /* retro.h */; };
-		B322514B286C4753001FDF42 /* libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B322512D286C4728001FDF42 /* libretro.a */; };
 		B32299422878CB3C00585AD8 /* input_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC54928671EFF00B60497 /* input_driver.c */; };
-		B32299432878CB3C00585AD8 /* input_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC54928671EFF00B60497 /* input_driver.c */; };
 		B32299462878CF2C00585AD8 /* rthreads.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC7072867202D00B60497 /* rthreads.c */; };
-		B32299472878CF2D00585AD8 /* rthreads.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC7072867202D00B60497 /* rthreads.c */; };
 		B322994A2878CF6200585AD8 /* input_keyboard.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC54A28671EFF00B60497 /* input_keyboard.c */; };
-		B322994B2878CF6200585AD8 /* input_keyboard.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC54A28671EFF00B60497 /* input_keyboard.c */; };
 		B32299512878D46F00585AD8 /* performance_counters.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC3782867180300B60497 /* performance_counters.c */; };
-		B32299522878D46F00585AD8 /* performance_counters.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC3782867180300B60497 /* performance_counters.c */; };
 		B32299672878DBE000585AD8 /* dynamic.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC36B286717AE00B60497 /* dynamic.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B32299682878DBE300585AD8 /* dynamic.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC36B286717AE00B60497 /* dynamic.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B322996C28792B4000585AD8 /* movie.c in Sources */ = {isa = PBXBuildFile; fileRef = B3225169286C6F2A001FDF42 /* movie.c */; };
-		B322996D28792B4100585AD8 /* movie.c in Sources */ = {isa = PBXBuildFile; fileRef = B3225169286C6F2A001FDF42 /* movie.c */; };
 		B322996E28792BA000585AD8 /* nullinput.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4ED28671EFF00B60497 /* nullinput.c */; };
-		B322996F28792BA000585AD8 /* nullinput.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4ED28671EFF00B60497 /* nullinput.c */; };
-		B324C3162191963B009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C3152191963B009F4EDC /* AVFoundation.framework */; };
 		B3296E8126C67EFA0088AC32 /* CocoaLumberjack+NSLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E8026C67EF90088AC32 /* CocoaLumberjack+NSLogger.swift */; };
-		B3296E8226C67EFA0088AC32 /* CocoaLumberjack+NSLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E8026C67EF90088AC32 /* CocoaLumberjack+NSLogger.swift */; };
 		B3296E8726C67F660088AC32 /* CocoaLumberjackSwiftLogBackend in Frameworks */ = {isa = PBXBuildFile; productRef = B3296E8626C67F660088AC32 /* CocoaLumberjackSwiftLogBackend */; };
-		B3296E8926C67F6B0088AC32 /* CocoaLumberjackSwiftLogBackend in Frameworks */ = {isa = PBXBuildFile; productRef = B3296E8826C67F6B0088AC32 /* CocoaLumberjackSwiftLogBackend */; };
 		B3296E9F26C685450088AC32 /* DDLogLevel+CustomStringConvertable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E9E26C685450088AC32 /* DDLogLevel+CustomStringConvertable.swift */; };
-		B3296EA026C685450088AC32 /* DDLogLevel+CustomStringConvertable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E9E26C685450088AC32 /* DDLogLevel+CustomStringConvertable.swift */; };
 		B3296EA226C68CCE0088AC32 /* PVCocoaLumberJackLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296EA126C68CCE0088AC32 /* PVCocoaLumberJackLogging.swift */; };
-		B3296EA326C68CCE0088AC32 /* PVCocoaLumberJackLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296EA126C68CCE0088AC32 /* PVCocoaLumberJackLogging.swift */; };
 		B336B8F126B3985B00960A81 /* CocoaLumberjackSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B336B8F026B3985B00960A81 /* CocoaLumberjackSwift */; };
-		B336B8F426B398A900960A81 /* Reachability in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B336B8F326B398A900960A81 /* Reachability */; };
-		B336B8F826B3991500960A81 /* CocoaLumberjackSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B336B8F726B3991500960A81 /* CocoaLumberjackSwift */; };
+		B336B8F426B398A900960A81 /* Reachability in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, tvos, ); productRef = B336B8F326B398A900960A81 /* Reachability */; };
 		B33FB2EB279BE0CC0013AAD8 /* CoreOptions+Serialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2EA279BE0CC0013AAD8 /* CoreOptions+Serialization.swift */; };
-		B33FB2EC279BE0CC0013AAD8 /* CoreOptions+Serialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2EA279BE0CC0013AAD8 /* CoreOptions+Serialization.swift */; };
-		B33FB2ED279BE0CC0013AAD8 /* CoreOptions+Serialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2EA279BE0CC0013AAD8 /* CoreOptions+Serialization.swift */; };
 		B33FB2EF279BE0F50013AAD8 /* CoreOptionValueDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2EE279BE0F50013AAD8 /* CoreOptionValueDisplay.swift */; };
-		B33FB2F0279BE0F50013AAD8 /* CoreOptionValueDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2EE279BE0F50013AAD8 /* CoreOptionValueDisplay.swift */; };
-		B33FB2F1279BE0F50013AAD8 /* CoreOptionValueDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2EE279BE0F50013AAD8 /* CoreOptionValueDisplay.swift */; };
 		B33FB2F3279BE1320013AAD8 /* CoreOptions+Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2F2279BE1320013AAD8 /* CoreOptions+Protocols.swift */; };
-		B33FB2F4279BE1330013AAD8 /* CoreOptions+Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2F2279BE1320013AAD8 /* CoreOptions+Protocols.swift */; };
-		B33FB2F5279BE1330013AAD8 /* CoreOptions+Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2F2279BE1320013AAD8 /* CoreOptions+Protocols.swift */; };
 		B33FB2F8279BE1730013AAD8 /* CoreOptionMultiValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2F7279BE1730013AAD8 /* CoreOptionMultiValue.swift */; };
-		B33FB2F9279BE1730013AAD8 /* CoreOptionMultiValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2F7279BE1730013AAD8 /* CoreOptionMultiValue.swift */; };
-		B33FB2FA279BE1730013AAD8 /* CoreOptionMultiValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2F7279BE1730013AAD8 /* CoreOptionMultiValue.swift */; };
 		B33FB2FC279BE18F0013AAD8 /* CoreOptionEnumValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2FB279BE18F0013AAD8 /* CoreOptionEnumValue.swift */; };
-		B33FB2FD279BE18F0013AAD8 /* CoreOptionEnumValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2FB279BE18F0013AAD8 /* CoreOptionEnumValue.swift */; };
-		B33FB2FE279BE18F0013AAD8 /* CoreOptionEnumValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2FB279BE18F0013AAD8 /* CoreOptionEnumValue.swift */; };
 		B33FB300279BE1E40013AAD8 /* OptionDependency.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2FF279BE1E40013AAD8 /* OptionDependency.swift */; };
-		B33FB301279BE1E40013AAD8 /* OptionDependency.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2FF279BE1E40013AAD8 /* OptionDependency.swift */; };
-		B33FB302279BE1E40013AAD8 /* OptionDependency.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2FF279BE1E40013AAD8 /* OptionDependency.swift */; };
 		B33FB304279BE21C0013AAD8 /* CoreOptionRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB303279BE21C0013AAD8 /* CoreOptionRange.swift */; };
-		B33FB305279BE21C0013AAD8 /* CoreOptionRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB303279BE21C0013AAD8 /* CoreOptionRange.swift */; };
-		B33FB306279BE21C0013AAD8 /* CoreOptionRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB303279BE21C0013AAD8 /* CoreOptionRange.swift */; };
 		B33FB308279BE2460013AAD8 /* CoreOptionValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB307279BE2460013AAD8 /* CoreOptionValue.swift */; };
-		B33FB309279BE2460013AAD8 /* CoreOptionValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB307279BE2460013AAD8 /* CoreOptionValue.swift */; };
-		B33FB30A279BE2460013AAD8 /* CoreOptionValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB307279BE2460013AAD8 /* CoreOptionValue.swift */; };
 		B33FB30D279BE2710013AAD8 /* CoreOptional.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB30C279BE2710013AAD8 /* CoreOptional.swift */; };
-		B33FB30E279BE2710013AAD8 /* CoreOptional.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB30C279BE2710013AAD8 /* CoreOptional.swift */; };
-		B33FB30F279BE2710013AAD8 /* CoreOptional.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB30C279BE2710013AAD8 /* CoreOptional.swift */; };
-		B342325A286EB4060033EFA5 /* dylib.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC6452867202D00B60497 /* dylib.c */; };
 		B342325B286EB4060033EFA5 /* dylib.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC6452867202D00B60497 /* dylib.c */; };
 		B3423260286EB5CA0033EFA5 /* dynamic_dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC59528671EFF00B60497 /* dynamic_dummy.c */; };
-		B3423261286EB5CB0033EFA5 /* dynamic_dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC59528671EFF00B60497 /* dynamic_dummy.c */; };
 		B3447E86218B7E4B00557ACE /* CABitOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E7F218B7E4B00557ACE /* CABitOperations.h */; };
-		B3447E87218B7E4B00557ACE /* CABitOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E7F218B7E4B00557ACE /* CABitOperations.h */; };
 		B3447E88218B7E4B00557ACE /* CAAudioTimeStamp.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E80218B7E4B00557ACE /* CAAudioTimeStamp.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		B3447E89218B7E4B00557ACE /* CAAudioTimeStamp.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E80218B7E4B00557ACE /* CAAudioTimeStamp.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B3447E8A218B7E4B00557ACE /* CARingBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3447E81218B7E4B00557ACE /* CARingBuffer.cpp */; };
-		B3447E8B218B7E4B00557ACE /* CARingBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3447E81218B7E4B00557ACE /* CARingBuffer.cpp */; };
 		B3447E8C218B7E4B00557ACE /* CAAutoDisposer.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E82218B7E4B00557ACE /* CAAutoDisposer.h */; };
-		B3447E8D218B7E4B00557ACE /* CAAutoDisposer.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E82218B7E4B00557ACE /* CAAutoDisposer.h */; };
 		B3447E8E218B7E4B00557ACE /* CAAtomic.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E83218B7E4B00557ACE /* CAAtomic.h */; };
-		B3447E8F218B7E4B00557ACE /* CAAtomic.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E83218B7E4B00557ACE /* CAAtomic.h */; };
 		B3447E90218B7E4B00557ACE /* CAAudioTimeStamp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3447E84218B7E4B00557ACE /* CAAudioTimeStamp.cpp */; };
-		B3447E91218B7E4B00557ACE /* CAAudioTimeStamp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3447E84218B7E4B00557ACE /* CAAudioTimeStamp.cpp */; };
 		B3447E92218B7E4B00557ACE /* CARingBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E85218B7E4B00557ACE /* CARingBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		B3447E93218B7E4B00557ACE /* CARingBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E85218B7E4B00557ACE /* CARingBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B3447F9B218C1CD200557ACE /* PVSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3447F9A218C1CD200557ACE /* PVSettingsModel.swift */; };
-		B3447F9C218C1CD200557ACE /* PVSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3447F9A218C1CD200557ACE /* PVSettingsModel.swift */; };
 		B34AB5732106DC3700C45F09 /* PVProvenanceLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89D20B73D6400C5E502 /* PVProvenanceLogging.m */; };
 		B34AB5742106DC4100C45F09 /* PVLogEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89920B73D5F00C5E502 /* PVLogEntry.m */; };
 		B34AB5752106DC4100C45F09 /* PVLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89E20B73D6400C5E502 /* PVLogging.m */; };
@@ -176,130 +60,63 @@
 		B34AB57E2106DC6100C45F09 /* PVEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FA5D601D6B90BD00060D71 /* PVEmulatorCore.m */; };
 		B34AB57F2106DC6100C45F09 /* PVEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */; };
 		B34AB8642106F2F200C45F09 /* PVSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C96EBB1D62C54D003F1E93 /* PVSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B34AB8652106F2F200C45F09 /* PVSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C96EBB1D62C54D003F1E93 /* PVSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3532B3721A7B736006CDA0F /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96ED81D62C5E7003F1E93 /* PVSupport.framework */; };
 		B3532B3F21A7B753006CDA0F /* PVSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532B3E21A7B753006CDA0F /* PVSettingsTests.swift */; };
 		B3532C3621A925C2006CDA0F /* SortOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3521A925C1006CDA0F /* SortOption.swift */; };
-		B3532C3721A925C2006CDA0F /* SortOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3521A925C1006CDA0F /* SortOption.swift */; };
-		B35E6C38207EE15D0040709A /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C36207EE15D0040709A /* CoreOptions.swift */; };
 		B364D4B42870E5F600B93A4B /* libretro.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC6D92867202D00B60497 /* libretro.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B364D4B52870E5F600B93A4B /* libretro.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC6D92867202D00B60497 /* libretro.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B36C41052898776C00EAEF59 /* retro_netplay.m in Sources */ = {isa = PBXBuildFile; fileRef = B36C41042898776C00EAEF59 /* retro_netplay.m */; };
 		B36C41062898776C00EAEF59 /* retro_netplay.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B36C41032898776C00EAEF59 /* retro_netplay.h */; };
 		B3702311287256DA00B3F6DA /* retro_inline.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC6C02867202D00B60497 /* retro_inline.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3702312287256DA00B3F6DA /* retro_inline.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC6C02867202D00B60497 /* retro_inline.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B372638426EA015700E95488 /* CocoaLumberjack+swift-log.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E8326C67F420088AC32 /* CocoaLumberjack+swift-log.swift */; };
 		B372638526EA015800E95488 /* CocoaLumberjack+swift-log.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3296E8326C67F420088AC32 /* CocoaLumberjack+swift-log.swift */; };
 		B392849128670348003BAC21 /* PVLibRetro.h in Headers */ = {isa = PBXBuildFile; fileRef = B392849028670348003BAC21 /* PVLibRetro.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3928499286703CD003BAC21 /* PVLibRetroCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3928497286703CD003BAC21 /* PVLibRetroCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B392849A286703CD003BAC21 /* PVLibRetroCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B3928498286703CD003BAC21 /* PVLibRetroCore.m */; };
 		B392849B286703F2003BAC21 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96ED81D62C5E7003F1E93 /* PVSupport.framework */; };
 		B39C29C727A0FADF0078D028 /* OERingBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FA5D5A1D6B908300060D71 /* OERingBuffer.m */; };
-		B39C29C827A0FADF0078D028 /* OERingBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FA5D5A1D6B908300060D71 /* OERingBuffer.m */; };
-		B39C29C927A0FAE00078D028 /* OERingBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FA5D5A1D6B908300060D71 /* OERingBuffer.m */; };
-		B39C29CD27A10EE40078D028 /* OEGameAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69217F748F80031B1C9 /* OEGameAudio.m */; };
 		B39C29CE27A10EE50078D028 /* OEGameAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69217F748F80031B1C9 /* OEGameAudio.m */; };
-		B39C29CF27A10EE50078D028 /* OEGameAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69217F748F80031B1C9 /* OEGameAudio.m */; };
 		B3A41BCF286E5E660054E9A5 /* retro.m in Sources */ = {isa = PBXBuildFile; fileRef = B3225130286C4728001FDF42 /* retro.m */; };
-		B3A41BD2286E75DD0054E9A5 /* retro.m in Sources */ = {isa = PBXBuildFile; fileRef = B3225130286C4728001FDF42 /* retro.m */; };
-		B3A41BD5286E75DD0054E9A5 /* retro.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B322512F286C4728001FDF42 /* retro.h */; };
-		B3A41BDF286E76110054E9A5 /* PVLibRetro.h in Headers */ = {isa = PBXBuildFile; fileRef = B392849028670348003BAC21 /* PVLibRetro.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3A41BE0286E76110054E9A5 /* PVLibRetroCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3928497286703CD003BAC21 /* PVLibRetroCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3A41BE2286E76110054E9A5 /* PVLibRetroCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B3928498286703CD003BAC21 /* PVLibRetroCore.m */; };
 		B3A4FB5A278FE45D00A65248 /* OEGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A4FB59278FE45C00A65248 /* OEGeometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3A4FB5B278FE45D00A65248 /* OEGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A4FB59278FE45C00A65248 /* OEGeometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3A4FB5C278FE45D00A65248 /* OEGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A4FB59278FE45C00A65248 /* OEGeometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3A74C8B20522B04001D3D2E /* PVEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */; };
 		B3AB37B321880FA5009D9244 /* iCadeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378B2187F9A9009D9244 /* iCadeState.swift */; };
-		B3AB37B421880FA6009D9244 /* iCadeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378B2187F9A9009D9244 /* iCadeState.swift */; };
 		B3AB37BD218812BB009D9244 /* iCadeReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37B02187FC4B009D9244 /* iCadeReaderView.swift */; };
-		B3AB37BE218812BC009D9244 /* iCadeReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37B02187FC4B009D9244 /* iCadeReaderView.swift */; };
 		B3AB37BF218814A7009D9244 /* PViCadeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37892187F9A9009D9244 /* PViCadeReader.swift */; };
-		B3AB37C0218814A8009D9244 /* PViCadeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37892187F9A9009D9244 /* PViCadeReader.swift */; };
 		B3AB37DA21881670009D9244 /* PViCadeGamepadButtonInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378F2187F9A9009D9244 /* PViCadeGamepadButtonInput.swift */; };
-		B3AB37DB21881671009D9244 /* PViCadeGamepadButtonInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378F2187F9A9009D9244 /* PViCadeGamepadButtonInput.swift */; };
 		B3AB37DC21881869009D9244 /* PViCadeInputAxis.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378A2187F9A9009D9244 /* PViCadeInputAxis.swift */; };
-		B3AB37DD21881869009D9244 /* PViCadeInputAxis.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378A2187F9A9009D9244 /* PViCadeInputAxis.swift */; };
 		B3AB37DE21881873009D9244 /* PViCadeGamepadDirectionPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37872187F9A9009D9244 /* PViCadeGamepadDirectionPad.swift */; };
-		B3AB37DF21881874009D9244 /* PViCadeGamepadDirectionPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37872187F9A9009D9244 /* PViCadeGamepadDirectionPad.swift */; };
 		B3AB37E021881955009D9244 /* PViCadeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378E2187F9A9009D9244 /* PViCadeController.swift */; };
-		B3AB37E121881956009D9244 /* PViCadeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378E2187F9A9009D9244 /* PViCadeController.swift */; };
 		B3AB37E321881A82009D9244 /* PViCadeGamepad.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37912187F9A9009D9244 /* PViCadeGamepad.swift */; };
-		B3AB37E421881A83009D9244 /* PViCadeGamepad.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37912187F9A9009D9244 /* PViCadeGamepad.swift */; };
 		B3AB37E721881B6D009D9244 /* iCadeControllerSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37882187F9A9009D9244 /* iCadeControllerSetting.swift */; };
-		B3AB37E821881B6E009D9244 /* iCadeControllerSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37882187F9A9009D9244 /* iCadeControllerSetting.swift */; };
 		B3AB37E921881B7A009D9244 /* PViCade8BitdoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378C2187F9A9009D9244 /* PViCade8BitdoController.swift */; };
 		B3AB37EA21881B7A009D9244 /* PViCadeMocuteController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37922187F9A9009D9244 /* PViCadeMocuteController.swift */; };
 		B3AB37EB21881B7A009D9244 /* PViCadeSteelSeriesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37902187F9A9009D9244 /* PViCadeSteelSeriesController.swift */; };
-		B3AB37EC21881B7B009D9244 /* PViCade8BitdoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378C2187F9A9009D9244 /* PViCade8BitdoController.swift */; };
-		B3AB37ED21881B7B009D9244 /* PViCadeMocuteController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37922187F9A9009D9244 /* PViCadeMocuteController.swift */; };
-		B3AB37EE21881B7B009D9244 /* PViCadeSteelSeriesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37902187F9A9009D9244 /* PViCadeSteelSeriesController.swift */; };
 		B3AF6FD821916168000FA7F9 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FD721916168000FA7F9 /* GameController.framework */; };
 		B3AF6FDA2191616C000FA7F9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FD92191616C000FA7F9 /* Foundation.framework */; };
-		B3AF6FDD219161BC000FA7F9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FDC219161BC000FA7F9 /* Foundation.framework */; };
-		B3AF6FDF219161C0000FA7F9 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FDE219161C0000FA7F9 /* GameController.framework */; };
 		B3B1A740279021C4004D1EF2 /* AHAP in Resources */ = {isa = PBXBuildFile; fileRef = B3B1A73F279021C4004D1EF2 /* AHAP */; };
-		B3B1A741279021C4004D1EF2 /* AHAP in Resources */ = {isa = PBXBuildFile; fileRef = B3B1A73F279021C4004D1EF2 /* AHAP */; };
-		B3B1A742279021C4004D1EF2 /* AHAP in Resources */ = {isa = PBXBuildFile; fileRef = B3B1A73F279021C4004D1EF2 /* AHAP */; };
 		B3B3D17428712EE1008A0E2F /* msg_hash.c in Sources */ = {isa = PBXBuildFile; fileRef = B322515C286C6F29001FDF42 /* msg_hash.c */; };
-		B3B492CB26B3A96B000B426B /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = B3B492CA26B3A96B000B426B /* Reachability */; };
-		B3C8A69428781C6E0037A946 /* msg_hash.c in Sources */ = {isa = PBXBuildFile; fileRef = B322515C286C6F29001FDF42 /* msg_hash.c */; };
-		B3C8A69528781D460037A946 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96E9E1D62C3A3003F1E93 /* PVSupport.framework */; };
-		B3C8A69A28781D4E0037A946 /* libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BDA286E75DD0054E9A5 /* libretro.a */; };
-		B3C96EA71D62C3BE003F1E93 /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4E718C1A6C699F005CA80F /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C96EA81D62C3C3003F1E93 /* OEGameAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69117F748F80031B1C9 /* OEGameAudio.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C96EAC1D62C3C3003F1E93 /* TPCircularBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69517F748F80031B1C9 /* TPCircularBuffer.c */; };
-		B3C96EAD1D62C3C3003F1E93 /* TPCircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69617F748F80031B1C9 /* TPCircularBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C96EAE1D62C3C7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA6A017F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C96EAF1D62C3C7003F1E93 /* NSObject+PVAbstractAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6A117F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m */; };
 		B3C96EC91D62C5E7003F1E93 /* OEGameAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69117F748F80031B1C9 /* OEGameAudio.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96ECA1D62C5E7003F1E93 /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4E718C1A6C699F005CA80F /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96ECC1D62C5E7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA6A017F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96ED01D62C5E7003F1E93 /* TPCircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69617F748F80031B1C9 /* TPCircularBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3CA5B5126E9E4D500687B27 /* CocoaLumberjack in Frameworks */ = {isa = PBXBuildFile; productRef = B3CA5B5026E9E4D500687B27 /* CocoaLumberjack */; };
 		B3CA5B5326E9E4DC00687B27 /* CocoaLumberjack in Frameworks */ = {isa = PBXBuildFile; productRef = B3CA5B5226E9E4DC00687B27 /* CocoaLumberjack */; };
 		B3CDEEBC21D4C3E6000C55F7 /* ArchiveSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEBB21D4C3E6000C55F7 /* ArchiveSupport.swift */; };
-		B3CDEEBD21D4C3E6000C55F7 /* ArchiveSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEBB21D4C3E6000C55F7 /* ArchiveSupport.swift */; };
 		B3CDEEBF21D4C41D000C55F7 /* DiscSwappable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEBE21D4C41D000C55F7 /* DiscSwappable.swift */; };
-		B3CDEEC021D4C41D000C55F7 /* DiscSwappable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEBE21D4C41D000C55F7 /* DiscSwappable.swift */; };
 		B3CDEEC221D4C454000C55F7 /* Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEC121D4C454000C55F7 /* Controls.swift */; };
-		B3CDEEC321D4C454000C55F7 /* Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEC121D4C454000C55F7 /* Controls.swift */; };
 		B3CDEEC521D4C490000C55F7 /* CoreActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEC421D4C490000C55F7 /* CoreActions.swift */; };
-		B3CDEEC621D4C490000C55F7 /* CoreActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEC421D4C490000C55F7 /* CoreActions.swift */; };
 		B3CDEEC821D4C4E5000C55F7 /* SaveStateSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEC721D4C4E5000C55F7 /* SaveStateSupport.swift */; };
-		B3CDEEC921D4C4E5000C55F7 /* SaveStateSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEC721D4C4E5000C55F7 /* SaveStateSupport.swift */; };
 		B3CEC5BC2794E9FD004A7CC1 /* PVGameControllerUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CEC5BB2794E9FD004A7CC1 /* PVGameControllerUtilities.swift */; };
-		B3CEC5BD2794E9FD004A7CC1 /* PVGameControllerUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CEC5BB2794E9FD004A7CC1 /* PVGameControllerUtilities.swift */; };
-		B3CEC5BE2794E9FD004A7CC1 /* PVGameControllerUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CEC5BB2794E9FD004A7CC1 /* PVGameControllerUtilities.swift */; };
 		B3CEC5C127952165004A7CC1 /* NSLogger in Frameworks */ = {isa = PBXBuildFile; productRef = B3CEC5C027952165004A7CC1 /* NSLogger */; };
-		B3CEC5C3279521EC004A7CC1 /* NSLogger in Frameworks */ = {isa = PBXBuildFile; productRef = B3CEC5C2279521EC004A7CC1 /* NSLogger */; };
 		B3D0EE20277FE85F002DC0A5 /* HapticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D0EE1F277FE85F002DC0A5 /* HapticsManager.swift */; };
-		B3D0EE21277FE85F002DC0A5 /* HapticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D0EE1F277FE85F002DC0A5 /* HapticsManager.swift */; };
-		B3D0EE26277FE880002DC0A5 /* HapticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D0EE1F277FE85F002DC0A5 /* HapticsManager.swift */; };
-		B3D0EE28277FE8C9002DC0A5 /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D0EE27277FE8C9002DC0A5 /* CoreHaptics.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3D0EE2A277FE8E1002DC0A5 /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D0EE29277FE8E0002DC0A5 /* CoreHaptics.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3D180A328964C40001207AF /* PVLibRetroCore+Controls.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D180A128964C3B001207AF /* PVLibRetroCore+Controls.m */; };
-		B3D180A428964C40001207AF /* PVLibRetroCore+Controls.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D180A128964C3B001207AF /* PVLibRetroCore+Controls.m */; };
 		B3D180A528964C40001207AF /* PVLibRetroCore+Saves.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D180A228964C40001207AF /* PVLibRetroCore+Saves.m */; };
-		B3D180A628964C40001207AF /* PVLibRetroCore+Saves.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D180A228964C40001207AF /* PVLibRetroCore+Saves.m */; };
 		B3D73D3D1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D73D3B1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3D73D3E1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D73D3B1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3D73D401EA15BB20023925B /* NSFileManager+OEHashingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D73D3C1EA15BB20023925B /* NSFileManager+OEHashingAdditions.m */; };
 		B3DF963F288D6B5800300A38 /* PVLibRetroGLESCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3DF963D288D6B5800300A38 /* PVLibRetroGLESCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3DF9640288D6B5800300A38 /* PVLibRetroGLESCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3DF963D288D6B5800300A38 /* PVLibRetroGLESCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3DF9641288D6B5800300A38 /* PVLibRetroGLESCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DF963E288D6B5800300A38 /* PVLibRetroGLESCore.m */; };
-		B3DF9642288D6B5800300A38 /* PVLibRetroGLESCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DF963E288D6B5800300A38 /* PVLibRetroGLESCore.m */; };
-		B3E6DADF20B7BF8600454DD4 /* UIDeviceExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E6DADD20B7BF8600454DD4 /* UIDeviceExtension.swift */; };
+		B3EA6C91292617F300010224 /* libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B322512D286C4728001FDF42 /* libretro.a */; };
 		B3F0846C2188CA7A00FF39EE /* CocoaLumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F0846B2188CA7A00FF39EE /* CocoaLumberExtensions.swift */; };
-		B3F0846D2188CA7A00FF39EE /* CocoaLumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F0846B2188CA7A00FF39EE /* CocoaLumberExtensions.swift */; };
 		B3FA5D5B1D6B908300060D71 /* OERingBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FA5D591D6B908300060D71 /* OERingBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3FA5D5C1D6B908300060D71 /* OERingBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FA5D591D6B908300060D71 /* OERingBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3FA5D631D6B90BD00060D71 /* PVEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FA5D5F1D6B90BD00060D71 /* PVEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3FA5D641D6B90BD00060D71 /* PVEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FA5D5F1D6B90BD00060D71 /* PVEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3FA5D661D6B90BD00060D71 /* PVEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FA5D601D6B90BD00060D71 /* PVEmulatorCore.m */; };
 		B3FFF02D26E9E65800A33143 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FFF02C26E9E65800A33143 /* AVFoundation.framework */; };
 		CF87D333258AB6B300838AF8 /* GameWithCheat.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF87D332258AB6B300838AF8 /* GameWithCheat.swift */; };
-		CF87D334258AB6B300838AF8 /* GameWithCheat.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF87D332258AB6B300838AF8 /* GameWithCheat.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -317,19 +134,12 @@
 			remoteGlobalIDString = B3C96EBE1D62C5E7003F1E93;
 			remoteInfo = "PVSupport-iOS";
 		};
-		B3C8A69728781D460037A946 /* PBXContainerItemProxy */ = {
+		B3EA6C92292617F300010224 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1ACEA63C17F7467D0031B1C9 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = B3C96E9D1D62C3A3003F1E93;
-			remoteInfo = "PVSupport-tvOS";
-		};
-		B3C8A69B28781D4E0037A946 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1ACEA63C17F7467D0031B1C9 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3A41BD0286E75DD0054E9A5;
-			remoteInfo = "retro-tvOS";
+			remoteGlobalIDString = B322512C286C4728001FDF42;
+			remoteInfo = retro;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -354,26 +164,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3A41BD4286E75DD0054E9A5 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-				B3A41BD5286E75DD0054E9A5 /* retro.h in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3C8A69928781D470037A946 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -393,7 +183,6 @@
 		B302F89C20B73D6300C5E502 /* PVProvenanceLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVProvenanceLogging.h; sourceTree = "<group>"; };
 		B302F89D20B73D6400C5E502 /* PVProvenanceLogging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVProvenanceLogging.m; sourceTree = "<group>"; };
 		B302F89E20B73D6400C5E502 /* PVLogging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVLogging.m; sourceTree = "<group>"; };
-		B305EF91276B4E41003AE510 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B305EF99276B4F0A003AE510 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.3.sdk/System/Library/Frameworks/GameKit.framework; sourceTree = DEVELOPER_DIR; };
 		B305EF9B276B4FDC003AE510 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.3.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		B306814C2895D405003E465F /* PVLibRetroCore+Cheats.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVLibRetroCore+Cheats.m"; sourceTree = "<group>"; };
@@ -1218,8 +1007,6 @@
 		B392849028670348003BAC21 /* PVLibRetro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVLibRetro.h; sourceTree = "<group>"; };
 		B3928497286703CD003BAC21 /* PVLibRetroCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVLibRetroCore.h; sourceTree = "<group>"; };
 		B3928498286703CD003BAC21 /* PVLibRetroCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVLibRetroCore.m; sourceTree = "<group>"; };
-		B3A41BDA286E75DD0054E9A5 /* libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libretro.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3A41BEB286E76110054E9A5 /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A4FB59278FE45C00A65248 /* OEGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OEGeometry.h; sourceTree = "<group>"; };
 		B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVEmulatorCore.swift; sourceTree = "<group>"; };
 		B3AB37872187F9A9009D9244 /* PViCadeGamepadDirectionPad.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PViCadeGamepadDirectionPad.swift; sourceTree = "<group>"; };
@@ -1241,7 +1028,6 @@
 		B3B1A73F279021C4004D1EF2 /* AHAP */ = {isa = PBXFileReference; lastKnownFileType = folder; path = AHAP; sourceTree = "<group>"; };
 		B3C83E262796211D0020824C /* Performance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Performance.swift; sourceTree = "<group>"; };
 		B3C83E2A279622EB0020824C /* PerformanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceView.swift; sourceTree = "<group>"; };
-		B3C96E9E1D62C3A3003F1E93 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C96EBA1D62C54D003F1E93 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3C96EBB1D62C54D003F1E93 /* PVSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVSupport.h; sourceTree = "<group>"; };
 		B3C96ED81D62C5E7003F1E93 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1271,20 +1057,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		B305EF84276B4E41003AE510 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B305EF85276B4E41003AE510 /* CocoaLumberjack in Frameworks */,
-				B305EF87276B4E41003AE510 /* Foundation.framework in Frameworks */,
-				B305EF89276B4E41003AE510 /* CocoaLumberjackSwiftLogBackend in Frameworks */,
-				B305EF9C276B4FDD003AE510 /* CoreGraphics.framework in Frameworks */,
-				B305EF9A276B4F0A003AE510 /* GameKit.framework in Frameworks */,
-				B305EF8A276B4E41003AE510 /* AVFoundation.framework in Frameworks */,
-				B305EF8B276B4E41003AE510 /* CocoaLumberjackSwift in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B322512A286C4728001FDF42 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1311,40 +1083,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B322514B286C4753001FDF42 /* libretro.a in Frameworks */,
+				B3EA6C91292617F300010224 /* libretro.a in Frameworks */,
 				B392849B286703F2003BAC21 /* PVSupport.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3A41BD3286E75DD0054E9A5 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3A41BE3286E76110054E9A5 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3C8A69A28781D4E0037A946 /* libretro.a in Frameworks */,
-				B3C8A69528781D460037A946 /* PVSupport.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3C96E9A1D62C3A3003F1E93 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3B492CB26B3A96B000B426B /* Reachability in Frameworks */,
-				B324C3162191963B009F4EDC /* AVFoundation.framework in Frameworks */,
-				B3CA5B5126E9E4D500687B27 /* CocoaLumberjack in Frameworks */,
-				B3296E8926C67F6B0088AC32 /* CocoaLumberjackSwiftLogBackend in Frameworks */,
-				B3CEC5C3279521EC004A7CC1 /* NSLogger in Frameworks */,
-				B3AF6FDF219161C0000FA7F9 /* GameController.framework in Frameworks */,
-				B3AF6FDD219161BC000FA7F9 /* Foundation.framework in Frameworks */,
-				B3D0EE28277FE8C9002DC0A5 /* CoreHaptics.framework in Frameworks */,
-				B336B8F826B3991500960A81 /* CocoaLumberjackSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1393,14 +1133,10 @@
 		1ACEA64517F7467D0031B1C9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B3C96E9E1D62C3A3003F1E93 /* PVSupport.framework */,
 				B3C96ED81D62C5E7003F1E93 /* PVSupport.framework */,
 				B3532B3221A7B736006CDA0F /* PVSupportTests.xctest */,
-				B305EF91276B4E41003AE510 /* PVSupport.framework */,
 				B392848E28670348003BAC21 /* PVLibRetro.framework */,
 				B322512D286C4728001FDF42 /* libretro.a */,
-				B3A41BDA286E75DD0054E9A5 /* libretro.a */,
-				B3A41BEB286E76110054E9A5 /* PVLibRetro.framework */,
 				B36C41012898776C00EAEF59 /* libretro-netplay.a */,
 			);
 			name = Products;
@@ -3555,30 +3291,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		B305EF48276B4E41003AE510 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B305EF49276B4E41003AE510 /* PVSupport.h in Headers */,
-				B305EF4A276B4E41003AE510 /* OEGameAudio.h in Headers */,
-				B305EF4B276B4E41003AE510 /* CABitOperations.h in Headers */,
-				B3A4FB5C278FE45D00A65248 /* OEGeometry.h in Headers */,
-				B305EF4C276B4E41003AE510 /* DebugUtils.h in Headers */,
-				B305EF4D276B4E41003AE510 /* PVProvenanceLogging.h in Headers */,
-				B305EF4E276B4E41003AE510 /* OERingBuffer.h in Headers */,
-				B305EF50276B4E41003AE510 /* NSObject+PVAbstractAdditions.h in Headers */,
-				B305EF51276B4E41003AE510 /* CARingBuffer.h in Headers */,
-				B305EF52276B4E41003AE510 /* CAAtomic.h in Headers */,
-				B305EF53276B4E41003AE510 /* CAAudioTimeStamp.h in Headers */,
-				B305EF54276B4E41003AE510 /* NSFileManager+OEHashingAdditions.h in Headers */,
-				B305EF55276B4E41003AE510 /* PVLogEntry.h in Headers */,
-				B305EF56276B4E41003AE510 /* PVEmulatorCore.h in Headers */,
-				B305EF57276B4E41003AE510 /* CAAutoDisposer.h in Headers */,
-				B305EF58276B4E41003AE510 /* TPCircularBuffer.h in Headers */,
-				B305EF59276B4E41003AE510 /* PVLogging.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B392848928670348003BAC21 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -3589,43 +3301,6 @@
 				B3DF963F288D6B5800300A38 /* PVLibRetroGLESCore.h in Headers */,
 				B32299672878DBE000585AD8 /* dynamic.h in Headers */,
 				B364D4B42870E5F600B93A4B /* libretro.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3A41BDE286E76110054E9A5 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3A41BDF286E76110054E9A5 /* PVLibRetro.h in Headers */,
-				B3A41BE0286E76110054E9A5 /* PVLibRetroCore.h in Headers */,
-				B3702312287256DA00B3F6DA /* retro_inline.h in Headers */,
-				B3DF9640288D6B5800300A38 /* PVLibRetroGLESCore.h in Headers */,
-				B32299682878DBE300585AD8 /* dynamic.h in Headers */,
-				B364D4B52870E5F600B93A4B /* libretro.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3C96E9B1D62C3A3003F1E93 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B34AB8652106F2F200C45F09 /* PVSupport.h in Headers */,
-				B3C96EA81D62C3C3003F1E93 /* OEGameAudio.h in Headers */,
-				B3447E89218B7E4B00557ACE /* CAAudioTimeStamp.h in Headers */,
-				B3C96EA71D62C3BE003F1E93 /* DebugUtils.h in Headers */,
-				B3447E93218B7E4B00557ACE /* CARingBuffer.h in Headers */,
-				B3FA5D5C1D6B908300060D71 /* OERingBuffer.h in Headers */,
-				B302F8A920B73D6500C5E502 /* PVProvenanceLogging.h in Headers */,
-				B3447E8D218B7E4B00557ACE /* CAAutoDisposer.h in Headers */,
-				B3C96EAE1D62C3C7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */,
-				B3447E8F218B7E4B00557ACE /* CAAtomic.h in Headers */,
-				B3A4FB5B278FE45D00A65248 /* OEGeometry.h in Headers */,
-				B3D73D3E1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h in Headers */,
-				B302F8A720B73D6500C5E502 /* PVLogEntry.h in Headers */,
-				B3FA5D641D6B90BD00060D71 /* PVEmulatorCore.h in Headers */,
-				B3C96EAD1D62C3C3003F1E93 /* TPCircularBuffer.h in Headers */,
-				B302F8A520B73D6500C5E502 /* PVLogging.h in Headers */,
-				B3447E87218B7E4B00557ACE /* CABitOperations.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3656,35 +3331,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		B305EF3D276B4E41003AE510 /* PVSupport-watchOS */ = {
+		B322512C286C4728001FDF42 /* retro */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B305EF8D276B4E41003AE510 /* Build configuration list for PBXNativeTarget "PVSupport-watchOS" */;
-			buildPhases = (
-				B305EF48276B4E41003AE510 /* Headers */,
-				B305EF5A276B4E41003AE510 /* Sources */,
-				B305EF84276B4E41003AE510 /* Frameworks */,
-				B305EF8C276B4E41003AE510 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B305EF3F276B4E41003AE510 /* PBXTargetDependency */,
-				B305EF40276B4E41003AE510 /* PBXTargetDependency */,
-				B305EF41276B4E41003AE510 /* PBXTargetDependency */,
-			);
-			name = "PVSupport-watchOS";
-			packageProductDependencies = (
-				B305EF42276B4E41003AE510 /* CocoaLumberjackSwift */,
-				B305EF46276B4E41003AE510 /* CocoaLumberjackSwiftLogBackend */,
-				B305EF47276B4E41003AE510 /* CocoaLumberjack */,
-			);
-			productName = "PVSupportTV Framework";
-			productReference = B305EF91276B4E41003AE510 /* PVSupport.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		B322512C286C4728001FDF42 /* retro-iOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B3225136286C4729001FDF42 /* Build configuration list for PBXNativeTarget "retro-iOS" */;
+			buildConfigurationList = B3225136286C4729001FDF42 /* Build configuration list for PBXNativeTarget "retro" */;
 			buildPhases = (
 				B3225129286C4728001FDF42 /* Sources */,
 				B322512A286C4728001FDF42 /* Frameworks */,
@@ -3694,7 +3343,7 @@
 			);
 			dependencies = (
 			);
-			name = "retro-iOS";
+			name = retro;
 			productName = retro;
 			productReference = B322512D286C4728001FDF42 /* libretro.a */;
 			productType = "com.apple.product-type.library.static";
@@ -3734,9 +3383,9 @@
 			productReference = B36C41012898776C00EAEF59 /* libretro-netplay.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B392848D28670348003BAC21 /* PVLibRetro-iOS */ = {
+		B392848D28670348003BAC21 /* PVLibRetro */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B392849528670348003BAC21 /* Build configuration list for PBXNativeTarget "PVLibRetro-iOS" */;
+			buildConfigurationList = B392849528670348003BAC21 /* Build configuration list for PBXNativeTarget "PVLibRetro" */;
 			buildPhases = (
 				B392848928670348003BAC21 /* Headers */,
 				B392848A28670348003BAC21 /* Sources */,
@@ -3747,82 +3396,16 @@
 			);
 			dependencies = (
 				B392849E286703F2003BAC21 /* PBXTargetDependency */,
+				B3EA6C93292617F300010224 /* PBXTargetDependency */,
 			);
-			name = "PVLibRetro-iOS";
+			name = PVLibRetro;
 			productName = PVLibRetro;
 			productReference = B392848E28670348003BAC21 /* PVLibRetro.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		B3A41BD0286E75DD0054E9A5 /* retro-tvOS */ = {
+		B3C96EBE1D62C5E7003F1E93 /* PVSupport */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3A41BD6286E75DD0054E9A5 /* Build configuration list for PBXNativeTarget "retro-tvOS" */;
-			buildPhases = (
-				B3A41BD1286E75DD0054E9A5 /* Sources */,
-				B3A41BD3286E75DD0054E9A5 /* Frameworks */,
-				B3A41BD4286E75DD0054E9A5 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "retro-tvOS";
-			productName = retro;
-			productReference = B3A41BDA286E75DD0054E9A5 /* libretro.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		B3A41BDB286E76110054E9A5 /* PVLibRetro-tvOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B3A41BE7286E76110054E9A5 /* Build configuration list for PBXNativeTarget "PVLibRetro-tvOS" */;
-			buildPhases = (
-				B3A41BDE286E76110054E9A5 /* Headers */,
-				B3A41BE1286E76110054E9A5 /* Sources */,
-				B3A41BE3286E76110054E9A5 /* Frameworks */,
-				B3A41BE6286E76110054E9A5 /* Resources */,
-				B3C8A69928781D470037A946 /* Embed Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B3C8A69828781D460037A946 /* PBXTargetDependency */,
-				B3C8A69C28781D4E0037A946 /* PBXTargetDependency */,
-			);
-			name = "PVLibRetro-tvOS";
-			productName = PVLibRetro;
-			productReference = B3A41BEB286E76110054E9A5 /* PVLibRetro.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		B3C96E9D1D62C3A3003F1E93 /* PVSupport-tvOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B3C96EA61D62C3A3003F1E93 /* Build configuration list for PBXNativeTarget "PVSupport-tvOS" */;
-			buildPhases = (
-				B3C96E9B1D62C3A3003F1E93 /* Headers */,
-				B3C96E991D62C3A3003F1E93 /* Sources */,
-				B3C96E9A1D62C3A3003F1E93 /* Frameworks */,
-				B3C96E9C1D62C3A3003F1E93 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B372637526EA013100E95488 /* PBXTargetDependency */,
-				B372637726EA013100E95488 /* PBXTargetDependency */,
-				B372637926EA013100E95488 /* PBXTargetDependency */,
-				B372637B26EA013100E95488 /* PBXTargetDependency */,
-			);
-			name = "PVSupport-tvOS";
-			packageProductDependencies = (
-				B336B8F726B3991500960A81 /* CocoaLumberjackSwift */,
-				B3B492CA26B3A96B000B426B /* Reachability */,
-				B3296E8826C67F6B0088AC32 /* CocoaLumberjackSwiftLogBackend */,
-				B3CA5B5026E9E4D500687B27 /* CocoaLumberjack */,
-				B3CEC5C2279521EC004A7CC1 /* NSLogger */,
-			);
-			productName = "PVSupportTV Framework";
-			productReference = B3C96E9E1D62C3A3003F1E93 /* PVSupport.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		B3C96EBE1D62C5E7003F1E93 /* PVSupport-iOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B3C96ED41D62C5E7003F1E93 /* Build configuration list for PBXNativeTarget "PVSupport-iOS" */;
+			buildConfigurationList = B3C96ED41D62C5E7003F1E93 /* Build configuration list for PBXNativeTarget "PVSupport" */;
 			buildPhases = (
 				B3C96EC81D62C5E7003F1E93 /* Headers */,
 				B3C96EBF1D62C5E7003F1E93 /* Sources */,
@@ -3837,7 +3420,7 @@
 				B372638126EA013A00E95488 /* PBXTargetDependency */,
 				B372638326EA013A00E95488 /* PBXTargetDependency */,
 			);
-			name = "PVSupport-iOS";
+			name = PVSupport;
 			packageProductDependencies = (
 				B336B8F026B3985B00960A81 /* CocoaLumberjackSwift */,
 				B336B8F326B398A900960A81 /* Reachability */,
@@ -3875,10 +3458,6 @@
 					B392848D28670348003BAC21 = {
 						CreatedOnToolsVersion = 13.4.1;
 					};
-					B3C96E9D1D62C3A3003F1E93 = {
-						CreatedOnToolsVersion = 7.3.1;
-						LastSwiftMigration = 0920;
-					};
 					B3C96EBE1D62C5E7003F1E93 = {
 						LastSwiftMigration = 1020;
 					};
@@ -3902,28 +3481,16 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B3C96EBE1D62C5E7003F1E93 /* PVSupport-iOS */,
-				B3C96E9D1D62C3A3003F1E93 /* PVSupport-tvOS */,
-				B305EF3D276B4E41003AE510 /* PVSupport-watchOS */,
+				B3C96EBE1D62C5E7003F1E93 /* PVSupport */,
 				B3532B3121A7B736006CDA0F /* PVSupportTests */,
-				B392848D28670348003BAC21 /* PVLibRetro-iOS */,
-				B3A41BDB286E76110054E9A5 /* PVLibRetro-tvOS */,
-				B322512C286C4728001FDF42 /* retro-iOS */,
-				B3A41BD0286E75DD0054E9A5 /* retro-tvOS */,
+				B392848D28670348003BAC21 /* PVLibRetro */,
+				B322512C286C4728001FDF42 /* retro */,
 				B36C41002898776C00EAEF59 /* retro-netplay */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		B305EF8C276B4E41003AE510 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3B1A742279021C4004D1EF2 /* AHAP in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3532B3021A7B736006CDA0F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3938,21 +3505,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3A41BE6286E76110054E9A5 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3C96E9C1D62C3A3003F1E93 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3B1A741279021C4004D1EF2 /* AHAP in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C96ED21D62C5E7003F1E93 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3964,65 +3516,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		B305EF5A276B4E41003AE510 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B305EF5B276B4E41003AE510 /* PVEmulatorCore.swift in Sources */,
-				B305EF5C276B4E41003AE510 /* PViCadeSteelSeriesController.swift in Sources */,
-				B305EF5D276B4E41003AE510 /* ArchiveSupport.swift in Sources */,
-				B39C29CF27A10EE50078D028 /* OEGameAudio.m in Sources */,
-				B33FB30F279BE2710013AAD8 /* CoreOptional.swift in Sources */,
-				B305EF60276B4E41003AE510 /* PViCade8BitdoController.swift in Sources */,
-				B305EF61276B4E41003AE510 /* PViCadeInputAxis.swift in Sources */,
-				B305EF62276B4E41003AE510 /* DDLogLevel+CustomStringConvertable.swift in Sources */,
-				B33FB306279BE21C0013AAD8 /* CoreOptionRange.swift in Sources */,
-				B305EF63276B4E41003AE510 /* iCadeState.swift in Sources */,
-				B305EF64276B4E41003AE510 /* CoreOptions.swift in Sources */,
-				B33FB2F5279BE1330013AAD8 /* CoreOptions+Protocols.swift in Sources */,
-				B305EF65276B4E41003AE510 /* UIDeviceExtension.swift in Sources */,
-				B30F8015290516B900F21217 /* ScreenType.swift in Sources */,
-				B305EF66276B4E41003AE510 /* SaveStateSupport.swift in Sources */,
-				B305EF67276B4E41003AE510 /* iCadeControllerSetting.swift in Sources */,
-				B305EF68276B4E41003AE510 /* PViCadeController.swift in Sources */,
-				B305EF69276B4E41003AE510 /* CocoaLumberjack+swift-log.swift in Sources */,
-				B305EF6A276B4E41003AE510 /* CARingBuffer.cpp in Sources */,
-				B305EF6B276B4E41003AE510 /* CocoaLumberjack+NSLogger.swift in Sources */,
-				B305EF6C276B4E41003AE510 /* Controls.swift in Sources */,
-				B305EF6D276B4E41003AE510 /* PViCadeGamepadDirectionPad.swift in Sources */,
-				B33FB30A279BE2460013AAD8 /* CoreOptionValue.swift in Sources */,
-				B33FB2F1279BE0F50013AAD8 /* CoreOptionValueDisplay.swift in Sources */,
-				B33FB2FA279BE1730013AAD8 /* CoreOptionMultiValue.swift in Sources */,
-				B305EF6E276B4E41003AE510 /* NSFileManager+OEHashingAdditions.m in Sources */,
-				B305EF6F276B4E41003AE510 /* PViCadeGamepadButtonInput.swift in Sources */,
-				B305EF70276B4E41003AE510 /* SortOption.swift in Sources */,
-				B305EF71276B4E41003AE510 /* GameWithCheat.swift in Sources */,
-				B305EF72276B4E41003AE510 /* CoreActions.swift in Sources */,
-				B3CEC5BE2794E9FD004A7CC1 /* PVGameControllerUtilities.swift in Sources */,
-				B33FB2ED279BE0CC0013AAD8 /* CoreOptions+Serialization.swift in Sources */,
-				B305EF73276B4E41003AE510 /* CAAudioTimeStamp.cpp in Sources */,
-				B305EF74276B4E41003AE510 /* PVProvenanceLogging.m in Sources */,
-				B305EF75276B4E41003AE510 /* PViCadeReader.swift in Sources */,
-				B305EF76276B4E41003AE510 /* RealTimeThread.m in Sources */,
-				B305EF77276B4E41003AE510 /* DiscSwappable.swift in Sources */,
-				B305EF78276B4E41003AE510 /* NSObject+PVAbstractAdditions.m in Sources */,
-				B3D0EE26277FE880002DC0A5 /* HapticsManager.swift in Sources */,
-				B305EF79276B4E41003AE510 /* PVEmulatorCore.m in Sources */,
-				B305EF7A276B4E41003AE510 /* PVLogEntry.m in Sources */,
-				B305EF7B276B4E41003AE510 /* TPCircularBuffer.c in Sources */,
-				B305EF7D276B4E41003AE510 /* PVLogging.m in Sources */,
-				B33FB2FE279BE18F0013AAD8 /* CoreOptionEnumValue.swift in Sources */,
-				B39C29C927A0FAE00078D028 /* OERingBuffer.m in Sources */,
-				B33FB302279BE1E40013AAD8 /* OptionDependency.swift in Sources */,
-				B305EF7E276B4E41003AE510 /* PViCadeMocuteController.swift in Sources */,
-				B305EF7F276B4E41003AE510 /* CocoaLumberExtensions.swift in Sources */,
-				B305EF80276B4E41003AE510 /* iCadeReaderView.swift in Sources */,
-				B305EF81276B4E41003AE510 /* PViCadeGamepad.swift in Sources */,
-				B305EF82276B4E41003AE510 /* PVCocoaLumberJackLogging.swift in Sources */,
-				B305EF83276B4E41003AE510 /* PVSettingsModel.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3225129286C4728001FDF42 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -4068,97 +3561,6 @@
 				B30681522895D407003E465F /* PVLibRetroCore+Video.m in Sources */,
 				B3DF9641288D6B5800300A38 /* PVLibRetroGLESCore.m in Sources */,
 				B392849A286703CD003BAC21 /* PVLibRetroCore.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3A41BD1286E75DD0054E9A5 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B32299472878CF2D00585AD8 /* rthreads.c in Sources */,
-				B342325A286EB4060033EFA5 /* dylib.c in Sources */,
-				B3C8A69428781C6E0037A946 /* msg_hash.c in Sources */,
-				B3A41BD2286E75DD0054E9A5 /* retro.m in Sources */,
-				B322996D28792B4100585AD8 /* movie.c in Sources */,
-				B32299432878CB3C00585AD8 /* input_driver.c in Sources */,
-				B3423261286EB5CB0033EFA5 /* dynamic_dummy.c in Sources */,
-				B322994B2878CF6200585AD8 /* input_keyboard.c in Sources */,
-				B322996F28792BA000585AD8 /* nullinput.c in Sources */,
-				B32299522878D46F00585AD8 /* performance_counters.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3A41BE1286E76110054E9A5 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3D180A628964C40001207AF /* PVLibRetroCore+Saves.m in Sources */,
-				B3D180A428964C40001207AF /* PVLibRetroCore+Controls.m in Sources */,
-				B30681572895D407003E465F /* PVLibRetroCore+Options.m in Sources */,
-				B30681512895D407003E465F /* PVLibRetroCore+Cheats.m in Sources */,
-				B30681552895D407003E465F /* PVLibRetroCore+Audio.m in Sources */,
-				B30681532895D407003E465F /* PVLibRetroCore+Video.m in Sources */,
-				B3DF9642288D6B5800300A38 /* PVLibRetroGLESCore.m in Sources */,
-				B3A41BE2286E76110054E9A5 /* PVLibRetroCore.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3C96E991D62C3A3003F1E93 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3AB37EE21881B7B009D9244 /* PViCadeSteelSeriesController.swift in Sources */,
-				B3CDEEBD21D4C3E6000C55F7 /* ArchiveSupport.swift in Sources */,
-				B33FB30E279BE2710013AAD8 /* CoreOptional.swift in Sources */,
-				B39C29CD27A10EE40078D028 /* OEGameAudio.m in Sources */,
-				B3AB37E421881A83009D9244 /* PViCadeGamepad.swift in Sources */,
-				B35E6C38207EE15D0040709A /* CoreOptions.swift in Sources */,
-				B3AB37EC21881B7B009D9244 /* PViCade8BitdoController.swift in Sources */,
-				B3AB37DD21881869009D9244 /* PViCadeInputAxis.swift in Sources */,
-				B3296EA026C685450088AC32 /* DDLogLevel+CustomStringConvertable.swift in Sources */,
-				B33FB305279BE21C0013AAD8 /* CoreOptionRange.swift in Sources */,
-				B3AB37B421880FA6009D9244 /* iCadeState.swift in Sources */,
-				B3A74C8B20522B04001D3D2E /* PVEmulatorCore.swift in Sources */,
-				B33FB2F4279BE1330013AAD8 /* CoreOptions+Protocols.swift in Sources */,
-				B30F8014290516B900F21217 /* ScreenType.swift in Sources */,
-				B3CDEEC921D4C4E5000C55F7 /* SaveStateSupport.swift in Sources */,
-				B3AB37E821881B6E009D9244 /* iCadeControllerSetting.swift in Sources */,
-				B3AB37E121881956009D9244 /* PViCadeController.swift in Sources */,
-				B372638426EA015700E95488 /* CocoaLumberjack+swift-log.swift in Sources */,
-				B3AB37DF21881874009D9244 /* PViCadeGamepadDirectionPad.swift in Sources */,
-				B3296E8226C67EFA0088AC32 /* CocoaLumberjack+NSLogger.swift in Sources */,
-				B3CDEEC321D4C454000C55F7 /* Controls.swift in Sources */,
-				B3C96EAC1D62C3C3003F1E93 /* TPCircularBuffer.c in Sources */,
-				B3AB37DB21881671009D9244 /* PViCadeGamepadButtonInput.swift in Sources */,
-				B33FB309279BE2460013AAD8 /* CoreOptionValue.swift in Sources */,
-				B33FB2F0279BE0F50013AAD8 /* CoreOptionValueDisplay.swift in Sources */,
-				B33FB2F9279BE1730013AAD8 /* CoreOptionMultiValue.swift in Sources */,
-				B3C96EAF1D62C3C7003F1E93 /* NSObject+PVAbstractAdditions.m in Sources */,
-				B3532C3721A925C2006CDA0F /* SortOption.swift in Sources */,
-				CF87D334258AB6B300838AF8 /* GameWithCheat.swift in Sources */,
-				B3CDEEC621D4C490000C55F7 /* CoreActions.swift in Sources */,
-				B3AB37C0218814A8009D9244 /* PViCadeReader.swift in Sources */,
-				B3CEC5BD2794E9FD004A7CC1 /* PVGameControllerUtilities.swift in Sources */,
-				B33FB2EC279BE0CC0013AAD8 /* CoreOptions+Serialization.swift in Sources */,
-				B3FA5D661D6B90BD00060D71 /* PVEmulatorCore.m in Sources */,
-				B3447E8B218B7E4B00557ACE /* CARingBuffer.cpp in Sources */,
-				B3D73D401EA15BB20023925B /* NSFileManager+OEHashingAdditions.m in Sources */,
-				B3CDEEC021D4C41D000C55F7 /* DiscSwappable.swift in Sources */,
-				B3F0846D2188CA7A00FF39EE /* CocoaLumberExtensions.swift in Sources */,
-				B3D0EE21277FE85F002DC0A5 /* HapticsManager.swift in Sources */,
-				B302F8AD20B73D6500C5E502 /* PVLogging.m in Sources */,
-				B3447E91218B7E4B00557ACE /* CAAudioTimeStamp.cpp in Sources */,
-				B3447F9C218C1CD200557ACE /* PVSettingsModel.swift in Sources */,
-				0592894F1DC194FD0012644D /* RealTimeThread.m in Sources */,
-				B33FB2FD279BE18F0013AAD8 /* CoreOptionEnumValue.swift in Sources */,
-				B39C29C827A0FADF0078D028 /* OERingBuffer.m in Sources */,
-				B33FB301279BE1E40013AAD8 /* OptionDependency.swift in Sources */,
-				B302F8A320B73D6500C5E502 /* PVLogEntry.m in Sources */,
-				B3AB37ED21881B7B009D9244 /* PViCadeMocuteController.swift in Sources */,
-				B3AB37BE218812BC009D9244 /* iCadeReaderView.swift in Sources */,
-				B3E6DADF20B7BF8600454DD4 /* UIDeviceExtension.swift in Sources */,
-				B302F8AB20B73D6500C5E502 /* PVProvenanceLogging.m in Sources */,
-				B3296EA326C68CCE0088AC32 /* PVCocoaLumberJackLogging.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4224,39 +3626,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B305EF3F276B4E41003AE510 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = B372637E26EA013A00E95488 /* CocoaLumberjackSwift */;
-		};
-		B305EF40276B4E41003AE510 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = B372638026EA013A00E95488 /* CocoaLumberjackSwiftLogBackend */;
-		};
-		B305EF41276B4E41003AE510 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			platformFilter = ios;
-			productRef = B372638226EA013A00E95488 /* Reachability */;
-		};
 		B3532B3921A7B736006CDA0F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3C96EBE1D62C5E7003F1E93 /* PVSupport-iOS */;
+			target = B3C96EBE1D62C5E7003F1E93 /* PVSupport */;
 			targetProxy = B3532B3821A7B736006CDA0F /* PBXContainerItemProxy */;
-		};
-		B372637526EA013100E95488 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = B372637426EA013100E95488 /* CocoaLumberjack */;
-		};
-		B372637726EA013100E95488 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = B372637626EA013100E95488 /* CocoaLumberjackSwift */;
-		};
-		B372637926EA013100E95488 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = B372637826EA013100E95488 /* CocoaLumberjackSwiftLogBackend */;
-		};
-		B372637B26EA013100E95488 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = B372637A26EA013100E95488 /* Reachability */;
 		};
 		B372637D26EA013A00E95488 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -4272,23 +3645,21 @@
 		};
 		B372638326EA013A00E95488 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
+			platformFilters = (
+				ios,
+				tvos,
+			);
 			productRef = B372638226EA013A00E95488 /* Reachability */;
 		};
 		B392849E286703F2003BAC21 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3C96EBE1D62C5E7003F1E93 /* PVSupport-iOS */;
+			target = B3C96EBE1D62C5E7003F1E93 /* PVSupport */;
 			targetProxy = B392849D286703F2003BAC21 /* PBXContainerItemProxy */;
 		};
-		B3C8A69828781D460037A946 /* PBXTargetDependency */ = {
+		B3EA6C93292617F300010224 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3C96E9D1D62C3A3003F1E93 /* PVSupport-tvOS */;
-			targetProxy = B3C8A69728781D460037A946 /* PBXContainerItemProxy */;
-		};
-		B3C8A69C28781D4E0037A946 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3A41BD0286E75DD0054E9A5 /* retro-tvOS */;
-			targetProxy = B3C8A69B28781D4E0037A946 /* PBXContainerItemProxy */;
+			target = B322512C286C4728001FDF42 /* retro */;
+			targetProxy = B3EA6C92292617F300010224 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -4407,143 +3778,11 @@
 			};
 			name = Release;
 		};
-		B305EF8E276B4E41003AE510 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = NO;
-				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_STYLE = Manual;
-				DEAD_CODE_STRIPPING = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREFIX_HEADER = "Supporting Files/PVSupport-Prefix.pch";
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = "Supporting Files/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 2.0.4;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(PVSUPPORT_PRODUCT_BUNDLE_IDENTIFIER)";
-				PRODUCT_NAME = PVSupport;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				SWIFT_COMPILATION_MODE = singlefile;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				VERSIONING_SYSTEM = "apple-generic";
-			};
-			name = Debug;
-		};
-		B305EF8F276B4E41003AE510 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = NO;
-				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREFIX_HEADER = "Supporting Files/PVSupport-Prefix.pch";
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = "Supporting Files/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 2.0.4;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(PVSUPPORT_PRODUCT_BUNDLE_IDENTIFIER)";
-				PRODUCT_NAME = PVSupport;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				VERSIONING_SYSTEM = "apple-generic";
-			};
-			name = Release;
-		};
-		B305EF90276B4E41003AE510 /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = NO;
-				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREFIX_HEADER = "Supporting Files/PVSupport-Prefix.pch";
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = "Supporting Files/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 2.0.4;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(PVSUPPORT_PRODUCT_BUNDLE_IDENTIFIER)";
-				PRODUCT_NAME = PVSupport;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				VERSIONING_SYSTEM = "apple-generic";
-			};
-			name = Archive;
-		};
 		B3225133286C4728001FDF42 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B32299412878C5A000585AD8 /* PVLibRetro-Build.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -4572,7 +3811,9 @@
 				PRODUCT_NAME = retro;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Debug;
 		};
@@ -4580,6 +3821,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B32299412878C5A000585AD8 /* PVLibRetro-Build.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -4609,7 +3851,9 @@
 				PRODUCT_NAME = retro;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Release;
 		};
@@ -4617,6 +3861,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B32299412878C5A000585AD8 /* PVLibRetro-Build.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -4646,7 +3891,9 @@
 				PRODUCT_NAME = retro;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Archive;
 		};
@@ -4744,48 +3991,11 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
-				VERSIONING_SYSTEM = "apple-generic";
-			};
-			name = Archive;
-		};
-		B324C53B2191A7A8009F4EDC /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREFIX_HEADER = "Supporting Files/PVSupport-Prefix.pch";
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = "Supporting Files/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 2.0.4;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(PVSUPPORT_PRODUCT_BUNDLE_IDENTIFIER)";
-				PRODUCT_NAME = PVSupport;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Archive;
@@ -4899,6 +4109,7 @@
 		B36C41072898776C00EAEF59 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -4917,13 +4128,16 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Debug;
 		};
 		B36C41082898776C00EAEF59 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -4943,13 +4157,16 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Release;
 		};
 		B36C41092898776C00EAEF59 /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -4969,7 +4186,9 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Archive;
 		};
@@ -5024,11 +4243,14 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -5086,9 +4308,12 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -5146,370 +4371,16 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Archive;
-		};
-		B3A41BD7286E75DD0054E9A5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = B32299412878C5A000585AD8 /* PVLibRetro-Build.xcconfig */;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				DEAD_CODE_STRIPPING = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					HAVE_DYNAMIC,
-					"$(inherited)",
-					NEED_DYNAMIC,
-				);
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
-					"$(inherited)",
-				);
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = retro;
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Debug;
-		};
-		B3A41BD8286E75DD0054E9A5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = B32299412878C5A000585AD8 /* PVLibRetro-Build.xcconfig */;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					HAVE_DYNAMIC,
-					"$(inherited)",
-					NEED_DYNAMIC,
-				);
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
-					"$(inherited)",
-				);
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = retro;
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Release;
-		};
-		B3A41BD9286E75DD0054E9A5 /* Archive */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = B32299412878C5A000585AD8 /* PVLibRetro-Build.xcconfig */;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					HAVE_DYNAMIC,
-					"$(inherited)",
-					NEED_DYNAMIC,
-				);
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
-					"$(inherited)",
-				);
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = retro;
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Archive;
-		};
-		B3A41BE8286E76110054E9A5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
-				DEAD_CODE_STRIPPING = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_PREFIX_HEADER = "Supporting Files/PVLibRetro-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = (
-					NEED_DYNAMIC,
-					HAVE_DYNAMIC,
-					__MACH__,
-				);
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GENERATE_INFOPLIST_FILE = YES;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
-					"\"$(SRCROOT)/Sources/retro\"",
-					"$(inherited)",
-				);
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibRetro";
-				PRODUCT_NAME = PVLibRetro;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 3;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		B3A41BE9286E76110054E9A5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEAD_CODE_STRIPPING = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_PREFIX_HEADER = "Supporting Files/PVLibRetro-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = (
-					NEED_DYNAMIC,
-					HAVE_DYNAMIC,
-					__MACH__,
-				);
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GENERATE_INFOPLIST_FILE = YES;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
-					"\"$(SRCROOT)/Sources/retro\"",
-					"$(inherited)",
-				);
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibRetro";
-				PRODUCT_NAME = PVLibRetro;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 3;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		B3A41BEA286E76110054E9A5 /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEAD_CODE_STRIPPING = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_PREFIX_HEADER = "Supporting Files/PVLibRetro-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = (
-					NEED_DYNAMIC,
-					HAVE_DYNAMIC,
-					__MACH__,
-				);
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GENERATE_INFOPLIST_FILE = YES;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
-					"\"$(SRCROOT)/Sources/retro\"",
-					"$(inherited)",
-				);
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibRetro";
-				PRODUCT_NAME = PVLibRetro;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 3;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Archive;
-		};
-		B3C96EA31D62C3A3003F1E93 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_STYLE = Manual;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREFIX_HEADER = "Supporting Files/PVSupport-Prefix.pch";
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = "Supporting Files/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 2.0.4;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(PVSUPPORT_PRODUCT_BUNDLE_IDENTIFIER)";
-				PRODUCT_NAME = PVSupport;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				SWIFT_COMPILATION_MODE = singlefile;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
-				VERSIONING_SYSTEM = "apple-generic";
-			};
-			name = Debug;
-		};
-		B3C96EA41D62C3A3003F1E93 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREFIX_HEADER = "Supporting Files/PVSupport-Prefix.pch";
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = "Supporting Files/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 2.0.4;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(PVSUPPORT_PRODUCT_BUNDLE_IDENTIFIER)";
-				PRODUCT_NAME = PVSupport;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
-				VERSIONING_SYSTEM = "apple-generic";
-			};
-			name = Release;
 		};
 		B3C96ED51D62C5E7003F1E93 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -5550,10 +4421,13 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -5598,8 +4472,11 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
@@ -5617,17 +4494,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B305EF8D276B4E41003AE510 /* Build configuration list for PBXNativeTarget "PVSupport-watchOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B305EF8E276B4E41003AE510 /* Debug */,
-				B305EF8F276B4E41003AE510 /* Release */,
-				B305EF90276B4E41003AE510 /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B3225136286C4729001FDF42 /* Build configuration list for PBXNativeTarget "retro-iOS" */ = {
+		B3225136286C4729001FDF42 /* Build configuration list for PBXNativeTarget "retro" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3225133286C4728001FDF42 /* Debug */,
@@ -5657,7 +4524,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B392849528670348003BAC21 /* Build configuration list for PBXNativeTarget "PVLibRetro-iOS" */ = {
+		B392849528670348003BAC21 /* Build configuration list for PBXNativeTarget "PVLibRetro" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B392849228670348003BAC21 /* Debug */,
@@ -5667,37 +4534,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3A41BD6286E75DD0054E9A5 /* Build configuration list for PBXNativeTarget "retro-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B3A41BD7286E75DD0054E9A5 /* Debug */,
-				B3A41BD8286E75DD0054E9A5 /* Release */,
-				B3A41BD9286E75DD0054E9A5 /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B3A41BE7286E76110054E9A5 /* Build configuration list for PBXNativeTarget "PVLibRetro-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B3A41BE8286E76110054E9A5 /* Debug */,
-				B3A41BE9286E76110054E9A5 /* Release */,
-				B3A41BEA286E76110054E9A5 /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B3C96EA61D62C3A3003F1E93 /* Build configuration list for PBXNativeTarget "PVSupport-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B3C96EA31D62C3A3003F1E93 /* Debug */,
-				B3C96EA41D62C3A3003F1E93 /* Release */,
-				B324C53B2191A7A8009F4EDC /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B3C96ED41D62C5E7003F1E93 /* Build configuration list for PBXNativeTarget "PVSupport-iOS" */ = {
+		B3C96ED41D62C5E7003F1E93 /* Build configuration list for PBXNativeTarget "PVSupport" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3C96ED51D62C5E7003F1E93 /* Debug */,
@@ -5710,14 +4547,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		B305EF43276B4E41003AE510 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/CocoaLumberjack/CocoaLumberjack.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 3.7.2;
-			};
-		};
 		B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/CocoaLumberjack/CocoaLumberjack.git";
@@ -5745,27 +4574,7 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		B305EF42276B4E41003AE510 /* CocoaLumberjackSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B305EF43276B4E41003AE510 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
-			productName = CocoaLumberjackSwift;
-		};
-		B305EF46276B4E41003AE510 /* CocoaLumberjackSwiftLogBackend */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B305EF43276B4E41003AE510 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
-			productName = CocoaLumberjackSwiftLogBackend;
-		};
-		B305EF47276B4E41003AE510 /* CocoaLumberjack */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B305EF43276B4E41003AE510 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
-			productName = CocoaLumberjack;
-		};
 		B3296E8626C67F660088AC32 /* CocoaLumberjackSwiftLogBackend */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
-			productName = CocoaLumberjackSwiftLogBackend;
-		};
-		B3296E8826C67F6B0088AC32 /* CocoaLumberjackSwiftLogBackend */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
 			productName = CocoaLumberjackSwiftLogBackend;
@@ -5776,31 +4585,6 @@
 			productName = CocoaLumberjackSwift;
 		};
 		B336B8F326B398A900960A81 /* Reachability */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B336B8F226B398A900960A81 /* XCRemoteSwiftPackageReference "Reachability.swift" */;
-			productName = Reachability;
-		};
-		B336B8F726B3991500960A81 /* CocoaLumberjackSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
-			productName = CocoaLumberjackSwift;
-		};
-		B372637426EA013100E95488 /* CocoaLumberjack */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
-			productName = CocoaLumberjack;
-		};
-		B372637626EA013100E95488 /* CocoaLumberjackSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
-			productName = CocoaLumberjackSwift;
-		};
-		B372637826EA013100E95488 /* CocoaLumberjackSwiftLogBackend */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
-			productName = CocoaLumberjackSwiftLogBackend;
-		};
-		B372637A26EA013100E95488 /* Reachability */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B336B8F226B398A900960A81 /* XCRemoteSwiftPackageReference "Reachability.swift" */;
 			productName = Reachability;
@@ -5825,27 +4609,12 @@
 			package = B336B8F226B398A900960A81 /* XCRemoteSwiftPackageReference "Reachability.swift" */;
 			productName = Reachability;
 		};
-		B3B492CA26B3A96B000B426B /* Reachability */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B336B8F226B398A900960A81 /* XCRemoteSwiftPackageReference "Reachability.swift" */;
-			productName = Reachability;
-		};
-		B3CA5B5026E9E4D500687B27 /* CocoaLumberjack */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
-			productName = CocoaLumberjack;
-		};
 		B3CA5B5226E9E4DC00687B27 /* CocoaLumberjack */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B336B8EF26B3985B00960A81 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
 			productName = CocoaLumberjack;
 		};
 		B3CEC5C027952165004A7CC1 /* NSLogger */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3CEC5BF27952163004A7CC1 /* XCRemoteSwiftPackageReference "NSLogger" */;
-			productName = NSLogger;
-		};
-		B3CEC5C2279521EC004A7CC1 /* NSLogger */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B3CEC5BF27952163004A7CC1 /* XCRemoteSwiftPackageReference "NSLogger" */;
 			productName = NSLogger;

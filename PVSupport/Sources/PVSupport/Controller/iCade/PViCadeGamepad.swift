@@ -6,7 +6,7 @@
 //  Created by Josejulio Martínez on 16/06/15.
 //  Copyright (c) 2015 Josejulio Martínez. All rights reserved.
 //
-
+#if canImport(UIKit)
 import GameController
 
 internal final class PViCadeGamepad: GCExtendedGamepad {
@@ -69,3 +69,4 @@ internal final class PViCadeGamepad: GCExtendedGamepad {
         return _rightTrigger
     }
 }
+#endif

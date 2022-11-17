@@ -3,16 +3,13 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B324C63421920D5C009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C63321920D5C009F4EDC /* PVSupport.framework */; };
 		B324C63621920D6D009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C63521920D6D009F4EDC /* PVSupport.framework */; };
 		B326758327B1C5BB0033C5D1 /* GenesisOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B326758227B1C5BB0033C5D1 /* GenesisOptions.swift */; };
-		B326758427B1C5BB0033C5D1 /* GenesisOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B326758227B1C5BB0033C5D1 /* GenesisOptions.swift */; };
 		B3547B572058589900CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B562058589900CFF7D8 /* Core.plist */; };
-		B3547B582058589900CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B562058589900CFF7D8 /* Core.plist */; };
 		B367000D2896283B00F75595 /* genesis.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FDFF289627AC00F75595 /* genesis.c */; };
 		B367000E2896283B00F75595 /* mem68k.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE98289627AC00F75595 /* mem68k.c */; };
 		B367000F2896283B00F75595 /* io_ctrl.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE97289627AC00F75595 /* io_ctrl.c */; };
@@ -114,149 +111,27 @@
 		B36700AD2896293700F75595 /* sms_ntsc.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7DD17F752600031B1C9 /* sms_ntsc.c */; };
 		B36700AE2896293700F75595 /* state.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7F017F752600031B1C9 /* state.c */; };
 		B36700AF2896293700F75595 /* sms_cart.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6F517F752600031B1C9 /* sms_cart.c */; };
-		B36700B22896294500F75595 /* input.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FDF6289627AB00F75595 /* input.c */; };
-		B36700B32896294500F75595 /* lightgun.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FDEF289627AB00F75595 /* lightgun.c */; };
-		B36700B42896294500F75595 /* cd_cart.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE71289627AC00F75595 /* cd_cart.c */; };
-		B36700B52896294500F75595 /* md_cart.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE93289627AC00F75595 /* md_cart.c */; };
-		B36700B62896294500F75595 /* cdd.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE76289627AC00F75595 /* cdd.c */; };
-		B36700B72896294500F75595 /* paddle.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FDF3289627AB00F75595 /* paddle.c */; };
-		B36700B82896294500F75595 /* memz80.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE99289627AC00F75595 /* memz80.c */; };
-		B36700B92896294500F75595 /* system.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE08289627AC00F75595 /* system.c */; };
-		B36700BA2896294500F75595 /* eq.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE9D289627AC00F75595 /* eq.c */; };
-		B36700BB2896294500F75595 /* genesis.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FDFF289627AC00F75595 /* genesis.c */; };
-		B36700BC2896294500F75595 /* eeprom_i2c.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE7D289627AC00F75595 /* eeprom_i2c.c */; };
-		B36700BD2896294500F75595 /* sram.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE7B289627AC00F75595 /* sram.c */; };
-		B36700BE2896294500F75595 /* activator.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FDF9289627AC00F75595 /* activator.c */; };
-		B36700BF2896294500F75595 /* ym2612.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FEA2289627AD00F75595 /* ym2612.c */; };
-		B36700C02896294500F75595 /* vdp_ctrl.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE9A289627AC00F75595 /* vdp_ctrl.c */; };
-		B36700C12896294500F75595 /* ssp16.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE87289627AC00F75595 /* ssp16.c */; };
-		B36700C22896294500F75595 /* ggenie.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE7F289627AC00F75595 /* ggenie.c */; };
-		B36700C32896294500F75595 /* gfx.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE0E289627AC00F75595 /* gfx.c */; };
-		B36700C42896294500F75595 /* membnk.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FEAE289627AD00F75595 /* membnk.c */; };
-		B36700C52896294500F75595 /* mem68k.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE98289627AC00F75595 /* mem68k.c */; };
-		B36700C62896294500F75595 /* svp.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE86289627AC00F75595 /* svp.c */; };
-		B36700C72896294500F75595 /* gamepad.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FDF2289627AB00F75595 /* gamepad.c */; };
-		B36700C82896294500F75595 /* state.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE05289627AC00F75595 /* state.c */; };
-		B36700C92896294500F75595 /* z80.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE02289627AC00F75595 /* z80.c */; };
-		B36700CA2896294500F75595 /* psg.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FEA9289627AD00F75595 /* psg.c */; };
-		B36700CB2896294500F75595 /* areplay.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE91289627AC00F75595 /* areplay.c */; };
-		B36700CC2896294500F75595 /* terebi_oekaki.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FDF8289627AB00F75595 /* terebi_oekaki.c */; };
-		B36700CD2896294500F75595 /* opll.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FEAC289627AD00F75595 /* opll.c */; };
-		B36700CE2896294500F75595 /* eeprom_spi.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE81289627AC00F75595 /* eeprom_spi.c */; };
-		B36700CF2896294500F75595 /* ym3438.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FEA8289627AD00F75595 /* ym3438.c */; };
-		B36700D02896294500F75595 /* s68kcpu.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FDAC289627AB00F75595 /* s68kcpu.c */; };
-		B36700D12896294500F75595 /* teamplayer.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FDF7289627AB00F75595 /* teamplayer.c */; };
-		B36700D22896294500F75595 /* scd.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE0F289627AC00F75595 /* scd.c */; };
-		B36700D32896294500F75595 /* loadrom.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FEAD289627AD00F75595 /* loadrom.c */; };
-		B36700D42896294500F75595 /* sound.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FEA7289627AD00F75595 /* sound.c */; };
-		B36700D52896294500F75595 /* ym2413.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FEA5289627AD00F75595 /* ym2413.c */; };
-		B36700D62896294500F75595 /* xe_1ap.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FDFC289627AC00F75595 /* xe_1ap.c */; };
-		B36700D72896294500F75595 /* megasd.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE80289627AC00F75595 /* megasd.c */; };
-		B36700D82896294500F75595 /* graphic_board.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FDF0289627AB00F75595 /* graphic_board.c */; };
-		B36700D92896294500F75595 /* sportspad.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FDF5289627AB00F75595 /* sportspad.c */; };
-		B36700DA2896294500F75595 /* pcm.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE12289627AC00F75595 /* pcm.c */; };
-		B36700DB2896294500F75595 /* m68kcpu.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FDAB289627AB00F75595 /* m68kcpu.c */; };
-		B36700DC2896294500F75595 /* eeprom_93c.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE7E289627AC00F75595 /* eeprom_93c.c */; };
-		B36700DD2896294500F75595 /* sms_ntsc.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FDDE289627AB00F75595 /* sms_ntsc.c */; };
-		B36700DE2896294500F75595 /* vdp_render.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE79289627AC00F75595 /* vdp_render.c */; };
-		B36700DF2896294500F75595 /* md_ntsc.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FDDC289627AB00F75595 /* md_ntsc.c */; };
-		B36700E02896294500F75595 /* cdc.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE72289627AC00F75595 /* cdc.c */; };
-		B36700E12896294500F75595 /* blip_buf.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FEA3289627AD00F75595 /* blip_buf.c */; };
-		B36700E22896294500F75595 /* mouse.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FDEC289627AB00F75595 /* mouse.c */; };
-		B36700E32896294500F75595 /* io_ctrl.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE97289627AC00F75595 /* io_ctrl.c */; };
-		B36700E42896294500F75595 /* sms_cart.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE8C289627AC00F75595 /* sms_cart.c */; };
-		B36700EE2896294F00F75595 /* ssp16.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6FB17F752600031B1C9 /* ssp16.c */; };
-		B36700EF2896294F00F75595 /* cd_cart.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA70117F752600031B1C9 /* cd_cart.c */; };
-		B36700F42896294F00F75595 /* paddle.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7B417F752600031B1C9 /* paddle.c */; };
-		B36700F62896294F00F75595 /* sms_cart.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6F517F752600031B1C9 /* sms_cart.c */; };
-		B36700F82896294F00F75595 /* system.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7F217F752600031B1C9 /* system.c */; };
-		B36700F92896294F00F75595 /* opll.c in Sources */ = {isa = PBXBuildFile; fileRef = C66E09402586D39D00EA6170 /* opll.c */; };
-		B36700FA2896294F00F75595 /* xe_1ap.c in Sources */ = {isa = PBXBuildFile; fileRef = C66E094F2586D47000EA6170 /* xe_1ap.c */; };
-		B36700FB2896294F00F75595 /* ym3438.c in Sources */ = {isa = PBXBuildFile; fileRef = C66E09422586D39D00EA6170 /* ym3438.c */; };
-		B36700FD2896294F00F75595 /* mem68k.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7CF17F752600031B1C9 /* mem68k.c */; };
-		B36700FE2896294F00F75595 /* state.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7F017F752600031B1C9 /* state.c */; };
-		B36701012896294F00F75595 /* sportspad.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7B617F752600031B1C9 /* sportspad.c */; };
-		B36701072896294F00F75595 /* ym2413.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7EC17F752600031B1C9 /* ym2413.c */; };
-		B36701082896294F00F75595 /* loadrom.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7C017F752600031B1C9 /* loadrom.c */; };
-		B36701092896294F00F75595 /* s68kcpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7CC17F752600031B1C9 /* s68kcpu.c */; };
-		B367010A2896294F00F75595 /* terebi_oekaki.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7BA17F752600031B1C9 /* terebi_oekaki.c */; };
-		B367010C2896294F00F75595 /* lightgun.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7B017F752600031B1C9 /* lightgun.c */; };
-		B367010D2896294F00F75595 /* ym2612.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7EE17F752600031B1C9 /* ym2612.c */; };
-		B367010F2896294F00F75595 /* eeprom_i2c.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6ED17F752600031B1C9 /* eeprom_i2c.c */; };
-		B36701102896294F00F75595 /* vdp_render.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA84217F752610031B1C9 /* vdp_render.c */; };
-		B36701122896294F00F75595 /* cdd.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA70517F752600031B1C9 /* cdd.c */; };
-		B36701162896294F00F75595 /* sram.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6F717F752600031B1C9 /* sram.c */; };
-		B36701192896294F00F75595 /* membnk.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7D117F752600031B1C9 /* membnk.c */; };
-		B367011A2896294F00F75595 /* cdc.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA70317F752600031B1C9 /* cdc.c */; };
-		B367011B2896294F00F75595 /* md_cart.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6F317F752600031B1C9 /* md_cart.c */; };
-		B367011D2896294F00F75595 /* svp.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6FD17F752600031B1C9 /* svp.c */; };
-		B367011E2896294F00F75595 /* z80.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA85817F752610031B1C9 /* z80.c */; };
-		B367011F2896294F00F75595 /* gamepad.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7AC17F752600031B1C9 /* gamepad.c */; };
-		B36701212896294F00F75595 /* memz80.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7D317F752600031B1C9 /* memz80.c */; };
-		B36701222896294F00F75595 /* mouse.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7B217F752600031B1C9 /* mouse.c */; };
-		B36701252896294F00F75595 /* vdp_ctrl.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA84017F752610031B1C9 /* vdp_ctrl.c */; };
-		B36701272896294F00F75595 /* sms_ntsc.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7DD17F752600031B1C9 /* sms_ntsc.c */; };
-		B367012A2896294F00F75595 /* sound.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7EA17F752600031B1C9 /* sound.c */; };
-		B367012B2896294F00F75595 /* areplay.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6E917F752600031B1C9 /* areplay.c */; };
-		B367012C2896294F00F75595 /* teamplayer.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7B817F752600031B1C9 /* teamplayer.c */; };
-		B367012E2896294F00F75595 /* ggenie.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6F117F752600031B1C9 /* ggenie.c */; };
-		B367012F2896294F00F75595 /* input.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7AE17F752600031B1C9 /* input.c */; };
-		B36701302896294F00F75595 /* blip_buf.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7E417F752600031B1C9 /* blip_buf.c */; };
-		B36701312896294F00F75595 /* genesis.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA70D17F752600031B1C9 /* genesis.c */; };
-		B36701322896294F00F75595 /* eeprom_spi.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6EF17F752600031B1C9 /* eeprom_spi.c */; };
-		B36701342896294F00F75595 /* scd.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA70B17F752600031B1C9 /* scd.c */; };
-		B36701392896294F00F75595 /* activator.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7AA17F752600031B1C9 /* activator.c */; };
-		B367013A2896294F00F75595 /* graphic_board.c in Sources */ = {isa = PBXBuildFile; fileRef = C66E09572586D65F00EA6170 /* graphic_board.c */; };
-		B367013B2896294F00F75595 /* pcm.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA70917F752600031B1C9 /* pcm.c */; };
-		B36701472896294F00F75595 /* psg.c in Sources */ = {isa = PBXBuildFile; fileRef = C66E093D2586D39D00EA6170 /* psg.c */; };
-		B36701482896294F00F75595 /* io_ctrl.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7BE17F752600031B1C9 /* io_ctrl.c */; };
-		B36701492896294F00F75595 /* gfx.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA70717F752600031B1C9 /* gfx.c */; };
-		B367014C2896294F00F75595 /* eeprom_93c.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6EB17F752600031B1C9 /* eeprom_93c.c */; };
-		B367014D2896294F00F75595 /* md_ntsc.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7D817F752600031B1C9 /* md_ntsc.c */; };
-		B36701502896294F00F75595 /* eq.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7E617F752600031B1C9 /* eq.c */; };
-		B36701532896294F00F75595 /* m68kcpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7C517F752600031B1C9 /* m68kcpu.c */; };
-		B367015C289629B000F75595 /* libgenesisPlusGX-legacy-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B367007B2896290E00F75595 /* libgenesisPlusGX-legacy-iOS.a */; };
-		B367015F289629B600F75595 /* libgenesisPlusGX-legacy-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B367015B2896294F00F75595 /* libgenesisPlusGX-legacy-tvOS.a */; };
+		B367015C289629B000F75595 /* libgenesisPlusGX-legacy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B367007B2896290E00F75595 /* libgenesisPlusGX-legacy.a */; };
 		B367016828962BC900F75595 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FECC289627AD00F75595 /* libretro.c */; };
 		B367016928962BCA00F75595 /* scrc32.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FF10289627AD00F75595 /* scrc32.c */; };
-		B367016A28962BCA00F75595 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FECC289627AD00F75595 /* libretro.c */; };
-		B367016B28962BCA00F75595 /* scrc32.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FF10289627AD00F75595 /* scrc32.c */; };
 		B367016C28962C8B00F75595 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA85B17F752610031B1C9 /* libretro.c */; };
-		B367016D28962C8B00F75595 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA85B17F752610031B1C9 /* libretro.c */; };
 		B367016E28962C9300F75595 /* scrc32.c in Sources */ = {isa = PBXBuildFile; fileRef = C66E09372586D34B00EA6170 /* scrc32.c */; };
-		B367016F28962C9300F75595 /* scrc32.c in Sources */ = {isa = PBXBuildFile; fileRef = C66E09372586D34B00EA6170 /* scrc32.c */; };
 		B37302DE1DE7DB1B00D0B366 /* PVGenesisEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA86817F752610031B1C9 /* PVGenesisEmulatorCore.m */; };
-		B373030F1DE7DB1B00D0B366 /* PVGenesisEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA86817F752610031B1C9 /* PVGenesisEmulatorCore.m */; };
 		B373033A1DE7DB6F00D0B366 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6E117F751590031B1C9 /* CoreGraphics.framework */; };
 		B373033B1DE7DB7300D0B366 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6DD17F751380031B1C9 /* AudioToolbox.framework */; };
 		B373033C1DE7DB7A00D0B366 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6DB17F751320031B1C9 /* OpenGLES.framework */; platformFilter = ios; };
-		B373033D1DE7DB8300D0B366 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6D917F7512B0031B1C9 /* UIKit.framework */; };
+		B373033D1DE7DB8300D0B366 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6D917F7512B0031B1C9 /* UIKit.framework */; platformFilters = (driverkit, ios, maccatalyst, tvos, watchos, ); };
 		B373033E1DE7DB8800D0B366 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6AF17F74D150031B1C9 /* Foundation.framework */; };
-		B373033F1DE7DBA300D0B366 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6AF17F74D150031B1C9 /* Foundation.framework */; };
-		B37303401DE7DBA700D0B366 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6D917F7512B0031B1C9 /* UIKit.framework */; };
-		B37303411DE7DBAF00D0B366 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6DB17F751320031B1C9 /* OpenGLES.framework */; };
-		B37303421DE7DBB600D0B366 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6DD17F751380031B1C9 /* AudioToolbox.framework */; };
-		B37303431DE7DBF000D0B366 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6E117F751590031B1C9 /* CoreGraphics.framework */; };
-		B37303481DE7DE8200D0B366 /* PVGenesisEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA86717F752610031B1C9 /* PVGenesisEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A9F4201DE7EB67008450F5 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F41F1DE7EB67008450F5 /* libz.tbd */; };
-		B3A9F4211DE7EBF8008450F5 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F41F1DE7EB67008450F5 /* libz.tbd */; };
 		B3A9F4221DE7F5F2008450F5 /* libretro.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA85C17F752610031B1C9 /* libretro.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3A9F4231DE7F5FA008450F5 /* libretro.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA85C17F752610031B1C9 /* libretro.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A9F4241DE7F606008450F5 /* PVGenesisEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA86717F752610031B1C9 /* PVGenesisEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3A9F4261DE864BC008450F5 /* PVGenesis.h in Headers */ = {isa = PBXBuildFile; fileRef = B3E432061DE6917700D3C91E /* PVGenesis.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3E432081DE6917700D3C91E /* PVGenesis.h in Headers */ = {isa = PBXBuildFile; fileRef = B3E432061DE6917700D3C91E /* PVGenesis.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C66E093B2586D34B00EA6170 /* scrc32.h in Headers */ = {isa = PBXBuildFile; fileRef = C66E09382586D34B00EA6170 /* scrc32.h */; };
-		C66E093C2586D34B00EA6170 /* scrc32.h in Headers */ = {isa = PBXBuildFile; fileRef = C66E09382586D34B00EA6170 /* scrc32.h */; };
 		C66E09452586D39E00EA6170 /* opll.h in Headers */ = {isa = PBXBuildFile; fileRef = C66E093E2586D39D00EA6170 /* opll.h */; };
-		C66E09462586D39E00EA6170 /* opll.h in Headers */ = {isa = PBXBuildFile; fileRef = C66E093E2586D39D00EA6170 /* opll.h */; };
 		C66E09472586D39E00EA6170 /* psg.h in Headers */ = {isa = PBXBuildFile; fileRef = C66E093F2586D39D00EA6170 /* psg.h */; };
-		C66E09482586D39E00EA6170 /* psg.h in Headers */ = {isa = PBXBuildFile; fileRef = C66E093F2586D39D00EA6170 /* psg.h */; };
 		C66E094B2586D39E00EA6170 /* ym3438.h in Headers */ = {isa = PBXBuildFile; fileRef = C66E09412586D39D00EA6170 /* ym3438.h */; };
-		C66E094C2586D39E00EA6170 /* ym3438.h in Headers */ = {isa = PBXBuildFile; fileRef = C66E09412586D39D00EA6170 /* ym3438.h */; };
 		C66E09532586D47000EA6170 /* xe_1ap.h in Headers */ = {isa = PBXBuildFile; fileRef = C66E09502586D47000EA6170 /* xe_1ap.h */; };
-		C66E09542586D47000EA6170 /* xe_1ap.h in Headers */ = {isa = PBXBuildFile; fileRef = C66E09502586D47000EA6170 /* xe_1ap.h */; };
 		C66E09582586D66000EA6170 /* graphic_board.h in Headers */ = {isa = PBXBuildFile; fileRef = C66E09562586D65F00EA6170 /* graphic_board.h */; };
-		C66E09592586D66000EA6170 /* graphic_board.h in Headers */ = {isa = PBXBuildFile; fileRef = C66E09562586D65F00EA6170 /* graphic_board.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -266,13 +141,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = B36700402896290E00F75595;
 			remoteInfo = "genesisPlusGX-legacy-iOS";
-		};
-		B3670160289629B600F75595 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1ACEA6A417F74D140031B1C9 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B36700EC2896294F00F75595;
-			remoteInfo = "genesisPlusGX-legacy-tvOS";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -287,24 +155,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B36700762896290E00F75595 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B36700E62896294500F75595 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B36701562896294F00F75595 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "include/$(PRODUCT_NAME)";
@@ -446,10 +296,8 @@
 		B324C63521920D6D009F4EDC /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B326758227B1C5BB0033C5D1 /* GenesisOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenesisOptions.swift; sourceTree = "<group>"; };
 		B3547B562058589900CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
-		B3670003289627E800F75595 /* libgenesisPlusGX-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libgenesisPlusGX-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B367007B2896290E00F75595 /* libgenesisPlusGX-legacy-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libgenesisPlusGX-legacy-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B36700EB2896294500F75595 /* libgenesisPlusGX-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libgenesisPlusGX-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B367015B2896294F00F75595 /* libgenesisPlusGX-legacy-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libgenesisPlusGX-legacy-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3670003289627E800F75595 /* libgenesisPlusGX.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libgenesisPlusGX.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B367007B2896290E00F75595 /* libgenesisPlusGX-legacy.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libgenesisPlusGX-legacy.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B367FDA4289627AB00F75595 /* Makefile.gc */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.gc; sourceTree = "<group>"; };
 		B367FDA7289627AB00F75595 /* s68ki_cycles.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = s68ki_cycles.h; sourceTree = "<group>"; };
 		B367FDA8289627AB00F75595 /* m68k.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = m68k.h; sourceTree = "<group>"; };
@@ -996,7 +844,6 @@
 		B3E432041DE6917700D3C91E /* PVGenesis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVGenesis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E432061DE6917700D3C91E /* PVGenesis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVGenesis.h; sourceTree = "<group>"; };
 		B3E432071DE6917700D3C91E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B3E432121DE6919B00D3C91E /* PVGenesis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVGenesis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C66E09372586D34B00EA6170 /* scrc32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scrc32.c; sourceTree = "<group>"; };
 		C66E09382586D34B00EA6170 /* scrc32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scrc32.h; sourceTree = "<group>"; };
 		C66E093D2586D39D00EA6170 /* psg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = psg.c; sourceTree = "<group>"; };
@@ -1026,20 +873,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B36700E52896294500F75595 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B36701552896294F00F75595 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3E432001DE6917700D3C91E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1050,23 +883,8 @@
 				B373033D1DE7DB8300D0B366 /* UIKit.framework in Frameworks */,
 				B373033C1DE7DB7A00D0B366 /* OpenGLES.framework in Frameworks */,
 				B373033B1DE7DB7300D0B366 /* AudioToolbox.framework in Frameworks */,
-				B367015C289629B000F75595 /* libgenesisPlusGX-legacy-iOS.a in Frameworks */,
+				B367015C289629B000F75595 /* libgenesisPlusGX-legacy.a in Frameworks */,
 				B373033A1DE7DB6F00D0B366 /* CoreGraphics.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3E4320E1DE6919B00D3C91E /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B367015F289629B600F75595 /* libgenesisPlusGX-legacy-tvOS.a in Frameworks */,
-				B324C63421920D5C009F4EDC /* PVSupport.framework in Frameworks */,
-				B3A9F4211DE7EBF8008450F5 /* libz.tbd in Frameworks */,
-				B37303431DE7DBF000D0B366 /* CoreGraphics.framework in Frameworks */,
-				B37303421DE7DBB600D0B366 /* AudioToolbox.framework in Frameworks */,
-				B37303411DE7DBAF00D0B366 /* OpenGLES.framework in Frameworks */,
-				B37303401DE7DBA700D0B366 /* UIKit.framework in Frameworks */,
-				B373033F1DE7DBA300D0B366 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1087,11 +905,8 @@
 			isa = PBXGroup;
 			children = (
 				B3E432041DE6917700D3C91E /* PVGenesis.framework */,
-				B3E432121DE6919B00D3C91E /* PVGenesis.framework */,
-				B3670003289627E800F75595 /* libgenesisPlusGX-iOS.a */,
-				B367007B2896290E00F75595 /* libgenesisPlusGX-legacy-iOS.a */,
-				B36700EB2896294500F75595 /* libgenesisPlusGX-tvOS.a */,
-				B367015B2896294F00F75595 /* libgenesisPlusGX-legacy-tvOS.a */,
+				B3670003289627E800F75595 /* libgenesisPlusGX.a */,
+				B367007B2896290E00F75595 /* libgenesisPlusGX-legacy.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2439,28 +2254,12 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3E4320F1DE6919B00D3C91E /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C66E09592586D66000EA6170 /* graphic_board.h in Headers */,
-				C66E09462586D39E00EA6170 /* opll.h in Headers */,
-				B3A9F4261DE864BC008450F5 /* PVGenesis.h in Headers */,
-				B37303481DE7DE8200D0B366 /* PVGenesisEmulatorCore.h in Headers */,
-				C66E09482586D39E00EA6170 /* psg.h in Headers */,
-				C66E09542586D47000EA6170 /* xe_1ap.h in Headers */,
-				C66E093C2586D34B00EA6170 /* scrc32.h in Headers */,
-				B3A9F4231DE7F5FA008450F5 /* libretro.h in Headers */,
-				C66E094C2586D39E00EA6170 /* ym3438.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		B3670002289627E800F75595 /* genesisPlusGX-iOS */ = {
+		B3670002289627E800F75595 /* genesisPlusGX */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3670009289627E800F75595 /* Build configuration list for PBXNativeTarget "genesisPlusGX-iOS" */;
+			buildConfigurationList = B3670009289627E800F75595 /* Build configuration list for PBXNativeTarget "genesisPlusGX" */;
 			buildPhases = (
 				B367FFFF289627E800F75595 /* Sources */,
 				B3670000289627E800F75595 /* Frameworks */,
@@ -2470,14 +2269,14 @@
 			);
 			dependencies = (
 			);
-			name = "genesisPlusGX-iOS";
+			name = genesisPlusGX;
 			productName = genesisPlusGX;
-			productReference = B3670003289627E800F75595 /* libgenesisPlusGX-iOS.a */;
+			productReference = B3670003289627E800F75595 /* libgenesisPlusGX.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B36700402896290E00F75595 /* genesisPlusGX-legacy-iOS */ = {
+		B36700402896290E00F75595 /* genesisPlusGX-legacy */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B36700772896290E00F75595 /* Build configuration list for PBXNativeTarget "genesisPlusGX-legacy-iOS" */;
+			buildConfigurationList = B36700772896290E00F75595 /* Build configuration list for PBXNativeTarget "genesisPlusGX-legacy" */;
 			buildPhases = (
 				B36700412896290E00F75595 /* Sources */,
 				B36700752896290E00F75595 /* Frameworks */,
@@ -2487,48 +2286,14 @@
 			);
 			dependencies = (
 			);
-			name = "genesisPlusGX-legacy-iOS";
+			name = "genesisPlusGX-legacy";
 			productName = genesisPlusGX;
-			productReference = B367007B2896290E00F75595 /* libgenesisPlusGX-legacy-iOS.a */;
+			productReference = B367007B2896290E00F75595 /* libgenesisPlusGX-legacy.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B36700B02896294500F75595 /* genesisPlusGX-tvOS */ = {
+		B3E432031DE6917700D3C91E /* PVGenesis */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B36700E72896294500F75595 /* Build configuration list for PBXNativeTarget "genesisPlusGX-tvOS" */;
-			buildPhases = (
-				B36700B12896294500F75595 /* Sources */,
-				B36700E52896294500F75595 /* Frameworks */,
-				B36700E62896294500F75595 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "genesisPlusGX-tvOS";
-			productName = genesisPlusGX;
-			productReference = B36700EB2896294500F75595 /* libgenesisPlusGX-tvOS.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		B36700EC2896294F00F75595 /* genesisPlusGX-legacy-tvOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B36701572896294F00F75595 /* Build configuration list for PBXNativeTarget "genesisPlusGX-legacy-tvOS" */;
-			buildPhases = (
-				B36700ED2896294F00F75595 /* Sources */,
-				B36701552896294F00F75595 /* Frameworks */,
-				B36701562896294F00F75595 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "genesisPlusGX-legacy-tvOS";
-			productName = genesisPlusGX;
-			productReference = B367015B2896294F00F75595 /* libgenesisPlusGX-legacy-tvOS.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		B3E432031DE6917700D3C91E /* PVGenesis-iOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B3E432091DE6917700D3C91E /* Build configuration list for PBXNativeTarget "PVGenesis-iOS" */;
+			buildConfigurationList = B3E432091DE6917700D3C91E /* Build configuration list for PBXNativeTarget "PVGenesis" */;
 			buildPhases = (
 				B3E432011DE6917700D3C91E /* Headers */,
 				B3E431FF1DE6917700D3C91E /* Sources */,
@@ -2540,28 +2305,9 @@
 			dependencies = (
 				B367015E289629B000F75595 /* PBXTargetDependency */,
 			);
-			name = "PVGenesis-iOS";
+			name = PVGenesis;
 			productName = PVGenesis;
 			productReference = B3E432041DE6917700D3C91E /* PVGenesis.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		B3E432111DE6919B00D3C91E /* PVGenesis-tvOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B3E432171DE6919B00D3C91E /* Build configuration list for PBXNativeTarget "PVGenesis-tvOS" */;
-			buildPhases = (
-				B3E4320F1DE6919B00D3C91E /* Headers */,
-				B3E4320D1DE6919B00D3C91E /* Sources */,
-				B3E4320E1DE6919B00D3C91E /* Frameworks */,
-				B3E432101DE6919B00D3C91E /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B3670161289629B600F75595 /* PBXTargetDependency */,
-			);
-			name = "PVGenesis-tvOS";
-			productName = PVGenesisTV;
-			productReference = B3E432121DE6919B00D3C91E /* PVGenesis.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -2583,10 +2329,6 @@
 						LastSwiftMigration = 1320;
 						ProvisioningStyle = Manual;
 					};
-					B3E432111DE6919B00D3C91E = {
-						CreatedOnToolsVersion = 8.1;
-						LastSwiftMigration = 1320;
-					};
 				};
 			};
 			buildConfigurationList = 1ACEA6A717F74D140031B1C9 /* Build configuration list for PBXProject "PVGenesis" */;
@@ -2602,12 +2344,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B3E432031DE6917700D3C91E /* PVGenesis-iOS */,
-				B3E432111DE6919B00D3C91E /* PVGenesis-tvOS */,
-				B3670002289627E800F75595 /* genesisPlusGX-iOS */,
-				B36700B02896294500F75595 /* genesisPlusGX-tvOS */,
-				B36700402896290E00F75595 /* genesisPlusGX-legacy-iOS */,
-				B36700EC2896294F00F75595 /* genesisPlusGX-legacy-tvOS */,
+				B3E432031DE6917700D3C91E /* PVGenesis */,
+				B3670002289627E800F75595 /* genesisPlusGX */,
+				B36700402896290E00F75595 /* genesisPlusGX-legacy */,
 			);
 		};
 /* End PBXProject section */
@@ -2618,14 +2357,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3547B572058589900CFF7D8 /* Core.plist in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3E432101DE6919B00D3C91E /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3547B582058589900CFF7D8 /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2688,125 +2419,6 @@
 				B367007C2896293700F75595 /* md_ntsc.c in Sources */,
 				B36700A82896293700F75595 /* eq.c in Sources */,
 				B367008D2896293700F75595 /* m68kcpu.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B36700B12896294500F75595 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B36700B22896294500F75595 /* input.c in Sources */,
-				B36700B32896294500F75595 /* lightgun.c in Sources */,
-				B36700B42896294500F75595 /* cd_cart.c in Sources */,
-				B36700B52896294500F75595 /* md_cart.c in Sources */,
-				B36700B62896294500F75595 /* cdd.c in Sources */,
-				B36700B72896294500F75595 /* paddle.c in Sources */,
-				B367016B28962BCA00F75595 /* scrc32.c in Sources */,
-				B36700B82896294500F75595 /* memz80.c in Sources */,
-				B36700B92896294500F75595 /* system.c in Sources */,
-				B36700BA2896294500F75595 /* eq.c in Sources */,
-				B36700BB2896294500F75595 /* genesis.c in Sources */,
-				B36700BC2896294500F75595 /* eeprom_i2c.c in Sources */,
-				B36700BD2896294500F75595 /* sram.c in Sources */,
-				B36700BE2896294500F75595 /* activator.c in Sources */,
-				B36700BF2896294500F75595 /* ym2612.c in Sources */,
-				B367016A28962BCA00F75595 /* libretro.c in Sources */,
-				B36700C02896294500F75595 /* vdp_ctrl.c in Sources */,
-				B36700C12896294500F75595 /* ssp16.c in Sources */,
-				B36700C22896294500F75595 /* ggenie.c in Sources */,
-				B36700C32896294500F75595 /* gfx.c in Sources */,
-				B36700C42896294500F75595 /* membnk.c in Sources */,
-				B36700C52896294500F75595 /* mem68k.c in Sources */,
-				B36700C62896294500F75595 /* svp.c in Sources */,
-				B36700C72896294500F75595 /* gamepad.c in Sources */,
-				B36700C82896294500F75595 /* state.c in Sources */,
-				B36700C92896294500F75595 /* z80.c in Sources */,
-				B36700CA2896294500F75595 /* psg.c in Sources */,
-				B36700CB2896294500F75595 /* areplay.c in Sources */,
-				B36700CC2896294500F75595 /* terebi_oekaki.c in Sources */,
-				B36700CD2896294500F75595 /* opll.c in Sources */,
-				B36700CE2896294500F75595 /* eeprom_spi.c in Sources */,
-				B36700CF2896294500F75595 /* ym3438.c in Sources */,
-				B36700D02896294500F75595 /* s68kcpu.c in Sources */,
-				B36700D12896294500F75595 /* teamplayer.c in Sources */,
-				B36700D22896294500F75595 /* scd.c in Sources */,
-				B36700D32896294500F75595 /* loadrom.c in Sources */,
-				B36700D42896294500F75595 /* sound.c in Sources */,
-				B36700D52896294500F75595 /* ym2413.c in Sources */,
-				B36700D62896294500F75595 /* xe_1ap.c in Sources */,
-				B36700D72896294500F75595 /* megasd.c in Sources */,
-				B36700D82896294500F75595 /* graphic_board.c in Sources */,
-				B36700D92896294500F75595 /* sportspad.c in Sources */,
-				B36700DA2896294500F75595 /* pcm.c in Sources */,
-				B36700DB2896294500F75595 /* m68kcpu.c in Sources */,
-				B36700DC2896294500F75595 /* eeprom_93c.c in Sources */,
-				B36700DD2896294500F75595 /* sms_ntsc.c in Sources */,
-				B36700DE2896294500F75595 /* vdp_render.c in Sources */,
-				B36700DF2896294500F75595 /* md_ntsc.c in Sources */,
-				B36700E02896294500F75595 /* cdc.c in Sources */,
-				B36700E12896294500F75595 /* blip_buf.c in Sources */,
-				B36700E22896294500F75595 /* mouse.c in Sources */,
-				B36700E32896294500F75595 /* io_ctrl.c in Sources */,
-				B36700E42896294500F75595 /* sms_cart.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B36700ED2896294F00F75595 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B36700EE2896294F00F75595 /* ssp16.c in Sources */,
-				B36700EF2896294F00F75595 /* cd_cart.c in Sources */,
-				B36700F42896294F00F75595 /* paddle.c in Sources */,
-				B36700F62896294F00F75595 /* sms_cart.c in Sources */,
-				B36700F82896294F00F75595 /* system.c in Sources */,
-				B36700F92896294F00F75595 /* opll.c in Sources */,
-				B36700FA2896294F00F75595 /* xe_1ap.c in Sources */,
-				B36700FB2896294F00F75595 /* ym3438.c in Sources */,
-				B36700FD2896294F00F75595 /* mem68k.c in Sources */,
-				B36700FE2896294F00F75595 /* state.c in Sources */,
-				B367016D28962C8B00F75595 /* libretro.c in Sources */,
-				B36701012896294F00F75595 /* sportspad.c in Sources */,
-				B36701072896294F00F75595 /* ym2413.c in Sources */,
-				B367016F28962C9300F75595 /* scrc32.c in Sources */,
-				B36701082896294F00F75595 /* loadrom.c in Sources */,
-				B36701092896294F00F75595 /* s68kcpu.c in Sources */,
-				B367010A2896294F00F75595 /* terebi_oekaki.c in Sources */,
-				B367010C2896294F00F75595 /* lightgun.c in Sources */,
-				B367010D2896294F00F75595 /* ym2612.c in Sources */,
-				B367010F2896294F00F75595 /* eeprom_i2c.c in Sources */,
-				B36701102896294F00F75595 /* vdp_render.c in Sources */,
-				B36701122896294F00F75595 /* cdd.c in Sources */,
-				B36701162896294F00F75595 /* sram.c in Sources */,
-				B36701192896294F00F75595 /* membnk.c in Sources */,
-				B367011A2896294F00F75595 /* cdc.c in Sources */,
-				B367011B2896294F00F75595 /* md_cart.c in Sources */,
-				B367011D2896294F00F75595 /* svp.c in Sources */,
-				B367011E2896294F00F75595 /* z80.c in Sources */,
-				B367011F2896294F00F75595 /* gamepad.c in Sources */,
-				B36701212896294F00F75595 /* memz80.c in Sources */,
-				B36701222896294F00F75595 /* mouse.c in Sources */,
-				B36701252896294F00F75595 /* vdp_ctrl.c in Sources */,
-				B36701272896294F00F75595 /* sms_ntsc.c in Sources */,
-				B367012A2896294F00F75595 /* sound.c in Sources */,
-				B367012B2896294F00F75595 /* areplay.c in Sources */,
-				B367012C2896294F00F75595 /* teamplayer.c in Sources */,
-				B367012E2896294F00F75595 /* ggenie.c in Sources */,
-				B367012F2896294F00F75595 /* input.c in Sources */,
-				B36701302896294F00F75595 /* blip_buf.c in Sources */,
-				B36701312896294F00F75595 /* genesis.c in Sources */,
-				B36701322896294F00F75595 /* eeprom_spi.c in Sources */,
-				B36701342896294F00F75595 /* scd.c in Sources */,
-				B36701392896294F00F75595 /* activator.c in Sources */,
-				B367013A2896294F00F75595 /* graphic_board.c in Sources */,
-				B367013B2896294F00F75595 /* pcm.c in Sources */,
-				B36701472896294F00F75595 /* psg.c in Sources */,
-				B36701482896294F00F75595 /* io_ctrl.c in Sources */,
-				B36701492896294F00F75595 /* gfx.c in Sources */,
-				B367014C2896294F00F75595 /* eeprom_93c.c in Sources */,
-				B367014D2896294F00F75595 /* md_ntsc.c in Sources */,
-				B36701502896294F00F75595 /* eq.c in Sources */,
-				B36701532896294F00F75595 /* m68kcpu.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2879,27 +2491,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3E4320D1DE6919B00D3C91E /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B373030F1DE7DB1B00D0B366 /* PVGenesisEmulatorCore.m in Sources */,
-				B326758427B1C5BB0033C5D1 /* GenesisOptions.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
 		B367015E289629B000F75595 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B36700402896290E00F75595 /* genesisPlusGX-legacy-iOS */;
+			target = B36700402896290E00F75595 /* genesisPlusGX-legacy */;
 			targetProxy = B367015D289629B000F75595 /* PBXContainerItemProxy */;
-		};
-		B3670161289629B600F75595 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B36700EC2896294F00F75595 /* genesisPlusGX-legacy-tvOS */;
-			targetProxy = B3670160289629B600F75595 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -3145,54 +2743,11 @@
 				PRODUCT_NAME = PVGenesis;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator driverkit iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Archive;
-		};
-		B324C51C2191A3E4009F4EDC /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_SUSPICIOUS_MOVES = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_NO_COMMON_BLOCKS = NO;
-				GCC_PREFIX_HEADER = "PVGenesis/PVGenesis-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = "";
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = PVGenesis/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGenesis";
-				PRODUCT_NAME = PVGenesis;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 3;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -3375,189 +2930,6 @@
 			};
 			name = Archive;
 		};
-		B36700E82896294500F75595 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/PVGenesis/Deps/Genesis-Plus-GX/core\"",
-					"\"$(SRCROOT)/PVGenesis/Deps/Genesis-Plus-GX/libretro/libretro-common/include\"",
-				);
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Debug;
-		};
-		B36700E92896294500F75595 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/PVGenesis/Deps/Genesis-Plus-GX/core\"",
-					"\"$(SRCROOT)/PVGenesis/Deps/Genesis-Plus-GX/libretro/libretro-common/include\"",
-				);
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Release;
-		};
-		B36700EA2896294500F75595 /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/PVGenesis/Deps/Genesis-Plus-GX/core\"",
-					"\"$(SRCROOT)/PVGenesis/Deps/Genesis-Plus-GX/libretro/libretro-common/include\"",
-				);
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Archive;
-		};
-		B36701582896294F00F75595 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/PVGenesis/Deps/genplusgx_source\"",
-					"\"$(SRCROOT)/PVGenesis/Deps/libretro\"",
-					"\"$(SRCROOT)/PVGenesis/Deps/other\"",
-				);
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Debug;
-		};
-		B36701592896294F00F75595 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/PVGenesis/Deps/genplusgx_source\"",
-					"\"$(SRCROOT)/PVGenesis/Deps/libretro\"",
-					"\"$(SRCROOT)/PVGenesis/Deps/other\"",
-				);
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Release;
-		};
-		B367015A2896294F00F75595 /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/PVGenesis/Deps/genplusgx_source\"",
-					"\"$(SRCROOT)/PVGenesis/Deps/libretro\"",
-					"\"$(SRCROOT)/PVGenesis/Deps/other\"",
-				);
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Archive;
-		};
 		B3E4320A1DE6917700D3C91E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3596,9 +2968,12 @@
 				PRODUCT_NAME = PVGenesis;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator driverkit iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -3643,100 +3018,11 @@
 				PRODUCT_NAME = PVGenesis;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator driverkit iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		B3E432181DE6919B00D3C91E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_SUSPICIOUS_MOVES = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_NO_COMMON_BLOCKS = NO;
-				GCC_PREFIX_HEADER = "PVGenesis/PVGenesis-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = PVGenesis/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = YES;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGenesis";
-				PRODUCT_NAME = PVGenesis;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 3;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		B3E432191DE6919B00D3C91E /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_SUSPICIOUS_MOVES = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_NO_COMMON_BLOCKS = NO;
-				GCC_PREFIX_HEADER = "PVGenesis/PVGenesis-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = "";
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = PVGenesis/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGenesis";
-				PRODUCT_NAME = PVGenesis;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 3;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -3755,7 +3041,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3670009289627E800F75595 /* Build configuration list for PBXNativeTarget "genesisPlusGX-iOS" */ = {
+		B3670009289627E800F75595 /* Build configuration list for PBXNativeTarget "genesisPlusGX" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B367000A289627E800F75595 /* Debug */,
@@ -3765,7 +3051,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B36700772896290E00F75595 /* Build configuration list for PBXNativeTarget "genesisPlusGX-legacy-iOS" */ = {
+		B36700772896290E00F75595 /* Build configuration list for PBXNativeTarget "genesisPlusGX-legacy" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B36700782896290E00F75595 /* Debug */,
@@ -3775,42 +3061,12 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B36700E72896294500F75595 /* Build configuration list for PBXNativeTarget "genesisPlusGX-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B36700E82896294500F75595 /* Debug */,
-				B36700E92896294500F75595 /* Release */,
-				B36700EA2896294500F75595 /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B36701572896294F00F75595 /* Build configuration list for PBXNativeTarget "genesisPlusGX-legacy-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B36701582896294F00F75595 /* Debug */,
-				B36701592896294F00F75595 /* Release */,
-				B367015A2896294F00F75595 /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B3E432091DE6917700D3C91E /* Build configuration list for PBXNativeTarget "PVGenesis-iOS" */ = {
+		B3E432091DE6917700D3C91E /* Build configuration list for PBXNativeTarget "PVGenesis" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3E4320A1DE6917700D3C91E /* Debug */,
 				B3E4320B1DE6917700D3C91E /* Release */,
 				B324C51B2191A3E4009F4EDC /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B3E432171DE6919B00D3C91E /* Build configuration list for PBXNativeTarget "PVGenesis-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B3E432181DE6919B00D3C91E /* Debug */,
-				B3E432191DE6919B00D3C91E /* Release */,
-				B324C51C2191A3E4009F4EDC /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

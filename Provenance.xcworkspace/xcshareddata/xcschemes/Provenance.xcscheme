@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
                BuildableName = "PVSupport.framework"
-               BlueprintName = "PVSupport-iOS"
+               BlueprintName = "PVSupport"
                ReferencedContainer = "container:PVSupport/PVSupport.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -30,7 +30,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3579D0E2106B11D00DDEBD6"
                BuildableName = "PVLibrary.framework"
-               BlueprintName = "PVLibrary-iOS"
+               BlueprintName = "PVLibrary"
                ReferencedContainer = "container:PVLibrary/PVLibrary.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -44,7 +44,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B392848D28670348003BAC21"
                BuildableName = "PVLibRetro.framework"
-               BlueprintName = "PVLibRetro-iOS"
+               BlueprintName = "PVLibRetro"
                ReferencedContainer = "container:PVSupport/PVSupport.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -58,7 +58,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C9D4B71DEA77DF0068D057"
                BuildableName = "PVGBA.framework"
-               BlueprintName = "PVGBA-iOS"
+               BlueprintName = "PVGBA"
                ReferencedContainer = "container:Cores/VisualBoyAdvance-M/PVGBA.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -72,7 +72,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3E432031DE6917700D3C91E"
                BuildableName = "PVGenesis.framework"
-               BlueprintName = "PVGenesis-iOS"
+               BlueprintName = "PVGenesis"
                ReferencedContainer = "container:Cores/Genesis-Plus-GX/PVGenesis.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -100,7 +100,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B37937AB1D6BCF8100EBAE81"
                BuildableName = "PicoDrive.framework"
-               BlueprintName = "PVPicoDrive-iOS"
+               BlueprintName = "PVPicoDrive"
                ReferencedContainer = "container:Cores/PicoDrive/PVPicoDrive.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -114,7 +114,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3CB85481E9BECBF009155A6"
                BuildableName = "PVPokeMini.framework"
-               BlueprintName = "PVPokeMini-iOS"
+               BlueprintName = "PVPokeMini"
                ReferencedContainer = "container:Cores/PokeMini/PVPokeMini.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -128,7 +128,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B340E4611E08887600AD0E8B"
                BuildableName = "PVMednafen.framework"
-               BlueprintName = "PVMednafen-iOS"
+               BlueprintName = "PVMednafen"
                ReferencedContainer = "container:Cores/Mednafen/PVMednafen.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -156,7 +156,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C9D4391DEA6AFB0068D057"
                BuildableName = "PVGB.framework"
-               BlueprintName = "PVGB-iOS"
+               BlueprintName = "PVGB"
                ReferencedContainer = "container:Cores/Gambatte/PVGB.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -198,7 +198,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B37EFF371C72F43300857158"
                BuildableName = "PVMupen64Plus.framework"
-               BlueprintName = "PVMupen64Plus-iOS"
+               BlueprintName = "PVMupen64Plus"
                ReferencedContainer = "container:Cores/Mupen64Plus/PVMupen64Plus.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -226,7 +226,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B36DE7471D6AB19C002EE3ED"
                BuildableName = "PVAtari800.framework"
-               BlueprintName = "PVAtari800-iOS"
+               BlueprintName = "PVAtari800"
                ReferencedContainer = "container:Cores/Atari800/PVAtari800.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -240,7 +240,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3A9F4351DE877B4008450F5"
                BuildableName = "PVFCEU.framework"
-               BlueprintName = "PVFCEU-iOS"
+               BlueprintName = "PVFCEU"
                ReferencedContainer = "container:Cores/FCEU/PVFCEU.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

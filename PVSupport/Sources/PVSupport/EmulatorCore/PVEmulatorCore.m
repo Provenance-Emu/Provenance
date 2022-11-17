@@ -13,7 +13,12 @@
 #import "PVLogging.h"
 #import "DebugUtils.h"
 @import AVFoundation;
+
+#if !TARGET_OS_OSX
 @import UIKit;
+#else
+@import AppKit;
+#endif
 
 /* Timing */
 #include <mach/mach_time.h>
@@ -105,7 +110,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 - (void)startEmulation {
 	if ([self class] != PVEmulatorCoreClass) {
 		if (!_isRunning) {
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_OSX
             [self startHaptic];
             NSError *error;
 			BOOL success = [self setPreferredSampleRate:[self audioSampleRate] error:&error];
@@ -139,16 +144,19 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
         return started;
     }
 
+#if !TARGET_OS_OSX
     if (self.supportsRumble && !(self.controller1 != nil && !self.controller1.isAttachedToDevice)) {
         self.rumbleGenerator = [[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleHeavy];
         [self.rumbleGenerator prepare];
         return YES;
     }
+#endif
 
     return NO;
 }
 
 -(void)stopHaptic {
+#if !TARGET_OS_OSX
     if (!NSThread.isMainThread) {
         MAKEWEAK(self);
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -158,6 +166,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
         return;
     }
     self.rumbleGenerator = nil;
+#endif
 }
 #else
  // Unsupported
@@ -338,7 +347,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
     }
 }
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_OSX
 - (Float64) getSampleRate {
     return [[AVAudioSession sharedInstance] sampleRate];
 }

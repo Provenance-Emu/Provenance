@@ -22,6 +22,10 @@
 #import <PVSupport/DebugUtils.h>
 #endif
 
+#if TARGET_OS_OSX
+#import <OpenGL/OpenGL.h>
+#endif
+
 #pragma mark -
 
 typedef void (^SaveStateCompletion)(BOOL, NSError * _Nullable );

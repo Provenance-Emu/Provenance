@@ -282,8 +282,9 @@ extension MirroredSettings {
 #else
     public dynamic var webDavAlwaysOn = false
 #endif
+#if canImport(UIKit)
     public dynamic var myiCadeControllerSetting = iCadeControllerSetting.disabled
-
+#endif
     public dynamic var controllerOpacity: Double = 0.8
     public dynamic var buttonTints = true
     public dynamic var use8BitdoM30 = false

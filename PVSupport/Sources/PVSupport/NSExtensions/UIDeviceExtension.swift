@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+#if canImport(UIKit)
 public extension UIDevice {
     /// pares the deveice name as the standard name
     @objc
@@ -63,3 +63,4 @@ public extension UIDevice {
         }
     }
 }
+#endif

@@ -99,7 +99,7 @@ void gl_swap() {
     return self;
 }
 
-#if !TARGET_OS_MACCATALYST
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 -(EAGLContext*)bestContext {
     EAGLContext* context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
     self.glesVersion = GLESVersion3;
@@ -279,7 +279,7 @@ static bool video_driver_cached_frame(void)
         [self.renderDelegate startRenderingOnAlternateThread];
 //        BOOL success = gles_init();
 //        assert(success);
-#if !TARGET_OS_MACCATALYST
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
     EAGLContext* context = [self bestContext];
     ILOG(@"%i", context.API);
 #endif

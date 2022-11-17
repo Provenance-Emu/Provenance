@@ -399,7 +399,7 @@ static void *dlopen_myself()
 
 	BOOL success = NO;
 
-#if !TARGET_OS_MACCATALYST
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 	EAGLContext* context = [self bestContext];
 #endif
 
@@ -509,7 +509,7 @@ static void *dlopen_myself()
     return YES;
 }
 
-#if !TARGET_OS_MACCATALYST
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 -(EAGLContext*)bestContext {
 	EAGLContext* context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
 	self.glesVersion = GLESVersion3;

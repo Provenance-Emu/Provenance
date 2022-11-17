@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3BCA6E727C098710012118D"
-               BuildableName = "libfceux-2.2.3-iOS.a"
-               BlueprintName = "fceux-2.2.3-iOS"
+               BuildableName = "libfceux-2.2.3.a"
+               BlueprintName = "fceux-2.2.3"
                ReferencedContainer = "container:PVFCEU.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3BCA6E727C098710012118D"
-            BuildableName = "libfceux-2.2.3-iOS.a"
-            BlueprintName = "fceux-2.2.3-iOS"
+            BuildableName = "libfceux-2.2.3.a"
+            BlueprintName = "fceux-2.2.3"
             ReferencedContainer = "container:PVFCEU.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

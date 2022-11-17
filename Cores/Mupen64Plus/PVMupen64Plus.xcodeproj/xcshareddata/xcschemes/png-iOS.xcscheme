@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3303E4B1DED23C600896D96"
-               BuildableName = "libpng-iOS.a"
-               BlueprintName = "png-iOS"
+               BuildableName = "libpng.a"
+               BlueprintName = "png"
                ReferencedContainer = "container:PVMupen64Plus.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3303E4B1DED23C600896D96"
-            BuildableName = "libpng-iOS.a"
-            BlueprintName = "png-iOS"
+            BuildableName = "libpng.a"
+            BlueprintName = "png"
             ReferencedContainer = "container:PVMupen64Plus.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

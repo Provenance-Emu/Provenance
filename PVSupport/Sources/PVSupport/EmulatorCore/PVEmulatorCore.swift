@@ -94,11 +94,12 @@ public extension PVEmulatorCore {
 
 				var vibrationLength = 30
 
+                #if canImport(UIKit)
 				if UIDevice.current.modelGeneration.hasPrefix("iPhone6") {
 						// iPhone 5S has a weaker vibration motor, so we vibrate for 10ms longer to compensate
 					vibrationLength = 40
 				}
-
+                #endif
 					// Must use NSArray/NSDictionary to prevent crash.
 				let pattern: [Any] = [false, 0, true, vibrationLength]
 				let dictionary: [String: Any] = ["VibePattern": pattern, "Intensity": 1]
@@ -113,6 +114,7 @@ public extension PVEmulatorCore {
     #endif
 }
 
+#if canImport(UIKit)
 private extension UIDevice {
 	var modelGeneration: String {
 		var sysinfo = utsname()
@@ -129,3 +131,4 @@ private extension UIDevice {
 		return modelGeneration
 	}
 }
+#endif

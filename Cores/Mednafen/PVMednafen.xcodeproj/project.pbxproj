@@ -61,9 +61,7 @@
 		11AFB33524882054000A3922 /* idct.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB33324882053000A3922 /* idct.cpp */; };
 		11AFB339248820AF000A3922 /* crc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB3382488209B000A3922 /* crc.cpp */; };
 		11AFB33A248820AF000A3922 /* crc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB3382488209B000A3922 /* crc.cpp */; };
-		B314E31021081E9200D0C27A /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B314E30F21081E9200D0C27A /* PVSupport.framework */; };
 		B3223CDD1E09E0CA007BB244 /* MednafenGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 824088340FFDDCF400F0FE7D /* MednafenGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3223CDE1E09E0CB007BB244 /* MednafenGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 824088340FFDDCF400F0FE7D /* MednafenGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B324C32421919BC6009F4EDC /* gte.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB0E020736EEA0097D86F /* gte.cpp */; };
 		B324C32521919BC6009F4EDC /* gpu_polygon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB10D20736EEA0097D86F /* gpu_polygon.cpp */; };
 		B324C32621919BC6009F4EDC /* mdec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB0E220736EEA0097D86F /* mdec.cpp */; };
@@ -427,7 +425,6 @@
 		B324C4CD2191A1AC009F4EDC /* z80.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB2A420736EEB0097D86F /* z80.cpp */; };
 		B324C4CE2191A1AC009F4EDC /* gfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB2AE20736EEB0097D86F /* gfx.cpp */; };
 		B324C4CF2191A1AC009F4EDC /* gbGlobals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB2B020736EEB0097D86F /* gbGlobals.cpp */; };
-		B324C4D62191A1F7009F4EDC /* libgb-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C4D52191A1AC009F4EDC /* libgb-tvOS.a */; };
 		B324C53E2191A8A5009F4EDC /* mpc_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAF020736EE80097D86F /* mpc_decoder.c */; };
 		B324C53F2191A8A5009F4EDC /* mpc_bits_reader.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAF520736EE80097D86F /* mpc_bits_reader.c */; };
 		B324C5402191A8A5009F4EDC /* huffman.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAFD20736EE80097D86F /* huffman.c */; };
@@ -436,18 +433,15 @@
 		B324C5432191A8A5009F4EDC /* streaminfo.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAED20736EE80097D86F /* streaminfo.c */; };
 		B324C5442191A8A5009F4EDC /* requant.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAF420736EE80097D86F /* requant.c */; };
 		B324C5452191A8A5009F4EDC /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAFE20736EE80097D86F /* crc32.c */; };
-		B324C54D2191A8D3009F4EDC /* libmpcdec-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C54C2191A8A5009F4EDC /* libmpcdec-tvOS.a */; };
 		B324C5502191AAD1009F4EDC /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB3B220736EEC0097D86F /* input.cpp */; };
 		B324C5512191AAD1009F4EDC /* ppu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB3AF20736EEC0097D86F /* ppu.cpp */; };
 		B324C5522191AAD1009F4EDC /* apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB3BC20736EEC0097D86F /* apu.cpp */; };
 		B324C5532191AAD1009F4EDC /* cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB3BD20736EEC0097D86F /* cpu.cpp */; };
 		B324C5542191AAD1009F4EDC /* snes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB3BB20736EEC0097D86F /* snes.cpp */; };
 		B324C5552191AAD1009F4EDC /* cart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB3C820736EEC0097D86F /* cart.cpp */; };
-		B324C55D2191AAF7009F4EDC /* libsnes_faust-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C55C2191AAD1009F4EDC /* libsnes_faust-tvOS.a */; };
 		B324C5602191AAFE009F4EDC /* triostr.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABD520736EE80097D86F /* triostr.c */; };
 		B324C5612191AAFE009F4EDC /* trio.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABCD20736EE80097D86F /* trio.c */; };
 		B324C5622191AAFE009F4EDC /* trionan.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABD020736EE80097D86F /* trionan.c */; };
-		B324C56A2191AB2E009F4EDC /* libtrio-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C5692191AAFE009F4EDC /* libtrio-tvOS.a */; };
 		B324C56D2191AB34009F4EDC /* bitwise.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAE420736EE80097D86F /* bitwise.c */; };
 		B324C56E2191AB34009F4EDC /* synthesis.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAACB20736EE80097D86F /* synthesis.c */; };
 		B324C56F2191AB34009F4EDC /* vorbisfile.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAE820736EE80097D86F /* vorbisfile.c */; };
@@ -464,8 +458,6 @@
 		B324C57A2191AB34009F4EDC /* mapping0.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAACF20736EE80097D86F /* mapping0.c */; };
 		B324C57B2191AB34009F4EDC /* mdct.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAAB720736EE70097D86F /* mdct.c */; };
 		B324C5852191AB4E009F4EDC /* quicklz.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB2DD20736EEB0097D86F /* quicklz.c */; };
-		B324C58D2191AB86009F4EDC /* libtremor-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C5822191AB34009F4EDC /* libtremor-tvOS.a */; };
-		B324C58E2191AB8D009F4EDC /* libquicklz-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C58C2191AB4E009F4EDC /* libquicklz-tvOS.a */; };
 		B324C5912191AB9D009F4EDC /* png.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB6620736EE80097D86F /* png.cpp */; };
 		B324C5922191AB9D009F4EDC /* font-data.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB6920736EE80097D86F /* font-data.cpp */; };
 		B324C5932191AB9D009F4EDC /* Deinterlacer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB6020736EE80097D86F /* Deinterlacer.cpp */; };
@@ -494,9 +486,6 @@
 		B324C5BD2191ABB7009F4EDC /* lec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB9620736EE80097D86F /* lec.cpp */; };
 		B324C5BE2191ABB7009F4EDC /* CDAFReader_MPC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAB8D20736EE80097D86F /* CDAFReader_MPC.cpp */; };
 		B324C5BF2191ABB7009F4EDC /* recover-raw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABB320736EE80097D86F /* recover-raw.cpp */; };
-		B324C5C72191AC05009F4EDC /* libvideo-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C5A02191AB9D009F4EDC /* libvideo-tvOS.a */; };
-		B324C5C82191AC0A009F4EDC /* libsound-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C5AF2191ABAD009F4EDC /* libsound-tvOS.a */; };
-		B324C5C92191AC10009F4EDC /* libcdrom-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C5C62191ABB7009F4EDC /* libcdrom-tvOS.a */; };
 		B324C5CC2191ACE1009F4EDC /* huc6273.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB17220736EEA0097D86F /* huc6273.cpp */; };
 		B324C5CD2191ACE1009F4EDC /* pcfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB17120736EEA0097D86F /* pcfx.cpp */; };
 		B324C5CE2191ACE1009F4EDC /* timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB15520736EEA0097D86F /* timer.cpp */; };
@@ -508,7 +497,6 @@
 		B324C5D52191ACE1009F4EDC /* gamepad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB14B20736EEA0097D86F /* gamepad.cpp */; };
 		B324C5D62191ACE1009F4EDC /* soundbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB13C20736EEA0097D86F /* soundbox.cpp */; };
 		B324C5D72191ACE1009F4EDC /* mouse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB14A20736EEA0097D86F /* mouse.cpp */; };
-		B324C5DF2191AD10009F4EDC /* libpcfx-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C5DE2191ACE1009F4EDC /* libpcfx-tvOS.a */; };
 		B324C5E22191AD13009F4EDC /* v30mz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE5920736EE90097D86F /* v30mz.cpp */; };
 		B324C5E32191AD13009F4EDC /* gfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE8820736EE90097D86F /* gfx.cpp */; };
 		B324C5E42191AD13009F4EDC /* comm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE6920736EE90097D86F /* comm.cpp */; };
@@ -519,8 +507,6 @@
 		B324C5E92191AD13009F4EDC /* tcache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE5B20736EE90097D86F /* tcache.cpp */; };
 		B324C5EA2191AD13009F4EDC /* interrupt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE5C20736EE90097D86F /* interrupt.cpp */; };
 		B324C5EB2191AD13009F4EDC /* rtc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE6420736EE90097D86F /* rtc.cpp */; };
-		B324C5F32191AD3B009F4EDC /* libwonderswan-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C5F22191AD13009F4EDC /* libwonderswan-tvOS.a */; };
-		B324C62521920724009F4EDC /* libgba-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C4C521919E72009F4EDC /* libgba-tvOS.a */; };
 		B324C63221920C56009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B314E30F21081E9200D0C27A /* PVSupport.framework */; };
 		B32CF13921923EB40058E2E7 /* Sms_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB2B520736EEB0097D86F /* Sms_Apu.cpp */; };
 		B32CF13A21923EB40058E2E7 /* Ym2612_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB2BB20736EEB0097D86F /* Ym2612_Emu.cpp */; };
@@ -529,7 +515,6 @@
 		B32CF13D21923EB40058E2E7 /* Gb_Oscs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB2C420736EEB0097D86F /* Gb_Oscs.cpp */; };
 		B32CF13E21923EB40058E2E7 /* Gb_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB2C520736EEB0097D86F /* Gb_Apu.cpp */; };
 		B32CF13F21923EB40058E2E7 /* emu2413.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB2D320736EEB0097D86F /* emu2413.cpp */; };
-		B32CF14721923F030058E2E7 /* libhwaudio-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B32CF14621923EB50058E2E7 /* libhwaudio-tvOS.a */; };
 		B32CF14A21923F330058E2E7 /* vsu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB24820736EEB0097D86F /* vsu.cpp */; };
 		B32CF14B21923F330058E2E7 /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB24020736EEB0097D86F /* input.cpp */; };
 		B32CF14C21923F330058E2E7 /* vip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB23F20736EEB0097D86F /* vip.cpp */; };
@@ -602,17 +587,6 @@
 		B32CF1BC21923F850058E2E7 /* render.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE2620736EE90097D86F /* render.cpp */; };
 		B32CF1BD21923F850058E2E7 /* romdb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE3820736EE90097D86F /* romdb.cpp */; };
 		B32CF1C7219240270058E2E7 /* arcade_card.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE1120736EE90097D86F /* arcade_card.cpp */; };
-		B32CF1CF219240770058E2E7 /* libhwmisc-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B32CF1CE219240270058E2E7 /* libhwmisc-tvOS.a */; };
-		B32CF1D0219240770058E2E7 /* liblynx-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B32CF18921923F740058E2E7 /* liblynx-tvOS.a */; };
-		B32CF1D1219240770058E2E7 /* libneogeopocket-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B32CF17821923F520058E2E7 /* libneogeopocket-tvOS.a */; };
-		B32CF1D2219240770058E2E7 /* libpce-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B32CF19F21923F790058E2E7 /* libpce-tvOS.a */; };
-		B32CF1D3219240770058E2E7 /* libpcefast-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B32CF1B121923F7F0058E2E7 /* libpcefast-tvOS.a */; };
-		B32CF1D5219240770058E2E7 /* libvirtualboy-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B32CF15521923F330058E2E7 /* libvirtualboy-tvOS.a */; };
-		B32CF1D6219241EE0058E2E7 /* libhwvideo-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C34C21919C1C009F4EDC /* libhwvideo-tvOS.a */; };
-		B32CF1D7219241EE0058E2E7 /* libmednafen-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C42A21919D73009F4EDC /* libmednafen-tvOS.a */; };
-		B32CF1D8219241EE0058E2E7 /* libnes-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C3D321919CD6009F4EDC /* libnes-tvOS.a */; };
-		B32CF1D9219241EE0058E2E7 /* libpsx-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C34221919BC6009F4EDC /* libpsx-tvOS.a */; };
-		B32CF1DA219241EE0058E2E7 /* libsnes-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C4AA21919DC9009F4EDC /* libsnes-tvOS.a */; };
 		B3335036207AFBDE0036A448 /* cdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB10B20736EEA0097D86F /* cdc.cpp */; };
 		B3335037207AFBDE0036A448 /* cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB0F520736EEA0097D86F /* cpu.cpp */; };
 		B3335038207AFBDE0036A448 /* dis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB0EF20736EEA0097D86F /* dis.cpp */; };
@@ -1038,29 +1012,16 @@
 		B33355EF207B27B60036A448 /* triostr.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABD520736EE80097D86F /* triostr.c */; };
 		B33355F0207B28570036A448 /* libtrio-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33355E4207B278E0036A448 /* libtrio-iOS.a */; };
 		B33355F1207B2A650036A448 /* MednafenGameCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8C20522B86001D3D2E /* MednafenGameCore.swift */; };
-		B33355F3207B3BAD0036A448 /* MednafenGameCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8C20522B86001D3D2E /* MednafenGameCore.swift */; };
-		B33355F4207B3BAD0036A448 /* MednafenMultiDisc.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */; };
-		B33355F5207B3BAD0036A448 /* stubs.mm in Sources */ = {isa = PBXBuildFile; fileRef = 94454E3B17852E61006C057B /* stubs.mm */; };
-		B33355F6207B3BAD0036A448 /* MednafenMultiTap.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44BA2039B6D0005BEB14 /* MednafenMultiTap.m */; };
-		B33355F7207B3BAD0036A448 /* MednafenGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 824088350FFDDCF400F0FE7D /* MednafenGameCore.mm */; };
-		B33355F8207B3BAD0036A448 /* thread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94454E3617852E44006C057B /* thread.cpp */; };
 		B340E4661E08887700AD0E8B /* PVMednafen.h in Headers */ = {isa = PBXBuildFile; fileRef = B340E4641E08887700AD0E8B /* PVMednafen.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B340E5E71E0889FB00AD0E8B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5E61E0889FB00AD0E8B /* libz.tbd */; };
-		B340E5E91E088A0100AD0E8B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5E81E088A0100AD0E8B /* libz.tbd */; };
 		B340E5EB1E088A1100AD0E8B /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5EA1E088A1100AD0E8B /* libiconv.tbd */; };
-		B340E5ED1E088A1E00AD0E8B /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5EC1E088A1E00AD0E8B /* libiconv.tbd */; };
-		B340E5EF1E088A3500AD0E8B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5EE1E088A3500AD0E8B /* UIKit.framework */; };
 		B340E5F11E088A3A00AD0E8B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5F01E088A3A00AD0E8B /* Foundation.framework */; };
 		B340E5F31E088A4000AD0E8B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5F21E088A4000AD0E8B /* UIKit.framework */; };
-		B340E5F51E088A4500AD0E8B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5F41E088A4500AD0E8B /* Foundation.framework */; };
 		B3547B60205858EF00CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B5F205858EF00CFF7D8 /* Core.plist */; };
-		B3547B61205858EF00CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B5F205858EF00CFF7D8 /* Core.plist */; };
 		B35D6686218185710005A992 /* z80_ops.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADFA20736EE90097D86F /* z80_ops.cpp */; };
 		B35D6687218185710005A992 /* v810_cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADFF20736EE90097D86F /* v810_cpu.cpp */; };
 		B35D6688218185710005A992 /* z80.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADF520736EE90097D86F /* z80.cpp */; };
 		B35D6689218185710005A992 /* v810_fp_ops.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE0020736EE90097D86F /* v810_fp_ops.cpp */; };
-		B35D6691218185A60005A992 /* libhwcpu-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B35D6690218185710005A992 /* libhwcpu-tvOS.a */; };
-		B36CBFED2039819100728482 /* PVMednafen.h in Headers */ = {isa = PBXBuildFile; fileRef = B340E4641E08887700AD0E8B /* PVMednafen.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B393F252277C0C1C0097F71C /* m68k.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADEB20736EE90097D86F /* m68k.cpp */; };
 		B393F260277C0C4E0097F71C /* m68k.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADEB20736EE90097D86F /* m68k.cpp */; };
 		B393F261277C109C0097F71C /* libhwcpu-m68k-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B393F251277C0BF70097F71C /* libhwcpu-m68k-iOS.a */; };
@@ -1070,7 +1031,6 @@
 		B3AAB43F2073820C0097D86F /* MednafenMultiDisc.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */; };
 		B3AAB4402073820C0097D86F /* MednafenMultiTap.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44BA2039B6D0005BEB14 /* MednafenMultiTap.m */; };
 		B3B8C3BF290E15EC002B839A /* MednafenGameCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3B8C3BE290E15EB002B839A /* MednafenGameCore+Controls.mm */; };
-		B3B8C3C0290E15EC002B839A /* MednafenGameCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3B8C3BE290E15EB002B839A /* MednafenGameCore+Controls.mm */; };
 		B3FBDF01207FF13400E661D1 /* interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE8F20736EE90097D86F /* interface.cpp */; };
 		B3FBDF02207FF19800E661D1 /* generic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE9820736EE90097D86F /* generic.cpp */; };
 		B3FBDF03207FF19800E661D1 /* smemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE9920736EE90097D86F /* smemory.cpp */; };
@@ -1202,7 +1162,6 @@
 		B3FBDFB0207FFC1E00E661D1 /* SPCReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE4C20736EE90097D86F /* SPCReader.cpp */; };
 		B3FBDFB3207FFC6100E661D1 /* snes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB29020736EEB0097D86F /* snes.cpp */; };
 		C66D56112626B12100CDECE9 /* Time_POSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C66D560B2626B12100CDECE9 /* Time_POSIX.cpp */; };
-		C66D56122626B12100CDECE9 /* Time_POSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C66D560B2626B12100CDECE9 /* Time_POSIX.cpp */; };
 		C66D56172626B2FB00CDECE9 /* convert.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C66D56162626B2FB00CDECE9 /* convert.cpp */; };
 		C66D56182626B2FB00CDECE9 /* convert.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C66D56162626B2FB00CDECE9 /* convert.cpp */; };
 		C66D561B2626B37300CDECE9 /* testsexp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C66D56192626B37200CDECE9 /* testsexp.cpp */; };
@@ -1240,7 +1199,6 @@
 		C6E1B64525AA9CB4007C3CF1 /* cart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB21520736EEB0097D86F /* cart.cpp */; };
 		C6E1B64625AA9CB4007C3CF1 /* vdp1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB21620736EEB0097D86F /* vdp1.cpp */; };
 		C6E1B64725AA9CB4007C3CF1 /* scu_dsp_gen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB21820736EEB0097D86F /* scu_dsp_gen.cpp */; };
-		C6E1B64825AA9CD6007C3CF1 /* libsaturn-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C6E1B62825AA9C15007C3CF1 /* libsaturn-tvOS.a */; };
 		C6E1B64B25AAA00E007C3CF1 /* cdb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB20E20736EEB0097D86F /* cdb.cpp */; };
 		C6E1B64C25AAA042007C3CF1 /* rom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB1E720736EEA0097D86F /* rom.cpp */; };
 		C6E1B64F25AAA24A007C3CF1 /* DSPUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2CC24880BF3000A3922 /* DSPUtility.cpp */; };
@@ -1284,181 +1242,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		11389F98248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B324C5B02191ABB7009F4EDC;
-			remoteInfo = "cdrom-tvOS";
-		};
-		11389F9A248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B324C4C82191A1AC009F4EDC;
-			remoteInfo = "gb-tvOS";
-		};
-		11389F9C248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B324C4AC21919E72009F4EDC;
-			remoteInfo = "gba-tvOS";
-		};
-		11389F9E248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B32CF13721923EB40058E2E7;
-			remoteInfo = "hwaudio-tvOS";
-		};
-		11389FA0248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B32CF1C5219240270058E2E7;
-			remoteInfo = "hwmisc-tvOS";
-		};
-		11389FA2248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B324C34421919C1C009F4EDC;
-			remoteInfo = "hwvideo-tvOS";
-		};
-		11389FA4248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B32CF17921923F740058E2E7;
-			remoteInfo = "lynx-tvOS";
-		};
-		11389FA6248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B324C3FB21919D73009F4EDC;
-			remoteInfo = "mednafen-tvOS";
-		};
-		11389FA8248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B324C53C2191A8A5009F4EDC;
-			remoteInfo = "mpcdec-tvOS";
-		};
-		11389FAA248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B32CF15621923F520058E2E7;
-			remoteInfo = "neogeopocket-tvOS";
-		};
-		11389FAC248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B324C34E21919CD6009F4EDC;
-			remoteInfo = "nes-tvOS";
-		};
-		11389FAE248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B32CF18A21923F790058E2E7;
-			remoteInfo = "pce-tvOS";
-		};
-		11389FB0248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B32CF1A021923F7F0058E2E7;
-			remoteInfo = "pcefast-tvOS";
-		};
-		11389FB2248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B324C5CA2191ACE1009F4EDC;
-			remoteInfo = "pcfx-tvOS";
-		};
-		11389FB4248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B324C32221919BC6009F4EDC;
-			remoteInfo = "psx-tvOS";
-		};
-		11389FB6248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B324C5832191AB4E009F4EDC;
-			remoteInfo = "quicklz-tvOS";
-		};
-		11389FB8248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B32CF1B221923F850058E2E7;
-			remoteInfo = "segamastersystem-tvOS";
-		};
-		11389FBA248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B324C42C21919DC9009F4EDC;
-			remoteInfo = "snes-tvOS";
-		};
-		11389FBC248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B324C54E2191AAD1009F4EDC;
-			remoteInfo = "snes_faust-tvOS";
-		};
-		11389FBE248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B324C5A12191ABAD009F4EDC;
-			remoteInfo = "sound-tvOS";
-		};
-		11389FC0248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B324C56B2191AB34009F4EDC;
-			remoteInfo = "tremor-tvOS";
-		};
-		11389FC2248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B324C55E2191AAFE009F4EDC;
-			remoteInfo = "trio-tvOS";
-		};
-		11389FC4248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B324C58F2191AB9D009F4EDC;
-			remoteInfo = "video-tvOS";
-		};
-		11389FC6248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B32CF14821923F330058E2E7;
-			remoteInfo = "virtualboy-tvOS";
-		};
-		11389FC8248D4F6B0089CBFF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B324C5E02191AD13009F4EDC;
-			remoteInfo = "wonderswan-tvOS";
-		};
 		B31737FD2783F8AF002D3ACD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
@@ -1648,26 +1431,12 @@
 			remoteGlobalIDString = B3FBDF9E207FF5D800E661D1;
 			remoteInfo = snes_faust;
 		};
-		B35D6692218185FF0005A992 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B35D6684218185710005A992;
-			remoteInfo = "hwcpu-tvOS";
-		};
 		B36C7D5227AE10F600715677 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = B393F253277C0C340097F71C;
 			remoteInfo = "hwcpu-m68k-tvOS";
-		};
-		C6E1B64925AA9DC1007C3CF1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C6E1B5A925AA9C15007C3CF1;
-			remoteInfo = "saturn-tvOS";
 		};
 		C6E1B69025AAC1D5007C3CF1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2336,7 +2105,6 @@
 		B340E4621E08887600AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B340E4641E08887700AD0E8B /* PVMednafen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVMednafen.h; sourceTree = "<group>"; };
 		B340E4651E08887700AD0E8B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B340E46F1E08888700AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B340E5E61E0889FB00AD0E8B /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.1.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		B340E5E81E088A0100AD0E8B /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		B340E5EA1E088A1100AD0E8B /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.1.sdk/usr/lib/libiconv.tbd; sourceTree = DEVELOPER_DIR; };
@@ -4439,44 +4207,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B340E46B1E08888700AD0E8B /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C6E1B64825AA9CD6007C3CF1 /* libsaturn-tvOS.a in Frameworks */,
-				B32CF1D6219241EE0058E2E7 /* libhwvideo-tvOS.a in Frameworks */,
-				B32CF1D7219241EE0058E2E7 /* libmednafen-tvOS.a in Frameworks */,
-				B32CF1D8219241EE0058E2E7 /* libnes-tvOS.a in Frameworks */,
-				B32CF1D9219241EE0058E2E7 /* libpsx-tvOS.a in Frameworks */,
-				B32CF1DA219241EE0058E2E7 /* libsnes-tvOS.a in Frameworks */,
-				B32CF1CF219240770058E2E7 /* libhwmisc-tvOS.a in Frameworks */,
-				B32CF1D0219240770058E2E7 /* liblynx-tvOS.a in Frameworks */,
-				B32CF1D1219240770058E2E7 /* libneogeopocket-tvOS.a in Frameworks */,
-				B32CF1D2219240770058E2E7 /* libpce-tvOS.a in Frameworks */,
-				B32CF1D3219240770058E2E7 /* libpcefast-tvOS.a in Frameworks */,
-				B32CF1D5219240770058E2E7 /* libvirtualboy-tvOS.a in Frameworks */,
-				B32CF14721923F030058E2E7 /* libhwaudio-tvOS.a in Frameworks */,
-				B324C62521920724009F4EDC /* libgba-tvOS.a in Frameworks */,
-				B324C5F32191AD3B009F4EDC /* libwonderswan-tvOS.a in Frameworks */,
-				B324C5DF2191AD10009F4EDC /* libpcfx-tvOS.a in Frameworks */,
-				B324C5C92191AC10009F4EDC /* libcdrom-tvOS.a in Frameworks */,
-				B324C5C82191AC0A009F4EDC /* libsound-tvOS.a in Frameworks */,
-				B324C5C72191AC05009F4EDC /* libvideo-tvOS.a in Frameworks */,
-				B324C58E2191AB8D009F4EDC /* libquicklz-tvOS.a in Frameworks */,
-				B324C58D2191AB86009F4EDC /* libtremor-tvOS.a in Frameworks */,
-				B324C56A2191AB2E009F4EDC /* libtrio-tvOS.a in Frameworks */,
-				B324C55D2191AAF7009F4EDC /* libsnes_faust-tvOS.a in Frameworks */,
-				B324C54D2191A8D3009F4EDC /* libmpcdec-tvOS.a in Frameworks */,
-				B324C4D62191A1F7009F4EDC /* libgb-tvOS.a in Frameworks */,
-				B35D6691218185A60005A992 /* libhwcpu-tvOS.a in Frameworks */,
-				B314E31021081E9200D0C27A /* PVSupport.framework in Frameworks */,
-				B340E5F51E088A4500AD0E8B /* Foundation.framework in Frameworks */,
-				B340E5EF1E088A3500AD0E8B /* UIKit.framework in Frameworks */,
-				B340E5ED1E088A1E00AD0E8B /* libiconv.tbd in Frameworks */,
-				B340E5E91E088A0100AD0E8B /* libz.tbd in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B35D668B218185710005A992 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -4608,7 +4338,6 @@
 			isa = PBXGroup;
 			children = (
 				B340E4621E08887600AD0E8B /* PVMednafen.framework */,
-				B340E46F1E08888700AD0E8B /* PVMednafen.framework */,
 				B333502D207AFBA30036A448 /* libpsx-iOS.a */,
 				B3335062207AFD3D0036A448 /* libwonderswan-iOS.a */,
 				B3335092207AFF2B0036A448 /* libvirtualboy-iOS.a */,
@@ -7666,15 +7395,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B340E46C1E08888700AD0E8B /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B36CBFED2039819100728482 /* PVMednafen.h in Headers */,
-				B3223CDE1E09E0CB007BB244 /* MednafenGameCore.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
@@ -8546,9 +8266,9 @@
 			productReference = B33355E4207B278E0036A448 /* libtrio-iOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B340E4611E08887600AD0E8B /* PVMednafen-iOS */ = {
+		B340E4611E08887600AD0E8B /* PVMednafen */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B340E4671E08887700AD0E8B /* Build configuration list for PBXNativeTarget "PVMednafen-iOS" */;
+			buildConfigurationList = B340E4671E08887700AD0E8B /* Build configuration list for PBXNativeTarget "PVMednafen" */;
 			buildPhases = (
 				B340E45F1E08887600AD0E8B /* Headers */,
 				B340E45D1E08887600AD0E8B /* Sources */,
@@ -8587,54 +8307,9 @@
 				B34AB5BC2106DF8400C45F09 /* PBXTargetDependency */,
 				C6E1B69725AAC5A3007C3CF1 /* PBXTargetDependency */,
 			);
-			name = "PVMednafen-iOS";
+			name = PVMednafen;
 			productName = PVMednafen;
 			productReference = B340E4621E08887600AD0E8B /* PVMednafen.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		B340E46E1E08888700AD0E8B /* PVMednafen-tvOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B340E4741E08888700AD0E8B /* Build configuration list for PBXNativeTarget "PVMednafen-tvOS" */;
-			buildPhases = (
-				B340E46C1E08888700AD0E8B /* Headers */,
-				B340E46A1E08888700AD0E8B /* Sources */,
-				B340E46B1E08888700AD0E8B /* Frameworks */,
-				B340E46D1E08888700AD0E8B /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				C6E1B64A25AA9DC1007C3CF1 /* PBXTargetDependency */,
-				11389F99248D4F6B0089CBFF /* PBXTargetDependency */,
-				11389F9B248D4F6B0089CBFF /* PBXTargetDependency */,
-				11389F9D248D4F6B0089CBFF /* PBXTargetDependency */,
-				11389F9F248D4F6B0089CBFF /* PBXTargetDependency */,
-				11389FA1248D4F6B0089CBFF /* PBXTargetDependency */,
-				11389FA3248D4F6B0089CBFF /* PBXTargetDependency */,
-				11389FA5248D4F6B0089CBFF /* PBXTargetDependency */,
-				11389FA7248D4F6B0089CBFF /* PBXTargetDependency */,
-				11389FA9248D4F6B0089CBFF /* PBXTargetDependency */,
-				11389FAB248D4F6B0089CBFF /* PBXTargetDependency */,
-				11389FAD248D4F6B0089CBFF /* PBXTargetDependency */,
-				11389FAF248D4F6B0089CBFF /* PBXTargetDependency */,
-				11389FB1248D4F6B0089CBFF /* PBXTargetDependency */,
-				11389FB3248D4F6B0089CBFF /* PBXTargetDependency */,
-				11389FB5248D4F6B0089CBFF /* PBXTargetDependency */,
-				11389FB7248D4F6B0089CBFF /* PBXTargetDependency */,
-				11389FB9248D4F6B0089CBFF /* PBXTargetDependency */,
-				11389FBB248D4F6B0089CBFF /* PBXTargetDependency */,
-				11389FBD248D4F6B0089CBFF /* PBXTargetDependency */,
-				11389FBF248D4F6B0089CBFF /* PBXTargetDependency */,
-				11389FC1248D4F6B0089CBFF /* PBXTargetDependency */,
-				11389FC3248D4F6B0089CBFF /* PBXTargetDependency */,
-				11389FC5248D4F6B0089CBFF /* PBXTargetDependency */,
-				11389FC7248D4F6B0089CBFF /* PBXTargetDependency */,
-				11389FC9248D4F6B0089CBFF /* PBXTargetDependency */,
-				B35D6693218185FF0005A992 /* PBXTargetDependency */,
-			);
-			name = "PVMednafen-tvOS";
-			productName = "PVMednafen tvOS";
-			productReference = B340E46F1E08888700AD0E8B /* PVMednafen.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		B35D6684218185710005A992 /* hwcpu-tvOS */ = {
@@ -8873,10 +8548,6 @@
 						CreatedOnToolsVersion = 8.1;
 						LastSwiftMigration = 1020;
 					};
-					B340E46E1E08888700AD0E8B = {
-						CreatedOnToolsVersion = 8.1;
-						LastSwiftMigration = 0920;
-					};
 					B3FBDEF7207FF0E300E661D1 = {
 						CreatedOnToolsVersion = 9.3;
 						ProvisioningStyle = Automatic;
@@ -8899,17 +8570,16 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B340E4611E08887600AD0E8B /* PVMednafen-iOS */,
-				B340E46E1E08888700AD0E8B /* PVMednafen-tvOS */,
+				B340E4611E08887600AD0E8B /* PVMednafen */,
 				B333502C207AFBA30036A448 /* psx-iOS */,
-				B324C32221919BC6009F4EDC /* psx-tvOS */,
 				B3335061207AFD3D0036A448 /* wonderswan-iOS */,
-				B324C5E02191AD13009F4EDC /* wonderswan-tvOS */,
 				B3335091207AFF2B0036A448 /* virtualboy-iOS */,
-				B32CF14821923F330058E2E7 /* virtualboy-tvOS */,
 				B33350A4207AFFE80036A448 /* nes-iOS */,
-				B324C34E21919CD6009F4EDC /* nes-tvOS */,
 				B333518F207B00F70036A448 /* gb-iOS */,
+				B324C32221919BC6009F4EDC /* psx-tvOS */,
+				B324C5E02191AD13009F4EDC /* wonderswan-tvOS */,
+				B32CF14821923F330058E2E7 /* virtualboy-tvOS */,
+				B324C34E21919CD6009F4EDC /* nes-tvOS */,
 				B324C4C82191A1AC009F4EDC /* gb-tvOS */,
 				B33351A3207B01460036A448 /* gba-iOS */,
 				B324C4AC21919E72009F4EDC /* gba-tvOS */,
@@ -8969,14 +8639,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3547B60205858EF00CFF7D8 /* Core.plist in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B340E46D1E08888700AD0E8B /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3547B61205858EF00CFF7D8 /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10333,21 +9995,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B340E46A1E08888700AD0E8B /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B33355F4207B3BAD0036A448 /* MednafenMultiDisc.m in Sources */,
-				B33355F8207B3BAD0036A448 /* thread.cpp in Sources */,
-				B33355F7207B3BAD0036A448 /* MednafenGameCore.mm in Sources */,
-				B33355F5207B3BAD0036A448 /* stubs.mm in Sources */,
-				B33355F3207B3BAD0036A448 /* MednafenGameCore.swift in Sources */,
-				C66D56122626B12100CDECE9 /* Time_POSIX.cpp in Sources */,
-				B3B8C3C0290E15EC002B839A /* MednafenGameCore+Controls.mm in Sources */,
-				B33355F6207B3BAD0036A448 /* MednafenMultiTap.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B35D6685218185710005A992 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -10610,131 +10257,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		11389F99248D4F6B0089CBFF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B324C5B02191ABB7009F4EDC /* cdrom-tvOS */;
-			targetProxy = 11389F98248D4F6B0089CBFF /* PBXContainerItemProxy */;
-		};
-		11389F9B248D4F6B0089CBFF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B324C4C82191A1AC009F4EDC /* gb-tvOS */;
-			targetProxy = 11389F9A248D4F6B0089CBFF /* PBXContainerItemProxy */;
-		};
-		11389F9D248D4F6B0089CBFF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B324C4AC21919E72009F4EDC /* gba-tvOS */;
-			targetProxy = 11389F9C248D4F6B0089CBFF /* PBXContainerItemProxy */;
-		};
-		11389F9F248D4F6B0089CBFF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B32CF13721923EB40058E2E7 /* hwaudio-tvOS */;
-			targetProxy = 11389F9E248D4F6B0089CBFF /* PBXContainerItemProxy */;
-		};
-		11389FA1248D4F6B0089CBFF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B32CF1C5219240270058E2E7 /* hwmisc-tvOS */;
-			targetProxy = 11389FA0248D4F6B0089CBFF /* PBXContainerItemProxy */;
-		};
-		11389FA3248D4F6B0089CBFF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B324C34421919C1C009F4EDC /* hwvideo-tvOS */;
-			targetProxy = 11389FA2248D4F6B0089CBFF /* PBXContainerItemProxy */;
-		};
-		11389FA5248D4F6B0089CBFF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B32CF17921923F740058E2E7 /* lynx-tvOS */;
-			targetProxy = 11389FA4248D4F6B0089CBFF /* PBXContainerItemProxy */;
-		};
-		11389FA7248D4F6B0089CBFF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B324C3FB21919D73009F4EDC /* mednafen-tvOS */;
-			targetProxy = 11389FA6248D4F6B0089CBFF /* PBXContainerItemProxy */;
-		};
-		11389FA9248D4F6B0089CBFF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B324C53C2191A8A5009F4EDC /* mpcdec-tvOS */;
-			targetProxy = 11389FA8248D4F6B0089CBFF /* PBXContainerItemProxy */;
-		};
-		11389FAB248D4F6B0089CBFF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B32CF15621923F520058E2E7 /* neogeopocket-tvOS */;
-			targetProxy = 11389FAA248D4F6B0089CBFF /* PBXContainerItemProxy */;
-		};
-		11389FAD248D4F6B0089CBFF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B324C34E21919CD6009F4EDC /* nes-tvOS */;
-			targetProxy = 11389FAC248D4F6B0089CBFF /* PBXContainerItemProxy */;
-		};
-		11389FAF248D4F6B0089CBFF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B32CF18A21923F790058E2E7 /* pce-tvOS */;
-			targetProxy = 11389FAE248D4F6B0089CBFF /* PBXContainerItemProxy */;
-		};
-		11389FB1248D4F6B0089CBFF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B32CF1A021923F7F0058E2E7 /* pcefast-tvOS */;
-			targetProxy = 11389FB0248D4F6B0089CBFF /* PBXContainerItemProxy */;
-		};
-		11389FB3248D4F6B0089CBFF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B324C5CA2191ACE1009F4EDC /* pcfx-tvOS */;
-			targetProxy = 11389FB2248D4F6B0089CBFF /* PBXContainerItemProxy */;
-		};
-		11389FB5248D4F6B0089CBFF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B324C32221919BC6009F4EDC /* psx-tvOS */;
-			targetProxy = 11389FB4248D4F6B0089CBFF /* PBXContainerItemProxy */;
-		};
-		11389FB7248D4F6B0089CBFF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B324C5832191AB4E009F4EDC /* quicklz-tvOS */;
-			targetProxy = 11389FB6248D4F6B0089CBFF /* PBXContainerItemProxy */;
-		};
-		11389FB9248D4F6B0089CBFF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B32CF1B221923F850058E2E7 /* segamastersystem-tvOS */;
-			targetProxy = 11389FB8248D4F6B0089CBFF /* PBXContainerItemProxy */;
-		};
-		11389FBB248D4F6B0089CBFF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B324C42C21919DC9009F4EDC /* snes-tvOS */;
-			targetProxy = 11389FBA248D4F6B0089CBFF /* PBXContainerItemProxy */;
-		};
-		11389FBD248D4F6B0089CBFF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B324C54E2191AAD1009F4EDC /* snes_faust-tvOS */;
-			targetProxy = 11389FBC248D4F6B0089CBFF /* PBXContainerItemProxy */;
-		};
-		11389FBF248D4F6B0089CBFF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B324C5A12191ABAD009F4EDC /* sound-tvOS */;
-			targetProxy = 11389FBE248D4F6B0089CBFF /* PBXContainerItemProxy */;
-		};
-		11389FC1248D4F6B0089CBFF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B324C56B2191AB34009F4EDC /* tremor-tvOS */;
-			targetProxy = 11389FC0248D4F6B0089CBFF /* PBXContainerItemProxy */;
-		};
-		11389FC3248D4F6B0089CBFF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B324C55E2191AAFE009F4EDC /* trio-tvOS */;
-			targetProxy = 11389FC2248D4F6B0089CBFF /* PBXContainerItemProxy */;
-		};
-		11389FC5248D4F6B0089CBFF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B324C58F2191AB9D009F4EDC /* video-tvOS */;
-			targetProxy = 11389FC4248D4F6B0089CBFF /* PBXContainerItemProxy */;
-		};
-		11389FC7248D4F6B0089CBFF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B32CF14821923F330058E2E7 /* virtualboy-tvOS */;
-			targetProxy = 11389FC6248D4F6B0089CBFF /* PBXContainerItemProxy */;
-		};
-		11389FC9248D4F6B0089CBFF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B324C5E02191AD13009F4EDC /* wonderswan-tvOS */;
-			targetProxy = 11389FC8248D4F6B0089CBFF /* PBXContainerItemProxy */;
-		};
 		B31737FE2783F8AF002D3ACD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B393F245277C0BF70097F71C /* hwcpu-m68k-iOS */;
@@ -10870,20 +10392,10 @@
 			target = B3FBDF9E207FF5D800E661D1 /* snes_faust-iOS */;
 			targetProxy = B34AB5BB2106DF8400C45F09 /* PBXContainerItemProxy */;
 		};
-		B35D6693218185FF0005A992 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B35D6684218185710005A992 /* hwcpu-tvOS */;
-			targetProxy = B35D6692218185FF0005A992 /* PBXContainerItemProxy */;
-		};
 		B36C7D5327AE10F600715677 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B393F253277C0C340097F71C /* hwcpu-m68k-tvOS */;
 			targetProxy = B36C7D5227AE10F600715677 /* PBXContainerItemProxy */;
-		};
-		C6E1B64A25AA9DC1007C3CF1 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C6E1B5A925AA9C15007C3CF1 /* saturn-tvOS */;
-			targetProxy = C6E1B64925AA9DC1007C3CF1 /* PBXContainerItemProxy */;
 		};
 		C6E1B69125AAC1D5007C3CF1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -11862,73 +11374,16 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator driverkit iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_INCLUDE_PATHS = "$(inherited) $(SRCROOT) \"$(SRCROOT)/PVMednafen\"";
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/PVMednafen\"";
 				USE_HEADERMAP = YES;
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Archive;
-		};
-		B324C4D92191A22A009F4EDC /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_SUSPICIOUS_MOVES = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
-				ENABLE_NS_ASSERTIONS = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/mednafen/src\"",
-				);
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					LSB_FIRST,
-					"$(inherited)",
-				);
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = PVMednafen/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.27.1;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMednafen";
-				PRODUCT_NAME = PVMednafen;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/PVMednafen\"";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -11938,6 +11393,7 @@
 		B324C4DA2191A22A009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -11958,7 +11414,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -11996,6 +11453,7 @@
 		B324C4DC2191A22A009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -12016,7 +11474,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12025,6 +11484,7 @@
 		B324C4DD2191A22A009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -12044,7 +11504,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12053,6 +11514,7 @@
 		B324C4DE2191A22A009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -12072,7 +11534,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12109,6 +11572,7 @@
 		B324C4E02191A22A009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -12130,7 +11594,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12169,6 +11634,7 @@
 		B324C4E22191A22A009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -12190,7 +11656,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12229,6 +11696,7 @@
 		B324C4E42191A22A009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -12248,7 +11716,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12257,6 +11726,7 @@
 		B324C4E52191A22A009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -12277,7 +11747,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12286,6 +11757,7 @@
 		B324C4E62191A22A009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -12305,7 +11777,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12314,6 +11787,7 @@
 		B324C4E72191A22A009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -12333,7 +11807,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12342,6 +11817,7 @@
 		B324C4E82191A22A009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -12361,7 +11837,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12370,6 +11847,7 @@
 		B324C4E92191A22A009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -12389,7 +11867,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12398,6 +11877,7 @@
 		B324C4EA2191A22A009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -12417,7 +11897,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12454,6 +11935,7 @@
 		B324C4EC2191A22A009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -12473,7 +11955,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12482,6 +11965,7 @@
 		B324C4ED2191A22A009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -12501,7 +11985,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12538,6 +12023,7 @@
 		B324C4EF2191A22A009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -12557,7 +12043,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12595,6 +12082,7 @@
 		B324C4F12191A22A009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -12613,7 +12101,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12622,6 +12111,7 @@
 		B324C4F22191A22A009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -12640,7 +12130,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12649,6 +12140,7 @@
 		B324C4F32191A22A009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -12667,7 +12159,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12676,6 +12169,7 @@
 		B324C4F42191A22A009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -12694,7 +12188,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12703,6 +12198,7 @@
 		B324C4F52191A22A009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -12721,7 +12217,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12758,6 +12255,7 @@
 		B324C4F72191A22A009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -12780,7 +12278,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12789,6 +12288,7 @@
 		B324C4F82191A22A009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -12808,7 +12308,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12817,6 +12318,7 @@
 		B324C4F92191A22A009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -12839,7 +12341,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12848,6 +12351,7 @@
 		B324C4FA2191A22A009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -12866,7 +12370,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12875,6 +12380,7 @@
 		B324C4FB2191A22A009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -12901,7 +12407,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -12946,6 +12453,7 @@
 		B324C4FD2191A22A009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -12964,7 +12472,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -14601,6 +14110,7 @@
 		B3335033207AFBA40036A448 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -14627,7 +14137,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
@@ -14635,6 +14146,7 @@
 		B3335034207AFBA40036A448 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -14655,7 +14167,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -14664,6 +14177,7 @@
 		B3335069207AFD3D0036A448 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -14690,7 +14204,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
@@ -14698,6 +14213,7 @@
 		B333506A207AFD3D0036A448 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -14718,7 +14234,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -14727,6 +14244,7 @@
 		B3335099207AFF2C0036A448 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -14752,7 +14270,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
@@ -14760,6 +14279,7 @@
 		B333509A207AFF2C0036A448 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -14779,7 +14299,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -14788,6 +14309,7 @@
 		B33350AC207AFFE90036A448 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -14813,7 +14335,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
@@ -14821,6 +14344,7 @@
 		B33350AD207AFFE90036A448 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -14840,7 +14364,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -14849,6 +14374,7 @@
 		B3335197207B00F80036A448 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -14875,7 +14401,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
@@ -14883,6 +14410,7 @@
 		B3335198207B00F80036A448 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -14904,7 +14432,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -14913,6 +14442,7 @@
 		B33351AB207B01470036A448 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -14939,7 +14469,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
@@ -14947,6 +14478,7 @@
 		B33351AC207B01470036A448 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -14968,7 +14500,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -14977,6 +14510,7 @@
 		B33351B8207B01570036A448 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15002,7 +14536,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
@@ -15010,6 +14545,7 @@
 		B33351B9207B01570036A448 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15029,7 +14565,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -15038,6 +14575,7 @@
 		B33351C5207B016F0036A448 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15064,7 +14602,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
@@ -15072,6 +14611,7 @@
 		B33351C6207B016F0036A448 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15092,7 +14632,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -15101,6 +14642,7 @@
 		B33351D2207B01860036A448 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15126,7 +14668,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
@@ -15134,6 +14677,7 @@
 		B33351D3207B01860036A448 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15153,7 +14697,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -15162,6 +14707,7 @@
 		B33351DF207B01980036A448 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15187,7 +14733,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
@@ -15195,6 +14742,7 @@
 		B33351E0207B01980036A448 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15214,7 +14762,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -15223,6 +14772,7 @@
 		B33351EC207B01C60036A448 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15248,7 +14798,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
@@ -15256,6 +14807,7 @@
 		B33351ED207B01C60036A448 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15275,7 +14827,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -15284,6 +14837,7 @@
 		B3335203207B020D0036A448 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15309,7 +14863,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
@@ -15317,6 +14872,7 @@
 		B3335204207B020D0036A448 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15336,7 +14892,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -15345,6 +14902,7 @@
 		B333524C207B02780036A448 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15370,7 +14928,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
@@ -15378,6 +14937,7 @@
 		B333524D207B02780036A448 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15397,7 +14957,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -15406,6 +14967,7 @@
 		B33352AE207B06550036A448 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15431,7 +14993,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
@@ -15439,6 +15002,7 @@
 		B33352AF207B06550036A448 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15458,7 +15022,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -15467,6 +15032,7 @@
 		B33352BB207B06620036A448 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15492,7 +15058,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
@@ -15500,6 +15067,7 @@
 		B33352BC207B06620036A448 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15519,7 +15087,8 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -15528,6 +15097,7 @@
 		B33352C8207B06740036A448 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15552,7 +15122,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
@@ -15560,6 +15131,7 @@
 		B33352C9207B06740036A448 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15579,7 +15151,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -15588,6 +15161,7 @@
 		B33352D5207B067F0036A448 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15612,7 +15186,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
@@ -15620,6 +15195,7 @@
 		B33352D6207B067F0036A448 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15638,7 +15214,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -15647,6 +15224,7 @@
 		B3335475207B1B500036A448 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15671,7 +15249,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
@@ -15679,6 +15258,7 @@
 		B3335476207B1B500036A448 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15697,7 +15277,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -15706,6 +15287,7 @@
 		B333549A207B1BF40036A448 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15730,7 +15312,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
@@ -15738,6 +15321,7 @@
 		B333549B207B1BF40036A448 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15756,7 +15340,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -15765,6 +15350,7 @@
 		B33354BB207B1C520036A448 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15789,7 +15375,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
@@ -15797,6 +15384,7 @@
 		B33354BC207B1C520036A448 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15815,7 +15403,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -15824,6 +15413,7 @@
 		B33354D2207B1D860036A448 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15848,7 +15438,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
@@ -15856,6 +15447,7 @@
 		B33354D3207B1D860036A448 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15874,7 +15466,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -15883,6 +15476,7 @@
 		B33355A9207B1E930036A448 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15908,7 +15502,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
@@ -15916,6 +15511,7 @@
 		B33355AA207B1E930036A448 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15938,7 +15534,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -15947,6 +15544,7 @@
 		B33355BF207B20420036A448 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15972,7 +15570,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
@@ -15980,6 +15579,7 @@
 		B33355C0207B20420036A448 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15999,7 +15599,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -16008,6 +15609,7 @@
 		B33355CE207B20BF0036A448 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -16032,7 +15634,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
@@ -16040,6 +15643,7 @@
 		B33355CF207B20BF0036A448 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -16062,7 +15666,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -16071,6 +15676,7 @@
 		B33355EB207B278F0036A448 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -16095,7 +15701,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
@@ -16103,6 +15710,7 @@
 		B33355EC207B278F0036A448 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -16121,7 +15729,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -16179,12 +15788,15 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator driverkit iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_INCLUDE_PATHS = "$(inherited) $(SRCROOT) \"$(SRCROOT)/PVMednafen\"";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/PVMednafen\"";
 				USE_HEADERMAP = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -16240,137 +15852,16 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator driverkit iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_INCLUDE_PATHS = "$(inherited) $(SRCROOT) \"$(SRCROOT)/PVMednafen\"";
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/PVMednafen\"";
 				USE_HEADERMAP = YES;
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		B340E4751E08888700AD0E8B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_SUSPICIOUS_MOVES = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
-				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/mednafen/src\"",
-				);
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					LSB_FIRST,
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = PVMednafen/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.27.1;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMednafen";
-				PRODUCT_NAME = PVMednafen;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_COMPILATION_MODE = singlefile;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/PVMednafen\"";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		B340E4761E08888700AD0E8B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_SUSPICIOUS_MOVES = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
-				ENABLE_NS_ASSERTIONS = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/mednafen/src\"",
-				);
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					LSB_FIRST,
-					"$(inherited)",
-				);
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = PVMednafen/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.27.1;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMednafen";
-				PRODUCT_NAME = PVMednafen;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/PVMednafen\"";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -16442,6 +15933,7 @@
 		B393F24E277C0BF70097F71C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -16467,7 +15959,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
@@ -16475,6 +15968,7 @@
 		B393F24F277C0BF70097F71C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -16495,7 +15989,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -16504,6 +15999,7 @@
 		B393F250277C0BF70097F71C /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -16524,7 +16020,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -16624,6 +16121,7 @@
 		B3FBDEFE207FF0E300E661D1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -16656,7 +16154,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
@@ -16664,6 +16163,7 @@
 		B3FBDEFF207FF0E300E661D1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -16690,7 +16190,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -16699,6 +16200,7 @@
 		B3FBDFA6207FF5D900E661D1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -16723,7 +16225,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
@@ -16731,6 +16234,7 @@
 		B3FBDFA7207FF5D900E661D1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -16749,7 +16253,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -16900,6 +16405,7 @@
 		C6E1B66B25AAC123007C3CF1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -16924,7 +16430,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
@@ -16932,6 +16439,7 @@
 		C6E1B66C25AAC123007C3CF1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -16950,7 +16458,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -16959,6 +16468,7 @@
 		C6E1B66D25AAC123007C3CF1 /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -16977,7 +16487,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -17506,22 +17017,12 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B340E4671E08887700AD0E8B /* Build configuration list for PBXNativeTarget "PVMednafen-iOS" */ = {
+		B340E4671E08887700AD0E8B /* Build configuration list for PBXNativeTarget "PVMednafen" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B340E4681E08887700AD0E8B /* Debug */,
 				B340E4691E08887700AD0E8B /* Release */,
 				B324C4D82191A22A009F4EDC /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B340E4741E08888700AD0E8B /* Build configuration list for PBXNativeTarget "PVMednafen-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B340E4751E08888700AD0E8B /* Debug */,
-				B340E4761E08888700AD0E8B /* Release */,
-				B324C4D92191A22A009F4EDC /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

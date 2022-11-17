@@ -330,28 +330,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         //			return
         //		}
 
-        do {
-            try core.loadFile(atPath: romPath.path)
-        } catch {
-            let alert = UIAlertController(title: error.localizedDescription, message: (error as NSError).localizedRecoverySuggestion, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
-                self.dismiss(animated: true, completion: nil)
-            }))
-            let code = (error as NSError).code
-            if code == PVEmulatorCoreErrorCode.missingM3U.rawValue {
-                alert.addAction(UIAlertAction(title: "View Wiki", style: .cancel, handler: { (_: UIAlertAction) -> Void in
-                    if let url = URL(string: "https://bitly.com/provm3u") {
-                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                    }
-                }))
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [weak self] in
-                self?.present(alert, animated: true) { () -> Void in }
-            })
-
-            return
-        }
-
         if UIScreen.screens.count > 1 {
             secondaryScreen = UIScreen.screens[1]
             if let aBounds = secondaryScreen?.bounds {
@@ -385,12 +363,35 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         hideOrShowMenuButton()
 
         convertOldSaveStatesToNewIfNeeded()
+        
+        do {
+            try core.loadFile(atPath: romPath.path)
+        } catch {
+            let alert = UIAlertController(title: error.localizedDescription, message: (error as NSError).localizedRecoverySuggestion, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
+                self.dismiss(animated: true, completion: nil)
+            }))
+            let code = (error as NSError).code
+            if code == PVEmulatorCoreErrorCode.missingM3U.rawValue {
+                alert.addAction(UIAlertAction(title: "View Wiki", style: .cancel, handler: { (_: UIAlertAction) -> Void in
+                    if let url = URL(string: "https://bitly.com/provm3u") {
+                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    }
+                }))
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [weak self] in
+                self?.present(alert, animated: true) { () -> Void in }
+            })
 
-        core.startEmulation()
+            return
+        }
 
         gameAudio.volume = PVSettingsModel.shared.volume
         gameAudio.outputDeviceID = 0
         gameAudio.start()
+        
+        core.startEmulation()
+
         #if os(tvOS)
         // On tvOS the siri-remotes menu-button will default to go back in the hierachy (thus dismissing the emulator), we don't want that behaviour
         // (we'd rather pause the game), so we just install a tap-recognizer here (that doesn't do anything), and add our own logic in `setupPauseHandler`
