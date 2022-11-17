@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -49,12 +49,9 @@
 		B3C9D4761DEA6DE80068D057 /* initstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE04E1ABE373800FF6AEF /* initstate.cpp */; };
 		B3C9D4771DEA6DE80068D057 /* makesinckernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0121ABE373800FF6AEF /* makesinckernel.cpp */; };
 		B3C9D4781DEA6DE80068D057 /* ppu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0871ABE373800FF6AEF /* ppu.cpp */; };
-		B3C9D49F1DEA6DFC0068D057 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AABE0C51ABE379500FF6AEF /* OpenGLES.framework */; platformFilter = ios; };
 		B3C9D4A11DEA6E0D0068D057 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AABE0C31ABE378D00FF6AEF /* Foundation.framework */; };
-		B3C9D4A21DEA6E120068D057 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AABE0C11ABE378800FF6AEF /* UIKit.framework */; platformFilters = (driverkit, ios, maccatalyst, tvos, watchos, ); };
 		B3C9D4AA1DEA730D0068D057 /* PVGBEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AABDFF81ABE373700FF6AEF /* PVGBEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3E4817720C7DE5C0061CF96 /* PVGBEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E4817620C7DE5C0061CF96 /* PVGBEmulatorCore.swift */; };
-		B3EA6C9529261AF500010224 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EA6C9429261AF500010224 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -219,10 +216,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B34AB55C2106D58F00C45F09 /* PVSupport.framework in Frameworks */,
-				B3C9D4A21DEA6E120068D057 /* UIKit.framework in Frameworks */,
 				B3C9D4A11DEA6E0D0068D057 /* Foundation.framework in Frameworks */,
-				B3EA6C9529261AF500010224 /* OpenGL.framework in Frameworks */,
-				B3C9D49F1DEA6DFC0068D057 /* OpenGLES.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -875,6 +869,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -923,6 +918,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -970,6 +966,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};

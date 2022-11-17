@@ -351,7 +351,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             }
             gpuViewController.didMove(toParent: self)
         }
-        #if os(iOS) && !targetEnvironment(macCatalyst)
+        #if os(iOS) && !targetEnvironment(macCatalyst) && !os(macOS)
             addControllerOverlay()
             initMenuButton()
         #endif

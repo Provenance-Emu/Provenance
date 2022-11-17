@@ -17,7 +17,7 @@
 //#import "mupen64plus-core/src/main/main.h"
 @import Dispatch;
 @import PVSupport;
-#if TARGET_OS_MACCATALYST
+#if TARGET_OS_MACCATALYST || TARGET_OS_OSX
 @import OpenGL.GL3;
 @import GLUT;
 #else

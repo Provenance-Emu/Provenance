@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B33355B7207B20420036A448"
-               BuildableName = "libquicklz-iOS.a"
-               BlueprintName = "quicklz-iOS"
+               BuildableName = "libquicklz.a"
+               BlueprintName = "quicklz"
                ReferencedContainer = "container:PVMednafen.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B33355B7207B20420036A448"
-            BuildableName = "libquicklz-iOS.a"
-            BlueprintName = "quicklz-iOS"
+            BuildableName = "libquicklz.a"
+            BlueprintName = "quicklz"
             ReferencedContainer = "container:PVMednafen.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

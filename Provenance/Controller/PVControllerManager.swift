@@ -210,7 +210,7 @@ final class PVControllerManager: NSObject {
             return
         }
 
-#if !targetEnvironment(macCatalyst) && canImport(SteamController)
+#if !targetEnvironment(macCatalyst) && canImport(SteamController)  && !os(macOS)
         if let steamController = controller as? SteamController {
             #if os(tvOS)
             // PVEmulatorViewController will set to controller mode if game is running
@@ -298,7 +298,7 @@ final class PVControllerManager: NSObject {
         listenForICadeControllers(window: nil) { () -> Void in }
     }
 
-#if !targetEnvironment(macCatalyst) && canImport(SteamController)
+#if !targetEnvironment(macCatalyst) && canImport(SteamController) && !os(macOS)
     func handleSteamControllerCombination(controller: SteamController, button: SteamControllerButton) {
         switch button {
         case .leftTrackpadClick:
@@ -418,7 +418,7 @@ final class PVControllerManager: NSObject {
         return false
     }
 
-#if !targetEnvironment(macCatalyst) && canImport(SteamController)
+#if !targetEnvironment(macCatalyst) && canImport(SteamController) && !os(macOS)
     func setSteamControllersMode(_ mode: SteamControllerMode) {
         for controller in SteamControllerManager.shared().controllers {
             controller.steamControllerMode = mode

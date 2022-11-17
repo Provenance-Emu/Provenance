@@ -9,9 +9,15 @@
 #import "PVVecXCore+Video.h"
 #import "PVVecXCore.h"
 
+#if !TARGET_OS_OSX
 #import <OpenGLES/ES3/glext.h>
 #import <OpenGLES/ES3/gl.h>
 #import <GLKit/GLKit.h>
+#else
+#import <OpenGL/OpenGL.h>
+#import <GLUT/GLUT.h>
+#import <GLKit/GLKit.h>
+#endif
 
 @implementation PVVecXCore (Video)
 

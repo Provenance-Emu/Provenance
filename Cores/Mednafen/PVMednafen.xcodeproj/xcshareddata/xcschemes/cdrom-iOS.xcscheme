@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B333546E207B1B500036A448"
-               BuildableName = "libcdrom-iOS.a"
-               BlueprintName = "cdrom-iOS"
+               BuildableName = "libcdrom.a"
+               BlueprintName = "cdrom"
                ReferencedContainer = "container:PVMednafen.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B333546E207B1B500036A448"
-            BuildableName = "libcdrom-iOS.a"
-            BlueprintName = "cdrom-iOS"
+            BuildableName = "libcdrom.a"
+            BlueprintName = "cdrom"
             ReferencedContainer = "container:PVMednafen.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

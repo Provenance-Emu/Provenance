@@ -6,7 +6,7 @@
 //  Copyright © 2016 James Addyman. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
 //! Project version number for PVGenesis.
 FOUNDATION_EXPORT double PVGenesisVersionNumber;

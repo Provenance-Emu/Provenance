@@ -9,6 +9,12 @@
 import Foundation
 import PVSupport
 import RealmSwift
+#if canImport(UIKit)
+import UIKit
+#else
+import AppKit
+import CoreGraphics
+#endif
 
 @objcMembers
 public final class PVImageFile: PVFile {
@@ -34,15 +40,25 @@ public final class PVImageFile: PVFile {
     }
 
     private func calculateSizeData() {
+        #if canImport(UIKit)
         guard let image = UIImage(contentsOfFile: url.path) else {
             ELOG("Failed to create UIImage from path <\(url.path)>")
             return
         }
+        #else
+        guard let image = NSImage(contentsOfFile: url.path) else {
+            ELOG("Failed to create UIImage from path <\(url.path)>")
+            return
+        }
+        #endif
 
         let size = image.size
+#if !os(macOS)
         cgsize = size
+#endif
     }
 
+#if !os(macOS)
     public private(set) var cgsize: CGSize {
         get {
             return NSCoder.cgSize(for: _cgsize)
@@ -55,4 +71,5 @@ public final class PVImageFile: PVFile {
             _cgsize = NSCoder.string(for: newValue)
         }
     }
+#endif
 }

@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "C6E1B65325AAC123007C3CF1"
-               BuildableName = "libsaturn-iOS.a"
-               BlueprintName = "saturn-iOS"
+               BuildableName = "libsaturn.a"
+               BlueprintName = "saturn"
                ReferencedContainer = "container:PVMednafen.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "C6E1B65325AAC123007C3CF1"
-            BuildableName = "libsaturn-iOS.a"
-            BlueprintName = "saturn-iOS"
+            BuildableName = "libsaturn.a"
+            BlueprintName = "saturn"
             ReferencedContainer = "container:PVMednafen.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

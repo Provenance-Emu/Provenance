@@ -6,6 +6,7 @@
 //  Copyright © 2018 Provenance Emu. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 final class PVSliderCell: SliderCell {
@@ -34,3 +35,4 @@ final class PVSliderCell: SliderCell {
         backgroundView = bg
     }
 }
+#endif

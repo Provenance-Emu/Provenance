@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B30178D2207C901D0051B93D"
-               BuildableName = "libreicast-iOS.a"
-               BlueprintName = "reicast-iOS"
+               BuildableName = "libreicast.a"
+               BlueprintName = "reicast"
                ReferencedContainer = "container:PVReicast.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B30178D2207C901D0051B93D"
-            BuildableName = "libreicast-iOS.a"
-            BlueprintName = "reicast-iOS"
+            BuildableName = "libreicast.a"
+            BlueprintName = "reicast"
             ReferencedContainer = "container:PVReicast.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

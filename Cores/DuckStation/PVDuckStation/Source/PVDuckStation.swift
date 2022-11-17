@@ -6,7 +6,7 @@
 //
 
 import PVSupport
-import UIKit
+import Foundation
 
 extension PVDuckStationCore: DiscSwappable {
     public var numberOfDiscs: UInt {

@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B33354B3207B1C520036A448"
-               BuildableName = "libvideo-iOS.a"
-               BlueprintName = "video-iOS"
+               BuildableName = "libvideo.a"
+               BlueprintName = "video"
                ReferencedContainer = "container:PVMednafen.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B33354B3207B1C520036A448"
-            BuildableName = "libvideo-iOS.a"
-            BlueprintName = "video-iOS"
+            BuildableName = "libvideo.a"
+            BlueprintName = "video"
             ReferencedContainer = "container:PVMednafen.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

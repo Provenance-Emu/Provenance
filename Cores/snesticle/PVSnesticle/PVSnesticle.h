@@ -5,7 +5,7 @@
 //  Created by Joseph Mattiello on 01/22/22.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
 //! Project version number for PVSnesticle.
 FOUNDATION_EXPORT double PVSnesticleVersionNumber;

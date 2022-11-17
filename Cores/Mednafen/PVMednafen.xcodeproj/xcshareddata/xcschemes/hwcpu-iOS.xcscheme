@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B33352C0207B06730036A448"
-               BuildableName = "libhwcpu-iOS.a"
-               BlueprintName = "hwcpu-iOS"
+               BuildableName = "libhwcpu.a"
+               BlueprintName = "hwcpu"
                ReferencedContainer = "container:PVMednafen.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B33352C0207B06730036A448"
-            BuildableName = "libhwcpu-iOS.a"
-            BlueprintName = "hwcpu-iOS"
+            BuildableName = "libhwcpu.a"
+            BlueprintName = "hwcpu"
             ReferencedContainer = "container:PVMednafen.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

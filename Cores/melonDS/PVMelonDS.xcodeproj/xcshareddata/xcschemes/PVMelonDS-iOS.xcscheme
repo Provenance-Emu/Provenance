@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C7620F20783162009950E4"
                BuildableName = "PVMelonDS.framework"
-               BlueprintName = "PVMelonDS-iOS"
+               BlueprintName = "PVMelonDS"
                ReferencedContainer = "container:PVMelonDS.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -52,7 +52,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C7620F20783162009950E4"
             BuildableName = "PVMelonDS.framework"
-            BlueprintName = "PVMelonDS-iOS"
+            BlueprintName = "PVMelonDS"
             ReferencedContainer = "container:PVMelonDS.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

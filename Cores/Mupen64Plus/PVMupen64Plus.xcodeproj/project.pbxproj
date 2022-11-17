@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -13,7 +13,7 @@
 		B316B4EB219275A800693472 /* RiceVideoLinux.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3A302912073F2AA008C1955 /* RiceVideoLinux.ini */; };
 		B324C62B21920BC2009F4EDC /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E811DED272E00896D96 /* libz.tbd */; };
 		B324C62F21920BDA009F4EDC /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EA447B206E10C700E608F6 /* OpenGLES.framework */; platformFilter = ios; };
-		B324C63121920BDB009F4EDC /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EA447B206E10C700E608F6 /* OpenGLES.framework */; platformFilter = ios; };
+		B324C63121920BDB009F4EDC /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EA447B206E10C700E608F6 /* OpenGLES.framework */; platformFilters = (ios, tvos, watchos, ); };
 		B3274E8B2106C19600857F52 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3055BEE20730B60001212D2 /* PVSupport.framework */; };
 		B3303E381DED20CF00896D96 /* PVMupen64PlusVideoRice.h in Headers */ = {isa = PBXBuildFile; fileRef = B37EFEF21C72E63300857158 /* PVMupen64PlusVideoRice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3303E6C1DED23EE00896D96 /* example.c in Sources */ = {isa = PBXBuildFile; fileRef = B3303E5B1DED23EE00896D96 /* example.c */; };
@@ -48,7 +48,7 @@
 		B36EF438279C55A4005C7ED4 /* asm_defines.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A092072FEE9001212D2 /* asm_defines.c */; };
 		B37263BE26EA1EF000E95488 /* PVMupen64PlusRspHLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8601DECEA9100602746 /* PVMupen64PlusRspHLE.framework */; };
 		B37263C226EA1EF000E95488 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFB601802038AD13001E70F1 /* PVMupen64PlusVideoGlideN64.framework */; };
-		B37263C626EA1EF000E95488 /* PVMupen64PlusVideoRice.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37EFEF01C72E63300857158 /* PVMupen64PlusVideoRice.framework */; platformFilter = ios; };
+		B37263C626EA1EF000E95488 /* PVMupen64PlusVideoRice.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37EFEF01C72E63300857158 /* PVMupen64PlusVideoRice.framework */; platformFilters = (ios, tvos, watchos, ); };
 		B37263CA26EA1EF000E95488 /* PVRSPCXD4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B331158C1C7309C200E9AD14 /* PVRSPCXD4.framework */; };
 		B37EFF231C72E6CD00857158 /* SDLStubs.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D00F0801183E52F002995A1 /* SDLStubs.m */; };
 		B37EFF861C72F47000857158 /* MupenGameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D208F811182B00300BEAA42 /* MupenGameCore.m */; };
@@ -72,9 +72,9 @@
 		B38010152085586900FA03B8 /* libglidenhq.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3800FF5208522DC00FA03B8 /* libglidenhq.a */; };
 		B3882C141DED279C007183B6 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E4C1DED23C600896D96 /* libpng.a */; };
 		B395ECFA2904B49F00C9407B /* MupenGameCore+Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = B395ECF92904B49F00C9407B /* MupenGameCore+Resources.swift */; };
-		B3962AEC26FBD89A00FAEFC0 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */; platformFilter = maccatalyst; };
-		B3962AED26FBD8A500FAEFC0 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */; platformFilter = maccatalyst; };
-		B3962AEE26FBD8F100FAEFC0 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */; platformFilter = maccatalyst; };
+		B3962AEC26FBD89A00FAEFC0 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
+		B3962AED26FBD8A500FAEFC0 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
+		B3962AEE26FBD8F100FAEFC0 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		B3963E61279E835300B00117 /* MupenGameCore+Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3963E60279E835300B00117 /* MupenGameCore+Audio.swift */; };
 		B3963E64279E867100B00117 /* MupenGameCore+Video.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3963E63279E866B00B00117 /* MupenGameCore+Video.swift */; };
 		B39C29D127A120790078D028 /* MupenGameCore+Controls.m in Sources */ = {isa = PBXBuildFile; fileRef = B39C29D027A120780078D028 /* MupenGameCore+Controls.m */; };
@@ -279,12 +279,12 @@
 		B3C83E21279618AD0020824C /* hvqm.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C83E20279618A30020824C /* hvqm.c */; };
 		B3C83E23279619400020824C /* ucodes.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AE1F2820733D3500AD06D4 /* ucodes.h */; };
 		B3CB4B21206E54D20074706B /* Log_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3CB4B20206E54D10074706B /* Log_ios.mm */; };
-		B3EA447C206E10C700E608F6 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EA447B206E10C700E608F6 /* OpenGLES.framework */; platformFilter = ios; };
+		B3EA447C206E10C700E608F6 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EA447B206E10C700E608F6 /* OpenGLES.framework */; platformFilters = (ios, tvos, watchos, ); };
 		B3EA4483206E309A00E608F6 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E811DED272E00896D96 /* libz.tbd */; };
 		B3EA448B206E471200E608F6 /* RSP_LoadMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB602AF2038AE7A001E70F1 /* RSP_LoadMatrix.cpp */; };
 		B3EA448D206E473300E608F6 /* CRC_OPT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603912038AE7D001E70F1 /* CRC_OPT.cpp */; };
 		B3EA448F206E473F00E608F6 /* 3DMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603292038AE7B001E70F1 /* 3DMath.cpp */; };
-		B3F2058326FBCBC600A4196B /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F2058226FBCBC600A4196B /* OpenGL.framework */; platformFilter = maccatalyst; };
+		B3F2058326FBCBC600A4196B /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F2058226FBCBC600A4196B /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		DF0035C0203C8F6E00F63831 /* GLideN64.custom.ini in Resources */ = {isa = PBXBuildFile; fileRef = DFB601CA2038AE78001E70F1 /* GLideN64.custom.ini */; };
 		DF0035C1203C8F6E00F63831 /* GLideN64.ini in Resources */ = {isa = PBXBuildFile; fileRef = DFB601CB2038AE78001E70F1 /* GLideN64.ini */; };
 		DFB601842038AD13001E70F1 /* PVMupen64PlusVideoGlideN64.h in Headers */ = {isa = PBXBuildFile; fileRef = DFB601822038AD13001E70F1 /* PVMupen64PlusVideoGlideN64.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -4654,7 +4654,11 @@
 		};
 		B37263C926EA1EF000E95488 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
+			platformFilters = (
+				ios,
+				tvos,
+				watchos,
+			);
 			target = B37EFEEF1C72E63300857158 /* PVMupen64PlusVideoRice */;
 			targetProxy = B37263C826EA1EF000E95488 /* PBXContainerItemProxy */;
 		};

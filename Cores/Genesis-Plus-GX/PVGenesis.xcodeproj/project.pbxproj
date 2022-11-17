@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -111,7 +111,6 @@
 		B36700AD2896293700F75595 /* sms_ntsc.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7DD17F752600031B1C9 /* sms_ntsc.c */; };
 		B36700AE2896293700F75595 /* state.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7F017F752600031B1C9 /* state.c */; };
 		B36700AF2896293700F75595 /* sms_cart.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6F517F752600031B1C9 /* sms_cart.c */; };
-		B367015C289629B000F75595 /* libgenesisPlusGX-legacy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B367007B2896290E00F75595 /* libgenesisPlusGX-legacy.a */; };
 		B367016828962BC900F75595 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FECC289627AD00F75595 /* libretro.c */; };
 		B367016928962BCA00F75595 /* scrc32.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FF10289627AD00F75595 /* scrc32.c */; };
 		B367016C28962C8B00F75595 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA85B17F752610031B1C9 /* libretro.c */; };
@@ -119,9 +118,8 @@
 		B37302DE1DE7DB1B00D0B366 /* PVGenesisEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA86817F752610031B1C9 /* PVGenesisEmulatorCore.m */; };
 		B373033A1DE7DB6F00D0B366 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6E117F751590031B1C9 /* CoreGraphics.framework */; };
 		B373033B1DE7DB7300D0B366 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6DD17F751380031B1C9 /* AudioToolbox.framework */; };
-		B373033C1DE7DB7A00D0B366 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6DB17F751320031B1C9 /* OpenGLES.framework */; platformFilter = ios; };
-		B373033D1DE7DB8300D0B366 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6D917F7512B0031B1C9 /* UIKit.framework */; platformFilters = (driverkit, ios, maccatalyst, tvos, watchos, ); };
 		B373033E1DE7DB8800D0B366 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6AF17F74D150031B1C9 /* Foundation.framework */; };
+		B381A27629262E6600305322 /* libgenesisPlusGX-legacy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B367007B2896290E00F75595 /* libgenesisPlusGX-legacy.a */; };
 		B3A9F4201DE7EB67008450F5 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F41F1DE7EB67008450F5 /* libz.tbd */; };
 		B3A9F4221DE7F5F2008450F5 /* libretro.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA85C17F752610031B1C9 /* libretro.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A9F4241DE7F606008450F5 /* PVGenesisEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA86717F752610031B1C9 /* PVGenesisEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -133,16 +131,6 @@
 		C66E09532586D47000EA6170 /* xe_1ap.h in Headers */ = {isa = PBXBuildFile; fileRef = C66E09502586D47000EA6170 /* xe_1ap.h */; };
 		C66E09582586D66000EA6170 /* graphic_board.h in Headers */ = {isa = PBXBuildFile; fileRef = C66E09562586D65F00EA6170 /* graphic_board.h */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		B367015D289629B000F75595 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1ACEA6A417F74D140031B1C9 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B36700402896290E00F75595;
-			remoteInfo = "genesisPlusGX-legacy-iOS";
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		B3670001289627E800F75595 /* CopyFiles */ = {
@@ -877,13 +865,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B381A27629262E6600305322 /* libgenesisPlusGX-legacy.a in Frameworks */,
 				B324C63621920D6D009F4EDC /* PVSupport.framework in Frameworks */,
 				B3A9F4201DE7EB67008450F5 /* libz.tbd in Frameworks */,
 				B373033E1DE7DB8800D0B366 /* Foundation.framework in Frameworks */,
-				B373033D1DE7DB8300D0B366 /* UIKit.framework in Frameworks */,
-				B373033C1DE7DB7A00D0B366 /* OpenGLES.framework in Frameworks */,
 				B373033B1DE7DB7300D0B366 /* AudioToolbox.framework in Frameworks */,
-				B367015C289629B000F75595 /* libgenesisPlusGX-legacy.a in Frameworks */,
 				B373033A1DE7DB6F00D0B366 /* CoreGraphics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2303,7 +2289,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				B367015E289629B000F75595 /* PBXTargetDependency */,
 			);
 			name = PVGenesis;
 			productName = PVGenesis;
@@ -2492,14 +2477,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		B367015E289629B000F75595 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B36700402896290E00F75595 /* genesisPlusGX-legacy */;
-			targetProxy = B367015D289629B000F75595 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1ACEA6CD17F74D150031B1C9 /* Debug */ = {
@@ -2707,6 +2684,7 @@
 		B324C51B2191A3E4009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -2743,7 +2721,7 @@
 				PRODUCT_NAME = PVGenesis;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator driverkit iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
@@ -2756,6 +2734,7 @@
 		B367000A289627E800F75595 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -2780,6 +2759,8 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -2787,6 +2768,7 @@
 		B367000B289627E800F75595 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -2808,6 +2790,8 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -2815,6 +2799,7 @@
 		B367000C289627E800F75595 /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -2836,6 +2821,8 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Archive;
@@ -2843,6 +2830,7 @@
 		B36700782896290E00F75595 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -2868,6 +2856,8 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -2875,6 +2865,7 @@
 		B36700792896290E00F75595 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -2897,6 +2888,8 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -2904,6 +2897,7 @@
 		B367007A2896290E00F75595 /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -2926,6 +2920,8 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Archive;
@@ -2933,6 +2929,7 @@
 		B3E4320A1DE6917700D3C91E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -2968,7 +2965,7 @@
 				PRODUCT_NAME = PVGenesis;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator driverkit iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -2982,6 +2979,7 @@
 		B3E4320B1DE6917700D3C91E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -3018,7 +3016,7 @@
 				PRODUCT_NAME = PVGenesis;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator driverkit iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;

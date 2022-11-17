@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C7620F20783162009950E4"
                BuildableName = "PVEP128Emu.framework"
-               BlueprintName = "PVEP128Emu-iOS"
+               BlueprintName = "PVEP128Emu"
                ReferencedContainer = "container:PVEP128Emu.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -52,7 +52,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C7620F20783162009950E4"
             BuildableName = "PVEP128Emu.framework"
-            BlueprintName = "PVEP128Emu-iOS"
+            BlueprintName = "PVEP128Emu"
             ReferencedContainer = "container:PVEP128Emu.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

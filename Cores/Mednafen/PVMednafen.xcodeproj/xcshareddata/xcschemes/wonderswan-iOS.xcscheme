@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3335061207AFD3D0036A448"
-               BuildableName = "libwonderswan-iOS.a"
-               BlueprintName = "wonderswan-iOS"
+               BuildableName = "libwonderswan.a"
+               BlueprintName = "wonderswan"
                ReferencedContainer = "container:PVMednafen.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3335061207AFD3D0036A448"
-            BuildableName = "libwonderswan-iOS.a"
-            BlueprintName = "wonderswan-iOS"
+            BuildableName = "libwonderswan.a"
+            BlueprintName = "wonderswan"
             ReferencedContainer = "container:PVMednafen.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

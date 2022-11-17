@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C7620F20783162009950E4"
                BuildableName = "PVGME.framework"
-               BlueprintName = "PVGME-iOS"
+               BlueprintName = "PVGME"
                ReferencedContainer = "container:PVGME.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -52,7 +52,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C7620F20783162009950E4"
             BuildableName = "PVGME.framework"
-            BlueprintName = "PVGME-iOS"
+            BlueprintName = "PVGME"
             ReferencedContainer = "container:PVGME.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

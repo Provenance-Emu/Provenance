@@ -38,9 +38,6 @@
             location = "group:Cores/O2EM/PVO2EM.xcodeproj">
          </FileRef>
          <FileRef
-            location = "group:Cores/O2EM/PVO2EM.xcodeproj">
-         </FileRef>
-         <FileRef
             location = "group:Cores/Play/PVPlayCore.xcodeproj">
          </FileRef>
          <FileRef

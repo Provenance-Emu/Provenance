@@ -9,7 +9,7 @@
 import Foundation
 import PVSupport
 
-#if targetEnvironment(macCatalyst)
+#if canImport(OpenGL)
 import OpenGL
 import GLUT
 #else

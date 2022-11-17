@@ -50,12 +50,16 @@
 //#import "mupen64plus-core/src/main/main.h"
 @import Dispatch;
 @import PVSupport;
-#if TARGET_OS_MACCATALYST
+#if TARGET_OS_MACCATALYST || TARGET_OS_OSX
 @import OpenGL.GL3;
 @import GLUT;
 #else
 @import OpenGLES.ES3;
 @import GLKit;
+#endif
+
+#if __has_include(<UIKit/UIKit.h>)
+#import <UIKit/UIKit.h>
 #endif
 
 #if TARGET_OS_MAC
@@ -159,6 +163,7 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
 }
 
 -(void)calculateSize {
+#if !TARGET_OS_OSX
     if(RESIZE_TO_FULLSCREEN) {
         CGSize size = UIApplication.sharedApplication.keyWindow.bounds.size;
         float widthScale = size.width / WIDTHf;
@@ -175,6 +180,10 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
         _videoWidth  = WIDTH;
         _videoHeight = HEIGHT;
     }
+#else
+    _videoWidth  = WIDTH;
+    _videoHeight = HEIGHT;
+#endif
 }
 
 -(void)detachCoreLib {
@@ -485,6 +494,7 @@ static void *dlopen_myself()
         return NO;
     }
 
+#if !TARGET_OS_OSX
     if(RESIZE_TO_FULLSCREEN) {
         UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
         if(keyWindow != nil) {
@@ -498,6 +508,7 @@ static void *dlopen_myself()
             [self tryToResizeVideoTo:CGSizeMake(widthScaled, heightScaled)];
         }
     }
+#endif
 
 	// Setup configs
 	ConfigureAll(romFolder);

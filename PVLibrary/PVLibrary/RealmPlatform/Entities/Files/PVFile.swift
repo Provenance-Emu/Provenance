@@ -9,7 +9,9 @@
 import Foundation
 import PVSupport
 import RealmSwift
+#if canImport(UIKit)
 import UIKit
+#endif
 
 public enum RelativeRoot: Int {
     case documents

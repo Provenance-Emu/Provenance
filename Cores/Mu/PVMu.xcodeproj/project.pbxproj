@@ -21,22 +21,8 @@
 		B3231BFC289666CE003CC116 /* dbvz.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682F42895F86E003E465F /* dbvz.c */; };
 		B3231BFD289666CE003CC116 /* ads7846.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682C62895F86E003E465F /* ads7846.c */; };
 		B3231BFE289666CE003CC116 /* m5XXBus.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682C72895F86E003E465F /* m5XXBus.c */; };
-		B3231BFF289666CE003CC116 /* w86l488.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682C32895F86E003E465F /* w86l488.c */; };
-		B3231C00289666CE003CC116 /* sdCard.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683012895F86E003E465F /* sdCard.c */; };
-		B3231C01289666CE003CC116 /* silkscreen.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682FE2895F86E003E465F /* silkscreen.c */; };
-		B3231C02289666CE003CC116 /* tps65010.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682E22895F86E003E465F /* tps65010.c */; };
-		B3231C03289666CE003CC116 /* emulator.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683022895F86E003E465F /* emulator.c */; };
-		B3231C04289666CE003CC116 /* tsc2101.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682C52895F86E003E465F /* tsc2101.c */; };
-		B3231C05289666CE003CC116 /* pdiUsbD12.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682F82895F86E003E465F /* pdiUsbD12.c */; };
-		B3231C06289666CE003CC116 /* flx68000.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683002895F86E003E465F /* flx68000.c */; };
-		B3231C07289666CE003CC116 /* sed1376.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682FF2895F86E003E465F /* sed1376.c */; };
-		B3231C08289666CE003CC116 /* dbvz.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682F42895F86E003E465F /* dbvz.c */; };
-		B3231C09289666CE003CC116 /* ads7846.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682C62895F86E003E465F /* ads7846.c */; };
-		B3231C0A289666CE003CC116 /* m5XXBus.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682C72895F86E003E465F /* m5XXBus.c */; };
 		B3231C0B289666E2003CC116 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B306819C2895F86B003E465F /* libretro.c */; };
 		B3231C0C289666E2003CC116 /* cursors.c in Sources */ = {isa = PBXBuildFile; fileRef = B306819D2895F86B003E465F /* cursors.c */; };
-		B3231C0D289666E3003CC116 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B306819C2895F86B003E465F /* libretro.c */; };
-		B3231C0E289666E3003CC116 /* cursors.c in Sources */ = {isa = PBXBuildFile; fileRef = B306819D2895F86B003E465F /* cursors.c */; };
 		B3231C0F28966754003CC116 /* pxa260_TIMR.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682E42895F86E003E465F /* pxa260_TIMR.c */; };
 		B3231C1028966754003CC116 /* pxa260I2c.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682EE2895F86E003E465F /* pxa260I2c.c */; };
 		B3231C1128966754003CC116 /* pxa260_RTC.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682ED2895F86E003E465F /* pxa260_RTC.c */; };
@@ -52,79 +38,34 @@
 		B3231C1B28966754003CC116 /* pxa260_UART.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682F12895F86E003E465F /* pxa260_UART.c */; };
 		B3231C1C28966754003CC116 /* pxa260Ssp.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682F32895F86E003E465F /* pxa260Ssp.c */; };
 		B3231C1D28966754003CC116 /* pxa260Udc.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682E92895F86E003E465F /* pxa260Udc.c */; };
-		B3231C1E28966754003CC116 /* pxa260_TIMR.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682E42895F86E003E465F /* pxa260_TIMR.c */; };
-		B3231C1F28966754003CC116 /* pxa260I2c.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682EE2895F86E003E465F /* pxa260I2c.c */; };
-		B3231C2028966754003CC116 /* pxa260_RTC.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682ED2895F86E003E465F /* pxa260_RTC.c */; };
-		B3231C2128966754003CC116 /* pxa260Timing.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682EB2895F86E003E465F /* pxa260Timing.c */; };
-		B3231C2228966754003CC116 /* pxa260Memctrl.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682F22895F86E003E465F /* pxa260Memctrl.c */; };
-		B3231C2328966754003CC116 /* pxa260.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682EF2895F86E003E465F /* pxa260.c */; };
-		B3231C2428966754003CC116 /* pxa260_GPIO.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682E82895F86E003E465F /* pxa260_GPIO.c */; };
-		B3231C2528966754003CC116 /* pxa260_DSP.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682F02895F86E003E465F /* pxa260_DSP.c */; };
-		B3231C2628966754003CC116 /* pxa260_IC.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682E72895F86E003E465F /* pxa260_IC.c */; };
-		B3231C2728966754003CC116 /* pxa260_PwrClk.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682EA2895F86E003E465F /* pxa260_PwrClk.c */; };
-		B3231C2828966754003CC116 /* pxa260_LCD.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682EC2895F86E003E465F /* pxa260_LCD.c */; };
-		B3231C2928966754003CC116 /* pxa260_DMA.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682E62895F86E003E465F /* pxa260_DMA.c */; };
-		B3231C2A28966754003CC116 /* pxa260_UART.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682F12895F86E003E465F /* pxa260_UART.c */; };
-		B3231C2B28966754003CC116 /* pxa260Ssp.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682F32895F86E003E465F /* pxa260Ssp.c */; };
-		B3231C2C28966754003CC116 /* pxa260Udc.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682E92895F86E003E465F /* pxa260Udc.c */; };
 		B3231C2D28966761003CC116 /* m68kopnz.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682C22895F86E003E465F /* m68kopnz.c */; };
 		B3231C2E28966761003CC116 /* m68kdasm.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682BE2895F86E003E465F /* m68kdasm.c */; };
 		B3231C2F28966761003CC116 /* m68kopac.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682BF2895F86E003E465F /* m68kopac.c */; };
 		B3231C3028966761003CC116 /* m68kopdm.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682C12895F86E003E465F /* m68kopdm.c */; };
 		B3231C3128966761003CC116 /* m68kcpu.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682BD2895F86E003E465F /* m68kcpu.c */; };
 		B3231C3228966761003CC116 /* m68kops.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682C02895F86E003E465F /* m68kops.c */; };
-		B3231C3328966762003CC116 /* m68kopnz.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682C22895F86E003E465F /* m68kopnz.c */; };
-		B3231C3428966762003CC116 /* m68kdasm.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682BE2895F86E003E465F /* m68kdasm.c */; };
-		B3231C3528966762003CC116 /* m68kopac.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682BF2895F86E003E465F /* m68kopac.c */; };
-		B3231C3628966762003CC116 /* m68kopdm.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682C12895F86E003E465F /* m68kopdm.c */; };
-		B3231C3728966762003CC116 /* m68kcpu.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682BD2895F86E003E465F /* m68kcpu.c */; };
-		B3231C3828966762003CC116 /* m68kops.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682C02895F86E003E465F /* m68kops.c */; };
 		B3231C3928966769003CC116 /* launcher.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682FD2895F86E003E465F /* launcher.c */; };
-		B3231C3A28966769003CC116 /* launcher.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682FD2895F86E003E465F /* launcher.c */; };
 		B3231C3B2896676F003CC116 /* blip_buf.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682F72895F86E003E465F /* blip_buf.c */; };
-		B3231C3C28966770003CC116 /* blip_buf.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682F72895F86E003E465F /* blip_buf.c */; };
 		B3231C3D28966791003CC116 /* mmu.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682E02895F86E003E465F /* mmu.c */; };
 		B3231C3E28966791003CC116 /* disasm.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682CC2895F86E003E465F /* disasm.c */; };
 		B3231C3F28966791003CC116 /* mem.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682CE2895F86E003E465F /* mem.c */; };
 		B3231C4028966791003CC116 /* emuVarPool.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682D62895F86E003E465F /* emuVarPool.c */; };
 		B3231C4128966791003CC116 /* asmcode.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682DF2895F86E003E465F /* asmcode.c */; };
-		B3231C4228966792003CC116 /* mmu.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682E02895F86E003E465F /* mmu.c */; };
-		B3231C4328966792003CC116 /* disasm.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682CC2895F86E003E465F /* disasm.c */; };
-		B3231C4428966792003CC116 /* mem.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682CE2895F86E003E465F /* mem.c */; };
-		B3231C4528966792003CC116 /* emuVarPool.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682D62895F86E003E465F /* emuVarPool.c */; };
-		B3231C4628966792003CC116 /* asmcode.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682DF2895F86E003E465F /* asmcode.c */; };
 		B3231C4728966828003CC116 /* translate_aarch64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B30682D02895F86E003E465F /* translate_aarch64.cpp */; };
-		B3231C4828966829003CC116 /* translate_aarch64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B30682D02895F86E003E465F /* translate_aarch64.cpp */; };
-		B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C31B2191964F009F4EDC /* AVFoundation.framework */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
-		B3447ECD218BEDD200557ACE /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
-		B3447ECE218BEDD200557ACE /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
-		B3447ED0218BEDD200557ACE /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
-		B3447ED1218BEDD200557ACE /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
-		B3447ED3218BEDD200557ACE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
-		B3447ED4218BEDD200557ACE /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
-		B37022C72872553D00B3F6DA /* PVMuCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B37022C6287253B300B3F6DA /* PVMuCore.mm */; };
 		B37022C82872553E00B3F6DA /* PVMuCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B37022C6287253B300B3F6DA /* PVMuCore.mm */; };
 		B37022C92872554300B3F6DA /* PVMuCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C5287253B300B3F6DA /* PVMuCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B37022CA2872554300B3F6DA /* PVMuCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C5287253B300B3F6DA /* PVMuCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B37022CB2872556600B3F6DA /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B37022BF287253B300B3F6DA /* Core.plist */; };
-		B37022CC2872556600B3F6DA /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B37022BF287253B300B3F6DA /* Core.plist */; };
 		B37022CD2872558F00B3F6DA /* PVMu.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVMu.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B37022CE2872558F00B3F6DA /* PVMu.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVMu.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B39768F82859E23200558958 /* libmu-libretro-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libmu-libretro-iOS.a */; };
-		B39768FB2859E23A00558958 /* libmu-libretro-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B39768F72859E18B00558958 /* libmu-libretro-tvOS.a */; };
 		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
 		B3A41BEE286E76330054E9A5 /* PVLibRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3A41BF0286E76490054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */; };
-		B3A41BF1286E76490054E9A5 /* PVLibRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3B104AF218F26F400210C39 /* libmu-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3447F91218BEE3F00557ACE /* libmu-tvOS.a */; };
-		B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B104B8218F281B00210C39 /* PVSupport.framework */; };
-		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
+		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilter = ios; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
 /* End PBXBuildFile section */
@@ -136,13 +77,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = B3344B522859E088006E6B3A;
 			remoteInfo = "dos-box-libretro-iOS";
-		};
-		B39768FC2859E23A00558958 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3C7620720783162009950E4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B39768ED2859E18B00558958;
-			remoteInfo = "dos-box-libretro-tvOS";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -165,24 +99,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3447F8D218BEE3F00557ACE /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B39768F22859E18B00558958 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B397691F2859FDF000558958 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -190,17 +106,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				B3A41BEE286E76330054E9A5 /* PVLibRetro.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3A41BF2286E76490054E9A5 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				B3A41BF1286E76490054E9A5 /* PVLibRetro.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -571,8 +476,6 @@
 		B339468820783F41008DBAB4 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = usr/lib/libpthread.tbd; sourceTree = SDKROOT; };
 		B339468A20783F48008DBAB4 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
-		B3447EE6218BEDD200557ACE /* PVMu.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMu.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3447F91218BEE3F00557ACE /* libmu-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libmu-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B35E6BEF207CD2610040709A /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		B35E6BF1207CD2670040709A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
@@ -584,7 +487,6 @@
 		B37022C1287253B300B3F6DA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B37022C5287253B300B3F6DA /* PVMuCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVMuCore.h; sourceTree = "<group>"; };
 		B37022C6287253B300B3F6DA /* PVMuCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVMuCore.mm; sourceTree = "<group>"; };
-		B39768F72859E18B00558958 /* libmu-libretro-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libmu-libretro-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39769132859E3A300558958 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39769172859E3AD00558958 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B39769182859E3AD00558958 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -606,38 +508,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B3344BBD2859E088006E6B3A /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3447ECA218BEDD200557ACE /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */,
-				B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */,
-				B3B104AF218F26F400210C39 /* libmu-tvOS.a in Frameworks */,
-				B39768FB2859E23A00558958 /* libmu-libretro-tvOS.a in Frameworks */,
-				B3447ECD218BEDD200557ACE /* CoreAudio.framework in Frameworks */,
-				B3447ECE218BEDD200557ACE /* AudioToolbox.framework in Frameworks */,
-				B3447ED0218BEDD200557ACE /* libz.tbd in Frameworks */,
-				B3A41BF0286E76490054E9A5 /* PVLibRetro.framework in Frameworks */,
-				B3447ED1218BEDD200557ACE /* libpthread.tbd in Frameworks */,
-				B3447ED3218BEDD200557ACE /* Foundation.framework in Frameworks */,
-				B3447ED4218BEDD200557ACE /* OpenGLES.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3447F8C218BEE3F00557ACE /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B39768F12859E18B00558958 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1603,10 +1473,7 @@
 			children = (
 				B3C7621020783162009950E4 /* PVMu.framework */,
 				B30178D3207C901D0051B93D /* libmu-iOS.a */,
-				B3447EE6218BEDD200557ACE /* PVMu.framework */,
-				B3447F91218BEE3F00557ACE /* libmu-tvOS.a */,
 				B3344BC32859E088006E6B3A /* libmu-libretro-iOS.a */,
-				B39768F72859E18B00558958 /* libmu-libretro-tvOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1639,15 +1506,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		B3447ED5218BEDD200557ACE /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B37022CE2872558F00B3F6DA /* PVMu.h in Headers */,
-				B37022CA2872554300B3F6DA /* PVMuCore.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C7620D20783162009950E4 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -1660,9 +1518,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		B30178D2207C901D0051B93D /* mu-iOS */ = {
+		B30178D2207C901D0051B93D /* mu */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "mu-iOS" */;
+			buildConfigurationList = B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "mu" */;
 			buildPhases = (
 				B30178CF207C901D0051B93D /* Sources */,
 				B30178D0207C901D0051B93D /* Frameworks */,
@@ -1672,14 +1530,14 @@
 			);
 			dependencies = (
 			);
-			name = "mu-iOS";
+			name = mu;
 			productName = reicast;
 			productReference = B30178D3207C901D0051B93D /* libmu-iOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B3344B522859E088006E6B3A /* mu-libretro-iOS */ = {
+		B3344B522859E088006E6B3A /* mu-libretro */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "mu-libretro-iOS" */;
+			buildConfigurationList = B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "mu-libretro" */;
 			buildPhases = (
 				B3344B532859E088006E6B3A /* Sources */,
 				B3344BBD2859E088006E6B3A /* Frameworks */,
@@ -1689,68 +1547,14 @@
 			);
 			dependencies = (
 			);
-			name = "mu-libretro-iOS";
+			name = "mu-libretro";
 			productName = reicast;
 			productReference = B3344BC32859E088006E6B3A /* libmu-libretro-iOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B3447EC0218BEDD200557ACE /* PVMu-tvOS */ = {
+		B3C7620F20783162009950E4 /* PVMu */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3447EE3218BEDD200557ACE /* Build configuration list for PBXNativeTarget "PVMu-tvOS" */;
-			buildPhases = (
-				B3447EC1218BEDD200557ACE /* Sources */,
-				B3447ECA218BEDD200557ACE /* Frameworks */,
-				B3447ED5218BEDD200557ACE /* Headers */,
-				B3447EDF218BEDD200557ACE /* Resources */,
-				B3A41BF2286E76490054E9A5 /* Embed Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B39768FD2859E23A00558958 /* PBXTargetDependency */,
-			);
-			name = "PVMu-tvOS";
-			productName = PVReicast;
-			productReference = B3447EE6218BEDD200557ACE /* PVMu.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		B3447EE8218BEE3F00557ACE /* mu-tvOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B3447F8E218BEE3F00557ACE /* Build configuration list for PBXNativeTarget "mu-tvOS" */;
-			buildPhases = (
-				B3447EE9218BEE3F00557ACE /* Sources */,
-				B3447F8C218BEE3F00557ACE /* Frameworks */,
-				B3447F8D218BEE3F00557ACE /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "mu-tvOS";
-			productName = reicast;
-			productReference = B3447F91218BEE3F00557ACE /* libmu-tvOS.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		B39768ED2859E18B00558958 /* mu-libretro-tvOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B39768F32859E18B00558958 /* Build configuration list for PBXNativeTarget "mu-libretro-tvOS" */;
-			buildPhases = (
-				B39768EE2859E18B00558958 /* Sources */,
-				B39768F12859E18B00558958 /* Frameworks */,
-				B39768F22859E18B00558958 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "mu-libretro-tvOS";
-			productName = reicast;
-			productReference = B39768F72859E18B00558958 /* libmu-libretro-tvOS.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		B3C7620F20783162009950E4 /* PVMu-iOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVMu-iOS" */;
+			buildConfigurationList = B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVMu" */;
 			buildPhases = (
 				B3C7620B20783162009950E4 /* Sources */,
 				B3C7620C20783162009950E4 /* Frameworks */,
@@ -1763,7 +1567,7 @@
 			dependencies = (
 				B39768FA2859E23200558958 /* PBXTargetDependency */,
 			);
-			name = "PVMu-iOS";
+			name = PVMu;
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVMu.framework */;
 			productType = "com.apple.product-type.framework";
@@ -1812,25 +1616,14 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B3C7620F20783162009950E4 /* PVMu-iOS */,
-				B3447EC0218BEDD200557ACE /* PVMu-tvOS */,
-				B3344B522859E088006E6B3A /* mu-libretro-iOS */,
-				B39768ED2859E18B00558958 /* mu-libretro-tvOS */,
-				B30178D2207C901D0051B93D /* mu-iOS */,
-				B3447EE8218BEE3F00557ACE /* mu-tvOS */,
+				B3C7620F20783162009950E4 /* PVMu */,
+				B3344B522859E088006E6B3A /* mu-libretro */,
+				B30178D2207C901D0051B93D /* mu */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		B3447EDF218BEDD200557ACE /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B37022CC2872556600B3F6DA /* Core.plist in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C7620E20783162009950E4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1899,71 +1692,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3447EC1218BEDD200557ACE /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B37022C72872553D00B3F6DA /* PVMuCore.mm in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3447EE9218BEE3F00557ACE /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3231C2C28966754003CC116 /* pxa260Udc.c in Sources */,
-				B3231C2528966754003CC116 /* pxa260_DSP.c in Sources */,
-				B3231C3628966762003CC116 /* m68kopdm.c in Sources */,
-				B3231C4528966792003CC116 /* emuVarPool.c in Sources */,
-				B3231C3A28966769003CC116 /* launcher.c in Sources */,
-				B3231C01289666CE003CC116 /* silkscreen.c in Sources */,
-				B3231C2A28966754003CC116 /* pxa260_UART.c in Sources */,
-				B3231C07289666CE003CC116 /* sed1376.c in Sources */,
-				B3231C2728966754003CC116 /* pxa260_PwrClk.c in Sources */,
-				B3231C2B28966754003CC116 /* pxa260Ssp.c in Sources */,
-				B3231C3728966762003CC116 /* m68kcpu.c in Sources */,
-				B3231C2428966754003CC116 /* pxa260_GPIO.c in Sources */,
-				B3231C3528966762003CC116 /* m68kopac.c in Sources */,
-				B3231C3428966762003CC116 /* m68kdasm.c in Sources */,
-				B3231C03289666CE003CC116 /* emulator.c in Sources */,
-				B3231C09289666CE003CC116 /* ads7846.c in Sources */,
-				B3231C2928966754003CC116 /* pxa260_DMA.c in Sources */,
-				B3231C2828966754003CC116 /* pxa260_LCD.c in Sources */,
-				B3231C04289666CE003CC116 /* tsc2101.c in Sources */,
-				B3231C1F28966754003CC116 /* pxa260I2c.c in Sources */,
-				B3231C3C28966770003CC116 /* blip_buf.c in Sources */,
-				B3231C1E28966754003CC116 /* pxa260_TIMR.c in Sources */,
-				B3231C4628966792003CC116 /* asmcode.c in Sources */,
-				B3231C4228966792003CC116 /* mmu.c in Sources */,
-				B3231C2628966754003CC116 /* pxa260_IC.c in Sources */,
-				B3231C06289666CE003CC116 /* flx68000.c in Sources */,
-				B3231C2328966754003CC116 /* pxa260.c in Sources */,
-				B3231C4328966792003CC116 /* disasm.c in Sources */,
-				B3231C2128966754003CC116 /* pxa260Timing.c in Sources */,
-				B3231C4828966829003CC116 /* translate_aarch64.cpp in Sources */,
-				B3231C4428966792003CC116 /* mem.c in Sources */,
-				B3231C08289666CE003CC116 /* dbvz.c in Sources */,
-				B3231C3328966762003CC116 /* m68kopnz.c in Sources */,
-				B3231C00289666CE003CC116 /* sdCard.c in Sources */,
-				B3231C02289666CE003CC116 /* tps65010.c in Sources */,
-				B3231BFF289666CE003CC116 /* w86l488.c in Sources */,
-				B3231C2028966754003CC116 /* pxa260_RTC.c in Sources */,
-				B3231C0A289666CE003CC116 /* m5XXBus.c in Sources */,
-				B3231C05289666CE003CC116 /* pdiUsbD12.c in Sources */,
-				B3231C3828966762003CC116 /* m68kops.c in Sources */,
-				B3231C2228966754003CC116 /* pxa260Memctrl.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B39768EE2859E18B00558958 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3231C0D289666E3003CC116 /* libretro.c in Sources */,
-				B3231C0E289666E3003CC116 /* cursors.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C7620B20783162009950E4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1977,13 +1705,8 @@
 /* Begin PBXTargetDependency section */
 		B39768FA2859E23200558958 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3344B522859E088006E6B3A /* mu-libretro-iOS */;
+			target = B3344B522859E088006E6B3A /* mu-libretro */;
 			targetProxy = B39768F92859E23200558958 /* PBXContainerItemProxy */;
-		};
-		B39768FD2859E23A00558958 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B39768ED2859E18B00558958 /* mu-libretro-tvOS */;
-			targetProxy = B39768FC2859E23A00558958 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1991,6 +1714,7 @@
 		B30178DA207C901D0051B93D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -2003,6 +1727,8 @@
 				PRODUCT_NAME = "mu-iOS";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -2010,6 +1736,7 @@
 		B30178DB207C901D0051B93D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -2022,6 +1749,8 @@
 				PRODUCT_NAME = "mu-iOS";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -2117,6 +1846,7 @@
 		B324C5022191A2A2009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -2144,47 +1874,16 @@
 				PRODUCT_NAME = PVMu;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Archive;
-		};
-		B324C5032191A2A2009F4EDC /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-				);
-				INFOPLIST_FILE = "$(SRCROOT)/PVMu/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMu";
-				PRODUCT_NAME = PVMu;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
 			};
 			name = Archive;
 		};
 		B324C5042191A2A2009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -2197,33 +1896,16 @@
 				PRODUCT_NAME = "mu-iOS";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Archive;
-		};
-		B324C5052191A2A2009F4EDC /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
-				PRODUCT_NAME = "mu-tvOS";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
 			};
 			name = Archive;
 		};
 		B3344BC02859E088006E6B3A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -2236,6 +1918,8 @@
 				PRODUCT_NAME = "mu-libretro-iOS";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -2243,6 +1927,7 @@
 		B3344BC12859E088006E6B3A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -2255,6 +1940,8 @@
 				PRODUCT_NAME = "mu-libretro-iOS";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -2262,6 +1949,7 @@
 		B3344BC22859E088006E6B3A /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -2274,175 +1962,9 @@
 				PRODUCT_NAME = "mu-libretro-iOS";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Archive;
-		};
-		B3447EE4218BEDD200557ACE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-				);
-				INFOPLIST_FILE = "$(SRCROOT)/PVMu/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMu";
-				PRODUCT_NAME = PVMu;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Debug;
-		};
-		B3447EE5218BEDD200557ACE /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-				);
-				INFOPLIST_FILE = "$(SRCROOT)/PVMu/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMu";
-				PRODUCT_NAME = PVMu;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Release;
-		};
-		B3447F8F218BEE3F00557ACE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
-				PRODUCT_NAME = "mu-tvOS";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Debug;
-		};
-		B3447F90218BEE3F00557ACE /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
-				PRODUCT_NAME = "mu-tvOS";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Release;
-		};
-		B39768F42859E18B00558958 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
-				PRODUCT_NAME = "mu-libretro-tvOS";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Debug;
-		};
-		B39768F52859E18B00558958 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
-				PRODUCT_NAME = "mu-libretro-tvOS";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Release;
-		};
-		B39768F62859E18B00558958 /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
-				);
-				PRODUCT_NAME = "mu-libretro-tvOS";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
 			};
 			name = Archive;
 		};
@@ -2613,6 +2135,7 @@
 		B3C7621920783162009950E4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -2640,6 +2163,8 @@
 				PRODUCT_NAME = PVMu;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -2647,6 +2172,7 @@
 		B3C7621A20783162009950E4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -2674,6 +2200,8 @@
 				PRODUCT_NAME = PVMu;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -2681,7 +2209,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "mu-iOS" */ = {
+		B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "mu" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B30178DA207C901D0051B93D /* Debug */,
@@ -2691,42 +2219,12 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "mu-libretro-iOS" */ = {
+		B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "mu-libretro" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3344BC02859E088006E6B3A /* Debug */,
 				B3344BC12859E088006E6B3A /* Release */,
 				B3344BC22859E088006E6B3A /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B3447EE3218BEDD200557ACE /* Build configuration list for PBXNativeTarget "PVMu-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B3447EE4218BEDD200557ACE /* Debug */,
-				B3447EE5218BEDD200557ACE /* Release */,
-				B324C5032191A2A2009F4EDC /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B3447F8E218BEE3F00557ACE /* Build configuration list for PBXNativeTarget "mu-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B3447F8F218BEE3F00557ACE /* Debug */,
-				B3447F90218BEE3F00557ACE /* Release */,
-				B324C5052191A2A2009F4EDC /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B39768F32859E18B00558958 /* Build configuration list for PBXNativeTarget "mu-libretro-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B39768F42859E18B00558958 /* Debug */,
-				B39768F52859E18B00558958 /* Release */,
-				B39768F62859E18B00558958 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -2741,7 +2239,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVMu-iOS" */ = {
+		B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVMu" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3C7621920783162009950E4 /* Debug */,

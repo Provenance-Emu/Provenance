@@ -90,7 +90,6 @@
 		B391F30427C172B600730B53 /* vidblit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB37C27C09C5B0012118D /* vidblit.cpp */; };
 		B39E8CB320539B2500380DCD /* PVFCEUEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39E8CB220539B2500380DCD /* PVFCEUEmulatorCore.swift */; };
 		B3A9F43A1DE877B4008450F5 /* PVFCEU.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A9F4381DE877B4008450F5 /* PVFCEU.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3A9F44F1DE87827008450F5 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3A79AF1ABF1D41002274A3 /* OpenGLES.framework */; platformFilter = ios; };
 		B3A9F4501DE87833008450F5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3A79AE1ABF1D41002274A3 /* Foundation.framework */; };
 		B3A9F4931DE87E09008450F5 /* PVFCEUEmulatorCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A79AC1ABF1CE8002274A3 /* PVFCEUEmulatorCore.mm */; };
 		B3A9F6311DE883FC008450F5 /* PVFCEUEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3A79AB1ABF1CE8002274A3 /* PVFCEUEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1898,7 +1897,6 @@
 				B3A9F6331DE88425008450F5 /* libz.tbd in Frameworks */,
 				B3341F7E27C1B2CF00E001C6 /* libfceux-netplay-server.a in Frameworks */,
 				B3A9F4501DE87833008450F5 /* Foundation.framework in Frameworks */,
-				B3A9F44F1DE87827008450F5 /* OpenGLES.framework in Frameworks */,
 				B3AAF66827C0A95C001CAE1F /* libfceux.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4549,6 +4547,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 				WARNING_CFLAGS = (
@@ -4745,6 +4744,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 				WARNING_CFLAGS = (
@@ -4805,6 +4805,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 				WARNING_CFLAGS = (

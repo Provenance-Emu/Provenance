@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -11,9 +11,7 @@
 		B3547B542058587300CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B532058587300CFF7D8 /* Core.plist */; };
 		B3AF47E121072B63002211EE /* vba-over.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47E021072B63002211EE /* vba-over.ini */; };
 		B3C9D4BC1DEA77DF0068D057 /* PVGBA.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C9D4BA1DEA77DF0068D057 /* PVGBA.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C9D4D91DEA78210068D057 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A9FBE161ABD1B46004E778B /* OpenGLES.framework */; platformFilter = ios; };
 		B3C9D4DA1DEA782C0068D057 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A9FBE0A1ABD1289004E778B /* Foundation.framework */; };
-		B3C9D4DB1DEA78310068D057 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A9FBE141ABD1B41004E778B /* UIKit.framework */; platformFilters = (driverkit, ios, maccatalyst, tvos, watchos, ); };
 		B3C9D4DC1DEA78550068D057 /* GBA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC9A1ABD0FEF004E778B /* GBA.cpp */; };
 		B3C9D4DD1DEA78550068D057 /* Effects_Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC411ABD0FEF004E778B /* Effects_Buffer.cpp */; };
 		B3C9D4DE1DEA78550068D057 /* EEprom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC921ABD0FEF004E778B /* EEprom.cpp */; };
@@ -157,9 +155,7 @@
 			files = (
 				B324C63921920DAC009F4EDC /* PVSupport.framework in Frameworks */,
 				B3C9D5271DEA7C410068D057 /* libz.tbd in Frameworks */,
-				B3C9D4DB1DEA78310068D057 /* UIKit.framework in Frameworks */,
 				B3C9D4DA1DEA782C0068D057 /* Foundation.framework in Frameworks */,
-				B3C9D4D91DEA78210068D057 /* OpenGLES.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -672,6 +668,7 @@
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -722,6 +719,7 @@
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -772,6 +770,7 @@
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};

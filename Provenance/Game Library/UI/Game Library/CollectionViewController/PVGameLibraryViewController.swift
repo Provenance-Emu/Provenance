@@ -877,7 +877,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             // show alert view
             showServerActiveAlert()
         } else {
-			#if targetEnvironment(simulator) || targetEnvironment(macCatalyst)
+			#if targetEnvironment(simulator) || targetEnvironment(macCatalyst) || os(macOS)
 			let message = "Check your network connection or settings and free up ports: 8080, 8081."
 			#else
 			let message = "Check your network connection or settings and free up ports: 80, 81."

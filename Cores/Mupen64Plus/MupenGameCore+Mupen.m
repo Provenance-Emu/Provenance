@@ -2,7 +2,10 @@
 #import "MupenGameCore+Controls.h"
 #import <PVMupen64Plus/PVMupen64Plus-Swift.h>
 
+#if __has_include(<UIKit/UIKit.h>)
 @import UIKit.UIWindow;
+#else
+#endif
 
 #import "api/config.h"
 #import "api/m64p_common.h"
@@ -186,6 +189,7 @@ void ConfigureVideoGeneral() {
 
     int screenWidth = WIDTH;
     int screenHeight = HEIGHT;
+#if __has_include(<UIKit/UIKit.h>)
     if(RESIZE_TO_FULLSCREEN) {
         CGSize size = UIApplication.sharedApplication.keyWindow.bounds.size;
         float widthScale = floor(size.height / WIDTHf);
@@ -194,6 +198,7 @@ void ConfigureVideoGeneral() {
         screenWidth =  scale * WIDTHf;
         screenHeight = scale * HEIGHTf;
     }
+#endif
 
     // Screen width
     ConfigSetParameter(general, "ScreenWidth", M64TYPE_INT, &screenWidth);

@@ -11,10 +11,7 @@
 		B3135B9B26E4CAD40047F338 /* PVDosBoxCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVDosBoxCore.mm */; };
 		B3135B9C26E4CC290047F338 /* PVDosBoxCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVDosBoxCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3135BA126E4CC620047F338 /* PVDosBox.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVDosBox.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3135BA226E4CC650047F338 /* PVDosBox.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVDosBox.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3135BA326E4CD080047F338 /* PVDosBoxCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVDosBoxCore.mm */; };
 		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
-		B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C31B2191964F009F4EDC /* AVFoundation.framework */; };
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		B3344A802859D5CF006E6B3A /* core_normal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A1A2859D566006E6B3A /* core_normal.cpp */; };
 		B3344A812859D5CF006E6B3A /* dosbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A502859D566006E6B3A /* dosbox.cpp */; };
@@ -121,143 +118,21 @@
 		B3344AE62859D5FF006E6B3A /* shell_cmds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A4E2859D566006E6B3A /* shell_cmds.cpp */; };
 		B3344AE72859D5FF006E6B3A /* shell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A4F2859D566006E6B3A /* shell.cpp */; };
 		B3344AE82859D5FF006E6B3A /* shell_batch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A4C2859D566006E6B3A /* shell_batch.cpp */; };
-		B3344AE92859D664006E6B3A /* int10_pal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A6A2859D566006E6B3A /* int10_pal.cpp */; };
-		B3344AEA2859D664006E6B3A /* gus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449C92859D566006E6B3A /* gus.cpp */; };
-		B3344AEB2859D664006E6B3A /* dos_keyboard_layout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449FA2859D566006E6B3A /* dos_keyboard_layout.cpp */; };
-		B3344AEC2859D664006E6B3A /* vga.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449EB2859D566006E6B3A /* vga.cpp */; };
-		B3344AED2859D664006E6B3A /* drive_virtual.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449FE2859D566006E6B3A /* drive_virtual.cpp */; };
-		B3344AEE2859D664006E6B3A /* shell_cmds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A4E2859D566006E6B3A /* shell_cmds.cpp */; };
-		B3344AEF2859D664006E6B3A /* bios_keyboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A792859D566006E6B3A /* bios_keyboard.cpp */; };
-		B3344AF02859D664006E6B3A /* render_scalers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A5A2859D566006E6B3A /* render_scalers.cpp */; };
-		B3344AF12859D664006E6B3A /* keyboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449E92859D566006E6B3A /* keyboard.cpp */; };
-		B3344AF22859D664006E6B3A /* messages.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449B32859D566006E6B3A /* messages.cpp */; };
-		B3344AF32859D664006E6B3A /* bios_disk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A7A2859D566006E6B3A /* bios_disk.cpp */; };
-		B3344AF42859D664006E6B3A /* core_prefetch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A2B2859D566006E6B3A /* core_prefetch.cpp */; };
-		B3344AF52859D664006E6B3A /* vga_crtc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449DC2859D566006E6B3A /* vga_crtc.cpp */; };
-		B3344AF62859D664006E6B3A /* core_full.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A392859D566006E6B3A /* core_full.cpp */; };
-		B3344AF72859D664006E6B3A /* fpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A7E2859D566006E6B3A /* fpu.cpp */; };
-		B3344AF82859D664006E6B3A /* int10.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A702859D566006E6B3A /* int10.cpp */; };
-		B3344AF92859D664006E6B3A /* int10_char.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A6E2859D566006E6B3A /* int10_char.cpp */; };
-		B3344AFA2859D664006E6B3A /* dos_classes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A012859D566006E6B3A /* dos_classes.cpp */; };
-		B3344AFB2859D664006E6B3A /* callback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A1C2859D566006E6B3A /* callback.cpp */; };
-		B3344AFC2859D664006E6B3A /* serialport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449DF2859D566006E6B3A /* serialport.cpp */; };
-		B3344AFD2859D664006E6B3A /* vga_s3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449ED2859D566006E6B3A /* vga_s3.cpp */; };
-		B3344AFE2859D664006E6B3A /* drive_overlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449F62859D566006E6B3A /* drive_overlay.cpp */; };
-		B3344AFF2859D664006E6B3A /* vga_memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449BA2859D566006E6B3A /* vga_memory.cpp */; };
-		B3344B002859D664006E6B3A /* core_dynrec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A212859D566006E6B3A /* core_dynrec.cpp */; };
-		B3344B012859D664006E6B3A /* modrm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A202859D566006E6B3A /* modrm.cpp */; };
-		B3344B022859D664006E6B3A /* int10_vesa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A6B2859D566006E6B3A /* int10_vesa.cpp */; };
-		B3344B032859D664006E6B3A /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449BB2859D566006E6B3A /* memory.cpp */; };
-		B3344B042859D664006E6B3A /* vga_xga.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449D32859D566006E6B3A /* vga_xga.cpp */; };
-		B3344B052859D664006E6B3A /* int10_memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A752859D566006E6B3A /* int10_memory.cpp */; };
-		B3344B062859D664006E6B3A /* vga_paradise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449E72859D566006E6B3A /* vga_paradise.cpp */; };
-		B3344B072859D664006E6B3A /* dbopl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449DD2859D566006E6B3A /* dbopl.cpp */; };
-		B3344B082859D664006E6B3A /* int10_modes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A722859D566006E6B3A /* int10_modes.cpp */; };
-		B3344B092859D664006E6B3A /* render.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A542859D566006E6B3A /* render.cpp */; };
-		B3344B0A2859D664006E6B3A /* drive_cache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449F02859D566006E6B3A /* drive_cache.cpp */; };
-		B3344B0B2859D664006E6B3A /* shell_batch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A4C2859D566006E6B3A /* shell_batch.cpp */; };
-		B3344B0C2859D664006E6B3A /* core_simple.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A1E2859D566006E6B3A /* core_simple.cpp */; };
-		B3344B0D2859D664006E6B3A /* drive_iso.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A0B2859D566006E6B3A /* drive_iso.cpp */; };
-		B3344B0E2859D664006E6B3A /* cross.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449B52859D566006E6B3A /* cross.cpp */; };
-		B3344B0F2859D664006E6B3A /* xms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A732859D566006E6B3A /* xms.cpp */; };
-		B3344B102859D664006E6B3A /* vga_tseng.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449D52859D566006E6B3A /* vga_tseng.cpp */; };
-		B3344B112859D664006E6B3A /* cmos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449D72859D566006E6B3A /* cmos.cpp */; };
-		B3344B122859D664006E6B3A /* iohandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449D42859D566006E6B3A /* iohandler.cpp */; };
-		B3344B132859D664006E6B3A /* dos_files.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449F12859D566006E6B3A /* dos_files.cpp */; };
-		B3344B142859D664006E6B3A /* drive_fat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A0D2859D566006E6B3A /* drive_fat.cpp */; };
-		B3344B152859D664006E6B3A /* shell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A4F2859D566006E6B3A /* shell.cpp */; };
-		B3344B162859D664006E6B3A /* dos_ioctl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449F32859D566006E6B3A /* dos_ioctl.cpp */; };
-		B3344B172859D664006E6B3A /* drive_zip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449F72859D566006E6B3A /* drive_zip.cpp */; };
-		B3344B182859D664006E6B3A /* dma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449BE2859D566006E6B3A /* dma.cpp */; };
-		B3344B192859D664006E6B3A /* sn76496.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449C32859D566006E6B3A /* sn76496.cpp */; };
-		B3344B1A2859D664006E6B3A /* mpu401.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449E82859D566006E6B3A /* mpu401.cpp */; };
-		B3344B1B2859D664006E6B3A /* midi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A572859D566006E6B3A /* midi.cpp */; };
-		B3344B1C2859D664006E6B3A /* support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449B72859D566006E6B3A /* support.cpp */; };
-		B3344B1D2859D664006E6B3A /* int10_put_pixel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A6C2859D566006E6B3A /* int10_put_pixel.cpp */; };
-		B3344B1E2859D664006E6B3A /* programs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449B62859D566006E6B3A /* programs.cpp */; };
-		B3344B1F2859D664006E6B3A /* dos_programs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449FB2859D566006E6B3A /* dos_programs.cpp */; };
-		B3344B202859D664006E6B3A /* shell_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A4D2859D566006E6B3A /* shell_misc.cpp */; };
-		B3344B212859D664006E6B3A /* cdrom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449F42859D566006E6B3A /* cdrom.cpp */; };
-		B3344B222859D664006E6B3A /* vga_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449EC2859D566006E6B3A /* vga_misc.cpp */; };
-		B3344B232859D664006E6B3A /* adlib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449D62859D566006E6B3A /* adlib.cpp */; };
-		B3344B242859D664006E6B3A /* gameblaster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449CA2859D566006E6B3A /* gameblaster.cpp */; };
-		B3344B252859D664006E6B3A /* cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A382859D566006E6B3A /* cpu.cpp */; };
-		B3344B262859D664006E6B3A /* tandy_sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449CE2859D566006E6B3A /* tandy_sound.cpp */; };
-		B3344B272859D664006E6B3A /* nukedopl3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449D82859D566006E6B3A /* nukedopl3.cpp */; };
-		B3344B282859D664006E6B3A /* int10_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A712859D566006E6B3A /* int10_misc.cpp */; };
-		B3344B292859D664006E6B3A /* core_normal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A1A2859D566006E6B3A /* core_normal.cpp */; };
-		B3344B2A2859D664006E6B3A /* int10_video_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A742859D566006E6B3A /* int10_video_state.cpp */; };
-		B3344B2B2859D664006E6B3A /* vga_gfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449D02859D566006E6B3A /* vga_gfx.cpp */; };
-		B3344B2C2859D664006E6B3A /* saa1099.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449C22859D566006E6B3A /* saa1099.cpp */; };
-		B3344B2D2859D664006E6B3A /* timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449C62859D566006E6B3A /* timer.cpp */; };
-		B3344B2E2859D664006E6B3A /* dosbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A502859D566006E6B3A /* dosbox.cpp */; };
-		B3344B2F2859D664006E6B3A /* bios.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A692859D566006E6B3A /* bios.cpp */; };
-		B3344B302859D664006E6B3A /* dos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A0A2859D566006E6B3A /* dos.cpp */; };
-		B3344B312859D664006E6B3A /* pic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449B92859D566006E6B3A /* pic.cpp */; };
-		B3344B322859D664006E6B3A /* pci_bus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449C52859D566006E6B3A /* pci_bus.cpp */; };
-		B3344B332859D664006E6B3A /* drive_local.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A0F2859D566006E6B3A /* drive_local.cpp */; };
-		B3344B342859D664006E6B3A /* dos_memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449FD2859D566006E6B3A /* dos_memory.cpp */; };
-		B3344B352859D664006E6B3A /* drive_memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A092859D566006E6B3A /* drive_memory.cpp */; };
-		B3344B362859D664006E6B3A /* setup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449B42859D566006E6B3A /* setup.cpp */; };
-		B3344B372859D664006E6B3A /* joystick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449EA2859D566006E6B3A /* joystick.cpp */; };
-		B3344B382859D664006E6B3A /* disney.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449D12859D566006E6B3A /* disney.cpp */; };
-		B3344B392859D664006E6B3A /* pcspeaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449DA2859D566006E6B3A /* pcspeaker.cpp */; };
-		B3344B3A2859D664006E6B3A /* dos_execute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A062859D566006E6B3A /* dos_execute.cpp */; };
-		B3344B3B2859D664006E6B3A /* int10_vptable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A782859D566006E6B3A /* int10_vptable.cpp */; };
-		B3344B3C2859D664006E6B3A /* mouse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A6D2859D566006E6B3A /* mouse.cpp */; };
-		B3344B3D2859D664006E6B3A /* drive_union.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A002859D566006E6B3A /* drive_union.cpp */; };
-		B3344B3E2859D664006E6B3A /* ems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A6F2859D566006E6B3A /* ems.cpp */; };
-		B3344B3F2859D664006E6B3A /* paging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A1F2859D566006E6B3A /* paging.cpp */; };
-		B3344B402859D664006E6B3A /* vga_other.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449BD2859D566006E6B3A /* vga_other.cpp */; };
-		B3344B412859D664006E6B3A /* dos_mscdex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449F92859D566006E6B3A /* dos_mscdex.cpp */; };
-		B3344B422859D664006E6B3A /* vga_draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449CB2859D566006E6B3A /* vga_draw.cpp */; };
-		B3344B432859D664006E6B3A /* vga_dac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449D92859D566006E6B3A /* vga_dac.cpp */; };
-		B3344B442859D664006E6B3A /* dos_devices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A072859D566006E6B3A /* dos_devices.cpp */; };
-		B3344B452859D664006E6B3A /* dbp_serialize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A7B2859D566006E6B3A /* dbp_serialize.cpp */; };
-		B3344B462859D664006E6B3A /* core_dyn_x86.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A372859D566006E6B3A /* core_dyn_x86.cpp */; };
-		B3344B472859D664006E6B3A /* sblaster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449CD2859D566006E6B3A /* sblaster.cpp */; };
-		B3344B482859D664006E6B3A /* dos_tables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449F22859D566006E6B3A /* dos_tables.cpp */; };
-		B3344B492859D664006E6B3A /* flags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A112859D566006E6B3A /* flags.cpp */; };
-		B3344B4A2859D664006E6B3A /* dos_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A0C2859D566006E6B3A /* dos_misc.cpp */; };
-		B3344B4B2859D664006E6B3A /* hardware.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449BC2859D566006E6B3A /* hardware.cpp */; };
-		B3344B4C2859D664006E6B3A /* vga_attr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449D22859D566006E6B3A /* vga_attr.cpp */; };
-		B3344B4D2859D664006E6B3A /* vga_seq.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449EE2859D566006E6B3A /* vga_seq.cpp */; };
-		B3344B4E2859D664006E6B3A /* mixer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449C72859D566006E6B3A /* mixer.cpp */; };
-		B3344B4F2859D664006E6B3A /* cdrom_image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449F52859D566006E6B3A /* cdrom_image.cpp */; };
-		B3344B502859D664006E6B3A /* drives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3344A052859D566006E6B3A /* drives.cpp */; };
-		B3344B512859D664006E6B3A /* serialdummy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449E42859D566006E6B3A /* serialdummy.cpp */; };
 		B3344BC42859E0C0006E6B3A /* dosbox_pure_libretro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33448CE2859D566006E6B3A /* dosbox_pure_libretro.cpp */; };
 		B3344BC52859E0E5006E6B3A /* keyb2joypad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449B02859D566006E6B3A /* keyb2joypad.cpp */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
-		B3423262286EBB4B0033EFA5 /* PVDosBoxCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVDosBoxCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3447ECD218BEDD200557ACE /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
-		B3447ECE218BEDD200557ACE /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
-		B3447ED0218BEDD200557ACE /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
-		B3447ED1218BEDD200557ACE /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
-		B3447ED3218BEDD200557ACE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
-		B3447ED4218BEDD200557ACE /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
-		B3447EE2218BEDD200557ACE /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
-		B39768EF2859E18B00558958 /* dosbox_pure_libretro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33448CE2859D566006E6B3A /* dosbox_pure_libretro.cpp */; };
-		B39768F02859E18B00558958 /* keyb2joypad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33449B02859D566006E6B3A /* keyb2joypad.cpp */; };
 		B39768F82859E23200558958 /* libdos-box-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libdos-box-libretro.a */; };
-		B39768FB2859E23A00558958 /* libdos-box-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B39768F72859E18B00558958 /* libdos-box-libretro.a */; };
 		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
-		B3A41BF0286E76490054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */; };
-		B3B104AF218F26F400210C39 /* libdos-box.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3447F91218BEE3F00557ACE /* libdos-box.a */; };
-		B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B104B8218F281B00210C39 /* PVSupport.framework */; };
-		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
+		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilter = ios; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
-		B3C8A65E2877D62F0037A946 /* PVDosBoxCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVDosBoxCore+Controls.mm */; };
 		B3C8A65F2877D6350037A946 /* PVDosBoxCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVDosBoxCore+Controls.mm */; };
-		B3C8A6602877D6510037A946 /* PVDosBoxCore+Video.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVDosBoxCore+Video.m */; };
 		B3C8A6612877D6B30037A946 /* PVDosBoxCore+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVDosBoxCore+Audio.m */; };
-		B3C8A6622877D6B40037A946 /* PVDosBoxCore+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVDosBoxCore+Audio.m */; };
 		B3EBB2032872B65700EAEB37 /* PVDosBoxCore+Video.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVDosBoxCore+Video.m */; };
 /* End PBXBuildFile section */
 
@@ -268,13 +143,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = B3344B522859E088006E6B3A;
 			remoteInfo = "dos-box-libretro-iOS";
-		};
-		B39768FC2859E23A00558958 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3C7620720783162009950E4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B39768ED2859E18B00558958;
-			remoteInfo = "dos-box-libretro-tvOS";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -289,24 +157,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B3344BBE2859E088006E6B3A /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3447F8D218BEE3F00557ACE /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B39768F22859E18B00558958 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "include/$(PRODUCT_NAME)";
@@ -600,14 +450,11 @@
 		B3447EB1218BC69700557ACE /* PVDosBoxCore+Audio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVDosBoxCore+Audio.h"; sourceTree = "<group>"; };
 		B3447EB2218BC69700557ACE /* PVDosBoxCore+Audio.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVDosBoxCore+Audio.m"; sourceTree = "<group>"; };
 		B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
-		B3447EE6218BEDD200557ACE /* PVDosBox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVDosBox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3447F91218BEE3F00557ACE /* libdos-box.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libdos-box.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B35E6BEF207CD2610040709A /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		B35E6BF1207CD2670040709A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
 		B35E6BF4207CD2740040709A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
-		B39768F72859E18B00558958 /* libdos-box-libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libdos-box-libretro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39769132859E3A300558958 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39769172859E3AD00558958 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B39769182859E3AD00558958 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -634,38 +481,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B3344BBD2859E088006E6B3A /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3447ECA218BEDD200557ACE /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */,
-				B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */,
-				B3B104AF218F26F400210C39 /* libdos-box.a in Frameworks */,
-				B39768FB2859E23A00558958 /* libdos-box-libretro.a in Frameworks */,
-				B3447ECD218BEDD200557ACE /* CoreAudio.framework in Frameworks */,
-				B3447ECE218BEDD200557ACE /* AudioToolbox.framework in Frameworks */,
-				B3447ED0218BEDD200557ACE /* libz.tbd in Frameworks */,
-				B3A41BF0286E76490054E9A5 /* PVLibRetro.framework in Frameworks */,
-				B3447ED1218BEDD200557ACE /* libpthread.tbd in Frameworks */,
-				B3447ED3218BEDD200557ACE /* Foundation.framework in Frameworks */,
-				B3447ED4218BEDD200557ACE /* OpenGLES.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3447F8C218BEE3F00557ACE /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B39768F12859E18B00558958 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1202,10 +1017,7 @@
 			children = (
 				B3C7621020783162009950E4 /* PVDosBox.framework */,
 				B30178D3207C901D0051B93D /* libdos-box.a */,
-				B3447EE6218BEDD200557ACE /* PVDosBox.framework */,
-				B3447F91218BEE3F00557ACE /* libdos-box.a */,
 				B3344BC32859E088006E6B3A /* libdos-box-libretro.a */,
-				B39768F72859E18B00558958 /* libdos-box-libretro.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1258,15 +1070,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		B3447ED5218BEDD200557ACE /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3423262286EBB4B0033EFA5 /* PVDosBoxCore.h in Headers */,
-				B3135BA226E4CC650047F338 /* PVDosBox.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C7620D20783162009950E4 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -1279,9 +1082,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		B30178D2207C901D0051B93D /* dos-box-iOS */ = {
+		B30178D2207C901D0051B93D /* dos-box */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "dos-box-iOS" */;
+			buildConfigurationList = B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "dos-box" */;
 			buildPhases = (
 				B30178CF207C901D0051B93D /* Sources */,
 				B30178D0207C901D0051B93D /* Frameworks */,
@@ -1291,14 +1094,14 @@
 			);
 			dependencies = (
 			);
-			name = "dos-box-iOS";
+			name = "dos-box";
 			productName = reicast;
 			productReference = B30178D3207C901D0051B93D /* libdos-box.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B3344B522859E088006E6B3A /* dos-box-libretro-iOS */ = {
+		B3344B522859E088006E6B3A /* dos-box-libretro */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "dos-box-libretro-iOS" */;
+			buildConfigurationList = B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "dos-box-libretro" */;
 			buildPhases = (
 				B3344B532859E088006E6B3A /* Sources */,
 				B3344BBD2859E088006E6B3A /* Frameworks */,
@@ -1308,67 +1111,14 @@
 			);
 			dependencies = (
 			);
-			name = "dos-box-libretro-iOS";
+			name = "dos-box-libretro";
 			productName = reicast;
 			productReference = B3344BC32859E088006E6B3A /* libdos-box-libretro.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B3447EC0218BEDD200557ACE /* PVDosBox-tvOS */ = {
+		B3C7620F20783162009950E4 /* PVDosBox */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3447EE3218BEDD200557ACE /* Build configuration list for PBXNativeTarget "PVDosBox-tvOS" */;
-			buildPhases = (
-				B3447EC1218BEDD200557ACE /* Sources */,
-				B3447ECA218BEDD200557ACE /* Frameworks */,
-				B3447ED5218BEDD200557ACE /* Headers */,
-				B3447EDF218BEDD200557ACE /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B39768FD2859E23A00558958 /* PBXTargetDependency */,
-			);
-			name = "PVDosBox-tvOS";
-			productName = PVReicast;
-			productReference = B3447EE6218BEDD200557ACE /* PVDosBox.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		B3447EE8218BEE3F00557ACE /* dos-box-tvOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B3447F8E218BEE3F00557ACE /* Build configuration list for PBXNativeTarget "dos-box-tvOS" */;
-			buildPhases = (
-				B3447EE9218BEE3F00557ACE /* Sources */,
-				B3447F8C218BEE3F00557ACE /* Frameworks */,
-				B3447F8D218BEE3F00557ACE /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "dos-box-tvOS";
-			productName = reicast;
-			productReference = B3447F91218BEE3F00557ACE /* libdos-box.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		B39768ED2859E18B00558958 /* dos-box-libretro-tvOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B39768F32859E18B00558958 /* Build configuration list for PBXNativeTarget "dos-box-libretro-tvOS" */;
-			buildPhases = (
-				B39768EE2859E18B00558958 /* Sources */,
-				B39768F12859E18B00558958 /* Frameworks */,
-				B39768F22859E18B00558958 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "dos-box-libretro-tvOS";
-			productName = reicast;
-			productReference = B39768F72859E18B00558958 /* libdos-box-libretro.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		B3C7620F20783162009950E4 /* PVDosBox-iOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVDosBox-iOS" */;
+			buildConfigurationList = B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVDosBox" */;
 			buildPhases = (
 				B3C7620B20783162009950E4 /* Sources */,
 				B3C7620C20783162009950E4 /* Frameworks */,
@@ -1380,7 +1130,7 @@
 			dependencies = (
 				B39768FA2859E23200558958 /* PBXTargetDependency */,
 			);
-			name = "PVDosBox-iOS";
+			name = PVDosBox;
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVDosBox.framework */;
 			productType = "com.apple.product-type.framework";
@@ -1429,25 +1179,14 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B3C7620F20783162009950E4 /* PVDosBox-iOS */,
-				B3447EC0218BEDD200557ACE /* PVDosBox-tvOS */,
-				B3344B522859E088006E6B3A /* dos-box-libretro-iOS */,
-				B39768ED2859E18B00558958 /* dos-box-libretro-tvOS */,
-				B30178D2207C901D0051B93D /* dos-box-iOS */,
-				B3447EE8218BEE3F00557ACE /* dos-box-tvOS */,
+				B3C7620F20783162009950E4 /* PVDosBox */,
+				B3344B522859E088006E6B3A /* dos-box-libretro */,
+				B30178D2207C901D0051B93D /* dos-box */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		B3447EDF218BEDD200557ACE /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3447EE2218BEDD200557ACE /* Core.plist in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C7620E20783162009950E4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1580,138 +1319,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3447EC1218BEDD200557ACE /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3135BA326E4CD080047F338 /* PVDosBoxCore.mm in Sources */,
-				B3C8A6602877D6510037A946 /* PVDosBoxCore+Video.m in Sources */,
-				B3C8A6622877D6B40037A946 /* PVDosBoxCore+Audio.m in Sources */,
-				B3C8A65E2877D62F0037A946 /* PVDosBoxCore+Controls.mm in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3447EE9218BEE3F00557ACE /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3344B162859D664006E6B3A /* dos_ioctl.cpp in Sources */,
-				B3344AF32859D664006E6B3A /* bios_disk.cpp in Sources */,
-				B3344B152859D664006E6B3A /* shell.cpp in Sources */,
-				B3344B022859D664006E6B3A /* int10_vesa.cpp in Sources */,
-				B3344B2E2859D664006E6B3A /* dosbox.cpp in Sources */,
-				B3344B3B2859D664006E6B3A /* int10_vptable.cpp in Sources */,
-				B3344B472859D664006E6B3A /* sblaster.cpp in Sources */,
-				B3344B422859D664006E6B3A /* vga_draw.cpp in Sources */,
-				B3344B502859D664006E6B3A /* drives.cpp in Sources */,
-				B3344B3F2859D664006E6B3A /* paging.cpp in Sources */,
-				B3344B142859D664006E6B3A /* drive_fat.cpp in Sources */,
-				B3344B2D2859D664006E6B3A /* timer.cpp in Sources */,
-				B3344B382859D664006E6B3A /* disney.cpp in Sources */,
-				B3344B1B2859D664006E6B3A /* midi.cpp in Sources */,
-				B3344B0D2859D664006E6B3A /* drive_iso.cpp in Sources */,
-				B3344B4B2859D664006E6B3A /* hardware.cpp in Sources */,
-				B3344AFE2859D664006E6B3A /* drive_overlay.cpp in Sources */,
-				B3344B1F2859D664006E6B3A /* dos_programs.cpp in Sources */,
-				B3344B092859D664006E6B3A /* render.cpp in Sources */,
-				B3344B292859D664006E6B3A /* core_normal.cpp in Sources */,
-				B3344B082859D664006E6B3A /* int10_modes.cpp in Sources */,
-				B3344B2A2859D664006E6B3A /* int10_video_state.cpp in Sources */,
-				B3344AE92859D664006E6B3A /* int10_pal.cpp in Sources */,
-				B3344AF52859D664006E6B3A /* vga_crtc.cpp in Sources */,
-				B3344B132859D664006E6B3A /* dos_files.cpp in Sources */,
-				B3344B032859D664006E6B3A /* memory.cpp in Sources */,
-				B3344B272859D664006E6B3A /* nukedopl3.cpp in Sources */,
-				B3344B512859D664006E6B3A /* serialdummy.cpp in Sources */,
-				B3344B0F2859D664006E6B3A /* xms.cpp in Sources */,
-				B3344B462859D664006E6B3A /* core_dyn_x86.cpp in Sources */,
-				B3344B3C2859D664006E6B3A /* mouse.cpp in Sources */,
-				B3344B4F2859D664006E6B3A /* cdrom_image.cpp in Sources */,
-				B3344B342859D664006E6B3A /* dos_memory.cpp in Sources */,
-				B3344B172859D664006E6B3A /* drive_zip.cpp in Sources */,
-				B3344B072859D664006E6B3A /* dbopl.cpp in Sources */,
-				B3344B482859D664006E6B3A /* dos_tables.cpp in Sources */,
-				B3344B0E2859D664006E6B3A /* cross.cpp in Sources */,
-				B3344B0A2859D664006E6B3A /* drive_cache.cpp in Sources */,
-				B3344B4E2859D664006E6B3A /* mixer.cpp in Sources */,
-				B3344AFD2859D664006E6B3A /* vga_s3.cpp in Sources */,
-				B3344B1E2859D664006E6B3A /* programs.cpp in Sources */,
-				B3344B4A2859D664006E6B3A /* dos_misc.cpp in Sources */,
-				B3344AEE2859D664006E6B3A /* shell_cmds.cpp in Sources */,
-				B3344B242859D664006E6B3A /* gameblaster.cpp in Sources */,
-				B3344AEF2859D664006E6B3A /* bios_keyboard.cpp in Sources */,
-				B3344B302859D664006E6B3A /* dos.cpp in Sources */,
-				B3344B312859D664006E6B3A /* pic.cpp in Sources */,
-				B3344B3D2859D664006E6B3A /* drive_union.cpp in Sources */,
-				B3344AF62859D664006E6B3A /* core_full.cpp in Sources */,
-				B3344B112859D664006E6B3A /* cmos.cpp in Sources */,
-				B3344AF82859D664006E6B3A /* int10.cpp in Sources */,
-				B3344AFF2859D664006E6B3A /* vga_memory.cpp in Sources */,
-				B3344AF72859D664006E6B3A /* fpu.cpp in Sources */,
-				B3344AFC2859D664006E6B3A /* serialport.cpp in Sources */,
-				B3344B3E2859D664006E6B3A /* ems.cpp in Sources */,
-				B3344B402859D664006E6B3A /* vga_other.cpp in Sources */,
-				B3344B192859D664006E6B3A /* sn76496.cpp in Sources */,
-				B3344B2F2859D664006E6B3A /* bios.cpp in Sources */,
-				B3344B492859D664006E6B3A /* flags.cpp in Sources */,
-				B3344B372859D664006E6B3A /* joystick.cpp in Sources */,
-				B3344AEA2859D664006E6B3A /* gus.cpp in Sources */,
-				B3344AEC2859D664006E6B3A /* vga.cpp in Sources */,
-				B3344B1A2859D664006E6B3A /* mpu401.cpp in Sources */,
-				B3344B202859D664006E6B3A /* shell_misc.cpp in Sources */,
-				B3344B332859D664006E6B3A /* drive_local.cpp in Sources */,
-				B3344B2B2859D664006E6B3A /* vga_gfx.cpp in Sources */,
-				B3344B4D2859D664006E6B3A /* vga_seq.cpp in Sources */,
-				B3344B452859D664006E6B3A /* dbp_serialize.cpp in Sources */,
-				B3344AED2859D664006E6B3A /* drive_virtual.cpp in Sources */,
-				B3344B042859D664006E6B3A /* vga_xga.cpp in Sources */,
-				B3344AEB2859D664006E6B3A /* dos_keyboard_layout.cpp in Sources */,
-				B3344B392859D664006E6B3A /* pcspeaker.cpp in Sources */,
-				B3344AF92859D664006E6B3A /* int10_char.cpp in Sources */,
-				B3344B0B2859D664006E6B3A /* shell_batch.cpp in Sources */,
-				B3344B1C2859D664006E6B3A /* support.cpp in Sources */,
-				B3344B102859D664006E6B3A /* vga_tseng.cpp in Sources */,
-				B3344AF02859D664006E6B3A /* render_scalers.cpp in Sources */,
-				B3344B012859D664006E6B3A /* modrm.cpp in Sources */,
-				B3344AF12859D664006E6B3A /* keyboard.cpp in Sources */,
-				B3344B262859D664006E6B3A /* tandy_sound.cpp in Sources */,
-				B3344AFA2859D664006E6B3A /* dos_classes.cpp in Sources */,
-				B3344AF22859D664006E6B3A /* messages.cpp in Sources */,
-				B3344B4C2859D664006E6B3A /* vga_attr.cpp in Sources */,
-				B3344B252859D664006E6B3A /* cpu.cpp in Sources */,
-				B3344B002859D664006E6B3A /* core_dynrec.cpp in Sources */,
-				B3344B212859D664006E6B3A /* cdrom.cpp in Sources */,
-				B3344B2C2859D664006E6B3A /* saa1099.cpp in Sources */,
-				B3344AFB2859D664006E6B3A /* callback.cpp in Sources */,
-				B3344B352859D664006E6B3A /* drive_memory.cpp in Sources */,
-				B3344B322859D664006E6B3A /* pci_bus.cpp in Sources */,
-				B3344B282859D664006E6B3A /* int10_misc.cpp in Sources */,
-				B3344B1D2859D664006E6B3A /* int10_put_pixel.cpp in Sources */,
-				B3344B182859D664006E6B3A /* dma.cpp in Sources */,
-				B3344B432859D664006E6B3A /* vga_dac.cpp in Sources */,
-				B3344B222859D664006E6B3A /* vga_misc.cpp in Sources */,
-				B3344AF42859D664006E6B3A /* core_prefetch.cpp in Sources */,
-				B3344B052859D664006E6B3A /* int10_memory.cpp in Sources */,
-				B3344B3A2859D664006E6B3A /* dos_execute.cpp in Sources */,
-				B3344B362859D664006E6B3A /* setup.cpp in Sources */,
-				B3344B0C2859D664006E6B3A /* core_simple.cpp in Sources */,
-				B3344B412859D664006E6B3A /* dos_mscdex.cpp in Sources */,
-				B3344B442859D664006E6B3A /* dos_devices.cpp in Sources */,
-				B3344B122859D664006E6B3A /* iohandler.cpp in Sources */,
-				B3344B232859D664006E6B3A /* adlib.cpp in Sources */,
-				B3344B062859D664006E6B3A /* vga_paradise.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B39768EE2859E18B00558958 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B39768EF2859E18B00558958 /* dosbox_pure_libretro.cpp in Sources */,
-				B39768F02859E18B00558958 /* keyb2joypad.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C7620B20783162009950E4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1728,13 +1335,8 @@
 /* Begin PBXTargetDependency section */
 		B39768FA2859E23200558958 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3344B522859E088006E6B3A /* dos-box-libretro-iOS */;
+			target = B3344B522859E088006E6B3A /* dos-box-libretro */;
 			targetProxy = B39768F92859E23200558958 /* PBXContainerItemProxy */;
-		};
-		B39768FD2859E23A00558958 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B39768ED2859E18B00558958 /* dos-box-libretro-tvOS */;
-			targetProxy = B39768FC2859E23A00558958 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1742,6 +1344,7 @@
 		B30178DA207C901D0051B93D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -1755,6 +1358,8 @@
 				PRODUCT_NAME = "dos-box";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1762,6 +1367,7 @@
 		B30178DB207C901D0051B93D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -1775,6 +1381,8 @@
 				PRODUCT_NAME = "dos-box";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -1849,6 +1457,7 @@
 		B324C5022191A2A2009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -1876,47 +1485,16 @@
 				PRODUCT_NAME = PVDosBox;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Archive;
-		};
-		B324C5032191A2A2009F4EDC /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-				);
-				INFOPLIST_FILE = "$(SRCROOT)/PVDosBox/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVDosBox";
-				PRODUCT_NAME = PVDosBox;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
 			};
 			name = Archive;
 		};
 		B324C5042191A2A2009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -1930,34 +1508,16 @@
 				PRODUCT_NAME = "dos-box";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Archive;
-		};
-		B324C5052191A2A2009F4EDC /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/dosbox-pure/include\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "dos-box";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
 			};
 			name = Archive;
 		};
 		B3344BC02859E088006E6B3A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -1971,6 +1531,8 @@
 				PRODUCT_NAME = "dos-box-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1978,6 +1540,7 @@
 		B3344BC12859E088006E6B3A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -1991,6 +1554,8 @@
 				PRODUCT_NAME = "dos-box-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -1998,6 +1563,7 @@
 		B3344BC22859E088006E6B3A /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -2011,180 +1577,9 @@
 				PRODUCT_NAME = "dos-box-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Archive;
-		};
-		B3447EE4218BEDD200557ACE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-				);
-				INFOPLIST_FILE = "$(SRCROOT)/PVDosBox/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVDosBox";
-				PRODUCT_NAME = PVDosBox;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Debug;
-		};
-		B3447EE5218BEDD200557ACE /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-				);
-				INFOPLIST_FILE = "$(SRCROOT)/PVDosBox/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVDosBox";
-				PRODUCT_NAME = PVDosBox;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Release;
-		};
-		B3447F8F218BEE3F00557ACE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/dosbox-pure/include\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "dos-box";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Debug;
-		};
-		B3447F90218BEE3F00557ACE /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/dosbox-pure/include\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "dos-box";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Release;
-		};
-		B39768F42859E18B00558958 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/dosbox-pure/include\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "dos-box-libretro";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Debug;
-		};
-		B39768F52859E18B00558958 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/dosbox-pure/include\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "dos-box-libretro";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Release;
-		};
-		B39768F62859E18B00558958 /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/dosbox-pure/include\"",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "dos-box-libretro";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
 			};
 			name = Archive;
 		};
@@ -2331,6 +1726,7 @@
 		B3C7621920783162009950E4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -2358,6 +1754,8 @@
 				PRODUCT_NAME = PVDosBox;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -2365,6 +1763,7 @@
 		B3C7621A20783162009950E4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -2392,6 +1791,8 @@
 				PRODUCT_NAME = PVDosBox;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -2399,7 +1800,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "dos-box-iOS" */ = {
+		B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "dos-box" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B30178DA207C901D0051B93D /* Debug */,
@@ -2409,42 +1810,12 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "dos-box-libretro-iOS" */ = {
+		B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "dos-box-libretro" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3344BC02859E088006E6B3A /* Debug */,
 				B3344BC12859E088006E6B3A /* Release */,
 				B3344BC22859E088006E6B3A /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B3447EE3218BEDD200557ACE /* Build configuration list for PBXNativeTarget "PVDosBox-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B3447EE4218BEDD200557ACE /* Debug */,
-				B3447EE5218BEDD200557ACE /* Release */,
-				B324C5032191A2A2009F4EDC /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B3447F8E218BEE3F00557ACE /* Build configuration list for PBXNativeTarget "dos-box-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B3447F8F218BEE3F00557ACE /* Debug */,
-				B3447F90218BEE3F00557ACE /* Release */,
-				B324C5052191A2A2009F4EDC /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B39768F32859E18B00558958 /* Build configuration list for PBXNativeTarget "dos-box-libretro-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B39768F42859E18B00558958 /* Debug */,
-				B39768F52859E18B00558958 /* Release */,
-				B39768F62859E18B00558958 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -2459,7 +1830,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVDosBox-iOS" */ = {
+		B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVDosBox" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3C7621920783162009950E4 /* Debug */,

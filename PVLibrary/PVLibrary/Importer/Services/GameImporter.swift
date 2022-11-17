@@ -13,6 +13,12 @@ import Foundation
 @_exported import RealmSwift
 @_exported import SQLite
 
+#if canImport(UIKit)
+import UIKit
+#else
+import AppKit
+#endif
+
 struct Constants {
     struct iCloud {
 //        static let containerIdentifier = "iCloud.org.provenance-emu.provenance"
@@ -606,23 +612,38 @@ public extension GameImporter {
         }
 
         // Create a UIImage from the Data
+        #if canImport(UIKit)
         guard let coverArtFullImage = UIImage(data: coverArtFullData) else {
             ELOG("Failed to create Image from data")
             return nil
         }
-
         // Scale the UIImage to our desired max size
         guard let coverArtScaledImage = coverArtFullImage.scaledImage(withMaxResolution: Int(PVThumbnailMaxResolution)) else {
             ELOG("Failed to create scale image")
             return nil
         }
+        #else
+        guard let coverArtFullImage = NSImage(data: coverArtFullData) else {
+            ELOG("Failed to create Image from data")
+            return nil
+        }
+        // Scale the UIImage to our desired max size
+        let coverArtScaledImage = coverArtFullImage
+//        guard let coverArtScaledImage = coverArtFullImage.scaledImage(withMaxResolution: Int(PVThumbnailMaxResolution)) else {
+//            ELOG("Failed to create scale image")
+//            return nil
+//        }
+        #endif
 
+#if canImport(UIKit)
         // Create new Data from scaled image
         guard let coverArtScaledData = coverArtScaledImage.jpegData(compressionQuality: 0.85) else {
             ELOG("Failed to create data respresentation of scaled image")
             return nil
         }
-
+        #else
+        let coverArtScaledData = coverArtScaledImage.jpegData(compressionQuality: 0.85) 
+        #endif
         // Hash the image and save to cache
         let hash: String = (coverArtScaledData as NSData).md5Hash
 
@@ -1310,6 +1331,17 @@ extension GameImporter {
                 DLOG("HTTP Error: \(urlResponse.statusCode). \nResponse: \(urlResponse)")
             }
 
+            #if os(macOS)
+            if let artwork = NSImage(data: data) {
+                do {
+                    let localURL = try PVMediaCache.writeImage(toDisk: artwork, withKey: url)
+                    try RomDatabase.sharedInstance.writeTransaction {
+                        let file = PVImageFile(withURL: localURL, relativeRoot: .iCloud)
+                        game.originalArtworkFile = file
+                    }
+                } catch { ELOG("\(error.localizedDescription)") }
+            }
+            #else
             if let artwork = UIImage(data: data) {
                 do {
                     let localURL = try PVMediaCache.writeImage(toDisk: artwork, withKey: url)
@@ -1319,6 +1351,7 @@ extension GameImporter {
                     }
                 } catch { ELOG("\(error.localizedDescription)") }
             }
+            #endif
             artworkURL = url
         }
     }

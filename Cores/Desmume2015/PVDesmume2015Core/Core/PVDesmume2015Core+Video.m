@@ -9,10 +9,14 @@
 #import "PVDesmume2015Core+Video.h"
 #import "PVDesmume2015Core.h"
 
+#if !__has_include(<OpenGL/OpenGL.h>)
 #import <OpenGLES/ES3/glext.h>
 #import <OpenGLES/ES3/gl.h>
 #import <GLKit/GLKit.h>
-
+#else
+#import <OpenGL/OpenGL.h>
+#import <GLUT/GLUT.h>
+#endif
 @implementation PVDesmume2015Core (Video)
 
 # pragma mark - Methods
@@ -87,7 +91,11 @@
 
 - (GLenum)internalPixelFormat {
     // TODO: use struct retro_pixel_format var, set with, RETRO_ENVIRONMENT_SET_PIXEL_FORMAT
+#if __has_include(<OpenGL/OpenGL.h>)
+    return GL_UNSIGNED_SHORT_5_6_5;
+#else
     return GL_RGB565;
+#endif
 }
 
 //- (GLenum)depthFormat {

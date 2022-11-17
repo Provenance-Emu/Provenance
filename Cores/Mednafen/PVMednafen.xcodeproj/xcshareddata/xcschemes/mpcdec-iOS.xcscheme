@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B33355A1207B1E930036A448"
-               BuildableName = "libmpcdec-iOS.a"
-               BlueprintName = "mpcdec-iOS"
+               BuildableName = "libmpcdec.a"
+               BlueprintName = "mpcdec"
                ReferencedContainer = "container:PVMednafen.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B33355A1207B1E930036A448"
-            BuildableName = "libmpcdec-iOS.a"
-            BlueprintName = "mpcdec-iOS"
+            BuildableName = "libmpcdec.a"
+            BlueprintName = "mpcdec"
             ReferencedContainer = "container:PVMednafen.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

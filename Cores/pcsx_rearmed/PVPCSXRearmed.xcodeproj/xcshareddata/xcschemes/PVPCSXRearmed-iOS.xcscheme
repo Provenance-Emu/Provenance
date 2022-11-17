@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C7620F20783162009950E4"
                BuildableName = "PVPCSXRearmed.framework"
-               BlueprintName = "PVPCSXRearmed-iOS"
+               BlueprintName = "PVPCSXRearmed"
                ReferencedContainer = "container:PVPCSXRearmed.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -66,7 +66,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C7620F20783162009950E4"
             BuildableName = "PVPCSXRearmed.framework"
-            BlueprintName = "PVPCSXRearmed-iOS"
+            BlueprintName = "PVPCSXRearmed"
             ReferencedContainer = "container:PVPCSXRearmed.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

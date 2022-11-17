@@ -2,13 +2,16 @@
 //  Use this file to import your target's public headers that you would like to expose to Swift.
 //
 
-#if !TARGET_OS_TV
+#import "PVGLViewController.h"
+#import "PVMetalViewController.h"
+#import "PVWebServer.h"
+
+#if !TARGET_OS_TV && !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
     #import "Services/PVAltKitService.h"
 #endif
 
-#import "PVLogViewController.h"
-#import "PVGLViewController.h"
-#import "PVMetalViewController.h"
-#import "MBProgressHUD.h"
-#import "PVWebServer.h"
-#import "UIDevice+Hardware.h"
+#if !TARGET_OS_OSX
+    #import "UIDevice+Hardware.h"
+    #import "MBProgressHUD.h"
+    #import "PVLogViewController.h"
+#endif

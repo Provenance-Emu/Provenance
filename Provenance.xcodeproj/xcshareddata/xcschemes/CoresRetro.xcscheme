@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1300"
+   LastUpgradeVersion = "1410"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B30178D2207C901D0051B93D"
-               BuildableName = "libplay.a"
-               BlueprintName = "play"
-               ReferencedContainer = "container:PVPlayCore.xcodeproj">
+               BlueprintIdentifier = "B3C8A6BB2878238C0037A946"
+               BuildableName = "CoresRetro.framework"
+               BlueprintName = "CoresRetro"
+               ReferencedContainer = "container:Provenance.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -50,10 +50,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B30178D2207C901D0051B93D"
-            BuildableName = "libplay.a"
-            BlueprintName = "play"
-            ReferencedContainer = "container:PVPlayCore.xcodeproj">
+            BlueprintIdentifier = "B3C8A6BB2878238C0037A946"
+            BuildableName = "CoresRetro.framework"
+            BlueprintName = "CoresRetro"
+            ReferencedContainer = "container:Provenance.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

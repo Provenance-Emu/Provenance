@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C9D5311DEA83DE0068D057"
                BuildableName = "PVSnesticle.framework"
-               BlueprintName = "PVSnesticle-iOS"
+               BlueprintName = "PVSnesticle"
                ReferencedContainer = "container:PVSnesticle.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -52,7 +52,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C9D5311DEA83DE0068D057"
             BuildableName = "PVSnesticle.framework"
-            BlueprintName = "PVSnesticle-iOS"
+            BlueprintName = "PVSnesticle"
             ReferencedContainer = "container:PVSnesticle.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

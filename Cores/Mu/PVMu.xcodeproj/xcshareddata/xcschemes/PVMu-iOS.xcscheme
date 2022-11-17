@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C7620F20783162009950E4"
                BuildableName = "PVMu.framework"
-               BlueprintName = "PVMu-iOS"
+               BlueprintName = "PVMu"
                ReferencedContainer = "container:PVMu.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -52,7 +52,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C7620F20783162009950E4"
             BuildableName = "PVMu.framework"
-            BlueprintName = "PVMu-iOS"
+            BlueprintName = "PVMu"
             ReferencedContainer = "container:PVMu.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

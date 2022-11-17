@@ -14,67 +14,7 @@
 		B3054326272022F000F5257D /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B305431F272022C800F5257D /* libavcodec.a */; };
 		B3054327272022F000F5257D /* libavformat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3054322272022C800F5257D /* libavformat.a */; };
 		B3054328272022F000F5257D /* libswresample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B305431E272022C800F5257D /* libswresample.a */; };
-		B305432B2720232900F5257D /* NativeApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CC4D25E178C7EC00094E987 /* NativeApp.cpp */; };
-		B305432C2720232900F5257D /* PPSSPPGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8CAFC1251785B6F700647A96 /* PPSSPPGameCore.mm */; };
-		B305432E2720232900F5257D /* libnative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DFC271D792B0025DD88 /* libnative.a */; };
-		B305432F2720232900F5257D /* libHLSL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DD4271D792B0025DD88 /* libHLSL.a */; };
-		B30543302720232900F5257D /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E55271D90A90025DD88 /* libMoltenVK.dylib */; platformFilter = ios; };
-		B30543312720232900F5257D /* AVKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E37271D8C100025DD88 /* AVKit.framework */; };
-		B30543322720232900F5257D /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3054321272022C800F5257D /* libavutil.a */; };
-		B30543332720232900F5257D /* libOSDependent.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DDA271D792B0025DD88 /* libOSDependent.a */; };
-		B30543342720232900F5257D /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E46271D8C800025DD88 /* CoreAudioKit.framework */; };
-		B30543352720232900F5257D /* libavformat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3054322272022C800F5257D /* libavformat.a */; };
-		B30543362720232900F5257D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E40271D8C450025DD88 /* CoreGraphics.framework */; };
-		B30543372720232900F5257D /* libsfmt19937.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E02271D792B0025DD88 /* libsfmt19937.a */; };
-		B30543382720232900F5257D /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E36271D8C100025DD88 /* AVFoundation.framework */; };
-		B30543392720232900F5257D /* libGenericCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DD2271D792B0025DD88 /* libGenericCodeGen.a */; };
-		B305433A2720232900F5257D /* libavdevice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3054320272022C800F5257D /* libavdevice.a */; };
-		B305433B2720232900F5257D /* libspirv-cross-hlsl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E0C271D792B0025DD88 /* libspirv-cross-hlsl.a */; };
-		B305433C2720232900F5257D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E3C271D8C330025DD88 /* Foundation.framework */; };
-		B305433D2720232900F5257D /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B305431F272022C800F5257D /* libavcodec.a */; };
-		B305433E2720232900F5257D /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E52271D8D610025DD88 /* MediaPlayer.framework */; };
-		B305433F2720232900F5257D /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E3D271D8C330025DD88 /* CoreFoundation.framework */; };
-		B30543402720232900F5257D /* libswscale.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B305431D272022C800F5257D /* libswscale.a */; };
-		B30543412720232900F5257D /* libglslang.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DF0271D792B0025DD88 /* libglslang.a */; };
-		B30543422720232900F5257D /* libspirv-cross-core.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E06271D792B0025DD88 /* libspirv-cross-core.a */; };
-		B30543432720232900F5257D /* libxbrz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E12271D792B0025DD88 /* libxbrz.a */; };
-		B30543442720232900F5257D /* libswresample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B305431E272022C800F5257D /* libswresample.a */; };
-		B30543452720232900F5257D /* liblibzip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DF4271D792B0025DD88 /* liblibzip.a */; };
-		B30543462720232900F5257D /* libkirk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DF2271D792B0025DD88 /* libkirk.a */; };
-		B30543472720232900F5257D /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E4C271D8CA00025DD88 /* CoreLocation.framework */; };
-		B30543482720232900F5257D /* libzstd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DF8271D792B0025DD88 /* libzstd.a */; };
-		B30543492720232900F5257D /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B38C4A11201DBD98006761ED /* PVSupport.framework */; };
-		B305434A2720232900F5257D /* libSPIRV.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DDE271D792B0025DD88 /* libSPIRV.a */; };
-		B305434B2720232900F5257D /* libMachineIndependent.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DD6271D792B0025DD88 /* libMachineIndependent.a */; };
-		B305434C2720232900F5257D /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E47271D8C800025DD88 /* CoreAudio.framework */; };
-		B305434D2720232900F5257D /* libudis86.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E10271D792B0025DD88 /* libudis86.a */; };
-		B305434E2720232900F5257D /* libxxhash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E14271D792B0025DD88 /* libxxhash.a */; };
-		B305434F2720232900F5257D /* libpng17.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E00271D792B0025DD88 /* libpng17.a */; };
-		B30543502720232900F5257D /* libCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DD0271D792B0025DD88 /* libCore.a */; };
-		B30543512720232900F5257D /* libspirv-cross-glsl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E0A271D792B0025DD88 /* libspirv-cross-glsl.a */; };
-		B30543522720232900F5257D /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B38C4A0E201DBD8D006761ED /* CoreVideo.framework */; };
-		B30543532720232900F5257D /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B38C4A0C201DBD7E006761ED /* libz.tbd */; };
-		B30543542720232900F5257D /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E3A271D8C280025DD88 /* UIKit.framework */; };
-		B30543552720232900F5257D /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E44271D8C700025DD88 /* GameController.framework */; };
-		B30543562720232900F5257D /* libcityhash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DE6271D792B0025DD88 /* libcityhash.a */; };
-		B30543572720232900F5257D /* libsnappy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E04271D792B0025DD88 /* libsnappy.a */; };
-		B30543582720232900F5257D /* libspirv-cross-cpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E08271D792B0025DD88 /* libspirv-cross-cpp.a */; };
-		B30543592720232900F5257D /* libgason.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DEE271D792B0025DD88 /* libgason.a */; };
-		B305435A2720232900F5257D /* libarmips.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DE0271D792B0025DD88 /* libarmips.a */; };
-		B305435B2720232900F5257D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E42271D8C4E0025DD88 /* QuartzCore.framework */; };
-		B305435C2720232900F5257D /* libCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DCE271D792B0025DD88 /* libCommon.a */; };
-		B305435D2720232900F5257D /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E58271D92700025DD88 /* CoreMedia.framework */; };
-		B305435E2720232900F5257D /* libOGLCompiler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DD8271D792B0025DD88 /* libOGLCompiler.a */; };
-		B305435F2720232900F5257D /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B38C4A0A201DBD75006761ED /* OpenGLES.framework */; };
-		B30543602720232900F5257D /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E4E271D8CAD0025DD88 /* GLKit.framework */; platformFilter = ios; };
-		B30543612720232900F5257D /* libspirv-cross-msl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E0E271D792B0025DD88 /* libspirv-cross-msl.a */; };
-		B30543622720232900F5257D /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E50271D8D410025DD88 /* AudioToolbox.framework */; };
-		B30543642720232900F5257D /* PVPPSSPP.h in Headers */ = {isa = PBXBuildFile; fileRef = B30C6D96271D74EB0025DD88 /* PVPPSSPP.h */; };
-		B30543652720232900F5257D /* PPSSPPGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CAFC1241785B6F700647A96 /* PPSSPPGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B30543672720232900F5257D /* Frameworks in Resources */ = {isa = PBXBuildFile; fileRef = B30C6E23271D8B250025DD88 /* Frameworks */; };
-		B30543752720289F00F5257D /* libMoltenVK.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = B30C6E55271D90A90025DD88 /* libMoltenVK.dylib */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B305437827202A7200F5257D /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B305437727202A7200F5257D /* Core.plist */; };
-		B305437927202A7200F5257D /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B305437727202A7200F5257D /* Core.plist */; };
 		B30C6D97271D74EB0025DD88 /* PVPPSSPP.h in Headers */ = {isa = PBXBuildFile; fileRef = B30C6D96271D74EB0025DD88 /* PVPPSSPP.h */; };
 		B30C6D98271D752A0025DD88 /* PPSSPPGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CAFC1241785B6F700647A96 /* PPSSPPGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B30C6E17271D79E60025DD88 /* libcityhash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6DE6271D792B0025DD88 /* libcityhash.a */; };
@@ -126,8 +66,6 @@
 		B38C4A10201DBD98006761ED /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B38C4A11201DBD98006761ED /* PVSupport.framework */; };
 		B3A41C20286E809A0054E9A5 /* ppsspp_libretro.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E06AE3272019E700AC0257 /* ppsspp_libretro.dylib */; };
 		B3A41C21286E809A0054E9A5 /* ppsspp_libretro.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E06AE3272019E700AC0257 /* ppsspp_libretro.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		B3A41C22286E80AE0054E9A5 /* ppsspp_libretro.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E06AE3272019E700AC0257 /* ppsspp_libretro.dylib */; };
-		B3A41C23286E80AE0054E9A5 /* ppsspp_libretro.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = B3E06AE3272019E700AC0257 /* ppsspp_libretro.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B3E06AE427201A4F00AC0257 /* libspirv-cross-cpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E08271D792B0025DD88 /* libspirv-cross-cpp.a */; };
 		B3E06AE527201A4F00AC0257 /* libspirv-cross-hlsl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E0C271D792B0025DD88 /* libspirv-cross-hlsl.a */; };
 		B3E06AE627201A4F00AC0257 /* libspirv-cross-msl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30C6E0E271D792B0025DD88 /* libspirv-cross-msl.a */; };
@@ -410,18 +348,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		B30543762720289F00F5257D /* Embed Libraries */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				B30543752720289F00F5257D /* libMoltenVK.dylib in Embed Libraries */,
-				B3A41C23286E80AE0054E9A5 /* ppsspp_libretro.dylib in Embed Libraries */,
-			);
-			name = "Embed Libraries";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B36455BB278E7E3E00B6E87A /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -461,7 +387,6 @@
 		B3054320272022C800F5257D /* libavdevice.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavdevice.a; path = ppsspp/ffmpeg/ios/universal/lib/libavdevice.a; sourceTree = "<group>"; };
 		B3054321272022C800F5257D /* libavutil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavutil.a; path = ppsspp/ffmpeg/ios/universal/lib/libavutil.a; sourceTree = "<group>"; };
 		B3054322272022C800F5257D /* libavformat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavformat.a; path = ppsspp/ffmpeg/ios/universal/lib/libavformat.a; sourceTree = "<group>"; };
-		B305436B2720232900F5257D /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B305436C2720232900F5257D /* PVPPSSPP copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PVPPSSPP copy-Info.plist"; sourceTree = "<group>"; };
 		B305437727202A7200F5257D /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B30C6D96271D74EB0025DD88 /* PVPPSSPP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVPPSSPP.h; sourceTree = SOURCE_ROOT; };
@@ -496,67 +421,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		B305432D2720232900F5257D /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B305432E2720232900F5257D /* libnative.a in Frameworks */,
-				B305432F2720232900F5257D /* libHLSL.a in Frameworks */,
-				B30543302720232900F5257D /* libMoltenVK.dylib in Frameworks */,
-				B30543312720232900F5257D /* AVKit.framework in Frameworks */,
-				B30543322720232900F5257D /* libavutil.a in Frameworks */,
-				B30543332720232900F5257D /* libOSDependent.a in Frameworks */,
-				B30543342720232900F5257D /* CoreAudioKit.framework in Frameworks */,
-				B30543352720232900F5257D /* libavformat.a in Frameworks */,
-				B30543362720232900F5257D /* CoreGraphics.framework in Frameworks */,
-				B30543372720232900F5257D /* libsfmt19937.a in Frameworks */,
-				B30543382720232900F5257D /* AVFoundation.framework in Frameworks */,
-				B30543392720232900F5257D /* libGenericCodeGen.a in Frameworks */,
-				B305433A2720232900F5257D /* libavdevice.a in Frameworks */,
-				B305433B2720232900F5257D /* libspirv-cross-hlsl.a in Frameworks */,
-				B305433C2720232900F5257D /* Foundation.framework in Frameworks */,
-				B305433D2720232900F5257D /* libavcodec.a in Frameworks */,
-				B305433E2720232900F5257D /* MediaPlayer.framework in Frameworks */,
-				B305433F2720232900F5257D /* CoreFoundation.framework in Frameworks */,
-				B30543402720232900F5257D /* libswscale.a in Frameworks */,
-				B30543412720232900F5257D /* libglslang.a in Frameworks */,
-				B30543422720232900F5257D /* libspirv-cross-core.a in Frameworks */,
-				B30543432720232900F5257D /* libxbrz.a in Frameworks */,
-				B30543442720232900F5257D /* libswresample.a in Frameworks */,
-				B30543452720232900F5257D /* liblibzip.a in Frameworks */,
-				B30543462720232900F5257D /* libkirk.a in Frameworks */,
-				B30543472720232900F5257D /* CoreLocation.framework in Frameworks */,
-				B30543482720232900F5257D /* libzstd.a in Frameworks */,
-				B30543492720232900F5257D /* PVSupport.framework in Frameworks */,
-				B305434A2720232900F5257D /* libSPIRV.a in Frameworks */,
-				B305434B2720232900F5257D /* libMachineIndependent.a in Frameworks */,
-				B305434C2720232900F5257D /* CoreAudio.framework in Frameworks */,
-				B305434D2720232900F5257D /* libudis86.a in Frameworks */,
-				B305434E2720232900F5257D /* libxxhash.a in Frameworks */,
-				B305434F2720232900F5257D /* libpng17.a in Frameworks */,
-				B30543502720232900F5257D /* libCore.a in Frameworks */,
-				B3A41C22286E80AE0054E9A5 /* ppsspp_libretro.dylib in Frameworks */,
-				B30543512720232900F5257D /* libspirv-cross-glsl.a in Frameworks */,
-				B30543522720232900F5257D /* CoreVideo.framework in Frameworks */,
-				B30543532720232900F5257D /* libz.tbd in Frameworks */,
-				B30543542720232900F5257D /* UIKit.framework in Frameworks */,
-				B30543552720232900F5257D /* GameController.framework in Frameworks */,
-				B30543562720232900F5257D /* libcityhash.a in Frameworks */,
-				B30543572720232900F5257D /* libsnappy.a in Frameworks */,
-				B30543582720232900F5257D /* libspirv-cross-cpp.a in Frameworks */,
-				B30543592720232900F5257D /* libgason.a in Frameworks */,
-				B305435A2720232900F5257D /* libarmips.a in Frameworks */,
-				B305435B2720232900F5257D /* QuartzCore.framework in Frameworks */,
-				B305435C2720232900F5257D /* libCommon.a in Frameworks */,
-				B305435D2720232900F5257D /* CoreMedia.framework in Frameworks */,
-				B305435E2720232900F5257D /* libOGLCompiler.a in Frameworks */,
-				B305435F2720232900F5257D /* OpenGLES.framework in Frameworks */,
-				B30543602720232900F5257D /* GLKit.framework in Frameworks */,
-				B30543612720232900F5257D /* libspirv-cross-msl.a in Frameworks */,
-				B30543622720232900F5257D /* AudioToolbox.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B38C49D1201DBC8C006761ED /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -648,7 +512,6 @@
 			isa = PBXGroup;
 			children = (
 				B38C49D5201DBC8C006761ED /* PVPPSSPP.framework */,
-				B305436B2720232900F5257D /* PVPPSSPP.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -804,15 +667,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		B30543632720232900F5257D /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B30543642720232900F5257D /* PVPPSSPP.h in Headers */,
-				B30543652720232900F5257D /* PPSSPPGameCore.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B38C49D2201DBC8C006761ED /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -825,25 +679,6 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		B30543292720232900F5257D /* PVPPSSPP-tvOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B30543682720232900F5257D /* Build configuration list for PBXNativeTarget "PVPPSSPP-tvOS" */;
-			buildPhases = (
-				B305432A2720232900F5257D /* Sources */,
-				B305432D2720232900F5257D /* Frameworks */,
-				B30543632720232900F5257D /* Headers */,
-				B30543662720232900F5257D /* Resources */,
-				B30543762720289F00F5257D /* Embed Libraries */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "PVPPSSPP-tvOS";
-			productName = PVPPSSPPios;
-			productReference = B305436B2720232900F5257D /* PVPPSSPP.framework */;
-			productType = "com.apple.product-type.framework";
-		};
 		B38C49D4201DBC8C006761ED /* PVPPSSPP */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B38C49DA201DBC8C006761ED /* Build configuration list for PBXNativeTarget "PVPPSSPP" */;
@@ -898,7 +733,6 @@
 			projectRoot = "";
 			targets = (
 				B38C49D4201DBC8C006761ED /* PVPPSSPP */,
-				B30543292720232900F5257D /* PVPPSSPP-tvOS */,
 			);
 		};
 /* End PBXProject section */
@@ -1183,15 +1017,6 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
-		B30543662720232900F5257D /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B30543672720232900F5257D /* Frameworks in Resources */,
-				B305437927202A7200F5257D /* Core.plist in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B38C49D3201DBC8C006761ED /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1204,15 +1029,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		B305432A2720232900F5257D /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B305432B2720232900F5257D /* NativeApp.cpp in Sources */,
-				B305432C2720232900F5257D /* PPSSPPGameCore.mm in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B38C49D0201DBC8C006761ED /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1345,157 +1161,10 @@
 			};
 			name = Release;
 		};
-		B30543692720232900F5257D /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/ppsspp/ffmpeg/ios/universal/lib",
-				);
-				MARKETING_VERSION = 1;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVPPSSPP";
-				PRODUCT_NAME = PVPPSSPP;
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		B305436A2720232900F5257D /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/ppsspp/ffmpeg/ios/universal/lib",
-				);
-				MARKETING_VERSION = 1;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVPPSSPP";
-				PRODUCT_NAME = PVPPSSPP;
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
 		B38C49DB201DBC8C006761ED /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1564,6 +1233,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -1573,6 +1244,7 @@
 		B38C49DC201DBC8C006761ED /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1634,6 +1306,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1649,15 +1323,6 @@
 			buildConfigurations = (
 				8CAFA7931785AA9900647A96 /* Debug */,
 				8CAFA7941785AA9900647A96 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B30543682720232900F5257D /* Build configuration list for PBXNativeTarget "PVPPSSPP-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B30543692720232900F5257D /* Debug */,
-				B305436A2720232900F5257D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

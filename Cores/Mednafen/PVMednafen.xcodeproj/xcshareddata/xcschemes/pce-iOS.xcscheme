@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B33351CA207B01860036A448"
-               BuildableName = "libpce-iOS.a"
-               BlueprintName = "pce-iOS"
+               BuildableName = "libpce.a"
+               BlueprintName = "pce"
                ReferencedContainer = "container:PVMednafen.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B33351CA207B01860036A448"
-            BuildableName = "libpce-iOS.a"
-            BlueprintName = "pce-iOS"
+            BuildableName = "libpce.a"
+            BlueprintName = "pce"
             ReferencedContainer = "container:PVMednafen.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

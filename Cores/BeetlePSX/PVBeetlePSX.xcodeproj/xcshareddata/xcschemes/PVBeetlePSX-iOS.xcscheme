@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C7620F20783162009950E4"
                BuildableName = "PVBeetlePSX.framework"
-               BlueprintName = "PVBeetlePSX-iOS"
+               BlueprintName = "PVBeetlePSX"
                ReferencedContainer = "container:PVBeetlePSX.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -52,7 +52,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C7620F20783162009950E4"
             BuildableName = "PVBeetlePSX.framework"
-            BlueprintName = "PVBeetlePSX-iOS"
+            BlueprintName = "PVBeetlePSX"
             ReferencedContainer = "container:PVBeetlePSX.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

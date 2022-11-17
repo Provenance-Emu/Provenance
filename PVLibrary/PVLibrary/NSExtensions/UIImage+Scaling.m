@@ -6,7 +6,10 @@
 //  Copyright (c) 2013 James Addyman. All rights reserved.
 //
 
+@import Foundation;
+#if !TARGET_OS_MAC
 #import "UIImage+Scaling.h"
+@import CoreGraphics;
 
 @implementation UIImage (Scaling)
 
@@ -128,3 +131,4 @@
 }
 
 @end
+#endif

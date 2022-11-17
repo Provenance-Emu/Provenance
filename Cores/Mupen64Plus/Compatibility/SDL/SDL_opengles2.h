@@ -29,7 +29,7 @@
 //#ifdef __IPHONEOS__
 #include <TargetConditionals.h>
 
-#if TARGET_OS_MACCATALYST
+#if TARGET_OS_MACCATALYST || TARGET_OS_OSX
 #include <OpenGL/gl3.h>
 #include <OpenGL/gl3ext.h>
 #include <OpenGL/OpenGL.h>
@@ -55,5 +55,9 @@
 #endif /* _MSC_VER */
 
 #ifndef APIENTRY
+#ifndef GL_APIENTRY
 #define APIENTRY GL_APIENTRY
+#else
+#define APIENTRY GL_APIENTRY
+#endif
 #endif

@@ -6,7 +6,7 @@
 //  Copyright © 2021 Joseph Mattiello. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
 //! Project version number for PVPPSSPP.
 FOUNDATION_EXPORT double PVPPSSPPVersionNumber;

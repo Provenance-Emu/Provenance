@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B33351FB207B020C0036A448"
-               BuildableName = "libpcfx-iOS.a"
-               BlueprintName = "pcfx-iOS"
+               BuildableName = "libpcfx.a"
+               BlueprintName = "pcfx"
                ReferencedContainer = "container:PVMednafen.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B33351FB207B020C0036A448"
-            BuildableName = "libpcfx-iOS.a"
-            BlueprintName = "pcfx-iOS"
+            BuildableName = "libpcfx.a"
+            BlueprintName = "pcfx"
             ReferencedContainer = "container:PVMednafen.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

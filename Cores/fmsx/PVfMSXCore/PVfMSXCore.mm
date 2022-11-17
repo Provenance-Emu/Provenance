@@ -17,6 +17,11 @@
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
 
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
+#import <OpenGL/gl3.h>
+#import <GLUT/GLUT.h>
+#endif
+
 #define SAMPLERATE 48000
 #define SIZESOUNDBUFFER 48000 / 60 * 4
 #define OpenEmu 1

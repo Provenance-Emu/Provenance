@@ -7,10 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B33FADA7279BCA9E0013AAD8 /* snesticle_tvOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FADA6279BCA9E0013AAD8 /* snesticle_tvOS.swift */; };
 		B33FADB3279BCAB40013AAD8 /* snesticle_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FADB2279BCAB40013AAD8 /* snesticle_iOS.swift */; };
-		B33FADB8279BCCDC0013AAD8 /* libsnesticle-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33FADB0279BCAB40013AAD8 /* libsnesticle-iOS.a */; };
-		B33FADBB279BCCF40013AAD8 /* libsnesticle-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33FADA4279BCA9D0013AAD8 /* libsnesticle-tvOS.a */; };
+		B33FADB8279BCCDC0013AAD8 /* libsnesticle.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33FADB0279BCAB40013AAD8 /* libsnesticle.a */; };
 		B33FB2D0279BCED80013AAD8 /* snspc_c.c in Sources */ = {isa = PBXBuildFile; fileRef = B33FADEA279BCE900013AAD8 /* snspc_c.c */; };
 		B33FB2D1279BCED80013AAD8 /* sncpu.c in Sources */ = {isa = PBXBuildFile; fileRef = B33FADE5279BCE900013AAD8 /* sncpu.c */; };
 		B33FB2D2279BCED80013AAD8 /* snspc.c in Sources */ = {isa = PBXBuildFile; fileRef = B33FADEF279BCE900013AAD8 /* snspc.c */; };
@@ -37,38 +35,9 @@
 		B33FB2E9279BCEF50013AAD8 /* snppurender8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FAE09279BCE900013AAD8 /* snppurender8.cpp */; };
 		B34AB5842106DEA000C45F09 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34AB5832106DEA000C45F09 /* PVSupport.framework */; };
 		B3547B632058591100CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B622058591000CFF7D8 /* Core.plist */; };
-		B3547B642058591100CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B622058591000CFF7D8 /* Core.plist */; };
 		B365107E21782E95008FDB7B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B365107D21782E95008FDB7B /* libz.tbd */; };
-		B365108021782E9E008FDB7B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B365107F21782E9E008FDB7B /* libz.tbd */; };
-		B380EA2F28952D2900968304 /* snppucolor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FADF8279BCE900013AAD8 /* snppucolor.cpp */; };
-		B380EA3028952D2900968304 /* snspcdisasm.c in Sources */ = {isa = PBXBuildFile; fileRef = B33FAE14279BCE900013AAD8 /* snspcdisasm.c */; };
-		B380EA3128952D2900968304 /* snspc.c in Sources */ = {isa = PBXBuildFile; fileRef = B33FADEF279BCE900013AAD8 /* snspc.c */; };
-		B380EA3228952D2900968304 /* snspc_c.c in Sources */ = {isa = PBXBuildFile; fileRef = B33FADEA279BCE900013AAD8 /* snspc_c.c */; };
-		B380EA3328952D2900968304 /* snppurender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FADE9279BCE900013AAD8 /* snppurender.cpp */; };
-		B380EA3428952D2900968304 /* snmemmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FADF7279BCE900013AAD8 /* snmemmap.cpp */; };
-		B380EA3528952D2900968304 /* snppuobj.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FAE12279BCE900013AAD8 /* snppuobj.cpp */; };
-		B380EA3628952D2900968304 /* snesreg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FADFC279BCE900013AAD8 /* snesreg.cpp */; };
-		B380EA3728952D2900968304 /* sncpu.c in Sources */ = {isa = PBXBuildFile; fileRef = B33FADE5279BCE900013AAD8 /* sncpu.c */; };
-		B380EA3828952D2900968304 /* snppu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FADED279BCE900013AAD8 /* snppu.cpp */; };
-		B380EA3928952D2900968304 /* snspcdsp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FAE16279BCE900013AAD8 /* snspcdsp.cpp */; };
-		B380EA3A28952D2900968304 /* snio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FADE7279BCE900013AAD8 /* snio.cpp */; };
-		B380EA3B28952D2900968304 /* snspctimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FADFD279BCE900013AAD8 /* snspctimer.cpp */; };
-		B380EA3C28952D2900968304 /* sncpu_c.c in Sources */ = {isa = PBXBuildFile; fileRef = B33FAE06279BCE900013AAD8 /* sncpu_c.c */; };
-		B380EA3E28952D2900968304 /* snrom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FAE15279BCE900013AAD8 /* snrom.cpp */; };
-		B380EA3F28952D2900968304 /* snppurender8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FAE09279BCE900013AAD8 /* snppurender8.cpp */; };
-		B380EA4028952D2900968304 /* snspcrom.c in Sources */ = {isa = PBXBuildFile; fileRef = B33FAE0D279BCE900013AAD8 /* snspcrom.c */; };
-		B380EA4128952D2900968304 /* sndma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FADF6279BCE900013AAD8 /* sndma.cpp */; };
-		B380EA4228952D2A00968304 /* snspcbrr.c in Sources */ = {isa = PBXBuildFile; fileRef = B33FAE20279BCE900013AAD8 /* snspcbrr.c */; };
-		B380EA4328952D2A00968304 /* snppublend_c.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FAE0F279BCE900013AAD8 /* snppublend_c.cpp */; };
-		B380EA4428952D2A00968304 /* snspcio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FAE13279BCE900013AAD8 /* snspcio.cpp */; };
-		B380EA4528952D2A00968304 /* snstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FAE08279BCE900013AAD8 /* snstate.cpp */; };
-		B380EA4628952D2A00968304 /* snes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FAE18279BCE900013AAD8 /* snes.cpp */; };
-		B380EA4728952D2A00968304 /* sndisasm.c in Sources */ = {isa = PBXBuildFile; fileRef = B33FAE10279BCE900013AAD8 /* sndisasm.c */; };
 		B3C39C092895292D00B8DCD5 /* rendersurface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FB290279BCE930013AAD8 /* rendersurface.cpp */; };
-		B3C39C0A2895292D00B8DCD5 /* rendersurface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FB290279BCE930013AAD8 /* rendersurface.cpp */; };
 		B3C39C0D2895296400B8DCD5 /* surface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FB26D279BCE930013AAD8 /* surface.cpp */; };
-		B3C39C0E2895296500B8DCD5 /* surface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FB26D279BCE930013AAD8 /* surface.cpp */; };
-		B3C39C0F28952A7800B8DCD5 /* PVSnesticleCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF87D337258AB6CE00838AF8 /* PVSnesticleCore.swift */; };
 		B3C39C1028952A7900B8DCD5 /* PVSnesticleCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF87D337258AB6CE00838AF8 /* PVSnesticleCore.swift */; };
 		B3C9D5361DEA83DE0068D057 /* PVSnesticle.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C9D5341DEA83DE0068D057 /* PVSnesticle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C9D54A1DEA841A0068D057 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA91317F75FAF0031B1C9 /* AudioToolbox.framework */; };
@@ -76,19 +45,9 @@
 		B3C9D54C1DEA842B0068D057 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA90F17F75FA10031B1C9 /* OpenGLES.framework */; platformFilter = ios; };
 		B3C9D54D1DEA84320068D057 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA90D17F75F6E0031B1C9 /* UIKit.framework */; };
 		B3C9D54E1DEA843E0068D057 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA8E717F75F350031B1C9 /* Foundation.framework */; };
-		B3C9D54F1DEA846B0068D057 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D2E3871D6E7E4A0058544D /* PVSupport.framework */; };
-		B3C9D5511DEA847B0068D057 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5501DEA847B0068D057 /* AudioToolbox.framework */; };
-		B3C9D5531DEA84830068D057 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5521DEA84830068D057 /* CoreGraphics.framework */; };
-		B3C9D5551DEA848A0068D057 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5541DEA848A0068D057 /* OpenGLES.framework */; };
-		B3C9D5571DEA84950068D057 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5561DEA84950068D057 /* UIKit.framework */; };
-		B3C9D5591DEA849B0068D057 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5581DEA849B0068D057 /* Foundation.framework */; };
 		B3C9D5941DEA86B80068D057 /* PVSnesticleOESupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA98F17F760390031B1C9 /* PVSnesticleOESupport.mm */; };
 		B3C9D5951DEA86B80068D057 /* PVSnesticleCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA91917F760390031B1C9 /* PVSnesticleCore.mm */; };
-		B3C9D5CA1DEA86B80068D057 /* PVSnesticleOESupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA98F17F760390031B1C9 /* PVSnesticleOESupport.mm */; };
-		B3C9D5CB1DEA86B80068D057 /* PVSnesticleCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA91917F760390031B1C9 /* PVSnesticleCore.mm */; };
 		B3C9D5CE1DEA87930068D057 /* PVSnesticleCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA91817F760390031B1C9 /* PVSnesticleCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C9D5CF1DEA87A00068D057 /* PVSnesticleCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA91817F760390031B1C9 /* PVSnesticleCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C9D5D01DEA87A00068D057 /* PVSnesticle.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C9D5341DEA83DE0068D057 /* PVSnesticle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -99,25 +58,9 @@
 			remoteGlobalIDString = B33FADAF279BCAB40013AAD8;
 			remoteInfo = "snesticle-iOS";
 		};
-		B33FADBC279BCCF40013AAD8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1ACEA8DC17F75F350031B1C9 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B33FADA3279BCA9D0013AAD8;
-			remoteInfo = "snesticle-tvOS";
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		B33FADA2279BCA9D0013AAD8 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B33FADAE279BCAB40013AAD8 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -142,9 +85,8 @@
 		1ACEA98F17F760390031B1C9 /* PVSnesticleOESupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PVSnesticleOESupport.mm; sourceTree = "<group>"; };
 		B3339C2E28951EE300F8E917 /* BuildFlags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
 		B33FAD9A279BCA840013AAD8 /* snesticle_iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = snesticle_iOS.swift; sourceTree = "<group>"; };
-		B33FADA4279BCA9D0013AAD8 /* libsnesticle-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libsnesticle-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B33FADA6279BCA9E0013AAD8 /* snesticle_tvOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = snesticle_tvOS.swift; sourceTree = "<group>"; };
-		B33FADB0279BCAB40013AAD8 /* libsnesticle-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libsnesticle-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B33FADB0279BCAB40013AAD8 /* libsnesticle.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsnesticle.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B33FADB2279BCAB40013AAD8 /* snesticle_iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = snesticle_iOS.swift; sourceTree = "<group>"; };
 		B33FADBF279BCE8F0013AAD8 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		B33FADC0279BCE8F0013AAD8 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -1341,7 +1283,6 @@
 		B3C9D5321DEA83DE0068D057 /* PVSnesticle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVSnesticle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D5341DEA83DE0068D057 /* PVSnesticle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVSnesticle.h; sourceTree = "<group>"; };
 		B3C9D5351DEA83DE0068D057 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B3C9D5401DEA83FD0068D057 /* PVSnesticle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVSnesticle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D5501DEA847B0068D057 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
 		B3C9D5521DEA84830068D057 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		B3C9D5541DEA848A0068D057 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
@@ -1353,13 +1294,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		B33FADA1279BCA9D0013AAD8 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B33FADAD279BCAB40013AAD8 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1373,27 +1307,12 @@
 			files = (
 				B365107E21782E95008FDB7B /* libz.tbd in Frameworks */,
 				B34AB5842106DEA000C45F09 /* PVSupport.framework in Frameworks */,
-				B33FADB8279BCCDC0013AAD8 /* libsnesticle-iOS.a in Frameworks */,
+				B33FADB8279BCCDC0013AAD8 /* libsnesticle.a in Frameworks */,
 				B3C9D54E1DEA843E0068D057 /* Foundation.framework in Frameworks */,
 				B3C9D54D1DEA84320068D057 /* UIKit.framework in Frameworks */,
 				B3C9D54C1DEA842B0068D057 /* OpenGLES.framework in Frameworks */,
 				B3C9D54B1DEA84220068D057 /* CoreGraphics.framework in Frameworks */,
 				B3C9D54A1DEA841A0068D057 /* AudioToolbox.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3C9D53C1DEA83FD0068D057 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B365108021782E9E008FDB7B /* libz.tbd in Frameworks */,
-				B3C9D5591DEA849B0068D057 /* Foundation.framework in Frameworks */,
-				B3C9D5571DEA84950068D057 /* UIKit.framework in Frameworks */,
-				B3C9D5551DEA848A0068D057 /* OpenGLES.framework in Frameworks */,
-				B33FADBB279BCCF40013AAD8 /* libsnesticle-tvOS.a in Frameworks */,
-				B3C9D5531DEA84830068D057 /* CoreGraphics.framework in Frameworks */,
-				B3C9D5511DEA847B0068D057 /* AudioToolbox.framework in Frameworks */,
-				B3C9D54F1DEA846B0068D057 /* PVSupport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1419,9 +1338,7 @@
 			isa = PBXGroup;
 			children = (
 				B3C9D5321DEA83DE0068D057 /* PVSnesticle.framework */,
-				B3C9D5401DEA83FD0068D057 /* PVSnesticle.framework */,
-				B33FADA4279BCA9D0013AAD8 /* libsnesticle-tvOS.a */,
-				B33FADB0279BCAB40013AAD8 /* libsnesticle-iOS.a */,
+				B33FADB0279BCAB40013AAD8 /* libsnesticle.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3222,38 +3139,12 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3C9D53D1DEA83FD0068D057 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3C9D5CF1DEA87A00068D057 /* PVSnesticleCore.h in Headers */,
-				B3C9D5D01DEA87A00068D057 /* PVSnesticle.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		B33FADA3279BCA9D0013AAD8 /* snesticle-tvOS */ = {
+		B33FADAF279BCAB40013AAD8 /* snesticle */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B33FADA8279BCA9E0013AAD8 /* Build configuration list for PBXNativeTarget "snesticle-tvOS" */;
-			buildPhases = (
-				B33FADA0279BCA9D0013AAD8 /* Sources */,
-				B33FADA1279BCA9D0013AAD8 /* Frameworks */,
-				B33FADA2279BCA9D0013AAD8 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "snesticle-tvOS";
-			productName = "snesticle-tvOS";
-			productReference = B33FADA4279BCA9D0013AAD8 /* libsnesticle-tvOS.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		B33FADAF279BCAB40013AAD8 /* snesticle-iOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B33FADB4279BCAB40013AAD8 /* Build configuration list for PBXNativeTarget "snesticle-iOS" */;
+			buildConfigurationList = B33FADB4279BCAB40013AAD8 /* Build configuration list for PBXNativeTarget "snesticle" */;
 			buildPhases = (
 				B33FADAC279BCAB40013AAD8 /* Sources */,
 				B33FADAD279BCAB40013AAD8 /* Frameworks */,
@@ -3263,14 +3154,14 @@
 			);
 			dependencies = (
 			);
-			name = "snesticle-iOS";
+			name = snesticle;
 			productName = "snesticle-iOS";
-			productReference = B33FADB0279BCAB40013AAD8 /* libsnesticle-iOS.a */;
+			productReference = B33FADB0279BCAB40013AAD8 /* libsnesticle.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B3C9D5311DEA83DE0068D057 /* PVSnesticle-iOS */ = {
+		B3C9D5311DEA83DE0068D057 /* PVSnesticle */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3C9D5371DEA83DE0068D057 /* Build configuration list for PBXNativeTarget "PVSnesticle-iOS" */;
+			buildConfigurationList = B3C9D5371DEA83DE0068D057 /* Build configuration list for PBXNativeTarget "PVSnesticle" */;
 			buildPhases = (
 				B3C9D52F1DEA83DE0068D057 /* Headers */,
 				B3C9D52D1DEA83DE0068D057 /* Sources */,
@@ -3282,28 +3173,9 @@
 			dependencies = (
 				B33FADBA279BCCDC0013AAD8 /* PBXTargetDependency */,
 			);
-			name = "PVSnesticle-iOS";
+			name = PVSnesticle;
 			productName = PVSNES;
 			productReference = B3C9D5321DEA83DE0068D057 /* PVSnesticle.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		B3C9D53F1DEA83FD0068D057 /* PVSnesticle-tvOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B3C9D5451DEA83FE0068D057 /* Build configuration list for PBXNativeTarget "PVSnesticle-tvOS" */;
-			buildPhases = (
-				B3C9D53D1DEA83FD0068D057 /* Headers */,
-				B3C9D53B1DEA83FD0068D057 /* Sources */,
-				B3C9D53C1DEA83FD0068D057 /* Frameworks */,
-				B3C9D53E1DEA83FD0068D057 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B33FADBD279BCCF40013AAD8 /* PBXTargetDependency */,
-			);
-			name = "PVSnesticle-tvOS";
-			productName = "PVSNES tvOS";
-			productReference = B3C9D5401DEA83FD0068D057 /* PVSnesticle.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -3318,17 +3190,10 @@
 				LastUpgradeCheck = 1300;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
-					B33FADA3279BCA9D0013AAD8 = {
-						CreatedOnToolsVersion = 13.2.1;
-					};
 					B33FADAF279BCAB40013AAD8 = {
 						CreatedOnToolsVersion = 13.2.1;
 					};
 					B3C9D5311DEA83DE0068D057 = {
-						CreatedOnToolsVersion = 8.1;
-						LastSwiftMigration = 1230;
-					};
-					B3C9D53F1DEA83FD0068D057 = {
 						CreatedOnToolsVersion = 8.1;
 						LastSwiftMigration = 1230;
 					};
@@ -3347,10 +3212,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B3C9D5311DEA83DE0068D057 /* PVSnesticle-iOS */,
-				B3C9D53F1DEA83FD0068D057 /* PVSnesticle-tvOS */,
-				B33FADAF279BCAB40013AAD8 /* snesticle-iOS */,
-				B33FADA3279BCA9D0013AAD8 /* snesticle-tvOS */,
+				B3C9D5311DEA83DE0068D057 /* PVSnesticle */,
+				B33FADAF279BCAB40013AAD8 /* snesticle */,
 			);
 		};
 /* End PBXProject section */
@@ -3364,51 +3227,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3C9D53E1DEA83FD0068D057 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3547B642058591100CFF7D8 /* Core.plist in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		B33FADA0279BCA9D0013AAD8 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B380EA4728952D2A00968304 /* sndisasm.c in Sources */,
-				B380EA2F28952D2900968304 /* snppucolor.cpp in Sources */,
-				B380EA4628952D2A00968304 /* snes.cpp in Sources */,
-				B380EA3028952D2900968304 /* snspcdisasm.c in Sources */,
-				B380EA4228952D2A00968304 /* snspcbrr.c in Sources */,
-				B380EA4028952D2900968304 /* snspcrom.c in Sources */,
-				B380EA3C28952D2900968304 /* sncpu_c.c in Sources */,
-				B380EA4328952D2A00968304 /* snppublend_c.cpp in Sources */,
-				B380EA3528952D2900968304 /* snppuobj.cpp in Sources */,
-				B380EA3428952D2900968304 /* snmemmap.cpp in Sources */,
-				B380EA3E28952D2900968304 /* snrom.cpp in Sources */,
-				B33FADA7279BCA9E0013AAD8 /* snesticle_tvOS.swift in Sources */,
-				B380EA3928952D2900968304 /* snspcdsp.cpp in Sources */,
-				B380EA3128952D2900968304 /* snspc.c in Sources */,
-				B380EA4128952D2900968304 /* sndma.cpp in Sources */,
-				B380EA3B28952D2900968304 /* snspctimer.cpp in Sources */,
-				B380EA3F28952D2900968304 /* snppurender8.cpp in Sources */,
-				B3C39C0E2895296500B8DCD5 /* surface.cpp in Sources */,
-				B380EA3A28952D2900968304 /* snio.cpp in Sources */,
-				B380EA4528952D2A00968304 /* snstate.cpp in Sources */,
-				B3C39C0A2895292D00B8DCD5 /* rendersurface.cpp in Sources */,
-				B380EA3828952D2900968304 /* snppu.cpp in Sources */,
-				B380EA3628952D2900968304 /* snesreg.cpp in Sources */,
-				B380EA3728952D2900968304 /* sncpu.c in Sources */,
-				B380EA3328952D2900968304 /* snppurender.cpp in Sources */,
-				B380EA4428952D2A00968304 /* snspcio.cpp in Sources */,
-				B380EA3228952D2900968304 /* snspc_c.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B33FADAC279BCAB40013AAD8 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3453,28 +3274,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3C9D53B1DEA83FD0068D057 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3C9D5CA1DEA86B80068D057 /* PVSnesticleOESupport.mm in Sources */,
-				B3C9D5CB1DEA86B80068D057 /* PVSnesticleCore.mm in Sources */,
-				B3C39C0F28952A7800B8DCD5 /* PVSnesticleCore.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
 		B33FADBA279BCCDC0013AAD8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B33FADAF279BCAB40013AAD8 /* snesticle-iOS */;
+			target = B33FADAF279BCAB40013AAD8 /* snesticle */;
 			targetProxy = B33FADB9279BCCDC0013AAD8 /* PBXContainerItemProxy */;
-		};
-		B33FADBD279BCCF40013AAD8 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B33FADA3279BCA9D0013AAD8 /* snesticle-tvOS */;
-			targetProxy = B33FADBC279BCCF40013AAD8 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -3662,6 +3468,7 @@
 		B324C5072191A2CB009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -3695,6 +3502,8 @@
 				PRODUCT_NAME = PVSnesticle;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -3702,135 +3511,10 @@
 			};
 			name = Archive;
 		};
-		B324C5082191A2CB009F4EDC /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_SUSPICIOUS_MOVES = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "PVSnesticle/PVSnesticle-Prefix.pch";
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = PVSnesticle/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVSnesticle";
-				PRODUCT_NAME = PVSnesticle;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Archive;
-		};
-		B33FADA9279BCA9E0013AAD8 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
-			};
-			name = Debug;
-		};
-		B33FADAA279BCA9E0013AAD8 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
-			};
-			name = Release;
-		};
-		B33FADAB279BCA9E0013AAD8 /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
-			};
-			name = Archive;
-		};
 		B33FADB5279BCAB40013AAD8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -3848,6 +3532,8 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -3858,6 +3544,7 @@
 		B33FADB6279BCAB40013AAD8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -3876,6 +3563,8 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3885,6 +3574,7 @@
 		B33FADB7279BCAB40013AAD8 /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -3903,6 +3593,8 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3912,6 +3604,7 @@
 		B3C9D5381DEA83DE0068D057 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -3944,6 +3637,8 @@
 				PRODUCT_NAME = PVSnesticle;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
@@ -3955,6 +3650,7 @@
 		B3C9D5391DEA83DE0068D057 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -3988,92 +3684,10 @@
 				PRODUCT_NAME = PVSnesticle;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		B3C9D5461DEA83FE0068D057 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_SUSPICIOUS_MOVES = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "PVSnesticle/PVSnesticle-Prefix.pch";
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = PVSnesticle/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVSnesticle";
-				PRODUCT_NAME = PVSnesticle;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		B3C9D5471DEA83FE0068D057 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_SUSPICIOUS_MOVES = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "PVSnesticle/PVSnesticle-Prefix.pch";
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = PVSnesticle/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVSnesticle";
-				PRODUCT_NAME = PVSnesticle;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -4092,17 +3706,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B33FADA8279BCA9E0013AAD8 /* Build configuration list for PBXNativeTarget "snesticle-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B33FADA9279BCA9E0013AAD8 /* Debug */,
-				B33FADAA279BCA9E0013AAD8 /* Release */,
-				B33FADAB279BCA9E0013AAD8 /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B33FADB4279BCAB40013AAD8 /* Build configuration list for PBXNativeTarget "snesticle-iOS" */ = {
+		B33FADB4279BCAB40013AAD8 /* Build configuration list for PBXNativeTarget "snesticle" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B33FADB5279BCAB40013AAD8 /* Debug */,
@@ -4112,22 +3716,12 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3C9D5371DEA83DE0068D057 /* Build configuration list for PBXNativeTarget "PVSnesticle-iOS" */ = {
+		B3C9D5371DEA83DE0068D057 /* Build configuration list for PBXNativeTarget "PVSnesticle" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3C9D5381DEA83DE0068D057 /* Debug */,
 				B3C9D5391DEA83DE0068D057 /* Release */,
 				B324C5072191A2CB009F4EDC /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B3C9D5451DEA83FE0068D057 /* Build configuration list for PBXNativeTarget "PVSnesticle-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B3C9D5461DEA83FE0068D057 /* Debug */,
-				B3C9D5471DEA83FE0068D057 /* Release */,
-				B324C5082191A2CB009F4EDC /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -6,10 +6,10 @@
 //  Copyright © 2019 JM. All rights reserved.
 //
 
+#if canImport(NSLoggerLibObjC)
 import Foundation
 @_exported import CocoaLumberjackSwift
 
-// #if canImport(NSLogger)
 import NSLogger
 
 extension DDLogLevel {
@@ -47,3 +47,4 @@ extension DDLogLevel: CustomStringConvertible {
         }
     }
 }
+#endif

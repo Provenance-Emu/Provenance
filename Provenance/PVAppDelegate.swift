@@ -99,7 +99,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         _initAppCenter()
         setDefaultsFromSettingsBundle()
 
-		#if !targetEnvironment(macCatalyst)
+		#if !targetEnvironment(macCatalyst) && !os(macOS)
         PVEmulatorConfiguration.initICloud()
         DispatchQueue.global(qos: .background).async {
             let useiCloud = PVSettingsModel.shared.debugOptions.iCloudSync && PVEmulatorConfiguration.supportsICloud
@@ -176,7 +176,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         // SteamControllerManager.listenForConnections()
         #endif
 
-        #if os(iOS)
+        #if os(iOS) && !targetEnvironment(macCatalyst)
             PVAltKitService.shared.start()
             ApplicationMonitor.shared.start()
         #endif

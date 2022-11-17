@@ -44,7 +44,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C7620F20783162009950E4"
                BuildableName = "PVDosBox.framework"
-               BlueprintName = "PVDosBox-iOS"
+               BlueprintName = "PVDosBox"
                ReferencedContainer = "container:PVDosBox.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -80,7 +80,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C7620F20783162009950E4"
             BuildableName = "PVDosBox.framework"
-            BlueprintName = "PVDosBox-iOS"
+            BlueprintName = "PVDosBox"
             ReferencedContainer = "container:PVDosBox.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

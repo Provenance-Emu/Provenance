@@ -48,7 +48,7 @@
 #endif
 
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 #import <PVSupport/OERingBuffer.h>
 #import <PVSupport/PVSupport-Swift.h>
 #import <PVSupport/PVEmulatorCore.h>

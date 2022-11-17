@@ -380,7 +380,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 			if UIDevice.hasTapticMotor {
 				feedbackGenerator?.selectionChanged()
 			} else if UIDevice.current.systemName == "iOS" {
-#if !targetEnvironment(macCatalyst)
+#if !targetEnvironment(macCatalyst) && !os(macOS)
 				AudioServicesStopSystemSound(Int32(kSystemSoundID_Vibrate))
 				let vibrationLength: Int = 30
 				let pattern: [Any] = [false, 0, true, vibrationLength]

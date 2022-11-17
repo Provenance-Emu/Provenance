@@ -9,9 +9,18 @@
 #import "PVMelonDSCore+Video.h"
 #import "PVMelonDSCore.h"
 
+#if !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
 #import <OpenGLES/ES3/glext.h>
 #import <OpenGLES/ES3/gl.h>
 #import <GLKit/GLKit.h>
+#else
+#import <OpenGL/OpenGL.h>
+#import <GLUT/GLUT.h>
+#endif
+
+#if __has_include(<UIKit/UIKit.h>)
+#import <UIKit/UIKit.h>
+#endif
 
 @implementation PVMelonDSCore (Video)
 
@@ -87,7 +96,11 @@
 
 - (GLenum)internalPixelFormat {
     // TODO: use struct retro_pixel_format var, set with, RETRO_ENVIRONMENT_SET_PIXEL_FORMAT
-    return GL_RGB565;
+#if !TARGET_OS_MAC && !TARGET_OS_MACCATALYST
+        return GL_RGB565;
+#else
+         return GL_UNSIGNED_SHORT_5_6_5;
+#endif
 }
 
 //- (GLenum)depthFormat {

@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C7620F20783162009950E4"
                BuildableName = "PVMiniVMac.framework"
-               BlueprintName = "PVMiniVMac-iOS"
+               BlueprintName = "PVMiniVMac"
                ReferencedContainer = "container:PVMiniVMac.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -52,7 +52,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C7620F20783162009950E4"
             BuildableName = "PVMiniVMac.framework"
-            BlueprintName = "PVMiniVMac-iOS"
+            BlueprintName = "PVMiniVMac"
             ReferencedContainer = "container:PVMiniVMac.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

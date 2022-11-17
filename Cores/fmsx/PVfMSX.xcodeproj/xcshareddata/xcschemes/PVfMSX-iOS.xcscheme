@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C7620F20783162009950E4"
                BuildableName = "PVfMSX.framework"
-               BlueprintName = "PVfMSX-iOS"
+               BlueprintName = "PVfMSX"
                ReferencedContainer = "container:PVfMSX.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -52,7 +52,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C7620F20783162009950E4"
             BuildableName = "PVfMSX.framework"
-            BlueprintName = "PVfMSX-iOS"
+            BlueprintName = "PVfMSX"
             ReferencedContainer = "container:PVfMSX.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
 
 //! Project version number for PVLibrary.
 FOUNDATION_EXPORT double PVLibraryVersionNumber;

@@ -8,7 +8,9 @@
 import Foundation
 import PVSupport
 import RealmSwift
+#if canImport(UIKit)
 import UIKit
+#endif
 
 extension Sequence where Iterator.Element : Hashable {
 

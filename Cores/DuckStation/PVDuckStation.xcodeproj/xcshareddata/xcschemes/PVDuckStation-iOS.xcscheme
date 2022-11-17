@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B36DE7471D6AB19C002EE3ED"
                BuildableName = "PVDuckStation.framework"
-               BlueprintName = "PVDuckStation-iOS"
+               BlueprintName = "PVDuckStation"
                ReferencedContainer = "container:PVDuckStation.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -52,7 +52,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B36DE7471D6AB19C002EE3ED"
             BuildableName = "PVDuckStation.framework"
-            BlueprintName = "PVDuckStation-iOS"
+            BlueprintName = "PVDuckStation"
             ReferencedContainer = "container:PVDuckStation.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

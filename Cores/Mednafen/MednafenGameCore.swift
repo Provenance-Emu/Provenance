@@ -6,7 +6,7 @@
 //
 
 import PVSupport
-import UIKit
+import Foundation
 // import PVMednafen.Private
 
 extension MednafenGameCore: DiscSwappable {

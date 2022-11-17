@@ -9,9 +9,14 @@
 #import "PVDosBoxCore+Video.h"
 #import "PVDosBoxCore.h"
 
+#if !__has_include(<OpenGL/OpenGL.h>)
 #import <OpenGLES/ES3/glext.h>
 #import <OpenGLES/ES3/gl.h>
 #import <GLKit/GLKit.h>
+#else
+#import <OpenGL/OpenGL.h>
+#import <GLUT/GLUT.h>
+#endif
 
 @implementation PVDosBoxCore (Video)
 

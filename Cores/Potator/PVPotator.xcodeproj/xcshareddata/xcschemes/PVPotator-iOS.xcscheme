@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C7620F20783162009950E4"
                BuildableName = "PVPotator.framework"
-               BlueprintName = "PVPotator-iOS"
+               BlueprintName = "PVPotator"
                ReferencedContainer = "container:PVPotator.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -52,7 +52,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C7620F20783162009950E4"
             BuildableName = "PVPotator.framework"
-            BlueprintName = "PVPotator-iOS"
+            BlueprintName = "PVPotator"
             ReferencedContainer = "container:PVPotator.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
