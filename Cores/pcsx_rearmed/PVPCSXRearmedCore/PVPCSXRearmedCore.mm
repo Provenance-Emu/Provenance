@@ -120,17 +120,17 @@
 //- (BOOL)supportsRumble { return NO; }
 //- (BOOL)supportsCheatCode { return NO; }
 
-- (NSTimeInterval)frameInterval {
-    return 13.63;
-}
+//- (NSTimeInterval)frameInterval {
+//    return 13.63;
+//}
 
-- (CGSize)aspectSize {
-    return CGSizeMake(4, 3);
-}
-
-- (CGSize)bufferSize {
-    return CGSizeMake(1440, 1080);
-}
+//- (CGSize)aspectSize {
+//    return CGSizeMake(4, 3);
+//}
+//
+//- (CGSize)bufferSize {
+//    return CGSizeMake(1440, 1080);
+//}
 
 - (GLenum)pixelFormat {
     return GL_BGRA;
@@ -144,6 +144,7 @@
     return GL_RGBA;
 }
 
+- (BOOL)rendersToOpenGL { return YES; }
 # pragma mark - Audio
 
 - (double)audioSampleRate {
