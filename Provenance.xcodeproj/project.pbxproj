@@ -529,8 +529,6 @@
 		B398800E27A521AC004DEFCA /* ConflictsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B398800C27A521AC004DEFCA /* ConflictsController.swift */; };
 		B39AF05F28754EB8004882FC /* PVAppDelegate+VolumeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39AF05E28754EB8004882FC /* PVAppDelegate+VolumeButton.swift */; };
 		B39DC77D279E79D40017E28D /* TopShelf.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		B39E129728925B1200016387 /* PVBeetlePSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B329030528740D920037BA1C /* PVBeetlePSX.framework */; platformFilters = (driverkit, ios, tvos, watchos, ); };
-		B39E129828925B1200016387 /* PVBeetlePSX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B329030528740D920037BA1C /* PVBeetlePSX.framework */; platformFilters = (driverkit, ios, tvos, watchos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B39E12A82892600500016387 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6AE28781E9F0037A946 /* PVLibRetro.framework */; };
 		B39E12A92892600500016387 /* PVLibRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6AE28781E9F0037A946 /* PVLibRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3A320372720974F00F338F6 /* PVGameCubeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A320362720974F00F338F6 /* PVGameCubeControllerViewController.swift */; };
@@ -937,7 +935,6 @@
 				B38E0EE82892853D004720DA /* PVMelonDS.framework in Embed Frameworks */,
 				B3231BF22896666C003CC116 /* PVOpera.framework in Embed Frameworks */,
 				B30F1427289674B1004D40BF /* PVGearcoleco.framework in Embed Frameworks */,
-				B39E129828925B1200016387 /* PVBeetlePSX.framework in Embed Frameworks */,
 				B3C8A6F1287823DC0037A946 /* PVMiniVMac.framework in Embed Frameworks */,
 				B3C8A6FD287823DC0037A946 /* PVDosBox.framework in Embed Frameworks */,
 				B3D3E7602894DEAB0016EB85 /* PVGME.framework in Embed Frameworks */,
@@ -1813,7 +1810,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B39E129728925B1200016387 /* PVBeetlePSX.framework in Frameworks */,
 				B3C8A6FA287823DC0037A946 /* PVDesmume2015.framework in Frameworks */,
 				B3C8A6C02878238C0037A946 /* libz.dylib in Frameworks */,
 				B3C8A6C52878238C0037A946 /* libc++.dylib in Frameworks */,
