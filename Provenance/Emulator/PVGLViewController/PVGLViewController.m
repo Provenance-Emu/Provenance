@@ -20,7 +20,9 @@
 #define USE_DISPLAY_LINK 0
 #endif
 
-#if !TARGET_OS_MACCATALYST &&!TARGET_OS_OSX
+#define USE_METAL (TARGET_OS_MACCATALYST || TARGET_OS_OSX)
+
+#if !USE_METAL
 #import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
@@ -31,13 +33,6 @@
 @import MetalKit;
 @import AppKit;
 @import GLUT;
-#endif
-
-#define USE_METAL TARGET_OS_MACCATALYST
-
-
-#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
-#define EAGLContext NSOpenGLContext
 #endif
 
 #define SHADER_DIR "GLES"
