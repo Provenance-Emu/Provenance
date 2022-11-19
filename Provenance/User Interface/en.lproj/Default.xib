@@ -25,7 +25,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Loading..." id="hEE-db-CVg">
+                    <navigationItem key="navigationItem" title="Loading…" id="hEE-db-CVg">
                         <barButtonItem key="leftBarButtonItem" image="gear" id="HKB-UT-nWv"/>
                         <rightBarButtonItems>
                             <barButtonItem systemItem="add" id="rh0-jO-Eea"/>
