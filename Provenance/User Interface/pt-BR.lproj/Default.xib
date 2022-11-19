@@ -23,23 +23,10 @@
                     <view key="view" contentMode="scaleToFill" id="CBZ-2S-KGQ">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <imageView opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.050000000000000003" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="pv_dark_logo" translatesAutoresizingMaskIntoConstraints="NO" id="DpG-sO-5zK">
-                                <rect key="frame" x="67.5" y="269.5" width="240" height="128"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="DpG-sO-5zK" secondAttribute="height" multiplier="15:8" id="8Hj-mS-tFY"/>
-                                </constraints>
-                            </imageView>
-                        </subviews>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <constraints>
-                            <constraint firstItem="DpG-sO-5zK" firstAttribute="width" secondItem="CBZ-2S-KGQ" secondAttribute="width" multiplier="0.64" id="R2q-OM-SD4"/>
-                            <constraint firstItem="DpG-sO-5zK" firstAttribute="centerX" secondItem="CBZ-2S-KGQ" secondAttribute="centerX" id="YjK-yJ-gGQ"/>
-                            <constraint firstItem="DpG-sO-5zK" firstAttribute="centerY" secondItem="CBZ-2S-KGQ" secondAttribute="centerY" id="dVg-lM-R4L"/>
-                        </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Loading..." style="browser" id="hEE-db-CVg">
-                        <barButtonItem key="leftBarButtonItem" image="gear" id="HKB-UT-nWv"/>
+                    <navigationItem key="navigationItem" title="Loading…" id="hEE-db-CVg">
+                        <barButtonItem key="leftBarButtonItem" image="gear" catalog="system" id="HKB-UT-nWv"/>
                         <rightBarButtonItems>
                             <barButtonItem systemItem="add" id="rh0-jO-Eea"/>
                             <barButtonItem image="sort" id="NtV-ij-HLA"/>
@@ -54,8 +41,7 @@
         </navigationController>
     </objects>
     <resources>
-        <image name="gear" width="20" height="20"/>
-        <image name="pv_dark_logo" width="800" height="370"/>
+        <image name="gear" catalog="system" width="128" height="122"/>
         <image name="sort" width="20" height="20"/>
     </resources>
 </document>
