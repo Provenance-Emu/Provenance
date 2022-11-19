@@ -26,7 +26,7 @@
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
                     <navigationItem key="navigationItem" title="Loading…" id="hEE-db-CVg">
-                        <barButtonItem key="leftBarButtonItem" image="gear" id="HKB-UT-nWv"/>
+                        <barButtonItem key="leftBarButtonItem" image="gear" catalog="system" id="HKB-UT-nWv"/>
                         <rightBarButtonItems>
                             <barButtonItem systemItem="add" id="rh0-jO-Eea"/>
                             <barButtonItem image="sort" id="NtV-ij-HLA"/>
@@ -41,7 +41,7 @@
         </navigationController>
     </objects>
     <resources>
-        <image name="gear" width="20" height="20"/>
+        <image name="gear" catalog="system" width="128" height="122"/>
         <image name="sort" width="20" height="20"/>
     </resources>
 </document>
