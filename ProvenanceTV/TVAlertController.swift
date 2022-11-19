@@ -195,6 +195,9 @@ final class TVAlertController: UIViewController, UIAlertControllerProtocol {
 
         let menu = UIView()
         menu.addSubview(stack)
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.centerXAnchor.constraint(equalTo:menu.centerXAnchor).isActive = true
+        stack.centerYAnchor.constraint(equalTo:menu.centerYAnchor).isActive = true
         view.addSubview(menu)
 
         menu.layer.cornerRadius = _inset
