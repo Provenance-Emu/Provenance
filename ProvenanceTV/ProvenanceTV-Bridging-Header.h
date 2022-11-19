@@ -17,7 +17,7 @@
 // • No need to import the Swift Bridging Header (Provenance-Swift.h), since it's already being imported fom the .pch file.
 
 #import "MBProgressHUD.h"
-//#import "PVMetalViewController.h"
+#import "PVMetalViewController.h"
 #import "PVGLViewController.h"
 #import "PVWebServer.h"
 
