@@ -461,7 +461,7 @@
                     <navigationItem key="navigationItem" id="LoK-Fl-znC">
                         <nil key="title"/>
                         <leftBarButtonItems>
-                            <barButtonItem image="gear" id="daz-L9-06G">
+                            <barButtonItem image="gear" catalog="system" id="daz-L9-06G">
                                 <connections>
                                     <segue destination="dRa-ou-OcL" kind="modal" identifier="SettingsSegue" modalPresentationStyle="formSheet" id="PHC-9h-QIz"/>
                                 </connections>
@@ -562,7 +562,7 @@
     </scenes>
     <color key="tintColor" red="0.51793235540390015" green="0.5159609317779541" blue="0.53913700580596924" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
     <resources>
-        <image name="gear" width="20" height="20"/>
+        <image name="gear" catalog="system" width="128" height="122"/>
         <image name="sort" width="20" height="20"/>
         <systemColor name="secondarySystemBackgroundColor">
             <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
