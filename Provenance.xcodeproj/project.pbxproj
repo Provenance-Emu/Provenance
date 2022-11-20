@@ -375,7 +375,6 @@
 		B355DF9E29209B6700E4C858 /* PreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF9D29209B6700E4C858 /* PreviewProvider.swift */; };
 		B355DFA129209B6700E4C858 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B355DF9F29209B6700E4C858 /* MainInterface.storyboard */; };
 		B355DFD52920A42800E4C858 /* Stickers.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B355DFD42920A42800E4C858 /* Stickers.xcassets */; };
-		B355DFD92920A42800E4C858 /* StickerPack.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B355DFD22920A42200E4C858 /* StickerPack.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B355E0002920AA2100E4C858 /* QuickLookThumbnailing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355DFFF2920AA2100E4C858 /* QuickLookThumbnailing.framework */; };
 		B355E0032920AA2600E4C858 /* ThumbnailProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355E0022920AA2600E4C858 /* ThumbnailProvider.swift */; };
 		B355E0142920AA9D00E4C858 /* ImportExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355E0132920AA9D00E4C858 /* ImportExtension.swift */; };
@@ -730,13 +729,6 @@
 			remoteGlobalIDString = B305EF04276B4C73003AE510;
 			remoteInfo = "Provenance Watch WatchKit Extension";
 		};
-		B355DFD72920A42800E4C858 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B355DFD12920A42100E4C858;
-			remoteInfo = StickerPack;
-		};
 		B36FE830218EAAD200F858F3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
@@ -958,7 +950,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				B355DFD92920A42800E4C858 /* StickerPack.appex in Embed App Extensions */,
 				B3E21D72203211BE009939D3 /* Spotlight.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
@@ -3263,7 +3254,6 @@
 				B36FE831218EAAD200F858F3 /* PBXTargetDependency */,
 				B3C8A708287827270037A946 /* PBXTargetDependency */,
 				B3C8A70C287827330037A946 /* PBXTargetDependency */,
-				B355DFD82920A42800E4C858 /* PBXTargetDependency */,
 			);
 			name = Provenance;
 			packageProductDependencies = (
@@ -4848,12 +4838,6 @@
 			isa = PBXTargetDependency;
 			target = B305EF04276B4C73003AE510 /* Provenance Watch WatchKit Extension */;
 			targetProxy = B305EF07276B4C73003AE510 /* PBXContainerItemProxy */;
-		};
-		B355DFD82920A42800E4C858 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			platformFilter = ios;
-			target = B355DFD12920A42100E4C858 /* StickerPack */;
-			targetProxy = B355DFD72920A42800E4C858 /* PBXContainerItemProxy */;
 		};
 		B36FE831218EAAD200F858F3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
