@@ -10,13 +10,13 @@ import Foundation
 import CoreHaptics
 
 #if os(iOS) && !targetEnvironment(macCatalyst)
-@_silgen_name("AudioServicesStopSystemSound")
-func AudioServicesStopSystemSound(_ soundID: SystemSoundID)
+//@_silgen_name("AudioServicesStopSystemSound")
+//func AudioServicesStopSystemSound(_ soundID: SystemSoundID)
 
 	// vibrationPattern parameter must be NSDictionary to prevent crash when bridging from Swift.Dictionary.
-@_silgen_name("AudioServicesPlaySystemSoundWithVibration")
-func AudioServicesPlaySystemSoundWithVibration(_ soundID: SystemSoundID, _ idk: Any?, _ vibrationPattern: NSDictionary)
-#endif
+//@_silgen_name("AudioServicesPlaySystemSoundWithVibration")
+//func AudioServicesPlaySystemSoundWithVibration(_ soundID: SystemSoundID, _ idk: Any?, _ vibrationPattern: NSDictionary)
+//#endif
 
 @available(iOS 14.0, tvOS 14.0, *)
 fileprivate var hapticEngines: [CHHapticEngine?] = Array<CHHapticEngine?>.init(repeating: nil, count: 4)
@@ -90,7 +90,7 @@ public extension PVEmulatorCore {
 
 		DispatchQueue.main.async {
 			if deviceHasHaptic {
-				AudioServicesStopSystemSound(kSystemSoundID_Vibrate)
+//				AudioServicesStopSystemSound(kSystemSoundID_Vibrate)
 
 				var vibrationLength = 30
 
@@ -104,11 +104,12 @@ public extension PVEmulatorCore {
 				let pattern: [Any] = [false, 0, true, vibrationLength]
 				let dictionary: [String: Any] = ["VibePattern": pattern, "Intensity": 1]
 
-				AudioServicesPlaySystemSoundWithVibration(kSystemSoundID_Vibrate, nil, dictionary as NSDictionary)
-					//				self?.rumbleGenerator.impactOccurred()
-			} else {
-				AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+//				AudioServicesPlaySystemSoundWithVibration(kSystemSoundID_Vibrate, nil, dictionary as NSDictionary)
+                self.rumble()
 			}
+//            else {
+//				AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+//			}
 		}
 	}
     #endif
