@@ -21,11 +21,6 @@
 	<true/>
 	<key>com.apple.developer.ubiquity-kvstore-identifier</key>
 	<string>$(TeamIdentifierPrefix)$(CFBundleIdentifier)</string>
-	<key>com.apple.developer.user-management</key>
-	<array>
-		<string>get-current-user</string>
-		<string>runs-as-current-user</string>
-	</array>
 	<key>com.apple.security.application-groups</key>
 	<array>
 		<string>$(APP_GROUP_IDENTIFIER)</string>
