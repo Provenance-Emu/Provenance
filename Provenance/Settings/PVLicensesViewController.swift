@@ -10,6 +10,7 @@
 import PVSupport
 import UIKit
 import Darwin
+import WebKit
 
 final class PVLicensesViewController: UIViewController {
     #if os(tvOS) || targetEnvironment(macCatalyst)
@@ -25,11 +26,13 @@ final class PVLicensesViewController: UIViewController {
             view.backgroundColor = UIColor.black
             let filesystemPath: String? = Bundle.main.path(forResource: "licenses", ofType: "html")
             let htmlContent = try? String(contentsOfFile: filesystemPath ?? "", encoding: .utf8)
-            let webView = UIWebView(frame: view.bounds)
+            let configuration: WKWebViewConfiguration = WKWebViewConfiguration()
+            configuration.suppressesIncrementalRendering = true
+            let webView = WKWebView(frame: view.bounds, configuration: configuration)
             webView.isOpaque = false
             webView.backgroundColor = UIColor.black
             webView.loadHTMLString(htmlContent ?? "", baseURL: nil)
-            webView.scalesPageToFit = false
+            webView.scalesLargeContentImage = false
             webView.scrollView.bounces = false
             webView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
             view.addSubview(webView)
