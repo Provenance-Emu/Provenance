@@ -105,7 +105,12 @@ extension MupenGameCore: CoreOptional {
 									   description: "Randomize PI/SI Interrupt Timing.",
 									   requiresRestart: true),
 								 defaultValue: true))
-
+        
+        coreOptions.append(.range(.init(title: "Count Per Op",
+                                        description: "Force number of cycles per emulated instruction when set greater than 0. 0 for default from .ini.",
+                                        requiresRestart: true),
+                                  range: .init(defaultValue: 0, min: 0, max: 7), defaultValue: 0))
+        
 			// MARK: --- DEBUG
 			// MARK: OSD <Bool=0>
 			// Draw on-screen display if True, otherwise don't draw OSD
