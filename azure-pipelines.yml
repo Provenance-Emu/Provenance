@@ -61,7 +61,7 @@ jobs:
       inputs:
         scheme: '$(scheme)'
         xcWorkspacePath: '$(xcWorkspacePath)'
-        # xcodeDeveloperDir: /Applications/Xcode_13.2.1.app/Contents/Developer
+        xcodeDeveloperDir: /Applications/Xcode_14.1.app/Contents/Developer
         xcodeVersion: specifyPath
         exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
         packageApp: false
