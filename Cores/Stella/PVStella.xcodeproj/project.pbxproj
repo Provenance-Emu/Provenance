@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B312F9C5292B0F2900286CFE /* FSNodeLIBRETRO.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B312F9A6292B0F1E00286CFE /* FSNodeLIBRETRO.cxx */; };
+		B312F9C6292B0F2900286CFE /* libretro.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B312F9A0292B0F1E00286CFE /* libretro.cxx */; };
+		B312F9C8292B104200286CFE /* StellaLIBRETRO.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B312F9AA292B0F1E00286CFE /* StellaLIBRETRO.cxx */; };
 		B31B11592894A02D0044F0E6 /* PVStellaGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B31B11572894A02D0044F0E6 /* PVStellaGameCore.h */; };
 		B31B115C2894A02D0044F0E6 /* PVStellaGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B31B11582894A02D0044F0E6 /* PVStellaGameCore.mm */; };
 		B324C64D21921666009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C64C21921666009F4EDC /* PVSupport.framework */; };
@@ -101,7 +104,6 @@
 		B3E6BF2D2894B5FE00CF98C7 /* RamCheat.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BB912894B2F700CF98C7 /* RamCheat.cxx */; };
 		B3E6BF2E2894B5FE00CF98C7 /* BankRomCheat.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BB942894B2F700CF98C7 /* BankRomCheat.cxx */; };
 		B3E6BF2F2894B5FE00CF98C7 /* CheetahCheat.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BB952894B2F700CF98C7 /* CheetahCheat.cxx */; };
-		B3E6BF302894B86B00CF98C7 /* libretro.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BC392894B2F800CF98C7 /* libretro.cxx */; };
 		B3E6BF312894B96600CF98C7 /* QuadTari.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BE7E2894B2FB00CF98C7 /* QuadTari.cxx */; };
 		B3E6BF322894B98200CF98C7 /* FSNode.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BE1B2894B2FB00CF98C7 /* FSNode.cxx */; };
 		B3E6BF332894BA1C00CF98C7 /* NTSCFilter.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BC212894B2F800CF98C7 /* NTSCFilter.cxx */; };
@@ -148,13 +150,6 @@
 		B3E6BF5C2894BB4000CF98C7 /* JitterEmulation.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BDF02894B2FB00CF98C7 /* JitterEmulation.cxx */; };
 		B3E6BF5D2894BB6E00CF98C7 /* ZipHandler.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BC312894B2F800CF98C7 /* ZipHandler.cxx */; };
 		B3E6BF5E2894BBC800CF98C7 /* EventHandler.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BDBF2894B2FA00CF98C7 /* EventHandler.cxx */; };
-		B3E6BF5F2894BC3A00CF98C7 /* StellaLIBRETRO.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BC452894B2F800CF98C7 /* StellaLIBRETRO.cxx */; };
-		B3E6BF602894BC6400CF98C7 /* OSystemLIBRETRO.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BC3A2894B2F800CF98C7 /* OSystemLIBRETRO.cxx */; };
-		B3E6BF612894BC6F00CF98C7 /* SoundLIBRETRO.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BC482894B2F800CF98C7 /* SoundLIBRETRO.cxx */; };
-		B3E6BF622894BC7B00CF98C7 /* FSNodeLIBRETRO.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BC412894B2F800CF98C7 /* FSNodeLIBRETRO.cxx */; };
-		B3E6BF632894BC9C00CF98C7 /* FBBackendLIBRETRO.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BC3C2894B2F800CF98C7 /* FBBackendLIBRETRO.cxx */; };
-		B3E6BF642894BC9C00CF98C7 /* EventHandlerLIBRETRO.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BC472894B2F800CF98C7 /* EventHandlerLIBRETRO.cxx */; };
-		B3E6BF652894BC9C00CF98C7 /* FBSurfaceLIBRETRO.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BC4D2894B2F800CF98C7 /* FBSurfaceLIBRETRO.cxx */; };
 		B3E6BF662894BD0700CF98C7 /* FBSurface.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BDC82894B2FA00CF98C7 /* FBSurface.cxx */; };
 		B3E6BF672894BD2C00CF98C7 /* FrameBuffer.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BE622894B2FB00CF98C7 /* FrameBuffer.cxx */; };
 		B3E6BF682894BD4700CF98C7 /* EmulationTiming.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BDF52894B2FB00CF98C7 /* EmulationTiming.cxx */; };
@@ -168,9 +163,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B3E6BEB62894B2FC00CF98C7 /* PBXContainerItemProxy */ = {
+		B312F9C3292B0F1F00286CFE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = B3E6BB3B2894B2F700CF98C7 /* stella.xcodeproj */;
+			containerPortal = B312F97D292B0F1E00286CFE /* stella.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = DCBA710010DED62E0077193B;
 			remoteInfo = Stella;
@@ -203,6 +198,150 @@
 		B305EF39276B4DE4003AE510 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.3.sdk/System/Library/Frameworks/CoreAudio.framework; sourceTree = DEVELOPER_DIR; };
 		B305EF3B276B4DEF003AE510 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.3.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		B305EF93276B4E8C003AE510 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B312F920292B0F1E00286CFE /* pnginfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pnginfo.h; sourceTree = "<group>"; };
+		B312F921292B0F1E00286CFE /* pngrio.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngrio.c; sourceTree = "<group>"; };
+		B312F922292B0F1E00286CFE /* pngerror.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngerror.c; sourceTree = "<group>"; };
+		B312F923292B0F1E00286CFE /* pngwio.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngwio.c; sourceTree = "<group>"; };
+		B312F924292B0F1E00286CFE /* pngstruct.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pngstruct.h; sourceTree = "<group>"; };
+		B312F925292B0F1E00286CFE /* pngtrans.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngtrans.c; sourceTree = "<group>"; };
+		B312F926292B0F1E00286CFE /* pngpriv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pngpriv.h; sourceTree = "<group>"; };
+		B312F927292B0F1E00286CFE /* pngwrite.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngwrite.c; sourceTree = "<group>"; };
+		B312F928292B0F1E00286CFE /* png.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = png.h; sourceTree = "<group>"; };
+		B312F929292B0F1E00286CFE /* module.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = module.mk; sourceTree = "<group>"; };
+		B312F92A292B0F1E00286CFE /* pngwutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngwutil.c; sourceTree = "<group>"; };
+		B312F92B292B0F1E00286CFE /* pngwtran.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngwtran.c; sourceTree = "<group>"; };
+		B312F92C292B0F1E00286CFE /* pnglibconf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pnglibconf.h; sourceTree = "<group>"; };
+		B312F92D292B0F1E00286CFE /* pngconf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pngconf.h; sourceTree = "<group>"; };
+		B312F92E292B0F1E00286CFE /* pngpread.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngpread.c; sourceTree = "<group>"; };
+		B312F92F292B0F1E00286CFE /* pngdebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pngdebug.h; sourceTree = "<group>"; };
+		B312F930292B0F1E00286CFE /* pngread.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngread.c; sourceTree = "<group>"; };
+		B312F931292B0F1E00286CFE /* pngmem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngmem.c; sourceTree = "<group>"; };
+		B312F932292B0F1E00286CFE /* pngget.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngget.c; sourceTree = "<group>"; };
+		B312F933292B0F1E00286CFE /* png.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = png.c; sourceTree = "<group>"; };
+		B312F934292B0F1E00286CFE /* pngrtran.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngrtran.c; sourceTree = "<group>"; };
+		B312F935292B0F1E00286CFE /* pngrutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngrutil.c; sourceTree = "<group>"; };
+		B312F936292B0F1E00286CFE /* pngset.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngset.c; sourceTree = "<group>"; };
+		B312F938292B0F1E00286CFE /* sqlite3.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = sqlite3.c; sourceTree = "<group>"; };
+		B312F939292B0F1E00286CFE /* sqlite_options.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sqlite_options.h; sourceTree = "<group>"; };
+		B312F93B292B0F1E00286CFE /* sqlite3.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = sqlite3.c; sourceTree = "<group>"; };
+		B312F93C292B0F1E00286CFE /* sqlite3.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sqlite3.h; sourceTree = "<group>"; };
+		B312F93D292B0F1E00286CFE /* module.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = module.mk; sourceTree = "<group>"; };
+		B312F93E292B0F1E00286CFE /* sqlite3.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sqlite3.h; sourceTree = "<group>"; };
+		B312F940292B0F1E00286CFE /* nanojpeg.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = nanojpeg.c; sourceTree = "<group>"; };
+		B312F941292B0F1E00286CFE /* nanojpeg_lib.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = nanojpeg_lib.hxx; sourceTree = "<group>"; };
+		B312F943292B0F1E00286CFE /* httplib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = httplib.h; sourceTree = "<group>"; };
+		B312F944292B0F1E00286CFE /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		B312F945292B0F1E00286CFE /* http_lib.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = http_lib.hxx; sourceTree = "<group>"; };
+		B312F946292B0F1E00286CFE /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		B312F948292B0F1E00286CFE /* zutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = zutil.h; sourceTree = "<group>"; };
+		B312F949292B0F1E00286CFE /* inftrees.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = inftrees.h; sourceTree = "<group>"; };
+		B312F94A292B0F1E00286CFE /* inflate.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = inflate.c; sourceTree = "<group>"; };
+		B312F94B292B0F1E00286CFE /* compress.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = compress.c; sourceTree = "<group>"; };
+		B312F94C292B0F1E00286CFE /* deflate.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = deflate.c; sourceTree = "<group>"; };
+		B312F94D292B0F1E00286CFE /* inffixed.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = inffixed.h; sourceTree = "<group>"; };
+		B312F94E292B0F1E00286CFE /* gzread.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gzread.c; sourceTree = "<group>"; };
+		B312F94F292B0F1E00286CFE /* trees.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = trees.h; sourceTree = "<group>"; };
+		B312F950292B0F1E00286CFE /* inffast.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = inffast.h; sourceTree = "<group>"; };
+		B312F951292B0F1E00286CFE /* module.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = module.mk; sourceTree = "<group>"; };
+		B312F952292B0F1E00286CFE /* crc32.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = crc32.c; sourceTree = "<group>"; };
+		B312F953292B0F1E00286CFE /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		B312F954292B0F1E00286CFE /* infback.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = infback.c; sourceTree = "<group>"; };
+		B312F955292B0F1E00286CFE /* zutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = zutil.c; sourceTree = "<group>"; };
+		B312F956292B0F1E00286CFE /* deflate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = deflate.h; sourceTree = "<group>"; };
+		B312F957292B0F1E00286CFE /* gzguts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gzguts.h; sourceTree = "<group>"; };
+		B312F958292B0F1E00286CFE /* zlib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = zlib.h; sourceTree = "<group>"; };
+		B312F959292B0F1E00286CFE /* gzlib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gzlib.c; sourceTree = "<group>"; };
+		B312F95A292B0F1E00286CFE /* inflate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = inflate.h; sourceTree = "<group>"; };
+		B312F95B292B0F1E00286CFE /* inftrees.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = inftrees.c; sourceTree = "<group>"; };
+		B312F95C292B0F1E00286CFE /* uncompr.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = uncompr.c; sourceTree = "<group>"; };
+		B312F95D292B0F1E00286CFE /* gzwrite.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gzwrite.c; sourceTree = "<group>"; };
+		B312F95E292B0F1E00286CFE /* trees.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = trees.c; sourceTree = "<group>"; };
+		B312F95F292B0F1E00286CFE /* gzclose.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gzclose.c; sourceTree = "<group>"; };
+		B312F960292B0F1E00286CFE /* crc32.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = crc32.h; sourceTree = "<group>"; };
+		B312F961292B0F1E00286CFE /* inffast.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = inffast.c; sourceTree = "<group>"; };
+		B312F962292B0F1E00286CFE /* adler32.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = adler32.c; sourceTree = "<group>"; };
+		B312F963292B0F1E00286CFE /* zconf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = zconf.h; sourceTree = "<group>"; };
+		B312F965292B0F1E00286CFE /* LICENSE.MIT */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.MIT; sourceTree = "<group>"; };
+		B312F966292B0F1E00286CFE /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		B312F967292B0F1E00286CFE /* json_lib.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = json_lib.hxx; sourceTree = "<group>"; };
+		B312F968292B0F1E00286CFE /* json.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = json.hxx; sourceTree = "<group>"; };
+		B312F96A292B0F1E00286CFE /* tinyexif_lib.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = tinyexif_lib.hxx; sourceTree = "<group>"; };
+		B312F96C292B0F1E00286CFE /* TinyEXIF.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TinyEXIF.h; sourceTree = "<group>"; };
+		B312F96D292B0F1E00286CFE /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		B312F96E292B0F1E00286CFE /* TinyEXIF.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TinyEXIF.cpp; sourceTree = "<group>"; };
+		B312F96F292B0F1E00286CFE /* module.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = module.mk; sourceTree = "<group>"; };
+		B312F970292B0F1E00286CFE /* tinyexif.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tinyexif.cxx; sourceTree = "<group>"; };
+		B312F974292B0F1E00286CFE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B312F975292B0F1E00286CFE /* AboutBoxTextView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AboutBoxTextView.m; sourceTree = "<group>"; };
+		B312F976292B0F1E00286CFE /* SettingsRepositoryMACOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SettingsRepositoryMACOS.mm; sourceTree = "<group>"; };
+		B312F977292B0F1E00286CFE /* AboutBox.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; path = AboutBox.nib; sourceTree = "<group>"; };
+		B312F978292B0F1E00286CFE /* AboutBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AboutBox.h; sourceTree = "<group>"; };
+		B312F979292B0F1E00286CFE /* SerialPortMACOS.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SerialPortMACOS.hxx; sourceTree = "<group>"; };
+		B312F97A292B0F1E00286CFE /* SDLMain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
+		B312F97B292B0F1E00286CFE /* OSystemMACOS.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = OSystemMACOS.hxx; sourceTree = "<group>"; };
+		B312F97C292B0F1E00286CFE /* SerialPortMACOS.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SerialPortMACOS.cxx; sourceTree = "<group>"; };
+		B312F97D292B0F1E00286CFE /* stella.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = stella.xcodeproj; sourceTree = "<group>"; };
+		B312F980292B0F1E00286CFE /* SDLMain.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; path = SDLMain.nib; sourceTree = "<group>"; };
+		B312F981292B0F1E00286CFE /* template.dmg.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = template.dmg.gz; sourceTree = "<group>"; };
+		B312F982292B0F1E00286CFE /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		B312F983292B0F1E00286CFE /* Cart.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Cart.icns; sourceTree = "<group>"; };
+		B312F984292B0F1E00286CFE /* SettingsRepositoryMACOS.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SettingsRepositoryMACOS.hxx; sourceTree = "<group>"; };
+		B312F985292B0F1E00286CFE /* AboutBox.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AboutBox.m; sourceTree = "<group>"; };
+		B312F986292B0F1E00286CFE /* OSystemMACOS.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OSystemMACOS.cxx; sourceTree = "<group>"; };
+		B312F987292B0F1E00286CFE /* Info-Stella.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-Stella.plist"; sourceTree = "<group>"; };
+		B312F988292B0F1E00286CFE /* AboutBoxTextView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AboutBoxTextView.h; sourceTree = "<group>"; };
+		B312F989292B0F1E00286CFE /* SDLMain.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
+		B312F98A292B0F1E00286CFE /* Credits.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = Credits.html; sourceTree = "<group>"; };
+		B312F98B292B0F1E00286CFE /* Create_build.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = Create_build.sh; sourceTree = "<group>"; };
+		B312F98C292B0F1E00286CFE /* Stella.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Stella.icns; sourceTree = "<group>"; };
+		B312F98E292B0F1E00286CFE /* OSystemUNIX.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = OSystemUNIX.hxx; sourceTree = "<group>"; };
+		B312F990292B0F1E00286CFE /* SettingsR77.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SettingsR77.cxx; sourceTree = "<group>"; };
+		B312F991292B0F1E00286CFE /* OSystemR77.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = OSystemR77.hxx; sourceTree = "<group>"; };
+		B312F992292B0F1E00286CFE /* module.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = module.mk; sourceTree = "<group>"; };
+		B312F993292B0F1E00286CFE /* OSystemR77.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OSystemR77.cxx; sourceTree = "<group>"; };
+		B312F994292B0F1E00286CFE /* SettingsR77.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SettingsR77.hxx; sourceTree = "<group>"; };
+		B312F995292B0F1E00286CFE /* FSNodePOSIX.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = FSNodePOSIX.hxx; sourceTree = "<group>"; };
+		B312F996292B0F1E00286CFE /* SerialPortUNIX.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SerialPortUNIX.cxx; sourceTree = "<group>"; };
+		B312F997292B0F1E00286CFE /* module.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = module.mk; sourceTree = "<group>"; };
+		B312F998292B0F1E00286CFE /* FSNodePOSIX.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FSNodePOSIX.cxx; sourceTree = "<group>"; };
+		B312F999292B0F1E00286CFE /* SerialPortUNIX.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SerialPortUNIX.hxx; sourceTree = "<group>"; };
+		B312F99A292B0F1E00286CFE /* stella.spec */ = {isa = PBXFileReference; lastKnownFileType = text; path = stella.spec; sourceTree = "<group>"; };
+		B312F99B292B0F1E00286CFE /* OSystemUNIX.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OSystemUNIX.cxx; sourceTree = "<group>"; };
+		B312F99C292B0F1E00286CFE /* stella.desktop */ = {isa = PBXFileReference; lastKnownFileType = text; path = stella.desktop; sourceTree = "<group>"; };
+		B312F99E292B0F1E00286CFE /* FBSurfaceLIBRETRO.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = FBSurfaceLIBRETRO.hxx; sourceTree = "<group>"; };
+		B312F99F292B0F1E00286CFE /* FSNodeLIBRETRO.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = FSNodeLIBRETRO.hxx; sourceTree = "<group>"; };
+		B312F9A0292B0F1E00286CFE /* libretro.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = libretro.cxx; sourceTree = "<group>"; };
+		B312F9A1292B0F1E00286CFE /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		B312F9A2292B0F1E00286CFE /* StellaLIBRETRO.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = StellaLIBRETRO.hxx; sourceTree = "<group>"; };
+		B312F9A3292B0F1E00286CFE /* EventHandlerLIBRETRO.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EventHandlerLIBRETRO.hxx; sourceTree = "<group>"; };
+		B312F9A4292B0F1E00286CFE /* SoundLIBRETRO.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SoundLIBRETRO.hxx; sourceTree = "<group>"; };
+		B312F9A5292B0F1E00286CFE /* Makefile.common */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.common; sourceTree = "<group>"; };
+		B312F9A6292B0F1E00286CFE /* FSNodeLIBRETRO.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FSNodeLIBRETRO.cxx; sourceTree = "<group>"; };
+		B312F9A7292B0F1E00286CFE /* OSystemLIBRETRO.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = OSystemLIBRETRO.hxx; sourceTree = "<group>"; };
+		B312F9A8292B0F1E00286CFE /* Stella.vcxproj */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Stella.vcxproj; sourceTree = "<group>"; };
+		B312F9A9292B0F1E00286CFE /* FBBackendLIBRETRO.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = FBBackendLIBRETRO.hxx; sourceTree = "<group>"; };
+		B312F9AA292B0F1E00286CFE /* StellaLIBRETRO.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StellaLIBRETRO.cxx; sourceTree = "<group>"; };
+		B312F9AB292B0F1E00286CFE /* libretro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libretro.h; sourceTree = "<group>"; };
+		B312F9AC292B0F1E00286CFE /* link.T */ = {isa = PBXFileReference; lastKnownFileType = text; path = link.T; sourceTree = "<group>"; };
+		B312F9AE292B0F1E00286CFE /* Android.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Android.mk; sourceTree = "<group>"; };
+		B312F9AF292B0F1E00286CFE /* Application.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Application.mk; sourceTree = "<group>"; };
+		B312F9B1292B0F1E00286CFE /* stella.ico */ = {isa = PBXFileReference; lastKnownFileType = image.ico; path = stella.ico; sourceTree = "<group>"; };
+		B312F9B2292B0F1E00286CFE /* OSystemWINDOWS.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OSystemWINDOWS.cxx; sourceTree = "<group>"; };
+		B312F9B3292B0F1E00286CFE /* Stella.vcxproj.filters */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Stella.vcxproj.filters; sourceTree = "<group>"; };
+		B312F9B4292B0F1E00286CFE /* Windows.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Windows.hxx; sourceTree = "<group>"; };
+		B312F9B5292B0F1E00286CFE /* Stella.sln */ = {isa = PBXFileReference; lastKnownFileType = text; path = Stella.sln; sourceTree = "<group>"; };
+		B312F9B6292B0F1E00286CFE /* Create_Builds.bat */ = {isa = PBXFileReference; lastKnownFileType = text; path = Create_Builds.bat; sourceTree = "<group>"; };
+		B312F9B7292B0F1E00286CFE /* FSNodeWINDOWS.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FSNodeWINDOWS.cxx; sourceTree = "<group>"; };
+		B312F9B8292B0F1E00286CFE /* SerialPortWINDOWS.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SerialPortWINDOWS.cxx; sourceTree = "<group>"; };
+		B312F9B9292B0F1E00286CFE /* module.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = module.mk; sourceTree = "<group>"; };
+		B312F9BA292B0F1E00286CFE /* Stella.vcxproj */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Stella.vcxproj; sourceTree = "<group>"; };
+		B312F9BB292B0F1E00286CFE /* FSNodeWINDOWS.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = FSNodeWINDOWS.hxx; sourceTree = "<group>"; };
+		B312F9BC292B0F1E00286CFE /* HomeFinder.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = HomeFinder.hxx; sourceTree = "<group>"; };
+		B312F9BD292B0F1E00286CFE /* resource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = resource.h; sourceTree = "<group>"; };
+		B312F9BE292B0F1E00286CFE /* SerialPortWINDOWS.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SerialPortWINDOWS.hxx; sourceTree = "<group>"; };
+		B312F9BF292B0F1E00286CFE /* stella.rc */ = {isa = PBXFileReference; lastKnownFileType = text; path = stella.rc; sourceTree = "<group>"; };
+		B312F9C0292B0F1E00286CFE /* stella.iss */ = {isa = PBXFileReference; lastKnownFileType = text; path = stella.iss; sourceTree = "<group>"; };
+		B312F9C1292B0F1E00286CFE /* OSystemWINDOWS.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = OSystemWINDOWS.hxx; sourceTree = "<group>"; };
 		B31B115528949D550044F0E6 /* BuildFlags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
 		B31B11572894A02D0044F0E6 /* PVStellaGameCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVStellaGameCore.h; sourceTree = "<group>"; };
 		B31B11582894A02D0044F0E6 /* PVStellaGameCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PVStellaGameCore.mm; sourceTree = "<group>"; };
@@ -772,12 +911,9 @@
 		B3E6BB162894B2F600CF98C7 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		B3E6BB172894B2F600CF98C7 /* Changes.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Changes.txt; sourceTree = "<group>"; };
 		B3E6BB182894B2F600CF98C7 /* config.sub */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = config.sub; sourceTree = "<group>"; };
-		B3E6BB192894B2F600CF98C7 /* appveyor.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = appveyor.yml; sourceTree = "<group>"; };
 		B3E6BB1A2894B2F600CF98C7 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
-		B3E6BB1B2894B2F600CF98C7 /* Readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Readme.txt; sourceTree = "<group>"; };
 		B3E6BB1C2894B2F600CF98C7 /* .gitlab-ci.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = ".gitlab-ci.yml"; sourceTree = "<group>"; };
 		B3E6BB1D2894B2F600CF98C7 /* License.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = License.txt; sourceTree = "<group>"; };
-		B3E6BB1E2894B2F600CF98C7 /* .travis.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .travis.yml; sourceTree = "<group>"; };
 		B3E6BB212894B2F600CF98C7 /* convbdf.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = convbdf.c; sourceTree = "<group>"; };
 		B3E6BB222894B2F600CF98C7 /* merge_props.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = merge_props.pl; sourceTree = "<group>"; };
 		B3E6BB232894B2F600CF98C7 /* PropSet.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = PropSet.pm; sourceTree = "<group>"; };
@@ -792,90 +928,6 @@
 		B3E6BB2D2894B2F600CF98C7 /* Readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Readme.txt; sourceTree = "<group>"; };
 		B3E6BB2E2894B2F600CF98C7 /* License.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = License.txt; sourceTree = "<group>"; };
 		B3E6BB2F2894B2F600CF98C7 /* 80-stelladaptor-joystick.rules */ = {isa = PBXFileReference; lastKnownFileType = text; path = "80-stelladaptor-joystick.rules"; sourceTree = "<group>"; };
-		B3E6BB322894B2F600CF98C7 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		B3E6BB332894B2F600CF98C7 /* AboutBoxTextView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AboutBoxTextView.m; sourceTree = "<group>"; };
-		B3E6BB342894B2F600CF98C7 /* SettingsRepositoryMACOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SettingsRepositoryMACOS.mm; sourceTree = "<group>"; };
-		B3E6BB352894B2F600CF98C7 /* AboutBox.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; path = AboutBox.nib; sourceTree = "<group>"; };
-		B3E6BB362894B2F600CF98C7 /* AboutBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AboutBox.h; sourceTree = "<group>"; };
-		B3E6BB372894B2F600CF98C7 /* SerialPortMACOS.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SerialPortMACOS.hxx; sourceTree = "<group>"; };
-		B3E6BB382894B2F700CF98C7 /* SDLMain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
-		B3E6BB392894B2F700CF98C7 /* OSystemMACOS.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = OSystemMACOS.hxx; sourceTree = "<group>"; };
-		B3E6BB3A2894B2F700CF98C7 /* SerialPortMACOS.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SerialPortMACOS.cxx; sourceTree = "<group>"; };
-		B3E6BB3B2894B2F700CF98C7 /* stella.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = stella.xcodeproj; sourceTree = "<group>"; };
-		B3E6BB3E2894B2F700CF98C7 /* SDLMain.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; path = SDLMain.nib; sourceTree = "<group>"; };
-		B3E6BB3F2894B2F700CF98C7 /* template.dmg.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = template.dmg.gz; sourceTree = "<group>"; };
-		B3E6BB402894B2F700CF98C7 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
-		B3E6BB412894B2F700CF98C7 /* Cart.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Cart.icns; sourceTree = "<group>"; };
-		B3E6BB422894B2F700CF98C7 /* SettingsRepositoryMACOS.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SettingsRepositoryMACOS.hxx; sourceTree = "<group>"; };
-		B3E6BB432894B2F700CF98C7 /* AboutBox.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AboutBox.m; sourceTree = "<group>"; };
-		B3E6BB442894B2F700CF98C7 /* OSystemMACOS.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OSystemMACOS.cxx; sourceTree = "<group>"; };
-		B3E6BB452894B2F700CF98C7 /* Info-Stella.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-Stella.plist"; sourceTree = "<group>"; };
-		B3E6BB462894B2F700CF98C7 /* AboutBoxTextView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AboutBoxTextView.h; sourceTree = "<group>"; };
-		B3E6BB472894B2F700CF98C7 /* SDLMain.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
-		B3E6BB482894B2F700CF98C7 /* Credits.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = Credits.html; sourceTree = "<group>"; };
-		B3E6BB492894B2F700CF98C7 /* Create_build.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = Create_build.sh; sourceTree = "<group>"; };
-		B3E6BB4A2894B2F700CF98C7 /* Stella.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Stella.icns; sourceTree = "<group>"; };
-		B3E6BB4C2894B2F700CF98C7 /* pnginfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pnginfo.h; sourceTree = "<group>"; };
-		B3E6BB4D2894B2F700CF98C7 /* pngrio.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngrio.c; sourceTree = "<group>"; };
-		B3E6BB4E2894B2F700CF98C7 /* pngerror.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngerror.c; sourceTree = "<group>"; };
-		B3E6BB4F2894B2F700CF98C7 /* pngwio.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngwio.c; sourceTree = "<group>"; };
-		B3E6BB502894B2F700CF98C7 /* pngstruct.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pngstruct.h; sourceTree = "<group>"; };
-		B3E6BB512894B2F700CF98C7 /* pngtrans.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngtrans.c; sourceTree = "<group>"; };
-		B3E6BB522894B2F700CF98C7 /* pngpriv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pngpriv.h; sourceTree = "<group>"; };
-		B3E6BB532894B2F700CF98C7 /* pngwrite.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngwrite.c; sourceTree = "<group>"; };
-		B3E6BB542894B2F700CF98C7 /* png.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = png.h; sourceTree = "<group>"; };
-		B3E6BB552894B2F700CF98C7 /* module.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = module.mk; sourceTree = "<group>"; };
-		B3E6BB562894B2F700CF98C7 /* pngwutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngwutil.c; sourceTree = "<group>"; };
-		B3E6BB572894B2F700CF98C7 /* pngwtran.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngwtran.c; sourceTree = "<group>"; };
-		B3E6BB582894B2F700CF98C7 /* pnglibconf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pnglibconf.h; sourceTree = "<group>"; };
-		B3E6BB592894B2F700CF98C7 /* pngconf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pngconf.h; sourceTree = "<group>"; };
-		B3E6BB5A2894B2F700CF98C7 /* pngpread.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngpread.c; sourceTree = "<group>"; };
-		B3E6BB5B2894B2F700CF98C7 /* pngdebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pngdebug.h; sourceTree = "<group>"; };
-		B3E6BB5C2894B2F700CF98C7 /* pngread.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngread.c; sourceTree = "<group>"; };
-		B3E6BB5D2894B2F700CF98C7 /* pngmem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngmem.c; sourceTree = "<group>"; };
-		B3E6BB5E2894B2F700CF98C7 /* pngget.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngget.c; sourceTree = "<group>"; };
-		B3E6BB5F2894B2F700CF98C7 /* png.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = png.c; sourceTree = "<group>"; };
-		B3E6BB602894B2F700CF98C7 /* pngrtran.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngrtran.c; sourceTree = "<group>"; };
-		B3E6BB612894B2F700CF98C7 /* pngrutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngrutil.c; sourceTree = "<group>"; };
-		B3E6BB622894B2F700CF98C7 /* pngset.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngset.c; sourceTree = "<group>"; };
-		B3E6BB642894B2F700CF98C7 /* sqlite3.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = sqlite3.c; sourceTree = "<group>"; };
-		B3E6BB652894B2F700CF98C7 /* sqlite_options.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sqlite_options.h; sourceTree = "<group>"; };
-		B3E6BB672894B2F700CF98C7 /* sqlite3.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = sqlite3.c; sourceTree = "<group>"; };
-		B3E6BB682894B2F700CF98C7 /* sqlite3.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sqlite3.h; sourceTree = "<group>"; };
-		B3E6BB692894B2F700CF98C7 /* module.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = module.mk; sourceTree = "<group>"; };
-		B3E6BB6A2894B2F700CF98C7 /* sqlite3.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sqlite3.h; sourceTree = "<group>"; };
-		B3E6BB6C2894B2F700CF98C7 /* httplib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = httplib.h; sourceTree = "<group>"; };
-		B3E6BB6D2894B2F700CF98C7 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
-		B3E6BB6E2894B2F700CF98C7 /* http_lib.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = http_lib.hxx; sourceTree = "<group>"; };
-		B3E6BB6F2894B2F700CF98C7 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		B3E6BB712894B2F700CF98C7 /* zutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = zutil.h; sourceTree = "<group>"; };
-		B3E6BB722894B2F700CF98C7 /* inftrees.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = inftrees.h; sourceTree = "<group>"; };
-		B3E6BB732894B2F700CF98C7 /* inflate.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = inflate.c; sourceTree = "<group>"; };
-		B3E6BB742894B2F700CF98C7 /* compress.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = compress.c; sourceTree = "<group>"; };
-		B3E6BB752894B2F700CF98C7 /* deflate.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = deflate.c; sourceTree = "<group>"; };
-		B3E6BB762894B2F700CF98C7 /* inffixed.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = inffixed.h; sourceTree = "<group>"; };
-		B3E6BB772894B2F700CF98C7 /* gzread.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gzread.c; sourceTree = "<group>"; };
-		B3E6BB782894B2F700CF98C7 /* trees.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = trees.h; sourceTree = "<group>"; };
-		B3E6BB792894B2F700CF98C7 /* inffast.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = inffast.h; sourceTree = "<group>"; };
-		B3E6BB7A2894B2F700CF98C7 /* module.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = module.mk; sourceTree = "<group>"; };
-		B3E6BB7B2894B2F700CF98C7 /* crc32.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = crc32.c; sourceTree = "<group>"; };
-		B3E6BB7C2894B2F700CF98C7 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
-		B3E6BB7D2894B2F700CF98C7 /* infback.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = infback.c; sourceTree = "<group>"; };
-		B3E6BB7E2894B2F700CF98C7 /* zutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = zutil.c; sourceTree = "<group>"; };
-		B3E6BB7F2894B2F700CF98C7 /* deflate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = deflate.h; sourceTree = "<group>"; };
-		B3E6BB802894B2F700CF98C7 /* gzguts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gzguts.h; sourceTree = "<group>"; };
-		B3E6BB812894B2F700CF98C7 /* zlib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = zlib.h; sourceTree = "<group>"; };
-		B3E6BB822894B2F700CF98C7 /* gzlib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gzlib.c; sourceTree = "<group>"; };
-		B3E6BB832894B2F700CF98C7 /* inflate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = inflate.h; sourceTree = "<group>"; };
-		B3E6BB842894B2F700CF98C7 /* inftrees.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = inftrees.c; sourceTree = "<group>"; };
-		B3E6BB852894B2F700CF98C7 /* uncompr.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = uncompr.c; sourceTree = "<group>"; };
-		B3E6BB862894B2F700CF98C7 /* gzwrite.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gzwrite.c; sourceTree = "<group>"; };
-		B3E6BB872894B2F700CF98C7 /* trees.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = trees.c; sourceTree = "<group>"; };
-		B3E6BB882894B2F700CF98C7 /* gzclose.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gzclose.c; sourceTree = "<group>"; };
-		B3E6BB892894B2F700CF98C7 /* crc32.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = crc32.h; sourceTree = "<group>"; };
-		B3E6BB8A2894B2F700CF98C7 /* inffast.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = inffast.c; sourceTree = "<group>"; };
-		B3E6BB8B2894B2F700CF98C7 /* adler32.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = adler32.c; sourceTree = "<group>"; };
-		B3E6BB8C2894B2F700CF98C7 /* zconf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = zconf.h; sourceTree = "<group>"; };
 		B3E6BB8E2894B2F700CF98C7 /* CheatCodeDialog.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CheatCodeDialog.cxx; sourceTree = "<group>"; };
 		B3E6BB8F2894B2F700CF98C7 /* BankRomCheat.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BankRomCheat.hxx; sourceTree = "<group>"; };
 		B3E6BB902894B2F700CF98C7 /* CheetahCheat.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CheetahCheat.hxx; sourceTree = "<group>"; };
@@ -888,20 +940,6 @@
 		B3E6BB972894B2F700CF98C7 /* CheatManager.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CheatManager.hxx; sourceTree = "<group>"; };
 		B3E6BB982894B2F700CF98C7 /* CheatCodeDialog.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CheatCodeDialog.hxx; sourceTree = "<group>"; };
 		B3E6BB992894B2F700CF98C7 /* Cheat.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Cheat.hxx; sourceTree = "<group>"; };
-		B3E6BB9B2894B2F700CF98C7 /* OSystemUNIX.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = OSystemUNIX.hxx; sourceTree = "<group>"; };
-		B3E6BB9D2894B2F700CF98C7 /* SettingsR77.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SettingsR77.cxx; sourceTree = "<group>"; };
-		B3E6BB9E2894B2F700CF98C7 /* OSystemR77.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = OSystemR77.hxx; sourceTree = "<group>"; };
-		B3E6BB9F2894B2F700CF98C7 /* module.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = module.mk; sourceTree = "<group>"; };
-		B3E6BBA02894B2F700CF98C7 /* OSystemR77.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OSystemR77.cxx; sourceTree = "<group>"; };
-		B3E6BBA12894B2F700CF98C7 /* SettingsR77.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SettingsR77.hxx; sourceTree = "<group>"; };
-		B3E6BBA22894B2F700CF98C7 /* FSNodePOSIX.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = FSNodePOSIX.hxx; sourceTree = "<group>"; };
-		B3E6BBA32894B2F700CF98C7 /* SerialPortUNIX.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SerialPortUNIX.cxx; sourceTree = "<group>"; };
-		B3E6BBA42894B2F700CF98C7 /* module.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = module.mk; sourceTree = "<group>"; };
-		B3E6BBA52894B2F700CF98C7 /* FSNodePOSIX.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FSNodePOSIX.cxx; sourceTree = "<group>"; };
-		B3E6BBA62894B2F700CF98C7 /* SerialPortUNIX.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SerialPortUNIX.hxx; sourceTree = "<group>"; };
-		B3E6BBA72894B2F700CF98C7 /* stella.spec */ = {isa = PBXFileReference; lastKnownFileType = text; path = stella.spec; sourceTree = "<group>"; };
-		B3E6BBA82894B2F700CF98C7 /* OSystemUNIX.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OSystemUNIX.cxx; sourceTree = "<group>"; };
-		B3E6BBA92894B2F700CF98C7 /* stella.desktop */ = {isa = PBXFileReference; lastKnownFileType = text; path = stella.desktop; sourceTree = "<group>"; };
 		B3E6BBAB2894B2F700CF98C7 /* EventHandlerSDL2.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EventHandlerSDL2.hxx; sourceTree = "<group>"; };
 		B3E6BBAC2894B2F700CF98C7 /* Vec.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Vec.hxx; sourceTree = "<group>"; };
 		B3E6BBAD2894B2F700CF98C7 /* PKeyboardHandler.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PKeyboardHandler.hxx; sourceTree = "<group>"; };
@@ -1036,32 +1074,6 @@
 		B3E6BC332894B2F800CF98C7 /* Logger.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Logger.hxx; sourceTree = "<group>"; };
 		B3E6BC342894B2F800CF98C7 /* SoundSDL2.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SoundSDL2.cxx; sourceTree = "<group>"; };
 		B3E6BC352894B2F800CF98C7 /* TimerManager.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TimerManager.cxx; sourceTree = "<group>"; };
-		B3E6BC372894B2F800CF98C7 /* FBSurfaceLIBRETRO.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = FBSurfaceLIBRETRO.hxx; sourceTree = "<group>"; };
-		B3E6BC382894B2F800CF98C7 /* FSNodeLIBRETRO.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = FSNodeLIBRETRO.hxx; sourceTree = "<group>"; };
-		B3E6BC392894B2F800CF98C7 /* libretro.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = libretro.cxx; sourceTree = "<group>"; };
-		B3E6BC3A2894B2F800CF98C7 /* OSystemLIBRETRO.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OSystemLIBRETRO.cxx; sourceTree = "<group>"; };
-		B3E6BC3B2894B2F800CF98C7 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
-		B3E6BC3C2894B2F800CF98C7 /* FBBackendLIBRETRO.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FBBackendLIBRETRO.cxx; sourceTree = "<group>"; };
-		B3E6BC3D2894B2F800CF98C7 /* StellaLIBRETRO.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = StellaLIBRETRO.hxx; sourceTree = "<group>"; };
-		B3E6BC3E2894B2F800CF98C7 /* EventHandlerLIBRETRO.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EventHandlerLIBRETRO.hxx; sourceTree = "<group>"; };
-		B3E6BC3F2894B2F800CF98C7 /* SoundLIBRETRO.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SoundLIBRETRO.hxx; sourceTree = "<group>"; };
-		B3E6BC402894B2F800CF98C7 /* Makefile.common */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.common; sourceTree = "<group>"; };
-		B3E6BC412894B2F800CF98C7 /* FSNodeLIBRETRO.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FSNodeLIBRETRO.cxx; sourceTree = "<group>"; };
-		B3E6BC422894B2F800CF98C7 /* OSystemLIBRETRO.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = OSystemLIBRETRO.hxx; sourceTree = "<group>"; };
-		B3E6BC432894B2F800CF98C7 /* Stella.vcxproj */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Stella.vcxproj; sourceTree = "<group>"; };
-		B3E6BC442894B2F800CF98C7 /* FBBackendLIBRETRO.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = FBBackendLIBRETRO.hxx; sourceTree = "<group>"; };
-		B3E6BC452894B2F800CF98C7 /* StellaLIBRETRO.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StellaLIBRETRO.cxx; sourceTree = "<group>"; };
-		B3E6BC462894B2F800CF98C7 /* libretro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libretro.h; sourceTree = "<group>"; };
-		B3E6BC472894B2F800CF98C7 /* EventHandlerLIBRETRO.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EventHandlerLIBRETRO.cxx; sourceTree = "<group>"; };
-		B3E6BC482894B2F800CF98C7 /* SoundLIBRETRO.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SoundLIBRETRO.cxx; sourceTree = "<group>"; };
-		B3E6BC492894B2F800CF98C7 /* link.T */ = {isa = PBXFileReference; lastKnownFileType = text; path = link.T; sourceTree = "<group>"; };
-		B3E6BC4B2894B2F800CF98C7 /* Android.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Android.mk; sourceTree = "<group>"; };
-		B3E6BC4C2894B2F800CF98C7 /* Application.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Application.mk; sourceTree = "<group>"; };
-		B3E6BC4D2894B2F800CF98C7 /* FBSurfaceLIBRETRO.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FBSurfaceLIBRETRO.cxx; sourceTree = "<group>"; };
-		B3E6BC4F2894B2F800CF98C7 /* LICENSE.MIT */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.MIT; sourceTree = "<group>"; };
-		B3E6BC502894B2F800CF98C7 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		B3E6BC512894B2F800CF98C7 /* json_lib.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = json_lib.hxx; sourceTree = "<group>"; };
-		B3E6BC522894B2F800CF98C7 /* json.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = json.hxx; sourceTree = "<group>"; };
 		B3E6BC542894B2F800CF98C7 /* Stella14x28tFont.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Stella14x28tFont.hxx; sourceTree = "<group>"; };
 		B3E6BC552894B2F800CF98C7 /* Launcher.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Launcher.cxx; sourceTree = "<group>"; };
 		B3E6BC562894B2F800CF98C7 /* InputTextDialog.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = InputTextDialog.hxx; sourceTree = "<group>"; };
@@ -1392,32 +1404,6 @@
 		B3E6BD9D2894B2FA00CF98C7 /* DiStella.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DiStella.cxx; sourceTree = "<group>"; };
 		B3E6BD9E2894B2FA00CF98C7 /* Expression.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Expression.hxx; sourceTree = "<group>"; };
 		B3E6BD9F2894B2FA00CF98C7 /* RiotDebug.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RiotDebug.cxx; sourceTree = "<group>"; };
-		B3E6BDA12894B2FA00CF98C7 /* YaccParser.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = YaccParser.hxx; sourceTree = "<group>"; };
-		B3E6BDA22894B2FA00CF98C7 /* y.tab.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = y.tab.c; sourceTree = "<group>"; };
-		B3E6BDA32894B2FA00CF98C7 /* module.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = module.mk; sourceTree = "<group>"; };
-		B3E6BDA42894B2FA00CF98C7 /* README.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
-		B3E6BDA52894B2FA00CF98C7 /* stella.y */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.yacc; path = stella.y; sourceTree = "<group>"; };
-		B3E6BDA62894B2FA00CF98C7 /* y.tab.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = y.tab.h; sourceTree = "<group>"; };
-		B3E6BDA72894B2FA00CF98C7 /* Makefile.yacc */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.yacc; sourceTree = "<group>"; };
-		B3E6BDA82894B2FA00CF98C7 /* YaccParser.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = YaccParser.cxx; sourceTree = "<group>"; };
-		B3E6BDA92894B2FA00CF98C7 /* calctest.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = calctest.c; sourceTree = "<group>"; };
-		B3E6BDAB2894B2FA00CF98C7 /* stella.ico */ = {isa = PBXFileReference; lastKnownFileType = image.ico; path = stella.ico; sourceTree = "<group>"; };
-		B3E6BDAC2894B2FA00CF98C7 /* OSystemWINDOWS.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OSystemWINDOWS.cxx; sourceTree = "<group>"; };
-		B3E6BDAD2894B2FA00CF98C7 /* Stella.vcxproj.filters */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Stella.vcxproj.filters; sourceTree = "<group>"; };
-		B3E6BDAE2894B2FA00CF98C7 /* Windows.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Windows.hxx; sourceTree = "<group>"; };
-		B3E6BDAF2894B2FA00CF98C7 /* Stella.sln */ = {isa = PBXFileReference; lastKnownFileType = text; path = Stella.sln; sourceTree = "<group>"; };
-		B3E6BDB02894B2FA00CF98C7 /* Create_Builds.bat */ = {isa = PBXFileReference; lastKnownFileType = text; path = Create_Builds.bat; sourceTree = "<group>"; };
-		B3E6BDB12894B2FA00CF98C7 /* FSNodeWINDOWS.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FSNodeWINDOWS.cxx; sourceTree = "<group>"; };
-		B3E6BDB22894B2FA00CF98C7 /* SerialPortWINDOWS.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SerialPortWINDOWS.cxx; sourceTree = "<group>"; };
-		B3E6BDB32894B2FA00CF98C7 /* module.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = module.mk; sourceTree = "<group>"; };
-		B3E6BDB42894B2FA00CF98C7 /* Stella.vcxproj */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Stella.vcxproj; sourceTree = "<group>"; };
-		B3E6BDB52894B2FA00CF98C7 /* FSNodeWINDOWS.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = FSNodeWINDOWS.hxx; sourceTree = "<group>"; };
-		B3E6BDB62894B2FA00CF98C7 /* HomeFinder.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = HomeFinder.hxx; sourceTree = "<group>"; };
-		B3E6BDB72894B2FA00CF98C7 /* resource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = resource.h; sourceTree = "<group>"; };
-		B3E6BDB82894B2FA00CF98C7 /* SerialPortWINDOWS.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SerialPortWINDOWS.hxx; sourceTree = "<group>"; };
-		B3E6BDB92894B2FA00CF98C7 /* stella.rc */ = {isa = PBXFileReference; lastKnownFileType = text; path = stella.rc; sourceTree = "<group>"; };
-		B3E6BDBA2894B2FA00CF98C7 /* stella.iss */ = {isa = PBXFileReference; lastKnownFileType = text; path = stella.iss; sourceTree = "<group>"; };
-		B3E6BDBB2894B2FA00CF98C7 /* OSystemWINDOWS.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = OSystemWINDOWS.hxx; sourceTree = "<group>"; };
 		B3E6BDBD2894B2FA00CF98C7 /* Driving.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Driving.hxx; sourceTree = "<group>"; };
 		B3E6BDBE2894B2FA00CF98C7 /* CartF8.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CartF8.cxx; sourceTree = "<group>"; };
 		B3E6BDBF2894B2FA00CF98C7 /* EventHandler.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EventHandler.cxx; sourceTree = "<group>"; };
@@ -1750,6 +1736,292 @@
 			path = Stella;
 			sourceTree = "<group>";
 		};
+		B312F91E292B0F1E00286CFE /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				B312F91F292B0F1E00286CFE /* libpng */,
+				B312F937292B0F1E00286CFE /* sqlite */,
+				B312F93F292B0F1E00286CFE /* nanojpeg */,
+				B312F942292B0F1E00286CFE /* httplib */,
+				B312F947292B0F1E00286CFE /* zlib */,
+				B312F964292B0F1E00286CFE /* json */,
+				B312F969292B0F1E00286CFE /* tinyexif */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
+		B312F91F292B0F1E00286CFE /* libpng */ = {
+			isa = PBXGroup;
+			children = (
+				B312F920292B0F1E00286CFE /* pnginfo.h */,
+				B312F921292B0F1E00286CFE /* pngrio.c */,
+				B312F922292B0F1E00286CFE /* pngerror.c */,
+				B312F923292B0F1E00286CFE /* pngwio.c */,
+				B312F924292B0F1E00286CFE /* pngstruct.h */,
+				B312F925292B0F1E00286CFE /* pngtrans.c */,
+				B312F926292B0F1E00286CFE /* pngpriv.h */,
+				B312F927292B0F1E00286CFE /* pngwrite.c */,
+				B312F928292B0F1E00286CFE /* png.h */,
+				B312F929292B0F1E00286CFE /* module.mk */,
+				B312F92A292B0F1E00286CFE /* pngwutil.c */,
+				B312F92B292B0F1E00286CFE /* pngwtran.c */,
+				B312F92C292B0F1E00286CFE /* pnglibconf.h */,
+				B312F92D292B0F1E00286CFE /* pngconf.h */,
+				B312F92E292B0F1E00286CFE /* pngpread.c */,
+				B312F92F292B0F1E00286CFE /* pngdebug.h */,
+				B312F930292B0F1E00286CFE /* pngread.c */,
+				B312F931292B0F1E00286CFE /* pngmem.c */,
+				B312F932292B0F1E00286CFE /* pngget.c */,
+				B312F933292B0F1E00286CFE /* png.c */,
+				B312F934292B0F1E00286CFE /* pngrtran.c */,
+				B312F935292B0F1E00286CFE /* pngrutil.c */,
+				B312F936292B0F1E00286CFE /* pngset.c */,
+			);
+			path = libpng;
+			sourceTree = "<group>";
+		};
+		B312F937292B0F1E00286CFE /* sqlite */ = {
+			isa = PBXGroup;
+			children = (
+				B312F938292B0F1E00286CFE /* sqlite3.c */,
+				B312F939292B0F1E00286CFE /* sqlite_options.h */,
+				B312F93A292B0F1E00286CFE /* source */,
+				B312F93D292B0F1E00286CFE /* module.mk */,
+				B312F93E292B0F1E00286CFE /* sqlite3.h */,
+			);
+			path = sqlite;
+			sourceTree = "<group>";
+		};
+		B312F93A292B0F1E00286CFE /* source */ = {
+			isa = PBXGroup;
+			children = (
+				B312F93B292B0F1E00286CFE /* sqlite3.c */,
+				B312F93C292B0F1E00286CFE /* sqlite3.h */,
+			);
+			path = source;
+			sourceTree = "<group>";
+		};
+		B312F93F292B0F1E00286CFE /* nanojpeg */ = {
+			isa = PBXGroup;
+			children = (
+				B312F940292B0F1E00286CFE /* nanojpeg.c */,
+				B312F941292B0F1E00286CFE /* nanojpeg_lib.hxx */,
+			);
+			path = nanojpeg;
+			sourceTree = "<group>";
+		};
+		B312F942292B0F1E00286CFE /* httplib */ = {
+			isa = PBXGroup;
+			children = (
+				B312F943292B0F1E00286CFE /* httplib.h */,
+				B312F944292B0F1E00286CFE /* LICENSE */,
+				B312F945292B0F1E00286CFE /* http_lib.hxx */,
+				B312F946292B0F1E00286CFE /* README.md */,
+			);
+			path = httplib;
+			sourceTree = "<group>";
+		};
+		B312F947292B0F1E00286CFE /* zlib */ = {
+			isa = PBXGroup;
+			children = (
+				B312F948292B0F1E00286CFE /* zutil.h */,
+				B312F949292B0F1E00286CFE /* inftrees.h */,
+				B312F94A292B0F1E00286CFE /* inflate.c */,
+				B312F94B292B0F1E00286CFE /* compress.c */,
+				B312F94C292B0F1E00286CFE /* deflate.c */,
+				B312F94D292B0F1E00286CFE /* inffixed.h */,
+				B312F94E292B0F1E00286CFE /* gzread.c */,
+				B312F94F292B0F1E00286CFE /* trees.h */,
+				B312F950292B0F1E00286CFE /* inffast.h */,
+				B312F951292B0F1E00286CFE /* module.mk */,
+				B312F952292B0F1E00286CFE /* crc32.c */,
+				B312F953292B0F1E00286CFE /* README */,
+				B312F954292B0F1E00286CFE /* infback.c */,
+				B312F955292B0F1E00286CFE /* zutil.c */,
+				B312F956292B0F1E00286CFE /* deflate.h */,
+				B312F957292B0F1E00286CFE /* gzguts.h */,
+				B312F958292B0F1E00286CFE /* zlib.h */,
+				B312F959292B0F1E00286CFE /* gzlib.c */,
+				B312F95A292B0F1E00286CFE /* inflate.h */,
+				B312F95B292B0F1E00286CFE /* inftrees.c */,
+				B312F95C292B0F1E00286CFE /* uncompr.c */,
+				B312F95D292B0F1E00286CFE /* gzwrite.c */,
+				B312F95E292B0F1E00286CFE /* trees.c */,
+				B312F95F292B0F1E00286CFE /* gzclose.c */,
+				B312F960292B0F1E00286CFE /* crc32.h */,
+				B312F961292B0F1E00286CFE /* inffast.c */,
+				B312F962292B0F1E00286CFE /* adler32.c */,
+				B312F963292B0F1E00286CFE /* zconf.h */,
+			);
+			path = zlib;
+			sourceTree = "<group>";
+		};
+		B312F964292B0F1E00286CFE /* json */ = {
+			isa = PBXGroup;
+			children = (
+				B312F965292B0F1E00286CFE /* LICENSE.MIT */,
+				B312F966292B0F1E00286CFE /* README.md */,
+				B312F967292B0F1E00286CFE /* json_lib.hxx */,
+				B312F968292B0F1E00286CFE /* json.hxx */,
+			);
+			path = json;
+			sourceTree = "<group>";
+		};
+		B312F969292B0F1E00286CFE /* tinyexif */ = {
+			isa = PBXGroup;
+			children = (
+				B312F96A292B0F1E00286CFE /* tinyexif_lib.hxx */,
+				B312F96B292B0F1E00286CFE /* source */,
+				B312F96F292B0F1E00286CFE /* module.mk */,
+				B312F970292B0F1E00286CFE /* tinyexif.cxx */,
+			);
+			path = tinyexif;
+			sourceTree = "<group>";
+		};
+		B312F96B292B0F1E00286CFE /* source */ = {
+			isa = PBXGroup;
+			children = (
+				B312F96C292B0F1E00286CFE /* TinyEXIF.h */,
+				B312F96D292B0F1E00286CFE /* README.md */,
+				B312F96E292B0F1E00286CFE /* TinyEXIF.cpp */,
+			);
+			path = source;
+			sourceTree = "<group>";
+		};
+		B312F971292B0F1E00286CFE /* os */ = {
+			isa = PBXGroup;
+			children = (
+				B312F972292B0F1E00286CFE /* macos */,
+				B312F98D292B0F1E00286CFE /* unix */,
+				B312F99D292B0F1E00286CFE /* libretro */,
+				B312F9B0292B0F1E00286CFE /* windows */,
+			);
+			path = os;
+			sourceTree = "<group>";
+		};
+		B312F972292B0F1E00286CFE /* macos */ = {
+			isa = PBXGroup;
+			children = (
+				B312F973292B0F1E00286CFE /* InfoPlist.strings */,
+				B312F975292B0F1E00286CFE /* AboutBoxTextView.m */,
+				B312F976292B0F1E00286CFE /* SettingsRepositoryMACOS.mm */,
+				B312F977292B0F1E00286CFE /* AboutBox.nib */,
+				B312F978292B0F1E00286CFE /* AboutBox.h */,
+				B312F979292B0F1E00286CFE /* SerialPortMACOS.hxx */,
+				B312F97A292B0F1E00286CFE /* SDLMain.h */,
+				B312F97B292B0F1E00286CFE /* OSystemMACOS.hxx */,
+				B312F97C292B0F1E00286CFE /* SerialPortMACOS.cxx */,
+				B312F97D292B0F1E00286CFE /* stella.xcodeproj */,
+				B312F980292B0F1E00286CFE /* SDLMain.nib */,
+				B312F981292B0F1E00286CFE /* template.dmg.gz */,
+				B312F982292B0F1E00286CFE /* .gitignore */,
+				B312F983292B0F1E00286CFE /* Cart.icns */,
+				B312F984292B0F1E00286CFE /* SettingsRepositoryMACOS.hxx */,
+				B312F985292B0F1E00286CFE /* AboutBox.m */,
+				B312F986292B0F1E00286CFE /* OSystemMACOS.cxx */,
+				B312F987292B0F1E00286CFE /* Info-Stella.plist */,
+				B312F988292B0F1E00286CFE /* AboutBoxTextView.h */,
+				B312F989292B0F1E00286CFE /* SDLMain.m */,
+				B312F98A292B0F1E00286CFE /* Credits.html */,
+				B312F98B292B0F1E00286CFE /* Create_build.sh */,
+				B312F98C292B0F1E00286CFE /* Stella.icns */,
+			);
+			path = macos;
+			sourceTree = "<group>";
+		};
+		B312F97E292B0F1E00286CFE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B312F9C4292B0F1F00286CFE /* Stella.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B312F98D292B0F1E00286CFE /* unix */ = {
+			isa = PBXGroup;
+			children = (
+				B312F98E292B0F1E00286CFE /* OSystemUNIX.hxx */,
+				B312F98F292B0F1E00286CFE /* r77 */,
+				B312F995292B0F1E00286CFE /* FSNodePOSIX.hxx */,
+				B312F996292B0F1E00286CFE /* SerialPortUNIX.cxx */,
+				B312F997292B0F1E00286CFE /* module.mk */,
+				B312F998292B0F1E00286CFE /* FSNodePOSIX.cxx */,
+				B312F999292B0F1E00286CFE /* SerialPortUNIX.hxx */,
+				B312F99A292B0F1E00286CFE /* stella.spec */,
+				B312F99B292B0F1E00286CFE /* OSystemUNIX.cxx */,
+				B312F99C292B0F1E00286CFE /* stella.desktop */,
+			);
+			path = unix;
+			sourceTree = "<group>";
+		};
+		B312F98F292B0F1E00286CFE /* r77 */ = {
+			isa = PBXGroup;
+			children = (
+				B312F990292B0F1E00286CFE /* SettingsR77.cxx */,
+				B312F991292B0F1E00286CFE /* OSystemR77.hxx */,
+				B312F992292B0F1E00286CFE /* module.mk */,
+				B312F993292B0F1E00286CFE /* OSystemR77.cxx */,
+				B312F994292B0F1E00286CFE /* SettingsR77.hxx */,
+			);
+			path = r77;
+			sourceTree = "<group>";
+		};
+		B312F99D292B0F1E00286CFE /* libretro */ = {
+			isa = PBXGroup;
+			children = (
+				B312F9A1292B0F1E00286CFE /* Makefile */,
+				B312F9A5292B0F1E00286CFE /* Makefile.common */,
+				B312F9A6292B0F1E00286CFE /* FSNodeLIBRETRO.cxx */,
+				B312F9A0292B0F1E00286CFE /* libretro.cxx */,
+				B312F9AA292B0F1E00286CFE /* StellaLIBRETRO.cxx */,
+				B312F9AB292B0F1E00286CFE /* libretro.h */,
+				B312F9A3292B0F1E00286CFE /* EventHandlerLIBRETRO.hxx */,
+				B312F9A9292B0F1E00286CFE /* FBBackendLIBRETRO.hxx */,
+				B312F99E292B0F1E00286CFE /* FBSurfaceLIBRETRO.hxx */,
+				B312F99F292B0F1E00286CFE /* FSNodeLIBRETRO.hxx */,
+				B312F9A7292B0F1E00286CFE /* OSystemLIBRETRO.hxx */,
+				B312F9A4292B0F1E00286CFE /* SoundLIBRETRO.hxx */,
+				B312F9A2292B0F1E00286CFE /* StellaLIBRETRO.hxx */,
+				B312F9AC292B0F1E00286CFE /* link.T */,
+				B312F9A8292B0F1E00286CFE /* Stella.vcxproj */,
+				B312F9AD292B0F1E00286CFE /* jni */,
+			);
+			path = libretro;
+			sourceTree = "<group>";
+		};
+		B312F9AD292B0F1E00286CFE /* jni */ = {
+			isa = PBXGroup;
+			children = (
+				B312F9AE292B0F1E00286CFE /* Android.mk */,
+				B312F9AF292B0F1E00286CFE /* Application.mk */,
+			);
+			path = jni;
+			sourceTree = "<group>";
+		};
+		B312F9B0292B0F1E00286CFE /* windows */ = {
+			isa = PBXGroup;
+			children = (
+				B312F9B1292B0F1E00286CFE /* stella.ico */,
+				B312F9B2292B0F1E00286CFE /* OSystemWINDOWS.cxx */,
+				B312F9B3292B0F1E00286CFE /* Stella.vcxproj.filters */,
+				B312F9B4292B0F1E00286CFE /* Windows.hxx */,
+				B312F9B5292B0F1E00286CFE /* Stella.sln */,
+				B312F9B6292B0F1E00286CFE /* Create_Builds.bat */,
+				B312F9B7292B0F1E00286CFE /* FSNodeWINDOWS.cxx */,
+				B312F9B8292B0F1E00286CFE /* SerialPortWINDOWS.cxx */,
+				B312F9B9292B0F1E00286CFE /* module.mk */,
+				B312F9BA292B0F1E00286CFE /* Stella.vcxproj */,
+				B312F9BB292B0F1E00286CFE /* FSNodeWINDOWS.hxx */,
+				B312F9BC292B0F1E00286CFE /* HomeFinder.hxx */,
+				B312F9BD292B0F1E00286CFE /* resource.h */,
+				B312F9BE292B0F1E00286CFE /* SerialPortWINDOWS.hxx */,
+				B312F9BF292B0F1E00286CFE /* stella.rc */,
+				B312F9C0292B0F1E00286CFE /* stella.iss */,
+				B312F9C1292B0F1E00286CFE /* OSystemWINDOWS.hxx */,
+			);
+			path = windows;
+			sourceTree = "<group>";
+		};
 		B31B11562894A02D0044F0E6 /* PVStellaGameCore */ = {
 			isa = PBXGroup;
 			children = (
@@ -1785,11 +2057,8 @@
 				B3E6B8B22894B2F200CF98C7 /* Copyright.txt */,
 				B3E6BB1D2894B2F600CF98C7 /* License.txt */,
 				B3E6BAB92894B2F600CF98C7 /* README-SDL.txt */,
-				B3E6BB1B2894B2F600CF98C7 /* Readme.txt */,
 				B3E6B8B32894B2F200CF98C7 /* Todo.txt */,
 				B3E6BB1C2894B2F600CF98C7 /* .gitlab-ci.yml */,
-				B3E6BB1E2894B2F600CF98C7 /* .travis.yml */,
-				B3E6BB192894B2F600CF98C7 /* appveyor.yml */,
 				B3E6BAAD2894B2F600CF98C7 /* debian */,
 				B3E6BABD2894B2F600CF98C7 /* docs */,
 				B3E6B8B42894B2F200CF98C7 /* test */,
@@ -2755,7 +3024,8 @@
 				B3E6BAB62894B2F600CF98C7 /* doc-base */,
 				B3E6BAB72894B2F600CF98C7 /* control */,
 			);
-			path = debian;
+			name = debian;
+			path = src/os/libretro;
 			sourceTree = "<group>";
 		};
 		B3E6BAB02894B2F600CF98C7 /* source */ = {
@@ -2877,22 +3147,13 @@
 		B3E6BB1F2894B2F600CF98C7 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				B312F91E292B0F1E00286CFE /* lib */,
+				B312F971292B0F1E00286CFE /* os */,
 				B3E6BB8D2894B2F700CF98C7 /* cheat */,
 				B3E6BBAA2894B2F700CF98C7 /* common */,
 				B3E6BCDE2894B2F900CF98C7 /* debugger */,
 				B3E6BDBC2894B2FA00CF98C7 /* emucore */,
 				B3E6BC532894B2F800CF98C7 /* gui */,
-				B3E6BB6B2894B2F700CF98C7 /* httplib */,
-				B3E6BC4E2894B2F800CF98C7 /* json */,
-				B3E6BB4B2894B2F700CF98C7 /* libpng */,
-				B3E6BC362894B2F800CF98C7 /* libretro */,
-				B3E6BB302894B2F600CF98C7 /* macos */,
-				B3E6BB632894B2F700CF98C7 /* sqlite */,
-				B3E6BB202894B2F600CF98C7 /* tools */,
-				B3E6BB9A2894B2F700CF98C7 /* unix */,
-				B3E6BDAA2894B2FA00CF98C7 /* windows */,
-				B3E6BDA02894B2FA00CF98C7 /* yacc */,
-				B3E6BB702894B2F700CF98C7 /* zlib */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -2926,141 +3187,6 @@
 			path = "evdev-joystick";
 			sourceTree = "<group>";
 		};
-		B3E6BB302894B2F600CF98C7 /* macos */ = {
-			isa = PBXGroup;
-			children = (
-				B3E6BB312894B2F600CF98C7 /* InfoPlist.strings */,
-				B3E6BB332894B2F600CF98C7 /* AboutBoxTextView.m */,
-				B3E6BB342894B2F600CF98C7 /* SettingsRepositoryMACOS.mm */,
-				B3E6BB352894B2F600CF98C7 /* AboutBox.nib */,
-				B3E6BB362894B2F600CF98C7 /* AboutBox.h */,
-				B3E6BB372894B2F600CF98C7 /* SerialPortMACOS.hxx */,
-				B3E6BB382894B2F700CF98C7 /* SDLMain.h */,
-				B3E6BB392894B2F700CF98C7 /* OSystemMACOS.hxx */,
-				B3E6BB3A2894B2F700CF98C7 /* SerialPortMACOS.cxx */,
-				B3E6BB3B2894B2F700CF98C7 /* stella.xcodeproj */,
-				B3E6BB3E2894B2F700CF98C7 /* SDLMain.nib */,
-				B3E6BB3F2894B2F700CF98C7 /* template.dmg.gz */,
-				B3E6BB402894B2F700CF98C7 /* .gitignore */,
-				B3E6BB412894B2F700CF98C7 /* Cart.icns */,
-				B3E6BB422894B2F700CF98C7 /* SettingsRepositoryMACOS.hxx */,
-				B3E6BB432894B2F700CF98C7 /* AboutBox.m */,
-				B3E6BB442894B2F700CF98C7 /* OSystemMACOS.cxx */,
-				B3E6BB452894B2F700CF98C7 /* Info-Stella.plist */,
-				B3E6BB462894B2F700CF98C7 /* AboutBoxTextView.h */,
-				B3E6BB472894B2F700CF98C7 /* SDLMain.m */,
-				B3E6BB482894B2F700CF98C7 /* Credits.html */,
-				B3E6BB492894B2F700CF98C7 /* Create_build.sh */,
-				B3E6BB4A2894B2F700CF98C7 /* Stella.icns */,
-			);
-			path = macos;
-			sourceTree = "<group>";
-		};
-		B3E6BB3C2894B2F700CF98C7 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				B3E6BEB72894B2FC00CF98C7 /* Stella.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		B3E6BB4B2894B2F700CF98C7 /* libpng */ = {
-			isa = PBXGroup;
-			children = (
-				B3E6BB4C2894B2F700CF98C7 /* pnginfo.h */,
-				B3E6BB4D2894B2F700CF98C7 /* pngrio.c */,
-				B3E6BB4E2894B2F700CF98C7 /* pngerror.c */,
-				B3E6BB4F2894B2F700CF98C7 /* pngwio.c */,
-				B3E6BB502894B2F700CF98C7 /* pngstruct.h */,
-				B3E6BB512894B2F700CF98C7 /* pngtrans.c */,
-				B3E6BB522894B2F700CF98C7 /* pngpriv.h */,
-				B3E6BB532894B2F700CF98C7 /* pngwrite.c */,
-				B3E6BB542894B2F700CF98C7 /* png.h */,
-				B3E6BB552894B2F700CF98C7 /* module.mk */,
-				B3E6BB562894B2F700CF98C7 /* pngwutil.c */,
-				B3E6BB572894B2F700CF98C7 /* pngwtran.c */,
-				B3E6BB582894B2F700CF98C7 /* pnglibconf.h */,
-				B3E6BB592894B2F700CF98C7 /* pngconf.h */,
-				B3E6BB5A2894B2F700CF98C7 /* pngpread.c */,
-				B3E6BB5B2894B2F700CF98C7 /* pngdebug.h */,
-				B3E6BB5C2894B2F700CF98C7 /* pngread.c */,
-				B3E6BB5D2894B2F700CF98C7 /* pngmem.c */,
-				B3E6BB5E2894B2F700CF98C7 /* pngget.c */,
-				B3E6BB5F2894B2F700CF98C7 /* png.c */,
-				B3E6BB602894B2F700CF98C7 /* pngrtran.c */,
-				B3E6BB612894B2F700CF98C7 /* pngrutil.c */,
-				B3E6BB622894B2F700CF98C7 /* pngset.c */,
-			);
-			path = libpng;
-			sourceTree = "<group>";
-		};
-		B3E6BB632894B2F700CF98C7 /* sqlite */ = {
-			isa = PBXGroup;
-			children = (
-				B3E6BB642894B2F700CF98C7 /* sqlite3.c */,
-				B3E6BB652894B2F700CF98C7 /* sqlite_options.h */,
-				B3E6BB662894B2F700CF98C7 /* source */,
-				B3E6BB692894B2F700CF98C7 /* module.mk */,
-				B3E6BB6A2894B2F700CF98C7 /* sqlite3.h */,
-			);
-			path = sqlite;
-			sourceTree = "<group>";
-		};
-		B3E6BB662894B2F700CF98C7 /* source */ = {
-			isa = PBXGroup;
-			children = (
-				B3E6BB672894B2F700CF98C7 /* sqlite3.c */,
-				B3E6BB682894B2F700CF98C7 /* sqlite3.h */,
-			);
-			path = source;
-			sourceTree = "<group>";
-		};
-		B3E6BB6B2894B2F700CF98C7 /* httplib */ = {
-			isa = PBXGroup;
-			children = (
-				B3E6BB6C2894B2F700CF98C7 /* httplib.h */,
-				B3E6BB6D2894B2F700CF98C7 /* LICENSE */,
-				B3E6BB6E2894B2F700CF98C7 /* http_lib.hxx */,
-				B3E6BB6F2894B2F700CF98C7 /* README.md */,
-			);
-			path = httplib;
-			sourceTree = "<group>";
-		};
-		B3E6BB702894B2F700CF98C7 /* zlib */ = {
-			isa = PBXGroup;
-			children = (
-				B3E6BB7C2894B2F700CF98C7 /* README */,
-				B3E6BB8B2894B2F700CF98C7 /* adler32.c */,
-				B3E6BB742894B2F700CF98C7 /* compress.c */,
-				B3E6BB7B2894B2F700CF98C7 /* crc32.c */,
-				B3E6BB752894B2F700CF98C7 /* deflate.c */,
-				B3E6BB882894B2F700CF98C7 /* gzclose.c */,
-				B3E6BB822894B2F700CF98C7 /* gzlib.c */,
-				B3E6BB772894B2F700CF98C7 /* gzread.c */,
-				B3E6BB862894B2F700CF98C7 /* gzwrite.c */,
-				B3E6BB7D2894B2F700CF98C7 /* infback.c */,
-				B3E6BB8A2894B2F700CF98C7 /* inffast.c */,
-				B3E6BB732894B2F700CF98C7 /* inflate.c */,
-				B3E6BB842894B2F700CF98C7 /* inftrees.c */,
-				B3E6BB872894B2F700CF98C7 /* trees.c */,
-				B3E6BB852894B2F700CF98C7 /* uncompr.c */,
-				B3E6BB7E2894B2F700CF98C7 /* zutil.c */,
-				B3E6BB892894B2F700CF98C7 /* crc32.h */,
-				B3E6BB7F2894B2F700CF98C7 /* deflate.h */,
-				B3E6BB802894B2F700CF98C7 /* gzguts.h */,
-				B3E6BB792894B2F700CF98C7 /* inffast.h */,
-				B3E6BB762894B2F700CF98C7 /* inffixed.h */,
-				B3E6BB832894B2F700CF98C7 /* inflate.h */,
-				B3E6BB722894B2F700CF98C7 /* inftrees.h */,
-				B3E6BB782894B2F700CF98C7 /* trees.h */,
-				B3E6BB8C2894B2F700CF98C7 /* zconf.h */,
-				B3E6BB812894B2F700CF98C7 /* zlib.h */,
-				B3E6BB712894B2F700CF98C7 /* zutil.h */,
-				B3E6BB7A2894B2F700CF98C7 /* module.mk */,
-			);
-			path = zlib;
-			sourceTree = "<group>";
-		};
 		B3E6BB8D2894B2F700CF98C7 /* cheat */ = {
 			isa = PBXGroup;
 			children = (
@@ -3078,35 +3204,6 @@
 				B3E6BB932894B2F700CF98C7 /* module.mk */,
 			);
 			path = cheat;
-			sourceTree = "<group>";
-		};
-		B3E6BB9A2894B2F700CF98C7 /* unix */ = {
-			isa = PBXGroup;
-			children = (
-				B3E6BB9B2894B2F700CF98C7 /* OSystemUNIX.hxx */,
-				B3E6BB9C2894B2F700CF98C7 /* r77 */,
-				B3E6BBA22894B2F700CF98C7 /* FSNodePOSIX.hxx */,
-				B3E6BBA32894B2F700CF98C7 /* SerialPortUNIX.cxx */,
-				B3E6BBA42894B2F700CF98C7 /* module.mk */,
-				B3E6BBA52894B2F700CF98C7 /* FSNodePOSIX.cxx */,
-				B3E6BBA62894B2F700CF98C7 /* SerialPortUNIX.hxx */,
-				B3E6BBA72894B2F700CF98C7 /* stella.spec */,
-				B3E6BBA82894B2F700CF98C7 /* OSystemUNIX.cxx */,
-				B3E6BBA92894B2F700CF98C7 /* stella.desktop */,
-			);
-			path = unix;
-			sourceTree = "<group>";
-		};
-		B3E6BB9C2894B2F700CF98C7 /* r77 */ = {
-			isa = PBXGroup;
-			children = (
-				B3E6BB9D2894B2F700CF98C7 /* SettingsR77.cxx */,
-				B3E6BB9E2894B2F700CF98C7 /* OSystemR77.hxx */,
-				B3E6BB9F2894B2F700CF98C7 /* module.mk */,
-				B3E6BBA02894B2F700CF98C7 /* OSystemR77.cxx */,
-				B3E6BBA12894B2F700CF98C7 /* SettingsR77.hxx */,
-			);
-			path = r77;
 			sourceTree = "<group>";
 		};
 		B3E6BBAA2894B2F700CF98C7 /* common */ = {
@@ -3290,57 +3387,10 @@
 			path = tv_filters;
 			sourceTree = "<group>";
 		};
-		B3E6BC362894B2F800CF98C7 /* libretro */ = {
-			isa = PBXGroup;
-			children = (
-				B3E6BC3B2894B2F800CF98C7 /* Makefile */,
-				B3E6BC402894B2F800CF98C7 /* Makefile.common */,
-				B3E6BC472894B2F800CF98C7 /* EventHandlerLIBRETRO.cxx */,
-				B3E6BC3C2894B2F800CF98C7 /* FBBackendLIBRETRO.cxx */,
-				B3E6BC4D2894B2F800CF98C7 /* FBSurfaceLIBRETRO.cxx */,
-				B3E6BC412894B2F800CF98C7 /* FSNodeLIBRETRO.cxx */,
-				B3E6BC392894B2F800CF98C7 /* libretro.cxx */,
-				B3E6BC3A2894B2F800CF98C7 /* OSystemLIBRETRO.cxx */,
-				B3E6BC482894B2F800CF98C7 /* SoundLIBRETRO.cxx */,
-				B3E6BC452894B2F800CF98C7 /* StellaLIBRETRO.cxx */,
-				B3E6BC462894B2F800CF98C7 /* libretro.h */,
-				B3E6BC3E2894B2F800CF98C7 /* EventHandlerLIBRETRO.hxx */,
-				B3E6BC442894B2F800CF98C7 /* FBBackendLIBRETRO.hxx */,
-				B3E6BC372894B2F800CF98C7 /* FBSurfaceLIBRETRO.hxx */,
-				B3E6BC382894B2F800CF98C7 /* FSNodeLIBRETRO.hxx */,
-				B3E6BC422894B2F800CF98C7 /* OSystemLIBRETRO.hxx */,
-				B3E6BC3F2894B2F800CF98C7 /* SoundLIBRETRO.hxx */,
-				B3E6BC3D2894B2F800CF98C7 /* StellaLIBRETRO.hxx */,
-				B3E6BC492894B2F800CF98C7 /* link.T */,
-				B3E6BC432894B2F800CF98C7 /* Stella.vcxproj */,
-				B3E6BC4A2894B2F800CF98C7 /* jni */,
-			);
-			path = libretro;
-			sourceTree = "<group>";
-		};
-		B3E6BC4A2894B2F800CF98C7 /* jni */ = {
-			isa = PBXGroup;
-			children = (
-				B3E6BC4B2894B2F800CF98C7 /* Android.mk */,
-				B3E6BC4C2894B2F800CF98C7 /* Application.mk */,
-			);
-			path = jni;
-			sourceTree = "<group>";
-		};
-		B3E6BC4E2894B2F800CF98C7 /* json */ = {
-			isa = PBXGroup;
-			children = (
-				B3E6BC4F2894B2F800CF98C7 /* LICENSE.MIT */,
-				B3E6BC502894B2F800CF98C7 /* README.md */,
-				B3E6BC512894B2F800CF98C7 /* json_lib.hxx */,
-				B3E6BC522894B2F800CF98C7 /* json.hxx */,
-			);
-			path = json;
-			sourceTree = "<group>";
-		};
 		B3E6BC532894B2F800CF98C7 /* gui */ = {
 			isa = PBXGroup;
 			children = (
+				B3E6BB202894B2F600CF98C7 /* tools */,
 				B3E6BC542894B2F800CF98C7 /* Stella14x28tFont.hxx */,
 				B3E6BC552894B2F800CF98C7 /* Launcher.cxx */,
 				B3E6BC562894B2F800CF98C7 /* InputTextDialog.hxx */,
@@ -3688,46 +3738,6 @@
 				B3E6BD982894B2FA00CF98C7 /* CartFAWidget.cxx */,
 			);
 			path = gui;
-			sourceTree = "<group>";
-		};
-		B3E6BDA02894B2FA00CF98C7 /* yacc */ = {
-			isa = PBXGroup;
-			children = (
-				B3E6BDA12894B2FA00CF98C7 /* YaccParser.hxx */,
-				B3E6BDA22894B2FA00CF98C7 /* y.tab.c */,
-				B3E6BDA32894B2FA00CF98C7 /* module.mk */,
-				B3E6BDA42894B2FA00CF98C7 /* README.txt */,
-				B3E6BDA52894B2FA00CF98C7 /* stella.y */,
-				B3E6BDA62894B2FA00CF98C7 /* y.tab.h */,
-				B3E6BDA72894B2FA00CF98C7 /* Makefile.yacc */,
-				B3E6BDA82894B2FA00CF98C7 /* YaccParser.cxx */,
-				B3E6BDA92894B2FA00CF98C7 /* calctest.c */,
-			);
-			path = yacc;
-			sourceTree = "<group>";
-		};
-		B3E6BDAA2894B2FA00CF98C7 /* windows */ = {
-			isa = PBXGroup;
-			children = (
-				B3E6BDAB2894B2FA00CF98C7 /* stella.ico */,
-				B3E6BDAC2894B2FA00CF98C7 /* OSystemWINDOWS.cxx */,
-				B3E6BDAD2894B2FA00CF98C7 /* Stella.vcxproj.filters */,
-				B3E6BDAE2894B2FA00CF98C7 /* Windows.hxx */,
-				B3E6BDAF2894B2FA00CF98C7 /* Stella.sln */,
-				B3E6BDB02894B2FA00CF98C7 /* Create_Builds.bat */,
-				B3E6BDB12894B2FA00CF98C7 /* FSNodeWINDOWS.cxx */,
-				B3E6BDB22894B2FA00CF98C7 /* SerialPortWINDOWS.cxx */,
-				B3E6BDB32894B2FA00CF98C7 /* module.mk */,
-				B3E6BDB42894B2FA00CF98C7 /* Stella.vcxproj */,
-				B3E6BDB52894B2FA00CF98C7 /* FSNodeWINDOWS.hxx */,
-				B3E6BDB62894B2FA00CF98C7 /* HomeFinder.hxx */,
-				B3E6BDB72894B2FA00CF98C7 /* resource.h */,
-				B3E6BDB82894B2FA00CF98C7 /* SerialPortWINDOWS.hxx */,
-				B3E6BDB92894B2FA00CF98C7 /* stella.rc */,
-				B3E6BDBA2894B2FA00CF98C7 /* stella.iss */,
-				B3E6BDBB2894B2FA00CF98C7 /* OSystemWINDOWS.hxx */,
-			);
-			path = windows;
 			sourceTree = "<group>";
 		};
 		B3E6BDBC2894B2FA00CF98C7 /* emucore */ = {
@@ -4085,8 +4095,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = B3E6BB3C2894B2F700CF98C7 /* Products */;
-					ProjectRef = B3E6BB3B2894B2F700CF98C7 /* stella.xcodeproj */;
+					ProductGroup = B312F97E292B0F1E00286CFE /* Products */;
+					ProjectRef = B312F97D292B0F1E00286CFE /* stella.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -4098,11 +4108,11 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		B3E6BEB72894B2FC00CF98C7 /* Stella.app */ = {
+		B312F9C4292B0F1F00286CFE /* Stella.app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;
 			path = Stella.app;
-			remoteRef = B3E6BEB62894B2FC00CF98C7 /* PBXContainerItemProxy */;
+			remoteRef = B312F9C3292B0F1F00286CFE /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -4136,7 +4146,6 @@
 				B3E6BF422894BA6000CF98C7 /* TimerManager.cxx in Sources */,
 				B3E6BF1D2894B3EB00CF98C7 /* System.cxx in Sources */,
 				B3E6BF3C2894BA6000CF98C7 /* DevSettingsHandler.cxx in Sources */,
-				B3E6BF302894B86B00CF98C7 /* libretro.cxx in Sources */,
 				B3E6BF282894B3EB00CF98C7 /* GlobalKeyHandler.cxx in Sources */,
 				B3E6BEBA2894B37000CF98C7 /* Bankswitch.cxx in Sources */,
 				B3E6BEC52894B37000CF98C7 /* CartF4SC.cxx in Sources */,
@@ -4144,7 +4153,6 @@
 				B3E6BED32894B37100CF98C7 /* CartSB.cxx in Sources */,
 				B3E6BED02894B37000CF98C7 /* CartE7.cxx in Sources */,
 				B3E6BEBB2894B37000CF98C7 /* Cart3EPlus.cxx in Sources */,
-				B3E6BF632894BC9C00CF98C7 /* FBBackendLIBRETRO.cxx in Sources */,
 				B3E6BF4F2894BB2200CF98C7 /* Audio.cxx in Sources */,
 				B3E6BEED2894B3C100CF98C7 /* Control.cxx in Sources */,
 				B3E6BF432894BA6000CF98C7 /* AudioSettings.cxx in Sources */,
@@ -4171,13 +4179,13 @@
 				B3E6BF582894BB3200CF98C7 /* TIA.cxx in Sources */,
 				B3E6BEE22894B37100CF98C7 /* CartBUS.cxx in Sources */,
 				B3E6BF1F2894B3EB00CF98C7 /* Keyboard.cxx in Sources */,
+				B312F9C8292B104200286CFE /* StellaLIBRETRO.cxx in Sources */,
 				B3E6BF222894B3EB00CF98C7 /* SaveKey.cxx in Sources */,
 				B3E6BEDA2894B37100CF98C7 /* Cart3EX.cxx in Sources */,
 				B3E6BF592894BB4000CF98C7 /* FrameManager.cxx in Sources */,
 				B3E6BF682894BD4700CF98C7 /* EmulationTiming.cxx in Sources */,
 				B3E6BEEF2894B3C600CF98C7 /* AtariVox.cxx in Sources */,
 				B3E6BF472894BA6000CF98C7 /* MouseControl.cxx in Sources */,
-				B3E6BF622894BC7B00CF98C7 /* FSNodeLIBRETRO.cxx in Sources */,
 				B3E6BF5E2894BBC800CF98C7 /* EventHandler.cxx in Sources */,
 				B3E6BEC72894B37000CF98C7 /* CartX07.cxx in Sources */,
 				B3E6BEE32894B37100CF98C7 /* CartARM.cxx in Sources */,
@@ -4190,6 +4198,7 @@
 				B3E6BF232894B3EB00CF98C7 /* Paddles.cxx in Sources */,
 				B3E6BEB92894B37000CF98C7 /* CartFA.cxx in Sources */,
 				B3E6BF392894BA6000CF98C7 /* RewindManager.cxx in Sources */,
+				B312F9C6292B0F2900286CFE /* libretro.cxx in Sources */,
 				B3E6BF5C2894BB4000CF98C7 /* JitterEmulation.cxx in Sources */,
 				B3E6BED12894B37000CF98C7 /* CartDFSC.cxx in Sources */,
 				B3E6BECB2894B37000CF98C7 /* CartUA.cxx in Sources */,
@@ -4202,15 +4211,13 @@
 				B3E6BF442894BA6000CF98C7 /* JoyMap.cxx in Sources */,
 				B3E6BF6E2894BE1B00CF98C7 /* ControllerDetector.cxx in Sources */,
 				B3E6BF0E2894B3EA00CF98C7 /* M6532.cxx in Sources */,
-				B3E6BF612894BC6F00CF98C7 /* SoundLIBRETRO.cxx in Sources */,
-				B3E6BF642894BC9C00CF98C7 /* EventHandlerLIBRETRO.cxx in Sources */,
 				B3E6BF0F2894B3EA00CF98C7 /* Serializer.cxx in Sources */,
 				B3E6BEC22894B37000CF98C7 /* CartEFSC.cxx in Sources */,
-				B3E6BF602894BC6400CF98C7 /* OSystemLIBRETRO.cxx in Sources */,
 				B3E6BF112894B3EA00CF98C7 /* Joystick.cxx in Sources */,
 				B3E6BF4A2894BA7700CF98C7 /* CompositeKeyValueRepository.cxx in Sources */,
 				B3E6BF6B2894BDB400CF98C7 /* Driving.cxx in Sources */,
 				B3E6BF6D2894BDF100CF98C7 /* CompuMate.cxx in Sources */,
+				B312F9C5292B0F2900286CFE /* FSNodeLIBRETRO.cxx in Sources */,
 				B3E6BF542894BB3200CF98C7 /* LatchedInput.cxx in Sources */,
 				B3E6BF5A2894BB4000CF98C7 /* AbstractFrameManager.cxx in Sources */,
 				B3E6BF4D2894BA7700CF98C7 /* KeyValueRepositoryPropertyFile.cxx in Sources */,
@@ -4261,8 +4268,6 @@
 				B3E6BED52894B37100CF98C7 /* Cart2K.cxx in Sources */,
 				B3E6BEBF2894B37000CF98C7 /* CartDPCPlus.cxx in Sources */,
 				B3E6BEC92894B37000CF98C7 /* Booster.cxx in Sources */,
-				B3E6BF5F2894BC3A00CF98C7 /* StellaLIBRETRO.cxx in Sources */,
-				B3E6BF652894BC9C00CF98C7 /* FBSurfaceLIBRETRO.cxx in Sources */,
 				B3E6BED22894B37000CF98C7 /* Cart3E.cxx in Sources */,
 				B3E6BEDD2894B37100CF98C7 /* CartEnhanced.cxx in Sources */,
 				B3E6BEDE2894B37100CF98C7 /* CartCM.cxx in Sources */,
@@ -4291,10 +4296,10 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		B3E6BB312894B2F600CF98C7 /* InfoPlist.strings */ = {
+		B312F973292B0F1E00286CFE /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				B3E6BB322894B2F600CF98C7 /* en */,
+				B312F974292B0F1E00286CFE /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -4333,10 +4338,7 @@
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -4348,6 +4350,8 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/Stella/stella/src/emucore/tia\"",
 					"\"$(SRCROOT)/Stella/stella/src/common\"",
+					"\"$(SRCROOT)/Stella/stella/src/os/libretro\"",
+					"\"$(SRCROOT)/Stella/stella/src/lib\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				ONLY_ACTIVE_ARCH = YES;
@@ -4399,6 +4403,8 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/Stella/stella/src/emucore/tia\"",
 					"\"$(SRCROOT)/Stella/stella/src/common\"",
+					"\"$(SRCROOT)/Stella/stella/src/os/libretro\"",
+					"\"$(SRCROOT)/Stella/stella/src/lib\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				ONLY_ACTIVE_ARCH = YES;
@@ -4451,6 +4457,8 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/Stella/stella/src/emucore/tia\"",
 					"\"$(SRCROOT)/Stella/stella/src/common\"",
+					"\"$(SRCROOT)/Stella/stella/src/os/libretro\"",
+					"\"$(SRCROOT)/Stella/stella/src/lib\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				SDKROOT = iphoneos;
@@ -4627,6 +4635,10 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					__LIB_RETRO__,
+					"$(inherited)",
+				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -4656,6 +4668,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					__LIB_RETRO__,
+					"$(inherited)",
+				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -4685,6 +4701,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					__LIB_RETRO__,
+					"$(inherited)",
+				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
