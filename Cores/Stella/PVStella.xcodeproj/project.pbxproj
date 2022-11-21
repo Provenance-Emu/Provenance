@@ -197,9 +197,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		941DFB2415B632E000C6552F /* libretro.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = libretro.cpp; sourceTree = "<group>"; };
-		94A9E281157D637B0083A7DC /* libretro.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libretro.h; sourceTree = "<group>"; };
-		B305EEB0276B4BDF003AE510 /* PVStella_watchOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVStella_watchOS.h; sourceTree = "<group>"; };
 		B305EF31276B4DC4003AE510 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B305EF35276B4DCD003AE510 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B305EF37276B4DD7003AE510 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.3.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
@@ -1702,7 +1699,6 @@
 				B31B11562894A02D0044F0E6 /* PVStellaGameCore */,
 				94A9E27F157D637B0083A7DC /* Stella */,
 				B38FB4C11C839BE500CD73BE /* PVStella */,
-				B305EEAF276B4BDF003AE510 /* PVStella-watchOS */,
 				089C1671FE841209C02AAC07 /* Frameworks */,
 				19C28FB8FE9D52D311CA2CBB /* Products */,
 			);
@@ -1750,18 +1746,8 @@
 			isa = PBXGroup;
 			children = (
 				B3E6B8B12894B2F200CF98C7 /* stella */,
-				941DFB2415B632E000C6552F /* libretro.cpp */,
-				94A9E281157D637B0083A7DC /* libretro.h */,
 			);
 			path = Stella;
-			sourceTree = "<group>";
-		};
-		B305EEAF276B4BDF003AE510 /* PVStella-watchOS */ = {
-			isa = PBXGroup;
-			children = (
-				B305EEB0276B4BDF003AE510 /* PVStella_watchOS.h */,
-			);
-			path = "PVStella-watchOS";
 			sourceTree = "<group>";
 		};
 		B31B11562894A02D0044F0E6 /* PVStellaGameCore */ = {
