@@ -622,8 +622,6 @@
 		B3CCD2BA21DAA8D30031C42C /* PVEmulatorViewController+Saves.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CCD2B921DAA8D30031C42C /* PVEmulatorViewController+Saves.swift */; };
 		B3CCD2BB21DAA8D30031C42C /* PVEmulatorViewController+Saves.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CCD2B921DAA8D30031C42C /* PVEmulatorViewController+Saves.swift */; };
 		B3CEC5B22794D8DD004A7CC1 /* Strings.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3296EEA26CAC3ED0088AC32 /* Strings.strings */; };
-		B3D1800928963AD3001207AF /* PVBliss.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D1800828963AD3001207AF /* PVBliss.framework */; platformFilters = (driverkit, ios, tvos, watchos, ); };
-		B3D1800A28963AD4001207AF /* PVBliss.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3D1800828963AD3001207AF /* PVBliss.framework */; platformFilters = (driverkit, ios, tvos, watchos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3D180A728964E07001207AF /* CoresRetro.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C8A6A428781E810037A946 /* CoresRetro.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3D3E75F2894DEAB0016EB85 /* PVGME.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D3E75E2894DEAB0016EB85 /* PVGME.framework */; };
 		B3D3E7602894DEAB0016EB85 /* PVGME.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3D3E75E2894DEAB0016EB85 /* PVGME.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -886,7 +884,6 @@
 				B3270F9927DCB2CA00E83180 /* PVStella.framework in Embed Frameworks */,
 				B3270F9527DCB2CA00E83180 /* PVPokeMini.framework in Embed Frameworks */,
 				B3270FB527DCB2CB00E83180 /* PVVirtualJaguar.framework in Embed Frameworks */,
-				B3D1800A28963AD4001207AF /* PVBliss.framework in Embed Frameworks */,
 				B3270F9D27DCB2CA00E83180 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
 				B3270FA527DCB2CA00E83180 /* PVAtari800.framework in Embed Frameworks */,
 				B3270FAD27DCB2CA00E83180 /* PVSNES.framework in Embed Frameworks */,
@@ -1737,7 +1734,6 @@
 				B3270FAC27DCB2CA00E83180 /* PVSNES.framework in Frameworks */,
 				B3270FBB27DCB62C00E83180 /* libxml2.dylib in Frameworks */,
 				B3270FB227DCB2CB00E83180 /* PVTGBDual.framework in Frameworks */,
-				B3D1800928963AD3001207AF /* PVBliss.framework in Frameworks */,
 				B3270FBA27DCB62C00E83180 /* libstdc++.dylib in Frameworks */,
 				B3270FA027DCB2CA00E83180 /* PVMupen64PlusVideoRice.framework in Frameworks */,
 				B3270F9227DCB2CA00E83180 /* PVFCEU.framework in Frameworks */,
