@@ -241,14 +241,10 @@ public final class Theme {
             $0.separatorColor = theme.settingsSeperator
         }
 
-        SettingsTableView.appearance {
-            $0.backgroundColor = theme.settingsHeaderBackground
-            $0.separatorColor = theme.settingsSeperator
-        }
         #endif
 
         // Settings
-        appearance(inAny: [PVSettingsViewController.self, SystemsSettingsTableViewController.self, CoreOptionsViewController.self, SettingsTableView.self, PVAppearanceViewController.self, PVCoresTableViewController.self]) {
+        appearance(inAny: [PVSettingsViewController.self, SystemsSettingsTableViewController.self, CoreOptionsViewController.self, PVAppearanceViewController.self, PVCoresTableViewController.self]) {
             UITableViewCell.appearance {
                 $0.backgroundColor = theme.settingsCellBackground
                 $0.textLabel?.backgroundColor = theme.settingsCellBackground

@@ -433,8 +433,6 @@
 		B378224B21D329FB0077E86F /* SettingsRowSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378224921D329EC0077E86F /* SettingsRowSwitch.swift */; };
 		B378224E21D32A360077E86F /* SegueNavigationRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378224D21D32A360077E86F /* SegueNavigationRow.swift */; };
 		B378224F21D32A360077E86F /* SegueNavigationRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378224D21D32A360077E86F /* SegueNavigationRow.swift */; };
-		B378225121D32A6B0077E86F /* SettingsTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225021D32A6B0077E86F /* SettingsTableView.swift */; };
-		B378225221D32A6B0077E86F /* SettingsTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225021D32A6B0077E86F /* SettingsTableView.swift */; };
 		B378225421D32AD60077E86F /* SliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225321D32AD60077E86F /* SliderCell.swift */; };
 		B378225721D32B0B0077E86F /* SliderRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225621D32B0B0077E86F /* SliderRow.swift */; };
 		B378225A21D32F970077E86F /* SettingsRowSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225921D32F970077E86F /* SettingsRowSlider.swift */; };
@@ -1435,7 +1433,6 @@
 		B37263A826EA159400E95488 /* PVRSPCXD4.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVRSPCXD4.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B378224921D329EC0077E86F /* SettingsRowSwitch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRowSwitch.swift; sourceTree = "<group>"; };
 		B378224D21D32A360077E86F /* SegueNavigationRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegueNavigationRow.swift; sourceTree = "<group>"; };
-		B378225021D32A6B0077E86F /* SettingsTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableView.swift; sourceTree = "<group>"; };
 		B378225321D32AD60077E86F /* SliderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderCell.swift; sourceTree = "<group>"; };
 		B378225621D32B0B0077E86F /* SliderRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderRow.swift; sourceTree = "<group>"; };
 		B378225921D32F970077E86F /* SettingsRowSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRowSlider.swift; sourceTree = "<group>"; };
@@ -1996,7 +1993,6 @@
 				1FB125951D93E57F00D045D0 /* PVAppearanceViewController.swift */,
 				B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */,
 				B387676B20BD0F43009D8CD2 /* WebServerActivatorController.swift */,
-				B378225021D32A6B0077E86F /* SettingsTableView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -4501,7 +4497,6 @@
 				B3AB373E2187F569009D9244 /* PVAtari5200ControllerViewController.swift in Sources */,
 				37EEA2A227BC7E610070E222 /* GameItemView.swift in Sources */,
 				378F4A051B63D7CD0065FA39 /* GCDWebServerDataRequest.m in Sources */,
-				B378225121D32A6B0077E86F /* SettingsTableView.swift in Sources */,
 				B3AB37322187F569009D9244 /* PVSNESControllerViewController.swift in Sources */,
 				1F8D52461D9198E000C29F90 /* PVLicensesViewController.swift in Sources */,
 				B35D26FA20337D1C00F17D58 /* GameLaunchingViewController.swift in Sources */,
@@ -4731,7 +4726,6 @@
 				B35D27022033B44B00F17D58 /* PVGameMoreInfoViewController.swift in Sources */,
 				B3427BF7287EA0CF0054C1B5 /* ulTron.metal in Sources */,
 				1AACCAED1BB61D5600DC21AE /* PVTVSplitViewController.swift in Sources */,
-				B378225221D32A6B0077E86F /* SettingsTableView.swift in Sources */,
 				B3B104C1218F2EF400210C39 /* PVAtari2600ControllerViewController.swift in Sources */,
 				1AD481D91BA3543B00FDA50A /* GCDWebServerFunctions.m in Sources */,
 				1AD481D01BA3540300FDA50A /* PVGameLibrarySectionHeaderView.swift in Sources */,

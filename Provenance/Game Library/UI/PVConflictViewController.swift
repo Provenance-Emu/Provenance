@@ -37,7 +37,7 @@ final class PVConflictViewController: UITableViewController {
             splitViewController?.title = "Solve Conflicts"
         #else
             let currentTableview = tableView!
-            tableView = SettingsTableView(frame: currentTableview.frame, style: currentTableview.style)
+            tableView = UITableView(frame: currentTableview.frame, style: currentTableview.style)
 
             title = "Solve Conflicts"
             tableView.separatorColor = UIColor.clear
