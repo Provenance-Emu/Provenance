@@ -221,7 +221,7 @@ extension MupenGameCore: CoreOptional {
 
 			// MARK: ---- HiRes
 			// MARK: txHiresEnable <Bool=0>
-		glidenOptions.append(.bool(.init(title: "Enable HiRes Texture packs", description: "These must be installed seperately. Refer to our WIKI for HD textures.", requiresRestart: true), defaultValue: true))
+		glidenOptions.append(.bool(.init(title: "Enable HiRes Texture packs", description: "These must be installed seperately. Refer to our WIKI for HD textures.", requiresRestart: true), defaultValue: false))
 
 			// MARK: txHresAltCRC <Bool=0>
 			// "Use alternative method of paletted textures CRC calculation."
