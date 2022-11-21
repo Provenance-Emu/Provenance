@@ -68,6 +68,9 @@
 		B380101420854EAA00FA03B8 /* TxDbg_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = B380101320854EAA00FA03B8 /* TxDbg_ios.mm */; };
 		B38010152085586900FA03B8 /* libglidenhq.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3800FF5208522DC00FA03B8 /* libglidenhq.a */; };
 		B3882C141DED279C007183B6 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E4C1DED23C600896D96 /* libpng.a */; };
+		B3919A31292C3CB600519575 /* CRC_OPT_NEON.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B31CB206CA65900AEAF88 /* CRC_OPT_NEON.cpp */; };
+		B3919A32292C3CDE00519575 /* RSP_LoadMatrixNeon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603282038AE7B001E70F1 /* RSP_LoadMatrixNeon.cpp */; };
+		B3919A33292C3CF600519575 /* 3DMathNeon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603272038AE7B001E70F1 /* 3DMathNeon.cpp */; };
 		B395ECFA2904B49F00C9407B /* MupenGameCore+Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = B395ECF92904B49F00C9407B /* MupenGameCore+Resources.swift */; };
 		B3962AEC26FBD89A00FAEFC0 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		B3962AED26FBD8A500FAEFC0 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
@@ -4539,6 +4542,7 @@
 				B3C3F40B21A9CBAA00EFB09C /* F3DEX2.cpp in Sources */,
 				B3C3F45121A9CBAA00EFB09C /* L3DEX2.cpp in Sources */,
 				DFB604742038BB0A001E70F1 /* Context.cpp in Sources */,
+				B3919A32292C3CDE00519575 /* RSP_LoadMatrixNeon.cpp in Sources */,
 				DFB604722038BB0A001E70F1 /* CombinerProgram.cpp in Sources */,
 				DFB6041A2038BA3C001E70F1 /* NoiseTexture.cpp in Sources */,
 				DFB6044E2038BA94001E70F1 /* VI.cpp in Sources */,
@@ -4554,6 +4558,7 @@
 				DFB6045B2038BAB8001E70F1 /* ColorBufferToRDRAM.cpp in Sources */,
 				DFB604522038BA9D001E70F1 /* ZlutTexture.cpp in Sources */,
 				DFB604782038BB0B001E70F1 /* ObjectHandle.cpp in Sources */,
+				B3919A33292C3CF600519575 /* 3DMathNeon.cpp in Sources */,
 				DFB606152038BD4E001E70F1 /* CommonAPIImpl_mupenplus.cpp in Sources */,
 				DFB6042D2038BA67001E70F1 /* RSP.cpp in Sources */,
 				DFB606122038BD4E001E70F1 /* Config_mupenplus.cpp in Sources */,
@@ -4597,6 +4602,7 @@
 				DFB603DE2038B9CF001E70F1 /* DebugDump.cpp in Sources */,
 				DFB603D02038B980001E70F1 /* CommonPluginAPI.cpp in Sources */,
 				DFB603F22038B9F0001E70F1 /* FrameBuffer.cpp in Sources */,
+				B3919A31292C3CB600519575 /* CRC_OPT_NEON.cpp in Sources */,
 				DFB6043A2038BA86001E70F1 /* SoftwareRender.cpp in Sources */,
 				DFB606142038BD4E001E70F1 /* MupenPlusAPIImpl.cpp in Sources */,
 				B35B31CE206CA72800AEAF88 /* xxhash.c in Sources */,
