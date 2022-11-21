@@ -126,6 +126,16 @@ void MupenSetAudioSpeed(int percent) {
     ILOG(@"value: %i", percent);
 }
 
+void MupenAudioRomOpen() {
+    // do we need this?
+    DLOG(@"called");
+}
+
+void MupenAudioRomClosed() {
+    // do we need this?
+    DLOG(@"called");
+}
+
 void ConfigureAll(NSString *romFolder) {
     ConfigureCore(romFolder);
     ConfigureVideoGeneral();
