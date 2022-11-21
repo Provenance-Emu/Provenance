@@ -9,6 +9,7 @@
 #import "PVMelonDSCore.h"
 #import "PVMelonDSCore+Controls.h"
 #import "PVMelonDSCore+Video.h"
+#import <PVSupport/PVSupport-Swift.h>
 
 #import "PVMelonDS+Audio.h"
 
@@ -82,7 +83,7 @@ int msgboxf(const wchar* text,unsigned int type,...)
     va_end(args);
 
         //printf(NULL,temp,VER_SHORTNAME,type | MB_TASKMODAL);
-    NSLog(@"%s", temp);
+    ILOG(@"%s", temp);
     return 0;
 }
 
@@ -94,7 +95,7 @@ int darw_printf(const wchar* text,...) {
     vsprintf(temp, text, args);
     va_end(args);
 
-    NSLog(@"%s", temp);
+    ILOG(@"%s", temp);
 
     return 0;
 }
@@ -119,7 +120,7 @@ u32  os_Push(void*, u32, bool) {
 }
 
 void os_SetWindowText(const char* t) {
-    NSLog(@"WindowText: %s", t);
+    ILOG(@"WindowText: %s", t);
 }
 
 void os_CreateWindow() {
