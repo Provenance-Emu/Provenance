@@ -1291,14 +1291,17 @@ extension GameImporter {
         DLOG("Starting Artwork download for \(url)")
 
 		#warning("Evil hack for bad domain in DB")
-		url = url.replacingOccurrences(of: "gamefaqs1.cbsistatic.com/box/", with:
-	"gamefaqs.gamespot.com/a/box/")
+		url = url.replacingOccurrences(of: "gamefaqs1.cbsistatic.com/box/", with: "gamefaqs.gamespot.com/a/box/")
 
         guard let artworkURL = URL(string: url) else {
+            ELOG("url is invalid url <\(url)>")
             return
         }
 
         let request = URLRequest(url: artworkURL)
+
+        // Create thread-safe reference to person
+        @ThreadSafe var gameRef = game
 
         // TODO: Is a synchronous data task just a bad idea here?
 //        let dataMaybe: Data?
@@ -1308,15 +1311,18 @@ extension GameImporter {
 //            DLOG("error downloading artwork from: \(url) -- \(error.localizedDescription)")
 //            return
 //        }
-        URLSession.shared.dataTask(with: request) { dataMaybe, urlResponseMaybe, error in
-            var artworkURL: String? = nil
-            defer {
+        let task = URLSession.shared.dataTask(with: request) { dataMaybe, urlResponseMaybe, error in
+            func artworkCompletion(artworkURL: String) {
                 if self.finishedArtworkHandler != nil {
                     DispatchQueue.main.sync(execute: { () -> Void in
-                        self.finishedArtworkHandler?(artworkURL)
+                        ILOG("Calling finishedArtworkHandler \(artworkURL)")
+                        self.finishedArtworkHandler!(artworkURL)
                     })
+                } else {
+                    ELOG("finishedArtworkHandler == nil")
                 }
             }
+            
             if let error = error {
                 ELOG("Network error: \(error.localizedDescription)")
                 return
@@ -1337,7 +1343,8 @@ extension GameImporter {
                     let localURL = try PVMediaCache.writeImage(toDisk: artwork, withKey: url)
                     try RomDatabase.sharedInstance.writeTransaction {
                         let file = PVImageFile(withURL: localURL, relativeRoot: .iCloud)
-                        game.originalArtworkFile = file
+                        gameRef?.originalArtworkFile = file
+                        artworkCompletion(artworkURL: localURL)
                     }
                 } catch { ELOG("\(error.localizedDescription)") }
             }
@@ -1347,13 +1354,14 @@ extension GameImporter {
                     let localURL = try PVMediaCache.writeImage(toDisk: artwork, withKey: url)
                     try RomDatabase.sharedInstance.writeTransaction {
                         let file = PVImageFile(withURL: localURL, relativeRoot: .iCloud)
-                        game.originalArtworkFile = file
+                        gameRef?.originalArtworkFile = file
                     }
                 } catch { ELOG("\(error.localizedDescription)") }
             }
             #endif
-            artworkURL = url
+            artworkCompletion(artworkURL: url)
         }
+        task.resume()
     }
 
     public func moveROM(toAppropriateSubfolder candidateFile: ImportCandidateFile) -> URL? {

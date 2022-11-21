@@ -7,7 +7,7 @@
 //
 
 @import Foundation;
-#if !TARGET_OS_MAC
+#if !TARGET_OS_OSX
 #import "UIImage+Scaling.h"
 @import CoreGraphics;
 

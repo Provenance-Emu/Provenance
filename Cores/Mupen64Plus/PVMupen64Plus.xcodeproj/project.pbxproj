@@ -12,7 +12,7 @@
 		B316B4EA219275A800693472 /* GLideN64.ini in Resources */ = {isa = PBXBuildFile; fileRef = DFB601CB2038AE78001E70F1 /* GLideN64.ini */; };
 		B316B4EB219275A800693472 /* RiceVideoLinux.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3A302912073F2AA008C1955 /* RiceVideoLinux.ini */; };
 		B324C62B21920BC2009F4EDC /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E811DED272E00896D96 /* libz.tbd */; };
-		B324C62F21920BDA009F4EDC /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EA447B206E10C700E608F6 /* OpenGLES.framework */; platformFilter = ios; };
+		B324C62F21920BDA009F4EDC /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EA447B206E10C700E608F6 /* OpenGLES.framework */; platformFilters = (ios, tvos, watchos, ); };
 		B324C63121920BDB009F4EDC /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EA447B206E10C700E608F6 /* OpenGLES.framework */; platformFilters = (ios, tvos, watchos, ); };
 		B3274E8B2106C19600857F52 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3055BEE20730B60001212D2 /* PVSupport.framework */; };
 		B3303E381DED20CF00896D96 /* PVMupen64PlusVideoRice.h in Headers */ = {isa = PBXBuildFile; fileRef = B37EFEF21C72E63300857158 /* PVMupen64PlusVideoRice.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -285,6 +285,7 @@
 		B3EA448D206E473300E608F6 /* CRC_OPT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603912038AE7D001E70F1 /* CRC_OPT.cpp */; };
 		B3EA448F206E473F00E608F6 /* 3DMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603292038AE7B001E70F1 /* 3DMath.cpp */; };
 		B3F2058326FBCBC600A4196B /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F2058226FBCBC600A4196B /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
+		B3FAC9B9292B522C005E8B11 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FAC9B8292B522C005E8B11 /* OpenGLES.framework */; platformFilters = (ios, tvos, ); };
 		DF0035C0203C8F6E00F63831 /* GLideN64.custom.ini in Resources */ = {isa = PBXBuildFile; fileRef = DFB601CA2038AE78001E70F1 /* GLideN64.custom.ini */; };
 		DF0035C1203C8F6E00F63831 /* GLideN64.ini in Resources */ = {isa = PBXBuildFile; fileRef = DFB601CB2038AE78001E70F1 /* GLideN64.ini */; };
 		DFB601842038AD13001E70F1 /* PVMupen64PlusVideoGlideN64.h in Headers */ = {isa = PBXBuildFile; fileRef = DFB601822038AD13001E70F1 /* PVMupen64PlusVideoGlideN64.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1190,6 +1191,7 @@
 		B3EA447B206E10C700E608F6 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		B3EA4488206E372400E608F6 /* TextDrawerStub.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextDrawerStub.cpp; sourceTree = "<group>"; };
 		B3F2058226FBCBC600A4196B /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
+		B3FAC9B8292B522C005E8B11 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.1.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		DF0035BD203C77D900F63831 /* Revision.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Revision.h; sourceTree = "<group>"; };
 		DFB601802038AD13001E70F1 /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1685,6 +1687,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3962AEC26FBD89A00FAEFC0 /* OpenGL.framework in Frameworks */,
+				B3FAC9B9292B522C005E8B11 /* OpenGLES.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2888,6 +2891,7 @@
 		B3B3B8551DECE9D800602746 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3FAC9B8292B522C005E8B11 /* OpenGLES.framework */,
 				B30BF1AD2775320F00FF9E07 /* libz.tbd */,
 				B3F2058226FBCBC600A4196B /* OpenGL.framework */,
 				B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */,
@@ -4941,11 +4945,12 @@
 				PRODUCT_NAME = PVMupen64Plus;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				USER_HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/Plugins/Core/src\"",
 					"\"$(SRCROOT)/Compatibility/SDL\"",
@@ -5034,10 +5039,11 @@
 				PRODUCT_NAME = PVMupen64PlusVideoRice;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -5095,10 +5101,11 @@
 				PRODUCT_NAME = PVMupen64PlusRspHLE;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -5705,9 +5712,10 @@
 				PRODUCT_NAME = PVMupen64PlusVideoRice;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -5790,9 +5798,10 @@
 				PRODUCT_NAME = PVMupen64PlusVideoRice;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -5873,11 +5882,12 @@
 				PRODUCT_NAME = PVMupen64Plus;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				USER_HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/Plugins/Core/src\"",
 					"\"$(SRCROOT)/Compatibility/SDL\"",
@@ -5964,10 +5974,11 @@
 				PRODUCT_NAME = PVMupen64Plus;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				USER_HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/Plugins/Core/src\"",
 					"\"$(SRCROOT)/Compatibility/SDL\"",
@@ -6151,9 +6162,10 @@
 				PRODUCT_NAME = PVMupen64PlusRspHLE;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -6210,9 +6222,10 @@
 				PRODUCT_NAME = PVMupen64PlusRspHLE;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";

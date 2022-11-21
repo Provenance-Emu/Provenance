@@ -377,6 +377,15 @@ public extension RomDatabase {
             }
         }
     }
+    
+    @objc
+    func asyncWriteTransaction(_ block: @escaping () -> Void) {
+        if realm.isPerformingAsynchronousWriteOperations {
+            block()
+        } else {
+            realm.writeAsync(block)
+        }
+    }
 
     @objc
     func add(_ object: Object, update: Bool = false) throws {
