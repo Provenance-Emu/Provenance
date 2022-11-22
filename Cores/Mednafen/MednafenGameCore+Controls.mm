@@ -413,10 +413,11 @@
 #pragma mark SS Buttons
 - (NSInteger)SSValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
     if ([controller extendedGamepad]) {
-        GCExtendedGamepad *gamepad = [controller extendedGamepad];
+        GCExtendedGamepad *gamepad = [[controller extendedGamepad] capture];
         GCControllerDirectionPad *dpad = [gamepad dpad];
-        if (PVSettingsModel.shared.use8BitdoM30) // Maps the Sega Saturn Controls to the 8BitDo M30 if enabled in Settings/Controller
-        { switch (buttonID) {
+        // Maps the Sega Saturn Controls to the 8BitDo M30 if enabled in Settings/Controller
+        if (PVSettingsModel.shared.use8BitdoM30) {
+            switch (buttonID) {
             case PVSaturnButtonUp:
                 return DPAD_PRESSED(up);
             case PVSaturnButtonDown:
@@ -445,14 +446,15 @@
             case PVSaturnButtonR:
                 return [[gamepad rightTrigger] isPressed];
 #else
-                return [[gamepad rightTrigger] isPressed]; // no Access to the R Shoulder Button on the Saturn Controller using the M30 due to Start Mismapping on iOS, for now
+                return [[gamepad rightTrigger] isPressed];
+                // no Access to the R Shoulder Button on the Saturn Controller using the M30 due to Start Mismapping on iOS, for now
 #endif
             default:
                 break;
-        }}
-        {
+            }
+        }
+        { // Non 8BitdoM30
             GCDualSenseGamepad *dualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]] ? gamepad : nil;
-            
             switch (buttonID) {
                 case PVSaturnButtonUp:
                     return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] isPressed];
@@ -480,8 +482,11 @@
                     return [[gamepad rightTrigger] isPressed];
                 case PVSaturnButtonStart:
                 {
-                    GCControllerButtonInput* button = dualSense ? dualSense.buttonHome : gamepad.rightTrigger;
-                    return button.isPressed;
+                    if (dualSense && !dualSense.buttonHome.isBoundToSystemGesture) {
+                        return dualSense.buttonHome.isBoundToSystemGesture;
+                    } else {
+                        return self.isStartPressed;
+                    }
                 }
                 default:
                     break;
