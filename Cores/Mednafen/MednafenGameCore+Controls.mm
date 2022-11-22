@@ -454,7 +454,7 @@
             }
         }
         { // Non 8BitdoM30
-            GCDualSenseGamepad *dualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]] ? gamepad : nil;
+//            GCDualSenseGamepad *dualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]] ? gamepad : nil;
             switch (buttonID) {
                 case PVSaturnButtonUp:
                     return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] isPressed];
@@ -482,8 +482,8 @@
                     return [[gamepad rightTrigger] isPressed];
                 case PVSaturnButtonStart:
                 {
-                    if (dualSense && !dualSense.buttonHome.isBoundToSystemGesture) {
-                        return dualSense.buttonHome.isBoundToSystemGesture;
+                    if (!gamepad.buttonHome.isBoundToSystemGesture) {
+                        return gamepad.buttonHome.isPressed;
                     } else {
                         return self.isStartPressed;
                     }
@@ -1193,7 +1193,7 @@
 - (NSInteger)PSXcontrollerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller withAnalogMode:(bool)analogMode {
     if ([controller extendedGamepad])
     {
-        GCExtendedGamepad *gamepad = [controller extendedGamepad];
+        GCExtendedGamepad *gamepad = [[controller extendedGamepad] capture];
         GCControllerDirectionPad *dpad = [gamepad dpad];
         
         if (@available(iOS 14, *)) {
@@ -1207,6 +1207,8 @@
                 GCXboxGamepad *xboxGamepad = gamepad;
             }
         }
+        
+        GCDualSenseGamepad *dualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]] ? gamepad : nil;
         
         bool modifier1Pressed = [[gamepad leftShoulder] isPressed] && [[gamepad rightShoulder] isPressed];
         bool modifier2Pressed = [[gamepad leftTrigger] isPressed] && [[gamepad rightTrigger] isPressed];
