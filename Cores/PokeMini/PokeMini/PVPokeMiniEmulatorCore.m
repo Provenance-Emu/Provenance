@@ -294,11 +294,14 @@ int saveEEPROM(const char *filename) {
     PokeMini_EmulateFrame();
     
     if(PokeMini_Rumbling) {
+        // TODO: Fix rumble
+#if TARGET_OS_IOS
         if (shouldRumble) {
             [self rumble];
             shouldRumble = NO;
         }
-
+#endif
+      
         PokeMini_VideoBlit(videoBuffer + PokeMini_GenRumbleOffset(current->videoWidth), current->videoWidth);
     }
     else

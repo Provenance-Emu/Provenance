@@ -10,7 +10,9 @@
 import PVSupport
 import UIKit
 import Darwin
+#if canImport(WebKit)
 import WebKit
+#endif
 
 final class PVLicensesViewController: UIViewController {
     #if os(tvOS) || targetEnvironment(macCatalyst)
@@ -22,7 +24,7 @@ final class PVLicensesViewController: UIViewController {
         // Do any additional setup after loading the view.
         title = NSLocalizedString("Acknowledgements", comment: "")
 
-        #if os(iOS) && !targetEnvironment(macCatalyst)
+        #if canImport(WebKit)
             view.backgroundColor = UIColor.black
             let filesystemPath: String? = Bundle.main.path(forResource: "licenses", ofType: "html")
             let htmlContent = try? String(contentsOfFile: filesystemPath ?? "", encoding: .utf8)

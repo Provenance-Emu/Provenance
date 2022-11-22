@@ -136,7 +136,9 @@ void MupenControllerCommand(int Control, unsigned char *Command) {
             {
                 if (*Data)
                 {
+#if TARGET_OS_IOS
                     [current rumble];
+#endif
 //                    AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
 //                    rumble.set_rumble_state(Control, RETRO_RUMBLE_WEAK, 0xFFFF);
 //                    rumble.set_rumble_state(Control, RETRO_RUMBLE_STRONG, 0xFFFF);
