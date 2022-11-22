@@ -17,6 +17,11 @@
 #import <OpenGL/OpenGL.h>
 #import <GLUT/GLUT.h>
 #endif
+
+extern unsigned GPU_LR_FRAMEBUFFER_NATIVE_WIDTH;
+extern unsigned GPU_LR_FRAMEBUFFER_NATIVE_HEIGHT;
+extern unsigned scale;
+
 @implementation PVDesmume2015Core (Video)
 
 # pragma mark - Methods
@@ -48,12 +53,12 @@
 //}
 //
 //- (CGRect)screenRect {
-//    return CGRectMake(0, 0, self.videoWidth, self.videoHeight);
+//    return CGRectMake(0, 0, GPU_LR_FRAMEBUFFER_NATIVE_WIDTH * scale, GPU_LR_FRAMEBUFFER_NATIVE_HEIGHT * scale);
 //}
 //
-//- (CGSize)aspectSize {
-//    return CGSizeMake(256, 192);
-//}
+- (CGSize)aspectSize {
+    return CGSizeMake(GPU_LR_FRAMEBUFFER_NATIVE_WIDTH, GPU_LR_FRAMEBUFFER_NATIVE_HEIGHT);
+}
 //
 //- (BOOL)rendersToOpenGL {
 //    return YES;

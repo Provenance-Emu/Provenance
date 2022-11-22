@@ -25,6 +25,7 @@
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
 		B364D4B72870E7D300B93A4B /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B364D4B62870E7D300B93A4B /* PVLibRetro.framework */; };
+		B3919A4D292C6B6100519575 /* PVDesmume2015Core+Options.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3919A4C292C6B6100519575 /* PVDesmume2015Core+Options.swift */; };
 		B39312F32870FB8E00372EBB /* matrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E8D272E2C9800FF72B9 /* matrix.cpp */; };
 		B39312F42870FB8E00372EBB /* readwrite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DC8272E2C9800FF72B9 /* readwrite.cpp */; };
 		B39312F52870FB8E00372EBB /* slot2_gbagame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DE5272E2C9800FF72B9 /* slot2_gbagame.cpp */; };
@@ -683,6 +684,7 @@
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		B364D4B62870E7D300B93A4B /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B364D4BA2870E7DE00B93A4B /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3919A4C292C6B6100519575 /* PVDesmume2015Core+Options.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVDesmume2015Core+Options.swift"; sourceTree = "<group>"; };
 		B3B104B8218F281B00210C39 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621020783162009950E4 /* PVDesmume2015.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVDesmume2015.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621320783162009950E4 /* PVDesmume2015.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVDesmume2015.h; sourceTree = "<group>"; };
@@ -2201,6 +2203,7 @@
 				B3447EAA218BC59D00557ACE /* PVDesmume2015Core+Saves.m */,
 				B3447E96218B809200557ACE /* PVDesmume2015Core+Controls.h */,
 				B3447E97218B809300557ACE /* PVDesmume2015Core+Controls.mm */,
+				B3919A4C292C6B6100519575 /* PVDesmume2015Core+Options.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -2343,6 +2346,7 @@
 					};
 					B3C7620F20783162009950E4 = {
 						CreatedOnToolsVersion = 9.3;
+						LastSwiftMigration = 1410;
 					};
 				};
 			};
@@ -2477,6 +2481,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3919A4D292C6B6100519575 /* PVDesmume2015Core+Options.swift in Sources */,
 				B338055D287582CE0009C732 /* PVDesmume2015Core+Audio.m in Sources */,
 				B338055B28757C3A0009C732 /* PVDesmume2015Core+Controls.mm in Sources */,
 				B338055F287583AD0009C732 /* PVDesmume2015Core+Video.m in Sources */,
@@ -2626,6 +2631,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = NO;
@@ -2661,6 +2667,7 @@
 				STRIP_SWIFT_SYMBOLS = NO;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Archive;
@@ -2846,6 +2853,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = NO;
@@ -2881,6 +2889,8 @@
 				STRIP_SWIFT_SYMBOLS = NO;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -2889,6 +2899,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = NO;
@@ -2924,6 +2935,7 @@
 				STRIP_SWIFT_SYMBOLS = NO;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

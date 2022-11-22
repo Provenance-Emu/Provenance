@@ -12,6 +12,8 @@
 #import "PVDesmume2015Core+Video.h"
 
 #import "PVDesmume2015+Audio.h"
+#import <PVDesmume2015/PVDesmume2015-Swift.h>
+
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
@@ -393,56 +395,74 @@
 
 
     #define V(x) strcmp(variable, x) == 0
+    #define RETURN_STRING(VAR) return strdup([self.desmume_##VAR cStringUsingEncoding:NSUTF8StringEncoding])
+    #define RETURN_BOOL(VAR) return strdup(self.desmume_##VAR ? "enabled" : "disabled")
 
+    // MARK - Core
     if (V("desmume_cpu_mode")) {
             // interpreter|jit
-        char * value = strdup("interpreter");
-        return value;
-    } else if (V("desmume_internal_resolution")) {
-        // 256x192|512x384|768x576|1024x768|1280x960|1536x1152|1792x1344|2048x1536|2304x1728|2560x1920
-        char * value = strdup("1024x768");
-        return value;
+        RETURN_STRING(cpuModeOption);
     } else if (V("desmume_num_cores")) {
             // CPU cores; 1|2|3|4
-        char * value = strdup("4");
-        return value;
-    } else if (V("desmume_pointer_type")) {
-            // mouse|touch
-            char * value = strdup("touch");
-            return value;
+        RETURN_STRING(numberOfCoresOption);
     } else if (V("desmume_load_to_memory")) {
-            // disabled|enabled
-            char * value = strdup("enabled");
-            return value;
-    } else if (V("desmume_gfx_txthack")) {
-            // disabled|enabled
-            char * value = strdup("disabled");
-            return value;
-    } else if (V("desmume_mic_mode")) {
-            // internal|sample|random|physical
-            char * value = strdup("physical");
-            return value;
-    } else if (V("desmume_pointer_colour")) {
-            // white|black|red|blue|yellow
-            char * value = strdup("blue");
-            return value;
+        RETURN_BOOL(loadToMemoryOption);
+    } else if (V("desmume_advanced_timing")) {
+        RETURN_BOOL(advancedTimingOption);
+    } else if (V("desmume_frameskip")) {
+        RETURN_STRING(frameSkipOption);
+    } else if (V("desmume_firmware_language")) {
+        RETURN_STRING(firmwareLanguageOption);
+    // MARK - Video
+    } else if (V("desmume_internal_resolution")) {
+        // 256x192|512x384|768x576|1024x768|1280x960|1536x1152|1792x1344|2048x1536|2304x1728|2560x1920
+        RETURN_STRING(internalResolutionOption);
     } else if (V("desmume_screens_layout")) {
             // top/bottom|bottom/top|left/right|right/left|top only|bottom only|quick switch|hybrid/top|hybrid/bottom
-            char * value = strdup("top/bottom");
-            return value;
+        RETURN_STRING(screensLayoutOption);
+    } else if (V("desmume_screens_gap")) {
+        RETURN_STRING(screenGapOption);
     } else if (V("desmume_hybrid_showboth_screens")) {
             // Hybrid layout show both screens; enabled|disabled
-            char * value = strdup("enabled");
-            return value;
+        RETURN_BOOL(hybridShowbothScreensOption);
+    } else if (V("desmume_hybrid_cursor_always_smallscreen")) {
+            // Hybrid layout show both screens; enabled|disabled
+        RETURN_BOOL(hybridCursorAlwaysSmallscreen);
     } else if (V("desmume_hybrid_layout_scale")) {
             // 1|3
-            char * value = strdup("3");
-            return value;
+        RETURN_STRING(hybridLayoutScaleOption);
+    // MARK - Audio
+    } else if (V("desmume_mic_force_enable")) {
+        RETURN_BOOL(micForceOption);
+    } else if (V("desmume_mic_mode")) {
+        // internal|sample|random|physical
+        RETURN_STRING(micModeOption);
+    // MARK - Pointer
+    } else if (V("desmume_pointer_mouse")) {
+        // disabled|enabled
+        RETURN_BOOL(mouseEnabledOption);
+    } else if (V("desmume_pointer_type")) {
+        // mouse|touch
+        RETURN_STRING(pointerTypeOption);
+    } else if (V("desmume_pointer_colour")) {
+        // white|black|red|blue|yellow
+        RETURN_STRING(pointerColorOption);
+    // MARK - Hacks
+    } else if (V("desmume_gfx_edgemark")) {
+            // disabled|enabled
+        RETURN_BOOL(gfxEdgemark);
+    } else if (V("desmume_gfx_txthack")) {
+            // disabled|enabled
+        RETURN_BOOL(gfxTxtHack);
+    } else if (V("desmume_gfx_linehack")) {
+            // disabled|enabled
+        RETURN_BOOL(gfxLineHack);
     } else {
         ELOG(@"Unprocessed var: %s", variable);
         return NULL;
     }
-
+#undef RETURN_STRING
+#undef RETURN_BOOL
 #undef V
     return NULL;
 }
