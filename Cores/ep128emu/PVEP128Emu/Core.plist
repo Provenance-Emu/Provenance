@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>PVCoreIdentifier</key>
-	<string>com.provenance.EP128Emu</string>
+	<string>com.provenance.core.EP128Emu</string>
 	<key>PVPrincipleClass</key>
 	<string>PVEP128EmuCore</string>
 	<key>PVSupportedSystems</key>

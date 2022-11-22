@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>PVCoreIdentifier</key>
-	<string>com.provenance.fMSX</string>
+	<string>com.provenance.core.fMSX</string>
 	<key>PVPrincipleClass</key>
 	<string>PVfMSXCore</string>
 	<key>PVSupportedSystems</key>

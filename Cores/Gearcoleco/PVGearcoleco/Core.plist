@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>PVCoreIdentifier</key>
-	<string>com.provenance.Gearcoleco</string>
+	<string>com.provenance.core.gearcoleco</string>
 	<key>PVPrincipleClass</key>
 	<string>PVGearcolecoCore</string>
 	<key>PVSupportedSystems</key>

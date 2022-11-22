@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>PVCoreIdentifier</key>
-	<string>com.provenance.Opera</string>
+	<string>com.provenance.core.opera</string>
 	<key>PVPrincipleClass</key>
 	<string>PVOperaCore</string>
 	<key>PVSupportedSystems</key>

@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>PVCoreIdentifier</key>
-	<string>com.provenance.Mu</string>
+	<string>com.provenance.core.Mu</string>
 	<key>PVPrincipleClass</key>
 	<string>PVMuCore</string>
 	<key>PVSupportedSystems</key>

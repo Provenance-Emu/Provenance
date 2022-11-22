@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>PVCoreIdentifier</key>
-	<string>com.provenance.potator</string>
+	<string>com.provenance.core.potator</string>
 	<key>PVPrincipleClass</key>
 	<string>PVPotatorCore</string>
 	<key>PVSupportedSystems</key>

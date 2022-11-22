@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>PVCoreIdentifier</key>
-	<string>com.provenance.minivmac</string>
+	<string>com.provenance.core.minivmac</string>
 	<key>PVPrincipleClass</key>
 	<string>PVMiniVMacCore</string>
 	<key>PVSupportedSystems</key>
