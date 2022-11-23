@@ -215,11 +215,4 @@ struct OptionsIndicator<Content: SwiftUI.View>: SwiftUI.View {
     }
 }
 
-// @available(iOS 14, tvOS 14, *)
-// struct HomeView_Previews: PreviewProvider {
-//    static var previews: some SwiftUI.View {
-//        HomeView()
-//    }
-// }
-
 #endif

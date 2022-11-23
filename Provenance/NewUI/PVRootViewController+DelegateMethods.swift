@@ -66,8 +66,6 @@ extension PVRootViewController: PVRootDelegate {
 extension PVRootViewController {
     func delete(game: PVGame) throws {
         try RomDatabase.sharedInstance.delete(game: game)
-//        loadLastKnownNavOption()
-        // we're still retaining a refernce to the removed game, causing a realm crash. Need to reload the view
     }
 }
 
@@ -143,6 +141,7 @@ extension PVRootViewController: PVMenuDelegate {
         for console in consoles {
             self.consoleIdentifiersAndNamesMap[console.identifier] = console.name
         }
+        selectedTabCancellable?.cancel()
         selectedTabCancellable = consolesWrapperViewDelegate.$selectedTab.sink { [weak self] tab in
             guard let self = self else { return }
             if let cachedTitle = self.consoleIdentifiersAndNamesMap[tab] {
