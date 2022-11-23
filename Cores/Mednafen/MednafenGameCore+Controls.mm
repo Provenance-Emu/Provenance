@@ -760,9 +760,9 @@
             case PVSNESButtonRight:
                 return DPAD_PRESSED(right);
             case PVSNESButtonB:
-                return [[gamepad buttonB] isPressed];
-            case PVSNESButtonA:
                 return [[gamepad buttonA] isPressed];
+            case PVSNESButtonA:
+                return [[gamepad buttonB] isPressed];
             case PVSNESButtonX:
                 return [[gamepad buttonY] isPressed];
             case PVSNESButtonY:
