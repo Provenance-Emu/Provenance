@@ -486,6 +486,7 @@ PV_OBJC_DIRECT_MEMBERS
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
+#if !TARGET_OS_TV
 - (void)createShadersDirs {
     // TODO: This is a hack, dir should come from arg
     NSFileManager *fm = [NSFileManager defaultManager];
@@ -505,6 +506,7 @@ PV_OBJC_DIRECT_MEMBERS
         ELOG(@"%@", error.localizedDescription);
     }
 }
+#endif
 
 #if !USE_METAL
 - (GLuint)compileShaderResource:(NSString*)shaderResourceName ofType:(GLenum)shaderType error:(NSError**)inError {
@@ -517,7 +519,7 @@ PV_OBJC_DIRECT_MEMBERS
     NSString* shaderPath;
     NSString* bundleShaderPath = [[NSBundle mainBundle] pathForResource:shaderResourceName
                                                                  ofType:@"glsl"];
-    
+#if !TARGET_OS_TV
     if(![fm fileExistsAtPath:docsPath]) {
         [self createShadersDirs];
         NSError *error;
@@ -538,6 +540,9 @@ PV_OBJC_DIRECT_MEMBERS
     } else {
         shaderPath = bundleShaderPath;
     }
+#else
+    shaderPath = bundleShaderPath;
+#endif
     if ( shaderPath == NULL )
     {
         if(inError) {
