@@ -33,7 +33,7 @@ struct ConsolesWrapperView: SwiftUI.View {
     @ObservedResults(
         PVSystem.self,
         filter: NSPredicate(format: "games.@count > 0"),
-        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSystem.name), ascending: false)
+        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSystem.name), ascending: true)
     ) var consoles
 
     init(
@@ -50,7 +50,7 @@ struct ConsolesWrapperView: SwiftUI.View {
         TabView(selection: $delegate.selectedTab) {
             if consoles.count > 0 {
                 ForEach(
-                    viewModel.sortConsolesAscending == true
+                    viewModel.sortConsolesAscending == false
                         ? consoles.reversed()
                         : consoles.map { $0 },
                     id: \.self

@@ -69,7 +69,7 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
         self.view.addSubview(containerView)
         self.fillParentView(child: containerView, parent: self.view)
 
-        didTapHome()
+        self.determineInitialView()
 
         let hud = MBProgressHUD(view: view)!
         hud.isUserInteractionEnabled = false
@@ -104,6 +104,14 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
 
     func closeMenu() {
         self.sideNavigationController?.closeSide()
+    }
+    
+    func determineInitialView() {
+        if let console = gameLibrary.activeSystems.first {
+            didTapConsole(with: console.identifier)
+        } else {
+            didTapHome()
+        }
     }
 
     func loadIntoContainer(_ navItem: PVNavOption, newVC: UIViewController) {

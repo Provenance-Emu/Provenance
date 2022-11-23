@@ -49,7 +49,7 @@ public struct PVGameLibrary {
             .collection(from: self.mostPlayedResults)
             .mapMany { $0 }
 
-        self.activeSystems = database.all(PVSystem.self, filter: NSPredicate(format: "games.@count > 0")).sorted(byKeyPath: #keyPath(PVSystem.name), ascending: false)
+        self.activeSystems = database.all(PVSystem.self, filter: NSPredicate(format: "games.@count > 0")).sorted(byKeyPath: #keyPath(PVSystem.name), ascending: true)
     }
 
     public func search(for searchText: String) -> Observable<[PVGame]> {
