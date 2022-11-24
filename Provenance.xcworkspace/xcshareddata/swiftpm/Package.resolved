@@ -119,6 +119,15 @@
         }
       },
       {
+        "package": "swift-argument-parser",
+        "repositoryURL": "https://github.com/apple/swift-argument-parser.git",
+        "state": {
+          "branch": null,
+          "revision": "fddd1c00396eed152c45a46bea9f47b98e59301d",
+          "version": "1.2.0"
+        }
+      },
+      {
         "package": "swift-log",
         "repositoryURL": "https://github.com/apple/swift-log.git",
         "state": {
@@ -143,6 +152,15 @@
           "branch": null,
           "revision": "b145c6f3619619fb48715c479643e2f2e0e42d2d",
           "version": "2.5.2"
+        }
+      },
+      {
+        "package": "ZIPFoundation",
+        "repositoryURL": "https://github.com/weichsel/ZIPFoundation",
+        "state": {
+          "branch": "development",
+          "revision": "642436f3684009ca7a5e3d6b30f2ecea26f8f772",
+          "version": null
         }
       }
     ]
