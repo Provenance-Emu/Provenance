@@ -308,6 +308,10 @@
 		B343717D276B0FA40014F87C /* PVVectrexControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B343717C276B0FA40014F87C /* PVVectrexControllerViewController.swift */; };
 		B343717E276B0FA40014F87C /* PVVectrexControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B343717C276B0FA40014F87C /* PVVectrexControllerViewController.swift */; };
 		B3447E73218B596600557ACE /* PVDreamcastControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */; };
+		B349B11A292F35C900309BDC /* OpenEmuShaders.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B349B10D292F35B500309BDC /* OpenEmuShaders.framework */; platformFilters = (ios, macos, tvos, ); };
+		B349B11B292F35C900309BDC /* OpenEmuShaders.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B349B10D292F35B500309BDC /* OpenEmuShaders.framework */; platformFilters = (ios, macos, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B349B11C292F35D300309BDC /* OpenEmuShaders.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B349B10D292F35B500309BDC /* OpenEmuShaders.framework */; };
+		B349B11D292F35D300309BDC /* OpenEmuShaders.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B349B10D292F35B500309BDC /* OpenEmuShaders.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B34EADAE218824C2008F52EE /* PViCadeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37F421881CDC009D9244 /* PViCadeControllerViewController.swift */; };
 		B34EADAF218824C3008F52EE /* PViCadeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37F421881CDC009D9244 /* PViCadeControllerViewController.swift */; };
 		B3532B2B21A78FB2006CDA0F /* PVSwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532B2A21A78FB2006CDA0F /* PVSwitchCell.swift */; };
@@ -783,6 +787,27 @@
 			remoteGlobalIDString = B305EF04276B4C73003AE510;
 			remoteInfo = "Provenance Watch WatchKit Extension";
 		};
+		B349B10C292F35B500309BDC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B349B105292F35B400309BDC /* OpenEmuShaders.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 05EEE338227CC35D007D011B;
+			remoteInfo = OpenEmuShaders;
+		};
+		B349B10E292F35B500309BDC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B349B105292F35B400309BDC /* OpenEmuShaders.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 05EEE341227CC35D007D011B;
+			remoteInfo = OpenEmuShadersTests;
+		};
+		B349B110292F35B500309BDC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B349B105292F35B400309BDC /* OpenEmuShaders.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 058AB9AC285130A4009A35FA;
+			remoteInfo = oeshaders;
+		};
 		B36FE830218EAAD200F858F3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
@@ -860,6 +885,7 @@
 				B3FAC97D292B474F005E8B11 /* PVVecX.framework in Embed Frameworks */,
 				B3FAC97B292B474E005E8B11 /* PVTGBDual.framework in Embed Frameworks */,
 				B3FAC98F292B4765005E8B11 /* PVfMSX.framework in Embed Frameworks */,
+				B349B11D292F35D300309BDC /* OpenEmuShaders.framework in Embed Frameworks */,
 				B3FAC9A3292B4776005E8B11 /* PVMu.framework in Embed Frameworks */,
 				B3FAC9B3292B4783005E8B11 /* PVRSPCXD4.framework in Embed Frameworks */,
 				B3FAC991292B4766005E8B11 /* PVGB.framework in Embed Frameworks */,
@@ -903,6 +929,7 @@
 				B3FAC920292B44F0005E8B11 /* ProSystem.framework in Embed Frameworks */,
 				B3FAC93A292B4589005E8B11 /* PVMednafen.framework in Embed Frameworks */,
 				B3FAC932292B4515005E8B11 /* PVGearcoleco.framework in Embed Frameworks */,
+				B349B11B292F35C900309BDC /* OpenEmuShaders.framework in Embed Frameworks */,
 				B3FAC952292B45A9005E8B11 /* PVSNES.framework in Embed Frameworks */,
 				B3FAC94E292B45A4005E8B11 /* PVPotator.framework in Embed Frameworks */,
 				B3FAC922292B44F4005E8B11 /* PVAtari800.framework in Embed Frameworks */,
@@ -1338,6 +1365,7 @@
 		B343717C276B0FA40014F87C /* PVVectrexControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVVectrexControllerViewController.swift; sourceTree = "<group>"; };
 		B344605A27DCB73E0035B08E /* libswift_Concurrency.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libswift_Concurrency.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/usr/lib/swift/libswift_Concurrency.tbd; sourceTree = DEVELOPER_DIR; };
 		B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVDreamcastControllerViewController.swift; sourceTree = "<group>"; };
+		B349B105292F35B400309BDC /* OpenEmuShaders.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpenEmuShaders.xcodeproj; path = "Dependencies/OpenEmu-Shaders/OpenEmuShaders.xcodeproj"; sourceTree = "<group>"; };
 		B35104C32896646800FA401F /* PVBeetlePSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBeetlePSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B35104C62896648500FA401F /* PVVecX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVecX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3532B2A21A78FB2006CDA0F /* PVSwitchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSwitchCell.swift; sourceTree = "<group>"; };
@@ -1697,6 +1725,7 @@
 				1A2B0E8E1AD18961005FB77C /* libc++.dylib in Frameworks */,
 				B3FAC94D292B45A3005E8B11 /* PVPotator.framework in Frameworks */,
 				1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */,
+				B349B11A292F35C900309BDC /* OpenEmuShaders.framework in Frameworks */,
 				B3FAC923292B44F8005E8B11 /* PVDesmume2015.framework in Frameworks */,
 				1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */,
 				B357A43827092254002C7C0F /* AppCenterAnalytics in Frameworks */,
@@ -1757,6 +1786,7 @@
 				B3FAC9AC292B477E005E8B11 /* PVOpera.framework in Frameworks */,
 				B3FAC986292B475F005E8B11 /* PVDesmume2015.framework in Frameworks */,
 				B3FAC97A292B474E005E8B11 /* PVTGBDual.framework in Frameworks */,
+				B349B11C292F35D300309BDC /* OpenEmuShaders.framework in Frameworks */,
 				B3FAC99A292B476E005E8B11 /* PVLibRetro.framework in Frameworks */,
 				B324C619219203A5009F4EDC /* libsqlite3.tbd in Frameworks */,
 				B3FAC9B4292B4784005E8B11 /* PVSNES.framework in Frameworks */,
@@ -2024,6 +2054,7 @@
 				B399119326C0F41300E54426 /* CHANGELOG.md */,
 				B399119126C0F41300E54426 /* LICENSE.md */,
 				B399119226C0F41300E54426 /* README.md */,
+				B349B105292F35B400309BDC /* OpenEmuShaders.xcodeproj */,
 				1A3D409D17B2DCE4004DFFFC /* Provenance */,
 				1AD481B51BA350A400FDA50A /* ProvenanceTV */,
 				B355E0512920AC7600E4C858 /* Extensions */,
@@ -2782,6 +2813,16 @@
 				B3427BEC287EA0CE0054C1B5 /* fullscreen_vs.metal */,
 			);
 			path = Vertex;
+			sourceTree = "<group>";
+		};
+		B349B106292F35B400309BDC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B349B10D292F35B500309BDC /* OpenEmuShaders.framework */,
+				B349B10F292F35B500309BDC /* OpenEmuShadersTests.xctest */,
+				B349B111292F35B500309BDC /* oeshaders */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		B3532B2921A78F97006CDA0F /* Cells */ = {
@@ -3894,6 +3935,12 @@
 			);
 			productRefGroup = 1A3D409517B2DCE4004DFFFC /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = B349B106292F35B400309BDC /* Products */;
+					ProjectRef = B349B105292F35B400309BDC /* OpenEmuShaders.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				1A3D409317B2DCE4004DFFFC /* Provenance */,
@@ -3926,6 +3973,30 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		B349B10D292F35B500309BDC /* OpenEmuShaders.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = OpenEmuShaders.framework;
+			remoteRef = B349B10C292F35B500309BDC /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B349B10F292F35B500309BDC /* OpenEmuShadersTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = OpenEmuShadersTests.xctest;
+			remoteRef = B349B10E292F35B500309BDC /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B349B111292F35B500309BDC /* oeshaders */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = oeshaders;
+			remoteRef = B349B110292F35B500309BDC /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		1A3D409217B2DCE4004DFFFC /* Resources */ = {
