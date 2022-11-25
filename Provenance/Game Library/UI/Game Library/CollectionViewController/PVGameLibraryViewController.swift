@@ -202,7 +202,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             let blurEffect = UIBlurEffect(style: UIBlurEffect.Style.dark)
             let blurEffectView = UIVisualEffectView(effect: blurEffect)
             let bounds = (self.navigationController?.navigationBar.bounds)!
-            blurEffectView.frame = CGRect(x: bounds.minX, y: bounds.minY, width: bounds.width, height: bounds.height + 49)
+            blurEffectView.frame = CGRect(x: bounds.minX, y: bounds.minY, width: bounds.width, height: bounds.height + 20)
             self.navigationController?.navigationBar.addSubview(blurEffectView)
             self.navigationController?.navigationBar.sendSubviewToBack(blurEffectView)
             navigationController?.navigationBar.backgroundColor = UIColor.black.withAlphaComponent(0.5)
@@ -500,11 +500,11 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             NSLayoutConstraint.activate([
                 collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                 collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                collectionView.topAnchor.constraint(equalTo: guide.topAnchor, constant: 49),
+                collectionView.topAnchor.constraint(equalTo: guide.topAnchor, constant: 20),
                 collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
             ])
         #endif
-        layout.sectionInsetReference = .fromSafeArea
+        
         // Force touch
         #if os(iOS)
             registerForPreviewing(with: self, sourceView: collectionView)
@@ -512,6 +512,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
 
         #if os(iOS)
             view.bringSubviewToFront(libraryInfoContainerView)
+            layout.sectionInsetReference = .fromSafeArea
         #endif
 
         let hud = MBProgressHUD(view: view)!
