@@ -1534,7 +1534,11 @@ extension PVGameLibraryViewController: UITableViewDataSource {
     }
 
     func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 0 ? SortOptions.count : 4
+        #if os(tvOS)
+            return section == 0 ? SortOptions.count : 5
+        #else
+            return section == 0 ? SortOptions.count : 4
+        #endif
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -1575,7 +1579,12 @@ extension PVGameLibraryViewController: UITableViewDelegate {
             case 3:
                 cell.textLabel?.text = "Show Game Badges"
                 cell.accessoryType = PVSettingsModel.shared.showGameBadges ? .checkmark : .none
-            default:
+            #if os(tvOS)
+            case 4:
+                cell.textLabel?.text = "Show Large Game Artwork"
+                cell.accessoryType = PVSettingsModel.shared.largeGameArt ? .checkmark : .none
+            #endif            
+	    default:
                 fatalError("Invalid row")
             }
         } else {
@@ -1603,7 +1612,11 @@ extension PVGameLibraryViewController: UITableViewDelegate {
                 showSaveStates.onNext(!PVSettingsModel.shared.showRecentSaveStates)
             case 3:
                 PVSettingsModel.shared.showGameBadges = !PVSettingsModel.shared.showGameBadges
-            default:
+	    #if os(tvOS)
+            case 4:
+                PVSettingsModel.shared.largeGameArt = !PVSettingsModel.shared.largeGameArt
+            #endif            
+	    default:
                 fatalError("Invalid row")
             }
             // dont call reloadRows or we will loose focus on tvOS
