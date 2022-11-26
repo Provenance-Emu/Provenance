@@ -1521,9 +1521,9 @@ extension PVGameLibraryViewController: UITableViewDataSource {
     func tableView(_: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case 0:
-            return "Sort By"
+            return "Sort By:"
         case 1:
-            return "View Options"
+            return "Game Library Display Options:"
         default:
             return nil
         }
