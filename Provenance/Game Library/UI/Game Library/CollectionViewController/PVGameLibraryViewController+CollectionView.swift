@@ -66,15 +66,15 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
                 // TODO: Multirow?
                 let numberOfRows: CGFloat = 1.0
                 let width = viewWidth // - collectionView.contentInset.left - collectionView.contentInset.right / 4
-                let height = (tvOSCellUnit + PageIndicatorHeight + 24) * numberOfRows
+                let height = (((PVSettingsModel.shared.largeGameArt ? 32 : 0) + tvOSCellUnit) + PageIndicatorHeight + 24) * numberOfRows
                 return PVSaveStateCollectionViewCell.cellSize(forImageSize: CGSize(width: width, height: height))
             case .favorites, .recents:
                 let numberOfRows: CGFloat = 1.0
                 let width = viewWidth // - collectionView.contentInset.left - collectionView.contentInset.right / 5
-                let height: CGFloat = tvOSCellUnit * numberOfRows + PageIndicatorHeight
+                let height: CGFloat = ((PVSettingsModel.shared.largeGameArt ? 32 : 0) + tvOSCellUnit) * numberOfRows + PageIndicatorHeight
                 return PVSaveStateCollectionViewCell.cellSize(forImageSize: CGSize(width: width, height: height))
             case .game(let game):
-                let boxartSize = CGSize(width: tvOSCellUnit, height: round(tvOSCellUnit / game.boxartAspectRatio.rawValue))
+                let boxartSize = CGSize(width: ((PVSettingsModel.shared.largeGameArt ? 32 : 0) + tvOSCellUnit), height: round(((PVSettingsModel.shared.largeGameArt ? 32 : 0) + tvOSCellUnit) / game.boxartAspectRatio.rawValue))
                 return PVGameLibraryCollectionViewCell.cellSize(forImageSize: boxartSize)
             }
         }
