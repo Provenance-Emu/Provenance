@@ -293,12 +293,12 @@ public final class Theme {
             $0.backgroundColor = theme.gameLibraryHeaderBackground
         }
 
-        appearance(in: [PVGameLibrarySectionHeaderView.self]) {
-            UILabel.appearance {
-                $0.backgroundColor = theme.gameLibraryHeaderBackground
-                $0.textColor = theme.gameLibraryHeaderText
-            }
-        }
+//        appearance(in: [PVGameLibrarySectionHeaderView.self]) {
+//            UILabel.appearance {
+//                $0.backgroundColor = theme.gameLibraryHeaderBackground
+//                $0.textColor = theme.gameLibraryHeaderText
+//            }
+//        }
 
         // Game Library Main
         appearance(inAny: [PVGameLibraryCollectionViewCell.self]) {
