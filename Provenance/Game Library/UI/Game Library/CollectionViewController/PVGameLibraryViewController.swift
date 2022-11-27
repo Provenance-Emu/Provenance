@@ -189,7 +189,6 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
 
         #if os(iOS)
             navigationController?.navigationBar.tintColor = Theme.currentTheme.barButtonItemTint
-            navigationItem.leftBarButtonItem?.tintColor = Theme.currentTheme.barButtonItemTint
 
             NotificationCenter.default.addObserver(forName: NSNotification.Name.PVInterfaceDidChangeNotification, object: nil, queue: nil, using: { (_: Notification) -> Void in
                 DispatchQueue.main.async {
