@@ -18,6 +18,10 @@ final class PVSwitchCell: SwitchCell {
         super.init(coder: aDecoder)
         style()
     }
+    
+    override func traitCollectionDidChange(_: UITraitCollection?) {
+        style()
+    }
 
     func style() {
         let bg = UIView(frame: bounds)

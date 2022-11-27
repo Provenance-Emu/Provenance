@@ -1715,6 +1715,11 @@ extension PVGameLibraryViewController {
     override var canBecomeFirstResponder: Bool {
         return true
     }
+    
+    override func traitCollectionDidChange(_: UITraitCollection?) {
+        self.collectionView?.collectionViewLayout.invalidateLayout()
+        self.collectionView?.reloadData()
+    }
 
     #if os(tvOS)
         @objc
