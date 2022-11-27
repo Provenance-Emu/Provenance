@@ -236,10 +236,10 @@ public final class Theme {
 			#endif
         }
 
-        UITableView.appearance {
-            $0.backgroundColor = theme.settingsHeaderBackground
-            $0.separatorColor = theme.settingsSeperator
-        }
+//        UITableView.appearance {
+//            $0.backgroundColor = theme.settingsHeaderBackground
+//            $0.separatorColor = theme.settingsSeperator
+//        }
 
         #endif
 

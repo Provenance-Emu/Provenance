@@ -464,8 +464,6 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             collectionView.clipsToBounds = false
             collectionView.backgroundColor = .black
         #else
-            collectionView.backgroundColor = Theme.currentTheme.gameLibraryBackground
-
             let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(PVGameLibraryViewController.didReceivePinchGesture(gesture:)))
             pinchGesture.cancelsTouchesInView = true
             collectionView.addGestureRecognizer(pinchGesture)

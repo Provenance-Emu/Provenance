@@ -123,7 +123,6 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
         super.viewDidLoad()
 
         #if os(iOS)
-            tableView.backgroundColor = Theme.currentTheme.settingsHeaderBackground
             tableView.separatorStyle = .singleLine
         #else
             tableView.backgroundColor = UIColor.clear
