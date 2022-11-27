@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		557DCAB1292A91E100045B02 /* ThemeOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557DCAB0292A91E000045B02 /* ThemeOption.swift */; };
 		B302F8A420B73D6500C5E502 /* PVLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89A20B73D6200C5E502 /* PVLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B302F8A620B73D6500C5E502 /* PVLogEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89B20B73D6300C5E502 /* PVLogEntry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B302F8A820B73D6500C5E502 /* PVProvenanceLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89C20B73D6300C5E502 /* PVProvenanceLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -177,6 +178,8 @@
 		1ACEA69617F748F80031B1C9 /* TPCircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPCircularBuffer.h; sourceTree = "<group>"; };
 		1ACEA6A017F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+PVAbstractAdditions.h"; sourceTree = "<group>"; };
 		1ACEA6A117F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+PVAbstractAdditions.m"; sourceTree = "<group>"; };
+		557DCAB0292A91E000045B02 /* ThemeOption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThemeOption.swift; sourceTree = "<group>"; };
+		557DCAB2292A92A700045B02 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = File.swift; path = ../PVUI/PVUI/File.swift; sourceTree = "<group>"; };
 		B302F89920B73D5F00C5E502 /* PVLogEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVLogEntry.m; sourceTree = "<group>"; };
 		B302F89A20B73D6200C5E502 /* PVLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVLogging.h; sourceTree = "<group>"; };
 		B302F89B20B73D6300C5E502 /* PVLogEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVLogEntry.h; sourceTree = "<group>"; };
@@ -1119,6 +1122,7 @@
 		1ACEA63B17F7467D0031B1C9 = {
 			isa = PBXGroup;
 			children = (
+				557DCAB2292A92A700045B02 /* File.swift */,
 				B3173802278419A2002D3ACD /* Build.xcconfig */,
 				B3A4FB58278FE2F200A65248 /* Sources */,
 				B3532B3321A7B736006CDA0F /* Tests */,
@@ -1391,6 +1395,7 @@
 			children = (
 				B3447F9A218C1CD200557ACE /* PVSettingsModel.swift */,
 				B3532C3521A925C1006CDA0F /* SortOption.swift */,
+				557DCAB0292A91E000045B02 /* ThemeOption.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -3582,6 +3587,7 @@
 				B33FB2F3279BE1320013AAD8 /* CoreOptions+Protocols.swift in Sources */,
 				B34AB5762106DC4C00C45F09 /* UIDeviceExtension.swift in Sources */,
 				B30F8013290516B900F21217 /* ScreenType.swift in Sources */,
+				557DCAB1292A91E100045B02 /* ThemeOption.swift in Sources */,
 				B3CDEEC821D4C4E5000C55F7 /* SaveStateSupport.swift in Sources */,
 				B3AB37E721881B6D009D9244 /* iCadeControllerSetting.swift in Sources */,
 				B3AB37E021881955009D9244 /* PViCadeController.swift in Sources */,

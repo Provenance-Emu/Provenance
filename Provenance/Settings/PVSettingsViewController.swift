@@ -89,11 +89,34 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
         // -- Section : App
         let systemsRow = SegueNavigationRow(text: NSLocalizedString("Systems", comment: "Systems"), viewController: self, segue: "pushSystemSettings")
-        #if os(iOS)
-            let autolockRow = PVSettingsSwitchRow(text: NSLocalizedString("Disable Auto Lock", comment: "Disable Auto Lock"), detailText: .subtitle("This also disables the screensaver."), key: \PVSettingsModel.disableAutoLock)
-            let appRows: [TableRow] = [autolockRow, systemsRow]
-        #else
+
+        let systemMode = self.traitCollection.userInterfaceStyle == .dark ? "Dark" : "Light"
+        var theme = PVSettingsModel.shared.theme.description
+        if PVSettingsModel.shared.theme == .auto {
+            theme += " (\(systemMode))"
+        }
+        let themeRow = NavigationRow<SystemSettingsCell>(text: NSLocalizedString("Theme", comment: "Theme"), detailText: .value1(PVSettingsModel.shared.theme.description), action: { row in
+            let alert = UIAlertController(title: "Theme", message: "", preferredStyle: .actionSheet)
+            ThemeOptions.themes.forEach { mode in
+                let modeLabel = mode == .auto ? mode.description + " (\(systemMode))" : mode.description
+                let action = UIAlertAction(title: modeLabel, style: .default, handler: { _ in
+                    let darkTheme = (mode == .auto && self.traitCollection.userInterfaceStyle == .dark) || mode == .dark
+                    Theme.currentTheme = darkTheme ? Theme.darkTheme : Theme.lightTheme
+                    UIApplication.shared.windows.first!.overrideUserInterfaceStyle = darkTheme ? .dark : .light
+                    PVSettingsModel.shared.theme = mode
+
+                    self.generateTableViewViewModels()
+                })
+                alert.addAction(action)
+            }
+            self.present(alert, animated: true)
+        })
+        
+        #if os(tvOS)
             let appRows: [TableRow] = [systemsRow]
+        #else
+            let autolockRow = PVSettingsSwitchRow(text: NSLocalizedString("Disable Auto Lock", comment: "Disable Auto Lock"), detailText: .subtitle("This also disables the screensaver."), key: \PVSettingsModel.disableAutoLock)
+            let appRows: [TableRow] = [autolockRow, systemsRow, themeRow]
         #endif
 
         let appSection = Section(title: NSLocalizedString("App", comment: "App"), rows: appRows)
@@ -394,7 +417,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
                 icon: nil,
                 customization: { cell, _ in
                     if !masterBranch {
-                        cell.detailTextLabel?.textColor = UIColor(hex: "#F5F5A0")
+                        cell.detailTextLabel?.textColor = .systemYellow
                     }
                 },
                 action: nil

@@ -18,14 +18,15 @@ final class PVSwitchCell: SwitchCell {
         super.init(coder: aDecoder)
         style()
     }
+    
+    override func traitCollectionDidChange(_: UITraitCollection?) {
+        style()
+    }
 
     func style() {
         let bg = UIView(frame: bounds)
         bg.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         #if os(iOS)
-            bg.backgroundColor = Theme.currentTheme.settingsCellBackground
-            textLabel?.textColor = Theme.currentTheme.settingsCellText
-            detailTextLabel?.textColor = Theme.currentTheme.defaultTintColor
             switchControl.onTintColor = Theme.currentTheme.switchON
 		#if !targetEnvironment(macCatalyst)
             switchControl.thumbTintColor = Theme.currentTheme.switchThumb

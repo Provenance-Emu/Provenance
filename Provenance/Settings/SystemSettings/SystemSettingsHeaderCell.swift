@@ -11,12 +11,7 @@ import Foundation
 public final class SystemSettingsHeaderCell: SystemSettingsCell {
     override func style() {
         super.style()
-        #if os(iOS)
-            backgroundView?.backgroundColor = Theme.currentTheme.settingsHeaderBackground
-            textLabel?.textColor = Theme.currentTheme.settingsHeaderText
-            detailTextLabel?.textColor = Theme.currentTheme.settingsHeaderText
-            textLabel?.font = UIFont.preferredFont(forTextStyle: .footnote)
-        #else
+        #if os(tvOS)
             backgroundView?.backgroundColor = UIColor.clear
             textLabel?.textColor = .white
             detailTextLabel?.textColor = .lightGray

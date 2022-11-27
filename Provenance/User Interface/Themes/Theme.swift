@@ -172,6 +172,11 @@ struct LightTheme: iOSTheme {
 
     let gameLibraryHeaderBackground: UIColor = Colors.white9alpha6
     let gameLibraryHeaderText: UIColor = .darkGray
+    
+    var navigationBarBackgroundColor: UIColor? { return .grey1C }
+    var settingsCellBackground: UIColor? { return .white }
+    var settingsCellText: UIColor? { return .black }
+    var settingsCellTextDetail: UIColor? { return .gray }
 }
 
 // @available(iOS 9.0, *)
@@ -211,14 +216,14 @@ public final class Theme {
     }
 
     private class func setTheme(_ theme: iOSTheme) {
-        UINavigationBar.appearance {
-            $0.backgroundColor = theme.navigationBarBackgroundColor
-            $0.tintColor = theme.barButtonItemTint
-            #if !os(tvOS)
-            $0.barStyle = theme.navigationBarStyle
-            #endif
-            $0.isTranslucent = true
-        }
+//        UINavigationBar.appearance {
+//            $0.backgroundColor = theme.navigationBarBackgroundColor
+//            $0.tintColor = theme.barButtonItemTint
+//            #if !os(tvOS)
+//            $0.barStyle = theme.navigationBarStyle
+//            #endif
+//            $0.isTranslucent = true
+//        }
 
 //        UIView.appearance {
 //            $0.tintColor = theme.defaultTintColor
@@ -236,10 +241,10 @@ public final class Theme {
 			#endif
         }
 
-        UITableView.appearance {
-            $0.backgroundColor = theme.settingsHeaderBackground
-            $0.separatorColor = theme.settingsSeperator
-        }
+//        UITableView.appearance {
+//            $0.backgroundColor = theme.settingsHeaderBackground
+//            $0.separatorColor = theme.settingsSeperator
+//        }
 
         #endif
 
@@ -293,12 +298,12 @@ public final class Theme {
             $0.backgroundColor = theme.gameLibraryHeaderBackground
         }
 
-        appearance(in: [PVGameLibrarySectionHeaderView.self]) {
-            UILabel.appearance {
-                $0.backgroundColor = theme.gameLibraryHeaderBackground
-                $0.textColor = theme.gameLibraryHeaderText
-            }
-        }
+//        appearance(in: [PVGameLibrarySectionHeaderView.self]) {
+//            UILabel.appearance {
+//                $0.backgroundColor = theme.gameLibraryHeaderBackground
+//                $0.textColor = theme.gameLibraryHeaderText
+//            }
+//        }
 
         // Game Library Main
         appearance(inAny: [PVGameLibraryCollectionViewCell.self]) {

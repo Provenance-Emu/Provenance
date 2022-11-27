@@ -312,4 +312,6 @@ extension MirroredSettings {
 #if os(tvOS)
     public dynamic var largeGameArt = true
 #endif
+
+    public dynamic var theme: ThemeOptions = .dark
 }
