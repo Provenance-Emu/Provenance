@@ -56,9 +56,9 @@ extern unsigned scale;
 //    return CGRectMake(0, 0, GPU_LR_FRAMEBUFFER_NATIVE_WIDTH * scale, GPU_LR_FRAMEBUFFER_NATIVE_HEIGHT * scale);
 //}
 //
-- (CGSize)aspectSize {
-    return CGSizeMake(GPU_LR_FRAMEBUFFER_NATIVE_WIDTH, GPU_LR_FRAMEBUFFER_NATIVE_HEIGHT);
-}
+//- (CGSize)aspectSize {
+//    return CGSizeMake(GPU_LR_FRAMEBUFFER_NATIVE_WIDTH, GPU_LR_FRAMEBUFFER_NATIVE_HEIGHT);
+//}
 //
 //- (BOOL)rendersToOpenGL {
 //    return YES;
