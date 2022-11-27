@@ -74,7 +74,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
                 let height: CGFloat = tvOSCellUnit * numberOfRows + PageIndicatorHeight
                 return PVSaveStateCollectionViewCell.cellSize(forImageSize: CGSize(width: width, height: height))
             case .game(let game):
-                let boxartSize = CGSize(width: tvOSCellUnit, height: round(tvOSCellUnit / game.boxartAspectRatio.rawValue))
+                let boxartSize = CGSize(width: ((PVSettingsModel.shared.largeGameArt ? 32 : 0) + tvOSCellUnit), height: round(((PVSettingsModel.shared.largeGameArt ? 32 : 0) + tvOSCellUnit) / game.boxartAspectRatio.rawValue))
                 return PVGameLibraryCollectionViewCell.cellSize(forImageSize: boxartSize)
             }
         }

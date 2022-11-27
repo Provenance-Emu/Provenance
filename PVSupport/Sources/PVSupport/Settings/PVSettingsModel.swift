@@ -308,4 +308,8 @@ extension MirroredSettings {
 
     public dynamic var haveWarnedAboutDebug = false
     public dynamic var collapsedSystems = Set<String>()
+
+#if os(tvOS)
+    public dynamic var largeGameArt = true
+#endif
 }
