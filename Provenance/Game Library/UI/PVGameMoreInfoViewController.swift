@@ -52,23 +52,23 @@ final class RegionLabel: LongPressLabel {
 }
 
 class LongPressLabel: UILabel {
-    #if os(tvOS)
-        override var canBecomeFocused: Bool {
-            return true
-        }
+//     #if os(tvOS)
+//         override var canBecomeFocused: Bool {
+//             return true
+//         }
 
-        override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
-            super.didUpdateFocus(in: context, with: coordinator)
+//         override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+//             super.didUpdateFocus(in: context, with: coordinator)
 
-            coordinator.addCoordinatedAnimations({ [unowned self] in
-                if self.isFocused {
-                    self.backgroundColor = UIColor.lightGray
-                } else {
-                    self.backgroundColor = nil
-                }
-            }, completion: nil)
-        }
-    #endif
+//             coordinator.addCoordinatedAnimations({ [unowned self] in
+//                 if self.isFocused {
+//                     self.backgroundColor = UIColor.lightGray
+//                 } else {
+//                     self.backgroundColor = nil
+//                 }
+//             }, completion: nil)
+//         }
+//     #endif
 }
 
 final class GameMoreInfoPageViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, GameLaunchingViewController, GameSharingViewController {
@@ -296,12 +296,14 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
         #endif
 
         #if os(tvOS)
-            if descriptionTextView.contentSize.height > descriptionTextView.bounds.height {
-                descriptionTextView.isUserInteractionEnabled = true
-                descriptionTextView.isSelectable = true
-                descriptionTextView.isScrollEnabled = true
-                descriptionTextView.panGestureRecognizer.allowedTouchTypes = [NSNumber(value: UITouch.TouchType.indirect.rawValue)]
-            }
+            descriptionTextView.font = UIFont.systemFont(ofSize: 24.0)
+//             if descriptionTextView.contentSize.height > descriptionTextView.bounds.height {
+//                 descriptionTextView.font = UIFont.systemFont(ofSize: 24.0)
+//                 descriptionTextView.isUserInteractionEnabled = false
+//                 descriptionTextView.isSelectable = false
+//                 descriptionTextView.isScrollEnabled = false
+//                 descriptionTextView.panGestureRecognizer.allowedTouchTypes = [NSNumber(value: UITouch.TouchType.indirect.rawValue)]
+//             }
         #endif
     }
 
