@@ -188,6 +188,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleAppDidBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
 
         #if os(iOS)
+            navigationController?.navigationBar.backgroundColor = Theme.currentTheme.navigationBarBackgroundColor
             navigationController?.navigationBar.tintColor = Theme.currentTheme.barButtonItemTint
 
             NotificationCenter.default.addObserver(forName: NSNotification.Name.PVInterfaceDidChangeNotification, object: nil, queue: nil, using: { (_: Notification) -> Void in

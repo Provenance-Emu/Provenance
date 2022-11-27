@@ -211,14 +211,14 @@ public final class Theme {
     }
 
     private class func setTheme(_ theme: iOSTheme) {
-        UINavigationBar.appearance {
-            $0.backgroundColor = theme.navigationBarBackgroundColor
-            $0.tintColor = theme.barButtonItemTint
-            #if !os(tvOS)
-            $0.barStyle = theme.navigationBarStyle
-            #endif
-            $0.isTranslucent = true
-        }
+//        UINavigationBar.appearance {
+//            $0.backgroundColor = theme.navigationBarBackgroundColor
+//            $0.tintColor = theme.barButtonItemTint
+//            #if !os(tvOS)
+//            $0.barStyle = theme.navigationBarStyle
+//            #endif
+//            $0.isTranslucent = true
+//        }
 
 //        UIView.appearance {
 //            $0.tintColor = theme.defaultTintColor
