@@ -394,7 +394,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
                 icon: nil,
                 customization: { cell, _ in
                     if !masterBranch {
-                        cell.detailTextLabel?.textColor = UIColor(hex: "#F5F5A0")
+                        cell.detailTextLabel?.textColor = .systemYellow
                     }
                 },
                 action: nil
