@@ -13,7 +13,9 @@ import RealmSwift
 import RxCocoa
 import RxRealm
 import RxSwift
+#if canImport(UIKit)
 import UIKit
+#endif
 
 protocol PVSaveStatesViewControllerDelegate: AnyObject {
     func saveStatesViewControllerDone(_ saveStatesViewController: PVSaveStatesViewController)

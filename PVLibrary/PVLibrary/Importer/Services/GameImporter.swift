@@ -1344,7 +1344,6 @@ extension GameImporter {
                     try RomDatabase.sharedInstance.writeTransaction {
                         let file = PVImageFile(withURL: localURL, relativeRoot: .iCloud)
                         gameRef?.originalArtworkFile = file
-                        artworkCompletion(artworkURL: localURL)
                     }
                 } catch { ELOG("\(error.localizedDescription)") }
             }

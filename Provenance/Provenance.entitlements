@@ -29,28 +29,20 @@
 	<true/>
 	<key>com.apple.developer.kernel.increased-memory-limit</key>
 	<true/>
-	<key>com.apple.developer.networking.multipath</key>
-	<true/>
-	<key>com.apple.developer.nfc.readersession.formats</key>
-	<array>
-		<string>TAG</string>
-	</array>
-	<key>com.apple.developer.shared-with-you.collaboration</key>
-	<true/>
-	<key>com.apple.developer.siri</key>
-	<true/>
-	<key>com.apple.developer.system-extension.install</key>
-	<true/>
 	<key>com.apple.developer.ubiquity-container-identifiers</key>
 	<array>
 		<string>iCloud.org.provenance-emu.provenance</string>
 	</array>
 	<key>com.apple.developer.ubiquity-kvstore-identifier</key>
 	<string>$(TeamIdentifierPrefix)$(CFBundleIdentifier)</string>
+	<key>com.apple.security.app-sandbox</key>
+	<true/>
 	<key>com.apple.security.application-groups</key>
 	<array>
 		<string>group.org.provenance-emu.provenance</string>
 	</array>
+	<key>com.apple.security.assets.pictures.read-write</key>
+	<true/>
 	<key>com.apple.security.cs.allow-dyld-environment-variables</key>
 	<true/>
 	<key>com.apple.security.cs.allow-jit</key>
@@ -60,6 +52,22 @@
 	<key>com.apple.security.cs.disable-executable-page-protection</key>
 	<true/>
 	<key>com.apple.security.cs.disable-library-validation</key>
+	<true/>
+	<key>com.apple.security.device.audio-input</key>
+	<true/>
+	<key>com.apple.security.device.bluetooth</key>
+	<true/>
+	<key>com.apple.security.device.camera</key>
+	<true/>
+	<key>com.apple.security.device.usb</key>
+	<true/>
+	<key>com.apple.security.files.downloads.read-write</key>
+	<true/>
+	<key>com.apple.security.files.user-selected.read-write</key>
+	<true/>
+	<key>com.apple.security.network.client</key>
+	<true/>
+	<key>com.apple.security.network.server</key>
 	<true/>
 	<key>com.apple.security.personal-information.photos-library</key>
 	<true/>

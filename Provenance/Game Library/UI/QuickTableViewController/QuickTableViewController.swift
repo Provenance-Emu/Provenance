@@ -23,8 +23,9 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 //
-
+#if canImport(UIKit)
 import UIKit
+#endif
 
 /// A table view controller that shows `tableContents` as formatted sections and rows.
 open class QuickTableViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
