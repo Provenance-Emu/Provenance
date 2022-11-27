@@ -136,7 +136,7 @@ void MupenControllerCommand(int Control, unsigned char *Command) {
             {
                 if (*Data)
                 {
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS && !TARGET_OS_MACCATALYST
                     [current rumble];
 #endif
 //                    AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);

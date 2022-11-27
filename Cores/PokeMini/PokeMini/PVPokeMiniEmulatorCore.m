@@ -295,7 +295,7 @@ int saveEEPROM(const char *filename) {
     
     if(PokeMini_Rumbling) {
         // TODO: Fix rumble
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS && !TARGET_OS_MACCATALYST
         if (shouldRumble) {
             [self rumble];
             shouldRumble = NO;
