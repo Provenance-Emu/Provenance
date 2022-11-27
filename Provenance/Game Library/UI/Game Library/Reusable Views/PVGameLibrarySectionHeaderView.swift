@@ -86,14 +86,14 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
 //        addSubview(topSeparator)
 
             let bottomSeparator = UIView(frame: CGRect(x: 0, y: bounds.size.height, width: bounds.size.width, height: 1.0))
-            bottomSeparator.backgroundColor = UIColor(white: 1.0, alpha: 0.2)
+            bottomSeparator.backgroundColor = Theme.currentTheme.gameLibraryHeaderText
             bottomSeparator.autoresizingMask = .flexibleWidth
 
             addSubview(bottomSeparator)
 
             // Style
             titleLabel.textAlignment = .left
-            titleLabel.textColor = UIColor(white: 1.0, alpha: 0.5)
+            titleLabel.textColor = Theme.currentTheme.gameLibraryHeaderText
 //        topSeparator.backgroundColor = UIColor(hex: "#262626")
 //        bottomSeparator.backgroundColor = UIColor(hex: "#262626")
             clipsToBounds = false
