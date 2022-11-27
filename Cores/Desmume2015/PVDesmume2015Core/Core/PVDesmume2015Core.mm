@@ -412,14 +412,20 @@
     } else if (V("desmume_frameskip")) {
         RETURN_STRING(frameSkipOption);
     } else if (V("desmume_firmware_language")) {
+        // TODO: This enum should be the title, not the "value"
         RETURN_STRING(firmwareLanguageOption);
     // MARK - Video
     } else if (V("desmume_internal_resolution")) {
         // 256x192|512x384|768x576|1024x768|1280x960|1536x1152|1792x1344|2048x1536|2304x1728|2560x1920
-        RETURN_STRING(internalResolutionOption);
+//        RETURN_STRING(internalResolutionOption);
+        // TODO: This enum should be the title, not the "value"
+        // This probably needs to be done in the tableview setting code
+        return strdup("1024x768");
     } else if (V("desmume_screens_layout")) {
             // top/bottom|bottom/top|left/right|right/left|top only|bottom only|quick switch|hybrid/top|hybrid/bottom
-        RETURN_STRING(screensLayoutOption);
+        // TODO: This enum should be the title, not the "value"
+        return strdup("top/bottom");
+//        RETURN_STRING(screensLayoutOption);
     } else if (V("desmume_screens_gap")) {
         RETURN_STRING(screenGapOption);
     } else if (V("desmume_hybrid_showboth_screens")) {
