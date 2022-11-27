@@ -172,6 +172,11 @@ struct LightTheme: iOSTheme {
 
     let gameLibraryHeaderBackground: UIColor = Colors.white9alpha6
     let gameLibraryHeaderText: UIColor = .darkGray
+    
+    var navigationBarBackgroundColor: UIColor? { return .grey1C }
+    var settingsCellBackground: UIColor? { return .white }
+    var settingsCellText: UIColor? { return .black }
+    var settingsCellTextDetail: UIColor? { return .gray }
 }
 
 // @available(iOS 9.0, *)
