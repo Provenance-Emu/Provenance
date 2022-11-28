@@ -862,6 +862,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                 let alert = UIAlertController(title: "Unable to start web server!", message: "Your device needs to be connected to a network to continue!", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
                 }))
+                WLOG("No WiFi. Cannot start web server.")
                 present(alert, animated: true) { () -> Void in }
             } else {
                 startWebServer()
