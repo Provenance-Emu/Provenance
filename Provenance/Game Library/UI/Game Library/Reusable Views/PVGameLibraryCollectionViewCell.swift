@@ -428,7 +428,11 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
     @IBOutlet var missingFileWidthContraint: NSLayoutConstraint?
     @IBOutlet var missingFileHeightContraint: NSLayoutConstraint?
     @IBOutlet var titleLabelHeightConstraint: NSLayoutConstraint?
-    @IBOutlet var deleteActionView: UIView?
+    @IBOutlet var deleteActionView: UIView? {
+        didSet {
+            deleteActionView?.alpha = 0
+        }
+    }
 //    @IBOutlet weak var artworkContainerViewHeightConstraint: NSLayoutConstraint?
 
     class func cellSize(forImageSize imageSize: CGSize) -> CGSize {

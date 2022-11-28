@@ -104,6 +104,7 @@ final class JSDPad: MovableButtonView {
 
     override var tintColor: UIColor? {
         didSet {
+//            guard analogMode else { return }
             dPadImageView.tintColor = PVSettingsModel.shared.buttonTints ? tintColor : .white
         }
     }
@@ -117,11 +118,21 @@ final class JSDPad: MovableButtonView {
         super.init(coder: aDecoder)
         commonInit()
     }
+    
+//    override var frame: CGRect {
+//        didSet {
+//            DLOG("\(frame.debugDescription)")
+//        }
+//    }
 
     private func commonInit() {
         tintColor = .white
-        addSubview(dPadImageView)
         clipsToBounds = false
+        isOpaque = false
+//        guard analogMode else {
+//            return
+//        }
+        addSubview(dPadImageView)
     }
 
     func direction(for point: CGPoint) -> JSDPadDirection {
@@ -187,9 +198,13 @@ final class JSDPad: MovableButtonView {
     }
 
     private func sendJoyPoint(_ point: CGPoint) {
+        guard let delegate = delegate else {
+            ELOG("`delegate` is nil")
+            return
+        }
         let x: CGFloat = (point.x / self.bounds.width)
         let y: CGFloat = (point.y / self.bounds.height)
-        delegate!.dPad(self, joystick: (x: Float(x), y: Float(y)))
+        delegate.dPad(self, joystick: (x: Float(x), y: Float(y)))
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -272,7 +287,8 @@ final class JSDPad: MovableButtonView {
             context.setLineWidth(5.0)
 
             // Set the circle outerline-colour
-            tintColor?.set()
+            let tintColor = self.tintColor ?? .white
+            tintColor.set()
 
             // Create Circle
             let radius = (frame.size.width - 10)/2

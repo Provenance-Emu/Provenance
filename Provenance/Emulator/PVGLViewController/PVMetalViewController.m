@@ -706,7 +706,7 @@ PV_OBJC_DIRECT_MEMBERS
     void (^renderBlock)(void) = ^()
     {
         MAKESTRONG_RETURN_IF_NIL(self);
-        PVMetalViewController *self = strongself;
+//        PVMetalViewController *self = strongself;
         
         id<MTLTexture> outputTex = view.currentDrawable.texture;
         

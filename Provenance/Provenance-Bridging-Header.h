@@ -10,7 +10,7 @@
     #import "Services/PVAltKitService.h"
 #endif
 
-#if !TARGET_OS_OSX
+#if TARGET_OS_IOS
     #import "UIDevice+Hardware.h"
     #import "MBProgressHUD.h"
     #import "PVLogViewController.h"

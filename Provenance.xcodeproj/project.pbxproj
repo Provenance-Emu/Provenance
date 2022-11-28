@@ -80,7 +80,7 @@
 		1A3D409C17B2DCE4004DFFFC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409B17B2DCE4004DFFFC /* CoreGraphics.framework */; };
 		1A3D40A217B2DCE4004DFFFC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A3D40A017B2DCE4004DFFFC /* InfoPlist.strings */; };
 		1A3D40A817B2DCE4004DFFFC /* PVAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */; };
-		1A3D431E17B2F01F004DFFFC /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D431D17B2F01F004DFFFC /* OpenGLES.framework */; platformFilter = ios; };
+		1A3D431E17B2F01F004DFFFC /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D431D17B2F01F004DFFFC /* OpenGLES.framework */; platformFilters = (ios, tvos, ); };
 		1A3D432C17B2FDFE004DFFFC /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D432B17B2FDFE004DFFFC /* libz.dylib */; };
 		1A3D433B17B30BA3004DFFFC /* PVGLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */; };
 		1A3FD78E1AC7744100F8C23C /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3FD78D1AC7744100F8C23C /* MBProgressHUD.m */; };
@@ -348,8 +348,8 @@
 		B355E0452920AC2000E4C858 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B355E0442920AC2000E4C858 /* Assets.xcassets */; };
 		B355E0472920AC2000E4C858 /* WidgetExtension.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = B355E0432920AC1E00E4C858 /* WidgetExtension.intentdefinition */; };
 		B355E0482920AC2000E4C858 /* WidgetExtension.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = B355E0432920AC1E00E4C858 /* WidgetExtension.intentdefinition */; };
-		B357A43827092254002C7C0F /* AppCenterAnalytics in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B357A43727092254002C7C0F /* AppCenterAnalytics */; };
-		B357A43A27092254002C7C0F /* AppCenterCrashes in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B357A43927092254002C7C0F /* AppCenterCrashes */; };
+		B357A43827092254002C7C0F /* AppCenterAnalytics in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, tvos, ); productRef = B357A43727092254002C7C0F /* AppCenterAnalytics */; };
+		B357A43A27092254002C7C0F /* AppCenterCrashes in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, tvos, ); productRef = B357A43927092254002C7C0F /* AppCenterCrashes */; };
 		B357A43C2709228E002C7C0F /* PVAppDelegate+AppCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */; };
 		B3589E32219E8C5B001C5E12 /* LogViewable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B383F3BE219BBD8700DB6926 /* LogViewable.swift */; };
 		B3592CE52070B9DE00533593 /* PVSaveStateCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3592CE42070B9DE00533593 /* PVSaveStateCollectionViewCell.xib */; platformFilters = (ios, maccatalyst, ); };
@@ -555,6 +555,7 @@
 		B3C8A6D52878238C0037A946 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AECF4A81966D76100F8704E /* libsqlite3.dylib */; };
 		B3CCD2BA21DAA8D30031C42C /* PVEmulatorViewController+Saves.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CCD2B921DAA8D30031C42C /* PVEmulatorViewController+Saves.swift */; };
 		B3CCD2BB21DAA8D30031C42C /* PVEmulatorViewController+Saves.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CCD2B921DAA8D30031C42C /* PVEmulatorViewController+Saves.swift */; };
+		B3CE94B7293446AC0053B891 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = B3CE94B6293446AC0053B891 /* Introspect */; };
 		B3CEC5B22794D8DD004A7CC1 /* Strings.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3296EEA26CAC3ED0088AC32 /* Strings.strings */; };
 		B3D180A728964E07001207AF /* CoresRetro.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C8A6A428781E810037A946 /* CoresRetro.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3D534E220AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
@@ -629,8 +630,8 @@
 		B3FAC930292B4511005E8B11 /* PVGBA.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5201DEA787D0068D057 /* PVGBA.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3FAC931292B4514005E8B11 /* PVGearcoleco.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30F1428289674CA004D40BF /* PVGearcoleco.framework */; };
 		B3FAC932292B4515005E8B11 /* PVGearcoleco.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B30F1428289674CA004D40BF /* PVGearcoleco.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3FAC933292B451A005E8B11 /* PVGenesis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; platformFilter = ios; };
-		B3FAC934292B451B005E8B11 /* PVGenesis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3FAC933292B451A005E8B11 /* PVGenesis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; platformFilters = (ios, tvos, ); };
+		B3FAC934292B451B005E8B11 /* PVGenesis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3FAC935292B451E005E8B11 /* PVGME.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D3E7612894DEBE0016EB85 /* PVGME.framework */; };
 		B3FAC936292B451F005E8B11 /* PVGME.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3D3E7612894DEBE0016EB85 /* PVGME.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3FAC937292B4585005E8B11 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6AE28781E9F0037A946 /* PVLibRetro.framework */; };
@@ -709,7 +710,7 @@
 		B3FAC9B5292B4784005E8B11 /* PVSNES.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D55C1DEA85C60068D057 /* PVSNES.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3FAC9B6292B4785005E8B11 /* PVStella.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF2E276B4CB0003AE510 /* PVStella.framework */; };
 		B3FAC9B7292B4786005E8B11 /* PVStella.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF2E276B4CB0003AE510 /* PVStella.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3FB9679276DD7F600F7EDEE /* SteamController in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B3FB9678276DD7F600F7EDEE /* SteamController */; settings = {ATTRIBUTES = (Weak, ); }; };
+		B3FB9679276DD7F600F7EDEE /* SteamController in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, tvos, ); productRef = B3FB9678276DD7F600F7EDEE /* SteamController */; settings = {ATTRIBUTES = (Weak, ); }; };
 		BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */; };
 		BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */; };
 		C13CC82923CABE2800463EDD /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13CC82823CABE2800463EDD /* Photos.framework */; };
@@ -1708,6 +1709,7 @@
 				B3FAC99A292B476E005E8B11 /* PVLibRetro.framework in Frameworks */,
 				B324C619219203A5009F4EDC /* libsqlite3.tbd in Frameworks */,
 				B3FAC9B4292B4784005E8B11 /* PVSNES.framework in Frameworks */,
+				B3CE94B7293446AC0053B891 /* Introspect in Frameworks */,
 				B3FAC9A4292B4778005E8B11 /* PVMupen64Plus.framework in Frameworks */,
 				B324C6172192038C009F4EDC /* libxml2.tbd in Frameworks */,
 				B312805F274C60EC00550720 /* SteamController in Frameworks */,
@@ -3307,6 +3309,7 @@
 				B3D30FC026F0BCE60064603F /* SteamController */,
 				B3F94A4D27093ABC002A71EF /* AppCenterAnalytics */,
 				B3F94A4F27093ABC002A71EF /* AppCenterCrashes */,
+				B3CE94B6293446AC0053B891 /* Introspect */,
 			);
 			productName = ProvenanceTV;
 			productReference = 1AD481B41BA350A400FDA50A /* Provenance.app */;
@@ -8947,6 +8950,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B390B0E8276B2DB20018E065 /* XCRemoteSwiftPackageReference "AltKit" */;
 			productName = AltKit;
+		};
+		B3CE94B6293446AC0053B891 /* Introspect */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 37EEA2A927BC81880070E222 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
+			productName = Introspect;
 		};
 		B3D30FC026F0BCE60064603F /* SteamController */ = {
 			isa = XCSwiftPackageProductDependency;

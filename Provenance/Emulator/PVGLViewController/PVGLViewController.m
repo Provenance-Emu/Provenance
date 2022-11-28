@@ -724,7 +724,7 @@ PV_OBJC_DIRECT_MEMBERS
         if (UNLIKELY(rendersToOpenGL))
         {
             frontBufferTex = strongself->alternateThreadColorTextureFront;
-            [self.emulatorCore.frontBufferLock lock];
+            [strongself.emulatorCore.frontBufferLock lock];
         }
         else
         {
@@ -733,16 +733,16 @@ PV_OBJC_DIRECT_MEMBERS
             frontBufferTex = strongself->texture;
             
 #if USE_EFFECT
-            if (texture)
+            if (strongself->texture)
             {
                 self.effect.texture2d0.envMode = GLKTextureEnvModeReplace;
                 self.effect.texture2d0.target = GLKTextureTarget2D;
-                self.effect.texture2d0.name = texture;
+                self.effect.texture2d0.name = strongself->texture;
                 self.effect.texture2d0.enabled = YES;
                 self.effect.useConstantColor = YES;
             }
 
-            [self.effect prepareToDraw];
+            [strongself.effect prepareToDraw];
 #endif
         }
         
