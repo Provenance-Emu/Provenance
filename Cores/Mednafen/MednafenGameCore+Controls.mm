@@ -454,7 +454,11 @@
             }
         }
         { // Non 8BitdoM30
-//            GCDualSenseGamepad *dualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]] ? gamepad : nil;
+            GCDualSenseGamepad *dualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]] ? gamepad : nil;
+            GCDualShockGamepad *dualShock = [gamepad isKindOfClass:[GCDualShockGamepad class]] ? gamepad : nil;
+            GCXboxGamepad *xbox = [gamepad isKindOfClass:[GCXboxGamepad class]] ? gamepad : nil;
+
+            
             switch (buttonID) {
                 case PVSaturnButtonUp:
                     return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] isPressed];
@@ -482,11 +486,27 @@
                     return [[gamepad rightTrigger] isPressed];
                 case PVSaturnButtonStart:
                 {
-                    if (!gamepad.buttonHome.isBoundToSystemGesture) {
-                        return gamepad.buttonHome.isPressed;
+                    if (dualSense) {
+                        return self.isStartPressed || dualSense.touchpadButton.isPressed;
+                    } else if (dualShock) {
+                        return self.isStartPressed || dualShock.touchpadButton.isPressed;
+                    } else if (xbox) {
+                        return self.isStartPressed || xbox.buttonShare.isPressed;
                     } else {
-                        return self.isStartPressed;
+//                        if (!gamepad.buttonHome.isBoundToSystemGesture) {
+//                            return gamepad.buttonHome.isPressed;
+//                        }
+                        if (gamepad.buttonOptions) {
+                            return gamepad.buttonOptions.isPressed;
+                        }
+
+                        bool modifier1Pressed = [[gamepad leftShoulder] isPressed] && [[gamepad rightShoulder] isPressed];
+                        bool modifier2Pressed = [[gamepad leftTrigger] isPressed] && [[gamepad rightTrigger] isPressed];
+                        bool modifiersPressed = modifier1Pressed && modifier2Pressed;
+
+                        return self.isStartPressed || (modifiersPressed && [[gamepad buttonX] isPressed]);
                     }
+//                    }
                 }
                 default:
                     break;
