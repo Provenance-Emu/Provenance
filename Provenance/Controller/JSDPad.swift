@@ -118,10 +118,17 @@ final class JSDPad: MovableButtonView {
         super.init(coder: aDecoder)
         commonInit()
     }
+    
+//    override var frame: CGRect {
+//        didSet {
+//            DLOG("\(frame.debugDescription)")
+//        }
+//    }
 
     private func commonInit() {
         tintColor = .white
         clipsToBounds = false
+        isOpaque = false
 //        guard analogMode else {
 //            return
 //        }
@@ -280,7 +287,8 @@ final class JSDPad: MovableButtonView {
             context.setLineWidth(5.0)
 
             // Set the circle outerline-colour
-            tintColor?.set()
+            let tintColor = self.tintColor ?? .white
+            tintColor.set()
 
             // Create Circle
             let radius = (frame.size.width - 10)/2

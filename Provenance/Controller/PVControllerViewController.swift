@@ -537,11 +537,14 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                 let bottomPadding: CGFloat = 16
                 let joyPadOriginY: CGFloat = min(controlOriginY - bottomPadding, view.frame.height - controlSize.height - bottomPadding)
                 var joyPadFrame = CGRect(x: xPadding, y: joyPadOriginY, width: controlSize.width, height: controlSize.height)
-
-                    joyPadFrame.origin.y += joyPadFrame.height + bottomPadding
-
-                    let joyPad: JSDPad = self.joyPad ?? JSDPad.JoyPad(frame: joyPadFrame)
+                
+                joyPadFrame.origin.y += joyPadFrame.height + bottomPadding
+                
+                let joyPad: JSDPad = self.joyPad ?? JSDPad.JoyPad(frame: joyPadFrame)
+                if !joyPad.isCustomMoved {
                     joyPad.frame = joyPadFrame
+                }
+
 				if let tintColor = control.PVControlTint {
 					joyPad.tintColor = UIColor(hex: tintColor)
 				}
@@ -1063,21 +1066,21 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
             return
         }
         
-        guard PVSettingsModel.shared.debugOptions.onscreenJoypad else {
-            DLOG("onscreenJoypad false, hiding")
-            joyPad.isHidden = true
-            return
-        }
-
-        if PVControllerManager.shared.isKeyboardConnected && !PVSettingsModel.shared.debugOptions.onscreenJoypadWithKeyboard {
-            DLOG("`isKeyboardConnected` true and `onscreenJoypadWithKeyboard` false, hiding")
-            joyPad.isHidden = true
-            return
-        }
+//        guard PVSettingsModel.shared.debugOptions.onscreenJoypad else {
+//            DLOG("onscreenJoypad false, hiding")
+//            joyPad.isHidden = true
+//            return
+//        }
+//
+//        if PVControllerManager.shared.isKeyboardConnected && !PVSettingsModel.shared.debugOptions.onscreenJoypadWithKeyboard {
+//            DLOG("`isKeyboardConnected` true and `onscreenJoypadWithKeyboard` false, hiding")
+//            joyPad.isHidden = true
+//            return
+//        }
+//
+//        joyPad.isHidden = false
         
-        joyPad.isHidden = false
-        
-        guard let dPad = dPad else {
+        guard let dPad = dPad, !dPad.isCustomMoved, !joyPad.isCustomMoved else {
             return
         }
         
