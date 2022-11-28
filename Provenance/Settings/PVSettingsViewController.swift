@@ -302,7 +302,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
                                 key: \PVSettingsModel.debugOptions.unsupportedCores),
 
             PVSettingsSwitchRow(text: NSLocalizedString("Use Swift UI", comment: "Use Swift UI"),
-                                detailText: .subtitle("Swift UI placeholder. Don't use unless you're a developer."),
+                                detailText: .subtitle("Alternative UI in Swift UI. Not all features supported yet."),
                                 key: \PVSettingsModel.debugOptions.useSwiftUI) { cell, row in
 //                                    let swiftUIDetailText: DetailText
 //                                    if #available(iOS 14, tvOS 14, *) {
@@ -328,6 +328,9 @@ final class PVSettingsViewController: PVQuickTableViewController {
             PVSettingsSwitchRow(text: NSLocalizedString("On screen Joypad", comment: ""),
                                 detailText: .subtitle("Show a touch Joystick pad on supported systems. Layout is strange on some devices while in beta."),
                                 key: \PVSettingsModel.debugOptions.onscreenJoypad),
+            PVSettingsSwitchRow(text: NSLocalizedString("On screen Joypad with keyboard", comment: ""),
+                                detailText: .subtitle("Show a touch Joystick pad on supported systems when the P1 controller is 'Keyboard'. Useful on iPad OS for systems with an analog joystick (N64, PSX, etc.)"),
+                                key: \PVSettingsModel.debugOptions.onscreenJoypadWithKeyboard),
         ]
         #else // tvOS
          let betaRows: [TableRow] = [

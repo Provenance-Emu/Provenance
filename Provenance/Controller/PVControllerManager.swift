@@ -83,6 +83,14 @@ final class PVControllerManager: NSObject {
     var hasControllers: Bool {
         return player1 != nil || player2 != nil || player3 != nil || player4 != nil
     }
+    var isKeyboardConnected: Bool {
+        return keyboardController != nil
+//        if #available(iOS 14.0, *) {
+//            return GCKeyboard.coalesced != nil
+//        } else {
+//            return false
+//        }
+    }
 
     static let shared: PVControllerManager = PVControllerManager()
 
@@ -270,12 +278,12 @@ final class PVControllerManager: NSObject {
 
     @available(iOS 14.0, tvOS 14.0, *)
     @objc func handleKeyboardConnect(_ note: Notification?) {
-        #if !targetEnvironment(simulator)
+//        #if !targetEnvironment(simulator)
         if let controller = GCKeyboard.coalesced?.createController() {
             keyboardController = controller
             NotificationCenter.default.post(name:.GCControllerDidConnect, object: controller)
         }
-        #endif
+//        #endif
     }
 
     @available(iOS 14.0, tvOS 14.0, *)
