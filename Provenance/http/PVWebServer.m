@@ -119,7 +119,7 @@
 
 -(BOOL)startWWWUploadServer {
     if (_webServer.isRunning) {
-        NSLog(@"Web Server is already running");
+        WLOG(@"Web Server is already running");
         return YES;
     }
     
@@ -142,7 +142,7 @@
     BOOL success = [self.webServer startWithOptions:webSeverOptions
                                               error:&error];
     if (!success) {
-        NSLog(@"Failed to start Web Server with error: %@", error.localizedDescription);
+        ELOG(@"Failed to start Web Server with error: %@", error.localizedDescription);
     }
     
     return success;
