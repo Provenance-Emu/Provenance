@@ -4,6 +4,8 @@
 <dict>
 	<key>ALTDeviceID</key>
 	<string></string>
+	<key>CFBundleAllowMixedLocalizations</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -66,6 +68,8 @@
 	<string></string>
 	<key>GitTag</key>
 	<string></string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.games</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -133,6 +137,8 @@
 	<array>
 		<string>_altserver._tcp</string>
 	</array>
+	<key>NSHighResolutionCapable</key>
+	<true/>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Provenance uses the local network to find and communicate with AltServer.</string>
 	<key>NSUserActivityTypes</key>
