@@ -95,7 +95,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
         if PVSettingsModel.shared.theme == .auto {
             theme += " (\(systemMode))"
         }
-        let themeRow = NavigationRow<SystemSettingsCell>(text: NSLocalizedString("Theme", comment: "Theme"), detailText: .value1(PVSettingsModel.shared.theme.description), action: { row in
+        let themeRow = NavigationRow(text: NSLocalizedString("Theme", comment: "Theme"), detailText: .value1(PVSettingsModel.shared.theme.description), action: { row in
             let alert = UIAlertController(title: "Theme", message: "", preferredStyle: .actionSheet)
             ThemeOptions.themes.forEach { mode in
                 let modeLabel = mode == .auto ? mode.description + " (\(systemMode))" : mode.description
@@ -123,13 +123,13 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
         // -- Core Options
         let realm = try! Realm()
-        let cores: [NavigationRow<SystemSettingsCell>] = realm.objects(PVCore.self).sorted(byKeyPath: "projectName").compactMap { pvcore in
+        let cores: [NavigationRow] = realm.objects(PVCore.self).sorted(byKeyPath: "projectName").compactMap { pvcore in
             guard let coreClass = NSClassFromString(pvcore.principleClass) as? CoreOptional.Type else {
                 VLOG("Class <\(pvcore.principleClass)> does not implement CoreOptional")
                 return nil
             }
 
-            return NavigationRow<SystemSettingsCell>(text: pvcore.projectName, detailText: .none, icon: nil, customization: nil, action: { [weak self] row in
+            return NavigationRow(text: pvcore.projectName, detailText: .none, icon: nil, customization: nil, action: { [weak self] row in
                 let coreOptionsVC = CoreOptionsViewController(withCore: coreClass)
                 coreOptionsVC.title = row.text
                 self?.navigationController?.pushViewController(coreOptionsVC, animated: true)
@@ -207,7 +207,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
         // Game Library
 
         var libraryRows: [TableRow] = [
-            NavigationRow<SystemSettingsCell>(
+            NavigationRow(
                 text: NSLocalizedString("Launch Web Server", comment: "Launch Web Server"),
                 detailText: .subtitle("Import/Export ROMs, saves, cover art…"),
                 icon: nil,
@@ -242,7 +242,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
         // Game Library 2
         let library2Rows: [TableRow] = [
-            NavigationRow<SystemSettingsCell>(
+            NavigationRow(
                 text: NSLocalizedString("Refresh Game Library", comment: ""),
                 detailText: .subtitle("Re-import ROMs ⚠️ Slow"),
                 icon: nil,
@@ -251,7 +251,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
                     self?.refreshGameLibraryAction()
                 }
             ),
-            NavigationRow<SystemSettingsCell>(
+            NavigationRow(
                 text: NSLocalizedString("Empty Image Cache", comment: "Empty Image Cache"),
                 detailText: .subtitle("Re-download covers"),
                 icon: nil,
@@ -260,7 +260,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
                     self?.emptyImageCacheAction()
                 }
             ),
-            NavigationRow<SystemSettingsCell>(
+            NavigationRow(
                 text: NSLocalizedString("Manage Conflicts", comment: ""),
                 detailText: .subtitle(numberOfConflicts > 0 ? "Manually resolve conflicted imports: \(numberOfConflicts) detected" : "None detected"),
                 icon: nil,
@@ -414,7 +414,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
         let buildDateString: String = outputDateFormatter.string(from: buildDate)
 
         let buildInformationRows: [TableRow] = [
-            NavigationRow<SystemSettingsCell>(
+            NavigationRow(
                 text: NSLocalizedString("Version", comment: ""),
                 detailText: .value2(versionText ?? NSLocalizedString("Unknown", comment: "")),
                 icon: nil,
@@ -425,12 +425,12 @@ final class PVSettingsViewController: PVQuickTableViewController {
                 },
                 action: nil
             ),
-            NavigationRow<SystemSettingsCell>(text: NSLocalizedString("Build", comment: "Build"), detailText: .value2(bundleVersion)),
-            NavigationRow<SystemSettingsCell>(text: NSLocalizedString("Mode", comment: "Mode"), detailText: .value2(modeLabel)),
-            NavigationRow<SystemSettingsCell>(text: NSLocalizedString("Git Revision", comment: "Git Revision"), detailText: .value2(revisionString)),
-            NavigationRow<SystemSettingsCell>(text: NSLocalizedString("Build Date", comment: "Build Date"), detailText: .value2(buildDateString)),
-            NavigationRow<SystemSettingsCell>(text: NSLocalizedString("Builder", comment: "Builder"), detailText: .value2(builtByUser)),
-            NavigationRow<SystemSettingsCell>(text: NSLocalizedString("Bundle ID", comment: "Bundle ID"), detailText: .value2(Bundle.main.bundleIdentifier ?? "Unknown"))
+            NavigationRow(text: NSLocalizedString("Build", comment: "Build"), detailText: .value2(bundleVersion)),
+            NavigationRow(text: NSLocalizedString("Mode", comment: "Mode"), detailText: .value2(modeLabel)),
+            NavigationRow(text: NSLocalizedString("Git Revision", comment: "Git Revision"), detailText: .value2(revisionString)),
+            NavigationRow(text: NSLocalizedString("Build Date", comment: "Build Date"), detailText: .value2(buildDateString)),
+            NavigationRow(text: NSLocalizedString("Builder", comment: "Builder"), detailText: .value2(builtByUser)),
+            NavigationRow(text: NSLocalizedString("Bundle ID", comment: "Bundle ID"), detailText: .value2(Bundle.main.bundleIdentifier ?? "Unknown"))
         ]
 
         let buildSection = Section(title: NSLocalizedString("Build Information", comment: ""), rows: buildInformationRows)
@@ -445,7 +445,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
 
         // Debug section
         let debugRows: [TableRow] = [
-            NavigationRow<SystemSettingsCell>(text: NSLocalizedString("Logs", comment: "Logs"),
+            NavigationRow(text: NSLocalizedString("Logs", comment: "Logs"),
                                               detailText: .subtitle("Live logging information"),
                                               icon: nil,
                                               customization: nil,

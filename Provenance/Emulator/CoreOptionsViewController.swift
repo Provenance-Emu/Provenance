@@ -80,7 +80,7 @@ final class CoreOptionsViewController: QuickTableViewController {
 					})
 				case let .multi(display, values):
 					let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
-					return NavigationRow<SystemSettingsCell>(text: display.title,
+					return NavigationRow(text: display.title,
 															 detailText: detailText,
 															 icon: nil,
 															 customization: { _, _ in
@@ -114,7 +114,7 @@ final class CoreOptionsViewController: QuickTableViewController {
 					})
                 case let .enumeration(display, values: values, defaultValue: defaultValue):
                     let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
-                    return NavigationRow<SystemSettingsCell>(text: display.title,
+                    return NavigationRow(text: display.title,
                                                              detailText: detailText,
                                                              icon: nil,
                                                              customization: { _, _ in
@@ -166,7 +166,7 @@ final class CoreOptionsViewController: QuickTableViewController {
 
                     #if os(tvOS)
                     // TODO: slider on tvOS?
-                    return NavigationRow<SystemSettingsCell>(text: "\(display.title): \(value)",
+                    return NavigationRow(text: "\(display.title): \(value)",
                                                              detailText: detailText,
                                                              icon: nil,
                                                              customization: { _, _ in
@@ -190,7 +190,7 @@ final class CoreOptionsViewController: QuickTableViewController {
                     let value = core.storedValueForOption(Float.self, option.key) ?? defaultValue
                     #if os(tvOS)
                     // TODO: slider on tvOS?
-                    return NavigationRow<SystemSettingsCell>(text: "\(display.title): \(value)",
+                    return NavigationRow(text: "\(display.title): \(value)",
                                                              detailText: detailText,
                                                              icon: nil,
                                                              customization: { _, _ in
@@ -213,7 +213,7 @@ final class CoreOptionsViewController: QuickTableViewController {
                     let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
                     let value = core.storedValueForOption(String.self, option.key) ?? defaultValue
 
-                    return NavigationRow<SystemSettingsCell>(text: display.title,
+                    return NavigationRow(text: display.title,
                                                              detailText: detailText,
                                                              icon: nil,
                                                              customization: { cell, _ in
@@ -250,7 +250,7 @@ final class CoreOptionsViewController: QuickTableViewController {
                     })
                 case let .group(display, subOptions: subOptions):
                     let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
-                    return NavigationRow<SystemSettingsCell>(text: display.title,
+                    return NavigationRow(text: display.title,
                                                              detailText: detailText,
                                                              icon: nil,
                                                              customization: { _, _ in
