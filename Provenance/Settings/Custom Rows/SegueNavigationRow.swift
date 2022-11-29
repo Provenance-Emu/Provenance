@@ -8,7 +8,7 @@
 
 import Foundation
 
-final class SegueNavigationRow: NavigationRow<SystemSettingsCell> {
+final class SegueNavigationRow: NavigationRow<UITableViewCell> {
     weak var viewController: UIViewController?
 
     required init(text: String,
