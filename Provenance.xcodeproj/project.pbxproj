@@ -316,8 +316,6 @@
 		B3532C3D21A9AC93006CDA0F /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3B21A9AC93006CDA0F /* Services.swift */; };
 		B354E7BF219A7D250041F971 /* SystemSettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7BE219A7D250041F971 /* SystemSettingsCell.swift */; };
 		B354E7C0219A7D250041F971 /* SystemSettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7BE219A7D250041F971 /* SystemSettingsCell.swift */; };
-		B354E7C2219A7D630041F971 /* SystemSettingsHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7C1219A7D630041F971 /* SystemSettingsHeaderCell.swift */; };
-		B354E7C3219A7D630041F971 /* SystemSettingsHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7C1219A7D630041F971 /* SystemSettingsHeaderCell.swift */; };
 		B354E7C6219A7D9D0041F971 /* SystemOverviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7C5219A7D9D0041F971 /* SystemOverviewViewModel.swift */; };
 		B354E7C7219A7D9D0041F971 /* SystemOverviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7C5219A7D9D0041F971 /* SystemOverviewViewModel.swift */; };
 		B354E7D2219A9C230041F971 /* CoreOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7D1219A9C230041F971 /* CoreOptionsViewController.swift */; };
@@ -1303,7 +1301,6 @@
 		B3532C3B21A9AC93006CDA0F /* Services.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services.swift; sourceTree = "<group>"; };
 		B354693B1DECDA710018B6F3 /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B354E7BE219A7D250041F971 /* SystemSettingsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSettingsCell.swift; sourceTree = "<group>"; };
-		B354E7C1219A7D630041F971 /* SystemSettingsHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSettingsHeaderCell.swift; sourceTree = "<group>"; };
 		B354E7C5219A7D9D0041F971 /* SystemOverviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemOverviewViewModel.swift; sourceTree = "<group>"; };
 		B354E7D1219A9C230041F971 /* CoreOptionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreOptionsViewController.swift; sourceTree = "<group>"; };
 		B355DF8A292088E500E4C858 /* PVAppDelegate+Open.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVAppDelegate+Open.swift"; sourceTree = "<group>"; };
@@ -2760,7 +2757,6 @@
 				B354E7C4219A7D830041F971 /* ViewModels */,
 				B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */,
 				B354E7BE219A7D250041F971 /* SystemSettingsCell.swift */,
-				B354E7C1219A7D630041F971 /* SystemSettingsHeaderCell.swift */,
 			);
 			path = SystemSettings;
 			sourceTree = "<group>";
@@ -4404,7 +4400,6 @@
 				B35E6C23207ED7050040709A /* UIAppearanceExtensions.swift in Sources */,
 				B35E6C29207ED7050040709A /* AppearanceStyleExtensions.swift in Sources */,
 				B3AB37442187F569009D9244 /* PVNESControllerViewController.swift in Sources */,
-				B354E7C2219A7D630041F971 /* SystemSettingsHeaderCell.swift in Sources */,
 				B3411C1F276B470C00D85327 /* Section.swift in Sources */,
 				B378225421D32AD60077E86F /* SliderCell.swift in Sources */,
 				B37B71AD278E3198005FB278 /* UIViewController+Alerts.swift in Sources */,
@@ -4523,7 +4518,6 @@
 				B382C636278E5055007E61FE /* PVEmulatorViewController+Audio.swift in Sources */,
 				B3F94A4C27093794002A71EF /* PVAppDelegate+AppCenter.swift in Sources */,
 				11A8A9E72496A3E500C1C6B4 /* PVGameLibraryUpdatesController.swift in Sources */,
-				B354E7C3219A7D630041F971 /* SystemSettingsHeaderCell.swift in Sources */,
 				B3B104D0218F2EF400210C39 /* PVPSXControllerViewController.swift in Sources */,
 				B3B104CF218F2EF400210C39 /* PVPokeMiniControllerViewController.swift in Sources */,
 				B35D26FB20337D1C00F17D58 /* GameLaunchingViewController.swift in Sources */,
