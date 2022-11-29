@@ -45,7 +45,7 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
 
             // BIOSES
             if let bioses = systemModel.bioses, !bioses.isEmpty {
-                let biosesHeader = NavigationRow<SystemSettingsHeaderCell>(text: "BIOSES",
+                let biosesHeader = NavigationRow(text: "BIOSES",
                                                                            detailText: .none,
                                                                            icon: nil,
                                                                            customization: { cell, _ in
