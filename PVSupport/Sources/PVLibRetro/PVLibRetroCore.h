@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+#import <PVRuntime/PVRuntime.h>
 #import <PVSupport/PVSupport.h>
 #import <PVSupport/PVSupport-Swift.h>
 #import <PVLibRetro/libretro.h>

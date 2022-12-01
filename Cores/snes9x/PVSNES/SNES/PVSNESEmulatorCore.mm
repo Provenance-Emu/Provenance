@@ -26,7 +26,7 @@
  */
 
 #import "PVSNESEmulatorCore.h"
-#import <PVSupport/OERingBuffer.h>
+#import <PVRuntime/OERingBuffer.h>
 #import <PVSupport/PVLogging.h>
 #import <PVSupport/PVSupport-Swift.h>
 

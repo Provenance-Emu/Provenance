@@ -192,6 +192,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		057698852937E75000F7E122 /* PVRuntime.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVRuntime.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B305EF31276B4DC4003AE510 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B305EF35276B4DCD003AE510 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B305EF37276B4DD7003AE510 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.3.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
@@ -1694,6 +1695,7 @@
 		089C1671FE841209C02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				057698852937E75000F7E122 /* PVRuntime.framework */,
 				B3E6BF6F2894BE4F00CF98C7 /* libz.tbd */,
 				B3271BDE276B8C660031AECC /* OpenGL.framework */,
 				B305EF93276B4E8C003AE510 /* PVSupport.framework */,

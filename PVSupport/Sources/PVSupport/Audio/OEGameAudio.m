@@ -25,8 +25,8 @@
  */
 
 #import "OEGameAudio.h"
-#import "TPCircularBuffer.h"
-#import "OERingBuffer.h"
+#import <PVRuntime/TPCircularBuffer.h>
+#import <PVRuntime/OERingBuffer.h>
 #import "PVEmulatorCore.h"
 #import "DebugUtils.h"
 #import "PVLogging.h"

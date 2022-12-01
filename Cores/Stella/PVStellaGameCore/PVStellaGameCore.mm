@@ -27,7 +27,7 @@
 
 #import "PVStellaGameCore.h"
 
-#import <PVSupport/OERingBuffer.h>
+#import <PVRuntime/OERingBuffer.h>
 #import <PVSupport/DebugUtils.h>
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX

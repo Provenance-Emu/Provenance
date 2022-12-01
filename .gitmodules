@@ -148,3 +148,6 @@
 [submodule "Cores/TIC80/TIC-80"]
 	path = Cores/TIC80/TIC-80
 	url = https://github.com/Provenance-Emu/TIC-80.git
+[submodule "Dependencies/OpenEmu-Shaders"]
+	path = Dependencies/OpenEmu-Shaders
+	url = https://github.com/OpenEmu/OpenEmu-Shaders.git

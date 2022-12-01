@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		057698752937245600F7E122 /* PVSNESGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 057698732937245600F7E122 /* PVSNESGameCore.h */; };
+		057698762937245600F7E122 /* PVSNESGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 057698742937245600F7E122 /* PVSNESGameCore.mm */; };
+		057698782937247800F7E122 /* PVRuntime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 057698772937247800F7E122 /* PVRuntime.framework */; };
 		B34AB5842106DEA000C45F09 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34AB5832106DEA000C45F09 /* PVSupport.framework */; };
 		B3547B632058591100CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B622058591000CFF7D8 /* Core.plist */; };
 		B365107E21782E95008FDB7B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B365107D21782E95008FDB7B /* libz.tbd */; };
@@ -73,6 +76,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		057698732937245600F7E122 /* PVSNESGameCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVSNESGameCore.h; sourceTree = "<group>"; };
+		057698742937245600F7E122 /* PVSNESGameCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVSNESGameCore.mm; sourceTree = "<group>"; };
+		057698772937247800F7E122 /* PVRuntime.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVRuntime.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1ACEA8E717F75F350031B1C9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1ACEA8EB17F75F350031B1C9 /* PVSNES-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVSNES-Prefix.pch"; sourceTree = "<group>"; };
 		1ACEA90D17F75F6E0031B1C9 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -233,6 +239,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B365107E21782E95008FDB7B /* libz.tbd in Frameworks */,
+				057698782937247800F7E122 /* PVRuntime.framework in Frameworks */,
 				B34AB5842106DEA000C45F09 /* PVSupport.framework in Frameworks */,
 				B3C9D54E1DEA843E0068D057 /* Foundation.framework in Frameworks */,
 				B3C9D54B1DEA84220068D057 /* CoreGraphics.framework in Frameworks */,
@@ -264,6 +271,7 @@
 		1ACEA8E617F75F350031B1C9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				057698772937247800F7E122 /* PVRuntime.framework */,
 				B365107D21782E95008FDB7B /* libz.tbd */,
 				B365107F21782E9E008FDB7B /* libz.tbd */,
 				B34AB5832106DEA000C45F09 /* PVSupport.framework */,
@@ -307,6 +315,8 @@
 			children = (
 				1ACEA91817F760390031B1C9 /* PVSNESEmulatorCore.h */,
 				1ACEA91917F760390031B1C9 /* PVSNESEmulatorCore.mm */,
+				057698732937245600F7E122 /* PVSNESGameCore.h */,
+				057698742937245600F7E122 /* PVSNESGameCore.mm */,
 				1ACEA98F17F760390031B1C9 /* SNESOESupport.mm */,
 				CF87D337258AB6CE00838AF8 /* PVSNESEmulatorCore.swift */,
 				1ACEA91A17F760390031B1C9 /* SNESCore */,
@@ -516,6 +526,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3C9D5361DEA83DE0068D057 /* PVSNES.h in Headers */,
+				057698752937245600F7E122 /* PVSNESGameCore.h in Headers */,
 				B3C9D5CE1DEA87930068D057 /* PVSNESEmulatorCore.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -637,6 +648,7 @@
 				C664023925B535B8001A3099 /* seta.cpp in Sources */,
 				C664023A25B535B8001A3099 /* sha256.cpp in Sources */,
 				C664023B25B535B8001A3099 /* seta010.cpp in Sources */,
+				057698762937245600F7E122 /* PVSNESGameCore.mm in Sources */,
 				C664023C25B535B8001A3099 /* seta011.cpp in Sources */,
 				C664023D25B535B8001A3099 /* seta018.cpp in Sources */,
 				C664023E25B535B8001A3099 /* snapshot.cpp in Sources */,

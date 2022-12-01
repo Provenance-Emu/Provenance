@@ -46,4 +46,5 @@ report.xml
 /Cores/PPSSPP/cmake/lib/Debug/libSPIRV.a
 Cores/PPSSPP/cmake/lib/
 /CodeSigning.xcconfig
+/DerivedData
 *.xcarchive
