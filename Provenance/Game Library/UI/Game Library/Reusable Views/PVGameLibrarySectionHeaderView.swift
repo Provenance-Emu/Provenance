@@ -92,6 +92,7 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
             addSubview(bottomSeparator)
 
             // Style
+            backgroundColor = Theme.currentTheme.gameLibraryHeaderBackground
             titleLabel.textAlignment = .left
             titleLabel.textColor = Theme.currentTheme.gameLibraryHeaderText
 //        topSeparator.backgroundColor = UIColor(hex: "#262626")
