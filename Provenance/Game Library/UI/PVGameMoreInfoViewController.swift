@@ -415,7 +415,7 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
 
     func image(withText text: String) -> UIImage? {
         #if os(iOS)
-            let backgroundColor: UIColor = Theme.currentTheme.settingsCellBackground!
+            let backgroundColor: UIColor = .systemBackground
         #else
             let backgroundColor: UIColor = UIColor(white: 0.9, alpha: 0.9)
         #endif

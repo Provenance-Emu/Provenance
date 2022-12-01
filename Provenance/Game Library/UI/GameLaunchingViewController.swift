@@ -640,7 +640,6 @@ extension GameLaunchingViewController where Self: UIViewController {
                         textField.rightViewMode = .always
                         textField.rightView = switchControl
                         textField.borderStyle = .none
-                        textField.layer.borderColor = Theme.currentTheme.settingsCellBackground!.cgColor
                         textField.delegate = textEditBlocker // Weak ref
                         switchControl.transform = CGAffineTransform(scaleX: 0.90, y: 0.90)
                     }

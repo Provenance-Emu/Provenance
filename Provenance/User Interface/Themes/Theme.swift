@@ -183,7 +183,7 @@ struct LightTheme: iOSTheme {
 public final class Theme {
     public static var currentTheme: iOSTheme = DarkTheme() {
         didSet {
-            setTheme(currentTheme)
+//            setTheme(currentTheme)
             UIApplication.shared.refreshAppearance(animated: true)
         }
     }

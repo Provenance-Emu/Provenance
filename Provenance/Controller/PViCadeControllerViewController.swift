@@ -39,7 +39,6 @@ final class PViCadeControllerViewController: UITableViewController {
 
         #if os(iOS)
             cell.backgroundColor = .secondarySystemGroupedBackground
-            cell.textLabel?.textColor = Theme.currentTheme.settingsCellText
         #endif
 
         return cell

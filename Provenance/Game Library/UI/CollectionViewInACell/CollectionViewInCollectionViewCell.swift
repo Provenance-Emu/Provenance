@@ -130,10 +130,6 @@ class CollectionViewInCollectionViewCell<Item: SubCellItem>: UICollectionViewCel
     }
 
     func setupViews() {
-        #if os(iOS)
-            backgroundColor = Theme.currentTheme.gameLibraryBackground
-        #endif
-
         addSubview(internalCollectionView)
 
         internalCollectionView.frame = bounds
@@ -147,10 +143,6 @@ class CollectionViewInCollectionViewCell<Item: SubCellItem>: UICollectionViewCel
         internalCollectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 0).isActive = true
         internalCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 0).isActive = true
         internalCollectionView.heightAnchor.constraint(equalTo: margins.heightAnchor, constant: 0).isActive = true
-
-        #if os(iOS)
-            internalCollectionView.backgroundColor = Theme.currentTheme.gameLibraryBackground
-        #endif
 
         // setup page indicator layout
         addSubview(pageIndicator)
