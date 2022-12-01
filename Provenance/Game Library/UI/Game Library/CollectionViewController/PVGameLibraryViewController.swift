@@ -1709,8 +1709,9 @@ extension PVGameLibraryViewController {
     }
     
     override func traitCollectionDidChange(_: UITraitCollection?) {
-        self.collectionView?.collectionViewLayout.invalidateLayout()
-        self.collectionView?.reloadData()
+        #if os(iOS)
+            viewDidLoad()
+        #endif
     }
 
     #if os(tvOS)
