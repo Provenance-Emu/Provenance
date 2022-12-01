@@ -521,7 +521,7 @@
                                     </label>
                                 </subviews>
                             </tableViewCellContentView>
-                            <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                            <color key="backgroundColor" systemColor="secondarySystemGroupedBackgroundColor"/>
                         </tableViewCell>
                         <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="checkmark" indentationWidth="10" reuseIdentifier="viewOptionsCell" textLabel="VpU-YI-9QR" style="IBUITableViewCellStyleDefault" id="bhh-7D-iQS">
                             <rect key="frame" x="0.0" y="92.666667938232422" width="240" height="44"/>
@@ -539,7 +539,7 @@
                                     </label>
                                 </subviews>
                             </tableViewCellContentView>
-                            <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                            <color key="backgroundColor" systemColor="secondarySystemGroupedBackgroundColor"/>
                         </tableViewCell>
                     </prototypes>
                     <sections/>
@@ -564,8 +564,8 @@
     <resources>
         <image name="gear" catalog="system" width="128" height="122"/>
         <image name="sort" width="20" height="20"/>
-        <systemColor name="secondarySystemBackgroundColor">
-            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        <systemColor name="secondarySystemGroupedBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
