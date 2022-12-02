@@ -85,7 +85,7 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
 //
 //        addSubview(topSeparator)
 
-            let bottomSeparator = UIView(frame: CGRect(x: 0, y: bounds.size.height, width: bounds.size.width, height: 1.0))
+            let bottomSeparator = UIView(frame: CGRect(x: 0, y: bounds.size.height - 1, width: bounds.size.width, height: 1.0))
             bottomSeparator.backgroundColor = Theme.currentTheme.gameLibraryHeaderText
             bottomSeparator.autoresizingMask = .flexibleWidth
 
