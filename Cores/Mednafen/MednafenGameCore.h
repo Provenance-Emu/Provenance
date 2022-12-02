@@ -72,7 +72,7 @@ static const int WSMap[]   = { 0, 2, 3, 1, 4, 6, 7, 5, 9, 10, 8, 11 };
 static const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
 
 // SS Sega Saturn
-static const int SSMap[]   = { 4, 5, 6, 7, 10, 8, 9, 2, 1, 0, 15, 3, 11 };
+static int SSMap[PVSaturnButtonCount]; //   = { 4, 5, 6, 7, 10, 8, 9, 2, 1, 0, 15, 3, 11 };
 
 // SMS, GG and MD unused as of now. Mednafen support is not maintained
 static const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
@@ -95,7 +95,7 @@ __attribute__((visibility("default")))
 
 // for Swift
 @interface MednafenGameCore() {
-    uint32_t *inputBuffer[8];
+    uint32_t *inputBuffer[13];
     int16_t axis[8];
     int videoWidth, videoHeight;
     int videoOffsetX, videoOffsetY;

@@ -413,7 +413,7 @@
 #pragma mark SS Buttons
 - (NSInteger)SSValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
     if ([controller extendedGamepad]) {
-        GCExtendedGamepad *gamepad = [[controller extendedGamepad] capture];
+        GCExtendedGamepad *gamepad = controller.extendedGamepad; //[[controller extendedGamepad] capture];
         GCControllerDirectionPad *dpad = [gamepad dpad];
         // Maps the Sega Saturn Controls to the 8BitDo M30 if enabled in Settings/Controller
         if (PVSettingsModel.shared.use8BitdoM30) {
@@ -452,8 +452,7 @@
             default:
                 break;
             }
-        }
-        { // Non 8BitdoM30
+        } else { // Non 8BitdoM30
             GCDualSenseGamepad *dualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]] ? gamepad : nil;
             GCDualShockGamepad *dualShock = [gamepad isKindOfClass:[GCDualShockGamepad class]] ? gamepad : nil;
             GCXboxGamepad *xbox = [gamepad isKindOfClass:[GCXboxGamepad class]] ? gamepad : nil;
@@ -461,13 +460,13 @@
             
             switch (buttonID) {
                 case PVSaturnButtonUp:
-                    return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] isPressed];
+                    return DPAD_PRESSED(up);
                 case PVSaturnButtonDown:
-                    return [[dpad down] isPressed]?:[[[gamepad leftThumbstick] down] isPressed];
+                    return DPAD_PRESSED(down);
                 case PVSaturnButtonLeft:
-                    return [[dpad left] isPressed]?:[[[gamepad leftThumbstick] left] isPressed];
+                    return DPAD_PRESSED(left);
                 case PVSaturnButtonRight:
-                    return [[dpad right] isPressed]?:[[[gamepad leftThumbstick] right] isPressed];
+                    return DPAD_PRESSED(right);
                 case PVSaturnButtonA:
                     return [[gamepad buttonA] isPressed];
                 case PVSaturnButtonB:
@@ -482,32 +481,34 @@
                     return [[gamepad rightShoulder] isPressed];
                 case PVSaturnButtonL:
                     return [[gamepad leftTrigger] isPressed];
-                case PVSaturnButtonR:
-                    return [[gamepad rightTrigger] isPressed];
                 case PVSaturnButtonStart:
                 {
+                    BOOL isStart = NO;
                     if (dualSense) {
-                        return self.isStartPressed || dualSense.touchpadButton.isPressed;
+                        isStart = self.isStartPressed || dualSense.touchpadButton.isPressed;
                     } else if (dualShock) {
-                        return self.isStartPressed || dualShock.touchpadButton.isPressed;
+                        isStart =  self.isStartPressed || dualShock.touchpadButton.isPressed;
                     } else if (xbox) {
-                        return self.isStartPressed || xbox.buttonShare.isPressed;
+                        isStart =  self.isStartPressed || xbox.buttonShare.isPressed;
                     } else {
 //                        if (!gamepad.buttonHome.isBoundToSystemGesture) {
 //                            return gamepad.buttonHome.isPressed;
 //                        }
                         if (gamepad.buttonOptions) {
-                            return gamepad.buttonOptions.isPressed;
+                            isStart =  gamepad.buttonOptions.isPressed;
                         }
 
                         bool modifier1Pressed = [[gamepad leftShoulder] isPressed] && [[gamepad rightShoulder] isPressed];
                         bool modifier2Pressed = [[gamepad leftTrigger] isPressed] && [[gamepad rightTrigger] isPressed];
                         bool modifiersPressed = modifier1Pressed && modifier2Pressed;
 
-                        return self.isStartPressed || (modifiersPressed && [[gamepad buttonX] isPressed]);
+                        isStart =  self.isStartPressed || (modifiersPressed && [[gamepad buttonX] isPressed]);
                     }
-//                    }
+                    DLOG("isStart: %@", isStart ? @"Yes" : @"No");
+                    return isStart;
                 }
+                case PVSaturnButtonR:
+                    return [[gamepad rightTrigger] isPressed];
                 default:
                     break;
             }}

@@ -138,14 +138,22 @@ static void mednafen_init(MednafenGameCore* current)
     // Disable to reduce latency, at the cost of potentially increased video "juddering", with the maximum reduction in latency being about 1 video frame's time.
     // Will work best with emulated systems that are not very computationally expensive to emulate, combined with running on a relatively fast CPU.
     // Default: 1
-    BOOL video_blit_timesync = current.video_blit_timesync;
-    Mednafen::MDFNI_SetSettingB("video.blit_timesync", video_blit_timesync);
+//    BOOL video_blit_timesync = current.video_blit_timesync;
+//    Mednafen::MDFNI_SetSettingUI("video.blit_timesync", video_blit_timesync);
+//
+//    BOOL video_fs = current.video_fs;
+//    Mednafen::MDFNI_SetSettingUI("video.fs", video_fs); // Enable fullscreen mode. Default: 0
+//
+//    const char* video_opengl = current.video_opengl ? "opengl" : "default";
+//    Mednafen::MDFNI_SetSetting("video.driver", video_opengl);
+
+    // Cache cd's to memory
+    BOOL cd_image_memcache = current.cd_image_memcache;
+    Mednafen::MDFNI_SetSettingB("cd.image_memcache", cd_image_memcache);
     
-    BOOL video_fs = current.video_fs;
-    Mednafen::MDFNI_SetSettingB("video.fs", video_fs); // Enable fullscreen mode. Default: 0
-    
-    const char* video_opengl = current.video_opengl ? "opengl" : "default";
-    Mednafen::MDFNI_SetSetting("video.driver", video_opengl);
+    // MARK: Sound
+    // TODO: Read from device?
+//    Mednafen::MDFNI_SetSettingUI("sound.rate", "44100");
     
     // MARK: VirtualBoy
     
@@ -168,8 +176,8 @@ static void mednafen_init(MednafenGameCore* current)
     Mednafen::MDFNI_SetSetting("vb.3dmode", vb_sidebyside);
     
     // This setting refers to pixels before vb.xscale(fs) scaling is taken into consideration. For example, a value of "100" here will result in a separation of 300 screen pixels if vb.xscale(fs) is set to "3".
-    int seperation = [MednafenGameCore intForOption:@"FullTMEMEmulation"];
-    Mednafen::MDFNI_SetSettingUI("vb.sidebyside.separation", seperation);
+//    int seperation = current.vb_sidebyside_seperation;
+//    Mednafen::MDFNI_SetSetting("vb.sidebyside.separation", seperation);
     // Mednafen::MDFNI_SetSetting("vb.sidebyside.separation", [NSString stringWithFormat:@"%i", seperation].UTF8String);
     
     // MARK: SNES Faust settings
@@ -183,9 +191,65 @@ static void mednafen_init(MednafenGameCore* current)
     //	MDFNI_SetSetting("snes_faust.special", "nn2x");
     
     // MARK: Sega Saturn Settings
-    Mednafen::MDFNI_SetSetting("ss.region_default", "na"); // Used if region autodetection fails or is disabled.
+    // https://mednafen.github.io/documentation/ss.html
+    BOOL ss_h_overscan = current.ss_h_overscan;
+    Mednafen::MDFNI_SetSettingB("ss.h_overscan", ss_h_overscan); // Show horizontal overscan area. 1 default
+
+    const char* ss_cart_autodefault;
+    switch (current.ss_cart_autodefault) {
+        case 0:
+            ss_cart_autodefault = "none";
+            break;
+        case 1:
+            ss_cart_autodefault = "backup";
+            break;
+        case 2:
+            ss_cart_autodefault = "extram1";
+            break;
+        case 3:
+            ss_cart_autodefault = "extram4";
+            break;
+        case 4:
+            ss_cart_autodefault = "cs1ram16";
+            break;
+        default:
+            ss_cart_autodefault = "backup";
+            break;
+    }
+    Mednafen::MDFNI_SetSetting("ss.cart.auto_default", ss_cart_autodefault);
     
-    
+    const char* ss_region_default;
+    switch (current.ss_region_default) {
+        case 0:
+            ss_region_default = "jp";
+            break;
+        case 1:
+            ss_region_default = "na";
+            break;
+        case 2:
+            ss_region_default = "eu";
+            break;
+        case 3:
+            ss_region_default = "kr";
+            break;
+        case 4:
+            ss_region_default = "tw";
+            break;
+        case 5:
+            ss_region_default = "as";
+            break;
+        case 6:
+            ss_region_default = "br";
+            break;
+        case 7:
+            ss_region_default = "la";
+            break;
+        default:
+            ss_region_default = "jp";
+            break;
+    }
+    Mednafen::MDFNI_SetSetting("ss.region_default", ss_region_default);
+
     // MARK: NES Settings
     
     Mednafen::MDFNI_SetSettingUI("nes.clipsides", 1); // Clip left+right 8 pixel columns. 0 default
@@ -247,12 +311,14 @@ static void mednafen_init(MednafenGameCore* current)
     Mednafen::MDFNI_SetSetting("pcfx.nospritelimit", "1"); // PCFX: Remove 16-sprites-per-scanline hardware limit.
     Mednafen::MDFNI_SetSetting("pcfx.slstart", "4"); // PCFX: First rendered scanline 4 default
     Mednafen::MDFNI_SetSetting("pcfx.slend", "235"); // PCFX: Last rendered scanline 235 default, 239max
+    
+    // MARK: Cheats
     Mednafen::MDFNI_SetSetting("cheats", "1");       //
     
     // MARK: HUD
     // Enable FPS
 #if DEBUG
-    Mednafen::MDFNI_SetSetting("fps.autoenable", "1");
+//    Mednafen::MDFNI_SetSettingUI("fps.autoenable", 1);
 #endif
     
     //	NSString *cfgPath = [[current BIOSPath] stringByAppendingPathComponent:@"mednafen-export.cfg"];
@@ -265,7 +331,7 @@ static void mednafen_init(MednafenGameCore* current)
         
         multiTapPlayerCount = 2;
         
-        for(unsigned i = 0; i < 8; i++) {
+        for(unsigned i = 0; i < 13; i++) {
             inputBuffer[i] = (uint32_t *) calloc(9, sizeof(uint32_t));
         }
         
@@ -357,6 +423,47 @@ static void mednafen_init(MednafenGameCore* current)
         PCFXMap[PVPCFXButtonRun]        = 7;
         PCFXMap[PVPCFXButtonMode]       = 12;
         
+        // Saturn SS map
+        // static const int SSMap[]   = { 4, 5, 6, 7, 10, 8, 9, 2, 1, 0, 15, 3, 11 };
+        /* IDIISG IODevice_Gamepad_IDII =
+         {
+          IDIIS_Button("z", "Z", 10),
+          IDIIS_Button("y", "Y", 9),
+          IDIIS_Button("x", "X", 8),
+          IDIIS_Button("rs", "Right Shoulder", 12),
+
+          IDIIS_Button("up", "UP ↑", 0, "down"),
+          IDIIS_Button("down", "DOWN ↓", 1, "up"),
+          IDIIS_Button("left", "LEFT ←", 2, "right"),
+          IDIIS_Button("right", "RIGHT →", 3, "left"),
+
+          IDIIS_Button("b", "B", 6),
+          IDIIS_Button("c", "C", 7),
+          IDIIS_Button("a", "A", 5),
+          IDIIS_Button("start", "START", 4),
+
+          IDIIS_Padding<1>(),
+          IDIIS_Padding<1>(),
+          IDIIS_Padding<1>(),
+          IDIIS_Button("ls", "Left Shoulder", 11),
+         };
+         */
+        SSMap[PVSaturnButtonUp]    = 0;
+        SSMap[PVSaturnButtonDown]  = 1;
+        SSMap[PVSaturnButtonLeft]  = 2;
+        SSMap[PVSaturnButtonRight] = 3;
+        
+        SSMap[PVSaturnButtonStart] = 4;
+        
+        SSMap[PVSaturnButtonA]     = 5;
+        SSMap[PVSaturnButtonB]     = 6;
+        SSMap[PVSaturnButtonC]     = 7;
+        SSMap[PVSaturnButtonX]     = 8;
+        SSMap[PVSaturnButtonY]     = 9;
+        SSMap[PVSaturnButtonZ]     = 10;
+        
+        SSMap[PVSaturnButtonL]     = 11;
+        SSMap[PVSaturnButtonR]     = 12;
     }
     
     cheatList = [[NSMutableDictionary alloc] init];
@@ -366,7 +473,7 @@ static void mednafen_init(MednafenGameCore* current)
 }
 
 - (void)dealloc {
-    for(unsigned i = 0; i < 8; i++) {
+    for(unsigned i = 0; i < 13; i++) {
         free(inputBuffer[i]);
     }
     
@@ -728,7 +835,9 @@ static void emulation_run(BOOL skipFrame) {
     else
     {
         game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
-        game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[0]);
+        game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
+//        game->SetInput(2, "gamepad", (uint8_t *)inputBuffer[2]);
+//        game->SetInput(3, "gamepad", (uint8_t *)inputBuffer[3]);
     }
     
     if (multiDiscGame && ![path.pathExtension.lowercaseString isEqualToString:@"m3u"]) {
