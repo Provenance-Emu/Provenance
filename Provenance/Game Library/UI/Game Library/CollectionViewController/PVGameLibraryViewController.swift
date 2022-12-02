@@ -1947,9 +1947,18 @@ extension PVGameLibraryViewController: ControllerButtonPress {
             cv.scrollToItem(at:idx, at:[], animated: false)
             rect = cv.convert(cv.layoutAttributesForItem(at:idx)?.frame ?? .zero, to: collectionView)
         } else {
-            indexPath.item = max(0, min(collectionView!.numberOfItems(inSection:indexPath.section)-1, indexPath.item))
-            collectionView?.scrollToItem(at: indexPath, at: [], animated: false)
-            rect = collectionView!.layoutAttributesForItem(at: indexPath)?.frame ?? .zero
+            guard let collectionView = collectionView, collectionView.numberOfSections > 0 else {
+                _selectedIndexPath = nil
+                _selectedIndexPathView?.frame = .zero
+                return
+            }
+            let numberOfItems = collectionView.numberOfItems(inSection:indexPath.section)
+            if numberOfItems < 1 {
+                return
+            }
+            indexPath.item = max(0, min(numberOfItems-1, indexPath.item))
+            collectionView.scrollToItem(at: indexPath, at: [], animated: false)
+            rect = collectionView.layoutAttributesForItem(at: indexPath)?.frame ?? .zero
         }
 
         _selectedIndexPath = indexPath
