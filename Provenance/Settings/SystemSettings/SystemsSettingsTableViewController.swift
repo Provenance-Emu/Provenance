@@ -21,7 +21,7 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
         tableContents = systemsModels.map { systemModel in
             var rows = [Row & RowStyle]()
             rows.append(
-                NavigationRow<SystemSettingsCell>(text: "Games", detailText: .value2("\(systemModel.gameCount)"))
+                NavigationRow(text: "Games", detailText: .value2("\(systemModel.gameCount)"))
             )
 
             // CORES
@@ -29,7 +29,7 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
             if !systemModel.cores.isEmpty {
                 let coreNames = systemModel.cores.map { $0.project.name }.joined(separator: ",")
                 rows.append(
-                    NavigationRow<SystemSettingsCell>(text: "Cores", detailText: .value2(coreNames))
+                    NavigationRow(text: "Cores", detailText: .value2(coreNames))
                 )
             }
             //			} else {
@@ -45,7 +45,7 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
 
             // BIOSES
             if let bioses = systemModel.bioses, !bioses.isEmpty {
-                let biosesHeader = NavigationRow<SystemSettingsHeaderCell>(text: "BIOSES",
+                let biosesHeader = NavigationRow(text: "BIOSES",
                                                                            detailText: .none,
                                                                            icon: nil,
                                                                            customization: { cell, _ in
@@ -60,7 +60,7 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
                 bioses.forEach { bios in
                     let subtitle = "\(bios.expectedMD5.uppercased()) : \(bios.expectedSize) bytes"
 
-                    let biosRow = NavigationRow<SystemSettingsCell>(text: bios.descriptionText,
+                    let biosRow = NavigationRow(text: bios.descriptionText,
                                                                     detailText: .subtitle(subtitle),
                                                                     icon: nil,
                                                                     customization: { cell, _ in

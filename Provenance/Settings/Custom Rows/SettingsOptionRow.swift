@@ -8,46 +8,10 @@
 
 import Foundation
 
-public
-final class PVRadioOptionCell: UITableViewCell {
-    public static let identifier: String = String(describing: PVRadioOptionCell.self)
-
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.style()
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        style()
-    }
-
-    func style() {
-        let bg = UIView(frame: bounds)
-        bg.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        #if os(iOS)
-        #if !targetEnvironment(macCatalyst)
-//            switchControl.thumbTintColor = Theme.currentTheme.switchThumb
-        #endif
-        #else
-            bg.backgroundColor = UIColor.clear
-            self.textLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.white : UIColor.black
-            self.detailTextLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.lightGray : UIColor.darkGray
-        #endif
-        backgroundView = bg
-    }
-}
-
-public
-final class PVRadioOptionRow: OptionRow<PVRadioOptionCell> {
-    
-}
-
-public
-final class PVSettingsOptionRow: RadioSection {
+public final class PVSettingsOptionRow: RadioSection {
     let keyPath: ReferenceWritableKeyPath<PVSettingsModel, String>
     let _options: [String]
-    let _rows: [PVRadioOptionRow]
+    let _rows: [OptionRow<UITableViewCell>]
     var selectedValue: String { PVSettingsModel.shared[keyPath: keyPath] }
     
 //    private func didToggleSelection() -> (Row) -> Void {
@@ -73,7 +37,7 @@ final class PVSettingsOptionRow: RadioSection {
             } else {
                 selected = $0 == _selected
             }
-            return PVRadioOptionRow(text: $0, isSelected: selected, action: { row in
+            return OptionRow(text: $0, isSelected: selected, action: { row in
                 if let option = row as? OptionRowCompatible {
                     if option.isSelected {
                         var value = option.text
