@@ -51,7 +51,7 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
                                                                            customization: { cell, _ in
                                                                                #if os(iOS)
                                                                                    let bgView = UIView()
-                                                                                   bgView.backgroundColor = Theme.currentTheme.settingsCellBackground!.withAlphaComponent(0.9)
+                                                                                   bgView.backgroundColor = .systemBackground.withAlphaComponent(0.9)
                                                                                    cell.backgroundView = bgView
                                                                                #endif
                 }, action: nil)
@@ -66,7 +66,7 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
                                                                     customization: { cell, _ in
 
                                                                         #if os(iOS)
-                                                                            var backgroundColor: UIColor? = Theme.currentTheme.settingsCellBackground
+                                                                            var backgroundColor: UIColor? = .systemBackground
                                                                         #else
                                                                             var backgroundColor: UIColor? = UIColor.clear
                                                                         #endif

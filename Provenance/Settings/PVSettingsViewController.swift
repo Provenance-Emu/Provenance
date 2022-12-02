@@ -61,11 +61,6 @@ final class PVSettingsViewController: PVQuickTableViewController {
                 self.tableView.reloadData()
             })
             .disposed(by: disposeBag)
-
-        #if os(iOS)
-            navigationItem.leftBarButtonItem?.tintColor = Theme.currentTheme.barButtonItemTint
-            navigationItem.rightBarButtonItem?.tintColor = Theme.currentTheme.barButtonItemTint
-        #endif
     }
 
     override func viewWillAppear(_ animated: Bool) {

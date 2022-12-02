@@ -48,15 +48,6 @@ public extension Notification.Name {
     static let PVInterfaceDidChangeNotification = Notification.Name("kInterfaceDidChangeNotification")
 }
 
-#if os(iOS)
-    final class PVDocumentPickerViewController: UIDocumentPickerViewController {
-        override func viewDidLoad() {
-            super.viewDidLoad()
-            navigationController?.navigationBar.barStyle = Theme.currentTheme.navigationBarStyle
-        }
-    }
-#endif
-
 final class PVGameLibraryViewController: GCEventViewController, UITextFieldDelegate, UINavigationControllerDelegate, GameLaunchingViewController, GameSharingViewController, WebServerActivatorController {
     lazy var collectionViewZoom: CGFloat = CGFloat(PVSettingsModel.shared.gameLibraryScale)
 
@@ -813,7 +804,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                 //        documentMenu.delegate = self
                 //        present(documentMenu, animated: true, completion: nil)
 
-                let documentPicker = PVDocumentPickerViewController(documentTypes: extensions, in: .import)
+                let documentPicker = UIDocumentPickerViewController(documentTypes: extensions, in: .import)
                 documentPicker.allowsMultipleSelection = true
                 documentPicker.delegate = self
                 self.present(documentPicker, animated: true, completion: nil)
@@ -1718,8 +1709,9 @@ extension PVGameLibraryViewController {
     }
     
     override func traitCollectionDidChange(_: UITraitCollection?) {
-        self.collectionView?.collectionViewLayout.invalidateLayout()
-        self.collectionView?.reloadData()
+        #if os(iOS)
+            viewDidLoad()
+        #endif
     }
 
     #if os(tvOS)

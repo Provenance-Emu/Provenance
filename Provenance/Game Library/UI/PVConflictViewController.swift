@@ -69,10 +69,6 @@ final class PVConflictViewController: UITableViewController {
                 cell.textLabel?.textAlignment = .center
                 cell.accessoryType = .none
             }
-
-            #if os(iOS)
-                cell.textLabel?.textColor = Theme.currentTheme.settingsCellText
-            #endif
         }
         .disposed(by: disposeBag)
 

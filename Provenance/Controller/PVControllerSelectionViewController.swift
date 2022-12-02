@@ -34,10 +34,6 @@ final class PVControllerSelectionViewController: UITableViewController {
 
         let labelText = "Player \(indexPath.row + 1)"
 
-        #if os(iOS)
-            cell.textLabel?.textColor = Theme.currentTheme.settingsCellText
-        #endif
-
         cell.textLabel?.text = labelText
 
         var controller: GCController?

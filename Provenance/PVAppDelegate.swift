@@ -29,12 +29,8 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
     func _initUITheme() {
         #if os(iOS)
-        //        let currentTheme = PVSettingsModel.shared.theme
-        //        Theme.currentTheme = currentTheme.theme
-        DispatchQueue.main.async {
-            let darkTheme = (PVSettingsModel.shared.theme == .auto && self.window?.traitCollection.userInterfaceStyle == .dark) || PVSettingsModel.shared.theme == .dark
-            Theme.currentTheme = darkTheme ? Theme.darkTheme : Theme.lightTheme
-        }
+        let darkTheme = (PVSettingsModel.shared.theme == .auto && self.window?.traitCollection.userInterfaceStyle == .dark) || PVSettingsModel.shared.theme == .dark
+        Theme.currentTheme = darkTheme ? Theme.darkTheme : Theme.lightTheme
         #elseif os(tvOS)
         if PVSettingsModel.shared.debugOptions.tvOSThemes {
             DispatchQueue.main.async {
@@ -54,11 +50,12 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         // Set root view controller and make windows visible
         let window = UIWindow.init(frame: UIScreen.main.bounds)
         self.window = window
-        let darkTheme = (PVSettingsModel.shared.theme == .auto && window.traitCollection.userInterfaceStyle == .dark) || PVSettingsModel.shared.theme == .dark
-        window.overrideUserInterfaceStyle = darkTheme ? .dark : .light
 
         #if os(tvOS)
         window.tintColor = .provenanceBlue
+        #else
+        let darkTheme = (PVSettingsModel.shared.theme == .auto && window.traitCollection.userInterfaceStyle == .dark) || PVSettingsModel.shared.theme == .dark
+        window.overrideUserInterfaceStyle = darkTheme ? .dark : .light
         #endif
 
         if #available(iOS 14, tvOS 14, *),
