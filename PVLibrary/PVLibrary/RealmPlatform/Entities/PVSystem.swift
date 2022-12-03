@@ -46,6 +46,8 @@ public final class PVSystem: Object, Identifiable, SystemProtocol {
     public dynamic var portableSystem: Bool = false
 
     public dynamic var supportsRumble: Bool = false
+    public dynamic var supported: Bool = true
+
     public dynamic var _screenType: String = ScreenType.unknown.rawValue
 
     public var options: SystemOptions {
@@ -254,6 +256,7 @@ extension System: RealmRepresentable {
             object.portableSystem = portableSystem
             object.usesCDs = usesCDs
             object.supportsRumble = supportsRumble
+            object.supported = supported
             object.headerByteSize = headerByteSize
         })
     }

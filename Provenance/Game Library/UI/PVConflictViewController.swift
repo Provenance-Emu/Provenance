@@ -108,10 +108,11 @@ final class PVConflictViewController: UITableViewController {
                 }
             })
             .bind(onNext: { conflict, indexPath in
+                let showsUnsupportedSystems = PVSettingsModel.shared.debugOptions.unsupportedCores
                 let alertController = UIAlertController(title: "Choose a System", message: nil, preferredStyle: .actionSheet)
                 alertController.popoverPresentationController?.sourceView = self.view
                 alertController.popoverPresentationController?.sourceRect = self.tableView.rectForRow(at: indexPath)
-                conflict.candidates.forEach { system in
+                conflict.candidates.filter{ $0.supported || showsUnsupportedSystems }.forEach { system in
                     alertController.addAction(.init(title: system.name, style: .default, handler: { _ in
                         self.conflictsController.resolveConflicts(withSolutions: [conflict.path: system])
                     }))

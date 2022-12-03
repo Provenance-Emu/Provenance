@@ -13,6 +13,8 @@
 		<string>PSP</string>
 		<key>PVReleaseYear</key>
 		<string>2004</string>
+		<key>PVSupported</key>
+		<false/>
 		<key>PVBit</key>
 		<string>32</string>
 		<key>PVSystemIdentifier</key>
@@ -182,6 +184,8 @@
 		<string>2001</string>
 		<key>PVScreenType</key>
 		<string>CRT</string>
+		<key>PVSupported</key>
+		<false/>
 		<key>PVBit</key>
 		<string>128</string>
 		<key>PVSystemIdentifier</key>
@@ -329,6 +333,8 @@
 		<string>CRT</string>
 		<key>PVReleaseYear</key>
 		<string>2006</string>
+		<key>PVSupported</key>
+		<false/>
 		<key>PVBit</key>
 		<string>64</string>
 		<key>PVSystemIdentifier</key>
@@ -821,6 +827,8 @@
 		<string>CRT</string>
 		<key>PVSystemShortNameAlt</key>
 		<string>PS2</string>
+		<key>PVSupported</key>
+		<false/>
 		<key>PVReleaseYear</key>
 		<string>2000</string>
 		<key>PVBit</key>
@@ -2404,6 +2412,8 @@
 		<string>DC</string>
 		<key>PVScreenType</key>
 		<string>CRT</string>
+		<key>PVSupported</key>
+		<false/>
 		<key>PVReleaseYear</key>
 		<string>1999</string>
 		<key>PVBit</key>
@@ -2861,6 +2871,8 @@
 		<string>ColorLCD</string>
 		<key>PVPortable</key>
 		<true/>
+		<key>PVSupported</key>
+		<false/>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.ds</string>
 		<key>PVDatabaseID</key>
@@ -3757,6 +3769,8 @@
 		<string>Jaguar CD</string>
 		<key>PVReleaseYear</key>
 		<string>1993</string>
+		<key>PVSupported</key>
+		<false/>
 		<key>PVScreenType</key>
 		<string>CRT</string>
 		<key>PVBit</key>
@@ -4178,6 +4192,8 @@
 		<false/>
 		<key>PVManufacturer</key>
 		<string>Atari</string>
+		<key>PVSupported</key>
+		<false/>
 		<key>PVSystemName</key>
 		<string>Atari ST</string>
 		<key>PVSystemShortName</key>
@@ -4290,6 +4306,8 @@
 		<string>CRT</string>
 		<key>PVBit</key>
 		<string>32</string>
+		<key>PVSupported</key>
+		<false/>
 		<key>PVPortable</key>
 		<false/>
 		<key>PVSystemIdentifier</key>
@@ -4377,6 +4395,8 @@
 		<string>CRT</string>
 		<key>PVBit</key>
 		<string>8</string>
+		<key>PVSupported</key>
+		<false/>
 		<key>PVPortable</key>
 		<false/>
 		<key>PVSystemIdentifier</key>
@@ -4571,6 +4591,8 @@
 		<string>1983</string>
 		<key>PVBit</key>
 		<string>16</string>
+		<key>PVSupported</key>
+		<false/>
 		<key>PVPortable</key>
 		<false/>
 		<key>PVSystemIdentifier</key>
@@ -4734,6 +4756,8 @@
 		<string>CRT</string>
 		<key>PVSystemShortName</key>
 		<string>MSX2</string>
+		<key>PVSupported</key>
+		<false/>
 		<key>PVReleaseYear</key>
 		<string>1983</string>
 		<key>PVBit</key>
@@ -4935,6 +4959,8 @@
 		<string>Macintosh</string>
 		<key>PVSystemShortName</key>
 		<string>Mac</string>
+		<key>PVSupported</key>
+		<false/>
 		<key>PVScreenType</key>
 		<string>CRT</string>
 		<key>PVReleaseYear</key>
@@ -5321,21 +5347,6 @@
 	<dict>
 		<key>PVRequiresBIOS</key>
 		<false/>
-		<key>PVBIOSNames</key>
-		<array>
-			<dict>
-				<key>Description</key>
-				<string>ColecoVision BIOS</string>
-				<key>MD5</key>
-				<string>2c66f5911e5b42b8ebe113403548eee7</string>
-				<key>Name</key>
-				<string>colecovision.rom</string>
-				<key>Size</key>
-				<integer>8192</integer>
-				<key>Optional</key>
-				<false/>
-			</dict>
-		</array>
 		<key>PVManufacturer</key>
 		<string>Enterprise</string>
 		<key>PVSystemName</key>
@@ -5356,9 +5367,14 @@
 		<string>-1</string>
 		<key>PVSupportedExtensions</key>
 		<array>
-			<string>rom</string>
-			<string>com</string>
+			<string>img</string>
+			<string>dsk</string>
+			<string>tap</string>
+			<string>dtf</string>
+			<string>128</string>
+			<string>trn</string>
 			<string>bas</string>
+			<string>cdt</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
@@ -5586,9 +5602,9 @@
 		<string>13</string>
 		<key>PVSupportedExtensions</key>
 		<array>
-			<string>col</string>
-			<string>cv</string>
+			<string>int</string>
 			<string>rom</string>
+			<string>bin</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
