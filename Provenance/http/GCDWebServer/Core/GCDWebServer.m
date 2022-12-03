@@ -178,7 +178,7 @@ static void _ExecuteMainThreadRunLoopSources() {
 - (instancetype)init {
   if ((self = [super init])) {
       NSString *queueName = NSStringFromClass([self class]);
-      dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_BACKGROUND, 0);
+      dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, 0);
 
     _syncQueue = dispatch_queue_create(queueName.UTF8String, queueAttributes);
     _sourceGroup = dispatch_group_create();
