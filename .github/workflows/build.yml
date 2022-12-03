@@ -37,7 +37,7 @@ jobs:
           xcode-version: ${{ matrix.version }}
           # xcode-select-path: /Applications/Xcode_${{ matrix.version }}.app/Contents/Developer
 
-   - name: Build Provenance
+      - name: Build Provenance
         run: |
           xcodebuild -workspace Provenance.xcworkspace -scheme Provenance-Release -sdk iphoneos archive -archivePath ./archive CODE_SIGNING_REQUIRED=NO AD_HOC_CODE_SIGNING_ALLOWED=YES CODE_SIGNING_ALLOWED=NO DEVELOPMENT_TEAM=XYZ0123456 ORG_IDENTIFIER=org.provenance-emu | xcpretty && exit ${PIPESTATUS[0]}
 
