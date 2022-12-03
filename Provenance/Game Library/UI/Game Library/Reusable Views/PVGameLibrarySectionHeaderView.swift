@@ -59,7 +59,7 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
             titleLabel.font = UIFont.preferredFont(forTextStyle: .title1)
 
         // add in separator for tvOS too, clean up #if statements later and make this generic
-            let bottomSeparator = UIView(frame: CGRect(x: -100.0, y: bounds.size.height, width: bounds.size.width + 200.0, height: 1.0))
+            let bottomSeparator = UIView(frame: CGRect(x: -100.0, y: bounds.size.height - 1, width: bounds.size.width + 200.0, height: 1.0))
             bottomSeparator.backgroundColor = UIColor(white: 1.0, alpha: 0.2)
             bottomSeparator.autoresizingMask = .flexibleWidth
 
