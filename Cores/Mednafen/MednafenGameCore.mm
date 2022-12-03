@@ -448,19 +448,19 @@ static void mednafen_init(MednafenGameCore* current)
           IDIIS_Button("ls", "Left Shoulder", 11),
          };
          */
-        SSMap[PVSaturnButtonUp]    = 0;
-        SSMap[PVSaturnButtonDown]  = 1;
-        SSMap[PVSaturnButtonLeft]  = 2;
-        SSMap[PVSaturnButtonRight] = 3;
+        SSMap[PVSaturnButtonUp]    = 4;
+        SSMap[PVSaturnButtonDown]  = 5;
+        SSMap[PVSaturnButtonLeft]  = 6;
+        SSMap[PVSaturnButtonRight] = 7;
         
-        SSMap[PVSaturnButtonStart] = 4;
+        SSMap[PVSaturnButtonStart] = 3;
         
-        SSMap[PVSaturnButtonA]     = 5;
-        SSMap[PVSaturnButtonB]     = 6;
-        SSMap[PVSaturnButtonC]     = 7;
-        SSMap[PVSaturnButtonX]     = 8;
-        SSMap[PVSaturnButtonY]     = 9;
-        SSMap[PVSaturnButtonZ]     = 10;
+        SSMap[PVSaturnButtonA]     = 10;
+        SSMap[PVSaturnButtonB]     = 8;
+        SSMap[PVSaturnButtonC]     = 9;
+        SSMap[PVSaturnButtonX]     = 2;
+        SSMap[PVSaturnButtonY]     = 1;
+        SSMap[PVSaturnButtonZ]     = 0;
         
         SSMap[PVSaturnButtonL]     = 11;
         SSMap[PVSaturnButtonR]     = 12;
