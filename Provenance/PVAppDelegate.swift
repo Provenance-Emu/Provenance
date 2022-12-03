@@ -9,6 +9,7 @@ import CocoaLumberjackSwift
 import CoreSpotlight
 import PVLibrary
 import PVSupport
+import PVRuntime
 import RealmSwift
 import RxSwift
 #if !targetEnvironment(macCatalyst) && !os(macOS) // && canImport(SteamController)
@@ -98,6 +99,22 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         _initLogging()
         _initAppCenter()
         setDefaultsFromSettingsBundle()
+        
+        PVHelperFactory.register { principalClass, systemIdentifier, coreIdentifier -> OEGameCoreHelper? in
+            guard let coreClass = NSClassFromString(principalClass) as? PVEmulatorCore.Type else {
+                ELOG("Couldn't get class for <\(principalClass)>")
+                return nil
+            }
+            
+            let emuCore = coreClass.init()
+
+            DLOG("Created core : <\(emuCore.debugDescription)>")
+
+            emuCore.systemIdentifier = systemIdentifier
+            emuCore.coreIdentifier = coreIdentifier
+            
+            return PVEmulatorCoreHelper(emuCore)
+        }
 
 		#if !targetEnvironment(macCatalyst) && !os(macOS)
         PVEmulatorConfiguration.initICloud()

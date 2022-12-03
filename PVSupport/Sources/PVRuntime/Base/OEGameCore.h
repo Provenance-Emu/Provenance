@@ -198,11 +198,11 @@ OE_EXPORTED_CLASS
 @property(nonatomic, readonly) NSUInteger                     rewindBufferSeconds;
 @property(nonatomic, readonly) OEDiffQueue                   *rewindQueue;
 
-@property(nonatomic, copy)     NSString                      *systemIdentifier;
-@property(nonatomic, copy)     NSString                      *systemRegion;
-@property(nonatomic, copy)     NSString                      *ROMMD5;
-@property(nonatomic, copy)     NSString                      *ROMHeader;
-@property(nonatomic, copy)     NSString                      *ROMSerial;
+@property(nonatomic, copy, nullable) NSString                *systemIdentifier;
+@property(nonatomic, copy, nullable) NSString                *systemRegion;
+@property(nonatomic, copy, nullable) NSString                *ROMMD5;
+@property(nonatomic, copy, nullable) NSString                *ROMHeader;
+@property(nonatomic, copy, nullable) NSString                *ROMSerial;
 
 /** The current value for each display mode preference key. Used to fetch the
  *  initial display mode state after the core is initialized.

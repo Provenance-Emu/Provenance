@@ -129,7 +129,9 @@ extension PVEmulatorViewController {
                         actionableCore.selected(action: coreAction)
                         self.core.setPauseEmulation(false)
                         if coreAction.requiresReset {
-                            self.core.resetEmulation()
+                            self.core.resetEmulation {
+                                
+                            }
                         }
                         self.isShowingMenu = false
                         self.enableControllerInput(false)
@@ -162,7 +164,9 @@ extension PVEmulatorViewController {
         actionSheet.addAction(UIAlertAction(title: "Reset", style: .default, handler: { action in
             let completion = {
                 self.core.setPauseEmulation(false)
-                self.core.resetEmulation()
+                self.core.resetEmulation {
+                    
+                }
                 self.isShowingMenu = false
                 self.enableControllerInput(false)
             }

@@ -140,9 +140,12 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
 @property (nonatomic, readonly, nullable) const void * videoBuffer;
 
 - (void)startEmulation NS_REQUIRES_SUPER;
+- (void)startEmulationWithCompletionHandler:(void(^ _Nullable)(void))completionHandler;
 - (void)resetEmulation;
+- (void)resetEmulationWithCompletionHandler:(void(^ _Nullable)(void))completionHandler;
 - (void)setPauseEmulation:(BOOL)flag NS_REQUIRES_SUPER;
 - (void)stopEmulation NS_REQUIRES_SUPER;
+- (void)stopEmulationWithCompletionHandler:(void(^ _Nullable)(void))completionHandler;
 - (void)executeFrame;
 - (BOOL)loadFileAtPath:(NSString * _Nonnull)path
                  error:(NSError * __nullable * __nullable)error;

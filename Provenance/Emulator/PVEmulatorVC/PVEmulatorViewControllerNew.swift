@@ -36,24 +36,17 @@ func uncaughtExceptionHandler(exception _: NSException?) {
 #endif
 
 final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelegate, PVSaveStatesViewControllerDelegate {
-    let core: PVEmulatorCore
+    let core: OEGameCoreHelper
     let game: PVGame
 
     var batterySavesPath: URL { return PVEmulatorConfiguration.batterySavesPath(forGame: game) }
     var BIOSPath: URL { return PVEmulatorConfiguration.biosPath(forGame: game) }
     var menuButton: MenuButton?
     
-	let use_metal: Bool = PVSettingsModel.shared.debugOptions.useMetal
-    private(set) lazy var gpuViewController: PVGPUViewController = use_metal ? PVMetalViewController(emulatorCore: core) : PVGLViewController(emulatorCore: core)
+    private(set) lazy var gpuViewController: UIViewController = core.viewController as! UIViewController
     private(set) lazy var controllerViewController: (UIViewController & StartSelectDelegate)? = {
-        let controller = PVCoreFactory.controllerViewController(forSystem: game.system, core: core)
+        let controller = PVCoreFactory.controllerViewController(forSystem: game.system, core: core.responderClient as! ResponderClient)
         return controller
-    }()
-    
-    var audioInited: Bool = false
-    private(set) lazy var gameAudio: OEGameAudio = {
-        audioInited = true
-        return OEGameAudio(core: core)
     }()
 
     var fpsTimer: Timer?
@@ -61,28 +54,27 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     var secondaryScreen: UIScreen?
     var secondaryWindow: UIWindow?
     var menuGestureRecognizer: UITapGestureRecognizer?
+    var isEmulationPaused = true
 
     var isShowingMenu: Bool = false {
         willSet {
             if newValue == true {
-                gpuViewController.isPaused = true
+                core.setPauseEmulation(true)
             }
         }
         didSet {
             if isShowingMenu == false {
-                gpuViewController.isPaused = false
+                core.setPauseEmulation(false)
             }
         }
     }
 
     let minimumPlayTimeToMakeAutosave: Double = 60
 
-    required init(game: PVGame, core: PVEmulatorCore) {
+    required init(game: PVGame, core: OEGameCoreHelper) {
         self.core = core
         self.game = game
 
-        core.screenType = game.system.screenType.rawValue
-        
         super.init(nibName: nil, bundle: nil)
 
         staticSelf = self
@@ -91,27 +83,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             NSSetUncaughtExceptionHandler(uncaughtExceptionHandler)
         } else {
             NSSetUncaughtExceptionHandler(nil)
-        }
-
-        // Add KVO watcher for isRunning state so we can update play time
-        core.addObserver(self, forKeyPath: "isRunning", options: .new, context: nil)
-    }
-
-    override func observeValue(forKeyPath keyPath: String?, of _: Any?, change _: [NSKeyValueChangeKey: Any]?, context _: UnsafeMutableRawPointer?) {
-        if keyPath == "isRunning" {
-            #if os(tvOS)
-            PVControllerManager.shared.setSteamControllersMode(core.isRunning ? .gameController : .keyboardAndMouse)
-            #endif
-            if core.isRunning {
-                if gameStartTime != nil {
-                    ELOG("Didn't expect to get a KVO update of isRunning to true while we still have an unflushed gameStartTime variable")
-                }
-                gameStartTime = Date()
-            } else {
-                DispatchQueue.main.async { [weak self] in
-                    self?.updatePlayedDuration()
-                }
-            }
         }
     }
 
@@ -122,13 +93,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     deinit {
         // These need to be first or mutli-threaded cores can cause crashes on close
         NotificationCenter.default.removeObserver(self)
-        core.removeObserver(self, forKeyPath: "isRunning")
 
-        core.stopEmulation()
-        // Leave emulation loop first
-        if audioInited {
-            gameAudio.stop()
+        core.stopEmulation {
+            ILOG("Core stopped")
         }
+
         NSSetUncaughtExceptionHandler(nil)
         staticSelf = nil
         gpuViewController.willMove(toParent: nil)
@@ -158,7 +127,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     }
 
     private func initCore() {
-        core.audioDelegate = self
         core.saveStatesPath = saveStatePath.path
         core.batterySavesPath = batterySavesPath.path
         core.biosPath = BIOSPath.path
@@ -224,7 +192,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 //            let white = [NSAttributedString.Key.foregroundColor: UIColor.white]
 
             let coreSpeed = self.core.renderFPS/self.core.frameInterval * 100
-            let drawTime =  self.gpuViewController.timeSinceLastDraw * 1000
+            let drawTime =  (self.gpuViewController as! OEGameCoreView).timeSinceLastDraw * 1000
             let fps = 1000 / drawTime
             let mem = self.memoryUsage()
 
@@ -387,9 +355,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
         convertOldSaveStatesToNewIfNeeded()
 
-        gameAudio.volume = PVSettingsModel.shared.volume
-        gameAudio.outputDeviceID = 0
-        gameAudio.start()
+        core.setVolume(PVSettingsModel.shared.volume)
         
         core.startEmulation {
             ILOG("Started emulating")
@@ -549,7 +515,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
                 }
             }
         }
-        gameAudio.pause()
         showMenu(self)
     }
 
@@ -558,7 +523,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             core.setPauseEmulation(false)
         }
         core.setPauseEmulation(true)
-        gameAudio.start()
     }
 
     func enableControllerInput(_ enabled: Bool) {
@@ -606,9 +570,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
     @objc func updateFPSLabel() {
         #if DEBUG
-            print("FPS: \(gpuViewController.framesPerSecond)")
+            print("FPS: \((gpuViewController as! OEGameCoreView).framesPerSecond)")
         #endif
-        fpsLabel.text = String(format: "%2.02f", core.emulationFPS)
+        // FIXME(SGC)
+        // fpsLabel.text = String(format: "%2.02f", core.emulationFPS)
     }
 
     func captureScreenshot() -> UIImage? {
@@ -662,15 +627,17 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         let speeds = ["Slow (20%)", "Normal (100%)", "Fast (500%)"]
         speeds.enumerated().forEach { idx, title in
             let action = UIAlertAction(title: title, style: .default, handler: { (_: UIAlertAction) -> Void in
-                self.core.gameSpeed = GameSpeed(rawValue: idx) ?? .normal
+                // FIXME(SGC)
+                //self.core.gameSpeed = GameSpeed(rawValue: idx) ?? .normal
                 self.core.setPauseEmulation(false)
                 self.isShowingMenu = false
                 self.enableControllerInput(false)
             })
             actionSheet.addAction(action)
-            if idx == self.core.gameSpeed.rawValue {
-                actionSheet.preferredAction = action
-            }
+            // FIXME(SGC)
+//            if idx == self.core.gameSpeed.rawValue {
+//                actionSheet.preferredAction = action
+//            }
         }
         let action = UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: { (_: UIAlertAction) -> Void in
             self.core.setPauseEmulation(false)
@@ -730,7 +697,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 		// Leave emulation loop first
         fpsTimer?.invalidate()
         fpsTimer = nil
-        gameAudio.stop()
 
 		self.willMove(toParent: nil)
 		dismiss(animated: true, completion: completion)
@@ -801,4 +767,23 @@ extension NSNumber {
     private convenience init(touchType: UITouch.TouchType) {
         self.init(integerLiteral: touchType.rawValue)
     }
+}
+
+extension PVEmulatorViewController: OEGameCoreHelperRunStateDelegate {
+    func helper(_ helper: OEGameCoreHelper, didChangeState state: RunState) {
+#if os(tvOS)
+        PVControllerManager.shared.setSteamControllersMode(state == .running ? .gameController : .keyboardAndMouse)
+#endif
+        switch state {
+        case .running:
+            gameStartTime = Date()
+            isEmulationPaused = false
+        case .paused, .stopped:
+            isEmulationPaused = true
+            DispatchQueue.main.async { [weak self] in
+                self?.updatePlayedDuration()
+            }
+        }
+    }
+    
 }

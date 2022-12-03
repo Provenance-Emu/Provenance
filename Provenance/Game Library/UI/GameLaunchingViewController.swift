@@ -559,7 +559,7 @@ extension GameLaunchingViewController where Self: UIViewController {
     }
 
     private func presentEMU(withCore core: PVCore, forGame game: PVGame, fromSaveState saveState: PVSaveState? = nil) {
-        guard let coreInstance = core.createInstance(forSystem: game.system) else {
+        guard let coreInstance = core.createGameCoreHelper(forSystem: game.system) else {
             displayAndLogError(withTitle: "Cannot open game", message: "Failed to create instance of core '\(core.projectName)'.")
             ELOG("Failed to init core instance")
             return
@@ -585,7 +585,8 @@ extension GameLaunchingViewController where Self: UIViewController {
 
         present(emulatorViewController, animated: true) { () -> Void in
             
-            emulatorViewController.gpuViewController.screenType = game.system.screenType.rawValue
+            // FIXME(SGC)
+            // emulatorViewController.gpuViewController.screenType = game.system.screenType.rawValue
             
             // Open the save state after a bootup delay if the user selected one
             // Use a timer loop on ios 10+ to check if the emulator has started running
@@ -596,7 +597,7 @@ extension GameLaunchingViewController where Self: UIViewController {
 						timer.invalidate()
 						return
 					}
-                    if !emulatorViewController.core.isEmulationPaused {
+                    if !emulatorViewController.isEmulationPaused {
                         timer.invalidate()
                         self.openSaveState(saveState)
                         emulatorViewController.gpuViewController.view.isHidden = false
@@ -764,7 +765,7 @@ extension GameLaunchingViewController where Self: UIViewController {
             }
 
             gameVC.core.setPauseEmulation(true)
-            gameVC.core.loadStateFromFile(atPath: saveState.file.url.path) { success, maybeError in
+            gameVC.core.loadStateFromFile(at: saveState.file.url) { success, maybeError in
                 guard success else {
                     let description = maybeError?.localizedDescription ?? "No reason given"
                     let reason = (maybeError as NSError?)?.localizedFailureReason

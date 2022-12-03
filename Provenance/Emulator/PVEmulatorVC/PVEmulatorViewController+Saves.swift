@@ -126,7 +126,7 @@ extension PVEmulatorViewController {
             }
         }
 
-        core.saveStateToFile(atPath: saveURL.path) { result, error in
+        core.saveStateToFile(at: saveURL) { result, error in
             guard result else {
                 completion(.error(.coreSaveError(error)))
                 return
@@ -199,7 +199,7 @@ extension PVEmulatorViewController {
                 state.lastOpened = Date()
             }
 
-            self.core.loadStateFromFile(atPath: state.file.url.path) { success, error in
+            self.core.loadStateFromFile(at: state.file.url) { success, error in
                 let completion = {
                     self.core.setPauseEmulation(false)
                     self.isShowingMenu = false

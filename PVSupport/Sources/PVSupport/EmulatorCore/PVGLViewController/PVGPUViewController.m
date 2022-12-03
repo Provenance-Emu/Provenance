@@ -8,6 +8,11 @@
 
 #import "PVGPUViewController.h"
 #import "DebugUtils.h"
+#import <PVRuntime/PVRuntime.h>
+
+@interface PVGPUViewController(Foo)<OEGameCoreView>
+
+@end
 
 @interface PVGPUViewController ()
 

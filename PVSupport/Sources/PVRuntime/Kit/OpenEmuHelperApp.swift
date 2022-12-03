@@ -26,6 +26,7 @@ import AudioToolbox
 import QuartzCore
 import Foundation
 import OpenEmuShaders
+import GameController
 import Metal
 @_implementationOnly import os.log
 
@@ -35,9 +36,8 @@ extension OSLog {
 }
 
 @objc public class OpenEmuHelperApp: NSObject {
-    @objc public var gameCoreOwner: OEGameCoreOwner!
-    @objc public private(set) var gameCore: OEGameCore!
-    @objc public private(set) var gameSystemResponderClientProtocol: Protocol!
+    public var gameCoreOwner: OEGameCoreOwner!
+    public private(set) var gameCore: OEGameCore
     
     // MARK: - State
     // swiftlint:disable identifier_name
@@ -85,8 +85,8 @@ extension OSLog {
     var frameRate   = CFTimeInterval()
     var lastLog     = CFTimeInterval()
     
-    @objc public override init() {
-        super.init()
+    public init(_ core: OEGameCore) {
+        self.gameCore = core
     }
     
     required init?(coder: NSCoder) {
@@ -96,8 +96,6 @@ extension OSLog {
     // MARK: -
     
     private func setupGameCoreAudioAndVideo() {
-        guard let gameCore = gameCore else { fatalError("Expected gameCore to be set") }
-        
         // 1. Audio
         _gameAudio = GameAudio(withCore: gameCore)
         _gameAudio.volume = 1.0
@@ -249,8 +247,6 @@ extension OSLog {
         _shader = info.shaderURL
         _shaderParameters = info.shaderParameters
 
-        gameCore = info.gameCore
-        
         gameCore.owner          = _gameController
         gameCore.delegate       = self
         gameCore.renderDelegate = self
@@ -268,7 +264,6 @@ extension OSLog {
         guard FileManager.default.isReadableFile(atPath: aPath)
         else {
             os_log(.error, log: .helper, "Unable to access file at path %{public}@", aPath)
-            gameCore = nil
             
             throw NSError(domain: OEGameCoreErrorDomain,
                           code: OEGameCoreErrorCodes.couldNotLoadROMError.rawValue,
@@ -290,7 +285,6 @@ extension OSLog {
             loadedRom = true
         } catch {
             os_log(.debug, log: .helper, "Failed to load ROM.")
-            gameCore = nil
             
             throw NSError(domain: OEGameCoreErrorDomain,
                           code: OEGameCoreErrorCodes.couldNotLoadROMError.rawValue,
@@ -311,11 +305,85 @@ extension OSLog {
         
         gameCoreOwner.setScreenSize(newScreenSize, aspectSize: newAspectSize)
     }
+    
+    // MARK: - OEGameCoreHelper
+    
+    var _romName: String? = nil
+    var _saveStatesPath: String? = nil
+    var _batterySavesPath: String? = nil
+    var _coreIdentifier: String? = nil
+    var _screenType: String? = nil
+    
+    public weak var runStateDelegate: OEGameCoreHelperRunStateDelegate?
 }
 
 // MARK: - OEGameCoreHelper methods
 
-@objc extension OpenEmuHelperApp: OEGameCoreHelper {
+extension OpenEmuHelperApp: OEGameCoreHelper {
+    // TODO: renderFPS
+    public var renderFPS: Double { 0 }
+    public var frameInterval: Double { gameCore.frameInterval }
+    
+    public var controller1: GCController? { get { nil } set { } }
+    public var controller2: GCController? { get { nil } set { } }
+    public var controller3: GCController? { get { nil } set { } }
+    public var controller4: GCController? { get { nil } set { } }
+    
+    public var romName: String? {
+        get { _romName }
+        set { _romName = newValue }
+    }
+    
+    public var saveStatesPath: String? {
+        get { _saveStatesPath }
+        set { _saveStatesPath = newValue }
+    }
+    
+    public var batterySavesPath: String? {
+        get { _batterySavesPath }
+        set { _batterySavesPath = newValue }
+    }
+    
+    // TODO: Add to OEGameCore
+    public var biosPath: String? {
+        get { nil }
+        set {  }
+    }
+    
+    public var systemIdentifier: String? {
+        get { gameCore.systemIdentifier }
+        set { gameCore.systemIdentifier = newValue }
+    }
+    
+    public var coreIdentifier: String? {
+        get { _coreIdentifier }
+        set { _coreIdentifier = newValue }
+    }
+    
+    public var romMD5: String? {
+        get { gameCore.rommd5 }
+        set { gameCore.rommd5 = newValue }
+    }
+    
+    public var romSerial: String? {
+        get { gameCore.romSerial }
+        set { gameCore.romSerial = newValue }
+    }
+    
+    public var screenType: String? {
+        get { _screenType }
+        set { _screenType = newValue }
+    }
+    
+    // TODO: Add to OEGameCore
+    public var supportsSaveStates: Bool {
+        false
+    }
+    
+    public var responderClient: AnyObject? { gameCore }
+    public var viewController: AnyObject? { nil }
+    
+    public var features: AnyObject? { nil }
     
     public func setVolume(_ volume: Float) {
         gameCore.perform {
@@ -326,6 +394,11 @@ extension OSLog {
     public func setPauseEmulation(_ paused: Bool) {
         gameCore.perform {
             self.gameCore.setPauseEmulation(paused)
+            if paused {
+                self.runStateDelegate?.helper(self, didChangeState: .paused)
+            } else {
+                self.runStateDelegate?.helper(self, didChangeState: .running)
+            }
         }
     }
     
@@ -408,6 +481,10 @@ extension OSLog {
         _filterChain.setValue(value, forParameterName: key)
     }
     
+    public func loadFile(atPath path: String) throws {
+        
+    }
+    
     public func setupEmulation(completionHandler handler: @escaping (_ screenSize: OEIntSize, _ aspectSize: OEIntSize) -> Void) {
         gameCore.setupEmulation {
             self.setupGameCoreAudioAndVideo()
@@ -418,6 +495,7 @@ extension OSLog {
     
     public func startEmulation(completionHandler handler: @escaping () -> Void) {
         gameCore.startEmulation(completionHandler: handler)
+        self.runStateDelegate?.helper(self, didChangeState: .running)
     }
     
     public func resetEmulation(completionHandler handler: @escaping () -> Void) {
@@ -425,18 +503,16 @@ extension OSLog {
     }
     
     public func stopEmulation(completionHandler handler: @escaping () -> Void) {
-        guard let gameCore = gameCore else { return }
-        self.gameCore = nil
-        
         gameCore.stopEmulation {
             self._gameAudio.stopAudio()
-            gameCore.renderDelegate = nil
-            gameCore.audioDelegate = nil
+            self.gameCore.renderDelegate = nil
+            self.gameCore.audioDelegate = nil
             self.gameCoreOwner = nil
             self._gameAudio = nil
             
             handler()
         }
+        self.runStateDelegate?.helper(self, didChangeState: .stopped)
     }
     
     public func saveStateToFile(at fileURL: URL, completionHandler block: @escaping (Bool, Error?) -> Void) {
@@ -502,7 +578,7 @@ extension OSLog {
     }
 }
 
-@objc extension OpenEmuHelperApp: OERenderDelegate {
+extension OpenEmuHelperApp: OERenderDelegate {
     public func presentDoubleBufferedFBO() {
         _openGLGameRenderer?.presentDoubleBufferedFBO()
     }
@@ -592,7 +668,7 @@ extension OSLog {
 
 // MARK: - OEAudioDelegate
 
-@objc extension OpenEmuHelperApp: OEAudioDelegate {
+extension OpenEmuHelperApp: OEAudioDelegate {
     public func audioSampleRateDidChange() {
         gameCore.perform {
             self._gameAudio.audioSampleRateDidChange()
@@ -612,7 +688,7 @@ extension OSLog {
     }
 }
 
-@objc extension OpenEmuHelperApp: OEGameCoreDelegate {
+extension OpenEmuHelperApp: OEGameCoreDelegate {
     public func gameCoreDidFinishFrameRefreshThread(_ gameCore: OEGameCore) {
         os_log(.debug, log: .helper, "Finishing separate thread, stopping")
         CFRunLoopStop(CFRunLoopGetCurrent())
@@ -722,7 +798,7 @@ extension OSLog {
     }
 }
 
-@objc extension OpenEmuHelperApp {
+extension OpenEmuHelperApp {
     public func saveState(_ sender: Any) {
         gameCoreOwner.saveState()
     }

@@ -2,7 +2,7 @@
 
 extension PVEmulatorViewController {
     func audioSampleRateDidChange() {
-        gameAudio.stop()
-        gameAudio.start()
+        //gameAudio.stop()
+        //gameAudio.start()
     }
 }

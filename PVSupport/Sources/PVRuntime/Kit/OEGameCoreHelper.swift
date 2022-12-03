@@ -24,10 +24,24 @@
 
 import Foundation
 import AudioToolbox
+import GameController
 
-@objc public enum OEGameCoreEffectsMode: UInt, RawRepresentable {
+public enum OEGameCoreEffectsMode {
     case reflectPaused
     case displayAlways
+}
+
+public enum RunState {
+    case running, paused, stopped
+}
+
+public protocol OEGameCoreHelperRunStateDelegate: AnyObject {
+    func helper(_ helper: OEGameCoreHelper, didChangeState state: RunState)
+}
+
+@objc public protocol OEGameCoreView: AnyObject {
+    var timeSinceLastDraw: TimeInterval { get }
+    var framesPerSecond: Int { get }
 }
 
 /// A protocol that defines the behaviour required to control an emulator core.
@@ -35,7 +49,32 @@ import AudioToolbox
 /// A host application obtains an instance of ``OEGameCoreHelper`` in order
 /// to communicate with the core, which may be running in another thread or
 /// a remote process.
-@objc(OEGameCoreHelper) public protocol OEGameCoreHelper: NSObjectProtocol {
+public protocol OEGameCoreHelper: AnyObject, CustomStringConvertible {
+    // MARK: - Core Properties
+    
+    var renderFPS: Double { get }
+    var frameInterval: Double { get }
+    var controller1: GCController? { get set }
+    var controller2: GCController? { get set }
+    var controller3: GCController? { get set }
+    var controller4: GCController? { get set }
+   
+    var romName: String? { get set }
+    var saveStatesPath: String? { get set }
+    var batterySavesPath: String? { get set }
+    var biosPath: String? { get set }
+    var systemIdentifier: String? { get set }
+    var coreIdentifier: String? { get set }
+    var romMD5: String? { get set }
+    var romSerial: String? { get set }
+    var screenType: String? { get set }
+    var supportsSaveStates: Bool { get }
+    
+    var responderClient: AnyObject? { get }
+    var viewController: AnyObject? { get }
+    /// Returns an object that can be optionally cast to one of the supported features
+    /// such as ``DiscSwappable``.
+    var features: AnyObject? { get }
 
     /// Adjust the output volume of the core.
     ///
@@ -48,6 +87,8 @@ import AudioToolbox
      * @param pauseEmulation Specify @c true to pause the core.
      */
     func setPauseEmulation(_ pauseEmulation: Bool)
+    
+    var runStateDelegate: OEGameCoreHelperRunStateDelegate? { get set }
     
     /// Specifies how and when shader effects are rendered.
     ///
@@ -67,6 +108,7 @@ import AudioToolbox
     func setAdaptiveSyncEnabled(_ enabled: Bool)
     func setShaderURL(_ url: URL, parameters: [String: NSNumber]?, completionHandler block: @escaping (Error?) -> Void)
     func setShaderParameterValue(_ value: CGFloat, forKey key: String)
+    func loadFile(atPath path: String) throws
     func setupEmulation(completionHandler handler: @escaping (_ screenSize: OEIntSize, _ aspectSize: OEIntSize) -> Void)
     func startEmulation(completionHandler handler: @escaping () -> Void)
     func resetEmulation(completionHandler handler: @escaping () -> Void)

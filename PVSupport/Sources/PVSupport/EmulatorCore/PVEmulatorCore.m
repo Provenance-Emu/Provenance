@@ -51,7 +51,11 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 @end
 
 //PV_OBJC_DIRECT_MEMBERS
-@implementation PVEmulatorCore
+@implementation PVEmulatorCore {
+    void (^_stopEmulationHandler)(void);
+    NSThread *_gameCoreThread;
+    CFRunLoopRef _gameCoreRunLoop;
+}
 
 + (void)initialize {
     if (self == [PVEmulatorCore class]) {
@@ -107,27 +111,67 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 
 #pragma mark - Execution
 
-- (void)startEmulation {
-	if ([self class] != PVEmulatorCoreClass) {
-		if (!_isRunning) {
+- (void)performBlock:(void(^)(void))block
+{
+    if (_gameCoreRunLoop == nil) {
+        block();
+        return;
+    }
+
+    CFRunLoopPerformBlock(_gameCoreRunLoop, kCFRunLoopCommonModes, block);
+}
+
+- (void)_gameCoreThreadWithStartEmulationCompletionHandler:(void (^)(void))startCompletionHandler
+{
+    @autoreleasepool {
+        _gameCoreRunLoop = CFRunLoopGetCurrent();
+
+        [self startEmulation];
+
+        if (startCompletionHandler != nil)
+            dispatch_async(dispatch_get_main_queue(), startCompletionHandler);
+
+        [self runGameLoop];
+
+        _gameCoreRunLoop = nil;
+    }
+}
+
+
+- (void)startEmulationWithCompletionHandler:(void(^ _Nullable)(void))completionHandler {
+    if ([self class] != PVEmulatorCoreClass) {
+        if (!_isRunning) {
 #if !TARGET_OS_TV && !TARGET_OS_OSX
             [self startHaptic];
             NSError *error;
-			BOOL success = [self setPreferredSampleRate:[self audioSampleRate] error:&error];
+            BOOL success = [self setPreferredSampleRate:[self audioSampleRate] error:&error];
             if(!success || error != nil) {
                 ELOG(@"%@", error.localizedDescription);
             }
 #endif
-			self.isRunning  = YES;
-			shouldStop = NO;
+            self.isRunning  = YES;
+            shouldStop = NO;
             self.gameSpeed = GameSpeedNormal;
-			MAKEWEAK(self);
-			[NSThread detachNewThreadWithBlock:^{
-				MAKESTRONG(self);
-				[strongself emulationLoopThread];
-			}];
-		}
-	}
+            _gameCoreThread = [[NSThread alloc] initWithTarget:self selector:@selector(_gameCoreThreadWithStartEmulationCompletionHandler:) object:completionHandler];
+            _gameCoreThread.name = @"org.openemu.core-thread";
+            _gameCoreThread.qualityOfService = NSQualityOfServiceUserInteractive;
+
+            [_gameCoreThread start];
+        }
+    }
+}
+
+- (void)startEmulation {
+    [self startEmulationWithCompletionHandler:nil];
+}
+
+- (void)resetEmulationWithCompletionHandler:(void(^ _Nullable)(void))completionHandler {
+    [self performBlock:^{
+        [self resetEmulation];
+
+        if (completionHandler)
+            dispatch_async(dispatch_get_main_queue(), completionHandler);
+    }];
 }
 
 - (void)resetEmulation {
@@ -195,6 +239,20 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 	return !_isRunning;
 }
 
+- (void)stopEmulationWithCompletionHandler:(void(^ _Nullable)(void))completionHandler {
+    [self performBlock:^{
+        self->_stopEmulationHandler = [completionHandler copy];
+        [self stopEmulation];
+    }];
+}
+
+- (void)didStopEmulation
+{
+    if(_stopEmulationHandler != nil)
+        dispatch_async(dispatch_get_main_queue(), _stopEmulationHandler);
+
+    _stopEmulationHandler = nil;
+}
 
 - (void)stopEmulation {
     [self stopHaptic];
@@ -203,6 +261,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 
     [self setIsFrontBufferReady:NO];
     [self.frontBufferCondition signal];
+    [self didStopEmulation];
     
 //    [self.emulationLoopThreadLock lock]; // make sure emulator loop has ended
 //    [self.emulationLoopThreadLock unlock];
@@ -212,7 +271,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
     //subclasses may implement for polling
 }
 
-- (void) emulationLoopThread {
+- (void)runGameLoop {
 
     // For FPS computation
     int frameCount = 0;
@@ -299,6 +358,9 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 			fpsCounter = PVTimestamp();
         }
         
+        // Service the event loop, which may now contain HID events, exactly once.
+        // TODO: If paused, this burns CPU waiting to unpause, because it still runs at 1x rate.
+        CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, 0);
     }
     
     [self.emulationLoopThreadLock unlock];

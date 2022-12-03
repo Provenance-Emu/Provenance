@@ -8,6 +8,7 @@
 import Foundation
 import PVLibrary
 import PVSupport
+import PVRuntime
 
 // extension PVSystem {
 //    var responderClassType : AnyClass {
@@ -32,7 +33,12 @@ extension PVCore {
 
         emuCore.systemIdentifier = system.identifier
         emuCore.coreIdentifier = identifier
+        emuCore.screenType = system.screenType.rawValue
         return emuCore
+    }
+    
+    func createGameCoreHelper(forSystem system: PVSystem) -> OEGameCoreHelper? {
+        PVHelperFactory.create(self.principleClass, systemIdentifier: system.identifier, coreIdentifier: identifier)
     }
 }
 

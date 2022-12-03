@@ -31,27 +31,27 @@ public class OEGameStartupInfo {
     public let romHeader: String
     public let romSerial: String
     public let systemIdentifier: String
+    public let coreIdentifier: String
     public let systemRegion: String
     public let displayModeInfo: [String: Any]?
     public let shaderURL: URL
     public let shaderParameters: [String: Double]
-    public let gameCore: OEGameCore
     
     public init(romURL: URL, romMD5: String, romHeader: String, romSerial: String,
                 systemIdentifier: String,
+                coreIdentifier: String,
                 systemRegion: String,
                 displayModeInfo: [String: Any]?,
-                shaderURL: URL, shaderParameters: [String: Double],
-                gameCore: OEGameCore) {
+                shaderURL: URL, shaderParameters: [String: Double]) {
         self.romURL = romURL
         self.romMD5 = romMD5
         self.romHeader = romHeader
         self.romSerial = romSerial
         self.systemIdentifier = systemIdentifier
+        self.coreIdentifier = coreIdentifier
         self.systemRegion = systemRegion
         self.displayModeInfo = displayModeInfo
         self.shaderURL = shaderURL
         self.shaderParameters = shaderParameters
-        self.gameCore = gameCore
     }
 }
