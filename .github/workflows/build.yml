@@ -16,8 +16,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: 'macos-12'
-            version: '14.1.0'
+          - os: 'macos-latest'
+            version: '14.1'
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -46,8 +46,8 @@ jobs:
 
       - name: Fakesign app
         run: |
-          rm -rf archive.xcarchive/Products/Applications/Provenance.app/Frameworks/PVSupport.framework/Frameworks/
-          ldid -SProvenance/Resources/tempEnt.plist archive.xcarchive/Products/Applications/Provenance.app/Provenance
+          rm -rf archive.xcarchive/Products/Applications/Provenance.app/Frameworks/*.framework/Frameworks/
+          ldid -SProvenance/Provenance.entitlements archive.xcarchive/Products/Applications/Provenance.app/Provenance
 
       - name: Convert to IPA
         run: |
