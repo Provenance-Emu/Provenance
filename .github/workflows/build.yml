@@ -9,6 +9,10 @@ on:
       - master
       - develop
 
+env:
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+
 jobs:
   build:
     name: Build and upload Provenance
@@ -68,3 +72,22 @@ jobs:
         with:
           name: Provenance.ipa
           path: Provenance.ipa
+
+      # - name: Upload IPA to S3
+      #   if: ${{ github.branch == 'develop' }}
+      #   uses: ebuckthal/s3-upload-artifact@v7
+      #   with:
+      #     bucket: 'sh-sysops'
+      #     key: ${AWS_SECRET_ACCESS_KEY}
+      #     path: 'Provenance.ipa'
+
+    # - name: Upload IPA to App Center
+    #   uses: wzieba/AppCenter-Github-Action@v1
+    #   if: ${{ github.branch == 'develop' }}
+    #   with:
+    #     appName: wzieba/Sample-App
+    #     token: ${{secrets.APP_CENTER_TOKEN}}
+    #     group: Testers
+    #     file: Provenance.ipa
+    #     notifyTesters: true
+    #     debug: false
