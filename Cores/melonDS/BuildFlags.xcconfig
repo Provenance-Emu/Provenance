@@ -7,9 +7,17 @@
 //
 
 // All
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) OBJ_C IOS USE_POSIX_MEMALIGN __RETRO_ARM__ USE_POSIX_MEMALIGN HAVE_WIFI JIT_ARCH=aarch64 HAVE_NEON=1 HAVE_THREADS=1 __LIBRETRO__ MELONDS_VERSION="" GIT_VERSION="" HAVE_OPENGLES3=1 JIT_ENABLED=1 ARCHITECTURE_ARM64=1
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) OBJ_C IOS USE_POSIX_MEMALIGN  USE_POSIX_MEMALIGN HAVE_WIFI JIT_ARCH=aarch64 HAVE_NEON=1 HAVE_THREADS=1 __LIBRETRO__ MELONDS_VERSION="" GIT_VERSION="" HAVE_OPENGLES=1 HAVE_OPENGLES2=1 HAVE_OPENGLES3=1 GLES=1 GLES2=1 GLES3=1 GLES31=1
+// JIT_ENABLED=1 
 OTHER_CFLAGS = $(inherited) -ObjC -ffast-math -ftree-vectorize -fno-strict-aliasing -fpermissive -fomit-frame-pointer -fPIC
 OTHER_LDFLAGS =  $(inherited) -ObjC -all_load
+
+GCC_PREPROCESSOR_DEFINITIONS[arch=armv7] = $(inherited) __RETRO_ARM__ ARCHITECTURE_ARM=1
+GCC_PREPROCESSOR_DEFINITIONS[arch=armv72] = $(inherited) __RETRO_ARM__ ARCHITECTURE_ARM=1
+GCC_PREPROCESSOR_DEFINITIONS[arch=arm64] = $(inherited) __RETRO_ARM__ ARCHITECTURE_ARM64=1
+GCC_PREPROCESSOR_DEFINITIONS[arch=x86_64] = $(inherited) ARCHITECTURE_X64=1
+
+GCC_PREPROCESSOR_DEFINITIONS[sdk=macos] = $(inherited) HAVE_OPENGL=1 OGLRENDERER_ENABLED=1 CORE=1
 
 //OTHER_CFLAGS = $(inherited) -mno-thumb -mfpu=neon -fno-operator-names -fno-rtti -ffast-math -ftree-vectorize -fno-strict-aliasing -frename-registers -fno-rtti -fpermissive -fno-operator-names -fsingle-precision-constant
 
