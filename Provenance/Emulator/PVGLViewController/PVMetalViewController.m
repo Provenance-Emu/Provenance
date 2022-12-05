@@ -483,7 +483,7 @@ PV_OBJC_DIRECT_MEMBERS
                 case GL_UNSIGNED_SHORT_4_4_4_4:
                 case GL_UNSIGNED_SHORT_5_5_5_1:
                 case GL_UNSIGNED_SHORT_5_6_5:
-                    return 4 * typeWidth;
+                    return typeWidth;
                 default:
                     return 4 * typeWidth;
             }
@@ -520,31 +520,31 @@ PV_OBJC_DIRECT_MEMBERS
     }
     else if (pixelFormat == GL_RGB && pixelType == GL_UNSIGNED_SHORT_5_6_5)
     {
-        return MTLPixelFormatRGBA16Unorm; // MTLPixelFormatRGBA8Unorm_sRGB
+        if (@available(iOS 8, tvOS 8, macOS 11, macCatalyst 14, *))
+        {
+           return MTLPixelFormatB5G6R5Unorm;
+        }
+        return MTLPixelFormatRGBA16Unorm;
     }
-    else if (pixelFormat == GL_RGB && pixelType == GL_UNSIGNED_SHORT_8_8_APPLE)
+    else if (pixelType == GL_UNSIGNED_SHORT_8_8_APPLE)
     {
         return MTLPixelFormatRGBA16Unorm;
     }
-    else if (pixelFormat == GL_RGBA && pixelType == GL_UNSIGNED_SHORT_8_8_APPLE)
+    else if (pixelType == GL_UNSIGNED_SHORT_5_5_5_1)
     {
+        if (@available(iOS 8, tvOS 8, macOS 11, macCatalyst 14, *))
+        {
+            return MTLPixelFormatA1BGR5Unorm;
+        }
         return MTLPixelFormatRGBA16Unorm;
     }
-    else if (pixelFormat == GL_RGB && pixelType == GL_UNSIGNED_SHORT_5_5_5_1)
+    else if (pixelType == GL_UNSIGNED_SHORT_4_4_4_4)
     {
+        if (@available(iOS 8, tvOS 8, macOS 11, macCatalyst 14, *))
+        {
+            return MTLPixelFormatABGR4Unorm;
+        }
         return MTLPixelFormatRGBA16Unorm;
-    }
-    else if (pixelFormat == GL_RGBA && pixelType == GL_UNSIGNED_SHORT_5_6_5)
-    {
-        return MTLPixelFormatRGBA16Unorm;
-    }
-    else if (pixelFormat == GL_RGBA && pixelType == GL_UNSIGNED_SHORT_4_4_4_4)
-    {
-        return MTLPixelFormatRGBA16Unorm;
-    }
-    else if (pixelFormat == GL_RGBA && pixelType == GL_UNSIGNED_SHORT_5_5_5_1)
-    {
-        return MTLPixelFormatA1BGR5Unorm;
     }
     else if (pixelFormat == GL_RGBA8)
     {
