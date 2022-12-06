@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		057698452935A97500F7E122 /* OpenEmuShaders.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 057698442935A97500F7E122 /* OpenEmuShaders.framework */; };
 		0576984A2935AC5B00F7E122 /* GameRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057698482935AC5900F7E122 /* GameRenderer.swift */; };
 		0576984B2935AC5B00F7E122 /* MTLGameRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057698492935AC5A00F7E122 /* MTLGameRenderer.swift */; };
 		0576984E2935E4FC00F7E122 /* GameHelperMetalLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0576984D2935E4FC00F7E122 /* GameHelperMetalLayer.swift */; };
@@ -164,6 +163,7 @@
 		B3AF6FDA2191616C000FA7F9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FD92191616C000FA7F9 /* Foundation.framework */; };
 		B3B1A740279021C4004D1EF2 /* AHAP in Resources */ = {isa = PBXBuildFile; fileRef = B3B1A73F279021C4004D1EF2 /* AHAP */; };
 		B3B3D17428712EE1008A0E2F /* msg_hash.c in Sources */ = {isa = PBXBuildFile; fileRef = B322515C286C6F29001FDF42 /* msg_hash.c */; };
+		B3B9F162293F4A0100BAD325 /* OpenEmuShaders.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B9F153293F49D300BAD325 /* OpenEmuShaders.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
 		B3C96EC91D62C5E7003F1E93 /* OEGameAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69117F748F80031B1C9 /* OEGameAudio.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96ECA1D62C5E7003F1E93 /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4E718C1A6C699F005CA80F /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96ECC1D62C5E7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA6A017F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -217,6 +217,34 @@
 			proxyType = 1;
 			remoteGlobalIDString = B3C96EBE1D62C5E7003F1E93;
 			remoteInfo = "PVSupport-iOS";
+		};
+		B3B9F152293F49D300BAD325 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3B9F14B293F49D300BAD325 /* OpenEmuShaders.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 05EEE338227CC35D007D011B;
+			remoteInfo = OpenEmuShaders;
+		};
+		B3B9F154293F49D300BAD325 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3B9F14B293F49D300BAD325 /* OpenEmuShaders.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 05EEE341227CC35D007D011B;
+			remoteInfo = OpenEmuShadersTests;
+		};
+		B3B9F156293F49D300BAD325 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3B9F14B293F49D300BAD325 /* OpenEmuShaders.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 058AB9AC285130A4009A35FA;
+			remoteInfo = oeshaders;
+		};
+		B3B9F160293F49F300BAD325 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3B9F14B293F49D300BAD325 /* OpenEmuShaders.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 05EEE337227CC35C007D011B;
+			remoteInfo = OpenEmuShaders;
 		};
 		B3EA6C92292617F300010224 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1184,6 +1212,7 @@
 		B3AF6FDC219161BC000FA7F9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3AF6FDE219161C0000FA7F9 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/GameController.framework; sourceTree = DEVELOPER_DIR; };
 		B3B1A73F279021C4004D1EF2 /* AHAP */ = {isa = PBXFileReference; lastKnownFileType = folder; path = AHAP; sourceTree = "<group>"; };
+		B3B9F14B293F49D300BAD325 /* OpenEmuShaders.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpenEmuShaders.xcodeproj; path = "../Dependencies/OpenEmu-Shaders/OpenEmuShaders.xcodeproj"; sourceTree = "<group>"; };
 		B3C83E262796211D0020824C /* Performance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Performance.swift; sourceTree = "<group>"; };
 		B3C83E2A279622EB0020824C /* PerformanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceView.swift; sourceTree = "<group>"; };
 		B3C96EBA1D62C54D003F1E93 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -1219,7 +1248,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				057698452935A97500F7E122 /* OpenEmuShaders.framework in Frameworks */,
+				B3B9F162293F4A0100BAD325 /* OpenEmuShaders.framework in Frameworks */,
 				057698722936BD8900F7E122 /* Atomics in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1514,6 +1543,7 @@
 		1ACEA63B17F7467D0031B1C9 = {
 			isa = PBXGroup;
 			children = (
+				B3B9F14B293F49D300BAD325 /* OpenEmuShaders.xcodeproj */,
 				B3173802278419A2002D3ACD /* Build.xcconfig */,
 				05784C92293572B300622C66 /* PVRuntime */,
 				B3A4FB58278FE2F200A65248 /* Sources */,
@@ -3655,6 +3685,16 @@
 			name = tvOS;
 			sourceTree = "<group>";
 		};
+		B3B9F14C293F49D300BAD325 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B3B9F153293F49D300BAD325 /* OpenEmuShaders.framework */,
+				B3B9F155293F49D300BAD325 /* OpenEmuShadersTests.xctest */,
+				B3B9F157293F49D300BAD325 /* oeshaders */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		B3C83E25279621080020824C /* Performance */ = {
 			isa = PBXGroup;
 			children = (
@@ -3765,6 +3805,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				B3B9F161293F49F300BAD325 /* PBXTargetDependency */,
 			);
 			name = PVRuntime;
 			packageProductDependencies = (
@@ -3929,6 +3970,12 @@
 			);
 			productRefGroup = 1ACEA64517F7467D0031B1C9 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = B3B9F14C293F49D300BAD325 /* Products */;
+					ProjectRef = B3B9F14B293F49D300BAD325 /* OpenEmuShaders.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				B3C96EBE1D62C5E7003F1E93 /* PVSupport */,
@@ -3940,6 +3987,30 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		B3B9F153293F49D300BAD325 /* OpenEmuShaders.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = OpenEmuShaders.framework;
+			remoteRef = B3B9F152293F49D300BAD325 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3B9F155293F49D300BAD325 /* OpenEmuShadersTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = OpenEmuShadersTests.xctest;
+			remoteRef = B3B9F154293F49D300BAD325 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3B9F157293F49D300BAD325 /* oeshaders */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = oeshaders;
+			remoteRef = B3B9F156293F49D300BAD325 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		05784C8F293572B200622C66 /* Resources */ = {
@@ -4186,6 +4257,11 @@
 			target = B3C96EBE1D62C5E7003F1E93 /* PVSupport */;
 			targetProxy = B392849D286703F2003BAC21 /* PBXContainerItemProxy */;
 		};
+		B3B9F161293F49F300BAD325 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = OpenEmuShaders;
+			targetProxy = B3B9F160293F49F300BAD325 /* PBXContainerItemProxy */;
+		};
 		B3EA6C93292617F300010224 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B322512C286C4728001FDF42 /* retro */;
@@ -4234,16 +4310,15 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-app.PVRuntime";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = auto;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator driverkit iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -4290,14 +4365,13 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-app.PVRuntime";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = auto;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator driverkit iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -4344,14 +4418,13 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-app.PVRuntime";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = auto;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator driverkit iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
