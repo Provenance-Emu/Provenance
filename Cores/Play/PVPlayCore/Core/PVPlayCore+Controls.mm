@@ -140,153 +140,59 @@ s8 joyx[4], joyy[4];
 }
 
 -(void)didPushPS2Button:(enum PVPS2Button)button forPlayer:(NSInteger)player {
-    if (button == PVDreamcastButtonL) {
-        lt[player] |= 0xff * true;
-    } else if (button == PVDreamcastButtonR) {
-        rt[player] |= 0xff * true;
-    } else {
-        int mapped = DreamcastMap[button];
-        kcode[player] &= ~(mapped);
-    }
+//    // FIXME: Player 2 is not yet supported.
+//    if (player != 1) {
+//        return;
+//    }
+//    for(auto bindingIterator(std::begin(_bindings));
+//        bindingIterator != std::end(_bindings); bindingIterator++)
+//    {
+//        const auto& binding = (*bindingIterator);
+//        if(!binding) continue;
+//        binding->ProcessEvent(button, 1);
+//    }
 }
 
--(void)didReleasePS2Button:(enum PVPS2Button)button forPlayer:(NSInteger)player {
-    if (button == PVDreamcastButtonL) {
-        lt[player] |= 0xff * false;
-    } else if (button == PVDreamcastButtonR) {
-        rt[player] |= 0xff * false;
-    } else {
-        int mapped = DreamcastMap[button];
-        kcode[player] |= (mapped);
-    }
+- (void)didReleasePS2Button:(enum PVPS2Button)button forPlayer:(NSInteger)player {
+//    // FIXME: Player 2 is not yet supported.
+//    if (player != 1) {
+//        return;
+//    }
+//    for(auto bindingIterator(std::begin(_bindings));
+//        bindingIterator != std::end(_bindings); bindingIterator++)
+//    {
+//        const auto& binding = (*bindingIterator);
+//        if(!binding) continue;
+//        binding->ProcessEvent(button, 0);
+//    }
 }
 
 - (void)didMovePS2JoystickDirection:(enum PVPS2Button)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
-    /*
-     float xvalue = gamepad.leftThumbstick.xAxis.value;
-     s8 x=(s8)(xvalue*127);
-     joyx[0] = x;
-
-     float yvalue = gamepad.leftThumbstick.yAxis.value;
-     s8 y=(s8)(yvalue*127 * - 1); //-127 ... + 127 range
-     joyy[0] = y;
-     */
+    // FIXME: Player 2 is not yet supported.
+    if (player != 1) {
+        return;
+    }
+    //TODO: find real scale value
+//    uint32 val = value * 0x7f;
+//    for(auto bindingIterator(std::begin(_bindings));
+//        bindingIterator != std::end(_bindings); bindingIterator++)
+//    {
+//        const auto& binding = (*bindingIterator);
+//        if(!binding) continue;
+//        binding->ProcessEvent(button, val);
+//    }
 }
 
 -(void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
-    [self didMoveDreamcastJoystickDirection:(enum PVPS2Button)button withValue:value forPlayer:player];
+    [self didMovePS2JoystickDirection:(enum PVPS2Button)button withValue:value forPlayer:player];
 }
 
 - (void)didPush:(NSInteger)button forPlayer:(NSInteger)player {
-    [self didPushDreamcastButton:(PVPS2Button)button forPlayer:player];
+    [self didPushPS2Button:(PVPS2Button)button forPlayer:player];
 }
 
 - (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player {
-    [self didReleaseDreamcastButton:(PVPS2Button)button forPlayer:player];
+    [self didReleasePS2Button:(PVPS2Button)button forPlayer:player];
 }
 
 @end
-
-#pragma mark - Pad callbacks
-
-void CPH_OpenEmu::Update(uint8* ram)
-{
-	GET_CURRENT_OR_RETURN();
-
-	for(auto listenerIterator(std::begin(m_listeners));
-		listenerIterator != std::end(m_listeners); listenerIterator++)
-	{
-		auto* listener(*listenerIterator);
-
-		for(unsigned int i = 0; i < PS2::CControllerInfo::MAX_BUTTONS; i++)
-		{
-			const auto& binding = current->_bindings[i];
-			if(!binding) continue;
-			uint32 value = binding->GetValue();
-			auto currentButtonId = static_cast<PS2::CControllerInfo::BUTTON>(i);
-			if(PS2::CControllerInfo::IsAxis(currentButtonId))
-			{
-				listener->SetAxisState(0, currentButtonId, value & 0xFF, ram);
-			}
-			else
-			{
-				listener->SetButtonState(0, currentButtonId, value != 0, ram);
-			}
-		}
-	}
-
-}
-
-static CPadHandler *PadHandlerFactory()
-{
-	return new CPH_OpenEmu();
-}
-
-CPadHandler::FactoryFunction CPH_OpenEmu::GetFactoryFunction()
-{
-	return PadHandlerFactory;
-}
-
-#pragma mark -
-
-//CSimpleBinding::CSimpleBinding(OEPS2Button keyCode)
-//: m_keyCode(keyCode)
-//, m_state(0)
-//{
-//
-//}
-//
-//CSimpleBinding::~CSimpleBinding() = default;
-//
-//void CSimpleBinding::ProcessEvent(OEPS2Button keyCode, uint32 state)
-//{
-//	if(keyCode != m_keyCode) return;
-//	m_state = state;
-//}
-//
-//uint32 CSimpleBinding::GetValue() const
-//{
-//	return m_state;
-//}
-
-#pragma mark -
-
-CSimulatedAxisBinding::CSimulatedAxisBinding(OEPS2Button negativeKeyCode, OEPS2Button positiveKeyCode)
-: m_negativeKeyCode(negativeKeyCode)
-, m_positiveKeyCode(positiveKeyCode)
-, m_negativeState(0)
-, m_positiveState(0)
-{
-
-}
-
-CSimulatedAxisBinding::~CSimulatedAxisBinding() = default;
-
-void CSimulatedAxisBinding::ProcessEvent(OEPS2Button keyCode, uint32 state)
-{
-	if(keyCode == m_negativeKeyCode)
-	{
-		m_negativeState = state;
-	}
-
-	if(keyCode == m_positiveKeyCode)
-	{
-		m_positiveState = state;
-	}
-}
-
-uint32 CSimulatedAxisBinding::GetValue() const
-{
-	uint32 value = 0x7F;
-
-	if(m_negativeState)
-	{
-		value -= m_negativeState;
-	} else
-	if(m_positiveState)
-	{
-		value += m_positiveState;
-	}
-
-	return value;
-}

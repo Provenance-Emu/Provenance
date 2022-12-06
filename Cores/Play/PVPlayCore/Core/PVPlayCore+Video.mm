@@ -91,44 +91,8 @@
     return GL_RGBA;
 }
 
-- (GLenum)depthFormat {
-        // 0, GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT24
-    return GL_DEPTH_COMPONENT24;
-}
+//- (GLenum)depthFormat {
+//        // 0, GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT24
+//    return GL_DEPTH_COMPONENT24;
+//}
 @end
-
-#pragma mark - Graphics callbacks
-
-//static CGSHandler *GSHandlerFactory()
-//{
-//	return new CGSH_OpenEmu();
-//}
-//
-//CGSHandler::FactoryFunction CGSH_OpenEmu::GetFactoryFunction()
-//{
-//	return GSHandlerFactory;
-//}
-//
-//void CGSH_OpenEmu::InitializeImpl()
-//{
-//	GET_CURRENT_OR_RETURN();
-//
-//	[current.renderDelegate willRenderFrameOnAlternateThread];
-//	CGSH_OpenGL::InitializeImpl();
-//
-//	this->m_presentFramebuffer = [current.renderDelegate.presentationFramebuffer intValue];
-//
-//	glClearColor(0,0,0,0);
-//	glClear(GL_COLOR_BUFFER_BIT);
-//}
-//
-//void CGSH_OpenEmu::PresentBackbuffer()
-//{
-//	GET_CURRENT_OR_RETURN();
-//
-//	[current.renderDelegate didRenderFrameOnAlternateThread];
-//
-//	// Start the next one.
-//	[current.renderDelegate willRenderFrameOnAlternateThread];
-//}
-
