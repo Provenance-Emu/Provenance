@@ -9,9 +9,16 @@
 #import "PVPlayCore+Video.h"
 #import "PVPlayCore.h"
 
-#import <OpenGLES/ES3/glext.h>
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+#import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES3/gl.h>
+#import <OpenGLES/ES3/glext.h>
+#import <OpenGLES/EAGL.h>
 #import <GLKit/GLKit.h>
+#else
+#import <OpenGL/OpenGL.h>
+#import <GLKit/GLKit.h>
+#endif
 
 //#import "PS2VM.h"
 //#import "gs/GSH_OpenGL/GSH_OpenGL.h"

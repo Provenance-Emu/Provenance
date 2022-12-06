@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -33,15 +33,6 @@
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B351223A27843318001C4B83 /* PVPlay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA0218B881000557ACE /* PVPlay.mm */; };
-		B3512240278433E4001C4B83 /* libFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B4C26E4C6860047F338 /* libFramework.a */; };
-		B351224227843430001C4B83 /* libFramework_Amazon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B4E26E4C6860047F338 /* libFramework_Amazon.a */; };
-		B351224327843430001C4B83 /* libFramework_Http.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B5026E4C6860047F338 /* libFramework_Http.a */; };
-		B351224427843430001C4B83 /* libFramework_OpenAl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B5226E4C6860047F338 /* libFramework_OpenAl.a */; };
-		B351224527843430001C4B83 /* libFramework_OpenGl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B5426E4C6860047F338 /* libFramework_OpenGl.a */; };
-		B3512246278434B9001C4B83 /* libCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B4826E4C6860047F338 /* libCodeGen.a */; };
-		B3512247278434D7001C4B83 /* libchdr-static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B6626E4C6860047F338 /* libchdr-static.a */; };
-		B3512248278434D7001C4B83 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B6C26E4C6860047F338 /* liblzma.a */; };
-		B3512249278434D7001C4B83 /* libSDWebImage_Static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B5E26E4C6860047F338 /* libSDWebImage_Static.a */; };
 		B3512262278435B1001C4B83 /* decompress.c in Sources */ = {isa = PBXBuildFile; fileRef = B35122572784355F001C4B83 /* decompress.c */; };
 		B3512263278435B1001C4B83 /* blocksort.c in Sources */ = {isa = PBXBuildFile; fileRef = B35122502784355E001C4B83 /* blocksort.c */; };
 		B3512264278435B1001C4B83 /* huffman.c in Sources */ = {isa = PBXBuildFile; fileRef = B35122532784355E001C4B83 /* huffman.c */; };
@@ -54,7 +45,10 @@
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
-		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
+		B37CE7DC293F2A8B0010B746 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE7DB293F2A8B0010B746 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
+		B3AEDE18293F2F710050BDB6 /* libFramework_Amazon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B4E26E4C6860047F338 /* libFramework_Amazon.a */; };
+		B3AEDE1B293F2FBE0050BDB6 /* libFramework_Http.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B5026E4C6860047F338 /* libFramework_Http.a */; };
+		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (driverkit, ios, tvos, watchos, ); };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
 /* End PBXBuildFile section */
@@ -290,6 +284,27 @@
 			proxyType = 1;
 			remoteGlobalIDString = 180B5733882C4138BCCC205A;
 			remoteInfo = zlib;
+		};
+		B37CE7DD293F2B110010B746 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = EB114EEB04084B60B33F647D;
+			remoteInfo = gsh_opengl;
+		};
+		B3AEDE16293F2F5D0050BDB6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F334D674251041ED82EE5739;
+			remoteInfo = Framework_Amazon;
+		};
+		B3AEDE19293F2FA50050BDB6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7CFD24AE86FC4EA98CE691F1;
+			remoteInfo = Framework_Http;
 		};
 		B3B2546B27842B7B00F97E55 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1520,6 +1535,7 @@
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
 		B35E6BF4207CD2740040709A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		B37CE7DB293F2A8B0010B746 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
 		B3B104B8218F281B00210C39 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621020783162009950E4 /* PVPlay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVPlay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621320783162009950E4 /* PVPlay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVPlay.h; sourceTree = "<group>"; };
@@ -1537,6 +1553,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3AEDE1B293F2FBE0050BDB6 /* libFramework_Http.a in Frameworks */,
+				B3AEDE18293F2F710050BDB6 /* libFramework_Amazon.a in Frameworks */,
 				B3135B7326E4C7020047F338 /* libchdr-static.a in Frameworks */,
 				B3135B7426E4C7020047F338 /* libCodeGen.a in Frameworks */,
 				B3135B7526E4C7020047F338 /* libFramework_OpenAl.a in Frameworks */,
@@ -1555,19 +1573,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3512247278434D7001C4B83 /* libchdr-static.a in Frameworks */,
-				B3512248278434D7001C4B83 /* liblzma.a in Frameworks */,
-				B3512249278434D7001C4B83 /* libSDWebImage_Static.a in Frameworks */,
-				B3512246278434B9001C4B83 /* libCodeGen.a in Frameworks */,
-				B351224227843430001C4B83 /* libFramework_Amazon.a in Frameworks */,
-				B351224327843430001C4B83 /* libFramework_Http.a in Frameworks */,
-				B351224427843430001C4B83 /* libFramework_OpenAl.a in Frameworks */,
-				B351224527843430001C4B83 /* libFramework_OpenGl.a in Frameworks */,
-				B3512240278433E4001C4B83 /* libFramework.a in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
+				B37CE7DC293F2A8B0010B746 /* OpenGL.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B301797F207C909E0051B93D /* libplay.a in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
@@ -3782,6 +3792,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B37CE7DB293F2A8B0010B746 /* OpenGL.framework */,
 				B3135BAA26E4CDC50047F338 /* QuartzCore.framework */,
 				B35E6BF1207CD2670040709A /* AudioToolbox.framework */,
 				B35E6BEF207CD2610040709A /* AudioUnit.framework */,
@@ -3838,6 +3849,9 @@
 			buildRules = (
 			);
 			dependencies = (
+				B3AEDE1A293F2FA50050BDB6 /* PBXTargetDependency */,
+				B3AEDE17293F2F5D0050BDB6 /* PBXTargetDependency */,
+				B37CE7DE293F2B110010B746 /* PBXTargetDependency */,
 				B3135B8826E4CA1A0047F338 /* PBXTargetDependency */,
 				B3135B8A26E4CA1A0047F338 /* PBXTargetDependency */,
 				B3135B8C26E4CA1A0047F338 /* PBXTargetDependency */,
@@ -4184,6 +4198,21 @@
 			isa = PBXTargetDependency;
 			name = zlib;
 			targetProxy = B3135B9926E4CA1A0047F338 /* PBXContainerItemProxy */;
+		};
+		B37CE7DE293F2B110010B746 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = gsh_opengl;
+			targetProxy = B37CE7DD293F2B110010B746 /* PBXContainerItemProxy */;
+		};
+		B3AEDE17293F2F5D0050BDB6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Framework_Amazon;
+			targetProxy = B3AEDE16293F2F5D0050BDB6 /* PBXContainerItemProxy */;
+		};
+		B3AEDE1A293F2FA50050BDB6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Framework_Http;
+			targetProxy = B3AEDE19293F2FA50050BDB6 /* PBXContainerItemProxy */;
 		};
 		B3B2546C27842B7B00F97E55 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
