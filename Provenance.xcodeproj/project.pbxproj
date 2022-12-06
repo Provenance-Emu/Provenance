@@ -169,7 +169,7 @@
 		052A9C76293009E700EF619C /* UIAppearanceExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C19207ED7040040709A /* UIAppearanceExtensions.swift */; };
 		052A9C77293009E700EF619C /* AppearanceStyleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C1C207ED7040040709A /* AppearanceStyleExtensions.swift */; };
 		052A9C78293009E700EF619C /* PVNESControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37302187F568009D9244 /* PVNESControllerViewController.swift */; };
-		052A9C79293009E700EF619C /* SystemSettingsHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7C1219A7D630041F971 /* SystemSettingsHeaderCell.swift */; };
+		052A9C79293009E700EF619C /* (null) in Sources */ = {isa = PBXBuildFile; };
 		052A9C7A293009E700EF619C /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C0C276B470B00D85327 /* Section.swift */; };
 		052A9C7B293009E700EF619C /* SliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225321D32AD60077E86F /* SliderCell.swift */; };
 		052A9C7C293009E700EF619C /* UIViewController+Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37B71AC278E3198005FB278 /* UIViewController+Alerts.swift */; };
@@ -213,7 +213,7 @@
 		052A9CA2293009E700EF619C /* PVLicensesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8D52451D9198E000C29F90 /* PVLicensesViewController.swift */; };
 		052A9CA3293009E700EF619C /* GameLaunchingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35D26F920337D1C00F17D58 /* GameLaunchingViewController.swift */; };
 		052A9CA4293009E700EF619C /* PVEmulatorViewController+Cheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF17107025858B5400258602 /* PVEmulatorViewController+Cheats.swift */; };
-		052A9CA5293009E700EF619C /* SystemSettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7BE219A7D250041F971 /* SystemSettingsCell.swift */; };
+		052A9CA5293009E700EF619C /* (null) in Sources */ = {isa = PBXBuildFile; };
 		052A9CA6293009E700EF619C /* PVMSXControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A70064288DF1BF00355823 /* PVMSXControllerViewController.swift */; };
 		052A9CA7293009E700EF619C /* PVControllerSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ED7205CD21F00C273C7 /* PVControllerSelectionViewController.swift */; };
 		052A9CA8293009E700EF619C /* UIApplicationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C1A207ED7040040709A /* UIApplicationExtensions.swift */; };
@@ -833,6 +833,8 @@
 		B3B104D5218F2F1700210C39 /* JSDPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ECB205CD1D600C273C7 /* JSDPad.swift */; };
 		B3B104D6218F2F2800210C39 /* PVButtonGroupOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ED1205CD20800C273C7 /* PVButtonGroupOverlayView.swift */; };
 		B3B923B0202D2EAE00580FFC /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A9202D2EAE00580FFC /* Theme.swift */; };
+		B3B9F14A293F47D000BAD325 /* OpenEmuShaders.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0576988B2937E83200F7E122 /* OpenEmuShaders.framework */; };
+		B3B9F163293F4A8F00BAD325 /* PVRuntime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 057698882937E7F300F7E122 /* PVRuntime.framework */; };
 		B3C8A6C02878238C0037A946 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270FB727DCB62C00E83180 /* libz.dylib */; };
 		B3C8A6C52878238C0037A946 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2B0E8D1AD18961005FB77C /* libc++.dylib */; };
 		B3C8A6CE2878238C0037A946 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D717C8D54D0019F6D2 /* libxml2.dylib */; };
@@ -1300,7 +1302,6 @@
 
 /* Begin PBXFileReference section */
 		052A9D4E293009E700EF619C /* Provenance-mini.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance-mini.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		052A9D4F293009EF00EF619C /* Provenance copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Provenance copy-Info.plist"; path = "/Volumes/Data/projects/iOS/Provenance/Provenance copy-Info.plist"; sourceTree = "<absolute>"; };
 		053108AB293BF78800534AEF /* PVEmulatorViewControllerNew.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVEmulatorViewControllerNew.swift; sourceTree = "<group>"; };
 		057698882937E7F300F7E122 /* PVRuntime.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVRuntime.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0576988B2937E83200F7E122 /* OpenEmuShaders.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = OpenEmuShaders.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2034,6 +2035,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3B9F163293F4A8F00BAD325 /* PVRuntime.framework in Frameworks */,
 				B357A43A27092254002C7C0F /* AppCenterCrashes in Frameworks */,
 				B3AEDE20293F34250050BDB6 /* PVReicast.framework in Frameworks */,
 				B3FAC92D292B450C005E8B11 /* PVGB.framework in Frameworks */,
@@ -2057,6 +2059,7 @@
 				B3AEDE22293F34370050BDB6 /* PVCrabEmu.framework in Frameworks */,
 				1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */,
 				B357A43827092254002C7C0F /* AppCenterAnalytics in Frameworks */,
+				B3B9F14A293F47D000BAD325 /* OpenEmuShaders.framework in Frameworks */,
 				B3FAC941292B4593005E8B11 /* PVMupen64Plus.framework in Frameworks */,
 				1A4869DD17C8D60C0019F6D2 /* CFNetwork.framework in Frameworks */,
 				B3FAC947292B459B005E8B11 /* PVMupen64PlusVideoRice.framework in Frameworks */,
@@ -2383,7 +2386,6 @@
 				B3C8A6A328781E810037A946 /* CoresRetro */,
 				1A3D409617B2DCE4004DFFFC /* Frameworks */,
 				1A3D409517B2DCE4004DFFFC /* Products */,
-				052A9D4F293009EF00EF619C /* Provenance copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -4916,7 +4918,7 @@
 				052A9C76293009E700EF619C /* UIAppearanceExtensions.swift in Sources */,
 				052A9C77293009E700EF619C /* AppearanceStyleExtensions.swift in Sources */,
 				052A9C78293009E700EF619C /* PVNESControllerViewController.swift in Sources */,
-				052A9C79293009E700EF619C /* SystemSettingsHeaderCell.swift in Sources */,
+				052A9C79293009E700EF619C /* (null) in Sources */,
 				052A9C7A293009E700EF619C /* Section.swift in Sources */,
 				052A9C7B293009E700EF619C /* SliderCell.swift in Sources */,
 				052A9C7C293009E700EF619C /* UIViewController+Alerts.swift in Sources */,
@@ -4960,7 +4962,7 @@
 				052A9CA2293009E700EF619C /* PVLicensesViewController.swift in Sources */,
 				052A9CA3293009E700EF619C /* GameLaunchingViewController.swift in Sources */,
 				052A9CA4293009E700EF619C /* PVEmulatorViewController+Cheats.swift in Sources */,
-				052A9CA5293009E700EF619C /* SystemSettingsCell.swift in Sources */,
+				052A9CA5293009E700EF619C /* (null) in Sources */,
 				052A9CA6293009E700EF619C /* PVMSXControllerViewController.swift in Sources */,
 				052A9CA7293009E700EF619C /* PVControllerSelectionViewController.swift in Sources */,
 				052A9CA8293009E700EF619C /* UIApplicationExtensions.swift in Sources */,
@@ -8102,7 +8104,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 6N425KH923;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -8119,8 +8121,8 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=200 -Xfrontend -warn-long-expression-type-checking=200";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(SPOTLIGHT_PRODUCT_BUNDLE_IDENTIFIER)";
-				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = org.sgc.provenance.spotlight;
-				"PRODUCT_BUNDLE_IDENTIFIER[sdk=macosx*]" = org.sgc.provenance.spotlight;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = "org.provenance-emu.provenance.spotlight";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=macosx*]" = "org.provenance-emu.provenance.spotlight";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -8568,7 +8570,7 @@
 				CODE_SIGN_ENTITLEMENTS = Extensions/Spotlight/Spotlight.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 6N425KH923;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_HARDENED_RUNTIME = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -8584,7 +8586,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=200 -Xfrontend -warn-long-expression-type-checking=200";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(SPOTLIGHT_PRODUCT_BUNDLE_IDENTIFIER)";
-				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = org.sgc.provenance.spotlight;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = "org.provenance-emu.provenance.spotlight";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -8615,7 +8617,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 6N425KH923;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -8632,7 +8634,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=200 -Xfrontend -warn-long-expression-type-checking=200";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(SPOTLIGHT_PRODUCT_BUNDLE_IDENTIFIER)";
-				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = org.sgc.provenance.spotlight;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = "org.provenance-emu.provenance.spotlight";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
