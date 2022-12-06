@@ -81,12 +81,53 @@
 //    return videoBuffer;
 //}
 
+#define USE_565 0
+
+#if 0
+// For reference @JoeMatt
+ /* DataType */
+ #define GL_BYTE                                          0x1400
+ #define GL_UNSIGNED_BYTE                                 0x1401
+ #define GL_SHORT                                         0x1402
+ #define GL_UNSIGNED_SHORT                                0x1403
+ #define GL_INT                                           0x1404
+ #define GL_UNSIGNED_INT                                  0x1405
+ #define GL_FLOAT                                         0x1406
+ #define GL_FIXED                                         0x140C
+
+ /* PixelFormat */
+ #define GL_DEPTH_COMPONENT                               0x1902
+ #define GL_ALPHA                                         0x1906
+ #define GL_RGB                                           0x1907
+ #define GL_RGBA                                          0x1908
+ #define GL_LUMINANCE                                     0x1909
+ #define GL_LUMINANCE_ALPHA                               0x190A
+
+ /* PixelType */
+ /*      GL_UNSIGNED_BYTE */
+ #define GL_UNSIGNED_SHORT_4_4_4_4                        0x8033
+ #define GL_UNSIGNED_SHORT_5_5_5_1                        0x8034
+ #define GL_UNSIGNED_SHORT_5_6_5                          0x8363
+#endif
+
 - (GLenum)pixelFormat {
+#if USE_565
     return GL_RGB;
+#else
+    return GL_RGBA;
+//    return GL_RGB5_A1;
+#endif
+//    return GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT;
+//    return GL_UNSIGNED_SHORT_1_5_5_5_REV;
 }
 
 - (GLenum)pixelType {
+#if USE_565
     return GL_UNSIGNED_SHORT_5_6_5;
+#else
+    return GL_UNSIGNED_SHORT_5_5_5_1;
+#endif
+//    return GL_UNSIGNED_SHORT_5_6_5;
 }
 
 - (GLenum)internalPixelFormat {
@@ -94,7 +135,12 @@
 #if __has_include(<OpenGL/OpenGL.h>)
     return GL_UNSIGNED_SHORT_5_6_5;
 #else
+#if USE_565
     return GL_RGB565;
+#else
+//    return GL_RGBA;
+    return GL_RGB5_A1; // RETRO_PIXEL_FORMAT_0RGB1555
+#endif
 #endif
 }
 
