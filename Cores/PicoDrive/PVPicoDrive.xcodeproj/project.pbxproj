@@ -520,7 +520,7 @@
 		B3411B5C276B312C00D85327 /* libpicodrive.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libpicodrive.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B34CB0EB2274B173009134B4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B3547B5C205858D800CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
-		B37937AC1D6BCF8100EBAE81 /* PicoDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PicoDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B37937AC1D6BCF8100EBAE81 /* PVPicoDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVPicoDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B37937AE1D6BCF8100EBAE81 /* PicoDrive.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PicoDrive.h; sourceTree = "<group>"; };
 		B37937AF1D6BCF8100EBAE81 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B37937F81D6BDF4E00EBAE81 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../PVSupport/build/Debug-iphoneos/PVSupport.framework"; sourceTree = "<group>"; };
@@ -600,7 +600,7 @@
 		19C28FB8FE9D52D311CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B37937AC1D6BCF8100EBAE81 /* PicoDrive.framework */,
+				B37937AC1D6BCF8100EBAE81 /* PVPicoDrive.framework */,
 				B3411B5C276B312C00D85327 /* libpicodrive.a */,
 			);
 			name = Products;
@@ -1456,7 +1456,7 @@
 			);
 			name = PVPicoDrive;
 			productName = PicoDrive;
-			productReference = B37937AC1D6BCF8100EBAE81 /* PicoDrive.framework */;
+			productReference = B37937AC1D6BCF8100EBAE81 /* PVPicoDrive.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -1803,7 +1803,7 @@
 					"-Wall",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PicoDrive";
-				PRODUCT_NAME = PicoDrive;
+				PRODUCT_NAME = PVPicoDrive;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -2022,7 +2022,7 @@
 					"-D_USE_CZ80",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PicoDrive";
-				PRODUCT_NAME = PicoDrive;
+				PRODUCT_NAME = PVPicoDrive;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -2085,7 +2085,7 @@
 					"-Wall",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PicoDrive";
-				PRODUCT_NAME = PicoDrive;
+				PRODUCT_NAME = PVPicoDrive;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;

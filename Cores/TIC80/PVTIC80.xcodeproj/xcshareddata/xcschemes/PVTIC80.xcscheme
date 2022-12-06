@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3447EC0218BEDD200557ACE"
-               BuildableName = "PVDosBox.framework"
-               BlueprintName = "PVDosBox-tvOS"
-               ReferencedContainer = "container:PVDosBox.xcodeproj">
+               BlueprintIdentifier = "B3C7620F20783162009950E4"
+               BuildableName = "PVTIC80.framework"
+               BlueprintName = "PVTIC80"
+               ReferencedContainer = "container:PVTIC80.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -50,10 +50,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B3447EC0218BEDD200557ACE"
-            BuildableName = "PVDosBox.framework"
-            BlueprintName = "PVDosBox-tvOS"
-            ReferencedContainer = "container:PVDosBox.xcodeproj">
+            BlueprintIdentifier = "B3C7620F20783162009950E4"
+            BuildableName = "PVTIC80.framework"
+            BlueprintName = "PVTIC80"
+            ReferencedContainer = "container:PVTIC80.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

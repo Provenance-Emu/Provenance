@@ -131,7 +131,7 @@
 		B34CB0EA2274B16A009134B4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B3547B59205858B600CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Core.plist; path = ProSystem/Core.plist; sourceTree = "<group>"; };
 		B36C7D5427AE227300715677 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B36DE7A01D6B7558002EE3ED /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B36DE7A01D6B7558002EE3ED /* PVProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36DE7A21D6B7558002EE3ED /* ProSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProSystem.h; sourceTree = "<group>"; };
 		B36DE7A41D6B7558002EE3ED /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B372637026E9FC7700E95488 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -200,7 +200,7 @@
 		19C28FB8FE9D52D311CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B36DE7A01D6B7558002EE3ED /* ProSystem.framework */,
+				B36DE7A01D6B7558002EE3ED /* PVProSystem.framework */,
 				B3CA5B0A26E9E3D700687B27 /* libprosystem.a */,
 			);
 			name = Products;
@@ -345,9 +345,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		B36DE79F1D6B7558002EE3ED /* ProSystem */ = {
+		B36DE79F1D6B7558002EE3ED /* PVProSystem */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B36DE7A51D6B7558002EE3ED /* Build configuration list for PBXNativeTarget "ProSystem" */;
+			buildConfigurationList = B36DE7A51D6B7558002EE3ED /* Build configuration list for PBXNativeTarget "PVProSystem" */;
 			buildPhases = (
 				B36DE79D1D6B7558002EE3ED /* Headers */,
 				B36DE79B1D6B7558002EE3ED /* Sources */,
@@ -359,9 +359,9 @@
 			dependencies = (
 				B3CA5B4C26E9E42400687B27 /* PBXTargetDependency */,
 			);
-			name = ProSystem;
+			name = PVProSystem;
 			productName = ProSystem;
-			productReference = B36DE7A01D6B7558002EE3ED /* ProSystem.framework */;
+			productReference = B36DE7A01D6B7558002EE3ED /* PVProSystem.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		B3CA5B0926E9E3D700687B27 /* prosystem */ = {
@@ -412,7 +412,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B36DE79F1D6B7558002EE3ED /* ProSystem */,
+				B36DE79F1D6B7558002EE3ED /* PVProSystem */,
 				B3CA5B0926E9E3D700687B27 /* prosystem */,
 			);
 		};
@@ -681,7 +681,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProSystem";
-				PRODUCT_NAME = ProSystem;
+				PRODUCT_NAME = PVProSystem;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
@@ -733,7 +733,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProSystem";
-				PRODUCT_NAME = ProSystem;
+				PRODUCT_NAME = PVProSystem;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
@@ -777,7 +777,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProSystem";
-				PRODUCT_NAME = ProSystem;
+				PRODUCT_NAME = PVProSystem;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
@@ -903,7 +903,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B36DE7A51D6B7558002EE3ED /* Build configuration list for PBXNativeTarget "ProSystem" */ = {
+		B36DE7A51D6B7558002EE3ED /* Build configuration list for PBXNativeTarget "PVProSystem" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B36DE7A61D6B7558002EE3ED /* Debug */,

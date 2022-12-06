@@ -20,15 +20,6 @@
          location = "container:"
          name = "Broken">
          <FileRef
-            location = "group:Cores/4DO/PV4DO.xcodeproj">
-         </FileRef>
-         <FileRef
-            location = "group:Cores/Bliss/PVBliss.xcodeproj">
-         </FileRef>
-         <FileRef
-            location = "group:Cores/CrabEMU/PVCrabEmu.xcodeproj">
-         </FileRef>
-         <FileRef
             location = "group:Cores/Dolphin/PVDolphin.xcodeproj">
          </FileRef>
          <FileRef
@@ -38,23 +29,20 @@
             location = "group:Cores/O2EM/PVO2EM.xcodeproj">
          </FileRef>
          <FileRef
-            location = "group:Cores/Play/PVPlayCore.xcodeproj">
-         </FileRef>
-         <FileRef
             location = "group:Cores/PPSSPP/PVPPSSPP.xcodeproj">
          </FileRef>
-         <FileRef
-            location = "group:Cores/Reicast/PVReicast.xcodeproj">
-         </FileRef>
-         <FileRef
-            location = "group:Cores/snesticle/PVSnesticle.xcodeproj">
-         </FileRef>
       </Group>
+      <FileRef
+         location = "group:Cores/4DO/PV4DO.xcodeproj">
+      </FileRef>
       <FileRef
          location = "group:Cores/Atari800/PVAtari800.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/Bliss/PVBliss.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/CrabEMU/PVCrabEmu.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/FCEU/PVFCEU.xcodeproj">
@@ -78,6 +66,9 @@
          location = "group:Cores/O2EM/PVO2EM.xcodeproj">
       </FileRef>
       <FileRef
+         location = "group:Cores/Play/PVPlayCore.xcodeproj">
+      </FileRef>
+      <FileRef
          location = "group:Cores/PicoDrive/PVPicoDrive.xcodeproj">
       </FileRef>
       <FileRef
@@ -87,7 +78,13 @@
          location = "group:Cores/ProSystem/PVProSystem.xcodeproj">
       </FileRef>
       <FileRef
+         location = "group:Cores/Reicast/PVReicast.xcodeproj">
+      </FileRef>
+      <FileRef
          location = "group:Cores/snes9x/PVSNES.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/snesticle/PVSnesticle.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/Stella/PVStella.xcodeproj">
@@ -116,9 +113,6 @@
          </FileRef>
          <FileRef
             location = "group:Cores/Flycast/PVFlycast.xcodeproj">
-         </FileRef>
-         <FileRef
-            location = "group:Cores/FreeIntv/PVFreeIntv.xcodeproj">
          </FileRef>
          <FileRef
             location = "group:Cores/fuse/PVFuse.xcodeproj">
@@ -153,6 +147,9 @@
       </FileRef>
       <FileRef
          location = "group:Cores/fMSX/PVfMSX.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/FreeIntv/PVFreeIntv.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/Gearcoleco/PVGearcoleco.xcodeproj">

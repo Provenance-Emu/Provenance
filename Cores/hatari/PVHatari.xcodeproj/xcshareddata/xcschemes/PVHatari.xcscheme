@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1300"
+   LastUpgradeVersion = "1340"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3CA5B2B26E9E40500687B27"
-               BuildableName = "libprosystem-tvOS.a"
-               BlueprintName = "prosystem-tvOS"
-               ReferencedContainer = "container:PVProSystem.xcodeproj">
+               BlueprintIdentifier = "B3C7620F20783162009950E4"
+               BuildableName = "PVHatari.framework"
+               BlueprintName = "PVHatari"
+               ReferencedContainer = "container:PVHatari.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -50,10 +50,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B3CA5B2B26E9E40500687B27"
-            BuildableName = "libprosystem-tvOS.a"
-            BlueprintName = "prosystem-tvOS"
-            ReferencedContainer = "container:PVProSystem.xcodeproj">
+            BlueprintIdentifier = "B3C7620F20783162009950E4"
+            BuildableName = "PVHatari.framework"
+            BlueprintName = "PVHatari"
+            ReferencedContainer = "container:PVHatari.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
