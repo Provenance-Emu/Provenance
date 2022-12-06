@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -15,16 +15,15 @@
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
+		B353CC06293F86B900124F12 /* glsym_es2.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1AE2894D32A00CF98C7 /* glsym_es2.c */; };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
 		B380C2592894E846007B76FD /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C19B2894D32900CF98C7 /* libretro.c */; };
-		B380C2662894EB16007B76FD /* glsym_es2.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1AE2894D32A00CF98C7 /* glsym_es2.c */; };
-		B380C2692894EB37007B76FD /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B380C2682894EB37007B76FD /* OpenGL.framework */; platformFilter = maccatalyst; };
-		B380C26A2894EBAB007B76FD /* rglgen.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1AF2894D32A00CF98C7 /* rglgen.c */; };
+		B380C2692894EB37007B76FD /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B380C2682894EB37007B76FD /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		B39768F82859E23200558958 /* libvecx-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libvecx-libretro.a */; };
 		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
-		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilter = ios; };
+		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (ios, tvos, watchos, ); };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
 		B3C8A65F2877D6350037A946 /* PVVecXCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVVecXCore+Controls.mm */; };
@@ -32,6 +31,11 @@
 		B3D3E7692894E5310016EB85 /* e6809.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1CD2894D32A00CF98C7 /* e6809.c */; };
 		B3D3E76A2894E5310016EB85 /* e8910.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1A02894D32900CF98C7 /* e8910.c */; };
 		B3D3E76B2894E5310016EB85 /* vecx.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C19A2894D32900CF98C7 /* vecx.c */; };
+		B3EB8B22293F81D600BCCBAE /* skip.bin in Resources */ = {isa = PBXBuildFile; fileRef = B3E6C1C92894D32A00CF98C7 /* skip.bin */; };
+		B3EB8B23293F81D600BCCBAE /* fast.bin in Resources */ = {isa = PBXBuildFile; fileRef = B3E6C1CA2894D32A00CF98C7 /* fast.bin */; };
+		B3EB8B24293F81D600BCCBAE /* system.bin in Resources */ = {isa = PBXBuildFile; fileRef = B3E6C1C82894D32A00CF98C7 /* system.bin */; };
+		B3EB8B25293F81E000BCCBAE /* rom.dat in Resources */ = {isa = PBXBuildFile; fileRef = B3E6C19E2894D32900CF98C7 /* rom.dat */; };
+		B3EB8B28293F835000BCCBAE /* rglgen.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1AF2894D32A00CF98C7 /* rglgen.c */; };
 		B3EBB2032872B65700EAEB37 /* PVVecXCore+Video.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVVecXCore+Video.m */; };
 /* End PBXBuildFile section */
 
@@ -532,6 +536,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3EB8B25293F81E000BCCBAE /* rom.dat in Resources */,
+				B3EB8B22293F81D600BCCBAE /* skip.bin in Resources */,
+				B3EB8B23293F81D600BCCBAE /* fast.bin in Resources */,
+				B3EB8B24293F81D600BCCBAE /* system.bin in Resources */,
 				B33350262078619C0036A448 /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -544,10 +552,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3D3E76A2894E5310016EB85 /* e8910.c in Sources */,
-				B380C26A2894EBAB007B76FD /* rglgen.c in Sources */,
 				B3D3E76B2894E5310016EB85 /* vecx.c in Sources */,
 				B3D3E7692894E5310016EB85 /* e6809.c in Sources */,
-				B380C2662894EB16007B76FD /* glsym_es2.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -556,6 +562,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B380C2592894E846007B76FD /* libretro.c in Sources */,
+				B353CC06293F86B900124F12 /* glsym_es2.c in Sources */,
+				B3EB8B28293F835000BCCBAE /* rglgen.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -592,7 +600,7 @@
 				PRODUCT_NAME = vecx;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -609,7 +617,7 @@
 				PRODUCT_NAME = vecx;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -659,7 +667,10 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					NDEBUG,
+					"$(inherited)",
+				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -706,7 +717,7 @@
 				PRODUCT_NAME = PVVecX;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -723,7 +734,7 @@
 				PRODUCT_NAME = vecx;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -740,7 +751,7 @@
 				PRODUCT_NAME = "vecx-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -757,7 +768,7 @@
 				PRODUCT_NAME = "vecx-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -774,7 +785,7 @@
 				PRODUCT_NAME = "vecx-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -896,7 +907,10 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					NDEBUG,
+					"$(inherited)",
+				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -944,7 +958,7 @@
 				PRODUCT_NAME = PVVecX;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -974,7 +988,7 @@
 				PRODUCT_NAME = PVVecX;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};

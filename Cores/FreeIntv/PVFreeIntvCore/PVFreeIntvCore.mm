@@ -121,16 +121,17 @@
 //- (BOOL)supportsCheatCode { return NO; }
 
 - (NSTimeInterval)frameInterval {
-    return 60;
+    return 59.92;
+//    return 60;
 }
 
-- (CGSize)aspectSize {
-    return CGSizeMake(4, 3);
-}
-
-- (CGSize)bufferSize {
-    return CGSizeMake(1024, 768);
-}
+//- (CGSize)aspectSize {
+//    return CGSizeMake(4, 3);
+//}
+//
+//- (CGSize)bufferSize {
+//    return CGSizeMake(1024, 768);
+//}
 
 - (GLenum)pixelFormat {
     return GL_RGB;
