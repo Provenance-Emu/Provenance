@@ -8,38 +8,22 @@
 
 /* Begin PBXBuildFile section */
 		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
-		B32296E628783A5100585AD8 /* libFuse-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B39768F72859E18B00558958 /* libFuse-libretro.a */; };
-		B32296E728783A5100585AD8 /* libFuse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3447F91218BEE3F00557ACE /* libFuse.a */; };
-		B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C31B2191964F009F4EDC /* AVFoundation.framework */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
-		B3447ECD218BEDD200557ACE /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
-		B3447ECE218BEDD200557ACE /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
-		B3447ED0218BEDD200557ACE /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
-		B3447ED1218BEDD200557ACE /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
-		B3447ED3218BEDD200557ACE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
-		B3447ED4218BEDD200557ACE /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
-		B37022C72872553D00B3F6DA /* PVFuseCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B37022C6287253B300B3F6DA /* PVFuseCore.mm */; };
 		B37022C82872553E00B3F6DA /* PVFuseCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B37022C6287253B300B3F6DA /* PVFuseCore.mm */; };
 		B37022C92872554300B3F6DA /* PVFuseCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C5287253B300B3F6DA /* PVFuseCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B37022CA2872554300B3F6DA /* PVFuseCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C5287253B300B3F6DA /* PVFuseCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B37022CB2872556600B3F6DA /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B37022BF287253B300B3F6DA /* Core.plist */; };
-		B37022CC2872556600B3F6DA /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B37022BF287253B300B3F6DA /* Core.plist */; };
 		B37022CD2872558F00B3F6DA /* PVFuse.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVFuse.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B37022CE2872558F00B3F6DA /* PVFuse.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVFuse.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B39768F82859E23200558958 /* libFuse-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libFuse-libretro.a */; };
 		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
-		B3A41BF0286E76490054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */; };
-		B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B104B8218F281B00210C39 /* PVSupport.framework */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
 		B3EBB19B28729B4300EAEB37 /* Z80.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC122872971F00EAEB37 /* Z80.c */; };
-		B3EBB19C28729B4400EAEB37 /* Z80.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC122872971F00EAEB37 /* Z80.c */; };
 		B3EBB19D28729B7200EAEB37 /* Floppy.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC062872971F00EAEB37 /* Floppy.c */; };
 		B3EBB19E28729B7200EAEB37 /* MCF.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC002872971F00EAEB37 /* MCF.c */; };
 		B3EBB19F28729B7200EAEB37 /* Sound.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC052872971F00EAEB37 /* Sound.c */; };
@@ -50,22 +34,9 @@
 		B3EBB1A428729B7200EAEB37 /* I8255.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC032872971F00EAEB37 /* I8255.c */; };
 		B3EBB1A528729B7200EAEB37 /* SCC.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC012872971F00EAEB37 /* SCC.c */; };
 		B3EBB1A628729B7200EAEB37 /* YM2413.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC042872971F00EAEB37 /* YM2413.c */; };
-		B3EBB1A728729B7300EAEB37 /* Floppy.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC062872971F00EAEB37 /* Floppy.c */; };
-		B3EBB1A828729B7300EAEB37 /* MCF.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC002872971F00EAEB37 /* MCF.c */; };
-		B3EBB1A928729B7300EAEB37 /* Sound.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC052872971F00EAEB37 /* Sound.c */; };
-		B3EBB1AA28729B7300EAEB37 /* FDIDisk.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC0B2872971F00EAEB37 /* FDIDisk.c */; };
-		B3EBB1AB28729B7300EAEB37 /* WD1793.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBABFE2872971F00EAEB37 /* WD1793.c */; };
-		B3EBB1AC28729B7300EAEB37 /* AY8910.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC0D2872971F00EAEB37 /* AY8910.c */; };
-		B3EBB1AD28729B7300EAEB37 /* SHA1.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC022872971F00EAEB37 /* SHA1.c */; };
-		B3EBB1AE28729B7300EAEB37 /* I8255.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC032872971F00EAEB37 /* I8255.c */; };
-		B3EBB1AF28729B7300EAEB37 /* SCC.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC012872971F00EAEB37 /* SCC.c */; };
-		B3EBB1B028729B7300EAEB37 /* YM2413.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC042872971F00EAEB37 /* YM2413.c */; };
 		B3EBB1B128729B8200EAEB37 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBABF72872971F00EAEB37 /* libretro.c */; };
-		B3EBB1B228729B8200EAEB37 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBABF72872971F00EAEB37 /* libretro.c */; };
 		B3EBB1B328729BA300EAEB37 /* MSX.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC332872971F00EAEB37 /* MSX.c */; };
 		B3EBB1B428729BA300EAEB37 /* V9938.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC362872971F00EAEB37 /* V9938.c */; };
-		B3EBB1B528729BA300EAEB37 /* MSX.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC332872971F00EAEB37 /* MSX.c */; };
-		B3EBB1B628729BA300EAEB37 /* V9938.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC362872971F00EAEB37 /* V9938.c */; };
 		B3EBB1B728729BB900EAEB37 /* KANJI.ROM in Resources */ = {isa = PBXBuildFile; fileRef = B3EBAC1E2872971F00EAEB37 /* KANJI.ROM */; };
 		B3EBB1B828729BB900EAEB37 /* JAPANESE.FNT in Resources */ = {isa = PBXBuildFile; fileRef = B3EBAC282872971F00EAEB37 /* JAPANESE.FNT */; };
 		B3EBB1B928729BB900EAEB37 /* INTERNAT.FNT in Resources */ = {isa = PBXBuildFile; fileRef = B3EBAC2D2872971F00EAEB37 /* INTERNAT.FNT */; };
@@ -85,55 +56,21 @@
 		B3EBB1C728729BB900EAEB37 /* MSX2PEXT.ROM in Resources */ = {isa = PBXBuildFile; fileRef = B3EBAC252872971F00EAEB37 /* MSX2PEXT.ROM */; };
 		B3EBB1C828729BB900EAEB37 /* CARTS.SHA in Resources */ = {isa = PBXBuildFile; fileRef = B3EBAC302872971F00EAEB37 /* CARTS.SHA */; };
 		B3EBB1C928729BB900EAEB37 /* RS232.ROM in Resources */ = {isa = PBXBuildFile; fileRef = B3EBAC2F2872971F00EAEB37 /* RS232.ROM */; };
-		B3EBB1CA28729BBA00EAEB37 /* KANJI.ROM in Resources */ = {isa = PBXBuildFile; fileRef = B3EBAC1E2872971F00EAEB37 /* KANJI.ROM */; };
-		B3EBB1CB28729BBA00EAEB37 /* JAPANESE.FNT in Resources */ = {isa = PBXBuildFile; fileRef = B3EBAC282872971F00EAEB37 /* JAPANESE.FNT */; };
-		B3EBB1CC28729BBA00EAEB37 /* INTERNAT.FNT in Resources */ = {isa = PBXBuildFile; fileRef = B3EBAC2D2872971F00EAEB37 /* INTERNAT.FNT */; };
-		B3EBB1CD28729BBA00EAEB37 /* MSXDOS2.ROM in Resources */ = {isa = PBXBuildFile; fileRef = B3EBAC2B2872971F00EAEB37 /* MSXDOS2.ROM */; };
-		B3EBB1CE28729BBA00EAEB37 /* DEFAULT.FNT in Resources */ = {isa = PBXBuildFile; fileRef = B3EBAC2E2872971F00EAEB37 /* DEFAULT.FNT */; };
-		B3EBB1CF28729BBA00EAEB37 /* FMPAC16.ROM in Resources */ = {isa = PBXBuildFile; fileRef = B3EBAC292872971F00EAEB37 /* FMPAC16.ROM */; };
-		B3EBB1D028729BBA00EAEB37 /* PAINTER.ROM in Resources */ = {isa = PBXBuildFile; fileRef = B3EBAC262872971F00EAEB37 /* PAINTER.ROM */; };
-		B3EBB1D128729BBA00EAEB37 /* FMPAC.ROM in Resources */ = {isa = PBXBuildFile; fileRef = B3EBAC202872971F00EAEB37 /* FMPAC.ROM */; };
-		B3EBB1D228729BBA00EAEB37 /* MSX2EXT.ROM in Resources */ = {isa = PBXBuildFile; fileRef = B3EBAC272872971F00EAEB37 /* MSX2EXT.ROM */; };
-		B3EBB1D328729BBA00EAEB37 /* DISK.ROM in Resources */ = {isa = PBXBuildFile; fileRef = B3EBAC232872971F00EAEB37 /* DISK.ROM */; };
-		B3EBB1D428729BBA00EAEB37 /* KOREAN.FNT in Resources */ = {isa = PBXBuildFile; fileRef = B3EBAC2C2872971F00EAEB37 /* KOREAN.FNT */; };
-		B3EBB1D528729BBA00EAEB37 /* MSX2.ROM in Resources */ = {isa = PBXBuildFile; fileRef = B3EBAC222872971F00EAEB37 /* MSX2.ROM */; };
-		B3EBB1D628729BBA00EAEB37 /* ITALIC.FNT in Resources */ = {isa = PBXBuildFile; fileRef = B3EBAC2A2872971F00EAEB37 /* ITALIC.FNT */; };
-		B3EBB1D728729BBA00EAEB37 /* CYRILLIC.FNT in Resources */ = {isa = PBXBuildFile; fileRef = B3EBAC212872971F00EAEB37 /* CYRILLIC.FNT */; };
-		B3EBB1D828729BBA00EAEB37 /* MSX.ROM in Resources */ = {isa = PBXBuildFile; fileRef = B3EBAC1F2872971F00EAEB37 /* MSX.ROM */; };
-		B3EBB1D928729BBA00EAEB37 /* MSX2P.ROM in Resources */ = {isa = PBXBuildFile; fileRef = B3EBAC242872971F00EAEB37 /* MSX2P.ROM */; };
-		B3EBB1DA28729BBA00EAEB37 /* MSX2PEXT.ROM in Resources */ = {isa = PBXBuildFile; fileRef = B3EBAC252872971F00EAEB37 /* MSX2PEXT.ROM */; };
-		B3EBB1DB28729BBA00EAEB37 /* CARTS.SHA in Resources */ = {isa = PBXBuildFile; fileRef = B3EBAC302872971F00EAEB37 /* CARTS.SHA */; };
-		B3EBB1DC28729BBA00EAEB37 /* RS232.ROM in Resources */ = {isa = PBXBuildFile; fileRef = B3EBAC2F2872971F00EAEB37 /* RS232.ROM */; };
 		B3EBB1DD28729C2600EAEB37 /* file_path_io.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC4A2872971F00EAEB37 /* file_path_io.c */; };
 		B3EBB1DE28729C2600EAEB37 /* file_path.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC4B2872971F00EAEB37 /* file_path.c */; };
 		B3EBB1DF28729C2600EAEB37 /* retro_dirent.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC4C2872971F00EAEB37 /* retro_dirent.c */; };
-		B3EBB1E028729C2700EAEB37 /* file_path_io.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC4A2872971F00EAEB37 /* file_path_io.c */; };
-		B3EBB1E128729C2700EAEB37 /* file_path.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC4B2872971F00EAEB37 /* file_path.c */; };
-		B3EBB1E228729C2700EAEB37 /* retro_dirent.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC4C2872971F00EAEB37 /* retro_dirent.c */; };
 		B3EBB1E328729C5000EAEB37 /* fopen_utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC472872971F00EAEB37 /* fopen_utf8.c */; };
 		B3EBB1E428729C5000EAEB37 /* compat_strl.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC432872971F00EAEB37 /* compat_strl.c */; };
 		B3EBB1E528729C5000EAEB37 /* compat_posix_string.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC442872971F00EAEB37 /* compat_posix_string.c */; };
 		B3EBB1E628729C5000EAEB37 /* compat_strcasestr.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC452872971F00EAEB37 /* compat_strcasestr.c */; };
 		B3EBB1E728729C5000EAEB37 /* compat_snprintf.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC462872971F00EAEB37 /* compat_snprintf.c */; };
-		B3EBB1E828729C5100EAEB37 /* fopen_utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC472872971F00EAEB37 /* fopen_utf8.c */; };
-		B3EBB1E928729C5100EAEB37 /* compat_strl.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC432872971F00EAEB37 /* compat_strl.c */; };
-		B3EBB1EA28729C5100EAEB37 /* compat_posix_string.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC442872971F00EAEB37 /* compat_posix_string.c */; };
-		B3EBB1EB28729C5100EAEB37 /* compat_strcasestr.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC452872971F00EAEB37 /* compat_strcasestr.c */; };
-		B3EBB1EC28729C5100EAEB37 /* compat_snprintf.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC462872971F00EAEB37 /* compat_snprintf.c */; };
 		B3EBB1ED28729C6800EAEB37 /* file_stream.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC502872971F00EAEB37 /* file_stream.c */; };
 		B3EBB1EE28729C6800EAEB37 /* file_stream_transforms.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC4E2872971F00EAEB37 /* file_stream_transforms.c */; };
-		B3EBB1EF28729C6900EAEB37 /* file_stream.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC502872971F00EAEB37 /* file_stream.c */; };
-		B3EBB1F028729C6900EAEB37 /* file_stream_transforms.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC4E2872971F00EAEB37 /* file_stream_transforms.c */; };
 		B3EBB1F128729C7F00EAEB37 /* vfs_implementation.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC402872971F00EAEB37 /* vfs_implementation.c */; };
 		B3EBB1F228729C7F00EAEB37 /* rtime.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC902872972000EAEB37 /* rtime.c */; };
-		B3EBB1F328729C8000EAEB37 /* vfs_implementation.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC402872971F00EAEB37 /* vfs_implementation.c */; };
-		B3EBB1F428729C8000EAEB37 /* rtime.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC902872972000EAEB37 /* rtime.c */; };
 		B3EBB1F528729C8E00EAEB37 /* stdstring.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC922872972000EAEB37 /* stdstring.c */; };
-		B3EBB1F628729C8F00EAEB37 /* stdstring.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC922872972000EAEB37 /* stdstring.c */; };
 		B3EBB1FD2872B1A000EAEB37 /* libFuse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libFuse.a */; };
-		B3EBB1FE2872B1AA00EAEB37 /* libFuse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3447F91218BEE3F00557ACE /* libFuse.a */; };
 		B3EBB2012872B1F600EAEB37 /* encoding_utf.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC3E2872971F00EAEB37 /* encoding_utf.c */; };
-		B3EBB2022872B1F700EAEB37 /* encoding_utf.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAC3E2872971F00EAEB37 /* encoding_utf.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -143,13 +80,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = B3344B522859E088006E6B3A;
 			remoteInfo = "dos-box-libretro-iOS";
-		};
-		B39768FC2859E23A00558958 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3C7620720783162009950E4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B39768ED2859E18B00558958;
-			remoteInfo = "dos-box-libretro-tvOS";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -172,24 +102,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3447F8D218BEE3F00557ACE /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B39768F22859E18B00558958 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -200,8 +112,6 @@
 		B339468820783F41008DBAB4 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = usr/lib/libpthread.tbd; sourceTree = SDKROOT; };
 		B339468A20783F48008DBAB4 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
-		B3447EE6218BEDD200557ACE /* PVFuse.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVFuse.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3447F91218BEE3F00557ACE /* libFuse.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libFuse.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B35E6BEF207CD2610040709A /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		B35E6BF1207CD2670040709A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
@@ -213,7 +123,6 @@
 		B37022C1287253B300B3F6DA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B37022C5287253B300B3F6DA /* PVFuseCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVFuseCore.h; sourceTree = "<group>"; };
 		B37022C6287253B300B3F6DA /* PVFuseCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVFuseCore.mm; sourceTree = "<group>"; };
-		B39768F72859E18B00558958 /* libFuse-libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libFuse-libretro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39769132859E3A300558958 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39769172859E3AD00558958 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B39769182859E3AD00558958 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -378,39 +287,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3447ECA218BEDD200557ACE /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B32296E628783A5100585AD8 /* libFuse-libretro.a in Frameworks */,
-				B32296E728783A5100585AD8 /* libFuse.a in Frameworks */,
-				B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */,
-				B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */,
-				B3447ECD218BEDD200557ACE /* CoreAudio.framework in Frameworks */,
-				B3447ECE218BEDD200557ACE /* AudioToolbox.framework in Frameworks */,
-				B3447ED0218BEDD200557ACE /* libz.tbd in Frameworks */,
-				B3A41BF0286E76490054E9A5 /* PVLibRetro.framework in Frameworks */,
-				B3447ED1218BEDD200557ACE /* libpthread.tbd in Frameworks */,
-				B3447ED3218BEDD200557ACE /* Foundation.framework in Frameworks */,
-				B3447ED4218BEDD200557ACE /* OpenGLES.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3447F8C218BEE3F00557ACE /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B39768F12859E18B00558958 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3EBB1FE2872B1AA00EAEB37 /* libFuse.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C7620C20783162009950E4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -470,10 +346,7 @@
 			children = (
 				B3C7621020783162009950E4 /* PVFuse.framework */,
 				B30178D3207C901D0051B93D /* libFuse.a */,
-				B3447EE6218BEDD200557ACE /* PVFuse.framework */,
-				B3447F91218BEE3F00557ACE /* libFuse.a */,
 				B3344BC32859E088006E6B3A /* libFuse-libretro.a */,
-				B39768F72859E18B00558958 /* libFuse-libretro.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -865,15 +738,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		B3447ED5218BEDD200557ACE /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B37022CE2872558F00B3F6DA /* PVFuse.h in Headers */,
-				B37022CA2872554300B3F6DA /* PVFuseCore.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C7620D20783162009950E4 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -886,9 +750,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		B30178D2207C901D0051B93D /* Fuse-iOS */ = {
+		B30178D2207C901D0051B93D /* Fuse */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "Fuse-iOS" */;
+			buildConfigurationList = B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "Fuse" */;
 			buildPhases = (
 				B30178CF207C901D0051B93D /* Sources */,
 				B30178D0207C901D0051B93D /* Frameworks */,
@@ -898,14 +762,14 @@
 			);
 			dependencies = (
 			);
-			name = "Fuse-iOS";
+			name = Fuse;
 			productName = reicast;
 			productReference = B30178D3207C901D0051B93D /* libFuse.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B3344B522859E088006E6B3A /* Fuse-libretro-iOS */ = {
+		B3344B522859E088006E6B3A /* Fuse-libretro */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "Fuse-libretro-iOS" */;
+			buildConfigurationList = B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "Fuse-libretro" */;
 			buildPhases = (
 				B3344B532859E088006E6B3A /* Sources */,
 				B3344BBD2859E088006E6B3A /* Frameworks */,
@@ -915,67 +779,14 @@
 			);
 			dependencies = (
 			);
-			name = "Fuse-libretro-iOS";
+			name = "Fuse-libretro";
 			productName = reicast;
 			productReference = B3344BC32859E088006E6B3A /* libFuse-libretro.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B3447EC0218BEDD200557ACE /* PVFuse-tvOS */ = {
+		B3C7620F20783162009950E4 /* PVFuse */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3447EE3218BEDD200557ACE /* Build configuration list for PBXNativeTarget "PVFuse-tvOS" */;
-			buildPhases = (
-				B3447EC1218BEDD200557ACE /* Sources */,
-				B3447ECA218BEDD200557ACE /* Frameworks */,
-				B3447ED5218BEDD200557ACE /* Headers */,
-				B3447EDF218BEDD200557ACE /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B39768FD2859E23A00558958 /* PBXTargetDependency */,
-			);
-			name = "PVFuse-tvOS";
-			productName = PVReicast;
-			productReference = B3447EE6218BEDD200557ACE /* PVFuse.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		B3447EE8218BEE3F00557ACE /* Fuse-tvOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B3447F8E218BEE3F00557ACE /* Build configuration list for PBXNativeTarget "Fuse-tvOS" */;
-			buildPhases = (
-				B3447EE9218BEE3F00557ACE /* Sources */,
-				B3447F8C218BEE3F00557ACE /* Frameworks */,
-				B3447F8D218BEE3F00557ACE /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "Fuse-tvOS";
-			productName = reicast;
-			productReference = B3447F91218BEE3F00557ACE /* libFuse.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		B39768ED2859E18B00558958 /* Fuse-libretro-tvOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B39768F32859E18B00558958 /* Build configuration list for PBXNativeTarget "Fuse-libretro-tvOS" */;
-			buildPhases = (
-				B39768EE2859E18B00558958 /* Sources */,
-				B39768F12859E18B00558958 /* Frameworks */,
-				B39768F22859E18B00558958 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "Fuse-libretro-tvOS";
-			productName = reicast;
-			productReference = B39768F72859E18B00558958 /* libFuse-libretro.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		B3C7620F20783162009950E4 /* PVFuse-iOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVFuse-iOS" */;
+			buildConfigurationList = B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVFuse" */;
 			buildPhases = (
 				B3C7620B20783162009950E4 /* Sources */,
 				B3C7620C20783162009950E4 /* Frameworks */,
@@ -987,7 +798,7 @@
 			dependencies = (
 				B39768FA2859E23200558958 /* PBXTargetDependency */,
 			);
-			name = "PVFuse-iOS";
+			name = PVFuse;
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVFuse.framework */;
 			productType = "com.apple.product-type.framework";
@@ -1036,44 +847,14 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B3C7620F20783162009950E4 /* PVFuse-iOS */,
-				B3447EC0218BEDD200557ACE /* PVFuse-tvOS */,
-				B3344B522859E088006E6B3A /* Fuse-libretro-iOS */,
-				B39768ED2859E18B00558958 /* Fuse-libretro-tvOS */,
-				B30178D2207C901D0051B93D /* Fuse-iOS */,
-				B3447EE8218BEE3F00557ACE /* Fuse-tvOS */,
+				B3C7620F20783162009950E4 /* PVFuse */,
+				B3344B522859E088006E6B3A /* Fuse-libretro */,
+				B30178D2207C901D0051B93D /* Fuse */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		B3447EDF218BEDD200557ACE /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3EBB1D228729BBA00EAEB37 /* MSX2EXT.ROM in Resources */,
-				B3EBB1DC28729BBA00EAEB37 /* RS232.ROM in Resources */,
-				B3EBB1CA28729BBA00EAEB37 /* KANJI.ROM in Resources */,
-				B3EBB1CF28729BBA00EAEB37 /* FMPAC16.ROM in Resources */,
-				B3EBB1D728729BBA00EAEB37 /* CYRILLIC.FNT in Resources */,
-				B3EBB1D028729BBA00EAEB37 /* PAINTER.ROM in Resources */,
-				B3EBB1CD28729BBA00EAEB37 /* MSXDOS2.ROM in Resources */,
-				B3EBB1CE28729BBA00EAEB37 /* DEFAULT.FNT in Resources */,
-				B37022CC2872556600B3F6DA /* Core.plist in Resources */,
-				B3EBB1CB28729BBA00EAEB37 /* JAPANESE.FNT in Resources */,
-				B3EBB1D428729BBA00EAEB37 /* KOREAN.FNT in Resources */,
-				B3EBB1D328729BBA00EAEB37 /* DISK.ROM in Resources */,
-				B3EBB1DA28729BBA00EAEB37 /* MSX2PEXT.ROM in Resources */,
-				B3EBB1D828729BBA00EAEB37 /* MSX.ROM in Resources */,
-				B3EBB1D928729BBA00EAEB37 /* MSX2P.ROM in Resources */,
-				B3EBB1DB28729BBA00EAEB37 /* CARTS.SHA in Resources */,
-				B3EBB1CC28729BBA00EAEB37 /* INTERNAT.FNT in Resources */,
-				B3EBB1D128729BBA00EAEB37 /* FMPAC.ROM in Resources */,
-				B3EBB1D628729BBA00EAEB37 /* ITALIC.FNT in Resources */,
-				B3EBB1D528729BBA00EAEB37 /* MSX2.ROM in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C7620E20783162009950E4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1146,56 +927,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3447EC1218BEDD200557ACE /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B37022C72872553D00B3F6DA /* PVFuseCore.mm in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3447EE9218BEE3F00557ACE /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3EBB1AE28729B7300EAEB37 /* I8255.c in Sources */,
-				B3EBB1AB28729B7300EAEB37 /* WD1793.c in Sources */,
-				B3EBB1A828729B7300EAEB37 /* MCF.c in Sources */,
-				B3EBB1A928729B7300EAEB37 /* Sound.c in Sources */,
-				B3EBB19C28729B4400EAEB37 /* Z80.c in Sources */,
-				B3EBB1AD28729B7300EAEB37 /* SHA1.c in Sources */,
-				B3EBB1B528729BA300EAEB37 /* MSX.c in Sources */,
-				B3EBB1B028729B7300EAEB37 /* YM2413.c in Sources */,
-				B3EBB1B628729BA300EAEB37 /* V9938.c in Sources */,
-				B3EBB1AC28729B7300EAEB37 /* AY8910.c in Sources */,
-				B3EBB1A728729B7300EAEB37 /* Floppy.c in Sources */,
-				B3EBB1AA28729B7300EAEB37 /* FDIDisk.c in Sources */,
-				B3EBB1AF28729B7300EAEB37 /* SCC.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B39768EE2859E18B00558958 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3EBB1E928729C5100EAEB37 /* compat_strl.c in Sources */,
-				B3EBB2022872B1F700EAEB37 /* encoding_utf.c in Sources */,
-				B3EBB1E228729C2700EAEB37 /* retro_dirent.c in Sources */,
-				B3EBB1E828729C5100EAEB37 /* fopen_utf8.c in Sources */,
-				B3EBB1E128729C2700EAEB37 /* file_path.c in Sources */,
-				B3EBB1EC28729C5100EAEB37 /* compat_snprintf.c in Sources */,
-				B3EBB1E028729C2700EAEB37 /* file_path_io.c in Sources */,
-				B3EBB1F628729C8F00EAEB37 /* stdstring.c in Sources */,
-				B3EBB1EB28729C5100EAEB37 /* compat_strcasestr.c in Sources */,
-				B3EBB1F428729C8000EAEB37 /* rtime.c in Sources */,
-				B3EBB1B228729B8200EAEB37 /* libretro.c in Sources */,
-				B3EBB1F028729C6900EAEB37 /* file_stream_transforms.c in Sources */,
-				B3EBB1F328729C8000EAEB37 /* vfs_implementation.c in Sources */,
-				B3EBB1EA28729C5100EAEB37 /* compat_posix_string.c in Sources */,
-				B3EBB1EF28729C6900EAEB37 /* file_stream.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C7620B20783162009950E4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1209,13 +940,8 @@
 /* Begin PBXTargetDependency section */
 		B39768FA2859E23200558958 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3344B522859E088006E6B3A /* Fuse-libretro-iOS */;
+			target = B3344B522859E088006E6B3A /* Fuse-libretro */;
 			targetProxy = B39768F92859E23200558958 /* PBXContainerItemProxy */;
-		};
-		B39768FD2859E23A00558958 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B39768ED2859E18B00558958 /* Fuse-libretro-tvOS */;
-			targetProxy = B39768FC2859E23A00558958 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1223,6 +949,7 @@
 		B30178DA207C901D0051B93D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -1230,13 +957,16 @@
 				PRODUCT_NAME = Fuse;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Debug;
 		};
 		B30178DB207C901D0051B93D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -1244,7 +974,9 @@
 				PRODUCT_NAME = Fuse;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Release;
 		};
@@ -1322,6 +1054,7 @@
 		B324C5022191A2A2009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -1342,41 +1075,16 @@
 				PRODUCT_NAME = PVFuse;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Archive;
-		};
-		B324C5032191A2A2009F4EDC /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/PVFuse/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVFuse";
-				PRODUCT_NAME = PVFuse;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Archive;
 		};
 		B324C5042191A2A2009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -1384,28 +1092,16 @@
 				PRODUCT_NAME = Fuse;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Archive;
-		};
-		B324C5052191A2A2009F4EDC /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				PRODUCT_NAME = Fuse;
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Archive;
 		};
 		B3344BC02859E088006E6B3A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -1413,13 +1109,16 @@
 				PRODUCT_NAME = "Fuse-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Debug;
 		};
 		B3344BC12859E088006E6B3A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -1427,13 +1126,16 @@
 				PRODUCT_NAME = "Fuse-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Release;
 		};
 		B3344BC22859E088006E6B3A /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -1441,138 +1143,9 @@
 				PRODUCT_NAME = "Fuse-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Archive;
-		};
-		B3447EE4218BEDD200557ACE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/PVFuse/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVFuse";
-				PRODUCT_NAME = PVFuse;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Debug;
-		};
-		B3447EE5218BEDD200557ACE /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/PVFuse/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVFuse";
-				PRODUCT_NAME = PVFuse;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Release;
-		};
-		B3447F8F218BEE3F00557ACE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				PRODUCT_NAME = Fuse;
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Debug;
-		};
-		B3447F90218BEE3F00557ACE /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				PRODUCT_NAME = Fuse;
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Release;
-		};
-		B39768F42859E18B00558958 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				PRODUCT_NAME = "Fuse-libretro";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Debug;
-		};
-		B39768F52859E18B00558958 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				PRODUCT_NAME = "Fuse-libretro";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Release;
-		};
-		B39768F62859E18B00558958 /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				PRODUCT_NAME = "Fuse-libretro";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Archive;
 		};
@@ -1724,6 +1297,7 @@
 		B3C7621920783162009950E4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -1744,13 +1318,16 @@
 				PRODUCT_NAME = PVFuse;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Debug;
 		};
 		B3C7621A20783162009950E4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -1771,14 +1348,16 @@
 				PRODUCT_NAME = PVFuse;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "Fuse-iOS" */ = {
+		B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "Fuse" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B30178DA207C901D0051B93D /* Debug */,
@@ -1788,42 +1367,12 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "Fuse-libretro-iOS" */ = {
+		B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "Fuse-libretro" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3344BC02859E088006E6B3A /* Debug */,
 				B3344BC12859E088006E6B3A /* Release */,
 				B3344BC22859E088006E6B3A /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B3447EE3218BEDD200557ACE /* Build configuration list for PBXNativeTarget "PVFuse-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B3447EE4218BEDD200557ACE /* Debug */,
-				B3447EE5218BEDD200557ACE /* Release */,
-				B324C5032191A2A2009F4EDC /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B3447F8E218BEE3F00557ACE /* Build configuration list for PBXNativeTarget "Fuse-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B3447F8F218BEE3F00557ACE /* Debug */,
-				B3447F90218BEE3F00557ACE /* Release */,
-				B324C5052191A2A2009F4EDC /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B39768F32859E18B00558958 /* Build configuration list for PBXNativeTarget "Fuse-libretro-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B39768F42859E18B00558958 /* Debug */,
-				B39768F52859E18B00558958 /* Release */,
-				B39768F62859E18B00558958 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1838,7 +1387,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVFuse-iOS" */ = {
+		B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVFuse" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3C7621920783162009950E4 /* Debug */,
