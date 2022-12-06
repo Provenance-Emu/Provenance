@@ -8,38 +8,22 @@
 
 /* Begin PBXBuildFile section */
 		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
-		B32296E628783A5100585AD8 /* libCitra-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B39768F72859E18B00558958 /* libCitra-libretro.a */; };
-		B32296E728783A5100585AD8 /* libCitra.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3447F91218BEE3F00557ACE /* libCitra.a */; };
-		B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C31B2191964F009F4EDC /* AVFoundation.framework */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
-		B3447ECD218BEDD200557ACE /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
-		B3447ECE218BEDD200557ACE /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
-		B3447ED0218BEDD200557ACE /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
-		B3447ED1218BEDD200557ACE /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
-		B3447ED3218BEDD200557ACE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
-		B3447ED4218BEDD200557ACE /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
-		B37022C72872553D00B3F6DA /* PVCitraCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B37022C6287253B300B3F6DA /* PVCitraCore.mm */; };
 		B37022C82872553E00B3F6DA /* PVCitraCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B37022C6287253B300B3F6DA /* PVCitraCore.mm */; };
 		B37022C92872554300B3F6DA /* PVCitraCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C5287253B300B3F6DA /* PVCitraCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B37022CA2872554300B3F6DA /* PVCitraCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C5287253B300B3F6DA /* PVCitraCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B37022CB2872556600B3F6DA /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B37022BF287253B300B3F6DA /* Core.plist */; };
-		B37022CC2872556600B3F6DA /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B37022BF287253B300B3F6DA /* Core.plist */; };
 		B37022CD2872558F00B3F6DA /* PVCitra.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVCitra.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B37022CE2872558F00B3F6DA /* PVCitra.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVCitra.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B39768F82859E23200558958 /* libCitra-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libCitra-libretro.a */; };
 		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
-		B3A41BF0286E76490054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */; };
-		B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B104B8218F281B00210C39 /* PVSupport.framework */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
 		B3EBB1FD2872B1A000EAEB37 /* libCitra.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libCitra.a */; };
-		B3EBB1FE2872B1AA00EAEB37 /* libCitra.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3447F91218BEE3F00557ACE /* libCitra.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,13 +33,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = B3344B522859E088006E6B3A;
 			remoteInfo = "dos-box-libretro-iOS";
-		};
-		B39768FC2859E23A00558958 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3C7620720783162009950E4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B39768ED2859E18B00558958;
-			remoteInfo = "dos-box-libretro-tvOS";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -70,24 +47,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B3344BBE2859E088006E6B3A /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3447F8D218BEE3F00557ACE /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B39768F22859E18B00558958 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "include/$(PRODUCT_NAME)";
@@ -1884,8 +1843,6 @@
 		B339468820783F41008DBAB4 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = usr/lib/libpthread.tbd; sourceTree = SDKROOT; };
 		B339468A20783F48008DBAB4 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
-		B3447EE6218BEDD200557ACE /* PVCitra.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVCitra.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3447F91218BEE3F00557ACE /* libCitra.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCitra.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B35E6BEF207CD2610040709A /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		B35E6BF1207CD2670040709A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
@@ -1897,7 +1854,6 @@
 		B37022C1287253B300B3F6DA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B37022C5287253B300B3F6DA /* PVCitraCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVCitraCore.h; sourceTree = "<group>"; };
 		B37022C6287253B300B3F6DA /* PVCitraCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVCitraCore.mm; sourceTree = "<group>"; };
-		B39768F72859E18B00558958 /* libCitra-libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libCitra-libretro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39769132859E3A300558958 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39769172859E3AD00558958 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B39769182859E3AD00558958 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -1923,39 +1879,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3EBB1FD2872B1A000EAEB37 /* libCitra.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3447ECA218BEDD200557ACE /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B32296E628783A5100585AD8 /* libCitra-libretro.a in Frameworks */,
-				B32296E728783A5100585AD8 /* libCitra.a in Frameworks */,
-				B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */,
-				B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */,
-				B3447ECD218BEDD200557ACE /* CoreAudio.framework in Frameworks */,
-				B3447ECE218BEDD200557ACE /* AudioToolbox.framework in Frameworks */,
-				B3447ED0218BEDD200557ACE /* libz.tbd in Frameworks */,
-				B3A41BF0286E76490054E9A5 /* PVLibRetro.framework in Frameworks */,
-				B3447ED1218BEDD200557ACE /* libpthread.tbd in Frameworks */,
-				B3447ED3218BEDD200557ACE /* Foundation.framework in Frameworks */,
-				B3447ED4218BEDD200557ACE /* OpenGLES.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3447F8C218BEE3F00557ACE /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B39768F12859E18B00558958 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3EBB1FE2872B1AA00EAEB37 /* libCitra.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6043,10 +5966,7 @@
 			children = (
 				B3C7621020783162009950E4 /* PVCitra.framework */,
 				B30178D3207C901D0051B93D /* libCitra.a */,
-				B3447EE6218BEDD200557ACE /* PVCitra.framework */,
-				B3447F91218BEE3F00557ACE /* libCitra.a */,
 				B3344BC32859E088006E6B3A /* libCitra-libretro.a */,
-				B39768F72859E18B00558958 /* libCitra-libretro.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -6079,15 +5999,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		B3447ED5218BEDD200557ACE /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B37022CE2872558F00B3F6DA /* PVCitra.h in Headers */,
-				B37022CA2872554300B3F6DA /* PVCitraCore.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C7620D20783162009950E4 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -6100,9 +6011,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		B30178D2207C901D0051B93D /* Citra-iOS */ = {
+		B30178D2207C901D0051B93D /* Citra */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "Citra-iOS" */;
+			buildConfigurationList = B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "Citra" */;
 			buildPhases = (
 				B30178CF207C901D0051B93D /* Sources */,
 				B30178D0207C901D0051B93D /* Frameworks */,
@@ -6112,14 +6023,14 @@
 			);
 			dependencies = (
 			);
-			name = "Citra-iOS";
+			name = Citra;
 			productName = reicast;
 			productReference = B30178D3207C901D0051B93D /* libCitra.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B3344B522859E088006E6B3A /* Citra-libretro-iOS */ = {
+		B3344B522859E088006E6B3A /* Citra-libretro */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "Citra-libretro-iOS" */;
+			buildConfigurationList = B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "Citra-libretro" */;
 			buildPhases = (
 				B3344B532859E088006E6B3A /* Sources */,
 				B3344BBD2859E088006E6B3A /* Frameworks */,
@@ -6129,67 +6040,14 @@
 			);
 			dependencies = (
 			);
-			name = "Citra-libretro-iOS";
+			name = "Citra-libretro";
 			productName = reicast;
 			productReference = B3344BC32859E088006E6B3A /* libCitra-libretro.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B3447EC0218BEDD200557ACE /* PVCitra-tvOS */ = {
+		B3C7620F20783162009950E4 /* PVCitra */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3447EE3218BEDD200557ACE /* Build configuration list for PBXNativeTarget "PVCitra-tvOS" */;
-			buildPhases = (
-				B3447EC1218BEDD200557ACE /* Sources */,
-				B3447ECA218BEDD200557ACE /* Frameworks */,
-				B3447ED5218BEDD200557ACE /* Headers */,
-				B3447EDF218BEDD200557ACE /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B39768FD2859E23A00558958 /* PBXTargetDependency */,
-			);
-			name = "PVCitra-tvOS";
-			productName = PVReicast;
-			productReference = B3447EE6218BEDD200557ACE /* PVCitra.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		B3447EE8218BEE3F00557ACE /* Citra-tvOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B3447F8E218BEE3F00557ACE /* Build configuration list for PBXNativeTarget "Citra-tvOS" */;
-			buildPhases = (
-				B3447EE9218BEE3F00557ACE /* Sources */,
-				B3447F8C218BEE3F00557ACE /* Frameworks */,
-				B3447F8D218BEE3F00557ACE /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "Citra-tvOS";
-			productName = reicast;
-			productReference = B3447F91218BEE3F00557ACE /* libCitra.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		B39768ED2859E18B00558958 /* Citra-libretro-tvOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B39768F32859E18B00558958 /* Build configuration list for PBXNativeTarget "Citra-libretro-tvOS" */;
-			buildPhases = (
-				B39768EE2859E18B00558958 /* Sources */,
-				B39768F12859E18B00558958 /* Frameworks */,
-				B39768F22859E18B00558958 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "Citra-libretro-tvOS";
-			productName = reicast;
-			productReference = B39768F72859E18B00558958 /* libCitra-libretro.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		B3C7620F20783162009950E4 /* PVCitra-iOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVCitra-iOS" */;
+			buildConfigurationList = B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVCitra" */;
 			buildPhases = (
 				B3C7620B20783162009950E4 /* Sources */,
 				B3C7620C20783162009950E4 /* Frameworks */,
@@ -6201,7 +6059,7 @@
 			dependencies = (
 				B39768FA2859E23200558958 /* PBXTargetDependency */,
 			);
-			name = "PVCitra-iOS";
+			name = PVCitra;
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVCitra.framework */;
 			productType = "com.apple.product-type.framework";
@@ -6250,25 +6108,14 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B3C7620F20783162009950E4 /* PVCitra-iOS */,
-				B3447EC0218BEDD200557ACE /* PVCitra-tvOS */,
-				B3344B522859E088006E6B3A /* Citra-libretro-iOS */,
-				B39768ED2859E18B00558958 /* Citra-libretro-tvOS */,
-				B30178D2207C901D0051B93D /* Citra-iOS */,
-				B3447EE8218BEE3F00557ACE /* Citra-tvOS */,
+				B3C7620F20783162009950E4 /* PVCitra */,
+				B3344B522859E088006E6B3A /* Citra-libretro */,
+				B30178D2207C901D0051B93D /* Citra */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		B3447EDF218BEDD200557ACE /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B37022CC2872556600B3F6DA /* Core.plist in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C7620E20783162009950E4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -6294,28 +6141,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3447EC1218BEDD200557ACE /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B37022C72872553D00B3F6DA /* PVCitraCore.mm in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3447EE9218BEE3F00557ACE /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B39768EE2859E18B00558958 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C7620B20783162009950E4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -6329,13 +6154,8 @@
 /* Begin PBXTargetDependency section */
 		B39768FA2859E23200558958 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3344B522859E088006E6B3A /* Citra-libretro-iOS */;
+			target = B3344B522859E088006E6B3A /* Citra-libretro */;
 			targetProxy = B39768F92859E23200558958 /* PBXContainerItemProxy */;
-		};
-		B39768FD2859E23A00558958 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B39768ED2859E18B00558958 /* Citra-libretro-tvOS */;
-			targetProxy = B39768FC2859E23A00558958 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -6343,6 +6163,7 @@
 		B30178DA207C901D0051B93D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -6350,13 +6171,16 @@
 				PRODUCT_NAME = Citra;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Debug;
 		};
 		B30178DB207C901D0051B93D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -6364,7 +6188,9 @@
 				PRODUCT_NAME = Citra;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Release;
 		};
@@ -6442,6 +6268,7 @@
 		B324C5022191A2A2009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -6462,41 +6289,16 @@
 				PRODUCT_NAME = PVCitra;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Archive;
-		};
-		B324C5032191A2A2009F4EDC /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/PVCitra/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVCitra";
-				PRODUCT_NAME = PVCitra;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Archive;
 		};
 		B324C5042191A2A2009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -6504,28 +6306,16 @@
 				PRODUCT_NAME = Citra;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Archive;
-		};
-		B324C5052191A2A2009F4EDC /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				PRODUCT_NAME = Citra;
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Archive;
 		};
 		B3344BC02859E088006E6B3A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -6533,13 +6323,16 @@
 				PRODUCT_NAME = "Citra-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Debug;
 		};
 		B3344BC12859E088006E6B3A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -6547,13 +6340,16 @@
 				PRODUCT_NAME = "Citra-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Release;
 		};
 		B3344BC22859E088006E6B3A /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -6561,138 +6357,9 @@
 				PRODUCT_NAME = "Citra-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Archive;
-		};
-		B3447EE4218BEDD200557ACE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/PVCitra/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVCitra";
-				PRODUCT_NAME = PVCitra;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Debug;
-		};
-		B3447EE5218BEDD200557ACE /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/PVCitra/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVCitra";
-				PRODUCT_NAME = PVCitra;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Release;
-		};
-		B3447F8F218BEE3F00557ACE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				PRODUCT_NAME = Citra;
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Debug;
-		};
-		B3447F90218BEE3F00557ACE /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				PRODUCT_NAME = Citra;
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Release;
-		};
-		B39768F42859E18B00558958 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				PRODUCT_NAME = "Citra-libretro";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Debug;
-		};
-		B39768F52859E18B00558958 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				PRODUCT_NAME = "Citra-libretro";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Release;
-		};
-		B39768F62859E18B00558958 /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				PRODUCT_NAME = "Citra-libretro";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Archive;
 		};
@@ -6844,6 +6511,7 @@
 		B3C7621920783162009950E4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -6864,13 +6532,16 @@
 				PRODUCT_NAME = PVCitra;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Debug;
 		};
 		B3C7621A20783162009950E4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -6891,14 +6562,16 @@
 				PRODUCT_NAME = PVCitra;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "Citra-iOS" */ = {
+		B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "Citra" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B30178DA207C901D0051B93D /* Debug */,
@@ -6908,42 +6581,12 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "Citra-libretro-iOS" */ = {
+		B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "Citra-libretro" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3344BC02859E088006E6B3A /* Debug */,
 				B3344BC12859E088006E6B3A /* Release */,
 				B3344BC22859E088006E6B3A /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B3447EE3218BEDD200557ACE /* Build configuration list for PBXNativeTarget "PVCitra-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B3447EE4218BEDD200557ACE /* Debug */,
-				B3447EE5218BEDD200557ACE /* Release */,
-				B324C5032191A2A2009F4EDC /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B3447F8E218BEE3F00557ACE /* Build configuration list for PBXNativeTarget "Citra-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B3447F8F218BEE3F00557ACE /* Debug */,
-				B3447F90218BEE3F00557ACE /* Release */,
-				B324C5052191A2A2009F4EDC /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B39768F32859E18B00558958 /* Build configuration list for PBXNativeTarget "Citra-libretro-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B39768F42859E18B00558958 /* Debug */,
-				B39768F52859E18B00558958 /* Release */,
-				B39768F62859E18B00558958 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6958,7 +6601,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVCitra-iOS" */ = {
+		B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVCitra" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3C7621920783162009950E4 /* Debug */,

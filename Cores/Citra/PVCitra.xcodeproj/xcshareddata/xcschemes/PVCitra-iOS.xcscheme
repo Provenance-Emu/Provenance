@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C7620F20783162009950E4"
                BuildableName = "PVCitra.framework"
-               BlueprintName = "PVCitra-iOS"
+               BlueprintName = "PVCitra"
                ReferencedContainer = "container:PVCitra.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -52,7 +52,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C7620F20783162009950E4"
             BuildableName = "PVCitra.framework"
-            BlueprintName = "PVCitra-iOS"
+            BlueprintName = "PVCitra"
             ReferencedContainer = "container:PVCitra.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
