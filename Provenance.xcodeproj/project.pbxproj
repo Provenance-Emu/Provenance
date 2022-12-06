@@ -666,8 +666,6 @@
 		B3FAC946292B4599005E8B11 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A626EA159400E95488 /* PVMupen64PlusVideoGlideN64.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3FAC947292B459B005E8B11 /* PVMupen64PlusVideoRice.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A726EA159400E95488 /* PVMupen64PlusVideoRice.framework */; };
 		B3FAC948292B459C005E8B11 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A726EA159400E95488 /* PVMupen64PlusVideoRice.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3FAC949292B459E005E8B11 /* PVOpera.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3231BEE28966661003CC116 /* PVOpera.framework */; };
-		B3FAC94A292B459F005E8B11 /* PVOpera.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3231BEE28966661003CC116 /* PVOpera.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3FAC94B292B45A1005E8B11 /* PVPokeMini.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B311B1C327A52F2000D1DE41 /* PVPokeMini.framework */; };
 		B3FAC94C292B45A1005E8B11 /* PVPokeMini.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B311B1C327A52F2000D1DE41 /* PVPokeMini.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3FAC94D292B45A3005E8B11 /* PVPotator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32296DD2878385E00585AD8 /* PVPotator.framework */; };
@@ -901,7 +899,6 @@
 				B3FAC934292B451B005E8B11 /* PVGenesis.framework in Embed Frameworks */,
 				B3FAC950292B45A7005E8B11 /* PVRSPCXD4.framework in Embed Frameworks */,
 				B3FAC92E292B450D005E8B11 /* PVGB.framework in Embed Frameworks */,
-				B3FAC94A292B459F005E8B11 /* PVOpera.framework in Embed Frameworks */,
 				B3FAC94C292B45A1005E8B11 /* PVPokeMini.framework in Embed Frameworks */,
 				B3FAC936292B451F005E8B11 /* PVGME.framework in Embed Frameworks */,
 				B3FAC944292B4596005E8B11 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
@@ -1728,7 +1725,6 @@
 				B37CE7C1293F287D0010B746 /* PVFreeIntv.framework in Frameworks */,
 				B3FAC943292B4596005E8B11 /* PVMupen64PlusRspHLE.framework in Frameworks */,
 				B3FAC945292B4598005E8B11 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
-				B3FAC949292B459E005E8B11 /* PVOpera.framework in Frameworks */,
 				B3AEE312293F3BA30050BDB6 /* PVMu.framework in Frameworks */,
 				B3FB9679276DD7F600F7EDEE /* SteamController in Frameworks */,
 				B33625FD26EDF88200DC41EA /* Metal.framework in Frameworks */,

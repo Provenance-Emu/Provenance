@@ -5773,6 +5773,47 @@
 		<string>com.provenance.3DO</string>
 		<key>PVDatabaseID</key>
 		<string>1</string>
+		<key>PVRequiresBIOS</key>
+		<true/>
+		<key>PVBIOSNames</key>
+		<array>
+			<dict>
+				<key>Description</key>
+				<string>3DO BIOS</string>
+				<key>MD5</key>
+				<string>51f2f43ae2f3508a14d9f56597e2d3ce</string>
+				<key>Name</key>
+				<string>panafz10.bin</string>
+				<key>Size</key>
+				<integer>1048576</integer>
+				<key>Optional</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>3DO Patches BIOS</string>
+				<key>MD5</key>
+				<string>1477bda80dc33731a65468c1f5bcbee9</string>
+				<key>Name</key>
+				<string>panafz10-patched.bin</string>
+				<key>Size</key>
+				<integer>1048576</integer>
+				<key>Optional</key>
+				<true/>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>Japanse Character ROM</string>
+				<key>MD5</key>
+				<string>428577250f43edc902ea239c50d2240d</string>
+				<key>Name</key>
+				<string>rom2.rom</string>
+				<key>Size</key>
+				<integer>933636</integer>
+				<key>Optional</key>
+				<true/>
+			</dict>
+		</array>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>cue</string>
