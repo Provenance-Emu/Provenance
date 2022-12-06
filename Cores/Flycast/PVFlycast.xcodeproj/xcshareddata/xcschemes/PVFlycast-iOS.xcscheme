@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C7620F20783162009950E4"
                BuildableName = "PVFlycast.framework"
-               BlueprintName = "PVFlycast-iOS"
+               BlueprintName = "PVFlycast"
                ReferencedContainer = "container:PVFlycast.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -52,7 +52,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C7620F20783162009950E4"
             BuildableName = "PVFlycast.framework"
-            BlueprintName = "PVFlycast-iOS"
+            BlueprintName = "PVFlycast"
             ReferencedContainer = "container:PVFlycast.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
