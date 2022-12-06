@@ -1,0 +1,47 @@
+//
+//  Config.xcconfig
+//  Mednafen
+//
+//  Created by Joseph Mattiello on 12/06/22.
+//
+//
+
+// All
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_LROUND HAVE_MKDIR HAVE_PTHREAD_COND_TIMEDWAIT_RELATIVE_NP HAVE_STDINT_H HAVE_STDLIB_H HAVE_SYS_PARAM_H HAVE_UNISTD_H INLINE="inline" LSB_FIRST MEDNAFEN_VERSION_NUMERIC=0x00102701 MPC_FIXED_POINT PSS_STYLE=1 SIZEOF_CHAR=1 SIZEOF_DOUBLE=8 SIZEOF_INT=4 SIZEOF_LONG=8 SIZEOF_LONG_LONG=8 SIZEOF_OFF_T=8 SIZEOF_PTRDIFF_T=8 SIZEOF_SHORT=2 SIZEOF_SIZE_T=8 SIZEOF_VOID_P=8 STDC_HEADERS WANT_FANCY_SCALERS=1 WANT_GB_EMU WANT_GBA_EMU WANT_LYNX_EMU WANT_NES_EMU WANT_NGP_EMU WANT_PCE_EMU WANT_PCE_FAST_EMU WANT_PCFX_EMU WANT_PSX_EMU WANT_SNES_EMU WANT_SNES_FAUST_EMU WANT_SS_EMU WANT_STEREO_SOUND WANT_VB_EMU WANT_WSWAN_EMU __LIBRETRO__ __STDC_LIMIT_MACROS=1
+
+//GCC_PREPROCESSOR_DEFINITIONS[configuration=Debug] = $(inherited) DEBUG=1
+//GCC_PREPROCESSOR_DEFINITIONS[configuration=Release] = NDEBUG $(inherited)
+
+//GCC_PREPROCESSOR_DEFINITIONS[arch=armv7] = $(inherited) ARCH_ARM
+//GCC_PREPROCESSOR_DEFINITIONS[arch=armv7s] = $(inherited) ARCH_ARM
+//GCC_PREPROCESSOR_DEFINITIONS[arch=arm64] = $(inherited) ARCH_ARM
+//GCC_PREPROCESSOR_DEFINITIONS[arch=x86_64] = $(inherited)
+
+OTHER_CFLAGS = $(inherited) -funroll-loops -fPIC -Wall -Wno-sign-compare -Wno-unused-variable -Wno-unused-function -Wno-uninitialized -Wno-strict-aliasing -Wno-aggressive-loop-optimizations -fno-fast-math -fomit-frame-pointer -fsigned-char -Wshadow -Wempty-body -Wignored-qualifiers -Wvla -Wvariadic-macros -Wdisabled-optimization -DMEDNAFEN_VERSION=\"1.27.1\" -DPACKAGE=\"mednafen\" -DICONV_CONST=
+OTHER_CFLAGS[arch=armv7] = -mfpu=neon $(inherited)
+OTHER_CFLAGS[arch=armv7s] = -mfpu=neon $(inherited)
+OTHER_CFLAGS[arch=arm64] = -mfpu=neon $(inherited)
+OTHER_CFLAGS[arch=x86_64] = $(inherited)
+
+// MacOS Catalyst
+GCC_PREPROCESSOR_DEFINITIONS[sdk=macosx*] = $(inherited)
+OTHER_CFLAGS[sdk=macosx*] = $(inherited)
+EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = $(inherited)
+
+// iPhone
+GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*] = $(inherited)
+OTHER_CFLAGS[sdk=iphoneos*] = $(inherited)
+
+// Simulator
+GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*] = $(inherited)
+OTHER_CFLAGS[sdk=iphonesimulator*] = $(inherited)
+
+// tvOS Device
+GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvos*] = $(inherited)
+OTHER_CFLAGS[sdk=appletvos*] = $(inherited)
+EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvos*] = $(inherited)
+// gSPNeon.cpp
+
+// tvOS Simulator
+GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvsimulator*] = $(inherited
+OTHER_CFLAGS[sdk=appletvsimulator*] = $(inherited)

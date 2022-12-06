@@ -249,6 +249,7 @@
     //    int mappedButton = SSMap[button];
     //    inputBuffer[player][0] |= 1 << mappedButton;
     if (button == PVSaturnButtonStart) {
+        DLOG("Start on");
         self.isStartPressed = true;
     }
     inputBuffer[player][0] |= 1 << SSMap[button];
@@ -257,6 +258,7 @@
 -(void)didReleaseSSButton:(enum PVSaturnButton)button forPlayer:(NSInteger)player {
     //    inputBuffer[player][0] &= ~(1 << SSMap[button]);
     if (button == PVSaturnButtonStart) {
+        DLOG("Start off");
         self.isStartPressed = false;
     }
     inputBuffer[player][0] &= ~(1 << SSMap[button]);
@@ -442,11 +444,11 @@
                 return [[gamepad leftTrigger] isPressed];
             case PVSaturnButtonStart:
 #if TARGET_OS_TV
-                return [[gamepad buttonMenu] isPressed];
+                return self.isStartPressed || [[gamepad buttonMenu] isPressed];
             case PVSaturnButtonR:
                 return [[gamepad rightTrigger] isPressed];
 #else
-                return [[gamepad rightTrigger] isPressed];
+                return self.isStartPressed || [[gamepad rightTrigger] isPressed];
                 // no Access to the R Shoulder Button on the Saturn Controller using the M30 due to Start Mismapping on iOS, for now
 #endif
             default:
@@ -487,9 +489,9 @@
                     if (dualSense) {
                         isStart = self.isStartPressed || dualSense.touchpadButton.isPressed;
                     } else if (dualShock) {
-                        isStart =  self.isStartPressed || dualShock.touchpadButton.isPressed;
+                        isStart = self.isStartPressed || dualShock.touchpadButton.isPressed;
                     } else if (xbox) {
-                        isStart =  self.isStartPressed || xbox.buttonShare.isPressed;
+                        isStart = self.isStartPressed || xbox.buttonShare.isPressed;
                     } else {
 //                        if (!gamepad.buttonHome.isBoundToSystemGesture) {
 //                            return gamepad.buttonHome.isPressed;
