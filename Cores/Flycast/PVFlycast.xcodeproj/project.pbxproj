@@ -9,21 +9,9 @@
 /* Begin PBXBuildFile section */
 		B301797F207C909E0051B93D /* libflycast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libflycast.a */; };
 		B316B4E721926FE500693472 /* emu.cfg in Resources */ = {isa = PBXBuildFile; fileRef = B316B4E621926FE500693472 /* emu.cfg */; };
-		B316B4E821926FE500693472 /* emu.cfg in Resources */ = {isa = PBXBuildFile; fileRef = B316B4E621926FE500693472 /* emu.cfg */; };
-		B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C31B2191964F009F4EDC /* AVFoundation.framework */; };
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
-		B3447EC4218BEDD200557ACE /* PVFlycastCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVFlycastCore.mm */; };
-		B3447ECD218BEDD200557ACE /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
-		B3447ECE218BEDD200557ACE /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
-		B3447ED0218BEDD200557ACE /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
-		B3447ED1218BEDD200557ACE /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
-		B3447ED3218BEDD200557ACE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
-		B3447ED4218BEDD200557ACE /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
-		B3447ED6218BEDD200557ACE /* PVFlycast.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVFlycast.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3447ED7218BEDD200557ACE /* PVFlycastCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVFlycastCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3447EE2218BEDD200557ACE /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
@@ -36,15 +24,12 @@
 		B39831E129241A6500A82429 /* libretro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3982F6129239F4A00A82429 /* libretro.cpp */; };
 		B39831E229241A6500A82429 /* vmu_xhair.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3982F6229239F4A00A82429 /* vmu_xhair.cpp */; };
 		B39E12A128925DD900016387 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39E12A028925DD900016387 /* PVLibRetro.framework */; };
-		B39E12A528925DEB00016387 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39E12A428925DEB00016387 /* PVLibRetro.framework */; };
-		B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B104B8218F281B00210C39 /* PVSupport.framework */; };
 		B3C7621520783162009950E4 /* PVFlycast.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVFlycast.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilter = ios; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
 		B3C76225207833DE009950E4 /* PVFlycastCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVFlycastCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C76226207833DE009950E4 /* PVFlycastCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVFlycastCore.mm */; };
-		B3DDF56D26E9B90400CE47F0 /* libflycast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3447F91218BEE3F00557ACE /* libflycast.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1098,26 +1083,10 @@
 			remoteGlobalIDString = FDD2C6F40E2E959E00B7A85F;
 			remoteInfo = torturethread;
 		};
-		B3DDF56E26E9B90400CE47F0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3C7620720783162009950E4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3447EE8218BEE3F00557ACE;
-			remoteInfo = "flycast-tvOS";
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		B30178D1207C901D0051B93D /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3447F8D218BEE3F00557ACE /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "include/$(PRODUCT_NAME)";
@@ -1149,8 +1118,6 @@
 		B3447EB1218BC69700557ACE /* PVFlycastCore+Audio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVFlycastCore+Audio.h"; sourceTree = "<group>"; };
 		B3447EB2218BC69700557ACE /* PVFlycastCore+Audio.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVFlycastCore+Audio.m"; sourceTree = "<group>"; };
 		B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
-		B3447EE6218BEDD200557ACE /* PVFlycast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVFlycast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3447F91218BEE3F00557ACE /* libflycast.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libflycast.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B35E6BEF207CD2610040709A /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		B35E6BF1207CD2670040709A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
@@ -9235,30 +9202,6 @@
 
 /* Begin PBXFrameworksBuildPhase section */
 		B30178D0207C901D0051B93D /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3447ECA218BEDD200557ACE /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B324C31C2191964F009F4EDC /* AVFoundation.framework in Frameworks */,
-				B3DDF56D26E9B90400CE47F0 /* libflycast.a in Frameworks */,
-				B3B104B9218F281B00210C39 /* PVSupport.framework in Frameworks */,
-				B3447ECD218BEDD200557ACE /* CoreAudio.framework in Frameworks */,
-				B3447ECE218BEDD200557ACE /* AudioToolbox.framework in Frameworks */,
-				B39E12A528925DEB00016387 /* PVLibRetro.framework in Frameworks */,
-				B3447ED0218BEDD200557ACE /* libz.tbd in Frameworks */,
-				B3447ED1218BEDD200557ACE /* libpthread.tbd in Frameworks */,
-				B3447ED3218BEDD200557ACE /* Foundation.framework in Frameworks */,
-				B3447ED4218BEDD200557ACE /* OpenGLES.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3447F8C218BEE3F00557ACE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -23581,8 +23524,6 @@
 			children = (
 				B3C7621020783162009950E4 /* PVFlycast.framework */,
 				B30178D3207C901D0051B93D /* libflycast.a */,
-				B3447EE6218BEDD200557ACE /* PVFlycast.framework */,
-				B3447F91218BEE3F00557ACE /* libflycast.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -23632,15 +23573,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		B3447ED5218BEDD200557ACE /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3447ED6218BEDD200557ACE /* PVFlycast.h in Headers */,
-				B3447ED7218BEDD200557ACE /* PVFlycastCore.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C7620D20783162009950E4 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -23653,9 +23585,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		B30178D2207C901D0051B93D /* flycast-iOS */ = {
+		B30178D2207C901D0051B93D /* flycast */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "flycast-iOS" */;
+			buildConfigurationList = B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "flycast" */;
 			buildPhases = (
 				B30178CF207C901D0051B93D /* Sources */,
 				B30178D0207C901D0051B93D /* Frameworks */,
@@ -23665,50 +23597,14 @@
 			);
 			dependencies = (
 			);
-			name = "flycast-iOS";
+			name = flycast;
 			productName = flycast;
 			productReference = B30178D3207C901D0051B93D /* libflycast.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B3447EC0218BEDD200557ACE /* PVFlycast-tvOS */ = {
+		B3C7620F20783162009950E4 /* PVFlycast */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3447EE3218BEDD200557ACE /* Build configuration list for PBXNativeTarget "PVFlycast-tvOS" */;
-			buildPhases = (
-				B3447EC1218BEDD200557ACE /* Sources */,
-				B3447ECA218BEDD200557ACE /* Frameworks */,
-				B3447ED5218BEDD200557ACE /* Headers */,
-				B3447EDF218BEDD200557ACE /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B3DDF56F26E9B90400CE47F0 /* PBXTargetDependency */,
-			);
-			name = "PVFlycast-tvOS";
-			productName = PVFlycast;
-			productReference = B3447EE6218BEDD200557ACE /* PVFlycast.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		B3447EE8218BEE3F00557ACE /* flycast-tvOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B3447F8E218BEE3F00557ACE /* Build configuration list for PBXNativeTarget "flycast-tvOS" */;
-			buildPhases = (
-				B3447EE9218BEE3F00557ACE /* Sources */,
-				B3447F8C218BEE3F00557ACE /* Frameworks */,
-				B3447F8D218BEE3F00557ACE /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "flycast-tvOS";
-			productName = flycast;
-			productReference = B3447F91218BEE3F00557ACE /* libflycast.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		B3C7620F20783162009950E4 /* PVFlycast-iOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVFlycast-iOS" */;
+			buildConfigurationList = B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVFlycast" */;
 			buildPhases = (
 				B3C7620B20783162009950E4 /* Sources */,
 				B3C7620C20783162009950E4 /* Frameworks */,
@@ -23719,7 +23615,7 @@
 			);
 			dependencies = (
 			);
-			name = "PVFlycast-iOS";
+			name = PVFlycast;
 			productName = PVFlycast;
 			productReference = B3C7621020783162009950E4 /* PVFlycast.framework */;
 			productType = "com.apple.product-type.framework";
@@ -23824,10 +23720,8 @@
 			);
 			projectRoot = "";
 			targets = (
-				B3C7620F20783162009950E4 /* PVFlycast-iOS */,
-				B3447EC0218BEDD200557ACE /* PVFlycast-tvOS */,
-				B30178D2207C901D0051B93D /* flycast-iOS */,
-				B3447EE8218BEE3F00557ACE /* flycast-tvOS */,
+				B3C7620F20783162009950E4 /* PVFlycast */,
+				B30178D2207C901D0051B93D /* flycast */,
 			);
 		};
 /* End PBXProject section */
@@ -24886,15 +24780,6 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
-		B3447EDF218BEDD200557ACE /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B316B4E821926FE500693472 /* emu.cfg in Resources */,
-				B3447EE2218BEDD200557ACE /* Core.plist in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C7620E20783162009950E4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -24921,21 +24806,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3447EC1218BEDD200557ACE /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3447EC4218BEDD200557ACE /* PVFlycastCore.mm in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3447EE9218BEE3F00557ACE /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C7620B20783162009950E4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -24945,14 +24815,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		B3DDF56F26E9B90400CE47F0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3447EE8218BEE3F00557ACE /* flycast-tvOS */;
-			targetProxy = B3DDF56E26E9B90400CE47F0 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		B3982D5F29239F4900A82429 /* InfoPlist.strings */ = {
@@ -25023,6 +24885,7 @@
 		B30178DA207C901D0051B93D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -25031,13 +24894,16 @@
 				PRODUCT_NAME = flycast;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Debug;
 		};
 		B30178DB207C901D0051B93D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -25046,7 +24912,9 @@
 				PRODUCT_NAME = flycast;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Release;
 		};
@@ -25128,6 +24996,7 @@
 		B324C5022191A2A2009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -25148,41 +25017,16 @@
 				PRODUCT_NAME = PVFlycast;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Archive;
-		};
-		B324C5032191A2A2009F4EDC /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				INFOPLIST_FILE = PVFlycast/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVFlycast";
-				PRODUCT_NAME = PVFlycast;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Archive;
 		};
 		B324C5042191A2A2009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -25191,113 +25035,11 @@
 				PRODUCT_NAME = flycast;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Archive;
-		};
-		B324C5052191A2A2009F4EDC /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = flycast;
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Archive;
-		};
-		B3447EE4218BEDD200557ACE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				INFOPLIST_FILE = PVFlycast/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVFlycast";
-				PRODUCT_NAME = PVFlycast;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Debug;
-		};
-		B3447EE5218BEDD200557ACE /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				INFOPLIST_FILE = PVFlycast/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVFlycast";
-				PRODUCT_NAME = PVFlycast;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Release;
-		};
-		B3447F8F218BEE3F00557ACE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = flycast;
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Debug;
-		};
-		B3447F90218BEE3F00557ACE /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = flycast;
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Release;
 		};
 		B3C7621620783162009950E4 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -25455,6 +25197,7 @@
 		B3C7621920783162009950E4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -25475,13 +25218,16 @@
 				PRODUCT_NAME = PVFlycast;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Debug;
 		};
 		B3C7621A20783162009950E4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -25502,39 +25248,21 @@
 				PRODUCT_NAME = PVFlycast;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "flycast-iOS" */ = {
+		B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "flycast" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B30178DA207C901D0051B93D /* Debug */,
 				B30178DB207C901D0051B93D /* Release */,
 				B324C5042191A2A2009F4EDC /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B3447EE3218BEDD200557ACE /* Build configuration list for PBXNativeTarget "PVFlycast-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B3447EE4218BEDD200557ACE /* Debug */,
-				B3447EE5218BEDD200557ACE /* Release */,
-				B324C5032191A2A2009F4EDC /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B3447F8E218BEE3F00557ACE /* Build configuration list for PBXNativeTarget "flycast-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B3447F8F218BEE3F00557ACE /* Debug */,
-				B3447F90218BEE3F00557ACE /* Release */,
-				B324C5052191A2A2009F4EDC /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -25549,7 +25277,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVFlycast-iOS" */ = {
+		B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVFlycast" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3C7621920783162009950E4 /* Debug */,
