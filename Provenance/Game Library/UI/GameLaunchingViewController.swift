@@ -397,7 +397,7 @@ extension GameLaunchingViewController where Self: UIViewController {
             .sorted(byKeyPath: "projectName")
             .filter({
                 guard !$0.disabled else {
-                    return PVSettingsModel.shared.debugOptions.experimentalCores
+                    return PVSettingsModel.shared.debugOptions.unsupportedCores
                 }
                 return true
             })
@@ -483,7 +483,7 @@ extension GameLaunchingViewController where Self: UIViewController {
 
             let cores = system.cores.filter({
                 guard !$0.disabled else {
-                    return PVSettingsModel.shared.debugOptions.experimentalCores
+                    return PVSettingsModel.shared.debugOptions.unsupportedCores
                 }
                 return true
             })
