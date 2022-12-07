@@ -74,6 +74,8 @@ final public class GameAudio: NSObject {
         attachNodes()
 #if os(macOS)
         setOutputDeviceID(outputDeviceID)
+#else
+        connectNodes()
 #endif
         
         engine.prepare()

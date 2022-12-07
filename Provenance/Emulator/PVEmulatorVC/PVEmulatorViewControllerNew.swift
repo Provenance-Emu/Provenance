@@ -301,6 +301,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         
         do {
             try core.loadFile(atPath: romPath.path)
+            core.setupEmulation { screenSize, aspectSize in
+                
+            }
         } catch {
             let alert = UIAlertController(title: error.localizedDescription, message: (error as NSError).localizedRecoverySuggestion, preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in

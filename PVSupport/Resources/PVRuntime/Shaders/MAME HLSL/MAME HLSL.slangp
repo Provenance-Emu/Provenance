@@ -1,0 +1,87 @@
+# info on how the passes come together can be found in mame/bgfx/chains/hlsl.json
+shaders = 11
+
+shader0 = shaders/mame_hlsl/shaders/mame_ntsc_encode.slang
+filter_linear0 = true
+scale_type0 = source
+scale0 = 1.0
+filter_linear0 = true
+
+shader1 = shaders/mame_hlsl/shaders/mame_ntsc_decode.slang
+filter_linear1 = true
+alias1 = NTSCPass
+scale_type1 = source
+scale1 = 1.0
+
+shader2 = shaders/mame_hlsl/shaders/mame_color.slang
+alias2 = ColorPass
+scale_type2 = source
+scale2 = 1.0
+filter_linear2 = true
+
+shader3 = shaders/mame_hlsl/shaders/mame_prescale.slang
+alias3 = PrescalePass
+scale_type3 = viewport
+filter_linear3 = true
+scale3 = 1.0
+
+shader4 = shaders/mame_hlsl/shaders/mame_deconverge.slang
+alias4 = DeconvergePass
+filter_linear4 = true
+scale_type4 = viewport
+scale4 = 1.0
+
+shader5 = shaders/mame_hlsl/shaders/mame_scanline.slang
+alias5 = ScanlinePass
+filter_linear5 = true
+scale_type5 = viewport
+scale5 = 1.0
+
+shader6 = shaders/mame_hlsl/shaders/mame_defocus.slang
+alias6 = FocusPass
+filter_linear6 = true
+scale_type6 = viewport
+scale6 = 1.0
+
+shader7 = shaders/mame_hlsl/shaders/mame_post.slang
+alias7 = PostPass
+filter_linear7 = true
+scale_type7 = viewport
+scale7 = 1.0
+
+shader8 = shaders/mame_hlsl/shaders/mame_phosphor.slang
+alias8 = PhosphorPass
+filter_linear8 = true
+scale_type8 = viewport
+scale8 = 1.0
+
+shader9 = shaders/mame_hlsl/shaders/mame_chroma.slang
+alias9 = ChromaPass
+filter_linear9 = true
+scale_type9 = viewport
+scale9 = 1.0
+
+shader10 = shaders/mame_hlsl/shaders/mame_distortion.slang
+alias10 = DistortionPass
+filter_linear10 = true
+scale_type10 = viewport
+scale10 = 1.0
+
+shader11 = shaders/mame_hlsl/shaders/lut.slang
+filter_linear11 = true
+
+# mame's textures are available here: https://github.com/mamedev/mame/tree/master/artwork
+textures = "MaskTexture"
+MaskTexture = shaders/mame_hlsl/resources/aperture-grille.png
+
+parameters = "AUTO_PRESCALE;chromaa_x;chromaa_y;chromab_x;chromab_y;chromac_x;chromac_y;ygain_r;ygain_g;ygain_b"
+chromaa_x = "0.630"
+chromaa_y = "0.340"
+chromab_x = "0.310"
+chromab_y = "0.595"
+chromac_x = "0.155"
+chromac_y = "0.070"
+ygain_r = "0.1875"
+ygain_g = "0.6940"
+ygain_b = "0.1185"
+AUTO_PRESCALE = "0.0"

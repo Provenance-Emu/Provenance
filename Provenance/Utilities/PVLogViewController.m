@@ -9,7 +9,7 @@
 #import "PVLogViewController.h"
 @import QuartzCore;
 @import ZipArchive;
-#import "Provenance-Swift.h"
+#import "Provenance_mini-Swift.h"
 @import PVSupport;
 @import CocoaLumberjack;
 

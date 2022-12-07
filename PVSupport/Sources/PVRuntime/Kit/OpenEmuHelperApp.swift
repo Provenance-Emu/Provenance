@@ -28,6 +28,7 @@ import Foundation
 import OpenEmuShaders
 import GameController
 import Metal
+@_implementationOnly import AVFAudio
 @_implementationOnly import os.log
 
 extension OSLog {
@@ -35,8 +36,8 @@ extension OSLog {
     static let renderer = OSLog(subsystem: "org.openemu.OpenEmuKit", category: "renderer")
 }
 
-@objc public class OpenEmuHelperApp: NSObject {
-    public var gameCoreOwner: OEGameCoreOwner!
+@objc public class OpenEmuHelperApp: NSObject, LayoutDelegate {
+    public var gameCoreOwner: OEGameCoreOwner?
     public private(set) var gameCore: OEGameCore
     
     // MARK: - State
@@ -60,6 +61,7 @@ extension OSLog {
     
     var _currentShader: URL?
     
+    var _viewController: OEGameViewController!
     var _videoLayer: GameHelperMetalLayer!
     var _filterChain: FilterChain!
     var _screenshot: Screenshot!
@@ -132,7 +134,9 @@ extension OSLog {
         CATransaction.setDisableActions(true)
         defer { CATransaction.commit() }
         
-        _videoLayer = .init()
+        _viewController = .init(gameCore: gameCore)
+        _videoLayer = _viewController.gameView.metalLayer
+        _viewController.gameView.delegate = self
         _videoLayer.device = _device
         _videoLayer.isOpaque = true
         _videoLayer.framebufferOnly = true
@@ -152,6 +156,10 @@ extension OSLog {
         default:
             fatalError("Rendering API \(rendering) not supported")
         }
+    }
+    
+    func layoutForViewDidChange(_ view: UIView) {
+        setOutputBounds(view.bounds)
     }
     
     private func setup2dVideo() -> GameRenderer {
@@ -228,7 +236,7 @@ extension OSLog {
             _filterChain.drawableSize = _videoLayer.drawableSize
         }
         
-        gameCoreOwner.setVideoLayer(_videoLayer)
+        gameCoreOwner?.setVideoLayer(_videoLayer)
     }
     
     // MARK: - Game Core methods
@@ -277,9 +285,9 @@ extension OSLog {
             try gameCore.loadFile(atPath: aPath)
             os_log(.debug, log: .helper, "Loaded new ROM: %{public}@", aPath)
             
-            gameCoreOwner.setDiscCount(gameCore.discCount)
+            gameCoreOwner?.setDiscCount(gameCore.discCount)
             if let displayModes = gameCore.displayModes {
-                gameCoreOwner.setDisplayModes(displayModes)
+                gameCoreOwner?.setDisplayModes(displayModes)
             }
             
             loadedRom = true
@@ -303,7 +311,7 @@ extension OSLog {
                NSStringFromOEIntSize(newScreenSize),
                NSStringFromOEIntSize(newAspectSize))
         
-        gameCoreOwner.setScreenSize(newScreenSize, aspectSize: newAspectSize)
+        gameCoreOwner?.setScreenSize(newScreenSize, aspectSize: newAspectSize)
     }
     
     // MARK: - OEGameCoreHelper
@@ -340,8 +348,8 @@ extension OpenEmuHelperApp: OEGameCoreHelper {
     }
     
     public var batterySavesPath: String? {
-        get { _batterySavesPath }
-        set { _batterySavesPath = newValue }
+        get { gameCore.batterySavesDirectoryPath }
+        set { gameCore.batterySavesDirectoryPath = newValue }
     }
     
     // TODO: Add to OEGameCore
@@ -381,7 +389,7 @@ extension OpenEmuHelperApp: OEGameCoreHelper {
     }
     
     public var responderClient: AnyObject? { gameCore }
-    public var viewController: AnyObject? { nil }
+    public var viewController: AnyObject? { _viewController }
     
     public var features: AnyObject? { nil }
     
@@ -395,8 +403,10 @@ extension OpenEmuHelperApp: OEGameCoreHelper {
         gameCore.perform {
             self.gameCore.setPauseEmulation(paused)
             if paused {
+                self._gameAudio.pauseAudio()
                 self.runStateDelegate?.helper(self, didChangeState: .paused)
             } else {
+                self._gameAudio.resumeAudio()
                 self.runStateDelegate?.helper(self, didChangeState: .running)
             }
         }
@@ -422,16 +432,9 @@ extension OpenEmuHelperApp: OEGameCoreHelper {
 #else
         os_log(.debug, log: .display, "Output bounds changed to %{public}@", NSCoder.string(for: rect))
 #endif
-        
-        if let _videoLayer = _videoLayer, _videoLayer.bounds != rect {
-            CATransaction.begin()
-            CATransaction.setDisableActions(true)
-            defer { CATransaction.commit() }
-            
-            _videoLayer.bounds = rect
-            _filterChain.drawableSize = _videoLayer.drawableSize
-        }
-        
+
+        _filterChain.drawableSize = _videoLayer.drawableSize
+
         // Game will try to render at the window size on its next frame.
         guard _gameRenderer.canChangeBufferSize else { return }
         
@@ -482,7 +485,17 @@ extension OpenEmuHelperApp: OEGameCoreHelper {
     }
     
     public func loadFile(atPath path: String) throws {
-        
+        let url = Bundle(for: Self.self).url(forResource: "MAME HLSL", withExtension: "slangp", subdirectory: "Shaders/MAME HLSL")
+        try self.load(withStartupInfo: .init(romURL: URL(fileURLWithPath: path),
+                                         romMD5: romMD5 ?? "",
+                                         romHeader: "",
+                                         romSerial: romSerial ?? "",
+                                         systemIdentifier: systemIdentifier!,
+                                         coreIdentifier: coreIdentifier!,
+                                         systemRegion: "",
+                                         displayModeInfo: nil,
+                                         shaderURL: url!,
+                                         shaderParameters: [:]))
     }
     
     public func setupEmulation(completionHandler handler: @escaping (_ screenSize: OEIntSize, _ aspectSize: OEIntSize) -> Void) {
@@ -543,7 +556,7 @@ extension OpenEmuHelperApp: OEGameCoreHelper {
         gameCore.perform {
             self.gameCore.changeDisplay(withMode: displayMode)
             if let displayModes = self.gameCore.displayModes {
-                self.gameCoreOwner.setDisplayModes(displayModes)
+                self.gameCoreOwner?.setDisplayModes(displayModes)
             }
         }
     }
@@ -800,76 +813,76 @@ extension OpenEmuHelperApp: OEGameCoreDelegate {
 
 extension OpenEmuHelperApp {
     public func saveState(_ sender: Any) {
-        gameCoreOwner.saveState()
+        gameCoreOwner?.saveState()
     }
     
     public func loadState(_ sender: Any) {
-        gameCoreOwner.loadState()
+        gameCoreOwner?.loadState()
     }
     
     public func quickSave(_ sender: Any) {
-        gameCoreOwner.quickSave()
+        gameCoreOwner?.quickSave()
     }
     
     public func quickLoad(_ sender: Any) {
-        gameCoreOwner.quickLoad()
+        gameCoreOwner?.quickLoad()
     }
     
     public func toggleFullScreen(_ sender: Any) {
-        gameCoreOwner.toggleFullScreen()
+        gameCoreOwner?.toggleFullScreen()
     }
     
     public func toggleAudioMute(_ sender: Any) {
-        gameCoreOwner.toggleAudioMute()
+        gameCoreOwner?.toggleAudioMute()
     }
     
     public func volumeDown(_ sender: Any) {
-        gameCoreOwner.volumeDown()
+        gameCoreOwner?.volumeDown()
     }
     
     public func volumeUp(_ sender: Any) {
-        gameCoreOwner.volumeUp()
+        gameCoreOwner?.volumeUp()
     }
     
     public func stopEmulation(_ sender: Any) {
-        gameCoreOwner.stopEmulation()
+        gameCoreOwner?.stopEmulation()
     }
     
     public func resetEmulation(_ sender: Any) {
-        gameCoreOwner.resetEmulation()
+        gameCoreOwner?.resetEmulation()
     }
     
     public func toggleEmulationPaused(_ sender: Any) {
-        gameCoreOwner.toggleEmulationPaused()
+        gameCoreOwner?.toggleEmulationPaused()
     }
     
     public func takeScreenshot(_ sender: Any) {
-        gameCoreOwner.takeScreenshot()
+        gameCoreOwner?.takeScreenshot()
     }
     
     public func fastForwardGameplay(_ enable: Bool) {
-        gameCoreOwner.fastForwardGameplay(enable)
+        gameCoreOwner?.fastForwardGameplay(enable)
     }
     
     public func rewindGameplay(_ enable: Bool) {
         // TODO: technically a data race, but it is only updating a single NSInteger
         _filterChain.frameDirection = enable ? -1 : 1
-        gameCoreOwner.rewindGameplay(enable)
+        gameCoreOwner?.rewindGameplay(enable)
     }
     
     public func stepGameplayFrameForward(_ sender: Any) {
-        gameCoreOwner.stepGameplayFrameForward()
+        gameCoreOwner?.stepGameplayFrameForward()
     }
     
     public func stepGameplayFrameBackward(_ sender: Any) {
-        gameCoreOwner.stepGameplayFrameBackward()
+        gameCoreOwner?.stepGameplayFrameBackward()
     }
     
     public func nextDisplayMode(_ sender: Any) {
-        gameCoreOwner.nextDisplayMode()
+        gameCoreOwner?.nextDisplayMode()
     }
     
     public func lastDisplayMode(_ sender: Any) {
-        gameCoreOwner.lastDisplayMode()
+        gameCoreOwner?.lastDisplayMode()
     }
 }

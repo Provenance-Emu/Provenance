@@ -22,8 +22,10 @@ public class PVHelperFactory {
     }
     
     public func create(_ principalClass: String, systemIdentifier: String, coreIdentifier: String) -> OEGameCoreHelper? {
-        if let cfn = registry.first {
-            return cfn(principalClass, systemIdentifier, coreIdentifier)
+        for cfn in registry {
+            if let res = cfn(principalClass, systemIdentifier, coreIdentifier) {
+                return res
+            }
         }
         return nil
     }

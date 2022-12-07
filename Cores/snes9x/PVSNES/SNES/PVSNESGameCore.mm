@@ -144,7 +144,7 @@ static __weak PVSNESGameCore *_current;
     
     S9xSetSamplesAvailableCallback(FinalizeSamplesAudioCallback, (__bridge void *)self);
 
-    if(Memory.LoadROM(path.fileSystemRepresentation))
+    if(Memory.LoadROM(path.UTF8String))
     {
         // Satellaview game detected
         if(Settings.BS)

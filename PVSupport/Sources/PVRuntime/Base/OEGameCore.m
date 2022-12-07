@@ -99,21 +99,6 @@ static Class GameCoreClass = Nil;
     return [[self owner] pluginName];
 }
 
-- (NSString *)biosDirectoryPath
-{
-    return [[self owner] biosDirectoryPath];
-}
-
-- (NSString *)supportDirectoryPath
-{
-    return [[self owner] supportDirectoryPath];
-}
-
-- (NSString *)batterySavesDirectoryPath
-{
-    return [[self supportDirectoryPath] stringByAppendingPathComponent:@"Battery Saves"];
-}
-
 - (BOOL)supportsRewinding
 {
     return [[self owner] supportsRewindingForSystemIdentifier:[self systemIdentifier]];

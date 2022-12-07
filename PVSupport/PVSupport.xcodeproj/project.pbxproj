@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		05755B40293D7EFF002D3F70 /* OEGameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05755B3F293D7EFF002D3F70 /* OEGameViewController.swift */; };
 		0576984A2935AC5B00F7E122 /* GameRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057698482935AC5900F7E122 /* GameRenderer.swift */; };
 		0576984B2935AC5B00F7E122 /* MTLGameRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057698492935AC5A00F7E122 /* MTLGameRenderer.swift */; };
 		0576984E2935E4FC00F7E122 /* GameHelperMetalLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0576984D2935E4FC00F7E122 /* GameHelperMetalLayer.swift */; };
@@ -80,6 +81,7 @@
 		0594677529393270004FBE11 /* ShaderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0594675629393270004FBE11 /* ShaderManager.swift */; };
 		05946777293934C8004FBE11 /* GLES in Resources */ = {isa = PBXBuildFile; fileRef = 05946776293934C8004FBE11 /* GLES */; };
 		0594678329394228004FBE11 /* PVHelperFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0594678229394228004FBE11 /* PVHelperFactory.swift */; };
+		059E6484293EBF24006A8E95 /* Shaders in Resources */ = {isa = PBXBuildFile; fileRef = 059E6483293EBF24006A8E95 /* Shaders */; };
 		557DCAB1292A91E100045B02 /* ThemeOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557DCAB0292A91E000045B02 /* ThemeOption.swift */; };
 		B302F8A420B73D6500C5E502 /* PVLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89A20B73D6200C5E502 /* PVLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B302F8A620B73D6500C5E502 /* PVLogEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89B20B73D6300C5E502 /* PVLogEntry.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -279,6 +281,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		05755B3F293D7EFF002D3F70 /* OEGameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OEGameViewController.swift; sourceTree = "<group>"; };
 		057698442935A97500F7E122 /* OpenEmuShaders.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = OpenEmuShaders.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		057698482935AC5900F7E122 /* GameRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameRenderer.swift; sourceTree = "<group>"; };
 		057698492935AC5A00F7E122 /* MTLGameRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MTLGameRenderer.swift; sourceTree = "<group>"; };
@@ -354,6 +357,7 @@
 		0594675629393270004FBE11 /* ShaderManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShaderManager.swift; sourceTree = "<group>"; };
 		05946776293934C8004FBE11 /* GLES */ = {isa = PBXFileReference; lastKnownFileType = folder; path = GLES; sourceTree = "<group>"; };
 		0594678229394228004FBE11 /* PVHelperFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVHelperFactory.swift; sourceTree = "<group>"; };
+		059E6483293EBF24006A8E95 /* Shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Shaders; sourceTree = "<group>"; };
 		1A4E718C1A6C699F005CA80F /* DebugUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DebugUtils.h; sourceTree = "<group>"; };
 		1ACEA64B17F7467D0031B1C9 /* PVSupport-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVSupport-Prefix.pch"; sourceTree = "<group>"; };
 		1ACEA69117F748F80031B1C9 /* OEGameAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OEGameAudio.h; sourceTree = "<group>"; };
@@ -1305,6 +1309,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		05755B3E293D7EDF002D3F70 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				05755B3F293D7EFF002D3F70 /* OEGameViewController.swift */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
 		057698332935A62100F7E122 /* Kit */ = {
 			isa = PBXGroup;
 			children = (
@@ -1359,6 +1371,7 @@
 				0576986929369D1300F7E122 /* Shaders */,
 				057698552935E64000F7E122 /* Audio */,
 				0576985F2936949900F7E122 /* Utilities */,
+				05755B3E293D7EDF002D3F70 /* Views */,
 				057698672936979900F7E122 /* OEGameStartupInfo.swift */,
 				0594678229394228004FBE11 /* PVHelperFactory.swift */,
 			);
@@ -1531,6 +1544,22 @@
 			path = Vertex;
 			sourceTree = "<group>";
 		};
+		059E6481293EBEA9006A8E95 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				059E6482293EBEB5006A8E95 /* PVRuntime */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		059E6482293EBEB5006A8E95 /* PVRuntime */ = {
+			isa = PBXGroup;
+			children = (
+				059E6483293EBF24006A8E95 /* Shaders */,
+			);
+			path = PVRuntime;
+			sourceTree = "<group>";
+		};
 		1A4E718B1A6C693A005CA80F /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
@@ -1551,6 +1580,7 @@
 				1ACEA64A17F7467D0031B1C9 /* Supporting Files */,
 				B392848F28670348003BAC21 /* PVLibRetro */,
 				B36C41022898776C00EAEF59 /* retro-netplay */,
+				059E6481293EBEA9006A8E95 /* Resources */,
 				1ACEA64617F7467D0031B1C9 /* Frameworks */,
 				1ACEA64517F7467D0031B1C9 /* Products */,
 			);
@@ -4088,6 +4118,7 @@
 				05784CC5293574AA00622C66 /* OETimingUtils.m in Sources */,
 				0576984B2935AC5B00F7E122 /* MTLGameRenderer.swift in Sources */,
 				057698592935E65100F7E122 /* AudioUnit.swift in Sources */,
+				05755B40293D7EFF002D3F70 /* OEGameViewController.swift in Sources */,
 				05784CC8293574AA00622C66 /* OERingBuffer.m in Sources */,
 				0576985E2936923100F7E122 /* OpenEmuHelperApp.swift in Sources */,
 			);

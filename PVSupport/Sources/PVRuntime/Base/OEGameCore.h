@@ -189,9 +189,9 @@ OE_EXPORTED_CLASS
 @property(nonatomic, weak)     OEGameCoreController          *owner;
 @property(nonatomic, readonly) NSString                      *pluginName;
 
-@property(nonatomic, readonly) NSString                      *biosDirectoryPath;
-@property(nonatomic, readonly) NSString                      *supportDirectoryPath;
-@property(nonatomic, readonly) NSString                      *batterySavesDirectoryPath;
+@property(nonatomic, copy, nullable) NSString                *biosDirectoryPath;
+@property(nonatomic, copy, nullable) NSString                *supportDirectoryPath;
+@property(nonatomic, copy, nullable) NSString                *batterySavesDirectoryPath;
 
 @property(nonatomic, readonly) BOOL                           supportsRewinding;
 @property(nonatomic, readonly) NSUInteger                     rewindInterval;

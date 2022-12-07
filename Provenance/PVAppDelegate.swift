@@ -115,6 +115,24 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             
             return PVEmulatorCoreHelper(emuCore)
         }
+        
+        PVHelperFactory.register { principalClass, systemIdentifier, coreIdentifier -> OEGameCoreHelper? in
+            guard let coreClass = NSClassFromString(principalClass) as? OEGameCore.Type else {
+                ELOG("Couldn't get class for <\(principalClass)>")
+                return nil
+            }
+            
+            let emuCore = coreClass.init()
+            
+            DLOG("Created core : <\(emuCore.debugDescription)>")
+            
+            let helper = OpenEmuHelperApp(emuCore)
+            
+            helper.systemIdentifier = systemIdentifier
+            helper.coreIdentifier = coreIdentifier
+            
+            return helper
+        }
 
 		#if !targetEnvironment(macCatalyst) && !os(macOS)
         PVEmulatorConfiguration.initICloud()
