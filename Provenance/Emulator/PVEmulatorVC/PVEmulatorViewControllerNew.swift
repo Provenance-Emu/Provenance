@@ -94,8 +94,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         // These need to be first or mutli-threaded cores can cause crashes on close
         NotificationCenter.default.removeObserver(self)
 
-        core.stopEmulation {
-            ILOG("Core stopped")
+        if !isEmulationPaused {
+            core.stopEmulation {
+                ILOG("Core stopped")
+            }
         }
 
         NSSetUncaughtExceptionHandler(nil)

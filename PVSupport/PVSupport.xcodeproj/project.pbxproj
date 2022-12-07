@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0535C78629406B9C009F3951 /* Shaders in Resources */ = {isa = PBXBuildFile; fileRef = 059E6483293EBF24006A8E95 /* Shaders */; };
 		05755B40293D7EFF002D3F70 /* OEGameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05755B3F293D7EFF002D3F70 /* OEGameViewController.swift */; };
 		0576984A2935AC5B00F7E122 /* GameRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057698482935AC5900F7E122 /* GameRenderer.swift */; };
 		0576984B2935AC5B00F7E122 /* MTLGameRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057698492935AC5A00F7E122 /* MTLGameRenderer.swift */; };
@@ -81,7 +82,6 @@
 		0594677529393270004FBE11 /* ShaderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0594675629393270004FBE11 /* ShaderManager.swift */; };
 		05946777293934C8004FBE11 /* GLES in Resources */ = {isa = PBXBuildFile; fileRef = 05946776293934C8004FBE11 /* GLES */; };
 		0594678329394228004FBE11 /* PVHelperFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0594678229394228004FBE11 /* PVHelperFactory.swift */; };
-		059E6484293EBF24006A8E95 /* Shaders in Resources */ = {isa = PBXBuildFile; fileRef = 059E6483293EBF24006A8E95 /* Shaders */; };
 		557DCAB1292A91E100045B02 /* ThemeOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557DCAB0292A91E000045B02 /* ThemeOption.swift */; };
 		B302F8A420B73D6500C5E502 /* PVLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89A20B73D6200C5E502 /* PVLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B302F8A620B73D6500C5E502 /* PVLogEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89B20B73D6300C5E502 /* PVLogEntry.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -4047,6 +4047,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0535C78629406B9C009F3951 /* Shaders in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
