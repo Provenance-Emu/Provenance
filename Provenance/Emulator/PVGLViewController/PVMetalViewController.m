@@ -453,6 +453,7 @@ PV_OBJC_DIRECT_MEMBERS
         case GL_INT:
         case GL_UNSIGNED_INT:
         case GL_FLOAT:
+        case GL_FLOAT_32_UNSIGNED_INT_24_8_REV:
         case 0x8367: // GL_UNSIGNED_INT_8_8_8_8_REV:
             typeWidth = 4;
             break;
@@ -506,6 +507,18 @@ PV_OBJC_DIRECT_MEMBERS
     if (pixelFormat == GL_BGRA && (pixelType == GL_UNSIGNED_BYTE || pixelType == 0x8367 /* GL_UNSIGNED_INT_8_8_8_8_REV */))
     {
         return MTLPixelFormatBGRA8Unorm; // MTLPixelFormatBGRA8Unorm_sRGB
+    }
+    else if (pixelFormat == GL_BGRA && (pixelType == GL_UNSIGNED_INT))
+    {
+        return MTLPixelFormatBGRA8Unorm;
+//        return MTLPixelFormatBGRA10_XR;
+//        return MTLPixelFormatBGRA8Unorm_sRGB;
+    }
+    else if (pixelFormat == GL_BGRA && (pixelType == GL_FLOAT_32_UNSIGNED_INT_24_8_REV))
+    {
+        return MTLPixelFormatBGRA8Unorm_sRGB;
+//        return MTLPixelFormatBGRA10_XR;
+//        return MTLPixelFormatBGRA8Unorm_sRGB;
     }
     else if (pixelFormat == GL_RGB && pixelType == GL_UNSIGNED_BYTE)
     {

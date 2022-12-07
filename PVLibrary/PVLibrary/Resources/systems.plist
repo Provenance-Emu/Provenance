@@ -843,6 +843,21 @@
 		<true/>
 		<key>PVPortable</key>
 		<false/>
+		<key>PVBIOSNames</key>
+		<array>
+			<dict>
+				<key>Description</key>
+				<string>PS2 Rom</string>
+				<key>MD5</key>
+				<string>acf4730ceb38ac9d8c7d8e21f2614600</string>
+				<key>Name</key>
+				<string>scph10000.bin</string>
+				<key>Size</key>
+				<integer>4194304</integer>
+			</dict>
+		</array>
+		<key>PVRequiresBIOS</key>
+		<true/>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>cue</string>
@@ -857,6 +872,9 @@
 			<string>nrg</string>
 			<string>mdf</string>
 			<string>ciso</string>
+			<string>ps2</string>
+			<string>bin</string>
+			<string>img</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
@@ -5755,6 +5773,47 @@
 		<string>com.provenance.3DO</string>
 		<key>PVDatabaseID</key>
 		<string>1</string>
+		<key>PVRequiresBIOS</key>
+		<true/>
+		<key>PVBIOSNames</key>
+		<array>
+			<dict>
+				<key>Description</key>
+				<string>3DO BIOS</string>
+				<key>MD5</key>
+				<string>51f2f43ae2f3508a14d9f56597e2d3ce</string>
+				<key>Name</key>
+				<string>panafz10.bin</string>
+				<key>Size</key>
+				<integer>1048576</integer>
+				<key>Optional</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>3DO Patches BIOS</string>
+				<key>MD5</key>
+				<string>1477bda80dc33731a65468c1f5bcbee9</string>
+				<key>Name</key>
+				<string>panafz10-patched.bin</string>
+				<key>Size</key>
+				<integer>1048576</integer>
+				<key>Optional</key>
+				<true/>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>Japanse Character ROM</string>
+				<key>MD5</key>
+				<string>428577250f43edc902ea239c50d2240d</string>
+				<key>Name</key>
+				<string>rom2.rom</string>
+				<key>Size</key>
+				<integer>933636</integer>
+				<key>Optional</key>
+				<true/>
+			</dict>
+		</array>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>cue</string>

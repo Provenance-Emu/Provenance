@@ -11,7 +11,7 @@
 @implementation PVVecXCore (Audio)
 
 - (NSTimeInterval)frameInterval {
-    return 60;
+    return 59.72;
 }
 
 - (NSUInteger)channelCount {

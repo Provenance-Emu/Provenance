@@ -108,13 +108,14 @@
     
     
 #define V(x) strcmp(variable, x) == 0
-    if (V("vecx_use_hw")) {
-        char *value = strdup("Hardware");
+    if (V("vecx_use_hw") || V("vecx_render")) {
+//        char *value = strdup("Hardware");
+        char *value = strdup("Software");
         return value;
     } else if (V("vecx_res_multi")) {
         // Internal Resolution Multiplier
         // 1,2,3,4
-        char *value = strdup("2");
+        char *value = strdup("4");
         return value;
     } else if (V("vecx_res_hw")) {
         // Hardware Rendering Resolution
@@ -151,7 +152,8 @@
         char *value = strdup("16");
         return value;
     } else if (V("VecX_pure_cpu_type")) {
-        char *value = strdup("pentium_slow"); // auto
+        char *value = strdup("auto"); // auto
+//        char *value = strdup("pentium_slow"); // auto
         return value;
     } else if (V("VecX_pure_cpu_core")) {
         char *value = strdup("auto");

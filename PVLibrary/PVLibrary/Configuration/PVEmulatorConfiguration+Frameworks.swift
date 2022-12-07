@@ -64,7 +64,7 @@ public extension PVEmulatorConfiguration {
                 let data = try Data(contentsOf: plist)
                 let core = try decoder.decode(CorePlistEntry.self, from: data)
                 let supportedSystems = database.all(PVSystem.self, filter: NSPredicate(format: "identifier IN %@", argumentArray: [core.PVSupportedSystems]))
-				if let disabled = core.PVDisabled, disabled, PVSettingsModel.shared.debugOptions.experimentalCores {
+				if let disabled = core.PVDisabled, disabled, !PVSettingsModel.shared.debugOptions.unsupportedCores {
                     // Do nothing
                     ILOG("Skipping disabled core \(core.PVCoreIdentifier)")
                 } else {

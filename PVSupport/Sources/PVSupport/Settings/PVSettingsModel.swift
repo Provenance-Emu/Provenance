@@ -233,7 +233,7 @@ extension MirroredSettings {
         #else
         @objc public dynamic var useSwiftUI = false
         #endif
-		@objc public dynamic var experimentalCores = false
+//		@objc public dynamic var experimentalCores = false
         @objc public dynamic var iCloudSync = false
         @objc public dynamic var unsupportedCores = false
 //        @objc public dynamic var multiThreadedGL = BoolSetting(false, title: "Multi-threaded GL", info: "Use threaded GLES calls.")

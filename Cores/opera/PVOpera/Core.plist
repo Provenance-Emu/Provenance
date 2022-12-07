@@ -8,7 +8,7 @@
 	<string>PVOperaCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
-		<string>com.provenance.3do</string>
+		<string>com.provenance.3DO</string>
 	</array>
 	<key>PVProjectName</key>
 	<string>Opera</string>
