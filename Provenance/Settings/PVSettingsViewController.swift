@@ -23,11 +23,10 @@ class PVQuickTableViewController: QuickTableViewController {
     open override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
 
-        #if os(iOS)
-            (cell as? SliderCell)?.delegate = self
-        #else
+        #if os(tvOS)
             cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
             cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
+            cell.layer.cornerRadius = 12
         #endif
 
         return cell
