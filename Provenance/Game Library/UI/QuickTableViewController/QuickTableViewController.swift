@@ -131,9 +131,6 @@ open class QuickTableViewController: UIViewController, UITableViewDataSource, UI
     #if os(iOS)
       (cell as? SwitchCell)?.delegate = self
     #endif
-    #if os(tvOS)
-      cell.layer.cornerRadius = 12
-    #endif
     row.customize?(cell, row)
 
     return cell
