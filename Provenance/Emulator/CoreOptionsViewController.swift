@@ -172,7 +172,7 @@ final class CoreOptionsViewController: QuickTableViewController {
                                                              action: { _ in
                     })
                     #else
-                    return SliderRow<PVSliderCell>(
+                    return SliderRow(
                         text: display.title,
                         detailText: detailText,
                         value: Float(value),
@@ -196,7 +196,7 @@ final class CoreOptionsViewController: QuickTableViewController {
                                                              action: { _ in
                     })
                     #else
-                    return SliderRow<PVSliderCell>(
+                    return SliderRow(
                         text: display.title,
                         detailText: detailText,
                         value: value,

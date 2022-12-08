@@ -8,7 +8,7 @@
 
 import Foundation
 
-final class PVSettingsSliderRow<T>: SliderRow<PVSliderCell> where T: BinaryFloatingPoint {
+final class PVSettingsSliderRow<T>: SliderRow<SliderCell> where T: BinaryFloatingPoint {
     let keyPath: ReferenceWritableKeyPath<PVSettingsModel, T>
 
     required init(text: String,

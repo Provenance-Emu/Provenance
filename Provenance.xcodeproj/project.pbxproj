@@ -502,7 +502,6 @@
 		B378225421D32AD60077E86F /* SliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225321D32AD60077E86F /* SliderCell.swift */; };
 		B378225721D32B0B0077E86F /* SliderRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225621D32B0B0077E86F /* SliderRow.swift */; };
 		B378225A21D32F970077E86F /* SettingsRowSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225921D32F970077E86F /* SettingsRowSlider.swift */; };
-		B378225C21D32FCC0077E86F /* PVSliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225B21D32FCC0077E86F /* PVSliderCell.swift */; };
 		B37B71AD278E3198005FB278 /* UIViewController+Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37B71AC278E3198005FB278 /* UIViewController+Alerts.swift */; };
 		B37B71AE278E3198005FB278 /* UIViewController+Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37B71AC278E3198005FB278 /* UIViewController+Alerts.swift */; };
 		B37B71B0278E33B9005FB278 /* MenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37B71AF278E33B9005FB278 /* MenuButton.swift */; };
@@ -1549,7 +1548,6 @@
 		B378225321D32AD60077E86F /* SliderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderCell.swift; sourceTree = "<group>"; };
 		B378225621D32B0B0077E86F /* SliderRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderRow.swift; sourceTree = "<group>"; };
 		B378225921D32F970077E86F /* SettingsRowSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRowSlider.swift; sourceTree = "<group>"; };
-		B378225B21D32FCC0077E86F /* PVSliderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSliderCell.swift; sourceTree = "<group>"; };
 		B37B71AC278E3198005FB278 /* UIViewController+Alerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alerts.swift"; sourceTree = "<group>"; };
 		B37B71AF278E33B9005FB278 /* MenuButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuButton.swift; sourceTree = "<group>"; };
 		B37CE662293F23A50010B746 /* PVBeetlePSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBeetlePSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2969,7 +2967,7 @@
 		B3532B2921A78F97006CDA0F /* Cells */ = {
 			isa = PBXGroup;
 			children = (
-				B378225B21D32FCC0077E86F /* PVSliderCell.swift */,
+				B3532B2A21A78FB2006CDA0F /* PVSwitchCell.swift */,
 				B378225321D32AD60077E86F /* SliderCell.swift */,
 			);
 			path = Cells;
@@ -4404,7 +4402,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3411C1D276B470C00D85327 /* RadioSection.swift in Sources */,
-				B378225C21D32FCC0077E86F /* PVSliderCell.swift in Sources */,
 				1A2FB109206EE8A700A1F942 /* PVSaveStatesViewController.swift in Sources */,
 				B3411C11276B470B00D85327 /* QuickTableViewController.swift in Sources */,
 				378F4A001B63D7CD0065FA39 /* GCDWebServer.m in Sources */,
