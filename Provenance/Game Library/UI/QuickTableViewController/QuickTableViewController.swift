@@ -163,7 +163,7 @@ open class QuickTableViewController: UIViewController, UITableViewDataSource, UI
       if changes.isEmpty {
         tableView.deselectRow(at: indexPath, animated: false)
       } else {
-        tableView.reloadRows(at: changes, with: .automatic)
+        tableView.reloadRows(at: changes, with: .none)
       }
 
     case let (_, option as OptionRowCompatible):
