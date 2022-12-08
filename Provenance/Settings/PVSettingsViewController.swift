@@ -18,22 +18,7 @@ import RealmSwift
 import UIKit
 import RxSwift
 
-class PVQuickTableViewController: QuickTableViewController {
-
-    open override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = super.tableView(tableView, cellForRowAt: indexPath)
-
-        #if os(tvOS)
-            cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
-            cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
-            cell.layer.cornerRadius = 12
-        #endif
-
-        return cell
-    }
-}
-
-final class PVSettingsViewController: PVQuickTableViewController {
+final class PVSettingsViewController: QuickTableViewController {
     // Check to see if we are connected to WiFi. Cannot continue otherwise.
     let reachability: Reachability = try! Reachability()
     var conflictsController: ConflictsController!
@@ -78,6 +63,16 @@ final class PVSettingsViewController: PVQuickTableViewController {
         reachability.stopNotifier()
     }
 
+    #if os(tvOS)
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
+        cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+        cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
+        cell.layer.cornerRadius = 12
+        return cell
+    }
+    #endif
+        
     func generateTableViewViewModels() {
         typealias TableRow = Row & RowStyle
 
