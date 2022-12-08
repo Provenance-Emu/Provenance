@@ -34,6 +34,7 @@ final class PVCoresTableViewController: QuickTableViewController {
                         }
                     #else
                         cell.accessoryType = .none
+                        cell.selectionStyle = .none
                     #endif
                 }, action: { _ in
                     #if os(iOS)
