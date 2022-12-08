@@ -68,7 +68,6 @@ public protocol iOSTheme {
     var switchThumb: UIColor? { get }
 
     var settingsHeaderBackground: UIColor? { get }
-    var settingsSeperator: UIColor? { get }
     var settingsHeaderText: UIColor? { get }
 
     var settingsCellBackground: UIColor? { get }
@@ -93,7 +92,6 @@ extension iOSTheme {
     var settingsHeaderText: UIColor? { return nil }
     var settingsCellBackground: UIColor? { return nil }
     var settingsCellText: UIColor? { return nil }
-    var settingsSeperator: UIColor? { return nil }
 
     #if !os(tvOS)
     var navigationBarStyle: UIBarStyle { return .default }
@@ -154,8 +152,6 @@ struct DarkTheme: iOSTheme {
 
     var settingsCellBackground: UIColor? { return .grey29 }
     var settingsCellText: UIColor? { return .middleGrey  }
-
-    var settingsSeperator: UIColor? { return .black }
 }
 
 struct LightTheme: iOSTheme {
