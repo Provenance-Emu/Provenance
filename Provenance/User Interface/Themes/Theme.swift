@@ -181,7 +181,7 @@ struct LightTheme: iOSTheme {
 public final class Theme {
     public static var currentTheme: iOSTheme = DarkTheme() {
         didSet {
-//            setTheme(currentTheme)
+            setTheme(currentTheme)
             UIApplication.shared.refreshAppearance(animated: true)
         }
     }
@@ -215,23 +215,6 @@ public final class Theme {
     }
 
     private class func setTheme(_ theme: iOSTheme) {
-//        UINavigationBar.appearance {
-//            $0.backgroundColor = theme.navigationBarBackgroundColor
-//            $0.tintColor = theme.barButtonItemTint
-//            #if !os(tvOS)
-//            $0.barStyle = theme.navigationBarStyle
-//            #endif
-//            $0.isTranslucent = true
-//        }
-
-//        UIView.appearance {
-//            $0.tintColor = theme.defaultTintColor
-//        }
-
-        UIBarButtonItem.appearance {
-            $0.tintColor = theme.barButtonItemTint
-        }
-
         #if !os(tvOS)
         UISwitch.appearance {
             $0.onTintColor = theme.switchON
@@ -239,109 +222,11 @@ public final class Theme {
             $0.thumbTintColor = theme.switchThumb
 			#endif
         }
-
-//        UITableView.appearance {
-//            $0.backgroundColor = theme.settingsHeaderBackground
-//            $0.separatorColor = theme.settingsSeperator
-//        }
-
-        #endif
-
-        // Settings
-        appearance(inAny: [PVSettingsViewController.self, SystemsSettingsTableViewController.self, CoreOptionsViewController.self, PVAppearanceViewController.self, PVCoresTableViewController.self]) {
-            UITableViewCell.appearance {
-                $0.backgroundColor = theme.settingsCellBackground
-                $0.textLabel?.backgroundColor = theme.settingsCellBackground
-                $0.textLabel?.textColor = theme.settingsCellText
-                $0.detailTextLabel?.textColor = theme.settingsCellText
-            }
-
-            SwitchCell.appearance {
-                $0.backgroundColor = theme.settingsCellBackground
-                $0.textLabel?.backgroundColor = theme.settingsCellBackground
-                $0.textLabel?.textColor = theme.settingsCellText
-                $0.detailTextLabel?.textColor = theme.settingsCellText
-//                $0.switchControl.onTintColor = theme.switchON
-//                $0.switchControl.thumbTintColor = theme.switchThumb
-            }
-
-            TapActionCell.appearance {
-                $0.backgroundColor = theme.settingsCellBackground
-                $0.textLabel?.backgroundColor = theme.settingsCellBackground
-                $0.textLabel?.textColor = theme.settingsCellText
-                $0.detailTextLabel?.textColor = theme.settingsCellText
-            }
+        
+        UISlider.appearance {
+            $0.tintColor = theme.defaultTintColor
         }
 
-        appearance(in: [UITableViewCell.self, SwitchCell.self]) {
-            UILabel.appearance {
-                $0.textColor = theme.settingsCellText
-            }
-        }
-
-        let selectedView = UIView()
-        selectedView.backgroundColor = theme.defaultTintColor
-
-        SwitchCell.appearance().selectedBackgroundView = selectedView
-        UITableViewCell.appearance().selectedBackgroundView = selectedView
-
-        // Search bar
-//        appearance(in: UISearchBar.self) {
-//            UITextView.appearance {
-//                $0.textColor = theme.searchTextColor
-//            }
-//        }
-
-        // Game Library Headers
-        PVGameLibrarySectionHeaderView.appearance {
-            $0.backgroundColor = theme.gameLibraryHeaderBackground
-        }
-
-//        appearance(in: [PVGameLibrarySectionHeaderView.self]) {
-//            UILabel.appearance {
-//                $0.backgroundColor = theme.gameLibraryHeaderBackground
-//                $0.textColor = theme.gameLibraryHeaderText
-//            }
-//        }
-
-        // Game Library Main
-        appearance(inAny: [PVGameLibraryCollectionViewCell.self]) {
-            UILabel.appearance {
-                $0.textColor = theme.gameLibraryText
-            }
-        }
-
-//        UICollectionView.appearance {
-//            $0.backgroundColor = theme.gameLibraryBackground
-//        }
-
-        // Keyboard Style
-        UITextField.appearance {
-            $0.keyboardAppearance = theme.keyboardAppearance
-        }
-
-        UISearchBar.appearance {
-            $0.keyboardAppearance = theme.keyboardAppearance
-        }
-
-        // Force touch sheet // _UIInterfaceActionSystemRepresentationView
-        if let actionSystemView = NSClassFromString("_UIInterfaceActionRepresentationsSequenceView") as? (UIView.Type) {
-            actionSystemView.appearance {
-                $0.backgroundColor = theme.settingsCellBackground
-//                $0.layer.borderColor = theme.settingsCellText?.withAlphaComponent(0.6).cgColor
-//                $0.layer.cornerRadius = 10.0
-//                $0.layer.borderWidth = 0.5
-                $0.tintColor = theme.gameLibraryText
-            }
-
-            appearance(inAny: [actionSystemView.self]) {
-                UILabel.appearance {
-                    $0.textColor = theme.gameLibraryText
-                }
-            }
-        }
-
-        #if os(iOS)
         // Status bar
         styleStatusBar(withColor: theme.statusBarColor)
         #endif
