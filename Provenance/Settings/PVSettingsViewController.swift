@@ -224,11 +224,13 @@ final class PVSettingsViewController: QuickTableViewController {
                 detailText: .subtitle(""),
                 key: \PVSettingsModel.webDavAlwaysOn,
                 customization: { cell, _ in
-                    if PVSettingsModel.shared.webDavAlwaysOn {
-                        let subTitleText = "WebDAV: \(PVWebServer.shared.webDavURLString)"
-                        cell.detailTextLabel?.text = subTitleText
-                    } else {
-                        cell.detailTextLabel?.text = nil
+                    DispatchQueue.main.async {
+                        if PVSettingsModel.shared.webDavAlwaysOn {
+                            let subTitleText = "WebDAV: \(PVWebServer.shared.webDavURLString)"
+                            cell.detailTextLabel?.text = subTitleText
+                        } else {
+                            cell.detailTextLabel?.text = nil
+                        }
                     }
                 }
             )
