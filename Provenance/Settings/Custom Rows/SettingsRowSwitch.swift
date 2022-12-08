@@ -8,7 +8,7 @@
 
 import Foundation
 
-final class PVSettingsSwitchRow: SwitchRow<PVSwitchCell> {
+final class PVSettingsSwitchRow: SwitchRow<SwitchCell> {
     let keyPath: ReferenceWritableKeyPath<PVSettingsModel, Bool>
 
     required init(text: String, detailText: DetailText? = nil, key: ReferenceWritableKeyPath<PVSettingsModel, Bool>, icon: Icon? = nil, customization: ((UITableViewCell, Row & RowStyle) -> Void)? = nil) {
