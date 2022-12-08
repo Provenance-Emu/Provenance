@@ -24,15 +24,6 @@ import UIKit
  Wrap long press of UIGameLibrayVC to if !pushPop available, since all that stuff will be handled in this VC
  Add UICollectionView wrapper
  */
-#if os(iOS)
-    extension UIImageView {
-        public override var ignoresInvertColors: Bool {
-            get {
-                return true
-            } set {}
-        }
-    }
-#endif
 
 // Special label that renders Countries as flag emojis when available
 final class RegionLabel: LongPressLabel {
@@ -271,11 +262,6 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
         layer.shadowOffset = CGSize(width: 2, height: 1)
         layer.shadowRadius = 4.0
         layer.shadowOpacity = 0.7
-
-        #if os(iOS)
-            // Ignore Smart Invert
-            artworkImageView.ignoresInvertColors = true
-        #endif
     }
 
     deinit {

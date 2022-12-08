@@ -38,9 +38,6 @@
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="grq-R5-nkq">
                                 <rect key="frame" x="0.0" y="0.0" width="164" height="109.33333333333333"/>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="boolean" keyPath="ignoresInvertColors" value="YES"/>
-                                </userDefinedRuntimeAttributes>
                             </imageView>
                             <view hidden="YES" alpha="0.90000000000000002" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3SN-fo-fqC">
                                 <rect key="frame" x="0.0" y="0.0" width="164" height="109.33333333333333"/>
@@ -97,7 +94,6 @@
                                     <userDefinedRuntimeAttribute type="color" keyPath="textColor">
                                         <color key="value" red="0.99999600649999998" green="1" blue="1" alpha="0.85905393835616439" colorSpace="custom" customColorSpace="sRGB"/>
                                     </userDefinedRuntimeAttribute>
-                                    <userDefinedRuntimeAttribute type="boolean" keyPath="ignoresInvertColors" value="YES"/>
                                     <userDefinedRuntimeAttribute type="string" keyPath="glyph" value="♥︎"/>
                                     <userDefinedRuntimeAttribute type="color" keyPath="strokeColor">
                                         <color key="value" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -135,7 +131,6 @@
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                         <userDefinedRuntimeAttributes>
-                            <userDefinedRuntimeAttribute type="boolean" keyPath="ignoresInvertColors" value="NO"/>
                             <userDefinedRuntimeAttribute type="number" keyPath="alignmentCode">
                                 <integer key="value" value="1"/>
                             </userDefinedRuntimeAttribute>

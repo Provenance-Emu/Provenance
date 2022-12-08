@@ -416,9 +416,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
         #if os(iOS)
             setNeedsUpdateOfHomeIndicatorAutoHidden()
-
-            // Ignore Smart Invert
-            view.ignoresInvertColors = true
         #endif
 
         if PVSettingsModel.shared.timedAutoSaves {
