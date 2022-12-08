@@ -226,12 +226,9 @@ final class PVSettingsViewController: QuickTableViewController {
                 customization: { cell, _ in
                     if PVSettingsModel.shared.webDavAlwaysOn {
                         let subTitleText = "WebDAV: \(PVWebServer.shared.webDavURLString)"
-                        let subTitleAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20), NSAttributedString.Key.foregroundColor: UIColor.gray]
-                        let subTitleAttrString = NSMutableAttributedString(string: subTitleText, attributes: subTitleAttributes)
-                        cell.detailTextLabel?.attributedText = subTitleAttrString
+                        cell.detailTextLabel?.text = subTitleText
                     } else {
                         cell.detailTextLabel?.text = nil
-                        cell.detailTextLabel?.attributedText = nil
                     }
                 }
             )
