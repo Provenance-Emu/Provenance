@@ -457,7 +457,6 @@
 		B3890BF420B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3890BF320B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift */; };
 		B3890BF520B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3890BF320B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift */; };
 		B3890BF920B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3890BF820B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib */; };
-		B3890BFA20B9E513005BB001 /* UILabel+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C125BF20B0826900DC045B /* UILabel+Theming.swift */; };
 		B38A2A48210233FE00374CDD /* EmulatorActionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B38A2A47210233FE00374CDD /* EmulatorActionCell.xib */; platformFilters = (ios, maccatalyst, ); };
 		B38D02342884D03B008FBED8 /* SettingsOptionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38D02332884D03A008FBED8 /* SettingsOptionRow.swift */; };
 		B38D30FD202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
@@ -565,7 +564,6 @@
 		B3D5E2B3218EC1AE0015C690 /* RxTableViewRealmDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D5E2AC218EC1AD0015C690 /* RxTableViewRealmDataSource.swift */; };
 		B3D5E2BF218EC62E0015C690 /* Sections.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D5E2BE218EC62E0015C690 /* Sections.swift */; };
 		B3D5E2C0218EC62E0015C690 /* Sections.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D5E2BE218EC62E0015C690 /* Sections.swift */; };
-		B3DB11A8205C52B800A6E845 /* UIAlertController+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11A7205C52B800A6E845 /* UIAlertController+Theming.swift */; };
 		B3DB11AD205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */; };
 		B3DB11AE205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */; };
 		B3E21D6E203211BE009939D3 /* IndexRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E21D6D203211BE009939D3 /* IndexRequestHandler.swift */; };
@@ -711,7 +709,6 @@
 		C13CC82923CABE2800463EDD /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13CC82823CABE2800463EDD /* Photos.framework */; };
 		C665CD8421FEC68E00C834C6 /* GCControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665CD8321FEC68E00C834C6 /* GCControllerExtensions.swift */; };
 		C665CD8521FEC68E00C834C6 /* GCControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665CD8321FEC68E00C834C6 /* GCControllerExtensions.swift */; };
-		C6C125C020B0826900DC045B /* UILabel+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C125BF20B0826900DC045B /* UILabel+Theming.swift */; };
 		C6E8F64D2095CAE4003CC2D9 /* SubtleVolume.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E8F64C2095CAE4003CC2D9 /* SubtleVolume.swift */; };
 		CF17107125858B5400258602 /* PVEmulatorViewController+Cheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF17107025858B5400258602 /* PVEmulatorViewController+Cheats.swift */; };
 		CF1710842585912C00258602 /* PVCheatsHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1710832585912C00258602 /* PVCheatsHeaderView.swift */; };
@@ -1548,7 +1545,6 @@
 		B3D5E2AC218EC1AD0015C690 /* RxTableViewRealmDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxTableViewRealmDataSource.swift; sourceTree = "<group>"; };
 		B3D5E2AD218EC1AE0015C690 /* RxCollectionViewRealmDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxCollectionViewRealmDataSource.swift; sourceTree = "<group>"; };
 		B3D5E2BE218EC62E0015C690 /* Sections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sections.swift; sourceTree = "<group>"; };
-		B3DB11A7205C52B800A6E845 /* UIAlertController+Theming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UIAlertController+Theming.swift"; path = "Provenance/User Interface/Themes/UIAlertController+Theming.swift"; sourceTree = SOURCE_ROOT; };
 		B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVCoresTableViewContorller.swift; sourceTree = "<group>"; };
 		B3DDB0A720291E8E001C6B64 /* PVMupen64PlusRspHLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusRspHLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E0A580215647BD004B4322 /* Scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Scripts; sourceTree = "<group>"; };
@@ -1614,7 +1610,6 @@
 		BE9FDCCD1C21194B0046DF0E /* TopShelf.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = TopShelf.entitlements; sourceTree = "<group>"; };
 		C13CC82823CABE2800463EDD /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
 		C665CD8321FEC68E00C834C6 /* GCControllerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GCControllerExtensions.swift; sourceTree = "<group>"; };
-		C6C125BF20B0826900DC045B /* UILabel+Theming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Theming.swift"; sourceTree = "<group>"; };
 		C6E8F64C2095CAE4003CC2D9 /* SubtleVolume.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubtleVolume.swift; sourceTree = "<group>"; };
 		CF17107025858B5400258602 /* PVEmulatorViewController+Cheats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVEmulatorViewController+Cheats.swift"; sourceTree = "<group>"; };
 		CF1710832585912C00258602 /* PVCheatsHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVCheatsHeaderView.swift; sourceTree = "<group>"; };
@@ -3016,8 +3011,6 @@
 			children = (
 				B3B923A2202D2EAE00580FFC /* SwiftyAppearance */,
 				B3B923A9202D2EAE00580FFC /* Theme.swift */,
-				B3DB11A7205C52B800A6E845 /* UIAlertController+Theming.swift */,
-				C6C125BF20B0826900DC045B /* UILabel+Theming.swift */,
 			);
 			path = Themes;
 			sourceTree = "<group>";
@@ -4310,7 +4303,6 @@
 				B3F7BE79204A289B000D0B4D /* PVConflictViewController.swift in Sources */,
 				378F4A031B63D7CD0065FA39 /* GCDWebServerRequest.m in Sources */,
 				B3411C16276B470B00D85327 /* RowCompatible.swift in Sources */,
-				C6C125C020B0826900DC045B /* UILabel+Theming.swift in Sources */,
 				B3AB37332187F569009D9244 /* PVAtari2600ControllerViewController.swift in Sources */,
 				B3EA0CD32070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */,
 				B39AF05F28754EB8004882FC /* PVAppDelegate+VolumeButton.swift in Sources */,
@@ -4330,7 +4322,6 @@
 				B3427BF8287EA0CF0054C1B5 /* megaTron.metal in Sources */,
 				B3411C12276B470B00D85327 /* Configurable.swift in Sources */,
 				CF1710842585912C00258602 /* PVCheatsHeaderView.swift in Sources */,
-				B3DB11A8205C52B800A6E845 /* UIAlertController+Theming.swift in Sources */,
 				B3411C13276B470B00D85327 /* Reusable.swift in Sources */,
 				378F4A081B63D7CD0065FA39 /* GCDWebServerURLEncodedFormRequest.m in Sources */,
 				1180B307248FF8AC00636C8A /* UICollectionView+Rx.swift in Sources */,
@@ -4595,7 +4586,6 @@
 				B3B104D5218F2F1700210C39 /* JSDPad.swift in Sources */,
 				B361F63527C07B300080D368 /* GameContextMenu.swift in Sources */,
 				B3411C2C276B472900D85327 /* Section.swift in Sources */,
-				B3890BFA20B9E513005BB001 /* UILabel+Theming.swift in Sources */,
 				B378224F21D32A360077E86F /* SegueNavigationRow.swift in Sources */,
 				B355DF8F29208A4A00E4C858 /* PVAppDelegate+Helpers.swift in Sources */,
 				B354E7D3219A9C230041F971 /* CoreOptionsViewController.swift in Sources */,
