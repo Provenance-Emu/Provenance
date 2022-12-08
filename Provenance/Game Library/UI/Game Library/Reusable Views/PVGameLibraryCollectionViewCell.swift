@@ -364,11 +364,6 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
     @IBOutlet private(set) var imageView: UIImageView! {
         didSet {
             imageView.translatesAutoresizingMaskIntoConstraints = false
-
-            #if os(iOS)
-                // Ignore Smart Invert
-                imageView.ignoresInvertColors = true
-            #endif
         }
     }
 
