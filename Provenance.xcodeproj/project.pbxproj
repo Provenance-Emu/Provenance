@@ -5311,7 +5311,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = NO;
+				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5364,7 +5364,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = NO;
+				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -7072,7 +7072,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = NO;
+				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
