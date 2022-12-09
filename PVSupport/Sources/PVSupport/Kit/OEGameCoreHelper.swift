@@ -44,6 +44,10 @@ public protocol OEGameCoreHelperRunStateDelegate: AnyObject {
     var framesPerSecond: Int { get }
 }
 
+@objc public protocol CoreFeatures {
+    var cheats: GameWithCheat? { get }
+}
+
 /// A protocol that defines the behaviour required to control an emulator core.
 ///
 /// A host application obtains an instance of ``OEGameCoreHelper`` in order
@@ -70,11 +74,12 @@ public protocol OEGameCoreHelper: AnyObject, CustomStringConvertible {
     var screenType: String? { get set }
     var supportsSaveStates: Bool { get }
     
-    var responderClient: AnyObject? { get }
+    var responderClient: ResponderClient { get }
     var viewController: AnyObject? { get }
+    
     /// Returns an object that can be optionally cast to one of the supported features
     /// such as ``DiscSwappable``.
-    var features: AnyObject? { get }
+    var features: CoreFeatures { get }
 
     /// Adjust the output volume of the core.
     ///
@@ -88,6 +93,7 @@ public protocol OEGameCoreHelper: AnyObject, CustomStringConvertible {
      */
     func setPauseEmulation(_ pauseEmulation: Bool)
     
+    /// A delegate that receives notifications when the game core changes running states.
     var runStateDelegate: OEGameCoreHelperRunStateDelegate? { get set }
     
     /// Specifies how and when shader effects are rendered.
@@ -101,8 +107,6 @@ public protocol OEGameCoreHelper: AnyObject, CustomStringConvertible {
 #if os(macOS)
     func setAudioOutputDeviceID(_ deviceID: AudioDeviceID)
 #endif
-    func setOutputBounds(_ rect: CGRect)
-    func setBackingScaleFactor(_ newBackingScaleFactor: CGFloat)
     
     /// Controls whether the renderer should use a variable refresh rate.
     func setAdaptiveSyncEnabled(_ enabled: Bool)
@@ -125,4 +129,14 @@ public protocol OEGameCoreHelper: AnyObject, CustomStringConvertible {
     
     /// Capture an image of the core's raw video display buffer with no effects.
     func captureSourceImage(completionHandler block: @escaping (CGImage) -> Void)
+}
+
+@objc class CoreFeaturesImpl: NSObject, CoreFeatures {
+    let source: AnyObject
+    
+    init(source: AnyObject) {
+        self.source = source
+    }
+    
+    var cheats: GameWithCheat? { source as? GameWithCheat }
 }

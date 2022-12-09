@@ -25,6 +25,7 @@
 import Foundation
 import OpenGLES.gltypes
 import Metal
+import PVRuntime
 @_implementationOnly import Atomics
 @_implementationOnly import os.log
 

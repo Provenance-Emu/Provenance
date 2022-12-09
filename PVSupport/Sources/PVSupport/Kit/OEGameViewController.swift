@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import QuartzCore
+import PVRuntime
 
 #if os(tvOS)
 public typealias OEGameViewControllerRootClass = GCEventViewController
@@ -34,6 +35,15 @@ public typealias OEGameViewControllerRootClass = UIViewController
         view = gameView
         gameView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         gameView.isUserInteractionEnabled = false
+        
+        if PVSettingsModel.shared.nativeScaleEnabled {
+            let scale = UIScreen.main.scale
+            if scale != 1.0 {
+                view.layer.contentsScale = scale
+                view.layer.rasterizationScale = scale
+                view.contentScaleFactor = scale
+            }
+        }
     }
     
     public override func viewDidLayoutSubviews() {
@@ -55,15 +65,16 @@ public typealias OEGameViewControllerRootClass = UIViewController
                 ratio = aspectSize.height / aspectSize.width
             }
             
-            let parentSize = parent?.view.bounds.size ?? view.window?.bounds.size ?? .init(width: 320, height: 200)
+            let parentSize = parent?.view.bounds.size
+                ?? view.window?.bounds.size
+                // Pick an arbitrary size, if the others are still nil
+                ?? .init(width: 320, height: 200)
 
             var height: CGFloat
             var width: CGFloat
 
             if parentSize.width > parentSize.height {
-                // TODO: Add this
-                // if PVSettingsModel.shared.integerScaleEnabled {
-                if true {
+                if PVSettingsModel.shared.integerScaleEnabled {
                     height = (parentSize.height / aspectSize.height).rounded(.down) * aspectSize.height
                 } else {
                     height = parentSize.height
@@ -74,9 +85,7 @@ public typealias OEGameViewControllerRootClass = UIViewController
                     height = (width / ratio).rounded(.toNearestOrAwayFromZero)
                 }
             } else {
-                // TODO: Add this
-                // if PVSettingsModel.shared.integerScaleEnabled {
-                if true {
+                if PVSettingsModel.shared.integerScaleEnabled {
                     width = (parentSize.width / aspectSize.width).rounded(.down) * aspectSize.width
                 } else {
                     width = parentSize.height

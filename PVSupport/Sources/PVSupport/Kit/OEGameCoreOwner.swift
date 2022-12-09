@@ -56,7 +56,7 @@ public typealias OEContextID = UInt32
     /// - Parameters:
     ///   - newScreenSize: The updated screen size
     ///   - newAspectSize: The updated aspect size
-    func setScreenSize(_ newScreenSize: OEIntSize, aspectSize newAspectSize: OEIntSize)
+    // func setScreenSize(_ newScreenSize: OEIntSize, aspectSize newAspectSize: OEIntSize)
     
     /// Notify the host application that the disc count has changed
     /// - Parameter discCount: The new disc count

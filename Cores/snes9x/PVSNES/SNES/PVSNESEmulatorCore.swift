@@ -27,3 +27,14 @@ extension PVSNESEmulatorCore: GameWithCheat {
         return true
     }
 }
+
+extension PVSNESGameCore: GameWithCheat {
+    public func setCheat(code: String, type: String, enabled: Bool) -> Bool {
+        self.setCheat(code, setType: type, setEnabled: enabled)
+        return true
+    }
+    
+    public func supportsCheatCode() -> Bool {
+        true
+    }
+}

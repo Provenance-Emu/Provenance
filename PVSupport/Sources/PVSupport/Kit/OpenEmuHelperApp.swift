@@ -28,6 +28,7 @@ import Foundation
 import OpenEmuShaders
 import GameController
 import Metal
+@_exported import PVRuntime
 @_implementationOnly import AVFAudio
 @_implementationOnly import os.log
 
@@ -88,7 +89,8 @@ extension OSLog {
     var lastLog     = CFTimeInterval()
     
     public init(_ core: OEGameCore) {
-        self.gameCore = core
+        self.gameCore  = core
+        self._features = .init(source: core)
     }
     
     required init?(coder: NSCoder) {
@@ -311,7 +313,7 @@ extension OSLog {
                NSStringFromOEIntSize(newScreenSize),
                NSStringFromOEIntSize(newAspectSize))
         
-        gameCoreOwner?.setScreenSize(newScreenSize, aspectSize: newAspectSize)
+        // gameCoreOwner?.setScreenSize(newScreenSize, aspectSize: newAspectSize)
     }
     
     // MARK: - OEGameCoreHelper
@@ -321,6 +323,7 @@ extension OSLog {
     var _batterySavesPath: String? = nil
     var _coreIdentifier: String? = nil
     var _screenType: String? = nil
+    let _features: CoreFeaturesImpl
     
     public weak var runStateDelegate: OEGameCoreHelperRunStateDelegate?
 }
@@ -388,10 +391,10 @@ extension OpenEmuHelperApp: OEGameCoreHelper {
         false
     }
     
-    public var responderClient: AnyObject? { gameCore }
+    public var responderClient: ResponderClient { gameCore }
     public var viewController: AnyObject? { _viewController }
     
-    public var features: AnyObject? { nil }
+    public var features: CoreFeatures { _features }
     
     public func setVolume(_ volume: Float) {
         gameCore.perform {
@@ -426,7 +429,7 @@ extension OpenEmuHelperApp: OEGameCoreHelper {
     }
 #endif
     
-    public func setOutputBounds(_ rect: CGRect) {
+    private func setOutputBounds(_ rect: CGRect) {
 #if os(macOS)
         os_log(.debug, log: .display, "Output bounds changed to %{public}@", NSStringFromRect(rect))
 #else
@@ -440,15 +443,6 @@ extension OpenEmuHelperApp: OEGameCoreHelper {
         
         let newBufferSize = OEIntSize(width: Int32(rect.size.width.rounded(.up)), height: Int32(rect.size.height.rounded(.up)))
         gameCore.tryToResizeVideo(to: newBufferSize)
-    }
-    
-    public func setBackingScaleFactor(_ newBackingScaleFactor: CGFloat) {
-        CATransaction.begin()
-        CATransaction.setDisableActions(true)
-        defer { CATransaction.commit() }
-        
-        _videoLayer.contentsScale = newBackingScaleFactor
-        _filterChain.drawableSize = _videoLayer.drawableSize
     }
     
     public func setAdaptiveSyncEnabled(_ enabled: Bool) {
@@ -810,6 +804,8 @@ extension OpenEmuHelperApp: OEGameCoreDelegate {
         }
     }
 }
+
+extension OpenEmuHelperApp: OEControllerDelegate { }
 
 extension OpenEmuHelperApp {
     public func saveState(_ sender: Any) {

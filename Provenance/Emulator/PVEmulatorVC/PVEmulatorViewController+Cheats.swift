@@ -49,7 +49,7 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
     }
 
     func setCheatState(code: String, type: String, enabled: Bool, completion: @escaping CheatsCompletion) {
-        if let gameWithCheat = core as? GameWithCheat {
+        if let gameWithCheat = core.features.cheats {
 
             // convert space to +
             var regex = try! NSRegularExpression(pattern: "[^a-fA-F0-9-:+]+|[G-Z\\s]+", options: NSRegularExpression.Options.caseInsensitive)
@@ -132,7 +132,7 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
 
     func cheatsViewControllerUpdateState(_: Any, cheat: PVCheats,
         completion: @escaping CheatsCompletion) {
-        if let gameWithCheat = core as? GameWithCheat {
+        if let gameWithCheat = core.features.cheats {
             if gameWithCheat.setCheat(code: cheat.code, type:cheat.type, enabled:cheat.enabled) {
 
                 ILOG("Succeeded applying cheat: \(cheat.code ?? "null") \(cheat.type ?? "null") \(cheat.enabled)")

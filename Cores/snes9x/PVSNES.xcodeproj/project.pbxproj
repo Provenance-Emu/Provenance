@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		057698752937245600F7E122 /* PVSNESGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 057698732937245600F7E122 /* PVSNESGameCore.h */; };
+		057698752937245600F7E122 /* PVSNESGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 057698732937245600F7E122 /* PVSNESGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		057698762937245600F7E122 /* PVSNESGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 057698742937245600F7E122 /* PVSNESGameCore.mm */; };
 		057698782937247800F7E122 /* PVRuntime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 057698772937247800F7E122 /* PVRuntime.framework */; };
 		B34AB5842106DEA000C45F09 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34AB5832106DEA000C45F09 /* PVSupport.framework */; };
@@ -315,10 +315,10 @@
 			children = (
 				1ACEA91817F760390031B1C9 /* PVSNESEmulatorCore.h */,
 				1ACEA91917F760390031B1C9 /* PVSNESEmulatorCore.mm */,
+				CF87D337258AB6CE00838AF8 /* PVSNESEmulatorCore.swift */,
 				057698732937245600F7E122 /* PVSNESGameCore.h */,
 				057698742937245600F7E122 /* PVSNESGameCore.mm */,
 				1ACEA98F17F760390031B1C9 /* SNESOESupport.mm */,
-				CF87D337258AB6CE00838AF8 /* PVSNESEmulatorCore.swift */,
 				1ACEA91A17F760390031B1C9 /* SNESCore */,
 			);
 			path = SNES;

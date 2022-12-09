@@ -8,7 +8,7 @@
 
 #import "PVGPUViewController.h"
 #import "DebugUtils.h"
-#import <PVRuntime/PVRuntime.h>
+#import <PVSupport/PVSupport-Swift.h>
 
 @interface PVGPUViewController(Foo)<OEGameCoreView>
 

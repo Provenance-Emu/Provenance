@@ -790,5 +790,4 @@ extension PVEmulatorViewController: OEGameCoreHelperRunStateDelegate {
             }
         }
     }
-    
 }

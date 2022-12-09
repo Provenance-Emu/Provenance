@@ -7,13 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <PVRuntime/OEGameCore.h>
+#import <PVRuntime/PVRuntime.h>
+#import <PVSupport/PVSupport-Swift.h>
 // @import PVRuntime;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PVSNESGameCore : OEGameCore
+@interface PVSNESGameCore : OEGameCore<PVSNESSystemResponderClient>
 
+- (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled;
 @end
 
 NS_ASSUME_NONNULL_END

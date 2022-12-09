@@ -32,9 +32,6 @@ class GameHelperMetalLayer: CAMetalLayer {
         
         anchorPoint     = .zero
         contentsGravity = .resizeAspect
-        
-        // TODO: this should come from the host
-        contentsScale   = 2.0
         pixelFormat     = pixelFormat
     }
     

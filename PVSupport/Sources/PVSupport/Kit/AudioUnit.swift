@@ -27,7 +27,7 @@ import AudioToolbox
 import AVFoundation
 @_implementationOnly import os.log
 
-@objc(OEAudioUnit) final public class AudioUnit: AUAudioUnit {
+@objc(OEAudioUnit) final class AudioUnit: AUAudioUnit {
     // swiftlint:disable identifier_name
     @objc public static var kAudioUnitSubType_Emulator     = OSType(bitPattern: 0x65_6d_75_21) // emu!
     @objc public static let kAudioUnitManufacturer_OpenEmu = OSType(bitPattern: 0x6f_65_6d_75) // oemu
@@ -46,13 +46,13 @@ import AVFoundation
         return true
     }()
     
-    @objc public static func register() {
+    @objc static func register() {
         _ = isRegistered
     }
     
     private var _outputProvider: AURenderPullInputBlock?
     
-    @objc public override var outputProvider: AURenderPullInputBlock? {
+    @objc override var outputProvider: AURenderPullInputBlock? {
         get { _outputProvider }
         set { _outputProvider = newValue }
     }

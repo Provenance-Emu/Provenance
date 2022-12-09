@@ -24,7 +24,16 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifdef __cplusplus
 #import <Foundation/Foundation.h>
+#import <GameController/GameController.h>
+#else
+@import Foundation;
+#if !TARGET_OS_WATCH
+@import GameController;
+#endif
+#endif
+
 #import <PVRuntime/OEGeometry.h>
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
@@ -173,6 +182,14 @@ typedef NS_ENUM(NSUInteger, OEGameCoreRendering) {
 - (void)resumeAudio;
 @end
 
+@protocol OEControllerDelegate
+@required
+@property (nonatomic, strong, nullable) GCController *controller1;
+@property (nonatomic, strong, nullable) GCController *controller2;
+@property (nonatomic, strong, nullable) GCController *controller3;
+@property (nonatomic, strong, nullable) GCController *controller4;
+@end
+
 @class OEHIDEvent, OERingBuffer;
 @protocol OEAudioBuffer;
 
@@ -182,9 +199,10 @@ OE_EXPORTED_CLASS
 @interface OEGameCore : NSObject
 
 // TODO: Move all ivars/properties that don't need overriding to a category?
-@property(weak)     id<OEGameCoreDelegate> delegate;
-@property(weak)     id<OERenderDelegate>   renderDelegate;
-@property(weak)     id<OEAudioDelegate>    audioDelegate;
+@property(weak)     id<OEGameCoreDelegate>      delegate;
+@property(weak)     id<OEControllerDelegate>    controllerDelegate;
+@property(weak)     id<OERenderDelegate>        renderDelegate;
+@property(weak)     id<OEAudioDelegate>         audioDelegate;
 
 @property(nonatomic, weak)     OEGameCoreController          *owner;
 @property(nonatomic, readonly) NSString                      *pluginName;

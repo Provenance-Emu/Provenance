@@ -42,6 +42,7 @@
 #include "cheats.h"
 #include "conffile.h"
 
+#import <PVRuntime/PVRuntime.h>
 #import <PVSupport/PVSupport-Swift.h>
 
 #define SAMPLERATE      32040
@@ -797,14 +798,14 @@ static void FinalizeSamplesAudioCallback(void *context)
 
 static NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", @"X", @"Y", @"L", @"R", @"Start", @"Select", nil };
 
-- (oneway void)didPushSNESButton:(PVSNESButton)button forPlayer:(NSUInteger)player;
+- (void)didPushSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player
 {
-    S9xReportButton((player << 16) | button, true);
+    S9xReportButton((player+1 << 16) | button, true);
 }
 
-- (oneway void)didReleaseSNESButton:(PVSNESButton)button forPlayer:(NSUInteger)player;
+- (void)didReleaseSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player
 {
-    S9xReportButton((player << 16) | button, false);
+    S9xReportButton((player+1 << 16) | button, false);
 }
 
 - (void)mapButtons
@@ -820,6 +821,83 @@ static NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A",
             s9xcommand_t cmd = S9xGetCommandT([[playerString stringByAppendingString:SNESEmulatorKeys[idx]] UTF8String]);
             S9xMapButton(playerMask | idx, cmd, false);
         }
+    }
+}
+
+- (void)updateControllers {
+    GCController *controller = nil;
+    
+    __auto_type del = self.controllerDelegate;
+
+    for (NSInteger player = 1; player <= 2; player++)
+    {
+        NSUInteger playerMask = player << 16;
+        GCController *controller = (player == 1) ? del.controller1 : del.controller2;
+
+        if ([controller extendedGamepad])
+        {
+            GCExtendedGamepad *gamepad = [controller extendedGamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
+
+            PVControllerAxisDirection axisDirection = [PVGameControllerUtilities axisDirectionForThumbstick:gamepad.leftThumbstick];
+
+            BOOL upPressed = dpad.up.pressed || axisDirection == PVControllerAxisDirectionUp || axisDirection == PVControllerAxisDirectionUpLeft || axisDirection == PVControllerAxisDirectionUpRight;
+            S9xReportButton(playerMask | PVSNESButtonUp, upPressed);
+            
+            BOOL downPressed = dpad.down.pressed || axisDirection == PVControllerAxisDirectionDown || axisDirection == PVControllerAxisDirectionDownLeft || axisDirection == PVControllerAxisDirectionDownRight;
+            S9xReportButton(playerMask | PVSNESButtonDown, downPressed);
+            
+            BOOL leftPressed = dpad.left.pressed || axisDirection == PVControllerAxisDirectionLeft || axisDirection == PVControllerAxisDirectionUpLeft || axisDirection == PVControllerAxisDirectionDownLeft;
+            S9xReportButton(playerMask | PVSNESButtonLeft, leftPressed);
+            
+            BOOL rightPressed = dpad.right.pressed || axisDirection == PVControllerAxisDirectionRight || axisDirection == PVControllerAxisDirectionUpRight || axisDirection == PVControllerAxisDirectionDownRight;
+            S9xReportButton(playerMask | PVSNESButtonRight, rightPressed);
+
+            S9xReportButton(playerMask | PVSNESButtonB, gamepad.buttonA.pressed);
+            S9xReportButton(playerMask | PVSNESButtonA, gamepad.buttonB.pressed);
+            S9xReportButton(playerMask | PVSNESButtonY, gamepad.buttonX.pressed);
+            S9xReportButton(playerMask | PVSNESButtonX, gamepad.buttonY.pressed);
+
+            S9xReportButton(playerMask | PVSNESButtonTriggerLeft, gamepad.leftShoulder.pressed);
+            S9xReportButton(playerMask | PVSNESButtonTriggerRight, gamepad.rightShoulder.pressed);
+
+            S9xReportButton(playerMask | PVSNESButtonStart, gamepad.rightTrigger.pressed);
+            S9xReportButton(playerMask | PVSNESButtonSelect, gamepad.leftTrigger.pressed);
+
+        }
+        else if ([controller gamepad])
+        {
+            GCGamepad *gamepad = [controller gamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
+
+            S9xReportButton(playerMask | PVSNESButtonUp, dpad.up.pressed);
+            S9xReportButton(playerMask | PVSNESButtonDown, dpad.down.pressed);
+            S9xReportButton(playerMask | PVSNESButtonLeft, dpad.left.pressed);
+            S9xReportButton(playerMask | PVSNESButtonRight, dpad.right.pressed);
+
+            S9xReportButton(playerMask | PVSNESButtonB, gamepad.buttonA.pressed);
+            S9xReportButton(playerMask | PVSNESButtonA, gamepad.buttonB.pressed);
+            S9xReportButton(playerMask | PVSNESButtonY, gamepad.buttonX.pressed);
+            S9xReportButton(playerMask | PVSNESButtonX, gamepad.buttonY.pressed);
+
+            S9xReportButton(playerMask | PVSNESButtonTriggerLeft, gamepad.leftShoulder.pressed);
+            S9xReportButton(playerMask | PVSNESButtonTriggerRight, gamepad.rightShoulder.pressed);
+        }
+#if TARGET_OS_TV
+        else if ([controller microGamepad])
+        {
+            GCMicroGamepad *gamepad = [controller microGamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
+
+            S9xReportButton(playerMask | PVSNESButtonUp, dpad.up.value > 0.5);
+            S9xReportButton(playerMask | PVSNESButtonDown, dpad.down.value > 0.5);
+            S9xReportButton(playerMask | PVSNESButtonLeft, dpad.left.value > 0.5);
+            S9xReportButton(playerMask | PVSNESButtonRight, dpad.right.value > 0.5);
+
+            S9xReportButton(playerMask | PVSNESButtonB, gamepad.buttonA.pressed);
+            S9xReportButton(playerMask | PVSNESButtonA, gamepad.buttonX.pressed);
+        }
+#endif
     }
 }
 

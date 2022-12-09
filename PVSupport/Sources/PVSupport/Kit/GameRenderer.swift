@@ -24,6 +24,7 @@
 
 import Foundation
 import Metal
+import PVRuntime
 
 protocol GameRenderer {
     var gameCore: OEGameCore { get }

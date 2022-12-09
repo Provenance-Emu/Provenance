@@ -24,6 +24,7 @@
 
 import Foundation
 import OpenEmuShaders
+import PVRuntime
 import Metal
 #if os(macOS)
 import OpenGL
@@ -49,53 +50,57 @@ final class MTLGameRenderer: GameRenderer {
     
     func update() {
         precondition(gameCore.gameCoreRendering == .rendering2DVideo, "Metal only supports 2D rendering")
-
+        
         let pixelFormat = gameCore.pixelFormat
         let pixelType   = gameCore.pixelType
         guard let pf = glToRPixelFormat(pixelFormat: pixelFormat, pixelType: pixelType) else {
             fatalError("Invalid pixel format")
         }
-
+        
         // bufferSize is fixed for 2D, so doesn't need to be reallocated.
         if buffer == nil {
             let bufferSize  = gameCore.bufferSize
             let bytesPerRow = gameCore.bytesPerRow
-
+            
             buffer = PixelBuffer.makeBuffer(withDevice: device,
-                    converter: converter,
-                    format: pf,
-                    height: Int(bufferSize.height),
-                    bytesPerRow: bytesPerRow)
-
+                                            converter: converter,
+                                            format: pf,
+                                            height: Int(bufferSize.height),
+                                            bytesPerRow: bytesPerRow)
+            
             let buf = UnsafeMutableRawPointer(mutating: gameCore.getVideoBuffer(withHint: buffer.contents))
             if buf != buffer.contents {
                 buffer = PixelBuffer.makeBuffer(withDevice: device,
-                        converter: converter,
-                        format: pf,
-                        height: Int(bufferSize.height),
-                        bytesPerRow: bytesPerRow,
-                        bytes: buf)
+                                                converter: converter,
+                                                format: pf,
+                                                height: Int(bufferSize.height),
+                                                bytesPerRow: bytesPerRow,
+                                                bytes: buf)
             }
         }
-
+        
         guard let buffer = buffer else {
             fatalError("buffer == nil")
         }
-
-        let rect       = gameCore.screenRect
+        
+        let rect = gameCore.screenRect
+        
+        // If the screen rect is zero and not yet determined, return. It will be updated in a future frame.
+        guard rect.size != .init(width: 0, height: 0) else { return }
+        
         let sourceRect = CGRect(x: CGFloat(rect.origin.x), y: CGFloat(rect.origin.y),
-                width: CGFloat(rect.size.width), height: CGFloat(rect.size.height))
+                                width: CGFloat(rect.size.width), height: CGFloat(rect.size.height))
         buffer.outputRect = sourceRect
-
+        
         let td = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .bgra8Unorm,
-                width: Int(sourceRect.width),
-                height: Int(sourceRect.height),
-                mipmapped: false)
+                                                          width: Int(sourceRect.width),
+                                                          height: Int(sourceRect.height),
+                                                          mipmapped: false)
         td.storageMode = .private
         td.usage = [.shaderRead, .shaderWrite]
         renderTexture = device.makeTexture(descriptor: td)
     }
-
+    
     var canChangeBufferSize: Bool { true }
     
     func willExecuteFrame() {

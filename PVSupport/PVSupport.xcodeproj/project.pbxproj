@@ -7,22 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0535C78629406B9C009F3951 /* Shaders in Resources */ = {isa = PBXBuildFile; fileRef = 059E6483293EBF24006A8E95 /* Shaders */; };
-		05755B40293D7EFF002D3F70 /* OEGameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05755B3F293D7EFF002D3F70 /* OEGameViewController.swift */; };
-		0576984A2935AC5B00F7E122 /* GameRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057698482935AC5900F7E122 /* GameRenderer.swift */; };
-		0576984B2935AC5B00F7E122 /* MTLGameRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057698492935AC5A00F7E122 /* MTLGameRenderer.swift */; };
-		0576984E2935E4FC00F7E122 /* GameHelperMetalLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0576984D2935E4FC00F7E122 /* GameHelperMetalLayer.swift */; };
-		057698512935E52800F7E122 /* ScreenShot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0576984F2935E52600F7E122 /* ScreenShot.swift */; };
-		057698582935E65100F7E122 /* GameAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057698562935E65000F7E122 /* GameAudio.swift */; };
-		057698592935E65100F7E122 /* AudioUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057698572935E65100F7E122 /* AudioUnit.swift */; };
-		0576985D2935E87B00F7E122 /* CoreVideoTexture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0576985C2935E87B00F7E122 /* CoreVideoTexture.swift */; };
-		0576985E2936923100F7E122 /* OpenEmuHelperApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057698502935E52800F7E122 /* OpenEmuHelperApp.swift */; };
-		05769861293694A900F7E122 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05769860293694A900F7E122 /* Logging.swift */; };
-		05769864293695D500F7E122 /* OEGameCoreOwner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05769863293695D500F7E122 /* OEGameCoreOwner.swift */; };
-		05769866293695F700F7E122 /* OEGameCoreHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05769865293695F700F7E122 /* OEGameCoreHelper.swift */; };
-		057698682936979900F7E122 /* OEGameStartupInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057698672936979900F7E122 /* OEGameStartupInfo.swift */; };
-		0576986B29369D1F00F7E122 /* ShaderCompilerOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0576986A29369D1F00F7E122 /* ShaderCompilerOptions.swift */; };
-		0576986D29369EF400F7E122 /* OpenGLES3GameRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0576986C29369EF400F7E122 /* OpenGLES3GameRenderer.swift */; };
+		0535C78C2941620C009F3951 /* GameAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057698562935E65000F7E122 /* GameAudio.swift */; };
+		0535C78D2941620C009F3951 /* OEGameCoreHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05769865293695F700F7E122 /* OEGameCoreHelper.swift */; };
+		0535C78E2941620C009F3951 /* OpenGLES3GameRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0576986C29369EF400F7E122 /* OpenGLES3GameRenderer.swift */; };
+		0535C78F2941620C009F3951 /* ShaderCompilerOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0576986A29369D1F00F7E122 /* ShaderCompilerOptions.swift */; };
+		0535C7902941620C009F3951 /* PVHelperFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0594678229394228004FBE11 /* PVHelperFactory.swift */; };
+		0535C7912941620C009F3951 /* ScreenShot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0576984F2935E52600F7E122 /* ScreenShot.swift */; };
+		0535C7922941620C009F3951 /* GameHelperMetalLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0576984D2935E4FC00F7E122 /* GameHelperMetalLayer.swift */; };
+		0535C7932941620C009F3951 /* AudioUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057698572935E65100F7E122 /* AudioUnit.swift */; };
+		0535C7942941620C009F3951 /* CoreVideoTexture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0576985C2935E87B00F7E122 /* CoreVideoTexture.swift */; };
+		0535C7952941620C009F3951 /* GameRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057698482935AC5900F7E122 /* GameRenderer.swift */; };
+		0535C7962941620C009F3951 /* OpenEmuHelperApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057698502935E52800F7E122 /* OpenEmuHelperApp.swift */; };
+		0535C7972941620C009F3951 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05769860293694A900F7E122 /* Logging.swift */; };
+		0535C7982941620C009F3951 /* OEGameStartupInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057698672936979900F7E122 /* OEGameStartupInfo.swift */; };
+		0535C7992941620C009F3951 /* MTLGameRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057698492935AC5A00F7E122 /* MTLGameRenderer.swift */; };
+		0535C79A2941620C009F3951 /* OEGameCoreOwner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05769863293695D500F7E122 /* OEGameCoreOwner.swift */; };
+		0535C79B2941620C009F3951 /* OEGameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05755B3F293D7EFF002D3F70 /* OEGameViewController.swift */; };
+		0535C79C2941680F009F3951 /* Shaders in Resources */ = {isa = PBXBuildFile; fileRef = 059E6483293EBF24006A8E95 /* Shaders */; };
 		057698722936BD8900F7E122 /* Atomics in Frameworks */ = {isa = PBXBuildFile; productRef = 057698712936BD8900F7E122 /* Atomics */; };
 		0576987B2937299600F7E122 /* PVRuntime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05784C91293572B200622C66 /* PVRuntime.framework */; };
 		057698802937E71300F7E122 /* PVRuntime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05784C91293572B200622C66 /* PVRuntime.framework */; };
@@ -81,7 +82,6 @@
 		0594677129393270004FBE11 /* fullscreen_vs.metal in Sources */ = {isa = PBXBuildFile; fileRef = 0594674E29393270004FBE11 /* fullscreen_vs.metal */; };
 		0594677529393270004FBE11 /* ShaderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0594675629393270004FBE11 /* ShaderManager.swift */; };
 		05946777293934C8004FBE11 /* GLES in Resources */ = {isa = PBXBuildFile; fileRef = 05946776293934C8004FBE11 /* GLES */; };
-		0594678329394228004FBE11 /* PVHelperFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0594678229394228004FBE11 /* PVHelperFactory.swift */; };
 		557DCAB1292A91E100045B02 /* ThemeOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557DCAB0292A91E000045B02 /* ThemeOption.swift */; };
 		B302F8A420B73D6500C5E502 /* PVLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89A20B73D6200C5E502 /* PVLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B302F8A620B73D6500C5E502 /* PVLogEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89B20B73D6300C5E502 /* PVLogEntry.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1424,7 +1424,6 @@
 			isa = PBXGroup;
 			children = (
 				05784C9B293573F400622C66 /* Base */,
-				057698332935A62100F7E122 /* Kit */,
 			);
 			path = PVRuntime;
 			sourceTree = "<group>";
@@ -1547,17 +1546,17 @@
 		059E6481293EBEA9006A8E95 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				059E6482293EBEB5006A8E95 /* PVRuntime */,
+				059E6482293EBEB5006A8E95 /* PVSupport */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		059E6482293EBEB5006A8E95 /* PVRuntime */ = {
+		059E6482293EBEB5006A8E95 /* PVSupport */ = {
 			isa = PBXGroup;
 			children = (
 				059E6483293EBF24006A8E95 /* Shaders */,
 			);
-			path = PVRuntime;
+			path = PVSupport;
 			sourceTree = "<group>";
 		};
 		1A4E718B1A6C693A005CA80F /* Utilities */ = {
@@ -1665,6 +1664,7 @@
 				B3AB36DC2187F4C4009D9244 /* Controller */,
 				B3AB37F721882119009D9244 /* CoreOptions */,
 				B3CDEEB821D4C394000C55F7 /* EmulatorCore */,
+				057698332935A62100F7E122 /* Kit */,
 				B302F89420B71C2300C5E502 /* Logging */,
 				B3A4FB57278FE2B700A65248 /* NSExtensions */,
 				B3C83E25279621080020824C /* Performance */,
@@ -4047,7 +4047,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0535C78629406B9C009F3951 /* Shaders in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4069,6 +4068,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0535C79C2941680F009F3951 /* Shaders in Resources */,
 				05946777293934C8004FBE11 /* GLES in Resources */,
 				0594676129393270004FBE11 /* CRT.fsh in Resources */,
 				0594676329393270004FBE11 /* OmniScale.fsh in Resources */,
@@ -4096,32 +4096,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0576985D2935E87B00F7E122 /* CoreVideoTexture.swift in Sources */,
-				0576986D29369EF400F7E122 /* OpenGLES3GameRenderer.swift in Sources */,
 				05784CD82935787A00622C66 /* OEGameCoreController.m in Sources */,
-				05769864293695D500F7E122 /* OEGameCoreOwner.swift in Sources */,
-				0594678329394228004FBE11 /* PVHelperFactory.swift in Sources */,
-				05769861293694A900F7E122 /* Logging.swift in Sources */,
 				05784CC4293574AA00622C66 /* OEDiffQueue.mm in Sources */,
 				05784CD1293574AA00622C66 /* OELogging.m in Sources */,
-				057698512935E52800F7E122 /* ScreenShot.swift in Sources */,
 				05784CC2293574AA00622C66 /* OEGeometry.m in Sources */,
-				057698582935E65100F7E122 /* GameAudio.swift in Sources */,
-				0576986B29369D1F00F7E122 /* ShaderCompilerOptions.swift in Sources */,
-				0576984A2935AC5B00F7E122 /* GameRenderer.swift in Sources */,
-				05769866293695F700F7E122 /* OEGameCoreHelper.swift in Sources */,
 				05784C9F2935740800622C66 /* OEGameCore.m in Sources */,
-				0576984E2935E4FC00F7E122 /* GameHelperMetalLayer.swift in Sources */,
-				057698682936979900F7E122 /* OEGameStartupInfo.swift in Sources */,
 				05784CD2293574AA00622C66 /* TPCircularBuffer.c in Sources */,
 				05784CBC293574AA00622C66 /* OEAbstractAdditions.m in Sources */,
 				05784CBB293574AA00622C66 /* OEGeometry.swift in Sources */,
 				05784CC5293574AA00622C66 /* OETimingUtils.m in Sources */,
-				0576984B2935AC5B00F7E122 /* MTLGameRenderer.swift in Sources */,
-				057698592935E65100F7E122 /* AudioUnit.swift in Sources */,
-				05755B40293D7EFF002D3F70 /* OEGameViewController.swift in Sources */,
 				05784CC8293574AA00622C66 /* OERingBuffer.m in Sources */,
-				0576985E2936923100F7E122 /* OpenEmuHelperApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4179,7 +4163,10 @@
 			files = (
 				0594676A29393270004FBE11 /* lineTron.metal in Sources */,
 				059467082939307F004FBE11 /* PVGLViewController.m in Sources */,
+				0535C79A2941620C009F3951 /* OEGameCoreOwner.swift in Sources */,
 				B34AB57F2106DC6100C45F09 /* PVEmulatorCore.swift in Sources */,
+				0535C7972941620C009F3951 /* Logging.swift in Sources */,
+				0535C7962941620C009F3951 /* OpenEmuHelperApp.swift in Sources */,
 				057698902937EF3300F7E122 /* PVEmulatorCoreHelper.swift in Sources */,
 				B3AB37EB21881B7A009D9244 /* PViCadeSteelSeriesController.swift in Sources */,
 				B3CDEEBC21D4C3E6000C55F7 /* ArchiveSupport.swift in Sources */,
@@ -4195,13 +4182,16 @@
 				B3AB37B321880FA5009D9244 /* iCadeState.swift in Sources */,
 				B34AB57A2106DC6100C45F09 /* CoreOptions.swift in Sources */,
 				B33FB2F3279BE1320013AAD8 /* CoreOptions+Protocols.swift in Sources */,
+				0535C7942941620C009F3951 /* CoreVideoTexture.swift in Sources */,
 				B34AB5762106DC4C00C45F09 /* UIDeviceExtension.swift in Sources */,
+				0535C7952941620C009F3951 /* GameRenderer.swift in Sources */,
 				B30F8013290516B900F21217 /* ScreenType.swift in Sources */,
 				557DCAB1292A91E100045B02 /* ThemeOption.swift in Sources */,
 				B3CDEEC821D4C4E5000C55F7 /* SaveStateSupport.swift in Sources */,
 				0594677129393270004FBE11 /* fullscreen_vs.metal in Sources */,
 				B3AB37E721881B6D009D9244 /* iCadeControllerSetting.swift in Sources */,
 				B3AB37E021881955009D9244 /* PViCadeController.swift in Sources */,
+				0535C79B2941620C009F3951 /* OEGameViewController.swift in Sources */,
 				B372638526EA015800E95488 /* CocoaLumberjack+swift-log.swift in Sources */,
 				B3447E8A218B7E4B00557ACE /* CARingBuffer.cpp in Sources */,
 				B3296E8126C67EFA0088AC32 /* CocoaLumberjack+NSLogger.swift in Sources */,
@@ -4209,20 +4199,28 @@
 				B3AB37DE21881873009D9244 /* PViCadeGamepadDirectionPad.swift in Sources */,
 				B33FB308279BE2460013AAD8 /* CoreOptionValue.swift in Sources */,
 				B33FB2EF279BE0F50013AAD8 /* CoreOptionValueDisplay.swift in Sources */,
+				0535C78F2941620C009F3951 /* ShaderCompilerOptions.swift in Sources */,
 				B33FB2F8279BE1730013AAD8 /* CoreOptionMultiValue.swift in Sources */,
 				B34AB57C2106DC6100C45F09 /* NSFileManager+OEHashingAdditions.m in Sources */,
 				B3AB37DA21881670009D9244 /* PViCadeGamepadButtonInput.swift in Sources */,
 				0594670B2939307F004FBE11 /* PVMetalViewController.m in Sources */,
 				B3532C3621A925C2006CDA0F /* SortOption.swift in Sources */,
 				CF87D333258AB6B300838AF8 /* GameWithCheat.swift in Sources */,
+				0535C7932941620C009F3951 /* AudioUnit.swift in Sources */,
+				0535C7922941620C009F3951 /* GameHelperMetalLayer.swift in Sources */,
 				B3CDEEC521D4C490000C55F7 /* CoreActions.swift in Sources */,
 				0594676829393270004FBE11 /* simpleCRT.metal in Sources */,
 				B3CEC5BC2794E9FD004A7CC1 /* PVGameControllerUtilities.swift in Sources */,
+				0535C7912941620C009F3951 /* ScreenShot.swift in Sources */,
 				B33FB2EB279BE0CC0013AAD8 /* CoreOptions+Serialization.swift in Sources */,
+				0535C78D2941620C009F3951 /* OEGameCoreHelper.swift in Sources */,
+				0535C78E2941620C009F3951 /* OpenGLES3GameRenderer.swift in Sources */,
 				B3447E90218B7E4B00557ACE /* CAAudioTimeStamp.cpp in Sources */,
 				B34AB5732106DC3700C45F09 /* PVProvenanceLogging.m in Sources */,
 				B3AB37BF218814A7009D9244 /* PViCadeReader.swift in Sources */,
+				0535C7902941620C009F3951 /* PVHelperFactory.swift in Sources */,
 				B34AB57D2106DC6100C45F09 /* RealTimeThread.m in Sources */,
+				0535C78C2941620C009F3951 /* GameAudio.swift in Sources */,
 				0594676529393270004FBE11 /* megaTron.metal in Sources */,
 				B3CDEEBF21D4C41D000C55F7 /* DiscSwappable.swift in Sources */,
 				B34AB57B2106DC6100C45F09 /* NSObject+PVAbstractAdditions.m in Sources */,
@@ -4234,9 +4232,11 @@
 				B33FB2FC279BE18F0013AAD8 /* CoreOptionEnumValue.swift in Sources */,
 				B33FB300279BE1E40013AAD8 /* OptionDependency.swift in Sources */,
 				0594675929393270004FBE11 /* ulTron.metal in Sources */,
+				0535C7982941620C009F3951 /* OEGameStartupInfo.swift in Sources */,
 				B3AB37EA21881B7A009D9244 /* PViCadeMocuteController.swift in Sources */,
 				B3F0846C2188CA7A00FF39EE /* CocoaLumberExtensions.swift in Sources */,
 				059467092939307F004FBE11 /* PVGPUViewController.m in Sources */,
+				0535C7992941620C009F3951 /* MTLGameRenderer.swift in Sources */,
 				B3AB37BD218812BB009D9244 /* iCadeReaderView.swift in Sources */,
 				0594676F29393270004FBE11 /* blit_ps.metal in Sources */,
 				B3AB37E321881A82009D9244 /* PViCadeGamepad.swift in Sources */,

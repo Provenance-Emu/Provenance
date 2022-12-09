@@ -25,6 +25,7 @@
 import Foundation
 import AudioToolbox
 import AVFoundation
+import PVRuntime
 @_implementationOnly import os.log
 
 extension OSLog {
@@ -32,7 +33,7 @@ extension OSLog {
 }
 
 @objc
-final public class GameAudio: NSObject {
+final class GameAudio: NSObject {
     @objc public var volume: Float {
         didSet {
             engine.mainMixerNode.outputVolume = volume
@@ -45,7 +46,7 @@ final public class GameAudio: NSObject {
     private var isDefaultOutputDevice = true
     private var isRunning = false
     
-    @objc public init(withCore gameCore: OEGameCore) {
+    @objc init(withCore gameCore: OEGameCore) {
         self.gameCore = gameCore
         volume = 1.0
         super.init()
@@ -56,7 +57,7 @@ final public class GameAudio: NSObject {
         stopMonitoringEngineConfiguration()
     }
     
-    @objc public func audioSampleRateDidChange() {
+    @objc func audioSampleRateDidChange() {
         guard isRunning else { return }
         
         engine.stop()
@@ -65,7 +66,7 @@ final public class GameAudio: NSObject {
         performResumeAudio()
     }
     
-    @objc public func startAudio() {
+    @objc func startAudio() {
         precondition(gameCore.audioBufferCount == 1,
                      "Only one buffer supported; got \(gameCore.audioBufferCount)")
         
@@ -85,14 +86,14 @@ final public class GameAudio: NSObject {
         startMonitoringEngineConfiguration()
     }
     
-    @objc public func stopAudio() {
+    @objc func stopAudio() {
         engine.stop()
         detachNodes()
         destroyNodes()
         isRunning = true
     }
     
-    @objc public func pauseAudio() {
+    @objc func pauseAudio() {
         engine.pause()
         isRunning = false
     }
@@ -104,7 +105,7 @@ final public class GameAudio: NSObject {
             }
     }
     
-    @objc public func resumeAudio() {
+    @objc func resumeAudio() {
         isRunning = true
         do {
             try engine.start()
@@ -234,7 +235,7 @@ final public class GameAudio: NSObject {
         return deviceID
     }
    
-    @objc public func setOutputDeviceID(_ newOutputDeviceID: AudioDeviceID) {
+    @objc func setOutputDeviceID(_ newOutputDeviceID: AudioDeviceID) {
         let id: AudioDeviceID
         if newOutputDeviceID == 0 {
             id = defaultAudioOutputDeviceID
@@ -262,7 +263,7 @@ final public class GameAudio: NSObject {
         }
     }
     
-    @objc public var outputDeviceID: AudioDeviceID {
+    @objc var outputDeviceID: AudioDeviceID {
         isDefaultOutputDevice ? 0 : engine.outputNode.auAudioUnit.deviceID
     }
     

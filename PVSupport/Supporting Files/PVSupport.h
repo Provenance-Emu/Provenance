@@ -47,6 +47,7 @@ FOUNDATION_EXPORT const unsigned char PVSupport_FrameworkVersionString[];
     #import <PVSupport/PVLogging.h>
     #import <PVSupport/PVLogEntry.h>
     #import <PVSupport/PVProvenanceLogging.h>
+    #import <PVRuntime/OEGameCore.h>
 
 #pragma mark - Emulator View Controllers
 

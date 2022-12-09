@@ -67,7 +67,7 @@ public class PVEmulatorCoreHelper: OEGameCoreHelper {
     
     public var supportsSaveStates: Bool { core.supportsSaveStates }
     
-    public var responderClient: AnyObject? { core }
+    public var responderClient: ResponderClient { core }
     public var viewController: AnyObject? { gpuViewController }
     
     let use_metal: Bool = PVSettingsModel.shared.debugOptions.useMetal
@@ -80,8 +80,12 @@ public class PVEmulatorCoreHelper: OEGameCoreHelper {
         return OEGameAudio(core: core)
     }()
     
+    public let features: CoreFeatures
+    
     public init(_ core: PVEmulatorCore) {
-        self.core = core
+        self.core       = core
+        self.features   = CoreFeaturesImpl(source: core)
+        
         self.core.audioDelegate = self
     }
     
@@ -103,15 +107,7 @@ public class PVEmulatorCoreHelper: OEGameCoreHelper {
         }
     }
     
-    public func setEffectsMode(_ mode: PVRuntime.OEGameCoreEffectsMode) {
-        
-    }
-    
-    public func setOutputBounds(_ rect: CGRect) {
-        
-    }
-    
-    public func setBackingScaleFactor(_ newBackingScaleFactor: CGFloat) {
+    public func setEffectsMode(_ mode: OEGameCoreEffectsMode) {
         
     }
     
@@ -181,8 +177,6 @@ public class PVEmulatorCoreHelper: OEGameCoreHelper {
     public func captureSourceImage(completionHandler block: @escaping (CGImage) -> Void) {
         
     }
-    
-    public var features: AnyObject? { core as AnyObject }
 }
 
 extension PVEmulatorCoreHelper: PVAudioDelegate {

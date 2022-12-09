@@ -74,6 +74,7 @@ import Foundation
 }
 
 @objc extension PVEmulatorCore: ResponderClient {}
+@objc extension OEGameCore: ResponderClient {}
 
 // MARK: - Sega 32X
 

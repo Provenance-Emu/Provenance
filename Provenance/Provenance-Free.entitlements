@@ -19,7 +19,7 @@
 	<true/>
 	<key>com.apple.developer.icloud-container-identifiers</key>
 	<array>
-		<string>iCloud.org.provenance-emu.provenance</string>
+		<string>iCloud.org.sgc.provenance</string>
 	</array>
 	<key>com.apple.developer.icloud-services</key>
 	<array>
@@ -31,7 +31,7 @@
 	<true/>
 	<key>com.apple.developer.ubiquity-container-identifiers</key>
 	<array>
-		<string>iCloud.org.provenance-emu.provenance</string>
+		<string>iCloud.org.sgc.provenance</string>
 	</array>
 	<key>com.apple.developer.ubiquity-kvstore-identifier</key>
 	<string>$(TeamIdentifierPrefix)$(CFBundleIdentifier)</string>
@@ -39,7 +39,7 @@
 	<true/>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.org.provenance-emu.provenance</string>
+		<string>group.org.sgc.provenance</string>
 	</array>
 	<key>com.apple.security.assets.pictures.read-write</key>
 	<true/>
