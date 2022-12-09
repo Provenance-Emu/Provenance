@@ -6,6 +6,7 @@
 //  Copyright © 2016 James Addyman. All rights reserved.
 //
 
+#if __has_include(<UIKit/UIKit.h>)
 #import "UIDevice+Hardware.h"
 #include <sys/sysctl.h>
 
@@ -50,3 +51,4 @@
 }
 
 @end
+#endif

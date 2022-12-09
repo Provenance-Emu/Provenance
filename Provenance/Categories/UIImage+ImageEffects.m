@@ -93,6 +93,7 @@
  5/3/2013
  */
 
+#if __has_include(<UIKit/UIKit.h>)
 #import "UIImage+ImageEffects.h"
 
 @import Accelerate;
@@ -277,3 +278,4 @@
 
 
 @end
+#endif
