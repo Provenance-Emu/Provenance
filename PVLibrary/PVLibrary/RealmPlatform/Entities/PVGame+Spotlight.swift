@@ -29,7 +29,7 @@ public extension PVGame {
                                               developer,
                                               publishDate != nil ? "(\(publishDate!)" : nil,
                                               regionName != nil ? "(\(regionName!))" : nil]
-        
+
         let secondLine = optionalEntries.compactMap { (maybeString) -> String? in
             maybeString
         }.joined(separator: " ")

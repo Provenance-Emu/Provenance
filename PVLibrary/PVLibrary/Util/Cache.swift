@@ -7,6 +7,9 @@
 //
 
 import Foundation
+#if os(macOS)
+import AppKit
+#endif
 
 private class ObjectWrapper {
     let value: Any
@@ -38,6 +41,7 @@ open class Cache<KeyType: Hashable, ObjectType> {
     private let cache: NSCache<KeyWrapper<KeyType>, ObjectWrapper> = NSCache()
 
     public init(lowMemoryAware: Bool = true) {
+        #if !os(macOS)
         guard lowMemoryAware else { return }
         NotificationCenter.default.addObserver(
             self,
@@ -45,6 +49,7 @@ open class Cache<KeyType: Hashable, ObjectType> {
             name: UIApplication.didReceiveMemoryWarningNotification,
             object: nil
         )
+        #endif
     }
 
     deinit {

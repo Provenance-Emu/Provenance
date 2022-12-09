@@ -5,6 +5,465 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2022-12-02
+
+Super special thanks to @Carter1190 @dnicolson @ianclawson @mrjschulte @stuartcarnie for providing pull requests.
+Special thanks for all the Patreon and Discord members that provided testing feedback and support.
+
+### Added
+
+- Light/Dark theme
+- tvOS artwork options
+- Saturn Core options
+- Option for onscreen joystick with keyboard on/off, or never.
+- add build.yml for github actions
+- stella: joystick deadzone
+
+### Fixed
+
+- tvOS various layout, styling improvements
+- fixes #1915 joystick layout busted
+- BoxArt fix nil crash
+- add sfc extension
+- Catalyst, fix crash on game load
+- catalyst: remove broken bliss
+- fixes #1973 incorrect paths in xcworkspace
+- fixes #1991 Fixes mupen plugin paths
+- fixes #1997 update ios launch storyboard
+- fixes #2010 remove unused codesign settings
+- disable broken contributors.yml
+- fix various tvos targets with wrong target platfrm
+- fixes #1814 Use documents for image cache
+- Fixes #1814, lib deletion and icloud fixes
+- fixes #1986 adds ways to press start in SS
+- fixes #1986 Saturn start MFi, I think.
+- fixes #2019 Mednafen SNES A/B swap
+- fixes #2026 joyPad move works, clear BG
+- fixes #2027 importer double run and deleting
+- fix archive step
+- fix artwork download
+- stella: don’t crash on 2nd load
+- stella: updated and cheats,save support
+- closes #1765 map dualsense home to pause on saturn
+- closes #1765 map dualsense home to pause on saturn
+- closes #1888 fix n64 scaling
+- closes #1903 tvos build broken
+- conflicts manager add delete option
+### Updated
+
+- Min target iOS 13 all around
+- More localised strings and xib's
+- SwiftUI additions and fixes
+### PRs
+
+- Merge branch 'feature/dos-box' into develop
+- Merge branch 'remove-unneeded-styling' into develop
+- Merge branch 'remove-unneeded-table-generics' into develop
+- Merge pull request #1919 from Provenance-Emu/feature/dos-box
+- Merge pull request #1995 from dnicolson/style-fixes
+- Merge pull request #2006 from Provenance-Emu/pullrequests/dnicolson/general-cleanup
+- Merge pull request #2015 from dnicolson/fix-constraint-warnings
+- Merge pull request #2016 from dnicolson/use-tvalertcontroller
+- Merge pull request #2017 from dnicolson/remove-unneeded-styling
+- Merge pull request #2018 from dnicolson/use-system-background-for-settings
+- Merge pull request #2025 from Provenance-Emu/largeGameArt-Support
+- Merge pull request #2028 from dnicolson/add-light-theme
+- Merge pull request #2029 from Provenance-Emu/tvOS-GameInfo-Tweaks
+- Merge pull request #2030 from Provenance-Emu/feature/JoystickFixes
+- Merge pull request #2033 from dnicolson/fix-library-bottom-separators
+- Merge pull request #2036 from Provenance-Emu/feature/gh_build_action
+- Merge pull request #2038 from Provenance-Emu/mrjschulte_section_header_fix_tvOS
+
+### GitLog
+
+- Add theme switcher
+- Add ThemeOptions enum
+- Adjust cell height as needed
+- AppDelegate refactor code, improve URL open
+- AppDelegate start of save open
+- azure 14.1
+- azure pipeline macos-12
+- azure turn off xcode pretty
+- azure update to newer xcode/macos
+- cdx4 fix submodule
+- cicd remove UIBrackgroundModes processing
+- citra: combine platforms
+- core 4do updates to fix tvos
+- cores framework don’t embed
+- cores table view, hide unsupported cores unless on
+- Cores, add .core.name to ones that didn’t
+- cxd4 fix submodule bs
+- delete dup schemes, new shaders, blissemu framewk
+- delete old tvos schemes and rename others
+- desmume2015 readd and fix debug
+- duckstation: fix some build stuff
+- entitlements remove ones that break xc cloud
+- Extend navigation bar
+- Extensions placeholders for new ones
+- fastlane update
+- Fix 4do build and almost works, bad gfx freedo
+- Fix and update Marketing Version 2.1.2
+- Fix button height constraint warning
+- fix catalyst builds
+- Fix cell background color
+- Fix cell font sizes
+- Fix controller selection table cell focus
+- Fix entitlement paths for 2 extions
+- Fix extensions in build
+- Fix iCade controller cell background
+- Fix iCloud, Spotlight entitlement, re-import path
+- fix ios/tvos build
+- Fix library options cell background color
+- Fix logs crash
+- fix macos/catalyst build and export
+- Fix navigation bar tint color
+- Fix PVFile iCloud paths incorrect
+- Fix slider cell text alignment
+- fix some warnings and self capture
+- Fix stack spacing constraint warning
+- fix submodules
+- Fix SwiftUI crash on iOS 16
+- fix tvos availability
+- Fix tvOS build
+- flycast builds
+- flycast, fbneo, dolphin fix some build stuff
+- Frameworks combined into single multi-platform!
+- fuse fix some build stuff
+- game view cell, hide delete text on start
+- GameLibVC fix potential crash
+- gba remove driverkit
+- gcdweb fix QOS
+- genesis: reflector2static libs, submodule 4 upstrm
+- gh action fix xcodebuild command
+- gh action macos-12
+- git insists on touching these submodules
+- github action build test
+- GitHub actions disable broken ones
+- gitignore .xcarchive
+- Hide unsupported cores from conflicts unless on
+- iCloud containers fix thread issue/warning
+- icloud sync catch exception
+- Improve how theme is set
+- Info.plist add ITSAppUsesNonExemptEncryption
+- Info.plist fix xcode cloud issues
+- Install the CodeSee workflow. Learn more at https://docs.codesee.io
+- intellivision respond protocol fixes
+- ios fix gliden compile
+- iOS settings menu replace (i) with >
+- jaguar: core update video fixes
+- Launch screen add brazil locale
+- libretro build flags update
+- Make web server alerts consistent
+- mednafen fix targeted device families
+- mednafen refactor controls to catagory
+- mednafen: refactor compiler flags to xcconfig
+- mednafen: remove broken options,controller reorder
+- melon DLOG for nslog
+- melonds build flags update
+- MetalVC minor catalyst chagnes
+- mu fixed embedded framework
+- mupen audio on/off callbacks
+- mupen speed option
+- mupen: fix crash on load
+- mupen: hi res off by default, fix catalyst
+- n64 controller fix warning
+- obscure cores various build fixes
+- On screen controller adjustments
+- option lcd filter
+- Patreon features
+- pcsx reamred builds
+- pcsx submodule
+- pcsx, fix submodule again
+- PCSXRearmed added to build
+- play: builds with gfx and audio callbacks
+- play: fix build
+- play: fix release build
+- Prevent bottom separators from disappearing
+- project remove nil file
+- ps2: add bios info
+- PVGenesis -Os
+- PVLIBRARY fix copy/embed
+- PVLogVC fix tvOS color error
+- Reduce width of log buttons
+- Remove Bliss, its breaking CI
+- remove broken cores from build
+- Remove cancel action from alert
+- Remove cell background color
+- remove duckstation from build
+- Remove forced dark interface style
+- Remove iOS 11 conditional
+- Remove iOS 13 conditionals
+- remove old vibrate for xccloud
+- Remove PVRadioOptionRow and PVRadioOptionCell
+- Remove red cell background
+- Remove redundant style
+- Remove SettingsTableView class
+- Remove styles in favor of defaults
+- Remove SystemSettingsCell
+- Remove SystemSettingsHeaderCell
+- Remove unimplimented extensions from app target
+- Remove unneeded code
+- Remove unneeded guard clause
+- Remove unneeded ifdef
+- Remove unneeded QuickTableView generics (#2031)
+- Remove unneeded section header styles
+- Remove unneeded styling
+- Remove unused code
+- Remove unused file
+- remove unused macos xib
+- Remove unused styling
+- Remove unused variable
+- Remove VecXGL submodule
+- rename o2em and jaguar cores to PV..
+- Replace remaining com.provenance-emu with org
+- Replace sync network with async for artwork
+- Replace UIWebView with WKWebView
+- retro: add bliss, 4do, some organization
+- retro: add game music and vicx
+- retro: all the cores
+- retro: fix build missing #endif
+- retro: fix framework dyload
+- retro: fix tvos bitcode
+- retro: gme builds and links
+- retro: gme fix tvos build
+- retro: gme loads
+- retro: gme plays
+- retro: ios biulds
+- retro: metal video doesn’t crash but still odd
+- retro: potator loads, fix static rom buffer copy
+- retro: remove VecXGL for libretro version
+- retro: software fb callback and pixl fmt fixes
+- retro: split core into categories, add cores
+- retro: the final cores! for now
+- retro: tvOS builds
+- retro: update core submodules
+- retro: video callback pitchshift work
+- rice: use newer branch, fixes catalyst
+- Set library header background
+- Set navigation bar style only for game library
+- Set overrideUserInterfaceStyle
+- Set settings button font only on tvOS
+- Settings webDav always tvOS and sim
+- Settings, disable swiftUI in iOS 13
+- shaders add support for lcd/crt screen option
+- Simplify code
+- Single frameworks, catalyst, macos
+- snes n64 fix a/b and deadzone
+- snesticle builds
+- snesticle: remove from app, needs work
+- snesticle: tvos, add to ios build
+- spotlight scheme update depends
+- stella module fix
+- stella snapshot
+- stella xcconfig
+- stella: delete duplicate files
+- stella: use a submodule and static libs
+- submodules: Single framework, macos
+- swap experimentalCores option with unsupported
+- swiftpm updates
+- swiftpm update depends
+- SwiftUI flow — make landing screen the console carousel if any consoles available, reduce side menu open width
+- systems.plist update ext and bios for new cores
+- tic80 add submodule
+- tic80 submodule
+- tvos add missing enums
+- tvOS don’t copy glsl to docs
+- tvOS fix duplicate symbols in mupen/gliden
+- tvOS Fix jaguar compile
+- tvOS fix missing target warnings, introspect err
+- tvOS hide metadata edit behind #if TVOS_HAS_EDIT
+- tweak previous commit
+- update bliss
+- Update bliss submodule, 2 targets
+- Update deployment targets
+- Update MednafenGameCore.mm
+- Update PVGameLibrarySectionHeaderView.swift
+- Update PVGameLibraryViewController.swift
+- Update PVGameLibraryViewController.swift
+- Update PVGameLibraryViewController.swift
+- Update PVGameLibraryViewController+CollectionView.swift
+- Update PVGameLibraryViewController+CollectionView.swift
+- Update PVGameMoreInfoViewController.swift
+- Update PVMetalViewController.m
+- Update PVSettingsModel.swift
+- Update PVSettingsModel.swift
+- Update realm schema version
+- Update rebase.yml
+- Update save game alert
+- update some core repos
+- Update stella to upstream
+- Update styles on theme change
+- Update various cores and ios target includes
+- Use different yellow that works with both themes
+- Use ellipsis
+- Use system alert system background color
+- Use system background color for game library
+- Use system background for game info
+- Use system background for settings
+- Use system color for “Game library empty”
+- Use system colors for file logs
+- Use system colors for live log
+- Use system colors for save states
+- Use system gear image
+- Use system sort libray options background colors
+- Use theme for section header style
+- Use TVAlertController everywhere
+- uupdate cores ios version and target platforms
+- WebServer fix hardcoded 8080
+- webserver fix queue QOS warning
+- webserver nslog to logger
+- whitespace
+- xcodebuild action remove cache clear
+- yabause: update c flags
+- Add .all-contributorsrc config file
+- add a working project for dosbox
+- Add dosbox-pure
+- Add fceux netplay server
+- add framework targets for cores and expermnt cores
+- add libretro framework
+- add libretro target to framework
+- beetle: it runs but no video
+- bridging-header remove superfulous import availaiblity
+- bump version to 2.1.1
+- Cancel as localized string
+- clean up window rootViewController assignment for SwiftUI path
+- desmume use prov upstream
+- desume builds with libretro
+- dosbox add libretro library
+- dosbox builds
+- dosbox technically it builds
+- dosbox: av tweaks
+- dosbox: link correclty
+- dosbox: some overwrides
+- ds: add controls callbacks
+- ds: melon and extensions tweaks
+- duckstation: rebase
+- Emu VC defer gesture .bottom to b,l,r
+- Enable MTL fast math support
+- ep128: fix c++ issue
+- fbneo minor shit
+- fceux add upstream submodule
+- fceux update core to 2.6.2
+- filters: add simple crt demo
+- filters: metal filter menu
+- First version of movable buttons
+- Fix broken wiki link, minor UX improvements
+- fix build
+- fix compile
+- fix gles shaders and add other framework core targetrs
+- fix some tvos build issues
+- fixes #1849 tgbdual crash on ios fixed
+- fuck git sometimes
+- fucking around with app clips and associated domai
+- fxeux swift to 2.2.3
+- gameimporter hacky override 4 updated gamefaq url
+- gameimporter throw less by pre-checking
+- gitignore dsstore
+- gitignore newrelic file
+- glescore: did i loop wrong?
+- hacks: placeholder 4 volumebutton and carplay hax
+- include assets
+- iOS 13 target in xcconfig
+- jag: add CD library support and loading
+- jaguar: update core for memory fix
+- libretro refactor and add files
+- make a libretro and it builds
+- mednafen: fix a build issue with switch statement
+- Merge branch 'feature/dos-box' into develop
+- Merge branch 'release/2.1.0' into develop
+- Merge pull request #1761 from ianclawson/ian/swiftui-menu-path
+- Merge pull request #1764 from Provenance-Emu/feature/MoveableButtons
+- Merge pull request #1810 from Provenance-Emu/feature/fceuxUpdate
+- Merge pull request #1900 from Provenance-Emu/feature/1888_N64_19x9
+- Merge pull request #1901 from Provenance-Emu/feature/snes9xControllerFix
+- Merge pull request #1909 from rrroyal/develop
+- Merge pull request #1926 from Provenance-Emu/feature/JoystickLayoutFix
+- Merge pull request #1933 from Provenance-Emu/feature/filtermanager
+- movebuttons: fix some buttons from resetting
+- mupen add more core options
+- mupen fix type-o in option
+- mupenx: core compile updates
+- NOTICKET core options enum default fixed
+- NOTICKET Options tableview popover rect fixed
+- options onscreen joypad as beta setting
+- package resolve update
+- pblibretro base code
+- prov: yabause hacks
+- pvdosbox use retro core as base
+- pvgenesis m68kcpu.c compiler flags
+- pvretrocore start point
+- refs #1765 fix non-dualshock start in  Saturn
+- refs #1797 refactor fceux into static libs
+- refs #1915 fixes psx start button layout
+- remove appclip from build
+- reto: video init code
+- retro add more files
+- retro:  start to add mupenNX
+- retro: a bunch of fixes, build flag updates, controllers, gles core
+- retro: add a beetle core cause y not
+- retro: add hatari build
+- retro: Add melonDS start of core
+- retro: add minivmac core
+- retro: add Mupen64Plus-NX
+- retro: add potator cause y not
+- retro: add potator core
+- retro: add proper projects for test forks
+- retro: add submodules and blank projects for more
+- retro: add vmac and fix other stuff
+- retro: add Yabause core
+- retro: beetle builds?!
+- retro: beetlepsx builds
+- retro: better code to find cores
+- retro: better wrapper
+- retro: callbacks set
+- retro: CORES OPEN MSX!
+- retro: desmeme2015 prov patches
+- retro: desmume, dosbox, neo, msx, genesis udates
+- retro: double buffer and real screen dimensions
+- retro: fbneo builds
+- retro: fbneo builds shockingly
+- retro: fix embedding framework
+- retro: fix loading gles cores
+- retro: fix paths, desumeme runs now
+- retro: fix release builds
+- retro: fix tvos build with melon,msx
+- retro: i more linking stuff, fbneo start
+- retro: kind of loads
+- retro: more cores
+- retro: more fb neo
+- retro: more linking, libretro.h into build
+- retro: mupen-nx has proper build, though errors
+- retro: pbbeetle additions
+- retro: pcsx rearmed some progress
+- retro: remove broken beetle from build
+- retro: reset targets, builds but empty
+- retro: schemes for ep128, msx
+- retro: stuff almost runs
+- retro: submodules update
+- retro: supervision works with new callbacks
+- retro: tvos builds, refactor cores into frameworks
+- retro: various fixes, tvos builds
+- retro: vecrex
+- retro: video work
+- retro: yabause update
+- shader manager
+- shaders metal are wrong
+- swiftlint corrections
+- SwiftUI menu design revamp - bulk add all changes from fubar'ed branch
+- systems.plist add DOS
+- systems.plist fill in all openvgdb system ids
+- systems.plist psx add compresed formats
+- test adding dos to build
+- Themes.swift cleanup some re-used code
+- tvOS add debug setting to use themes
+- tvOS fix swift ui build
+- Update Atari8bit bios sizes
+- Update blit_ps.metal
+- Update PVSearchViewController.swift
+- Update PVSNESEmulatorCore.mm
+- xcconfig: GLES_SILENCE_DEPRECATION=1
+- yabause: fix release build
+
 ## [2.1.1] - 2022-06-15
 
 ### Added

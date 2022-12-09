@@ -4,7 +4,7 @@
 //
 
 import PVSupport
-import UIKit
+import Foundation
 
 extension PVSnesticleCore: GameWithCheat {
     public func setCheat(

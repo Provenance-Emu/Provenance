@@ -48,10 +48,12 @@
         UITableView *tableView    = [[UITableView alloc] init];
         tableView.delegate        = self;
         tableView.dataSource      = self;
-        tableView.backgroundColor = [UIColor blackColor];
         tableView.opaque          = YES;
 #if TARGET_OS_IOS
+        tableView.backgroundColor = [UIColor systemBackgroundColor];
         tableView.separatorStyle  = UITableViewCellSeparatorStyleNone;
+#elif TARGET_OS_TV
+        tableView.backgroundColor = [UIColor blackColor];
 #endif
         tableView.indicatorStyle  = UIScrollViewIndicatorStyleWhite;
         [tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"LogCell"];
@@ -648,7 +650,7 @@
             break;
         case DDLogFlagInfo:
         default:
-            cell.textLabel.textColor = [UIColor whiteColor];
+            cell.textLabel.textColor = [UIColor labelColor];
             break;
     }
     

@@ -10,8 +10,6 @@ import PVLibrary
 import RealmSwift
 import UIKit
 
-
-
 final class SystemsSettingsTableViewController: QuickTableViewController {
     var systemsToken: NotificationToken?
 
@@ -23,7 +21,7 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
         tableContents = systemsModels.map { systemModel in
             var rows = [Row & RowStyle]()
             rows.append(
-                NavigationRow<SystemSettingsCell>(text: "Games", detailText: .value2("\(systemModel.gameCount)"))
+                NavigationRow(text: "Games", detailText: .value2("\(systemModel.gameCount)"))
             )
 
             // CORES
@@ -31,7 +29,7 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
             if !systemModel.cores.isEmpty {
                 let coreNames = systemModel.cores.map { $0.project.name }.joined(separator: ",")
                 rows.append(
-                    NavigationRow<SystemSettingsCell>(text: "Cores", detailText: .value2(coreNames))
+                    NavigationRow(text: "Cores", detailText: .value2(coreNames))
                 )
             }
             //			} else {
@@ -47,13 +45,13 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
 
             // BIOSES
             if let bioses = systemModel.bioses, !bioses.isEmpty {
-                let biosesHeader = NavigationRow<SystemSettingsHeaderCell>(text: "BIOSES",
+                let biosesHeader = NavigationRow(text: "BIOSES",
                                                                            detailText: .none,
                                                                            icon: nil,
                                                                            customization: { cell, _ in
                                                                                #if os(iOS)
                                                                                    let bgView = UIView()
-                                                                                   bgView.backgroundColor = Theme.currentTheme.settingsCellBackground!.withAlphaComponent(0.9)
+                                                                                   bgView.backgroundColor = .systemBackground.withAlphaComponent(0.9)
                                                                                    cell.backgroundView = bgView
                                                                                #endif
                 }, action: nil)
@@ -62,13 +60,13 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
                 bioses.forEach { bios in
                     let subtitle = "\(bios.expectedMD5.uppercased()) : \(bios.expectedSize) bytes"
 
-                    let biosRow = NavigationRow<SystemSettingsCell>(text: bios.descriptionText,
+                    let biosRow = NavigationRow(text: bios.descriptionText,
                                                                     detailText: .subtitle(subtitle),
                                                                     icon: nil,
                                                                     customization: { cell, _ in
 
                                                                         #if os(iOS)
-                                                                            var backgroundColor: UIColor? = Theme.currentTheme.settingsCellBackground
+                                                                            var backgroundColor: UIColor? = .systemBackground
                                                                         #else
                                                                             var backgroundColor: UIColor? = UIColor.clear
                                                                         #endif
@@ -125,7 +123,6 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
         super.viewDidLoad()
 
         #if os(iOS)
-            tableView.backgroundColor = Theme.currentTheme.settingsHeaderBackground
             tableView.separatorStyle = .singleLine
         #else
             tableView.backgroundColor = UIColor.clear

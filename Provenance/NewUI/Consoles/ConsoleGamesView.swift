@@ -15,37 +15,36 @@ import PVLibrary
 // TODO: might be able to reuse this view for collections
 @available(iOS 14, tvOS 14, *)
 struct ConsoleGamesView: SwiftUI.View {
-    
+
     @ObservedObject var viewModel: PVRootViewModel
     var console: PVSystem
-    var rootDelegate: PVRootDelegate?
-    
+    weak var rootDelegate: PVRootDelegate?
+
     @ObservedResults(
         PVGame.self,
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: false)
     ) var games
-    
+
     init(console: PVSystem, viewModel: PVRootViewModel, rootDelegate: PVRootDelegate) {
         self.console = console
         self.viewModel = viewModel
         self.rootDelegate = rootDelegate
     }
-    
+
     func filteredAndSortedGames() -> Results<PVGame> {
         // TODO: if filters are on, apply them here before returning
         return games
             .filter(NSPredicate(format: "systemIdentifier == %@", argumentArray: [console.identifier]))
             .sorted(by: [SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: viewModel.sortGamesAscending)])
     }
-    
+
     // TODO: adjust for landscape
     let columns = [
         GridItem(.flexible()),
         GridItem(.flexible()),
-        GridItem(.flexible()),
+        GridItem(.flexible())
     ]
-    
-    
+
     var body: some SwiftUI.View {
         ScrollView {
             GamesDisplayOptionsView(
@@ -94,13 +93,13 @@ struct ConsoleGamesView: SwiftUI.View {
 
 @available(iOS 14, tvOS 14, *)
 struct BiosRowView: SwiftUI.View {
-    
+
     var bios: PVBIOS
-    
+
     func biosState() -> BIOSStatus.State {
         return (bios as BIOSStatusProvider).status.state
     }
-    
+
     var body: some SwiftUI.View {
         HStack(alignment: .center, spacing: 0) {
             Image(biosState().biosStatusImageName).resizable().scaledToFit()
@@ -165,14 +164,14 @@ struct GamesDividerView: SwiftUI.View {
 
 @available(iOS 14, tvOS 14, *)
 struct GamesDisplayOptionsView: SwiftUI.View {
-    
+
     var sortAscending = true
     var isGrid = true
-    
+
     var toggleFilterAction: () -> Void
     var toggleSortAction: () -> Void
     var toggleViewTypeAction: () -> Void
-    
+
     var body: some SwiftUI.View {
         HStack(spacing: 12) {
             Spacer()
@@ -194,14 +193,14 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 
 @available(iOS 14, tvOS 14, *)
 struct OptionsIndicator<Content: SwiftUI.View>: SwiftUI.View {
-    
+
     var pointDown: Bool = true
     var chevronSize: CGFloat = 12.0
-    
+
     var action: () -> Void
-    
+
     @ViewBuilder var label: () -> Content
-    
+
     var body: some SwiftUI.View {
         Button {
             action()
@@ -215,12 +214,5 @@ struct OptionsIndicator<Content: SwiftUI.View>: SwiftUI.View {
         }
     }
 }
-
-//@available(iOS 14, tvOS 14, *)
-//struct HomeView_Previews: PreviewProvider {
-//    static var previews: some SwiftUI.View {
-//        HomeView()
-//    }
-//}
 
 #endif

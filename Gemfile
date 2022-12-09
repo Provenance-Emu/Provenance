@@ -7,6 +7,7 @@ gem 'dotenv'
 
 # Fastlane
 gem 'fastlane'
+gem 'xcode-install'
 # gem 'net-ssh'
 # gem "net-scp"
 

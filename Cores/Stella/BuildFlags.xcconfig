@@ -1,0 +1,39 @@
+//
+//  BuildFlags.xcconfig
+//  PVStella
+//
+//  Created by Joseph Mattiello on 11/1/18.
+//
+//
+
+// All
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) LSB_FIRST=1 HAVE_MKDIR=1 SIZEOF_DOUBLE=8 PSS_STYLE=1 MPC_FIXED_POINT ARCH_X86 WANT_STELLA_EMU=1 STDC_HEADERS=1 HAVE_INTTYPES=1 Keyboard=StellaKeyboard _GLIBCXX_USE_CXX11_ABI=1 UNIX=1 DARWIN=1 MACOS_KEYS=1 SOUND_SUPPORT=1 JOYSTICK_SUPPORT CHEATCODE_SUPPORT __LIB_RETRO__=1 IOS ARM
+// PNG_SUPPORT BSPF_UNIX GUI_SUPPORT SDL_SUPPORT ZIP_SUPPORT
+OTHER_CFLAGS = $(inherited) -ObjC -fno-strict-overflow -ffast-math -funroll-loops -fPIC -Wno-multichar -Wunused -fno-aligned-allocation
+OTHER_CXXFLAGS = $(inherited) -ObjC -Wno-multichar -Wunused -Woverloaded-virtual -Wnon-virtual-dtor
+OTHER_CFLAGS[configuration=Release] = $(inherited) -flto
+OTHER_CXXFLAGS[configuration=Release] = $(inherited) -flto -fno-rtti -Wno-poison-system-directories
+
+// -ffast-math -ftree-vectorize -fno-strict-aliasing -fpermissive -fomit-frame-pointer
+OTHER_LDFLAGS =  $(inherited) -ObjC -Wl,-all_load -all_load -pthread
+GCC_C_LANGUAGE_STANDARD = gnu99
+CLANG_CXX_LANGUAGE_STANDARD = c++14
+
+
+    // Device
+GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*] = $(inherited) TARGET_IPHONE=1 NEON=1
+OTHER_CFLAGS[sdk=iphoneos*] = $(inherited) -mfpu=neon -D__VEC4_OPT -D__NEON_OPT
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*] = $(inherited)
+
+// Simulator
+GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*] = $(inherited) TARGET_IPHONE_SIMULATOR=1
+
+// tvOS Device
+GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvos*] = $(inherited) TARGET_IPHONE=1
+OTHER_CFLAGS[sdk=appletvos*] = $(inherited)
+
+// tvOS Simulator
+GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvsimulator*] = $(inherited) TARGET_IPHONE_SIMULATOR=1
+
+// Global
+ENABLE_BITCODE = NO

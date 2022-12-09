@@ -83,6 +83,14 @@ final class PVControllerManager: NSObject {
     var hasControllers: Bool {
         return player1 != nil || player2 != nil || player3 != nil || player4 != nil
     }
+    var isKeyboardConnected: Bool {
+        return keyboardController != nil
+//        if #available(iOS 14.0, *) {
+//            return GCKeyboard.coalesced != nil
+//        } else {
+//            return false
+//        }
+    }
 
     static let shared: PVControllerManager = PVControllerManager()
 
@@ -145,7 +153,7 @@ final class PVControllerManager: NSObject {
 
     override init() {
         super.init()
-        
+
         if #available(iOS 14.0, tvOS 14.0, *) {
             NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleKeyboardConnect(_:)), name: .GCKeyboardDidConnect, object: nil)
             NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleKeyboardDisconnect(_:)), name: .GCKeyboardDidDisconnect, object: nil)
@@ -204,13 +212,13 @@ final class PVControllerManager: NSObject {
             ELOG("Object wasn't a GCController")
             return
         }
-        
+
         // ignore the bogus controller in the simulator
         if isSimulator && (controller.vendorName == nil || controller.vendorName == "Gamepad") {
             return
         }
 
-#if !targetEnvironment(macCatalyst) && canImport(SteamController)
+#if !targetEnvironment(macCatalyst) && canImport(SteamController)  && !os(macOS)
         if let steamController = controller as? SteamController {
             #if os(tvOS)
             // PVEmulatorViewController will set to controller mode if game is running
@@ -267,17 +275,17 @@ final class PVControllerManager: NSObject {
             NotificationCenter.default.post(name: NSNotification.Name.PVControllerManagerControllerReassigned, object: self)
         }
     }
-    
+
     @available(iOS 14.0, tvOS 14.0, *)
     @objc func handleKeyboardConnect(_ note: Notification?) {
-        #if !targetEnvironment(simulator)
+//        #if !targetEnvironment(simulator)
         if let controller = GCKeyboard.coalesced?.createController() {
             keyboardController = controller
             NotificationCenter.default.post(name:.GCControllerDidConnect, object: controller)
         }
-        #endif
+//        #endif
     }
-    
+
     @available(iOS 14.0, tvOS 14.0, *)
     @objc func handleKeyboardDisconnect(_ note: Notification?) {
         if let controller = keyboardController {
@@ -298,7 +306,7 @@ final class PVControllerManager: NSObject {
         listenForICadeControllers(window: nil) { () -> Void in }
     }
 
-#if !targetEnvironment(macCatalyst) && canImport(SteamController)
+#if !targetEnvironment(macCatalyst) && canImport(SteamController) && !os(macOS)
     func handleSteamControllerCombination(controller: SteamController, button: SteamControllerButton) {
         switch button {
         case .leftTrackpadClick:
@@ -355,14 +363,13 @@ final class PVControllerManager: NSObject {
     func controller(forPlayer player: Int) -> GCController? {
         return allLiveControllers[player]
     }
-    
+
     // a filtered and augmented version of CGControllers.controllers()
     func controllers() -> [GCController] {
         var controllers = GCController.controllers()
         if let aController = iCadeController {
             controllers.append(aController)
-        }
-        else if let aController = keyboardController {
+        } else if let aController = keyboardController {
             controllers.append(aController)
         }
         // ignore the bogus controller in the simulator
@@ -418,17 +425,17 @@ final class PVControllerManager: NSObject {
         }
         return false
     }
-    
-#if !targetEnvironment(macCatalyst) && canImport(SteamController)
+
+#if !targetEnvironment(macCatalyst) && canImport(SteamController) && !os(macOS)
     func setSteamControllersMode(_ mode: SteamControllerMode) {
         for controller in SteamControllerManager.shared().controllers {
             controller.steamControllerMode = mode
         }
     }
 #endif
-    
+
     // MARK: - Controller User Interaction (ie use controller to drive UX)
-    
+
 #if os(iOS)
     //
     // make a *cheap* *simple* version of the FocusSystem
@@ -448,9 +455,9 @@ final class PVControllerManager: NSObject {
                     let state = gamepad.readButtonState()
                     let changed_state = current_state.symmetricDifference(state)
                     let changed_state_pressed = changed_state.intersection(state)
-                    
+
                     let topVC = UIApplication.shared.keyWindow?.topViewController
-                    
+
                     // send button press(s) to the top bannana
                     if let top = topVC as? ControllerButtonPress {
                         changed_state_pressed.forEach {
@@ -515,7 +522,7 @@ extension ControllerButtonPress where Self: TVAlertController {
             buttonPress(button(for: preferredAction))
         case .back:     // (aka B or ESC)
             // only automaticly dismiss if there is a cancel button
-            if cancelAction != nil  {
+            if cancelAction != nil {
                 presentingViewController?.dismiss(animated:true, completion:nil)
             }
         default:
@@ -526,10 +533,10 @@ extension ControllerButtonPress where Self: TVAlertController {
         if let action = preferredAction, var idx = actions.firstIndex(of: action) {
             if doubleStackHeight != 0 {
                 let n = self.doubleStackHeight
-                if dir == +1 && idx == n-1   {idx = n*2-1}
-                if dir == -1 && idx == n     {idx = n+1}
-                if dir == -1 && idx == n*2   {idx = n}
-                if dir == +1000 && idx < n   {idx = idx + n - 1000}
+                if dir == +1 && idx == n-1 {idx = n*2-1}
+                if dir == -1 && idx == n {idx = n+1}
+                if dir == -1 && idx == n*2 {idx = n}
+                if dir == +1000 && idx < n {idx = idx + n - 1000}
                 if dir == -1000 && idx < n*2 {idx = idx - n + 1000}
             }
             idx = idx + dir
@@ -538,8 +545,7 @@ extension ControllerButtonPress where Self: TVAlertController {
                 button(for: action)?.isSelected = false
                 button(for: preferredAction)?.isSelected = true
             }
-        }
-        else {
+        } else {
             preferredAction = actions.first(where: {$0.style == .default && $0.isEnabled})
             button(for: preferredAction)?.isSelected = true
         }
@@ -549,7 +555,7 @@ extension ControllerButtonPress where Self: TVAlertController {
 // MARK: - ControllerButtonPress - UINavigationController
 
 extension UINavigationController : ControllerButtonPress {
-    
+
     func controllerButtonPress(_ type: ButtonType) {
         switch type {
         case .cancel:
@@ -580,14 +586,14 @@ protocol ControllerButtonPressTableView: ControllerButtonPress {
     var clearsSelectionOnViewWillAppear: Bool { get set }
 }
 extension ControllerButtonPressTableView {
-    
+
     func controllerButtonPress(_ type: ButtonType) {
         switch type {
         case .select:
             if let indexPath = tableView.indexPathForSelectedRow {
                 clearsSelectionOnViewWillAppear = false
                 tableView.delegate?.tableView?(tableView, didSelectRowAt: indexPath)
-                
+
                 if let cell = tableView.cellForRow(at: indexPath) {
                     if cell.accessoryType != .none {
                         tableView.delegate?.tableView?(tableView, accessoryButtonTappedForRowWith: indexPath)
@@ -634,12 +640,10 @@ extension ControllerButtonPressTableView {
         if dir == -1 && indexPath.row == 0 && indexPath.section != 0 {
             indexPath.section -= 1
             indexPath.row = maxRow(indexPath)
-        }
-        else if dir == +1 && indexPath.row == maxRow(indexPath) && indexPath.section < maxSection() {
+        } else if dir == +1 && indexPath.row == maxRow(indexPath) && indexPath.section < maxSection() {
             indexPath.section += 1
             indexPath.row = 0
-        }
-        else {
+        } else {
             indexPath.row += dir
             indexPath.row = max(0, min(indexPath.row, maxRow(indexPath)))
         }
@@ -650,31 +654,28 @@ extension ControllerButtonPressTableView {
 // MARK: - Read Controller UX buttons
 
 extension GCExtendedGamepad {
-    
+
     enum ButtonType: String {
-        case a,b,x,y
-        case menu,options
-        case up,down,left,right
+        case a, b, x, y
+        case menu, options
+        case up, down, left, right
         case l1, l2, r1, r2
         static let select = a
         static let back = b
         static let cancel = b
     }
-    
+
     typealias ButtonState = Set<ButtonType>
-    
+
     func readButtonState() -> ButtonState {
         var state = ButtonState()
-        
+
         if buttonA.isPressed {state.formUnion([.a])}
         if buttonB.isPressed {state.formUnion([.b])}
         if buttonX.isPressed {state.formUnion([.x])}
         if buttonY.isPressed {state.formUnion([.y])}
-
-        if #available(iOS 13.0, tvOS 13.0, *) {
-            if buttonMenu.isPressed {state.formUnion([.menu])}
-            if buttonOptions?.isPressed == true {state.formUnion([.options])}
-        }
+        if buttonMenu.isPressed {state.formUnion([.menu])}
+        if buttonOptions?.isPressed == true {state.formUnion([.options])}
 
         for pad in [dpad, leftThumbstick, rightThumbstick] {
             if pad.up.isPressed {state.formUnion([.up])}
@@ -726,29 +727,29 @@ extension GCController {
 extension GCKeyboard {
     func createController() -> GCController? {
         guard let keyboard = self.keyboardInput else {return nil}
-        
+
         let controller = GCController.withExtendedGamepad()
         let gamepad = controller.extendedGamepad!
-        
+
         controller.setValue(self.vendorName ?? "Keyboard", forKey: "vendorName")
 
         keyboard.keyChangedHandler = {(keyboard, button, key, pressed) -> Void in
-            //print("\(button) \(key) \(pressed)")
-            
+            // print("\(button) \(key) \(pressed)")
+
             func isPressed(_ code:GCKeyCode) -> Bool {
                 return keyboard.button(forKeyCode:code)?.isPressed ?? false
             }
-            
+
             // DPAD
             let dpad_x:Float = isPressed(.rightArrow) ? 1.0 : isPressed(.leftArrow) ? -1.0 : 0.0
             let dpad_y:Float = isPressed(.upArrow)    ? 1.0 : isPressed(.downArrow) ? -1.0 : 0.0
-            gamepad.dpad.setValueForXAxis(dpad_x, yAxis:dpad_y) 
+            gamepad.dpad.setValueForXAxis(dpad_x, yAxis:dpad_y)
 
             // WASD
             let left_x:Float = isPressed(.keyD) ? 1.0 : isPressed(.keyA) ? -1.0 : 0.0
             let left_y:Float = isPressed(.keyW) ? 1.0 : isPressed(.keyS) ? -1.0 : 0.0
             gamepad.leftThumbstick.setValueForXAxis(left_x, yAxis:left_y)
-            
+
             // -,=,[,]
             let right_x:Float = isPressed(.closeBracket) ? 1.0 : isPressed(.openBracket) ? -1.0 : 0.0
             let right_y:Float = isPressed(.equalSign) ? 1.0 : isPressed(.hyphen) ? -1.0 : 0.0
@@ -771,31 +772,30 @@ extension GCKeyboard {
             // MENU, OPTIONS
             gamepad.buttonMenu.setValue(isPressed(.graveAccentAndTilde) ? 1.0 : 0.0)
             gamepad.buttonOptions?.setValue(isPressed(.one) ? 1.0 : 0.0)
-            
+
             // the system does not call this handler in setValue, so call it with the dpad
             gamepad.valueChangedHandler?(gamepad, gamepad.dpad)
         }
-        
+
         return controller
     }
 }
 
 public final class SortOptionsTableViewController: UIViewController {
     var clearsSelectionOnViewWillAppear: Bool = true
-    
+
     public private(set) var tableView: UITableView!
-    
+
     public required init(withTableView tableView: UITableView) {
         super.init(nibName: nil, bundle: nil)
 
         self.tableView = tableView
     }
-    
+
     public override func loadView() {
         self.view = tableView
     }
-    
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

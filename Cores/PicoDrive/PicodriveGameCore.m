@@ -30,7 +30,7 @@
 
 #import <TargetConditionals.h>
 
-#if !TARGET_OS_MACCATALYST
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
@@ -86,9 +86,15 @@ static void video_callback(const void *data, unsigned width, unsigned height, si
     strongCurrent->videoWidth  = width;
     strongCurrent->videoHeight = height;
     
-    dispatch_queue_t the_queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     
-    dispatch_apply(height, the_queue, ^(size_t y){
+    static dispatch_queue_t memory_queue;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_CONCURRENT, QOS_CLASS_USER_INTERACTIVE, 0);
+        memory_queue = dispatch_queue_create("com.provenance.video", queueAttributes);
+    });
+        
+    dispatch_apply(height, memory_queue, ^(size_t y){
         const uint16_t *src = (uint16_t*)data + y * (pitch >> 1); //pitch is in bytes not pixels
         uint16_t *dst = strongCurrent->videoBuffer + y * 320;
         
@@ -268,7 +274,7 @@ static void writeSaveFile(const char* path, int type)
 }
 
 -(void)copyCartHWCFG {
-    NSBundle *myBundle = [NSBundle bundleForClass:[self class]];
+    NSBundle *myBundle = [NSBundle bundleForClass:[PicodriveGameCore class]];
     NSString *cartPath = [myBundle pathForResource:@"carthw" ofType:@"cfg"];
     
     NSString *systemPath = self.BIOSPath;
@@ -281,9 +287,9 @@ static void writeSaveFile(const char* path, int type)
                                    toPath:destinationPath
                                     error:&error];
         if(!success) {
-            NSLog(@"Error copying carthw.cfg:\n %@", error.localizedDescription);
+            ELOG(@"Error copying carthw.cfg:\n %@\nsource: %@\ndestination: %@", error.localizedDescription, cartPath, destinationPath);
         } else {
-            NSLog(@"Copied default carthw.cfg file into system directory. %@", self.BIOSPath);
+            ILOG(@"Copied default carthw.cfg file into system directory. %@", self.BIOSPath);
         }
     }
 }

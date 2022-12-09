@@ -29,7 +29,7 @@
 @import PVSupport;
 //#import <PVSupport/OERingBuffer.h>
 //#import <PVSupport/DebugUtils.h>
-#if !TARGET_OS_MACCATALYST
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
@@ -577,6 +577,30 @@ __weak static ATR800GameCore * _currentCore;
 		default:
 			break;
 	}
+}
+
+- (void)didMove5200JoystickDirection:(PV5200Button)button withValue:(CGFloat)value forPlayer:(NSUInteger)player {
+//    if (self.dualJoystickOption && player == 0) {
+//        player = 1;
+//    }
+//    switch (button) {
+//        case PV5200ButtonAnalogUp:
+////            NSLog(@"Up: %f", round(value * N64_ANALOG_MAX));
+//            yAxis[player] = round(value * N64_ANALOG_MAX);
+//            break;
+//        case PV5200ButtonAnalogDown:
+////            NSLog(@"Down: %f", value * -N64_ANALOG_MAX);
+//            yAxis[player] = value * -N64_ANALOG_MAX;
+//            break;
+//        case PV5200ButtonAnalogLeft:
+//            xAxis[player] = value * -N64_ANALOG_MAX;
+//            break;
+//        case PV5200ButtonAnalogRight:
+//            xAxis[player] = value * N64_ANALOG_MAX;
+//            break;
+//        default:
+//            break;
+//    }
 }
 
 - (void)didRelease5200Button:(PV5200Button)button forPlayer:(NSUInteger)player

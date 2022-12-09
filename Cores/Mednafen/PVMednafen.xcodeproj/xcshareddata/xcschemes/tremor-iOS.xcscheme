@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B33355C6207B20BE0036A448"
-               BuildableName = "libtremor-iOS.a"
-               BlueprintName = "tremor-iOS"
+               BuildableName = "libtremor.a"
+               BlueprintName = "tremor"
                ReferencedContainer = "container:PVMednafen.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B33355C6207B20BE0036A448"
-            BuildableName = "libtremor-iOS.a"
-            BlueprintName = "tremor-iOS"
+            BuildableName = "libtremor.a"
+            BlueprintName = "tremor"
             ReferencedContainer = "container:PVMednafen.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

@@ -9,20 +9,42 @@
 #import "PVGLViewController.h"
 @import PVSupport;
 @import QuartzCore;
+@import ReplayKit;
 #import "Provenance-Swift.h"
 
-#if !TARGET_OS_MACCATALYST
+#ifndef USE_EFFECT
+#define USE_EFFECT 1
+#endif
+
+#ifndef USE_DISPLAY_LINK
+#define USE_DISPLAY_LINK 0
+#endif
+
+#define USE_METAL (TARGET_OS_MACCATALYST || TARGET_OS_OSX)
+
+#if !USE_METAL
 #import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
 #import <OpenGLES/EAGL.h>
 #else
+@import Metal;
 @import OpenGL;
+@import MetalKit;
 @import AppKit;
 @import GLUT;
 #endif
 
+#define SHADER_DIR "GLES"
+#define VERTEX_DIR SHADER_DIR "/Vertex"
+#define BLITTER_DIR SHADER_DIR "/Blitters"
+#define FILTER_DIR SHADER_DIR "/Filters"
+
+#if USE_METAL
+@interface PVGLViewController () <PVRenderDelegate, MTKViewDelegate>
+#else
 @interface PVGLViewController () <PVRenderDelegate>
+#endif
 {
     GLuint alternateThreadFramebufferBack;
     GLuint alternateThreadColorTextureBack;
@@ -51,10 +73,25 @@
     struct RenderSettings renderSettings;
 }
 
+#if USE_METAL
+@property (nonatomic, strong) CIContext *glContext;
+@property (nonatomic, strong) CIContext *alternateThreadGLContext;
+@property (nonatomic, strong) CIContext *alternateThreadBufferCopyGLContext;
+@property (nonatomic, strong) MTKView *mtlview;
+@property (nonatomic, strong) id<MTLDevice> device;
+@property (nonatomic, strong) id<MTLCommandQueue> commandQueue;
+#else
 @property (nonatomic, strong) EAGLContext *glContext;
 @property (nonatomic, strong) EAGLContext *alternateThreadGLContext;
 @property (nonatomic, strong) EAGLContext *alternateThreadBufferCopyGLContext;
+#endif
 
+#if USE_DISPLAY_LINK
+@property (nonatomic, strong) CADisplayLink *displayLink;
+#endif
+#if USE_EFFECT && !USE_METAL
+@property (nonatomic, strong) GLKBaseEffect *effect;
+#endif
 
 @property (nonatomic, assign) GLESVersion glesVersion;
 
@@ -113,6 +150,7 @@ PV_OBJC_DIRECT_MEMBERS
     glDeleteTextures(1, &texture);
     
     [[PVSettingsModel shared] removeObserver:self forKeyPath:@"crtFilterEnabled"];
+    [[PVSettingsModel shared] removeObserver:self forKeyPath:@"lcdFilterEnabled"];
     [[PVSettingsModel shared] removeObserver:self forKeyPath:@"imageSmoothing"];
 }
 
@@ -127,9 +165,11 @@ PV_OBJC_DIRECT_MEMBERS
         }
         
         renderSettings.crtFilterEnabled = [[PVSettingsModel shared] crtFilterEnabled];
+        renderSettings.lcdFilterEnabled = [[PVSettingsModel shared] lcdFilterEnabled];
         renderSettings.smoothingEnabled = [[PVSettingsModel shared] imageSmoothing];
         
         [[PVSettingsModel shared] addObserver:self forKeyPath:@"crtFilterEnabled" options:NSKeyValueObservingOptionNew context:nil];
+        [[PVSettingsModel shared] addObserver:self forKeyPath:@"lcdFilterEnabled" options:NSKeyValueObservingOptionNew context:nil];
         [[PVSettingsModel shared] addObserver:self forKeyPath:@"imageSmoothing" options:NSKeyValueObservingOptionNew context:nil];
 	}
 
@@ -139,6 +179,8 @@ PV_OBJC_DIRECT_MEMBERS
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if ([keyPath isEqualToString:@"crtFilterEnabled"]) {
         renderSettings.crtFilterEnabled = [[PVSettingsModel shared] crtFilterEnabled];
+    } else if ([keyPath isEqualToString:@"lcdFilterEnabled"]) {
+        renderSettings.lcdFilterEnabled = [[PVSettingsModel shared] lcdFilterEnabled];
     } else if ([keyPath isEqualToString:@"imageSmoothing"]) {
         renderSettings.smoothingEnabled = [[PVSettingsModel shared] imageSmoothing];
     } else {
@@ -146,13 +188,20 @@ PV_OBJC_DIRECT_MEMBERS
     }
 }
 
+#if USE_DISPLAY_LINK
+-(void)render {
+    [self.core executeFrame];
+//    [self.view render];
+}
+#endif
+
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
 
     [self updatePreferredFPS];
 
-
+#if !USE_METAL
     self.glContext = [self bestContext];
 
     if (self.glContext == nil) {
@@ -166,24 +215,66 @@ PV_OBJC_DIRECT_MEMBERS
 
     self.glContext.multiThreaded = PVSettingsModel.shared.debugOptions.multiThreadedGL;
 
-	[EAGLContext setCurrentContext:self.glContext];
+    [EAGLContext setCurrentContext:self.glContext];
 
-	GLKView *view = (GLKView *)self.view;
+    GLKView *view = (GLKView *)self.view;
+#else
+    self.device = MTLCreateSystemDefaultDevice();
+
+    MTKView *view = [[MTKView alloc] initWithFrame:self.view.bounds device:self.device];
+    self.mtlview = view;
+    [self.view addSubview:self.mtlview];
+    view.device = self.device;
+    view.clearColor = MTLClearColorMake(0.0, 0.0, 0.0, 0.0);
+    view.depthStencilPixelFormat = MTLPixelFormatDepth32Float_Stencil8;
+    view.sampleCount = 4;
+    view.delegate = self;
+    self.commandQueue = [_device newCommandQueue];
+
+
+        // Set paused and only trigger redraw when needs display is set.
+    view.paused = NO;
+    view.enableSetNeedsDisplay = NO;
+
+     // Setup display link.
+//     CVDisplayLinkCreateWithActiveCGDisplays(&displayLink);
+//     CVDisplayLinkSetOutputCallback(displayLink, &MyDisplayLinkCallback, (__bridge void*)self);
+//     CVDisplayLinkStart(displayLink);
+#endif
 
     view.opaque = YES;
     view.layer.opaque = YES;
+#if !USE_METAL
     view.context = self.glContext;
+#else
+#endif
     view.userInteractionEnabled = NO;
 
+#if USE_DISPLAY_LINK
+    self.displayLink = [CADisplayLink displayLinkWithTarget: self selector: @selector(render)];
+    [self.displayLink addToRunLoop: [NSRunLoop currentRunLoop] forMode: NSDefaultRunLoopMode];
+#endif
+    
+#if USE_EFFECT && !USE_METAL
+    self.effect = [[GLKBaseEffect alloc] init];
+#endif
+    
     GLenum depthFormat = self.emulatorCore.depthFormat;
     switch (depthFormat) {
         case GL_DEPTH_COMPONENT16:
+#if USE_METAL
+            view.depthStencilPixelFormat = MTLPixelFormatRG8Unorm_sRGB;
+#else
             view.drawableDepthFormat = GLKViewDrawableDepthFormat16;
+#endif
             break;
         case GL_DEPTH_COMPONENT24:
+#if USE_METAL
+            view.depthStencilPixelFormat = MTLPixelFormatX24_Stencil8;
+#else
             view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
+#endif
             break;
-
         default:
             break;
     }
@@ -199,16 +290,30 @@ PV_OBJC_DIRECT_MEMBERS
 
             // Enable multisampling
         if(PVSettingsModel.shared.debugOptions.multiSampling) {
+#if USE_METAL
+            [view setSampleCount:4];
+#else
             view.drawableMultisample = GLKViewDrawableMultisample4X;
+#endif
         }
     }
 
-    [self setupTexture];
-    defaultVertexShader = [self compileShaderResource:@"shaders/default/default_vertex" ofType:GL_VERTEX_SHADER];
     [self setupVBOs];
+    [self setupTexture];
+#if USE_METAL
+#else
+    NSError *error;
+    defaultVertexShader = [self compileShaderResource:[NSString stringWithFormat:@"%s/default_vertex", VERTEX_DIR] ofType:GL_VERTEX_SHADER error:&error];
+    
+    if(error) {
+        ELOG(@"%@", error.localizedDescription)
+    }
+    assert(defaultVertexShader != GL_NO_ERROR);
     
     [self setupBlitShader];
     [self setupCRTShader];
+//    [self setupLCDShader];
+#endif
     
     alternateThreadFramebufferBack = 0;
     alternateThreadColorTextureBack = 0;
@@ -218,6 +323,7 @@ PV_OBJC_DIRECT_MEMBERS
     alternateThreadColorTextureFront = 0;
 }
 
+#if !USE_METAL
 -(EAGLContext*)bestContext {
     EAGLContext* context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
     self.glesVersion = GLESVersion3;
@@ -233,6 +339,7 @@ PV_OBJC_DIRECT_MEMBERS
 
     return context;
 }
+#endif
 
 - (void) updatePreferredFPS {
     float preferredFPS = self.emulatorCore.frameInterval;
@@ -242,7 +349,12 @@ PV_OBJC_DIRECT_MEMBERS
         preferredFPS = 60;
     }
 
+#if !USE_METAL
     [self setPreferredFramesPerSecond:preferredFPS];
+    WLOG(@"Actual FPS: %f", self.framesPerSecond);
+#else
+    [self setFramesPerSecond:preferredFPS];
+#endif
     VLOG(@"Actual FPS: %f", self.framesPerSecond);
 }
 
@@ -374,28 +486,30 @@ PV_OBJC_DIRECT_MEMBERS
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
+#if !TARGET_OS_TV
 - (void)createShadersDirs {
     // TODO: This is a hack, dir should come from arg
     NSFileManager *fm = [NSFileManager defaultManager];
     NSError *error;
     NSString *docsPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, true).firstObject;
     
-    [fm createDirectoryAtPath:[docsPath stringByAppendingPathComponent:@"shaders/default/"] withIntermediateDirectories:true attributes:nil error:&error];
+    [fm createDirectoryAtPath:[docsPath stringByAppendingPathComponent:@VERTEX_DIR] withIntermediateDirectories:true attributes:nil error:&error];
     if (error) {
         ELOG(@"%@", error.localizedDescription);
     }
-    [fm createDirectoryAtPath:[docsPath stringByAppendingPathComponent:@"shaders/blit/"] withIntermediateDirectories:true attributes:nil error:&error];
+    [fm createDirectoryAtPath:[docsPath stringByAppendingPathComponent:@BLITTER_DIR] withIntermediateDirectories:true attributes:nil error:&error];
     if (error) {
         ELOG(@"%@", error.localizedDescription);
     }
-    [fm createDirectoryAtPath:[docsPath stringByAppendingPathComponent:@"shaders/crt/"] withIntermediateDirectories:true attributes:nil error:&error];
+    [fm createDirectoryAtPath:[docsPath stringByAppendingPathComponent:@FILTER_DIR] withIntermediateDirectories:true attributes:nil error:&error];
     if (error) {
         ELOG(@"%@", error.localizedDescription);
     }
 }
+#endif
 
-- (GLuint)compileShaderResource:(NSString*)shaderResourceName ofType:(GLenum)shaderType
-{
+#if !USE_METAL
+- (GLuint)compileShaderResource:(NSString*)shaderResourceName ofType:(GLenum)shaderType error:(NSError**)inError {
     // TODO: check shaderType == GL_VERTEX_SHADER
     NSString *fileName = [shaderResourceName stringByAppendingPathExtension:@"glsl"];
 
@@ -405,7 +519,7 @@ PV_OBJC_DIRECT_MEMBERS
     NSString* shaderPath;
     NSString* bundleShaderPath = [[NSBundle mainBundle] pathForResource:shaderResourceName
                                                                  ofType:@"glsl"];
-    
+#if !TARGET_OS_TV
     if(![fm fileExistsAtPath:docsPath]) {
         [self createShadersDirs];
         NSError *error;
@@ -414,6 +528,9 @@ PV_OBJC_DIRECT_MEMBERS
                     toPath:docsPath
                      error:&error];
         if (error) {
+            if(inError) {
+                *inError = error;
+            }
             ELOG(@"%@", error.localizedDescription);
         }
     }
@@ -423,8 +540,16 @@ PV_OBJC_DIRECT_MEMBERS
     } else {
         shaderPath = bundleShaderPath;
     }
+#else
+    shaderPath = bundleShaderPath;
+#endif
     if ( shaderPath == NULL )
     {
+        if(inError) {
+            *inError = [NSError errorWithDomain:@"org.provenance.core"
+                                           code:-1
+                                       userInfo:@{NSLocalizedDescriptionKey : @"shaderPath is null"}];
+        }
         ELOG(@"Nil shaderPath");
         return 0;
     }
@@ -436,6 +561,9 @@ PV_OBJC_DIRECT_MEMBERS
     if ( shaderSource == NULL )
     {
         ELOG(@"Nil shaderSource: %@ %@", shaderPath, error.localizedDescription);
+        if(inError) {
+            *inError = [NSError errorWithDomain:@"org.provenance.core" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"shaderSource is null"}];
+        }
         return 0;
     }
     
@@ -443,6 +571,9 @@ PV_OBJC_DIRECT_MEMBERS
     if ( shaderSourceCString == NULL )
     {
         ELOG(@"Nil shaderSourceCString");
+        if(inError) {
+            *inError = [NSError errorWithDomain:@"org.provenance.core" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"shaderSourceCString is null"}];
+        }
         return 0;
     }
     
@@ -450,6 +581,9 @@ PV_OBJC_DIRECT_MEMBERS
     if ( shader == 0 )
     {
         ELOG(@"Nil shader");
+        if(inError) {
+            *inError = [NSError errorWithDomain:@"org.provenance.core" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"shader is null"}];
+        }
         return 0;
     }
     
@@ -466,7 +600,11 @@ PV_OBJC_DIRECT_MEMBERS
         {
             char* infoLog = (char*)malloc( infoLogLength );
             glGetShaderInfoLog( shader, infoLogLength, NULL, infoLog );
-            printf( "Error compiling shader: %s", infoLog );
+            NSString *log = [NSString stringWithCString:infoLog encoding:NSUTF8StringEncoding];
+            ELOG(@"Error compiling shader: %@", log );
+            if(inError) {
+                *inError = [NSError errorWithDomain:@"org.provenance.core" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"Error compiling shader" , NSLocalizedFailureReasonErrorKey:log}];
+            }
             free( infoLog );
         }
         
@@ -503,7 +641,7 @@ PV_OBJC_DIRECT_MEMBERS
         {
             char* infoLog = (char*)malloc( infoLogLength );
             glGetProgramInfoLog( shaderProgram, infoLogLength, NULL, infoLog );
-            printf( "Error linking program: %s", infoLog );
+            ELOG(@"Error linking program: %s", infoLog );
             free( infoLog );
         }
         
@@ -516,15 +654,34 @@ PV_OBJC_DIRECT_MEMBERS
 
 - (void)setupBlitShader
 {
-    blitFragmentShader = [self compileShaderResource:@"shaders/blit/blit_fragment" ofType:GL_FRAGMENT_SHADER];
+    NSError *error;
+    blitFragmentShader = [self compileShaderResource:[NSString stringWithFormat:@"%s/blit_fragment", BLITTER_DIR] ofType:GL_FRAGMENT_SHADER error:&error];
+    assert(blitFragmentShader != GL_NO_ERROR);
     blitShaderProgram = [self linkVertexShader:defaultVertexShader withFragmentShader:blitFragmentShader];
+    assert(blitShaderProgram != GL_NO_ERROR);
     blitUniform_EmulatedImage = glGetUniformLocation(blitShaderProgram, "EmulatedImage");
 }
 
 - (void)setupCRTShader
 {
-    crtFragmentShader = [self compileShaderResource:@"shaders/crt/crt_fragment" ofType:GL_FRAGMENT_SHADER];
+    NSError *error;
+    crtFragmentShader = [self compileShaderResource:[NSString stringWithFormat:@"%s/crt_fragment", FILTER_DIR] ofType:GL_FRAGMENT_SHADER error:&error];
+    assert(crtFragmentShader != GL_NO_ERROR);
     crtShaderProgram = [self linkVertexShader:defaultVertexShader withFragmentShader:crtFragmentShader];
+    assert(crtShaderProgram != GL_NO_ERROR);
+    crtUniform_DisplayRect = glGetUniformLocation(crtShaderProgram, "DisplayRect");
+    crtUniform_EmulatedImage = glGetUniformLocation(crtShaderProgram, "EmulatedImage");
+    crtUniform_EmulatedImageSize = glGetUniformLocation(crtShaderProgram, "EmulatedImageSize");
+    crtUniform_FinalRes = glGetUniformLocation(crtShaderProgram, "FinalRes");
+}
+
+- (void)setupLCDShader
+{
+    NSError *error;
+    crtFragmentShader = [self compileShaderResource:[NSString stringWithFormat:@"%s/crt_fragment", FILTER_DIR] ofType:GL_FRAGMENT_SHADER error:&error];
+    assert(crtFragmentShader != GL_NO_ERROR);
+    crtShaderProgram = [self linkVertexShader:defaultVertexShader withFragmentShader:crtFragmentShader];
+    assert(crtShaderProgram != GL_NO_ERROR);
     crtUniform_DisplayRect = glGetUniformLocation(crtShaderProgram, "DisplayRect");
     crtUniform_EmulatedImage = glGetUniformLocation(crtShaderProgram, "EmulatedImage");
     crtUniform_EmulatedImageSize = glGetUniformLocation(crtShaderProgram, "EmulatedImageSize");
@@ -558,19 +715,35 @@ PV_OBJC_DIRECT_MEMBERS
         glClear(GL_COLOR_BUFFER_BIT);
 #endif
         const BOOL rendersToOpenGL = strongself->_emulatorCore.rendersToOpenGL;
-        const BOOL crtEnabled = strongself->renderSettings.crtFilterEnabled;
-
+        const BOOL crtEnabled = strongself->renderSettings.crtFilterEnabled &&
+        ![strongself->_emulatorCore.screenType.lowercaseString containsString:@"lcd"];
+        const BOOL lcdEnabled = strongself->renderSettings.lcdFilterEnabled &&
+        [strongself->_emulatorCore.screenType.lowercaseString containsString:@"lcd"];
+        
         GLuint frontBufferTex;
         if (UNLIKELY(rendersToOpenGL))
         {
             frontBufferTex = strongself->alternateThreadColorTextureFront;
-            [self.emulatorCore.frontBufferLock lock];
+            [strongself.emulatorCore.frontBufferLock lock];
         }
         else
         {
             glBindTexture(GL_TEXTURE_2D, strongself->texture);
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, videoBufferSize.width, videoBufferSize.height, videoBufferPixelFormat, videoBufferPixelType, videoBuffer);
             frontBufferTex = strongself->texture;
+            
+#if USE_EFFECT
+            if (strongself->texture)
+            {
+                self.effect.texture2d0.envMode = GLKTextureEnvModeReplace;
+                self.effect.texture2d0.target = GLKTextureTarget2D;
+                self.effect.texture2d0.name = strongself->texture;
+                self.effect.texture2d0.enabled = YES;
+                self.effect.useConstantColor = YES;
+            }
+
+            [strongself.effect prepareToDraw];
+#endif
         }
         
         if (frontBufferTex)
@@ -580,6 +753,16 @@ PV_OBJC_DIRECT_MEMBERS
         }
         
         if (crtEnabled)
+        {
+            glUseProgram(strongself->crtShaderProgram);
+            glUniform4f(strongself->crtUniform_DisplayRect, screenRect.origin.x, screenRect.origin.y, screenRect.size.width, screenRect.size.height);
+            glUniform1i(strongself->crtUniform_EmulatedImage, 0);
+            glUniform2f(strongself->crtUniform_EmulatedImageSize, videoBufferSize.width, videoBufferSize.height);
+            float finalResWidth = view.drawableWidth;
+            float finalResHeight = view.drawableHeight;
+            glUniform2f(strongself->crtUniform_FinalRes, finalResWidth, finalResHeight);
+        }
+        else if (lcdEnabled)
         {
             glUseProgram(strongself->crtShaderProgram);
             glUniform4f(strongself->crtUniform_DisplayRect, screenRect.origin.x, screenRect.origin.y, screenRect.size.width, screenRect.size.height);
@@ -680,9 +863,248 @@ PV_OBJC_DIRECT_MEMBERS
         }
     }
 }
+#else
+// Mac OS Stuff
+// MARK: - MTKViewDelegate
+
+/*!
+ @method mtkView:drawableSizeWillChange:
+ @abstract Called whenever the drawableSize of the view will change
+ @discussion Delegate can recompute view and projection matricies or regenerate any buffers to be compatible with the new view size or resolution
+ @param view MTKView which called this method
+ @param size New drawable size in pixels
+ */
+- (void)mtkView:(nonnull MTKView *)view drawableSizeWillChange:(CGSize)size {
+
+}
+
+/*!
+ @method drawInMTKView:
+ @abstract Called on the delegate when it is asked to render into the view
+ @discussion Called on the delegate when it is asked to render into the view
+ */
+- (void)drawInMTKView:(nonnull MTKView *)view {
+        //guard let safeCurrentDrawable = self.currentDrawable,
+        //      let safeCommandBuffer = self.commandQueue.makeCommandBuffer()
+        //else {
+        //    return
+        //}
+        //
+        //let image: CIImage
+        //let baseImage: CIImage = CIImage(bitmapData: NSData(bytes: &self.buffer, length: 640 * 480 * PVMTLView.elementLength) as Data, bytesPerRow: 640 * PVMTLView.elementLength, size: PVMTLView.imageSize, format: CIFormat.ARGB8, colorSpace: self.rgbColorSpace)
+        //
+        //if self.nearestNeighborRendering {
+        //    image = baseImage.samplingNearest().transformed(by: self.tNesScreen)
+        //} else {
+        //    image = baseImage.transformed(by: self.tNesScreen)
+        //}
+        //
+        //let renderDestination = CIRenderDestination(width: Int(self.drawableSize.width), height: Int(self.drawableSize.height), pixelFormat: self.colorPixelFormat, commandBuffer: safeCommandBuffer) {
+        //    () -> MTLTexture in return safeCurrentDrawable.texture
+        //}
+        //
+        //do {
+        //    _ = try self.context.startTask(toRender: image, to: renderDestination)
+        //} catch {
+        //    os_log("%@", error.localizedDescription)
+        //}
+        //
+        //safeCommandBuffer.present(safeCurrentDrawable)
+        //safeCommandBuffer.commit()
+        //
+        //self.lastDrawableSize = self.drawableSizeview
+        id<CAMetalDrawable> safeCurrentDrawable = view.currentDrawable;
+        id<MTLCommandBuffer> safeCommandBuffer = [self.commandQueue commandBuffer];
+
+
+    __block CGRect screenRect;
+    __block const void* videoBuffer;
+    __block GLenum videoBufferPixelFormat;
+    __block GLenum videoBufferPixelType;
+    __block CGSize videoBufferSize;
+
+    void (^fetchVideoBuffer)(void) = ^()
+    {
+        screenRect = [self.emulatorCore screenRect];
+        videoBufferPixelFormat = [self.emulatorCore pixelFormat];
+        videoBufferPixelType = [self.emulatorCore pixelType];
+        videoBufferSize = [self.emulatorCore bufferSize];
+        videoBuffer = [self.emulatorCore videoBuffer];
+    };
+
+    MAKEWEAK(self);
+
+    void (^renderBlock)(void) = ^()
+    {
+        MAKESTRONG_RETURN_IF_NIL(self);
+//#if DEBUG
+//        glClearColor(1.0, 1.0, 1.0, 1.0);
+//        glClear(GL_COLOR_BUFFER_BIT);
+//#endif
+        GLuint frontBufferTex;
+        if ([self.emulatorCore rendersToOpenGL])
+        {
+            frontBufferTex = strongself->alternateThreadColorTextureFront;
+            [self.emulatorCore.frontBufferLock lock];
+        }
+        else
+        {
+            glBindTexture(GL_TEXTURE_2D, strongself->texture);
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, videoBufferSize.width, videoBufferSize.height, videoBufferPixelFormat, videoBufferPixelType, videoBuffer);
+            frontBufferTex = strongself->texture;
+        }
+
+        if (frontBufferTex)
+        {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, frontBufferTex);
+        }
+
+        if (strongself->renderSettings.crtFilterEnabled)
+        {
+            glUseProgram(strongself->crtShaderProgram);
+            glUniform4f(strongself->crtUniform_DisplayRect, screenRect.origin.x, screenRect.origin.y, screenRect.size.width, screenRect.size.height);
+            glUniform1i(strongself->crtUniform_EmulatedImage, 0);
+            glUniform2f(strongself->crtUniform_EmulatedImageSize, videoBufferSize.width, videoBufferSize.height);
+            float finalResWidth = view.drawableSize.width;
+            float finalResHeight = view.drawableSize.height;
+            glUniform2f(strongself->crtUniform_FinalRes, finalResWidth, finalResHeight);
+        }
+        else
+        {
+            glUseProgram(strongself->blitShaderProgram);
+            glUniform1i(strongself->blitUniform_EmulatedImage, 0);
+        }
+
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
+
+//        [self updateVBOWithScreenRect:screenRect andVideoBufferSize:videoBufferSize];
+
+        glBindBuffer(GL_ARRAY_BUFFER, strongself->vertexVBO);
+
+//        glEnableVertexAttribArray(GLKVertexAttribPosition);
+//        glVertexAttribPointer(GLKVertexAttribPosition, 3, GL_FLOAT, GL_FALSE, sizeof(struct PVVertex), BUFFER_OFFSET(0));
+//
+//        glEnableVertexAttribArray(GLKVertexAttribTexCoord0);
+//        glVertexAttribPointer(GLKVertexAttribTexCoord0, 2, GL_FLOAT, GL_FALSE, sizeof(struct PVVertex), BUFFER_OFFSET(12));
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, strongself->indexVBO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+//        glDisableVertexAttribArray(GLKVertexAttribTexCoord0);
+//        glDisableVertexAttribArray(GLKVertexAttribPosition);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        if ([strongself->_emulatorCore rendersToOpenGL])
+        {
+            glFlush();
+            [strongself->_emulatorCore.frontBufferLock unlock];
+        }
+    };
+
+    if ([self.emulatorCore rendersToOpenGL])
+    {
+        if ((!self.emulatorCore.isSpeedModified && !self.emulatorCore.isEmulationPaused) || self.emulatorCore.isFrontBufferReady)
+        {
+            [self.emulatorCore.frontBufferCondition lock];
+            while (UNLIKELY(!self.emulatorCore.isFrontBufferReady) && LIKELY(!self.emulatorCore.isEmulationPaused))
+            {
+                [self.emulatorCore.frontBufferCondition wait];
+            }
+            BOOL isFrontBufferReady = self.emulatorCore.isFrontBufferReady;
+            [self.emulatorCore.frontBufferCondition unlock];
+            if (isFrontBufferReady)
+            {
+                fetchVideoBuffer();
+                renderBlock();
+                [_emulatorCore.frontBufferCondition lock];
+                _emulatorCore.isFrontBufferReady = NO;
+                [_emulatorCore.frontBufferCondition signal];
+                [_emulatorCore.frontBufferCondition unlock];
+            }
+        }
+    }
+    else
+    {
+        if (self.emulatorCore.isSpeedModified)
+        {
+            fetchVideoBuffer();
+            renderBlock();
+        }
+        else
+        {
+            if (UNLIKELY(self.emulatorCore.isDoubleBuffered))
+            {
+                [self.emulatorCore.frontBufferCondition lock];
+                while (UNLIKELY(!self.emulatorCore.isFrontBufferReady) && LIKELY(!self.emulatorCore.isEmulationPaused))
+                {
+                    [self.emulatorCore.frontBufferCondition wait];
+                }
+                _emulatorCore.isFrontBufferReady = NO;
+                [_emulatorCore.frontBufferLock lock];
+                fetchVideoBuffer();
+                renderBlock();
+                [_emulatorCore.frontBufferLock unlock];
+                [_emulatorCore.frontBufferCondition unlock];
+            }
+            else
+            {
+                @synchronized(self.emulatorCore)
+                {
+                    fetchVideoBuffer();
+                    renderBlock();
+                }
+            }
+        }
+    }
+
+
+        [safeCommandBuffer presentDrawable:safeCurrentDrawable];
+        [safeCommandBuffer commit];
+}
+
+//@objc private func appResignedActive() {
+//self.queue.suspend()
+//self.hasSuspended = true
+//}
+//
+//@objc private func appBecameActive() {
+//if self.hasSuspended {
+//    self.queue.resume()
+//    self.hasSuspended = false
+//}
+//}
+#endif
 
 #pragma mark - PVRenderDelegate protocol methods
 
+#if USE_METAL //|| TARGET_OS_MACOS
+- (void)startRenderingOnAlternateThread {
+
+}
+- (void)didRenderFrameOnAlternateThread {
+    [self.emulatorCore.frontBufferLock lock];
+
+ // TODO: Copy the back buffer
+    [self.emulatorCore.frontBufferLock unlock];
+
+    // Notify render thread that the front buffer is ready
+    [self.emulatorCore.frontBufferCondition lock];
+    [self.emulatorCore setIsFrontBufferReady:YES];
+    [self.emulatorCore.frontBufferCondition signal];
+    [self.emulatorCore.frontBufferCondition unlock];
+
+    // Switch context back to emulator's
+//    [EAGLContext setCurrentContext:self.alternateThreadGLContext];
+//    glBindFramebuffer(GL_FRAMEBUFFER, alternateThreadFramebufferBack);
+}
+
+#else
 - (void)startRenderingOnAlternateThread
 {
     self.emulatorCore.glesVersion = self.glesVersion;
@@ -804,4 +1226,5 @@ PV_OBJC_DIRECT_MEMBERS
     [EAGLContext setCurrentContext:self.alternateThreadGLContext];
     glBindFramebuffer(GL_FRAMEBUFFER, alternateThreadFramebufferBack);
 }
+#endif
 @end

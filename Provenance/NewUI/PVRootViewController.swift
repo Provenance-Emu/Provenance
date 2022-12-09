@@ -28,7 +28,7 @@ enum PVNavOption {
     case settings
     case home
     case console(consoleId: String, title: String)
-    
+
     var title: String {
         switch self {
         case .settings: return "Settings"
@@ -40,20 +40,20 @@ enum PVNavOption {
 
 @available(iOS 14, tvOS 14, *)
 class PVRootViewController: UIViewController, GameLaunchingViewController, GameSharingViewController {
-    
+
     let containerView = UIView()
     var viewModel: PVRootViewModel!
-    
+
     var updatesController: PVGameLibraryUpdatesController!
     var gameLibrary: PVGameLibrary!
     var gameImporter: GameImporter!
-    
+
     let disposeBag = DisposeBag()
     var selectedTabCancellable: AnyCancellable?
-    
+
     lazy var consolesWrapperViewDelegate = ConsolesWrapperViewDelegate()
     var consoleIdentifiersAndNamesMap: [String:String] = [:]
-    
+
     static func instantiate(updatesController: PVGameLibraryUpdatesController, gameLibrary: PVGameLibrary, gameImporter: GameImporter, viewModel: PVRootViewModel) -> PVRootViewController {
         let controller = PVRootViewController()
         controller.updatesController = updatesController
@@ -62,15 +62,15 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
         controller.viewModel = viewModel
         return controller
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         self.view.addSubview(containerView)
         self.fillParentView(child: containerView, parent: self.view)
-        
-        didTapHome()
-        
+
+        self.determineInitialView()
+
         let hud = MBProgressHUD(view: view)!
         hud.isUserInteractionEnabled = false
         view.addSubview(hud)
@@ -93,19 +93,27 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
             })
             .disposed(by: disposeBag)
     }
-    
+
     deinit {
         selectedTabCancellable?.cancel()
     }
-    
+
     func showMenu() {
         self.sideNavigationController?.showLeftSide()
     }
-    
+
     func closeMenu() {
         self.sideNavigationController?.closeSide()
     }
     
+    func determineInitialView() {
+        if let console = gameLibrary.activeSystems.first {
+            didTapConsole(with: console.identifier)
+        } else {
+            didTapHome()
+        }
+    }
+
     func loadIntoContainer(_ navItem: PVNavOption, newVC: UIViewController) {
         // remove old view
         self.containerView.subviews.forEach { $0.removeFromSuperview() }
@@ -127,23 +135,23 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
 
 // MARK: - Helpers
 extension UIViewController {
-    
+
     func addChildViewController(_ child: UIViewController, toContainerView containerView: UIView) {
         addChild(child)
         containerView.addSubview(child.view)
         child.didMove(toParent: self)
     }
-    
+
     func fillParentView(child: UIView, parent: UIView) {
         child.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             child.topAnchor.constraint(equalTo: parent.topAnchor),
             child.bottomAnchor.constraint(equalTo: parent.bottomAnchor),
             child.leadingAnchor.constraint(equalTo: parent.leadingAnchor),
-            child.trailingAnchor.constraint(equalTo: parent.trailingAnchor),
+            child.trailingAnchor.constraint(equalTo: parent.trailingAnchor)
         ])
     }
-    
+
 }
 
 #if os(iOS)

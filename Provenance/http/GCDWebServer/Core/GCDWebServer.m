@@ -177,7 +177,10 @@ static void _ExecuteMainThreadRunLoopSources() {
 
 - (instancetype)init {
   if ((self = [super init])) {
-    _syncQueue = dispatch_queue_create([NSStringFromClass([self class]) UTF8String], DISPATCH_QUEUE_SERIAL);
+      NSString *queueName = NSStringFromClass([self class]);
+      dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, 0);
+
+    _syncQueue = dispatch_queue_create(queueName.UTF8String, queueAttributes);
     _sourceGroup = dispatch_group_create();
     _handlers = [[NSMutableArray alloc] init];
 #if TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
@@ -1154,7 +1157,7 @@ static CFHTTPMessageRef _CreateHTTPMessageFromPerformingRequest(NSData* inData, 
     bzero(&addr4, sizeof(addr4));
     addr4.sin_len = sizeof(port);
     addr4.sin_family = AF_INET;
-    addr4.sin_port = htons(8080);
+    addr4.sin_port = htons(port);
     addr4.sin_addr.s_addr = htonl(INADDR_ANY);
     if (connect(httpSocket, (void*)&addr4, sizeof(addr4)) == 0) {
       if (write(httpSocket, inData.bytes, inData.length) == (ssize_t)inData.length) {

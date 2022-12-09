@@ -6,8 +6,9 @@
 //  Copyright © 2018 Provenance. All rights reserved.
 //
 
-import Foundation
+#if canImport(UIKit)
 
+import UIKit
 public extension UIDevice {
     /// pares the deveice name as the standard name
     @objc
@@ -63,3 +64,4 @@ public extension UIDevice {
         }
     }
 }
+#endif

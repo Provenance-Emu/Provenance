@@ -24,7 +24,6 @@
 //  SOFTWARE.
 //
 
-
 import UIKit
 
 public protocol SliderRowCompatible: Row, RowStyle {
@@ -81,7 +80,7 @@ extension QuickTableViewController: SliderCellDelegate {
          */
         public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
             super.init(style: style, reuseIdentifier: reuseIdentifier)
-            setUpAppearance()
+            contentView.addSubview(slider)
         }
 
         /**
@@ -93,7 +92,7 @@ extension QuickTableViewController: SliderCellDelegate {
          */
         public required init?(coder aDecoder: NSCoder) {
             super.init(coder: aDecoder)
-            setUpAppearance()
+            contentView.addSubview(slider)
         }
 
         // MARK: - Configurable
@@ -111,37 +110,34 @@ extension QuickTableViewController: SliderCellDelegate {
             }
         }
 
-//    open override func layoutSubviews() {
-//        super.layoutSubviews()
-//        let leftInset = (textLabel?.bounds.width ?? 0) + 16
-//        slider.frame = contentView.bounds.inset(by: UIEdgeInsets(top: 0, left: leftInset, bottom: 0, right: 16))
-//    }
+    open override func layoutSubviews() {
+        super.layoutSubviews()
+        guard let textLabel = textLabel else {
+            return
+        }
+
+        contentView.heightAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
+        
+        textLabel.translatesAutoresizingMaskIntoConstraints = false
+        if (contentView.bounds.height == 44.5) {
+            textLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16).isActive = true
+        } else {
+            textLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20).isActive = true
+        }
+        textLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 0).isActive = true
+        textLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0).isActive = true
+
+        slider.translatesAutoresizingMaskIntoConstraints = false
+        slider.leadingAnchor.constraint(equalTo: textLabel.trailingAnchor, constant: 20).isActive = true
+        slider.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20).isActive = true
+        slider.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: 0).isActive = true
+    }
 
         // MARK: - Private
 
         @objc
         private func didChangeValue(_ sender: UISlider) {
             delegate?.sliderCell(self, didChangeValue: sender.value)
-        }
-
-        private func setUpAppearance() {
-            contentView.addSubview(slider)
-
-            guard let textLabel = textLabel else {
-                return
-            }
-
-            contentView.heightAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
-
-            textLabel.translatesAutoresizingMaskIntoConstraints = false
-            textLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 15).isActive = true
-            textLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 0).isActive = true
-            textLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0).isActive = true
-
-            slider.translatesAutoresizingMaskIntoConstraints = false
-            slider.leadingAnchor.constraint(equalTo: textLabel.trailingAnchor, constant: 20).isActive = true
-            slider.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20).isActive = true
-            slider.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: 0).isActive = true
         }
     }
 #endif

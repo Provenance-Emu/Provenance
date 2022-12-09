@@ -13,14 +13,6 @@ import RealmSwift
     import TVServices
 #endif
 
-public enum ScreenType: String, Codable {
-    case unknown = ""
-    case monochromaticLCD = "MonoLCD"
-    case colorLCD = "ColorLCD"
-    case crt = "CRT"
-    case modern = "Modern"
-}
-
 public struct SystemOptions: OptionSet, Codable {
     public init(rawValue: Int) {
         self.rawValue = rawValue
@@ -54,6 +46,8 @@ public final class PVSystem: Object, Identifiable, SystemProtocol {
     public dynamic var portableSystem: Bool = false
 
     public dynamic var supportsRumble: Bool = false
+    public dynamic var supported: Bool = true
+
     public dynamic var _screenType: String = ScreenType.unknown.rawValue
 
     public var options: SystemOptions {
@@ -182,9 +176,9 @@ public extension PVSystem {
     #if os(tvOS)
         var imageType: TVContentItemImageShape {
             switch enumValue {
-            case .NES, .Dreamcast, .GameCube, .Genesis, .Saturn, .SegaCD, .MasterSystem, .SG1000, .Sega32X, .Atari2600, .Atari5200, .Atari7800, .AtariJaguar, .Lynx, .WonderSwan, .WonderSwanColor, .PS2, .PS3, .PSP, .Intellivision, .ColecoVision, ._3DO, .Odyssey2, .Atari8bit, .Vectrex:
+            case .NES, .Dreamcast, .GameCube, .Genesis, .Saturn, .SegaCD, .MasterSystem, .SG1000, .Sega32X, .Atari2600, .Atari5200, .Atari7800, .AtariJaguar, .AtariJaguarCD, .Lynx, .WonderSwan, .WonderSwanColor, .PS2, .PS3, .PSP, .Intellivision, .ColecoVision, ._3DO, .Odyssey2, .Atari8bit, .Vectrex, .DOS, .AtariST, .EP128, .Macintosh, .MSX, .MSX2, .Supervision, .ZXSpectrum, .C64, .Wii, .PalmOS, .TIC80:
                 return .poster
-            case .GameGear, .GB, .GBC, .GBA, .NeoGeo, .NGP, .NGPC, .PSX, .VirtualBoy, .PCE, .PCECD, .PCFX, .SGFX, .FDS, .PokemonMini, .DS, .Unknown:
+            case .GameGear, .GB, .GBC, .GBA, .NeoGeo, .NGP, .NGPC, .PSX, .VirtualBoy, .PCE, .PCECD, .PCFX, .SGFX, .FDS, .PokemonMini, .DS, .Unknown, .Music, ._3DS, .MegaDuck:
                 return .square
             case .N64, .SNES:
                 return .HDTV
@@ -262,6 +256,7 @@ extension System: RealmRepresentable {
             object.portableSystem = portableSystem
             object.usesCDs = usesCDs
             object.supportsRumble = supportsRumble
+            object.supported = supported
             object.headerByteSize = headerByteSize
         })
     }

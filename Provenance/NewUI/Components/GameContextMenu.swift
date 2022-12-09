@@ -14,11 +14,11 @@ import PVLibrary
 
 @available(iOS 14, tvOS 14, *)
 struct GameContextMenu: SwiftUI.View {
-    
+
     var game: PVGame
-    
-    var rootDelegate: PVRootDelegate?
-    
+
+    weak var rootDelegate: PVRootDelegate?
+
     var body: some SwiftUI.View {
         Group {
             Button {

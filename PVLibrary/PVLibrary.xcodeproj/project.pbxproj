@@ -8,221 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		112E7E2F247EF3840050431C /* PVGameLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 112E7E2E247EF3840050431C /* PVGameLibrary.swift */; };
-		112E7E30247EF3840050431C /* PVGameLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 112E7E2E247EF3840050431C /* PVGameLibrary.swift */; };
 		1180B31E2492A9BB00636C8A /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B31D2492A9B400636C8A /* CoreServices.framework */; };
-		1180B3202492A9CB00636C8A /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B31F2492A9C200636C8A /* CoreServices.framework */; };
 		11AFB2B324867482000A3922 /* PVGameLibrary+Migration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2B224867482000A3922 /* PVGameLibrary+Migration.swift */; };
-		11AFB2B424867482000A3922 /* PVGameLibrary+Migration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2B224867482000A3922 /* PVGameLibrary+Migration.swift */; };
-		B3014FA427B487F0006AC79B /* Differentiator in Frameworks */ = {isa = PBXBuildFile; productRef = B3014FA327B487F0006AC79B /* Differentiator */; };
-		B3014FA627B487FD006AC79B /* Differentiator in Frameworks */ = {isa = PBXBuildFile; productRef = B3014FA527B487FD006AC79B /* Differentiator */; };
 		B305EF9F276B50E2003AE510 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF9E276B50DF003AE510 /* SwiftUI.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		B305EFA1276B5112003AE510 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305EFA0276B5112003AE510 /* SwiftUI.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		B305EFAD276B512D003AE510 /* NSData+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D362106B4D700DDEBD6 /* NSData+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B305EFAE276B512D003AE510 /* UIImage+Scaling.h in Headers */ = {isa = PBXBuildFile; fileRef = B3274E672106BAF500857F52 /* UIImage+Scaling.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B305EFAF276B512D003AE510 /* PVLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D122106B11D00DDEBD6 /* PVLibrary.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B305EFB0276B512D003AE510 /* NSFileManager+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = B3274E7D2106BD7500857F52 /* NSFileManager+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B305EFB1276B512D003AE510 /* NSString+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = B3274E632106BAA200857F52 /* NSString+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B305EFB2276B512D003AE510 /* LzmaSDKObjCMutableItem.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474121071CA6002211EE /* LzmaSDKObjCMutableItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B305EFB3276B512D003AE510 /* LzmaSDKObjCTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474421071CA6002211EE /* LzmaSDKObjCTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B305EFB4276B512D003AE510 /* LzmaSDKObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF475221071CA6002211EE /* LzmaSDKObjC.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B305EFB5276B512D003AE510 /* LzmaSDKObjCWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF473221071CA6002211EE /* LzmaSDKObjCWriter.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B305EFB6276B512D003AE510 /* LzmaSDKObjCExtern.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF473D21071CA6002211EE /* LzmaSDKObjCExtern.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B305EFB7276B512D003AE510 /* LzmaSDKObjCReader.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474721071CA6002211EE /* LzmaSDKObjCReader.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B305EFB8276B512D003AE510 /* LzmaSDKObjCItem.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF473E21071CA6002211EE /* LzmaSDKObjCItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B305EFB9276B512D003AE510 /* LzmaSDKObjCBufferProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474321071CA6002211EE /* LzmaSDKObjCBufferProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B305EFBA276B512D003AE510 /* OESQLiteDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D1E2106B4D600DDEBD6 /* OESQLiteDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B305EFBC276B512D003AE510 /* MethodProps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46BA21071CA6002211EE /* MethodProps.cpp */; };
-		B305EFBD276B512D003AE510 /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = B3579D202106B4D600DDEBD6 /* OESQLiteDatabase.m */; };
-		B305EFBE276B512D003AE510 /* CreateCoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46D121071CA6002211EE /* CreateCoder.cpp */; };
-		B305EFBF276B512D003AE510 /* PVCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D312106B4D700DDEBD6 /* PVCore.swift */; };
-		B305EFC0276B512D003AE510 /* ByteSwap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466821071CA6002211EE /* ByteSwap.cpp */; };
-		B305EFC1276B512D003AE510 /* Sha256Reg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF461B21071CA5002211EE /* Sha256Reg.cpp */; };
-		B305EFC2276B512D003AE510 /* InOutTempBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46C221071CA6002211EE /* InOutTempBuffer.cpp */; };
-		B305EFC3276B512D003AE510 /* BcjCoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466421071CA6002211EE /* BcjCoder.cpp */; };
-		B305EFC4276B512D003AE510 /* PpmdRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466B21071CA6002211EE /* PpmdRegister.cpp */; };
-		B305EFC5276B512D003AE510 /* PVCheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF17109C2585F97000258602 /* PVCheats.swift */; };
-		B305EFC6276B512D003AE510 /* SavePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227921D41E1C0077E86F /* SavePackage.swift */; };
-		B305EFC7276B512D003AE510 /* LzmaSDKObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF473421071CA6002211EE /* LzmaSDKObjC.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305EFC8276B512D003AE510 /* PVFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D302106B4D700DDEBD6 /* PVFile.swift */; };
-		B305EFC9276B512D003AE510 /* UIImage+Scaling.m in Sources */ = {isa = PBXBuildFile; fileRef = B3274E662106BAF500857F52 /* UIImage+Scaling.m */; };
-		B305EFCA276B512D003AE510 /* OutBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46AF21071CA6002211EE /* OutBuffer.cpp */; };
-		B305EFCB276B512D003AE510 /* LzmaSDKObjCFileDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF474021071CA6002211EE /* LzmaSDKObjCFileDecoder.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305EFCC276B512D003AE510 /* DirectoryWatcher2.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D332106B4D700DDEBD6 /* DirectoryWatcher2.swift */; };
-		B305EFCD276B512D003AE510 /* LibrarySerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CE219A8EAF0041F971 /* LibrarySerializer.swift */; };
-		B305EFCE276B512D003AE510 /* Lzma2Register.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF465E21071CA5002211EE /* Lzma2Register.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305EFCF276B512D003AE510 /* NSData+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B3579D372106B4D700DDEBD6 /* NSData+Hashing.m */; };
-		B305EFD0276B512D003AE510 /* CopyCoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466021071CA5002211EE /* CopyCoder.cpp */; };
-		B305EFD1276B512D003AE510 /* RandGen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF464A21071CA5002211EE /* RandGen.cpp */; };
-		B305EFD2276B512D003AE510 /* Bcj2Coder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466A21071CA6002211EE /* Bcj2Coder.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305EFD3276B512D003AE510 /* MyAes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF464B21071CA5002211EE /* MyAes.cpp */; };
-		B305EFD4276B512D003AE510 /* RomDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D1F2106B4D600DDEBD6 /* RomDatabase.swift */; };
-		B305EFD5276B512D003AE510 /* RealmRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E79F219A77F20041F971 /* RealmRepresentable.swift */; };
-		B305EFD6276B512D003AE510 /* XzCrc64Opt.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF472621071CA6002211EE /* XzCrc64Opt.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305EFD7276B512D003AE510 /* Bcj2.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46EA21071CA6002211EE /* Bcj2.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305EFD8276B512D003AE510 /* LzmaHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF468721071CA6002211EE /* LzmaHandler.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305EFD9276B512D003AE510 /* LzmaDec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF470321071CA6002211EE /* LzmaDec.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305EFDA276B512D003AE510 /* FileBackedConformance.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7AB219A78700041F971 /* FileBackedConformance.swift */; };
-		B305EFDB276B512D003AE510 /* FilterCoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46B221071CA6002211EE /* FilterCoder.cpp */; };
-		B305EFDC276B512D003AE510 /* Bcj2Register.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF465721071CA5002211EE /* Bcj2Register.cpp */; };
-		B305EFDD276B512D003AE510 /* 7zEncode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF469B21071CA6002211EE /* 7zEncode.cpp */; };
-		B305EFDE276B512D003AE510 /* UTI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D252106B4D600DDEBD6 /* UTI.swift */; };
-		B305EFDF276B512D003AE510 /* Cheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1710A02585FA3F00258602 /* Cheats.swift */; };
-		B305EFE0276B512D003AE510 /* Bra86.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46F621071CA6002211EE /* Bra86.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305EFE1276B512D003AE510 /* Bra.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46F421071CA6002211EE /* Bra.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305EFE2276B512D003AE510 /* LzmaSDKObjCWriter.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF474921071CA6002211EE /* LzmaSDKObjCWriter.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305EFE3276B512D003AE510 /* PVBIOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D272106B4D700DDEBD6 /* PVBIOS.swift */; };
-		B305EFE4276B512D003AE510 /* GameImporter2.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEAF21D493AC000C55F7 /* GameImporter2.swift */; };
-		B305EFE5276B512D003AE510 /* 7zAes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF464F21071CA5002211EE /* 7zAes.cpp */; };
-		B305EFE6276B512D003AE510 /* LzmaSDKObjCMutableItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF474A21071CA6002211EE /* LzmaSDKObjCMutableItem.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305EFE7276B512D003AE510 /* LzFind.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46EC21071CA6002211EE /* LzFind.c */; };
-		B305EFE8276B512D003AE510 /* LzmaDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466721071CA6002211EE /* LzmaDecoder.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305EFE9276B512D003AE510 /* DomainConvertibleType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7A0219A77F20041F971 /* DomainConvertibleType.swift */; };
-		B305EFEA276B512D003AE510 /* ImportCandidateFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E852106BFD000857F52 /* ImportCandidateFile.swift */; };
-		B305EFEB276B512D003AE510 /* LzmaSDKObjCOpenCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF474C21071CA6002211EE /* LzmaSDKObjCOpenCallback.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305EFEC276B512D003AE510 /* 7zAesRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF464821071CA5002211EE /* 7zAesRegister.cpp */; };
-		B305EFED276B512D003AE510 /* PVMediaCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D222106B4D600DDEBD6 /* PVMediaCache.swift */; };
-		B305EFEE276B512D003AE510 /* PlistDataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E787219A76C80041F971 /* PlistDataModels.swift */; };
-		B305EFEF276B512D003AE510 /* StringConvert.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF463921071CA5002211EE /* StringConvert.cpp */; };
-		B305EFF0276B512D003AE510 /* BcjRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF465B21071CA5002211EE /* BcjRegister.cpp */; };
-		B305EFF1276B512D003AE510 /* LockedStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46BB21071CA6002211EE /* LockedStream.cpp */; };
-		B305EFF2276B512D003AE510 /* NSString+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B3274E622106BAA200857F52 /* NSString+Hashing.m */; };
-		B305EFF3276B512D003AE510 /* StreamObjects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46CC21071CA6002211EE /* StreamObjects.cpp */; };
-		B305EFF4276B512D003AE510 /* BraIA64.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF470F21071CA6002211EE /* BraIA64.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305EFF5276B512D003AE510 /* NSFileManager+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B3274E7C2106BD7500857F52 /* NSFileManager+Hashing.m */; };
-		B305EFF6276B512D003AE510 /* 7zDecode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46A221071CA6002211EE /* 7zDecode.cpp */; };
-		B305EFF7276B512D003AE510 /* XzIn.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46FA21071CA6002211EE /* XzIn.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305EFF8276B512D003AE510 /* 7zUpdate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF469C21071CA6002211EE /* 7zUpdate.cpp */; };
-		B305EFF9276B512D003AE510 /* PVGame+Spotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D2A2106B4D700DDEBD6 /* PVGame+Spotlight.swift */; };
-		B305EFFA276B512D003AE510 /* 7zOut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF469A21071CA6002211EE /* 7zOut.cpp */; };
-		B305EFFB276B512D003AE510 /* PVGame+BoxArt.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D2E2106B4D700DDEBD6 /* PVGame+BoxArt.swift */; };
-		B305EFFC276B512D003AE510 /* 7zHeader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF468F21071CA6002211EE /* 7zHeader.cpp */; };
-		B305EFFD276B512D003AE510 /* System.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7C8219A7E470041F971 /* System.swift */; };
-		B305EFFE276B512D003AE510 /* Xz.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF472721071CA6002211EE /* Xz.c */; };
-		B305EFFF276B512D003AE510 /* MyString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF462721071CA5002211EE /* MyString.cpp */; };
-		B305F000276B512D003AE510 /* PVGameLibrary+Migration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2B224867482000A3922 /* PVGameLibrary+Migration.swift */; };
-		B305F001276B512D003AE510 /* ItemNameUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF468021071CA6002211EE /* ItemNameUtils.cpp */; };
-		B305F002276B512D003AE510 /* LocalFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E78D219A76C80041F971 /* LocalFile.swift */; };
-		B305F003276B512D003AE510 /* Lzma2DecMt.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46FC21071CA6002211EE /* Lzma2DecMt.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305F004276B512D003AE510 /* LzmaSDKObjCFileEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF475021071CA6002211EE /* LzmaSDKObjCFileEncoder.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305F005276B512D003AE510 /* LzmaSDKObjCExtractCallback.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF475421071CA6002211EE /* LzmaSDKObjCExtractCallback.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305F006276B512D003AE510 /* DllExports2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF467421071CA6002211EE /* DllExports2.cpp */; };
-		B305F007276B512D003AE510 /* 7zCrcOpt.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF472821071CA6002211EE /* 7zCrcOpt.c */; };
-		B305F008276B512D003AE510 /* 7zHandlerOut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF469621071CA6002211EE /* 7zHandlerOut.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305F009276B512D003AE510 /* Bcj2Enc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF472421071CA6002211EE /* Bcj2Enc.c */; };
-		B305F00A276B512D003AE510 /* LzmaSDKObjCReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF473F21071CA6002211EE /* LzmaSDKObjCReader.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305F00B276B512D003AE510 /* BIOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E786219A76C80041F971 /* BIOS.swift */; };
-		B305F00C276B512D003AE510 /* Realm+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7B3219A796A0041F971 /* Realm+Ext.swift */; };
-		B305F00D276B512D003AE510 /* PVRecentGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D2F2106B4D700DDEBD6 /* PVRecentGame.swift */; };
-		B305F00E276B512D003AE510 /* Ppmd7Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46E421071CA6002211EE /* Ppmd7Dec.c */; };
-		B305F00F276B512D003AE510 /* PVSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D292106B4D700DDEBD6 /* PVSystem.swift */; };
-		B305F010276B512D003AE510 /* PpmdEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466F21071CA6002211EE /* PpmdEncoder.cpp */; };
-		B305F011276B512D003AE510 /* LzmaSDKObjCUpdateCallback.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF473521071CA6002211EE /* LzmaSDKObjCUpdateCallback.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305F012276B512D003AE510 /* PVLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D282106B4D700DDEBD6 /* PVLibrary.swift */; };
-		B305F013276B512D003AE510 /* LzmaEnc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46E321071CA6002211EE /* LzmaEnc.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305F014276B512D003AE510 /* XzDec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46E821071CA6002211EE /* XzDec.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305F015276B512D003AE510 /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7A7219A78420041F971 /* Repository.swift */; };
-		B305F016276B512D003AE510 /* GameImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D342106B4D700DDEBD6 /* GameImporter.swift */; };
-		B305F017276B512D003AE510 /* PVEmulatorConfiguration+Frameworks.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C04B972107991100E7AF79 /* PVEmulatorConfiguration+Frameworks.swift */; };
-		B305F018276B512D003AE510 /* StringToInt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF461C21071CA5002211EE /* StringToInt.cpp */; };
-		B305F019276B512D003AE510 /* Core.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E788219A76C80041F971 /* Core.swift */; };
-		B305F01A276B512D003AE510 /* SaveState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E789219A76C80041F971 /* SaveState.swift */; };
-		B305F01B276B512D003AE510 /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7BA219A7ADB0041F971 /* Cache.swift */; };
-		B305F01C276B512D003AE510 /* StreamUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46B721071CA6002211EE /* StreamUtils.cpp */; };
-		B305F01D276B512D003AE510 /* XzCrc64Reg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF463221071CA5002211EE /* XzCrc64Reg.cpp */; };
-		B305F01E276B512D003AE510 /* VirtThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46AB21071CA6002211EE /* VirtThread.cpp */; };
-		B305F01F276B512D003AE510 /* PVGameLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 112E7E2E247EF3840050431C /* PVGameLibrary.swift */; };
-		B305F020276B512D003AE510 /* CWrappers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46C321071CA6002211EE /* CWrappers.cpp */; };
-		B305F021276B512D003AE510 /* HandlerOut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF467B21071CA6002211EE /* HandlerOut.cpp */; };
-		B305F022276B512D003AE510 /* CrcReg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF463821071CA5002211EE /* CrcReg.cpp */; };
-		B305F023276B512D003AE510 /* Ppmd7.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46F221071CA6002211EE /* Ppmd7.c */; };
-		B305F024276B512D003AE510 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E78B219A76C80041F971 /* Protocols.swift */; };
-		B305F025276B512D003AE510 /* LzmaSDKObjCInFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF474D21071CA6002211EE /* LzmaSDKObjCInFile.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305F026276B512D003AE510 /* Lzma2Decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF465621071CA5002211EE /* Lzma2Decoder.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305F027276B512D003AE510 /* LzmaSDKObjCOutFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF474E21071CA6002211EE /* LzmaSDKObjCOutFile.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305F028276B512D003AE510 /* PVGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D2B2106B4D700DDEBD6 /* PVGame.swift */; };
-		B305F029276B512D003AE510 /* 7zIn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF469721071CA6002211EE /* 7zIn.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305F02A276B512D003AE510 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E785219A76C80041F971 /* Game.swift */; };
-		B305F02B276B512D003AE510 /* 7zFolderInStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF468B21071CA6002211EE /* 7zFolderInStream.cpp */; };
-		B305F02C276B512D003AE510 /* DirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEECA21D4CF61000C55F7 /* DirectoryWatcher.swift */; };
-		B305F02D276B512D003AE510 /* CodecExports.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF465221071CA5002211EE /* CodecExports.cpp */; };
-		B305F02E276B512D003AE510 /* LibrarySerializerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378228421D41E9B0077E86F /* LibrarySerializerError.swift */; };
-		B305F02F276B512D003AE510 /* LzmaSDKObjCItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF475521071CA6002211EE /* LzmaSDKObjCItem.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305F030276B512D003AE510 /* AesOpt.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF471E21071CA6002211EE /* AesOpt.c */; };
-		B305F031276B512D003AE510 /* 7zStream.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF471121071CA6002211EE /* 7zStream.c */; };
-		B305F032276B512D003AE510 /* LzmaEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466D21071CA6002211EE /* LzmaEncoder.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305F033276B512D003AE510 /* LzmaSDKObjCBaseCoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF474F21071CA6002211EE /* LzmaSDKObjCBaseCoder.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305F034276B512D003AE510 /* 7zHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF468C21071CA6002211EE /* 7zHandler.cpp */; };
-		B305F035276B512D003AE510 /* Aes.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46E521071CA6002211EE /* Aes.c */; };
-		B305F036276B512D003AE510 /* Lzma2Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46E121071CA6002211EE /* Lzma2Dec.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305F037276B512D003AE510 /* 7zRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46A421071CA6002211EE /* 7zRegister.cpp */; };
-		B305F038276B512D003AE510 /* Wildcard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF462B21071CA5002211EE /* Wildcard.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305F039276B512D003AE510 /* XzCrc64.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF470D21071CA6002211EE /* XzCrc64.c */; };
-		B305F03A276B512D003AE510 /* PropVariantConv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46DA21071CA6002211EE /* PropVariantConv.cpp */; };
-		B305F03B276B512D003AE510 /* LimitedStreams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46BF21071CA6002211EE /* LimitedStreams.cpp */; };
-		B305F03C276B512D003AE510 /* ArchiveExports.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF467321071CA6002211EE /* ArchiveExports.cpp */; };
-		B305F03D276B512D003AE510 /* C_FileIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF462821071CA5002211EE /* C_FileIO.cpp */; };
-		B305F03E276B512D003AE510 /* IntToString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF462A21071CA5002211EE /* IntToString.cpp */; };
-		B305F03F276B512D003AE510 /* MyWindows.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF463C21071CA5002211EE /* MyWindows.cpp */; };
-		B305F040276B512D003AE510 /* LzmaSDKObjCExtern.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF475121071CA6002211EE /* LzmaSDKObjCExtern.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305F041276B512D003AE510 /* PVImageFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E832106BF2F00857F52 /* PVImageFile.swift */; };
-		B305F042276B512D003AE510 /* Ppmd7Enc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF470521071CA6002211EE /* Ppmd7Enc.c */; };
-		B305F043276B512D003AE510 /* XzEnc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46FB21071CA6002211EE /* XzEnc.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305F044276B512D003AE510 /* Observable+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7B2219A796A0041F971 /* Observable+Ext.swift */; };
-		B305F045276B512D003AE510 /* 7zCrc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF471C21071CA6002211EE /* 7zCrc.c */; };
-		B305F046276B512D003AE510 /* RunLoopThreadScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7B0219A796A0041F971 /* RunLoopThreadScheduler.swift */; };
-		B305F047276B512D003AE510 /* ProgressUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46AA21071CA6002211EE /* ProgressUtils.cpp */; };
-		B305F048276B512D003AE510 /* PropId.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46CF21071CA6002211EE /* PropId.cpp */; };
-		B305F049276B512D003AE510 /* PropVariant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46DF21071CA6002211EE /* PropVariant.cpp */; };
-		B305F04A276B512D003AE510 /* BehaviorRelay+RangeReplaceableCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30E7AEA26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift */; };
-		B305F04B276B512D003AE510 /* PVEmulatorConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E5D2106BA1200857F52 /* PVEmulatorConfiguration.swift */; };
-		B305F04C276B512D003AE510 /* OutStreamWithCRC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF467D21071CA6002211EE /* OutStreamWithCRC.cpp */; };
-		B305F04D276B512D003AE510 /* LzFindMt.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46E621071CA6002211EE /* LzFindMt.c */; };
-		B305F04E276B512D003AE510 /* LzmaSDKObjCError.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF473821071CA6002211EE /* LzmaSDKObjCError.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305F04F276B512D003AE510 /* GamePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227C21D41E310077E86F /* GamePackage.swift */; };
-		B305F050276B512D003AE510 /* PackageResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227F21D41E460077E86F /* PackageResult.swift */; };
-		B305F051276B512D003AE510 /* Time Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D242106B4D600DDEBD6 /* Time Utilities.swift */; };
-		B305F052276B512D003AE510 /* PVAppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E5E2106BA1200857F52 /* PVAppConstants.swift */; };
-		B305F053276B512D003AE510 /* Lzma2Enc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF470421071CA6002211EE /* Lzma2Enc.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305F054276B512D003AE510 /* PpmdDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466621071CA6002211EE /* PpmdDecoder.cpp */; };
-		B305F055276B512D003AE510 /* LzmaSDKObjCBufferProcessor.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF473321071CA6002211EE /* LzmaSDKObjCBufferProcessor.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305F056276B512D003AE510 /* BranchMisc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466521071CA6002211EE /* BranchMisc.cpp */; };
-		B305F057276B512D003AE510 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEB221D497CD000C55F7 /* Package.swift */; };
-		B305F058276B512D003AE510 /* MtCoder.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46E921071CA6002211EE /* MtCoder.c */; };
-		B305F059276B512D003AE510 /* Sha256.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF471621071CA6002211EE /* Sha256.c */; };
-		B305F05A276B512D003AE510 /* Lzma2Encoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466221071CA5002211EE /* Lzma2Encoder.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305F05B276B512D003AE510 /* SystemProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CB219A7E620041F971 /* SystemProtocol.swift */; };
-		B305F05C276B512D003AE510 /* iCloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = B383F3BB219BB29600DB6926 /* iCloudSync.swift */; };
-		B305F05D276B512D003AE510 /* LzmaRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466321071CA6002211EE /* LzmaRegister.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305F05E276B512D003AE510 /* DummyOutStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF467921071CA6002211EE /* DummyOutStream.cpp */; };
-		B305F05F276B512D003AE510 /* 7zExtract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF468A21071CA6002211EE /* 7zExtract.cpp */; };
-		B305F060276B512D003AE510 /* 7zProperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF469321071CA6002211EE /* 7zProperties.cpp */; };
-		B305F061276B512D003AE510 /* Alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF470121071CA6002211EE /* Alloc.c */; };
-		B305F062276B512D003AE510 /* CpuArch.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF472221071CA6002211EE /* CpuArch.c */; };
-		B305F063276B512D003AE510 /* FileInfoProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E78C219A76C80041F971 /* FileInfoProvider.swift */; };
-		B305F064276B512D003AE510 /* Delta.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF471821071CA6002211EE /* Delta.c */; };
-		B305F065276B512D003AE510 /* LzmaSDKObjCCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF473721071CA6002211EE /* LzmaSDKObjCCommon.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B305F066276B512D003AE510 /* Threads.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF472A21071CA6002211EE /* Threads.c */; };
-		B305F067276B512D003AE510 /* FileStreams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46C621071CA6002211EE /* FileStreams.cpp */; };
-		B305F068276B512D003AE510 /* 7zSpecStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46A321071CA6002211EE /* 7zSpecStream.cpp */; };
-		B305F069276B512D003AE510 /* MyAesReg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF464C21071CA5002211EE /* MyAesReg.cpp */; };
-		B305F06A276B512D003AE510 /* CopyRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466121071CA5002211EE /* CopyRegister.cpp */; };
-		B305F06B276B512D003AE510 /* CoderMixer2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF468221071CA6002211EE /* CoderMixer2.cpp */; };
-		B305F06C276B512D003AE510 /* BranchRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF465F21071CA5002211EE /* BranchRegister.cpp */; };
-		B305F06D276B512D003AE510 /* PVObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E782106BC8800857F52 /* PVObject.swift */; };
-		B305F06E276B512D003AE510 /* PVSaveState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D2D2106B4D700DDEBD6 /* PVSaveState.swift */; };
-		B305F070276B512D003AE510 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305EFA0276B5112003AE510 /* SwiftUI.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		B305F071276B512D003AE510 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = B305EFA8276B512D003AE510 /* SQLite */; };
-		B305F072276B512D003AE510 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = B305EFA5276B512D003AE510 /* RxCocoa */; };
-		B305F074276B512D003AE510 /* RxRealm in Frameworks */ = {isa = PBXBuildFile; productRef = B305EFA6276B512D003AE510 /* RxRealm */; };
-		B305F075276B512D003AE510 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FBE219160C4000FA7F9 /* Foundation.framework */; };
-		B305F076276B512D003AE510 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B305EFA3276B512D003AE510 /* RxSwift */; };
-		B305F077276B512D003AE510 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B31F2492A9C200636C8A /* CoreServices.framework */; };
-		B305F078276B512D003AE510 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FBC219160BF000FA7F9 /* CoreGraphics.framework */; };
-		B305F079276B512D003AE510 /* ZipArchive in Frameworks */ = {isa = PBXBuildFile; productRef = B305EFAA276B512D003AE510 /* ZipArchive */; };
-		B305F07B276B512D003AE510 /* openvgdb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47DC21072AD3002211EE /* openvgdb.sqlite */; };
-		B305F07C276B512D003AE510 /* systems.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47DD21072AD3002211EE /* systems.plist */; };
-		B305F084276B5229003AE510 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305F083276B5229003AE510 /* PVSupport.framework */; };
-		B305F085276B5229003AE510 /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B305F083276B5229003AE510 /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3067F4B2106B5A30091437F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3067F4A2106B5A20091437F /* Foundation.framework */; };
 		B3067F5D2106B8590091437F /* OESQLiteDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D1E2106B4D600DDEBD6 /* OESQLiteDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3067F5E2106B8590091437F /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = B3579D202106B4D600DDEBD6 /* OESQLiteDatabase.m */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
@@ -232,13 +20,8 @@
 		B3067F662106B8690091437F /* UTI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D252106B4D600DDEBD6 /* UTI.swift */; };
 		B3067F742106B9130091437F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3067F732106B9130091437F /* CoreGraphics.framework */; };
 		B30E7AEB26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30E7AEA26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift */; };
-		B30E7AEC26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30E7AEA26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift */; };
 		B31117AC218EB24300C495A2 /* LzmaSDKObjCReader.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474721071CA6002211EE /* LzmaSDKObjCReader.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B31117AD218EB24400C495A2 /* LzmaSDKObjCReader.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474721071CA6002211EE /* LzmaSDKObjCReader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B31117AE218EB25F00C495A2 /* LzmaSDKObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF475221071CA6002211EE /* LzmaSDKObjC.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B31117AF218EB26000C495A2 /* LzmaSDKObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF475221071CA6002211EE /* LzmaSDKObjC.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3128066274C658E00550720 /* ZipArchive in Frameworks */ = {isa = PBXBuildFile; productRef = B3128065274C658E00550720 /* ZipArchive */; };
-		B324C2ED219192FF009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C2EC219192FF009F4EDC /* PVSupport.framework */; };
 		B3274E602106BA1300857F52 /* PVAppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E5E2106BA1200857F52 /* PVAppConstants.swift */; };
 		B3274E612106BA5B00857F52 /* PVMediaCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D222106B4D600DDEBD6 /* PVMediaCache.swift */; };
 		B3274E642106BAA200857F52 /* NSString+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B3274E622106BAA200857F52 /* NSString+Hashing.m */; };
@@ -264,60 +47,35 @@
 		B3274E842106BF2F00857F52 /* PVImageFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E832106BF2F00857F52 /* PVImageFile.swift */; };
 		B3274E862106BFD000857F52 /* ImportCandidateFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E852106BFD000857F52 /* ImportCandidateFile.swift */; };
 		B336B90626B39ABA00960A81 /* RxRealm in Frameworks */ = {isa = PBXBuildFile; productRef = B336B90526B39ABA00960A81 /* RxRealm */; };
-		B336B90C26B39ACB00960A81 /* RxRealm in Frameworks */ = {isa = PBXBuildFile; productRef = B336B90B26B39ACB00960A81 /* RxRealm */; };
 		B336B90F26B39BCF00960A81 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = B336B90E26B39BCF00960A81 /* SQLite */; };
-		B336B91126B39BDA00960A81 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = B336B91026B39BDA00960A81 /* SQLite */; };
 		B34AB8632106F2E900C45F09 /* PVLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D122106B11D00DDEBD6 /* PVLibrary.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B354E78E219A76C80041F971 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E785219A76C80041F971 /* Game.swift */; };
-		B354E78F219A76C80041F971 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E785219A76C80041F971 /* Game.swift */; };
 		B354E790219A76C80041F971 /* BIOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E786219A76C80041F971 /* BIOS.swift */; };
-		B354E791219A76C80041F971 /* BIOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E786219A76C80041F971 /* BIOS.swift */; };
 		B354E792219A76C80041F971 /* PlistDataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E787219A76C80041F971 /* PlistDataModels.swift */; };
-		B354E793219A76C80041F971 /* PlistDataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E787219A76C80041F971 /* PlistDataModels.swift */; };
 		B354E794219A76C80041F971 /* Core.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E788219A76C80041F971 /* Core.swift */; };
-		B354E795219A76C80041F971 /* Core.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E788219A76C80041F971 /* Core.swift */; };
 		B354E796219A76C80041F971 /* SaveState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E789219A76C80041F971 /* SaveState.swift */; };
-		B354E797219A76C80041F971 /* SaveState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E789219A76C80041F971 /* SaveState.swift */; };
 		B354E798219A76C80041F971 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E78B219A76C80041F971 /* Protocols.swift */; };
-		B354E799219A76C80041F971 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E78B219A76C80041F971 /* Protocols.swift */; };
 		B354E79A219A76C80041F971 /* FileInfoProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E78C219A76C80041F971 /* FileInfoProvider.swift */; };
-		B354E79B219A76C80041F971 /* FileInfoProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E78C219A76C80041F971 /* FileInfoProvider.swift */; };
 		B354E79C219A76C80041F971 /* LocalFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E78D219A76C80041F971 /* LocalFile.swift */; };
-		B354E79D219A76C80041F971 /* LocalFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E78D219A76C80041F971 /* LocalFile.swift */; };
 		B354E7A1219A77F20041F971 /* RealmRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E79F219A77F20041F971 /* RealmRepresentable.swift */; };
-		B354E7A2219A77F20041F971 /* RealmRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E79F219A77F20041F971 /* RealmRepresentable.swift */; };
 		B354E7A3219A77F20041F971 /* DomainConvertibleType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7A0219A77F20041F971 /* DomainConvertibleType.swift */; };
-		B354E7A4219A77F20041F971 /* DomainConvertibleType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7A0219A77F20041F971 /* DomainConvertibleType.swift */; };
 		B354E7A8219A78420041F971 /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7A7219A78420041F971 /* Repository.swift */; };
-		B354E7A9219A78420041F971 /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7A7219A78420041F971 /* Repository.swift */; };
 		B354E7AC219A78700041F971 /* FileBackedConformance.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7AB219A78700041F971 /* FileBackedConformance.swift */; };
-		B354E7AD219A78700041F971 /* FileBackedConformance.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7AB219A78700041F971 /* FileBackedConformance.swift */; };
 		B354E7B4219A796A0041F971 /* RunLoopThreadScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7B0219A796A0041F971 /* RunLoopThreadScheduler.swift */; };
-		B354E7B5219A796A0041F971 /* RunLoopThreadScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7B0219A796A0041F971 /* RunLoopThreadScheduler.swift */; };
 		B354E7B6219A796A0041F971 /* Observable+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7B2219A796A0041F971 /* Observable+Ext.swift */; };
-		B354E7B7219A796A0041F971 /* Observable+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7B2219A796A0041F971 /* Observable+Ext.swift */; };
 		B354E7B8219A796A0041F971 /* Realm+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7B3219A796A0041F971 /* Realm+Ext.swift */; };
-		B354E7B9219A796A0041F971 /* Realm+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7B3219A796A0041F971 /* Realm+Ext.swift */; };
 		B354E7BB219A7ADC0041F971 /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7BA219A7ADB0041F971 /* Cache.swift */; };
-		B354E7BC219A7ADC0041F971 /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7BA219A7ADB0041F971 /* Cache.swift */; };
 		B354E7C9219A7E470041F971 /* System.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7C8219A7E470041F971 /* System.swift */; };
-		B354E7CA219A7E470041F971 /* System.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7C8219A7E470041F971 /* System.swift */; };
 		B354E7CC219A7E620041F971 /* SystemProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CB219A7E620041F971 /* SystemProtocol.swift */; };
-		B354E7CD219A7E620041F971 /* SystemProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CB219A7E620041F971 /* SystemProtocol.swift */; };
 		B354E7CF219A8EAF0041F971 /* LibrarySerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CE219A8EAF0041F971 /* LibrarySerializer.swift */; };
-		B354E7D0219A8EAF0041F971 /* LibrarySerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CE219A8EAF0041F971 /* LibrarySerializer.swift */; };
+		B364D4BF2870E80100B93A4B /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B364D4BE2870E80100B93A4B /* PVLibRetro.framework */; };
 		B378227A21D41E1C0077E86F /* SavePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227921D41E1C0077E86F /* SavePackage.swift */; };
-		B378227B21D41E1C0077E86F /* SavePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227921D41E1C0077E86F /* SavePackage.swift */; };
 		B378227D21D41E310077E86F /* GamePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227C21D41E310077E86F /* GamePackage.swift */; };
-		B378227E21D41E310077E86F /* GamePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227C21D41E310077E86F /* GamePackage.swift */; };
 		B378228021D41E460077E86F /* PackageResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227F21D41E460077E86F /* PackageResult.swift */; };
-		B378228121D41E460077E86F /* PackageResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227F21D41E460077E86F /* PackageResult.swift */; };
 		B378228521D41E9B0077E86F /* LibrarySerializerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378228421D41E9B0077E86F /* LibrarySerializerError.swift */; };
-		B378228621D41E9B0077E86F /* LibrarySerializerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378228421D41E9B0077E86F /* LibrarySerializerError.swift */; };
 		B37B4DF027B2292F0068F8D1 /* Differentiator in Frameworks */ = {isa = PBXBuildFile; productRef = B37B4DEF27B2292F0068F8D1 /* Differentiator */; };
 		B37B4DF227B2292F0068F8D1 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = B37B4DF127B2292F0068F8D1 /* RxDataSources */; };
 		B383F3BC219BB29600DB6926 /* iCloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = B383F3BB219BB29600DB6926 /* iCloudSync.swift */; };
-		B383F3BD219BB29600DB6926 /* iCloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = B383F3BB219BB29600DB6926 /* iCloudSync.swift */; };
 		B3A3204127209B4300F338F6 /* ZipArchive in Frameworks */ = {isa = PBXBuildFile; productRef = B3A3204027209B4300F338F6 /* ZipArchive */; };
 		B3AF42F42107145C002211EE /* DirectoryWatcher2.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D332106B4D700DDEBD6 /* DirectoryWatcher2.swift */; };
 		B3AF475721071CDB002211EE /* LzmaSDKObjCBufferProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474321071CA6002211EE /* LzmaSDKObjCBufferProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -448,185 +206,29 @@
 		B3AF47D721071FCD002211EE /* PropVariant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46DF21071CA6002211EE /* PropVariant.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
 		B3AF47DE21072AD4002211EE /* openvgdb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47DC21072AD3002211EE /* openvgdb.sqlite */; };
 		B3AF47DF21072AD4002211EE /* systems.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47DD21072AD3002211EE /* systems.plist */; };
-		B3AF6FBD219160BF000FA7F9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FBC219160BF000FA7F9 /* CoreGraphics.framework */; };
-		B3AF6FBF219160C4000FA7F9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FBE219160C4000FA7F9 /* Foundation.framework */; };
 		B3AF701621916CF3000FA7F9 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701521916CF3000FA7F9 /* PVSupport.framework */; };
-		B3C04A8D21077B3100E7AF79 /* NSData+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D362106B4D700DDEBD6 /* NSData+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C04A8E21077B3100E7AF79 /* UIImage+Scaling.h in Headers */ = {isa = PBXBuildFile; fileRef = B3274E672106BAF500857F52 /* UIImage+Scaling.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C04A8F21077B3100E7AF79 /* PVLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D122106B11D00DDEBD6 /* PVLibrary.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C04A9021077B3100E7AF79 /* NSFileManager+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = B3274E7D2106BD7500857F52 /* NSFileManager+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C04A9121077B3100E7AF79 /* NSString+Hashing.h in Headers */ = {isa = PBXBuildFile; fileRef = B3274E632106BAA200857F52 /* NSString+Hashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C04A9221077B3100E7AF79 /* LzmaSDKObjCMutableItem.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474121071CA6002211EE /* LzmaSDKObjCMutableItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C04A9321077B3100E7AF79 /* LzmaSDKObjCTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474421071CA6002211EE /* LzmaSDKObjCTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C04A9421077B3100E7AF79 /* LzmaSDKObjCWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF473221071CA6002211EE /* LzmaSDKObjCWriter.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C04A9621077B3100E7AF79 /* LzmaSDKObjCExtern.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF473D21071CA6002211EE /* LzmaSDKObjCExtern.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C04A9721077B3100E7AF79 /* LzmaSDKObjCItem.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF473E21071CA6002211EE /* LzmaSDKObjCItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C04A9921077B3100E7AF79 /* LzmaSDKObjCBufferProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = B3AF474321071CA6002211EE /* LzmaSDKObjCBufferProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C04A9A21077B3100E7AF79 /* OESQLiteDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D1E2106B4D600DDEBD6 /* OESQLiteDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C04A9C21077B3100E7AF79 /* MethodProps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46BA21071CA6002211EE /* MethodProps.cpp */; };
-		B3C04A9D21077B3100E7AF79 /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = B3579D202106B4D600DDEBD6 /* OESQLiteDatabase.m */; };
-		B3C04A9E21077B3100E7AF79 /* CreateCoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46D121071CA6002211EE /* CreateCoder.cpp */; };
-		B3C04A9F21077B3100E7AF79 /* PVCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D312106B4D700DDEBD6 /* PVCore.swift */; };
-		B3C04AA021077B3100E7AF79 /* ByteSwap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466821071CA6002211EE /* ByteSwap.cpp */; };
-		B3C04AA121077B3100E7AF79 /* Sha256Reg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF461B21071CA5002211EE /* Sha256Reg.cpp */; };
-		B3C04AA221077B3100E7AF79 /* InOutTempBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46C221071CA6002211EE /* InOutTempBuffer.cpp */; };
-		B3C04AA321077B3100E7AF79 /* BcjCoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466421071CA6002211EE /* BcjCoder.cpp */; };
-		B3C04AA421077B3100E7AF79 /* PpmdRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466B21071CA6002211EE /* PpmdRegister.cpp */; };
-		B3C04AA521077B3100E7AF79 /* LzmaSDKObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF473421071CA6002211EE /* LzmaSDKObjC.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04AA621077B3100E7AF79 /* PVFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D302106B4D700DDEBD6 /* PVFile.swift */; };
-		B3C04AA721077B3100E7AF79 /* UIImage+Scaling.m in Sources */ = {isa = PBXBuildFile; fileRef = B3274E662106BAF500857F52 /* UIImage+Scaling.m */; };
-		B3C04AA821077B3100E7AF79 /* OutBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46AF21071CA6002211EE /* OutBuffer.cpp */; };
-		B3C04AA921077B3100E7AF79 /* LzmaSDKObjCFileDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF474021071CA6002211EE /* LzmaSDKObjCFileDecoder.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04AAA21077B3100E7AF79 /* DirectoryWatcher2.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D332106B4D700DDEBD6 /* DirectoryWatcher2.swift */; };
-		B3C04AAB21077B3100E7AF79 /* Lzma2Register.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF465E21071CA5002211EE /* Lzma2Register.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04AAC21077B3100E7AF79 /* NSData+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B3579D372106B4D700DDEBD6 /* NSData+Hashing.m */; };
-		B3C04AAD21077B3100E7AF79 /* CopyCoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466021071CA5002211EE /* CopyCoder.cpp */; };
-		B3C04AAE21077B3100E7AF79 /* RandGen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF464A21071CA5002211EE /* RandGen.cpp */; };
-		B3C04AAF21077B3100E7AF79 /* Bcj2Coder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466A21071CA6002211EE /* Bcj2Coder.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04AB021077B3100E7AF79 /* MyAes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF464B21071CA5002211EE /* MyAes.cpp */; };
-		B3C04AB121077B3100E7AF79 /* RomDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D1F2106B4D600DDEBD6 /* RomDatabase.swift */; };
-		B3C04AB221077B3100E7AF79 /* XzCrc64Opt.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF472621071CA6002211EE /* XzCrc64Opt.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04AB321077B3100E7AF79 /* Bcj2.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46EA21071CA6002211EE /* Bcj2.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04AB421077B3100E7AF79 /* LzmaHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF468721071CA6002211EE /* LzmaHandler.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04AB521077B3100E7AF79 /* LzmaDec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF470321071CA6002211EE /* LzmaDec.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04AB621077B3100E7AF79 /* FilterCoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46B221071CA6002211EE /* FilterCoder.cpp */; };
-		B3C04AB721077B3100E7AF79 /* Bcj2Register.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF465721071CA5002211EE /* Bcj2Register.cpp */; };
-		B3C04AB821077B3100E7AF79 /* 7zEncode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF469B21071CA6002211EE /* 7zEncode.cpp */; };
-		B3C04AB921077B3100E7AF79 /* UTI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D252106B4D600DDEBD6 /* UTI.swift */; };
-		B3C04ABA21077B3100E7AF79 /* Bra86.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46F621071CA6002211EE /* Bra86.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04ABB21077B3100E7AF79 /* Bra.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46F421071CA6002211EE /* Bra.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04ABC21077B3100E7AF79 /* LzmaSDKObjCWriter.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF474921071CA6002211EE /* LzmaSDKObjCWriter.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04ABD21077B3100E7AF79 /* PVBIOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D272106B4D700DDEBD6 /* PVBIOS.swift */; };
-		B3C04ABE21077B3100E7AF79 /* 7zAes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF464F21071CA5002211EE /* 7zAes.cpp */; };
-		B3C04ABF21077B3100E7AF79 /* LzmaSDKObjCMutableItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF474A21071CA6002211EE /* LzmaSDKObjCMutableItem.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04AC021077B3100E7AF79 /* LzFind.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46EC21071CA6002211EE /* LzFind.c */; };
-		B3C04AC121077B3100E7AF79 /* LzmaDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466721071CA6002211EE /* LzmaDecoder.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04AC221077B3100E7AF79 /* ImportCandidateFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E852106BFD000857F52 /* ImportCandidateFile.swift */; };
-		B3C04AC321077B3100E7AF79 /* LzmaSDKObjCOpenCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF474C21071CA6002211EE /* LzmaSDKObjCOpenCallback.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04AC421077B3100E7AF79 /* 7zAesRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF464821071CA5002211EE /* 7zAesRegister.cpp */; };
-		B3C04AC521077B3100E7AF79 /* PVMediaCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D222106B4D600DDEBD6 /* PVMediaCache.swift */; };
-		B3C04AC621077B3100E7AF79 /* StringConvert.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF463921071CA5002211EE /* StringConvert.cpp */; };
-		B3C04AC721077B3100E7AF79 /* BcjRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF465B21071CA5002211EE /* BcjRegister.cpp */; };
-		B3C04AC821077B3100E7AF79 /* LockedStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46BB21071CA6002211EE /* LockedStream.cpp */; };
-		B3C04AC921077B3100E7AF79 /* NSString+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B3274E622106BAA200857F52 /* NSString+Hashing.m */; };
-		B3C04ACA21077B3100E7AF79 /* StreamObjects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46CC21071CA6002211EE /* StreamObjects.cpp */; };
-		B3C04ACC21077B3100E7AF79 /* BraIA64.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF470F21071CA6002211EE /* BraIA64.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04ACD21077B3100E7AF79 /* NSFileManager+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B3274E7C2106BD7500857F52 /* NSFileManager+Hashing.m */; };
-		B3C04ACE21077B3100E7AF79 /* 7zDecode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46A221071CA6002211EE /* 7zDecode.cpp */; };
-		B3C04ACF21077B3100E7AF79 /* XzIn.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46FA21071CA6002211EE /* XzIn.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04AD021077B3100E7AF79 /* 7zUpdate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF469C21071CA6002211EE /* 7zUpdate.cpp */; };
-		B3C04AD121077B3100E7AF79 /* PVGame+Spotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D2A2106B4D700DDEBD6 /* PVGame+Spotlight.swift */; };
-		B3C04AD221077B3100E7AF79 /* 7zOut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF469A21071CA6002211EE /* 7zOut.cpp */; };
-		B3C04AD321077B3100E7AF79 /* PVGame+BoxArt.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D2E2106B4D700DDEBD6 /* PVGame+BoxArt.swift */; };
-		B3C04AD421077B3100E7AF79 /* 7zHeader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF468F21071CA6002211EE /* 7zHeader.cpp */; };
-		B3C04AD521077B3100E7AF79 /* Xz.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF472721071CA6002211EE /* Xz.c */; };
-		B3C04AD621077B3100E7AF79 /* MyString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF462721071CA5002211EE /* MyString.cpp */; };
-		B3C04AD721077B3100E7AF79 /* ItemNameUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF468021071CA6002211EE /* ItemNameUtils.cpp */; };
-		B3C04AD821077B3100E7AF79 /* Lzma2DecMt.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46FC21071CA6002211EE /* Lzma2DecMt.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04AD921077B3100E7AF79 /* LzmaSDKObjCFileEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF475021071CA6002211EE /* LzmaSDKObjCFileEncoder.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04ADA21077B3100E7AF79 /* LzmaSDKObjCExtractCallback.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF475421071CA6002211EE /* LzmaSDKObjCExtractCallback.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04ADB21077B3100E7AF79 /* DllExports2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF467421071CA6002211EE /* DllExports2.cpp */; };
-		B3C04ADC21077B3100E7AF79 /* 7zCrcOpt.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF472821071CA6002211EE /* 7zCrcOpt.c */; };
-		B3C04ADD21077B3100E7AF79 /* 7zHandlerOut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF469621071CA6002211EE /* 7zHandlerOut.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04ADE21077B3100E7AF79 /* Bcj2Enc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF472421071CA6002211EE /* Bcj2Enc.c */; };
-		B3C04ADF21077B3100E7AF79 /* LzmaSDKObjCReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF473F21071CA6002211EE /* LzmaSDKObjCReader.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04AE021077B3100E7AF79 /* PVRecentGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D2F2106B4D700DDEBD6 /* PVRecentGame.swift */; };
-		B3C04AE121077B3100E7AF79 /* Ppmd7Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46E421071CA6002211EE /* Ppmd7Dec.c */; };
-		B3C04AE221077B3100E7AF79 /* PVSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D292106B4D700DDEBD6 /* PVSystem.swift */; };
-		B3C04AE321077B3100E7AF79 /* PpmdEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466F21071CA6002211EE /* PpmdEncoder.cpp */; };
-		B3C04AE421077B3100E7AF79 /* LzmaSDKObjCUpdateCallback.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF473521071CA6002211EE /* LzmaSDKObjCUpdateCallback.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04AE521077B3100E7AF79 /* PVLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D282106B4D700DDEBD6 /* PVLibrary.swift */; };
-		B3C04AE721077B3100E7AF79 /* LzmaEnc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46E321071CA6002211EE /* LzmaEnc.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04AE821077B3100E7AF79 /* XzDec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46E821071CA6002211EE /* XzDec.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04AE921077B3100E7AF79 /* GameImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D342106B4D700DDEBD6 /* GameImporter.swift */; };
-		B3C04AEA21077B3100E7AF79 /* StringToInt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF461C21071CA5002211EE /* StringToInt.cpp */; };
-		B3C04AEB21077B3100E7AF79 /* StreamUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46B721071CA6002211EE /* StreamUtils.cpp */; };
-		B3C04AEC21077B3100E7AF79 /* XzCrc64Reg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF463221071CA5002211EE /* XzCrc64Reg.cpp */; };
-		B3C04AED21077B3100E7AF79 /* VirtThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46AB21071CA6002211EE /* VirtThread.cpp */; };
-		B3C04AEE21077B3100E7AF79 /* CWrappers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46C321071CA6002211EE /* CWrappers.cpp */; };
-		B3C04AEF21077B3100E7AF79 /* HandlerOut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF467B21071CA6002211EE /* HandlerOut.cpp */; };
-		B3C04AF021077B3100E7AF79 /* CrcReg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF463821071CA5002211EE /* CrcReg.cpp */; };
-		B3C04AF121077B3100E7AF79 /* Ppmd7.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46F221071CA6002211EE /* Ppmd7.c */; };
-		B3C04AF221077B3100E7AF79 /* LzmaSDKObjCInFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF474D21071CA6002211EE /* LzmaSDKObjCInFile.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04AF321077B3100E7AF79 /* Lzma2Decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF465621071CA5002211EE /* Lzma2Decoder.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04AF421077B3100E7AF79 /* LzmaSDKObjCOutFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF474E21071CA6002211EE /* LzmaSDKObjCOutFile.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04AF521077B3100E7AF79 /* PVGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D2B2106B4D700DDEBD6 /* PVGame.swift */; };
-		B3C04AF621077B3100E7AF79 /* 7zIn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF469721071CA6002211EE /* 7zIn.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04AF721077B3100E7AF79 /* 7zFolderInStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF468B21071CA6002211EE /* 7zFolderInStream.cpp */; };
-		B3C04AF821077B3100E7AF79 /* CodecExports.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF465221071CA5002211EE /* CodecExports.cpp */; };
-		B3C04AF921077B3100E7AF79 /* LzmaSDKObjCItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF475521071CA6002211EE /* LzmaSDKObjCItem.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04AFA21077B3100E7AF79 /* AesOpt.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF471E21071CA6002211EE /* AesOpt.c */; };
-		B3C04AFB21077B3100E7AF79 /* 7zStream.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF471121071CA6002211EE /* 7zStream.c */; };
-		B3C04AFC21077B3100E7AF79 /* LzmaEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466D21071CA6002211EE /* LzmaEncoder.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04AFD21077B3100E7AF79 /* LzmaSDKObjCBaseCoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF474F21071CA6002211EE /* LzmaSDKObjCBaseCoder.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04AFE21077B3100E7AF79 /* 7zHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF468C21071CA6002211EE /* 7zHandler.cpp */; };
-		B3C04AFF21077B3100E7AF79 /* Aes.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46E521071CA6002211EE /* Aes.c */; };
-		B3C04B0021077B3100E7AF79 /* Lzma2Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46E121071CA6002211EE /* Lzma2Dec.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04B0121077B3100E7AF79 /* 7zRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46A421071CA6002211EE /* 7zRegister.cpp */; };
-		B3C04B0221077B3100E7AF79 /* Wildcard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF462B21071CA5002211EE /* Wildcard.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04B0321077B3100E7AF79 /* XzCrc64.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF470D21071CA6002211EE /* XzCrc64.c */; };
-		B3C04B0421077B3100E7AF79 /* PropVariantConv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46DA21071CA6002211EE /* PropVariantConv.cpp */; };
-		B3C04B0521077B3100E7AF79 /* LimitedStreams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46BF21071CA6002211EE /* LimitedStreams.cpp */; };
-		B3C04B0621077B3100E7AF79 /* ArchiveExports.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF467321071CA6002211EE /* ArchiveExports.cpp */; };
-		B3C04B0721077B3100E7AF79 /* C_FileIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF462821071CA5002211EE /* C_FileIO.cpp */; };
-		B3C04B0821077B3100E7AF79 /* IntToString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF462A21071CA5002211EE /* IntToString.cpp */; };
-		B3C04B0921077B3100E7AF79 /* MyWindows.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF463C21071CA5002211EE /* MyWindows.cpp */; };
-		B3C04B0A21077B3100E7AF79 /* LzmaSDKObjCExtern.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF475121071CA6002211EE /* LzmaSDKObjCExtern.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04B0B21077B3100E7AF79 /* PVImageFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E832106BF2F00857F52 /* PVImageFile.swift */; };
-		B3C04B0C21077B3100E7AF79 /* Ppmd7Enc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF470521071CA6002211EE /* Ppmd7Enc.c */; };
-		B3C04B0D21077B3100E7AF79 /* XzEnc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46FB21071CA6002211EE /* XzEnc.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04B0E21077B3100E7AF79 /* 7zCrc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF471C21071CA6002211EE /* 7zCrc.c */; };
-		B3C04B0F21077B3100E7AF79 /* ProgressUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46AA21071CA6002211EE /* ProgressUtils.cpp */; };
-		B3C04B1021077B3100E7AF79 /* PropId.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46CF21071CA6002211EE /* PropId.cpp */; };
-		B3C04B1121077B3100E7AF79 /* PropVariant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46DF21071CA6002211EE /* PropVariant.cpp */; };
-		B3C04B1221077B3100E7AF79 /* PVEmulatorConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E5D2106BA1200857F52 /* PVEmulatorConfiguration.swift */; };
-		B3C04B1321077B3100E7AF79 /* OutStreamWithCRC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF467D21071CA6002211EE /* OutStreamWithCRC.cpp */; };
-		B3C04B1421077B3100E7AF79 /* LzFindMt.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46E621071CA6002211EE /* LzFindMt.c */; };
-		B3C04B1521077B3100E7AF79 /* LzmaSDKObjCError.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF473821071CA6002211EE /* LzmaSDKObjCError.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04B1621077B3100E7AF79 /* Time Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D242106B4D600DDEBD6 /* Time Utilities.swift */; };
-		B3C04B1721077B3100E7AF79 /* PVAppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E5E2106BA1200857F52 /* PVAppConstants.swift */; };
-		B3C04B1821077B3100E7AF79 /* Lzma2Enc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF470421071CA6002211EE /* Lzma2Enc.c */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04B1921077B3100E7AF79 /* PpmdDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466621071CA6002211EE /* PpmdDecoder.cpp */; };
-		B3C04B1A21077B3100E7AF79 /* LzmaSDKObjCBufferProcessor.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3AF473321071CA6002211EE /* LzmaSDKObjCBufferProcessor.mm */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04B1B21077B3100E7AF79 /* BranchMisc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466521071CA6002211EE /* BranchMisc.cpp */; };
-		B3C04B1C21077B3100E7AF79 /* MtCoder.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46E921071CA6002211EE /* MtCoder.c */; };
-		B3C04B1D21077B3100E7AF79 /* Sha256.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF471621071CA6002211EE /* Sha256.c */; };
-		B3C04B1E21077B3100E7AF79 /* Lzma2Encoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466221071CA5002211EE /* Lzma2Encoder.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04B1F21077B3100E7AF79 /* LzmaRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466321071CA6002211EE /* LzmaRegister.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04B2021077B3100E7AF79 /* DummyOutStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF467921071CA6002211EE /* DummyOutStream.cpp */; };
-		B3C04B2121077B3100E7AF79 /* 7zExtract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF468A21071CA6002211EE /* 7zExtract.cpp */; };
-		B3C04B2221077B3100E7AF79 /* 7zProperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF469321071CA6002211EE /* 7zProperties.cpp */; };
-		B3C04B2321077B3100E7AF79 /* Alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF470121071CA6002211EE /* Alloc.c */; };
-		B3C04B2521077B3100E7AF79 /* CpuArch.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF472221071CA6002211EE /* CpuArch.c */; };
-		B3C04B2621077B3100E7AF79 /* Delta.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF471821071CA6002211EE /* Delta.c */; };
-		B3C04B2721077B3100E7AF79 /* LzmaSDKObjCCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF473721071CA6002211EE /* LzmaSDKObjCCommon.cpp */; settings = {COMPILER_FLAGS = "-Wno-everything"; }; };
-		B3C04B2821077B3100E7AF79 /* Threads.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AF472A21071CA6002211EE /* Threads.c */; };
-		B3C04B2921077B3100E7AF79 /* FileStreams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46C621071CA6002211EE /* FileStreams.cpp */; };
-		B3C04B2A21077B3100E7AF79 /* 7zSpecStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF46A321071CA6002211EE /* 7zSpecStream.cpp */; };
-		B3C04B2B21077B3100E7AF79 /* MyAesReg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF464C21071CA5002211EE /* MyAesReg.cpp */; };
-		B3C04B2C21077B3100E7AF79 /* CopyRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF466121071CA5002211EE /* CopyRegister.cpp */; };
-		B3C04B2D21077B3100E7AF79 /* CoderMixer2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF468221071CA6002211EE /* CoderMixer2.cpp */; };
-		B3C04B2E21077B3100E7AF79 /* BranchRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AF465F21071CA5002211EE /* BranchRegister.cpp */; };
-		B3C04B2F21077B3100E7AF79 /* PVObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3274E782106BC8800857F52 /* PVObject.swift */; };
-		B3C04B3021077B3100E7AF79 /* PVSaveState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3579D2D2106B4D700DDEBD6 /* PVSaveState.swift */; };
-		B3C04B3F21077B3100E7AF79 /* openvgdb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47DC21072AD3002211EE /* openvgdb.sqlite */; };
-		B3C04B4021077B3100E7AF79 /* systems.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47DD21072AD3002211EE /* systems.plist */; };
 		B3C04B642107867200E7AF79 /* PVLibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C04B632107867200E7AF79 /* PVLibraryTests.swift */; };
 		B3C04B662107867200E7AF79 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */; };
 		B3C04B6F21078D2500E7AF79 /* PVLibrary.framework in Copy Framework */ = {isa = PBXBuildFile; fileRef = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C04B982107991200E7AF79 /* PVEmulatorConfiguration+Frameworks.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C04B972107991100E7AF79 /* PVEmulatorConfiguration+Frameworks.swift */; };
-		B3C04B992107991200E7AF79 /* PVEmulatorConfiguration+Frameworks.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C04B972107991100E7AF79 /* PVEmulatorConfiguration+Frameworks.swift */; };
 		B3CDEEB021D493AC000C55F7 /* GameImporter2.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEAF21D493AC000C55F7 /* GameImporter2.swift */; };
-		B3CDEEB121D493AC000C55F7 /* GameImporter2.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEAF21D493AC000C55F7 /* GameImporter2.swift */; };
 		B3CDEEB321D497CD000C55F7 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEB221D497CD000C55F7 /* Package.swift */; };
-		B3CDEEB421D497CD000C55F7 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEB221D497CD000C55F7 /* Package.swift */; };
 		B3CDEECB21D4CF61000C55F7 /* DirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEECA21D4CF61000C55F7 /* DirectoryWatcher.swift */; };
-		B3CDEECC21D4CF61000C55F7 /* DirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEECA21D4CF61000C55F7 /* DirectoryWatcher.swift */; };
+		B3FAC8DE292B1DDD005E8B11 /* PVPatreon.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FAC8DD292B1DDD005E8B11 /* PVPatreon.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3FAC8E9292B1E1B005E8B11 /* Patron.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAC8E3292B1E17005E8B11 /* Patron.swift */; };
+		B3FAC8EA292B1E1B005E8B11 /* Campaign.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAC8E4292B1E17005E8B11 /* Campaign.swift */; };
+		B3FAC8EB292B1E1B005E8B11 /* Benefit.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAC8E5292B1E18005E8B11 /* Benefit.swift */; };
+		B3FAC8EC292B1E1B005E8B11 /* PatreonAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAC8E6292B1E18005E8B11 /* PatreonAccount.swift */; };
+		B3FAC8ED292B1E1B005E8B11 /* PatreonAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAC8E7292B1E18005E8B11 /* PatreonAPI.swift */; };
+		B3FAC8EE292B1E1B005E8B11 /* Tier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAC8E8292B1E1A005E8B11 /* Tier.swift */; };
+		B3FAC8EF292B1E1C005E8B11 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */; };
+		B3FAC8F0292B1E1C005E8B11 /* PVLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3FAC8F6292B2551005E8B11 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAC8F5292B2551005E8B11 /* Keychain.swift */; };
+		B3FAC8F9292B26EA005E8B11 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = B3FAC8F8292B26EA005E8B11 /* KeychainAccess */; };
+		B3FAC8FB292B3155005E8B11 /* PVUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAC8FA292B3155005E8B11 /* PVUser.swift */; };
+		B3FAC8FD292B3240005E8B11 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAC8FC292B3240005E8B11 /* User.swift */; };
 		CF17109D2585F97000258602 /* PVCheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF17109C2585F97000258602 /* PVCheats.swift */; };
-		CF17109E2585F97000258602 /* PVCheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF17109C2585F97000258602 /* PVCheats.swift */; };
 		CF1710A12585FA3F00258602 /* Cheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1710A02585FA3F00258602 /* Cheats.swift */; };
-		CF1710A22585FA3F00258602 /* Cheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1710A02585FA3F00258602 /* Cheats.swift */; };
-		EF7D4AA527B44FA7002528B7 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = EF7D4AA427B44FA7002528B7 /* RxDataSources */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -637,20 +239,16 @@
 			remoteGlobalIDString = B3579D0E2106B11D00DDEBD6;
 			remoteInfo = PVLibrary;
 		};
+		B3FAC8F1292B1E1C005E8B11 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3579D062106B11D00DDEBD6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3579D0E2106B11D00DDEBD6;
+			remoteInfo = PVLibrary;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		B305F086276B5229003AE510 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				B305F085276B5229003AE510 /* PVSupport.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C04B6C21078CD900E7AF79 /* Copy Framework */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -662,6 +260,17 @@
 			name = "Copy Framework";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3FAC8F3292B1E1C005E8B11 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B3FAC8F0292B1E1C005E8B11 /* PVLibrary.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -671,7 +280,6 @@
 		11AFB2B224867482000A3922 /* PVGameLibrary+Migration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGameLibrary+Migration.swift"; sourceTree = "<group>"; };
 		B305EF9E276B50DF003AE510 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/iOSSupport/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
 		B305EFA0276B5112003AE510 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.2.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
-		B305F081276B512D003AE510 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B305F082276B5152003AE510 /* PVLibrary-tvOS copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PVLibrary-tvOS copy-Info.plist"; path = "/Users/jmattiello/Workspace/Provenance/Provenance/PVLibrary/PVLibrary-tvOS copy-Info.plist"; sourceTree = "<absolute>"; };
 		B305F083276B5229003AE510 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3067F4A2106B5A20091437F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -735,6 +343,8 @@
 		B3579D342106B4D700DDEBD6 /* GameImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameImporter.swift; sourceTree = "<group>"; };
 		B3579D362106B4D700DDEBD6 /* NSData+Hashing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSData+Hashing.h"; sourceTree = "<group>"; };
 		B3579D372106B4D700DDEBD6 /* NSData+Hashing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSData+Hashing.m"; sourceTree = "<group>"; };
+		B364D4BE2870E80100B93A4B /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B364D4C22870E81200B93A4B /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B378226D21D409F20077E86F /* Extractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extractor.swift; sourceTree = "<group>"; };
 		B378227921D41E1C0077E86F /* SavePackage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavePackage.swift; sourceTree = "<group>"; };
 		B378227C21D41E310077E86F /* GamePackage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamePackage.swift; sourceTree = "<group>"; };
@@ -1064,7 +674,6 @@
 		B3AF6FBC219160BF000FA7F9 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		B3AF6FBE219160C4000FA7F9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3AF701521916CF3000FA7F9 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3C04B4421077B3100E7AF79 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C04B612107867200E7AF79 /* PVLibraryTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PVLibraryTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C04B632107867200E7AF79 /* PVLibraryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVLibraryTests.swift; sourceTree = "<group>"; };
 		B3C04B652107867200E7AF79 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -1072,29 +681,22 @@
 		B3CDEEAF21D493AC000C55F7 /* GameImporter2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameImporter2.swift; sourceTree = "<group>"; };
 		B3CDEEB221D497CD000C55F7 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		B3CDEECA21D4CF61000C55F7 /* DirectoryWatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DirectoryWatcher.swift; sourceTree = "<group>"; };
+		B3FAC8DB292B1DDD005E8B11 /* PVPatreon.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVPatreon.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3FAC8DD292B1DDD005E8B11 /* PVPatreon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVPatreon.h; sourceTree = "<group>"; };
+		B3FAC8E3292B1E17005E8B11 /* Patron.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Patron.swift; path = ../../../PVPatreon/Patron.swift; sourceTree = "<group>"; };
+		B3FAC8E4292B1E17005E8B11 /* Campaign.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Campaign.swift; path = ../../../PVPatreon/Campaign.swift; sourceTree = "<group>"; };
+		B3FAC8E5292B1E18005E8B11 /* Benefit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Benefit.swift; path = ../../../PVPatreon/Benefit.swift; sourceTree = "<group>"; };
+		B3FAC8E6292B1E18005E8B11 /* PatreonAccount.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PatreonAccount.swift; path = ../../../PVPatreon/PatreonAccount.swift; sourceTree = "<group>"; };
+		B3FAC8E7292B1E18005E8B11 /* PatreonAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PatreonAPI.swift; path = ../../../PVPatreon/PatreonAPI.swift; sourceTree = "<group>"; };
+		B3FAC8E8292B1E1A005E8B11 /* Tier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Tier.swift; path = ../../../PVPatreon/Tier.swift; sourceTree = "<group>"; };
+		B3FAC8F5292B2551005E8B11 /* Keychain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
+		B3FAC8FA292B3155005E8B11 /* PVUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PVUser.swift; path = PVLibrary/RealmPlatform/Entities/PVUser.swift; sourceTree = SOURCE_ROOT; };
+		B3FAC8FC292B3240005E8B11 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		CF17109C2585F97000258602 /* PVCheats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVCheats.swift; sourceTree = "<group>"; };
 		CF1710A02585FA3F00258602 /* Cheats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cheats.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		B305F06F276B512D003AE510 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B305F084276B5229003AE510 /* PVSupport.framework in Frameworks */,
-				B305F070276B512D003AE510 /* SwiftUI.framework in Frameworks */,
-				B3014FA627B487FD006AC79B /* Differentiator in Frameworks */,
-				B305F071276B512D003AE510 /* SQLite in Frameworks */,
-				B305F072276B512D003AE510 /* RxCocoa in Frameworks */,
-				B305F074276B512D003AE510 /* RxRealm in Frameworks */,
-				B305F075276B512D003AE510 /* Foundation.framework in Frameworks */,
-				B305F076276B512D003AE510 /* RxSwift in Frameworks */,
-				B305F077276B512D003AE510 /* CoreServices.framework in Frameworks */,
-				B305F078276B512D003AE510 /* CoreGraphics.framework in Frameworks */,
-				B305F079276B512D003AE510 /* ZipArchive in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3579D0C2106B11D00DDEBD6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1106,26 +708,10 @@
 				B3067F742106B9130091437F /* CoreGraphics.framework in Frameworks */,
 				1180B31E2492A9BB00636C8A /* CoreServices.framework in Frameworks */,
 				B3067F4B2106B5A30091437F /* Foundation.framework in Frameworks */,
+				B364D4BF2870E80100B93A4B /* PVLibRetro.framework in Frameworks */,
 				B37B4DF227B2292F0068F8D1 /* RxDataSources in Frameworks */,
 				B336B90626B39ABA00960A81 /* RxRealm in Frameworks */,
 				B3A3204127209B4300F338F6 /* ZipArchive in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3C04B3121077B3100E7AF79 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B305EFA1276B5112003AE510 /* SwiftUI.framework in Frameworks */,
-				B336B91126B39BDA00960A81 /* SQLite in Frameworks */,
-				B324C2ED219192FF009F4EDC /* PVSupport.framework in Frameworks */,
-				B3014FA427B487F0006AC79B /* Differentiator in Frameworks */,
-				B336B90C26B39ACB00960A81 /* RxRealm in Frameworks */,
-				EF7D4AA527B44FA7002528B7 /* RxDataSources in Frameworks */,
-				B3AF6FBF219160C4000FA7F9 /* Foundation.framework in Frameworks */,
-				1180B3202492A9CB00636C8A /* CoreServices.framework in Frameworks */,
-				B3AF6FBD219160BF000FA7F9 /* CoreGraphics.framework in Frameworks */,
-				B3128066274C658E00550720 /* ZipArchive in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1137,12 +723,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3FAC8D8292B1DDD005E8B11 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3FAC8F9292B26EA005E8B11 /* KeychainAccess in Frameworks */,
+				B3FAC8EF292B1E1C005E8B11 /* PVLibrary.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		B3067F492106B5A20091437F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B364D4C22870E81200B93A4B /* PVLibRetro.framework */,
+				B364D4BE2870E80100B93A4B /* PVLibRetro.framework */,
 				B305F083276B5229003AE510 /* PVSupport.framework */,
 				B305EF9E276B50DF003AE510 /* SwiftUI.framework */,
 				B305EFA0276B5112003AE510 /* SwiftUI.framework */,
@@ -1177,6 +774,7 @@
 				B354E789219A76C80041F971 /* SaveState.swift */,
 				B354E7C8219A7E470041F971 /* System.swift */,
 				CF1710A02585FA3F00258602 /* Cheats.swift */,
+				B3FAC8FC292B3240005E8B11 /* User.swift */,
 			);
 			path = Domain;
 			sourceTree = "<group>";
@@ -1206,6 +804,7 @@
 				B354E7AA219A78600041F971 /* Files */,
 				B3579D272106B4D700DDEBD6 /* PVBIOS.swift */,
 				B3579D282106B4D700DDEBD6 /* PVLibrary.swift */,
+				B3FAC8FA292B3155005E8B11 /* PVUser.swift */,
 				B3579D292106B4D700DDEBD6 /* PVSystem.swift */,
 				B3579D2B2106B4D700DDEBD6 /* PVGame.swift */,
 				B3579D2A2106B4D700DDEBD6 /* PVGame+Spotlight.swift */,
@@ -1268,6 +867,7 @@
 				B317380127841959002D3ACD /* Build.xcconfig */,
 				B3579D112106B11D00DDEBD6 /* PVLibrary */,
 				B3C04B622107867200E7AF79 /* Tests */,
+				B3FAC8DC292B1DDD005E8B11 /* PVPatreon */,
 				B3579D102106B11D00DDEBD6 /* Products */,
 				B3067F492106B5A20091437F /* Frameworks */,
 				B305F082276B5152003AE510 /* PVLibrary-tvOS copy-Info.plist */,
@@ -1278,9 +878,8 @@
 			isa = PBXGroup;
 			children = (
 				B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */,
-				B3C04B4421077B3100E7AF79 /* PVLibrary.framework */,
 				B3C04B612107867200E7AF79 /* PVLibraryTests.xctest */,
-				B305F081276B512D003AE510 /* PVLibrary.framework */,
+				B3FAC8DB292B1DDD005E8B11 /* PVPatreon.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1883,30 +1482,33 @@
 			path = Tests;
 			sourceTree = "<group>";
 		};
+		B3FAC8DC292B1DDD005E8B11 /* PVPatreon */ = {
+			isa = PBXGroup;
+			children = (
+				B3FAC8F4292B2551005E8B11 /* Keychain */,
+				B3FAC8E5292B1E18005E8B11 /* Benefit.swift */,
+				B3FAC8E4292B1E17005E8B11 /* Campaign.swift */,
+				B3FAC8E6292B1E18005E8B11 /* PatreonAccount.swift */,
+				B3FAC8E7292B1E18005E8B11 /* PatreonAPI.swift */,
+				B3FAC8E3292B1E17005E8B11 /* Patron.swift */,
+				B3FAC8E8292B1E1A005E8B11 /* Tier.swift */,
+				B3FAC8DD292B1DDD005E8B11 /* PVPatreon.h */,
+			);
+			path = PVPatreon;
+			sourceTree = "<group>";
+		};
+		B3FAC8F4292B2551005E8B11 /* Keychain */ = {
+			isa = PBXGroup;
+			children = (
+				B3FAC8F5292B2551005E8B11 /* Keychain.swift */,
+			);
+			name = Keychain;
+			path = ../../../PVPatreon/Keychain;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		B305EFAC276B512D003AE510 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B305EFAD276B512D003AE510 /* NSData+Hashing.h in Headers */,
-				B305EFAE276B512D003AE510 /* UIImage+Scaling.h in Headers */,
-				B305EFAF276B512D003AE510 /* PVLibrary.h in Headers */,
-				B305EFB0276B512D003AE510 /* NSFileManager+Hashing.h in Headers */,
-				B305EFB1276B512D003AE510 /* NSString+Hashing.h in Headers */,
-				B305EFB2276B512D003AE510 /* LzmaSDKObjCMutableItem.h in Headers */,
-				B305EFB3276B512D003AE510 /* LzmaSDKObjCTypes.h in Headers */,
-				B305EFB4276B512D003AE510 /* LzmaSDKObjC.h in Headers */,
-				B305EFB5276B512D003AE510 /* LzmaSDKObjCWriter.h in Headers */,
-				B305EFB6276B512D003AE510 /* LzmaSDKObjCExtern.h in Headers */,
-				B305EFB7276B512D003AE510 /* LzmaSDKObjCReader.h in Headers */,
-				B305EFB8276B512D003AE510 /* LzmaSDKObjCItem.h in Headers */,
-				B305EFB9276B512D003AE510 /* LzmaSDKObjCBufferProcessor.h in Headers */,
-				B305EFBA276B512D003AE510 /* OESQLiteDatabase.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3579D0A2106B11D00DDEBD6 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -1928,60 +1530,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3C04A8C21077B3100E7AF79 /* Headers */ = {
+		B3FAC8D6292B1DDD005E8B11 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3C04A8D21077B3100E7AF79 /* NSData+Hashing.h in Headers */,
-				B3C04A8E21077B3100E7AF79 /* UIImage+Scaling.h in Headers */,
-				B3C04A8F21077B3100E7AF79 /* PVLibrary.h in Headers */,
-				B3C04A9021077B3100E7AF79 /* NSFileManager+Hashing.h in Headers */,
-				B3C04A9121077B3100E7AF79 /* NSString+Hashing.h in Headers */,
-				B3C04A9221077B3100E7AF79 /* LzmaSDKObjCMutableItem.h in Headers */,
-				B3C04A9321077B3100E7AF79 /* LzmaSDKObjCTypes.h in Headers */,
-				B31117AF218EB26000C495A2 /* LzmaSDKObjC.h in Headers */,
-				B3C04A9421077B3100E7AF79 /* LzmaSDKObjCWriter.h in Headers */,
-				B3C04A9621077B3100E7AF79 /* LzmaSDKObjCExtern.h in Headers */,
-				B31117AD218EB24400C495A2 /* LzmaSDKObjCReader.h in Headers */,
-				B3C04A9721077B3100E7AF79 /* LzmaSDKObjCItem.h in Headers */,
-				B3C04A9921077B3100E7AF79 /* LzmaSDKObjCBufferProcessor.h in Headers */,
-				B3C04A9A21077B3100E7AF79 /* OESQLiteDatabase.h in Headers */,
+				B3FAC8DE292B1DDD005E8B11 /* PVPatreon.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		B305EFA2276B512D003AE510 /* PVLibrary-watchOS */ = {
+		B3579D0E2106B11D00DDEBD6 /* PVLibrary */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B305F07D276B512D003AE510 /* Build configuration list for PBXNativeTarget "PVLibrary-watchOS" */;
-			buildPhases = (
-				B305EFAC276B512D003AE510 /* Headers */,
-				B305EFBB276B512D003AE510 /* Sources */,
-				B305F06F276B512D003AE510 /* Frameworks */,
-				B305F07A276B512D003AE510 /* Resources */,
-				B305F086276B5229003AE510 /* Embed Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "PVLibrary-watchOS";
-			packageProductDependencies = (
-				B305EFA3276B512D003AE510 /* RxSwift */,
-				B305EFA5276B512D003AE510 /* RxCocoa */,
-				B305EFA6276B512D003AE510 /* RxRealm */,
-				B305EFA8276B512D003AE510 /* SQLite */,
-				B305EFAA276B512D003AE510 /* ZipArchive */,
-				B3014FA527B487FD006AC79B /* Differentiator */,
-			);
-			productName = PVLibrary;
-			productReference = B305F081276B512D003AE510 /* PVLibrary.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		B3579D0E2106B11D00DDEBD6 /* PVLibrary-iOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B3579D172106B11D00DDEBD6 /* Build configuration list for PBXNativeTarget "PVLibrary-iOS" */;
+			buildConfigurationList = B3579D172106B11D00DDEBD6 /* Build configuration list for PBXNativeTarget "PVLibrary" */;
 			buildPhases = (
 				B3579D0A2106B11D00DDEBD6 /* Headers */,
 				B3579D0B2106B11D00DDEBD6 /* Sources */,
@@ -1992,7 +1554,7 @@
 			);
 			dependencies = (
 			);
-			name = "PVLibrary-iOS";
+			name = PVLibrary;
 			packageProductDependencies = (
 				B336B90526B39ABA00960A81 /* RxRealm */,
 				B336B90E26B39BCF00960A81 /* SQLite */,
@@ -2002,31 +1564,6 @@
 			);
 			productName = PVLibrary;
 			productReference = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		B3C04A8B21077B3100E7AF79 /* PVLibrary-tvOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B3C04B4121077B3100E7AF79 /* Build configuration list for PBXNativeTarget "PVLibrary-tvOS" */;
-			buildPhases = (
-				B3C04A8C21077B3100E7AF79 /* Headers */,
-				B3C04A9B21077B3100E7AF79 /* Sources */,
-				B3C04B3121077B3100E7AF79 /* Frameworks */,
-				B3C04B3E21077B3100E7AF79 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "PVLibrary-tvOS";
-			packageProductDependencies = (
-				B336B90B26B39ACB00960A81 /* RxRealm */,
-				B336B91026B39BDA00960A81 /* SQLite */,
-				B3128065274C658E00550720 /* ZipArchive */,
-				EF7D4AA427B44FA7002528B7 /* RxDataSources */,
-				B3014FA327B487F0006AC79B /* Differentiator */,
-			);
-			productName = PVLibrary;
-			productReference = B3C04B4421077B3100E7AF79 /* PVLibrary.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		B3C04B602107867200E7AF79 /* PVLibraryTests */ = {
@@ -2047,6 +1584,29 @@
 			productName = PVLibraryTests;
 			productReference = B3C04B612107867200E7AF79 /* PVLibraryTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		B3FAC8DA292B1DDD005E8B11 /* PVPatreon */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3FAC8E2292B1DDD005E8B11 /* Build configuration list for PBXNativeTarget "PVPatreon" */;
+			buildPhases = (
+				B3FAC8D6292B1DDD005E8B11 /* Headers */,
+				B3FAC8D7292B1DDD005E8B11 /* Sources */,
+				B3FAC8D8292B1DDD005E8B11 /* Frameworks */,
+				B3FAC8D9292B1DDD005E8B11 /* Resources */,
+				B3FAC8F3292B1E1C005E8B11 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B3FAC8F2292B1E1C005E8B11 /* PBXTargetDependency */,
+			);
+			name = PVPatreon;
+			packageProductDependencies = (
+				B3FAC8F8292B26EA005E8B11 /* KeychainAccess */,
+			);
+			productName = PVPatreon;
+			productReference = B3FAC8DB292B1DDD005E8B11 /* PVPatreon.framework */;
+			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
 
@@ -2069,6 +1629,10 @@
 						CreatedOnToolsVersion = 9.4.1;
 						LastSwiftMigration = 1020;
 					};
+					B3FAC8DA292B1DDD005E8B11 = {
+						CreatedOnToolsVersion = 14.1;
+						LastSwiftMigration = 1410;
+					};
 				};
 			};
 			buildConfigurationList = B3579D092106B11D00DDEBD6 /* Build configuration list for PBXProject "PVLibrary" */;
@@ -2085,44 +1649,26 @@
 				B336B90D26B39BCF00960A81 /* XCRemoteSwiftPackageReference "SQLite.swift" */,
 				B3A3203F27209B4300F338F6 /* XCRemoteSwiftPackageReference "ZipArchive" */,
 				B37B4DEE27B2292F0068F8D1 /* XCRemoteSwiftPackageReference "RxDataSources" */,
+				B3FAC8F7292B26EA005E8B11 /* XCRemoteSwiftPackageReference "KeychainAccess" */,
 			);
 			productRefGroup = B3579D102106B11D00DDEBD6 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B3579D0E2106B11D00DDEBD6 /* PVLibrary-iOS */,
-				B3C04A8B21077B3100E7AF79 /* PVLibrary-tvOS */,
-				B305EFA2276B512D003AE510 /* PVLibrary-watchOS */,
+				B3579D0E2106B11D00DDEBD6 /* PVLibrary */,
 				B3C04B602107867200E7AF79 /* PVLibraryTests */,
+				B3FAC8DA292B1DDD005E8B11 /* PVPatreon */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		B305F07A276B512D003AE510 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B305F07B276B512D003AE510 /* openvgdb.sqlite in Resources */,
-				B305F07C276B512D003AE510 /* systems.plist in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3579D0D2106B11D00DDEBD6 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				B3AF47DE21072AD4002211EE /* openvgdb.sqlite in Resources */,
 				B3AF47DF21072AD4002211EE /* systems.plist in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3C04B3E21077B3100E7AF79 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3C04B3F21077B3100E7AF79 /* openvgdb.sqlite in Resources */,
-				B3C04B4021077B3100E7AF79 /* systems.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2133,195 +1679,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-/* End PBXResourcesBuildPhase section */
-
-/* Begin PBXSourcesBuildPhase section */
-		B305EFBB276B512D003AE510 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
+		B3FAC8D9292B1DDD005E8B11 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B305EFBC276B512D003AE510 /* MethodProps.cpp in Sources */,
-				B305EFBD276B512D003AE510 /* OESQLiteDatabase.m in Sources */,
-				B305EFBE276B512D003AE510 /* CreateCoder.cpp in Sources */,
-				B305EFBF276B512D003AE510 /* PVCore.swift in Sources */,
-				B305EFC0276B512D003AE510 /* ByteSwap.cpp in Sources */,
-				B305EFC1276B512D003AE510 /* Sha256Reg.cpp in Sources */,
-				B305EFC2276B512D003AE510 /* InOutTempBuffer.cpp in Sources */,
-				B305EFC3276B512D003AE510 /* BcjCoder.cpp in Sources */,
-				B305EFC4276B512D003AE510 /* PpmdRegister.cpp in Sources */,
-				B305EFC5276B512D003AE510 /* PVCheats.swift in Sources */,
-				B305EFC6276B512D003AE510 /* SavePackage.swift in Sources */,
-				B305EFC7276B512D003AE510 /* LzmaSDKObjC.mm in Sources */,
-				B305EFC8276B512D003AE510 /* PVFile.swift in Sources */,
-				B305EFC9276B512D003AE510 /* UIImage+Scaling.m in Sources */,
-				B305EFCA276B512D003AE510 /* OutBuffer.cpp in Sources */,
-				B305EFCB276B512D003AE510 /* LzmaSDKObjCFileDecoder.cpp in Sources */,
-				B305EFCC276B512D003AE510 /* DirectoryWatcher2.swift in Sources */,
-				B305EFCD276B512D003AE510 /* LibrarySerializer.swift in Sources */,
-				B305EFCE276B512D003AE510 /* Lzma2Register.cpp in Sources */,
-				B305EFCF276B512D003AE510 /* NSData+Hashing.m in Sources */,
-				B305EFD0276B512D003AE510 /* CopyCoder.cpp in Sources */,
-				B305EFD1276B512D003AE510 /* RandGen.cpp in Sources */,
-				B305EFD2276B512D003AE510 /* Bcj2Coder.cpp in Sources */,
-				B305EFD3276B512D003AE510 /* MyAes.cpp in Sources */,
-				B305EFD4276B512D003AE510 /* RomDatabase.swift in Sources */,
-				B305EFD5276B512D003AE510 /* RealmRepresentable.swift in Sources */,
-				B305EFD6276B512D003AE510 /* XzCrc64Opt.c in Sources */,
-				B305EFD7276B512D003AE510 /* Bcj2.c in Sources */,
-				B305EFD8276B512D003AE510 /* LzmaHandler.cpp in Sources */,
-				B305EFD9276B512D003AE510 /* LzmaDec.c in Sources */,
-				B305EFDA276B512D003AE510 /* FileBackedConformance.swift in Sources */,
-				B305EFDB276B512D003AE510 /* FilterCoder.cpp in Sources */,
-				B305EFDC276B512D003AE510 /* Bcj2Register.cpp in Sources */,
-				B305EFDD276B512D003AE510 /* 7zEncode.cpp in Sources */,
-				B305EFDE276B512D003AE510 /* UTI.swift in Sources */,
-				B305EFDF276B512D003AE510 /* Cheats.swift in Sources */,
-				B305EFE0276B512D003AE510 /* Bra86.c in Sources */,
-				B305EFE1276B512D003AE510 /* Bra.c in Sources */,
-				B305EFE2276B512D003AE510 /* LzmaSDKObjCWriter.mm in Sources */,
-				B305EFE3276B512D003AE510 /* PVBIOS.swift in Sources */,
-				B305EFE4276B512D003AE510 /* GameImporter2.swift in Sources */,
-				B305EFE5276B512D003AE510 /* 7zAes.cpp in Sources */,
-				B305EFE6276B512D003AE510 /* LzmaSDKObjCMutableItem.mm in Sources */,
-				B305EFE7276B512D003AE510 /* LzFind.c in Sources */,
-				B305EFE8276B512D003AE510 /* LzmaDecoder.cpp in Sources */,
-				B305EFE9276B512D003AE510 /* DomainConvertibleType.swift in Sources */,
-				B305EFEA276B512D003AE510 /* ImportCandidateFile.swift in Sources */,
-				B305EFEB276B512D003AE510 /* LzmaSDKObjCOpenCallback.cpp in Sources */,
-				B305EFEC276B512D003AE510 /* 7zAesRegister.cpp in Sources */,
-				B305EFED276B512D003AE510 /* PVMediaCache.swift in Sources */,
-				B305EFEE276B512D003AE510 /* PlistDataModels.swift in Sources */,
-				B305EFEF276B512D003AE510 /* StringConvert.cpp in Sources */,
-				B305EFF0276B512D003AE510 /* BcjRegister.cpp in Sources */,
-				B305EFF1276B512D003AE510 /* LockedStream.cpp in Sources */,
-				B305EFF2276B512D003AE510 /* NSString+Hashing.m in Sources */,
-				B305EFF3276B512D003AE510 /* StreamObjects.cpp in Sources */,
-				B305EFF4276B512D003AE510 /* BraIA64.c in Sources */,
-				B305EFF5276B512D003AE510 /* NSFileManager+Hashing.m in Sources */,
-				B305EFF6276B512D003AE510 /* 7zDecode.cpp in Sources */,
-				B305EFF7276B512D003AE510 /* XzIn.c in Sources */,
-				B305EFF8276B512D003AE510 /* 7zUpdate.cpp in Sources */,
-				B305EFF9276B512D003AE510 /* PVGame+Spotlight.swift in Sources */,
-				B305EFFA276B512D003AE510 /* 7zOut.cpp in Sources */,
-				B305EFFB276B512D003AE510 /* PVGame+BoxArt.swift in Sources */,
-				B305EFFC276B512D003AE510 /* 7zHeader.cpp in Sources */,
-				B305EFFD276B512D003AE510 /* System.swift in Sources */,
-				B305EFFE276B512D003AE510 /* Xz.c in Sources */,
-				B305EFFF276B512D003AE510 /* MyString.cpp in Sources */,
-				B305F000276B512D003AE510 /* PVGameLibrary+Migration.swift in Sources */,
-				B305F001276B512D003AE510 /* ItemNameUtils.cpp in Sources */,
-				B305F002276B512D003AE510 /* LocalFile.swift in Sources */,
-				B305F003276B512D003AE510 /* Lzma2DecMt.c in Sources */,
-				B305F004276B512D003AE510 /* LzmaSDKObjCFileEncoder.cpp in Sources */,
-				B305F005276B512D003AE510 /* LzmaSDKObjCExtractCallback.mm in Sources */,
-				B305F006276B512D003AE510 /* DllExports2.cpp in Sources */,
-				B305F007276B512D003AE510 /* 7zCrcOpt.c in Sources */,
-				B305F008276B512D003AE510 /* 7zHandlerOut.cpp in Sources */,
-				B305F009276B512D003AE510 /* Bcj2Enc.c in Sources */,
-				B305F00A276B512D003AE510 /* LzmaSDKObjCReader.mm in Sources */,
-				B305F00B276B512D003AE510 /* BIOS.swift in Sources */,
-				B305F00C276B512D003AE510 /* Realm+Ext.swift in Sources */,
-				B305F00D276B512D003AE510 /* PVRecentGame.swift in Sources */,
-				B305F00E276B512D003AE510 /* Ppmd7Dec.c in Sources */,
-				B305F00F276B512D003AE510 /* PVSystem.swift in Sources */,
-				B305F010276B512D003AE510 /* PpmdEncoder.cpp in Sources */,
-				B305F011276B512D003AE510 /* LzmaSDKObjCUpdateCallback.mm in Sources */,
-				B305F012276B512D003AE510 /* PVLibrary.swift in Sources */,
-				B305F013276B512D003AE510 /* LzmaEnc.c in Sources */,
-				B305F014276B512D003AE510 /* XzDec.c in Sources */,
-				B305F015276B512D003AE510 /* Repository.swift in Sources */,
-				B305F016276B512D003AE510 /* GameImporter.swift in Sources */,
-				B305F017276B512D003AE510 /* PVEmulatorConfiguration+Frameworks.swift in Sources */,
-				B305F018276B512D003AE510 /* StringToInt.cpp in Sources */,
-				B305F019276B512D003AE510 /* Core.swift in Sources */,
-				B305F01A276B512D003AE510 /* SaveState.swift in Sources */,
-				B305F01B276B512D003AE510 /* Cache.swift in Sources */,
-				B305F01C276B512D003AE510 /* StreamUtils.cpp in Sources */,
-				B305F01D276B512D003AE510 /* XzCrc64Reg.cpp in Sources */,
-				B305F01E276B512D003AE510 /* VirtThread.cpp in Sources */,
-				B305F01F276B512D003AE510 /* PVGameLibrary.swift in Sources */,
-				B305F020276B512D003AE510 /* CWrappers.cpp in Sources */,
-				B305F021276B512D003AE510 /* HandlerOut.cpp in Sources */,
-				B305F022276B512D003AE510 /* CrcReg.cpp in Sources */,
-				B305F023276B512D003AE510 /* Ppmd7.c in Sources */,
-				B305F024276B512D003AE510 /* Protocols.swift in Sources */,
-				B305F025276B512D003AE510 /* LzmaSDKObjCInFile.cpp in Sources */,
-				B305F026276B512D003AE510 /* Lzma2Decoder.cpp in Sources */,
-				B305F027276B512D003AE510 /* LzmaSDKObjCOutFile.cpp in Sources */,
-				B305F028276B512D003AE510 /* PVGame.swift in Sources */,
-				B305F029276B512D003AE510 /* 7zIn.cpp in Sources */,
-				B305F02A276B512D003AE510 /* Game.swift in Sources */,
-				B305F02B276B512D003AE510 /* 7zFolderInStream.cpp in Sources */,
-				B305F02C276B512D003AE510 /* DirectoryWatcher.swift in Sources */,
-				B305F02D276B512D003AE510 /* CodecExports.cpp in Sources */,
-				B305F02E276B512D003AE510 /* LibrarySerializerError.swift in Sources */,
-				B305F02F276B512D003AE510 /* LzmaSDKObjCItem.mm in Sources */,
-				B305F030276B512D003AE510 /* AesOpt.c in Sources */,
-				B305F031276B512D003AE510 /* 7zStream.c in Sources */,
-				B305F032276B512D003AE510 /* LzmaEncoder.cpp in Sources */,
-				B305F033276B512D003AE510 /* LzmaSDKObjCBaseCoder.cpp in Sources */,
-				B305F034276B512D003AE510 /* 7zHandler.cpp in Sources */,
-				B305F035276B512D003AE510 /* Aes.c in Sources */,
-				B305F036276B512D003AE510 /* Lzma2Dec.c in Sources */,
-				B305F037276B512D003AE510 /* 7zRegister.cpp in Sources */,
-				B305F038276B512D003AE510 /* Wildcard.cpp in Sources */,
-				B305F039276B512D003AE510 /* XzCrc64.c in Sources */,
-				B305F03A276B512D003AE510 /* PropVariantConv.cpp in Sources */,
-				B305F03B276B512D003AE510 /* LimitedStreams.cpp in Sources */,
-				B305F03C276B512D003AE510 /* ArchiveExports.cpp in Sources */,
-				B305F03D276B512D003AE510 /* C_FileIO.cpp in Sources */,
-				B305F03E276B512D003AE510 /* IntToString.cpp in Sources */,
-				B305F03F276B512D003AE510 /* MyWindows.cpp in Sources */,
-				B305F040276B512D003AE510 /* LzmaSDKObjCExtern.mm in Sources */,
-				B305F041276B512D003AE510 /* PVImageFile.swift in Sources */,
-				B305F042276B512D003AE510 /* Ppmd7Enc.c in Sources */,
-				B305F043276B512D003AE510 /* XzEnc.c in Sources */,
-				B305F044276B512D003AE510 /* Observable+Ext.swift in Sources */,
-				B305F045276B512D003AE510 /* 7zCrc.c in Sources */,
-				B305F046276B512D003AE510 /* RunLoopThreadScheduler.swift in Sources */,
-				B305F047276B512D003AE510 /* ProgressUtils.cpp in Sources */,
-				B305F048276B512D003AE510 /* PropId.cpp in Sources */,
-				B305F049276B512D003AE510 /* PropVariant.cpp in Sources */,
-				B305F04A276B512D003AE510 /* BehaviorRelay+RangeReplaceableCollection.swift in Sources */,
-				B305F04B276B512D003AE510 /* PVEmulatorConfiguration.swift in Sources */,
-				B305F04C276B512D003AE510 /* OutStreamWithCRC.cpp in Sources */,
-				B305F04D276B512D003AE510 /* LzFindMt.c in Sources */,
-				B305F04E276B512D003AE510 /* LzmaSDKObjCError.mm in Sources */,
-				B305F04F276B512D003AE510 /* GamePackage.swift in Sources */,
-				B305F050276B512D003AE510 /* PackageResult.swift in Sources */,
-				B305F051276B512D003AE510 /* Time Utilities.swift in Sources */,
-				B305F052276B512D003AE510 /* PVAppConstants.swift in Sources */,
-				B305F053276B512D003AE510 /* Lzma2Enc.c in Sources */,
-				B305F054276B512D003AE510 /* PpmdDecoder.cpp in Sources */,
-				B305F055276B512D003AE510 /* LzmaSDKObjCBufferProcessor.mm in Sources */,
-				B305F056276B512D003AE510 /* BranchMisc.cpp in Sources */,
-				B305F057276B512D003AE510 /* Package.swift in Sources */,
-				B305F058276B512D003AE510 /* MtCoder.c in Sources */,
-				B305F059276B512D003AE510 /* Sha256.c in Sources */,
-				B305F05A276B512D003AE510 /* Lzma2Encoder.cpp in Sources */,
-				B305F05B276B512D003AE510 /* SystemProtocol.swift in Sources */,
-				B305F05C276B512D003AE510 /* iCloudSync.swift in Sources */,
-				B305F05D276B512D003AE510 /* LzmaRegister.cpp in Sources */,
-				B305F05E276B512D003AE510 /* DummyOutStream.cpp in Sources */,
-				B305F05F276B512D003AE510 /* 7zExtract.cpp in Sources */,
-				B305F060276B512D003AE510 /* 7zProperties.cpp in Sources */,
-				B305F061276B512D003AE510 /* Alloc.c in Sources */,
-				B305F062276B512D003AE510 /* CpuArch.c in Sources */,
-				B305F063276B512D003AE510 /* FileInfoProvider.swift in Sources */,
-				B305F064276B512D003AE510 /* Delta.c in Sources */,
-				B305F065276B512D003AE510 /* LzmaSDKObjCCommon.cpp in Sources */,
-				B305F066276B512D003AE510 /* Threads.c in Sources */,
-				B305F067276B512D003AE510 /* FileStreams.cpp in Sources */,
-				B305F068276B512D003AE510 /* 7zSpecStream.cpp in Sources */,
-				B305F069276B512D003AE510 /* MyAesReg.cpp in Sources */,
-				B305F06A276B512D003AE510 /* CopyRegister.cpp in Sources */,
-				B305F06B276B512D003AE510 /* CoderMixer2.cpp in Sources */,
-				B305F06C276B512D003AE510 /* BranchRegister.cpp in Sources */,
-				B305F06D276B512D003AE510 /* PVObject.swift in Sources */,
-				B305F06E276B512D003AE510 /* PVSaveState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
 		B3579D0B2106B11D00DDEBD6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2477,6 +1844,7 @@
 				B378228021D41E460077E86F /* PackageResult.swift in Sources */,
 				B3067F652106B8690091437F /* Time Utilities.swift in Sources */,
 				B3274E602106BA1300857F52 /* PVAppConstants.swift in Sources */,
+				B3FAC8FD292B3240005E8B11 /* User.swift in Sources */,
 				B3AF478221071E85002211EE /* Lzma2Enc.c in Sources */,
 				B3AF47C421071F76002211EE /* PpmdDecoder.cpp in Sources */,
 				B3AF476121071E28002211EE /* LzmaSDKObjCBufferProcessor.mm in Sources */,
@@ -2486,6 +1854,7 @@
 				B3AF478921071E85002211EE /* Sha256.c in Sources */,
 				B3AF47BF21071F76002211EE /* Lzma2Encoder.cpp in Sources */,
 				B354E7CC219A7E620041F971 /* SystemProtocol.swift in Sources */,
+				B3FAC8FB292B3155005E8B11 /* PVUser.swift in Sources */,
 				B383F3BC219BB29600DB6926 /* iCloudSync.swift in Sources */,
 				B3AF47C321071F76002211EE /* LzmaRegister.cpp in Sources */,
 				B3AF47A021071EE9002211EE /* DummyOutStream.cpp in Sources */,
@@ -2508,192 +1877,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3C04A9B21077B3100E7AF79 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3C04A9C21077B3100E7AF79 /* MethodProps.cpp in Sources */,
-				B3C04A9D21077B3100E7AF79 /* OESQLiteDatabase.m in Sources */,
-				B3C04A9E21077B3100E7AF79 /* CreateCoder.cpp in Sources */,
-				B3C04A9F21077B3100E7AF79 /* PVCore.swift in Sources */,
-				B3C04AA021077B3100E7AF79 /* ByteSwap.cpp in Sources */,
-				B3C04AA121077B3100E7AF79 /* Sha256Reg.cpp in Sources */,
-				B3C04AA221077B3100E7AF79 /* InOutTempBuffer.cpp in Sources */,
-				B3C04AA321077B3100E7AF79 /* BcjCoder.cpp in Sources */,
-				B3C04AA421077B3100E7AF79 /* PpmdRegister.cpp in Sources */,
-				CF17109E2585F97000258602 /* PVCheats.swift in Sources */,
-				B378227B21D41E1C0077E86F /* SavePackage.swift in Sources */,
-				B3C04AA521077B3100E7AF79 /* LzmaSDKObjC.mm in Sources */,
-				B3C04AA621077B3100E7AF79 /* PVFile.swift in Sources */,
-				B3C04AA721077B3100E7AF79 /* UIImage+Scaling.m in Sources */,
-				B3C04AA821077B3100E7AF79 /* OutBuffer.cpp in Sources */,
-				B3C04AA921077B3100E7AF79 /* LzmaSDKObjCFileDecoder.cpp in Sources */,
-				B3C04AAA21077B3100E7AF79 /* DirectoryWatcher2.swift in Sources */,
-				B354E7D0219A8EAF0041F971 /* LibrarySerializer.swift in Sources */,
-				B3C04AAB21077B3100E7AF79 /* Lzma2Register.cpp in Sources */,
-				B3C04AAC21077B3100E7AF79 /* NSData+Hashing.m in Sources */,
-				B3C04AAD21077B3100E7AF79 /* CopyCoder.cpp in Sources */,
-				B3C04AAE21077B3100E7AF79 /* RandGen.cpp in Sources */,
-				B3C04AAF21077B3100E7AF79 /* Bcj2Coder.cpp in Sources */,
-				B3C04AB021077B3100E7AF79 /* MyAes.cpp in Sources */,
-				B3C04AB121077B3100E7AF79 /* RomDatabase.swift in Sources */,
-				B354E7A2219A77F20041F971 /* RealmRepresentable.swift in Sources */,
-				B3C04AB221077B3100E7AF79 /* XzCrc64Opt.c in Sources */,
-				B3C04AB321077B3100E7AF79 /* Bcj2.c in Sources */,
-				B3C04AB421077B3100E7AF79 /* LzmaHandler.cpp in Sources */,
-				B3C04AB521077B3100E7AF79 /* LzmaDec.c in Sources */,
-				B354E7AD219A78700041F971 /* FileBackedConformance.swift in Sources */,
-				B3C04AB621077B3100E7AF79 /* FilterCoder.cpp in Sources */,
-				B3C04AB721077B3100E7AF79 /* Bcj2Register.cpp in Sources */,
-				B3C04AB821077B3100E7AF79 /* 7zEncode.cpp in Sources */,
-				B3C04AB921077B3100E7AF79 /* UTI.swift in Sources */,
-				CF1710A22585FA3F00258602 /* Cheats.swift in Sources */,
-				B3C04ABA21077B3100E7AF79 /* Bra86.c in Sources */,
-				B3C04ABB21077B3100E7AF79 /* Bra.c in Sources */,
-				B3C04ABC21077B3100E7AF79 /* LzmaSDKObjCWriter.mm in Sources */,
-				B3C04ABD21077B3100E7AF79 /* PVBIOS.swift in Sources */,
-				B3CDEEB121D493AC000C55F7 /* GameImporter2.swift in Sources */,
-				B3C04ABE21077B3100E7AF79 /* 7zAes.cpp in Sources */,
-				B3C04ABF21077B3100E7AF79 /* LzmaSDKObjCMutableItem.mm in Sources */,
-				B3C04AC021077B3100E7AF79 /* LzFind.c in Sources */,
-				B3C04AC121077B3100E7AF79 /* LzmaDecoder.cpp in Sources */,
-				B354E7A4219A77F20041F971 /* DomainConvertibleType.swift in Sources */,
-				B3C04AC221077B3100E7AF79 /* ImportCandidateFile.swift in Sources */,
-				B3C04AC321077B3100E7AF79 /* LzmaSDKObjCOpenCallback.cpp in Sources */,
-				B3C04AC421077B3100E7AF79 /* 7zAesRegister.cpp in Sources */,
-				B3C04AC521077B3100E7AF79 /* PVMediaCache.swift in Sources */,
-				B354E793219A76C80041F971 /* PlistDataModels.swift in Sources */,
-				B3C04AC621077B3100E7AF79 /* StringConvert.cpp in Sources */,
-				B3C04AC721077B3100E7AF79 /* BcjRegister.cpp in Sources */,
-				B3C04AC821077B3100E7AF79 /* LockedStream.cpp in Sources */,
-				B3C04AC921077B3100E7AF79 /* NSString+Hashing.m in Sources */,
-				B3C04ACA21077B3100E7AF79 /* StreamObjects.cpp in Sources */,
-				B3C04ACC21077B3100E7AF79 /* BraIA64.c in Sources */,
-				B3C04ACD21077B3100E7AF79 /* NSFileManager+Hashing.m in Sources */,
-				B3C04ACE21077B3100E7AF79 /* 7zDecode.cpp in Sources */,
-				B3C04ACF21077B3100E7AF79 /* XzIn.c in Sources */,
-				B3C04AD021077B3100E7AF79 /* 7zUpdate.cpp in Sources */,
-				B3C04AD121077B3100E7AF79 /* PVGame+Spotlight.swift in Sources */,
-				B3C04AD221077B3100E7AF79 /* 7zOut.cpp in Sources */,
-				B3C04AD321077B3100E7AF79 /* PVGame+BoxArt.swift in Sources */,
-				B3C04AD421077B3100E7AF79 /* 7zHeader.cpp in Sources */,
-				B354E7CA219A7E470041F971 /* System.swift in Sources */,
-				B3C04AD521077B3100E7AF79 /* Xz.c in Sources */,
-				B3C04AD621077B3100E7AF79 /* MyString.cpp in Sources */,
-				11AFB2B424867482000A3922 /* PVGameLibrary+Migration.swift in Sources */,
-				B3C04AD721077B3100E7AF79 /* ItemNameUtils.cpp in Sources */,
-				B354E79D219A76C80041F971 /* LocalFile.swift in Sources */,
-				B3C04AD821077B3100E7AF79 /* Lzma2DecMt.c in Sources */,
-				B3C04AD921077B3100E7AF79 /* LzmaSDKObjCFileEncoder.cpp in Sources */,
-				B3C04ADA21077B3100E7AF79 /* LzmaSDKObjCExtractCallback.mm in Sources */,
-				B3C04ADB21077B3100E7AF79 /* DllExports2.cpp in Sources */,
-				B3C04ADC21077B3100E7AF79 /* 7zCrcOpt.c in Sources */,
-				B3C04ADD21077B3100E7AF79 /* 7zHandlerOut.cpp in Sources */,
-				B3C04ADE21077B3100E7AF79 /* Bcj2Enc.c in Sources */,
-				B3C04ADF21077B3100E7AF79 /* LzmaSDKObjCReader.mm in Sources */,
-				B354E791219A76C80041F971 /* BIOS.swift in Sources */,
-				B354E7B9219A796A0041F971 /* Realm+Ext.swift in Sources */,
-				B3C04AE021077B3100E7AF79 /* PVRecentGame.swift in Sources */,
-				B3C04AE121077B3100E7AF79 /* Ppmd7Dec.c in Sources */,
-				B3C04AE221077B3100E7AF79 /* PVSystem.swift in Sources */,
-				B3C04AE321077B3100E7AF79 /* PpmdEncoder.cpp in Sources */,
-				B3C04AE421077B3100E7AF79 /* LzmaSDKObjCUpdateCallback.mm in Sources */,
-				B3C04AE521077B3100E7AF79 /* PVLibrary.swift in Sources */,
-				B3C04AE721077B3100E7AF79 /* LzmaEnc.c in Sources */,
-				B3C04AE821077B3100E7AF79 /* XzDec.c in Sources */,
-				B354E7A9219A78420041F971 /* Repository.swift in Sources */,
-				B3C04AE921077B3100E7AF79 /* GameImporter.swift in Sources */,
-				B3C04B992107991200E7AF79 /* PVEmulatorConfiguration+Frameworks.swift in Sources */,
-				B3C04AEA21077B3100E7AF79 /* StringToInt.cpp in Sources */,
-				B354E795219A76C80041F971 /* Core.swift in Sources */,
-				B354E797219A76C80041F971 /* SaveState.swift in Sources */,
-				B354E7BC219A7ADC0041F971 /* Cache.swift in Sources */,
-				B3C04AEB21077B3100E7AF79 /* StreamUtils.cpp in Sources */,
-				B3C04AEC21077B3100E7AF79 /* XzCrc64Reg.cpp in Sources */,
-				B3C04AED21077B3100E7AF79 /* VirtThread.cpp in Sources */,
-				112E7E30247EF3840050431C /* PVGameLibrary.swift in Sources */,
-				B3C04AEE21077B3100E7AF79 /* CWrappers.cpp in Sources */,
-				B3C04AEF21077B3100E7AF79 /* HandlerOut.cpp in Sources */,
-				B3C04AF021077B3100E7AF79 /* CrcReg.cpp in Sources */,
-				B3C04AF121077B3100E7AF79 /* Ppmd7.c in Sources */,
-				B354E799219A76C80041F971 /* Protocols.swift in Sources */,
-				B3C04AF221077B3100E7AF79 /* LzmaSDKObjCInFile.cpp in Sources */,
-				B3C04AF321077B3100E7AF79 /* Lzma2Decoder.cpp in Sources */,
-				B3C04AF421077B3100E7AF79 /* LzmaSDKObjCOutFile.cpp in Sources */,
-				B3C04AF521077B3100E7AF79 /* PVGame.swift in Sources */,
-				B3C04AF621077B3100E7AF79 /* 7zIn.cpp in Sources */,
-				B354E78F219A76C80041F971 /* Game.swift in Sources */,
-				B3C04AF721077B3100E7AF79 /* 7zFolderInStream.cpp in Sources */,
-				B3CDEECC21D4CF61000C55F7 /* DirectoryWatcher.swift in Sources */,
-				B3C04AF821077B3100E7AF79 /* CodecExports.cpp in Sources */,
-				B378228621D41E9B0077E86F /* LibrarySerializerError.swift in Sources */,
-				B3C04AF921077B3100E7AF79 /* LzmaSDKObjCItem.mm in Sources */,
-				B3C04AFA21077B3100E7AF79 /* AesOpt.c in Sources */,
-				B3C04AFB21077B3100E7AF79 /* 7zStream.c in Sources */,
-				B3C04AFC21077B3100E7AF79 /* LzmaEncoder.cpp in Sources */,
-				B3C04AFD21077B3100E7AF79 /* LzmaSDKObjCBaseCoder.cpp in Sources */,
-				B3C04AFE21077B3100E7AF79 /* 7zHandler.cpp in Sources */,
-				B3C04AFF21077B3100E7AF79 /* Aes.c in Sources */,
-				B3C04B0021077B3100E7AF79 /* Lzma2Dec.c in Sources */,
-				B3C04B0121077B3100E7AF79 /* 7zRegister.cpp in Sources */,
-				B3C04B0221077B3100E7AF79 /* Wildcard.cpp in Sources */,
-				B3C04B0321077B3100E7AF79 /* XzCrc64.c in Sources */,
-				B3C04B0421077B3100E7AF79 /* PropVariantConv.cpp in Sources */,
-				B3C04B0521077B3100E7AF79 /* LimitedStreams.cpp in Sources */,
-				B3C04B0621077B3100E7AF79 /* ArchiveExports.cpp in Sources */,
-				B3C04B0721077B3100E7AF79 /* C_FileIO.cpp in Sources */,
-				B3C04B0821077B3100E7AF79 /* IntToString.cpp in Sources */,
-				B3C04B0921077B3100E7AF79 /* MyWindows.cpp in Sources */,
-				B3C04B0A21077B3100E7AF79 /* LzmaSDKObjCExtern.mm in Sources */,
-				B3C04B0B21077B3100E7AF79 /* PVImageFile.swift in Sources */,
-				B3C04B0C21077B3100E7AF79 /* Ppmd7Enc.c in Sources */,
-				B3C04B0D21077B3100E7AF79 /* XzEnc.c in Sources */,
-				B354E7B7219A796A0041F971 /* Observable+Ext.swift in Sources */,
-				B3C04B0E21077B3100E7AF79 /* 7zCrc.c in Sources */,
-				B354E7B5219A796A0041F971 /* RunLoopThreadScheduler.swift in Sources */,
-				B3C04B0F21077B3100E7AF79 /* ProgressUtils.cpp in Sources */,
-				B3C04B1021077B3100E7AF79 /* PropId.cpp in Sources */,
-				B3C04B1121077B3100E7AF79 /* PropVariant.cpp in Sources */,
-				B30E7AEC26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift in Sources */,
-				B3C04B1221077B3100E7AF79 /* PVEmulatorConfiguration.swift in Sources */,
-				B3C04B1321077B3100E7AF79 /* OutStreamWithCRC.cpp in Sources */,
-				B3C04B1421077B3100E7AF79 /* LzFindMt.c in Sources */,
-				B3C04B1521077B3100E7AF79 /* LzmaSDKObjCError.mm in Sources */,
-				B378227E21D41E310077E86F /* GamePackage.swift in Sources */,
-				B378228121D41E460077E86F /* PackageResult.swift in Sources */,
-				B3C04B1621077B3100E7AF79 /* Time Utilities.swift in Sources */,
-				B3C04B1721077B3100E7AF79 /* PVAppConstants.swift in Sources */,
-				B3C04B1821077B3100E7AF79 /* Lzma2Enc.c in Sources */,
-				B3C04B1921077B3100E7AF79 /* PpmdDecoder.cpp in Sources */,
-				B3C04B1A21077B3100E7AF79 /* LzmaSDKObjCBufferProcessor.mm in Sources */,
-				B3C04B1B21077B3100E7AF79 /* BranchMisc.cpp in Sources */,
-				B3CDEEB421D497CD000C55F7 /* Package.swift in Sources */,
-				B3C04B1C21077B3100E7AF79 /* MtCoder.c in Sources */,
-				B3C04B1D21077B3100E7AF79 /* Sha256.c in Sources */,
-				B3C04B1E21077B3100E7AF79 /* Lzma2Encoder.cpp in Sources */,
-				B354E7CD219A7E620041F971 /* SystemProtocol.swift in Sources */,
-				B383F3BD219BB29600DB6926 /* iCloudSync.swift in Sources */,
-				B3C04B1F21077B3100E7AF79 /* LzmaRegister.cpp in Sources */,
-				B3C04B2021077B3100E7AF79 /* DummyOutStream.cpp in Sources */,
-				B3C04B2121077B3100E7AF79 /* 7zExtract.cpp in Sources */,
-				B3C04B2221077B3100E7AF79 /* 7zProperties.cpp in Sources */,
-				B3C04B2321077B3100E7AF79 /* Alloc.c in Sources */,
-				B3C04B2521077B3100E7AF79 /* CpuArch.c in Sources */,
-				B354E79B219A76C80041F971 /* FileInfoProvider.swift in Sources */,
-				B3C04B2621077B3100E7AF79 /* Delta.c in Sources */,
-				B3C04B2721077B3100E7AF79 /* LzmaSDKObjCCommon.cpp in Sources */,
-				B3C04B2821077B3100E7AF79 /* Threads.c in Sources */,
-				B3C04B2921077B3100E7AF79 /* FileStreams.cpp in Sources */,
-				B3C04B2A21077B3100E7AF79 /* 7zSpecStream.cpp in Sources */,
-				B3C04B2B21077B3100E7AF79 /* MyAesReg.cpp in Sources */,
-				B3C04B2C21077B3100E7AF79 /* CopyRegister.cpp in Sources */,
-				B3C04B2D21077B3100E7AF79 /* CoderMixer2.cpp in Sources */,
-				B3C04B2E21077B3100E7AF79 /* BranchRegister.cpp in Sources */,
-				B3C04B2F21077B3100E7AF79 /* PVObject.swift in Sources */,
-				B3C04B3021077B3100E7AF79 /* PVSaveState.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3C04B5D2107867200E7AF79 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2702,133 +1885,36 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3FAC8D7292B1DDD005E8B11 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3FAC8E9292B1E1B005E8B11 /* Patron.swift in Sources */,
+				B3FAC8ED292B1E1B005E8B11 /* PatreonAPI.swift in Sources */,
+				B3FAC8EC292B1E1B005E8B11 /* PatreonAccount.swift in Sources */,
+				B3FAC8EE292B1E1B005E8B11 /* Tier.swift in Sources */,
+				B3FAC8EA292B1E1B005E8B11 /* Campaign.swift in Sources */,
+				B3FAC8EB292B1E1B005E8B11 /* Benefit.swift in Sources */,
+				B3FAC8F6292B2551005E8B11 /* Keychain.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
 		B3C04B682107867200E7AF79 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3579D0E2106B11D00DDEBD6 /* PVLibrary-iOS */;
+			target = B3579D0E2106B11D00DDEBD6 /* PVLibrary */;
 			targetProxy = B3C04B672107867200E7AF79 /* PBXContainerItemProxy */;
+		};
+		B3FAC8F2292B1E1C005E8B11 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3579D0E2106B11D00DDEBD6 /* PVLibrary */;
+			targetProxy = B3FAC8F1292B1E1C005E8B11 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		B305F07E276B512D003AE510 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = NO;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"LZMASDKOBJC=1",
-					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
-				);
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
-					/usr/include/libxml2,
-				);
-				INFOPLIST_FILE = "PVLibrary-tvOS copy-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 2.0.4;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(PVLIBRARY_PRODUCT_BUNDLE_IDENTIFIER)";
-				PRODUCT_NAME = PVLibrary;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 4;
-				TVOS_DEPLOYMENT_TARGET = 12.1;
-			};
-			name = Debug;
-		};
-		B305F07F276B512D003AE510 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = NO;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"LZMASDKOBJC=1",
-					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
-				);
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
-					/usr/include/libxml2,
-				);
-				INFOPLIST_FILE = "PVLibrary-tvOS copy-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 2.0.4;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(PVLIBRARY_PRODUCT_BUNDLE_IDENTIFIER)";
-				PRODUCT_NAME = PVLibrary;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 4;
-				TVOS_DEPLOYMENT_TARGET = 12.1;
-			};
-			name = Release;
-		};
-		B305F080276B512D003AE510 /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = NO;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"LZMASDKOBJC=1",
-					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
-				);
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
-					/usr/include/libxml2,
-				);
-				INFOPLIST_FILE = "PVLibrary-tvOS copy-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 2.0.4;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(PVLIBRARY_PRODUCT_BUNDLE_IDENTIFIER)";
-				PRODUCT_NAME = PVLibrary;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 4;
-				TVOS_DEPLOYMENT_TARGET = 12.1;
-			};
-			name = Archive;
-		};
 		B324C5352191A78D009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B317380127841959002D3ACD /* Build.xcconfig */;
@@ -2878,12 +1964,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -2894,6 +1981,7 @@
 		B324C5362191A78D009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				APPLICATION_EXTENSION_API_ONLY = NO;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -2916,6 +2004,7 @@
 				);
 				INFOPLIST_FILE = PVLibrary/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2928,49 +2017,12 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_WORKSPACE = YES;
-			};
-			name = Archive;
-		};
-		B324C5372191A78D009F4EDC /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = NO;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"LZMASDKOBJC=1",
-					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
-				);
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
-					/usr/include/libxml2,
-				);
-				INFOPLIST_FILE = PVLibrary/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 2.0.4;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(PVLIBRARY_PRODUCT_BUNDLE_IDENTIFIER)";
-				PRODUCT_NAME = PVLibrary;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 12.1;
 			};
 			name = Archive;
 		};
@@ -2979,7 +2031,7 @@
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = PVLibraryTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3050,13 +2102,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_WORKSPACE = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -3112,13 +2165,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -3129,6 +2183,7 @@
 		B3579D182106B11D00DDEBD6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				APPLICATION_EXTENSION_API_ONLY = NO;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -3151,6 +2206,7 @@
 				);
 				INFOPLIST_FILE = PVLibrary/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3163,9 +2219,11 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_WORKSPACE = YES;
 			};
 			name = Debug;
@@ -3173,6 +2231,7 @@
 		B3579D192106B11D00DDEBD6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				APPLICATION_EXTENSION_API_ONLY = NO;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -3195,6 +2254,7 @@
 				);
 				INFOPLIST_FILE = PVLibrary/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3207,87 +2267,12 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_WORKSPACE = YES;
-			};
-			name = Release;
-		};
-		B3C04B4221077B3100E7AF79 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = NO;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"LZMASDKOBJC=1",
-					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
-				);
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
-					/usr/include/libxml2,
-				);
-				INFOPLIST_FILE = PVLibrary/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 2.0.4;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(PVLIBRARY_PRODUCT_BUNDLE_IDENTIFIER)";
-				PRODUCT_NAME = PVLibrary;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 12.1;
-			};
-			name = Debug;
-		};
-		B3C04B4321077B3100E7AF79 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = NO;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"LZMASDKOBJC=1",
-					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
-				);
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
-					/usr/include/libxml2,
-				);
-				INFOPLIST_FILE = PVLibrary/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 2.0.4;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(PVLIBRARY_PRODUCT_BUNDLE_IDENTIFIER)";
-				PRODUCT_NAME = PVLibrary;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 12.1;
 			};
 			name = Release;
 		};
@@ -3296,7 +2281,7 @@
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = PVLibraryTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3319,7 +2304,7 @@
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = PVLibraryTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3335,19 +2320,132 @@
 			};
 			name = Release;
 		};
+		B3FAC8DF292B1DDD005E8B11 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVPatreon";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4";
+			};
+			name = Debug;
+		};
+		B3FAC8E0292B1DDD005E8B11 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVPatreon";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4";
+			};
+			name = Release;
+		};
+		B3FAC8E1292B1DDD005E8B11 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVPatreon";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4";
+			};
+			name = Archive;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		B305F07D276B512D003AE510 /* Build configuration list for PBXNativeTarget "PVLibrary-watchOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B305F07E276B512D003AE510 /* Debug */,
-				B305F07F276B512D003AE510 /* Release */,
-				B305F080276B512D003AE510 /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		B3579D092106B11D00DDEBD6 /* Build configuration list for PBXProject "PVLibrary" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -3358,22 +2456,12 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3579D172106B11D00DDEBD6 /* Build configuration list for PBXNativeTarget "PVLibrary-iOS" */ = {
+		B3579D172106B11D00DDEBD6 /* Build configuration list for PBXNativeTarget "PVLibrary" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3579D182106B11D00DDEBD6 /* Debug */,
 				B3579D192106B11D00DDEBD6 /* Release */,
 				B324C5362191A78D009F4EDC /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B3C04B4121077B3100E7AF79 /* Build configuration list for PBXNativeTarget "PVLibrary-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B3C04B4221077B3100E7AF79 /* Debug */,
-				B3C04B4321077B3100E7AF79 /* Release */,
-				B324C5372191A78D009F4EDC /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -3388,41 +2476,19 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		B3FAC8E2292B1DDD005E8B11 /* Build configuration list for PBXNativeTarget "PVPatreon" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3FAC8DF292B1DDD005E8B11 /* Debug */,
+				B3FAC8E0292B1DDD005E8B11 /* Release */,
+				B3FAC8E1292B1DDD005E8B11 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		B305EFA4276B512D003AE510 /* XCRemoteSwiftPackageReference "RxSwift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/ReactiveX/RxSwift.git";
-			requirement = {
-				kind = exactVersion;
-				version = 6.2.0;
-			};
-		};
-		B305EFA7276B512D003AE510 /* XCRemoteSwiftPackageReference "RxRealm" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/RxSwiftCommunity/RxRealm.git";
-			requirement = {
-				kind = exactVersion;
-				version = 5.0.3;
-			};
-		};
-		B305EFA9276B512D003AE510 /* XCRemoteSwiftPackageReference "SQLite.swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/stephencelis/SQLite.swift.git";
-			requirement = {
-				kind = exactVersion;
-				version = 0.12.2;
-			};
-		};
-		B305EFAB276B512D003AE510 /* XCRemoteSwiftPackageReference "ZipArchive" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/ZipArchive/ZipArchive";
-			requirement = {
-				kind = exactVersion;
-				version = 2.3.0;
-			};
-		};
 		B336B90426B39ABA00960A81 /* XCRemoteSwiftPackageReference "RxRealm" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/RxSwiftCommunity/RxRealm.git";
@@ -3455,65 +2521,23 @@
 				minimumVersion = 2.3.0;
 			};
 		};
+		B3FAC8F7292B26EA005E8B11 /* XCRemoteSwiftPackageReference "KeychainAccess" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kishikawakatsumi/KeychainAccess.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		B3014FA327B487F0006AC79B /* Differentiator */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B37B4DEE27B2292F0068F8D1 /* XCRemoteSwiftPackageReference "RxDataSources" */;
-			productName = Differentiator;
-		};
-		B3014FA527B487FD006AC79B /* Differentiator */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B37B4DEE27B2292F0068F8D1 /* XCRemoteSwiftPackageReference "RxDataSources" */;
-			productName = Differentiator;
-		};
-		B305EFA3276B512D003AE510 /* RxSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B305EFA4276B512D003AE510 /* XCRemoteSwiftPackageReference "RxSwift" */;
-			productName = RxSwift;
-		};
-		B305EFA5276B512D003AE510 /* RxCocoa */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B305EFA4276B512D003AE510 /* XCRemoteSwiftPackageReference "RxSwift" */;
-			productName = RxCocoa;
-		};
-		B305EFA6276B512D003AE510 /* RxRealm */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B305EFA7276B512D003AE510 /* XCRemoteSwiftPackageReference "RxRealm" */;
-			productName = RxRealm;
-		};
-		B305EFA8276B512D003AE510 /* SQLite */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B305EFA9276B512D003AE510 /* XCRemoteSwiftPackageReference "SQLite.swift" */;
-			productName = SQLite;
-		};
-		B305EFAA276B512D003AE510 /* ZipArchive */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B305EFAB276B512D003AE510 /* XCRemoteSwiftPackageReference "ZipArchive" */;
-			productName = ZipArchive;
-		};
-		B3128065274C658E00550720 /* ZipArchive */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3A3203F27209B4300F338F6 /* XCRemoteSwiftPackageReference "ZipArchive" */;
-			productName = ZipArchive;
-		};
 		B336B90526B39ABA00960A81 /* RxRealm */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B336B90426B39ABA00960A81 /* XCRemoteSwiftPackageReference "RxRealm" */;
 			productName = RxRealm;
 		};
-		B336B90B26B39ACB00960A81 /* RxRealm */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B336B90426B39ABA00960A81 /* XCRemoteSwiftPackageReference "RxRealm" */;
-			productName = RxRealm;
-		};
 		B336B90E26B39BCF00960A81 /* SQLite */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B336B90D26B39BCF00960A81 /* XCRemoteSwiftPackageReference "SQLite.swift" */;
-			productName = SQLite;
-		};
-		B336B91026B39BDA00960A81 /* SQLite */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B336B90D26B39BCF00960A81 /* XCRemoteSwiftPackageReference "SQLite.swift" */;
 			productName = SQLite;
@@ -3533,10 +2557,10 @@
 			package = B3A3203F27209B4300F338F6 /* XCRemoteSwiftPackageReference "ZipArchive" */;
 			productName = ZipArchive;
 		};
-		EF7D4AA427B44FA7002528B7 /* RxDataSources */ = {
+		B3FAC8F8292B26EA005E8B11 /* KeychainAccess */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B37B4DEE27B2292F0068F8D1 /* XCRemoteSwiftPackageReference "RxDataSources" */;
-			productName = RxDataSources;
+			package = B3FAC8F7292B26EA005E8B11 /* XCRemoteSwiftPackageReference "KeychainAccess" */;
+			productName = KeychainAccess;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

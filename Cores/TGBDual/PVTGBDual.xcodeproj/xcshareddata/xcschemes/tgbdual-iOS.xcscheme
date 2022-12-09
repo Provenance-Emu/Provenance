@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3D275A026E9D5C100543CFE"
-               BuildableName = "libtgbdual-iOS.a"
-               BlueprintName = "tgbdual-iOS"
+               BuildableName = "libtgbdual.a"
+               BlueprintName = "tgbdual"
                ReferencedContainer = "container:PVTGBDual.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3D275A026E9D5C100543CFE"
-            BuildableName = "libtgbdual-iOS.a"
-            BlueprintName = "tgbdual-iOS"
+            BuildableName = "libtgbdual.a"
+            BlueprintName = "tgbdual"
             ReferencedContainer = "container:PVTGBDual.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

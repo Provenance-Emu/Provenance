@@ -37,6 +37,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 void MupenAudioSampleRateChanged(int SystemType);
+void MupenAudioRomClosed();
+void MupenAudioRomOpen();
+
 void MupenAudioLenChanged();
 void SetIsNTSC();
 int MupenOpenAudio(AUDIO_INFO info);

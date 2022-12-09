@@ -60,7 +60,6 @@ public enum Subtitle: Equatable {
 
 }
 
-
 internal extension DetailText {
 
   @available(*, deprecated, message: "The conversion between DetailText and Subtitle.")

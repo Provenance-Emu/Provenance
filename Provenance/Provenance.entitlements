@@ -11,9 +11,15 @@
 		<string>appclips:provenance.app</string>
 		<string>appclips:provenance-emu.com</string>
 	</array>
+	<key>com.apple.developer.driverkit.communicates-with-drivers</key>
+	<true/>
+	<key>com.apple.developer.game-center</key>
+	<true/>
+	<key>com.apple.developer.group-session</key>
+	<true/>
 	<key>com.apple.developer.icloud-container-identifiers</key>
 	<array>
-		<string>$(ICLOUD_CONTAINER_IDENTIFIER)</string>
+		<string>iCloud.org.provenance-emu.provenance</string>
 	</array>
 	<key>com.apple.developer.icloud-services</key>
 	<array>
@@ -21,13 +27,11 @@
 	</array>
 	<key>com.apple.developer.kernel.extended-virtual-addressing</key>
 	<true/>
-	<key>com.apple.developer.networking.multipath</key>
-	<true/>
-	<key>com.apple.developer.siri</key>
+	<key>com.apple.developer.kernel.increased-memory-limit</key>
 	<true/>
 	<key>com.apple.developer.ubiquity-container-identifiers</key>
 	<array>
-		<string>$(ICLOUD_CONTAINER_IDENTIFIER)</string>
+		<string>iCloud.org.provenance-emu.provenance</string>
 	</array>
 	<key>com.apple.developer.ubiquity-kvstore-identifier</key>
 	<string>$(TeamIdentifierPrefix)$(CFBundleIdentifier)</string>
@@ -35,9 +39,9 @@
 	<true/>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>$(APP_GROUP_IDENTIFIER)</string>
+		<string>group.org.provenance-emu.provenance</string>
 	</array>
-	<key>com.apple.security.assets.pictures.read-only</key>
+	<key>com.apple.security.assets.pictures.read-write</key>
 	<true/>
 	<key>com.apple.security.cs.allow-dyld-environment-variables</key>
 	<true/>
@@ -57,9 +61,9 @@
 	<true/>
 	<key>com.apple.security.device.usb</key>
 	<true/>
-	<key>com.apple.security.files.downloads.read-only</key>
+	<key>com.apple.security.files.downloads.read-write</key>
 	<true/>
-	<key>com.apple.security.files.user-selected.read-only</key>
+	<key>com.apple.security.files.user-selected.read-write</key>
 	<true/>
 	<key>com.apple.security.network.client</key>
 	<true/>
@@ -67,5 +71,9 @@
 	<true/>
 	<key>com.apple.security.personal-information.photos-library</key>
 	<true/>
+	<key>keychain-access-groups</key>
+	<array>
+		<string>$(AppIdentifierPrefix)org.provenance-emu.provenance</string>
+	</array>
 </dict>
 </plist>

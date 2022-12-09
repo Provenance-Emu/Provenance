@@ -19,13 +19,14 @@ final class PVCoresTableViewController: QuickTableViewController {
         #if os(tvOS)
             splitViewController?.title = NSLocalizedString("Cores", comment: "")
         #endif
+        let showsUnsupportedSystems = PVSettingsModel.shared.debugOptions.unsupportedCores
 
         tableContents = [
             Section(title: NSLocalizedString("Cores", comment: ""), rows: cores.map { core in
-                let systemsText = core.supportedSystems.map({ $0.shortName }).joined(separator: ", ")
+                let systemsText = core.supportedSystems.filter { $0.supported || showsUnsupportedSystems }.map({ $0.shortName }).joined(separator: ", ")
                 let detailLabelText = "\(core.projectVersion) : \(systemsText)"
 
-                return NavigationRow<SystemSettingsCell>(text: core.projectName, detailText: .subtitle(detailLabelText), icon: nil, customization: { cell, _ in
+                return NavigationRow(text: core.projectName, detailText: .subtitle(detailLabelText), icon: nil, customization: { cell, _ in
                     #if os(iOS)
                         if URL(string: core.projectURL) != nil {
                             cell.accessoryType = .disclosureIndicator

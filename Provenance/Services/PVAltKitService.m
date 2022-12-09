@@ -6,6 +6,7 @@
 //  Copyright © 2021 Provenance Emu. All rights reserved.
 //
 
+#if !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
 #import "PVAltKitService.h"
 @import PVSupport;
 @import AltKit;
@@ -50,3 +51,4 @@
 }
 
 @end
+#endif

@@ -4,6 +4,8 @@
 <dict>
 	<key>ALTDeviceID</key>
 	<string></string>
+	<key>CFBundleAllowMixedLocalizations</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -66,6 +68,8 @@
 	<string></string>
 	<key>GitTag</key>
 	<string></string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.games</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -74,6 +78,58 @@
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>127.0.0.1</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+			<key>gamefaqs.gamespot.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+			<key>gamespot.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+			<key>github.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+			<key>localhost</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+			<key>provenance-emu.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+			<key>provenance.app</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+		</dict>
 	</dict>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Provenance uses Bluetooth to support game controllers.</string>
@@ -81,19 +137,21 @@
 	<array>
 		<string>_altserver._tcp</string>
 	</array>
+	<key>NSHighResolutionCapable</key>
+	<true/>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Provenance uses the local network to find and communicate with AltServer.</string>
 	<key>NSUserActivityTypes</key>
 	<array>
-		<string>org.provenance-emu.webserver</string>
 		<string>org.provenance-emu.game.play</string>
+		<string>org.provenance-emu.webserver</string>
 	</array>
 	<key>Revision</key>
 	<string>f9c61252</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
-		<string>processing</string>
+		<string>fetch</string>
 	</array>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>

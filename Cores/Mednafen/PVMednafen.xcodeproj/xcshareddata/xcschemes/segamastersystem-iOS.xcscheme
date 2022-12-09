@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B33351E4207B01C60036A448"
-               BuildableName = "libsegamastersystem-iOS.a"
-               BlueprintName = "segamastersystem-iOS"
+               BuildableName = "libsegamastersystem.a"
+               BlueprintName = "segamastersystem"
                ReferencedContainer = "container:PVMednafen.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B33351E4207B01C60036A448"
-            BuildableName = "libsegamastersystem-iOS.a"
-            BlueprintName = "segamastersystem-iOS"
+            BuildableName = "libsegamastersystem.a"
+            BlueprintName = "segamastersystem"
             ReferencedContainer = "container:PVMednafen.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

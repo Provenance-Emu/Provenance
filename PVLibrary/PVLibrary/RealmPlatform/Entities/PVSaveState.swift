@@ -133,7 +133,7 @@ extension SaveState: RealmRepresentable {
                 let dir = path.deletingLastPathComponent()
                 let imagePath = dir.appendingPathComponent(image.fileName)
                 DLOG("path: \(imagePath)")
-                object.image = PVImageFile(withURL: imagePath)
+                object.image = PVImageFile(withURL: imagePath, relativeRoot: .iCloud)
             }
             object.isAutosave = isAutosave
         }

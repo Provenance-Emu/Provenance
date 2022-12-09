@@ -7,6 +7,7 @@
 //  Copyright (c) 2015 Josejulio Martínez. All rights reserved.
 //
 
+#if canImport(UIKit)
 @objc
 public enum iCadeControllerSetting: Int, CustomStringConvertible, CaseIterable, UserDefaultsRepresentable {
     case disabled
@@ -50,3 +51,4 @@ public enum iCadeControllerSetting: Int, CustomStringConvertible, CaseIterable, 
         }
     }
 }
+#endif

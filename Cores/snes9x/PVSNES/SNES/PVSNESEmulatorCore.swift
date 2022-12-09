@@ -4,7 +4,7 @@
 //
 
 import PVSupport
-import UIKit
+import Foundation
 
 extension PVSNESEmulatorCore: GameWithCheat {
     public func setCheat(

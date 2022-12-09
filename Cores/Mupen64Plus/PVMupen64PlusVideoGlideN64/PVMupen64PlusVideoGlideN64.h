@@ -6,7 +6,7 @@
 //  Copyright © 2018 James Addyman. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
 //! Project version number for PVMupen64PlusVideoGlideN64.
 FOUNDATION_EXPORT double PVMupen64PlusVideoGlideN64VersionNumber;

@@ -1,0 +1,93 @@
+name: Build and Upload Provenance
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+    branches:
+      - master
+      - develop
+
+env:
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+
+jobs:
+  build:
+    name: Build and upload Provenance
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: 'macos-12'
+            version: '14.1'
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      # - name: Install Xcode
+      #   uses: maxim-lobanov/setup-xcode@v1
+      #   with:
+      #     xcode-version: ${{ matrix.version }}
+
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1.5.1
+        with:
+          xcode-version: ${{ matrix.version }}
+          # xcode-select-path: /Applications/Xcode_${{ matrix.version }}.app/Contents/Developer
+
+      - name: Install dependencies
+        run: brew install ldid
+
+      - name: Build Provenance
+        run: |
+          xcodebuild -workspace Provenance.xcworkspace -scheme Provenance-Release -sdk iphoneos archive -archivePath ./archive CODE_SIGNING_REQUIRED=NO AD_HOC_CODE_SIGNING_ALLOWED=YES CODE_SIGNING_ALLOWED=NO DEVELOPMENT_TEAM=XYZ0123456 ORG_IDENTIFIER=org.provenance-emu | xcpretty && exit ${PIPESTATUS[0]}
+
+      # - name: Build Provenance
+      #   run: |
+      #     rm -rf ~/Library/Developer/Xcode/DerivedData/
+      #     rm ./Provenance.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+      #     rm ./Provenance.xcworkspace/xcshareddata/swiftpm/Package.resolved
+      #     xcodebuild -workspace Provenance.xcworkspace -scheme Provenance-Release -sdk iphoneos archive -archivePath ./archive CODE_SIGNING_REQUIRED=NO AD_HOC_CODE_SIGNING_ALLOWED=YES CODE_SIGNING_ALLOWED=NO DEVELOPMENT_TEAM=XYZ0123456 ORG_IDENTIFIER=org.provenance-emu | xcpretty && exit ${PIPESTATUS[0]}
+
+      - name: Fakesign app
+        run: |
+          rm -rf archive.xcarchive/Products/Applications/Provenance.app/Frameworks/*.framework/Frameworks/
+          ldid -SProvenance/Provenance.entitlements archive.xcarchive/Products/Applications/Provenance.app/Provenance
+
+      - name: Convert to IPA
+        run: |
+          mkdir Payload
+          mkdir Payload/Provenance.app
+          cp -R archive.xcarchive/Products/Applications/Provenance.app/ Payload/Provenance.app/
+          zip -r Provenance.ipa Payload
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3.1.0
+        with:
+          name: Provenance.ipa
+          path: Provenance.ipa
+
+      # - name: Upload IPA to S3
+      #   if: ${{ github.branch == 'develop' }}
+      #   uses: ebuckthal/s3-upload-artifact@v7
+      #   with:
+      #     bucket: 'sh-sysops'
+      #     key: ${AWS_SECRET_ACCESS_KEY}
+      #     path: 'Provenance.ipa'
+
+    # - name: Upload IPA to App Center
+    #   uses: wzieba/AppCenter-Github-Action@v1
+    #   if: ${{ github.branch == 'develop' }}
+    #   with:
+    #     appName: wzieba/Sample-App
+    #     token: ${{secrets.APP_CENTER_TOKEN}}
+    #     group: Testers
+    #     file: Provenance.ipa
+    #     notifyTesters: true
+    #     debug: false

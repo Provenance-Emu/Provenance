@@ -9,7 +9,9 @@
 import Foundation
 import PVSupport
 import RealmSwift
+#if canImport(UIKit)
 import UIKit
+#endif
 
 public enum RelativeRoot: Int {
     case documents
@@ -43,7 +45,10 @@ public enum RelativeRoot: Int {
     }
 
     func appendingPath(_ path: String) -> URL {
-        return URL(fileURLWithPath: path, relativeTo: directoryURL)
+        let directoryURL = self.directoryURL
+        let url = directoryURL.appendingPathComponent(path)
+//        let url = URL(fileURLWithPath: path, relativeTo: directoryURL)
+        return url
     }
 }
 
@@ -89,7 +94,8 @@ public extension PVFile {
                 let url = (iCloudBase ?? RelativeRoot.documentsDirectory).appendingPathComponent(path)
                 return url
             }
-            let resolvedURL = relativeRoot.appendingPath(partialPath)
+            let root = relativeRoot
+            let resolvedURL = root.appendingPath(partialPath)
             return resolvedURL
         }
         set {

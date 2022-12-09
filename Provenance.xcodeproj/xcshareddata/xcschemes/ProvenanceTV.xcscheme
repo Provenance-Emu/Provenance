@@ -199,7 +199,7 @@
                BlueprintIdentifier = "B3C89935206B7AF1005E7033"
                BuildableName = "PVVirtualJaguar.framework"
                BlueprintName = "PVVirtualJaguar-tvOS"
-               ReferencedContainer = "container:Cores/VirtualJaguar/Core-VirtualJaguar.xcodeproj">
+               ReferencedContainer = "container:Cores/VirtualJaguar/PVVirtualJaguar.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -256,6 +256,20 @@
                BuildableName = "Provenance.app"
                BlueprintName = "ProvenanceTV"
                ReferencedContainer = "container:Provenance.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3A41BDB286E76110054E9A5"
+               BuildableName = "PVLibRetro.framework"
+               BlueprintName = "PVLibRetro-tvOS"
+               ReferencedContainer = "container:PVSupport/PVSupport.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

@@ -29,7 +29,7 @@
 #import <PVSupport/PVSupport.h>
 //#import <PVSupport/OERingBuffer.h>
 //#import <PVSupport/DebugUtils.h>
-#if !TARGET_OS_MACCATALYST
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
@@ -576,14 +576,14 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
     }
     bootPath = [path copy];
 
-#if !TARGET_OS_MACCATALYST
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
     EAGLContext* context = [self bestContext];
 #endif
     
     return true;
 }
 
-#if !TARGET_OS_MACCATALYST
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 -(EAGLContext*)bestContext {
     EAGLContext* context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
     self.glesVersion = GLESVersion3;

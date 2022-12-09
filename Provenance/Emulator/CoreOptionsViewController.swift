@@ -12,9 +12,9 @@ import UIKit
 
 final class CoreOptionsViewController: QuickTableViewController {
     let core: CoreOptional.Type
-    
+
     let subOptions: [CoreOption]?
-    
+
     init(withCore core: CoreOptional.Type, subOptions: [CoreOption]? = nil) {
         self.core = core
         self.subOptions = subOptions
@@ -80,7 +80,7 @@ final class CoreOptionsViewController: QuickTableViewController {
 					})
 				case let .multi(display, values):
 					let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
-					return NavigationRow<SystemSettingsCell>(text: display.title,
+					return NavigationRow(text: display.title,
 															 detailText: detailText,
 															 icon: nil,
 															 customization: { _, _ in
@@ -105,7 +105,7 @@ final class CoreOptionsViewController: QuickTableViewController {
 																	 })
 																	 actionController.addAction(action)
 																 }
-																 actionController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+																 actionController.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
 																 self.present(actionController, animated: true)
 
 																 if let indexPath = self.tableView.indexPathForSelectedRow {
@@ -114,7 +114,7 @@ final class CoreOptionsViewController: QuickTableViewController {
 					})
                 case let .enumeration(display, values: values, defaultValue: defaultValue):
                     let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
-                    return NavigationRow<SystemSettingsCell>(text: display.title,
+                    return NavigationRow(text: display.title,
                                                              detailText: detailText,
                                                              icon: nil,
                                                              customization: { _, _ in
@@ -153,7 +153,7 @@ final class CoreOptionsViewController: QuickTableViewController {
                                                                      })
                                                                      actionController.addAction(action)
                                                                  }
-                                                                 actionController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+                                                                 actionController.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
                                                                  self.present(actionController, animated: true)
 
                                                                  if let indexPath = self.tableView.indexPathForSelectedRow {
@@ -163,10 +163,10 @@ final class CoreOptionsViewController: QuickTableViewController {
 				case let .range(display, range: range, defaultValue: defaultValue):
 					let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
                     let value = core.storedValueForOption(Int.self, option.key) ?? defaultValue
-                    
+
                     #if os(tvOS)
                     // TODO: slider on tvOS?
-                    return NavigationRow<SystemSettingsCell>(text: "\(display.title): \(value)",
+                    return NavigationRow(text: "\(display.title): \(value)",
                                                              detailText: detailText,
                                                              icon: nil,
                                                              customization: { _, _ in
@@ -180,8 +180,7 @@ final class CoreOptionsViewController: QuickTableViewController {
                         value: Float(value),
                         valueLimits: (min: Float(range.min), max: Float(range.max)),
                         valueImages: (min: nil, max: nil),
-                        customization: nil)
-                    { _ in
+                        customization: nil) { _ in
                         let value = self.core.storedValueForOption(Int.self, option.key) ?? defaultValue
                         self.core.setValue(value, forOption: option)
                     }
@@ -191,7 +190,7 @@ final class CoreOptionsViewController: QuickTableViewController {
                     let value = core.storedValueForOption(Float.self, option.key) ?? defaultValue
                     #if os(tvOS)
                     // TODO: slider on tvOS?
-                    return NavigationRow<SystemSettingsCell>(text: "\(display.title): \(value)",
+                    return NavigationRow(text: "\(display.title): \(value)",
                                                              detailText: detailText,
                                                              icon: nil,
                                                              customization: { _, _ in
@@ -205,8 +204,7 @@ final class CoreOptionsViewController: QuickTableViewController {
                         value: value,
                         valueLimits: (min: range.min, max: range.max),
                         valueImages: (min: nil, max: nil),
-                        customization: nil)
-                    { _ in
+                        customization: nil) { _ in
                         let value = self.core.storedValueForOption(Float.self, option.key) ?? defaultValue
                         self.core.setValue(value, forOption: option)
                     }
@@ -214,8 +212,8 @@ final class CoreOptionsViewController: QuickTableViewController {
                 case let .string(display, defaultValue: defaultValue):
                     let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
                     let value = core.storedValueForOption(String.self, option.key) ?? defaultValue
-                    
-                    return NavigationRow<SystemSettingsCell>(text: display.title,
+
+                    return NavigationRow(text: display.title,
                                                              detailText: detailText,
                                                              icon: nil,
                                                              customization: { cell, _ in
@@ -243,7 +241,7 @@ final class CoreOptionsViewController: QuickTableViewController {
 //                                                                     })
 //                                                                     actionController.addAction(action)
 //                                                                 }
-                                                                 actionController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+                                                                 actionController.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
                                                                  self.present(actionController, animated: true)
 
                                                                  if let indexPath = self.tableView.indexPathForSelectedRow {
@@ -252,13 +250,12 @@ final class CoreOptionsViewController: QuickTableViewController {
                     })
                 case let .group(display, subOptions: subOptions):
                     let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
-                    return NavigationRow<SystemSettingsCell>(text: display.title,
+                    return NavigationRow(text: display.title,
                                                              detailText: detailText,
                                                              icon: nil,
                                                              customization: { _, _ in
                     },
-                                                             action:
-                                                                { [weak self] row in
+                                                             action: { [weak self] row in
                         guard let self = self else { return }
                         let subOptionsVC = CoreOptionsViewController(withCore: self.core, subOptions: subOptions)
                         subOptionsVC.title = row.text

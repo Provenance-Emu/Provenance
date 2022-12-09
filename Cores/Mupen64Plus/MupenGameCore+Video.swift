@@ -1,5 +1,5 @@
 //
-//  MupenGameCore+Audio.swift
+//  MupenGameCore+Video.swift
 //  PVMupen64Plus
 //
 //  Created by Joseph Mattiello on 1/24/22.
@@ -9,7 +9,7 @@
 import Foundation
 import PVSupport
 
-#if targetEnvironment(macCatalyst)
+#if canImport(OpenGL)
 import OpenGL
 import GLUT
 #else

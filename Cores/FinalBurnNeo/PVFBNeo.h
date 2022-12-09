@@ -6,7 +6,7 @@
 //  Copyright © 2022 Provenance-EMU. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
 //! Project version number for PVFBNeo.
 FOUNDATION_EXPORT double PVFBNeoVersionNumber;
@@ -16,4 +16,3 @@ FOUNDATION_EXPORT const unsigned char PVFBNeoVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <PVFBNeo/PublicHeader.h>
 #import <PVFBNeo/PVFBNeoEmulatorCore.h>
-

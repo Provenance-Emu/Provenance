@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B33354CA207B1D850036A448"
-               BuildableName = "libmednafen-iOS.a"
-               BlueprintName = "mednafen-iOS"
+               BuildableName = "libmednafen.a"
+               BlueprintName = "mednafen"
                ReferencedContainer = "container:PVMednafen.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B33354CA207B1D850036A448"
-            BuildableName = "libmednafen-iOS.a"
-            BlueprintName = "mednafen-iOS"
+            BuildableName = "libmednafen.a"
+            BlueprintName = "mednafen"
             ReferencedContainer = "container:PVMednafen.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

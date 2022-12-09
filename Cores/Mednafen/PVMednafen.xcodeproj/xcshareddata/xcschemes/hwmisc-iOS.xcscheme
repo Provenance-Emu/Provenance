@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B33352CD207B067F0036A448"
-               BuildableName = "libhwmisc-iOS.a"
-               BlueprintName = "hwmisc-iOS"
+               BuildableName = "libhwmisc.a"
+               BlueprintName = "hwmisc"
                ReferencedContainer = "container:PVMednafen.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B33352CD207B067F0036A448"
-            BuildableName = "libhwmisc-iOS.a"
-            BlueprintName = "hwmisc-iOS"
+            BuildableName = "libhwmisc.a"
+            BlueprintName = "hwmisc"
             ReferencedContainer = "container:PVMednafen.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

@@ -17,33 +17,36 @@ import Introspect
 
 @available(iOS 14, tvOS 14, *)
 struct SideMenuView: SwiftUI.View {
-    
-    var delegate: PVMenuDelegate
-    @ObservedObject var viewModel: PVRootViewModel
-    var rootDelegate: PVRootDelegate
+
+    weak var delegate: PVMenuDelegate!
+
+	@ObservedObject
+	var viewModel: PVRootViewModel
+
+	weak var rootDelegate: PVRootDelegate!
     var gameLibrary: PVGameLibrary
-    
+
     @ObservedResults(
         PVSystem.self,
         filter: NSPredicate(format: "games.@count > 0")
     ) var consoles
-    
+
     @ObservedObject var searchBar: SearchBar = SearchBar()
-    
+
     init(gameLibrary: PVGameLibrary, viewModel: PVRootViewModel, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) {
         self.gameLibrary = gameLibrary
         self.viewModel = viewModel
         self.delegate = delegate
         self.rootDelegate = rootDelegate
     }
-    
+
     static func instantiate(gameLibrary: PVGameLibrary, viewModel: PVRootViewModel, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) -> UIViewController {
         let view = SideMenuView(gameLibrary: gameLibrary, viewModel: viewModel, delegate: delegate, rootDelegate: rootDelegate)
         let hostingView = UIHostingController(rootView: view)
         let nav = UINavigationController(rootViewController: hostingView)
         return nav
     }
-    
+
     func versionText() -> String {
         let masterBranch: Bool = kGITBranch.lowercased() == "master"
         var versionText = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
@@ -53,15 +56,15 @@ struct SideMenuView: SwiftUI.View {
         }
         return versionText ?? ""
     }
-    
+
     func sortedConsoles() -> Results<PVSystem> {
         return self.consoles.sorted(by: [SortDescriptor(keyPath: #keyPath(PVSystem.name), ascending: viewModel.sortConsolesAscending)])
     }
-    
+
     func filteredSearchResults() -> Results<PVGame> {
         return self.gameLibrary.searchResults(for: self.searchBar.text)
     }
-    
+
     var body: some SwiftUI.View {
         StatusBarProtectionWrapper {
             ScrollView {
@@ -130,12 +133,12 @@ struct SideMenuView: SwiftUI.View {
 
 @available(iOS 14, tvOS 14, *)
 struct MenuSectionHeaderView: SwiftUI.View {
-    
+
     var sectionTitle: String
     var sortable: Bool
     var sortAscending: Bool = false
     var action: () -> Void
-    
+
     var body: some SwiftUI.View {
         VStack(spacing: 0) {
             Divider().frame(height: 2).background(Theme.currentTheme.gameLibraryText.swiftUIColor)
@@ -159,11 +162,11 @@ struct MenuSectionHeaderView: SwiftUI.View {
 
 @available(iOS 14, tvOS 14, *)
 struct MenuItemView: SwiftUI.View {
-    
+
     var imageName: String
     var rowTitle: String
     var action: () -> Void
-    
+
     var body: some SwiftUI.View {
         Button {
             action()

@@ -6,6 +6,7 @@
 //  Copyright (c) 2018 Joseph Mattiello. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 public typealias iCadeButtonEventHandler = (_ button: iCadeControllerState) -> Void
@@ -73,3 +74,4 @@ public final class PViCadeReader: NSObject, iCadeEventDelegate {
         stateChangedHandler?(state)
     }
 }
+#endif

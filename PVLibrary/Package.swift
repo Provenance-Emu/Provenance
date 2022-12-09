@@ -61,7 +61,7 @@ let package = Package(
                 "NSExtensions/NSFileManager+Hashing.m",
                 "NSExtensions/UIImage+Scaling.m",
                 "NSExtensions/NSString+Hashing.m",
-                "NSExtensions/NSData+Hashing.m",
+                "NSExtensions/NSData+Hashing.m"
                 // "LzmaSDKObjC/src/LzmaSDKObjC.mm",
                 // "LzmaSDKObjC/src/LzmaSDKObjCBufferProcessor.mm",
                 // "LzmaSDKObjC/src/LzmaSDKObjCCrc.mm",
@@ -102,7 +102,7 @@ let package = Package(
                 "NSExtensions/UIImage+Scaling.m",
                 "NSExtensions/NSString+Hashing.m",
                 "NSExtensions/NSData+Hashing.m",
-                "Info.plist",
+                "Info.plist"
                 // "LzmaSDKObjC/src/LzmaSDKObjC.mm",
                 // "LzmaSDKObjC/src/LzmaSDKObjCBufferProcessor.mm",
                 // "LzmaSDKObjC/src/LzmaSDKObjCCrc.mm",

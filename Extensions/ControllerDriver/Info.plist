@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IOKitPersonalities</key>
+	<dict>
+		<key>ControllerDriver</key>
+		<dict>
+			<key>CFBundleIdentifierKernel</key>
+			<string>com.apple.kpi.iokit</string>
+			<key>IOClass</key>
+			<string>IOUserService</string>
+			<key>IOMatchCategory</key>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+			<key>IOProviderClass</key>
+			<string>IOUserResources</string>
+			<key>IOResourceMatch</key>
+			<string>IOKit</string>
+			<key>IOUserClass</key>
+			<string>ControllerDriver</string>
+			<key>IOUserServerName</key>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+		</dict>
+	</dict>
+	<key>OSBundleUsageDescription</key>
+	<string></string>
+</dict>
+</plist>

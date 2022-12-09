@@ -7,6 +7,7 @@
 //
 
 import PVSupport
+#if canImport(UIKit)
 import UIKit
 
 enum JSDPadDirection: Int, CaseIterable {
@@ -29,21 +30,20 @@ protocol JSDPadDelegate: AnyObject {
     func dPad(_ dPad: JSDPad, didRelease direction: JSDPadDirection)
 }
 
+final class JSDPad: MovableButtonView {
 
-final class JSDPad: UIView {
-    
     public class func JoyPad(frame: CGRect) -> JSDPad {
         let dpad = JSDPad.init(frame: frame)
         dpad.analogMode = true
         return dpad
     }
-    
+
     var analogMode: Bool = false {
         didSet {
             dPadImageView.isHidden = analogMode
         }
     }
-    
+
     lazy var centerPoint: CGPoint = CGPoint(x: bounds.midX, y: bounds.midY)
     lazy var analogPoint: CGPoint = centerPoint {
         didSet {
@@ -70,7 +70,7 @@ final class JSDPad: UIView {
                 point.y = minY
                 needUpdate = true
             }
-            
+
             if needUpdate {
                 analogPoint = point
             } else {
@@ -78,7 +78,7 @@ final class JSDPad: UIView {
             }
         }
     }
-    
+
     weak var delegate: JSDPadDelegate?
 
     private var currentDirection: JSDPadDirection = .none
@@ -105,6 +105,7 @@ final class JSDPad: UIView {
 
     override var tintColor: UIColor? {
         didSet {
+//            guard analogMode else { return }
             dPadImageView.tintColor = PVSettingsModel.shared.buttonTints ? tintColor : .white
         }
     }
@@ -118,11 +119,21 @@ final class JSDPad: UIView {
         super.init(coder: aDecoder)
         commonInit()
     }
+    
+//    override var frame: CGRect {
+//        didSet {
+//            DLOG("\(frame.debugDescription)")
+//        }
+//    }
 
     private func commonInit() {
         tintColor = .white
-        addSubview(dPadImageView)
         clipsToBounds = false
+        isOpaque = false
+//        guard analogMode else {
+//            return
+//        }
+        addSubview(dPadImageView)
     }
 
     func direction(for point: CGPoint) -> JSDPadDirection {
@@ -140,29 +151,34 @@ final class JSDPad: UIView {
     func image(for direction: JSDPadDirection) -> UIImage? {
         var image: UIImage?
         switch direction {
-        case .up:
-            image = UIImage(named: "dPad-Up")
-        case .down:
-            image = UIImage(named: "dPad-Down")
-        case .left:
-            image = UIImage(named: "dPad-Left")
-        case .right:
-            image = UIImage(named: "dPad-Right")
-        case .upLeft:
-            image = UIImage(named: "dPad-UpLeft")
-        case .upRight:
-            image = UIImage(named: "dPad-UpRight")
-        case .downLeft:
-            image = UIImage(named: "dPad-DownLeft")
-        case .downRight:
-            image = UIImage(named: "dPad-DownRight")
-        case .none:
-            image = UIImage(named: "dPad-None")
+            case .up:
+                image = UIImage(named: "dPad-Up")
+            case .down:
+                image = UIImage(named: "dPad-Down")
+            case .left:
+                image = UIImage(named: "dPad-Left")
+            case .right:
+                image = UIImage(named: "dPad-Right")
+            case .upLeft:
+                image = UIImage(named: "dPad-UpLeft")
+            case .upRight:
+                image = UIImage(named: "dPad-UpRight")
+            case .downLeft:
+                image = UIImage(named: "dPad-DownLeft")
+            case .downRight:
+                image = UIImage(named: "dPad-DownRight")
+            case .none:
+                image = UIImage(named: "dPad-None")
         }
         return image
     }
 
-    override func touchesBegan(_ touches: Set<UITouch>, with _: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+		if inMoveMode || !isUserInteractionEnabled {
+			super.touchesBegan(touches, with: event)
+			return
+		}
+
         guard let delegate = delegate, let touch = touches.first else {
             return
         }
@@ -181,14 +197,23 @@ final class JSDPad: UIView {
             }
         }
     }
-    
+
     private func sendJoyPoint(_ point: CGPoint) {
+        guard let delegate = delegate else {
+            ELOG("`delegate` is nil")
+            return
+        }
         let x: CGFloat = (point.x / self.bounds.width)
         let y: CGFloat = (point.y / self.bounds.height)
-        delegate!.dPad(self, joystick: (x: Float(x), y: Float(y)))
+        delegate.dPad(self, joystick: (x: Float(x), y: Float(y)))
     }
 
-    override func touchesMoved(_ touches: Set<UITouch>, with _: UIEvent?) {
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+		if inMoveMode || !isUserInteractionEnabled {
+			super.touchesMoved(touches, with: event)
+			return
+		}
+
         guard let delegate = delegate, let touch = touches.first else {
             return
         }
@@ -207,10 +232,15 @@ final class JSDPad: UIView {
         }
     }
 
-    override func touchesCancelled(_: Set<UITouch>, with _: UIEvent?) {
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+		if inMoveMode || !isUserInteractionEnabled {
+			super.touchesCancelled(touches, with: event)
+			return
+		}
+
         currentDirection = .none
         dPadImageView.image = image(for: currentDirection)
-        
+
         guard let delegate = delegate else {
             return
         }
@@ -223,10 +253,15 @@ final class JSDPad: UIView {
         }
     }
 
-    override func touchesEnded(_: Set<UITouch>, with _: UIEvent?) {
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+		if inMoveMode || !isUserInteractionEnabled {
+			super.touchesEnded(touches, with: event)
+			return
+		}
+
         currentDirection = .none
         dPadImageView.image = image(for: currentDirection)
-        
+
         guard let delegate = delegate else {
             return
         }
@@ -238,7 +273,7 @@ final class JSDPad: UIView {
             JSDPadDirection.allCases.forEach { delegate.dPad(self, didRelease: $0) }
         }
     }
-    
+
     override func draw(_ rect: CGRect) {
         guard analogMode else {
             super.draw(rect)
@@ -246,22 +281,23 @@ final class JSDPad: UIView {
         }
         // Get the Graphics Context
         if let context = UIGraphicsGetCurrentContext() {
-            
+
             context.clear(rect)
-            
+
             // Set the circle outerline-width
             context.setLineWidth(5.0)
-            
+
             // Set the circle outerline-colour
-            tintColor?.set()
-            
+            let tintColor = self.tintColor ?? .white
+            tintColor.set()
+
             // Create Circle
             let radius = (frame.size.width - 10)/2
             context.addArc(center: centerPoint, radius: radius, startAngle: 0.0, endAngle: .pi * 2.0, clockwise: true)
-                
+
             // Draw
             context.strokePath()
-            
+
             // Create touch point
             context.addArc(center: analogPoint, radius: radius / 6, startAngle: 0.0, endAngle: .pi * 2.0, clockwise: true)
             // Draw
@@ -269,3 +305,4 @@ final class JSDPad: UIView {
         }
     }
 }
+#endif

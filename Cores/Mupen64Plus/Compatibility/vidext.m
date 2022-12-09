@@ -28,7 +28,11 @@
 #include "api/vidext.h"
 #import "../MupenGameCore.h"
 #import <PVSupport/PVLogging.h>
+#import <Foundation/Foundation.h>
+
+#if __has_include(<UIKit/UIKit.h>)
 #import <UIKit/UIKit.h>
+#endif
 
 #include <dlfcn.h>
 
@@ -57,7 +61,11 @@ EXPORT m64p_error CALL VidExt_ListFullscreenModes(m64p_2d_size *SizeArray, int *
 	size[0].uiHeight = 480;
 
 	// Full device size
-	CGSize fullWindow = UIApplication.sharedApplication.keyWindow.bounds.size;
+#if TARGET_OS_OSX
+    CGSize fullWindow = CGSizeMake(640, 480);
+#else
+    CGSize fullWindow = UIApplication.sharedApplication.keyWindow.bounds.size;
+#endif
 	size[1].uiWidth = fullWindow.width;
 	size[1].uiHeight = fullWindow.height;
 

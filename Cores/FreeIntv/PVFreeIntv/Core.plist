@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PVCoreIdentifier</key>
+	<string>com.provenance.FreeIntv</string>
+	<key>PVPrincipleClass</key>
+	<string>PVFreeIntvCore</string>
+	<key>PVSupportedSystems</key>
+	<array>
+		<string>com.provenance.intellivision</string>
+	</array>
+	<key>PVProjectName</key>
+	<string>FreeIntv</string>
+	<key>PVProjectURL</key>
+	<string>https://github.com/libretro/FreeIntv</string>
+	<key>PVProjectVersion</key>
+	<string>2018.1.5</string>
+</dict>
+</plist>

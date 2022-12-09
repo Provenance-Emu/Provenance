@@ -17,7 +17,7 @@ public struct PVGameLibrary {
     public let favorites: Observable<[PVGame]>
     public let recents: Observable<[PVRecentGame]>
     public let mostPlayed: Observable<[PVGame]>
-    
+
     public let saveStatesResults: Results<PVSaveState>
     public let favoritesResults: Results<PVGame>
     public let recentsResults: Results<PVRecentGame>
@@ -28,34 +28,34 @@ public struct PVGameLibrary {
 
     public init(database: RomDatabase) {
         self.database = database
-        
+
         self.saveStatesResults = database.all(PVSaveState.self).filter("game != nil && game.system != nil").sorted(byKeyPath: #keyPath(PVSaveState.lastOpened), ascending: false).sorted(byKeyPath: #keyPath(PVSaveState.date), ascending: false)
         self.saveStates = Observable
             .collection(from: self.saveStatesResults)
             .mapMany { $0 }
-        
+
         self.favoritesResults = database.all(PVGame.self, where: #keyPath(PVGame.isFavorite), value: true).sorted(byKeyPath: #keyPath(PVGame.title), ascending: false)
         self.favorites = Observable
             .collection(from: self.favoritesResults)
             .mapMany { $0 }
-        
+
         self.recentsResults = database.all(PVRecentGame.self).sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
         self.recents = Observable
             .collection(from: recentsResults)
             .mapMany { $0 }
-        
+
         self.mostPlayedResults = database.all(PVGame.self).sorted(byKeyPath: #keyPath(PVGame.playCount), ascending: false)
         self.mostPlayed = Observable
             .collection(from: self.mostPlayedResults)
             .mapMany { $0 }
 
-        self.activeSystems = database.all(PVSystem.self, filter: NSPredicate(format: "games.@count > 0")).sorted(byKeyPath: #keyPath(PVSystem.name), ascending: false)
+        self.activeSystems = database.all(PVSystem.self, filter: NSPredicate(format: "games.@count > 0")).sorted(byKeyPath: #keyPath(PVSystem.name), ascending: true)
     }
 
     public func search(for searchText: String) -> Observable<[PVGame]> {
         return Observable.collection(from: searchResults(for: searchText)).mapMany { $0 }
     }
-    
+
     public func searchResults(for searchText: String) -> Results<PVGame> {
         // Search first by title, and a broader search if that one's empty
         let titleResults = self.database.all(PVGame.self, filter: NSPredicate(format: "title CONTAINS[c] %@", argumentArray: [searchText]))
@@ -68,6 +68,8 @@ public struct PVGameLibrary {
 
     public func systems(sortedBy sortOptions: SortOptions) -> Observable<[System]> {
         let betaIDs: [SystemIdentifier] = SystemIdentifier.betas
+        let unsuppotedIDs: [SystemIdentifier] = SystemIdentifier.unsupported
+
         return Observable.collection(from: database.all(PVSystem.self))
             .flatMapLatest({ systems -> Observable<[System]> in
                 // Here we actualy observe on the games for each system, since we want to update this when games are added or removed from a system
@@ -78,6 +80,7 @@ public struct PVGameLibrary {
                     let manufacturer = pvSystem.manufacturer
                     let shortName = pvSystem.shortName
                     let isBeta = betaIDs.contains(pvSystem.enumValue)
+                    let unsupported = unsuppotedIDs.contains(pvSystem.enumValue)
                     let sortedGames = pvSystem.games.sorted(by: sortOptions)
                     return Observable.collection(from: sortedGames)
                         .mapMany { $0 }
@@ -87,6 +90,7 @@ public struct PVGameLibrary {
                                 manufacturer: manufacturer,
                                 shortName: shortName,
                                 isBeta: isBeta,
+                                unsupported: unsupported,
                                 sortedGames: games
                             )
                         })
@@ -114,6 +118,7 @@ public struct PVGameLibrary {
         public let manufacturer: String
         public let shortName: String
         public let isBeta: Bool
+        public let unsupported: Bool
         public let sortedGames: [PVGame]
     }
 
@@ -131,17 +136,47 @@ public struct PVGameLibrary {
         }
     }
     
+    public func clearROMs() -> Completable {
+        Completable.create { observer in
+            do {
+                try self.database.deleteAllGames()
+                observer(.completed)
+            } catch {
+                ELOG("Failed to delete all objects. \(error.localizedDescription)")
+                observer(.error(error))
+            }
+            return Disposables.create()
+        }
+    }
+
     public func gamesForSystem(systemIdentifier: String) -> Results<PVGame> {
         return database.all(PVGame.self).filter(NSPredicate(format: "systemIdentifier == %@", argumentArray: [systemIdentifier]))
     }
-    
+
     public func system(identifier: String) -> PVSystem? {
         return database.object(ofType: PVSystem.self, wherePrimaryKeyEquals: identifier)
     }
-    
+
     public func game(identifier: String) -> PVGame? {
         return database.object(ofType: PVGame.self, wherePrimaryKeyEquals: identifier)
     }
+    
+//    public enum SaveType {
+//        case auto
+//        case manual
+//        case any
+//    }
+//    public func saves(ofType type: SaveType = .any, game: PVGame? = nil) -> [PVSaveState]? {
+//        let saves =
+//        switch type {
+//        case .auto:
+//            return database.all(PVSaveState.self).filter("isAutoSave == YES").sorted(byKeyPath: #keyPath(PVSaveState.lastOpened), ascending: false).sorted(byKeyPath: #keyPath(PVSaveState.date), ascending: false)
+//        case .manual:
+//            return saveStates.filter("isAutosave == NO")
+//        case .any:
+//
+//        }
+//    }
 }
 
 public extension ObservableType where Element: Collection {

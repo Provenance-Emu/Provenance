@@ -1,10 +1,10 @@
-	//
-	//  MupenOptions.swift
-	//  PVMupen64Plus
-	//
-	//  Created by Joseph Mattiello on 4/11/18.
-	//  Copyright © 2018 Provenance. All rights reserved.
-	//
+//
+//  MupenOptions.swift
+//  PVMupen64Plus
+//
+//  Created by Joseph Mattiello on 4/11/18.
+//  Copyright © 2018 Provenance. All rights reserved.
+//
 
 import Foundation
 import PVSupport
@@ -105,7 +105,12 @@ extension MupenGameCore: CoreOptional {
 									   description: "Randomize PI/SI Interrupt Timing.",
 									   requiresRestart: true),
 								 defaultValue: true))
-
+        
+        coreOptions.append(.range(.init(title: "Count Per Op",
+                                        description: "Force number of cycles per emulated instruction when set greater than 0. 0 for default from .ini.",
+                                        requiresRestart: true),
+                                  range: .init(defaultValue: 0, min: 0, max: 7), defaultValue: 0))
+        
 			// MARK: --- DEBUG
 			// MARK: OSD <Bool=0>
 			// Draw on-screen display if True, otherwise don't draw OSD
@@ -221,7 +226,7 @@ extension MupenGameCore: CoreOptional {
 
 			// MARK: ---- HiRes
 			// MARK: txHiresEnable <Bool=0>
-		glidenOptions.append(.bool(.init(title: "Enable HiRes Texture packs", description: "These must be installed seperately. Refer to our WIKI for HD textures.", requiresRestart: true), defaultValue: true))
+		glidenOptions.append(.bool(.init(title: "Enable HiRes Texture packs", description: "These must be installed seperately. Refer to our WIKI for HD textures.", requiresRestart: true), defaultValue: false))
 
 			// MARK: txHresAltCRC <Bool=0>
 			// "Use alternative method of paletted textures CRC calculation."

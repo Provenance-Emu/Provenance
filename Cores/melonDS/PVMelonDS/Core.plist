@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PVCoreIdentifier</key>
+	<string>com.provenance.core.MelonDS</string>
+	<key>PVPrincipleClass</key>
+	<string>PVMelonDSCore</string>
+	<key>PVSupportedSystems</key>
+	<array>
+		<string>com.provenance.ds</string>
+	</array>
+	<key>PVProjectName</key>
+	<string>MelonDS</string>
+	<key>PVProjectURL</key>
+	<string>https://melonds.kuribo64.net</string>
+	<key>PVProjectVersion</key>
+	<string>0.9.4</string>
+	<key>PVDisabled</key>
+	<false/>
+</dict>
+</plist>

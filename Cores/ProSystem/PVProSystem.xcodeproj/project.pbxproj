@@ -9,23 +9,11 @@
 /* Begin PBXBuildFile section */
 		B324C64321921519009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C64221921519009F4EDC /* PVSupport.framework */; };
 		B324C64921921577009F4EDC /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C64821921577009F4EDC /* libz.tbd */; };
-		B3411B4C276B2FBB00D85327 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3411B4B276B2FBB00D85327 /* PVLibrary.framework */; };
 		B3411B50276B2FC000D85327 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3411B4F276B2FC000D85327 /* Foundation.framework */; };
-		B3411B52276B2FD600D85327 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3411B51276B2FD600D85327 /* Foundation.framework */; };
-		B3411B54276B2FE200D85327 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3411B53276B2FE200D85327 /* PVSupport.framework */; };
 		B3547B5A205858B700CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B59205858B600CFF7D8 /* Core.plist */; };
-		B36C7D5527AE227300715677 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36C7D5427AE227300715677 /* PVLibrary.framework */; };
 		B36DE7A31D6B7558002EE3ED /* ProSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE7A21D6B7558002EE3ED /* ProSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B36DE7AE1D6B759C002EE3ED /* ProSystem.dat in Resources */ = {isa = PBXBuildFile; fileRef = 941F59FB17A77CC90005D7EA /* ProSystem.dat */; };
 		B36DE7C31D6B7621002EE3ED /* ProSystemGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 941DFB2615B6425200C6552F /* ProSystemGameCore.mm */; };
-		B372639326EA037900E95488 /* ProSystemGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 941DFB2615B6425200C6552F /* ProSystemGameCore.mm */; };
-		B372639426EA037C00E95488 /* ProSystemGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B5008DAD0E8BFB3E005AECAF /* ProSystemGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B372639526EA039800E95488 /* libprosystem-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CA5B2C26E9E40500687B27 /* libprosystem-tvOS.a */; };
-		B372639D26EA03B300E95488 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B372639C26EA03A600E95488 /* libz.tbd */; };
-		B372639E26EA046000E95488 /* Logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F599B17A6189D0005D7EA /* Logger.cpp */; };
-		B372639F26EA047B00E95488 /* ProSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE7A21D6B7558002EE3ED /* ProSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B39DC781279E807B0017E28D /* ProSystem.dat in Resources */ = {isa = PBXBuildFile; fileRef = 941F59FB17A77CC90005D7EA /* ProSystem.dat */; };
-		B39DC782279E80870017E28D /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B59205858B600CFF7D8 /* Core.plist */; };
 		B3CA5B1426E9E3E100687B27 /* Unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 941F599417A6189D0005D7EA /* Unzip.c */; };
 		B3CA5B1526E9E3E100687B27 /* Cartridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F598517A6189D0005D7EA /* Cartridge.cpp */; };
 		B3CA5B1626E9E3E100687B27 /* Database.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F598917A6189D0005D7EA /* Database.cpp */; };
@@ -46,37 +34,11 @@
 		B3CA5B2526E9E3E100687B27 /* Tia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F59B117A6189D0005D7EA /* Tia.cpp */; };
 		B3CA5B2626E9E3E100687B27 /* ProSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F59A617A6189D0005D7EA /* ProSystem.cpp */; };
 		B3CA5B2726E9E3E100687B27 /* Bios.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F598317A6189D0005D7EA /* Bios.cpp */; };
-		B3CA5B3626E9E41900687B27 /* ProSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F59A617A6189D0005D7EA /* ProSystem.cpp */; };
-		B3CA5B3726E9E41900687B27 /* Palette.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F59A217A6189D0005D7EA /* Palette.cpp */; };
-		B3CA5B3826E9E41900687B27 /* Cartridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F598517A6189D0005D7EA /* Cartridge.cpp */; };
-		B3CA5B3926E9E41900687B27 /* Maria.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F599D17A6189D0005D7EA /* Maria.cpp */; };
-		B3CA5B3A26E9E41900687B27 /* Unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 941F599417A6189D0005D7EA /* Unzip.c */; };
-		B3CA5B3B26E9E41900687B27 /* Database.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F598917A6189D0005D7EA /* Database.cpp */; };
-		B3CA5B3C26E9E41900687B27 /* Sally.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F59AD17A6189D0005D7EA /* Sally.cpp */; };
-		B3CA5B3D26E9E41900687B27 /* Sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F59AF17A6189D0005D7EA /* Sound.cpp */; };
-		B3CA5B3E26E9E41900687B27 /* Bios.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F598317A6189D0005D7EA /* Bios.cpp */; };
-		B3CA5B3F26E9E41900687B27 /* Zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 941F599717A6189D0005D7EA /* Zip.c */; };
-		B3CA5B4026E9E41900687B27 /* Archive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F598117A6189D0005D7EA /* Archive.cpp */; };
-		B3CA5B4126E9E41900687B27 /* Memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F599F17A6189D0005D7EA /* Memory.cpp */; };
-		B3CA5B4226E9E41900687B27 /* Tia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F59B117A6189D0005D7EA /* Tia.cpp */; };
-		B3CA5B4326E9E41900687B27 /* Hash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F598C17A6189D0005D7EA /* Hash.cpp */; };
-		B3CA5B4426E9E41900687B27 /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F59B317A6189D0005D7EA /* Timer.cpp */; };
-		B3CA5B4526E9E41900687B27 /* Pokey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F59A417A6189D0005D7EA /* Pokey.cpp */; };
-		B3CA5B4626E9E41900687B27 /* Common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F598717A6189D0005D7EA /* Common.cpp */; };
-		B3CA5B4826E9E41900687B27 /* Region.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F59A917A6189D0005D7EA /* Region.cpp */; };
-		B3CA5B4926E9E41900687B27 /* Riot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F59AB17A6189D0005D7EA /* Riot.cpp */; };
-		B3CA5B4A26E9E42400687B27 /* libprosystem-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CA5B0A26E9E3D700687B27 /* libprosystem-iOS.a */; };
+		B3CA5B4A26E9E42400687B27 /* libprosystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CA5B0A26E9E3D700687B27 /* libprosystem.a */; };
 		B3FA5D431D6B84F400060D71 /* ProSystemGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B5008DAD0E8BFB3E005AECAF /* ProSystemGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B372639626EA039800E95488 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3CA5B2B26E9E40500687B27;
-			remoteInfo = "prosystem-tvOS";
-		};
 		B3CA5B4B26E9E42400687B27 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
@@ -88,15 +50,6 @@
 
 /* Begin PBXCopyFilesBuildPhase section */
 		B3CA5B0826E9E3D700687B27 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3CA5B2A26E9E40500687B27 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "include/$(PRODUCT_NAME)";
@@ -178,16 +131,14 @@
 		B34CB0EA2274B16A009134B4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B3547B59205858B600CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Core.plist; path = ProSystem/Core.plist; sourceTree = "<group>"; };
 		B36C7D5427AE227300715677 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B36DE7A01D6B7558002EE3ED /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B36DE7A01D6B7558002EE3ED /* PVProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36DE7A21D6B7558002EE3ED /* ProSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProSystem.h; sourceTree = "<group>"; };
 		B36DE7A41D6B7558002EE3ED /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B372637026E9FC7700E95488 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B372638B26EA035900E95488 /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B372639826EA039D00E95488 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B372639C26EA03A600E95488 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.0.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		B3CA5B0226E9E38200687B27 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3CA5B0A26E9E3D700687B27 /* libprosystem-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libprosystem-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3CA5B2C26E9E40500687B27 /* libprosystem-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libprosystem-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3CA5B0A26E9E3D700687B27 /* libprosystem.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libprosystem.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5008DAD0E8BFB3E005AECAF /* ProSystemGameCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProSystemGameCore.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -198,32 +149,12 @@
 			files = (
 				B3411B50276B2FC000D85327 /* Foundation.framework in Frameworks */,
 				B324C64921921577009F4EDC /* libz.tbd in Frameworks */,
-				B3CA5B4A26E9E42400687B27 /* libprosystem-iOS.a in Frameworks */,
-				B3411B4C276B2FBB00D85327 /* PVLibrary.framework in Frameworks */,
+				B3CA5B4A26E9E42400687B27 /* libprosystem.a in Frameworks */,
 				B324C64321921519009F4EDC /* PVSupport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B372638826EA035900E95488 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B36C7D5527AE227300715677 /* PVLibrary.framework in Frameworks */,
-				B372639D26EA03B300E95488 /* libz.tbd in Frameworks */,
-				B372639526EA039800E95488 /* libprosystem-tvOS.a in Frameworks */,
-				B3411B54276B2FE200D85327 /* PVSupport.framework in Frameworks */,
-				B3411B52276B2FD600D85327 /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3CA5B0726E9E3D700687B27 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3CA5B2926E9E40500687B27 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -269,10 +200,8 @@
 		19C28FB8FE9D52D311CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B36DE7A01D6B7558002EE3ED /* ProSystem.framework */,
-				B3CA5B0A26E9E3D700687B27 /* libprosystem-iOS.a */,
-				B3CA5B2C26E9E40500687B27 /* libprosystem-tvOS.a */,
-				B372638B26EA035900E95488 /* ProSystem.framework */,
+				B36DE7A01D6B7558002EE3ED /* PVProSystem.framework */,
+				B3CA5B0A26E9E3D700687B27 /* libprosystem.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -413,21 +342,12 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B372638626EA035900E95488 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B372639F26EA047B00E95488 /* ProSystem.h in Headers */,
-				B372639426EA037C00E95488 /* ProSystemGameCore.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		B36DE79F1D6B7558002EE3ED /* ProSystem-iOS */ = {
+		B36DE79F1D6B7558002EE3ED /* PVProSystem */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B36DE7A51D6B7558002EE3ED /* Build configuration list for PBXNativeTarget "ProSystem-iOS" */;
+			buildConfigurationList = B36DE7A51D6B7558002EE3ED /* Build configuration list for PBXNativeTarget "PVProSystem" */;
 			buildPhases = (
 				B36DE79D1D6B7558002EE3ED /* Headers */,
 				B36DE79B1D6B7558002EE3ED /* Sources */,
@@ -439,33 +359,14 @@
 			dependencies = (
 				B3CA5B4C26E9E42400687B27 /* PBXTargetDependency */,
 			);
-			name = "ProSystem-iOS";
+			name = PVProSystem;
 			productName = ProSystem;
-			productReference = B36DE7A01D6B7558002EE3ED /* ProSystem.framework */;
+			productReference = B36DE7A01D6B7558002EE3ED /* PVProSystem.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		B372638A26EA035900E95488 /* ProSystem-tvOS */ = {
+		B3CA5B0926E9E3D700687B27 /* prosystem */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B372638F26EA035900E95488 /* Build configuration list for PBXNativeTarget "ProSystem-tvOS" */;
-			buildPhases = (
-				B372638626EA035900E95488 /* Headers */,
-				B372638726EA035900E95488 /* Sources */,
-				B372638826EA035900E95488 /* Frameworks */,
-				B372638926EA035900E95488 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B372639726EA039800E95488 /* PBXTargetDependency */,
-			);
-			name = "ProSystem-tvOS";
-			productName = "ProSystem-tvOS";
-			productReference = B372638B26EA035900E95488 /* ProSystem.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		B3CA5B0926E9E3D700687B27 /* prosystem-iOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B3CA5B1026E9E3D700687B27 /* Build configuration list for PBXNativeTarget "prosystem-iOS" */;
+			buildConfigurationList = B3CA5B1026E9E3D700687B27 /* Build configuration list for PBXNativeTarget "prosystem" */;
 			buildPhases = (
 				B3CA5B0626E9E3D700687B27 /* Sources */,
 				B3CA5B0726E9E3D700687B27 /* Frameworks */,
@@ -475,26 +376,9 @@
 			);
 			dependencies = (
 			);
-			name = "prosystem-iOS";
+			name = prosystem;
 			productName = "prosystem-iOS";
-			productReference = B3CA5B0A26E9E3D700687B27 /* libprosystem-iOS.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		B3CA5B2B26E9E40500687B27 /* prosystem-tvOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B3CA5B3226E9E40600687B27 /* Build configuration list for PBXNativeTarget "prosystem-tvOS" */;
-			buildPhases = (
-				B3CA5B2826E9E40500687B27 /* Sources */,
-				B3CA5B2926E9E40500687B27 /* Frameworks */,
-				B3CA5B2A26E9E40500687B27 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "prosystem-tvOS";
-			productName = "prosystem-tvOS";
-			productReference = B3CA5B2C26E9E40500687B27 /* libprosystem-tvOS.a */;
+			productReference = B3CA5B0A26E9E3D700687B27 /* libprosystem.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -511,13 +395,7 @@
 					B36DE79F1D6B7558002EE3ED = {
 						CreatedOnToolsVersion = 7.3.1;
 					};
-					B372638A26EA035900E95488 = {
-						CreatedOnToolsVersion = 13.0;
-					};
 					B3CA5B0926E9E3D700687B27 = {
-						CreatedOnToolsVersion = 13.0;
-					};
-					B3CA5B2B26E9E40500687B27 = {
 						CreatedOnToolsVersion = 13.0;
 					};
 				};
@@ -534,10 +412,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B36DE79F1D6B7558002EE3ED /* ProSystem-iOS */,
-				B372638A26EA035900E95488 /* ProSystem-tvOS */,
-				B3CA5B0926E9E3D700687B27 /* prosystem-iOS */,
-				B3CA5B2B26E9E40500687B27 /* prosystem-tvOS */,
+				B36DE79F1D6B7558002EE3ED /* PVProSystem */,
+				B3CA5B0926E9E3D700687B27 /* prosystem */,
 			);
 		};
 /* End PBXProject section */
@@ -552,15 +428,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B372638926EA035900E95488 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B39DC781279E807B0017E28D /* ProSystem.dat in Resources */,
-				B39DC782279E80870017E28D /* Core.plist in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -569,14 +436,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B36DE7C31D6B7621002EE3ED /* ProSystemGameCore.mm in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B372638726EA035900E95488 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B372639326EA037900E95488 /* ProSystemGameCore.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -607,44 +466,12 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3CA5B2826E9E40500687B27 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3CA5B4126E9E41900687B27 /* Memory.cpp in Sources */,
-				B3CA5B4326E9E41900687B27 /* Hash.cpp in Sources */,
-				B3CA5B4526E9E41900687B27 /* Pokey.cpp in Sources */,
-				B3CA5B4026E9E41900687B27 /* Archive.cpp in Sources */,
-				B3CA5B4426E9E41900687B27 /* Timer.cpp in Sources */,
-				B3CA5B3E26E9E41900687B27 /* Bios.cpp in Sources */,
-				B3CA5B3926E9E41900687B27 /* Maria.cpp in Sources */,
-				B3CA5B3C26E9E41900687B27 /* Sally.cpp in Sources */,
-				B3CA5B3626E9E41900687B27 /* ProSystem.cpp in Sources */,
-				B3CA5B3D26E9E41900687B27 /* Sound.cpp in Sources */,
-				B3CA5B4626E9E41900687B27 /* Common.cpp in Sources */,
-				B372639E26EA046000E95488 /* Logger.cpp in Sources */,
-				B3CA5B3826E9E41900687B27 /* Cartridge.cpp in Sources */,
-				B3CA5B3726E9E41900687B27 /* Palette.cpp in Sources */,
-				B3CA5B3F26E9E41900687B27 /* Zip.c in Sources */,
-				B3CA5B4826E9E41900687B27 /* Region.cpp in Sources */,
-				B3CA5B3B26E9E41900687B27 /* Database.cpp in Sources */,
-				B3CA5B4226E9E41900687B27 /* Tia.cpp in Sources */,
-				B3CA5B3A26E9E41900687B27 /* Unzip.c in Sources */,
-				B3CA5B4926E9E41900687B27 /* Riot.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B372639726EA039800E95488 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3CA5B2B26E9E40500687B27 /* prosystem-tvOS */;
-			targetProxy = B372639626EA039800E95488 /* PBXContainerItemProxy */;
-		};
 		B3CA5B4C26E9E42400687B27 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3CA5B0926E9E3D700687B27 /* prosystem-iOS */;
+			target = B3CA5B0926E9E3D700687B27 /* prosystem */;
 			targetProxy = B3CA5B4B26E9E42400687B27 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -707,10 +534,11 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 			};
 			name = Debug;
 		};
@@ -760,10 +588,11 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 			};
 			name = Release;
 		};
@@ -813,15 +642,17 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				SDKROOT = iphoneos;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 			};
 			name = Archive;
 		};
 		B324C52D2191A426009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -841,7 +672,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = ProSystem/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -850,10 +681,13 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProSystem";
-				PRODUCT_NAME = ProSystem;
+				PRODUCT_NAME = PVProSystem;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -863,6 +697,7 @@
 		B36DE7A61D6B7558002EE3ED /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -888,7 +723,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = ProSystem/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -898,10 +733,13 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProSystem";
-				PRODUCT_NAME = ProSystem;
+				PRODUCT_NAME = PVProSystem;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -910,6 +748,7 @@
 		B36DE7A71D6B7558002EE3ED /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -929,7 +768,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = ProSystem/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -938,164 +777,23 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProSystem";
-				PRODUCT_NAME = ProSystem;
+				PRODUCT_NAME = PVProSystem;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
-		};
-		B372639026EA035900E95488 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Provenance Emu. All rights reserved.";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProSystem";
-				PRODUCT_NAME = ProSystem;
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 12.1;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		B372639126EA035900E95488 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_NS_ASSERTIONS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Provenance Emu. All rights reserved.";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProSystem";
-				PRODUCT_NAME = ProSystem;
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 12.1;
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		B372639226EA035900E95488 /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_NS_ASSERTIONS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Provenance Emu. All rights reserved.";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProSystem";
-				PRODUCT_NAME = ProSystem;
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 12.1;
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Archive;
 		};
 		B3CA5B1126E9E3D700687B27 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1122,13 +820,16 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Debug;
 		};
 		B3CA5B1226E9E3D700687B27 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1150,7 +851,9 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -1158,6 +861,7 @@
 		B3CA5B1326E9E3D700687B27 /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1179,104 +883,9 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Archive;
-		};
-		B3CA5B3326E9E40600687B27 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 12.1;
-			};
-			name = Debug;
-		};
-		B3CA5B3426E9E40600687B27 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				ENABLE_NS_ASSERTIONS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 12.1;
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		B3CA5B3526E9E40600687B27 /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				ENABLE_NS_ASSERTIONS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 12.1;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Archive;
@@ -1294,7 +903,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B36DE7A51D6B7558002EE3ED /* Build configuration list for PBXNativeTarget "ProSystem-iOS" */ = {
+		B36DE7A51D6B7558002EE3ED /* Build configuration list for PBXNativeTarget "PVProSystem" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B36DE7A61D6B7558002EE3ED /* Debug */,
@@ -1304,32 +913,12 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B372638F26EA035900E95488 /* Build configuration list for PBXNativeTarget "ProSystem-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B372639026EA035900E95488 /* Debug */,
-				B372639126EA035900E95488 /* Release */,
-				B372639226EA035900E95488 /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B3CA5B1026E9E3D700687B27 /* Build configuration list for PBXNativeTarget "prosystem-iOS" */ = {
+		B3CA5B1026E9E3D700687B27 /* Build configuration list for PBXNativeTarget "prosystem" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3CA5B1126E9E3D700687B27 /* Debug */,
 				B3CA5B1226E9E3D700687B27 /* Release */,
 				B3CA5B1326E9E3D700687B27 /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B3CA5B3226E9E40600687B27 /* Build configuration list for PBXNativeTarget "prosystem-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B3CA5B3326E9E40600687B27 /* Debug */,
-				B3CA5B3426E9E40600687B27 /* Release */,
-				B3CA5B3526E9E40600687B27 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

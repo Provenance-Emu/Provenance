@@ -139,7 +139,7 @@ final class PVN64ControllerViewController: PVControllerViewController<PVN64Syste
         zTriggerButton?.buttonTag = .z
         startButton?.buttonTag = .start
     }
-    
+
     override func dPad(_ dPad: JSDPad, joystick value: JoystickValue) {
         var up:CGFloat = value.y < 0.5 ? CGFloat(1 - (value.y * 2)) : 0.0
         var down:CGFloat = value.y > 0.5 ? CGFloat((value.y - 0.5) * 2) : 0.0
@@ -150,13 +150,13 @@ final class PVN64ControllerViewController: PVControllerViewController<PVN64Syste
         down = min(down, 1.0)
         left = min(left, 1.0)
         right = min(right, 1.0)
-        
+
         up = max(up, 0.0)
         down = max(down, 0.0)
         left = max(left, 0.0)
         right = max(right, 0.0)
 
-        print("x: \(value.x) , y: \(value.y), up:\(up), down:\(down), left:\(left), right:\(right), ")
+        // print("x: \(value.x) , y: \(value.y), up:\(up), down:\(down), left:\(left), right:\(right), ")
         emulatorCore.didMoveJoystick(.analogUp, withValue: up, forPlayer: 0)
         if down != 0 {
             emulatorCore.didMoveJoystick(.analogDown, withValue: down, forPlayer: 0)
@@ -168,37 +168,37 @@ final class PVN64ControllerViewController: PVControllerViewController<PVN64Syste
     }
 
     override func dPad(_: JSDPad, didPress direction: JSDPadDirection) {
-        if false {
-            // OLD non joystick way
-            emulatorCore.didMoveJoystick(.analogUp, withValue: 0, forPlayer: 0)
-            emulatorCore.didMoveJoystick(.analogLeft, withValue: 0, forPlayer: 0)
-            emulatorCore.didMoveJoystick(.analogRight, withValue: 0, forPlayer: 0)
-            emulatorCore.didMoveJoystick(.analogDown, withValue: 0, forPlayer: 0)
-            switch direction {
-            case .upLeft:
-                emulatorCore.didMoveJoystick(.analogUp, withValue: 1, forPlayer: 0)
-                emulatorCore.didMoveJoystick(.analogLeft, withValue: 1, forPlayer: 0)
-            case .up:
-                emulatorCore.didMoveJoystick(.analogUp, withValue: 1, forPlayer: 0)
-            case .upRight:
-                emulatorCore.didMoveJoystick(.analogUp, withValue: 1, forPlayer: 0)
-                emulatorCore.didMoveJoystick(.analogRight, withValue: 1, forPlayer: 0)
-            case .left:
-                emulatorCore.didMoveJoystick(.analogLeft, withValue: 1, forPlayer: 0)
-            case .right:
-                emulatorCore.didMoveJoystick(.analogRight, withValue: 1, forPlayer: 0)
-            case .downLeft:
-                emulatorCore.didMoveJoystick(.analogDown, withValue: 1, forPlayer: 0)
-                emulatorCore.didMoveJoystick(.analogLeft, withValue: 1, forPlayer: 0)
-            case .down:
-                emulatorCore.didMoveJoystick(.analogDown, withValue: 1, forPlayer: 0)
-            case .downRight:
-                emulatorCore.didMoveJoystick(.analogDown, withValue: 1, forPlayer: 0)
-                emulatorCore.didMoveJoystick(.analogRight, withValue: 1, forPlayer: 0)
-            default:
-                break
-            }
-        } else {
+//        if false {
+//            // OLD non joystick way
+//            emulatorCore.didMoveJoystick(.analogUp, withValue: 0, forPlayer: 0)
+//            emulatorCore.didMoveJoystick(.analogLeft, withValue: 0, forPlayer: 0)
+//            emulatorCore.didMoveJoystick(.analogRight, withValue: 0, forPlayer: 0)
+//            emulatorCore.didMoveJoystick(.analogDown, withValue: 0, forPlayer: 0)
+//            switch direction {
+//            case .upLeft:
+//                emulatorCore.didMoveJoystick(.analogUp, withValue: 1, forPlayer: 0)
+//                emulatorCore.didMoveJoystick(.analogLeft, withValue: 1, forPlayer: 0)
+//            case .up:
+//                emulatorCore.didMoveJoystick(.analogUp, withValue: 1, forPlayer: 0)
+//            case .upRight:
+//                emulatorCore.didMoveJoystick(.analogUp, withValue: 1, forPlayer: 0)
+//                emulatorCore.didMoveJoystick(.analogRight, withValue: 1, forPlayer: 0)
+//            case .left:
+//                emulatorCore.didMoveJoystick(.analogLeft, withValue: 1, forPlayer: 0)
+//            case .right:
+//                emulatorCore.didMoveJoystick(.analogRight, withValue: 1, forPlayer: 0)
+//            case .downLeft:
+//                emulatorCore.didMoveJoystick(.analogDown, withValue: 1, forPlayer: 0)
+//                emulatorCore.didMoveJoystick(.analogLeft, withValue: 1, forPlayer: 0)
+//            case .down:
+//                emulatorCore.didMoveJoystick(.analogDown, withValue: 1, forPlayer: 0)
+//            case .downRight:
+//                emulatorCore.didMoveJoystick(.analogDown, withValue: 1, forPlayer: 0)
+//                emulatorCore.didMoveJoystick(.analogRight, withValue: 1, forPlayer: 0)
+//            default:
+//                break
+//            }
+//        } else {
             emulatorCore.didRelease(.dPadUp, forPlayer: 0)
             emulatorCore.didRelease(.dPadDown, forPlayer: 0)
             emulatorCore.didRelease(.dPadLeft, forPlayer: 0)
@@ -228,7 +228,7 @@ final class PVN64ControllerViewController: PVControllerViewController<PVN64Syste
             default:
                 break
             }
-        }
+//        }
 
         vibrate()
     }

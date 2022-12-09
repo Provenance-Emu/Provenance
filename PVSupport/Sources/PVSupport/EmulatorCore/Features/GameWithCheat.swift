@@ -11,5 +11,6 @@ import Foundation
         enabled: Bool
     ) -> Bool
 
+    @objc(supportsCheatCode)
     func supportsCheatCode() -> Bool
 }

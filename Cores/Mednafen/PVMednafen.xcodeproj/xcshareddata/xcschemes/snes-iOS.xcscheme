@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3FBDEF7207FF0E300E661D1"
-               BuildableName = "libsnes-iOS.a"
-               BlueprintName = "snes-iOS"
+               BuildableName = "libsnes.a"
+               BlueprintName = "snes"
                ReferencedContainer = "container:PVMednafen.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3FBDEF7207FF0E300E661D1"
-            BuildableName = "libsnes-iOS.a"
-            BlueprintName = "snes-iOS"
+            BuildableName = "libsnes.a"
+            BlueprintName = "snes"
             ReferencedContainer = "container:PVMednafen.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

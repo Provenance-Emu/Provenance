@@ -4,7 +4,7 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/xcode
 
 pool:
-  vmImage: 'macOS-11'
+  vmImage: 'macOS-12'
 
 variables:
   group: 'ios-pipeline'
@@ -18,7 +18,7 @@ variables:
   CertificateFileName: 'developer_cert.p12'
   ExportOptionsFileName: 'options.plist'
   ExportMethod: 'development'
-  # xcode-version: '12.5.1'
+  xcode-version: '14.1'
   xcodeVersion: specifyPath  # Options: 8, 9, 11, 12, default, specifyPath
   sdk: 'iphoneos'
   scheme: 'Provenance'
@@ -61,12 +61,12 @@ jobs:
       inputs:
         scheme: '$(scheme)'
         xcWorkspacePath: '$(xcWorkspacePath)'
-        xcodeDeveloperDir: /Applications/Xcode_13.2.1.app/Contents/Developer
+        xcodeDeveloperDir: /Applications/Xcode_14.1.app/Contents/Developer
         xcodeVersion: specifyPath
         exportPath: '$(agent.buildDirectory)/output/$(sdk)/$(configuration)'
         packageApp: false
         destinationPlatformOption: $(destinationPlatformOption)
-        useXcpretty: true
+        useXcpretty: false
         configuration: '$(configuration)'
         exportMethod: '$(ExportMethod)'
         destinationSimulators: 'iPhone 11 Pro'

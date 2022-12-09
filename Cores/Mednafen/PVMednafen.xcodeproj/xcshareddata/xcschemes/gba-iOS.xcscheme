@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B33351A3207B01460036A448"
-               BuildableName = "libgba-iOS.a"
-               BlueprintName = "gba-iOS"
+               BuildableName = "libgba.a"
+               BlueprintName = "gba"
                ReferencedContainer = "container:PVMednafen.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B33351A3207B01460036A448"
-            BuildableName = "libgba-iOS.a"
-            BlueprintName = "gba-iOS"
+            BuildableName = "libgba.a"
+            BlueprintName = "gba"
             ReferencedContainer = "container:PVMednafen.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

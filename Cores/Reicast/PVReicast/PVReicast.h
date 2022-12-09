@@ -6,7 +6,7 @@
 //  Copyright © 2018 Provenance. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
 //! Project version number for PVReicast.
 FOUNDATION_EXPORT double PVReicastVersionNumber;

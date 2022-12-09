@@ -8,17 +8,17 @@
 
 import Foundation
 
-public enum Result {
+public enum SaveResult {
     case success
     case error(Error)
 }
 
 public protocol SaveStateSupport {
-    func loadState(atPath: URL) -> Result
-    func saveState(toPath: URL) -> Result
+    func loadState(atPath: URL) -> SaveResult
+    func saveState(toPath: URL) -> SaveResult
 }
 
 public protocol AsyncSaveStateSupport {
-    func loadState(atPath: URL, completion: @escaping (Result) -> Void) throws
-    func saveState(toPath: URL, completion: @escaping (Result) -> Void) throws
+    func loadState(atPath: URL, completion: @escaping (SaveResult) -> Void) throws
+    func saveState(toPath: URL, completion: @escaping (SaveResult) -> Void) throws
 }
