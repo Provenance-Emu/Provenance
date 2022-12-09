@@ -2482,7 +2482,6 @@
 		1ACEA6CD17F74D150031B1C9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -2515,7 +2514,10 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -2535,6 +2537,7 @@
 					"-DUSE_32BPP_RENDERING",
 					"-DNDEBUG",
 					"-D__LIBRETRO__",
+					"$(inherited)",
 				);
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -2546,7 +2549,6 @@
 		1ACEA6CE17F74D150031B1C9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -2578,7 +2580,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -2603,6 +2605,7 @@
 					"-DINLINE=\"static inline\"",
 					"-DZ80_OVERCLOCK_SHIFT=20",
 					"-DM68K_OVERCLOCK_SHIFT=20",
+					"$(inherited)",
 				);
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -2615,7 +2618,6 @@
 		B324C51A2191A3E4009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -2647,7 +2649,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -2672,6 +2674,7 @@
 					"-DINLINE=\"static inline\"",
 					"-DZ80_OVERCLOCK_SHIFT=20",
 					"-DM68K_OVERCLOCK_SHIFT=20",
+					"$(inherited)",
 				);
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;

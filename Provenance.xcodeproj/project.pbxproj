@@ -447,8 +447,6 @@
 		B37CE670293F23F70010B746 /* PVfMSX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE66E293F23F70010B746 /* PVfMSX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B37CE7C1293F287D0010B746 /* PVFreeIntv.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE7C0293F287D0010B746 /* PVFreeIntv.framework */; };
 		B37CE7C2293F287D0010B746 /* PVFreeIntv.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE7C0293F287D0010B746 /* PVFreeIntv.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B37CE7C4293F29940010B746 /* PVBliss.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE7C3293F29940010B746 /* PVBliss.framework */; };
-		B37CE7C5293F29940010B746 /* PVBliss.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE7C3293F29940010B746 /* PVBliss.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B37CE7C8293F29AD0010B746 /* PVFreeDO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE7C6293F29AB0010B746 /* PVFreeDO.framework */; };
 		B37CE7C9293F29AD0010B746 /* PVFreeDO.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE7C6293F29AB0010B746 /* PVFreeDO.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B37D30B527BCD82B00C01114 /* Moveable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37D30B427BCD82B00C01114 /* Moveable.swift */; };
@@ -599,6 +597,8 @@
 		B3DB11AB205C7F7B00A6E845 /* UIView+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AA205C7F7B00A6E845 /* UIView+Theming.swift */; };
 		B3DB11AD205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */; };
 		B3DB11AE205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */; };
+		B3DEEF922942F92C00A6957C /* PVBliss.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEEF912942F92C00A6957C /* PVBliss.framework */; };
+		B3DEEF932942F92C00A6957C /* PVBliss.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEEF912942F92C00A6957C /* PVBliss.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E21D6E203211BE009939D3 /* IndexRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E21D6D203211BE009939D3 /* IndexRequestHandler.swift */; };
 		B3E21D72203211BE009939D3 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3E3B5D9202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */; };
@@ -890,7 +890,6 @@
 				B3AEE313293F3BA40050BDB6 /* PVMu.framework in Embed Frameworks */,
 				B37CE670293F23F70010B746 /* PVfMSX.framework in Embed Frameworks */,
 				B3AF701121916C30000FA7F9 /* PVSupport.framework in Embed Frameworks */,
-				B37CE7C5293F29940010B746 /* PVBliss.framework in Embed Frameworks */,
 				B3AEDE1D293F2FF10050BDB6 /* PVPlay.framework in Embed Frameworks */,
 				B3FAC928292B4501005E8B11 /* PVEP128Emu.framework in Embed Frameworks */,
 				B3AF701421916C3A000FA7F9 /* PVLibrary.framework in Embed Frameworks */,
@@ -912,6 +911,7 @@
 				B3FAC946292B4599005E8B11 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
 				B3FAC930292B4511005E8B11 /* PVGBA.framework in Embed Frameworks */,
 				B3FAC948292B459C005E8B11 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
+				B3DEEF932942F92C00A6957C /* PVBliss.framework in Embed Frameworks */,
 				B3FAC942292B4593005E8B11 /* PVMupen64Plus.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -1596,6 +1596,8 @@
 		B3DB11AA205C7F7B00A6E845 /* UIView+Theming.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Theming.swift"; sourceTree = "<group>"; };
 		B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVCoresTableViewContorller.swift; sourceTree = "<group>"; };
 		B3DDB0A720291E8E001C6B64 /* PVMupen64PlusRspHLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusRspHLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3DEEF912942F92C00A6957C /* PVBliss.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBliss.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3DEEF942942F96900A6957C /* PVBliss.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBliss.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E0A580215647BD004B4322 /* Scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Scripts; sourceTree = "<group>"; };
 		B3E0AB38289214F500DB1E39 /* PVHatari.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVHatari.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E21D6B203211BE009939D3 /* Spotlight.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Spotlight.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1707,8 +1709,8 @@
 				B3FAC94B292B45A1005E8B11 /* PVPokeMini.framework in Frameworks */,
 				1A4869DF17C8D60C0019F6D2 /* Security.framework in Frameworks */,
 				B3FAC955292B45B6005E8B11 /* PVTGBDual.framework in Frameworks */,
+				B3DEEF922942F92C00A6957C /* PVBliss.framework in Frameworks */,
 				B3FAC929292B4505005E8B11 /* PVFCEU.framework in Frameworks */,
-				B37CE7C4293F29940010B746 /* PVBliss.framework in Frameworks */,
 				B3FAC953292B45AC005E8B11 /* PVStella.framework in Frameworks */,
 				B3FAC921292B44F3005E8B11 /* PVAtari800.framework in Frameworks */,
 				1A4869E017C8D60C0019F6D2 /* SystemConfiguration.framework in Frameworks */,
@@ -2061,6 +2063,8 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3DEEF942942F96900A6957C /* PVBliss.framework */,
+				B3DEEF912942F92C00A6957C /* PVBliss.framework */,
 				B3AEE311293F3BA30050BDB6 /* PVMu.framework */,
 				B3AEE310293F39230050BDB6 /* PVGearcoleco.framework */,
 				B3AEDE2D293F34D90050BDB6 /* PVProSystem.framework */,
