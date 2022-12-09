@@ -7,6 +7,7 @@
 //
 
 import PVSupport
+#if canImport(UIKit)
 import UIKit
 
 enum JSDPadDirection: Int, CaseIterable {
@@ -304,3 +305,4 @@ final class JSDPad: MovableButtonView {
         }
     }
 }
+#endif

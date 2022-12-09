@@ -6,6 +6,7 @@
 //  Copyright © 2016 James Addyman. All rights reserved.
 //
 
+#if __has_include(<UIKit/UIKit.h>)
 #import <UIKit/UIKit.h>
 
 // These are private/undocumented API, so we need to expose them here
@@ -21,3 +22,4 @@
 @property (class, readonly, assign) BOOL hasTapticMotor;
 
 @end
+#endif

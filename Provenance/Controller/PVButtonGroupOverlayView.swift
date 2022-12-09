@@ -6,7 +6,11 @@
 //  Copyright (c) 2018 Joe Mattiello. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 final class PVButtonGroupOverlayView: MovableButtonView {
     var buttons = [JSButton]()
