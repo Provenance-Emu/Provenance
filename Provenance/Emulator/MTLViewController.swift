@@ -25,7 +25,6 @@ extension MTLViewController: PVRenderDelegate {
 	}
 }
 
-@available(iOS 13.0, tvOS 13.0, *)
 class PVMTLView: MTKView, MTKViewDelegate {
 	private let queue: DispatchQueue = DispatchQueue.init(label: "renderQueue", qos: .userInteractive)
 	private var hasSuspended: Bool = false

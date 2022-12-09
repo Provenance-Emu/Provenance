@@ -1,0 +1,23 @@
+// Codesigning settings defined optionally, see `CodeSigning.xcconfig.example`
+#include "../../Build.xcconfig"
+
+
+// All
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) __LIBRETRO__=1 HAVE_THREADS=1 HAVE_OPENGL=1 HAVE_OPENGLES=1 HAVE_OPENGLES2=1 HAVE_OPENGLES3=1 GLES=1 GLES2=1 GLES3=1 GLES31=1 
+// HAVE_PLAIN_DRM=1
+OTHER_CFLAGS = $(inherited) -ObjC
+OTHER_LDFLAGS = $(inherited) -ObjC -all_load
+
+    // Device
+GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*] = $(inherited) TARGET_IPHONE=1
+OTHER_CFLAGS[sdk=iphoneos*] = $(inherited)
+
+// Simulator
+GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*] = $(inherited) TARGET_IPHONE_SIMULATOR=1
+
+// tvOS Device
+GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvos*] = $(inherited) TARGET_IPHONE=1
+OTHER_CFLAGS[sdk=appletvos*] = $(inherited)
+
+// tvOS Simulator
+GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvsimulator*] = $(inherited) TARGET_IPHONE_SIMULATOR=1

@@ -291,10 +291,30 @@ public final class iCloudSync {
             let jsonDecorder = JSONDecoder()
             jsonDecorder.dataDecodingStrategy = .deferredToData
 
-            let legacySubDirs = try? fm.contentsOfDirectory(at: legacySavesDirectory, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
-
+            let legacySubDirs: [URL]?
+            do {
+                legacySubDirs = try fm.contentsOfDirectory(at: legacySavesDirectory, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+            } catch {
+                ELOG("\(error.localizedDescription)")
+                legacySubDirs = nil
+            }
+            
             legacySubDirs?.forEach {
-                try? fm.setUbiquitous(true, itemAt: $0, destinationURL: PVEmulatorConfiguration.Paths.saveSavesPath.appendingPathComponent($0.lastPathComponent, isDirectory: true))
+                do {
+                    let destinationURL = PVEmulatorConfiguration.Paths.saveSavesPath.appendingPathComponent($0.lastPathComponent, isDirectory: true)
+                    if !fm.isUbiquitousItem(at: destinationURL) {
+                        try fm.setUbiquitous(true,
+                                             itemAt: $0,
+                                             destinationURL: destinationURL)
+                    } else {
+//                        var resultURL: NSURL?
+//                        try fm.replaceItem(at: destinationURL, withItemAt: $0, backupItemName: nil, resultingItemURL: &resultURL)
+//                        try fm.evictUbiquitousItem(at: destinationURL)
+                        try fm.startDownloadingUbiquitousItem(at: destinationURL)
+                    }
+                } catch {
+                    ELOG("Error: \(error)")
+                }
             }
             //        let saves = realm.objects(PVSaveState.self)
             //        saves.forEach {

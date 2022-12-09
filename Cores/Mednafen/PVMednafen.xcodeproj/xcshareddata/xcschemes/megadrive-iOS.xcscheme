@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3335244207B02770036A448"
-               BuildableName = "libmegadrive-iOS.a"
-               BlueprintName = "megadrive-iOS"
+               BuildableName = "libmegadrive.a"
+               BlueprintName = "megadrive"
                ReferencedContainer = "container:PVMednafen.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3335244207B02770036A448"
-            BuildableName = "libmegadrive-iOS.a"
-            BlueprintName = "megadrive-iOS"
+            BuildableName = "libmegadrive.a"
+            BlueprintName = "megadrive"
             ReferencedContainer = "container:PVMednafen.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

@@ -20,13 +20,13 @@
 #include "types.h"
 #include "profiler/profiler.h"
 #include "cfg/cfg.h"
-#include "rend/rend.h"
+//#include "rend/rend.h"
 #include "rend/TexCache.h"
 #include "hw/maple/maple_devs.h"
 #include "hw/maple/maple_if.h"
 #include "hw/maple/maple_cfg.h"
 
-__weak PVFlycastCore *_current = 0;
+//__weak PVFlycastCore *_current = 0;
 
 @interface PVFlycastCore() {
 
@@ -37,16 +37,16 @@ __weak PVFlycastCore *_current = 0;
 @end
 
 // Flycast function declerations
-extern int screen_width,screen_height;
-bool rend_single_frame();
-bool gles_init();
-extern int flycast_main(int argc, char* argv[]);
-void common_linux_setup();
-int dc_init(int argc,wchar* argv[]);
-void dc_run();
-void dc_term();
-void dc_stop();
-extern void MakeCurrentThreadRealTime();
+//extern int screen_width,screen_height;
+//bool rend_single_frame();
+//bool gles_init();
+//extern int flycast_main(int argc, char* argv[]);
+//void common_linux_setup();
+//int dc_init(int argc,wchar* argv[]);
+//void dc_run();
+//void dc_term();
+//void dc_stop();
+//extern void MakeCurrentThreadRealTime();
 
 bool inside_loop     = true;
 static bool first_run = true;;
@@ -68,10 +68,10 @@ volatile bool has_init = false;
 		coreWaitToEndFrameSemaphore    = dispatch_semaphore_create(0);
         coreWaitForExitSemaphore       = dispatch_semaphore_create(0);
 
-		_videoWidth  = screen_width = 640;
-		_videoHeight = screen_height = 480;
-		_videoBitDepth = 32; // ignored
-		videoDepthBitDepth = 0; // TODO
+//		_videoWidth  = screen_width = 640;
+//		_videoHeight = screen_height = 480;
+//		_videoBitDepth = 32; // ignored
+//		videoDepthBitDepth = 0; // TODO
 
 		sampleRate = 44100;
 
@@ -143,31 +143,31 @@ volatile bool has_init = false;
 }
 
 - (void)printSettings {
-#define LIST_OF_VARIABLES \
-X(dynarec.Enable) \
-X(dynarec.idleskip) \
-X(dreamcast.region) \
-X(dreamcast.region) \
-X(aica.LimitFPS) \
-X(aica.NoSound) \
-X(aica.NoBatch) \
-X(aica.GlobalFocus) \
-X(aica.BufferSize) \
-X(aica.OldSyncronousDma) \
-X(bios.UseReios) \
-X(rend.WideScreen) \
-X(rend.UseMipmaps) \
-X(pvr.MaxThreads) \
-X(pvr.SynchronousRender)
-
-
-    NSMutableString *s = [NSMutableString stringWithFormat:@"----------\nFlycast Settings:\n---------\n"];
-#define X(name) \
-[s appendString: [NSString stringWithFormat:@"%@ : %i\n", @#name , settings.name ]];
-LIST_OF_VARIABLES
-#undef X
-
-    ILOG(@"%@", s);
+//#define LIST_OF_VARIABLES \
+//X(dynarec.Enable) \
+//X(dynarec.idleskip) \
+//X(dreamcast.region) \
+//X(dreamcast.region) \
+//X(aica.LimitFPS) \
+//X(aica.NoSound) \
+//X(aica.NoBatch) \
+//X(aica.GlobalFocus) \
+//X(aica.BufferSize) \
+//X(aica.OldSyncronousDma) \
+//X(bios.UseReios) \
+//X(rend.WideScreen) \
+//X(rend.UseMipmaps) \
+//X(pvr.MaxThreads) \
+//X(pvr.SynchronousRender)
+//
+//
+//    NSMutableString *s = [NSMutableString stringWithFormat:@"----------\nFlycast Settings:\n---------\n"];
+//#define X(name) \
+//[s appendString: [NSString stringWithFormat:@"%@ : %i\n", @#name , settings.name ]];
+//LIST_OF_VARIABLES
+//#undef X
+//
+//    ILOG(@"%@", s);
 }
 
 
@@ -213,166 +213,166 @@ LIST_OF_VARIABLES
 }
 
 #pragma mark - Running
-- (void)startEmulation {
-	if(!self.isRunning) {
-		[super startEmulation];
-        [NSThread detachNewThreadSelector:@selector(runFlycastRenderThread) toTarget:self withObject:nil];
-	}
-}
-
-- (void)runFlycastEmuThread {
-	@autoreleasepool
-	{
-		[self flycastMain];
-
-		// Core returns
-
-		// Unlock rendering thread
-		dispatch_semaphore_signal(coreWaitToEndFrameSemaphore);
-
-		[super stopEmulation];
-	}
-}
-
-- (void)runFlycastRenderThread {
-    @autoreleasepool
-    {
-        [self.renderDelegate startRenderingOnAlternateThread];
-        BOOL success = gles_init();
-        assert(success);
-        [NSThread detachNewThreadSelector:@selector(runFlycastEmuThread) toTarget:self withObject:nil];
-
-        CFAbsoluteTime lastTime = CFAbsoluteTimeGetCurrent();
-
-        while (!has_init) {}
-        while ( !shouldStop )
-        {
-            [self.frontBufferCondition lock];
-            while (!shouldStop && self.isFrontBufferReady) [self.frontBufferCondition wait];
-            [self.frontBufferCondition unlock];
-
-            CFAbsoluteTime now = CFAbsoluteTimeGetCurrent();
-            CFTimeInterval deltaTime = now - lastTime;
-            while ( !shouldStop && !rend_single_frame() ) {}
-            [self swapBuffers];
-            lastTime = now;
-        }
-    }
-}
-
-- (void)flycastMain {
-	//    #if !TARGET_OS_SIMULATOR
-	// install_prof_handler(1);
-	//   #endif
-
-	char *Args[3];
-	const char *P;
-
-	P = (const char *)[self.diskPath UTF8String];
-	Args[0] = "dc";
-	Args[1] = "-config";
-	Args[2] = P&&P[0]? (char *)malloc(strlen(P)+32):0;
-
-	if(Args[2])
-	{
-		strcpy(Args[2],"config:image=");
-		strcat(Args[2],P);
-	}
-
-	MakeCurrentThreadRealTime();
-
-	int argc = Args[2]? 3:1;
-
-    // Set directories
-	set_user_config_dir(self.BIOSPath.UTF8String);
-    set_user_data_dir(self.BIOSPath.UTF8String);
-    // Shouuld be this, but it looks for BIOS there too and  have to copy BIOS into battery saves dir of every game then
-        //    set_user_data_dir(self.batterySavesPath.UTF8String);
-
-    add_system_data_dir(self.BIOSPath.UTF8String);
-    add_system_config_dir(self.BIOSPath.UTF8String);
-
-    NSString *systemPath = [self.diskPath stringByDeletingLastPathComponent];
-
-    NSString *configDirs = [NSString stringWithFormat:@"%@", systemPath];
-    NSString *dataDirs = [NSString stringWithFormat:@"%@", systemPath];
-
-    setenv("XDG_CONFIG_DIRS", configDirs.UTF8String, true);
-    setenv("XDG_DATA_DIRS", dataDirs.UTF8String, true);
-
-    ILOG(@"Config dir is: %s\n", get_writable_config_path("/").c_str());
-	ILOG(@"Data dir is:   %s\n", get_writable_data_path("/").c_str());
-
-	common_linux_setup();
-
-	settings.profile.run_counts=0;
-
-	flycast_main(argc, Args);
-    
-    dispatch_semaphore_signal(coreWaitForExitSemaphore);
-}
-
-int flycast_main(int argc, wchar* argv[]) {
-	int status = dc_init(argc, argv);
-    if (status != 0) {
-        ELOG(@"Flycast dc_init failed with code: %i", status);
-        return status;
-    }
-
-    ILOG(@"Flycast init status: %i", status);
-
-    [_current printSettings];
-
-    has_init = true;
-
-	dc_run();
-
-    has_init = false;
-//    _current->shouldStop = true;
-
-    dc_term();
-
-	return 0;
-}
-
-- (void)setPauseEmulation:(BOOL)flag {
-	[super setPauseEmulation:flag];
-
-	if (flag)
-	{
-        dc_stop();
-		dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
-		[self.frontBufferCondition lock];
-		[self.frontBufferCondition signal];
-		[self.frontBufferCondition unlock];
-    } else {
-        dc_run();
-    }
-}
-
-- (void)stopEmulation {
-    has_init = false;
-
-	// TODO: Call flycast stop command here
-	dc_term();
-    self->shouldStop = YES;
-	dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
-    dispatch_semaphore_wait(coreWaitForExitSemaphore, DISPATCH_TIME_FOREVER);
-	[self.frontBufferCondition lock];
-	[self.frontBufferCondition signal];
-	[self.frontBufferCondition unlock];
-
-	[super stopEmulation];
-}
-
-- (void)resetEmulation {
-	// TODO: Call flycast reset command here
-	plugins_Reset(true);
-	dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
-	[self.frontBufferCondition lock];
-	[self.frontBufferCondition signal];
-	[self.frontBufferCondition unlock];
-}
+//- (void)startEmulation {
+//	if(!self.isRunning) {
+//		[super startEmulation];
+//        [NSThread detachNewThreadSelector:@selector(runFlycastRenderThread) toTarget:self withObject:nil];
+//	}
+//}
+//
+//- (void)runFlycastEmuThread {
+//	@autoreleasepool
+//	{
+//		[self flycastMain];
+//
+//		// Core returns
+//
+//		// Unlock rendering thread
+//		dispatch_semaphore_signal(coreWaitToEndFrameSemaphore);
+//
+//		[super stopEmulation];
+//	}
+//}
+//
+//- (void)runFlycastRenderThread {
+//    @autoreleasepool
+//    {
+//        [self.renderDelegate startRenderingOnAlternateThread];
+//        BOOL success = gles_init();
+//        assert(success);
+//        [NSThread detachNewThreadSelector:@selector(runFlycastEmuThread) toTarget:self withObject:nil];
+//
+//        CFAbsoluteTime lastTime = CFAbsoluteTimeGetCurrent();
+//
+//        while (!has_init) {}
+//        while ( !shouldStop )
+//        {
+//            [self.frontBufferCondition lock];
+//            while (!shouldStop && self.isFrontBufferReady) [self.frontBufferCondition wait];
+//            [self.frontBufferCondition unlock];
+//
+//            CFAbsoluteTime now = CFAbsoluteTimeGetCurrent();
+//            CFTimeInterval deltaTime = now - lastTime;
+//            while ( !shouldStop && !rend_single_frame() ) {}
+//            [self swapBuffers];
+//            lastTime = now;
+//        }
+//    }
+//}
+//
+//- (void)flycastMain {
+//	//    #if !TARGET_OS_SIMULATOR
+//	// install_prof_handler(1);
+//	//   #endif
+//
+//	char *Args[3];
+//	const char *P;
+//
+//	P = (const char *)[self.diskPath UTF8String];
+//	Args[0] = "dc";
+//	Args[1] = "-config";
+//	Args[2] = P&&P[0]? (char *)malloc(strlen(P)+32):0;
+//
+//	if(Args[2])
+//	{
+//		strcpy(Args[2],"config:image=");
+//		strcat(Args[2],P);
+//	}
+//
+//	MakeCurrentThreadRealTime();
+//
+//	int argc = Args[2]? 3:1;
+//
+//    // Set directories
+//	set_user_config_dir(self.BIOSPath.UTF8String);
+//    set_user_data_dir(self.BIOSPath.UTF8String);
+//    // Shouuld be this, but it looks for BIOS there too and  have to copy BIOS into battery saves dir of every game then
+//        //    set_user_data_dir(self.batterySavesPath.UTF8String);
+//
+//    add_system_data_dir(self.BIOSPath.UTF8String);
+//    add_system_config_dir(self.BIOSPath.UTF8String);
+//
+//    NSString *systemPath = [self.diskPath stringByDeletingLastPathComponent];
+//
+//    NSString *configDirs = [NSString stringWithFormat:@"%@", systemPath];
+//    NSString *dataDirs = [NSString stringWithFormat:@"%@", systemPath];
+//
+//    setenv("XDG_CONFIG_DIRS", configDirs.UTF8String, true);
+//    setenv("XDG_DATA_DIRS", dataDirs.UTF8String, true);
+//
+//    ILOG(@"Config dir is: %s\n", get_writable_config_path("/").c_str());
+//	ILOG(@"Data dir is:   %s\n", get_writable_data_path("/").c_str());
+//
+//	common_linux_setup();
+//
+////	settings.profile.run_counts=0;
+//
+//	flycast_main(argc, Args);
+//
+//    dispatch_semaphore_signal(coreWaitForExitSemaphore);
+//}
+//
+//int flycast_main(int argc, char* argv[]) {
+//	int status = dc_init(argc, argv);
+//    if (status != 0) {
+//        ELOG(@"Flycast dc_init failed with code: %i", status);
+//        return status;
+//    }
+//
+//    ILOG(@"Flycast init status: %i", status);
+//
+//    [_current printSettings];
+//
+//    has_init = true;
+//
+//	dc_run();
+//
+//    has_init = false;
+////    _current->shouldStop = true;
+//
+//    dc_term();
+//
+//	return 0;
+//}
+//
+//- (void)setPauseEmulation:(BOOL)flag {
+//	[super setPauseEmulation:flag];
+//
+//	if (flag)
+//	{
+//        dc_stop();
+//		dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
+//		[self.frontBufferCondition lock];
+//		[self.frontBufferCondition signal];
+//		[self.frontBufferCondition unlock];
+//    } else {
+//        dc_run();
+//    }
+//}
+//
+//- (void)stopEmulation {
+//    has_init = false;
+//
+//	// TODO: Call flycast stop command here
+//	dc_term();
+//    self->shouldStop = YES;
+//	dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
+//    dispatch_semaphore_wait(coreWaitForExitSemaphore, DISPATCH_TIME_FOREVER);
+//	[self.frontBufferCondition lock];
+//	[self.frontBufferCondition signal];
+//	[self.frontBufferCondition unlock];
+//
+//	[super stopEmulation];
+//}
+//
+//- (void)resetEmulation {
+//	// TODO: Call flycast reset command here
+//	plugins_Reset(true);
+//	dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
+//	[self.frontBufferCondition lock];
+//	[self.frontBufferCondition signal];
+//	[self.frontBufferCondition unlock];
+//}
 
 @end
 

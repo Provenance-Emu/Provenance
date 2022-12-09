@@ -115,7 +115,7 @@ extension PVEmulatorViewController {
                 do {
                     try jpegData.write(to: imageURL)
                     //                    try RomDatabase.sharedInstance.writeTransaction {
-                    //                        let newFile = PVImageFile(withURL: imageURL)
+                    //                        let newFile = PVImageFile(withURL: imageURL, relativeRoot: .iCloud)
                     //                        game.screenShots.append(newFile)
                     //                    }
                 } catch {

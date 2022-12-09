@@ -127,6 +127,7 @@ PV_OBJC_DIRECT_MEMBERS
     self = [super init];
     if(self != nil)
     {
+#if !TARGET_OS_OSX
         NSError *error;
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient error:&error];
         if(error) {
@@ -134,12 +135,12 @@ PV_OBJC_DIRECT_MEMBERS
         } else {
             ILOG(@"Successfully set audio session to ambient");
         }
-
+#endif
 		_outputDeviceID = 0;
 		volume = 1;
 
         gameCore = core;
-        [self createGraph];
+//        [self createGraph];
     }
     
     return self;
@@ -194,7 +195,11 @@ PV_OBJC_DIRECT_MEMBERS
     AudioComponentDescription desc;
     
     desc.componentType         = kAudioUnitType_Output;
+#if !TARGET_OS_OSX
     desc.componentSubType      = kAudioUnitSubType_RemoteIO;
+#else
+    desc.componentSubType      = kAudioUnitSubType_DefaultOutput;
+#endif
     desc.componentManufacturer = kAudioUnitManufacturer_Apple;
     desc.componentFlagsMask    = 0;
     desc.componentFlags        = 0;

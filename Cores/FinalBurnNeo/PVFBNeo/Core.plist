@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PVCoreIdentifier</key>
+	<string>com.provenance.fbneo</string>
+	<key>PVPrincipleClass</key>
+	<string>PVFBNeoCore</string>
+	<key>PVSupportedSystems</key>
+	<array>
+		<string>com.provenance.neogeo</string>
+		<string>com.provenance.msx</string>
+		<string>com.provenance.cps</string>
+		<string>com.provenance.colecovision</string>
+	</array>
+	<key>PVProjectName</key>
+	<string>FBNeo</string>
+	<key>PVProjectURL</key>
+	<string></string>
+	<key>PVProjectVersion</key>
+	<string></string>
+</dict>
+</plist>

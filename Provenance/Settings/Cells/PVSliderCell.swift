@@ -6,6 +6,7 @@
 //  Copyright © 2018 Provenance Emu. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 final class PVSliderCell: SliderCell {
@@ -19,23 +20,21 @@ final class PVSliderCell: SliderCell {
         style()
     }
 
+    override func traitCollectionDidChange(_: UITraitCollection?) {
+        style()
+    }
+    
     func style() {
         let bg = UIView(frame: bounds)
         bg.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         #if os(iOS)
-            bg.backgroundColor = Theme.currentTheme.settingsCellBackground
-            textLabel?.textColor = Theme.currentTheme.settingsCellText
-            detailTextLabel?.textColor = Theme.currentTheme.defaultTintColor
             slider.tintColor = Theme.currentTheme.defaultTintColor
 		#if !targetEnvironment(macCatalyst)
             slider.thumbTintColor = Theme.currentTheme.switchThumb
 		#endif
             slider.isContinuous = false
-        #else
-            bg.backgroundColor = UIColor.clear
-            self.textLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.white : UIColor.black
-            self.detailTextLabel?.textColor = traitCollection.userInterfaceStyle != .light ? UIColor.lightGray : UIColor.darkGray
         #endif
         backgroundView = bg
     }
 }
+#endif

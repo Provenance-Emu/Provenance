@@ -52,23 +52,23 @@ final class RegionLabel: LongPressLabel {
 }
 
 class LongPressLabel: UILabel {
-    #if os(tvOS)
-        override var canBecomeFocused: Bool {
-            return true
-        }
+     #if os(tvOS) && TVOS_HAS_EDIT
+         override var canBecomeFocused: Bool {
+             return true
+         }
 
-        override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
-            super.didUpdateFocus(in: context, with: coordinator)
+         override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+             super.didUpdateFocus(in: context, with: coordinator)
 
-            coordinator.addCoordinatedAnimations({ [unowned self] in
-                if self.isFocused {
-                    self.backgroundColor = UIColor.lightGray
-                } else {
-                    self.backgroundColor = nil
-                }
-            }, completion: nil)
-        }
-    #endif
+             coordinator.addCoordinatedAnimations({ [unowned self] in
+                 if self.isFocused {
+                     self.backgroundColor = UIColor.lightGray
+                 } else {
+                     self.backgroundColor = nil
+                 }
+             }, completion: nil)
+         }
+     #endif
 }
 
 final class GameMoreInfoPageViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, GameLaunchingViewController, GameSharingViewController {
@@ -285,24 +285,29 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
 //    override func viewWillDisappear(_ animated: Bool) {
 //        super.viewWillDisappear(animated)
 //    }
-
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
-        #if os(iOS)
-            descriptionTextView.showsVerticalScrollIndicator = true
-            descriptionTextView.flashScrollIndicators()
-            descriptionTextView.indicatorStyle = .white
-        #endif
-
-        #if os(tvOS)
-            if descriptionTextView.contentSize.height > descriptionTextView.bounds.height {
-                descriptionTextView.isUserInteractionEnabled = true
-                descriptionTextView.isSelectable = true
-                descriptionTextView.isScrollEnabled = true
-                descriptionTextView.panGestureRecognizer.allowedTouchTypes = [NSNumber(value: UITouch.TouchType.indirect.rawValue)]
-            }
-        #endif
+        
+#if os(iOS)
+        descriptionTextView.showsVerticalScrollIndicator = true
+        descriptionTextView.flashScrollIndicators()
+        descriptionTextView.indicatorStyle = .white
+#endif
+        
+#if os(tvOS)
+#if TVOS_HAS_EDIT
+        if descriptionTextView.contentSize.height > descriptionTextView.bounds.height {
+            descriptionTextView.font = UIFont.systemFont(ofSize: 24.0)
+            descriptionTextView.isUserInteractionEnabled = false
+            descriptionTextView.isSelectable = false
+            descriptionTextView.isScrollEnabled = false
+            descriptionTextView.panGestureRecognizer.allowedTouchTypes = [NSNumber(value: UITouch.TouchType.indirect.rawValue)]
+        }
+#else
+        descriptionTextView.font = UIFont.systemFont(ofSize: 24.0)
+#endif
+#endif
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -410,7 +415,7 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
 
     func image(withText text: String) -> UIImage? {
         #if os(iOS)
-            let backgroundColor: UIColor = Theme.currentTheme.settingsCellBackground!
+            let backgroundColor: UIColor = .systemBackground
         #else
             let backgroundColor: UIColor = UIColor(white: 0.9, alpha: 0.9)
         #endif
@@ -598,7 +603,7 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
             textField.keyboardAppearance = .dark
         }
 
-        alert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .destructive, handler: nil))
         alert.addAction(UIAlertAction(title: "Done", style: .default, handler: { _ in
             let textField = alert.textFields?.first!
             let submittedValue = textField?.text
@@ -632,7 +637,7 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
             textField.autocapitalizationType = .sentences
         }
 
-        alert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .destructive, handler: nil))
         alert.addAction(UIAlertAction(title: "Done", style: .default, handler: { _ in
             let textField = alert.textFields?.first!
             let submittedValue = textField?.text
@@ -806,7 +811,7 @@ extension PVGameMoreInfoViewController: UITextViewDelegate {
 extension PVGameMoreInfoViewController {
     private func askToResetAnalytics() {
         let alert = UIAlertController(title: "Erase history?", message: "Would you like to erase your play counter and time spent in \(game!.title)?", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .default, handler: nil))
         alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { _ in
             do {
                 try RomDatabase.sharedInstance.writeTransaction {
@@ -858,7 +863,7 @@ extension PVGameMoreInfoViewController {
 //                }))
 //            }
 
-            actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            actionSheet.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
             present(actionSheet, animated: true, completion: nil)
         #endif
     }
@@ -929,7 +934,7 @@ extension PVGameMoreInfoViewController {
 //                                imagePickerActionSheet.pv_addButton(withTitle: "Choose from Library...", action: libraryAction)
 //                            }
 //                        }
-//                        imagePickerActionSheet.pv_addCancelButton(withTitle: "Cancel", action: nil)
+//                        imagePickerActionSheet.pv_addCancelButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel"), action: nil)
 //                        imagePickerActionSheet.show(in: self.view)
 //                    }
 //                })
@@ -952,7 +957,7 @@ extension PVGameMoreInfoViewController {
 //                    imagePickerActionSheet.pv_addButton(withTitle: "Choose from Library...", action: libraryAction)
 //                }
 //            }
-//            imagePickerActionSheet.pv_addCancelButton(withTitle: "Cancel", action: nil)
+//            imagePickerActionSheet.pv_addCancelButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel"), action: nil)
 //            imagePickerActionSheet.show(in: self.view)
 //            self.assetsLibrary = nil
 //        })

@@ -11,14 +11,14 @@ import Foundation
 public protocol CoreOptional where Self: PVEmulatorCore {
     @nonobjc
     static var options: [CoreOption] { get }
-    
+
 //    static func bool(forOption option: String) -> Bool
 //    static func int(forOption option: String) -> Int
 //    static func float(forOption option: String) -> Float
 //    static func string(forOption option: String) -> String?
 }
 
-//public extension CoreOptional {
+// public extension CoreOptional {
 //    static func bool(forOption option: String) -> Bool {
 //        return valueForOption(Bool.self, option) ?? false
 //    }
@@ -37,4 +37,4 @@ public protocol CoreOptional where Self: PVEmulatorCore {
 //        let value = valueForOption(String.self, option)
 //        return value
 //    }
-//}
+// }

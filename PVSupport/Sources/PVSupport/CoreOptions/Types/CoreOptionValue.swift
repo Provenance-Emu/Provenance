@@ -14,7 +14,7 @@ public enum CoreOptionValue {
     case int(Int)
     case float(Float)
     case notFound
-    
+
     public var asBool: Bool {
         switch self {
         case .bool(let value): return value
@@ -24,7 +24,7 @@ public enum CoreOptionValue {
         case .notFound: return false
         }
     }
-    
+
     public var asString: String {
         switch self {
         case .bool(let value): return value ? "true" : "false"
@@ -34,7 +34,7 @@ public enum CoreOptionValue {
         case .notFound: return "not found"
         }
     }
-    
+
     public var asInt: Int? {
         switch self {
         case .bool(let value): return value ? 1 : 0
@@ -44,7 +44,7 @@ public enum CoreOptionValue {
         case .notFound: return nil
         }
     }
-    
+
     public var asFloat: Float? {
         switch self {
         case .bool(let value): return value ? 1 : 0
@@ -78,7 +78,7 @@ extension CoreOptionValue: Codable {
             break
         }
     }
-        
+
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodableKeys.self)
         let type = try values.decode(String.self, forKey: .type)

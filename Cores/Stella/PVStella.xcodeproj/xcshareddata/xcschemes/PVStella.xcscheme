@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B38FB4BF1C839BE500CD73BE"
                BuildableName = "PVStella.framework"
-               BlueprintName = "PVStella-iOS"
+               BlueprintName = "PVStella"
                ReferencedContainer = "container:PVStella.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,7 +45,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B38FB4BF1C839BE500CD73BE"
             BuildableName = "PVStella.framework"
-            BlueprintName = "PVStella-iOS"
+            BlueprintName = "PVStella"
             ReferencedContainer = "container:PVStella.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -61,7 +61,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B38FB4BF1C839BE500CD73BE"
             BuildableName = "PVStella.framework"
-            BlueprintName = "PVStella-iOS"
+            BlueprintName = "PVStella"
             ReferencedContainer = "container:PVStella.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3335091207AFF2B0036A448"
-               BuildableName = "libvirtualboy-iOS.a"
-               BlueprintName = "virtualboy-iOS"
+               BuildableName = "libvirtualboy.a"
+               BlueprintName = "virtualboy"
                ReferencedContainer = "container:PVMednafen.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3335091207AFF2B0036A448"
-            BuildableName = "libvirtualboy-iOS.a"
-            BlueprintName = "virtualboy-iOS"
+            BuildableName = "libvirtualboy.a"
+            BlueprintName = "virtualboy"
             ReferencedContainer = "container:PVMednafen.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PVCoreIdentifier</key>
+	<string>com.provenance.Citra</string>
+	<key>PVPrincipleClass</key>
+	<string>PVCitraCore</string>
+	<key>PVSupportedSystems</key>
+	<array>
+		<string>com.provenance.3ds</string>
+	</array>
+	<key>PVProjectName</key>
+	<string>Citra</string>
+	<key>PVProjectURL</key>
+	<string>https://github.com/libretro/libretro-core-info/blob/master/citra_libretro.info</string>
+	<key>PVProjectVersion</key>
+	<string>Git</string>
+</dict>
+</plist>

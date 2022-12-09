@@ -214,7 +214,7 @@ private extension GameImporter {
         case initialized
         case started(path: URL)
         case finished(md5: String, modified: Bool)
-        case finishedArtwork(url: URL)
+        case finishedArtwork(url: URL?)
         case completed(encounteredConflicts: Bool)
     }
 }
@@ -228,7 +228,7 @@ private extension Reactive where Base: GameImporter {
 
             self.base.importStartedHandler = { observer.onNext(.started(path: URL(fileURLWithPath: $0))) }
             self.base.finishedImportHandler = { observer.onNext(.finished(md5: $0, modified: $1)) }
-            self.base.finishedArtworkHandler = { observer.onNext(.finishedArtwork(url: URL(fileURLWithPath: $0))) }
+            self.base.finishedArtworkHandler = { observer.onNext(.finishedArtwork(url: URL(fileURLWithPath: $0 ?? ""))) }
             self.base.completionHandler = { observer.onNext(.completed(encounteredConflicts: $0)) }
 
             return Disposables.create {

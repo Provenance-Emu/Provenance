@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C9D4B71DEA77DF0068D057"
                BuildableName = "PVGBA.framework"
-               BlueprintName = "PVGBA-iOS"
+               BlueprintName = "PVGBA"
                ReferencedContainer = "container:PVGBA.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -30,7 +30,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
                BuildableName = "PVSupport.framework"
-               BlueprintName = "PVSupport-iOS"
+               BlueprintName = "PVSupport"
                ReferencedContainer = "container:../../PVSupport/PVSupport.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -59,7 +59,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C9D4B71DEA77DF0068D057"
             BuildableName = "PVGBA.framework"
-            BlueprintName = "PVGBA-iOS"
+            BlueprintName = "PVGBA"
             ReferencedContainer = "container:PVGBA.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -75,7 +75,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C9D4B71DEA77DF0068D057"
             BuildableName = "PVGBA.framework"
-            BlueprintName = "PVGBA-iOS"
+            BlueprintName = "PVGBA"
             ReferencedContainer = "container:PVGBA.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

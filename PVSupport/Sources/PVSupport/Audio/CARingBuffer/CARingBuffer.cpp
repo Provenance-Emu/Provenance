@@ -49,6 +49,12 @@
 #include "CAAutoDisposer.h"
 //#include "CAAtomic.h"
 
+#if DEBUG
+#define CALOG printf
+#else
+#define CALOG
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 #include <algorithm>
@@ -156,24 +162,24 @@ inline void ZeroABL(AudioBufferList *abl, int destOffset, int nbytes)
 CARingBufferError	CARingBuffer::Store(const AudioBufferList *abl, UInt32 framesToWrite, SampleTime startWrite)
 {
 	if (framesToWrite == 0) {
-		printf("no frames to write\n");
+        CALOG("no frames to write\n");
 		return kCARingBufferError_OK;
 	}
 
 	if (framesToWrite > mCapacityFrames) {
-        printf("no frames to write\n");
+        CALOG("no frames to write\n");
 		return kCARingBufferError_TooMuch;		// too big!
 	}
 
 	SampleTime endWrite = startWrite + framesToWrite;
 	
 	if (startWrite < EndTime()) {
-		printf("// going backwards, throw everything out\n");
+		CALOG("// going backwards, throw everything out\n");
 
 		// going backwards, throw everything out
 		SetTimeBounds(startWrite, startWrite);
 	} else if (endWrite - StartTime() <= mCapacityFrames) {
-		printf("//the buffer has not yet wrapped and will not need to\n");
+		CALOG("//the buffer has not yet wrapped and will not need to\n");
 
 		// the buffer has not yet wrapped and will not need to
 	} else {
@@ -181,7 +187,7 @@ CARingBufferError	CARingBuffer::Store(const AudioBufferList *abl, UInt32 framesT
 		SampleTime newStart = endWrite - mCapacityFrames;	// one buffer of time behind where we're writing
 		SampleTime newEnd = std::max(newStart, EndTime());
 		SetTimeBounds(newStart, newEnd);
-		printf("// advance the start time past the region we are about to overwrite\n");
+		CALOG("// advance the start time past the region we are about to overwrite\n");
 
 	}
 	
@@ -261,11 +267,11 @@ CARingBufferError	CARingBuffer::ClipTimeBounds(SampleTime& startRead, SampleTime
 	
 	if (startRead > endTime || endRead < startTime) {
 		if (startRead > endTime) {
-			printf("!! startRead is too big by %lli\n", startRead - endTime);
+			CALOG("!! startRead is too big by %lli\n", startRead - endTime);
 		}
 
 		if(endTime < startTime) {
-			printf("!! endRead is too small by %lli\n", startTime - endRead);
+			CALOG("!! endRead is too small by %lli\n", startTime - endRead);
 		}
 		endRead = startRead;
 		return kCARingBufferError_OK;
@@ -281,7 +287,7 @@ CARingBufferError	CARingBuffer::ClipTimeBounds(SampleTime& startRead, SampleTime
 CARingBufferError	CARingBuffer::Fetch(AudioBufferList *abl, UInt32 nFrames, SampleTime startRead)
 {
 	if (nFrames == 0) {
-		printf("Fetch zero frames\n");
+		CALOG("Fetch zero frames\n");
 		return kCARingBufferError_OK;
 	}
 
@@ -294,12 +300,13 @@ CARingBufferError	CARingBuffer::Fetch(AudioBufferList *abl, UInt32 nFrames, Samp
 
 	CARingBufferError err = ClipTimeBounds(startRead, endRead);
 	if (err) {
-		printf("Fetch ClipTimeBounds erred\n");
+        assert("Fetch ClipTimeBounds erred\n");
+		CALOG("Fetch ClipTimeBounds erred\n");
 		return err;
 	}
 
 	if (startRead == endRead) {
-		printf("Fetch start == end!\n");
+		CALOG("Fetch start == end!\n");
 
 		ZeroABL(abl, 0, nFrames * mBytesPerFrame);
 		return kCARingBufferError_OK;
@@ -341,7 +348,7 @@ CARingBufferError	CARingBuffer::Fetch(AudioBufferList *abl, UInt32 nFrames, Samp
 		dest++;
 	}
 
-	printf("Fetch normal return\n");
+	CALOG("Fetch normal return\n");
 
 	return noErr;
 }

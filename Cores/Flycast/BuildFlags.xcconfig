@@ -7,8 +7,13 @@
 //
 
 // All
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) REICAST_VERSION=15.0 TARGET_NO_WEBUI=1 TARGET_NO_REC=1 GLES=1 NO_ASM=1
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) REICAST_VERSION=15.0 TARGET_NO_WEBUI=1 TARGET_NO_REC=1 GLES=1 GLES3=1 GLES_SILENCE_DEPRECATION=1 HAVE_OPENGLES=1 LIBRETRO=1 TARGET_IPHONE=1
+
+// NO_ASM=1
+
 OTHER_CFLAGS = $(inherited) -mno-thumb -mfpu=neon -fno-operator-names -fno-rtti -ffast-math -ftree-vectorize -fno-strict-aliasing -frename-registers -fno-rtti -fpermissive -fno-operator-names -fsingle-precision-constant
+
+OTHER_LDFLAGS = $(inherited) -ObjC -Wl,-all_load -all_load
 
     // Device
 GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*] = $(inherited) TARGET_IPHONE=1

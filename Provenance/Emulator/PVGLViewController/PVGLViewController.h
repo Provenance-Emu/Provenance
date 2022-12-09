@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 James Addyman. All rights reserved.
 //
 
-@import UIKit;
+@import Foundation;
 
 #import "PVGPUViewController.h"
 

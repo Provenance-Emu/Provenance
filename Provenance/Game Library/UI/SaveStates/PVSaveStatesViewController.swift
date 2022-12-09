@@ -13,7 +13,9 @@ import RealmSwift
 import RxCocoa
 import RxRealm
 import RxSwift
+#if canImport(UIKit)
 import UIKit
+#endif
 
 protocol PVSaveStatesViewControllerDelegate: AnyObject {
     func saveStatesViewControllerDone(_ saveStatesViewController: PVSaveStatesViewController)
@@ -248,7 +250,7 @@ final class PVSaveStatesViewController: UICollectionViewController {
                 self.presentError("Error deleting save state: \(error.localizedDescription)")
             }
         }))
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
         present(alert, animated: true)
     }
 

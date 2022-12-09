@@ -37,7 +37,7 @@ final class PVConflictViewController: UITableViewController {
             splitViewController?.title = "Solve Conflicts"
         #else
             let currentTableview = tableView!
-            tableView = SettingsTableView(frame: currentTableview.frame, style: currentTableview.style)
+            tableView = UITableView(frame: currentTableview.frame, style: currentTableview.style)
 
             title = "Solve Conflicts"
             tableView.separatorColor = UIColor.clear
@@ -69,13 +69,9 @@ final class PVConflictViewController: UITableViewController {
                 cell.textLabel?.textAlignment = .center
                 cell.accessoryType = .none
             }
-
-            #if os(iOS)
-                cell.textLabel?.textColor = Theme.currentTheme.settingsCellText
-            #endif
         }
         .disposed(by: disposeBag)
-        
+
         tableView.rx.itemDeleted
             .do(onNext: {
                 self.tableView.deselectRow(at: $0, animated: true)
@@ -112,16 +108,27 @@ final class PVConflictViewController: UITableViewController {
                 }
             })
             .bind(onNext: { conflict, indexPath in
+                let showsUnsupportedSystems = PVSettingsModel.shared.debugOptions.unsupportedCores
                 let alertController = UIAlertController(title: "Choose a System", message: nil, preferredStyle: .actionSheet)
                 alertController.popoverPresentationController?.sourceView = self.view
                 alertController.popoverPresentationController?.sourceRect = self.tableView.rectForRow(at: indexPath)
-                conflict.candidates.forEach { system in
+                conflict.candidates.filter{ $0.supported || showsUnsupportedSystems }.forEach { system in
                     alertController.addAction(.init(title: system.name, style: .default, handler: { _ in
                         self.conflictsController.resolveConflicts(withSolutions: [conflict.path: system])
                     }))
                 }
 
-                alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+				alertController.addAction(.init(title: NSLocalizedString("Delete", comment: "Delete file"), style: .destructive, handler: { _ in
+					let fm = FileManager.default
+					do {
+						try fm.removeItem(at: conflict.path)
+						self.tableView.reloadData()
+					} catch {
+						ELOG("\(error.localizedDescription)")
+					}
+				}))
+
+                alertController.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
                 self.present(alertController, animated: true) { () -> Void in
                     self.tableView.reloadData()
                 }
@@ -157,24 +164,24 @@ final class PVConflictViewController: UITableViewController {
 }
 
 extension PVConflictViewController {
-    
+
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return true
     }
-    
+
     override func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
         return true
     }
-    
+
     override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         return .delete
     }
-    
+
     @objc private func toggleEditing() {
         tableView.setEditing(!tableView.isEditing, animated: true) // Set opposite value of current editing status
         navigationItem.rightBarButtonItem?.title = tableView.isEditing ? "Done" : "Edit" // Set title depending on the editing status
     }
-    
+
     @objc func showEditing(sender: UIBarButtonItem) {
        if self.tableView.isEditing {
            self.tableView.isEditing = false
@@ -184,10 +191,10 @@ extension PVConflictViewController {
            self.navigationItem.rightBarButtonItem?.title = "Edit"
        }
    }
-    
+
     override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
-        
+
         // Toggle table view editing.
          tableView.setEditing(editing, animated: true)
     }

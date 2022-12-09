@@ -10,16 +10,16 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PVDosBoxCore (Controls) <PVGameCubeSystemResponderClient>
+@interface PVDosBoxCore (Controls) <PVDOSSystemResponderClient>
 
 - (void)initControllBuffers;
 - (void)pollControllers;
 
 #pragma mark - Control
 
-- (void)didPushGameCubeButton:(enum PVGameCubeButton)button forPlayer:(NSInteger)player;
-- (void)didReleaseGameCubeButton:(enum PVGameCubeButton)button forPlayer:(NSInteger)player;
-- (void)didMoveGameCubeJoystickDirection:(enum PVGameCubeButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player;
+- (void)didPushDOSButton:(enum PVDOSButton)button forPlayer:(NSInteger)player;
+- (void)didReleaseDOSButton:(enum PVDOSButton)button forPlayer:(NSInteger)player;
+- (void)didMoveDOSJoystickDirection:(enum PVDOSButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player;
 - (void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player;
 
 - (void)didPush:(NSInteger)button forPlayer:(NSInteger)player;

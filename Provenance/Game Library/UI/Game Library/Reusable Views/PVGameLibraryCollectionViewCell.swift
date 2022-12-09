@@ -208,7 +208,7 @@ protocol GameLibraryCollectionViewDelegate: AnyObject {
     func promptToDeleteGame(_ game: PVGame, completion: ((_ deleted: Bool) -> Swift.Void)?)
 }
 // MARK: Corner Badge Glyph
-@IBDesignable
+//@IBDesignable
 final class CornerBadgeView: UIView {
     enum FillCorner {
         case topLeft
@@ -428,7 +428,11 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
     @IBOutlet var missingFileWidthContraint: NSLayoutConstraint?
     @IBOutlet var missingFileHeightContraint: NSLayoutConstraint?
     @IBOutlet var titleLabelHeightConstraint: NSLayoutConstraint?
-    @IBOutlet var deleteActionView: UIView?
+    @IBOutlet var deleteActionView: UIView? {
+        didSet {
+            deleteActionView?.alpha = 0
+        }
+    }
 //    @IBOutlet weak var artworkContainerViewHeightConstraint: NSLayoutConstraint?
 
     class func cellSize(forImageSize imageSize: CGSize) -> CGSize {
@@ -601,9 +605,6 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                 deleteActionView.frame = contentView.bounds
                 backgroundView = UIView(frame: bounds)
                 backgroundView?.isOpaque = true
-                backgroundView?.backgroundColor = Theme.currentTheme.gameLibraryBackground
-                contentView.backgroundColor = Theme.currentTheme.gameLibraryBackground
-                backgroundColor = Theme.currentTheme.gameLibraryBackground
                 isOpaque = true
                 contentView.isOpaque = true
 
@@ -775,7 +776,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 
     func image(withText text: String) -> UIImage? {
         #if os(iOS)
-            let backgroundColor: UIColor = Theme.currentTheme.settingsCellBackground!
+            let backgroundColor: UIColor = .systemBackground
         #else
             let backgroundColor: UIColor = UIColor(white: 0.18, alpha: 1.0)
         #endif
@@ -930,8 +931,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                     let transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
                     if let header = self.superview?.subviews.filter({$0 is PVGameLibrarySectionHeaderView}).first {
                         self.superview?.insertSubview(self, belowSubview: header)
-                    }
-                    else {
+                    } else {
                         self.superview?.bringSubviewToFront(self)
                     }
                     if PVSettingsModel.shared.showGameBadges {

@@ -18,6 +18,7 @@
 #include "fceux/src/state.h"
 #include "fceux/src/emufile.h"
 
+#define DEADZONE 0.1f
 static const int NESMap[] = {JOY_UP, JOY_DOWN, JOY_LEFT, JOY_RIGHT, JOY_A, JOY_B, JOY_START, JOY_SELECT};
 
 @implementation PVFCEUEmulatorCore (Controls)
@@ -56,10 +57,10 @@ static const int NESMap[] = {JOY_UP, JOY_DOWN, JOY_LEFT, JOY_RIGHT, JOY_A, JOY_B
             GCExtendedGamepad *gamepad = [controller extendedGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
 
-            (dpad.up.isPressed || gamepad.leftThumbstick.up.isPressed) ? pad[playerIndex][0] |= JOY_UP << playerShift : pad[playerIndex][0] &= ~JOY_UP << playerShift;
-            (dpad.down.isPressed || gamepad.leftThumbstick.down.isPressed) ? pad[playerIndex][0] |= JOY_DOWN << playerShift : pad[playerIndex][0] &= ~JOY_DOWN << playerShift;
-            (dpad.left.isPressed || gamepad.leftThumbstick.left.isPressed) ? pad[playerIndex][0] |= JOY_LEFT << playerShift : pad[playerIndex][0] &= ~JOY_LEFT << playerShift;
-            (dpad.right.isPressed || gamepad.leftThumbstick.right.isPressed) ? pad[playerIndex][0] |= JOY_RIGHT << playerShift : pad[playerIndex][0] &= ~JOY_RIGHT << playerShift;
+            (dpad.up.isPressed || gamepad.leftThumbstick.up.value > DEADZONE) ? pad[playerIndex][0] |= JOY_UP << playerShift : pad[playerIndex][0] &= ~JOY_UP << playerShift;
+            (dpad.down.isPressed || gamepad.leftThumbstick.down.value > DEADZONE) ? pad[playerIndex][0] |= JOY_DOWN << playerShift : pad[playerIndex][0] &= ~JOY_DOWN << playerShift;
+            (dpad.left.isPressed || gamepad.leftThumbstick.left.value > DEADZONE) ? pad[playerIndex][0] |= JOY_LEFT << playerShift : pad[playerIndex][0] &= ~JOY_LEFT << playerShift;
+            (dpad.right.isPressed || gamepad.leftThumbstick.right.value > DEADZONE) ? pad[playerIndex][0] |= JOY_RIGHT << playerShift : pad[playerIndex][0] &= ~JOY_RIGHT << playerShift;
 
             (gamepad.buttonA.isPressed || gamepad.buttonY.isPressed) ? pad[playerIndex][0] |= JOY_B << playerShift : pad[playerIndex][0] &= ~JOY_B << playerShift;
             (gamepad.buttonX.isPressed || gamepad.buttonB.isPressed) ? pad[playerIndex][0] |= JOY_A << playerShift : pad[playerIndex][0] &= ~JOY_A << playerShift;

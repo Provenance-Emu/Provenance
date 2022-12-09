@@ -32,7 +32,7 @@
 
 //#import <PVSupport/PVGameControllerUtilities.h>
 
-#if !TARGET_OS_MACCATALYST
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
@@ -71,6 +71,8 @@ static __weak PVSNESEmulatorCore *_current;
     unsigned char *videoBufferA;
     unsigned char *videoBufferB;
     NSMutableDictionary *cheatList;
+    
+    BOOL isMultitap;
 }
 
 @end
@@ -707,6 +709,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 									 @"3c6a8dc8", // Zero 4 Champ RR-Z (Japan)
 									 ];
 
+        isMultitap = NO;
 		// Automatically enable SNES Mouse, Super Scope, Justifier and Multitap where supported
 		if([snesJustifier containsObject:cartCRC32])
 		{
@@ -729,6 +732,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 			// Controller in Port 1 and Multitap in Port 2
 			S9xSetController(0, CTL_JOYPAD, 0, 0, 0, 0);
 			S9xSetController(1, CTL_MP5,    1, 2, 3, 4);
+            isMultitap = YES;
 		}
 		else if([cartCRC32 isEqual:@"be08d788"])
 		{
@@ -856,7 +860,7 @@ static void FinalizeSamplesAudioCallback(void *) {
             cheatList[code] = @YES;
         else
             [cheatList removeObjectForKey:code];
-        NSLog(@"Applying Cheat Code %@ %@ %@", code, type, cheatList);
+        ILOG(@"Applying Cheat Code %@ %@ %@", code, type, cheatList);
         
 
         S9xDeleteCheats();
@@ -872,13 +876,13 @@ static void FinalizeSamplesAudioCallback(void *) {
             {
                 // Handle multi-line cheats
                 multipleCodes = [key componentsSeparatedByString:@"+"];
-                NSLog(@"Multiple Codes %@", multipleCodes);
+                ILOG(@"Multiple Codes %@", multipleCodes);
                 for (NSString *singleCode in multipleCodes) {
                     // Sanitize for PAR codes that might contain colons
                     const char *cheatCode = [[singleCode stringByReplacingOccurrencesOfString:@":" withString:@""] UTF8String];
                     if (singleCode != nil && singleCode.length > 0) {
                         if (S9xAddCheatGroup("Provenance", cheatCode) >= 0) {
-                            NSLog(@"Code %@ applied successfully", singleCode);
+                            ILOG(@"Code %@ applied successfully", singleCode);
                             S9xEnableCheatGroup(Cheat.g.size () - 1);
                         } else {
                             cheatListSuccessfull = NO;
@@ -903,20 +907,24 @@ static void FinalizeSamplesAudioCallback(void *) {
 
 #pragma mark - Input
 
-- (void)didPushSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player {
+- (void)didPushSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player
+{
     S9xReportButton((player+1 << 16) | button, true);
 }
 
-- (void)didReleaseSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player {
+- (void)didReleaseSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player
+{
     S9xReportButton((player+1 << 16) | button, false);
 }
 
-- (void)mapButtons {
-    for(int player = 1; player <= 8; player++) {
+- (void)mapButtons
+{
+    for(int player = 1; player <= 8; player++)
+    {
         NSUInteger playerMask = player << 16;
-		
+        
         NSString *playerString = [NSString stringWithFormat:@"Joypad%d ", player];
-		
+        
         for(NSUInteger idx = 0; idx < PVSNESButtonCount; idx++)
         {
             s9xcommand_t cmd = S9xGetCommandT([[playerString stringByAppendingString:SNESEmulatorKeys[idx]] UTF8String]);
@@ -925,14 +933,21 @@ static void FinalizeSamplesAudioCallback(void *) {
     }
 }
 
-- (void)updateController {
+
+-(NSUInteger)maxNumberPlayers {
+    return isMultitap ? 8 : 4;
+}
+
+- (void)updateControllers {
     GCController *controller = nil;
 
-    for (NSInteger player = 1; player <= 2; player++) {
+    for (NSInteger player = 1; player <= 2; player++)
+    {
         NSUInteger playerMask = player << 16;
         GCController *controller = (player == 1) ? self.controller1 : self.controller2;
 
-        if ([controller extendedGamepad]) {
+        if ([controller extendedGamepad])
+        {
             GCExtendedGamepad *gamepad = [controller extendedGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
 

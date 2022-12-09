@@ -19,6 +19,8 @@
 			<array/>
 			<key>CFBundleTypeName</key>
 			<string>ROM</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>com.provenance.rom</string>
@@ -29,6 +31,8 @@
 			<array/>
 			<key>CFBundleTypeName</key>
 			<string>Save State</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>com.provenance.savestate</string>
@@ -39,6 +43,8 @@
 			<array/>
 			<key>CFBundleTypeName</key>
 			<string>Artwork</string>
+			<key>LSHandlerRank</key>
+			<string>None</string>
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>public.image</string>
@@ -62,6 +68,9 @@
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>Spanish</string>
+		<string>zh_TW</string>
+		<string>it</string>
+		<string>ja</string>
 		<string>en</string>
 		<string>zh_CN</string>
 	</array>
@@ -98,11 +107,11 @@
 		</dict>
 		<dict>
 			<key>ProfileName</key>
-			<string>MicroGamepad</string>
+			<string>DirectionalGamepad</string>
 		</dict>
 		<dict>
 			<key>ProfileName</key>
-			<string>DirectionalGamepad</string>
+			<string>MicroGamepad</string>
 		</dict>
 	</array>
 	<key>GCSupportsControllerUserInteraction</key>
@@ -113,6 +122,8 @@
 	<string></string>
 	<key>GitTag</key>
 	<string></string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.games</string>
 	<key>LSApplicationQueriesSchemes</key>
@@ -129,7 +140,49 @@
 		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
+			<key>127.0.0.1</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+			<key>gamefaqs.gamespot.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+			<key>gamespot.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+			<key>github.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
 			<key>localhost</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+			<key>provenance-emu.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+			<key>wiki.provenance-emu.com</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
 				<true/>
@@ -166,8 +219,8 @@
 	</dict>
 	<key>NSUserActivityTypes</key>
 	<array>
-		<string>org.provenance-emu.webserver</string>
 		<string>org.provenance-emu.game.play</string>
+		<string>org.provenance-emu.webserver</string>
 	</array>
 	<key>Revision</key>
 	<string>78dc628</string>
@@ -178,7 +231,7 @@
 		<string>external-accessory</string>
 		<string>fetch</string>
 		<string>location</string>
-		<string>processing</string>
+		<string>nearby-interaction</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UIFileSharingEnabled</key>
@@ -211,8 +264,6 @@
 	</array>
 	<key>UISupportsDocumentBrowser</key>
 	<true/>
-	<key>UIUserInterfaceStyle</key>
-	<string>Dark</string>
 	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>
@@ -227,7 +278,7 @@
 			<key>UTTypeIdentifier</key>
 			<string>com.provenance.rom</string>
 			<key>UTTypeReferenceURL</key>
-			<string>http://www.provenance-emu.org/</string>
+			<string>https://provenance-emu.com/</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>
@@ -241,6 +292,7 @@
 					<string>a52</string>
 					<string>sms</string>
 					<string>smc</string>
+					<string>sfc</string>
 					<string>fig</string>
 					<string>sfc</string>
 					<string>gb</string>
@@ -271,6 +323,15 @@
 					<string>cdi</string>
 					<string>gdi</string>
 					<string>bios</string>
+					<string>msx</string>
+					<string>col</string>
+					<string>rar</string>
+					<string>z80</string>
+					<string>tzx</string>
+				</array>
+				<key>public.mime-type</key>
+				<array>
+					<string>com.provenance.rom</string>
 				</array>
 			</dict>
 		</dict>
@@ -292,8 +353,20 @@
 			<array/>
 			<key>UTTypeIdentifier</key>
 			<string>com.provenance.savestate</string>
+			<key>UTTypeReferenceURL</key>
+			<string>https://provenance-emu.com/</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>svs</string>
+				</array>
+				<key>public.mime-type</key>
+				<array>
+					<string>com.provenance.savestate</string>
+				</array>
+			</dict>
 		</dict>
-		<dict/>
 	</array>
 	<key>UTImportedTypeDeclarations</key>
 	<array>
@@ -303,7 +376,9 @@
 				<key>public.filename-extension</key>
 				<array>
 					<string>ROM</string>
+					<string>col</string>
 					<string>rom</string>
+					<string>msx</string>
 					<string>cue</string>
 					<string>bin</string>
 					<string>a78</string>
@@ -311,6 +386,7 @@
 					<string>a52</string>
 					<string>sms</string>
 					<string>smc</string>
+					<string>sfc</string>
 					<string>fig</string>
 					<string>sfc</string>
 					<string>gb</string>
@@ -341,6 +417,9 @@
 					<string>cdi</string>
 					<string>gdi</string>
 					<string>bios</string>
+					<string>z80</string>
+					<string>tzx</string>
+					<string>rar</string>
 				</array>
 			</dict>
 			<key>UTTypeConformsTo</key>
@@ -353,6 +432,61 @@
 			<array/>
 			<key>UTTypeIdentifier</key>
 			<string>com.provenance.rom</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>ROM</string>
+					<string>rom</string>
+					<string>cue</string>
+					<string>bin</string>
+					<string>a78</string>
+					<string>a26</string>
+					<string>a52</string>
+					<string>sms</string>
+					<string>smc</string>
+					<string>sfc</string>
+					<string>fig</string>
+					<string>sfc</string>
+					<string>gb</string>
+					<string>gbc</string>
+					<string>sgb</string>
+					<string>gba</string>
+					<string>nes</string>
+					<string>fds</string>
+					<string>lnx</string>
+					<string>ngp</string>
+					<string>ngc</string>
+					<string>ngpc</string>
+					<string>npc</string>
+					<string>pce</string>
+					<string>ws</string>
+					<string>wsc</string>
+					<string>vb</string>
+					<string>n64</string>
+					<string>z64</string>
+					<string>gen</string>
+					<string>md</string>
+					<string>gg</string>
+					<string>smd</string>
+					<string>32x</string>
+					<string>32X</string>
+					<string>min</string>
+					<string>7z</string>
+					<string>cdi</string>
+					<string>gdi</string>
+					<string>bios</string>
+					<string>msx</string>
+					<string>col</string>
+					<string>rar</string>
+					<string>z80</string>
+					<string>tzx</string>
+				</array>
+				<key>public.mime-type</key>
+				<array>
+					<string>com.provenance.rom</string>
+				</array>
+			</dict>
 		</dict>
 		<dict>
 			<key>UTITagTypeSpecification</key>
@@ -394,6 +528,17 @@
 			<array/>
 			<key>UTTypeIdentifier</key>
 			<string>com.provenance.savestate</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>svs</string>
+				</array>
+				<key>public.mime-type</key>
+				<array>
+					<string>com.provenance.savestate</string>
+				</array>
+			</dict>
 		</dict>
 	</array>
 	<key>appcenter</key>

@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
                BuildableName = "PVSupport.framework"
-               BlueprintName = "PVSupport-iOS"
+               BlueprintName = "PVSupport"
                ReferencedContainer = "container:../../PVSupport/PVSupport.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -29,8 +29,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B36DE79F1D6B7558002EE3ED"
-               BuildableName = "ProSystem.framework"
-               BlueprintName = "ProSystem-iOS"
+               BuildableName = "PVProSystem.framework"
+               BlueprintName = "PVProSystem"
                ReferencedContainer = "container:PVProSystem.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -58,8 +58,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B36DE79F1D6B7558002EE3ED"
-            BuildableName = "ProSystem.framework"
-            BlueprintName = "ProSystem-iOS"
+            BuildableName = "PVProSystem.framework"
+            BlueprintName = "PVProSystem"
             ReferencedContainer = "container:PVProSystem.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -74,8 +74,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B36DE79F1D6B7558002EE3ED"
-            BuildableName = "ProSystem.framework"
-            BlueprintName = "ProSystem-iOS"
+            BuildableName = "PVProSystem.framework"
+            BlueprintName = "PVProSystem"
             ReferencedContainer = "container:PVProSystem.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

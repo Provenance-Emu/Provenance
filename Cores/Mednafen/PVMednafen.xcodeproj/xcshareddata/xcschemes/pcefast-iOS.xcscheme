@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B33351D7207B01970036A448"
-               BuildableName = "libpcefast-iOS.a"
-               BlueprintName = "pcefast-iOS"
+               BuildableName = "libpcefast.a"
+               BlueprintName = "pcefast"
                ReferencedContainer = "container:PVMednafen.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B33351D7207B01970036A448"
-            BuildableName = "libpcefast-iOS.a"
-            BlueprintName = "pcefast-iOS"
+            BuildableName = "libpcefast.a"
+            BlueprintName = "pcefast"
             ReferencedContainer = "container:PVMednafen.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

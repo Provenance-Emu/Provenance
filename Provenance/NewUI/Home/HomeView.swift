@@ -21,38 +21,38 @@ enum PVHomeSection: Int, CaseIterable {
 
 @available(iOS 14, tvOS 14, *)
 struct HomeView: SwiftUI.View {
-    
+
     var gameLibrary: PVGameLibrary!
-    
-    var rootDelegate: PVRootDelegate?
-    
+
+    weak var rootDelegate: PVRootDelegate?
+
     @ObservedResults(
         PVSaveState.self,
         filter: NSPredicate(format: "game != nil && game.system != nil"),
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: false)
     ) var recentSaveStates
-    
+
     @ObservedResults(
         PVRecentGame.self,
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
     ) var recentlyPlayedGames
-    
+
     @ObservedResults(
         PVGame.self,
         filter: NSPredicate(format: "\(#keyPath(PVGame.isFavorite)) == %@", NSNumber(value: true)),
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: false)
     ) var favorites
-    
+
     @ObservedResults(
         PVGame.self,
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.playCount), ascending: false)
     ) var mostPlayed
-    
+
     init(gameLibrary: PVGameLibrary, delegate: PVRootDelegate) {
         self.gameLibrary = gameLibrary
         self.rootDelegate = delegate
     }
-    
+
     var body: some SwiftUI.View {
         StatusBarProtectionWrapper {
             ScrollView {
@@ -104,13 +104,13 @@ struct HomeView: SwiftUI.View {
 
 @available(iOS 15, tvOS 15, *)
 struct HomeContinueSection: SwiftUI.View {
-    
+
     var continueStates: Results<PVSaveState>
-    var rootDelegate: PVRootDelegate?
+    weak var rootDelegate: PVRootDelegate?
     let height: CGFloat = 260
-    
+
     var body: some SwiftUI.View {
-        
+
         TabView {
             if continueStates.count > 0 {
                 ForEach(continueStates, id: \.self) { state in
@@ -132,11 +132,11 @@ struct HomeContinueSection: SwiftUI.View {
 
 @available(iOS 15, tvOS 15, *)
 struct HomeContinueItemView: SwiftUI.View {
-    
+
     var continueState: PVSaveState
     let height: CGFloat // match image height to section height, else the fill content mode messes up the zstack
     var action: () -> Void
-    
+
     var body: some SwiftUI.View {
         Button {
             action()
@@ -183,11 +183,11 @@ struct HomeContinueItemView: SwiftUI.View {
 
 @available(iOS 14, tvOS 14, *)
 struct HomeSection<Content: SwiftUI.View>: SwiftUI.View {
-    
+
     let title: String
-    
+
     @ViewBuilder var content: () -> Content
-    
+
     var body: some SwiftUI.View {
         VStack(alignment: .leading, spacing: 0) {
             Text(title.uppercased())
@@ -220,10 +220,10 @@ struct HomeDividerView: SwiftUI.View {
 
 @available(iOS 14, tvOS 14, *)
 struct HomeItemView: SwiftUI.View {
-    
+
     var imageName: String
     var rowTitle: String
-    
+
     var body: some SwiftUI.View {
         HStack(spacing: 0) {
             Image(imageName).resizable().scaledToFit().cornerRadius(4).padding(8)

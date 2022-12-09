@@ -59,7 +59,7 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
             titleLabel.font = UIFont.preferredFont(forTextStyle: .title1)
 
         // add in separator for tvOS too, clean up #if statements later and make this generic
-            let bottomSeparator = UIView(frame: CGRect(x: -100.0, y: bounds.size.height, width: bounds.size.width + 200.0, height: 1.0))
+            let bottomSeparator = UIView(frame: CGRect(x: -100.0, y: bounds.size.height - 1, width: bounds.size.width + 200.0, height: 1.0))
             bottomSeparator.backgroundColor = UIColor(white: 1.0, alpha: 0.2)
             bottomSeparator.autoresizingMask = .flexibleWidth
 
@@ -85,17 +85,16 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
 //
 //        addSubview(topSeparator)
 
-            let bottomSeparator = UIView(frame: CGRect(x: 0, y: bounds.size.height, width: bounds.size.width, height: 1.0))
-            bottomSeparator.backgroundColor = UIColor(white: 1.0, alpha: 0.2)
+            let bottomSeparator = UIView(frame: CGRect(x: 0, y: bounds.size.height - 1, width: bounds.size.width, height: 1.0))
+            bottomSeparator.backgroundColor = Theme.currentTheme.gameLibraryHeaderText
             bottomSeparator.autoresizingMask = .flexibleWidth
 
             addSubview(bottomSeparator)
 
             // Style
-            backgroundColor = UIColor.black.withAlphaComponent(0.8)
+            backgroundColor = Theme.currentTheme.gameLibraryHeaderBackground
             titleLabel.textAlignment = .left
-            titleLabel.backgroundColor = .clear
-            titleLabel.textColor = UIColor(white: 1.0, alpha: 0.5)
+            titleLabel.textColor = Theme.currentTheme.gameLibraryHeaderText
 //        topSeparator.backgroundColor = UIColor(hex: "#262626")
 //        bottomSeparator.backgroundColor = UIColor(hex: "#262626")
             clipsToBounds = false
@@ -114,7 +113,7 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         #else
         collapseButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 0).isActive = true
         #endif
-        
+
         isOpaque = true
     }
 

@@ -7,6 +7,7 @@
 //  Copyright (c) 2015 Josejulio Martínez. All rights reserved.
 //
 
+#if canImport(UIKit)
 import GameController
 
 // TODO: Make a class for gamepad and another for joystick to support dpad and joystick as seperate inputs
@@ -70,3 +71,4 @@ public final class PViCadeGamepadDirectionPad: GCControllerDirectionPad {
         }
     }
 }
+#endif

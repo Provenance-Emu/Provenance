@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B37937AB1D6BCF8100EBAE81"
-               BuildableName = "PicoDrive.framework"
-               BlueprintName = "PVPicoDrive-iOS"
+               BuildableName = "PVPicoDrive.framework"
+               BlueprintName = "PVPicoDrive"
                ReferencedContainer = "container:PVPicoDrive.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -30,7 +30,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
                BuildableName = "PVSupport.framework"
-               BlueprintName = "PVSupport-iOS"
+               BlueprintName = "PVSupport"
                ReferencedContainer = "container:../../PVSupport/PVSupport.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -58,8 +58,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B37937AB1D6BCF8100EBAE81"
-            BuildableName = "PicoDrive.framework"
-            BlueprintName = "PVPicoDrive-iOS"
+            BuildableName = "PVPicoDrive.framework"
+            BlueprintName = "PVPicoDrive"
             ReferencedContainer = "container:PVPicoDrive.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -74,8 +74,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B37937AB1D6BCF8100EBAE81"
-            BuildableName = "PicoDrive.framework"
-            BlueprintName = "PVPicoDrive-iOS"
+            BuildableName = "PVPicoDrive.framework"
+            BlueprintName = "PVPicoDrive"
             ReferencedContainer = "container:PVPicoDrive.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

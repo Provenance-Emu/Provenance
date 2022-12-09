@@ -10,7 +10,7 @@ extension PVEmulatorViewController {
             }
         })
     }
-    
+
     func hideOrShowMenuButton() {
 
         // find out how many *real* controllers we have....
@@ -20,17 +20,15 @@ extension PVEmulatorViewController {
                 return false
             }
             // show menu for "virtual" controllers
-            if #available(iOS 13.0, tvOS 13.0, *) {
-                if (controller.isSnapshot) {
-                    return false
-                }
+            if (controller.isSnapshot) {
+                return false
             }
             return true
         }
 
         // and hide menu button if we have zero
         menuButton?.isHidden = controllers.count != 0
-        
+
         #if os(iOS)
             setNeedsUpdateOfHomeIndicatorAutoHidden()
         #endif

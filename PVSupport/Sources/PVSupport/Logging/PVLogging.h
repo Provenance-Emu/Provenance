@@ -235,7 +235,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)flushLogs;
 
-@optional
 /**
  *  Array of info for the log files such as zie and modification date
  *

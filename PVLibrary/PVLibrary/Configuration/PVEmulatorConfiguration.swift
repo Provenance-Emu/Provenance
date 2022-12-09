@@ -47,16 +47,22 @@ public struct SystemDictionaryKeys {
     }
 }
 
-public enum SystemIdentifier: String, CaseIterable {
+public enum SystemIdentifier: String, CaseIterable, Codable {
     case _3DO = "com.provenance.3DO"
+    case _3DS = "com.provenance.3ds"
     case Atari2600 = "com.provenance.2600"
     case Atari5200 = "com.provenance.5200"
     case Atari7800 = "com.provenance.7800"
-	case Atari8bit = "com.provenance.atari8bit"
+    case Atari8bit = "com.provenance.atari8bit"
     case AtariJaguar = "com.provenance.jaguar"
+    case AtariJaguarCD = "com.provenance.jaguarcd"
+    case AtariST = "com.provenance.atarist"
+    case C64 = "com.provenance.c64"
     case ColecoVision = "com.provenance.colecovision"
-    case DS = "com.provenance.ds"
+    case DOS = "com.provenance.dos"
     case Dreamcast = "com.provenance.dreamcast"
+    case DS = "com.provenance.ds"
+    case EP128 = "com.provenance.ep128"
     case FDS = "com.provenance.fds"
     case GameCube = "com.provenance.gamecube"
     case GameGear = "com.provenance.gamegear"
@@ -66,13 +72,19 @@ public enum SystemIdentifier: String, CaseIterable {
     case Genesis = "com.provenance.genesis"
     case Intellivision = "com.provenance.intellivision"
     case Lynx = "com.provenance.lynx"
+    case Macintosh = "com.provenance.macintosh"
     case MasterSystem = "com.provenance.mastersystem"
+    case MegaDuck = "com.provenance.megaduck"
+    case MSX = "com.provenance.msx"
+    case MSX2 = "com.provenance.msx2"
+    case Music = "com.provenance.music"
     case N64 = "com.provenance.n64"
-    case NES = "com.provenance.nes"
     case NeoGeo = "com.provenance.neogeo"
+    case NES = "com.provenance.nes"
     case NGP = "com.provenance.ngp"
     case NGPC = "com.provenance.ngpc"
     case Odyssey2 = "com.provenance.odyssey2"
+    case PalmOS = "com.provenance.palmos"
     case PCE = "com.provenance.pce"
     case PCECD = "com.provenance.pcecd"
     case PCFX = "com.provenance.pcfx"
@@ -87,14 +99,48 @@ public enum SystemIdentifier: String, CaseIterable {
     case SG1000 = "com.provenance.sg1000"
     case SGFX = "com.provenance.sgfx"
     case SNES = "com.provenance.snes"
+    case Supervision = "com.provenance.supervision"
+    case TIC80 = "com.provenance.tic80"
     case Vectrex = "com.provenance.vectrex"
     case VirtualBoy = "com.provenance.vb"
+    case Wii = "com.provenance.wii"
     case WonderSwan = "com.provenance.ws"
     case WonderSwanColor = "com.provenance.wsc"
+    case ZXSpectrum = "com.provenance.zxspectrum"
 
     case Unknown
 
-    static public let betas: [SystemIdentifier] = [.ColecoVision, .Dreamcast, .DS, .Atari8bit, .Intellivision, ._3DO, .Vectrex, .PSP, .PS2, .PS3, .GameCube]
+    static public let betas: [SystemIdentifier] =
+    [
+        ._3DO,
+        .Atari8bit,
+        .AtariJaguarCD,
+        .AtariST,
+        .C64,
+        .ColecoVision,
+        .DOS,
+        .Dreamcast,
+        .DS,
+        .EP128,
+        .GameCube,
+        .Intellivision,
+        .Macintosh,
+        .MSX,
+        .MSX2,
+        .Odyssey2,
+
+        .Supervision,
+        .Vectrex,
+        .ZXSpectrum,
+    ]
+    
+    static public let unsupported: [SystemIdentifier] =
+    [
+        .PS2,
+        .PS3,
+        .PSP,
+        .Wii,
+    ]
     // MARK: Assistance accessors for properties
 
     public var system: PVSystem? {
@@ -239,21 +285,29 @@ public final class PVEmulatorConfiguration: NSObject {
 
     public static func initICloud() {
         DispatchQueue.global(qos: .background).async {
-            ILOG("iCloudContainerDirectory: \(PVEmulatorConfiguration.iCloudContainerDirectory)")
+            let dir = PVEmulatorConfiguration.iCloudContainerDirectory
+            DLOG("iCloudContainerDirectory: \(String(describing: dir))")
         }
     }
+
+    static var iCloudContainerDirectoryCached: URL? = {
+        if Thread.isMainThread {
+            var container: URL?
+            DispatchQueue.global(qos: .background).sync {
+                container = FileManager.default.url(forUbiquityContainerIdentifier: Constants.iCloud.containerIdentifier)
+            }
+            return container
+        } else {
+            let container = FileManager.default.url(forUbiquityContainerIdentifier: Constants.iCloud.containerIdentifier)
+            return container
+        }
+    }()
     
-    static var iCloudContainerDirectoryCached: URL?
     /// This should be called on a background thread
     static var iCloudContainerDirectory: URL? {
-        guard iCloudContainerDirectoryCached == nil else {
+        get {
             return iCloudContainerDirectoryCached
         }
-        if Thread.isMainThread {
-            WLOG("Warning, this should only be called on background threads.")
-        }
-        iCloudContainerDirectoryCached = FileManager.default.url(forUbiquityContainerIdentifier: Constants.iCloud.containerIdentifier)
-        return iCloudContainerDirectoryCached
     }
 
     /// This should be called on a background thread
@@ -393,7 +447,7 @@ public struct ClassInfo: CustomStringConvertible, Equatable {
     public let className: String
     public let bundle: Bundle
 
-    public init?(_ classObject: AnyClass?, withSuperclass superclass: String? = nil) {
+    public init?(_ classObject: AnyClass?, withSuperclass superclass: [String]? = nil) {
         guard let classObject = classObject else { return nil }
 
         self.classObject = classObject
@@ -402,11 +456,29 @@ public struct ClassInfo: CustomStringConvertible, Equatable {
         let classString = String(cString: cName)
         className = classString
 
-        if let superclass = superclass, ClassInfo.superClassName(forClass: classObject) != superclass {
+        if let superclass = superclass,
+            let superclassName = ClassInfo.superClassName(forClass: classObject),
+            !superclass.contains(superclassName) {
             return nil
         }
 
         bundle = Bundle(for: classObject)
+    }
+    
+    public var superclassesInfo: [ClassInfo]? {
+        var classInfos = [ClassInfo]()
+        var superClass: ClassInfo? = superclassInfo
+        
+        while(superClass != nil) {
+            if let classInfo = ClassInfo(superClass?.classObject) {
+                classInfos.append(classInfo)
+                superClass = classInfo.superclassInfo
+            } else {
+                superClass = nil
+            }
+        }
+        
+        return classInfos.isEmpty ? nil : classInfos
     }
 
     public var superclassInfo: ClassInfo? {
@@ -432,6 +504,13 @@ public struct ClassInfo: CustomStringConvertible, Equatable {
         let cName = class_getName(superClass)
         let classString = String(cString: cName)
         return classString
+    }
+}
+
+extension ClassInfo: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(className)
+        hasher.combine(bundle.bundleIdentifier)
     }
 }
 
@@ -603,7 +682,7 @@ public extension PVEmulatorConfiguration {
         let gamePath = path(forGame: game)
         return m3uFile(forURL: gamePath, indentifier: game.system.identifier)
     }
-    
+
     @objc
     class func m3uFile(forURL gamePath: URL, indentifier: String) -> URL? {
         let gameDirectory = romDirectory(forSystemIdentifier: indentifier)

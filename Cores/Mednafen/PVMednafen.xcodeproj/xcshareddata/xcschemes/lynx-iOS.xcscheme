@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B33351B0207B01570036A448"
-               BuildableName = "liblynx-iOS.a"
-               BlueprintName = "lynx-iOS"
+               BuildableName = "liblynx.a"
+               BlueprintName = "lynx"
                ReferencedContainer = "container:PVMednafen.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B33351B0207B01570036A448"
-            BuildableName = "liblynx-iOS.a"
-            BlueprintName = "lynx-iOS"
+            BuildableName = "liblynx.a"
+            BlueprintName = "lynx"
             ReferencedContainer = "container:PVMednafen.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

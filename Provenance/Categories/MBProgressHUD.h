@@ -27,7 +27,11 @@
 // THE SOFTWARE.
 
 #import <Foundation/Foundation.h>
+#if __has_include(<UIKit/UIKit.h>)
 #import <UIKit/UIKit.h>
+#else
+#import <AppKit/AppKit.h>
+#endif
 #import <CoreGraphics/CoreGraphics.h>
 
 @protocol MBProgressHUDDelegate;

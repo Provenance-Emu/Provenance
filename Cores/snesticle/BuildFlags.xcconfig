@@ -1,0 +1,31 @@
+//
+//  BuildFlags.xcconfig
+//  PVDosBox
+//
+//  Created by Joseph Mattiello on 11/1/18.
+//
+//
+
+// All
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) C_DYNREC=1 _FILE_OFFSET_BITS=64 __LIBRETRO__ LSB_FIRST=1 ALIGN_DWORD=1 CODE_PLATFORM=1 USE_POSIX_MEMALIGN=1 HAVE_THREADS=1 HAVE_SYS_PARAM_H HAVE_INTTYPES_H HAVE_STRINGS HAVE_STDINT_H STATIC_LINKING
+GCC_PREPROCESSOR_DEFINITIONS[configuration=Debug] = $(inherited) DEBUG=1
+GCC_PREPROCESSOR_DEFINITIONS[configuration=Release] = $(inherited) NDEBUG=1
+
+// DISABLE_DYNAREC=1
+OTHER_CFLAGS = $(inherited) -ObjC -Wno-ignored-optimization-argument -Wno-unknown-warning-option -fomit-frame-pointer -fno-exceptions -fno-non-call-exceptions -Wno-address-of-packed-member -Wno-format -Wno-switch -Wno-psabi -fpic -fvisibility=hidden -ffunction-sections -Iinclude
+OTHER_LDFLAGS = $(inherited) -ObjC -Wl,-all_load -all_load -lpthread
+
+
+    // Device
+GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*] = $(inherited) TARGET_IPHONE=1
+OTHER_CFLAGS[sdk=iphoneos*] = $(inherited)
+
+// Simulator
+GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*] = $(inherited) TARGET_IPHONE_SIMULATOR=1
+
+// tvOS Device
+GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvos*] = $(inherited) TARGET_IPHONE=1
+OTHER_CFLAGS[sdk=appletvos*] = $(inherited)
+
+// tvOS Simulator
+GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvsimulator*] = $(inherited) TARGET_IPHONE_SIMULATOR=1

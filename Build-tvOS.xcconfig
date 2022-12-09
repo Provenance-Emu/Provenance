@@ -1,1 +1,3 @@
 #include "Build.xcconfig"
+
+TVOS_DEPLOYMENT_TARGET = 13.0

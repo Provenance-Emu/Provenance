@@ -29,7 +29,7 @@
 #import "PVPokeMiniEmulatorCore.h"
 @import PVSupport;
 
-#if !TARGET_OS_MACCATALYST
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
@@ -294,11 +294,14 @@ int saveEEPROM(const char *filename) {
     PokeMini_EmulateFrame();
     
     if(PokeMini_Rumbling) {
+        // TODO: Fix rumble
+#if TARGET_OS_IOS && !TARGET_OS_MACCATALYST
         if (shouldRumble) {
             [self rumble];
             shouldRumble = NO;
         }
-
+#endif
+      
         PokeMini_VideoBlit(videoBuffer + PokeMini_GenRumbleOffset(current->videoWidth), current->videoWidth);
     }
     else

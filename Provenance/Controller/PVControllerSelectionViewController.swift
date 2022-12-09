@@ -11,26 +11,12 @@ import GameController
 import UIKit
 
 final class PVControllerSelectionViewController: UITableViewController {
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVControllerSelectionViewController.handleReassigned(_:)), name: NSNotification.Name.PVControllerManagerControllerReassigned, object: nil)
-    }
-
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.PVControllerManagerControllerReassigned, object: nil)
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         #if TARGET_OS_TV
             tableView.backgroundColor = UIColor.clear
             tableView.backgroundView = nil
         #endif
-    }
-
-    @objc func handleReassigned(_: Notification?) {
-        tableView.reloadData()
     }
 
     // MARK: - UITableViewDataSource
@@ -47,10 +33,6 @@ final class PVControllerSelectionViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "controllerCell")!
 
         let labelText = "Player \(indexPath.row + 1)"
-
-        #if os(iOS)
-            cell.textLabel?.textColor = Theme.currentTheme.settingsCellText
-        #endif
 
         cell.textLabel?.text = labelText
 
@@ -88,7 +70,6 @@ final class PVControllerSelectionViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
         let player: Int = indexPath.row + 1
         let actionSheet = UIAlertController(title: "Select a controller for Player \(player)", message: "or press a button on your iCade controller.", preferredStyle: .actionSheet)
 
@@ -120,7 +101,11 @@ final class PVControllerSelectionViewController: UITableViewController {
                 } else if indexPath.row == 3 {
                     PVControllerManager.shared.setController(controller, toPlayer: 4)
                 }
-                self.tableView.reloadData()
+
+                DispatchQueue.main.async {
+                    let visibleIndex = self.tableView.visibleCells.compactMap { tableView.indexPath(for: $0) }
+                    self.tableView.reloadRows(at: visibleIndex, with: .none)
+                }
                 PVControllerManager.shared.stopListeningForICadeControllers()
             }))
         }
@@ -135,15 +120,16 @@ final class PVControllerSelectionViewController: UITableViewController {
             } else if indexPath.row == 3 {
                 PVControllerManager.shared.setController(nil, toPlayer: 4)
             }
-            self.tableView.reloadData()
+
+            DispatchQueue.main.async {
+                let visibleIndex = self.tableView.visibleCells.compactMap { tableView.indexPath(for: $0) }
+                self.tableView.reloadRows(at: visibleIndex, with: .none)
+            }
             PVControllerManager.shared.stopListeningForICadeControllers()
         }))
 
-        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-
-        present(actionSheet, animated: true, completion: { [unowned self] () -> Void in
+        present(actionSheet, animated: true, completion: { () -> Void in
             PVControllerManager.shared.listenForICadeControllers(window: actionSheet.view.window, preferredPlayer: indexPath.row + 1, completion: { () -> Void in
-                self.tableView.reloadData()
                 actionSheet.dismiss(animated: true) { () -> Void in }
             })
         })

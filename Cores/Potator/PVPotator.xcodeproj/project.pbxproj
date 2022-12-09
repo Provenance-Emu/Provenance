@@ -1,0 +1,1033 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B301797F207C909E0051B93D /* libpotator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libpotator.a */; };
+		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
+		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
+		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
+		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
+		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
+		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
+		B37022C82872553E00B3F6DA /* PVPotatorCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B37022C6287253B300B3F6DA /* PVPotatorCore.mm */; };
+		B37022C92872554300B3F6DA /* PVPotatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C5287253B300B3F6DA /* PVPotatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B37022CB2872556600B3F6DA /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B37022BF287253B300B3F6DA /* Core.plist */; };
+		B37022CD2872558F00B3F6DA /* PVPotator.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVPotator.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B39768F82859E23200558958 /* libpotator-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libpotator-libretro.a */; };
+		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
+		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilter = ios; };
+		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
+		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
+		B3FF641F2873EBCC00829C14 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA0FE2872965F00EAEB37 /* libretro.c */; };
+		B3FF64212873EBEB00829C14 /* gpu.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1132872965F00EAEB37 /* gpu.c */; };
+		B3FF64222873EBEB00829C14 /* memorymap.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1122872965F00EAEB37 /* memorymap.c */; };
+		B3FF64232873EBEB00829C14 /* watara.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1212872965F00EAEB37 /* watara.c */; };
+		B3FF64242873EBEB00829C14 /* controls.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA11B2872965F00EAEB37 /* controls.c */; };
+		B3FF64252873EBEB00829C14 /* sound.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA11F2872965F00EAEB37 /* sound.c */; };
+		B3FF64262873EBEB00829C14 /* timer.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1152872965F00EAEB37 /* timer.c */; };
+		B3FF642D2873EBF000829C14 /* m6502.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1182872965F00EAEB37 /* m6502.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B39768F92859E23200558958 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3344B522859E088006E6B3A;
+			remoteInfo = "dos-box-libretro-iOS";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		B30178D1207C901D0051B93D /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3344BBE2859E088006E6B3A /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		B30178D3207C901D0051B93D /* libpotator.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libpotator.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3135BAA26E4CDC50047F338 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
+		B324C31B2191964F009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
+		B3344BC32859E088006E6B3A /* libpotator-libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libpotator-libretro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B339468820783F41008DBAB4 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = usr/lib/libpthread.tbd; sourceTree = SDKROOT; };
+		B339468A20783F48008DBAB4 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
+		B35E6BEF207CD2610040709A /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
+		B35E6BF1207CD2670040709A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
+		B35E6BF4207CD2740040709A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
+		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		B37022BD287253B300B3F6DA /* PVPotator-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVPotator-Prefix.pch"; sourceTree = "<group>"; };
+		B37022BF287253B300B3F6DA /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
+		B37022C0287253B300B3F6DA /* PVPotator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVPotator.h; sourceTree = "<group>"; };
+		B37022C1287253B300B3F6DA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B37022C3287253B300B3F6DA /* PVPotator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVPotator.h; sourceTree = "<group>"; };
+		B37022C5287253B300B3F6DA /* PVPotatorCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVPotatorCore.h; sourceTree = "<group>"; };
+		B37022C6287253B300B3F6DA /* PVPotatorCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVPotatorCore.mm; sourceTree = "<group>"; };
+		B39769132859E3A300558958 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B39769172859E3AD00558958 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
+		B39769182859E3AD00558958 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3B104B8218F281B00210C39 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3C7621020783162009950E4 /* PVPotator.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVPotator.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3C7621C20783243009950E4 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		B3C7621E2078325C009950E4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		B3C7622120783297009950E4 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3EBA0FB2872965F00EAEB37 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		B3EBA0FE2872965F00EAEB37 /* libretro.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = libretro.c; sourceTree = "<group>"; };
+		B3EBA0FF2872965F00EAEB37 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		B3EBA1002872965F00EAEB37 /* Makefile.common */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.common; sourceTree = "<group>"; };
+		B3EBA1012872965F00EAEB37 /* libretro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libretro.h; sourceTree = "<group>"; };
+		B3EBA1022872965F00EAEB37 /* libretro_core_options.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libretro_core_options.h; sourceTree = "<group>"; };
+		B3EBA1032872965F00EAEB37 /* libretro_core_options_intl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libretro_core_options_intl.h; sourceTree = "<group>"; };
+		B3EBA1082872965F00EAEB37 /* stdint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stdint.h; sourceTree = "<group>"; };
+		B3EBA1092872965F00EAEB37 /* msvc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = msvc.h; sourceTree = "<group>"; };
+		B3EBA10A2872965F00EAEB37 /* retro_inline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = retro_inline.h; sourceTree = "<group>"; };
+		B3EBA10B2872965F00EAEB37 /* link.T */ = {isa = PBXFileReference; lastKnownFileType = text; path = link.T; sourceTree = "<group>"; };
+		B3EBA10D2872965F00EAEB37 /* Android.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Android.mk; sourceTree = "<group>"; };
+		B3EBA10E2872965F00EAEB37 /* Application.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Application.mk; sourceTree = "<group>"; };
+		B3EBA10F2872965F00EAEB37 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		B3EBA1112872965F00EAEB37 /* sound.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sound.h; sourceTree = "<group>"; };
+		B3EBA1122872965F00EAEB37 /* memorymap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = memorymap.c; sourceTree = "<group>"; };
+		B3EBA1132872965F00EAEB37 /* gpu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gpu.c; sourceTree = "<group>"; };
+		B3EBA1142872965F00EAEB37 /* controls.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = controls.h; sourceTree = "<group>"; };
+		B3EBA1152872965F00EAEB37 /* timer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = timer.c; sourceTree = "<group>"; };
+		B3EBA1162872965F00EAEB37 /* types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
+		B3EBA1182872965F00EAEB37 /* m6502.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = m6502.c; sourceTree = "<group>"; };
+		B3EBA1192872965F00EAEB37 /* tables.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tables.h; sourceTree = "<group>"; };
+		B3EBA11A2872965F00EAEB37 /* m6502.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = m6502.h; sourceTree = "<group>"; };
+		B3EBA11B2872965F00EAEB37 /* controls.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = controls.c; sourceTree = "<group>"; };
+		B3EBA11C2872965F00EAEB37 /* timer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = timer.h; sourceTree = "<group>"; };
+		B3EBA11D2872965F00EAEB37 /* memorymap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = memorymap.h; sourceTree = "<group>"; };
+		B3EBA11E2872965F00EAEB37 /* gpu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gpu.h; sourceTree = "<group>"; };
+		B3EBA11F2872965F00EAEB37 /* sound.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = sound.c; sourceTree = "<group>"; };
+		B3EBA1202872965F00EAEB37 /* supervision.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = supervision.h; sourceTree = "<group>"; };
+		B3EBA1212872965F00EAEB37 /* watara.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = watara.c; sourceTree = "<group>"; };
+		B3EBA1222872965F00EAEB37 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		B3EBA1232872965F00EAEB37 /* .gitlab-ci.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = ".gitlab-ci.yml"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B30178D0207C901D0051B93D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3344BBD2859E088006E6B3A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3C7620C20783162009950E4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
+				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
+				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
+				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
+				B301797F207C909E0051B93D /* libpotator.a in Frameworks */,
+				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
+				B39768F82859E23200558958 /* libpotator-libretro.a in Frameworks */,
+				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
+				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
+				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
+				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
+				B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		B37022BE287253B300B3F6DA /* PVPotator */ = {
+			isa = PBXGroup;
+			children = (
+				B37022C0287253B300B3F6DA /* PVPotator.h */,
+				B37022BF287253B300B3F6DA /* Core.plist */,
+				B37022C1287253B300B3F6DA /* Info.plist */,
+			);
+			path = PVPotator;
+			sourceTree = "<group>";
+		};
+		B37022C4287253B300B3F6DA /* PVPotatorCore */ = {
+			isa = PBXGroup;
+			children = (
+				B37022C5287253B300B3F6DA /* PVPotatorCore.h */,
+				B37022C6287253B300B3F6DA /* PVPotatorCore.mm */,
+			);
+			path = PVPotatorCore;
+			sourceTree = "<group>";
+		};
+		B3C7620620783162009950E4 = {
+			isa = PBXGroup;
+			children = (
+				B3EBA0FA2872965F00EAEB37 /* potator */,
+				B37022BE287253B300B3F6DA /* PVPotator */,
+				B37022C4287253B300B3F6DA /* PVPotatorCore */,
+				B37022C3287253B300B3F6DA /* PVPotator.h */,
+				B37022BD287253B300B3F6DA /* PVPotator-Prefix.pch */,
+				B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */,
+				B3C7621B20783242009950E4 /* Frameworks */,
+				B3C7621120783162009950E4 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B3C7621120783162009950E4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B3C7621020783162009950E4 /* PVPotator.framework */,
+				B30178D3207C901D0051B93D /* libpotator.a */,
+				B3344BC32859E088006E6B3A /* libpotator-libretro.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B3C7621B20783242009950E4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */,
+				B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */,
+				B39769172859E3AD00558958 /* CoreFoundation.framework */,
+				B39769182859E3AD00558958 /* Foundation.framework */,
+				B39769132859E3A300558958 /* PVLibrary.framework */,
+				B3135BAA26E4CDC50047F338 /* QuartzCore.framework */,
+				B35E6BF1207CD2670040709A /* AudioToolbox.framework */,
+				B35E6BEF207CD2610040709A /* AudioUnit.framework */,
+				B324C31B2191964F009F4EDC /* AVFoundation.framework */,
+				B35E6BF8207D00D00040709A /* AVFoundation.framework */,
+				B35E6BF4207CD2740040709A /* CoreAudio.framework */,
+				B35E6BF3207CD2730040709A /* CoreAudioKit.framework */,
+				B3C7621E2078325C009950E4 /* Foundation.framework */,
+				B339468820783F41008DBAB4 /* libpthread.tbd */,
+				B339468A20783F48008DBAB4 /* libz.tbd */,
+				B3C7621C20783243009950E4 /* OpenGLES.framework */,
+				B3B104B8218F281B00210C39 /* PVSupport.framework */,
+				B3C7622120783297009950E4 /* PVSupport.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B3EBA0FA2872965F00EAEB37 /* potator */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA1222872965F00EAEB37 /* .gitignore */,
+				B3EBA0FB2872965F00EAEB37 /* LICENSE */,
+				B3EBA10F2872965F00EAEB37 /* README.md */,
+				B3EBA1232872965F00EAEB37 /* .gitlab-ci.yml */,
+				B3EBA1102872965F00EAEB37 /* common */,
+				B3EBA0FC2872965F00EAEB37 /* platform */,
+			);
+			path = potator;
+			sourceTree = "<group>";
+		};
+		B3EBA0FC2872965F00EAEB37 /* platform */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA0FD2872965F00EAEB37 /* libretro */,
+			);
+			path = platform;
+			sourceTree = "<group>";
+		};
+		B3EBA0FD2872965F00EAEB37 /* libretro */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA0FF2872965F00EAEB37 /* Makefile */,
+				B3EBA0FE2872965F00EAEB37 /* libretro.c */,
+				B3EBA1002872965F00EAEB37 /* Makefile.common */,
+				B3EBA1032872965F00EAEB37 /* libretro_core_options_intl.h */,
+				B3EBA1022872965F00EAEB37 /* libretro_core_options.h */,
+				B3EBA1012872965F00EAEB37 /* libretro.h */,
+				B3EBA10B2872965F00EAEB37 /* link.T */,
+				B3EBA10C2872965F00EAEB37 /* jni */,
+				B3EBA1042872965F00EAEB37 /* libretro-common */,
+			);
+			path = libretro;
+			sourceTree = "<group>";
+		};
+		B3EBA1042872965F00EAEB37 /* libretro-common */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA1052872965F00EAEB37 /* include */,
+			);
+			path = "libretro-common";
+			sourceTree = "<group>";
+		};
+		B3EBA1052872965F00EAEB37 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA1062872965F00EAEB37 /* compat */,
+				B3EBA10A2872965F00EAEB37 /* retro_inline.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		B3EBA1062872965F00EAEB37 /* compat */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA1072872965F00EAEB37 /* msvc */,
+				B3EBA1092872965F00EAEB37 /* msvc.h */,
+			);
+			path = compat;
+			sourceTree = "<group>";
+		};
+		B3EBA1072872965F00EAEB37 /* msvc */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA1082872965F00EAEB37 /* stdint.h */,
+			);
+			path = msvc;
+			sourceTree = "<group>";
+		};
+		B3EBA10C2872965F00EAEB37 /* jni */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA10D2872965F00EAEB37 /* Android.mk */,
+				B3EBA10E2872965F00EAEB37 /* Application.mk */,
+			);
+			path = jni;
+			sourceTree = "<group>";
+		};
+		B3EBA1102872965F00EAEB37 /* common */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA11B2872965F00EAEB37 /* controls.c */,
+				B3EBA1132872965F00EAEB37 /* gpu.c */,
+				B3EBA1122872965F00EAEB37 /* memorymap.c */,
+				B3EBA11F2872965F00EAEB37 /* sound.c */,
+				B3EBA1152872965F00EAEB37 /* timer.c */,
+				B3EBA1212872965F00EAEB37 /* watara.c */,
+				B3EBA1142872965F00EAEB37 /* controls.h */,
+				B3EBA11E2872965F00EAEB37 /* gpu.h */,
+				B3EBA11D2872965F00EAEB37 /* memorymap.h */,
+				B3EBA1112872965F00EAEB37 /* sound.h */,
+				B3EBA1202872965F00EAEB37 /* supervision.h */,
+				B3EBA11C2872965F00EAEB37 /* timer.h */,
+				B3EBA1162872965F00EAEB37 /* types.h */,
+				B3EBA1172872965F00EAEB37 /* m6502 */,
+			);
+			path = common;
+			sourceTree = "<group>";
+		};
+		B3EBA1172872965F00EAEB37 /* m6502 */ = {
+			isa = PBXGroup;
+			children = (
+				B3EBA1182872965F00EAEB37 /* m6502.c */,
+				B3EBA1192872965F00EAEB37 /* tables.h */,
+				B3EBA11A2872965F00EAEB37 /* m6502.h */,
+			);
+			path = m6502;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		B3C7620D20783162009950E4 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B37022CD2872558F00B3F6DA /* PVPotator.h in Headers */,
+				B37022C92872554300B3F6DA /* PVPotatorCore.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		B30178D2207C901D0051B93D /* potator */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "potator" */;
+			buildPhases = (
+				B30178CF207C901D0051B93D /* Sources */,
+				B30178D0207C901D0051B93D /* Frameworks */,
+				B30178D1207C901D0051B93D /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = potator;
+			productName = reicast;
+			productReference = B30178D3207C901D0051B93D /* libpotator.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B3344B522859E088006E6B3A /* potator-libretro */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "potator-libretro" */;
+			buildPhases = (
+				B3344B532859E088006E6B3A /* Sources */,
+				B3344BBD2859E088006E6B3A /* Frameworks */,
+				B3344BBE2859E088006E6B3A /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "potator-libretro";
+			productName = reicast;
+			productReference = B3344BC32859E088006E6B3A /* libpotator-libretro.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B3C7620F20783162009950E4 /* PVPotator */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVPotator" */;
+			buildPhases = (
+				B3C7620B20783162009950E4 /* Sources */,
+				B3C7620C20783162009950E4 /* Frameworks */,
+				B3C7620D20783162009950E4 /* Headers */,
+				B3C7620E20783162009950E4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B39768FA2859E23200558958 /* PBXTargetDependency */,
+			);
+			name = PVPotator;
+			productName = PVReicast;
+			productReference = B3C7621020783162009950E4 /* PVPotator.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B3C7620720783162009950E4 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				CLASSPREFIX = PV;
+				LastUpgradeCheck = 1300;
+				ORGANIZATIONNAME = "Provenance Emu";
+				TargetAttributes = {
+					B30178D2207C901D0051B93D = {
+						CreatedOnToolsVersion = 9.3;
+						ProvisioningStyle = Automatic;
+					};
+					B3C7620F20783162009950E4 = {
+						CreatedOnToolsVersion = 9.3;
+					};
+				};
+			};
+			buildConfigurationList = B3C7620A20783162009950E4 /* Build configuration list for PBXProject "PVPotator" */;
+			compatibilityVersion = "Xcode 12.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				de,
+				"zh-Hans",
+				ja,
+				es,
+				it,
+				sv,
+				ko,
+				"pt-BR",
+				ru,
+				fr,
+				nl,
+			);
+			mainGroup = B3C7620620783162009950E4;
+			productRefGroup = B3C7621120783162009950E4 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B3C7620F20783162009950E4 /* PVPotator */,
+				B3344B522859E088006E6B3A /* potator-libretro */,
+				B30178D2207C901D0051B93D /* potator */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B3C7620E20783162009950E4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B37022CB2872556600B3F6DA /* Core.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B30178CF207C901D0051B93D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3FF64252873EBEB00829C14 /* sound.c in Sources */,
+				B3FF64212873EBEB00829C14 /* gpu.c in Sources */,
+				B3FF64232873EBEB00829C14 /* watara.c in Sources */,
+				B3FF64262873EBEB00829C14 /* timer.c in Sources */,
+				B3FF64222873EBEB00829C14 /* memorymap.c in Sources */,
+				B3FF642D2873EBF000829C14 /* m6502.c in Sources */,
+				B3FF64242873EBEB00829C14 /* controls.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3344B532859E088006E6B3A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3FF641F2873EBCC00829C14 /* libretro.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3C7620B20783162009950E4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B37022C82872553E00B3F6DA /* PVPotatorCore.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B39768FA2859E23200558958 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3344B522859E088006E6B3A /* potator-libretro */;
+			targetProxy = B39768F92859E23200558958 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		B30178DA207C901D0051B93D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = potator;
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = Debug;
+		};
+		B30178DB207C901D0051B93D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = potator;
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = Release;
+		};
+		B324C5012191A2A2009F4EDC /* Archive */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_BITCODE = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					RELEASE,
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = __LIBRETRO__;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/potator/platform/libretro/libretro-common/include\"",
+					"\"$(SRCROOT)/potator/platform/libretro\"",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
+				VALIDATE_PRODUCT = YES;
+				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Archive;
+		};
+		B324C5022191A2A2009F4EDC /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
+					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
+					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/PVPotator/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVPotator";
+				PRODUCT_NAME = PVPotator;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = Archive;
+		};
+		B324C5042191A2A2009F4EDC /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = potator;
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = Archive;
+		};
+		B3344BC02859E088006E6B3A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "potator-libretro";
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = Debug;
+		};
+		B3344BC12859E088006E6B3A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "potator-libretro";
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = Release;
+		};
+		B3344BC22859E088006E6B3A /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "potator-libretro";
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = Archive;
+		};
+		B3C7621620783162009950E4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_BITCODE = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					DEBUG,
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = __LIBRETRO__;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/potator/platform/libretro/libretro-common/include\"",
+					"\"$(SRCROOT)/potator/platform/libretro\"",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
+				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		B3C7621720783162009950E4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_BITCODE = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					RELEASE,
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = __LIBRETRO__;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/potator/platform/libretro/libretro-common/include\"",
+					"\"$(SRCROOT)/potator/platform/libretro\"",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
+				VALIDATE_PRODUCT = YES;
+				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		B3C7621920783162009950E4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
+					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
+					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/PVPotator/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVPotator";
+				PRODUCT_NAME = PVPotator;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = Debug;
+		};
+		B3C7621A20783162009950E4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
+					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
+					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/PVPotator/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVPotator";
+				PRODUCT_NAME = PVPotator;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "potator" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B30178DA207C901D0051B93D /* Debug */,
+				B30178DB207C901D0051B93D /* Release */,
+				B324C5042191A2A2009F4EDC /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3344BBF2859E088006E6B3A /* Build configuration list for PBXNativeTarget "potator-libretro" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3344BC02859E088006E6B3A /* Debug */,
+				B3344BC12859E088006E6B3A /* Release */,
+				B3344BC22859E088006E6B3A /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3C7620A20783162009950E4 /* Build configuration list for PBXProject "PVPotator" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3C7621620783162009950E4 /* Debug */,
+				B3C7621720783162009950E4 /* Release */,
+				B324C5012191A2A2009F4EDC /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVPotator" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3C7621920783162009950E4 /* Debug */,
+				B3C7621A20783162009950E4 /* Release */,
+				B324C5022191A2A2009F4EDC /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B3C7620720783162009950E4 /* Project object */;
+}

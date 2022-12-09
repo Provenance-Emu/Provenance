@@ -38,6 +38,7 @@ public protocol SystemProtocol {
 
     var supportsRumble: Bool { get }
     var screenType: ScreenType { get }
+    var supported: Bool { get }
 }
 
 // MARK: Default Implimentations

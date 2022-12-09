@@ -5,7 +5,7 @@
 
 //#import <PVSupport/PVGameControllerUtilities.h>
 
-#if !TARGET_OS_MACCATALYST
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
@@ -176,7 +176,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
 - (BOOL)isDoubleBuffered
 {
-    return YES;
+    return NO;
 }
 
 #pragma mark Audio
@@ -192,6 +192,8 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 }
 
 #pragma mark Save States
+- (BOOL)supportsSaveStates { return NO; }
+
 - (BOOL)saveStateToFileAtPath: (NSString *) fileName error:(NSError**)error  
 {
     @synchronized(self) {

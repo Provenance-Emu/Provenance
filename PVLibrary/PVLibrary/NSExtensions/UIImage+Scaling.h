@@ -6,6 +6,8 @@
 //  Copyright (c) 2013 James Addyman. All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
+#if !TARGET_OS_OSX
 #import <UIKit/UIKit.h>
 
 @interface UIImage (Scaling)
@@ -13,3 +15,4 @@
 - (UIImage *)scaledImageWithMaxResolution:(NSInteger)maxResolution;
 
 @end
+#endif

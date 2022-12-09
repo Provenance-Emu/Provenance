@@ -16,6 +16,7 @@ public extension UTI {
     static let artwork = UTI(rawValue: "com.provenance.artwork")
     static let savestate = UTI(rawValue: "com.provenance.savestate")
     static let sevenZipArchive = UTI(rawValue: "org.7-zip.7-zip-archive")
+    static let rar = UTI(rawValue: "com.rarlab.rar-archive")
 }
 
 /// Instances of the UTI class represent a specific Universal Type Identifier, e.g. kUTTypeMPEG4.
@@ -260,7 +261,7 @@ public final class UTI: RawRepresentable, Equatable {
         guard let identifiers = unmanagedIdentifiers?.takeRetainedValue() as? [CFString] else {
             return []
         }
-        
+
         return identifiers.compactMap { UTI(rawValue: $0 as String) }
     }
 

@@ -7,6 +7,7 @@
 //  Copyright (c) 2015 Josejulio Martínez. All rights reserved.
 //
 
+#if canImport(UIKit)
 import Foundation
 
 public final class PViCade8BitdoController: PViCadeController {
@@ -95,3 +96,4 @@ public final class PViCade8BitdoZeroController: PViCadeController {
         return "8Bitdo Zero"
     }
 }
+#endif

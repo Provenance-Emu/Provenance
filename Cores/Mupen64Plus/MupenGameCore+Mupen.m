@@ -2,7 +2,10 @@
 #import "MupenGameCore+Controls.h"
 #import <PVMupen64Plus/PVMupen64Plus-Swift.h>
 
+#if __has_include(<UIKit/UIKit.h>)
 @import UIKit.UIWindow;
+#else
+#endif
 
 #import "api/config.h"
 #import "api/m64p_common.h"
@@ -123,6 +126,16 @@ void MupenSetAudioSpeed(int percent) {
     ILOG(@"value: %i", percent);
 }
 
+void MupenAudioRomOpen() {
+    // do we need this?
+    DLOG(@"called");
+}
+
+void MupenAudioRomClosed() {
+    // do we need this?
+    DLOG(@"called");
+}
+
 void ConfigureAll(NSString *romFolder) {
     ConfigureCore(romFolder);
     ConfigureVideoGeneral();
@@ -152,14 +165,25 @@ void ConfigureCore(NSString *romFolder) {
     ConfigSetParameter(config, "R4300Emulator", M64TYPE_INT, &emulator);
 
 	int SiDmaDuration = [MupenGameCore intForOption:@"SiDmaDuration"];
-	ConfigSetParameter(config, "SiDmaDuration", M64TYPE_INT, &SiDmaDuration);
-
+    if (SiDmaDuration >= 0) {
+        ConfigSetParameter(config, "SiDmaDuration", M64TYPE_INT, &SiDmaDuration);
+    }
+    
 	int disableExtraMemory = [MupenGameCore boolForOption:@"Disable Extra Memory"];
 	ConfigSetParameter(config, "DisableExtraMem", M64TYPE_BOOL, &disableExtraMemory);
 
 	int randomizeInterrupt = [MupenGameCore boolForOption:@"Randomize Interrupt"];
 	ConfigSetParameter(config, "RandomizeInterrupt", M64TYPE_BOOL, &randomizeInterrupt);
 
+    int countPerOp = [MupenGameCore boolForOption:@"Count Per Op"];
+    if (countPerOp >= 1) {
+        ConfigSetParameter(config, "CountPerOp", M64TYPE_INT, &countPerOp);
+    }
+    
+    // Save state slot (0-9) to use when saving/loading the emulator state
+//    int currentStateSlot = [MupenGameCore boolForOption:@"Save State Slot"];
+//    ConfigSetParameter(config, "CurrentStateSlot", M64TYPE_INT, &currentStateSlot);
+    
 
 		// Draw on-screen display if True, otherwise don't draw OSD
 	int osd = [MupenGameCore boolForOption:@"Debug OSD"];
@@ -186,6 +210,7 @@ void ConfigureVideoGeneral() {
 
     int screenWidth = WIDTH;
     int screenHeight = HEIGHT;
+#if __has_include(<UIKit/UIKit.h>)
     if(RESIZE_TO_FULLSCREEN) {
         CGSize size = UIApplication.sharedApplication.keyWindow.bounds.size;
         float widthScale = floor(size.height / WIDTHf);
@@ -194,6 +219,7 @@ void ConfigureVideoGeneral() {
         screenWidth =  scale * WIDTHf;
         screenHeight = scale * HEIGHTf;
     }
+#endif
 
     // Screen width
     ConfigSetParameter(general, "ScreenWidth", M64TYPE_INT, &screenWidth);

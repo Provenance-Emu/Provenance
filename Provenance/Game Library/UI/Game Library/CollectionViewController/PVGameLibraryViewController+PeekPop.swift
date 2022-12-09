@@ -29,7 +29,7 @@ import UIKit
                 else { return nil }
             // This will show the cell clearly and blur the rest of the screen for our peek.
             previewingContext.sourceRect = cellAttributes.frame
-			
+
 			switch item {
             case .game(let game):
                 let storyBoard = UIStoryboard(name: "Provenance", bundle: nil)

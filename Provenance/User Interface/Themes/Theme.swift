@@ -117,7 +117,6 @@ extension iOSTheme {
         sharedApp.delegate?.window??.tintColor = defaultTintColor
     }
 
-
 }
 
 struct DarkTheme: iOSTheme {
@@ -125,7 +124,7 @@ struct DarkTheme: iOSTheme {
         static let lightBlue: UIColor   = .init(hex: "#18A9F7")!
         static let blueishGrey: UIColor = .init(hex: "#848489")!
     }
-    
+
     let theme = Themes.dark
 
     #if !os(tvOS)
@@ -150,7 +149,6 @@ struct DarkTheme: iOSTheme {
     var alertViewBackground: UIColor { return .darkGray }
     var alertViewText: UIColor { return .lightGray }
 
-
     var settingsHeaderBackground: UIColor? { return .black }
     var settingsHeaderText: UIColor? { return .middleGrey }
 
@@ -162,11 +160,10 @@ struct DarkTheme: iOSTheme {
 
 struct LightTheme: iOSTheme {
     let theme = Themes.light
-    
+
     enum Colors {
         static let white9alpha6 = UIColor(white: 0.9, alpha: 0.6)
     }
-    
 
     var defaultTintColor: UIColor? { return .iosBlue } // iOS Blue
 
@@ -175,13 +172,18 @@ struct LightTheme: iOSTheme {
 
     let gameLibraryHeaderBackground: UIColor = Colors.white9alpha6
     let gameLibraryHeaderText: UIColor = .darkGray
+    
+    var navigationBarBackgroundColor: UIColor? { return .grey1C }
+    var settingsCellBackground: UIColor? { return .white }
+    var settingsCellText: UIColor? { return .black }
+    var settingsCellTextDetail: UIColor? { return .gray }
 }
 
 // @available(iOS 9.0, *)
 public final class Theme {
     public static var currentTheme: iOSTheme = DarkTheme() {
         didSet {
-            setTheme(currentTheme)
+//            setTheme(currentTheme)
             UIApplication.shared.refreshAppearance(animated: true)
         }
     }
@@ -198,36 +200,30 @@ public final class Theme {
             }
             return
         }
-        if #available(iOS 13.0, *) {
-            guard
-                let window = UIApplication.shared.keyWindow,
-                let scene = window.windowScene,
-                let manager = scene.statusBarManager else {
-                ELOG("check your tcp/ip's")
-                return
-            }
-            let statusBar1 = statusBarView ?? UIView()
-            statusBar1.frame = manager.statusBarFrame
-            statusBar1.backgroundColor = color
-            statusBarView = statusBar1
-            window.addSubview(statusBar1)
-        } else {
-            if let statusBar1: UIView = UIApplication.shared.value(forKey: "statusBar") as? UIView {
-                statusBar1.backgroundColor = color
-            }
+        guard
+            let window = UIApplication.shared.keyWindow,
+            let scene = window.windowScene,
+            let manager = scene.statusBarManager else {
+            ELOG("check your tcp/ip's")
+            return
         }
+        let statusBar1 = statusBarView ?? UIView()
+        statusBar1.frame = manager.statusBarFrame
+        statusBar1.backgroundColor = color
+        statusBarView = statusBar1
+        window.addSubview(statusBar1)
         #endif
     }
 
     private class func setTheme(_ theme: iOSTheme) {
-        UINavigationBar.appearance {
-            $0.backgroundColor = theme.navigationBarBackgroundColor
-            $0.tintColor = theme.barButtonItemTint
-            #if !os(tvOS)
-            $0.barStyle = theme.navigationBarStyle
-            #endif
-            $0.isTranslucent = true
-        }
+//        UINavigationBar.appearance {
+//            $0.backgroundColor = theme.navigationBarBackgroundColor
+//            $0.tintColor = theme.barButtonItemTint
+//            #if !os(tvOS)
+//            $0.barStyle = theme.navigationBarStyle
+//            #endif
+//            $0.isTranslucent = true
+//        }
 
 //        UIView.appearance {
 //            $0.tintColor = theme.defaultTintColor
@@ -245,19 +241,15 @@ public final class Theme {
 			#endif
         }
 
-        UITableView.appearance {
-            $0.backgroundColor = theme.settingsHeaderBackground
-            $0.separatorColor = theme.settingsSeperator
-        }
+//        UITableView.appearance {
+//            $0.backgroundColor = theme.settingsHeaderBackground
+//            $0.separatorColor = theme.settingsSeperator
+//        }
 
-        SettingsTableView.appearance {
-            $0.backgroundColor = theme.settingsHeaderBackground
-            $0.separatorColor = theme.settingsSeperator
-        }
         #endif
 
         // Settings
-        appearance(inAny: [PVSettingsViewController.self, SystemsSettingsTableViewController.self, CoreOptionsViewController.self, SettingsTableView.self, PVAppearanceViewController.self, PVCoresTableViewController.self]) {
+        appearance(inAny: [PVSettingsViewController.self, SystemsSettingsTableViewController.self, CoreOptionsViewController.self, PVAppearanceViewController.self, PVCoresTableViewController.self]) {
             UITableViewCell.appearance {
                 $0.backgroundColor = theme.settingsCellBackground
                 $0.textLabel?.backgroundColor = theme.settingsCellBackground
@@ -306,12 +298,12 @@ public final class Theme {
             $0.backgroundColor = theme.gameLibraryHeaderBackground
         }
 
-        appearance(in: [PVGameLibrarySectionHeaderView.self]) {
-            UILabel.appearance {
-                $0.backgroundColor = theme.gameLibraryHeaderBackground
-                $0.textColor = theme.gameLibraryHeaderText
-            }
-        }
+//        appearance(in: [PVGameLibrarySectionHeaderView.self]) {
+//            UILabel.appearance {
+//                $0.backgroundColor = theme.gameLibraryHeaderBackground
+//                $0.textColor = theme.gameLibraryHeaderText
+//            }
+//        }
 
         // Game Library Main
         appearance(inAny: [PVGameLibraryCollectionViewCell.self]) {
@@ -349,7 +341,7 @@ public final class Theme {
                 }
             }
         }
-        
+
         // Status bar
         styleStatusBar(withColor: theme.statusBarColor)
     }

@@ -6,7 +6,7 @@
 //  Copyright © 2021 Provenance Emu. All rights reserved.
 //
 
-//#if canImport(NSLogger)
+// #if canImport(NSLogger)
 import Foundation
 import NSLogger
 @_exported import CocoaLumberjackSwift
@@ -223,4 +223,4 @@ extension JMLumberjackNSLogger {
         return debugDescription
     }
 }
-//#endif
+// #endif

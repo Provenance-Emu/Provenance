@@ -39,6 +39,33 @@ final class PVVectrexControllerViewController: PVControllerViewController<PVVect
 //        startButton?.buttonTag = .reset
 //        selectButton?.buttonTag = .select
     }
+    
+    override func dPad(_ dPad: JSDPad, joystick value: JoystickValue) {
+        var up:CGFloat = value.y < 0.5 ? CGFloat(1 - (value.y * 2)) : 0.0
+        var down:CGFloat = value.y > 0.5 ? CGFloat((value.y - 0.5) * 2) : 0.0
+        var left:CGFloat = value.x < 0.5 ? CGFloat(1 - (value.x * 2)) : 0.0
+        var right:CGFloat = value.x > 0.5 ? CGFloat((value.x - 0.5) * 2) : 0.0
+
+        up = min(up, 1.0)
+        down = min(down, 1.0)
+        left = min(left, 1.0)
+        right = min(right, 1.0)
+        
+        up = max(up, 0.0)
+        down = max(down, 0.0)
+        left = max(left, 0.0)
+        right = max(right, 0.0)
+
+        // print("x: \(value.x) , y: \(value.y), up:\(up), down:\(down), left:\(left), right:\(right), ")
+        emulatorCore.didMoveJoystick(.analogUp, withValue: up, forPlayer: 0)
+        if down != 0 {
+            emulatorCore.didMoveJoystick(.analogDown, withValue: down, forPlayer: 0)
+        }
+        emulatorCore.didMoveJoystick(.analogLeft, withValue: left, forPlayer: 0)
+        if right != 0 {
+            emulatorCore.didMoveJoystick(.analogRight, withValue: right, forPlayer: 0)
+        }
+    }
 
     override func dPad(_: JSDPad, didPress direction: JSDPadDirection) {
         emulatorCore.didRelease(.analogUp, forPlayer: 0)

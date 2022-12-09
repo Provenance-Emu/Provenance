@@ -7,9 +7,6 @@
 [submodule "PVMupen64Plus/Plugins/mupen64plus-rsp-hle"]
 	path = Cores/Mupen64Plus/Plugins/rsp/hle
 	url = https://github.com/mupen64plus/mupen64plus-rsp-hle.git
-[submodule "PVMupen64Plus/Plugins/mupen64plus-rsp-cxd4"]
-	path = Cores/Mupen64Plus/Plugins/rsp/cxd4
-	url = https://github.com/Provenance-Emu/mupen64plus-rsp-cxd4.git
 [submodule "PVMupen64Plus/Plugins/mupen64plus-video-rice"]
 	path = Cores/Mupen64Plus/Plugins/Video/rice
 	url = https://github.com/Provenance-Emu/mupen64plus-video-rice.git
@@ -49,9 +46,6 @@
 [submodule "Cores/O2EM"]
 	path = Cores/O2EM
 	url = https://github.com/Provenance-Emu/O2EM-Core.git
-[submodule "Cores/VecXGL"]
-	path = Cores/VecXGL
-	url = https://github.com/Provenance-Emu/VecXGL-Core.git
 [submodule "Cores/CrabEMU"]
 	path = Cores/CrabEMU
 	url = https://github.com/Provenance-Emu/CrabEmu-Core.git
@@ -82,3 +76,75 @@
 [submodule "Cores/DosBox/dosbox-pure"]
 	path = Cores/DosBox/dosbox-pure
 	url = https://github.com/Provenance-Emu/dosbox-pure.git
+[submodule "Cores/Mini_vMac/libretro-minivmac"]
+	path = Cores/Mini_vMac/libretro-minivmac
+	url = https://github.com/Provenance-Emu/libretro-minivmac.git
+[submodule "Cores/BeetlePSX/beetle-psx-libretro"]
+	path = Cores/BeetlePSX/beetle-psx-libretro
+	url = https://github.com/Provenance-Emu/beetle-psx-libretro.git
+[submodule "Cores/Potator/potator"]
+	path = Cores/Potator/potator
+	url = https://github.com/Provenance-Emu/potator.git
+[submodule "Cores/ep128emu/ep128emu-core"]
+	path = Cores/ep128emu/ep128emu-core
+	url = https://github.com/Provenance-Emu/ep128emu-core.git
+[submodule "Cores/hatari/hatari"]
+	path = Cores/hatari/hatari
+	url = https://github.com/Provenance-Emu/hatari.git
+[submodule "Cores/fmsx/fmsx-libretro"]
+	path = Cores/fmsx/fmsx-libretro
+	url = https://github.com/Provenance-Emu/fmsx-libretro.git
+[submodule "Cores/pcsx_rearmed/pcsx_rearmed"]
+	path = Cores/pcsx_rearmed/pcsx_rearmed
+	url = https://github.com/Provenance-Emu/pcsx_rearmed.git
+[submodule "Cores/opera/opera-libretro"]
+	path = Cores/opera/opera-libretro
+	url = https://github.com/Provenance-Emu/opera-libretro.git
+[submodule "Cores/Mu/Mu"]
+	path = Cores/Mu/Mu
+	url = https://github.com/Provenance-Emu/Mu.git
+[submodule "Cores/Yabause/yabause"]
+	path = Cores/Yabause/yabause
+	url = https://github.com/Provenance-Emu/yabause.git
+[submodule "Cores/melonDS/melonDS"]
+	path = Cores/melonDS/melonDS
+	url = https://github.com/Provenance-Emu/melonDS.git
+[submodule "Cores/Mupen64Plus-NX/mupen64plus-libretro-nx"]
+	path = Cores/Mupen64Plus-NX/mupen64plus-libretro-nx
+	url = https://github.com/Provenance-Emu/mupen64plus-libretro-nx.git
+[submodule "Cores/GameMusicEmu/libretro-gme"]
+	path = Cores/GameMusicEmu/libretro-gme
+	url = https://github.com/Provenance-Emu/libretro-gme.git
+[submodule "Cores/VecX/libretro-vecx"]
+	path = Cores/VecX/libretro-vecx
+	url = https://github.com/Provenance-Emu/libretro-vecx.git
+[submodule "Cores/Stella/Stella/stella"]
+	path = Cores/Stella/Stella/stella
+	url = https://github.com/Provenance-Emu/stella.git
+[submodule "Cores/SameDuck/SameBoy"]
+	path = Cores/SameDuck/SameBoy
+	url = https://github.com/Provenance-Emu/SameBoy.git
+[submodule "Cores/blueMSX/blueMSX-libretro"]
+	path = Cores/blueMSX/blueMSX-libretro
+	url = https://github.com/Provenance-Emu/blueMSX-libretro.git
+[submodule "Cores/fuse/fuse-libretro"]
+	path = Cores/fuse/fuse-libretro
+	url = https://github.com/Provenance-Emu/fuse-libretro.git
+[submodule "Cores/Gearcoleco/Gearcoleco"]
+	path = Cores/Gearcoleco/Gearcoleco
+	url = https://github.com/Provenance-Emu/Gearcoleco.git
+[submodule "Cores/Citra/citra"]
+	path = Cores/Citra/citra
+	url = https://github.com/Provenance-Emu/citra.git
+[submodule "Cores/FreeIntv/FreeIntv"]
+	path = Cores/FreeIntv/FreeIntv
+	url = https://github.com/Provenance-Emu/FreeIntv.git
+[submodule "Cores/Genesis-Plus-GX/PVGenesis/Deps/Genesis-Plus-GX"]
+	path = Cores/Genesis-Plus-GX/PVGenesis/Deps/Genesis-Plus-GX
+	url = https://github.com/Provenance-Emu/Genesis-Plus-GX.git
+[submodule "Cores/Mupen64Plus/Plugins/rsp/cxd4"]
+	path = Cores/Mupen64Plus/Plugins/rsp/cxd4
+	url = https://github.com/Provenance-Emu/mupen64plus-rsp-cxd4.git
+[submodule "Cores/TIC80/TIC-80"]
+	path = Cores/TIC80/TIC-80
+	url = https://github.com/Provenance-Emu/TIC-80.git

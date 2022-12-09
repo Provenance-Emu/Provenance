@@ -65,6 +65,8 @@ internal extension Core {
         principleClass = core.principleClass
         disabled = core.disabled
         // TODO: Supported systems
+		DLOG("\(core.projectName)")
+		print("loadcore: \(core.projectName) class: \(core.principleClass)")
         project = CoreProject(name: core.projectName, url: URL(string: core.projectURL)!, version: core.projectVersion)
     }
 }
