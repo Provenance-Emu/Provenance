@@ -464,7 +464,11 @@
 
     NSString *logPath = logs[index];
     NSError *error;
-
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if(![fm fileExistsAtPath:logPath]) {
+        [fm createFileAtPath:logPath contents:nil attributes:nil];
+    }
+    
     NSString *logText = [NSString stringWithContentsOfFile:logPath
                                                   encoding:NSUTF8StringEncoding
                                                      error:&error];
