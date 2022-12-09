@@ -515,7 +515,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         return documentsDirectoryPath
     }
 
-    #if os(iOS)
+    #if os(iOS) && !targetEnvironment(macCatalyst)
         override var prefersStatusBarHidden: Bool {
             return true
         }

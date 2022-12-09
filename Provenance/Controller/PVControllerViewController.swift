@@ -395,7 +395,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 #endif
 	}
 
-#if os(iOS)
+#if os(iOS) && !targetEnvironment(macCatalyst)
 	open override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
 		return .landscape
 	}

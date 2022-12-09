@@ -675,7 +675,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         }
     }
 
-    #if os(iOS)
+    #if os(iOS) && !targetEnvironment(macCatalyst)
         override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
             return .all
         }
