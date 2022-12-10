@@ -269,7 +269,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
         let librarySection2 = Section(title: nil, rows: library2Rows)
 
          // Beta options
-        #if os(iOS)
+        #if !os(tvOS)
 
         let betaRows: [TableRow] = [
 			PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"),
@@ -358,8 +358,119 @@ final class PVSettingsViewController: PVQuickTableViewController {
             rows: betaRows,
             footer: "Untested, unsupported, work in progress features. Use at your own risk. May result in crashes and data loss."
         )
+        
+        // - Social links
+        let discordRow = NavigationRow(
+            text: NSLocalizedString("Discord", comment: ""),
+            detailText: .value2("Join our Discord server for help and community chat."),
+            icon: nil,
+            customization: nil,
+            action: { _ in
+                if let url = URL(string: "https://discord.gg/4TK7PU5") {
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                }
+            }
+        )
+        let twitterRow = NavigationRow(
+            text: NSLocalizedString("Twitter", comment: ""),
+            detailText: .value2("Follow us on Twitter for release and other announcements."),
+            icon: nil,
+            customization: nil,
+            action: { _ in
+                if let url = URL(string: "https://twitter.com/provenanceapp") {
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                }
+            }
+        )
+        let githubRow = NavigationRow(
+            text: NSLocalizedString("GitHub", comment: ""),
+            detailText: .value2("Check out GitHub for code, reporting bugs and contributing."),
+            icon: nil,
+            customization: nil,
+            action: { _ in
+                if let url = URL(string: "https://github.com/Provenance-Emu/Provenance") {
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                }
+            }
+        )
+        let patreonRow = NavigationRow(
+            text: NSLocalizedString("Patreon", comment: ""),
+            detailText: .value2("Support us on Patreaon and receive special features and early access builds."),
+            icon: nil,
+            customization: nil,
+            action: { _ in
+                if let url = URL(string: "https://provenance-emu.com/patreon") {
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                }
+            }
+        )
+        let youTubeRow = NavigationRow(
+            text: NSLocalizedString("YouTube!", comment: ""),
+            detailText: .value2("Help tutorial videos and new feature previews."),
+            icon: nil,
+            customization: nil,
+            action: { _ in
+                if let url = URL(string: "https://www.youtube.com/channel/UCKeN6unYKdayfgLWulXgB1w") {
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                }
+            }
+        )
+        let blogRow = NavigationRow(
+            text: NSLocalizedString("Blog", comment: ""),
+            detailText: .value2("Release annoucements and full changelogs and screenshots posted to our blog."),
+            icon: nil,
+            customization: nil,
+            action: { [weak self] _ in
+                if let url = URL(string: "https://provenance-emu.com/blog/") {
+#if canImport(SafariServices)
+                    let webVC = WebkitViewController(url: url)
+                    self?.navigationController?.pushViewController(webVC, animated: true)
+#else
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+#endif
+                }
+            }
+        )
+        let faqRow = NavigationRow(
+            text: NSLocalizedString("FAQ", comment: ""),
+            detailText: .value2("Frequently asked questions."),
+            icon: nil,
+            customization: nil,
+            action: { [weak self] _ in
+                if let url = URL(string: "https://wiki.provenance-emu.com/faqs") {
+#if canImport(SafariServices)
+                    let webVC = WebkitViewController(url: url)
+                    self?.navigationController?.pushViewController(webVC, animated: true)
+#else
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+#endif
+                }
+            }
+        )
+        let wikiRow = NavigationRow(
+            text: NSLocalizedString("Wiki", comment: ""),
+            detailText: .value2("Full usage documentation, tips and tricks on our Wiki."),
+            icon: nil,
+            customization: nil,
+            action: { [weak self] _ in
+                if let url = URL(string: "https://wiki.provenance-emu.com/") {
+#if canImport(SafariServices)
+                    let webVC = WebkitViewController(url: url)
+                    self?.navigationController?.pushViewController(webVC, animated: true)
+#else
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+#endif
+                }
+            }
+        )
+            
+        let socialLinksRows = [patreonRow, discordRow, twitterRow, youTubeRow, githubRow]
+        let socialLinksSection = Section(title: NSLocalizedString("Socials", comment: ""), rows: socialLinksRows)
 
-        // Build Information
+        let documentationLinksRow = [blogRow, faqRow, wikiRow]
+        let documentationSection = Section(title: NSLocalizedString("Documentation", comment: ""), rows: documentationLinksRow)
+        
+        // - Build Information
 
         #if DEBUG
             let modeLabel = "DEBUG"
@@ -367,7 +478,8 @@ final class PVSettingsViewController: PVQuickTableViewController {
             let modeLabel = "RELEASE"
         #endif
 
-        let masterBranch: Bool = kGITBranch.lowercased() == "master"
+        let branchName = kGITBranch.lowercased()
+        let masterBranch: Bool = branchName == "master" || branchName.starts(with: "release")
         let bundleVersion = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"
 
         var versionText = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
@@ -452,7 +564,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
         let debugSection = Section(title: NSLocalizedString("Debug", comment: ""), rows: debugRows)
 
         // Set table data
-        tableContents = [appSection, coreOptionsSection, savesSection, avSection, metalSection, controllerSection, librarySection, librarySection2, betaSection, buildSection, extraInfoSection]
+        tableContents = [appSection, coreOptionsSection, savesSection, avSection, metalSection, controllerSection, librarySection, librarySection2, betaSection, socialLinksSection, documentationSection, buildSection, extraInfoSection]
         #if os(iOS)
             tableContents.append(debugSection)
         #endif
