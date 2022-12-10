@@ -47,6 +47,7 @@ public protocol iOSTheme {
     #if !os(tvOS)
     var navigationBarStyle: UIBarStyle { get }
     var statusBarStyle: UIStatusBarStyle { get }
+    var statusBarColor: UIColor { get }
     #endif
     // Mandatory
     var gameLibraryBackground: UIColor { get }
@@ -65,8 +66,6 @@ public protocol iOSTheme {
 
     var switchON: UIColor? { get }
     var switchThumb: UIColor? { get }
-
-    var statusBarColor: UIColor? { get }
 
     var settingsHeaderBackground: UIColor? { get }
     var settingsSeperator: UIColor? { get }
@@ -101,8 +100,8 @@ extension iOSTheme {
     var statusBarStyle: UIStatusBarStyle {
         return UIStatusBarStyle.default
     }
-    #endif
     var statusBarColor: UIColor? { return nil }
+    #endif
 
     // Default to default tint (which defaults to nil)
     var barButtonItemTint: UIColor? { return defaultTintColor }
@@ -130,6 +129,7 @@ struct DarkTheme: iOSTheme {
     #if !os(tvOS)
     var navigationBarStyle: UIBarStyle { return UIBarStyle.black }
     var statusBarStyle: UIStatusBarStyle { return UIStatusBarStyle.lightContent }
+    var statusBarColor: UIColor { return .grey1C }
     #endif
     var defaultTintColor: UIColor? { return Colors.blueishGrey }
     var keyboardAppearance: UIKeyboardAppearance = .dark
@@ -174,6 +174,8 @@ struct LightTheme: iOSTheme {
     let gameLibraryHeaderText: UIColor = .darkGray
     
     var navigationBarBackgroundColor: UIColor? { return .grey1C }
+    var statusBarColor: UIColor { return .grey1C }
+    
     var settingsCellBackground: UIColor? { return .white }
     var settingsCellText: UIColor? { return .black }
     var settingsCellTextDetail: UIColor? { return .gray }
@@ -192,26 +194,27 @@ public final class Theme {
     //		let light = AppearanceStyle("light")
     //	}
     static weak var statusBarView: UIView?
-    private class func styleStatusBar(withColor color: UIColor? = nil) {
+    private class func styleStatusBar(withColor color: UIColor) {
         #if !os(tvOS)
-        guard let color = color else {
-            if let statusBarView = statusBarView {
-                statusBarView.removeFromSuperview()
+        DispatchQueue.main.async {
+            let keyWindow = UIApplication.shared.connectedScenes
+                .map({$0 as? UIWindowScene})
+                .compactMap({$0})
+                .first?.windows.first
+
+            guard
+                let scene = keyWindow?.windowScene,
+                let manager = scene.statusBarManager else {
+                ELOG("check your tcp/ip's")
+                return
             }
-            return
+        
+            let statusBar1 = statusBarView ?? UIView()
+            statusBar1.frame = manager.statusBarFrame
+            statusBar1.backgroundColor = color
+            statusBarView = statusBar1
+            keyWindow?.addSubview(statusBar1)
         }
-        guard
-            let window = UIApplication.shared.keyWindow,
-            let scene = window.windowScene,
-            let manager = scene.statusBarManager else {
-            ELOG("check your tcp/ip's")
-            return
-        }
-        let statusBar1 = statusBarView ?? UIView()
-        statusBar1.frame = manager.statusBarFrame
-        statusBar1.backgroundColor = color
-        statusBarView = statusBar1
-        window.addSubview(statusBar1)
         #endif
     }
 
@@ -342,8 +345,10 @@ public final class Theme {
             }
         }
 
+        #if os(iOS)
         // Status bar
         styleStatusBar(withColor: theme.statusBarColor)
+        #endif
     }
 }
 
