@@ -4563,7 +4563,7 @@
 			repositoryURL = "https://github.com/CocoaLumberjack/CocoaLumberjack.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 3.7.2;
+				minimumVersion = 3.8.0;
 			};
 		};
 		B336B8F226B398A900960A81 /* XCRemoteSwiftPackageReference "Reachability.swift" */ = {

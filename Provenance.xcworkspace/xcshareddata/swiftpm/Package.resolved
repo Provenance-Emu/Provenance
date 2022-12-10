@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/microsoft/appcenter-sdk-apple.git",
         "state": {
           "branch": null,
-          "revision": "b2dc99cfedead0bad4e6573d86c5228c89cff332",
-          "version": "4.4.3"
+          "revision": "88e65475ffd3a7cf2bbde07df9e62159a1fd60a8",
+          "version": "5.0.0"
         }
       },
       {
@@ -23,9 +23,9 @@
         "package": "KeychainAccess",
         "repositoryURL": "https://github.com/kishikawakatsumi/KeychainAccess.git",
         "state": {
-          "branch": "master",
-          "revision": "6299daec1d74be12164fec090faf9ed14d0da9d6",
-          "version": null
+          "branch": null,
+          "revision": "84e546727d66f1adc5439debad16270d0fdd04e7",
+          "version": "4.2.2"
         }
       },
       {
@@ -42,8 +42,8 @@
         "repositoryURL": "https://github.com/microsoft/PLCrashReporter.git",
         "state": {
           "branch": null,
-          "revision": "81cdec2b3827feb03286cb297f4c501a8eb98df1",
-          "version": "1.10.2"
+          "revision": "b1a342da19ed9b3af61ea2efa7656c2af30aeb7c",
+          "version": "1.11.0"
         }
       },
       {
@@ -57,11 +57,11 @@
       },
       {
         "package": "RealmDatabase",
-        "repositoryURL": "https://github.com/realm/realm-core",
+        "repositoryURL": "https://github.com/realm/realm-core.git",
         "state": {
           "branch": null,
-          "revision": "3c4b86da569368c4ee5ccca2a112d511cc6fa936",
-          "version": "12.11.0"
+          "revision": "b77443ca7fa25407869ca537bf3ae912b1427bff",
+          "version": "12.13.0"
         }
       },
       {
@@ -69,8 +69,8 @@
         "repositoryURL": "https://github.com/realm/realm-swift.git",
         "state": {
           "branch": null,
-          "revision": "72a0dd9dc0ec1bab417155471191ef68e1bb0eaf",
-          "version": "10.32.3"
+          "revision": "b442ee3e9caa1abab26fd9b23f060f6f0815ff48",
+          "version": "10.33.0"
         }
       },
       {
