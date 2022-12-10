@@ -70,6 +70,7 @@ final class PVControllerSelectionViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
         let player: Int = indexPath.row + 1
         let actionSheet = UIAlertController(title: "Select a controller for Player \(player)", message: "or press a button on your iCade controller.", preferredStyle: .actionSheet)
 
@@ -133,6 +134,8 @@ final class PVControllerSelectionViewController: UITableViewController {
             PVControllerManager.shared.stopListeningForICadeControllers()
         }))
 
+        actionSheet.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
+        
         present(actionSheet, animated: true, completion: { () -> Void in
             PVControllerManager.shared.listenForICadeControllers(window: actionSheet.view.window, preferredPlayer: indexPath.row + 1, completion: { () -> Void in
                 actionSheet.dismiss(animated: true) { () -> Void in }
