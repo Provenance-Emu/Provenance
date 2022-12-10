@@ -227,8 +227,12 @@ extension MirroredSettings {
     public static let shared = PVSettingsModel()
 
     @objc public class DebugOptions: NSObject {
-		@objc public dynamic var useMetal = false
-        #if os(macOS)
+        #if os(macOS) || targetEnvironment(macCatalyst)
+		@objc public dynamic var useMetal = true
+        #else
+        @objc public dynamic var useMetal = false
+        #endif
+        #if os(macOS) || targetEnvironment(macCatalyst)
         @objc public dynamic var useSwiftUI = true
         #else
         @objc public dynamic var useSwiftUI = false
@@ -242,7 +246,11 @@ extension MirroredSettings {
         #if os(tvOS)
         @objc public dynamic var tvOSThemes = false
         #endif
-        #if os(iOS)
+        #if os(macOS) || targetEnvironment(macCatalyst)
+        @objc public dynamic var movableButtons = false
+        @objc public dynamic var onscreenJoypad = false
+        @objc public dynamic var onscreenJoypadWithKeyboard = false
+        #elseif os(iOS)
         @objc public dynamic var movableButtons = false
         @objc public dynamic var onscreenJoypad = true
         @objc public dynamic var onscreenJoypadWithKeyboard = true
@@ -265,7 +273,7 @@ extension MirroredSettings {
     #endif
 
     public dynamic var buttonVibration = true
-    #if os(iOS)
+    #if os(iOS) || targetEnvironment(macCatalyst)
         public dynamic var nativeScaleEnabled = true
     #else
         public dynamic var nativeScaleEnabled = false
@@ -311,7 +319,7 @@ extension MirroredSettings {
     public dynamic var haveWarnedAboutDebug = false
     public dynamic var collapsedSystems = Set<String>()
 
-#if os(tvOS)
+#if os(tvOS) || targetEnvironment(macCatalyst)
     public dynamic var largeGameArt = true
 #endif
 

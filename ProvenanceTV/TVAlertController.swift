@@ -232,13 +232,18 @@ final class TVAlertController: UIViewController, UIAlertControllerProtocol {
          }
     }
 
-    #if os(iOS)
+    #if !os(tvOS)
     override var popoverPresentationController: UIPopoverPresentationController? {
 
         // if caller is asking for a ppc, they must want a popup!
-        let tc = UIApplication.shared.keyWindow?.traitCollection
-        if tc?.userInterfaceIdiom == .pad && tc?.horizontalSizeClass == .regular {
+        guard let tc = UIApplication.shared.keyWindow?.traitCollection else {
+            ELOG("Nil train collection")
+            return nil
+        }
+        if tc.userInterfaceIdiom == .pad && tc.horizontalSizeClass == .regular {
             self.modalPresentationStyle = .popover
+        } else {
+            self.modalPresentationStyle = .automatic
         }
 
         return super.popoverPresentationController

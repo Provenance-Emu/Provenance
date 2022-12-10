@@ -53,8 +53,7 @@ extension GameSharingViewController where Self: UIViewController {
          Add metadata files to shares so they can cleanly re-import
          Well, then also need a way to import save states
          */
-        #if os(iOS)
-
+        #if !os(tvOS)
             // - Create temporary directory
             let tempDir = NSTemporaryDirectory()
             let tempDirURL = URL(fileURLWithPath: tempDir, isDirectory: true)
@@ -405,20 +404,40 @@ extension GameLaunchingViewController where Self: UIViewController {
             .sorted { $0.supportedSystems.count <= $1.supportedSystems.count }
 
         let coreChoiceAlert = UIAlertController(title: "Multiple cores found", message: "Select which core to use with this game. If not sure, select the 1st option.", preferredStyle: .actionSheet)
+#if os(macOS) || targetEnvironment(macCatalyst)
+        if let senderView = sender as? UIView ?? self.view {
+            coreChoiceAlert.popoverPresentationController?.sourceView = senderView
+            coreChoiceAlert.popoverPresentationController?.sourceRect = senderView.bounds
+        } else {
+            ELOG("Nil senderView")
+            assertionFailure("Nil senderview")
+        }
+#else
         if traitCollection.userInterfaceIdiom == .pad, let senderView = sender as? UIView ?? self.view {
             coreChoiceAlert.popoverPresentationController?.sourceView = senderView
             coreChoiceAlert.popoverPresentationController?.sourceRect = senderView.bounds
         }
+#endif
 
         for core in cores {
             let action = UIAlertAction(title: core.projectName, style: .default) { [unowned self] _ in
                 let message = "Open with \(core.projectName)…"
                 let alwaysUseAlert = UIAlertController(title: nil, message: message, preferredStyle: .actionSheet)
+        #if os(macOS) || targetEnvironment(macCatalyst)
+                if let senderView = sender as? UIView ?? self.view {
+                    alwaysUseAlert.popoverPresentationController?.sourceView = senderView
+                    alwaysUseAlert.popoverPresentationController?.sourceRect = senderView.bounds
+                } else {
+                    ELOG("Nil senderView")
+                    assertionFailure("Nil senderview")
+                }
+        #else
                 if self.traitCollection.userInterfaceIdiom == .pad, let senderView = sender as? UIView ?? self.view {
                     alwaysUseAlert.popoverPresentationController?.sourceView = senderView
                     alwaysUseAlert.popoverPresentationController?.sourceRect = senderView.bounds
                 }
-
+        #endif
+              
                 let thisTimeOnlyAction = UIAlertAction(title: "This time", style: .default, handler: { _ in self.presentEMU(withCore: core, forGame: game) })
                 let alwaysThisGameAction = UIAlertAction(title: "Always for this game", style: .default, handler: { [unowned self] _ in
                     try! RomDatabase.sharedInstance.writeTransaction {

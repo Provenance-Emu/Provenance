@@ -23,7 +23,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     var fileLogger: DDFileLogger = DDFileLogger()
     let disposeBag = DisposeBag()
 
-    #if os(iOS)
+    #if os(iOS) && !targetEnvironment(macCatalyst)
         var _logViewController: PVLogViewController?
     #endif
 
@@ -58,7 +58,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         window.overrideUserInterfaceStyle = darkTheme ? .dark : .light
         #endif
 
-        if #available(iOS 14, tvOS 14, *),
+        if #available(iOS 14, tvOS 14, macCatalyst 15.0, *),
            PVSettingsModel.shared.debugOptions.useSwiftUI {
             let viewModel = PVRootViewModel()
             let rootViewController = PVRootViewController.instantiate(
@@ -99,7 +99,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         _initAppCenter()
         setDefaultsFromSettingsBundle()
 
-		#if !targetEnvironment(macCatalyst) && !os(macOS)
+//		#if !(targetEnvironment(macCatalyst) || os(macOS))
         PVEmulatorConfiguration.initICloud()
         DispatchQueue.global(qos: .background).async {
             let useiCloud = PVSettingsModel.shared.debugOptions.iCloudSync && PVEmulatorConfiguration.supportsICloud
@@ -110,7 +110,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
         }
-		#endif
+//		#endif
 
         do {
             try RomDatabase.initDefaultDatabase()

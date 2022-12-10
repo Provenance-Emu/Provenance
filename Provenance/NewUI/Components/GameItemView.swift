@@ -12,10 +12,16 @@ import Foundation
 import SwiftUI
 import PVLibrary
 
-#if os(tvOS)
+#if os(tvOS) || targetEnvironment(macCatalyst) || os(macOS)
     public let PVRowHeight: CGFloat = 300.0
 #else
     public let PVRowHeight: CGFloat = 150.0
+#endif
+
+#if os(macOS)
+public typealias SwiftImage = NSImage
+#else
+public typealias SwiftImage = UIImage
 #endif
 
 enum GameItemViewType {
@@ -48,7 +54,7 @@ struct GameItemView: SwiftUI.View {
     var constrainHeight: Bool = false
     var viewType: GameItemViewType = .cell
 
-    @State var artwork: UIImage?
+    @State var artwork: SwiftImage?
     var action: () -> Void
 
     var body: some SwiftUI.View {
@@ -68,7 +74,6 @@ struct GameItemView: SwiftUI.View {
             })
         }
     }
-
 }
 
 @available(iOS 14, tvOS 14, *)
@@ -76,13 +81,13 @@ struct GameItemViewCell: SwiftUI.View {
 
     var game: PVGame
 
-    var artwork: UIImage?
+    var artwork: SwiftImage?
 
     var constrainHeight: Bool = false
 
     var viewType: GameItemViewType
 
-    @State private var textMaxWidth: CGFloat = 150
+    @State private var textMaxWidth: CGFloat = PVRowHeight
 
     var body: some SwiftUI.View {
         VStack(alignment: .leading, spacing: 3) {
@@ -107,8 +112,8 @@ struct GameItemViewRow: SwiftUI.View {
 
     var game: PVGame
 
-    var artwork: UIImage?
-    @State private var textMaxWidth: CGFloat = 150
+    var artwork: SwiftImage?
+    @State private var textMaxWidth: CGFloat = PVRowHeight
 
     var constrainHeight: Bool = false
 
@@ -128,7 +133,7 @@ struct GameItemViewRow: SwiftUI.View {
 
 @available(iOS 14, tvOS 14, *)
 struct GameItemThumbnail: SwiftUI.View {
-    var artwork: UIImage?
+    var artwork: SwiftImage?
     var gameTitle: String
     var boxartAspectRatio: PVGameBoxArtAspectRatio
     let radius: CGFloat = 3.0
@@ -148,11 +153,11 @@ struct GameItemThumbnail: SwiftUI.View {
 @available(iOS 14, tvOS 14, *)
 struct ArtworkImageBaseView: SwiftUI.View {
 
-    var artwork: UIImage?
+    var artwork: SwiftImage?
     var gameTitle: String
     var boxartAspectRatio: PVGameBoxArtAspectRatio
 
-    init(artwork: UIImage?, gameTitle: String, boxartAspectRatio: PVGameBoxArtAspectRatio) {
+    init(artwork: SwiftImage?, gameTitle: String, boxartAspectRatio: PVGameBoxArtAspectRatio) {
         self.artwork = artwork
         self.gameTitle = gameTitle
         self.boxartAspectRatio = boxartAspectRatio
@@ -160,11 +165,11 @@ struct ArtworkImageBaseView: SwiftUI.View {
 
     var body: some SwiftUI.View {
         if let artwork = artwork {
-            Image(uiImage: artwork)
+            SwiftUI.Image(uiImage: artwork)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
         } else {
-            Image(uiImage: UIImage.missingArtworkImage(gameTitle: gameTitle, ratio: boxartAspectRatio.rawValue))
+            SwiftUI.Image(uiImage: UIImage.missingArtworkImage(gameTitle: gameTitle, ratio: boxartAspectRatio.rawValue))
                 .resizable()
                 .aspectRatio(contentMode: .fit)
         }
@@ -218,28 +223,28 @@ extension PVGame {
     }
 }
 
-extension UIImage {
-    static func missingArtworkImage(gameTitle: String, ratio: CGFloat) -> UIImage {
-    #if os(iOS)
-        let backgroundColor: UIColor = Theme.currentTheme.settingsCellBackground!
-    #else
+extension SwiftImage {
+    static func missingArtworkImage(gameTitle: String, ratio: CGFloat) -> SwiftImage {
+        #if os(tvOS)
         let backgroundColor: UIColor = UIColor(white: 0.18, alpha: 1.0)
-    #endif
+        #else
+        let backgroundColor: UIColor = Theme.currentTheme.settingsCellBackground!
+        #endif
 
-    #if os(iOS)
-        let attributedText = NSAttributedString(string: gameTitle, attributes: [
-            NSAttributedString.Key.font: UIFont.systemFont(ofSize: 30.0),
-            NSAttributedString.Key.foregroundColor: Theme.currentTheme.settingsCellText!])
-    #else
+        #if os(tvOS)
         let attributedText = NSAttributedString(string: gameTitle, attributes: [
             NSAttributedString.Key.font: UIFont.systemFont(ofSize: 60.0),
             NSAttributedString.Key.foregroundColor: UIColor.gray])
-    #endif
+        #else
+        let attributedText = NSAttributedString(string: gameTitle, attributes: [
+            NSAttributedString.Key.font: UIFont.systemFont(ofSize: 30.0),
+            NSAttributedString.Key.foregroundColor: Theme.currentTheme.settingsCellText!])
+        #endif
 
         let height: CGFloat = CGFloat(PVThumbnailMaxResolution)
         let width: CGFloat = height * ratio
         let size = CGSize(width: width, height: height)
-        let missingArtworkImage = UIImage.image(withSize: size, color: backgroundColor, text: attributedText)
-        return missingArtworkImage ?? UIImage()
+        let missingArtworkImage = SwiftImage.image(withSize: size, color: backgroundColor, text: attributedText)
+        return missingArtworkImage ?? SwiftImage()
     }
 }

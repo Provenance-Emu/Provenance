@@ -652,10 +652,18 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     #endif
     @objc func showSpeedMenu(_ sender:AnyObject?) {
         let actionSheet = UIAlertController(title: "Game Speed", message: nil, preferredStyle: .actionSheet)
+#if targetEnvironment(macCatalyst) || os(macOS)
+        if let menuButton = menuButton, sender === menuButton {
+            actionSheet.popoverPresentationController?.sourceView = menuButton
+            actionSheet.popoverPresentationController?.sourceRect = menuButton.bounds
+        }
+#else
         if traitCollection.userInterfaceIdiom == .pad, let menuButton = menuButton, sender === menuButton {
             actionSheet.popoverPresentationController?.sourceView = menuButton
             actionSheet.popoverPresentationController?.sourceRect = menuButton.bounds
         }
+#endif
+
         let speeds = ["Slow (20%)", "Normal (100%)", "Fast (500%)"]
         speeds.enumerated().forEach { idx, title in
             let action = UIAlertAction(title: title, style: .default, handler: { (_: UIAlertAction) -> Void in

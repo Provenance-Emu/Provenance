@@ -17,13 +17,19 @@ import PVLibrary
 struct ConsoleGamesView: SwiftUI.View {
 
     @ObservedObject var viewModel: PVRootViewModel
-    var console: PVSystem
+    let console: PVSystem
     weak var rootDelegate: PVRootDelegate?
 
     @ObservedResults(
         PVGame.self,
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: false)
     ) var games
+    
+//    @ObservedResults(
+//        PVGame.self,
+//        filter: NSPredicate(format: "systemIdentifier == %@", argumentArray: [console.identifier])
+//        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: false)
+//    ) var filteredGames
 
     init(console: PVSystem, viewModel: PVRootViewModel, rootDelegate: PVRootDelegate) {
         self.console = console

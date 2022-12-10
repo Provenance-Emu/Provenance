@@ -334,7 +334,7 @@
 	logsTableViewController.tableView.dataSource = self;
 	logsTableViewController.tableView.delegate = self;
 
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
 	logsTableViewController.modalPresentationStyle = UIModalPresentationPopover;
 #endif
 	logsTableViewController.popoverPresentationController.barButtonItem = self.logListButton;
@@ -345,7 +345,7 @@
 }
 #define ADD_FLOG_ATTACHMENTS_TO_SUPPORT_EMAILS 1
 
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
 - (void)createAndShareZip {
 	//add attachments
 	NSArray *logFilePaths = [[PVLogging sharedInstance] logFilePaths];
