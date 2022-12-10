@@ -11,12 +11,6 @@
 		<string>appclips:provenance.app</string>
 		<string>appclips:provenance-emu.com</string>
 	</array>
-	<key>com.apple.developer.driverkit.communicates-with-drivers</key>
-	<true/>
-	<key>com.apple.developer.game-center</key>
-	<true/>
-	<key>com.apple.developer.group-session</key>
-	<true/>
 	<key>com.apple.developer.icloud-container-identifiers</key>
 	<array>
 		<string>iCloud.org.sgc.provenance</string>
@@ -50,6 +44,8 @@
 	<key>com.apple.security.cs.allow-unsigned-executable-memory</key>
 	<true/>
 	<key>com.apple.security.cs.disable-executable-page-protection</key>
+	<true/>
+	<key>com.apple.security.cs.disable-library-validation</key>
 	<true/>
 	<key>com.apple.security.device.audio-input</key>
 	<true/>

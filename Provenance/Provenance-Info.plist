@@ -196,6 +196,8 @@
 	<key>NSBonjourServices</key>
 	<array>
 		<string>_altserver._tcp</string>
+		<string>_http._tcp</string>
+		<string>_webdav._tcp</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>Used for album artwork</string>
@@ -242,7 +244,8 @@
 	<true/>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
-		<string>armv7</string>
+		<string>metal</string>
+		<string>arm64</string>
 	</array>
 	<key>UIStatusBarHidden</key>
 	<false/>

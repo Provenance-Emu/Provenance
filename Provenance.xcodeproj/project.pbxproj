@@ -587,7 +587,6 @@
 		B355DF8C292088E500E4C858 /* PVAppDelegate+Open.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF8A292088E500E4C858 /* PVAppDelegate+Open.swift */; };
 		B355DF8E29208A4A00E4C858 /* PVAppDelegate+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF8D29208A4A00E4C858 /* PVAppDelegate+Helpers.swift */; };
 		B355DF8F29208A4A00E4C858 /* PVAppDelegate+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF8D29208A4A00E4C858 /* PVAppDelegate+Helpers.swift */; };
-		B355DF91292095B300E4C858 /* Intents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = B355DF90292095B300E4C858 /* Intents.intentdefinition */; };
 		B355DF92292095B300E4C858 /* Intents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = B355DF90292095B300E4C858 /* Intents.intentdefinition */; };
 		B355DF9929209B6300E4C858 /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355DF9829209B6300E4C858 /* QuickLook.framework */; };
 		B355DF9C29209B6700E4C858 /* PreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF9B29209B6700E4C858 /* PreviewViewController.swift */; };
@@ -608,7 +607,6 @@
 		B355E0422920AC1E00E4C858 /* WidgetExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355E0412920AC1E00E4C858 /* WidgetExtension.swift */; };
 		B355E0452920AC2000E4C858 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B355E0442920AC2000E4C858 /* Assets.xcassets */; };
 		B355E0472920AC2000E4C858 /* WidgetExtension.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = B355E0432920AC1E00E4C858 /* WidgetExtension.intentdefinition */; };
-		B355E0482920AC2000E4C858 /* WidgetExtension.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = B355E0432920AC1E00E4C858 /* WidgetExtension.intentdefinition */; };
 		B357A43827092254002C7C0F /* AppCenterAnalytics in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, tvos, ); productRef = B357A43727092254002C7C0F /* AppCenterAnalytics */; };
 		B357A43A27092254002C7C0F /* AppCenterCrashes in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, tvos, ); productRef = B357A43927092254002C7C0F /* AppCenterCrashes */; };
 		B357A43C2709228E002C7C0F /* PVAppDelegate+AppCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */; };
@@ -861,7 +859,7 @@
 		B3DEEF922942F92C00A6957C /* PVBliss.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEEF912942F92C00A6957C /* PVBliss.framework */; platformFilters = (ios, tvos, ); };
 		B3DEEF932942F92C00A6957C /* PVBliss.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEEF912942F92C00A6957C /* PVBliss.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E21D6E203211BE009939D3 /* IndexRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E21D6D203211BE009939D3 /* IndexRequestHandler.swift */; };
-		B3E21D72203211BE009939D3 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B3E21D72203211BE009939D3 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3E3B5D9202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */; };
 		B3E3B5DA202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */; };
 		B3E6DADC20B7AD1500454DD4 /* PVLogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E6DADB20B7AD1500454DD4 /* PVLogViewController.m */; };
@@ -5009,7 +5007,6 @@
 				B3411C11276B470B00D85327 /* QuickTableViewController.swift in Sources */,
 				378F4A001B63D7CD0065FA39 /* GCDWebServer.m in Sources */,
 				B3AB373C2187F569009D9244 /* PVLynxControllerViewController.swift in Sources */,
-				B355E0482920AC2000E4C858 /* WidgetExtension.intentdefinition in Sources */,
 				B31117B3218EB3AE00C495A2 /* PVButtonGroupOverlayView.swift in Sources */,
 				B3A320372720974F00F338F6 /* PVGameCubeControllerViewController.swift in Sources */,
 				B3427C00287EA0CF0054C1B5 /* blit_ps.metal in Sources */,
@@ -5102,7 +5099,6 @@
 				B3532C3C21A9AC93006CDA0F /* Services.swift in Sources */,
 				1180B3242492AFC900636C8A /* PVGameLibraryUpdatesController.swift in Sources */,
 				B3AB37382187F569009D9244 /* PVGBAControllerViewController.swift in Sources */,
-				B355DF91292095B300E4C858 /* Intents.intentdefinition in Sources */,
 				1A5665091D96A18A006EAE01 /* UIDevice+Hardware.m in Sources */,
 				B36D9DF8203562E000D583C4 /* PVControllerViewController.swift in Sources */,
 				378F4A021B63D7CD0065FA39 /* GCDWebServerFunctions.m in Sources */,
@@ -5577,6 +5573,10 @@
 		};
 		B36FE831218EAAD200F858F3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				tvos,
+			);
 			target = B3E21D6A203211BE009939D3 /* Spotlight */;
 			targetProxy = B36FE830218EAAD200F858F3 /* PBXContainerItemProxy */;
 		};
@@ -9840,7 +9840,7 @@
 			repositoryURL = "https://github.com/microsoft/appcenter-sdk-apple.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 4.3.0;
+				minimumVersion = 5.0.0;
 			};
 		};
 		B390B0E8276B2DB20018E065 /* XCRemoteSwiftPackageReference "AltKit" */ = {

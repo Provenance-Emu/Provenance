@@ -73,10 +73,15 @@ final class PVControllerSelectionViewController: UITableViewController {
         let player: Int = indexPath.row + 1
         let actionSheet = UIAlertController(title: "Select a controller for Player \(player)", message: "or press a button on your iCade controller.", preferredStyle: .actionSheet)
 
+        #if targetEnvironment(macCatalyst) || os(macOS)
+        actionSheet.popoverPresentationController?.sourceView = self.tableView
+        actionSheet.popoverPresentationController?.sourceRect = self.tableView.rectForRow(at: indexPath)
+        #else
         if traitCollection.userInterfaceIdiom == .pad {
             actionSheet.popoverPresentationController?.sourceView = self.tableView
             actionSheet.popoverPresentationController?.sourceRect = self.tableView.rectForRow(at: indexPath)
         }
+        #endif
 
         for controller: GCController in PVControllerManager.shared.controllers() {
             var title = controller.vendorName ?? ""

@@ -40,10 +40,15 @@ extension PVEmulatorViewController {
         }))
 
         // Present
+#if targetEnvironment(macCatalyst) || os(macOS)
+        actionSheet.popoverPresentationController?.sourceView = menuButton
+        actionSheet.popoverPresentationController?.sourceRect = menuButton?.bounds ?? .zero
+#else
         if traitCollection.userInterfaceIdiom == .pad {
             actionSheet.popoverPresentationController?.sourceView = menuButton
             actionSheet.popoverPresentationController?.sourceRect = menuButton?.bounds ?? .zero
         }
+#endif
 
         present(actionSheet, animated: true) {
             PVControllerManager.shared.iCadeController?.refreshListener()

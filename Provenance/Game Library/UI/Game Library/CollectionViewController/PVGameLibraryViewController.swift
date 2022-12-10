@@ -675,7 +675,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         }
     }
 
-    #if os(iOS)
+    #if os(iOS) && !targetEnvironment(macCatalyst)
         override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
             return .all
         }
@@ -756,7 +756,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         }
         sortOptionsTableView.reloadData()
 
-        #if os(iOS)
+        #if !os(tvOS)
             // Add done button to iPhone
             // iPad is a popover do no done button needed
             if traitCollection.userInterfaceIdiom != .pad || traitCollection.horizontalSizeClass == .compact || !(sender is UIBarButtonItem) {
@@ -792,7 +792,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             ELOG("Unable to start notifier")
         }
 
-        #if os(iOS)
+        #if !os(tvOS)
             // connected via wifi, let's continue
 
             let actionSheet = UIAlertController(title: "Select Import Source", message: nil, preferredStyle: .actionSheet)
@@ -965,7 +965,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         present(actionSheet, animated: true)
     }
 
-    #if os(iOS)
+    #if !os(tvOS)
     func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         guard useModernContextMenus,
               let cell = collectionView.cellForItem(at: indexPath),
@@ -1303,11 +1303,15 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
 
         private func presentActionSheetViewControllerForPopoverPresentation(_ alertController: UIViewController, sourceView: UIView) {
 
+            #if os(macOS) || targetEnvironment(macCatalyst)
+            alertController.popoverPresentationController?.sourceView = sourceView
+            alertController.popoverPresentationController?.sourceRect = sourceView.bounds
+            #else
             if traitCollection.userInterfaceIdiom == .pad {
                 alertController.popoverPresentationController?.sourceView = sourceView
                 alertController.popoverPresentationController?.sourceRect = sourceView.bounds
             }
-
+            #endif
             present(alertController, animated: true)
         }
 
@@ -1413,7 +1417,7 @@ extension PVGameLibraryViewController {
 
 // MARK: UIDocumentMenuDelegate
 
-#if os(iOS)
+#if !os(tvOS)
     extension PVGameLibraryViewController: UIDocumentMenuDelegate {
         func documentMenu(_ documentMenu: UIDocumentMenuViewController, didPickDocumentPicker documentPicker: UIDocumentPickerViewController) {
             documentPicker.delegate = self

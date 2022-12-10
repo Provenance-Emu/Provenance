@@ -21,9 +21,11 @@ struct GameContextMenu: SwiftUI.View {
 
     var body: some SwiftUI.View {
         Group {
-            Button {
-                rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
-            } label: { Label("Open in...", systemImage: "gamecontroller") }
+//            game.system.cores.count > 1 {
+                Button {
+                    rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                } label: { Label("Open in...", systemImage: "gamecontroller") }
+//            }
             Button {
                 self.rootDelegate?.showUnderConstructionAlert() // TODO: this
             } label: { Label("Game Info", systemImage: "info.circle") }

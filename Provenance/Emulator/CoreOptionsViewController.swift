@@ -123,7 +123,7 @@ final class CoreOptionsViewController: QuickTableViewController {
                                                                  let currentSelection: Int = self.core.storedValueForOption(Int.self, option.key) ?? option.defaultValue as? Int ?? defaultValue
                                                                  let actionController = UIAlertController(title: display.title, message: nil, preferredStyle: .actionSheet)
 
-#if !os(tvOS)
+                        #if !os(tvOS)
                             if #available(iOS 15.0, *), let sheetPresentationController = actionController.sheetPresentationController {
 //                                let cellRect = self.tableView.rectForRow(at: IndexPath(row: rowIndex, section: sectionIndex))
                                 sheetPresentationController.sourceView = self.tableView

@@ -2502,7 +2502,7 @@
 			repositoryURL = "https://github.com/stephencelis/SQLite.swift.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.13.2;
+				minimumVersion = 0.14.1;
 			};
 		};
 		B37B4DEE27B2292F0068F8D1 /* XCRemoteSwiftPackageReference "RxDataSources" */ = {
@@ -2510,7 +2510,7 @@
 			repositoryURL = "https://github.com/RxSwiftCommunity/RxDataSources.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.0;
+				minimumVersion = 5.0.2;
 			};
 		};
 		B3A3203F27209B4300F338F6 /* XCRemoteSwiftPackageReference "ZipArchive" */ = {
@@ -2518,15 +2518,15 @@
 			repositoryURL = "https://github.com/ZipArchive/ZipArchive";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.3.0;
+				minimumVersion = 2.5.2;
 			};
 		};
 		B3FAC8F7292B26EA005E8B11 /* XCRemoteSwiftPackageReference "KeychainAccess" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kishikawakatsumi/KeychainAccess.git";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.2.2;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

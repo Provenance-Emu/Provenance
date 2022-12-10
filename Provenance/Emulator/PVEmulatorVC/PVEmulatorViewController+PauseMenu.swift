@@ -20,11 +20,21 @@ extension PVEmulatorViewController {
         let actionSheet = UIAlertController(title: "Game Options", message: nil, preferredStyle: .actionSheet)
 
         // only popup if sumoned from menuButton
-        if traitCollection.userInterfaceIdiom == .pad && sender === menuButton {
+#if targetEnvironment(macCatalyst) || os(macOS)
+        if let menuButton = menuButton, sender === menuButton {
             actionSheet.popoverPresentationController?.sourceView = menuButton
-            actionSheet.popoverPresentationController?.sourceRect = menuButton!.bounds
+            actionSheet.popoverPresentationController?.sourceRect = menuButton.bounds
+        } else {
+            actionSheet.popoverPresentationController?.sourceView = self.view
+            actionSheet.popoverPresentationController?.sourceRect = self.view.bounds
         }
-
+#else
+        if traitCollection.userInterfaceIdiom == .pad, let menuButton = menuButton, sender === menuButton {
+            actionSheet.popoverPresentationController?.sourceView = menuButton
+            actionSheet.popoverPresentationController?.sourceRect = menuButton.bounds
+        }
+#endif
+        
         if PVControllerManager.shared.iCadeController != nil {
             actionSheet.addAction(UIAlertAction(title: "Disconnect iCade", style: .default, handler: { action in
                 NotificationCenter.default.post(name: .GCControllerDidDisconnect, object: PVControllerManager.shared.iCadeController)
