@@ -647,7 +647,7 @@ extension GameLaunchingViewController where Self: UIViewController {
                 completion(latestSaveState)
             } else if shouldAskToLoadSaveState {
                 // 1) Alert to ask about loading latest save state
-                let alert = UIAlertController(title: "Save State Detected", message: nil, preferredStyle: .alert)
+                let alert = UIAlertController(title: "Save State Detected", message: nil, preferredStyle: .actionSheet)
                 #if os(iOS)
                     let switchControl = UISwitch()
                     switchControl.isOn = !PVSettingsModel.shared.askToAutoLoad
@@ -703,6 +703,8 @@ extension GameLaunchingViewController where Self: UIViewController {
                         completion(latestSaveState)
                     }))
                 #endif
+		    
+                alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
 
                 // Present the alert
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
