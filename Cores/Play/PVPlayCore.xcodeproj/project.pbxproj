@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9310345A29436AC3002D218C /* CGSH_Provenance_OGL.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9310344A29436AC2002D218C /* CGSH_Provenance_OGL.mm */; };
+		9310345B29436AC3002D218C /* CGSH_Provenance_OGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 9310345929436AC3002D218C /* CGSH_Provenance_OGL.h */; };
+		93A811EF2944A59A00DB5560 /* CGSH_ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93A811DF2944A59900DB5560 /* CGSH_ViewController.mm */; };
+		93A811F02944A59A00DB5560 /* CGSH_ViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 93A811EE2944A59A00DB5560 /* CGSH_ViewController.h */; };
+		93F5FBF42945D1B600493D4F /* PVPlayCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5FBF32945D1B600493D4F /* PVPlayCore.swift */; };
 		B301797F207C909E0051B93D /* libplay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libplay.a */; };
 		B3135B7326E4C7020047F338 /* libchdr-static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B6626E4C6860047F338 /* libchdr-static.a */; };
 		B3135B7426E4C7020047F338 /* libCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B4826E4C6860047F338 /* libCodeGen.a */; };
@@ -329,6 +334,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9310344A29436AC2002D218C /* CGSH_Provenance_OGL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CGSH_Provenance_OGL.mm; sourceTree = "<group>"; };
+		9310345929436AC3002D218C /* CGSH_Provenance_OGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGSH_Provenance_OGL.h; sourceTree = "<group>"; };
+		93A811DF2944A59900DB5560 /* CGSH_ViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CGSH_ViewController.mm; sourceTree = "<group>"; };
+		93A811EE2944A59A00DB5560 /* CGSH_ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGSH_ViewController.h; sourceTree = "<group>"; };
+		93F5FBF32945D1B600493D4F /* PVPlayCore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVPlayCore.swift; sourceTree = "<group>"; };
 		B30178D3207C901D0051B93D /* libplay.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libplay.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B313545126E4C4930047F338 /* android_build.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = android_build.sh; sourceTree = "<group>"; };
 		B313545326E4C4930047F338 /* Play.desktop */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Play.desktop; sourceTree = "<group>"; };
@@ -3732,6 +3742,11 @@
 		B3447EB5218BCE2000557ACE /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				93F5FBF32945D1B600493D4F /* PVPlayCore.swift */,
+				93A811EE2944A59A00DB5560 /* CGSH_ViewController.h */,
+				93A811DF2944A59900DB5560 /* CGSH_ViewController.mm */,
+				9310345929436AC3002D218C /* CGSH_Provenance_OGL.h */,
+				9310344A29436AC2002D218C /* CGSH_Provenance_OGL.mm */,
 				B3C76223207833DE009950E4 /* PVPlayCore.h */,
 				B3C76224207833DE009950E4 /* PVPlayCore.mm */,
 				B3447EB1218BC69700557ACE /* PVPlayCore+Audio.h */,
@@ -3832,6 +3847,8 @@
 				B3135B9C26E4CC290047F338 /* PVPlayCore.h in Headers */,
 				B3135B9F26E4CC330047F338 /* PVPlayCore+Saves.h in Headers */,
 				B3135BA126E4CC620047F338 /* PVPlay.h in Headers */,
+				9310345B29436AC3002D218C /* CGSH_Provenance_OGL.h in Headers */,
+				93A811F02944A59A00DB5560 /* CGSH_ViewController.h in Headers */,
 				B3135B9E26E4CC330047F338 /* PVPlayCore+Video.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3905,6 +3922,7 @@
 					};
 					B3C7620F20783162009950E4 = {
 						CreatedOnToolsVersion = 9.3;
+						LastSwiftMigration = 1410;
 					};
 				};
 			};
@@ -4140,10 +4158,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3EB8B10293F653D00BCCBAE /* PVPlayCore+Controls.mm in Sources */,
+				93A811EF2944A59A00DB5560 /* CGSH_ViewController.mm in Sources */,
+				93F5FBF42945D1B600493D4F /* PVPlayCore.swift in Sources */,
 				B3135BA726E4CD5A0047F338 /* PVPlayCore+Video.mm in Sources */,
 				B3135BA526E4CD500047F338 /* PVPlayCore+Saves.mm in Sources */,
 				B351223A27843318001C4B83 /* PVPlay.mm in Sources */,
 				B3135B9B26E4CAD40047F338 /* PVPlayCore.mm in Sources */,
+				9310345A29436AC3002D218C /* CGSH_Provenance_OGL.mm in Sources */,
 				B3135BA926E4CD600047F338 /* PVPlayCore+Audio.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4393,12 +4414,21 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_CFLAGS = (
+					"-fobjc-arc",
+					"-fcxx-modules",
+					"-x",
+					"objective-c++",
+					"-fmodules",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.pvplay";
 				PRODUCT_NAME = PVPlay;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "$(SWIFT_MODULE_NAME)-Swift.h";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Archive;
@@ -4598,12 +4628,21 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_CFLAGS = (
+					"-fobjc-arc",
+					"-fcxx-modules",
+					"-x",
+					"objective-c++",
+					"-fmodules",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.pvplay";
 				PRODUCT_NAME = PVPlay;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "$(SWIFT_MODULE_NAME)-Swift.h";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Debug;
@@ -4643,12 +4682,21 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_CFLAGS = (
+					"-fobjc-arc",
+					"-fcxx-modules",
+					"-x",
+					"objective-c++",
+					"-fmodules",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.pvplay";
 				PRODUCT_NAME = PVPlay;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "$(SWIFT_MODULE_NAME)-Swift.h";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Release;
