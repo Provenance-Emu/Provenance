@@ -9,36 +9,51 @@
 #import "PVPlayCore+Saves.h"
 #import "PVPlayCore.h"
 
+#include "PH_Generic.h"
+#include "PS2VM.h"
+#include "CGSH_Provenance_OGL.h"
+#include "CGSH_ViewController.h"
+
+extern CGSH_Provenance_OGL *gsHandler;
+extern CPH_Generic *padHandler;
+extern GLKView *m_view;
+extern CPS2VM *_ps2VM;
+
 @implementation PVPlayCore (Saves)
 
 #pragma mark - Properties
 -(BOOL)supportsSaveStates {
-    return NO;
+    return YES;
 }
 
 #pragma mark - Methods
 
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName {
-    return NO;
+    const fs::path fsName(fileName.fileSystemRepresentation);
+    auto success = _ps2VM->SaveState(fsName);
+    success.wait();
+    return YES;
 }
 
 - (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
-//	const fs::path fsName(fileName.fileSystemRepresentation);
-//	  auto success = _ps2VM.SaveState(fsName);
-//	  success.wait();
-//	  block(success.get(), nil);
+    const fs::path fsName(fileName.fileSystemRepresentation);
+    auto success = _ps2VM->SaveState(fsName);
+    success.wait();
+    block(success.get(), nil);
 }
 
 - (BOOL)loadStateFromFileAtPath:(NSString *)fileName {
-    return NO;
+    const fs::path fsName(fileName.fileSystemRepresentation);
+    auto success = _ps2VM->LoadState(fsName);
+    success.wait();
+    return YES;
 }
 
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
-//	//FIXME: load save state at launch fails.
-//	const fs::path fsName(fileName.fileSystemRepresentation);
-//	auto success = _ps2VM.LoadState(fsName);
-//	success.wait();
-//	block(success.get(), nil)
+    const fs::path fsName(fileName.fileSystemRepresentation);
+    auto success = _ps2VM->LoadState(fsName);
+    success.wait();
+    block(success.get(), nil);
 }
 
 @end

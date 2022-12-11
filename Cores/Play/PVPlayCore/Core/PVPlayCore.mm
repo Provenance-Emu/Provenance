@@ -38,7 +38,17 @@
 #include "PH_Generic.h"
 #include "../../tools/PsfPlayer/Source/SH_OpenAL.h"
 #include "../ui_shared/StatsManager.h"
+#import <PVPlay/PVPlay-Swift.h>
 
+#include "PH_Generic.h"
+#include "PS2VM.h"
+#include "CGSH_Provenance_OGL.h"
+#include "CGSH_ViewController.h"
+
+CGSH_Provenance_OGL *gsHandler = nullptr;
+CPH_Generic *padHandler = nullptr;
+GLKView *m_view = nullptr;
+CPS2VM *_ps2VM = nullptr;
 
 __weak PVPlayCore *_current = nil;
 
@@ -134,25 +144,25 @@ private:
 {
 @public
     // ivars
-    CPS2VM _ps2VM;
     NSString *_romPath;
     BindingPtr _bindings[PS2::CControllerInfo::MAX_BUTTONS];
 }
 
 - (instancetype)init {
     if (self = [super init]) {
-        _videoWidth  = 640;
-        _videoHeight = 480;
-        _videoBitDepth = 32; // ignored
+        videoBitDepth = 32; // ignored
         videoDepthBitDepth = 0; // TODO
-        
+        self.videoWidth = 640;
+        self.videoHeight = 480;
+        self.resFactor = 1; // 2x
+        setFramerateMultiplier:
+        [self setGameSpeed:GameSpeedFast];
         sampleRate = 44100;
-        
         isNTSC = YES;
-        
         dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, 0);
-        
         _callbackQueue = dispatch_queue_create("org.provenance-emu.play.CallbackHandlerQueue", queueAttributes);
+        _ps2VM = new CPS2VM();
+        [self parseOptions];
     }
     
     _current = self;
@@ -205,24 +215,38 @@ private:
 //}
 - (void)startEmulation
 {
-    _ps2VM.CreateGSHandler(CGSH_OpenEmu::GetFactoryFunction());
-    _ps2VM.CreatePadHandler(CPH_OpenEmu::GetFactoryFunction());
-    _ps2VM.CreateSoundHandler(CSH_OpenEmu::GetFactoryFunction());
-
-    CGSHandler::PRESENTATION_PARAMS presentationParams;
-    auto presentationMode = static_cast<CGSHandler::PRESENTATION_MODE>(CAppConfig::GetInstance().GetPreferenceInteger(PREF_CGSHANDLER_PRESENTATION_MODE));
-    presentationParams.windowWidth = 640;
-    presentationParams.windowHeight = 480;
-    presentationParams.mode = presentationMode;
-    _ps2VM.m_ee->m_gs->SetPresentationParams(presentationParams);
-
-    CPS2OS* os = _ps2VM.m_ee->m_os;
-    os->BootFromCDROM();
-
-    // TODO: Play! starts a bunch of threads. They all need to be realtime.
-    _ps2VM.Resume();
-
+    [self setupEmulation];
+    [self startVM];
     [super startEmulation];
+}
+
+- (void)startVM
+{
+    _ps2VM->CreateGSHandler(CGSH_Provenance_OGL::GetFactoryFunction(
+        ((CAEAGLLayer *)m_view.layer),
+        self.videoWidth,
+        self.videoHeight,
+        self.resFactor
+    ));
+    _ps2VM->CreatePadHandler(CPH_Generic::GetFactoryFunction());
+    _ps2VM->CreateSoundHandler(CSH_OpenEmu::GetFactoryFunction());
+    gsHandler = (CGSH_Provenance_OGL *)_ps2VM->GetGSHandler();
+    padHandler = (CPH_Generic *)_ps2VM->GetPadHandler();
+    gsHandler->Reset();
+    CGSHandler::PRESENTATION_PARAMS presentationParams;
+    auto presentationMode = static_cast<CGSHandler::PRESENTATION_MODE>(
+        CAppConfig::GetInstance().GetPreferenceInteger(PREF_CGSHANDLER_PRESENTATION_MODE)
+    );
+    presentationParams.windowWidth = self.videoWidth * self.resFactor;
+    presentationParams.windowHeight = self.videoHeight * self.resFactor;
+    presentationParams.mode = presentationMode;
+    _ps2VM->m_ee->m_gs->SetPresentationParams(presentationParams);
+    _ps2VM->Pause();
+    _ps2VM->Reset();
+    CPS2OS* os = _ps2VM->m_ee->m_os;
+    os->BootFromCDROM();
+    // TODO: Play! starts a bunch of threads. They all need to be realtime.
+    _ps2VM->Resume();
 }
 
 //- (void)runGLESRenderThread {
@@ -275,6 +299,7 @@ private:
 
 - (void)setupEmulation
 {
+    [self initView];
     _current = self;
     
     CAppConfig::GetInstance().SetPreferencePath(PREF_PS2_CDROM0_PATH, [_romPath fileSystemRepresentation]);
@@ -297,9 +322,12 @@ private:
     CAppConfig::GetInstance().SetPreferencePath(PREF_PS2_HOST_DIRECTORY, hdd.fileSystemRepresentation);
     CAppConfig::GetInstance().SetPreferencePath(PREF_PS2_ROM0_DIRECTORY, self.BIOSPath.fileSystemRepresentation);
     CAppConfig::GetInstance().SetPreferenceInteger(PREF_CGSHANDLER_PRESENTATION_MODE, CGSHandler::PRESENTATION_MODE_FIT);
+    CAppConfig::GetInstance().SetPreferenceInteger(PREF_CGSH_OPENGL_RESOLUTION_FACTOR, self.resFactor);
+    CAppConfig::GetInstance().SetPreferenceInteger(PREF_AUDIO_SPUBLOCKCOUNT, 22);
     CAppConfig::GetInstance().Save();
-    
-    _ps2VM.Initialize();
+    _ps2VM->Initialize();
+    CAppConfig::GetInstance().SetPreferenceBoolean(PREF_PS2_LIMIT_FRAMERATE, false);
+    _ps2VM->ReloadFrameRateLimit();
     //
     //	_bindings[PS2::CControllerInfo::START] = std::make_shared<CSimpleBinding>(PVPS2ButtonStart);
     //	_bindings[PS2::CControllerInfo::SELECT] = std::make_shared<CSimpleBinding>(PVPS2ButtonSelect);
@@ -327,24 +355,37 @@ private:
 
 - (void)setPauseEmulation:(BOOL)flag {
     if (flag) {
-        _ps2VM.Pause();
+        _ps2VM->Pause();
     } else {
-        _ps2VM.Resume();
+        _ps2VM->Resume();
     }
     
     [super setPauseEmulation:flag];
 }
 
 - (void)stopEmulation {
-    _ps2VM.Pause();
-    _ps2VM.Destroy();
+    shouldStop=true;
+    if (_ps2VM) {
+        _ps2VM->Pause();
+        gsHandler->Release();
+        _ps2VM->DestroyPadHandler();
+        _ps2VM->DestroyGSHandler();
+        _ps2VM->DestroySoundHandler();
+        _ps2VM->Destroy();
+    }
+    delete _ps2VM;
+    _ps2VM = nullptr;
     [super stopEmulation];
 }
 
 - (void)resetEmulation {
-    _ps2VM.Pause();
-    _ps2VM.Reset();
-    _ps2VM.Resume();
+    if(_ps2VM)
+    {
+        _ps2VM->Pause();
+        _ps2VM->Reset();
+        _ps2VM->m_ee->m_os->BootFromCDROM();
+        _ps2VM->Resume();
+    }
 }
 
 //- (void)resetEmulation {
@@ -356,20 +397,38 @@ private:
 //}
 
 
-- (void)swapBuffers {
-    [self.renderDelegate didRenderFrameOnAlternateThread];
-}
+//- (void)swapBuffers {
+//    [self.renderDelegate didRenderFrameOnAlternateThread];
+//}
 
-- (void)executeFrameSkippingFrame:(BOOL)skip {
+//- (void)executeFrameSkippingFrame:(BOOL)skip {
 //    dispatch_semaphore_signal(glesWaitToBeginFrameSemaphore);
 //
 //    dispatch_semaphore_wait(coreWaitToEndFrameSemaphore, [self frameTime]);
-}
+//}
 
-- (void)executeFrame {
-    [self executeFrameSkippingFrame:NO];
-}
+//- (void)executeFrame {
+//    [self executeFrameSkippingFrame:NO];
+//}
 
+- (void)initView {
+    UIViewController *gl_view_controller = (UIViewController *)self.renderDelegate;
+    GLKViewController *cgsh_view_controller = [[CGSH_ViewController alloc]
+                                               initWithNibName:nil
+                                               bundle:nil];
+    UIViewController *view_controller = gl_view_controller.parentViewController;
+    auto screenBounds = [[UIScreen mainScreen] bounds];
+    GLKView *glk_view = (GLKView *)cgsh_view_controller.view;
+    m_view = glk_view;
+    m_view.frame = screenBounds;
+    m_view.enableSetNeedsDisplay = NO;
+    cgsh_view_controller.view=(UIView *)m_view;
+    // Attach Controller to somewhere rendering won't interfere frame buffers
+    [view_controller.parentViewController addChildViewController:cgsh_view_controller];
+    [cgsh_view_controller didMoveToParentViewController:view_controller.parentViewController];
+    // Add View
+    [gl_view_controller.view addSubview:m_view];
+}
 @end
 
 
