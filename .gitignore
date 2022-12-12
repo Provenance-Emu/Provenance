@@ -47,3 +47,7 @@ report.xml
 Cores/PPSSPP/cmake/lib/
 /CodeSigning.xcconfig
 *.xcarchive
+Cores/Play/cmake/build/
+Cores/Play/cmake/**/Release-*
+Cores/Play/cmake/**/Debug-*
+Cores/Play/cmake/**/*.build
