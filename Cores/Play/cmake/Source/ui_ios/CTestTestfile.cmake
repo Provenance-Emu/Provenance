@@ -6,6 +6,7 @@
 # testing this directory and lists subdirectories to be tested as well.
 subdirs("Source")
 subdirs("gs/GSH_OpenGL")
+subdirs("gs/GSH_Vulkan")
 subdirs("SH_OpenAL")
 subdirs("iCade-iOS")
 subdirs("SDWebImage")

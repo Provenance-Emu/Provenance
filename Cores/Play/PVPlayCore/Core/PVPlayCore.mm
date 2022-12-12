@@ -224,12 +224,17 @@ private:
 
 - (void)startVM
 {
+#ifdef HAS_GSH_VULKAN
+    _ps2VM->CreateGSHandler(CGSH_VulkaniOS::GetFactoryFunction(((CAMetalLayer*)m_view.layer)));
+#else
     _ps2VM->CreateGSHandler(CGSH_Provenance_OGL::GetFactoryFunction(
         ((CAEAGLLayer *)m_view.layer),
         self.videoWidth,
         self.videoHeight,
         self.resFactor
     ));
+#endif
+ 
     _ps2VM->CreatePadHandler(CPH_Generic::GetFactoryFunction());
     _ps2VM->CreateSoundHandler(CSH_OpenEmu::GetFactoryFunction());
     gsHandler = (CGSH_Provenance_OGL *)_ps2VM->GetGSHandler();
