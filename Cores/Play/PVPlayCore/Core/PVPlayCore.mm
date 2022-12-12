@@ -452,13 +452,13 @@ void CGSH_OpenGLiOS::InitializeImpl()
 
     if(!m_context)
     {
-        NSLog(@"Failed to create ES context");
+        ELOG(@"Failed to create ES context");
         return;
     }
 
     if(![EAGLContext setCurrentContext:m_context])
     {
-        NSLog(@"Failed to set ES context current");
+        ELOG(@"Failed to set ES context current");
         return;
     }
 
@@ -505,7 +505,7 @@ void CGSH_OpenGLiOS::CreateFramebuffer()
 
     if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     {
-        NSLog(@"Failed to make complete framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
+        ELOG(@"Failed to make complete framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
         assert(false);
     }
 
