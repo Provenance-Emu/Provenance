@@ -847,7 +847,7 @@
 		<array>
 			<dict>
 				<key>Description</key>
-				<string>PS2 Rom</string>
+				<string>PS2 BIOS 10000</string>
 				<key>MD5</key>
 				<string>acf4730ceb38ac9d8c7d8e21f2614600</string>
 				<key>Name</key>
@@ -855,9 +855,79 @@
 				<key>Size</key>
 				<integer>4194304</integer>
 			</dict>
+			<dict>
+				<key>Description</key>
+				<string>PS2 BIOS 250e</string>
+				<key>MD5</key>
+				<string>93ea3bcee4252627919175ff1b16a1d9</string>
+				<key>Name</key>
+				<string>ps2-0250e-20100415.bin</string>
+				<key>Size</key>
+				<integer>4194304</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>PS2 BIOS 230j</string>
+				<key>MD5</key>
+				<string>80ac46fa7e77b8ab4366e86948e54f83</string>
+				<key>Name</key>
+				<string>ps2-0230j-20080220.bin</string>
+				<key>Size</key>
+				<integer>4194304</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>PS2 BIOS 230e</string>
+				<key>MD5</key>
+				<string>dc69f0643a3030aaa4797501b483d6c4</string>
+				<key>Name</key>
+				<string>ps2-0230e-20080220.bin</string>
+				<key>Size</key>
+				<integer>4194304</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>PS2 BIOS 230a</string>
+				<key>MD5</key>
+				<string>21038400dc633070a78ad53090c53017</string>
+				<key>Name</key>
+				<string>ps2-0230a-20080220.bin</string>
+				<key>Size</key>
+				<integer>4194304</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>PS2 BIOS 220j</string>
+				<key>MD5</key>
+				<string>5de9d0d730ff1e7ad122806335332524</string>
+				<key>Name</key>
+				<string>ps2-0220j-20060905.bin</string>
+				<key>Size</key>
+				<integer>4194304</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>PS2 BIOS 220e</string>
+				<key>MD5</key>
+				<string>80bbb237a6af9c611df43b16b930b683</string>
+				<key>Name</key>
+				<string>ps2-0220e-20060905.bin</string>
+				<key>Size</key>
+				<integer>4194304</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>PS2 BIOS 220a</string>
+				<key>MD5</key>
+				<string>40c11c063b3b9409aa5e4058e984e30c</string>
+				<key>Name</key>
+				<string>ps2-0220a-20060905.bin</string>
+				<key>Size</key>
+				<integer>4194304</integer>
+			</dict>
 		</array>
 		<key>PVRequiresBIOS</key>
-		<true/>
+		<false/>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>cue</string>
