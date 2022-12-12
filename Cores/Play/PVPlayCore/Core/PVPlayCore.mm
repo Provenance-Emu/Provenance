@@ -45,6 +45,8 @@
 #include "CGSH_Provenance_OGL.h"
 #include "CGSH_ViewController.h"
 
+#define SAMPLE_RATE_DEFAULT 48000
+
 CGSH_Provenance_OGL *gsHandler = nullptr;
 CPH_Generic *padHandler = nullptr;
 GLKView *m_view = nullptr;
@@ -155,9 +157,9 @@ private:
         self.videoWidth = 640;
         self.videoHeight = 480;
         self.resFactor = 1; // 2x
-        setFramerateMultiplier:
-        [self setGameSpeed:GameSpeedFast];
-        sampleRate = 44100;
+//        [self setFramerateMultiplier: 1];
+//        [self setGameSpeed:GameSpeedFast];
+        sampleRate = SAMPLE_RATE_DEFAULT;
         isNTSC = YES;
         dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, 0);
         _callbackQueue = dispatch_queue_create("org.provenance-emu.play.CallbackHandlerQueue", queueAttributes);
@@ -683,7 +685,10 @@ void CSH_OpenEmu::Write(int16 *audio, unsigned int sampleCount, unsigned int sam
 void MakeCurrentThreadRealTime();
 static CSoundHandler *SoundHandlerFactory()
 {
-    MakeCurrentThreadRealTime();
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        MakeCurrentThreadRealTime();
+    });
 //    OESetThreadRealtime(1. / (1 * 60), .007, .03);
     return new CSH_OpenEmu();
 }
