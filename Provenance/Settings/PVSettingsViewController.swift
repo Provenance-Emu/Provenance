@@ -74,7 +74,7 @@ final class PVSettingsViewController: QuickTableViewController {
         let height = heightDictionary[indexPath]
         return height ?? UITableView.automaticDimension
     }
-    
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
         cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
@@ -83,7 +83,7 @@ final class PVSettingsViewController: QuickTableViewController {
         return cell
     }
     #endif
-        
+
     func generateTableViewViewModels() {
         typealias TableRow = Row & RowStyle
 
@@ -111,7 +111,7 @@ final class PVSettingsViewController: QuickTableViewController {
             }
             self.present(alert, animated: true)
         })
-        
+
         #if os(tvOS)
             let appRows: [TableRow] = [systemsRow]
         #else
@@ -173,7 +173,7 @@ final class PVSettingsViewController: QuickTableViewController {
                                                footer: "Post processing filter when using Metal",
                                                key: \PVSettingsModel.metalFilter,
                                                options: shaders)
-        
+
         // -- Section : Controler
 
         var controllerRows = [TableRow]()
@@ -319,17 +319,17 @@ final class PVSettingsViewController: QuickTableViewController {
 //                                        swiftUI.switchValue = false
 //                                    }
                                 },
-            
+
             PVSettingsSwitchRow(text: NSLocalizedString("Movable Buttons", comment: "Bool option to allow user to move on screen controller buttons"),
 								detailText: .subtitle("Allow user to move on screen controller buttons."),
 								key: \PVSettingsModel.debugOptions.movableButtons),
-            
+
             PVSettingsSwitchRow(text: NSLocalizedString("On screen Joypad", comment: ""),
                                 detailText: .subtitle("Show a touch Joystick pad on supported systems. Layout is strange on some devices while in beta."),
                                 key: \PVSettingsModel.debugOptions.onscreenJoypad),
             PVSettingsSwitchRow(text: NSLocalizedString("On screen Joypad with keyboard", comment: ""),
                                 detailText: .subtitle("Show a touch Joystick pad on supported systems when the P1 controller is 'Keyboard'. Useful on iPad OS for systems with an analog joystick (N64, PSX, etc.)"),
-                                key: \PVSettingsModel.debugOptions.onscreenJoypadWithKeyboard),
+                                key: \PVSettingsModel.debugOptions.onscreenJoypadWithKeyboard)
         ]
         #else // tvOS
          let betaRows: [TableRow] = [
@@ -362,7 +362,7 @@ final class PVSettingsViewController: QuickTableViewController {
             rows: betaRows,
             footer: "Untested, unsupported, work in progress features. Use at your own risk. May result in crashes and data loss."
         )
-        
+
         // - Social links
         let discordRow = NavigationRow(
             text: NSLocalizedString("Discord", comment: ""),
@@ -467,13 +467,13 @@ final class PVSettingsViewController: QuickTableViewController {
                 }
             }
         )
-            
+
         let socialLinksRows = [patreonRow, discordRow, twitterRow, youTubeRow, githubRow]
         let socialLinksSection = Section(title: NSLocalizedString("Socials", comment: ""), rows: socialLinksRows)
 
         let documentationLinksRow = [blogRow, faqRow, wikiRow]
         let documentationSection = Section(title: NSLocalizedString("Documentation", comment: ""), rows: documentationLinksRow)
-        
+
         // - Build Information
 
         #if DEBUG
@@ -619,7 +619,7 @@ You will need to completely relaunch the App to start the library rebuild proces
                                       handler: nil))
         present(alert, animated: true) { () -> Void in }
     }
-    
+
     func emptyImageCacheAction() {
         tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
         let alert = UIAlertController(title: NSLocalizedString("Empty Image Cache?", comment: ""),

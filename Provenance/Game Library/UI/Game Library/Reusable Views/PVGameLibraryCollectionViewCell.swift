@@ -208,7 +208,7 @@ protocol GameLibraryCollectionViewDelegate: AnyObject {
     func promptToDeleteGame(_ game: PVGame, completion: ((_ deleted: Bool) -> Swift.Void)?)
 }
 // MARK: Corner Badge Glyph
-//@IBDesignable
+// @IBDesignable
 final class CornerBadgeView: UIView {
     enum FillCorner {
         case topLeft

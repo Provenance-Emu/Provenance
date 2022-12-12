@@ -58,7 +58,7 @@ public class PVCocoaLumberJackLogging: NSObject, PVLoggingEntity {
     public func logFileInfos() -> [Any]? {
         return fileLogger.logFileManager.sortedLogFileInfos
     }
-    
+
     public func flushLogs() {
         DDLog.flushLog()
     }

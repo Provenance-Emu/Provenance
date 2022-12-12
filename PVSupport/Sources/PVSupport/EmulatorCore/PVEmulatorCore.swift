@@ -10,25 +10,25 @@ import Foundation
 import CoreHaptics
 
 #if os(iOS) && !targetEnvironment(macCatalyst)
-//@_silgen_name("AudioServicesStopSystemSound")
-//func AudioServicesStopSystemSound(_ soundID: SystemSoundID)
+// @_silgen_name("AudioServicesStopSystemSound")
+// func AudioServicesStopSystemSound(_ soundID: SystemSoundID)
 
 	// vibrationPattern parameter must be NSDictionary to prevent crash when bridging from Swift.Dictionary.
-//@_silgen_name("AudioServicesPlaySystemSoundWithVibration")
-//func AudioServicesPlaySystemSoundWithVibration(_ soundID: SystemSoundID, _ idk: Any?, _ vibrationPattern: NSDictionary)
-//#endif
+// @_silgen_name("AudioServicesPlaySystemSoundWithVibration")
+// func AudioServicesPlaySystemSoundWithVibration(_ soundID: SystemSoundID, _ idk: Any?, _ vibrationPattern: NSDictionary)
+// #endif
 
 @available(iOS 14.0, tvOS 14.0, *)
-fileprivate var hapticEngines: [CHHapticEngine?] = Array<CHHapticEngine?>.init(repeating: nil, count: 4)
+private var hapticEngines: [CHHapticEngine?] = [CHHapticEngine?].init(repeating: nil, count: 4)
 
 @objc
 public extension PVEmulatorCore {
-	@objc var supportsRumble: Bool { false }
-    
+	var supportsRumble: Bool { false }
+
 	func rumble() {
 		rumble(player: 0)
 	}
-    
+
     @available(iOS 14.0, tvOS 14.0, *)
     func hapticEngine(for player: Int) -> CHHapticEngine? {
         if let engine = hapticEngines[player] {
@@ -41,7 +41,7 @@ public extension PVEmulatorCore {
             return nil
         }
     }
-    
+
     func controller(for player: Int) -> GCController? {
         var controller: GCController?
         switch player {
@@ -82,7 +82,7 @@ public extension PVEmulatorCore {
             // Fallback on earlier versions
         }
 	}
-    
+
     #if os(iOS) && !targetEnvironment(macCatalyst)
 	func rumblePhone() {
 

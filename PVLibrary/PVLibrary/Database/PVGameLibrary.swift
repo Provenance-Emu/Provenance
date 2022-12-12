@@ -135,7 +135,7 @@ public struct PVGameLibrary {
             return Disposables.create()
         }
     }
-    
+
     public func clearROMs() -> Completable {
         Completable.create { observer in
             do {
@@ -160,7 +160,7 @@ public struct PVGameLibrary {
     public func game(identifier: String) -> PVGame? {
         return database.object(ofType: PVGame.self, wherePrimaryKeyEquals: identifier)
     }
-    
+
 //    public enum SaveType {
 //        case auto
 //        case manual

@@ -32,7 +32,7 @@ extension NSImage {
 
         return nil
     }
-    
+
     func jpegData(compressionQuality: Double) -> Data {
             let cgImage = self.cgImage(forProposedRect: nil, context: nil, hints: nil)!
             let bitmapRep = NSBitmapImageRep(cgImage: cgImage)

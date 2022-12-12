@@ -41,14 +41,14 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     var batterySavesPath: URL { return PVEmulatorConfiguration.batterySavesPath(forGame: game) }
     var BIOSPath: URL { return PVEmulatorConfiguration.biosPath(forGame: game) }
     var menuButton: MenuButton?
-    
+
 	let use_metal: Bool = PVSettingsModel.shared.debugOptions.useMetal
     private(set) lazy var gpuViewController: PVGPUViewController = use_metal ? PVMetalViewController(emulatorCore: core) : PVGLViewController(emulatorCore: core)
     private(set) lazy var controllerViewController: (UIViewController & StartSelectDelegate)? = {
         let controller = PVCoreFactory.controllerViewController(forSystem: game.system, core: core)
         return controller
     }()
-    
+
     var audioInited: Bool = false
     private(set) lazy var gameAudio: OEGameAudio = {
         audioInited = true
@@ -81,7 +81,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         self.game = game
 
         core.screenType = game.system.screenType.rawValue
-        
+
         super.init(nibName: nil, bundle: nil)
 
         staticSelf = self
@@ -329,7 +329,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         //			presentingViewController?.presentError("File doesn't exist at path \(romPath.absoluteString)")
         //			return
         //		}
-        
+
         do {
             try core.loadFile(atPath: romPath.path)
         } catch {
@@ -389,7 +389,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         gameAudio.volume = PVSettingsModel.shared.volume
         gameAudio.outputDeviceID = 0
         gameAudio.start()
-        
+
         core.startEmulation()
 
         #if os(tvOS)

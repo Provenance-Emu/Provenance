@@ -189,7 +189,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
         return true
     }
-    
+
     func applicationWillResignActive(_: UIApplication) {}
 
     func applicationDidEnterBackground(_: UIApplication) {}

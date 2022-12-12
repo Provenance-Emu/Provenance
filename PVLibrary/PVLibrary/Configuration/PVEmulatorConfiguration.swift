@@ -131,15 +131,15 @@ public enum SystemIdentifier: String, CaseIterable, Codable {
 
         .Supervision,
         .Vectrex,
-        .ZXSpectrum,
+        .ZXSpectrum
     ]
-    
+
     static public let unsupported: [SystemIdentifier] =
     [
         .PS2,
         .PS3,
         .PSP,
-        .Wii,
+        .Wii
     ]
     // MARK: Assistance accessors for properties
 
@@ -302,7 +302,7 @@ public final class PVEmulatorConfiguration: NSObject {
             return container
         }
     }()
-    
+
     /// This should be called on a background thread
     static var iCloudContainerDirectory: URL? {
         get {
@@ -464,11 +464,11 @@ public struct ClassInfo: CustomStringConvertible, Equatable {
 
         bundle = Bundle(for: classObject)
     }
-    
+
     public var superclassesInfo: [ClassInfo]? {
         var classInfos = [ClassInfo]()
         var superClass: ClassInfo? = superclassInfo
-        
+
         while(superClass != nil) {
             if let classInfo = ClassInfo(superClass?.classObject) {
                 classInfos.append(classInfo)
@@ -477,7 +477,7 @@ public struct ClassInfo: CustomStringConvertible, Equatable {
                 superClass = nil
             }
         }
-        
+
         return classInfos.isEmpty ? nil : classInfos
     }
 
