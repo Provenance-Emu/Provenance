@@ -131,9 +131,6 @@ open class QuickTableViewController: UIViewController, UITableViewDataSource, UI
     #if os(iOS)
       (cell as? SwitchCell)?.delegate = self
     #endif
-    #if os(tvOS)
-      cell.layer.cornerRadius = 12
-    #endif
     row.customize?(cell, row)
 
     return cell
@@ -154,6 +151,7 @@ open class QuickTableViewController: UIViewController, UITableViewDataSource, UI
     let row = section.rows[indexPath.row]
 
     _selected = indexPath   // remember this so we can restore focus after a reloadData
+    let contentOffset = tableView.contentOffset
 
     switch (section, row) {
     case let (radio as RadioSection, option as OptionRowCompatible):
@@ -163,8 +161,14 @@ open class QuickTableViewController: UIViewController, UITableViewDataSource, UI
       if changes.isEmpty {
         tableView.deselectRow(at: indexPath, animated: false)
       } else {
-        tableView.reloadRows(at: changes, with: .automatic)
+        tableView.reloadRows(at: changes, with: .none)
       }
+      #if os(tvOS)
+      DispatchQueue.main.async {
+        tableView.layoutIfNeeded()
+        tableView.setContentOffset(contentOffset, animated: false)
+      }
+      #endif
 
     case let (_, option as OptionRowCompatible):
       // Allow OptionRow to be used without RadioSection.
@@ -176,6 +180,8 @@ open class QuickTableViewController: UIViewController, UITableViewDataSource, UI
       // SwitchRow on tvOS behaves like OptionRow.
       row.switchValue = !row.switchValue
       tableView.reloadData()
+      tableView.layoutIfNeeded()
+      tableView.setContentOffset(contentOffset, animated: false)
     #endif
 
     case (_, is TapActionRowCompatible):

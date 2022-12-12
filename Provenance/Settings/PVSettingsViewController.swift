@@ -18,23 +18,7 @@ import RealmSwift
 import UIKit
 import RxSwift
 
-class PVQuickTableViewController: QuickTableViewController {
-
-    open override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = super.tableView(tableView, cellForRowAt: indexPath)
-
-        #if os(iOS)
-            (cell as? SliderCell)?.delegate = self
-        #else
-            cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
-            cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
-        #endif
-
-        return cell
-    }
-}
-
-final class PVSettingsViewController: PVQuickTableViewController {
+final class PVSettingsViewController: QuickTableViewController {
     // Check to see if we are connected to WiFi. Cannot continue otherwise.
     let reachability: Reachability = try! Reachability()
     var conflictsController: ConflictsController!
@@ -79,6 +63,27 @@ final class PVSettingsViewController: PVQuickTableViewController {
         reachability.stopNotifier()
     }
 
+    #if os(tvOS)
+    private var heightDictionary: [IndexPath: CGFloat] = [:]
+
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        heightDictionary[indexPath] = cell.frame.size.height
+    }
+
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        let height = heightDictionary[indexPath]
+        return height ?? UITableView.automaticDimension
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
+        cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+        cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
+        cell.layer.cornerRadius = 12
+        return cell
+    }
+    #endif
+        
     func generateTableViewViewModels() {
         typealias TableRow = Row & RowStyle
 
@@ -219,14 +224,13 @@ final class PVSettingsViewController: PVQuickTableViewController {
                 detailText: .subtitle(""),
                 key: \PVSettingsModel.webDavAlwaysOn,
                 customization: { cell, _ in
-                    if PVSettingsModel.shared.webDavAlwaysOn {
-                        let subTitleText = "WebDAV: \(PVWebServer.shared.webDavURLString)"
-                        let subTitleAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20), NSAttributedString.Key.foregroundColor: UIColor.gray]
-                        let subTitleAttrString = NSMutableAttributedString(string: subTitleText, attributes: subTitleAttributes)
-                        cell.detailTextLabel?.attributedText = subTitleAttrString
-                    } else {
-                        cell.detailTextLabel?.text = nil
-                        cell.detailTextLabel?.attributedText = nil
+                    DispatchQueue.main.async {
+                        if PVSettingsModel.shared.webDavAlwaysOn {
+                            let subTitleText = "WebDAV: \(PVWebServer.shared.webDavURLString)"
+                            cell.detailTextLabel?.text = subTitleText
+                        } else {
+                            cell.detailTextLabel?.text = nil
+                        }
                     }
                 }
             )
