@@ -39,7 +39,7 @@ void CGSH_Provenance_OGL::InitializeImpl()
  	m_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
  	if(![EAGLContext setCurrentContext:m_context])
  	{
- 	 	NSLog(@"Failed to set ES context current");
+        ELOG(@"Failed to set ES context current");
  	 	return;
  	}
  	CreateFramebuffer();
@@ -69,7 +69,7 @@ void CGSH_Provenance_OGL::CreateFramebuffer()
 	CHECKGLERROR();
 	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
-		NSLog(@"Failed to make complete framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
+        ELOG(@"Failed to make complete framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
 		assert(false);
 	}
 	m_presentFramebuffer = m_defaultFramebuffer;
