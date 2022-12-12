@@ -151,3 +151,9 @@
 [submodule "Cores/VisualBoyAdvance-M/Cores/vbam-libretro"]
 	path = Cores/VisualBoyAdvance-M/Cores/vbam-libretro
 	url = https://github.com/libretro/vbam-libretro.git
+[submodule "Cores/VisualBoyAdvance-M/Cores/visualboyadvance-m"]
+	path = Cores/VisualBoyAdvance-M/Cores/visualboyadvance-m
+	url = https://github.com/visualboyadvance-m/visualboyadvance-m.git
+[submodule "Cores/VisualBoyAdvance-M/Cores/vba-next"]
+	path = Cores/VisualBoyAdvance-M/Cores/vba-next
+	url = https://github.com/libretro/vba-next.git
