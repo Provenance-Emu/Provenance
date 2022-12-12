@@ -16,7 +16,7 @@ extension PVPlayCore: CoreOptional {
  	 	 	 	 	 	 	 	.init(title: "8X", description: "8X", value: 8),
  	 	 	 	 	 	 	 	.init(title: "16X", description: "16X", value: 16),
  	 	 	 	 	 	 	],
- 	 	 	 	 	 	 	defaultValue: 2)
+ 	 	 	 	 	 	 	defaultValue: 1)
  	}()
  	public static var options: [CoreOption] {
 		var options = [CoreOption]()
