@@ -7,46 +7,47 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		0285C8420FCC45EA8D71FBC5 /* install */ = {
+		30DE5BD6E1FC421D914FDFDF /* install */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 23011753366C48DF81EF9104 /* Build configuration list for PBXAggregateTarget "install" */;
+			buildConfigurationList = F29E3B2554E943D1952DA91F /* Build configuration list for PBXAggregateTarget "install" */;
 			buildPhases = (
 				93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */,
 			);
 			dependencies = (
-				F08218769E5A4298A04B6A73 /* PBXTargetDependency */,
+				E26BB2A56CA34E0097B16B31 /* PBXTargetDependency */,
 			);
 			name = install;
 			productName = install;
 		};
-		3EBABC1ED902418AB5132579 /* ZERO_CHECK */ = {
+		558005FED0934015B4894DF2 /* package */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = B889D500152042D38A49D3D5 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildConfigurationList = C95FCF6053FB4CA59E240ADE /* Build configuration list for PBXAggregateTarget "package" */;
 			buildPhases = (
-				D8A18D28028FB2D05220D658 /* Generate CMakeFiles/ZERO_CHECK */,
+				571234464C2A5D0D43F1AB42 /* CMake PostBuild Rules */,
 			);
 			dependencies = (
+				3275E248EACB4128BF8697B0 /* PBXTargetDependency */,
 			);
-			name = ZERO_CHECK;
-			productName = ZERO_CHECK;
+			name = package;
+			productName = package;
 		};
-		6B9C69E5DB214681B2A5C976 /* ALL_BUILD */ = {
+		687167BB77A0419196BB3ED0 /* ALL_BUILD */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = E910BCE36A6E49188E508164 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildConfigurationList = 44BD020771544FB38CECD591 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
 			buildPhases = (
-				B78729FFC07D7F70CF26FA4A /* Generate CMakeFiles/ALL_BUILD */,
+				D034B872C7C1909D120FB037 /* Generate CMakeFiles/ALL_BUILD */,
 			);
 			dependencies = (
-				1E052F735E9D4F2B9EFDC4FB /* PBXTargetDependency */,
-				5158B0220A52408D9B0B23AE /* PBXTargetDependency */,
-				6AA1BF23B495418D8AFCD66F /* PBXTargetDependency */,
+				9411036E123B4D17A37A691D /* PBXTargetDependency */,
+				B43EB6FEA96840A9999E2897 /* PBXTargetDependency */,
+				A303C252738F44D491F4D394 /* PBXTargetDependency */,
 			);
 			name = ALL_BUILD;
 			productName = ALL_BUILD;
 		};
-		B7A566E4767340588D653807 /* RUN_TESTS */ = {
+		744235B101344E32861135D6 /* RUN_TESTS */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 76BD5F65538B436EBDD6C6EC /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
+			buildConfigurationList = 552F05B4CF1D49A3839B9EDD /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
 			buildPhases = (
 				003C8D08B0008F35F218E126 /* CMake PostBuild Rules */,
 			);
@@ -55,130 +56,148 @@
 			name = RUN_TESTS;
 			productName = RUN_TESTS;
 		};
+		E87A927634F24825820F8DE5 /* ZERO_CHECK */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 08C2EE109B5F43FD985319B1 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildPhases = (
+				32E5BB6903FB47177C88EC33 /* Generate CMakeFiles/ZERO_CHECK */,
+			);
+			dependencies = (
+			);
+			name = ZERO_CHECK;
+			productName = ZERO_CHECK;
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		00C73250ECCD4410A2411026 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 644720D0E89746F799BB174F /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl/CMakeLists.txt */; };
-		2A693B7B9B2E44FAA8FCE3B5 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL.cpp */ = {isa = PBXBuildFile; fileRef = D4E235A30A804322A598F5FE /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL.cpp */; };
-		2D92858609F34B4C9189FE2C /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL_Texture.cpp */ = {isa = PBXBuildFile; fileRef = 155626504FA24B66B3D8A63E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL_Texture.cpp */; };
-		482587CACBEA4513B8B5DF2B /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL_Shader.cpp */ = {isa = PBXBuildFile; fileRef = 44D545E212824DD586361490 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL_Shader.cpp */; };
-		52B9ED450C4E4F67B9F72863 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/FrameworkOpenGl/CMakeFiles/Framework_OpenGl.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 1D4655F291F04741AC6A003B /* /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/FrameworkOpenGl/CMakeFiles/Framework_OpenGl.dir/Info.plist */; };
-		5CA662E209644ABE9BA90E0F /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/Program.h */ = {isa = PBXBuildFile; fileRef = 2ED5E0EBD76D4E078912E1A8 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/Program.h */; };
-		6D20CC24AA2F40B7B765977C /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/Resource.h */ = {isa = PBXBuildFile; fileRef = 70B63B93E9F343858B30756E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/Resource.h */; };
-		A199D9F6ED444A1E8530F8A0 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/CMakeFiles/gsh_opengl.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 5B2A1D5C89124C62B8E0475D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/CMakeFiles/gsh_opengl.dir/Info.plist */; };
-		A4ACA90433894EEFA9B1F79B /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = D23093CCBE78430CA72F3474 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/CMakeLists.txt */; };
-		B1074855245440ADB308D561 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/opengl/Shader.cpp */ = {isa = PBXBuildFile; fileRef = 7AAB6F2DE31243E884DD6165 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/opengl/Shader.cpp */; };
-		C1FB92D3A59E425A8C987502 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/Shader.h */ = {isa = PBXBuildFile; fileRef = B8A066056E2E4423B54C7024 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/Shader.h */; };
-		D7F473C9784C4AEC896A9424 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/opengl/Program.cpp */ = {isa = PBXBuildFile; fileRef = A436E9EA0CE340EEB9B487DD /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/opengl/Program.cpp */; };
-		EF5F944911684F83ABD27213 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/OpenGlDef.h */ = {isa = PBXBuildFile; fileRef = A3BD3A15E4B84452A31D0058 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/OpenGlDef.h */; };
-		F63BF84820084B7D8C912355 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL.h */ = {isa = PBXBuildFile; fileRef = B94F159961E946B7876F5A53 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL.h */; };
+		0880188DFAC44CBD996A0FC3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/Shader.h */ = {isa = PBXBuildFile; fileRef = 8A4C1310375C48EB8F111088 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/Shader.h */; };
+		46012C00667E4DBEA7CB042C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/CMakeFiles/gsh_opengl.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 6EB1F2824A6B4390839813C2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/CMakeFiles/gsh_opengl.dir/Info.plist */; };
+		4B816D91F2794823A3AB743F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/FrameworkOpenGl/CMakeFiles/Framework_OpenGl.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 1041D2AD48484791B7D56A70 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/FrameworkOpenGl/CMakeFiles/Framework_OpenGl.dir/Info.plist */; };
+		5932BD96118043019DA2F073 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/Resource.h */ = {isa = PBXBuildFile; fileRef = BBA345DC02484FA8A2D763E7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/Resource.h */; };
+		69AAE18A699540E6ABEB6FB5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = B32260768F8D474EBACF68B3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl/CMakeLists.txt */; };
+		72DCC241BBFC4135861B1CF0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/Program.h */ = {isa = PBXBuildFile; fileRef = 66ABF8D3AC6A42B6AE0434B1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/Program.h */; };
+		77CA4AEC2FB6485AA5821FCF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL_Shader.cpp */ = {isa = PBXBuildFile; fileRef = 53E387C08AD044919D1F14AB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL_Shader.cpp */; };
+		942A8257EA654E8B866CF7EA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/opengl/Shader.cpp */ = {isa = PBXBuildFile; fileRef = 36CB7B1F4C4E4AB694DA7AE2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/opengl/Shader.cpp */; };
+		AB23EE0A99D94596844D8718 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/opengl/Program.cpp */ = {isa = PBXBuildFile; fileRef = E2FA8D2DB4E34906BB30A438 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/opengl/Program.cpp */; };
+		B494CC783CF14CAE8BAD8AE2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL_Texture.cpp */ = {isa = PBXBuildFile; fileRef = 287C7F9478904FD89A761102 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL_Texture.cpp */; };
+		BB15B0E824A64B18AAE12A6D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/OpenGlDef.h */ = {isa = PBXBuildFile; fileRef = ACF2D7A6A1704B3E8B644870 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/OpenGlDef.h */; };
+		C90706BCA0114496A7F0D8B8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 2C3E8CEBC4E3488098AA9583 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/CMakeLists.txt */; };
+		DFA7DCF1FCAF4B0088ED71BF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL.cpp */ = {isa = PBXBuildFile; fileRef = 29B3AE865F3A407E8A08007E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL.cpp */; };
+		E8DCCB856F114CFC84D05804 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL.h */ = {isa = PBXBuildFile; fileRef = E7C7D67630C34EEDBB87936E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
-		05939ACF1CB24730993CA69F /* Release */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Release;
-		};
-		D4294DE6E2F04560AF1B35B5 /* MinSizeRel */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = MinSizeRel;
-		};
-		F7BF932FEAA444C4B4699FCD /* Debug */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Debug;
-		};
-		FF4E804BE42E40A492AD782F /* RelWithDebInfo */ = {
+		1B26E6D943C14C0B91C3F96F /* RelWithDebInfo */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = RelWithDebInfo;
 		};
+		413CE05D527946B283C24182 /* Release */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Release;
+		};
+		9B953DBFA7DC4772B4C2FFE7 /* Debug */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+		DC0417957CDC4E0483538A93 /* MinSizeRel */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = MinSizeRel;
+		};
 /* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
-		36D76B45BDA0446483077A46 /* PBXContainerItemProxy */ = {
+		095AA2FC70FD439FAFDC8600 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 1EAF97E761004637AFD99B24 /* Project object */;
+			containerPortal = D740AC8F72AA4C02B4B3AEC1 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 3EBABC1ED902418AB5132579;
-			remoteInfo = ZERO_CHECK;
-		};
-		4532C35176DF4AC49ACB4E48 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1EAF97E761004637AFD99B24 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3EBABC1ED902418AB5132579;
-			remoteInfo = ZERO_CHECK;
-		};
-		8133E1399AB647D1B43F0191 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1EAF97E761004637AFD99B24 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C8994A4A30BF428288C41132;
+			remoteGlobalIDString = C2920CBF20514736BC445365;
 			remoteInfo = Framework_OpenGl;
 		};
-		81DAB4D3F01145CF9BE0596B /* PBXContainerItemProxy */ = {
+		381C7B7CE7374E5AB1F94971 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 1EAF97E761004637AFD99B24 /* Project object */;
+			containerPortal = D740AC8F72AA4C02B4B3AEC1 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = EB114EEB04084B60B33F647D;
+			remoteGlobalIDString = 687167BB77A0419196BB3ED0;
+			remoteInfo = ALL_BUILD;
+		};
+		5D6123C0A12B4A468096EB9D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D740AC8F72AA4C02B4B3AEC1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E87A927634F24825820F8DE5;
+			remoteInfo = ZERO_CHECK;
+		};
+		B72E7AA7EE9649AC8B03A9FF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D740AC8F72AA4C02B4B3AEC1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 687167BB77A0419196BB3ED0;
+			remoteInfo = ALL_BUILD;
+		};
+		EC0B0F45B0F64649ADA7B237 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D740AC8F72AA4C02B4B3AEC1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C2920CBF20514736BC445365;
+			remoteInfo = Framework_OpenGl;
+		};
+		EC19CA033C254C50B267B40A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D740AC8F72AA4C02B4B3AEC1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BA27CFF6DFA04BAA912F3EA9;
 			remoteInfo = gsh_opengl;
 		};
-		B3768B40F3DA4A9EBA26ECFA /* PBXContainerItemProxy */ = {
+		ED95C7E781AF4D86938A05F2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 1EAF97E761004637AFD99B24 /* Project object */;
+			containerPortal = D740AC8F72AA4C02B4B3AEC1 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C8994A4A30BF428288C41132;
-			remoteInfo = Framework_OpenGl;
-		};
-		B4CE3936D60F43C9A3B5DFD5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1EAF97E761004637AFD99B24 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 6B9C69E5DB214681B2A5C976;
-			remoteInfo = ALL_BUILD;
+			remoteGlobalIDString = E87A927634F24825820F8DE5;
+			remoteInfo = ZERO_CHECK;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0325ACA71E74459CBCCC39B1 /* gsh_opengl */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libgsh_opengl.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		155626504FA24B66B3D8A63E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL_Texture.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_OpenGL_Texture.cpp; path = GSH_OpenGL_Texture.cpp; sourceTree = SOURCE_ROOT; };
-		1D4655F291F04741AC6A003B /* /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/FrameworkOpenGl/CMakeFiles/Framework_OpenGl.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../../../../cmake/Source/ui_ios/gs/GSH_OpenGL/FrameworkOpenGl/CMakeFiles/Framework_OpenGl.dir/Info.plist; sourceTree = SOURCE_ROOT; };
-		2ED5E0EBD76D4E078912E1A8 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/Program.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Program.h; path = ../../../deps/Framework/include/opengl/Program.h; sourceTree = SOURCE_ROOT; };
-		441651F720C5447092DA19DC /* Framework_OpenGl */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libFramework_OpenGl.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		44D545E212824DD586361490 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL_Shader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_OpenGL_Shader.cpp; path = GSH_OpenGL_Shader.cpp; sourceTree = SOURCE_ROOT; };
-		5B2A1D5C89124C62B8E0475D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/CMakeFiles/gsh_opengl.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../../../../cmake/Source/ui_ios/gs/GSH_OpenGL/CMakeFiles/gsh_opengl.dir/Info.plist; sourceTree = SOURCE_ROOT; };
-		644720D0E89746F799BB174F /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = ../../../deps/Framework/build_cmake/FrameworkOpenGl/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		70B63B93E9F343858B30756E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/Resource.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Resource.h; path = ../../../deps/Framework/include/opengl/Resource.h; sourceTree = SOURCE_ROOT; };
-		7AAB6F2DE31243E884DD6165 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/opengl/Shader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Shader.cpp; path = ../../../deps/Framework/src/opengl/Shader.cpp; sourceTree = SOURCE_ROOT; };
-		A3BD3A15E4B84452A31D0058 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/OpenGlDef.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = OpenGlDef.h; path = ../../../deps/Framework/include/opengl/OpenGlDef.h; sourceTree = SOURCE_ROOT; };
-		A436E9EA0CE340EEB9B487DD /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/opengl/Program.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Program.cpp; path = ../../../deps/Framework/src/opengl/Program.cpp; sourceTree = SOURCE_ROOT; };
-		B3B2F6DA8A334B999B27CA89 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		B8A066056E2E4423B54C7024 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/Shader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Shader.h; path = ../../../deps/Framework/include/opengl/Shader.h; sourceTree = SOURCE_ROOT; };
-		B94F159961E946B7876F5A53 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_OpenGL.h; path = GSH_OpenGL.h; sourceTree = SOURCE_ROOT; };
-		D23093CCBE78430CA72F3474 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		D4E235A30A804322A598F5FE /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_OpenGL.cpp; path = GSH_OpenGL.cpp; sourceTree = SOURCE_ROOT; };
+		1041D2AD48484791B7D56A70 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/FrameworkOpenGl/CMakeFiles/Framework_OpenGl.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/FrameworkOpenGl/CMakeFiles/Framework_OpenGl.dir/Info.plist; sourceTree = "<absolute>"; };
+		23501445B5C94E9E811DBCA4 /* Framework_OpenGl */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libFramework_OpenGl.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		287C7F9478904FD89A761102 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL_Texture.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_OpenGL_Texture.cpp; path = GSH_OpenGL_Texture.cpp; sourceTree = SOURCE_ROOT; };
+		29B3AE865F3A407E8A08007E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_OpenGL.cpp; path = GSH_OpenGL.cpp; sourceTree = SOURCE_ROOT; };
+		2C3E8CEBC4E3488098AA9583 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		36CB7B1F4C4E4AB694DA7AE2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/opengl/Shader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Shader.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/opengl/Shader.cpp"; sourceTree = "<absolute>"; };
+		53E387C08AD044919D1F14AB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL_Shader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GSH_OpenGL_Shader.cpp; path = GSH_OpenGL_Shader.cpp; sourceTree = SOURCE_ROOT; };
+		66ABF8D3AC6A42B6AE0434B1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/Program.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Program.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/Program.h"; sourceTree = "<absolute>"; };
+		6EB1F2824A6B4390839813C2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/CMakeFiles/gsh_opengl.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/CMakeFiles/gsh_opengl.dir/Info.plist; sourceTree = "<absolute>"; };
+		8A4C1310375C48EB8F111088 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/Shader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Shader.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/Shader.h"; sourceTree = "<absolute>"; };
+		9210D3932604402E91557017 /* gsh_opengl */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libgsh_opengl.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		9803E794F538451497BFFEAF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		ACF2D7A6A1704B3E8B644870 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/OpenGlDef.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = OpenGlDef.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/OpenGlDef.h"; sourceTree = "<absolute>"; };
+		B32260768F8D474EBACF68B3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl/CMakeLists.txt"; sourceTree = "<absolute>"; };
+		BBA345DC02484FA8A2D763E7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/Resource.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Resource.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/Resource.h"; sourceTree = "<absolute>"; };
+		E2FA8D2DB4E34906BB30A438 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/opengl/Program.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Program.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/opengl/Program.cpp"; sourceTree = "<absolute>"; };
+		E7C7D67630C34EEDBB87936E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GSH_OpenGL.h; path = GSH_OpenGL.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		B79EA6FDA5C243DA9A4B42A1 /* Frameworks */ = {
+		3C88A4C08BD54B32AC61FB75 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		EB85B7A625754ACFA607CB89 /* Frameworks */ = {
+		C78B1CD2BDB640D796B94BFB /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -188,134 +207,152 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		02FDFF2F934F4421AC922186 /* Frameworks */ = {
+		1A941B1B009243D2A4213781 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				1041D2AD48484791B7D56A70 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/FrameworkOpenGl/CMakeFiles/Framework_OpenGl.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		1E2704C515754C2E9E92EAB7 = {
+			isa = PBXGroup;
+			children = (
+				52804F86EEE1453985591CC7 /* gsh_opengl */,
+				7199DD7A941F4C5D96B04FDC /* ALL_BUILD */,
+				A241B1D0CDB44EEEB8B088AD /* Framework_OpenGl */,
+				C66BA080D4A34DD7B86C3CC2 /* Products */,
+				5FE22E0D1A67455EADC64866 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		52804F86EEE1453985591CC7 /* gsh_opengl */ = {
+			isa = PBXGroup;
+			children = (
+				6007ABC2733349E584A15E9B /* Source Files */,
+				CE37D78A4A2547DC837CC1ED /* Header Files */,
+				AE3C815A873A4290B4D24B43 /* Resources */,
+				2C3E8CEBC4E3488098AA9583 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/CMakeLists.txt */,
+			);
+			name = gsh_opengl;
+			sourceTree = "<group>";
+		};
+		5FE22E0D1A67455EADC64866 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		19ABE360A3AF49F2B3527F8A /* gsh_opengl */ = {
+		6007ABC2733349E584A15E9B /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				C76DD38E800B496AAF7E63CB /* Source Files */,
-				592E910FB89749FA89D21933 /* Header Files */,
-				C22033A3CF744B34923D4E3A /* Resources */,
-				D23093CCBE78430CA72F3474 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/CMakeLists.txt */,
-			);
-			name = gsh_opengl;
-			sourceTree = "<group>";
-		};
-		22A2735CE2644AB1B01C7A8A = {
-			isa = PBXGroup;
-			children = (
-				19ABE360A3AF49F2B3527F8A /* gsh_opengl */,
-				B55146F1AEF44884965DDDA2 /* ALL_BUILD */,
-				FCBEE458D95943419C779934 /* Framework_OpenGl */,
-				BF1623CD9EA1415FBAE1ADFE /* Products */,
-				02FDFF2F934F4421AC922186 /* Frameworks */,
-			);
-			sourceTree = "<group>";
-		};
-		3AE97035C42647A88822DA02 /* Source Files */ = {
-			isa = PBXGroup;
-			children = (
-				A436E9EA0CE340EEB9B487DD /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/opengl/Program.cpp */,
-				7AAB6F2DE31243E884DD6165 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/opengl/Shader.cpp */,
+				29B3AE865F3A407E8A08007E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL.cpp */,
+				53E387C08AD044919D1F14AB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL_Shader.cpp */,
+				287C7F9478904FD89A761102 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL_Texture.cpp */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
 		};
-		592E910FB89749FA89D21933 /* Header Files */ = {
+		7199DD7A941F4C5D96B04FDC /* ALL_BUILD */ = {
 			isa = PBXGroup;
 			children = (
-				B94F159961E946B7876F5A53 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL.h */,
-			);
-			name = "Header Files";
-			sourceTree = "<group>";
-		};
-		5F14A6BD17724138A1E57146 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				1D4655F291F04741AC6A003B /* /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/FrameworkOpenGl/CMakeFiles/Framework_OpenGl.dir/Info.plist */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-		};
-		B55146F1AEF44884965DDDA2 /* ALL_BUILD */ = {
-			isa = PBXGroup;
-			children = (
-				CFC33C0FC481420D8051CBE7 /* CMake Rules */,
-				B3B2F6DA8A334B999B27CA89 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/CMakeLists.txt */,
+				C41C5CE7FFBE4C4D80958111 /* CMake Rules */,
+				9803E794F538451497BFFEAF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/CMakeLists.txt */,
 			);
 			name = ALL_BUILD;
 			sourceTree = "<group>";
 		};
-		BF1623CD9EA1415FBAE1ADFE /* Products */ = {
+		9292266E2E92476C9D471017 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				441651F720C5447092DA19DC /* Framework_OpenGl */,
-				0325ACA71E74459CBCCC39B1 /* gsh_opengl */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		C22033A3CF744B34923D4E3A /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				5B2A1D5C89124C62B8E0475D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/CMakeFiles/gsh_opengl.dir/Info.plist */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-		};
-		C76DD38E800B496AAF7E63CB /* Source Files */ = {
-			isa = PBXGroup;
-			children = (
-				D4E235A30A804322A598F5FE /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL.cpp */,
-				44D545E212824DD586361490 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL_Shader.cpp */,
-				155626504FA24B66B3D8A63E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL_Texture.cpp */,
+				E2FA8D2DB4E34906BB30A438 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/opengl/Program.cpp */,
+				36CB7B1F4C4E4AB694DA7AE2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/opengl/Shader.cpp */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
 		};
-		CFC33C0FC481420D8051CBE7 /* CMake Rules */ = {
+		A241B1D0CDB44EEEB8B088AD /* Framework_OpenGl */ = {
+			isa = PBXGroup;
+			children = (
+				9292266E2E92476C9D471017 /* Source Files */,
+				F074B11F0A854504B4E98B1E /* Header Files */,
+				1A941B1B009243D2A4213781 /* Resources */,
+				B32260768F8D474EBACF68B3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl/CMakeLists.txt */,
+			);
+			name = Framework_OpenGl;
+			sourceTree = "<group>";
+		};
+		AE3C815A873A4290B4D24B43 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				6EB1F2824A6B4390839813C2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/CMakeFiles/gsh_opengl.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		C41C5CE7FFBE4C4D80958111 /* CMake Rules */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = "CMake Rules";
 			sourceTree = "<group>";
 		};
-		F5F7670101104ADA8AED1DC3 /* Header Files */ = {
+		C66BA080D4A34DD7B86C3CC2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A3BD3A15E4B84452A31D0058 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/OpenGlDef.h */,
-				2ED5E0EBD76D4E078912E1A8 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/Program.h */,
-				70B63B93E9F343858B30756E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/Resource.h */,
-				B8A066056E2E4423B54C7024 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/Shader.h */,
+				23501445B5C94E9E811DBCA4 /* Framework_OpenGl */,
+				9210D3932604402E91557017 /* gsh_opengl */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CE37D78A4A2547DC837CC1ED /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				E7C7D67630C34EEDBB87936E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL.h */,
 			);
 			name = "Header Files";
 			sourceTree = "<group>";
 		};
-		FCBEE458D95943419C779934 /* Framework_OpenGl */ = {
+		F074B11F0A854504B4E98B1E /* Header Files */ = {
 			isa = PBXGroup;
 			children = (
-				3AE97035C42647A88822DA02 /* Source Files */,
-				F5F7670101104ADA8AED1DC3 /* Header Files */,
-				5F14A6BD17724138A1E57146 /* Resources */,
-				644720D0E89746F799BB174F /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl/CMakeLists.txt */,
+				ACF2D7A6A1704B3E8B644870 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/OpenGlDef.h */,
+				66ABF8D3AC6A42B6AE0434B1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/Program.h */,
+				BBA345DC02484FA8A2D763E7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/Resource.h */,
+				8A4C1310375C48EB8F111088 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/include/opengl/Shader.h */,
 			);
-			name = Framework_OpenGl;
+			name = "Header Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		C8994A4A30BF428288C41132 /* Framework_OpenGl */ = {
+		BA27CFF6DFA04BAA912F3EA9 /* gsh_opengl */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 03543C7C6B2348429B161535 /* Build configuration list for PBXNativeTarget "Framework_OpenGl" */;
+			buildConfigurationList = 71C9BB2666CE43AC9D9C81DA /* Build configuration list for PBXNativeTarget "gsh_opengl" */;
 			buildPhases = (
-				472C8D3B22B247BCAE16BF49 /* Sources */,
-				EB85B7A625754ACFA607CB89 /* Frameworks */,
+				79638B3B9AE5452386FD468C /* Sources */,
+				C78B1CD2BDB640D796B94BFB /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E03F1C86ED80487F86A00B47 /* PBXTargetDependency */,
+				9C60DDCB0D344A6BA5204F87 /* PBXTargetDependency */,
+			);
+			name = gsh_opengl;
+			productName = gsh_opengl;
+			productReference = 9210D3932604402E91557017 /* gsh_opengl */;
+			productType = "com.apple.product-type.library.static";
+		};
+		C2920CBF20514736BC445365 /* Framework_OpenGl */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E04263A15D1D46F4950DD25A /* Build configuration list for PBXNativeTarget "Framework_OpenGl" */;
+			buildPhases = (
+				FF0BBF44BFB647149B6876F9 /* Sources */,
+				3C88A4C08BD54B32AC61FB75 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -323,57 +360,40 @@
 			);
 			name = Framework_OpenGl;
 			productName = Framework_OpenGl;
-			productReference = 441651F720C5447092DA19DC /* Framework_OpenGl */;
-			productType = "com.apple.product-type.library.static";
-		};
-		EB114EEB04084B60B33F647D /* gsh_opengl */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = ACFACF4D52A1475EB21BCF19 /* Build configuration list for PBXNativeTarget "gsh_opengl" */;
-			buildPhases = (
-				9A47FE655F154C05B1FF28B9 /* Sources */,
-				B79EA6FDA5C243DA9A4B42A1 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				42FBF762D45B4EDCB792C486 /* PBXTargetDependency */,
-				4DA4642409AB47FA8E9623BA /* PBXTargetDependency */,
-			);
-			name = gsh_opengl;
-			productName = gsh_opengl;
-			productReference = 0325ACA71E74459CBCCC39B1 /* gsh_opengl */;
+			productReference = 23501445B5C94E9E811DBCA4 /* Framework_OpenGl */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		1EAF97E761004637AFD99B24 /* Project object */ = {
+		D740AC8F72AA4C02B4B3AEC1 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1300;
+				LastUpgradeCheck = 1420;
 			};
-			buildConfigurationList = D6FF106BA6DB411BA6F98ECD /* Build configuration list for PBXProject "GSH_OpenGL" */;
+			buildConfigurationList = 7462AE8A18EC471CBD25E274 /* Build configuration list for PBXProject "GSH_OpenGL" */;
 			buildSettings = {
 			};
 			buildStyles = (
-				F7BF932FEAA444C4B4699FCD /* Debug */,
-				05939ACF1CB24730993CA69F /* Release */,
-				D4294DE6E2F04560AF1B35B5 /* MinSizeRel */,
-				FF4E804BE42E40A492AD782F /* RelWithDebInfo */,
+				9B953DBFA7DC4772B4C2FFE7 /* Debug */,
+				413CE05D527946B283C24182 /* Release */,
+				DC0417957CDC4E0483538A93 /* MinSizeRel */,
+				1B26E6D943C14C0B91C3F96F /* RelWithDebInfo */,
 			);
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
-			mainGroup = 22A2735CE2644AB1B01C7A8A;
-			projectDirPath = "/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL";
+			mainGroup = 1E2704C515754C2E9E92EAB7;
+			projectDirPath = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL";
 			projectRoot = "";
 			targets = (
-				6B9C69E5DB214681B2A5C976 /* ALL_BUILD */,
-				C8994A4A30BF428288C41132 /* Framework_OpenGl */,
-				B7A566E4767340588D653807 /* RUN_TESTS */,
-				3EBABC1ED902418AB5132579 /* ZERO_CHECK */,
-				EB114EEB04084B60B33F647D /* gsh_opengl */,
-				0285C8420FCC45EA8D71FBC5 /* install */,
+				687167BB77A0419196BB3ED0 /* ALL_BUILD */,
+				C2920CBF20514736BC445365 /* Framework_OpenGl */,
+				744235B101344E32861135D6 /* RUN_TESTS */,
+				E87A927634F24825820F8DE5 /* ZERO_CHECK */,
+				BA27CFF6DFA04BAA912F3EA9 /* gsh_opengl */,
+				30DE5BD6E1FC421D914FDFDF /* install */,
+				558005FED0934015B4894DF2 /* package */,
 			);
 		};
 /* End PBXProject section */
@@ -392,25 +412,104 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
-  /usr/local/Cellar/cmake/3.21.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
-  /usr/local/Cellar/cmake/3.21.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
-  /usr/local/Cellar/cmake/3.21.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
-  /usr/local/Cellar/cmake/3.21.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		32E5BB6903FB47177C88EC33 /* Generate CMakeFiles/ZERO_CHECK */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ZERO_CHECK";
+			outputPaths = (
+/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/CMakeFiles/ZERO_CHECK			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
+  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
+  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
+  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
+  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/CMakeScripts/ReRunCMake.make
 fi
 ";
 			showEnvVarsInLog = 0;
 		};
 		3C0110FC8322DE7E50886E21 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		571234464C2A5D0D43F1AB42 /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		661D9C604B3B91332E7543CC = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -468,20 +567,20 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
-  /usr/local/Cellar/cmake/3.21.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
-  /usr/local/Cellar/cmake/3.21.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
-  /usr/local/Cellar/cmake/3.21.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
-  /usr/local/Cellar/cmake/3.21.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -501,7 +600,7 @@ fi
 exit 0";
 			showEnvVarsInLog = 0;
 		};
-		B78729FFC07D7F70CF26FA4A /* Generate CMakeFiles/ALL_BUILD */ = {
+		D034B872C7C1909D120FB037 /* Generate CMakeFiles/ALL_BUILD */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -511,58 +610,25 @@ exit 0";
 			);
 			name = "Generate CMakeFiles/ALL_BUILD";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/CMakeFiles/ALL_BUILD			);
+/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/CMakeFiles/ALL_BUILD			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
   echo Build\\ all\\ projects
-fi
-";
-			showEnvVarsInLog = 0;
-		};
-		D8A18D28028FB2D05220D658 /* Generate CMakeFiles/ZERO_CHECK */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Generate CMakeFiles/ZERO_CHECK";
-			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/CMakeFiles/ZERO_CHECK			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e
-if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
-  make -f /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/CMakeScripts/ReRunCMake.make
-fi
-if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
-  make -f /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/CMakeScripts/ReRunCMake.make
-fi
-if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
-  make -f /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/CMakeScripts/ReRunCMake.make
-fi
-if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL
-  make -f /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/CMakeScripts/ReRunCMake.make
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -570,82 +636,67 @@ fi
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		472C8D3B22B247BCAE16BF49 /* Sources */ = {
+		79638B3B9AE5452386FD468C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D7F473C9784C4AEC896A9424 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/opengl/Program.cpp */,
-				B1074855245440ADB308D561 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/src/opengl/Shader.cpp */,
+				DFA7DCF1FCAF4B0088ED71BF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL.cpp */,
+				77CA4AEC2FB6485AA5821FCF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL_Shader.cpp */,
+				B494CC783CF14CAE8BAD8AE2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL_Texture.cpp */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		9A47FE655F154C05B1FF28B9 /* Sources */ = {
+		FF0BBF44BFB647149B6876F9 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2A693B7B9B2E44FAA8FCE3B5 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL.cpp */,
-				482587CACBEA4513B8B5DF2B /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL_Shader.cpp */,
-				2D92858609F34B4C9189FE2C /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/GSH_OpenGL_Texture.cpp */,
+				AB23EE0A99D94596844D8718 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/opengl/Program.cpp */,
+				942A8257EA654E8B866CF7EA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/opengl/Shader.cpp */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		1E052F735E9D4F2B9EFDC4FB /* PBXTargetDependency */ = {
+		3275E248EACB4128BF8697B0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = EB114EEB04084B60B33F647D /* gsh_opengl */;
-			targetProxy = 81DAB4D3F01145CF9BE0596B /* PBXContainerItemProxy */;
+			target = 687167BB77A0419196BB3ED0 /* ALL_BUILD */;
+			targetProxy = B72E7AA7EE9649AC8B03A9FF /* PBXContainerItemProxy */;
 		};
-		42FBF762D45B4EDCB792C486 /* PBXTargetDependency */ = {
+		9411036E123B4D17A37A691D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C8994A4A30BF428288C41132 /* Framework_OpenGl */;
-			targetProxy = B3768B40F3DA4A9EBA26ECFA /* PBXContainerItemProxy */;
+			target = BA27CFF6DFA04BAA912F3EA9 /* gsh_opengl */;
+			targetProxy = EC19CA033C254C50B267B40A /* PBXContainerItemProxy */;
 		};
-		4DA4642409AB47FA8E9623BA /* PBXTargetDependency */ = {
+		9C60DDCB0D344A6BA5204F87 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 3EBABC1ED902418AB5132579 /* ZERO_CHECK */;
-			targetProxy = 36D76B45BDA0446483077A46 /* PBXContainerItemProxy */;
+			target = E87A927634F24825820F8DE5 /* ZERO_CHECK */;
+			targetProxy = ED95C7E781AF4D86938A05F2 /* PBXContainerItemProxy */;
 		};
-		5158B0220A52408D9B0B23AE /* PBXTargetDependency */ = {
+		A303C252738F44D491F4D394 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C8994A4A30BF428288C41132 /* Framework_OpenGl */;
-			targetProxy = 8133E1399AB647D1B43F0191 /* PBXContainerItemProxy */;
+			target = E87A927634F24825820F8DE5 /* ZERO_CHECK */;
+			targetProxy = 5D6123C0A12B4A468096EB9D /* PBXContainerItemProxy */;
 		};
-		6AA1BF23B495418D8AFCD66F /* PBXTargetDependency */ = {
+		B43EB6FEA96840A9999E2897 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 3EBABC1ED902418AB5132579 /* ZERO_CHECK */;
-			targetProxy = 4532C35176DF4AC49ACB4E48 /* PBXContainerItemProxy */;
+			target = C2920CBF20514736BC445365 /* Framework_OpenGl */;
+			targetProxy = EC0B0F45B0F64649ADA7B237 /* PBXContainerItemProxy */;
 		};
-		F08218769E5A4298A04B6A73 /* PBXTargetDependency */ = {
+		E03F1C86ED80487F86A00B47 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 6B9C69E5DB214681B2A5C976 /* ALL_BUILD */;
-			targetProxy = B4CE3936D60F43C9A3B5DFD5 /* PBXContainerItemProxy */;
+			target = C2920CBF20514736BC445365 /* Framework_OpenGl */;
+			targetProxy = 095AA2FC70FD439FAFDC8600 /* PBXContainerItemProxy */;
+		};
+		E26BB2A56CA34E0097B16B31 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 687167BB77A0419196BB3ED0 /* ALL_BUILD */;
+			targetProxy = 381C7B7CE7374E5AB1F94971 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		1B90B27FEA3342B6AEB943F0 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		1C9D36C29708449B9B83C227 /* MinSizeRel */ = {
+		026C57CE1B704C4B88FBFBB0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = arm64;
@@ -653,47 +704,14 @@ fi
 				CODE_SIGNING_ALLOWED = NO;
 				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_IDENTITY = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/build;
-			};
-			name = MinSizeRel;
-		};
-		20802DC4AA75420DB7D35B94 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				SDKROOT = "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk";
+				SWIFT_VERSION = 4.0;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build;
 			};
 			name = Release;
 		};
-		26F7A0B501A54F378BC4E1EB /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/build;
-			};
-			name = RelWithDebInfo;
-		};
-		2F2704D6AE744901AD6B291F /* Release */ = {
+		0F64A543ABA94845BAA75E62 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -707,157 +725,12 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = install;
 				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		3474510C20B349E1848963F6 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"1.3-2331-g0b8742f68\"'",GLES_COMPATIBILITY,"'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0                -mios-version-min=11.0    -D_DEBUG '-std=gnu++17' ";
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = gsh_opengl;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		41D9896DDB684DF8B99EF3F2 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/build;
-			};
-			name = Release;
-		};
-		4902062092BD48B08C9FE0AC /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		5869D2831D9D479C92026DBC /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"1.3-2331-g0b8742f68\"'",GLES_COMPATIBILITY,"'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0                -mios-version-min=11.0     -DNDEBUG -DNDEBUG '-std=gnu++17' ";
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = gsh_opengl;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		5F6ABF4D487F4E0FB0EDD074 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/build;
-			};
-			name = Debug;
-		};
-		6528EA0527974A979713C60C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		6C871EE3B1F048D080DA7613 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = RelWithDebInfo;
 		};
-		6F26CAD968AC493D8711F763 /* Debug */ = {
+		12A495765D9B4EC899B53F7E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -871,129 +744,99 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = install;
 				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = Debug;
 		};
-		71132288ED734C7F898A3F27 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		71FD638A1B4845EC86A48B31 /* Release */ = {
+		136315BB57644AF989149AD2 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = arm64;
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLES_COMPATIBILITY,"'PLAY_VERSION=\"1.3-2331-g0b8742f68\"'","'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0                -mios-version-min=11.0     -DNDEBUG -DNDEBUG '-std=gnu++17' ";
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = Framework_OpenGl;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/FrameworkOpenGl;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		887948D127B74ECC8EBB5CCB /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		92BADEC639FB4014AADB2C09 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		A3EB053C06F7418EA20BF305 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLES_COMPATIBILITY,"'PLAY_VERSION=\"1.3-2331-g0b8742f68\"'","'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",GLES_COMPATIBILITY,ZWRAP_USE_ZSTD,"'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
+				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/xxHash/cmake_unofficial/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0                -mios-version-min=11.0        -DNDEBUG '-std=gnu++17' ";
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2                -mios-version-min=12.2        -DNDEBUG '-std=gnu++17' ";
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = Framework_OpenGl;
+				PRODUCT_NAME = gsh_opengl;
 				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/FrameworkOpenGl;
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/gsh_opengl.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = RelWithDebInfo;
 		};
-		A9C5264773EE40BFAF65DD43 /* Debug */ = {
+		22ED656242414A09A80D9BAB /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/FrameworkOpenGl/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLES_COMPATIBILITY,"'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,"'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/xxHash/cmake_unofficial/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2                -mios-version-min=12.2     -DNDEBUG '-std=gnu++17' ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = Framework_OpenGl;
+				SECTORDER_FLAGS = "";
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/Framework_OpenGl.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		2369147B7400472788D15D3C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/Debug${EFFECTIVE_PLATFORM_NAME}";
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",GLES_COMPATIBILITY,ZWRAP_USE_ZSTD,"'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/xxHash/cmake_unofficial/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2                -mios-version-min=12.2    -D_DEBUG '-std=gnu++17' ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = gsh_opengl;
+				SECTORDER_FLAGS = "";
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/gsh_opengl.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		23BCCD7D52244E43A8E4293D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1007,205 +850,12 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = RUN_TESTS;
 				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = Debug;
 		};
-		AA76E5F1538849AF90155180 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"1.3-2331-g0b8742f68\"'",GLES_COMPATIBILITY,"'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0                -mios-version-min=11.0     -DNDEBUG '-std=gnu++17' ";
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = gsh_opengl;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		AC311DCB232448578D37FAE2 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		BEBA39F086824A99BD66A182 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLES_COMPATIBILITY,"'PLAY_VERSION=\"1.3-2331-g0b8742f68\"'","'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0                -mios-version-min=11.0     -DNDEBUG '-std=gnu++17' ";
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = Framework_OpenGl;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/FrameworkOpenGl;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		C0FE6240EFFD4125A805E575 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLES_COMPATIBILITY,"'PLAY_VERSION=\"1.3-2331-g0b8742f68\"'","'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0                -mios-version-min=11.0    -D_DEBUG '-std=gnu++17' ";
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = Framework_OpenGl;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/FrameworkOpenGl;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		C6A0EE25553949259DC68F7A /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		CD905C8F957A44A0A86B06D2 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		CF7624C4BD06461C81BC547C /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"1.3-2331-g0b8742f68\"'",GLES_COMPATIBILITY,"'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0                -mios-version-min=11.0        -DNDEBUG '-std=gnu++17' ";
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = gsh_opengl;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		D5C82EE237D24C48A8F23B3A /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		E9553EB3AABB4D4BA6F6AEE6 /* RelWithDebInfo */ = {
+		245FEA2E18BD4495AFBC07A9 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1219,7 +869,500 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = install;
 				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		24D434FAB79E4AF486B87CF8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		25B10F08CEC54FD586829BCD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				SDKROOT = "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk";
+				SWIFT_VERSION = 4.0;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build;
+			};
+			name = Debug;
+		};
+		2D385E75E9834314A29E5BBD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/Release${EFFECTIVE_PLATFORM_NAME}";
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",GLES_COMPATIBILITY,ZWRAP_USE_ZSTD,"'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/xxHash/cmake_unofficial/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2                -mios-version-min=12.2     -DNDEBUG -DNDEBUG '-std=gnu++17' ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = gsh_opengl;
+				SECTORDER_FLAGS = "";
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/gsh_opengl.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		2FD9C1904C00482B9911A3C6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		30EBCAFEE1694AB285A54695 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		33799117BC684AA68E8774D2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/FrameworkOpenGl/Release${EFFECTIVE_PLATFORM_NAME}";
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLES_COMPATIBILITY,"'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,"'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/xxHash/cmake_unofficial/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2                -mios-version-min=12.2     -DNDEBUG -DNDEBUG '-std=gnu++17' ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = Framework_OpenGl;
+				SECTORDER_FLAGS = "";
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/Framework_OpenGl.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		3C01094B435F4BEBB0E24B29 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				SDKROOT = "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk";
+				SWIFT_VERSION = 4.0;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build;
+			};
+			name = RelWithDebInfo;
+		};
+		3D6C6D8A458942EA84CEC12A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		49C7F30214784995B2998D13 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		542E18DBDB1349BA963CA2DD /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		7A955B687A124633A524997B /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				SDKROOT = "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk";
+				SWIFT_VERSION = 4.0;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build;
+			};
+			name = MinSizeRel;
+		};
+		8D04996E97E346669CEFFEAF /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		8DD6BBE10F3A4244ADC4803C /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/FrameworkOpenGl/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLES_COMPATIBILITY,"'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,"'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/xxHash/cmake_unofficial/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2                -mios-version-min=12.2        -DNDEBUG '-std=gnu++17' ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = Framework_OpenGl;
+				SECTORDER_FLAGS = "";
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/Framework_OpenGl.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		9A3C7C4676A64B8EA4646E91 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		9F4D2F382B2B4F26B00C4800 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		AD204E828A85434286FC2BC2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		B4C996B54F0247C1A11A64E1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/FrameworkOpenGl/Debug${EFFECTIVE_PLATFORM_NAME}";
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",GLES_COMPATIBILITY,"'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,"'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/xxHash/cmake_unofficial/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2                -mios-version-min=12.2    -D_DEBUG '-std=gnu++17' ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = Framework_OpenGl;
+				SECTORDER_FLAGS = "";
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/Framework_OpenGl.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		BE3179ADD32A44DFB1080099 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		C900D1118F0B47EFB30A1621 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		E68AAF600CD44DA39A964CF0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		EA9E5568477646CCBEC0F44C /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/gs/GSH_OpenGL/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",GLES_COMPATIBILITY,ZWRAP_USE_ZSTD,"'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/xxHash/cmake_unofficial/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2                -mios-version-min=12.2     -DNDEBUG '-std=gnu++17' ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = gsh_opengl;
+				SECTORDER_FLAGS = "";
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/gsh_opengl.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		F139827569B74591B8DAFC7B /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		F1735C4832CA4334B4C541A0 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		FF939B74C6694ECCADD61F56 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1228,84 +1371,95 @@ fi
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		03543C7C6B2348429B161535 /* Build configuration list for PBXNativeTarget "Framework_OpenGl" */ = {
+		08C2EE109B5F43FD985319B1 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C0FE6240EFFD4125A805E575 /* Debug */,
-				71FD638A1B4845EC86A48B31 /* Release */,
-				BEBA39F086824A99BD66A182 /* MinSizeRel */,
-				A3EB053C06F7418EA20BF305 /* RelWithDebInfo */,
+				9F4D2F382B2B4F26B00C4800 /* Debug */,
+				2FD9C1904C00482B9911A3C6 /* Release */,
+				C900D1118F0B47EFB30A1621 /* MinSizeRel */,
+				F1735C4832CA4334B4C541A0 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		23011753366C48DF81EF9104 /* Build configuration list for PBXAggregateTarget "install" */ = {
+		44BD020771544FB38CECD591 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				6F26CAD968AC493D8711F763 /* Debug */,
-				2F2704D6AE744901AD6B291F /* Release */,
-				92BADEC639FB4014AADB2C09 /* MinSizeRel */,
-				E9553EB3AABB4D4BA6F6AEE6 /* RelWithDebInfo */,
+				BE3179ADD32A44DFB1080099 /* Debug */,
+				AD204E828A85434286FC2BC2 /* Release */,
+				F139827569B74591B8DAFC7B /* MinSizeRel */,
+				30EBCAFEE1694AB285A54695 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		76BD5F65538B436EBDD6C6EC /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
+		552F05B4CF1D49A3839B9EDD /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A9C5264773EE40BFAF65DD43 /* Debug */,
-				4902062092BD48B08C9FE0AC /* Release */,
-				1B90B27FEA3342B6AEB943F0 /* MinSizeRel */,
-				AC311DCB232448578D37FAE2 /* RelWithDebInfo */,
+				23BCCD7D52244E43A8E4293D /* Debug */,
+				49C7F30214784995B2998D13 /* Release */,
+				9A3C7C4676A64B8EA4646E91 /* MinSizeRel */,
+				FF939B74C6694ECCADD61F56 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		ACFACF4D52A1475EB21BCF19 /* Build configuration list for PBXNativeTarget "gsh_opengl" */ = {
+		71C9BB2666CE43AC9D9C81DA /* Build configuration list for PBXNativeTarget "gsh_opengl" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				3474510C20B349E1848963F6 /* Debug */,
-				5869D2831D9D479C92026DBC /* Release */,
-				AA76E5F1538849AF90155180 /* MinSizeRel */,
-				CF7624C4BD06461C81BC547C /* RelWithDebInfo */,
+				2369147B7400472788D15D3C /* Debug */,
+				2D385E75E9834314A29E5BBD /* Release */,
+				EA9E5568477646CCBEC0F44C /* MinSizeRel */,
+				136315BB57644AF989149AD2 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		B889D500152042D38A49D3D5 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+		7462AE8A18EC471CBD25E274 /* Build configuration list for PBXProject "GSH_OpenGL" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				6528EA0527974A979713C60C /* Debug */,
-				C6A0EE25553949259DC68F7A /* Release */,
-				D5C82EE237D24C48A8F23B3A /* MinSizeRel */,
-				6C871EE3B1F048D080DA7613 /* RelWithDebInfo */,
+				25B10F08CEC54FD586829BCD /* Debug */,
+				026C57CE1B704C4B88FBFBB0 /* Release */,
+				7A955B687A124633A524997B /* MinSizeRel */,
+				3C01094B435F4BEBB0E24B29 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		D6FF106BA6DB411BA6F98ECD /* Build configuration list for PBXProject "GSH_OpenGL" */ = {
+		C95FCF6053FB4CA59E240ADE /* Build configuration list for PBXAggregateTarget "package" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				5F6ABF4D487F4E0FB0EDD074 /* Debug */,
-				41D9896DDB684DF8B99EF3F2 /* Release */,
-				1C9D36C29708449B9B83C227 /* MinSizeRel */,
-				26F7A0B501A54F378BC4E1EB /* RelWithDebInfo */,
+				E68AAF600CD44DA39A964CF0 /* Debug */,
+				24D434FAB79E4AF486B87CF8 /* Release */,
+				542E18DBDB1349BA963CA2DD /* MinSizeRel */,
+				8D04996E97E346669CEFFEAF /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		E910BCE36A6E49188E508164 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+		E04263A15D1D46F4950DD25A /* Build configuration list for PBXNativeTarget "Framework_OpenGl" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				71132288ED734C7F898A3F27 /* Debug */,
-				20802DC4AA75420DB7D35B94 /* Release */,
-				CD905C8F957A44A0A86B06D2 /* MinSizeRel */,
-				887948D127B74ECC8EBB5CCB /* RelWithDebInfo */,
+				B4C996B54F0247C1A11A64E1 /* Debug */,
+				33799117BC684AA68E8774D2 /* Release */,
+				22ED656242414A09A80D9BAB /* MinSizeRel */,
+				8DD6BBE10F3A4244ADC4803C /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		F29E3B2554E943D1952DA91F /* Build configuration list for PBXAggregateTarget "install" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				12A495765D9B4EC899B53F7E /* Debug */,
+				3D6C6D8A458942EA84CEC12A /* Release */,
+				245FEA2E18BD4495AFBC07A9 /* MinSizeRel */,
+				0F64A543ABA94845BAA75E62 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 1EAF97E761004637AFD99B24 /* Project object */;
+	rootObject = D740AC8F72AA4C02B4B3AEC1 /* Project object */;
 }

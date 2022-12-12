@@ -7,45 +7,46 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		0285C8420FCC45EA8D71FBC5 /* install */ = {
+		30DE5BD6E1FC421D914FDFDF /* install */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = BFFB405855A64E02A2A35A7A /* Build configuration list for PBXAggregateTarget "install" */;
+			buildConfigurationList = EF692EE60A4341C0AD3C1670 /* Build configuration list for PBXAggregateTarget "install" */;
 			buildPhases = (
 				93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */,
 			);
 			dependencies = (
-				AE476A2A173E411FAEDC5B03 /* PBXTargetDependency */,
+				5984858303064DA78605592C /* PBXTargetDependency */,
 			);
 			name = install;
 			productName = install;
 		};
-		3EBABC1ED902418AB5132579 /* ZERO_CHECK */ = {
+		558005FED0934015B4894DF2 /* package */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 1E367CAED1314F1FBF996EC6 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildConfigurationList = 933EB6150AC145419AF06660 /* Build configuration list for PBXAggregateTarget "package" */;
 			buildPhases = (
-				4615300B8CCF47A2CEB69781 /* Generate CMakeFiles/ZERO_CHECK */,
+				571234464C2A5D0D43F1AB42 /* CMake PostBuild Rules */,
 			);
 			dependencies = (
+				F653E9554DD44445A1FAA754 /* PBXTargetDependency */,
 			);
-			name = ZERO_CHECK;
-			productName = ZERO_CHECK;
+			name = package;
+			productName = package;
 		};
-		6B9C69E5DB214681B2A5C976 /* ALL_BUILD */ = {
+		687167BB77A0419196BB3ED0 /* ALL_BUILD */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = B0089D33C2C44210B13C61D3 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildConfigurationList = E4BC2B13CE0544E3A7C313E8 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
 			buildPhases = (
-				EF6F910038EA9132EF2C5A1E /* Generate CMakeFiles/ALL_BUILD */,
+				EC1B909C4425E077445F9998 /* Generate CMakeFiles/ALL_BUILD */,
 			);
 			dependencies = (
-				12D9082A68864F84B326CDF4 /* PBXTargetDependency */,
-				2565E473D9CF4F3FAE853F82 /* PBXTargetDependency */,
+				367D7FEC49E64B8EB2DEFE6D /* PBXTargetDependency */,
+				38F588993EA14B81BE47EC80 /* PBXTargetDependency */,
 			);
 			name = ALL_BUILD;
 			productName = ALL_BUILD;
 		};
-		B7A566E4767340588D653807 /* RUN_TESTS */ = {
+		744235B101344E32861135D6 /* RUN_TESTS */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 1F17C029E44A4CE8BC1D6B37 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
+			buildConfigurationList = 4C1E12B09FAB49F8BB81E527 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
 			buildPhases = (
 				003C8D08B0008F35F218E126 /* CMake PostBuild Rules */,
 			);
@@ -54,86 +55,104 @@
 			name = RUN_TESTS;
 			productName = RUN_TESTS;
 		};
+		E87A927634F24825820F8DE5 /* ZERO_CHECK */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 5964CC57841E4EDCAD49E5A5 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildPhases = (
+				FD05E4FE8A23EDB326DEFD00 /* Generate CMakeFiles/ZERO_CHECK */,
+			);
+			dependencies = (
+			);
+			name = ZERO_CHECK;
+			productName = ZERO_CHECK;
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		716416EA94B2484081A8F8F5 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/iCade-iOS/iCadeReaderView.m */ = {isa = PBXBuildFile; fileRef = A2705DB1BB6A40FA98C2B98D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/iCade-iOS/iCadeReaderView.m */; };
-		A0816653593143DD8A3C6ACA /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/iCade-iOS/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 90EF9BEF490844E380C54AFE /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/iCade-iOS/CMakeLists.txt */; };
-		E61170D1BF834FA39E7FA0A1 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS/CMakeFiles/iCade_Static.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = EAE23996C26C4C64AB6D2964 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS/CMakeFiles/iCade_Static.dir/Info.plist */; };
+		36411A746A964A7FB60D59D2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/iCade-iOS/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 75981E47D5B64753992CDDD5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/iCade-iOS/CMakeLists.txt */; };
+		4EBA82CCAE6B44819926B7D0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/iCade-iOS/iCadeReaderView.m */ = {isa = PBXBuildFile; fileRef = CA327E817988489CA2B05B9A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/iCade-iOS/iCadeReaderView.m */; };
+		5D9FBD498FA54D288D20FE47 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS/CMakeFiles/iCade_Static.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 8227E6E38DFC4A848E05E369 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS/CMakeFiles/iCade_Static.dir/Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
-		2FDE76E7A3BD4937820656E8 /* Debug */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Debug;
-		};
-		5032DB69B2B54057A0AA0433 /* MinSizeRel */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = MinSizeRel;
-		};
-		EAD3886C678E4F3582B3D1F4 /* RelWithDebInfo */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = RelWithDebInfo;
-		};
-		F9AC4A7BD9534DE0AA02A45E /* Release */ = {
+		3C3901952C994819BEA4852C /* Release */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = Release;
 		};
+		41CCE982F7D34E73AA18B593 /* Debug */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+		9C1D573DE29C4C49BA8E1F2E /* MinSizeRel */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = MinSizeRel;
+		};
+		FB48209D736B4D5D8122A96B /* RelWithDebInfo */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = RelWithDebInfo;
+		};
 /* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
-		0E9B4D83C31B458CA0FA4CA6 /* PBXContainerItemProxy */ = {
+		4CBEC6BF5CAC452994D40067 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = EB220DB7835340FAB92AA235 /* Project object */;
+			containerPortal = EB604A7663B7493485D2FD15 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 6B9C69E5DB214681B2A5C976;
+			remoteGlobalIDString = E87A927634F24825820F8DE5;
+			remoteInfo = ZERO_CHECK;
+		};
+		4FC00DC9EC254F9C8957A3F0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EB604A7663B7493485D2FD15 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7C548E18EF734F1183E28856;
+			remoteInfo = iCade_Static;
+		};
+		8493FC110EBA41B19DE124C1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EB604A7663B7493485D2FD15 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 687167BB77A0419196BB3ED0;
 			remoteInfo = ALL_BUILD;
 		};
-		749CABA5DF4E421A937298DB /* PBXContainerItemProxy */ = {
+		9386DF90414D4F7D94AE98B2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = EB220DB7835340FAB92AA235 /* Project object */;
+			containerPortal = EB604A7663B7493485D2FD15 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 3EBABC1ED902418AB5132579;
-			remoteInfo = ZERO_CHECK;
+			remoteGlobalIDString = 687167BB77A0419196BB3ED0;
+			remoteInfo = ALL_BUILD;
 		};
-		76904E09A2674F63AB6847AC /* PBXContainerItemProxy */ = {
+		B8CE500227894E0884C86C40 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = EB220DB7835340FAB92AA235 /* Project object */;
+			containerPortal = EB604A7663B7493485D2FD15 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 3EBABC1ED902418AB5132579;
+			remoteGlobalIDString = E87A927634F24825820F8DE5;
 			remoteInfo = ZERO_CHECK;
-		};
-		EA3F39468F2741558C049813 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = EB220DB7835340FAB92AA235 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 2D6053221AB747739E582A67;
-			remoteInfo = iCade_Static;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		67980B8C58594369AC5DDCCA /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/iCade-iOS/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		80C5456EAEF841BA9AA1D3EF /* iCade_Static */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libiCade_Static.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		90EF9BEF490844E380C54AFE /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/iCade-iOS/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		A2705DB1BB6A40FA98C2B98D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/iCade-iOS/iCadeReaderView.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = iCadeReaderView.m; path = "../../iCade-iOS/iCadeReaderView.m"; sourceTree = SOURCE_ROOT; };
-		EAE23996C26C4C64AB6D2964 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS/CMakeFiles/iCade_Static.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "../../../../../cmake/Source/ui_ios/iCade-iOS/CMakeFiles/iCade_Static.dir/Info.plist"; sourceTree = SOURCE_ROOT; };
+		75981E47D5B64753992CDDD5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/iCade-iOS/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		8227E6E38DFC4A848E05E369 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS/CMakeFiles/iCade_Static.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS/CMakeFiles/iCade_Static.dir/Info.plist"; sourceTree = "<absolute>"; };
+		B3BDD843ACA5400B9D0223D7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/iCade-iOS/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		CA327E817988489CA2B05B9A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/iCade-iOS/iCadeReaderView.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = iCadeReaderView.m; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/iCade-iOS/iCadeReaderView.m"; sourceTree = "<absolute>"; };
+		DE04B0BE19EF4EF4B19016FE /* iCade_Static */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libiCade_Static.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		371DD70A7F134C3D81FF705A /* Frameworks */ = {
+		359EB7745C97472B926527AE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -143,122 +162,123 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0D5D6B2742724545BBCC8530 /* iCade_Static */ = {
-			isa = PBXGroup;
-			children = (
-				4DBF7B948E02461C9A2235CB /* Source Files */,
-				9A74700DD0024D95B2B819C7 /* Resources */,
-				90EF9BEF490844E380C54AFE /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/iCade-iOS/CMakeLists.txt */,
-			);
-			name = iCade_Static;
-			sourceTree = "<group>";
-		};
-		4DBF7B948E02461C9A2235CB /* Source Files */ = {
-			isa = PBXGroup;
-			children = (
-				A2705DB1BB6A40FA98C2B98D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/iCade-iOS/iCadeReaderView.m */,
-			);
-			name = "Source Files";
-			sourceTree = "<group>";
-		};
-		73832736F4914ACDA89EB3FC /* CMake Rules */ = {
+		1F933BDAD0AD4A86A0CB0C6D /* CMake Rules */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = "CMake Rules";
 			sourceTree = "<group>";
 		};
-		7A931688DC004411916A6530 /* Frameworks */ = {
+		6C606B2570584CB6BF8CB699 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				CA327E817988489CA2B05B9A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/iCade-iOS/iCadeReaderView.m */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		8F7CF2F55C6942AF8B0D4235 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8227E6E38DFC4A848E05E369 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS/CMakeFiles/iCade_Static.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		90D35137F09048DE9A419ACF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		859544058BD0466DA275C67D /* Products */ = {
+		98977ED0659B47CD9BBDD1C1 = {
 			isa = PBXGroup;
 			children = (
-				80C5456EAEF841BA9AA1D3EF /* iCade_Static */,
+				F8586AD93F3B4E4BA3F385CD /* iCade_Static */,
+				A1C0B823758A4060BE024C37 /* ALL_BUILD */,
+				DAC1962CC9554DB28F2C2884 /* Products */,
+				90D35137F09048DE9A419ACF /* Frameworks */,
 			);
-			name = Products;
 			sourceTree = "<group>";
 		};
-		9A74700DD0024D95B2B819C7 /* Resources */ = {
+		A1C0B823758A4060BE024C37 /* ALL_BUILD */ = {
 			isa = PBXGroup;
 			children = (
-				EAE23996C26C4C64AB6D2964 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS/CMakeFiles/iCade_Static.dir/Info.plist */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-		};
-		CF36CD28329D49E4B807386C /* ALL_BUILD */ = {
-			isa = PBXGroup;
-			children = (
-				73832736F4914ACDA89EB3FC /* CMake Rules */,
-				67980B8C58594369AC5DDCCA /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/iCade-iOS/CMakeLists.txt */,
+				1F933BDAD0AD4A86A0CB0C6D /* CMake Rules */,
+				B3BDD843ACA5400B9D0223D7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/iCade-iOS/CMakeLists.txt */,
 			);
 			name = ALL_BUILD;
 			sourceTree = "<group>";
 		};
-		DD1A0AFA762641F1A1FFA51E = {
+		DAC1962CC9554DB28F2C2884 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				0D5D6B2742724545BBCC8530 /* iCade_Static */,
-				CF36CD28329D49E4B807386C /* ALL_BUILD */,
-				859544058BD0466DA275C67D /* Products */,
-				7A931688DC004411916A6530 /* Frameworks */,
+				DE04B0BE19EF4EF4B19016FE /* iCade_Static */,
 			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F8586AD93F3B4E4BA3F385CD /* iCade_Static */ = {
+			isa = PBXGroup;
+			children = (
+				6C606B2570584CB6BF8CB699 /* Source Files */,
+				8F7CF2F55C6942AF8B0D4235 /* Resources */,
+				75981E47D5B64753992CDDD5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/iCade-iOS/CMakeLists.txt */,
+			);
+			name = iCade_Static;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		2D6053221AB747739E582A67 /* iCade_Static */ = {
+		7C548E18EF734F1183E28856 /* iCade_Static */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 19F5B3F5C18C4FB684E41F6D /* Build configuration list for PBXNativeTarget "iCade_Static" */;
+			buildConfigurationList = 8B65B22788C949518F766DA0 /* Build configuration list for PBXNativeTarget "iCade_Static" */;
 			buildPhases = (
-				C3FE5B18F636457690D14DB1 /* Sources */,
-				371DD70A7F134C3D81FF705A /* Frameworks */,
+				018337CF8FED4E8CB06B0B94 /* Sources */,
+				359EB7745C97472B926527AE /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				A37E659790704C41A956B95C /* PBXTargetDependency */,
+				8EC184189D9D4BC0B4F704A6 /* PBXTargetDependency */,
 			);
 			name = iCade_Static;
 			productName = iCade_Static;
-			productReference = 80C5456EAEF841BA9AA1D3EF /* iCade_Static */;
+			productReference = DE04B0BE19EF4EF4B19016FE /* iCade_Static */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		EB220DB7835340FAB92AA235 /* Project object */ = {
+		EB604A7663B7493485D2FD15 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1300;
+				LastUpgradeCheck = 1420;
 			};
-			buildConfigurationList = 2CAAE1B325224F0F906264CE /* Build configuration list for PBXProject "iCade" */;
+			buildConfigurationList = 670DB191EE6C4D5A92FC99E5 /* Build configuration list for PBXProject "iCade" */;
 			buildSettings = {
 			};
 			buildStyles = (
-				2FDE76E7A3BD4937820656E8 /* Debug */,
-				F9AC4A7BD9534DE0AA02A45E /* Release */,
-				5032DB69B2B54057A0AA0433 /* MinSizeRel */,
-				EAD3886C678E4F3582B3D1F4 /* RelWithDebInfo */,
+				41CCE982F7D34E73AA18B593 /* Debug */,
+				3C3901952C994819BEA4852C /* Release */,
+				9C1D573DE29C4C49BA8E1F2E /* MinSizeRel */,
+				FB48209D736B4D5D8122A96B /* RelWithDebInfo */,
 			);
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
-			mainGroup = DD1A0AFA762641F1A1FFA51E;
-			projectDirPath = "/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/iCade-iOS";
+			mainGroup = 98977ED0659B47CD9BBDD1C1;
+			projectDirPath = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/iCade-iOS";
 			projectRoot = "";
 			targets = (
-				6B9C69E5DB214681B2A5C976 /* ALL_BUILD */,
-				B7A566E4767340588D653807 /* RUN_TESTS */,
-				3EBABC1ED902418AB5132579 /* ZERO_CHECK */,
-				2D6053221AB747739E582A67 /* iCade_Static */,
-				0285C8420FCC45EA8D71FBC5 /* install */,
+				687167BB77A0419196BB3ED0 /* ALL_BUILD */,
+				744235B101344E32861135D6 /* RUN_TESTS */,
+				E87A927634F24825820F8DE5 /* ZERO_CHECK */,
+				7C548E18EF734F1183E28856 /* iCade_Static */,
+				30DE5BD6E1FC421D914FDFDF /* install */,
+				558005FED0934015B4894DF2 /* package */,
 			);
 		};
 /* End PBXProject section */
@@ -277,20 +297,20 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
-  /usr/local/Cellar/cmake/3.21.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
-  /usr/local/Cellar/cmake/3.21.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
-  /usr/local/Cellar/cmake/3.21.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
-  /usr/local/Cellar/cmake/3.21.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -310,37 +330,50 @@ fi
 exit 0";
 			showEnvVarsInLog = 0;
 		};
-		4615300B8CCF47A2CEB69781 /* Generate CMakeFiles/ZERO_CHECK */ = {
+		571234464C2A5D0D43F1AB42 /* CMake PostBuild Rules */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-			);
-			name = "Generate CMakeFiles/ZERO_CHECK";
+			name = "CMake PostBuild Rules";
 			outputPaths = (
-"/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS/CMakeFiles/ZERO_CHECK"			);
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
-  make -f /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS/CMakeScripts/ReRunCMake.make
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
-  make -f /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS/CMakeScripts/ReRunCMake.make
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
-  make -f /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS/CMakeScripts/ReRunCMake.make
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
-  make -f /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS/CMakeScripts/ReRunCMake.make
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 ";
+			showEnvVarsInLog = 0;
+		};
+		661D9C604B3B91332E7543CC = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
 			showEnvVarsInLog = 0;
 		};
 		87AF4882E018677E2624B544 = {
@@ -386,20 +419,20 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
-  /usr/local/Cellar/cmake/3.21.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
-  /usr/local/Cellar/cmake/3.21.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
-  /usr/local/Cellar/cmake/3.21.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
-  /usr/local/Cellar/cmake/3.21.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -419,7 +452,7 @@ fi
 exit 0";
 			showEnvVarsInLog = 0;
 		};
-		EF6F910038EA9132EF2C5A1E /* Generate CMakeFiles/ALL_BUILD */ = {
+		EC1B909C4425E077445F9998 /* Generate CMakeFiles/ALL_BUILD */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -429,25 +462,58 @@ exit 0";
 			);
 			name = "Generate CMakeFiles/ALL_BUILD";
 			outputPaths = (
-"/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS/CMakeFiles/ALL_BUILD"			);
+"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS/CMakeFiles/ALL_BUILD"			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
   echo Build\\ all\\ projects
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		FD05E4FE8A23EDB326DEFD00 /* Generate CMakeFiles/ZERO_CHECK */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ZERO_CHECK";
+			outputPaths = (
+"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS/CMakeFiles/ZERO_CHECK"			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
+  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
+  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
+  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS
+  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS/CMakeScripts/ReRunCMake.make
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -455,41 +521,84 @@ fi
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		C3FE5B18F636457690D14DB1 /* Sources */ = {
+		018337CF8FED4E8CB06B0B94 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				716416EA94B2484081A8F8F5 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/iCade-iOS/iCadeReaderView.m */,
+				4EBA82CCAE6B44819926B7D0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/iCade-iOS/iCadeReaderView.m */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		12D9082A68864F84B326CDF4 /* PBXTargetDependency */ = {
+		367D7FEC49E64B8EB2DEFE6D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 2D6053221AB747739E582A67 /* iCade_Static */;
-			targetProxy = EA3F39468F2741558C049813 /* PBXContainerItemProxy */;
+			target = 7C548E18EF734F1183E28856 /* iCade_Static */;
+			targetProxy = 4FC00DC9EC254F9C8957A3F0 /* PBXContainerItemProxy */;
 		};
-		2565E473D9CF4F3FAE853F82 /* PBXTargetDependency */ = {
+		38F588993EA14B81BE47EC80 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 3EBABC1ED902418AB5132579 /* ZERO_CHECK */;
-			targetProxy = 76904E09A2674F63AB6847AC /* PBXContainerItemProxy */;
+			target = E87A927634F24825820F8DE5 /* ZERO_CHECK */;
+			targetProxy = 4CBEC6BF5CAC452994D40067 /* PBXContainerItemProxy */;
 		};
-		A37E659790704C41A956B95C /* PBXTargetDependency */ = {
+		5984858303064DA78605592C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 3EBABC1ED902418AB5132579 /* ZERO_CHECK */;
-			targetProxy = 749CABA5DF4E421A937298DB /* PBXContainerItemProxy */;
+			target = 687167BB77A0419196BB3ED0 /* ALL_BUILD */;
+			targetProxy = 8493FC110EBA41B19DE124C1 /* PBXContainerItemProxy */;
 		};
-		AE476A2A173E411FAEDC5B03 /* PBXTargetDependency */ = {
+		8EC184189D9D4BC0B4F704A6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 6B9C69E5DB214681B2A5C976 /* ALL_BUILD */;
-			targetProxy = 0E9B4D83C31B458CA0FA4CA6 /* PBXContainerItemProxy */;
+			target = E87A927634F24825820F8DE5 /* ZERO_CHECK */;
+			targetProxy = B8CE500227894E0884C86C40 /* PBXContainerItemProxy */;
+		};
+		F653E9554DD44445A1FAA754 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 687167BB77A0419196BB3ED0 /* ALL_BUILD */;
+			targetProxy = 9386DF90414D4F7D94AE98B2 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		17E3B90C87674F93A8C8A453 /* RelWithDebInfo */ = {
+		0460FB8DF7774D49A4E2F0CA /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		0934AE7D2B274115845C8B54 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		16BD07B4B4894B2EB1349FE0 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -503,13 +612,84 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = install;
 				SECTORDER_FLAGS = "";
-				SYMROOT = "/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = RelWithDebInfo;
 		};
-		18695EC9DEDE4A5894A60F06 /* MinSizeRel */ = {
+		1954821AAB7B48DDBF29B606 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		245459C8B10949888F3CCA76 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		3447558BF720413AA9A410B3 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		3D806CD125E7467EA129F83E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				SDKROOT = "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk";
+				SWIFT_VERSION = 4.0;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build;
+			};
+			name = Debug;
+		};
+		42B7DA7BE1BB4A03890A2316 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -523,40 +703,12 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = ZERO_CHECK;
 				SECTORDER_FLAGS = "";
-				SYMROOT = "/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = MinSizeRel;
+			name = Release;
 		};
-		2FCE44C62CF64801AE9ACC12 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"1.3-2331-g0b8742f68\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/iCade-iOS/../../iCade-iOS","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0    -x objective-c ","$(inherited)");
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = iCade_Static;
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		34F7292521A34CC38DAB01FD /* Release */ = {
+		47F14408074E4B04B495ED4D /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -570,68 +722,12 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = ZERO_CHECK;
 				SECTORDER_FLAGS = "";
-				SYMROOT = "/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		36E29BFE83FE496E8CD725F8 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
-				SYMROOT = "/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS/build";
 			};
 			name = RelWithDebInfo;
 		};
-		451946406BB544CE81DA4E8B /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"1.3-2331-g0b8742f68\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/iCade-iOS/../../iCade-iOS","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0     -DNDEBUG -x objective-c ","$(inherited)");
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = iCade_Static;
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		459C8D8B869B4FEF9F5DE1ED /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
-				SYMROOT = "/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS/build";
-			};
-			name = Release;
-		};
-		527A07382B98442792F2C500 /* Debug */ = {
+		587EC105AAC6495A95043BE0 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -643,15 +739,33 @@ fi
 				INSTALL_PATH = "";
 				OTHER_LDFLAGS = ("","$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
+				PRODUCT_NAME = ALL_BUILD;
 				SECTORDER_FLAGS = "";
-				SYMROOT = "/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = Debug;
+			name = RelWithDebInfo;
 		};
-		5954D5B1486C4F61962191BE /* MinSizeRel */ = {
+		6514929653F946F492203C36 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		744F1CAF52CC4DA38F620A58 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = arm64;
@@ -659,100 +773,61 @@ fi
 				CODE_SIGNING_ALLOWED = NO;
 				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_IDENTITY = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
-				SYMROOT = "/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS/build";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				SDKROOT = "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk";
+				SWIFT_VERSION = 4.0;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build;
+			};
+			name = RelWithDebInfo;
+		};
+		7C4F55D9FD7D4C85BAE22422 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = MinSizeRel;
 		};
-		5F5B29165A494F1F8516257F /* Release */ = {
+		960839DAF1E9480FB6FF7016 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS/Release${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"1.3-2331-g0b8742f68\"'","$(inherited)");
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/iCade-iOS/../../iCade-iOS","$(inherited)");
+				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/iCade-iOS/../../iCade-iOS","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0     -DNDEBUG -x objective-c ","$(inherited)");
+				OTHER_CFLAGS = (" -mios-version-min=12.2 -mios-version-min=12.2     -DNDEBUG -x objective-c ","$(inherited)");
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = iCade_Static;
 				SECTORDER_FLAGS = "";
-				SYMROOT = "/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS";
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/iCade_Static.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = Release;
 		};
-		60377A753EC442F5A05C44D8 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		69A397F265084BAEBC3BD459 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		6FED01749C4D4F9EB8089A66 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		7452EBC9AA8C455C8F5A9C6A /* Debug */ = {
+		A6E710C48BB8456E9C8FC17B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = arm64;
@@ -760,140 +835,85 @@ fi
 				CODE_SIGNING_ALLOWED = NO;
 				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_IDENTITY = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
-				SYMROOT = "/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS/build";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				SDKROOT = "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk";
+				SWIFT_VERSION = 4.0;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build;
 			};
-			name = Debug;
+			name = Release;
 		};
-		7CFEC656453848C583F69859 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		931581D1F9B24D1883C01EEB /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		9A3DE385A59B49C38ED4E883 /* RelWithDebInfo */ = {
+		A8CEA17116214052BA7291D5 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"1.3-2331-g0b8742f68\"'","$(inherited)");
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/iCade-iOS/../../iCade-iOS","$(inherited)");
+				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/iCade-iOS/../../iCade-iOS","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=11.0 -mios-version-min=11.0        -DNDEBUG -x objective-c ","$(inherited)");
+				OTHER_CFLAGS = (" -mios-version-min=12.2 -mios-version-min=12.2     -DNDEBUG -x objective-c ","$(inherited)");
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = iCade_Static;
 				SECTORDER_FLAGS = "";
-				SYMROOT = "/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS";
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/iCade_Static.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = RelWithDebInfo;
+			name = MinSizeRel;
 		};
-		9FB74FE2B60F4B58BCE8F547 /* Release */ = {
+		ABADF544B4474EB59B2F7177 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				SDKROOT = "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk";
+				SWIFT_VERSION = 4.0;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build;
 			};
-			name = Release;
+			name = MinSizeRel;
 		};
-		BD8049BE340244A78A980CB8 /* Release */ = {
+		B71DCCE46CD14D87A1424A96 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS/Debug${EFFECTIVE_PLATFORM_NAME}";
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/iCade-iOS/../../iCade-iOS","$(inherited)");
 				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=12.2 -mios-version-min=12.2    -x objective-c ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
+				PRODUCT_NAME = iCade_Static;
 				SECTORDER_FLAGS = "";
-				SYMROOT = "/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		CCF1B7BB265F4A8C88F95B70 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS";
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/iCade_Static.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = Debug;
 		};
-		D351C711C3644CE78558F04D /* Debug */ = {
+		C7884B8E899E4103896583A5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -907,13 +927,12 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = ZERO_CHECK;
 				SECTORDER_FLAGS = "";
-				SYMROOT = "/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = Debug;
 		};
-		E9E31BA0502741F0B61E82E8 /* RelWithDebInfo */ = {
+		CA48C03030D24D598F9D4C24 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -925,35 +944,14 @@ fi
 				INSTALL_PATH = "";
 				OTHER_LDFLAGS = ("","$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
+				PRODUCT_NAME = package;
 				SECTORDER_FLAGS = "";
-				SYMROOT = "/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = RelWithDebInfo;
+			name = Debug;
 		};
-		F60657B2B99D4FEF9B0B0E9C /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		FC04045401A845A392B257DA /* Release */ = {
+		D030D0640E29448581F52A5B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -967,82 +965,234 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = RUN_TESTS;
 				SECTORDER_FLAGS = "";
-				SYMROOT = "/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = Release;
 		};
+		DAAA2E548A024EEA995FF822 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		DD838B8661B1491490E2FFFA /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		E695DB2378F440419B6B1230 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/iCade-iOS/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/iCade-iOS/../../iCade-iOS","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=12.2 -mios-version-min=12.2        -DNDEBUG -x objective-c ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = iCade_Static;
+				SECTORDER_FLAGS = "";
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/iCade_Static.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		E7263B05A6224269BE3B0650 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		EAEA69C97F8045459590329B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		EC23785E0A634EC4A7988589 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		FD5E7B4474834360A5FDBFB1 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		19F5B3F5C18C4FB684E41F6D /* Build configuration list for PBXNativeTarget "iCade_Static" */ = {
+		4C1E12B09FAB49F8BB81E527 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2FCE44C62CF64801AE9ACC12 /* Debug */,
-				5F5B29165A494F1F8516257F /* Release */,
-				451946406BB544CE81DA4E8B /* MinSizeRel */,
-				9A3DE385A59B49C38ED4E883 /* RelWithDebInfo */,
+				245459C8B10949888F3CCA76 /* Debug */,
+				D030D0640E29448581F52A5B /* Release */,
+				0460FB8DF7774D49A4E2F0CA /* MinSizeRel */,
+				6514929653F946F492203C36 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		1E367CAED1314F1FBF996EC6 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+		5964CC57841E4EDCAD49E5A5 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D351C711C3644CE78558F04D /* Debug */,
-				34F7292521A34CC38DAB01FD /* Release */,
-				18695EC9DEDE4A5894A60F06 /* MinSizeRel */,
-				E9E31BA0502741F0B61E82E8 /* RelWithDebInfo */,
+				C7884B8E899E4103896583A5 /* Debug */,
+				42B7DA7BE1BB4A03890A2316 /* Release */,
+				7C4F55D9FD7D4C85BAE22422 /* MinSizeRel */,
+				47F14408074E4B04B495ED4D /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		1F17C029E44A4CE8BC1D6B37 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
+		670DB191EE6C4D5A92FC99E5 /* Build configuration list for PBXProject "iCade" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				60377A753EC442F5A05C44D8 /* Debug */,
-				FC04045401A845A392B257DA /* Release */,
-				69A397F265084BAEBC3BD459 /* MinSizeRel */,
-				6FED01749C4D4F9EB8089A66 /* RelWithDebInfo */,
+				3D806CD125E7467EA129F83E /* Debug */,
+				A6E710C48BB8456E9C8FC17B /* Release */,
+				ABADF544B4474EB59B2F7177 /* MinSizeRel */,
+				744F1CAF52CC4DA38F620A58 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		2CAAE1B325224F0F906264CE /* Build configuration list for PBXProject "iCade" */ = {
+		8B65B22788C949518F766DA0 /* Build configuration list for PBXNativeTarget "iCade_Static" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				7452EBC9AA8C455C8F5A9C6A /* Debug */,
-				459C8D8B869B4FEF9F5DE1ED /* Release */,
-				5954D5B1486C4F61962191BE /* MinSizeRel */,
-				36E29BFE83FE496E8CD725F8 /* RelWithDebInfo */,
+				B71DCCE46CD14D87A1424A96 /* Debug */,
+				960839DAF1E9480FB6FF7016 /* Release */,
+				A8CEA17116214052BA7291D5 /* MinSizeRel */,
+				E695DB2378F440419B6B1230 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		B0089D33C2C44210B13C61D3 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+		933EB6150AC145419AF06660 /* Build configuration list for PBXAggregateTarget "package" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				CCF1B7BB265F4A8C88F95B70 /* Debug */,
-				9FB74FE2B60F4B58BCE8F547 /* Release */,
-				7CFEC656453848C583F69859 /* MinSizeRel */,
-				F60657B2B99D4FEF9B0B0E9C /* RelWithDebInfo */,
+				CA48C03030D24D598F9D4C24 /* Debug */,
+				0934AE7D2B274115845C8B54 /* Release */,
+				EC23785E0A634EC4A7988589 /* MinSizeRel */,
+				FD5E7B4474834360A5FDBFB1 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		BFFB405855A64E02A2A35A7A /* Build configuration list for PBXAggregateTarget "install" */ = {
+		E4BC2B13CE0544E3A7C313E8 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				527A07382B98442792F2C500 /* Debug */,
-				BD8049BE340244A78A980CB8 /* Release */,
-				931581D1F9B24D1883C01EEB /* MinSizeRel */,
-				17E3B90C87674F93A8C8A453 /* RelWithDebInfo */,
+				DAAA2E548A024EEA995FF822 /* Debug */,
+				1954821AAB7B48DDBF29B606 /* Release */,
+				3447558BF720413AA9A410B3 /* MinSizeRel */,
+				587EC105AAC6495A95043BE0 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		EF692EE60A4341C0AD3C1670 /* Build configuration list for PBXAggregateTarget "install" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EAEA69C97F8045459590329B /* Debug */,
+				E7263B05A6224269BE3B0650 /* Release */,
+				DD838B8661B1491490E2FFFA /* MinSizeRel */,
+				16BD07B4B4894B2EB1349FE0 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = EB220DB7835340FAB92AA235 /* Project object */;
+	rootObject = EB604A7663B7493485D2FD15 /* Project object */;
 }
