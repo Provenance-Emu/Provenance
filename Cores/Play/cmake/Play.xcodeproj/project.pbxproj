@@ -4429,6 +4429,7 @@
 		70453554072943739D6C349F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1300;
 			};
 			buildConfigurationList = AF12144685114324A5D37C7F /* Build configuration list for PBXProject "Play" */;
@@ -5883,13 +5884,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				ARCHS = arm64;
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LIBRARY = "libc++";
 				CODE_SIGNING_ALLOWED = NO;
 				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_IDENTITY = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SYMROOT = ./cmake/build;
 			};
@@ -6741,13 +6742,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				ARCHS = arm64;
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LIBRARY = "libc++";
 				CODE_SIGNING_ALLOWED = NO;
 				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_IDENTITY = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SYMROOT = ./cmake/build;
 			};
@@ -6763,7 +6764,7 @@
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
 					"'PLAY_VERSION=\"1.3-2331-g0b8742f68\"'",
@@ -8054,13 +8055,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				ARCHS = arm64;
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LIBRARY = "libc++";
 				CODE_SIGNING_ALLOWED = NO;
 				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_IDENTITY = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SYMROOT = ./cmake/build;
 			};
@@ -8560,13 +8561,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				ARCHS = arm64;
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LIBRARY = "libc++";
 				CODE_SIGNING_ALLOWED = NO;
 				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_IDENTITY = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SYMROOT = ./cmake/build;
 			};
@@ -8970,7 +8971,7 @@
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
 					"'PLAY_VERSION=\"1.3-2331-g0b8742f68\"'",
@@ -9038,7 +9039,7 @@
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
 					GLES_COMPATIBILITY,
@@ -9293,7 +9294,7 @@
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
 					"'PLAY_VERSION=\"1.3-2331-g0b8742f68\"'",
@@ -10378,7 +10379,7 @@
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
 					"'_IOP_EMULATE_MODULES=1'",
@@ -10955,7 +10956,7 @@
 				11DD900FFAF845C8BBC087E8 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		056A68D1826D4C27AF103ED7 /* Build configuration list for PBXNativeTarget "autotest" */ = {
 			isa = XCConfigurationList;
@@ -10966,7 +10967,7 @@
 				F0C12D2BD6954179813C4B6B /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		07163596C29F483C94A02382 /* Build configuration list for PBXNativeTarget "Framework_OpenAl" */ = {
 			isa = XCConfigurationList;
@@ -10977,7 +10978,7 @@
 				D1FBD0282C574399AB52BF9A /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		28D10D14BC6B479A932A910D /* Build configuration list for PBXNativeTarget "chdr-static" */ = {
 			isa = XCConfigurationList;
@@ -10988,7 +10989,7 @@
 				A352DD28A2DD4DEFA0A4195E /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		2B4839292C3E466CA99471E1 /* Build configuration list for PBXNativeTarget "CodeGen" */ = {
 			isa = XCConfigurationList;
@@ -10999,7 +11000,7 @@
 				3A8E8D39924D4C0F947C5AC6 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		2C4C270470A4436D97DE6501 /* Build configuration list for PBXNativeTarget "iCade_Static" */ = {
 			isa = XCConfigurationList;
@@ -11010,7 +11011,7 @@
 				B294298D236C402294676CE9 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		373D4118FFD847489BA752F1 /* Build configuration list for PBXNativeTarget "Framework_OpenGl" */ = {
 			isa = XCConfigurationList;
@@ -11021,7 +11022,7 @@
 				127159EF440F4D47B1926D86 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		54F8EF92B2F14B6990797C3A /* Build configuration list for PBXNativeTarget "McServTest" */ = {
 			isa = XCConfigurationList;
@@ -11032,7 +11033,7 @@
 				4A16A17A0D01482DB88961F4 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		61285C0DFDC34FCF8A71F406 /* Build configuration list for PBXNativeTarget "Play" */ = {
 			isa = XCConfigurationList;
@@ -11043,7 +11044,7 @@
 				B29DADC055D0468BBC302794 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		63A665514B234843936EB800 /* Build configuration list for PBXNativeTarget "SDWebImage_Static" */ = {
 			isa = XCConfigurationList;
@@ -11054,7 +11055,7 @@
 				902DE3A2046543018260CF04 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		7058789ECA624CBEB3CC2FBF /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
 			isa = XCConfigurationList;
@@ -11065,7 +11066,7 @@
 				B81101930F2245A989BE1BCC /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		775B03D99EDA4F4DB9C3AD74 /* Build configuration list for PBXNativeTarget "gsh_opengl" */ = {
 			isa = XCConfigurationList;
@@ -11076,7 +11077,7 @@
 				672E3322C3FA4FACB232482E /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		80ED9CC87E6C43B5BB056DF4 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
 			isa = XCConfigurationList;
@@ -11087,7 +11088,7 @@
 				88549F5AB3A54075A412F828 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		934C52E117094A49BA412B5F /* Build configuration list for PBXNativeTarget "Framework" */ = {
 			isa = XCConfigurationList;
@@ -11098,7 +11099,7 @@
 				E398382575A14B1BA558087F /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		9B59D05179F647A586EFA583 /* Build configuration list for PBXNativeTarget "Framework_Amazon" */ = {
 			isa = XCConfigurationList;
@@ -11109,7 +11110,7 @@
 				F9528B42D3DD4A2CBC8EF623 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		9B79B57FD6DE4DED81C2D6CC /* Build configuration list for PBXAggregateTarget "install" */ = {
 			isa = XCConfigurationList;
@@ -11120,7 +11121,7 @@
 				E6F240992BF14DADA273B3D8 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		A23C084EC90D4FD68C0AADB2 /* Build configuration list for PBXNativeTarget "zlib" */ = {
 			isa = XCConfigurationList;
@@ -11131,7 +11132,7 @@
 				7AF57726F5074FA98B77D9BB /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		A23E154227F547D598D72DD1 /* Build configuration list for PBXNativeTarget "CodeGenTestSuite" */ = {
 			isa = XCConfigurationList;
@@ -11142,7 +11143,7 @@
 				D61C0D50363E4128AA8BDBDB /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		AC659B591FDF44A899513C9A /* Build configuration list for PBXNativeTarget "GsAreaTest" */ = {
 			isa = XCConfigurationList;
@@ -11153,7 +11154,7 @@
 				E353B638086F4FE6AAAC2624 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		AF12144685114324A5D37C7F /* Build configuration list for PBXProject "Play" */ = {
 			isa = XCConfigurationList;
@@ -11164,7 +11165,7 @@
 				A6EF7787B33B4B5888F8138D /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		BB8C7028AC404D6BB45D6D67 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
 			isa = XCConfigurationList;
@@ -11175,7 +11176,7 @@
 				003A9CACD8C046CEBD6F086C /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		C59D6766FCDD4B8E95C1C9E3 /* Build configuration list for PBXNativeTarget "SpuTest" */ = {
 			isa = XCConfigurationList;
@@ -11186,7 +11187,7 @@
 				D1703344EE2E497080A681FA /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		CE5D974A3EB742B284D6446A /* Build configuration list for PBXNativeTarget "ui_shared" */ = {
 			isa = XCConfigurationList;
@@ -11197,7 +11198,7 @@
 				B0FAABA7F89048798B55CD52 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		D86DE318237A4710BD5EC17C /* Build configuration list for PBXNativeTarget "Framework_Http" */ = {
 			isa = XCConfigurationList;
@@ -11208,7 +11209,7 @@
 				0DE8204536B9471588F84167 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		DDF349D717F445069C5A86FA /* Build configuration list for PBXNativeTarget "lzma" */ = {
 			isa = XCConfigurationList;
@@ -11219,7 +11220,7 @@
 				BF7F313167D1426FA24550B3 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		E39D8AF44C63413E929261C0 /* Build configuration list for PBXNativeTarget "VuTest" */ = {
 			isa = XCConfigurationList;
@@ -11230,7 +11231,7 @@
 				1A77A4A582A14EEEBB8F6872 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		F9BACC12F7094E9C9E0A8496 /* Build configuration list for PBXNativeTarget "PlayCore" */ = {
 			isa = XCConfigurationList;
@@ -11241,7 +11242,7 @@
 				6C067838FFAC4DDEB4DA8AC7 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
