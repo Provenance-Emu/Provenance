@@ -6,6 +6,14 @@ space:= $(empty) $(empty)
 spaceplus:= $(empty)\ $(empty)
 
 TARGETS += $(subst $(space),$(spaceplus),$(wildcard /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/CMakeLists.txt))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/ext/filesystem/CMakeLists.txt))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard /opt/homebrew/Cellar/cmake/3.25.1/share/cmake/Modules/CMakeDependentOption.cmake))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard /opt/homebrew/Cellar/cmake/3.25.1/share/cmake/Modules/CheckCSourceCompiles.cmake))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard /opt/homebrew/Cellar/cmake/3.25.1/share/cmake/Modules/CheckIncludeFile.cmake))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard /opt/homebrew/Cellar/cmake/3.25.1/share/cmake/Modules/CheckLibraryExists.cmake))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard /opt/homebrew/Cellar/cmake/3.25.1/share/cmake/Modules/FindPackageHandleStandardArgs.cmake))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard /opt/homebrew/Cellar/cmake/3.25.1/share/cmake/Modules/FindPackageMessage.cmake))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard /opt/homebrew/Cellar/cmake/3.25.1/share/cmake/Modules/FindThreads.cmake))
 
 /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/CMakeFiles/cmake.check_cache: $(TARGETS)
-	/opt/homebrew/Cellar/cmake/3.21.3_1/bin/cmake -H/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp -B/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake
+	/opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -H/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp -B/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake

@@ -9,7 +9,7 @@ foreach(file ${files})
   message(STATUS "Uninstalling $ENV{DESTDIR}${file}")
   if(IS_SYMLINK "$ENV{DESTDIR}${file}" OR EXISTS "$ENV{DESTDIR}${file}")
     exec_program(
-      "/opt/homebrew/Cellar/cmake/3.21.3_1/bin/cmake" ARGS "-E remove \"$ENV{DESTDIR}${file}\""
+      "/opt/homebrew/Cellar/cmake/3.25.1/bin/cmake" ARGS "-E remove \"$ENV{DESTDIR}${file}\""
       OUTPUT_VARIABLE rm_out
       RETURN_VALUE rm_retval
       )
