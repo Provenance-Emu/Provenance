@@ -45,7 +45,7 @@
 #include "CGSH_Provenance_OGL.h"
 #include "CGSH_ViewController.h"
 
-#define SAMPLE_RATE_DEFAULT 48000
+#define SAMPLE_RATE_DEFAULT 44100
 
 CGSH_Provenance_OGL *gsHandler = nullptr;
 CPH_Generic *padHandler = nullptr;
