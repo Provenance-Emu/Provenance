@@ -468,7 +468,7 @@ void CGSH_OpenGLiOS::InitializeImpl()
 
     {
         PRESENTATION_PARAMS presentationParams;
-        presentationParams.mode = PRESENTATION_MODE_FIT;
+        presentationParams.mode = PRESENTATION_MODE_FILL;
         presentationParams.windowWidth = m_framebufferWidth;
         presentationParams.windowHeight = m_framebufferHeight;
 
