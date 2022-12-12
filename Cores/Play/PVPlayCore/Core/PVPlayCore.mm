@@ -258,7 +258,21 @@ private:
     _ps2VM->Pause();
     _ps2VM->Reset();
     CPS2OS* os = _ps2VM->m_ee->m_os;
+    
+//    auto bootablePath = fs::path([_romPath fileSystemRepresentation]);
+//    if(IsBootableExecutablePath(bootablePath))
+//    {
+//        os->BootFromFile(bootablePath);
+//    }
+//    else
+//    {
+//        CAppConfig::GetInstance().SetPreferencePath(PREF_PS2_CDROM0_PATH, bootablePath);
+        _ps2VM->Reset();
+        os->BootFromCDROM();
+//    }
+
     os->BootFromCDROM();
+    
     // TODO: Play! starts a bunch of threads. They all need to be realtime.
     _ps2VM->Resume();
 }
@@ -338,6 +352,15 @@ private:
     CAppConfig::GetInstance().SetPreferenceInteger(PREF_CGSHANDLER_PRESENTATION_MODE, CGSHandler::PRESENTATION_MODE_FIT);
     CAppConfig::GetInstance().SetPreferenceInteger(PREF_CGSH_OPENGL_RESOLUTION_FACTOR, self.resFactor);
     CAppConfig::GetInstance().SetPreferenceInteger(PREF_AUDIO_SPUBLOCKCOUNT, 22);
+    
+    CAppConfig::GetInstance().RegisterPreferenceBoolean(PREFERENCE_UI_SHOWFPS, true);
+    CAppConfig::GetInstance().RegisterPreferenceBoolean(PREFERENCE_UI_SHOWVIRTUALPAD, true);
+    CAppConfig::GetInstance().RegisterPreferenceBoolean(PREFERENCE_AUDIO_ENABLEOUTPUT, true);
+    CAppConfig::GetInstance().RegisterPreferenceInteger(PREFERENCE_VIDEO_GS_HANDLER, PREFERENCE_VALUE_VIDEO_GS_HANDLER_VULKAN);
+    CAppConfig::GetInstance().RegisterPreferenceInteger(PREFERENCE_UI_VIRTUALPADOPACITY, 100);
+    CAppConfig::GetInstance().RegisterPreferenceBoolean(PREFERENCE_UI_HIDEVIRTUALPAD_CONTROLLER_CONNECTED, true);
+    CAppConfig::GetInstance().RegisterPreferenceBoolean(PREFERENCE_UI_VIRTUALPAD_HAPTICFEEDBACK, true);
+    
     CAppConfig::GetInstance().Save();
     _ps2VM->Initialize();
     CAppConfig::GetInstance().SetPreferenceBoolean(PREF_PS2_LIMIT_FRAMERATE, false);

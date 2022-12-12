@@ -1,7 +1,5 @@
-#pragma once
-
 #import <QuartzCore/QuartzCore.h>
-#include "../gs/GSH_Vulkan/GSH_Vulkan.h"
+#import "../gs/GSH_Vulkan/GSH_Vulkan.h"
 
 class CGSH_VulkaniOS : public CGSH_Vulkan
 {
