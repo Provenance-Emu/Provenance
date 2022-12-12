@@ -33,6 +33,8 @@
 #include "GSH_OpenGLiOS.h"
 #ifdef HAS_GSH_VULKAN
 #include "GSH_VulkaniOS.h"
+#import <Metal/Metal.h>
+#import <MetalKit/MetalKit.h>
 #endif
 #include "../ui_shared/BootablesProcesses.h"
 #include "PH_Generic.h"
@@ -49,7 +51,12 @@
 
 CGSH_Provenance_OGL *gsHandler = nullptr;
 CPH_Generic *padHandler = nullptr;
+#ifdef HAS_GSH_VULKAN
+#import <MetalKit/MetalKit.h>
+MTKView *m_view = nullptr;
+#else
 GLKView *m_view = nullptr;
+#endif
 CPS2VM *_ps2VM = nullptr;
 
 __weak PVPlayCore *_current = nil;
@@ -419,22 +426,31 @@ private:
 //}
 
 - (void)initView {
+#ifdef HAS_GSH_VULKAN
+    // TODO: Fix this hack to find the MTKView, and detect first if in metal mode
+    MTKView *glk_view = (MTKView *)self.renderDelegate.mtlview;
+    m_view = glk_view;
+//    m_view.frame = screenBounds;
+//    m_view.enableSetNeedsDisplay = NO;
+#else
     UIViewController *gl_view_controller = (UIViewController *)self.renderDelegate;
-    GLKViewController *cgsh_view_controller = [[CGSH_ViewController alloc]
-                                               initWithNibName:nil
-                                               bundle:nil];
     UIViewController *view_controller = gl_view_controller.parentViewController;
     auto screenBounds = [[UIScreen mainScreen] bounds];
     GLKView *glk_view = (GLKView *)cgsh_view_controller.view;
     m_view = glk_view;
     m_view.frame = screenBounds;
     m_view.enableSetNeedsDisplay = NO;
+    GLKViewController *cgsh_view_controller = [[CGSH_ViewController alloc]
+                                               initWithNibName:nil
+                                               bundle:nil];
+
     cgsh_view_controller.view=(UIView *)m_view;
     // Attach Controller to somewhere rendering won't interfere frame buffers
     [view_controller.parentViewController addChildViewController:cgsh_view_controller];
     [cgsh_view_controller didMoveToParentViewController:view_controller.parentViewController];
     // Add View
     [gl_view_controller.view addSubview:m_view];
+#endif
 }
 @end
 

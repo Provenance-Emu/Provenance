@@ -8,12 +8,14 @@
 
 @import Foundation;
 #import "PVGPUViewController.h"
+@import MetalKit.MTKView;
 
 @class PVEmulatorCore;
 
 @interface PVMetalViewController : PVGPUViewController
 
 @property (nonatomic, weak) PVEmulatorCore *emulatorCore;
+@property (nonatomic, strong) MTKView *mtlview;
 #if TARGET_OS_MACCATALYST || TARGET_OS_OSX
 @property (nonatomic, assign) BOOL isPaused;
 @property (nonatomic, assign) NSTimeInterval timeSinceLastDraw;

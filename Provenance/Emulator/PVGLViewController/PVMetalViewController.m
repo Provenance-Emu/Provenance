@@ -58,7 +58,6 @@
     
 }
 
-@property (nonatomic, strong) MTKView *mtlview;
 @property (nonatomic, strong) id<MTLDevice> device;
 @property (nonatomic, strong) id<MTLCommandQueue> commandQueue;
 @property (nonatomic, strong) id<MTLRenderPipelineState> blitPipeline;
