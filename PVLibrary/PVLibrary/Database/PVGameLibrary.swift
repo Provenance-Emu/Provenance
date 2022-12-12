@@ -180,8 +180,8 @@ public struct PVGameLibrary {
 }
 
 public extension ObservableType where Element: Collection {
-    func mapMany<R>(_ transform: @escaping (Element.Element) -> R) -> Observable<[R]> {
-        map { elements in elements.map(transform) }
+    func mapMany<R>(_ transform: @escaping (Element.Element) -> R?) -> Observable<[R]> {
+        map { elements in elements.compactMap(transform) }
     }
 }
 
