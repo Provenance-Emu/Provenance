@@ -437,7 +437,7 @@ extension GameLaunchingViewController where Self: UIViewController {
                     alwaysUseAlert.popoverPresentationController?.sourceRect = senderView.bounds
                 }
         #endif
-              
+
                 let thisTimeOnlyAction = UIAlertAction(title: "This time", style: .default, handler: { _ in self.presentEMU(withCore: core, forGame: game) })
                 let alwaysThisGameAction = UIAlertAction(title: "Always for this game", style: .default, handler: { [unowned self] _ in
                     try! RomDatabase.sharedInstance.writeTransaction {
@@ -603,9 +603,9 @@ extension GameLaunchingViewController where Self: UIViewController {
         emulatorViewController.modalPresentationStyle = .fullScreen
 
         present(emulatorViewController, animated: true) { () -> Void in
-            
+
             emulatorViewController.gpuViewController.screenType = game.system.screenType.rawValue
-            
+
             // Open the save state after a bootup delay if the user selected one
             // Use a timer loop on ios 10+ to check if the emulator has started running
             if let saveState = saveState {
@@ -703,7 +703,7 @@ extension GameLaunchingViewController where Self: UIViewController {
                         completion(latestSaveState)
                     }))
                 #endif
-		    
+
                 alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
 
                 // Present the alert

@@ -298,7 +298,7 @@ public final class iCloudSync {
                 ELOG("\(error.localizedDescription)")
                 legacySubDirs = nil
             }
-            
+
             legacySubDirs?.forEach {
                 do {
                     let destinationURL = PVEmulatorConfiguration.Paths.saveSavesPath.appendingPathComponent($0.lastPathComponent, isDirectory: true)

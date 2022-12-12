@@ -381,7 +381,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                 feedbackGenerator?.selectionChanged()
             }
 //			} else if UIDevice.current.systemName == "iOS" {
-//#if !targetEnvironment(macCatalyst) && !os(macOS)
+// #if !targetEnvironment(macCatalyst) && !os(macOS)
 //				AudioServicesStopSystemSound(Int32(kSystemSoundID_Vibrate))
 //				let vibrationLength: Int = 30
 //				let pattern: [Any] = [false, 0, true, vibrationLength]
@@ -389,7 +389,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 //				dictionary["VibePattern"] = pattern
 //				dictionary["Intensity"] = 1
 //				AudioServicesPlaySystemSoundWithVibration(Int32(kSystemSoundID_Vibrate), nil, dictionary)
-//#endif
+// #endif
 //			}
 		}
 #endif
@@ -431,7 +431,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 		volume.frame = CGRect(x: safeAreaInsets.left + volumeXPadding, y: safeAreaInsets.top + volumeYPadding, width: UIScreen.main.bounds.width - (volumeXPadding * 2) - safeAreaInsets.left - safeAreaInsets.right, height: volumeHeight)
 	}
 #endif
-    
+
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         if inMoveMode {
             inMoveMode = false
@@ -476,7 +476,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 #else
 	func setupTouchControls() {
         if inMoveMode { return }
-        
+
 		let alpha = self.alpha
 
         for control in controlLayout {
@@ -489,7 +489,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
 			if controlType == Keys.DPad {
                 if let dPad = dPad, dPad.isCustomMoved { continue }
-                
+
 				let xPadding: CGFloat = 0 // safeAreaInsets.left
 				let bottomPadding: CGFloat = 16
 				let dPadOriginY: CGFloat = min(controlOriginY - bottomPadding, view.frame.height - controlSize.height - bottomPadding)
@@ -530,16 +530,16 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                 if let dPad2 = dPad2 {
                     dPad2.isHidden = compactVertical
                 }
-                
+
                 adjustJoystick()
             } else if controlType == Keys.JoyPad, PVSettingsModel.shared.debugOptions.onscreenJoypad {
                 let xPadding: CGFloat = 0 // safeAreaInsets.left
                 let bottomPadding: CGFloat = 16
                 let joyPadOriginY: CGFloat = min(controlOriginY - bottomPadding, view.frame.height - controlSize.height - bottomPadding)
                 var joyPadFrame = CGRect(x: xPadding, y: joyPadOriginY, width: controlSize.width, height: controlSize.height)
-                
+
                 joyPadFrame.origin.y += joyPadFrame.height + bottomPadding
-                
+
                 let joyPad: JSDPad = self.joyPad ?? JSDPad.JoyPad(frame: joyPadFrame)
                 if !joyPad.isCustomMoved {
                     joyPad.frame = joyPadFrame
@@ -906,8 +906,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                                     y: selectButton.frame.origin.y,
                                     width: controlSize.width,
                                     height: controlSize.height)
-            }
-			else if let buttonGroup = buttonGroup {
+            } else if let buttonGroup = buttonGroup {
 				if buttonGroup.isHidden {
 					startFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
 					if gripControl {
@@ -1065,7 +1064,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         guard  let joyPad = joyPad else {
             return
         }
-        
+
 //        guard PVSettingsModel.shared.debugOptions.onscreenJoypad else {
 //            DLOG("onscreenJoypad false, hiding")
 //            joyPad.isHidden = true
@@ -1079,19 +1078,19 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 //        }
 //
 //        joyPad.isHidden = false
-        
+
         guard let dPad = dPad, !dPad.isCustomMoved, !joyPad.isCustomMoved else {
             return
         }
-        
+
         var joyPadFrame = joyPad.frame
         var dPadFrame = dPad.frame
-        
+
         let joystickOverDPad = joyPadFrame.minY <= dPadFrame.minY
-        
+
         if joystickOverDPad {
             joyPadFrame.origin.y = dPadFrame.minY - joyPadFrame.size.height
-        } else  {
+        } else {
             let overlap = (dPadFrame.maxY + joyPadFrame.height) - view.frame.height
             if overlap > 1 {
                 dPadFrame.origin.y -= overlap

@@ -172,10 +172,10 @@ struct LightTheme: iOSTheme {
 
     let gameLibraryHeaderBackground: UIColor = Colors.white9alpha6
     let gameLibraryHeaderText: UIColor = .darkGray
-    
+
     var navigationBarBackgroundColor: UIColor? { return .grey1C }
     var statusBarColor: UIColor { return .grey1C }
-    
+
     var settingsCellBackground: UIColor? { return .white }
     var settingsCellText: UIColor? { return .black }
     var settingsCellTextDetail: UIColor? { return .gray }
@@ -208,7 +208,7 @@ public final class Theme {
                 ELOG("check your tcp/ip's")
                 return
             }
-        
+
             let statusBar1 = statusBarView ?? UIView()
             statusBar1.frame = manager.statusBarFrame
             statusBar1.backgroundColor = color

@@ -15,8 +15,7 @@ import UIKit
 extension Sequence where Iterator.Element : Hashable {
 
     func intersects<S : Sequence>(with sequence: S) -> Bool
-        where S.Iterator.Element == Iterator.Element
-    {
+        where S.Iterator.Element == Iterator.Element {
         let sequenceSet = Set(sequence)
         return self.contains(where: sequenceSet.contains)
     }
@@ -37,7 +36,7 @@ public extension PVEmulatorConfiguration {
         let classList = UnsafeBufferPointer(start: classListPointer, count: Int(count))
 
         for i in 0 ..< Int(count) {
-            if let classInfo = ClassInfo(classList[i], withSuperclass: ["PVEmulatorCore", "PVLibRetroCore", "PVLibRetroGLESCore"]), let superclassesInfo = classInfo.superclassesInfo, motherClassInfo.intersects(with: motherClassInfo)  {
+            if let classInfo = ClassInfo(classList[i], withSuperclass: ["PVEmulatorCore", "PVLibRetroCore", "PVLibRetroGLESCore"]), let superclassesInfo = classInfo.superclassesInfo, motherClassInfo.intersects(with: motherClassInfo) {
                 subclassList.append(classInfo)
             }
         }
@@ -45,16 +44,16 @@ public extension PVEmulatorConfiguration {
         let filteredList = subclassList.filter {
             let notMasterClass = $0.className != "PVEmulatorCore"
             let className: String = $0.superclassInfo?.className ?? ""
-            let inheritsClass = ["PVEmulatorCore","PVLibRetroCore", "PVLibRetroGLESCore"].contains(className)
+            let inheritsClass = ["PVEmulatorCore", "PVLibRetroCore", "PVLibRetroGLESCore"].contains(className)
             return notMasterClass && inheritsClass
         }
-        
+
         let classes = filteredList.map { $0.className }.joined(separator: ",")
         ILOG("\(classes)")
-        
-        return filteredList;
+
+        return filteredList
     }
-    
+
     class func updateCores(fromPlists plists: [URL]) {
         let database = RomDatabase.sharedInstance
         let decoder = PropertyListDecoder()

@@ -24,7 +24,7 @@ struct ConsoleGamesView: SwiftUI.View {
         PVGame.self,
         sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: false)
     ) var games
-    
+
 //    @ObservedResults(
 //        PVGame.self,
 //        filter: NSPredicate(format: "systemIdentifier == %@", argumentArray: [console.identifier])
@@ -152,7 +152,7 @@ extension BIOSStatus.State {
     var biosStatusImageName: String {
         switch self {
         case .missing: return "bios_empty"
-        case .mismatch(_):  return "bios_empty"
+        case .mismatch:  return "bios_empty"
         case .match: return "bios_filled"
         }
     }

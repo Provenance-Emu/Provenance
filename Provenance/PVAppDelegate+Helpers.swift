@@ -26,7 +26,7 @@ extension PVAppDelegate {
             PVWebServer.shared.startWebDavServer()
         }
     }
-    
+
     func _initLogging() {
         // Initialize logging
         PVLogging.sharedInstance()

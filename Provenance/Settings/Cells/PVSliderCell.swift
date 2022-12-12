@@ -23,7 +23,7 @@ final class PVSliderCell: SliderCell {
     override func traitCollectionDidChange(_: UITraitCollection?) {
         style()
     }
-    
+
     func style() {
         let bg = UIView(frame: bounds)
         bg.autoresizingMask = [.flexibleWidth, .flexibleHeight]

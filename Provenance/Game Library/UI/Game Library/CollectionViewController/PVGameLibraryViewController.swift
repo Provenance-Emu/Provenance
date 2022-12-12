@@ -493,7 +493,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                 collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
             ])
         #endif
-        
+
         // Force touch
         #if os(iOS)
             registerForPreviewing(with: self, sourceView: collectionView)
@@ -1578,7 +1578,7 @@ extension PVGameLibraryViewController: UITableViewDelegate {
             case 4:
                 cell.textLabel?.text = "Show Large Game Artwork"
                 cell.accessoryType = PVSettingsModel.shared.largeGameArt ? .checkmark : .none
-            #endif            
+            #endif
 	    default:
                 fatalError("Invalid row")
             }
@@ -1610,7 +1610,7 @@ extension PVGameLibraryViewController: UITableViewDelegate {
 	    #if os(tvOS)
             case 4:
                 PVSettingsModel.shared.largeGameArt = !PVSettingsModel.shared.largeGameArt
-            #endif            
+            #endif
 	    default:
                 fatalError("Invalid row")
             }
@@ -1711,7 +1711,7 @@ extension PVGameLibraryViewController {
     override var canBecomeFirstResponder: Bool {
         return true
     }
-    
+
     override func traitCollectionDidChange(_: UITraitCollection?) {
         #if os(iOS)
             viewDidLoad()

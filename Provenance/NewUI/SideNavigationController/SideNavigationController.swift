@@ -212,7 +212,7 @@ open class SideNavigationController: UIViewController {
 
     private func close(direction: Direction, animated: Bool) {
         guard self.visibleSideViewController != nil else {
-            return; // NO SIDE VISIBLE TO CLOSE
+            return
         }
         guard let side = self.side(direction: direction) else {
             // EXCEPTION
