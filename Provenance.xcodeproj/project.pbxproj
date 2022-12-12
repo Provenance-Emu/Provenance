@@ -599,6 +599,8 @@
 		B3DEEF932942F92C00A6957C /* PVBliss.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEEF912942F92C00A6957C /* PVBliss.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E21D6E203211BE009939D3 /* IndexRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E21D6D203211BE009939D3 /* IndexRequestHandler.swift */; };
 		B3E21D72203211BE009939D3 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B3E398842946E0AE001C636B /* vba.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E398832946E0AE001C636B /* vba.m */; };
+		B3E398852946E0AE001C636B /* vba.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B3E398822946E0AE001C636B /* vba.h */; };
 		B3E3B5D9202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */; };
 		B3E3B5DA202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */; };
 		B3E6DADC20B7AD1500454DD4 /* PVLogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E6DADB20B7AD1500454DD4 /* PVLogViewController.m */; };
@@ -981,6 +983,16 @@
 				B3E21D72203211BE009939D3 /* Spotlight.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3E3987E2946E0AC001C636B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+				B3E398852946E0AE001C636B /* vba.h in CopyFiles */,
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -1602,6 +1614,9 @@
 		B3E21D6D203211BE009939D3 /* IndexRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexRequestHandler.swift; sourceTree = "<group>"; };
 		B3E21D6F203211BE009939D3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3E21D7E20321EE0009939D3 /* Spotlight-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Spotlight-Bridging-Header.h"; sourceTree = "<group>"; };
+		B3E398802946E0AC001C636B /* libvba.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libvba.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3E398822946E0AE001C636B /* vba.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vba.h; sourceTree = "<group>"; };
+		B3E398832946E0AE001C636B /* vba.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = vba.m; sourceTree = "<group>"; };
 		B3E3B5C7202E3AB700A11871 /* TopShelf-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TopShelf-Bridging-Header.h"; sourceTree = "<group>"; };
 		B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVGameLibraryViewController.swift; sourceTree = "<group>"; };
 		B3E6DADA20B7AD1500454DD4 /* PVLogViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVLogViewController.h; sourceTree = "<group>"; };
@@ -1897,6 +1912,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3E3987D2946E0AC001C636B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3EEED5B2920AEB6008E2603 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2023,6 +2045,7 @@
 				B3E0A580215647BD004B4322 /* Scripts */,
 				B3270F8027DCB25100E83180 /* Cores */,
 				B3C8A6A328781E810037A946 /* CoresRetro */,
+				B3E398812946E0AE001C636B /* vba */,
 				1A3D409617B2DCE4004DFFFC /* Frameworks */,
 				1A3D409517B2DCE4004DFFFC /* Products */,
 			);
@@ -2054,6 +2077,7 @@
 				B3EEED9E2920B099008E2603 /* QuickLookMacOS.appex */,
 				B3EEEDB32920B0D5008E2603 /* ThumbnailExtensionMacOS.appex */,
 				B3EEEDCD2920B563008E2603 /* BackgroundDownloadExtension.appex */,
+				B3E398802946E0AC001C636B /* libvba.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3174,6 +3198,15 @@
 			path = Spotlight;
 			sourceTree = "<group>";
 		};
+		B3E398812946E0AE001C636B /* vba */ = {
+			isa = PBXGroup;
+			children = (
+				B3E398822946E0AE001C636B /* vba.h */,
+				B3E398832946E0AE001C636B /* vba.m */,
+			);
+			path = vba;
+			sourceTree = "<group>";
+		};
 		B3E3B5D1202ED5D500A11871 /* UI */ = {
 			isa = PBXGroup;
 			children = (
@@ -3620,6 +3653,23 @@
 			productReference = B3E21D6B203211BE009939D3 /* Spotlight.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		B3E3987F2946E0AC001C636B /* vba */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3E398892946E0AE001C636B /* Build configuration list for PBXNativeTarget "vba" */;
+			buildPhases = (
+				B3E3987C2946E0AC001C636B /* Sources */,
+				B3E3987D2946E0AC001C636B /* Frameworks */,
+				B3E3987E2946E0AC001C636B /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = vba;
+			productName = vba;
+			productReference = B3E398802946E0AC001C636B /* libvba.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		B3EEED5D2920AEB6008E2603 /* ActivityMonitorExtension */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3EEED692920AEC0008E2603 /* Build configuration list for PBXNativeTarget "ActivityMonitorExtension" */;
@@ -3851,6 +3901,9 @@
 							};
 						};
 					};
+					B3E3987F2946E0AC001C636B = {
+						CreatedOnToolsVersion = 14.1;
+					};
 					B3EEED5D2920AEB6008E2603 = {
 						CreatedOnToolsVersion = 14.1;
 					};
@@ -3932,6 +3985,7 @@
 				B355DFFD2920AA2000E4C858 /* ThumbnailExtension */,
 				B3EEEDB22920B0D4008E2603 /* ThumbnailExtensionMacOS */,
 				B355E0372920AC1900E4C858 /* WidgetExtension */,
+				B3E3987F2946E0AC001C636B /* vba */,
 			);
 		};
 /* End PBXProject section */
@@ -4827,6 +4881,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3E21D6E203211BE009939D3 /* IndexRequestHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3E3987C2946E0AC001C636B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3E398842946E0AE001C636B /* vba.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7813,6 +7875,91 @@
 			};
 			name = Release;
 		};
+		B3E398862946E0AE001C636B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B3E398872946E0AE001C636B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B3E398882946E0AE001C636B /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Archive;
+		};
 		B3EEED6A2920AEC0008E2603 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -8882,6 +9029,16 @@
 				B3E21D74203211BE009939D3 /* Debug */,
 				B3E21D75203211BE009939D3 /* Release */,
 				B3721CF021912B7400433E4C /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3E398892946E0AE001C636B /* Build configuration list for PBXNativeTarget "vba" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3E398862946E0AE001C636B /* Debug */,
+				B3E398872946E0AE001C636B /* Release */,
+				B3E398882946E0AE001C636B /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -12,43 +12,75 @@
 		B3AF47E121072B63002211EE /* vba-over.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47E021072B63002211EE /* vba-over.ini */; };
 		B3C9D4BC1DEA77DF0068D057 /* PVGBA.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C9D4BA1DEA77DF0068D057 /* PVGBA.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C9D4DA1DEA782C0068D057 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A9FBE0A1ABD1289004E778B /* Foundation.framework */; };
-		B3C9D4DC1DEA78550068D057 /* GBA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC9A1ABD0FEF004E778B /* GBA.cpp */; };
-		B3C9D4DD1DEA78550068D057 /* Effects_Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC411ABD0FEF004E778B /* Effects_Buffer.cpp */; };
-		B3C9D4DE1DEA78550068D057 /* EEprom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC921ABD0FEF004E778B /* EEprom.cpp */; };
-		B3C9D4DF1DEA78550068D057 /* Gb_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC431ABD0FEF004E778B /* Gb_Apu.cpp */; };
-		B3C9D4E01DEA78550068D057 /* GBA-arm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC981ABD0FEF004E778B /* GBA-arm.cpp */; };
-		B3C9D4E11DEA78550068D057 /* Globals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCA61ABD0FEF004E778B /* Globals.cpp */; };
-		B3C9D4E21DEA78550068D057 /* Util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBD211ABD0FEF004E778B /* Util.cpp */; };
-		B3C9D4E31DEA78550068D057 /* Multi_Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC481ABD0FEF004E778B /* Multi_Buffer.cpp */; };
-		B3C9D4E41DEA78550068D057 /* GBAGfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC9F1ABD0FEF004E778B /* GBAGfx.cpp */; };
-		B3C9D4E51DEA78550068D057 /* CheatSearch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC901ABD0FEF004E778B /* CheatSearch.cpp */; };
-		B3C9D4E61DEA78550068D057 /* armdis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC8A1ABD0FEF004E778B /* armdis.cpp */; };
-		B3C9D4E71DEA78550068D057 /* Sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCB11ABD0FEF004E778B /* Sound.cpp */; };
-		B3C9D4E81DEA78550068D057 /* Mode1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCA91ABD0FEF004E778B /* Mode1.cpp */; };
-		B3C9D4E91DEA78550068D057 /* Sram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCB31ABD0FEF004E778B /* Sram.cpp */; };
-		B3C9D4EA1DEA78550068D057 /* Mode4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCAC1ABD0FEF004E778B /* Mode4.cpp */; };
-		B3C9D4EB1DEA78550068D057 /* gbafilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC9D1ABD0FEF004E778B /* gbafilter.cpp */; };
-		B3C9D4EC1DEA78550068D057 /* Mode5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCAD1ABD0FEF004E778B /* Mode5.cpp */; };
-		B3C9D4ED1DEA78550068D057 /* Blip_Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC3F1ABD0FEF004E778B /* Blip_Buffer.cpp */; };
-		B3C9D4EE1DEA78550068D057 /* agbprint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC881ABD0FEF004E778B /* agbprint.cpp */; };
 		B3C9D4EF1DEA78550068D057 /* PVGBAEmulatorCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC381ABD0FE2004E778B /* PVGBAEmulatorCore.mm */; };
-		B3C9D4F01DEA78550068D057 /* GBALink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCA21ABD0FEF004E778B /* GBALink.cpp */; };
-		B3C9D4F11DEA78550068D057 /* Mode0.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCA81ABD0FEF004E778B /* Mode0.cpp */; };
-		B3C9D4F21DEA78550068D057 /* memgzio.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC4F1ABD0FEF004E778B /* memgzio.c */; };
-		B3C9D4F31DEA78550068D057 /* Cheats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC8E1ABD0FEF004E778B /* Cheats.cpp */; };
-		B3C9D4F41DEA78550068D057 /* Mode3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCAB1ABD0FEF004E778B /* Mode3.cpp */; };
-		B3C9D4F51DEA78550068D057 /* GBASockClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCA41ABD0FEF004E778B /* GBASockClient.cpp */; };
-		B3C9D4F61DEA78550068D057 /* Gb_Oscs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC461ABD0FEF004E778B /* Gb_Oscs.cpp */; };
-		B3C9D4F71DEA78550068D057 /* elf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC941ABD0FEF004E778B /* elf.cpp */; };
-		B3C9D4F81DEA78550068D057 /* bios.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC8C1ABD0FEF004E778B /* bios.cpp */; };
-		B3C9D4F91DEA78550068D057 /* GBA-thumb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC991ABD0FEF004E778B /* GBA-thumb.cpp */; };
-		B3C9D4FA1DEA78550068D057 /* Mode2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCAA1ABD0FEF004E778B /* Mode2.cpp */; };
-		B3C9D4FB1DEA78550068D057 /* RTC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCAF1ABD0FEF004E778B /* RTC.cpp */; };
-		B3C9D4FC1DEA78550068D057 /* Flash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC961ABD0FEF004E778B /* Flash.cpp */; };
-		B3C9D4FD1DEA78550068D057 /* Gb_Apu_State.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC451ABD0FEF004E778B /* Gb_Apu_State.cpp */; };
-		B3C9D5271DEA7C410068D057 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5261DEA7C410068D057 /* libz.tbd */; };
 		B3C9D52A1DEA7D040068D057 /* PVGBAEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9FBC371ABD0FE2004E778B /* PVGBAEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3E398952946E15F001C636B /* GBA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC9A1ABD0FEF004E778B /* GBA.cpp */; };
+		B3E398962946E15F001C636B /* Gb_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC431ABD0FEF004E778B /* Gb_Apu.cpp */; };
+		B3E398972946E15F001C636B /* EEprom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC921ABD0FEF004E778B /* EEprom.cpp */; };
+		B3E398982946E15F001C636B /* GBASockClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCA41ABD0FEF004E778B /* GBASockClient.cpp */; };
+		B3E398992946E15F001C636B /* Mode0.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCA81ABD0FEF004E778B /* Mode0.cpp */; };
+		B3E3989A2946E15F001C636B /* RTC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCAF1ABD0FEF004E778B /* RTC.cpp */; };
+		B3E3989B2946E15F001C636B /* GBA-arm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC981ABD0FEF004E778B /* GBA-arm.cpp */; };
+		B3E3989C2946E15F001C636B /* GBAGfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC9F1ABD0FEF004E778B /* GBAGfx.cpp */; };
+		B3E3989D2946E15F001C636B /* Mode3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCAB1ABD0FEF004E778B /* Mode3.cpp */; };
+		B3E3989E2946E15F001C636B /* agbprint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC881ABD0FEF004E778B /* agbprint.cpp */; };
+		B3E3989F2946E15F001C636B /* gbafilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC9D1ABD0FEF004E778B /* gbafilter.cpp */; };
+		B3E398A02946E15F001C636B /* elf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC941ABD0FEF004E778B /* elf.cpp */; };
+		B3E398A12946E15F001C636B /* Globals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCA61ABD0FEF004E778B /* Globals.cpp */; };
+		B3E398A22946E15F001C636B /* Effects_Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC411ABD0FEF004E778B /* Effects_Buffer.cpp */; };
+		B3E398A32946E15F001C636B /* Gb_Apu_State.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC451ABD0FEF004E778B /* Gb_Apu_State.cpp */; };
+		B3E398A42946E15F001C636B /* Mode5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCAD1ABD0FEF004E778B /* Mode5.cpp */; };
+		B3E398A52946E15F001C636B /* Cheats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC8E1ABD0FEF004E778B /* Cheats.cpp */; };
+		B3E398A62946E15F001C636B /* Mode1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCA91ABD0FEF004E778B /* Mode1.cpp */; };
+		B3E398A72946E15F001C636B /* Sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCB11ABD0FEF004E778B /* Sound.cpp */; };
+		B3E398A82946E15F001C636B /* CheatSearch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC901ABD0FEF004E778B /* CheatSearch.cpp */; };
+		B3E398A92946E15F001C636B /* Mode4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCAC1ABD0FEF004E778B /* Mode4.cpp */; };
+		B3E398AA2946E15F001C636B /* Mode2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCAA1ABD0FEF004E778B /* Mode2.cpp */; };
+		B3E398AB2946E15F001C636B /* Flash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC961ABD0FEF004E778B /* Flash.cpp */; };
+		B3E398AC2946E15F001C636B /* GBA-thumb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC991ABD0FEF004E778B /* GBA-thumb.cpp */; };
+		B3E398AD2946E15F001C636B /* Blip_Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC3F1ABD0FEF004E778B /* Blip_Buffer.cpp */; };
+		B3E398AE2946E15F001C636B /* Sram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCB31ABD0FEF004E778B /* Sram.cpp */; };
+		B3E398AF2946E15F001C636B /* Util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBD211ABD0FEF004E778B /* Util.cpp */; };
+		B3E398B02946E15F001C636B /* armdis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC8A1ABD0FEF004E778B /* armdis.cpp */; };
+		B3E398B12946E15F001C636B /* bios.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC8C1ABD0FEF004E778B /* bios.cpp */; };
+		B3E398B22946E15F001C636B /* GBALink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCA21ABD0FEF004E778B /* GBALink.cpp */; };
+		B3E398B32946E15F001C636B /* memgzio.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC4F1ABD0FEF004E778B /* memgzio.c */; };
+		B3E398B42946E15F001C636B /* Gb_Oscs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC461ABD0FEF004E778B /* Gb_Oscs.cpp */; };
+		B3E398B52946E15F001C636B /* Multi_Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC481ABD0FEF004E778B /* Multi_Buffer.cpp */; };
+		B3E398B72946E175001C636B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E398B62946E175001C636B /* libz.tbd */; };
+		B3E398B82946E17E001C636B /* libvba.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E398942946E140001C636B /* libvba.a */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B3E398B92946E19B001C636B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A9FBC121ABD0DA7004E778B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3E3988A2946E140001C636B;
+			remoteInfo = vba;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		B3E398702946E095001C636B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3E3988E2946E140001C636B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		1A9FBC361ABD0F2B004E778B /* PVGBA-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVGBA-Prefix.pch"; sourceTree = "<group>"; };
@@ -146,6 +178,10 @@
 		B3C9D4D31DEA780A0068D057 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3C9D4D51DEA780E0068D057 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		B3C9D5261DEA7C410068D057 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		B3E398722946E095001C636B /* libvba-next.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libvba-next.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3E398942946E140001C636B /* libvba.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libvba.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3E398B62946E175001C636B /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
+		B3E398BB2946E1CE001C636B /* BuildFlags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,9 +189,24 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3E398B82946E17E001C636B /* libvba.a in Frameworks */,
 				B324C63921920DAC009F4EDC /* PVSupport.framework in Frameworks */,
-				B3C9D5271DEA7C410068D057 /* libz.tbd in Frameworks */,
 				B3C9D4DA1DEA782C0068D057 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3E3986F2946E095001C636B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3E3988D2946E140001C636B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3E398B72946E175001C636B /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -165,6 +216,7 @@
 		1A9FBC111ABD0DA7004E778B = {
 			isa = PBXGroup;
 			children = (
+				B3E398BB2946E1CE001C636B /* BuildFlags.xcconfig */,
 				1A9FBC1C1ABD0DA7004E778B /* PVGBA */,
 				B3C9D4B91DEA77DF0068D057 /* PVGBA */,
 				1A9FBE131ABD133E004E778B /* Frameworks */,
@@ -176,6 +228,8 @@
 			isa = PBXGroup;
 			children = (
 				B3C9D4B81DEA77DF0068D057 /* PVGBA.framework */,
+				B3E398722946E095001C636B /* libvba-next.a */,
+				B3E398942946E140001C636B /* libvba.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -210,15 +264,15 @@
 		1A9FBC3A1ABD0FEF004E778B /* GBACore */ = {
 			isa = PBXGroup;
 			children = (
-				1A9FBC3B1ABD0FEF004E778B /* apu */,
+				1A9FBD211ABD0FEF004E778B /* Util.cpp */,
 				1A9FBC4A1ABD0FEF004E778B /* AutoBuild.h */,
-				1A9FBC4B1ABD0FEF004E778B /* common */,
-				1A9FBC871ABD0FEF004E778B /* gba */,
 				1A9FBD0A1ABD0FEF004E778B /* NLS.h */,
 				1A9FBD201ABD0FEF004E778B /* System.h */,
-				1A9FBD211ABD0FEF004E778B /* Util.cpp */,
 				1A9FBD221ABD0FEF004E778B /* Util.h */,
 				1A9FBD241ABD0FEF004E778B /* version.h */,
+				1A9FBC3B1ABD0FEF004E778B /* apu */,
+				1A9FBC4B1ABD0FEF004E778B /* common */,
+				1A9FBC871ABD0FEF004E778B /* gba */,
 			);
 			path = GBACore;
 			sourceTree = "<group>";
@@ -226,19 +280,19 @@
 		1A9FBC3B1ABD0FEF004E778B /* apu */ = {
 			isa = PBXGroup;
 			children = (
+				1A9FBC3F1ABD0FEF004E778B /* Blip_Buffer.cpp */,
+				1A9FBC411ABD0FEF004E778B /* Effects_Buffer.cpp */,
+				1A9FBC451ABD0FEF004E778B /* Gb_Apu_State.cpp */,
+				1A9FBC431ABD0FEF004E778B /* Gb_Apu.cpp */,
+				1A9FBC461ABD0FEF004E778B /* Gb_Oscs.cpp */,
+				1A9FBC481ABD0FEF004E778B /* Multi_Buffer.cpp */,
 				1A9FBC3C1ABD0FEF004E778B /* blargg_common.h */,
 				1A9FBC3D1ABD0FEF004E778B /* blargg_config.h */,
 				1A9FBC3E1ABD0FEF004E778B /* blargg_source.h */,
-				1A9FBC3F1ABD0FEF004E778B /* Blip_Buffer.cpp */,
 				1A9FBC401ABD0FEF004E778B /* Blip_Buffer.h */,
-				1A9FBC411ABD0FEF004E778B /* Effects_Buffer.cpp */,
 				1A9FBC421ABD0FEF004E778B /* Effects_Buffer.h */,
-				1A9FBC431ABD0FEF004E778B /* Gb_Apu.cpp */,
 				1A9FBC441ABD0FEF004E778B /* Gb_Apu.h */,
-				1A9FBC451ABD0FEF004E778B /* Gb_Apu_State.cpp */,
-				1A9FBC461ABD0FEF004E778B /* Gb_Oscs.cpp */,
 				1A9FBC471ABD0FEF004E778B /* Gb_Oscs.h */,
-				1A9FBC481ABD0FEF004E778B /* Multi_Buffer.cpp */,
 				1A9FBC491ABD0FEF004E778B /* Multi_Buffer.h */,
 			);
 			path = apu;
@@ -247,17 +301,17 @@
 		1A9FBC4B1ABD0FEF004E778B /* common */ = {
 			isa = PBXGroup;
 			children = (
-				1A9FBC4C1ABD0FEF004E778B /* Array.h */,
-				1A9FBC4D1ABD0FEF004E778B /* ffmpeg.cpp */,
-				1A9FBC4E1ABD0FEF004E778B /* ffmpeg.h */,
 				1A9FBC4F1ABD0FEF004E778B /* memgzio.c */,
-				1A9FBC501ABD0FEF004E778B /* memgzio.h */,
+				1A9FBC4D1ABD0FEF004E778B /* ffmpeg.cpp */,
 				1A9FBC511ABD0FEF004E778B /* Patch.cpp */,
+				1A9FBC561ABD0FEF004E778B /* SoundSDL.cpp */,
+				1A9FBC4C1ABD0FEF004E778B /* Array.h */,
+				1A9FBC4E1ABD0FEF004E778B /* ffmpeg.h */,
+				1A9FBC501ABD0FEF004E778B /* memgzio.h */,
 				1A9FBC521ABD0FEF004E778B /* Patch.h */,
 				1A9FBC531ABD0FEF004E778B /* Port.h */,
 				1A9FBC541ABD0FEF004E778B /* RingBuffer.h */,
 				1A9FBC551ABD0FEF004E778B /* SoundDriver.h */,
-				1A9FBC561ABD0FEF004E778B /* SoundSDL.cpp */,
 				1A9FBC571ABD0FEF004E778B /* SoundSDL.h */,
 				1A9FBC581ABD0FEF004E778B /* Types.h */,
 			);
@@ -268,37 +322,21 @@
 			isa = PBXGroup;
 			children = (
 				1A9FBC881ABD0FEF004E778B /* agbprint.cpp */,
-				1A9FBC891ABD0FEF004E778B /* agbprint.h */,
 				1A9FBC8A1ABD0FEF004E778B /* armdis.cpp */,
-				1A9FBC8B1ABD0FEF004E778B /* armdis.h */,
 				1A9FBC8C1ABD0FEF004E778B /* bios.cpp */,
-				1A9FBC8D1ABD0FEF004E778B /* bios.h */,
 				1A9FBC8E1ABD0FEF004E778B /* Cheats.cpp */,
-				1A9FBC8F1ABD0FEF004E778B /* Cheats.h */,
 				1A9FBC901ABD0FEF004E778B /* CheatSearch.cpp */,
-				1A9FBC911ABD0FEF004E778B /* CheatSearch.h */,
 				1A9FBC921ABD0FEF004E778B /* EEprom.cpp */,
-				1A9FBC931ABD0FEF004E778B /* EEprom.h */,
 				1A9FBC941ABD0FEF004E778B /* elf.cpp */,
-				1A9FBC951ABD0FEF004E778B /* elf.h */,
 				1A9FBC961ABD0FEF004E778B /* Flash.cpp */,
-				1A9FBC971ABD0FEF004E778B /* Flash.h */,
 				1A9FBC981ABD0FEF004E778B /* GBA-arm.cpp */,
 				1A9FBC991ABD0FEF004E778B /* GBA-thumb.cpp */,
 				1A9FBC9A1ABD0FEF004E778B /* GBA.cpp */,
-				1A9FBC9B1ABD0FEF004E778B /* GBA.h */,
-				1A9FBC9C1ABD0FEF004E778B /* GBAcpu.h */,
 				1A9FBC9D1ABD0FEF004E778B /* gbafilter.cpp */,
-				1A9FBC9E1ABD0FEF004E778B /* gbafilter.h */,
 				1A9FBC9F1ABD0FEF004E778B /* GBAGfx.cpp */,
-				1A9FBCA01ABD0FEF004E778B /* GBAGfx.h */,
-				1A9FBCA11ABD0FEF004E778B /* GBAinline.h */,
 				1A9FBCA21ABD0FEF004E778B /* GBALink.cpp */,
-				1A9FBCA31ABD0FEF004E778B /* GBALink.h */,
 				1A9FBCA41ABD0FEF004E778B /* GBASockClient.cpp */,
-				1A9FBCA51ABD0FEF004E778B /* GBASockClient.h */,
 				1A9FBCA61ABD0FEF004E778B /* Globals.cpp */,
-				1A9FBCA71ABD0FEF004E778B /* Globals.h */,
 				1A9FBCA81ABD0FEF004E778B /* Mode0.cpp */,
 				1A9FBCA91ABD0FEF004E778B /* Mode1.cpp */,
 				1A9FBCAA1ABD0FEF004E778B /* Mode2.cpp */,
@@ -307,10 +345,26 @@
 				1A9FBCAD1ABD0FEF004E778B /* Mode5.cpp */,
 				1A9FBCAE1ABD0FEF004E778B /* remote.cpp */,
 				1A9FBCAF1ABD0FEF004E778B /* RTC.cpp */,
-				1A9FBCB01ABD0FEF004E778B /* RTC.h */,
 				1A9FBCB11ABD0FEF004E778B /* Sound.cpp */,
-				1A9FBCB21ABD0FEF004E778B /* Sound.h */,
 				1A9FBCB31ABD0FEF004E778B /* Sram.cpp */,
+				1A9FBC891ABD0FEF004E778B /* agbprint.h */,
+				1A9FBC8B1ABD0FEF004E778B /* armdis.h */,
+				1A9FBC8D1ABD0FEF004E778B /* bios.h */,
+				1A9FBC8F1ABD0FEF004E778B /* Cheats.h */,
+				1A9FBC911ABD0FEF004E778B /* CheatSearch.h */,
+				1A9FBC931ABD0FEF004E778B /* EEprom.h */,
+				1A9FBC951ABD0FEF004E778B /* elf.h */,
+				1A9FBC971ABD0FEF004E778B /* Flash.h */,
+				1A9FBC9B1ABD0FEF004E778B /* GBA.h */,
+				1A9FBC9C1ABD0FEF004E778B /* GBAcpu.h */,
+				1A9FBC9E1ABD0FEF004E778B /* gbafilter.h */,
+				1A9FBCA01ABD0FEF004E778B /* GBAGfx.h */,
+				1A9FBCA11ABD0FEF004E778B /* GBAinline.h */,
+				1A9FBCA31ABD0FEF004E778B /* GBALink.h */,
+				1A9FBCA51ABD0FEF004E778B /* GBASockClient.h */,
+				1A9FBCA71ABD0FEF004E778B /* Globals.h */,
+				1A9FBCB01ABD0FEF004E778B /* RTC.h */,
+				1A9FBCB21ABD0FEF004E778B /* Sound.h */,
 				1A9FBCB41ABD0FEF004E778B /* Sram.h */,
 			);
 			path = gba;
@@ -319,6 +373,7 @@
 		1A9FBE131ABD133E004E778B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3E398B62946E175001C636B /* libz.tbd */,
 				B324C63B21920DCD009F4EDC /* PVSupport.framework */,
 				B324C63821920DAC009F4EDC /* PVSupport.framework */,
 				B3C9D5261DEA7C410068D057 /* libz.tbd */,
@@ -370,11 +425,46 @@
 			buildRules = (
 			);
 			dependencies = (
+				B3E398BA2946E19B001C636B /* PBXTargetDependency */,
 			);
 			name = PVGBA;
 			productName = PVGBA;
 			productReference = B3C9D4B81DEA77DF0068D057 /* PVGBA.framework */;
 			productType = "com.apple.product-type.framework";
+		};
+		B3E398712946E095001C636B /* vba-next */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3E3987B2946E095001C636B /* Build configuration list for PBXNativeTarget "vba-next" */;
+			buildPhases = (
+				B3E3986E2946E095001C636B /* Sources */,
+				B3E3986F2946E095001C636B /* Frameworks */,
+				B3E398702946E095001C636B /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "vba-next";
+			productName = "vba-next";
+			productReference = B3E398722946E095001C636B /* libvba-next.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		B3E3988A2946E140001C636B /* vba */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3E398902946E140001C636B /* Build configuration list for PBXNativeTarget "vba" */;
+			buildPhases = (
+				B3E3988B2946E140001C636B /* Sources */,
+				B3E3988D2946E140001C636B /* Frameworks */,
+				B3E3988E2946E140001C636B /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = vba;
+			productName = "vba-next";
+			productReference = B3E398942946E140001C636B /* libvba.a */;
+			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
 
@@ -389,6 +479,9 @@
 				TargetAttributes = {
 					B3C9D4B71DEA77DF0068D057 = {
 						CreatedOnToolsVersion = 8.1;
+					};
+					B3E398712946E095001C636B = {
+						CreatedOnToolsVersion = 14.1;
 					};
 				};
 			};
@@ -406,6 +499,8 @@
 			projectRoot = "";
 			targets = (
 				B3C9D4B71DEA77DF0068D057 /* PVGBA */,
+				B3E398712946E095001C636B /* vba-next */,
+				B3E3988A2946E140001C636B /* vba */,
 			);
 		};
 /* End PBXProject section */
@@ -427,49 +522,73 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3C9D4DC1DEA78550068D057 /* GBA.cpp in Sources */,
-				B3C9D4DD1DEA78550068D057 /* Effects_Buffer.cpp in Sources */,
-				B3C9D4DE1DEA78550068D057 /* EEprom.cpp in Sources */,
-				B3C9D4DF1DEA78550068D057 /* Gb_Apu.cpp in Sources */,
-				B3C9D4E01DEA78550068D057 /* GBA-arm.cpp in Sources */,
-				B3C9D4E11DEA78550068D057 /* Globals.cpp in Sources */,
-				B3C9D4E21DEA78550068D057 /* Util.cpp in Sources */,
-				B3C9D4E31DEA78550068D057 /* Multi_Buffer.cpp in Sources */,
-				B3C9D4E41DEA78550068D057 /* GBAGfx.cpp in Sources */,
-				B3C9D4E51DEA78550068D057 /* CheatSearch.cpp in Sources */,
-				B3C9D4E61DEA78550068D057 /* armdis.cpp in Sources */,
-				B3C9D4E71DEA78550068D057 /* Sound.cpp in Sources */,
-				B3C9D4E81DEA78550068D057 /* Mode1.cpp in Sources */,
-				B3C9D4E91DEA78550068D057 /* Sram.cpp in Sources */,
-				B3C9D4EA1DEA78550068D057 /* Mode4.cpp in Sources */,
-				B3C9D4EB1DEA78550068D057 /* gbafilter.cpp in Sources */,
-				B3C9D4EC1DEA78550068D057 /* Mode5.cpp in Sources */,
-				B3C9D4ED1DEA78550068D057 /* Blip_Buffer.cpp in Sources */,
-				B3C9D4EE1DEA78550068D057 /* agbprint.cpp in Sources */,
 				B3C9D4EF1DEA78550068D057 /* PVGBAEmulatorCore.mm in Sources */,
-				B3C9D4F01DEA78550068D057 /* GBALink.cpp in Sources */,
-				B3C9D4F11DEA78550068D057 /* Mode0.cpp in Sources */,
-				B3C9D4F21DEA78550068D057 /* memgzio.c in Sources */,
-				B3C9D4F31DEA78550068D057 /* Cheats.cpp in Sources */,
-				B3C9D4F41DEA78550068D057 /* Mode3.cpp in Sources */,
-				B3C9D4F51DEA78550068D057 /* GBASockClient.cpp in Sources */,
-				B3C9D4F61DEA78550068D057 /* Gb_Oscs.cpp in Sources */,
-				B3C9D4F71DEA78550068D057 /* elf.cpp in Sources */,
-				B3C9D4F81DEA78550068D057 /* bios.cpp in Sources */,
-				B3C9D4F91DEA78550068D057 /* GBA-thumb.cpp in Sources */,
-				B3C9D4FA1DEA78550068D057 /* Mode2.cpp in Sources */,
-				B3C9D4FB1DEA78550068D057 /* RTC.cpp in Sources */,
-				B3C9D4FC1DEA78550068D057 /* Flash.cpp in Sources */,
-				B3C9D4FD1DEA78550068D057 /* Gb_Apu_State.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3E3986E2946E095001C636B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3E3988B2946E140001C636B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3E398AE2946E15F001C636B /* Sram.cpp in Sources */,
+				B3E398AD2946E15F001C636B /* Blip_Buffer.cpp in Sources */,
+				B3E398A82946E15F001C636B /* CheatSearch.cpp in Sources */,
+				B3E398962946E15F001C636B /* Gb_Apu.cpp in Sources */,
+				B3E398AC2946E15F001C636B /* GBA-thumb.cpp in Sources */,
+				B3E398AA2946E15F001C636B /* Mode2.cpp in Sources */,
+				B3E398B02946E15F001C636B /* armdis.cpp in Sources */,
+				B3E398B42946E15F001C636B /* Gb_Oscs.cpp in Sources */,
+				B3E398952946E15F001C636B /* GBA.cpp in Sources */,
+				B3E398B12946E15F001C636B /* bios.cpp in Sources */,
+				B3E398A52946E15F001C636B /* Cheats.cpp in Sources */,
+				B3E398A22946E15F001C636B /* Effects_Buffer.cpp in Sources */,
+				B3E398A42946E15F001C636B /* Mode5.cpp in Sources */,
+				B3E398A92946E15F001C636B /* Mode4.cpp in Sources */,
+				B3E3989B2946E15F001C636B /* GBA-arm.cpp in Sources */,
+				B3E398A12946E15F001C636B /* Globals.cpp in Sources */,
+				B3E3989E2946E15F001C636B /* agbprint.cpp in Sources */,
+				B3E398992946E15F001C636B /* Mode0.cpp in Sources */,
+				B3E398B32946E15F001C636B /* memgzio.c in Sources */,
+				B3E398A02946E15F001C636B /* elf.cpp in Sources */,
+				B3E398A62946E15F001C636B /* Mode1.cpp in Sources */,
+				B3E3989C2946E15F001C636B /* GBAGfx.cpp in Sources */,
+				B3E398AB2946E15F001C636B /* Flash.cpp in Sources */,
+				B3E3989D2946E15F001C636B /* Mode3.cpp in Sources */,
+				B3E3989A2946E15F001C636B /* RTC.cpp in Sources */,
+				B3E398972946E15F001C636B /* EEprom.cpp in Sources */,
+				B3E3989F2946E15F001C636B /* gbafilter.cpp in Sources */,
+				B3E398B22946E15F001C636B /* GBALink.cpp in Sources */,
+				B3E398982946E15F001C636B /* GBASockClient.cpp in Sources */,
+				B3E398A32946E15F001C636B /* Gb_Apu_State.cpp in Sources */,
+				B3E398B52946E15F001C636B /* Multi_Buffer.cpp in Sources */,
+				B3E398A72946E15F001C636B /* Sound.cpp in Sources */,
+				B3E398AF2946E15F001C636B /* Util.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		B3E398BA2946E19B001C636B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3E3988A2946E140001C636B /* vba */;
+			targetProxy = B3E398B92946E19B001C636B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
 		1A9FBC2C1ABD0DA7004E778B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3E398BB2946E1CE001C636B /* BuildFlags.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -516,16 +635,22 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/GBA/GBACore\"";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 			};
 			name = Debug;
 		};
 		1A9FBC2D1ABD0DA7004E778B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3E398BB2946E1CE001C636B /* BuildFlags.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -565,9 +690,13 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/GBA/GBACore\"";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 			};
@@ -575,7 +704,9 @@
 		};
 		B324C5172191A3CF009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3E398BB2946E1CE001C636B /* BuildFlags.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -615,9 +746,13 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/GBA/GBACore\"";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 			};
@@ -640,7 +775,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
-				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "GBA/PVGBA-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -653,13 +787,6 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				OTHER_CFLAGS = (
-					"-DC_CORE",
-					"-DFINAL_VERSION",
-					"-DNO_LINK",
-					"-DNO_PNG",
-					"-DTILED_RENDERING",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGBA";
 				PRODUCT_NAME = PVGBA;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -668,7 +795,6 @@
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -691,7 +817,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
-				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "GBA/PVGBA-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -704,13 +829,6 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				OTHER_CFLAGS = (
-					"-DC_CORE",
-					"-DFINAL_VERSION",
-					"-DNO_LINK",
-					"-DNO_PNG",
-					"-DTILED_RENDERING",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGBA";
 				PRODUCT_NAME = PVGBA;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -719,7 +837,6 @@
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -742,7 +859,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
-				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "GBA/PVGBA-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -755,13 +871,6 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				OTHER_CFLAGS = (
-					"-DC_CORE",
-					"-DFINAL_VERSION",
-					"-DNO_LINK",
-					"-DNO_PNG",
-					"-DTILED_RENDERING",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVGBA";
 				PRODUCT_NAME = PVGBA;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -770,11 +879,142 @@
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
+		};
+		B3E398782946E095001C636B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = Debug;
+		};
+		B3E398792946E095001C636B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = Release;
+		};
+		B3E3987A2946E095001C636B /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = Archive;
+		};
+		B3E398912946E140001C636B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = Debug;
+		};
+		B3E398922946E140001C636B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = Release;
+		};
+		B3E398932946E140001C636B /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = Archive;
 		};
 /* End XCBuildConfiguration section */
 
@@ -795,6 +1035,26 @@
 				B3C9D4BE1DEA77DF0068D057 /* Debug */,
 				B3C9D4BF1DEA77DF0068D057 /* Release */,
 				B324C5182191A3CF009F4EDC /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3E3987B2946E095001C636B /* Build configuration list for PBXNativeTarget "vba-next" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3E398782946E095001C636B /* Debug */,
+				B3E398792946E095001C636B /* Release */,
+				B3E3987A2946E095001C636B /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3E398902946E140001C636B /* Build configuration list for PBXNativeTarget "vba" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3E398912946E140001C636B /* Debug */,
+				B3E398922946E140001C636B /* Release */,
+				B3E398932946E140001C636B /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

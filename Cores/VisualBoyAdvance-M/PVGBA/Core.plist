@@ -9,6 +9,8 @@
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.gba</string>
+		<string>com.provenance.gb</string>
+		<string>com.provenance.gbc</string>
 	</array>
 	<key>PVProjectName</key>
 	<string>VisualBoyAdvance</string>
