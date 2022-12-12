@@ -54,6 +54,8 @@ final class PVSaveStateCollectionViewCell: UICollectionViewCell {
                 #if os(tvOS)
                 // Set up initial textColor for the savestate labels to match the other titles and allow for animation to white for our popup effect when focussed
                 if saveStateView {
+                    labelContainer.superview?.constraints.first(where: {$0.identifier == "labelContainer"})?.constant = 40
+                    
                     timeStampLabel.textColor = .white
                     titleLabel.textColor = .white
                     coreLabel.textColor = .white
