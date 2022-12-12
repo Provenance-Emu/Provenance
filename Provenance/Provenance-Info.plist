@@ -331,6 +331,7 @@
 					<string>rar</string>
 					<string>z80</string>
 					<string>tzx</string>
+					<string>chd</string>
 				</array>
 				<key>public.mime-type</key>
 				<array>
@@ -423,6 +424,7 @@
 					<string>z80</string>
 					<string>tzx</string>
 					<string>rar</string>
+					<string>chd</string>
 				</array>
 			</dict>
 			<key>UTTypeConformsTo</key>
@@ -484,6 +486,7 @@
 					<string>rar</string>
 					<string>z80</string>
 					<string>tzx</string>
+					<string>chd</string>
 				</array>
 				<key>public.mime-type</key>
 				<array>
@@ -512,6 +515,14 @@
 			<array/>
 			<key>UTTypeIdentifier</key>
 			<string>com.provenance.artwork</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>jpg</string>
+					<string>png</string>
+				</array>
+			</dict>
 		</dict>
 		<dict>
 			<key>UTITagTypeSpecification</key>
