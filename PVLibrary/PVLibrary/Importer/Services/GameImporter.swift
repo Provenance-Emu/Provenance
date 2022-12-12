@@ -114,7 +114,7 @@ public final class GameImporter {
     internal func isCDROM(_ romFile: ImportCandidateFile) -> Bool {
         let cdExtensions = PVEmulatorConfiguration.supportedCDFileExtensions
         let ext = romFile.filePath.pathExtension
-
+        if ext.lowercased() == "chd" { return false }
         return cdExtensions.contains(ext)
     }
 
