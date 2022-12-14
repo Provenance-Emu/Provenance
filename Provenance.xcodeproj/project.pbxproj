@@ -497,6 +497,8 @@
 		B3A70062288DD24000355823 /* PVEP128ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A70060288DD23F00355823 /* PVEP128ControllerViewController.swift */; };
 		B3A70065288DF1C400355823 /* PVMSXControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A70064288DF1BF00355823 /* PVMSXControllerViewController.swift */; };
 		B3A70066288DF1C400355823 /* PVMSXControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A70064288DF1BF00355823 /* PVMSXControllerViewController.swift */; };
+		B3AB13DF2949C0B1005DCCDE /* PVBeetlePSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B329030528740D920037BA1C /* PVBeetlePSX.framework */; };
+		B3AB13E02949C0B1005DCCDE /* PVBeetlePSX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B329030528740D920037BA1C /* PVBeetlePSX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3AB13C129497DF5005DCCDE /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AB13C029497DF5005DCCDE /* libMoltenVK.dylib */; };
 		B3AB13C329497E0A005DCCDE /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AB13C229497E08005DCCDE /* libMoltenVK.dylib */; platformFilters = (maccatalyst, macos, ); };
 		B3AB37322187F569009D9244 /* PVSNESControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB371E2187F568009D9244 /* PVSNESControllerViewController.swift */; };
@@ -884,6 +886,7 @@
 				B3AEDE1D293F2FF10050BDB6 /* PVPlay.framework in Embed Frameworks */,
 				B3FAC928292B4501005E8B11 /* PVEP128Emu.framework in Embed Frameworks */,
 				B3AF701421916C3A000FA7F9 /* PVLibrary.framework in Embed Frameworks */,
+				B3AB13E02949C0B1005DCCDE /* PVBeetlePSX.framework in Embed Frameworks */,
 				B3AEDE23293F34380050BDB6 /* PVCrabEmu.framework in Embed Frameworks */,
 				B3FAC938292B4586005E8B11 /* PVLibRetro.framework in Embed Frameworks */,
 				B3FAC934292B451B005E8B11 /* PVGenesis.framework in Embed Frameworks */,
@@ -1704,6 +1707,7 @@
 				B3DEEF922942F92C00A6957C /* PVBliss.framework in Frameworks */,
 				B3FAC929292B4505005E8B11 /* PVFCEU.framework in Frameworks */,
 				B3FAC953292B45AC005E8B11 /* PVStella.framework in Frameworks */,
+				B3AB13DF2949C0B1005DCCDE /* PVBeetlePSX.framework in Frameworks */,
 				B3FAC921292B44F3005E8B11 /* PVAtari800.framework in Frameworks */,
 				1A4869E017C8D60C0019F6D2 /* SystemConfiguration.framework in Frameworks */,
 				1A4869D617C8D5450019F6D2 /* CoreData.framework in Frameworks */,
