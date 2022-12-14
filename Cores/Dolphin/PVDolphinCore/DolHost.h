@@ -25,14 +25,41 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #import <Foundation/Foundation.h>
+#import <PVSupport/PVSupport.h>
+#import <PVSupport/PVSupport-Swift.h>
+
 //#import "OEGCSystemResponderClient.h"
 //#import "Wii/OEWiiSystemResponderClient.h"
 
 #include "Core/GeckoCode.h"
 #include "Core/ActionReplay.h"
 #include "Core/ARDecrypt.h"
+#include "Common/Common.h"
+#include "Common/CommonTypes.h"
+#include "Common/IniFile.h"
+#include "Core/ConfigManager.h"
+#include "Core/HW/GCKeyboard.h"
+#include "Core/HW/GCPad.h"
+#include "Core/HW/GCPadEmu.h"
+#include "Core/HW/Wiimote.h"
+#include "Core/HW/WiimoteEmu/Extension/Classic.h"
+#include "Core/HW/WiimoteEmu/Extension/Nunchuk.h"
+#include "Core/HW/WiimoteEmu/WiimoteEmu.h"
+#include "Core/HW/WiimoteReal/WiimoteReal.h"
+#include "Core/Host.h"
+//#include "OpenEmuInput.h"
 
-#include "InputCommon/ControllerInterface/Device.h"
+#include "InputCommon/ControlReference/ControlReference.h"
+#include "InputCommon/ControlReference/ExpressionParser.h"
+#include "InputCommon/ControllerEmu/Control/Control.h"
+#include "InputCommon/ControllerEmu/ControlGroup/Attachments.h"
+#include "InputCommon/ControllerEmu/Setting/NumericSetting.h"
+#include "InputCommon/ControllerInterface/ControllerInterface.h"
+#include "InputCommon/GCAdapter.h"
+#include "InputCommon/GCPadStatus.h"
+#include "InputCommon/InputConfig.h"
+
+#include "Device.h"
 
 #include "DolphinNoGUI/Platform.h"
 
@@ -114,7 +141,8 @@ public:
     std::string autoSaveStateFile;
 
     void SetUpPlayerInputs();
-    ciface::Core::Device::Input* m_playerInputs[4][OEWiiButtonCount];
+    ciface::Core::Device::Input* m_playerInputs[4][18];
+//    ciface::Core::Device::Input* m_playerInputs[4][PVWiiButtonCount];
     
     
 };

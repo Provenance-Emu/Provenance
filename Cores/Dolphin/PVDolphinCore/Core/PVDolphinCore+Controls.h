@@ -17,9 +17,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Control
 
-- (void)didPushGameCubeButton:(enum PVGameCubeButton)button forPlayer:(NSInteger)player;
-- (void)didReleaseGameCubeButton:(enum PVGameCubeButton)button forPlayer:(NSInteger)player;
-- (void)didMoveGameCubeJoystickDirection:(enum PVGameCubeButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player;
+- (void)didPushGameCubeButton:(enum PVGCButton)button forPlayer:(NSInteger)player;
+- (void)didReleaseGameCubeButton:(enum PVGCButton)button forPlayer:(NSInteger)player;
+- (void)didMoveGameCubeJoystickDirection:(enum PVGCButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player;
 - (void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player;
 
 - (void)didPush:(NSInteger)button forPlayer:(NSInteger)player;
