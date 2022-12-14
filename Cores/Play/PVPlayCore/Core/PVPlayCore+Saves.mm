@@ -12,11 +12,10 @@
 #include "PH_Generic.h"
 #include "PS2VM.h"
 #include "CGSH_Provenance_OGL.h"
-#include "CGSH_ViewController.h"
 
 extern CGSH_Provenance_OGL *gsHandler;
 extern CPH_Generic *padHandler;
-extern GLKView *m_view;
+extern UIView *m_view;
 extern CPS2VM *_ps2VM;
 
 @implementation PVPlayCore (Saves)

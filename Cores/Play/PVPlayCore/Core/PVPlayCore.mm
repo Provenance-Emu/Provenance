@@ -6,15 +6,16 @@
 //  Copyright © 2021 Provenance. All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
+#import <PVSupport/PVSupport.h>
+#import <Metal/Metal.h>
+#import <MetalKit/MetalKit.h>
+#import <PVPlay/PVPlay-Swift.h>
 #import "PVPlayCore.h"
 #import "PVPlayCore+Controls.h"
 #import "PVPlayCore+Audio.h"
 #import "PVPlayCore+Video.h"
-
 #import "PVPlayCore+Audio.h"
-
-#import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
 #import "PS2VM.h"
 #import "gs/GSH_OpenGL/GSH_OpenGL.h"
 #import "PadHandler.h"
@@ -22,42 +23,27 @@
 #import "PS2VM_Preferences.h"
 #import "AppConfig.h"
 #import "StdStream.h"
-
 #include "PathUtils.h"
-//#import "EmulatorViewController.h"
-//#import "SaveStateViewController.h"
-//#import "SettingsViewController.h"
-//#import "RenderView.h"
 #include "../AppConfig.h"
 #include "PreferenceDefs.h"
 #include "GSH_OpenGLiOS.h"
-#ifdef HAS_GSH_VULKAN
 #include "GSH_VulkaniOS.h"
-#import <Metal/Metal.h>
-#import <MetalKit/MetalKit.h>
-#endif
 #include "../ui_shared/BootablesProcesses.h"
 #include "PH_Generic.h"
 #include "../../tools/PsfPlayer/Source/SH_OpenAL.h"
 #include "../ui_shared/StatsManager.h"
-#import <PVPlay/PVPlay-Swift.h>
-
 #include "PH_Generic.h"
 #include "PS2VM.h"
 #include "CGSH_Provenance_OGL.h"
-#include "CGSH_ViewController.h"
 
 #define SAMPLE_RATE_DEFAULT 44100
 
 CGSH_Provenance_OGL *gsHandler = nullptr;
 CPH_Generic *padHandler = nullptr;
-#ifdef HAS_GSH_VULKAN
-#import <MetalKit/MetalKit.h>
-MTKView *m_view = nullptr;
-#else
-GLKView *m_view = nullptr;
-#endif
+UIView *m_view = nullptr;
 CPS2VM *_ps2VM = nullptr;
+CAMetalLayer* m_metal_layer = nullptr;
+CAEAGLLayer *m_gl_layer = nullptr;
 
 __weak PVPlayCore *_current = nil;
 
@@ -172,6 +158,8 @@ private:
         _callbackQueue = dispatch_queue_create("org.provenance-emu.play.CallbackHandlerQueue", queueAttributes);
         _ps2VM = new CPS2VM();
         [self parseOptions];
+        // Set OpenGL or Vulkan
+        CAppConfig::GetInstance().SetPreferenceInteger(PREFERENCE_VIDEO_GS_HANDLER, (self.gsPreference));
     }
     
     _current = self;
@@ -231,17 +219,16 @@ private:
 
 - (void)startVM
 {
-#ifdef HAS_GSH_VULKAN
-    _ps2VM->CreateGSHandler(CGSH_VulkaniOS::GetFactoryFunction(((CAMetalLayer*)m_view.layer)));
-#else
-    _ps2VM->CreateGSHandler(CGSH_Provenance_OGL::GetFactoryFunction(
-        ((CAEAGLLayer *)m_view.layer),
-        self.videoWidth,
-        self.videoHeight,
-        self.resFactor
-    ));
-#endif
- 
+    auto gsHandlerId = CAppConfig::GetInstance().GetPreferenceInteger(PREFERENCE_VIDEO_GS_HANDLER);
+    if(gsHandlerId == PREFERENCE_VALUE_VIDEO_GS_HANDLER_VULKAN)
+        _ps2VM->CreateGSHandler(CGSH_VulkaniOS::GetFactoryFunction(((CAMetalLayer*)m_metal_layer)));
+    else if(gsHandlerId == PREFERENCE_VALUE_VIDEO_GS_HANDLER_OPENGL)
+        _ps2VM->CreateGSHandler(CGSH_Provenance_OGL::GetFactoryFunction(
+            ((CAEAGLLayer *)m_gl_layer),
+            self.videoWidth,
+            self.videoHeight,
+            self.resFactor
+        ));
     _ps2VM->CreatePadHandler(CPH_Generic::GetFactoryFunction());
     _ps2VM->CreateSoundHandler(CSH_OpenEmu::GetFactoryFunction());
     gsHandler = (CGSH_Provenance_OGL *)_ps2VM->GetGSHandler();
@@ -259,20 +246,15 @@ private:
     _ps2VM->Reset();
     CPS2OS* os = _ps2VM->m_ee->m_os;
     
-//    auto bootablePath = fs::path([_romPath fileSystemRepresentation]);
-//    if(IsBootableExecutablePath(bootablePath))
-//    {
-//        os->BootFromFile(bootablePath);
-//    }
-//    else
-//    {
-//        CAppConfig::GetInstance().SetPreferencePath(PREF_PS2_CDROM0_PATH, bootablePath);
-        _ps2VM->Reset();
+    auto bootablePath = fs::path([_romPath fileSystemRepresentation]);
+    if(IsBootableExecutablePath(bootablePath))
+    {
+        os->BootFromFile(bootablePath);
+    }
+    else
+    {
         os->BootFromCDROM();
-//    }
-
-    os->BootFromCDROM();
-    
+    }    
     // TODO: Play! starts a bunch of threads. They all need to be realtime.
     _ps2VM->Resume();
 }
@@ -349,22 +331,21 @@ private:
     CAppConfig::GetInstance().SetPreferencePath(PREF_PS2_MC1_DIRECTORY, mcd1.fileSystemRepresentation);
     CAppConfig::GetInstance().SetPreferencePath(PREF_PS2_HOST_DIRECTORY, hdd.fileSystemRepresentation);
     CAppConfig::GetInstance().SetPreferencePath(PREF_PS2_ROM0_DIRECTORY, self.BIOSPath.fileSystemRepresentation);
-    CAppConfig::GetInstance().SetPreferenceInteger(PREF_CGSHANDLER_PRESENTATION_MODE, CGSHandler::PRESENTATION_MODE_FIT);
+    CAppConfig::GetInstance().SetPreferenceInteger(PREF_CGSHANDLER_PRESENTATION_MODE, CGSHandler::PRESENTATION_MODE_FILL);
     CAppConfig::GetInstance().SetPreferenceInteger(PREF_CGSH_OPENGL_RESOLUTION_FACTOR, self.resFactor);
     CAppConfig::GetInstance().SetPreferenceInteger(PREF_AUDIO_SPUBLOCKCOUNT, 22);
     
     CAppConfig::GetInstance().RegisterPreferenceBoolean(PREFERENCE_UI_SHOWFPS, true);
     CAppConfig::GetInstance().RegisterPreferenceBoolean(PREFERENCE_UI_SHOWVIRTUALPAD, true);
     CAppConfig::GetInstance().RegisterPreferenceBoolean(PREFERENCE_AUDIO_ENABLEOUTPUT, true);
-    CAppConfig::GetInstance().RegisterPreferenceInteger(PREFERENCE_VIDEO_GS_HANDLER, PREFERENCE_VALUE_VIDEO_GS_HANDLER_VULKAN);
     CAppConfig::GetInstance().RegisterPreferenceInteger(PREFERENCE_UI_VIRTUALPADOPACITY, 100);
     CAppConfig::GetInstance().RegisterPreferenceBoolean(PREFERENCE_UI_HIDEVIRTUALPAD_CONTROLLER_CONNECTED, true);
     CAppConfig::GetInstance().RegisterPreferenceBoolean(PREFERENCE_UI_VIRTUALPAD_HAPTICFEEDBACK, true);
     
     CAppConfig::GetInstance().Save();
     _ps2VM->Initialize();
-    CAppConfig::GetInstance().SetPreferenceBoolean(PREF_PS2_LIMIT_FRAMERATE, false);
-    _ps2VM->ReloadFrameRateLimit();
+    //CAppConfig::GetInstance().SetPreferenceBoolean(PREF_PS2_LIMIT_FRAMERATE, false);
+    //_ps2VM->ReloadFrameRateLimit();
     //
     //	_bindings[PS2::CControllerInfo::START] = std::make_shared<CSimpleBinding>(PVPS2ButtonStart);
     //	_bindings[PS2::CControllerInfo::SELECT] = std::make_shared<CSimpleBinding>(PVPS2ButtonSelect);
@@ -449,31 +430,51 @@ private:
 //}
 
 - (void)initView {
-#ifdef HAS_GSH_VULKAN
-    // TODO: Fix this hack to find the MTKView, and detect first if in metal mode
-    MTKView *glk_view = (MTKView *)self.renderDelegate.mtlview;
-    m_view = glk_view;
-//    m_view.frame = screenBounds;
-//    m_view.enableSetNeedsDisplay = NO;
-#else
     UIViewController *gl_view_controller = (UIViewController *)self.renderDelegate;
     UIViewController *view_controller = gl_view_controller.parentViewController;
+    auto gsHandlerId = CAppConfig::GetInstance().GetPreferenceInteger(PREFERENCE_VIDEO_GS_HANDLER);
     auto screenBounds = [[UIScreen mainScreen] bounds];
-    GLKView *glk_view = (GLKView *)cgsh_view_controller.view;
-    m_view = glk_view;
-    m_view.frame = screenBounds;
-    m_view.enableSetNeedsDisplay = NO;
-    GLKViewController *cgsh_view_controller = [[CGSH_ViewController alloc]
-                                               initWithNibName:nil
-                                               bundle:nil];
-
-    cgsh_view_controller.view=(UIView *)m_view;
-    // Attach Controller to somewhere rendering won't interfere frame buffers
-    [view_controller.parentViewController addChildViewController:cgsh_view_controller];
-    [cgsh_view_controller didMoveToParentViewController:view_controller.parentViewController];
-    // Add View
-    [gl_view_controller.view addSubview:m_view];
-#endif
+    if(gsHandlerId == PREFERENCE_VALUE_VIDEO_GS_HANDLER_VULKAN)
+    {
+        /*
+         // TODO: Fix this hack to find the MTKView, and detect first if in metal mode
+         MTKView *glk_view = (MTKView *)self.renderDelegate.mtlview;
+         m_view = glk_view;
+         m_view.frame = screenBounds;
+         m_metal_layer=m_view.layer;
+         glk_view.enableSetNeedsDisplay = NO;
+         */
+        CGSH_MTLViewController *cgsh_view_controller=[[CGSH_MTLViewController alloc] init];
+        m_metal_layer=(CAMetalLayer *)cgsh_view_controller.view.layer;
+        // Attach Controller to somewhere rendering won't interfere frame buffers
+        [view_controller.parentViewController addChildViewController:cgsh_view_controller];
+        [cgsh_view_controller didMoveToParentViewController:view_controller.parentViewController];
+        // Add View
+        m_view=cgsh_view_controller.view;
+        [gl_view_controller.view addSubview:m_view];
+        // Resize masks
+        m_view.autoresizingMask  = (UIViewAutoresizingFlexibleWidth|
+                                    UIViewAutoresizingFlexibleHeight|
+                                    UIViewAutoresizingFlexibleBottomMargin|
+                                    UIViewAutoresizingFlexibleRightMargin |
+                                    UIViewAutoresizingFlexibleLeftMargin |
+                                    UIViewAutoresizingFlexibleTopMargin );
+        [m_view.topAnchor constraintEqualToAnchor:gl_view_controller.view.topAnchor constant:0].active = true;
+        [m_view.leadingAnchor constraintEqualToAnchor:gl_view_controller.view.leadingAnchor constant:0].active = true;
+        [m_view.trailingAnchor constraintEqualToAnchor:gl_view_controller.view.trailingAnchor constant:0].active = true;
+        [m_view.bottomAnchor constraintEqualToAnchor:gl_view_controller.view.bottomAnchor constant:0].active = true;
+    } else if(gsHandlerId == PREFERENCE_VALUE_VIDEO_GS_HANDLER_OPENGL) {
+        GLKViewController *cgsh_view_controller = [[GLKViewController alloc]
+                                                initWithNibName:nil
+                                                bundle:nil];
+        m_gl_layer=(CAEAGLLayer *)cgsh_view_controller.view.layer;
+        // Attach Controller to somewhere rendering won't interfere frame buffers
+        [view_controller.parentViewController addChildViewController:cgsh_view_controller];
+        [cgsh_view_controller didMoveToParentViewController:view_controller.parentViewController];
+        // Add View
+        m_view=cgsh_view_controller.view;
+        [gl_view_controller.view addSubview:m_view];
+    }
 }
 @end
 

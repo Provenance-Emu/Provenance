@@ -19,15 +19,15 @@
 #import <OpenGL/OpenGL.h>
 #import <GLKit/GLKit.h>
 #endif
-
+#include "../AppConfig.h"
+#include "PreferenceDefs.h"
 #include "PH_Generic.h"
 #include "PS2VM.h"
 #include "CGSH_Provenance_OGL.h"
-#include "CGSH_ViewController.h"
 
 extern CGSH_Provenance_OGL *gsHandler;
 extern CPH_Generic *padHandler;
-extern GLKView *m_view;
+extern UIView *m_view;
 extern CPS2VM *_ps2VM;
 
 //#import "PS2VM.h"
@@ -62,7 +62,10 @@ extern CPS2VM *_ps2VM;
         && _ps2VM->GetPadHandler()
         && _ps2VM->GetGSHandler()) {
         [self pollControllers];
-        gsHandler->ProcessSingleFrame();
+        auto gsHandlerId = CAppConfig::GetInstance().GetPreferenceInteger(PREFERENCE_VIDEO_GS_HANDLER);
+        if(gsHandlerId == PREFERENCE_VALUE_VIDEO_GS_HANDLER_OPENGL) {
+            gsHandler->ProcessSingleFrame();
+        }
     }
 }
 

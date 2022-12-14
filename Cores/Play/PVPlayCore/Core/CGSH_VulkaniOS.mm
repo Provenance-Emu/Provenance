@@ -2,6 +2,7 @@
 #import "CGSH_VulkaniOS.h"
 #import "vulkan/Loader.h"
 #import <QuartzCore/QuartzCore.h>
+#import "GSH_VulkanPlatformDefs.h"
 
 CGSH_VulkaniOS::CGSH_VulkaniOS(CAMetalLayer* layer)
     : m_layer(layer)

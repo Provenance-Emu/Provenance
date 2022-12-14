@@ -25,7 +25,8 @@
  	int videoWidth;
  	int videoHeight;
  	int videoBitDepth;
- 	int8_t resFactor;
+    int8_t gsPreference;
+    int8_t resFactor;
 
 	float sampleRate;
 
@@ -38,6 +39,8 @@
 @property (nonatomic, assign) int videoWidth;
 @property (nonatomic, assign) int videoHeight;
 @property (nonatomic, assign) int8_t resFactor;
+
+@property (nonatomic, assign) int8_t gsPreference;
 
 -(void)pollControllers;
 -(void)executeFrameSkippingFrame:(BOOL)skip;
