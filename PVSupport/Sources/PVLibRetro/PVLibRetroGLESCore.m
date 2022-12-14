@@ -141,9 +141,9 @@ void gl_swap() {
 }
 
 - (void)videoInterrupt {
-//    dispatch_semaphore_signal(coreWaitToEndFrameSemaphore);
-//
-//    dispatch_semaphore_wait(glesWaitToBeginFrameSemaphore, [self frameTime]);
+    dispatch_semaphore_signal(coreWaitToEndFrameSemaphore);
+
+    dispatch_semaphore_wait(glesWaitToBeginFrameSemaphore, [self frameTime]);
 }
 
 - (void)swapBuffers {
@@ -151,9 +151,9 @@ void gl_swap() {
 }
 
 - (void)executeFrameSkippingFrame:(BOOL)skip {
-//    dispatch_semaphore_signal(glesWaitToBeginFrameSemaphore);
-//
-//    dispatch_semaphore_wait(coreWaitToEndFrameSemaphore, [self frameTime]);
+    dispatch_semaphore_signal(glesWaitToBeginFrameSemaphore);
+
+    dispatch_semaphore_wait(coreWaitToEndFrameSemaphore, [self frameTime]);
 }
 
 - (void)executeFrame {
@@ -197,6 +197,8 @@ void gl_swap() {
 
 
 - (void)startEmulation {
+//    [self parseOptions];
+
     if(!self.isRunning) {
         [super startEmulation];
         [NSThread detachNewThreadSelector:@selector(runGLESRenderThread) toTarget:self withObject:nil];
@@ -243,35 +245,35 @@ bool gles_init()
     return true;
 }
 
-static bool video_driver_cached_frame(void)
-{
-   retro_ctx_frame_info_t info;
-//   void *recording  = recording_driver_get_data_ptr();
-
-   if (runloop_ctl(RUNLOOP_CTL_IS_IDLE, NULL))
-      return false; /* Maybe return false here for indication of idleness? */
-
-   /* Cannot allow recording when pushing duped frames. */
-//   recording_driver_clear_data_ptr();
-
-   /* Not 100% safe, since the library might have
-    * freed the memory, but no known implementations do this.
-    * It would be really stupid at any rate ...
-    */
-   info.data        = NULL;
-   info.width       = video_driver_state.frame_cache.width;
-   info.height      = video_driver_state.frame_cache.height;
-   info.pitch       = video_driver_state.frame_cache.pitch;
-
-   if (video_driver_state.frame_cache.data != RETRO_HW_FRAME_BUFFER_VALID)
-      info.data = video_driver_state.frame_cache.data;
-
-   core_frame(&info);
-
-//   recording_driver_set_data_ptr(recording);
-
-   return true;
-}
+//static bool video_driver_cached_frame(void)
+//{
+//   retro_ctx_frame_info_t info;
+////   void *recording  = recording_driver_get_data_ptr();
+//
+//   if (runloop_ctl(RUNLOOP_CTL_IS_IDLE, NULL))
+//      return false; /* Maybe return false here for indication of idleness? */
+//
+//   /* Cannot allow recording when pushing duped frames. */
+////   recording_driver_clear_data_ptr();
+//
+//   /* Not 100% safe, since the library might have
+//    * freed the memory, but no known implementations do this.
+//    * It would be really stupid at any rate ...
+//    */
+//   info.data        = NULL;
+//   info.width       = video_driver_state.frame_cache.width;
+//   info.height      = video_driver_state.frame_cache.height;
+//   info.pitch       = video_driver_state.frame_cache.pitch;
+//
+//   if (video_driver_state.frame_cache.data != RETRO_HW_FRAME_BUFFER_VALID)
+//      info.data = video_driver_state.frame_cache.data;
+//
+//   core_frame(&info);
+//
+////   recording_driver_set_data_ptr(recording);
+//
+//   return true;
+//}
 
 - (void)runGLESRenderThread {
     @autoreleasepool
@@ -283,9 +285,18 @@ static bool video_driver_cached_frame(void)
     EAGLContext* context = [self bestContext];
     ILOG(@"%i", context.API);
 #endif
+#if 1 // Trying different render methods
+        [self libretroMain];
+        // Core returns
+
+        // Unlock rendering thread
+        dispatch_semaphore_signal(coreWaitToEndFrameSemaphore);
+
+        [super stopEmulation];
+#else
         [NSThread detachNewThreadSelector:@selector(runGLESEmuThread) toTarget:self withObject:nil];
 
-//        CFAbsoluteTime lastTime = CFAbsoluteTimeGetCurrent();
+        CFAbsoluteTime lastTime = CFAbsoluteTimeGetCurrent();
 
         while (!has_init) {}
         while ( !shouldStop )
@@ -303,6 +314,7 @@ static bool video_driver_cached_frame(void)
             [self swapBuffers];
 //            lastTime = now;
         }
+#endif
     }
 }
 
