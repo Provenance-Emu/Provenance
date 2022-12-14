@@ -62,10 +62,8 @@ extern CPS2VM *_ps2VM;
         && _ps2VM->GetPadHandler()
         && _ps2VM->GetGSHandler()) {
         [self pollControllers];
-        auto gsHandlerId = CAppConfig::GetInstance().GetPreferenceInteger(PREFERENCE_VIDEO_GS_HANDLER);
-        if(gsHandlerId == PREFERENCE_VALUE_VIDEO_GS_HANDLER_OPENGL) {
+        if(self.gsPreference == PREFERENCE_VALUE_VIDEO_GS_HANDLER_OPENGL)
             gsHandler->ProcessSingleFrame();
-        }
     }
 }
 

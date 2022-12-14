@@ -42,17 +42,22 @@ extern CPS2VM *_ps2VM;
 }
 
 - (BOOL)loadStateFromFileAtPath:(NSString *)fileName {
-    const fs::path fsName(fileName.fileSystemRepresentation);
-    auto success = _ps2VM->LoadState(fsName);
-    success.wait();
-    return YES;
+    if (_ps2VM) {
+        const fs::path fsName(fileName.fileSystemRepresentation);
+        auto success = _ps2VM->LoadState(fsName);
+        success.wait();
+        return YES;
+    }
+    return NO;
 }
 
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
-    const fs::path fsName(fileName.fileSystemRepresentation);
-    auto success = _ps2VM->LoadState(fsName);
-    success.wait();
-    block(success.get(), nil);
+    if (_ps2VM) {
+        const fs::path fsName(fileName.fileSystemRepresentation);
+        auto success = _ps2VM->LoadState(fsName);
+        success.wait();
+        block(success.get(), nil);
+    }
 }
 
 @end

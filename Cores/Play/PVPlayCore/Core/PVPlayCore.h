@@ -21,10 +21,10 @@
 	uint8_t padData[4][PVDreamcastButtonCount];
 	int8_t xAxis[4];
 	int8_t yAxis[4];
- 	int videoDepthBitDepth; // eh
- 	int videoWidth;
- 	int videoHeight;
- 	int videoBitDepth;
+    int videoDepthBitDepth; // eh
+    int videoWidth;
+    int videoHeight;
+    int videoBitDepth;
     int8_t gsPreference;
     int8_t resFactor;
 
@@ -33,7 +33,7 @@
 	BOOL isNTSC;
 
 @public
- 	dispatch_queue_t _callbackQueue;
+    dispatch_queue_t _callbackQueue;
 }
 
 @property (nonatomic, assign) int videoWidth;

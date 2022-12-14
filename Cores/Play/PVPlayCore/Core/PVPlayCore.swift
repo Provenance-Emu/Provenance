@@ -1,8 +1,8 @@
 import Foundation
 
 extension PVPlayCore: CoreOptional {
- 	static var resolutionOption: CoreOption = {
- 	 	.enumeration(.init(title: "Resolution Upscaling",
+     static var resolutionOption: CoreOption = {
+          .enumeration(.init(title: "Resolution Upscaling",
                 description: "(Requires Restart)",
                 requiresRestart: true),
             values: [
@@ -28,27 +28,27 @@ extension PVPlayCore: CoreOptional {
           ],
           defaultValue: 0)
     }()
- 	public static var options: [CoreOption] {
-		var options = [CoreOption]()
- 	 	var coreOptions = [CoreOption]()
+     public static var options: [CoreOption] {
+        var options = [CoreOption]()
+          var coreOptions = [CoreOption]()
         coreOptions.append(resolutionOption)
- 	 	coreOptions.append(gsOption)
-		let coreGroup:CoreOption = .group(.init(title: "Play! Core", description: "Global options for Play!"),
-										  subOptions: coreOptions)
- 	 	options.append(contentsOf: [coreGroup])
-		return options
-	}
+          coreOptions.append(gsOption)
+        let coreGroup:CoreOption = .group(.init(title: "Play! Core", description: "Global options for Play!"),
+                                          subOptions: coreOptions)
+          options.append(contentsOf: [coreGroup])
+        return options
+    }
 }
 
 @objc public extension PVPlayCore {
- 	@objc var resolution: Int{
- 	 	PVPlayCore.valueForOption(PVPlayCore.resolutionOption).asInt ?? 0
- 	}
+     @objc var resolution: Int{
+          PVPlayCore.valueForOption(PVPlayCore.resolutionOption).asInt ?? 0
+     }
     @objc var gs: Int{
          PVPlayCore.valueForOption(PVPlayCore.gsOption).asInt ?? 0
     }
- 	func parseOptions() {
+     func parseOptions() {
         self.gsPreference = NSNumber(value: gs).int8Value
- 	 	self.resFactor = NSNumber(value: resolution).int8Value
- 	}
+          self.resFactor = NSNumber(value: resolution).int8Value
+     }
 }
