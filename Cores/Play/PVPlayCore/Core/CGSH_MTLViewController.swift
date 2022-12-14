@@ -14,10 +14,15 @@ import os
 @objc public class CGSH_MTLViewController: UIViewController {
     private var metalView: PVMTLView!
     
+    @objc public init(resFactor: Int8, videoWidth: CGFloat, videoHeight: CGFloat) {
+        super.init(nibName: nil, bundle: nil)
+        metalView = PVMTLView(gameScreenSize: CGSize(width: videoWidth, height: videoHeight),
+                              resolutionFactor: resFactor);
+        self.view=metalView;
+    }
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-        metalView = PVMTLView(frame: UIScreen.main.bounds, device:MTLCreateSystemDefaultDevice());
-        self.view=metalView;
+        
     }
     required init?(coder: NSCoder) {
         super.init(coder:coder);
@@ -38,6 +43,8 @@ import os
     private var viewportOffset: CGPoint = CGPoint.zero
     private var lastDrawableSize: CGSize = CGSize.zero
     private var tNesScreen: CGAffineTransform = CGAffineTransform.identity
+    private var gameScreenSize: CGSize = CGSize.zero
+    private var resolutionFactor: Int8 = 1
     static private let elementLength: Int = 4
     static private let bitsPerComponent: Int = 8
     
@@ -52,41 +59,65 @@ import os
         super.init(coder: coder)
     }
 
-    override init(frame frameRect: CGRect,
-                  device: MTLDevice?) {
-        let dev: MTLDevice = device!;
-        let commandQueue = dev.makeCommandQueue()!
-        self.context = CIContext.init(mtlCommandQueue: commandQueue, options: [.cacheIntermediates: false])
-        self.commandQueue = commandQueue
+    init(gameScreenSize: CGSize, resolutionFactor: Int8) {
+        let dev: MTLDevice = MTLCreateSystemDefaultDevice()!
+        self.gameScreenSize = gameScreenSize
+        self.resolutionFactor = resolutionFactor
+        self.commandQueue = dev.makeCommandQueue()!
+        self.context = CIContext.init(mtlCommandQueue: self.commandQueue, options: [.cacheIntermediates: false])
         self.nearestNeighborRendering = true
         self.checkForRedundantFrames = true
         self.integerScaling = true
-        super.init(frame: frameRect,
-                   device: dev);
+        let videoBounds = CGRect( x: 0,
+                            y: 0,
+                            width: (CGFloat)(gameScreenSize.width * CGFloat(resolutionFactor)),
+                            height: (CGFloat)(gameScreenSize.height * CGFloat(resolutionFactor)));
+        super.init(frame: videoBounds, device: dev)
         self.device = dev
-        self.autoResizeDrawable = true
         self.isPaused = true
         self.enableSetNeedsDisplay = false
         self.framebufferOnly = false
         self.delegate = self
         self.isOpaque = true
         self.clearsContextBeforeDrawing = true
-        self.drawableSize = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        self.setResolution()
         NotificationCenter.default.addObserver(self, selector: #selector(appResignedActive), name: UIApplication.willResignActiveNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(appBecameActive), name: UIApplication.didBecomeActiveNotification, object: nil)
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
+    func setResolution() {
         let scale:CGFloat = UIScreen.main.scale
         if (scale != 1.0) {
             self.layer.contentsScale = scale;
             self.layer.rasterizationScale = scale;
             self.contentScaleFactor = scale;
         }
-        self.frame = UIScreen.main.bounds;
-        self.layer.frame = UIScreen.main.bounds;
-        self.contentMode = .scaleAspectFill
-    }
-
-    deinit {
-        NotificationCenter.default.removeObserver(self)
+        let screenBounds=UIScreen.main.bounds
+        // Resize masks
+        self.autoResizeDrawable = true
+        self.autoresizingMask  = [.flexibleHeight, .flexibleWidth,
+                                  .flexibleRightMargin,
+                                  .flexibleLeftMargin]
+        self.layer.anchorPoint=CGPoint(x: 0, y: 0)
+        let gameFrameSize = CGRect(x: 0,
+                                   y: 0,
+                                   width: (CGFloat)(gameScreenSize.width * CGFloat(resolutionFactor)),
+                                   height: (CGFloat)(gameScreenSize.height * CGFloat(resolutionFactor)))
+        self.layer.frame = gameFrameSize
+        // Adjust to Resolution Upscaled Vulkan Render
+        let xScale = screenBounds.width / (CGFloat)(gameScreenSize.width * CGFloat(resolutionFactor)) ;
+        let yScale = screenBounds.height / (CGFloat)(gameScreenSize.height * CGFloat(resolutionFactor)) ;
+        self.layer.setAffineTransform(
+            CGAffineTransform(scaleX: xScale,
+                              y: yScale)
+        )
+        self.drawableSize=CGSize(width: gameFrameSize.width, height: gameFrameSize.height)
+        self.autoresizesSubviews = true
+        self.contentMode = .scaleToFill
     }
 
     var buffer: [UInt32] = [UInt32]() {

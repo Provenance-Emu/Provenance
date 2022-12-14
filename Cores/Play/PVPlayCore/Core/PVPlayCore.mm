@@ -219,10 +219,9 @@ private:
 
 - (void)startVM
 {
-    auto gsHandlerId = CAppConfig::GetInstance().GetPreferenceInteger(PREFERENCE_VIDEO_GS_HANDLER);
-    if(gsHandlerId == PREFERENCE_VALUE_VIDEO_GS_HANDLER_VULKAN)
+    if(self.gsPreference == PREFERENCE_VALUE_VIDEO_GS_HANDLER_VULKAN)
         _ps2VM->CreateGSHandler(CGSH_VulkaniOS::GetFactoryFunction(((CAMetalLayer*)m_metal_layer)));
-    else if(gsHandlerId == PREFERENCE_VALUE_VIDEO_GS_HANDLER_OPENGL)
+    else if(self.gsPreference == PREFERENCE_VALUE_VIDEO_GS_HANDLER_OPENGL)
         _ps2VM->CreateGSHandler(CGSH_Provenance_OGL::GetFactoryFunction(
             ((CAEAGLLayer *)m_gl_layer),
             self.videoWidth,
@@ -383,17 +382,18 @@ private:
 
 - (void)stopEmulation {
     shouldStop=true;
+    [super stopEmulation];
     if (_ps2VM) {
         _ps2VM->Pause();
-        gsHandler->Release();
-        _ps2VM->DestroyPadHandler();
+        if(self.gsPreference == PREFERENCE_VALUE_VIDEO_GS_HANDLER_OPENGL)
+            gsHandler->Release();
         _ps2VM->DestroyGSHandler();
+        _ps2VM->DestroyPadHandler();
         _ps2VM->DestroySoundHandler();
         _ps2VM->Destroy();
+        delete _ps2VM;
+        _ps2VM = nullptr;
     }
-    delete _ps2VM;
-    _ps2VM = nullptr;
-    [super stopEmulation];
 }
 
 - (void)resetEmulation {
@@ -434,7 +434,7 @@ private:
     UIViewController *view_controller = gl_view_controller.parentViewController;
     auto gsHandlerId = CAppConfig::GetInstance().GetPreferenceInteger(PREFERENCE_VIDEO_GS_HANDLER);
     auto screenBounds = [[UIScreen mainScreen] bounds];
-    if(gsHandlerId == PREFERENCE_VALUE_VIDEO_GS_HANDLER_VULKAN)
+    if(self.gsPreference == PREFERENCE_VALUE_VIDEO_GS_HANDLER_VULKAN)
     {
         /*
          // TODO: Fix this hack to find the MTKView, and detect first if in metal mode
@@ -444,7 +444,10 @@ private:
          m_metal_layer=m_view.layer;
          glk_view.enableSetNeedsDisplay = NO;
          */
-        CGSH_MTLViewController *cgsh_view_controller=[[CGSH_MTLViewController alloc] init];
+        CGSH_MTLViewController *cgsh_view_controller=[[CGSH_MTLViewController alloc]
+                                                      initWithResFactor:self.resFactor
+                                                      videoWidth: self.videoWidth
+                                                      videoHeight: self.videoHeight];
         m_metal_layer=(CAMetalLayer *)cgsh_view_controller.view.layer;
         // Attach Controller to somewhere rendering won't interfere frame buffers
         [view_controller.parentViewController addChildViewController:cgsh_view_controller];
@@ -452,18 +455,11 @@ private:
         // Add View
         m_view=cgsh_view_controller.view;
         [gl_view_controller.view addSubview:m_view];
-        // Resize masks
-        m_view.autoresizingMask  = (UIViewAutoresizingFlexibleWidth|
-                                    UIViewAutoresizingFlexibleHeight|
-                                    UIViewAutoresizingFlexibleBottomMargin|
-                                    UIViewAutoresizingFlexibleRightMargin |
-                                    UIViewAutoresizingFlexibleLeftMargin |
-                                    UIViewAutoresizingFlexibleTopMargin );
         [m_view.topAnchor constraintEqualToAnchor:gl_view_controller.view.topAnchor constant:0].active = true;
         [m_view.leadingAnchor constraintEqualToAnchor:gl_view_controller.view.leadingAnchor constant:0].active = true;
         [m_view.trailingAnchor constraintEqualToAnchor:gl_view_controller.view.trailingAnchor constant:0].active = true;
         [m_view.bottomAnchor constraintEqualToAnchor:gl_view_controller.view.bottomAnchor constant:0].active = true;
-    } else if(gsHandlerId == PREFERENCE_VALUE_VIDEO_GS_HANDLER_OPENGL) {
+    } else if(self.gsPreference == PREFERENCE_VALUE_VIDEO_GS_HANDLER_OPENGL) {
         GLKViewController *cgsh_view_controller = [[GLKViewController alloc]
                                                 initWithNibName:nil
                                                 bundle:nil];
