@@ -9,6 +9,16 @@
 #import <PVPlay/PVPlay.h>
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
+#import "PS2VM.h"
+
+#include "PH_Generic.h"
+#include "PS2VM.h"
+#include "CGSH_Provenance_OGL.h"
+
+extern CGSH_Provenance_OGL *gsHandler;
+extern CPH_Generic *padHandler;
+extern UIView *m_view;
+extern CPS2VM *_ps2VM;
 
 #define DC_BTN_C        (1<<0)
 #define DC_BTN_B        (1<<1)
@@ -74,11 +84,11 @@ s8 joyx[4], joyy[4];
         {
             controller = self.controller2;
         }
-        else if (self.controller3 && playerIndex == 3)
+        else if (self.controller3 && playerIndex == 2)
         {
             controller = self.controller3;
         }
-        else if (self.controller4 && playerIndex == 4)
+        else if (self.controller4 && playerIndex == 3)
         {
             controller = self.controller4;
         }
@@ -112,7 +122,8 @@ s8 joyx[4], joyy[4];
             float yvalue = gamepad.leftThumbstick.yAxis.value;
             s8 y=(s8)(yvalue*127 * - 1); //-127 ... + 127 range
             joyy[0] = y;
-
+            [self sendExtendedGamepadInput:gamepad forPlayer:playerIndex];
+            return;
         } else if ([controller gamepad]) {
             GCGamepad *gamepad = [controller gamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
@@ -129,17 +140,149 @@ s8 joyx[4], joyy[4];
 
             gamepad.leftShoulder.isPressed ? kcode[playerIndex] &= ~(DC_AXIS_LT) : kcode[playerIndex] |= (DC_AXIS_LT);
             gamepad.rightShoulder.isPressed ? kcode[playerIndex] &= ~(DC_AXIS_RT) : kcode[playerIndex] |= (DC_AXIS_RT);
+            [self sendGamepadInput:gamepad forPlayer:playerIndex];
+            return;
+
         }
 #if TARGET_OS_TV
         else if ([controller microGamepad]) {
             GCMicroGamepad *gamepad = [controller microGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
+            [self sendMicroGamepadInput:gamepad forPlayer:playerIndex];
+            return;
         }
 #endif
     }
 }
 
+-(void)sendExtendedGamepadInput:(GCExtendedGamepad *) gamepad forPlayer:(NSInteger)player {
+    padHandler->SetButtonState(PS2::CControllerInfo::CROSS, gamepad.buttonA.isPressed);
+    padHandler->SetButtonState(PS2::CControllerInfo::CIRCLE, gamepad.buttonB.isPressed);
+    padHandler->SetButtonState(PS2::CControllerInfo::SQUARE, gamepad.buttonX.isPressed);
+    padHandler->SetButtonState(PS2::CControllerInfo::TRIANGLE, gamepad.buttonY.isPressed);
+    padHandler->SetButtonState(PS2::CControllerInfo::DPAD_UP, gamepad.dpad.up.isPressed);
+    padHandler->SetButtonState(PS2::CControllerInfo::DPAD_DOWN, gamepad.dpad.down.isPressed);
+    padHandler->SetButtonState(PS2::CControllerInfo::DPAD_LEFT, gamepad.dpad.left.isPressed);
+    padHandler->SetButtonState(PS2::CControllerInfo::DPAD_RIGHT, gamepad.dpad.right.isPressed);
+    padHandler->SetAxisState(PS2::CControllerInfo::ANALOG_LEFT_X, gamepad.leftThumbstick.xAxis.value);
+    padHandler->SetAxisState(PS2::CControllerInfo::ANALOG_LEFT_Y, -gamepad.leftThumbstick.yAxis.value);
+    padHandler->SetAxisState(PS2::CControllerInfo::ANALOG_RIGHT_X, gamepad.rightThumbstick.xAxis.value);
+    padHandler->SetAxisState(PS2::CControllerInfo::ANALOG_RIGHT_Y, -gamepad.rightThumbstick.yAxis.value);
+    padHandler->SetButtonState(PS2::CControllerInfo::L1, gamepad.leftShoulder.isPressed);
+    padHandler->SetButtonState(PS2::CControllerInfo::R1, gamepad.rightShoulder.isPressed);
+    padHandler->SetButtonState(PS2::CControllerInfo::L2, gamepad.leftTrigger.isPressed);
+    padHandler->SetButtonState(PS2::CControllerInfo::R2, gamepad.rightTrigger.isPressed);
+    padHandler->SetButtonState(PS2::CControllerInfo::L3, gamepad.leftThumbstickButton.isPressed);
+    padHandler->SetButtonState(PS2::CControllerInfo::R3, gamepad.rightThumbstickButton.isPressed);
+    padHandler->SetButtonState(PS2::CControllerInfo::SELECT, gamepad.buttonMenu.isPressed);
+    padHandler->SetButtonState(PS2::CControllerInfo::START, gamepad.buttonHome.isPressed);
+}
+
+
+-(void)sendGamepadInput:(GCGamepad *) gamepad forPlayer:(NSInteger)player {
+    padHandler->SetButtonState(PS2::CControllerInfo::CROSS, gamepad.buttonA.isPressed);
+    padHandler->SetButtonState(PS2::CControllerInfo::CIRCLE, gamepad.buttonB.isPressed);
+    padHandler->SetButtonState(PS2::CControllerInfo::SQUARE, gamepad.buttonX.isPressed);
+    padHandler->SetButtonState(PS2::CControllerInfo::TRIANGLE, gamepad.buttonY.isPressed);
+    padHandler->SetButtonState(PS2::CControllerInfo::L1, gamepad.leftShoulder.isPressed);
+    padHandler->SetButtonState(PS2::CControllerInfo::R1, gamepad.rightShoulder.isPressed);
+    padHandler->SetButtonState(PS2::CControllerInfo::DPAD_UP, gamepad.dpad.up.isPressed);
+    padHandler->SetButtonState(PS2::CControllerInfo::DPAD_DOWN, gamepad.dpad.down.isPressed);
+    padHandler->SetButtonState(PS2::CControllerInfo::DPAD_LEFT, gamepad.dpad.left.isPressed);
+    padHandler->SetButtonState(PS2::CControllerInfo::DPAD_RIGHT, gamepad.dpad.right.isPressed);
+}
+
+
+-(void)sendMicroGamepadInput:(GCMicroGamepad *) gamepad forPlayer:(NSInteger)player {
+    padHandler->SetButtonState(PS2::CControllerInfo::CROSS, gamepad.buttonA.isPressed);
+    padHandler->SetButtonState(PS2::CControllerInfo::SQUARE, gamepad.buttonX.isPressed);
+    padHandler->SetButtonState(PS2::CControllerInfo::DPAD_UP, gamepad.dpad.up.isPressed);
+    padHandler->SetButtonState(PS2::CControllerInfo::DPAD_DOWN, gamepad.dpad.down.isPressed);
+    padHandler->SetButtonState(PS2::CControllerInfo::DPAD_LEFT, gamepad.dpad.left.isPressed);
+    padHandler->SetButtonState(PS2::CControllerInfo::DPAD_RIGHT, gamepad.dpad.right.isPressed);
+}
+
+-(void)sendButtonInput:(enum PVPS2Button)button isPressed:(bool)pressed withValue:(CGFloat)value forPlayer:(NSInteger)player {
+    switch (button) {
+        case(PVPS2ButtonStart):
+            padHandler->SetButtonState(PS2::CControllerInfo::START, pressed);
+            break;
+        case(PVPS2ButtonSelect):
+            padHandler->SetButtonState(PS2::CControllerInfo::SELECT, pressed);
+            break;
+        case(PVPS2ButtonLeft):
+            padHandler->SetButtonState(PS2::CControllerInfo::DPAD_LEFT, pressed);
+            break;
+        case(PVPS2ButtonRight):
+            padHandler->SetButtonState(PS2::CControllerInfo::DPAD_RIGHT, pressed);
+            break;
+        case(PVPS2ButtonUp):
+            padHandler->SetButtonState(PS2::CControllerInfo::DPAD_UP, pressed);
+            break;
+        case(PVPS2ButtonDown):
+            padHandler->SetButtonState(PS2::CControllerInfo::DPAD_DOWN, pressed);
+            break;
+        case(PVPS2ButtonSquare):
+            padHandler->SetButtonState(PS2::CControllerInfo::SQUARE, pressed);
+            break;
+        case(PVPS2ButtonCross):
+            padHandler->SetButtonState(PS2::CControllerInfo::CROSS, pressed);
+            break;
+        case(PVPS2ButtonTriangle):
+            padHandler->SetButtonState(PS2::CControllerInfo::TRIANGLE, pressed);
+            break;
+        case(PVPS2ButtonCircle):
+            padHandler->SetButtonState(PS2::CControllerInfo::CIRCLE, pressed);
+            break;
+        case(PVPS2ButtonL1):
+            padHandler->SetButtonState(PS2::CControllerInfo::L1, pressed);
+            break;
+        case(PVPS2ButtonR1):
+            padHandler->SetButtonState(PS2::CControllerInfo::R1, pressed);
+            break;
+        case(PVPS2ButtonL2):
+            padHandler->SetButtonState(PS2::CControllerInfo::L2, pressed);
+            break;
+        case(PVPS2ButtonR2):
+            padHandler->SetButtonState(PS2::CControllerInfo::R2, pressed);
+            break;
+        case(PVPS2ButtonL3):
+            padHandler->SetButtonState(PS2::CControllerInfo::L3, pressed);
+            break;
+        case(PVPS2ButtonR3):
+            padHandler->SetButtonState(PS2::CControllerInfo::R3, pressed);
+            break;
+        case(PVPS2ButtonLeftAnalogLeft):
+            padHandler->SetButtonState(PS2::CControllerInfo::ANALOG_LEFT_X, value);
+            break;
+        case(PVPS2ButtonLeftAnalogRight):
+            padHandler->SetButtonState(PS2::CControllerInfo::ANALOG_LEFT_X, value);
+            break;
+        case(PVPS2ButtonLeftAnalogUp):
+            padHandler->SetButtonState(PS2::CControllerInfo::ANALOG_LEFT_Y, value);
+            break;
+        case(PVPS2ButtonLeftAnalogDown):
+            padHandler->SetButtonState(PS2::CControllerInfo::ANALOG_LEFT_Y, value);
+            break;
+        case(PVPS2ButtonRightAnalogLeft):
+            padHandler->SetButtonState(PS2::CControllerInfo::ANALOG_RIGHT_X, value);
+            break;
+        case(PVPS2ButtonRightAnalogRight):
+            padHandler->SetButtonState(PS2::CControllerInfo::ANALOG_RIGHT_X, value);
+            break;
+        case(PVPS2ButtonRightAnalogUp):
+            padHandler->SetButtonState(PS2::CControllerInfo::ANALOG_RIGHT_Y, value);
+            break;
+        case(PVPS2ButtonRightAnalogDown):
+            padHandler->SetButtonState(PS2::CControllerInfo::ANALOG_RIGHT_Y, value);
+            break;
+        default:
+            break;
+    }
+}
+
 -(void)didPushPS2Button:(enum PVPS2Button)button forPlayer:(NSInteger)player {
+    [self sendButtonInput:button isPressed:true withValue:1 forPlayer:player];
 //    // FIXME: Player 2 is not yet supported.
 //    if (player != 1) {
 //        return;
@@ -154,6 +297,7 @@ s8 joyx[4], joyy[4];
 }
 
 - (void)didReleasePS2Button:(enum PVPS2Button)button forPlayer:(NSInteger)player {
+    [self sendButtonInput:button isPressed:false withValue:0 forPlayer:player];
 //    // FIXME: Player 2 is not yet supported.
 //    if (player != 1) {
 //        return;
@@ -168,6 +312,7 @@ s8 joyx[4], joyy[4];
 }
 
 - (void)didMovePS2JoystickDirection:(enum PVPS2Button)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
+    [self sendButtonInput:button isPressed:true withValue:value forPlayer:player];
     // FIXME: Player 2 is not yet supported.
     if (player != 1) {
         return;

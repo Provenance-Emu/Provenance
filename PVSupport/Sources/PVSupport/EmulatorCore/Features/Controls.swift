@@ -492,7 +492,7 @@ import Foundation
     func didPush(_ button: PV5200Button, forPlayer player: Int)
     @objc(didRelease5200Button:forPlayer:)
     func didRelease(_ button: PV5200Button, forPlayer player: Int)
-    
+
     @objc(didMove5200JoystickDirection:withValue:forPlayer:)
     func didMoveJoystick(_ button: PV5200Button, withValue value: CGFloat, forPlayer player: Int)
 }
@@ -1141,7 +1141,6 @@ import Foundation
 	func leftMouseDown(at point: CGPoint)
 	func leftMouseUp()
 }
-
 
 // MARK: - EP128
  @objc public enum PVEP128Button: Int {

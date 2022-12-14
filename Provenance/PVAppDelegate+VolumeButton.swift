@@ -30,15 +30,15 @@ import CarPlay
 
  */
 
-//class CarPlayHacks {
+// class CarPlayHacks {
 //    func createWindow() -> CRCarPlayWindow {
 //        liveCarplayWindow = [[CRCarPlayWindow alloc] initWithBundleIdentifier:identifier];
 // Receive notifications for Carplay connect/disconnect events. When a Carplay screen becomes unavailable while an app is being hosted on it, that app window needs to be closed
-//[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(carplayIsConnectedChanged) name:@"CarPlayIsConnectedDidChange" object:nil];
+// [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(carplayIsConnectedChanged) name:@"CarPlayIsConnectedDidChange" object:nil];
 //
 
 //    }
-//func createCarPlayApp() {
+// func createCarPlayApp() {
 //    // Create a fake declaration so this app appears to support carplay.
 //      id carplayDeclaration = [[objc_getClass("CRCarPlayAppDeclaration") alloc] init];
 //      // This is not template-driven -- important. Without specifying this, the process that hosts the Templates will continuously spin up
@@ -56,21 +56,20 @@ import CarPlay
 //          newTags = [newTags arrayByAddingObjectsFromArray:objcInvoke(appInfo, @"tags")];
 //      }
 //      setIvar(appInfo, @"_tags", newTags);
-//}
-//id allAppsConfiguration = [[objc_getClass("FBSApplicationLibraryConfiguration") alloc] init];
+// }
+// id allAppsConfiguration = [[objc_getClass("FBSApplicationLibraryConfiguration") alloc] init];
 //   objcInvoke_1(allAppsConfiguration, @"setApplicationInfoClass:", objc_getClass("CARApplicationInfo"));
 //   objcInvoke_1(allAppsConfiguration, @"setApplicationPlaceholderClass:", objc_getClass("FBSApplicationPlaceholder"));
 //   objcInvoke_1(allAppsConfiguration, @"setAllowConcurrentLoading:", 1);
-//id allAppsLibrary = objcInvoke_1([objc_getClass("FBSApplicationLibrary") alloc], @"initWithConfiguration:", allAppsConfiguration);
+// id allAppsLibrary = objcInvoke_1([objc_getClass("FBSApplicationLibrary") alloc], @"initWithConfiguration:", allAppsConfiguration);
 //
 //        // Notify SpringBoard of the launch. SpringBoard will host the application + UI
-//[[objc_getClass("NSDistributedNotificationCenter") defaultCenter] postNotificationName:@"com.carplayenable" object:nil userInfo:@{@"identifier": objcInvoke(arg1, @"bundleIdentifier")}];
-//https://github.com/EthanArbuckle/carplay-cast/tree/master/src
+// [[objc_getClass("NSDistributedNotificationCenter") defaultCenter] postNotificationName:@"com.carplayenable" object:nil userInfo:@{@"identifier": objcInvoke(arg1, @"bundleIdentifier")}];
+// https://github.com/EthanArbuckle/carplay-cast/tree/master/src
 //
-//}
+// }
 
 // https://developer.apple.com/documentation/carplay/cpwindow class CPWindow : UIWindow
-
 
 /* info.plist https://developer.apple.com/documentation/carplay/cptemplateapplicationscenedelegate
  <key>CPTemplateApplicationSceneSessionRoleApplication</key>
@@ -87,10 +86,10 @@ import CarPlay
  </array>
  */
 
-//https://developer.apple.com/documentation/carplay/cptemplateapplicationscenedelegate
-//CPTemplateApplicationSceneDelegate
+// https://developer.apple.com/documentation/carplay/cptemplateapplicationscenedelegate
+// CPTemplateApplicationSceneDelegate
 //
-//extension PVAppDelegate {
+// extension PVAppDelegate {
 //    optional func application(
 //        _ application: UIApplication,
 //        configurationForConnecting connectingSceneSession: UISceneSession,
@@ -99,9 +98,9 @@ import CarPlay
 //
 //    }
 //
-//}
+// }
 
-//extension TemplateManager: CPMapTemplateDelegate {
+// extension TemplateManager: CPMapTemplateDelegate {
 //
 //    func mapTemplate(_ mapTemplate: CPMapTemplate, panWith direction: CPMapTemplate.PanDirection) {
 //        mainMapViewController.panInDirection(direction)
@@ -129,7 +128,7 @@ extension PVAppDelegate: CPTemplateApplicationSceneDelegate {
 //        _ templateApplicationScene: CPTemplateApplicationScene,
 //        didConnect interfaceController: CPInterfaceController
 //    ) { }
-    
+
 //    func application(
     //        _ application: UIApplication,
     //        configurationForConnecting connectingSceneSession: UISceneSession,
@@ -137,7 +136,7 @@ extension PVAppDelegate: CPTemplateApplicationSceneDelegate {
     //    ) -> UISceneConfiguration {
     //
     //    }
-    
+
 //    func interfaceController(_ interfaceController: CPInterfaceController, didConnectWith window: CPWindow, style: UIUserInterfaceStyle) {
 //        MemoryLogger.shared.appendEvent("Connected to CarPlay window.")
 //

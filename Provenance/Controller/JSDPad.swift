@@ -119,7 +119,7 @@ final class JSDPad: MovableButtonView {
         super.init(coder: aDecoder)
         commonInit()
     }
-    
+
 //    override var frame: CGRect {
 //        didSet {
 //            DLOG("\(frame.debugDescription)")

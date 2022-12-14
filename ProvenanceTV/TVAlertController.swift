@@ -467,7 +467,7 @@ final class TVAlertController: UIViewController, UIAlertControllerProtocol {
 private extension UIAlertAction {
     func callActionHandler() {
         if let handler = self.value(forKey:"handler") as? NSObject {
-            unsafeBitCast(handler, to:(@convention(block) (UIAlertAction)->Void).self)(self)
+            unsafeBitCast(handler, to:(@convention(block) (UIAlertAction) -> Void).self)(self)
         }
     }
 }

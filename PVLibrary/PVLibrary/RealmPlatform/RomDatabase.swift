@@ -382,7 +382,7 @@ public extension RomDatabase {
             }
         }
     }
-    
+
     @objc
     func asyncWriteTransaction(_ block: @escaping () -> Void) {
         if realm.isPerformingAsynchronousWriteOperations {
@@ -410,7 +410,7 @@ public extension RomDatabase {
             realm.deleteAll()
         }
     }
-    
+
     func deleteAllGames() throws {
         let realm = try! Realm()
         let allUploadingObjects = realm.objects(PVGame.self)

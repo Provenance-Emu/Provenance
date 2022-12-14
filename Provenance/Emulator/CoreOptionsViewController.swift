@@ -140,8 +140,6 @@ final class CoreOptionsViewController: QuickTableViewController {
                             popoverPresentationController.sourceRect = cellRect
                          }
                         #endif
-                        
-                                                                
 
                                                                  values.forEach { value in
                                                                      var title = value.title

@@ -19,6 +19,16 @@
 #import <OpenGL/OpenGL.h>
 #import <GLKit/GLKit.h>
 #endif
+#include "../AppConfig.h"
+#include "PreferenceDefs.h"
+#include "PH_Generic.h"
+#include "PS2VM.h"
+#include "CGSH_Provenance_OGL.h"
+
+extern CGSH_Provenance_OGL *gsHandler;
+extern CPH_Generic *padHandler;
+extern UIView *m_view;
+extern CPS2VM *_ps2VM;
 
 //#import "PS2VM.h"
 //#import "gs/GSH_OpenGL/GSH_OpenGL.h"
@@ -40,13 +50,23 @@
 }
 
 - (void)swapBuffers {
-    [self.renderDelegate didRenderFrameOnAlternateThread];
 }
 
 - (void)executeFrameSkippingFrame:(BOOL)skip {
-        //dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
+    //dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
 
-        //dispatch_semaphore_wait(coreWaitToEndFrameSemaphore, DISPATCH_TIME_FOREVER);
+    //dispatch_semaphore_wait(coreWaitToEndFrameSemaphore, DISPATCH_TIME_FOREVER);
+    if (_ps2VM
+        && _ps2VM->GetStatus() != CVirtualMachine::PAUSED
+        && !shouldStop
+        && _ps2VM->GetPadHandler()
+        && _ps2VM->GetGSHandler()) {
+        [self pollControllers];
+        auto gsHandlerId = CAppConfig::GetInstance().GetPreferenceInteger(PREFERENCE_VIDEO_GS_HANDLER);
+        if(gsHandlerId == PREFERENCE_VALUE_VIDEO_GS_HANDLER_OPENGL) {
+            gsHandler->ProcessSingleFrame();
+        }
+    }
 }
 
 - (void)executeFrame {
@@ -56,15 +76,15 @@
 # pragma mark - Properties
 
 - (CGSize)bufferSize {
-    return CGSizeMake(640, 480);
+    return CGSizeMake(self.videoWidth * self.resFactor, self.videoHeight * self.resFactor);
 }
 
 - (CGRect)screenRect {
-    return CGRectMake(0, 0, self.videoWidth, self.videoHeight);
+    return CGRectMake(0, 0, self.videoWidth * self.resFactor, self.videoHeight * self.resFactor);
 }
 
 - (CGSize)aspectSize {
-    return CGSizeMake(self.videoWidth, self.videoHeight);
+    return CGSizeMake(self.videoWidth * self.resFactor, self.videoHeight * self.resFactor);
 }
 
 - (BOOL)rendersToOpenGL {

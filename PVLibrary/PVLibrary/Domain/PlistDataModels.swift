@@ -33,13 +33,13 @@ public struct ControlLayoutEntry: Codable, Equatable, Hashable, Comparable {
             if lhs.PVControlTitle == nil {
                 return false
             }
-            
+
             return lhs.PVControlTitle! < rhs.PVControlTitle!
         } else {
             return false
         }
     }
-    
+
     public let PVControlType: String
     public let PVControlSize: String
     public let PVControlTitle: String?

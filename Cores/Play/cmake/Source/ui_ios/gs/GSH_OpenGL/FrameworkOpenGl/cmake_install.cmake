@@ -1,4 +1,4 @@
-# Install script for directory: /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl
+# Install script for directory: /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -34,10 +34,10 @@ endif()
 
 # Set default install directory permissions.
 if(NOT DEFINED CMAKE_OBJDUMP)
-  set(CMAKE_OBJDUMP "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/objdump")
+  set(CMAKE_OBJDUMP "/Applications/Xcode-14.2.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/objdump")
 endif()
 
-set(CMAKE_BINARY_DIR "/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake")
+set(CMAKE_BINARY_DIR "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake")
 
 if(NOT PLATFORM_NAME)
   if(NOT "$ENV{PLATFORM_NAME}" STREQUAL "")

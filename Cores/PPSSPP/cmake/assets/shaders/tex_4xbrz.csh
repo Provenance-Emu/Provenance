@@ -1,5 +1,5 @@
 // 4xBRZ shader - Copyright (C) 2014-2016 DeSmuME team (GPL2+)
-// Hyllian's xBR-vertex code and texel mapping
+// Hyllians xBR-vertex code and texel mapping
 // Copyright (C) 2011/2016 Hyllian - sergiogdb@gmail.com
 #define BLEND_ALPHA 1
 #define BLEND_NONE 0
@@ -10,21 +10,18 @@
 #define STEEP_DIRECTION_THRESHOLD 2.2
 #define DOMINANT_DIRECTION_THRESHOLD 3.6
 
-float reduce(vec4 color) {
-	return dot(color.rgb, vec3(65536.0, 256.0, 1.0));
-}
-
+// TODO: Replace this with something cheaper.
 float DistYCbCr(vec4 pixA, vec4 pixB) {
 	// https://en.wikipedia.org/wiki/YCbCr#ITU-R_BT.2020_conversion
 	const vec3 K = vec3(0.2627, 0.6780, 0.0593);
-	const mat3 MATRIX = mat3(K, 
+	const mat3 MATRIX = mat3(K,
 	                         -.5 * K.r / (1.0 - K.b),  -.5 * K.g / (1.0 - K.b),  .5,
 	                         .5,                       -.5 * K.g / (1.0 - K.r),  -.5 * K.b / (1.0 - K.r));
 	vec4 diff = pixA - pixB;
 	vec3 YCbCr = diff.rgb * MATRIX;
 	YCbCr.x *= LUMINANCE_WEIGHT;
-	float d = length(YCbCr);
-	return sqrt(pixA.a * pixB.a * d * d + diff.a * diff.a);
+	float d = dot(YCbCr, YCbCr);
+	return sqrt(pixA.a * pixB.a * d + diff.a * diff.a);
 }
 
 bool IsPixEqual(const vec4 pixA, const vec4 pixB) {
@@ -36,10 +33,15 @@ bool IsBlendingNeeded(const ivec4 blend) {
 	return diff.x != 0 || diff.y != 0 || diff.z != 0 || diff.w != 0;
 }
 
-vec4 applyScalingf(uvec2 origxy, uvec2 xy) {
-	float dx = 1.0 / params.width;
-	float dy = 1.0 / params.height;
+uint readInputu(uvec2 coord) {
+	return readColoru(uvec2(clamp(coord.x, 0, params.width - 1), clamp(coord.y, 0, params.height - 1)));
+}
 
+vec4 readInput(uvec2 coord) {
+    return readColorf(uvec2(clamp(coord.x, 0, params.width - 1), clamp(coord.y, 0, params.height - 1)));
+}
+
+void applyScaling(uvec2 origxy) {
 	//    A1 B1 C1
 	// A0 A  B  C C4
 	// D0 D  E  F F4
@@ -54,8 +56,6 @@ vec4 applyScalingf(uvec2 origxy, uvec2 xy) {
 	uvec4 t6 = uvec4(origxy.x - 2, origxy.y - 1, origxy.y, origxy.y + 1); // A0 D0 G0
 	uvec4 t7 = uvec4(origxy.x + 2, origxy.y - 1, origxy.y, origxy.y + 1); // C4 F4 I4
 
-	vec2 f = fract(vec2(float(xy.x) / float(params.scale), float(xy.y) / float(params.scale)));
-
 	//---------------------------------------
 	// Input Pixel Mapping:    |21|22|23|
 	//                       19|06|07|08|09
@@ -63,40 +63,40 @@ vec4 applyScalingf(uvec2 origxy, uvec2 xy) {
 	//                       17|04|03|02|11
 	//                         |15|14|13|
 
+	uint v[9];
+	v[0] = readInputu(t3.yw);
+	v[1] = readInputu(t3.zw);
+	v[2] = readInputu(t4.zw);
+	v[3] = readInputu(t4.yw);
+	v[4] = readInputu(t4.xw);
+	v[5] = readInputu(t3.xw);
+	v[6] = readInputu(t2.xw);
+	v[7] = readInputu(t2.yw);
+	v[8] = readInputu(t2.zw);
+
 	vec4 src[25];
 
-	src[21] = readColorf(t1.xw);
-	src[22] = readColorf(t1.yw);
-	src[23] = readColorf(t1.zw);
-	src[ 6] = readColorf(t2.xw);
-	src[ 7] = readColorf(t2.yw);
-	src[ 8] = readColorf(t2.zw);
-	src[ 5] = readColorf(t3.xw);
-	src[ 0] = readColorf(t3.yw);
-	src[ 1] = readColorf(t3.zw);
-	src[ 4] = readColorf(t4.xw);
-	src[ 3] = readColorf(t4.yw);
-	src[ 2] = readColorf(t4.zw);
-	src[15] = readColorf(t5.xw);
-	src[14] = readColorf(t5.yw);
-	src[13] = readColorf(t5.zw);
-	src[19] = readColorf(t6.xy);
-	src[18] = readColorf(t6.xz);
-	src[17] = readColorf(t6.xw);
-	src[ 9] = readColorf(t7.xy);
-	src[10] = readColorf(t7.xz);
-	src[11] = readColorf(t7.xw);
-
-	float v[9];
-	v[0] = reduce(src[0]);
-	v[1] = reduce(src[1]);
-	v[2] = reduce(src[2]);
-	v[3] = reduce(src[3]);
-	v[4] = reduce(src[4]);
-	v[5] = reduce(src[5]);
-	v[6] = reduce(src[6]);
-	v[7] = reduce(src[7]);
-	v[8] = reduce(src[8]);
+	src[21] = readInput(t1.xw);
+	src[22] = readInput(t1.yw);
+	src[23] = readInput(t1.zw);
+	src[ 6] = unpackUnorm4x8(v[6]);
+	src[ 7] = unpackUnorm4x8(v[7]);
+	src[ 8] = unpackUnorm4x8(v[8]);
+	src[ 5] = unpackUnorm4x8(v[5]);
+	src[ 0] = unpackUnorm4x8(v[0]);
+	src[ 1] = unpackUnorm4x8(v[1]);
+	src[ 4] = unpackUnorm4x8(v[4]);
+	src[ 3] = unpackUnorm4x8(v[3]);
+	src[ 2] = unpackUnorm4x8(v[2]);
+	src[15] = readInput(t5.xw);
+	src[14] = readInput(t5.yw);
+	src[13] = readInput(t5.zw);
+	src[19] = readInput(t6.xy);
+	src[18] = readInput(t6.xz);
+	src[17] = readInput(t6.xw);
+	src[ 9] = readInput(t7.xy);
+	src[10] = readInput(t7.xz);
+	src[11] = readInput(t7.xw);
 
 	ivec4 blendResult = ivec4(BLEND_NONE);
 
@@ -254,26 +254,27 @@ vec4 applyScalingf(uvec2 origxy, uvec2 xy) {
 		dst[ 6] = mix(dst[ 6], blendPix, (needBlend && doLineBlend && haveShallowLine) ? 0.25 : 0.00);
 	}
 
-	// select output pixel
-	vec4 res = mix(mix(mix(mix(dst[ 6], dst[ 7], step(0.25, f.x)),
-	                       mix(dst[ 8], dst[ 9], step(0.75, f.x)),
-	                       step(0.50, f.x)),
-	                   mix(mix(dst[ 5], dst[ 0], step(0.25, f.x)),
-	                       mix(dst[ 1], dst[10], step(0.75, f.x)),
-	                       step(0.50, f.x)),
-	                   step(0.25, f.y)),
-	               mix(mix(mix(dst[ 4], dst[ 3], step(0.25, f.x)),
-	                       mix(dst[ 2], dst[11], step(0.75, f.x)),
-	                       step(0.50, f.x)),
-	                   mix(mix(dst[15], dst[14], step(0.25, f.x)),
-	                       mix(dst[13], dst[12], step(0.75, f.x)),
-	                       step(0.50, f.x)),
-	                   step(0.75, f.y)),
-	               step(0.50, f.y));
-
-	return res;
-}
-
-uint applyScalingu(uvec2 origxy, uvec2 xy) {
-	return packUnorm4x8(applyScalingf(origxy, xy));
+	// Output Pixel Mapping:
+	//   06|07|08|09
+	//   05|00|01|10
+	//   04|03|02|11
+	//   15|14|13|12
+	// Write all 16 output pixels.
+	ivec2 destXY = ivec2(origxy) * 4;
+	writeColorf(destXY, dst[6]);
+	writeColorf(destXY + ivec2(1, 0), dst[7]);
+	writeColorf(destXY + ivec2(2, 0), dst[8]);
+	writeColorf(destXY + ivec2(3, 0), dst[9]);
+	writeColorf(destXY + ivec2(0, 1), dst[5]);
+	writeColorf(destXY + ivec2(1, 1), dst[0]);
+	writeColorf(destXY + ivec2(2, 1), dst[1]);
+	writeColorf(destXY + ivec2(3, 1), dst[10]);
+	writeColorf(destXY + ivec2(0, 2), dst[4]);
+	writeColorf(destXY + ivec2(1, 2), dst[3]);
+	writeColorf(destXY + ivec2(2, 2), dst[2]);
+	writeColorf(destXY + ivec2(3, 2), dst[11]);
+	writeColorf(destXY + ivec2(0, 3), dst[15]);
+	writeColorf(destXY + ivec2(1, 3), dst[14]);
+	writeColorf(destXY + ivec2(2, 3), dst[13]);
+	writeColorf(destXY + ivec2(3, 3), dst[12]);
 }

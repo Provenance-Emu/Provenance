@@ -7,45 +7,45 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		0285C8420FCC45EA8D71FBC5 /* install */ = {
+		0C166A68102548AEB1781C34 /* install */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 3C962519511745D8975E89C0 /* Build configuration list for PBXAggregateTarget "install" */;
+			buildConfigurationList = E1A34D47DE6849228352F104 /* Build configuration list for PBXAggregateTarget "install" */;
 			buildPhases = (
 				93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */,
 			);
 			dependencies = (
-				44B6DB6F599547A9B53FC43C /* PBXTargetDependency */,
+				F531A48DAD664026A1F30EE9 /* PBXTargetDependency */,
 			);
 			name = install;
 			productName = install;
 		};
-		3EBABC1ED902418AB5132579 /* ZERO_CHECK */ = {
+		813B9411ED6148CBBF6FDF45 /* ALL_BUILD */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 3A2D9557BB9F4961AAFF18C5 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildConfigurationList = 115FE4299AB84C7296C4F1DB /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
 			buildPhases = (
-				FFC8EDE7076295D20674F959 /* Generate CMakeFiles/ZERO_CHECK */,
+				2C040765E28A646A70CCCD4C /* Generate CMakeFiles/ALL_BUILD */,
+			);
+			dependencies = (
+				EF9D1DDD10E246FC8AF24A04 /* PBXTargetDependency */,
+				1DBB29E598EF40AE92E1A455 /* PBXTargetDependency */,
+			);
+			name = ALL_BUILD;
+			productName = ALL_BUILD;
+		};
+		81A7140D8C2040F2ACDF825B /* ZERO_CHECK */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = BF773E4C199A4100B9400AA7 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildPhases = (
+				EAD442E8728CC89AEB76D46D /* Generate CMakeFiles/ZERO_CHECK */,
 			);
 			dependencies = (
 			);
 			name = ZERO_CHECK;
 			productName = ZERO_CHECK;
 		};
-		6B9C69E5DB214681B2A5C976 /* ALL_BUILD */ = {
+		B7CC82741C444EE0A7828070 /* RUN_TESTS */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 594316D4F3664CDE9385CC27 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
-			buildPhases = (
-				09633983C117A246917AB07F /* Generate CMakeFiles/ALL_BUILD */,
-			);
-			dependencies = (
-				314B273411D24596970DDA02 /* PBXTargetDependency */,
-				A7AEC436A132448E9F9542BE /* PBXTargetDependency */,
-			);
-			name = ALL_BUILD;
-			productName = ALL_BUILD;
-		};
-		B7A566E4767340588D653807 /* RUN_TESTS */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = E985C102C2B64F52B3ACD890 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
+			buildConfigurationList = 18C3B4F080B242CAADEFC966 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
 			buildPhases = (
 				003C8D08B0008F35F218E126 /* CMake PostBuild Rules */,
 			);
@@ -54,96 +54,119 @@
 			name = RUN_TESTS;
 			productName = RUN_TESTS;
 		};
+		D771A2D4BE7846D7BB9D5A72 /* package */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 072DDCD3180E489FA2A59038 /* Build configuration list for PBXAggregateTarget "package" */;
+			buildPhases = (
+				571234464C2A5D0D43F1AB42 /* CMake PostBuild Rules */,
+			);
+			dependencies = (
+				D795394571ED43938CB6876B /* PBXTargetDependency */,
+			);
+			name = package;
+			productName = package;
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		177E944BBEB24F23B73AC465 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 7F2FCA72E32346C2BC3BFEC3 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/CMakeLists.txt */; };
-		20FE037F1BAB4C829F40A7B7 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/Test.h */ = {isa = PBXBuildFile; fileRef = F3AB33648A36470683342747 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/Test.h */; };
-		2D62916CE8C647EAB6E6B8D7 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsCachedAreaTest.cpp */ = {isa = PBXBuildFile; fileRef = 435F5EBE99A84383BAD65A5E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsCachedAreaTest.cpp */; };
-		A5CA587244FF454FBA62F5B2 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsTransferInvalidationTest.h */ = {isa = PBXBuildFile; fileRef = 2666F3C6A3DA4C93AE9907EB /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsTransferInvalidationTest.h */; };
-		AF6C0E1100DF4597960CDED6 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/Main.cpp */ = {isa = PBXBuildFile; fileRef = 57CA3EA7D1EA4DC3BFA2615D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/Main.cpp */; };
-		BF11D60831724842B3622505 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsCachedAreaTest.h */ = {isa = PBXBuildFile; fileRef = 099EE9F5AA0A43B29033AB97 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsCachedAreaTest.h */; };
-		EC6AFF920AB34EBFA7FDCE09 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest/CMakeFiles/GsAreaTest.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = D1574B9479074EE79C06F441 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest/CMakeFiles/GsAreaTest.dir/Info.plist */; };
-		F2F6ABE677BF4135B7D7DED0 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsTransferInvalidationTest.cpp */ = {isa = PBXBuildFile; fileRef = 16B046B9E7D744A4BD467292 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsTransferInvalidationTest.cpp */; };
+		022BD27F4AF147A28295149E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsCachedAreaTest.cpp */ = {isa = PBXBuildFile; fileRef = C6EE88364AE84414965CAFB3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsCachedAreaTest.cpp */; };
+		5634F70DF72E493BB37C6816 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsTransferInvalidationTest.cpp */ = {isa = PBXBuildFile; fileRef = F66B6F61EB7E4EF09333A404 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsTransferInvalidationTest.cpp */; };
+		6B836D07AF794577BB934869 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsSpriteRegionTest.h */ = {isa = PBXBuildFile; fileRef = 96A485938CF345679FFC6AC4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsSpriteRegionTest.h */; };
+		8ABA0F51D4AC4BA4A384D529 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsSpriteRegionTest.cpp */ = {isa = PBXBuildFile; fileRef = CD063D251A584697B6F275A7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsSpriteRegionTest.cpp */; };
+		A9F0F26AC8454B10A36BB3CB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsTransferInvalidationTest.h */ = {isa = PBXBuildFile; fileRef = 2DADA2B5E04A440E8D136200 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsTransferInvalidationTest.h */; };
+		AFF3BF7AA887487883BBBA29 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest/CMakeFiles/GsAreaTest.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 4D10CA1EFF9A4B83A7C7FE26 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest/CMakeFiles/GsAreaTest.dir/Info.plist */; };
+		CB022587C4D04219B5624F16 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = B6B08C988746447F8C585E43 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/CMakeLists.txt */; };
+		CCD4C934DE994FEE8C7DC82B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/Main.cpp */ = {isa = PBXBuildFile; fileRef = 39E9C5B6993B488E8197D0E2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/Main.cpp */; };
+		EB2798F29F934486B5556054 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsCachedAreaTest.h */ = {isa = PBXBuildFile; fileRef = 10DA43AD06924E3DA03AC220 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsCachedAreaTest.h */; };
+		F77E98B398DF406FA17E2EE6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/Test.h */ = {isa = PBXBuildFile; fileRef = 45D1229A31974595BEDB5D66 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/Test.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
-		0ACB2894CFFB4FDC9A7926B6 /* Debug */ = {
+		2AC8210ACEE4494DA091BF5F /* Debug */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = Debug;
 		};
-		578D00896D1F426AA0A5B705 /* Release */ = {
+		9188C61060BB45F698D74E42 /* Release */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = Release;
 		};
-		6C1B47E5E74A43309786CE8E /* MinSizeRel */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = MinSizeRel;
-		};
-		ED25D2496B944C389DA54C78 /* RelWithDebInfo */ = {
+		C1065DCBD4054A8F87DB660E /* RelWithDebInfo */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = RelWithDebInfo;
 		};
+		C5D843BA5F5842468B0A55F1 /* MinSizeRel */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = MinSizeRel;
+		};
 /* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
-		18F4D810EAF84F8495CC2244 /* PBXContainerItemProxy */ = {
+		6B944755645642FEB0C7F415 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 281D6CAB282546DBB698B6E6 /* Project object */;
+			containerPortal = F3108006C8F94A8790093935 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 3EBABC1ED902418AB5132579;
-			remoteInfo = ZERO_CHECK;
-		};
-		52BE873F14D34A2F8D1BF145 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 281D6CAB282546DBB698B6E6 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3EBABC1ED902418AB5132579;
-			remoteInfo = ZERO_CHECK;
-		};
-		8AA8E222187C4C008FEBDE1A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 281D6CAB282546DBB698B6E6 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 6B9C69E5DB214681B2A5C976;
+			remoteGlobalIDString = 813B9411ED6148CBBF6FDF45;
 			remoteInfo = ALL_BUILD;
 		};
-		F9C3030ECBAC4DCEB79C7C1A /* PBXContainerItemProxy */ = {
+		CA71B73D2FAC4F7E9D76ADCB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 281D6CAB282546DBB698B6E6 /* Project object */;
+			containerPortal = F3108006C8F94A8790093935 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = A1F74ECA2C6946AC8202C0AE;
+			remoteGlobalIDString = 81A7140D8C2040F2ACDF825B;
+			remoteInfo = ZERO_CHECK;
+		};
+		D1C4A5A77E714FA5A513474F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3108006C8F94A8790093935 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 813B9411ED6148CBBF6FDF45;
+			remoteInfo = ALL_BUILD;
+		};
+		DD43FA452C1F47C6A17BB7E8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3108006C8F94A8790093935 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 81A7140D8C2040F2ACDF825B;
+			remoteInfo = ZERO_CHECK;
+		};
+		F69A2A2B6B86417B9B5CBF38 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3108006C8F94A8790093935 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A35A4545E7994E208DB40667;
 			remoteInfo = GsAreaTest;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		099EE9F5AA0A43B29033AB97 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsCachedAreaTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GsCachedAreaTest.h; path = GsCachedAreaTest.h; sourceTree = SOURCE_ROOT; };
-		16B046B9E7D744A4BD467292 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsTransferInvalidationTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GsTransferInvalidationTest.cpp; path = GsTransferInvalidationTest.cpp; sourceTree = SOURCE_ROOT; };
-		2666F3C6A3DA4C93AE9907EB /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsTransferInvalidationTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GsTransferInvalidationTest.h; path = GsTransferInvalidationTest.h; sourceTree = SOURCE_ROOT; };
-		435F5EBE99A84383BAD65A5E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsCachedAreaTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GsCachedAreaTest.cpp; path = GsCachedAreaTest.cpp; sourceTree = SOURCE_ROOT; };
-		57CA3EA7D1EA4DC3BFA2615D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/Main.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Main.cpp; path = Main.cpp; sourceTree = SOURCE_ROOT; };
-		7F2FCA72E32346C2BC3BFEC3 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		D1574B9479074EE79C06F441 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest/CMakeFiles/GsAreaTest.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../../../cmake/tools/GsAreaTest/CMakeFiles/GsAreaTest.dir/Info.plist; sourceTree = SOURCE_ROOT; };
-		E130F6B1A0CD440C9A989633 /* GsAreaTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = GsAreaTest; sourceTree = BUILT_PRODUCTS_DIR; };
-		E8B804AC563D4224A23C7312 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		F3AB33648A36470683342747 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/Test.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Test.h; path = Test.h; sourceTree = SOURCE_ROOT; };
+		10DA43AD06924E3DA03AC220 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsCachedAreaTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GsCachedAreaTest.h; path = GsCachedAreaTest.h; sourceTree = SOURCE_ROOT; };
+		2DADA2B5E04A440E8D136200 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsTransferInvalidationTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GsTransferInvalidationTest.h; path = GsTransferInvalidationTest.h; sourceTree = SOURCE_ROOT; };
+		39E9C5B6993B488E8197D0E2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/Main.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Main.cpp; path = Main.cpp; sourceTree = SOURCE_ROOT; };
+		45D1229A31974595BEDB5D66 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/Test.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Test.h; path = Test.h; sourceTree = SOURCE_ROOT; };
+		4D10CA1EFF9A4B83A7C7FE26 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest/CMakeFiles/GsAreaTest.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest/CMakeFiles/GsAreaTest.dir/Info.plist; sourceTree = "<absolute>"; };
+		96A485938CF345679FFC6AC4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsSpriteRegionTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GsSpriteRegionTest.h; path = GsSpriteRegionTest.h; sourceTree = SOURCE_ROOT; };
+		A6093D1734E1469386D6C12D /* GsAreaTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = GsAreaTest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B6B08C988746447F8C585E43 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		C6EE88364AE84414965CAFB3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsCachedAreaTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GsCachedAreaTest.cpp; path = GsCachedAreaTest.cpp; sourceTree = SOURCE_ROOT; };
+		CD063D251A584697B6F275A7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsSpriteRegionTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GsSpriteRegionTest.cpp; path = GsSpriteRegionTest.cpp; sourceTree = SOURCE_ROOT; };
+		DC0208DBA0EB4F789A96051B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		F66B6F61EB7E4EF09333A404 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsTransferInvalidationTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GsTransferInvalidationTest.cpp; path = GsTransferInvalidationTest.cpp; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		B1226DEB3BEF4704A0D5ED10 /* Frameworks */ = {
+		7E2B1659536B4E9D802D394C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -153,135 +176,138 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		152A141E0B444D98BB8A6195 /* ALL_BUILD */ = {
+		06C9FDF880404C76B5887098 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				C0ACFF72A9734A1984C83ECC /* CMake Rules */,
-				E8B804AC563D4224A23C7312 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/CMakeLists.txt */,
-			);
-			name = ALL_BUILD;
-			sourceTree = "<group>";
-		};
-		458C7D1542DB48208C2FF870 = {
-			isa = PBXGroup;
-			children = (
-				C2ED25D0001F441C9EFEBC79 /* GsAreaTest */,
-				152A141E0B444D98BB8A6195 /* ALL_BUILD */,
-				BC7EE40650E94DD39C85DA2B /* Products */,
-				EC5B6F90260641549563D048 /* Frameworks */,
-			);
-			sourceTree = "<group>";
-		};
-		99037137E4FF4A71992E53D0 /* Source Files */ = {
-			isa = PBXGroup;
-			children = (
-				435F5EBE99A84383BAD65A5E /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsCachedAreaTest.cpp */,
-				16B046B9E7D744A4BD467292 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsTransferInvalidationTest.cpp */,
-				57CA3EA7D1EA4DC3BFA2615D /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/Main.cpp */,
+				C6EE88364AE84414965CAFB3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsCachedAreaTest.cpp */,
+				CD063D251A584697B6F275A7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsSpriteRegionTest.cpp */,
+				F66B6F61EB7E4EF09333A404 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsTransferInvalidationTest.cpp */,
+				39E9C5B6993B488E8197D0E2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/Main.cpp */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
 		};
-		ABE21E7BECE1405F8B6450F4 /* Resources */ = {
+		11F33BEE72A0461FAACA3DA9 /* ALL_BUILD */ = {
 			isa = PBXGroup;
 			children = (
-				D1574B9479074EE79C06F441 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest/CMakeFiles/GsAreaTest.dir/Info.plist */,
+				FA912B6F6D084BD6A0A07D26 /* CMake Rules */,
+				DC0208DBA0EB4F789A96051B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/CMakeLists.txt */,
 			);
-			name = Resources;
+			name = ALL_BUILD;
 			sourceTree = "<group>";
 		};
-		BC7EE40650E94DD39C85DA2B /* Products */ = {
+		44B2585B78EB4A8DB06B0664 /* GsAreaTest */ = {
 			isa = PBXGroup;
 			children = (
-				E130F6B1A0CD440C9A989633 /* GsAreaTest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		C0ACFF72A9734A1984C83ECC /* CMake Rules */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "CMake Rules";
-			sourceTree = "<group>";
-		};
-		C2ED25D0001F441C9EFEBC79 /* GsAreaTest */ = {
-			isa = PBXGroup;
-			children = (
-				99037137E4FF4A71992E53D0 /* Source Files */,
-				E857C20E6ED04BC6931073A0 /* Header Files */,
-				ABE21E7BECE1405F8B6450F4 /* Resources */,
-				7F2FCA72E32346C2BC3BFEC3 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/CMakeLists.txt */,
+				06C9FDF880404C76B5887098 /* Source Files */,
+				D0AA6878DC684319B1F96CCC /* Header Files */,
+				5B2068E4F53C4B9B9610F88C /* Resources */,
+				B6B08C988746447F8C585E43 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/CMakeLists.txt */,
 			);
 			name = GsAreaTest;
 			sourceTree = "<group>";
 		};
-		E857C20E6ED04BC6931073A0 /* Header Files */ = {
+		5034314D901349B2A162C37E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				099EE9F5AA0A43B29033AB97 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsCachedAreaTest.h */,
-				2666F3C6A3DA4C93AE9907EB /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsTransferInvalidationTest.h */,
-				F3AB33648A36470683342747 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/Test.h */,
+				A6093D1734E1469386D6C12D /* GsAreaTest */,
 			);
-			name = "Header Files";
+			name = Products;
 			sourceTree = "<group>";
 		};
-		EC5B6F90260641549563D048 /* Frameworks */ = {
+		51C65483469246DB8D95B143 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		5B2068E4F53C4B9B9610F88C /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				4D10CA1EFF9A4B83A7C7FE26 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest/CMakeFiles/GsAreaTest.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		B9B1A8A92AC54ABBB4D49765 = {
+			isa = PBXGroup;
+			children = (
+				44B2585B78EB4A8DB06B0664 /* GsAreaTest */,
+				11F33BEE72A0461FAACA3DA9 /* ALL_BUILD */,
+				5034314D901349B2A162C37E /* Products */,
+				51C65483469246DB8D95B143 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		D0AA6878DC684319B1F96CCC /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				10DA43AD06924E3DA03AC220 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsCachedAreaTest.h */,
+				96A485938CF345679FFC6AC4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsSpriteRegionTest.h */,
+				2DADA2B5E04A440E8D136200 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsTransferInvalidationTest.h */,
+				45D1229A31974595BEDB5D66 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/Test.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		FA912B6F6D084BD6A0A07D26 /* CMake Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A1F74ECA2C6946AC8202C0AE /* GsAreaTest */ = {
+		A35A4545E7994E208DB40667 /* GsAreaTest */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2ABDC50F3C6F4D52A9F6ADDB /* Build configuration list for PBXNativeTarget "GsAreaTest" */;
+			buildConfigurationList = 37F6D68548654C2F9C90C26C /* Build configuration list for PBXNativeTarget "GsAreaTest" */;
 			buildPhases = (
-				44F605765E98400B9C64A4D2 /* Sources */,
-				B1226DEB3BEF4704A0D5ED10 /* Frameworks */,
+				6DFCA44427164DBB85D5819C /* Sources */,
+				7E2B1659536B4E9D802D394C /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				077D0D4FAE8C45A3A29A4E77 /* PBXTargetDependency */,
+				218B70C9ABFE4839AB982443 /* PBXTargetDependency */,
 			);
 			name = GsAreaTest;
 			productName = GsAreaTest;
-			productReference = E130F6B1A0CD440C9A989633 /* GsAreaTest */;
+			productReference = A6093D1734E1469386D6C12D /* GsAreaTest */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		281D6CAB282546DBB698B6E6 /* Project object */ = {
+		F3108006C8F94A8790093935 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1300;
+				LastUpgradeCheck = 1420;
 			};
-			buildConfigurationList = 911CE62F6B474FEBAD78F2F7 /* Build configuration list for PBXProject "GsAreaTest" */;
+			buildConfigurationList = 7B7F02CD8CE241628ACC7DCB /* Build configuration list for PBXProject "GsAreaTest" */;
 			buildSettings = {
 			};
 			buildStyles = (
-				0ACB2894CFFB4FDC9A7926B6 /* Debug */,
-				578D00896D1F426AA0A5B705 /* Release */,
-				6C1B47E5E74A43309786CE8E /* MinSizeRel */,
-				ED25D2496B944C389DA54C78 /* RelWithDebInfo */,
+				2AC8210ACEE4494DA091BF5F /* Debug */,
+				9188C61060BB45F698D74E42 /* Release */,
+				C5D843BA5F5842468B0A55F1 /* MinSizeRel */,
+				C1065DCBD4054A8F87DB660E /* RelWithDebInfo */,
 			);
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
-			mainGroup = 458C7D1542DB48208C2FF870;
-			projectDirPath = "/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest";
+			mainGroup = B9B1A8A92AC54ABBB4D49765;
+			projectDirPath = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest";
 			projectRoot = "";
 			targets = (
-				6B9C69E5DB214681B2A5C976 /* ALL_BUILD */,
-				A1F74ECA2C6946AC8202C0AE /* GsAreaTest */,
-				B7A566E4767340588D653807 /* RUN_TESTS */,
-				3EBABC1ED902418AB5132579 /* ZERO_CHECK */,
-				0285C8420FCC45EA8D71FBC5 /* install */,
+				813B9411ED6148CBBF6FDF45 /* ALL_BUILD */,
+				A35A4545E7994E208DB40667 /* GsAreaTest */,
+				B7CC82741C444EE0A7828070 /* RUN_TESTS */,
+				81A7140D8C2040F2ACDF825B /* ZERO_CHECK */,
+				0C166A68102548AEB1781C34 /* install */,
+				D771A2D4BE7846D7BB9D5A72 /* package */,
 			);
 		};
 /* End PBXProject section */
@@ -300,25 +326,25 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest
-  /usr/local/Cellar/cmake/3.21.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest
-  /usr/local/Cellar/cmake/3.21.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest
-  /usr/local/Cellar/cmake/3.21.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest
-  /usr/local/Cellar/cmake/3.21.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 ";
 			showEnvVarsInLog = 0;
 		};
-		09633983C117A246917AB07F /* Generate CMakeFiles/ALL_BUILD */ = {
+		2C040765E28A646A70CCCD4C /* Generate CMakeFiles/ALL_BUILD */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -328,30 +354,76 @@ fi
 			);
 			name = "Generate CMakeFiles/ALL_BUILD";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest/CMakeFiles/ALL_BUILD			);
+/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest/CMakeFiles/ALL_BUILD			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest
   echo Build\\ all\\ projects
 fi
 ";
 			showEnvVarsInLog = 0;
 		};
 		3C0110FC8322DE7E50886E21 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		571234464C2A5D0D43F1AB42 /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		661D9C604B3B91332E7543CC = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -409,20 +481,20 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest
-  /usr/local/Cellar/cmake/3.21.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest
-  /usr/local/Cellar/cmake/3.21.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest
-  /usr/local/Cellar/cmake/3.21.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest
-  /usr/local/Cellar/cmake/3.21.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -442,7 +514,7 @@ fi
 exit 0";
 			showEnvVarsInLog = 0;
 		};
-		FFC8EDE7076295D20674F959 /* Generate CMakeFiles/ZERO_CHECK */ = {
+		EAD442E8728CC89AEB76D46D /* Generate CMakeFiles/ZERO_CHECK */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -452,25 +524,25 @@ exit 0";
 			);
 			name = "Generate CMakeFiles/ZERO_CHECK";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest/CMakeFiles/ZERO_CHECK			);
+/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest/CMakeFiles/ZERO_CHECK			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest
-  make -f /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest/CMakeScripts/ReRunCMake.make
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest
+  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest
-  make -f /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest/CMakeScripts/ReRunCMake.make
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest
+  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest
-  make -f /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest/CMakeScripts/ReRunCMake.make
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest
+  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest
-  make -f /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest/CMakeScripts/ReRunCMake.make
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest
+  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest/CMakeScripts/ReRunCMake.make
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -478,43 +550,49 @@ fi
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		44F605765E98400B9C64A4D2 /* Sources */ = {
+		6DFCA44427164DBB85D5819C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D62916CE8C647EAB6E6B8D7 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsCachedAreaTest.cpp */,
-				F2F6ABE677BF4135B7D7DED0 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsTransferInvalidationTest.cpp */,
-				AF6C0E1100DF4597960CDED6 /* /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/tools/GsAreaTest/Main.cpp */,
+				022BD27F4AF147A28295149E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsCachedAreaTest.cpp */,
+				8ABA0F51D4AC4BA4A384D529 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsSpriteRegionTest.cpp */,
+				5634F70DF72E493BB37C6816 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/GsTransferInvalidationTest.cpp */,
+				CCD4C934DE994FEE8C7DC82B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/GsAreaTest/Main.cpp */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		077D0D4FAE8C45A3A29A4E77 /* PBXTargetDependency */ = {
+		1DBB29E598EF40AE92E1A455 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 3EBABC1ED902418AB5132579 /* ZERO_CHECK */;
-			targetProxy = 18F4D810EAF84F8495CC2244 /* PBXContainerItemProxy */;
+			target = 81A7140D8C2040F2ACDF825B /* ZERO_CHECK */;
+			targetProxy = CA71B73D2FAC4F7E9D76ADCB /* PBXContainerItemProxy */;
 		};
-		314B273411D24596970DDA02 /* PBXTargetDependency */ = {
+		218B70C9ABFE4839AB982443 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = A1F74ECA2C6946AC8202C0AE /* GsAreaTest */;
-			targetProxy = F9C3030ECBAC4DCEB79C7C1A /* PBXContainerItemProxy */;
+			target = 81A7140D8C2040F2ACDF825B /* ZERO_CHECK */;
+			targetProxy = DD43FA452C1F47C6A17BB7E8 /* PBXContainerItemProxy */;
 		};
-		44B6DB6F599547A9B53FC43C /* PBXTargetDependency */ = {
+		D795394571ED43938CB6876B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 6B9C69E5DB214681B2A5C976 /* ALL_BUILD */;
-			targetProxy = 8AA8E222187C4C008FEBDE1A /* PBXContainerItemProxy */;
+			target = 813B9411ED6148CBBF6FDF45 /* ALL_BUILD */;
+			targetProxy = 6B944755645642FEB0C7F415 /* PBXContainerItemProxy */;
 		};
-		A7AEC436A132448E9F9542BE /* PBXTargetDependency */ = {
+		EF9D1DDD10E246FC8AF24A04 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 3EBABC1ED902418AB5132579 /* ZERO_CHECK */;
-			targetProxy = 52BE873F14D34A2F8D1BF145 /* PBXContainerItemProxy */;
+			target = A35A4545E7994E208DB40667 /* GsAreaTest */;
+			targetProxy = F69A2A2B6B86417B9B5CBF38 /* PBXContainerItemProxy */;
+		};
+		F531A48DAD664026A1F30EE9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 813B9411ED6148CBBF6FDF45 /* ALL_BUILD */;
+			targetProxy = D1C4A5A77E714FA5A513474F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		10E945816D0B4D26820E5C77 /* Debug */ = {
+		1340BD4C122946E3BA3D735E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -528,13 +606,12 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = ALL_BUILD;
 				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = Debug;
+			name = Release;
 		};
-		11B2B10E4D05402C82663D7A /* RelWithDebInfo */ = {
+		1E31EC512142479B9706A8B3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -546,43 +623,119 @@ fi
 				INSTALL_PATH = "";
 				OTHER_LDFLAGS = ("","$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
+				PRODUCT_NAME = package;
 				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		213C7141B97D45FA8AABEC44 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		2BC75023A35846848E6DCC99 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		309C4BC3124D4933967DFD29 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = RelWithDebInfo;
 		};
-		162F526D134449138187C78E /* MinSizeRel */ = {
+		335D262D3BAD46349CA6229E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		37054CA0BA864A59AE9867D0 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = arm64;
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = "";
 				EXECUTABLE_SUFFIX = "";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"1.3-2331-g0b8742f68\"'","'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'",ZWRAP_USE_ZSTD,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest/CMakeFiles/GsAreaTest.dir/Info.plist;
+				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/xxHash/cmake_unofficial/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
+				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest/CMakeFiles/GsAreaTest.dir/Info.plist;
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0                -mios-version-min=11.0     -DNDEBUG '-std=gnu++17' ";
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/CodeGen/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkAmazon/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkAmazon/FrameworkHttp/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libFramework.a",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk/usr/lib/libz.tbd,"-framework Foundation",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk/usr/lib/libbz2.tbd,/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk/usr/lib/libz.tbd,"/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/liblzma.a","/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libzlib.a","$(inherited)");
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2     -DNDEBUG '-std=gnu++17' ";
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/CodeGen/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkAmazon/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkAmazon/FrameworkHttp/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libFramework.a","-framework Foundation","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libbz2.tbd","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libzstd.a","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libz.tbd","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/xxHash/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libxxhash.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/liblzma.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libzlib.a","$(inherited)");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = GsAreaTest;
 				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest;
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/GsAreaTest.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = MinSizeRel;
 		};
-		2645A5DE00744C6BA864A68B /* Release */ = {
+		4E917F30EC5247849CA417C8 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -594,35 +747,14 @@ fi
 				INSTALL_PATH = "";
 				OTHER_LDFLAGS = ("","$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
+				PRODUCT_NAME = package;
 				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = Release;
+			name = RelWithDebInfo;
 		};
-		288C1142DA61404F9AEB7440 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		4A2ADA872585431DA8BC1641 /* Release */ = {
+		6F453FC0A1B44BC2B0A1039A /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -636,47 +768,12 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = ZERO_CHECK;
 				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		4E002C60948E4EA89AFB48F8 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest/build;
-			};
-			name = Release;
-		};
-		610E30325E464E6DB5FB5020 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = RelWithDebInfo;
 		};
-		631DD2A98D7449E2BBB9FD64 /* Release */ = {
+		71349C5DCDF2471EAC070F26 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -690,41 +787,60 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = install;
 				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		7F4F21FF683348518A95DDBB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = Release;
 		};
-		644633942EA141B1868A4EC4 /* Release */ = {
+		911D84987CAD49CC86390173 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = arm64;
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest/Release${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = "";
 				EXECUTABLE_SUFFIX = "";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"1.3-2331-g0b8742f68\"'","'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'",ZWRAP_USE_ZSTD,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest/CMakeFiles/GsAreaTest.dir/Info.plist;
+				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/xxHash/cmake_unofficial/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
+				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest/CMakeFiles/GsAreaTest.dir/Info.plist;
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0                -mios-version-min=11.0     -DNDEBUG -DNDEBUG '-std=gnu++17' ";
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Release${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/CodeGen/Release${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkAmazon/Release${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkAmazon/FrameworkHttp/Release${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/Release${EFFECTIVE_PLATFORM_NAME}/libFramework.a",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk/usr/lib/libz.tbd,"-framework Foundation",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk/usr/lib/libbz2.tbd,/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk/usr/lib/libz.tbd,"/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/Release${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/Release${EFFECTIVE_PLATFORM_NAME}/liblzma.a","/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/Release${EFFECTIVE_PLATFORM_NAME}/libzlib.a","$(inherited)");
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2     -DNDEBUG -DNDEBUG '-std=gnu++17' ";
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Release${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/CodeGen/Release${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkAmazon/Release${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkAmazon/FrameworkHttp/Release${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/Release${EFFECTIVE_PLATFORM_NAME}/libFramework.a","-framework Foundation","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libbz2.tbd","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/Release${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/Release${EFFECTIVE_PLATFORM_NAME}/libzstd.a","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libz.tbd","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/xxHash/Release${EFFECTIVE_PLATFORM_NAME}/libxxhash.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/Release${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/Release${EFFECTIVE_PLATFORM_NAME}/liblzma.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/Release${EFFECTIVE_PLATFORM_NAME}/libzlib.a","$(inherited)");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = GsAreaTest;
 				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest;
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/GsAreaTest.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = Release;
 		};
-		688F33D0D93A49D69DCABAE2 /* MinSizeRel */ = {
+		9C250A519886463C9CF47957 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -738,13 +854,12 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = ZERO_CHECK;
 				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = MinSizeRel;
 		};
-		7115448D2F874DA2B66DA64A /* MinSizeRel */ = {
+		A4C7B158B4D14611A7C01250 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -756,15 +871,33 @@ fi
 				INSTALL_PATH = "";
 				OTHER_LDFLAGS = ("","$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
+				PRODUCT_NAME = package;
 				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = MinSizeRel;
 		};
-		910B25AA040F4080872FC98B /* MinSizeRel */ = {
+		A97C57B73AF241D39E0EF2BE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		AD7D8A0D404440B689A1E7CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = arm64;
@@ -772,61 +905,16 @@ fi
 				CODE_SIGNING_ALLOWED = NO;
 				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_IDENTITY = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest/build;
-			};
-			name = MinSizeRel;
-		};
-		9481E5D0283242FFADF1927A /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		9AB6A4CB257C4FD6B9B815B3 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"1.3-2331-g0b8742f68\"'","'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest/CMakeFiles/GsAreaTest.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0                -mios-version-min=11.0    -D_DEBUG '-std=gnu++17' ";
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Debug${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/CodeGen/Debug${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkAmazon/Debug${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkAmazon/FrameworkHttp/Debug${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/Debug${EFFECTIVE_PLATFORM_NAME}/libFramework.a",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk/usr/lib/libz.tbd,"-framework Foundation",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk/usr/lib/libbz2.tbd,/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk/usr/lib/libz.tbd,"/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/Debug${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/Debug${EFFECTIVE_PLATFORM_NAME}/liblzma.a","/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/Debug${EFFECTIVE_PLATFORM_NAME}/libzlib.a","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = GsAreaTest;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk";
+				SWIFT_VERSION = 4.0;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build;
 			};
 			name = Debug;
 		};
-		A3042B5360074F1FA428375E /* RelWithDebInfo */ = {
+		B597EFE0CFA3405D9BF8BBE2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = arm64;
@@ -834,81 +922,45 @@ fi
 				CODE_SIGNING_ALLOWED = NO;
 				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_IDENTITY = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest/build;
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk";
+				SWIFT_VERSION = 4.0;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build;
 			};
-			name = RelWithDebInfo;
+			name = Release;
 		};
-		A3346B8AF0C84EFBA4606C63 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		A564255F1554449CA7AEDFDF /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		B503C47AB01642B587EC5C9E /* RelWithDebInfo */ = {
+		B5E686CBEFE54ABCB6160CEA /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = arm64;
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = "";
 				EXECUTABLE_SUFFIX = "";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"1.3-2331-g0b8742f68\"'","'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'",ZWRAP_USE_ZSTD,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest/CMakeFiles/GsAreaTest.dir/Info.plist;
+				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/xxHash/cmake_unofficial/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
+				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest/CMakeFiles/GsAreaTest.dir/Info.plist;
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0                -mios-version-min=11.0        -DNDEBUG '-std=gnu++17' ";
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/CodeGen/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkAmazon/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkAmazon/FrameworkHttp/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libFramework.a",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk/usr/lib/libz.tbd,"-framework Foundation",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk/usr/lib/libbz2.tbd,/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk/usr/lib/libz.tbd,"/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/liblzma.a","/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libzlib.a","$(inherited)");
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2        -DNDEBUG '-std=gnu++17' ";
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/CodeGen/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkAmazon/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkAmazon/FrameworkHttp/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libFramework.a","-framework Foundation","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libbz2.tbd","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libzstd.a","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libz.tbd","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/xxHash/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libxxhash.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/liblzma.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libzlib.a","$(inherited)");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = GsAreaTest;
 				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest;
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/GsAreaTest.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = RelWithDebInfo;
 		};
-		BC369F0A2D2D4637AE74DDE0 /* Release */ = {
+		B9B83B7E45CF400CA6979BF9 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -920,15 +972,31 @@ fi
 				INSTALL_PATH = "";
 				OTHER_LDFLAGS = ("","$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
+				PRODUCT_NAME = install;
 				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = Release;
+			name = RelWithDebInfo;
 		};
-		BF1448C61B3E4A5A87156C63 /* Debug */ = {
+		BF717BB6123246A1A3E3FCFB /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk";
+				SWIFT_VERSION = 4.0;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build;
+			};
+			name = MinSizeRel;
+		};
+		C5A3DB7FD4E04264AB9729B9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -942,13 +1010,41 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = ZERO_CHECK;
 				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		D1991A8B933548C499846CBE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest/Debug${EFFECTIVE_PLATFORM_NAME}";
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'",ZWRAP_USE_ZSTD,"$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/xxHash/cmake_unofficial/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
+				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/GsAreaTest/CMakeFiles/GsAreaTest.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2    -D_DEBUG '-std=gnu++17' ";
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Debug${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/CodeGen/Debug${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkAmazon/Debug${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkAmazon/FrameworkHttp/Debug${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/Debug${EFFECTIVE_PLATFORM_NAME}/libFramework.a","-framework Foundation","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libbz2.tbd","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/Debug${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/Debug${EFFECTIVE_PLATFORM_NAME}/libzstd.a","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libz.tbd","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/xxHash/Debug${EFFECTIVE_PLATFORM_NAME}/libxxhash.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/Debug${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/Debug${EFFECTIVE_PLATFORM_NAME}/liblzma.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/Debug${EFFECTIVE_PLATFORM_NAME}/libzlib.a","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = GsAreaTest;
+				SECTORDER_FLAGS = "";
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/GsAreaTest.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = Debug;
 		};
-		D56FD28BD75A40B281FAF6D0 /* MinSizeRel */ = {
+		ED96CACE429E499499CE39FC /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -962,13 +1058,31 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = ALL_BUILD;
 				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = MinSizeRel;
 		};
-		E5B3C005DB684AB5979C92C5 /* RelWithDebInfo */ = {
+		EE4A4A6E2A2A48BBBE693CFB /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		F46C6174434E4660A263A817 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -982,13 +1096,31 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = RUN_TESTS;
 				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = RelWithDebInfo;
+			name = Debug;
 		};
-		FE3AFA92844A437B8CDDBBD0 /* Debug */ = {
+		F75E67E9DD48411697CE9030 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		FAC14BCD87704CEAB7987D60 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = arm64;
@@ -996,82 +1128,115 @@ fi
 				CODE_SIGNING_ALLOWED = NO;
 				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_IDENTITY = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/tools/GsAreaTest/build;
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk";
+				SWIFT_VERSION = 4.0;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build;
 			};
-			name = Debug;
+			name = RelWithDebInfo;
+		};
+		FF670AD5913B4A94B5A64AB9 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		2ABDC50F3C6F4D52A9F6ADDB /* Build configuration list for PBXNativeTarget "GsAreaTest" */ = {
+		072DDCD3180E489FA2A59038 /* Build configuration list for PBXAggregateTarget "package" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9AB6A4CB257C4FD6B9B815B3 /* Debug */,
-				644633942EA141B1868A4EC4 /* Release */,
-				162F526D134449138187C78E /* MinSizeRel */,
-				B503C47AB01642B587EC5C9E /* RelWithDebInfo */,
+				335D262D3BAD46349CA6229E /* Debug */,
+				1E31EC512142479B9706A8B3 /* Release */,
+				A4C7B158B4D14611A7C01250 /* MinSizeRel */,
+				4E917F30EC5247849CA417C8 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		3A2D9557BB9F4961AAFF18C5 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+		115FE4299AB84C7296C4F1DB /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				BF1448C61B3E4A5A87156C63 /* Debug */,
-				4A2ADA872585431DA8BC1641 /* Release */,
-				688F33D0D93A49D69DCABAE2 /* MinSizeRel */,
-				11B2B10E4D05402C82663D7A /* RelWithDebInfo */,
+				F75E67E9DD48411697CE9030 /* Debug */,
+				1340BD4C122946E3BA3D735E /* Release */,
+				ED96CACE429E499499CE39FC /* MinSizeRel */,
+				EE4A4A6E2A2A48BBBE693CFB /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		3C962519511745D8975E89C0 /* Build configuration list for PBXAggregateTarget "install" */ = {
+		18C3B4F080B242CAADEFC966 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A564255F1554449CA7AEDFDF /* Debug */,
-				631DD2A98D7449E2BBB9FD64 /* Release */,
-				288C1142DA61404F9AEB7440 /* MinSizeRel */,
-				9481E5D0283242FFADF1927A /* RelWithDebInfo */,
+				F46C6174434E4660A263A817 /* Debug */,
+				213C7141B97D45FA8AABEC44 /* Release */,
+				2BC75023A35846848E6DCC99 /* MinSizeRel */,
+				309C4BC3124D4933967DFD29 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		594316D4F3664CDE9385CC27 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+		37F6D68548654C2F9C90C26C /* Build configuration list for PBXNativeTarget "GsAreaTest" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				10E945816D0B4D26820E5C77 /* Debug */,
-				2645A5DE00744C6BA864A68B /* Release */,
-				D56FD28BD75A40B281FAF6D0 /* MinSizeRel */,
-				610E30325E464E6DB5FB5020 /* RelWithDebInfo */,
+				D1991A8B933548C499846CBE /* Debug */,
+				911D84987CAD49CC86390173 /* Release */,
+				37054CA0BA864A59AE9867D0 /* MinSizeRel */,
+				B5E686CBEFE54ABCB6160CEA /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		911CE62F6B474FEBAD78F2F7 /* Build configuration list for PBXProject "GsAreaTest" */ = {
+		7B7F02CD8CE241628ACC7DCB /* Build configuration list for PBXProject "GsAreaTest" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				FE3AFA92844A437B8CDDBBD0 /* Debug */,
-				4E002C60948E4EA89AFB48F8 /* Release */,
-				910B25AA040F4080872FC98B /* MinSizeRel */,
-				A3042B5360074F1FA428375E /* RelWithDebInfo */,
+				AD7D8A0D404440B689A1E7CD /* Debug */,
+				B597EFE0CFA3405D9BF8BBE2 /* Release */,
+				BF717BB6123246A1A3E3FCFB /* MinSizeRel */,
+				FAC14BCD87704CEAB7987D60 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		E985C102C2B64F52B3ACD890 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
+		BF773E4C199A4100B9400AA7 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A3346B8AF0C84EFBA4606C63 /* Debug */,
-				BC369F0A2D2D4637AE74DDE0 /* Release */,
-				7115448D2F874DA2B66DA64A /* MinSizeRel */,
-				E5B3C005DB684AB5979C92C5 /* RelWithDebInfo */,
+				A97C57B73AF241D39E0EF2BE /* Debug */,
+				C5A3DB7FD4E04264AB9729B9 /* Release */,
+				9C250A519886463C9CF47957 /* MinSizeRel */,
+				6F453FC0A1B44BC2B0A1039A /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E1A34D47DE6849228352F104 /* Build configuration list for PBXAggregateTarget "install" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				71349C5DCDF2471EAC070F26 /* Debug */,
+				7F4F21FF683348518A95DDBB /* Release */,
+				FF670AD5913B4A94B5A64AB9 /* MinSizeRel */,
+				B9B83B7E45CF400CA6979BF9 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 281D6CAB282546DBB698B6E6 /* Project object */;
+	rootObject = F3108006C8F94A8790093935 /* Project object */;
 }

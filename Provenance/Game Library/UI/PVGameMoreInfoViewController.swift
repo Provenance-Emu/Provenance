@@ -271,16 +271,16 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
 //    override func viewWillDisappear(_ animated: Bool) {
 //        super.viewWillDisappear(animated)
 //    }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+
 #if os(iOS)
         descriptionTextView.showsVerticalScrollIndicator = true
         descriptionTextView.flashScrollIndicators()
         descriptionTextView.indicatorStyle = .white
 #endif
-        
+
 #if os(tvOS)
 #if TVOS_HAS_EDIT
         if descriptionTextView.contentSize.height > descriptionTextView.bounds.height {
@@ -1021,8 +1021,6 @@ extension PVGameMoreInfoViewController {
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-
-import UIKit
 
 public final class MediaZoom: UIView, UIScrollViewDelegate {
     public lazy var imageView: UIImageView = {

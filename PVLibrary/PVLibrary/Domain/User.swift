@@ -11,9 +11,9 @@ import Foundation
 public struct User: Codable {
     public let uuid: String
     public let name: String
-    
+
     public let isPatron: Bool
     public let savesAccess: Bool
-    
+
     public let lastSeen: Date
 }

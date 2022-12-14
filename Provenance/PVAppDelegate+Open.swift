@@ -20,7 +20,7 @@ import UIKit
 public enum AppURLKeys: String, Codable {
     case open
     case save
-    
+
     public enum OpenKeys: String, Codable {
         case md5Key = "PVGameMD5Key"
         case system
@@ -39,7 +39,7 @@ extension Array<URLQueryItem> {
             return first(where: {$0.name == key})?.value
         }
         set(newValue) {
-            
+
             if let newValue = newValue {
                 removeAll(where: {$0.name == key})
                 let newItem = URLQueryItem(name: key, value: newValue)
@@ -96,8 +96,7 @@ extension PVAppDelegate {
                 ELOG("Invalid host/action: \(components.host ?? "nil")")
                 return false
             }
-            
-            
+
             switch action {
             case .save:
                 guard let queryItems = components.queryItems, !queryItems.isEmpty else {
@@ -108,11 +107,11 @@ extension PVAppDelegate {
                       let action = AppURLKeys.SaveKeys(rawValue: a) else {
                     return false
                 }
-                
+
                 let md5QueryItem = queryItems["PVGameMD5Key"]
                 let systemItem = queryItems["system"]
                 let nameItem = queryItems["title"]
-                
+
                 let saves = RomDatabase.sharedInstance.all(PVSaveState.self)
                 var filter: String
                 switch action {
@@ -123,28 +122,28 @@ extension PVAppDelegate {
                 case .lastQuickSave:
                     filter = ""
                 }
-                
+
                 if let md5QueryItem = md5QueryItem {
-                    
+
                 }
                 if let systemItem = systemItem {
-                    
+
                 }
                 if let nameItem = nameItem {
-                    
+
                 }
                 return false
-                    //.filter("systemIdentifier == %@ AND title == %@", matchedSystem.identifier, gameName)
+                    // .filter("systemIdentifier == %@ AND title == %@", matchedSystem.identifier, gameName)
             case .open:
-                
+
                 guard let queryItems = components.queryItems, !queryItems.isEmpty else {
                     return false
                 }
-                
+
                 let md5QueryItem = queryItems["PVGameMD5Key"]
                 let systemItem = queryItems["system"]
                 let nameItem = queryItems["title"]
-                
+
                 if let value = md5QueryItem, !value.isEmpty,
                    let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: value)) as PVGame??) {
                     // Match by md5

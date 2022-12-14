@@ -155,8 +155,6 @@ public extension UIGestureRecognizer {
 //  Copyright (c) 2015 Because. All rights reserved.
 //
 
-import UIKit
-
 public protocol Moveable : UIView {
     func makeMoveable()
     func didStartMoving()

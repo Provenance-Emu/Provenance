@@ -18,7 +18,6 @@ public final class PVUser: Object {
     public dynamic var isPatron: Bool = false
     public dynamic var savesAccess: Bool = false
 
-
     public dynamic var lastSeen: Date = Date()
 }
 

@@ -117,7 +117,7 @@ extension QuickTableViewController: SliderCellDelegate {
         }
 
         contentView.heightAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
-        
+
         textLabel.translatesAutoresizingMaskIntoConstraints = false
         if (contentView.bounds.height == 44.5) {
             textLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16).isActive = true
