@@ -28,9 +28,15 @@
 #include "OpenEmuInput.h"
 #include "OpenEmuController.h"
 
-#include <OpenGL/gl3.h>
-#include <OpenGL/gl3ext.h>
-#import  <Cocoa/Cocoa.h>
+#if __has_include(<OpenGL/OpenGL.h>)
+#import <OpenGL/gl3.h>
+#import <OpenGL/gl3ext.h>
+#import <OpenGL/OpenGL.h>
+#import <GLUT/GLUT.h>
+#else
+#import <OpenGLES/ES3/gl.h>
+#import <OpenGLES/ES3/glext.h>
+#endif
 
 #include "AudioCommon/AudioCommon.h"
 
@@ -44,7 +50,7 @@
 #include "Common/Thread.h"
 #include "Common/Version.h"
 
-#include "Core/Analytics.h"
+//#include "Core/Analytics.h"
 #include "Core/Boot/Boot.h"
 #include "Core/BootManager.h"
 #include "Core/Config/MainSettings.h"
@@ -77,6 +83,32 @@
 #include "VideoCommon/VideoConfig.h"
 #include "VideoCommon/OnScreenDisplay.h"
 #include "VideoBackends/OGL/ProgramShaderCache.h"
+
+void input_poll_f()
+{
+    //This is called every chance the Dolphin Emulator has to poll input from the frontend
+    //  OpenEmu handles this, so it could be used to perfom a task per per input polling
+    return;
+};
+
+int16_t input_state_f(unsigned port, unsigned device, unsigned index, unsigned button)
+{
+//    if (SConfig::GetInstance().bWii && !SConfig::GetInstance().m_bt_passthrough_enabled)
+//    {
+//        //This is where we must translate the OpenEmu frontend keys presses stored in the keymap to bitmasks for Dolphin.
+//        return WiiRemotes[port].wiimote_keymap[button].value;
+//    } else {
+        return GameCubePads[port].gc_pad_keymap[button].value;
+//    }
+};
+
+void init_Callback() {
+    //Dolphin Polling Callback
+//    Input::openemu_set_input_poll(input_poll_f);
+    
+    //Controller input Callbacks
+//    Input::openemu_set_input_state(input_state_f);
+}
 
 DolHost* DolHost::m_instance = nullptr;
 static Common::Event updateMainFrameEvent;
@@ -142,7 +174,7 @@ void DolHost::Init(std::string supportDirectoryPath, std::string cpath)
     //Analitics
     Config::SetBase(Config::MAIN_ANALYTICS_PERMISSION_ASKED, true);
     Config::SetBase(Config::MAIN_ANALYTICS_ENABLED, false);
-    DolphinAnalytics::Instance().ReloadConfig();
+//    DolphinAnalytics::Instance().ReloadConfig();
     
     //Save them now
     SConfig::GetInstance().SaveSettings();
@@ -202,10 +234,10 @@ void DolHost::Init(std::string supportDirectoryPath, std::string cpath)
 # pragma mark - Execution
 bool DolHost::LoadFileAtPath()
 {
-    Core::SetOnStateChangedCallback([](Core::State state) {
-        if (state == Core::State::Uninitialized)
-            s_running.Clear();
-    });
+//    Core::SetOnStateChangedCallback([](Core::State state) {
+//        if (state == Core::State::Uninitialized)
+//            s_running.Clear();
+//    });
     
     //    DolphinAnalytics::Instance()->ReportDolphinStart("openEmu");
     //
@@ -218,11 +250,11 @@ bool DolHost::LoadFileAtPath()
         return false;
    
     // Initialize Input
-    Input::Openemu_Input_Init();
+//    Input::Openemu_Input_Init();
     
     //Add 4 Joypads
-    for (int i = 0; i < 4; i++)
-        Input::openemu_set_controller_port_device(i, OEDolDevJoy);
+//    for (int i = 0; i < 4; i++)
+//        Input::openemu_set_controller_port_device(i, OEDolDevJoy);
 
     init_Callback();
     
@@ -466,56 +498,56 @@ void DolHost::DisplayMessage(std::string message)
 
 void DolHost::setButtonState(int button, int state, int player)
 {
-    player -= 1;
-    if (_gameType == DiscIO::Platform::GameCubeDisc) {
-        setGameCubeButton(player, button, state);
-    } else {
-        setWiiButton(player, button, state);
-    }
+//    player -= 1;
+//    if (_gameType == DiscIO::Platform::GameCubeDisc) {
+//        setGameCubeButton(player, button, state);
+//    } else {
+//        setWiiButton(player, button, state);
+//    }
 }
 
 void DolHost::SetAxis(int button, float value, int player)
 {
-    player -= 1;
-    if (_gameType == DiscIO::Platform::GameCubeDisc) {
-        setGameCubeAxis(player, button, value);
-        if (button == OEGCButtonR || button == OEGCButtonL) {
-            int digVal = 0;
-            if (value == 1) digVal = 1;
-            setGameCubeButton(player, button + 5, digVal);
-        }
-    } else {
-        setWiiAxis(player, button, value);
-    }
+//    player -= 1;
+//    if (_gameType == DiscIO::Platform::GameCubeDisc) {
+//        setGameCubeAxis(player, button, value);
+//        if (button == PVGCButtonR || button == PVGCButtonL) {
+//            int digVal = 0;
+//            if (value == 1) digVal = 1;
+//            setGameCubeButton(player, button + 5, digVal);
+//        }
+//    } else {
+//        setWiiAxis(player, button, value);
+//    }
 }
 
 void DolHost::processSpecialKeys (int button , int player)
 {
-    player -= 1;
-    button += 1;
-    
-    if (button == OEWiimoteSideways) {
-        _wmSideways[player] = !_wmSideways[player];
-        setWiimoteSideways(player);
-    } else if (button == OEWiimoteUpright) {
-        _wmUpright[player] = !_wmUpright[player];
-       setWiimoteUpright(player);
-    }
+//    player -= 1;
+//    button += 1;
+//
+//    if (button == PVWiimoteSideways) {
+//        _wmSideways[player] = !_wmSideways[player];
+//        setWiimoteSideways(player);
+//    } else if (button == PVWiimoteUpright) {
+//        _wmUpright[player] = !_wmUpright[player];
+//       setWiimoteUpright(player);
+//    }
 }
 void DolHost::setWiimoteSideways (int player)
 {
-    static_cast<ControllerEmu::NumericSetting<bool>*>(Wiimote::GetWiimoteGroup(player, WiimoteEmu::WiimoteGroup::Options)->numeric_settings[3].get())->SetValue(_wmSideways[player]);
+//    static_cast<ControllerEmu::NumericSetting<bool>*>(Wiimote::GetWiimoteGroup(player, WiimoteEmu::WiimoteGroup::Options)->numeric_settings[3].get())->SetValue(_wmSideways[player]);
 }
 
 void DolHost::setWiimoteUpright (int player)
 {
-    static_cast<ControllerEmu::NumericSetting<bool>*>(Wiimote::GetWiimoteGroup(player, WiimoteEmu::WiimoteGroup::Options)->numeric_settings[2].get())->SetValue(_wmUpright[player]);
+//    static_cast<ControllerEmu::NumericSetting<bool>*>(Wiimote::GetWiimoteGroup(player, WiimoteEmu::WiimoteGroup::Options)->numeric_settings[2].get())->SetValue(_wmUpright[player]);
 }
 
 void DolHost::changeWiimoteExtension(int extension, int player)
 {
-    player -= 1;
-    static_cast<ControllerEmu::Attachments*>(Wiimote::GetWiimoteGroup(player, WiimoteEmu::WiimoteGroup::Attachments))->SetSelectedAttachment(extension);
+//    player -= 1;
+//    static_cast<ControllerEmu::Attachments*>(Wiimote::GetWiimoteGroup(player, WiimoteEmu::WiimoteGroup::Attachments))->SetSelectedAttachment(extension);
 }
 
 void DolHost::SetIR(int player, float x, float y)
@@ -601,14 +633,14 @@ WindowSystemInfo DolHost::GetWSI()
 }
 
 # pragma mark - Dolphin Host callbacks
-void Host_NotifyMapLoaded() {}
-void Host_RefreshDSPDebuggerWindow() {}
-void Host_Message(HostMessageID id) {}
-void* Host_GetRenderHandle() { return (void *)-1; }
-void Host_UpdateTitle(const std::string&) {}
-void Host_UpdateDisasmDialog() {}
-void Host_UpdateMainFrame() {}
-void Host_RequestRenderWindowSize(int width, int height){}
+//void Host_NotifyMapLoaded() {}
+//void Host_RefreshDSPDebuggerWindow() {}
+//void Host_Message(HostMessageID id) {}
+//void* Host_GetRenderHandle() { return (void *)-1; }
+//void Host_UpdateTitle(const std::string&) {}
+//void Host_UpdateDisasmDialog() {}
+//void Host_UpdateMainFrame() {}
+//void Host_RequestRenderWindowSize(int width, int height){}
 void Host_SetStartupDebuggingParameters()
 {
     SConfig& StartUp = SConfig::GetInstance();
@@ -616,11 +648,11 @@ void Host_SetStartupDebuggingParameters()
     StartUp.bBootToPause = false;
 }
 
-bool Host_UINeedsControllerState(){ return false; }
-bool Host_UIBlocksControllerState() { return false; }
-bool Host_RendererHasFocus() { return true; }
-bool Host_RendererIsFullscreen() { return false; }
-void Host_ShowVideoConfig(void*, const std::string&) {}
-void Host_YieldToUI() {}
-void Host_TitleChanged() {}
-void Host_UpdateProgressDialog(const char* caption, int position, int total) {}
+//bool Host_UINeedsControllerState(){ return false; }
+//bool Host_UIBlocksControllerState() { return false; }
+//bool Host_RendererHasFocus() { return true; }
+//bool Host_RendererIsFullscreen() { return false; }
+//void Host_ShowVideoConfig(void*, const std::string&) {}
+//void Host_YieldToUI() {}
+//void Host_TitleChanged() {}
+//void Host_UpdateProgressDialog(const char* caption, int position, int total) {}

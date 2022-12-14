@@ -30,14 +30,14 @@
 
 - (void)executeFrameSkippingFrame:(BOOL)skip {
 
-	if (![self isEmulationPaused])
-	 {
-		 if(!dol_host->CoreRunning()) {
-		 dol_host->Pause(false);
-		 }
-
-	   dol_host->UpdateFrame();
-	 }
+//	if (![self isEmulationPaused])
+//	 {
+//		 if(!dol_host->CoreRunning()) {
+//		 dol_host->Pause(false);
+//		 }
+//
+//	   dol_host->UpdateFrame();
+//	 }
         //dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
 
         //dispatch_semaphore_wait(coreWaitToEndFrameSemaphore, DISPATCH_TIME_FOREVER);
