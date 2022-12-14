@@ -46,8 +46,8 @@ __weak PVDolphinCore *_current = 0;
 
 	NSString *autoLoadStatefileName;
 	NSString *_dolphinCoreModule;
-	OEIntSize _dolphinCoreAspect;
-	OEIntSize _dolphinCoreScreen;
+	CGSize _dolphinCoreAspect;
+	CGSize _dolphinCoreScreen;
 }
 
 - (instancetype)init {
@@ -98,7 +98,7 @@ __weak PVDolphinCore *_current = 0;
                                                attributes:nil
                                                     error:NULL];
 
-	self.filePath = path;
+//	self.filePath = path;
 
 	if([[self systemIdentifier] isEqualToString:@"com.provenance.gamecube"])
 	{
@@ -117,7 +117,7 @@ __weak PVDolphinCore *_current = 0;
 		_dolphinCoreScreen = CGSizeMake(854, 480);
 	}
 
-	dol_host->Init([[self supportDirectoryPath] fileSystemRepresentation], [path fileSystemRepresentation] );
+//	dol_host->Init([[self supportDirectoryPath] fileSystemRepresentation], [path fileSystemRepresentation] );
 
 	usleep(5000);
 	return YES;
@@ -127,9 +127,9 @@ __weak PVDolphinCore *_current = 0;
 - (void)startEmulation {
 	if (!_isInitialized)
 	{
-		[self.renderDelegate willRenderFrameOnAlternateThread];
+//		[self.renderDelegate willRenderFrameOnAlternateThread];
 
-		dol_host->SetPresentationFBO((int)[[self.renderDelegate presentationFramebuffer] integerValue]);
+//		dol_host->SetPresentationFBO((int)[[self.renderDelegate presentationFramebuffer] integerValue]);
 
 		if(dol_host->LoadFileAtPath())
 			_isInitialized = true;
@@ -140,7 +140,7 @@ __weak PVDolphinCore *_current = 0;
 	[super startEmulation];
 
 	//Disable the OE framelimiting
-	[self.renderDelegate suspendFPSLimiting];
+//	[self.renderDelegate suspendFPSLimiting];
 //	if(!self.isRunning) {
 //		[super startEmulation];
 ////        [NSThread detachNewThreadSelector:@selector(runReicastRenderThread) toTarget:self withObject:nil];
@@ -196,6 +196,6 @@ __weak PVDolphinCore *_current = 0;
 }
 
 - (BOOL)supportsRumble { return YES; }
-- (BOOL)supportsCheatCode@end { return YES; }
+- (BOOL)supportsCheatCode { return YES; }
 
 @end

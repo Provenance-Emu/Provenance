@@ -139,37 +139,37 @@ s8 joyx[4], joyy[4];
     }
 }
 
--(void)didPushGameCubeButton:(enum PVGameCubeButton)button forPlayer:(NSInteger)player {
-	if(_isInitialized)
-	  {
-		  dol_host->setButtonState(button, 1, (int)player);
-	  }
+-(void)didPushGameCubeButton:(enum PVGCButton)button forPlayer:(NSInteger)player {
+//	if(_isInitialized)
+//	  {
+//		  dol_host->setButtonState(button, 1, (int)player);
+//	  }
 }
 
--(void)didReleaseGameCubeButton:(enum PVGameCubeButton)button forPlayer:(NSInteger)player {
-	if(_isInitialized)
-	  {
-		  dol_host->setButtonState(button, 0, (int)player);
-	  }
+-(void)didReleaseGameCubeButton:(enum PVGCButton)button forPlayer:(NSInteger)player {
+//	if(_isInitialized)
+//	  {
+//		  dol_host->setButtonState(button, 0, (int)player);
+//	  }
 }
 
-- (void)didMoveGameCubeJoystickDirection:(enum PVGameCubeButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
-	if(_isInitialized)
-	  {
-		  dol_host->SetAxis(button, value, (int)player);
-	  }
+- (void)didMoveGameCubeJoystickDirection:(enum PVGCButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
+//	if(_isInitialized)
+//	  {
+//		  dol_host->SetAxis(button, value, (int)player);
+//	  }
 }
 
 -(void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
-    [self didMoveGameCubeJoystickDirection:(enum PVGameCubeButton)button withValue:value forPlayer:player];
+    [self didMoveGameCubeJoystickDirection:(enum PVGCButton)button withValue:value forPlayer:player];
 }
 
 - (void)didPush:(NSInteger)button forPlayer:(NSInteger)player {
-    [self didPushGameCubeButton:(PVGameCubeButton)button forPlayer:player];
+    [self didPushGameCubeButton:(PVGCButton)button forPlayer:player];
 }
 
 - (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player {
-    [self didReleaseGameCubeButton:(PVGameCubeButton)button forPlayer:player];
+    [self didReleaseGameCubeButton:(PVGCButton)button forPlayer:player];
 }
 
 

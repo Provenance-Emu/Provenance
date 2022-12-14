@@ -139,39 +139,90 @@ import Foundation
 
 // MARK: - GameCube
 
-@objc public enum PVGameCubeButton: Int {
+@objc public enum PVGCButton: Int {
 	// D-Pad
-	case dPadUp
-	case dPadDown
-	case dPadLeft
-	case dPadRight
+	case up
+	case down
+    case left
+	case right
+    @objc(PVGCAnalogUp)
+    case analogUp
+    @objc(PVGCAnalogDown)
+    case analogDown
+    @objc(PVGCAnalogLeft)
+    case analogLeft
+    @objc(PVGCAnalogRight)
+    case analogRight
 	// C buttons
-	case cUp
-	case cDown
-	case cLeft
-	case cRight
+    @objc(PVGCAnalogCUp)
+	case analogCUp
+    @objc(PVGCAnalogCDown)
+	case analogCDown
+    @objc(PVGCAnalogCLeft)
+	case analogCLeft
+    @objc(PVGCAnalogCRight)
+	case analogCRight
 	case a
 	case b
+    case x
+    case y
 	// Shoulder buttons
 	case l
 	case r
 	case z
 	case start
-	case analogUp
-	case analogDown
-	case analogLeft
-	case analogRight
+    @objc(PVGCDigitalL)
+    case digitalL
+    @objc(PVGCDigitalR)
+    case digitalR
 	case count
 }
 
 // FIXME: analog stick (x,y), memory pack, rumble pack
 @objc public protocol PVGameCubeSystemResponderClient: ResponderClient, ButtonResponder, JoystickResponder {
 	@objc(didMoveGameCubeJoystickDirection:withValue:forPlayer:)
-	func didMoveJoystick(_ button: PVGameCubeButton, withValue value: CGFloat, forPlayer player: Int)
+	func didMoveJoystick(_ button: PVGCButton, withValue value: CGFloat, forPlayer player: Int)
 	@objc(didPushGameCubeButton:forPlayer:)
-	func didPush(_ button: PVGameCubeButton, forPlayer player: Int)
+	func didPush(_ button: PVGCButton, forPlayer player: Int)
 	@objc(didReleaseGameCubeButton:forPlayer:)
-	func didRelease(_ button: PVGameCubeButton, forPlayer player: Int)
+	func didRelease(_ button: PVGCButton, forPlayer player: Int)
+}
+
+// MARK: - Wii
+
+@objc public enum PVWiiMoteButton: Int {
+    // D-Pad
+    case dPadUp
+    case dPadDown
+    case dPadLeft
+    case dPadRight
+    // C buttons
+    case cUp
+    case cDown
+    case cLeft
+    case cRight
+    case a
+    case b
+    // Shoulder buttons
+    case l
+    case r
+    case z
+    case start
+    case analogUp
+    case analogDown
+    case analogLeft
+    case analogRight
+    case count
+}
+
+// FIXME: analog stick (x,y), memory pack, rumble pack
+@objc public protocol PVWiiSystemResponderClient: ResponderClient, ButtonResponder, JoystickResponder {
+    @objc(didMoveWiiJoystickDirection:withValue:forPlayer:)
+    func didMoveJoystick(_ button: PVWiiMoteButton, withValue value: CGFloat, forPlayer player: Int)
+    @objc(didPushWiiButton:forPlayer:)
+    func didPush(_ button: PVWiiMoteButton, forPlayer player: Int)
+    @objc(didReleaseWiiButton:forPlayer:)
+    func didRelease(_ button: PVWiiMoteButton, forPlayer player: Int)
 }
 
 // MARK: - Atari 2600
