@@ -497,6 +497,8 @@
 		B3A70062288DD24000355823 /* PVEP128ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A70060288DD23F00355823 /* PVEP128ControllerViewController.swift */; };
 		B3A70065288DF1C400355823 /* PVMSXControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A70064288DF1BF00355823 /* PVMSXControllerViewController.swift */; };
 		B3A70066288DF1C400355823 /* PVMSXControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A70064288DF1BF00355823 /* PVMSXControllerViewController.swift */; };
+		B3AB13C129497DF5005DCCDE /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AB13C029497DF5005DCCDE /* libMoltenVK.dylib */; };
+		B3AB13C329497E0A005DCCDE /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AB13C229497E08005DCCDE /* libMoltenVK.dylib */; platformFilters = (maccatalyst, macos, ); };
 		B3AB37322187F569009D9244 /* PVSNESControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB371E2187F568009D9244 /* PVSNESControllerViewController.swift */; };
 		B3AB37332187F569009D9244 /* PVAtari2600ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB371F2187F568009D9244 /* PVAtari2600ControllerViewController.swift */; };
 		B3AB37342187F569009D9244 /* PVGBControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37202187F568009D9244 /* PVGBControllerViewController.swift */; };
@@ -1486,6 +1488,8 @@
 		B3A4FB65278FFB6600A65248 /* Result+Conveniences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Result+Conveniences.swift"; sourceTree = "<group>"; };
 		B3A70060288DD23F00355823 /* PVEP128ControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVEP128ControllerViewController.swift; sourceTree = "<group>"; };
 		B3A70064288DF1BF00355823 /* PVMSXControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVMSXControllerViewController.swift; sourceTree = "<group>"; };
+		B3AB13C029497DF5005DCCDE /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = MoltenVK/MoltenVK/dylib/tvOS/libMoltenVK.dylib; sourceTree = "<group>"; };
+		B3AB13C229497E08005DCCDE /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = MoltenVK/MoltenVK/dylib/macOS/libMoltenVK.dylib; sourceTree = "<group>"; };
 		B3AB371E2187F568009D9244 /* PVSNESControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVSNESControllerViewController.swift; sourceTree = "<group>"; };
 		B3AB371F2187F568009D9244 /* PVAtari2600ControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVAtari2600ControllerViewController.swift; sourceTree = "<group>"; };
 		B3AB37202187F568009D9244 /* PVGBControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVGBControllerViewController.swift; sourceTree = "<group>"; };
@@ -1668,6 +1672,7 @@
 				B357A43A27092254002C7C0F /* AppCenterCrashes in Frameworks */,
 				B3AEDE20293F34250050BDB6 /* PVReicast.framework in Frameworks */,
 				B34A60802947951E0070ED25 /* libMoltenVK.dylib in Frameworks */,
+				B3AB13C329497E0A005DCCDE /* libMoltenVK.dylib in Frameworks */,
 				B3FAC92D292B450C005E8B11 /* PVGB.framework in Frameworks */,
 				B3FAC927292B4501005E8B11 /* PVEP128Emu.framework in Frameworks */,
 				B3271BDD276B8B660031AECC /* CoreTelephony.framework in Frameworks */,
@@ -1744,6 +1749,7 @@
 				B3FAC99A292B476E005E8B11 /* PVLibRetro.framework in Frameworks */,
 				B324C619219203A5009F4EDC /* libsqlite3.tbd in Frameworks */,
 				B3FAC9B4292B4784005E8B11 /* PVSNES.framework in Frameworks */,
+				B3AB13C129497DF5005DCCDE /* libMoltenVK.dylib in Frameworks */,
 				B3CE94B7293446AC0053B891 /* Introspect in Frameworks */,
 				B3FAC9A4292B4778005E8B11 /* PVMupen64Plus.framework in Frameworks */,
 				B324C6172192038C009F4EDC /* libxml2.tbd in Frameworks */,
@@ -2017,6 +2023,8 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3AB13C229497E08005DCCDE /* libMoltenVK.dylib */,
+				B3AB13C029497DF5005DCCDE /* libMoltenVK.dylib */,
 				B34A607D294794B60070ED25 /* MoltenVK.xcframework */,
 				B34A6077294794860070ED25 /* libMoltenVK.dylib */,
 				B34A607A294794960070ED25 /* libMoltenVK.dylib */,
@@ -5255,6 +5263,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/tvOS",
+				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = Provenance;
@@ -5304,6 +5316,10 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/tvOS",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -7024,6 +7040,10 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/tvOS",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
