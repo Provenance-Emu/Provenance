@@ -18,8 +18,8 @@
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
 
-#define SAMPLERATE 48000
-#define SIZESOUNDBUFFER 48000 / 60 * 4
+#define SAMPLERATE 44100
+#define SIZESOUNDBUFFER 44100 / 60 * 4
 #define OpenEmu 1
 
 #pragma mark - Private
@@ -124,6 +124,9 @@
 - (BOOL)supportsCheatCode { return YES; }
 
 //- (NSTimeInterval)frameInterval {
+/*
+ The Beetle PSX HW core's core provided FPS is 59.826 for NTSC games and 49.761 for PAL games (non-interlaced rates) and is toggleable to 59.940 for NTSC games and 50.000 for PAL games (interlaced rates) through core options
+ */
 //    return 60;
 //}
 //
@@ -187,7 +190,7 @@
     
     
 #define V(x) strcmp(variable, x) == 0
-    if (V(BEETLE_OPT(beetle_psx_hw_renderer))) {
+    if (V(BEETLE_OPT(hw_renderer))) {
         // hardware, hardware_gl, hardware_vk, software
         char *value = strdup("hardware_gl");
         return value;
@@ -202,6 +205,10 @@
 //        },
             char *value = strdup("disabled");
             return value;
+    } else if (V(BEETLE_OPT(internal_resolution))) {
+        // 1,2,4,8,16
+        char *value = strdup("2x");
+        return value;
     } else {
         ELOG(@"Unprocessed var: %s", variable);
         return nil;
