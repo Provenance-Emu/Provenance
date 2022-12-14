@@ -25,6 +25,8 @@ final class PVSaveStateCollectionViewCell: UICollectionViewCell {
         tf.timeStyle = .short
         return tf
     }()
+    
+    var saveStateView = false
 
     @IBOutlet var imageView: UIImageView!
     @IBOutlet var noScreenshotLabel: UILabel!
@@ -51,9 +53,17 @@ final class PVSaveStateCollectionViewCell: UICollectionViewCell {
 
                 #if os(tvOS)
                 // Set up initial textColor for the savestate labels to match the other titles and allow for animation to white for our popup effect when focussed
+                if saveStateView {
+                    labelContainer.superview?.constraints.first(where: {$0.identifier == "labelContainer"})?.constant = 40
+                    
+                    timeStampLabel.textColor = .white
+                    titleLabel.textColor = .white
+                    coreLabel.textColor = .white
+                } else {
                     timeStampLabel.textColor = UIColor.darkGray
                     titleLabel.textColor = UIColor.darkGray
                     coreLabel.textColor = UIColor.darkGray
+                }
 
                 // Set up nicer Save State image filtering on tvOS
                     imageView.layer.shouldRasterize = true
@@ -135,9 +145,15 @@ final class PVSaveStateCollectionViewCell: UICollectionViewCell {
                     self.superview?.bringSubviewToFront(self)
                 } else {
                     self.labelContainer.transform = .identity
-                    self.timeStampLabel.textColor = UIColor.darkGray
-                    self.titleLabel.textColor = UIColor.darkGray
-                    self.coreLabel.textColor = UIColor.darkGray
+                    if self.saveStateView {
+                        self.timeStampLabel.textColor = .white
+                        self.titleLabel.textColor = .white
+                        self.coreLabel.textColor = .white
+                    } else {
+                        self.timeStampLabel.textColor = UIColor.darkGray
+                        self.titleLabel.textColor = UIColor.darkGray
+                        self.coreLabel.textColor = UIColor.darkGray
+                    }
                 }
             }) { () -> Void in }
         }
