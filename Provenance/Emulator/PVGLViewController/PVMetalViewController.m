@@ -580,6 +580,12 @@ PV_OBJC_DIRECT_MEMBERS
     {
         return MTLPixelFormatRGBA16Unorm;
     }
+    else if (pixelFormat == GL_UNSIGNED_SHORT_5_6_5)
+    {
+        if(pixelType == GL_UNSIGNED_BYTE) {
+            return MTLPixelFormatB5G6R5Unorm;
+        }
+    }
     
     ELOG(@"Unknown GL pixelFormat. Add pixelFormat: %0x pixelType: %0x", pixelFormat, pixelType);
 
