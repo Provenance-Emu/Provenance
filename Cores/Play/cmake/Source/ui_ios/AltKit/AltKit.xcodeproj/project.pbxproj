@@ -70,21 +70,21 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		06424552E0EC4A4586BA376F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/NetworkConnection.swift */ = {isa = PBXBuildFile; fileRef = 2637CDAC2E4A43EC9CB5FC28 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/NetworkConnection.swift */; };
-		0B08720FF8BB47A2814456C7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Extensions/ALTServerError+Conveniences.swift */ = {isa = PBXBuildFile; fileRef = FD1E8F37C4BA4887952C6EB2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Extensions/ALTServerError+Conveniences.swift */; };
-		1BD06A9662F144E39EDFA3F5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit/CMakeFiles/AltKit.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 3218DAD753A24B33B8732A8B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit/CMakeFiles/AltKit.dir/Info.plist */; };
-		2D5A7F18600143B9BFB495AC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/ServerManager.swift */ = {isa = PBXBuildFile; fileRef = 9A246120239A48B6A8976602 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/ServerManager.swift */; };
-		2EE1F9E222794421975B1072 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = C54C1F65E2DE46F48039F4DD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/CMakeLists.txt */; };
-		50F1F61EEADF418BBBA00CDF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Types/CodableServerError.swift */ = {isa = PBXBuildFile; fileRef = 564F61643B874DF5980E1839 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Types/CodableServerError.swift */; };
-		5E54EB05099D4B5FB9BEB606 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Extensions/Result+Conveniences.swift */ = {isa = PBXBuildFile; fileRef = 276FF8F643A843F2A477F4C7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Extensions/Result+Conveniences.swift */; };
-		6AC3745CE68E4D35A7DD4B46 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/CAltKit/NSError+ALTServerError.m */ = {isa = PBXBuildFile; fileRef = 0C228DF8B742487194DC6B8C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/CAltKit/NSError+ALTServerError.m */; };
-		848538B63F064456802E72B2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit/CMakeFiles/CAltKit.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = DB51DDC7517D41D48699C4C9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit/CMakeFiles/CAltKit.dir/Info.plist */; };
-		946AD5C5133940DFA53C2F8E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/Server.swift */ = {isa = PBXBuildFile; fileRef = DB1CF86429D747A6A518C064 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/Server.swift */; };
-		A99FF03B1B0A429A983B2AD6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/ServerProtocol.swift */ = {isa = PBXBuildFile; fileRef = 9DC3503D5E2246F19C1D15A6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/ServerProtocol.swift */; };
-		C944FBD4EF544D0E88A96901 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 2053D68B77EB49B395A60919 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/CMakeLists.txt */; };
-		DC217CEA3C8342F8A5BA760B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/ServerConnection.swift */ = {isa = PBXBuildFile; fileRef = AF808980F8A141EB8677858A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/ServerConnection.swift */; };
-		E43F96693E2F4E8F91C35E8B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/CAltKit/NSError+ALTServerError.h */ = {isa = PBXBuildFile; fileRef = A6E7F1B259124A7B89D9B197 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/CAltKit/NSError+ALTServerError.h */; };
-		F81E857528C741FAAB474D40 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/Connection.swift */ = {isa = PBXBuildFile; fileRef = 1A2DA7495BD74956BFF6CF65 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/Connection.swift */; };
+		06424552E0EC4A4586BA376F /* ../Play-/deps/AltKit/Sources/AltKit/Server/NetworkConnection.swift */ = {isa = PBXBuildFile; fileRef = 2637CDAC2E4A43EC9CB5FC28 /* ../Play-/deps/AltKit/Sources/AltKit/Server/NetworkConnection.swift */; };
+		0B08720FF8BB47A2814456C7 /* ../Play-/deps/AltKit/Sources/AltKit/Extensions/ALTServerError+Conveniences.swift */ = {isa = PBXBuildFile; fileRef = FD1E8F37C4BA4887952C6EB2 /* ../Play-/deps/AltKit/Sources/AltKit/Extensions/ALTServerError+Conveniences.swift */; };
+		1BD06A9662F144E39EDFA3F5 /* ../cmake/Source/ui_ios/AltKit/CMakeFiles/AltKit.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 3218DAD753A24B33B8732A8B /* ../cmake/Source/ui_ios/AltKit/CMakeFiles/AltKit.dir/Info.plist */; };
+		2D5A7F18600143B9BFB495AC /* ../Play-/deps/AltKit/Sources/AltKit/Server/ServerManager.swift */ = {isa = PBXBuildFile; fileRef = 9A246120239A48B6A8976602 /* ../Play-/deps/AltKit/Sources/AltKit/Server/ServerManager.swift */; };
+		2EE1F9E222794421975B1072 /* ../Play-/deps/AltKit/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = C54C1F65E2DE46F48039F4DD /* ../Play-/deps/AltKit/CMakeLists.txt */; };
+		50F1F61EEADF418BBBA00CDF /* ../Play-/deps/AltKit/Sources/AltKit/Types/CodableServerError.swift */ = {isa = PBXBuildFile; fileRef = 564F61643B874DF5980E1839 /* ../Play-/deps/AltKit/Sources/AltKit/Types/CodableServerError.swift */; };
+		5E54EB05099D4B5FB9BEB606 /* ../Play-/deps/AltKit/Sources/AltKit/Extensions/Result+Conveniences.swift */ = {isa = PBXBuildFile; fileRef = 276FF8F643A843F2A477F4C7 /* ../Play-/deps/AltKit/Sources/AltKit/Extensions/Result+Conveniences.swift */; };
+		6AC3745CE68E4D35A7DD4B46 /* ../Play-/deps/AltKit/Sources/CAltKit/NSError+ALTServerError.m */ = {isa = PBXBuildFile; fileRef = 0C228DF8B742487194DC6B8C /* ../Play-/deps/AltKit/Sources/CAltKit/NSError+ALTServerError.m */; };
+		848538B63F064456802E72B2 /* ../cmake/Source/ui_ios/AltKit/CMakeFiles/CAltKit.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = DB51DDC7517D41D48699C4C9 /* ../cmake/Source/ui_ios/AltKit/CMakeFiles/CAltKit.dir/Info.plist */; };
+		946AD5C5133940DFA53C2F8E /* ../Play-/deps/AltKit/Sources/AltKit/Server/Server.swift */ = {isa = PBXBuildFile; fileRef = DB1CF86429D747A6A518C064 /* ../Play-/deps/AltKit/Sources/AltKit/Server/Server.swift */; };
+		A99FF03B1B0A429A983B2AD6 /* ../Play-/deps/AltKit/Sources/AltKit/Server/ServerProtocol.swift */ = {isa = PBXBuildFile; fileRef = 9DC3503D5E2246F19C1D15A6 /* ../Play-/deps/AltKit/Sources/AltKit/Server/ServerProtocol.swift */; };
+		C944FBD4EF544D0E88A96901 /* ../Play-/deps/AltKit/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 2053D68B77EB49B395A60919 /* ../Play-/deps/AltKit/CMakeLists.txt */; };
+		DC217CEA3C8342F8A5BA760B /* ../Play-/deps/AltKit/Sources/AltKit/Server/ServerConnection.swift */ = {isa = PBXBuildFile; fileRef = AF808980F8A141EB8677858A /* ../Play-/deps/AltKit/Sources/AltKit/Server/ServerConnection.swift */; };
+		E43F96693E2F4E8F91C35E8B /* ../Play-/deps/AltKit/Sources/CAltKit/NSError+ALTServerError.h */ = {isa = PBXBuildFile; fileRef = A6E7F1B259124A7B89D9B197 /* ../Play-/deps/AltKit/Sources/CAltKit/NSError+ALTServerError.h */; };
+		F81E857528C741FAAB474D40 /* ../Play-/deps/AltKit/Sources/AltKit/Server/Connection.swift */ = {isa = PBXBuildFile; fileRef = 1A2DA7495BD74956BFF6CF65 /* ../Play-/deps/AltKit/Sources/AltKit/Server/Connection.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -178,24 +178,24 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0C228DF8B742487194DC6B8C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/CAltKit/NSError+ALTServerError.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = "NSError+ALTServerError.m"; path = "Sources/CAltKit/NSError+ALTServerError.m"; sourceTree = SOURCE_ROOT; };
-		1A2DA7495BD74956BFF6CF65 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/Connection.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; fileEncoding = 4; name = Connection.swift; path = Sources/AltKit/Server/Connection.swift; sourceTree = SOURCE_ROOT; };
-		2053D68B77EB49B395A60919 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		2637CDAC2E4A43EC9CB5FC28 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/NetworkConnection.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; fileEncoding = 4; name = NetworkConnection.swift; path = Sources/AltKit/Server/NetworkConnection.swift; sourceTree = SOURCE_ROOT; };
-		276FF8F643A843F2A477F4C7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Extensions/Result+Conveniences.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; fileEncoding = 4; name = "Result+Conveniences.swift"; path = "Sources/AltKit/Extensions/Result+Conveniences.swift"; sourceTree = SOURCE_ROOT; };
-		3218DAD753A24B33B8732A8B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit/CMakeFiles/AltKit.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit/CMakeFiles/AltKit.dir/Info.plist; sourceTree = "<absolute>"; };
-		564F61643B874DF5980E1839 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Types/CodableServerError.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; fileEncoding = 4; name = CodableServerError.swift; path = Sources/AltKit/Types/CodableServerError.swift; sourceTree = SOURCE_ROOT; };
+		0C228DF8B742487194DC6B8C /* ../Play-/deps/AltKit/Sources/CAltKit/NSError+ALTServerError.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = "NSError+ALTServerError.m"; path = "Sources/CAltKit/NSError+ALTServerError.m"; sourceTree = SOURCE_ROOT; };
+		1A2DA7495BD74956BFF6CF65 /* ../Play-/deps/AltKit/Sources/AltKit/Server/Connection.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; fileEncoding = 4; name = Connection.swift; path = Sources/AltKit/Server/Connection.swift; sourceTree = SOURCE_ROOT; };
+		2053D68B77EB49B395A60919 /* ../Play-/deps/AltKit/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		2637CDAC2E4A43EC9CB5FC28 /* ../Play-/deps/AltKit/Sources/AltKit/Server/NetworkConnection.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; fileEncoding = 4; name = NetworkConnection.swift; path = Sources/AltKit/Server/NetworkConnection.swift; sourceTree = SOURCE_ROOT; };
+		276FF8F643A843F2A477F4C7 /* ../Play-/deps/AltKit/Sources/AltKit/Extensions/Result+Conveniences.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; fileEncoding = 4; name = "Result+Conveniences.swift"; path = "Sources/AltKit/Extensions/Result+Conveniences.swift"; sourceTree = SOURCE_ROOT; };
+		3218DAD753A24B33B8732A8B /* ../cmake/Source/ui_ios/AltKit/CMakeFiles/AltKit.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/Source/ui_ios/AltKit/CMakeFiles/AltKit.dir/Info.plist; sourceTree = "<absolute>"; };
+		564F61643B874DF5980E1839 /* ../Play-/deps/AltKit/Sources/AltKit/Types/CodableServerError.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; fileEncoding = 4; name = CodableServerError.swift; path = Sources/AltKit/Types/CodableServerError.swift; sourceTree = SOURCE_ROOT; };
 		7563FE90D47049A6AB001400 /* AltKit */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libAltKit.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		84B55D059C0E4BA295AADA76 /* CAltKit */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libCAltKit.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		9A246120239A48B6A8976602 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/ServerManager.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; fileEncoding = 4; name = ServerManager.swift; path = Sources/AltKit/Server/ServerManager.swift; sourceTree = SOURCE_ROOT; };
-		9DC3503D5E2246F19C1D15A6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/ServerProtocol.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; fileEncoding = 4; name = ServerProtocol.swift; path = Sources/AltKit/Server/ServerProtocol.swift; sourceTree = SOURCE_ROOT; };
-		A6E7F1B259124A7B89D9B197 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/CAltKit/NSError+ALTServerError.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = "NSError+ALTServerError.h"; path = "Sources/CAltKit/NSError+ALTServerError.h"; sourceTree = SOURCE_ROOT; };
-		AF808980F8A141EB8677858A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/ServerConnection.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; fileEncoding = 4; name = ServerConnection.swift; path = Sources/AltKit/Server/ServerConnection.swift; sourceTree = SOURCE_ROOT; };
-		C54C1F65E2DE46F48039F4DD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		D99E0E073262483CA3C601E5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		DB1CF86429D747A6A518C064 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/Server.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; fileEncoding = 4; name = Server.swift; path = Sources/AltKit/Server/Server.swift; sourceTree = SOURCE_ROOT; };
-		DB51DDC7517D41D48699C4C9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit/CMakeFiles/CAltKit.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit/CMakeFiles/CAltKit.dir/Info.plist; sourceTree = "<absolute>"; };
-		FD1E8F37C4BA4887952C6EB2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Extensions/ALTServerError+Conveniences.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; fileEncoding = 4; name = "ALTServerError+Conveniences.swift"; path = "Sources/AltKit/Extensions/ALTServerError+Conveniences.swift"; sourceTree = SOURCE_ROOT; };
+		9A246120239A48B6A8976602 /* ../Play-/deps/AltKit/Sources/AltKit/Server/ServerManager.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; fileEncoding = 4; name = ServerManager.swift; path = Sources/AltKit/Server/ServerManager.swift; sourceTree = SOURCE_ROOT; };
+		9DC3503D5E2246F19C1D15A6 /* ../Play-/deps/AltKit/Sources/AltKit/Server/ServerProtocol.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; fileEncoding = 4; name = ServerProtocol.swift; path = Sources/AltKit/Server/ServerProtocol.swift; sourceTree = SOURCE_ROOT; };
+		A6E7F1B259124A7B89D9B197 /* ../Play-/deps/AltKit/Sources/CAltKit/NSError+ALTServerError.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = "NSError+ALTServerError.h"; path = "Sources/CAltKit/NSError+ALTServerError.h"; sourceTree = SOURCE_ROOT; };
+		AF808980F8A141EB8677858A /* ../Play-/deps/AltKit/Sources/AltKit/Server/ServerConnection.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; fileEncoding = 4; name = ServerConnection.swift; path = Sources/AltKit/Server/ServerConnection.swift; sourceTree = SOURCE_ROOT; };
+		C54C1F65E2DE46F48039F4DD /* ../Play-/deps/AltKit/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		D99E0E073262483CA3C601E5 /* ../Play-/deps/AltKit/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		DB1CF86429D747A6A518C064 /* ../Play-/deps/AltKit/Sources/AltKit/Server/Server.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; fileEncoding = 4; name = Server.swift; path = Sources/AltKit/Server/Server.swift; sourceTree = SOURCE_ROOT; };
+		DB51DDC7517D41D48699C4C9 /* ../cmake/Source/ui_ios/AltKit/CMakeFiles/CAltKit.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/Source/ui_ios/AltKit/CMakeFiles/CAltKit.dir/Info.plist; sourceTree = "<absolute>"; };
+		FD1E8F37C4BA4887952C6EB2 /* ../Play-/deps/AltKit/Sources/AltKit/Extensions/ALTServerError+Conveniences.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; fileEncoding = 4; name = "ALTServerError+Conveniences.swift"; path = "Sources/AltKit/Extensions/ALTServerError+Conveniences.swift"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -219,7 +219,7 @@
 		1FA884579C314510A7C66295 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				DB51DDC7517D41D48699C4C9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit/CMakeFiles/CAltKit.dir/Info.plist */,
+				DB51DDC7517D41D48699C4C9 /* ../cmake/Source/ui_ios/AltKit/CMakeFiles/CAltKit.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -227,7 +227,7 @@
 		3452E6BF6A2146D891BA6843 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				3218DAD753A24B33B8732A8B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit/CMakeFiles/AltKit.dir/Info.plist */,
+				3218DAD753A24B33B8732A8B /* ../cmake/Source/ui_ios/AltKit/CMakeFiles/AltKit.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -238,7 +238,7 @@
 				59F9A9F118E84283A500D8E7 /* Header Files */,
 				ADDF669536114949802247EC /* Source Files */,
 				1FA884579C314510A7C66295 /* Resources */,
-				C54C1F65E2DE46F48039F4DD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/CMakeLists.txt */,
+				C54C1F65E2DE46F48039F4DD /* ../Play-/deps/AltKit/CMakeLists.txt */,
 			);
 			name = CAltKit;
 			sourceTree = "<group>";
@@ -257,7 +257,7 @@
 		59F9A9F118E84283A500D8E7 /* Header Files */ = {
 			isa = PBXGroup;
 			children = (
-				A6E7F1B259124A7B89D9B197 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/CAltKit/NSError+ALTServerError.h */,
+				A6E7F1B259124A7B89D9B197 /* ../Play-/deps/AltKit/Sources/CAltKit/NSError+ALTServerError.h */,
 			);
 			name = "Header Files";
 			sourceTree = "<group>";
@@ -273,16 +273,16 @@
 			isa = PBXGroup;
 			children = (
 				3452E6BF6A2146D891BA6843 /* Resources */,
-				2053D68B77EB49B395A60919 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/CMakeLists.txt */,
-				FD1E8F37C4BA4887952C6EB2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Extensions/ALTServerError+Conveniences.swift */,
-				276FF8F643A843F2A477F4C7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Extensions/Result+Conveniences.swift */,
-				1A2DA7495BD74956BFF6CF65 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/Connection.swift */,
-				2637CDAC2E4A43EC9CB5FC28 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/NetworkConnection.swift */,
-				DB1CF86429D747A6A518C064 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/Server.swift */,
-				AF808980F8A141EB8677858A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/ServerConnection.swift */,
-				9A246120239A48B6A8976602 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/ServerManager.swift */,
-				9DC3503D5E2246F19C1D15A6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/ServerProtocol.swift */,
-				564F61643B874DF5980E1839 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Types/CodableServerError.swift */,
+				2053D68B77EB49B395A60919 /* ../Play-/deps/AltKit/CMakeLists.txt */,
+				FD1E8F37C4BA4887952C6EB2 /* ../Play-/deps/AltKit/Sources/AltKit/Extensions/ALTServerError+Conveniences.swift */,
+				276FF8F643A843F2A477F4C7 /* ../Play-/deps/AltKit/Sources/AltKit/Extensions/Result+Conveniences.swift */,
+				1A2DA7495BD74956BFF6CF65 /* ../Play-/deps/AltKit/Sources/AltKit/Server/Connection.swift */,
+				2637CDAC2E4A43EC9CB5FC28 /* ../Play-/deps/AltKit/Sources/AltKit/Server/NetworkConnection.swift */,
+				DB1CF86429D747A6A518C064 /* ../Play-/deps/AltKit/Sources/AltKit/Server/Server.swift */,
+				AF808980F8A141EB8677858A /* ../Play-/deps/AltKit/Sources/AltKit/Server/ServerConnection.swift */,
+				9A246120239A48B6A8976602 /* ../Play-/deps/AltKit/Sources/AltKit/Server/ServerManager.swift */,
+				9DC3503D5E2246F19C1D15A6 /* ../Play-/deps/AltKit/Sources/AltKit/Server/ServerProtocol.swift */,
+				564F61643B874DF5980E1839 /* ../Play-/deps/AltKit/Sources/AltKit/Types/CodableServerError.swift */,
 			);
 			name = AltKit;
 			sourceTree = "<group>";
@@ -297,7 +297,7 @@
 		ADDF669536114949802247EC /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				0C228DF8B742487194DC6B8C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/CAltKit/NSError+ALTServerError.m */,
+				0C228DF8B742487194DC6B8C /* ../Play-/deps/AltKit/Sources/CAltKit/NSError+ALTServerError.m */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
@@ -306,7 +306,7 @@
 			isa = PBXGroup;
 			children = (
 				7B0E3CDA42A947BF91ECCDCD /* CMake Rules */,
-				D99E0E073262483CA3C601E5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/CMakeLists.txt */,
+				D99E0E073262483CA3C601E5 /* ../Play-/deps/AltKit/CMakeLists.txt */,
 			);
 			name = ALL_BUILD;
 			sourceTree = "<group>";
@@ -380,7 +380,7 @@
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
 			mainGroup = 413A3E0112EB46E68E04D5C5;
-			projectDirPath = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit";
+			projectDirPath = "../Play-";
 			projectRoot = "";
 			targets = (
 				813B9411ED6148CBBF6FDF45 /* ALL_BUILD */,
@@ -408,19 +408,19 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit
+  cd ../cmake/Source/ui_ios/AltKit
   /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit
+  cd ../cmake/Source/ui_ios/AltKit
   /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit
+  cd ../cmake/Source/ui_ios/AltKit
   /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit
+  cd ../cmake/Source/ui_ios/AltKit
   /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 ";
@@ -454,19 +454,19 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 ";
@@ -482,24 +482,24 @@ fi
 			);
 			name = "Generate CMakeFiles/ALL_BUILD";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit/CMakeFiles/ALL_BUILD			);
+../cmake/Source/ui_ios/AltKit/CMakeFiles/ALL_BUILD			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit
+  cd ../cmake/Source/ui_ios/AltKit
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit
+  cd ../cmake/Source/ui_ios/AltKit
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit
+  cd ../cmake/Source/ui_ios/AltKit
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit
+  cd ../cmake/Source/ui_ios/AltKit
   echo Build\\ all\\ projects
 fi
 ";
@@ -515,25 +515,25 @@ fi
 			);
 			name = "Generate CMakeFiles/ZERO_CHECK";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit/CMakeFiles/ZERO_CHECK			);
+../cmake/Source/ui_ios/AltKit/CMakeFiles/ZERO_CHECK			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Source/ui_ios/AltKit
+  make -f ../cmake/Source/ui_ios/AltKit/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Source/ui_ios/AltKit
+  make -f ../cmake/Source/ui_ios/AltKit/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Source/ui_ios/AltKit
+  make -f ../cmake/Source/ui_ios/AltKit/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Source/ui_ios/AltKit
+  make -f ../cmake/Source/ui_ios/AltKit/CMakeScripts/ReRunCMake.make
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -596,19 +596,19 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit
+  cd ../cmake/Source/ui_ios/AltKit
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit
+  cd ../cmake/Source/ui_ios/AltKit
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit
+  cd ../cmake/Source/ui_ios/AltKit
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit
+  cd ../cmake/Source/ui_ios/AltKit
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 ";
@@ -642,20 +642,20 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit
-  cp $DERIVED_SOURCES_DIR/AltKit-Swift.h /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit
+  cd ../cmake/Source/ui_ios/AltKit
+  cp $DERIVED_SOURCES_DIR/AltKit-Swift.h ../cmake/Source/ui_ios/AltKit
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit
-  cp $DERIVED_SOURCES_DIR/AltKit-Swift.h /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit
+  cd ../cmake/Source/ui_ios/AltKit
+  cp $DERIVED_SOURCES_DIR/AltKit-Swift.h ../cmake/Source/ui_ios/AltKit
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit
-  cp $DERIVED_SOURCES_DIR/AltKit-Swift.h /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit
+  cd ../cmake/Source/ui_ios/AltKit
+  cp $DERIVED_SOURCES_DIR/AltKit-Swift.h ../cmake/Source/ui_ios/AltKit
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit
-  cp $DERIVED_SOURCES_DIR/AltKit-Swift.h /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit
+  cd ../cmake/Source/ui_ios/AltKit
+  cp $DERIVED_SOURCES_DIR/AltKit-Swift.h ../cmake/Source/ui_ios/AltKit
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -667,7 +667,7 @@ fi
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6AC3745CE68E4D35A7DD4B46 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/CAltKit/NSError+ALTServerError.m */,
+				6AC3745CE68E4D35A7DD4B46 /* ../Play-/deps/AltKit/Sources/CAltKit/NSError+ALTServerError.m */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -675,15 +675,15 @@ fi
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0B08720FF8BB47A2814456C7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Extensions/ALTServerError+Conveniences.swift */,
-				5E54EB05099D4B5FB9BEB606 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Extensions/Result+Conveniences.swift */,
-				F81E857528C741FAAB474D40 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/Connection.swift */,
-				06424552E0EC4A4586BA376F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/NetworkConnection.swift */,
-				946AD5C5133940DFA53C2F8E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/Server.swift */,
-				DC217CEA3C8342F8A5BA760B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/ServerConnection.swift */,
-				2D5A7F18600143B9BFB495AC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/ServerManager.swift */,
-				A99FF03B1B0A429A983B2AD6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Server/ServerProtocol.swift */,
-				50F1F61EEADF418BBBA00CDF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/AltKit/Types/CodableServerError.swift */,
+				0B08720FF8BB47A2814456C7 /* ../Play-/deps/AltKit/Sources/AltKit/Extensions/ALTServerError+Conveniences.swift */,
+				5E54EB05099D4B5FB9BEB606 /* ../Play-/deps/AltKit/Sources/AltKit/Extensions/Result+Conveniences.swift */,
+				F81E857528C741FAAB474D40 /* ../Play-/deps/AltKit/Sources/AltKit/Server/Connection.swift */,
+				06424552E0EC4A4586BA376F /* ../Play-/deps/AltKit/Sources/AltKit/Server/NetworkConnection.swift */,
+				946AD5C5133940DFA53C2F8E /* ../Play-/deps/AltKit/Sources/AltKit/Server/Server.swift */,
+				DC217CEA3C8342F8A5BA760B /* ../Play-/deps/AltKit/Sources/AltKit/Server/ServerConnection.swift */,
+				2D5A7F18600143B9BFB495AC /* ../Play-/deps/AltKit/Sources/AltKit/Server/ServerManager.swift */,
+				A99FF03B1B0A429A983B2AD6 /* ../Play-/deps/AltKit/Sources/AltKit/Server/ServerProtocol.swift */,
+				50F1F61EEADF418BBBA00CDF /* ../Play-/deps/AltKit/Sources/AltKit/Types/CodableServerError.swift */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -757,7 +757,7 @@ fi
 			buildSettings = {
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit/Debug${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -773,7 +773,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = CAltKit;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/CAltKit.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -803,7 +803,7 @@ fi
 			buildSettings = {
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit/Release${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -819,7 +819,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = CAltKit;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/CAltKit.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1007,9 +1007,9 @@ fi
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk";
+				SDKROOT = iphoneos;
 				SWIFT_VERSION = 4.0;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build;
+				
 			};
 			name = RelWithDebInfo;
 		};
@@ -1075,7 +1075,7 @@ fi
 			buildSettings = {
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -1091,7 +1091,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = CAltKit;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/CAltKit.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1102,7 +1102,7 @@ fi
 			buildSettings = {
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit/Release${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -1119,9 +1119,9 @@ fi
 				PRODUCT_NAME = AltKit;
 				SECTORDER_FLAGS = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = (PLAY_VERSION);
-				SWIFT_INCLUDE_PATHS = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/CAltKit";
+				SWIFT_INCLUDE_PATHS = "../Play-/deps/AltKit/Sources/CAltKit";
 				SWIFT_VERSION = 5.0;
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/AltKit.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1170,7 +1170,7 @@ fi
 			buildSettings = {
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit/Debug${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -1187,9 +1187,9 @@ fi
 				PRODUCT_NAME = AltKit;
 				SECTORDER_FLAGS = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = (PLAY_VERSION);
-				SWIFT_INCLUDE_PATHS = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/CAltKit";
+				SWIFT_INCLUDE_PATHS = "../Play-/deps/AltKit/Sources/CAltKit";
 				SWIFT_VERSION = 5.0;
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/AltKit.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1206,9 +1206,9 @@ fi
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk";
+				SDKROOT = iphoneos;
 				SWIFT_VERSION = 4.0;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build;
+				
 			};
 			name = Debug;
 		};
@@ -1217,7 +1217,7 @@ fi
 			buildSettings = {
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -1234,9 +1234,9 @@ fi
 				PRODUCT_NAME = AltKit;
 				SECTORDER_FLAGS = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = (PLAY_VERSION);
-				SWIFT_INCLUDE_PATHS = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/CAltKit";
+				SWIFT_INCLUDE_PATHS = "../Play-/deps/AltKit/Sources/CAltKit";
 				SWIFT_VERSION = 5.0;
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/AltKit.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1272,9 +1272,9 @@ fi
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk";
+				SDKROOT = iphoneos;
 				SWIFT_VERSION = 4.0;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build;
+				
 			};
 			name = MinSizeRel;
 		};
@@ -1283,7 +1283,7 @@ fi
 			buildSettings = {
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -1299,7 +1299,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = CAltKit;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/CAltKit.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1310,7 +1310,7 @@ fi
 			buildSettings = {
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/AltKit/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -1327,9 +1327,9 @@ fi
 				PRODUCT_NAME = AltKit;
 				SECTORDER_FLAGS = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = (PLAY_VERSION);
-				SWIFT_INCLUDE_PATHS = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/AltKit/Sources/CAltKit";
+				SWIFT_INCLUDE_PATHS = "../Play-/deps/AltKit/Sources/CAltKit";
 				SWIFT_VERSION = 5.0;
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/AltKit.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1346,9 +1346,9 @@ fi
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk";
+				SDKROOT = iphoneos;
 				SWIFT_VERSION = 4.0;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build;
+				
 			};
 			name = Release;
 		};
