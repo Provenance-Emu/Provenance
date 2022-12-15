@@ -45,8 +45,6 @@ public protocol iOSTheme {
     var theme: Themes { get }
 
     #if !os(tvOS)
-    var navigationBarStyle: UIBarStyle { get }
-    var statusBarStyle: UIStatusBarStyle { get }
     var statusBarColor: UIColor { get }
     #endif
     // Mandatory
@@ -58,8 +56,6 @@ public protocol iOSTheme {
 
     // Optional - Defaults to nil (OS chooses)
     var defaultTintColor: UIColor? { get }
-
-    var keyboardAppearance: UIKeyboardAppearance { get }
 
     var barButtonItemTint: UIColor? { get }
     var navigationBarBackgroundColor: UIColor? { get }
@@ -81,8 +77,6 @@ public protocol iOSTheme {
 
 // Default implimentnations
 extension iOSTheme {
-    var keyboardAppearance: UIKeyboardAppearance { return .default }
-
     // Defaults to NIL will use iOS defaults
     var defaultTintColor: UIColor? { return nil }
     var switchThumb: UIColor? { return nil }
@@ -94,10 +88,6 @@ extension iOSTheme {
     var settingsCellText: UIColor? { return nil }
 
     #if !os(tvOS)
-    var navigationBarStyle: UIBarStyle { return .default }
-    var statusBarStyle: UIStatusBarStyle {
-        return UIStatusBarStyle.default
-    }
     var statusBarColor: UIColor? { return nil }
     #endif
 
@@ -105,15 +95,6 @@ extension iOSTheme {
     var barButtonItemTint: UIColor? { return defaultTintColor }
     var alertViewTintColor: UIColor? { return defaultTintColor }
     var switchON: UIColor? { return defaultTintColor }
-
-    func setGlobalTint() {
-        // Get app delegate
-        let sharedApp = UIApplication.shared
-
-        // Set tint color
-        sharedApp.delegate?.window??.tintColor = defaultTintColor
-    }
-
 }
 
 struct DarkTheme: iOSTheme {
@@ -125,12 +106,9 @@ struct DarkTheme: iOSTheme {
     let theme = Themes.dark
 
     #if !os(tvOS)
-    var navigationBarStyle: UIBarStyle { return UIBarStyle.black }
-    var statusBarStyle: UIStatusBarStyle { return UIStatusBarStyle.lightContent }
     var statusBarColor: UIColor { return .grey1C }
     #endif
     var defaultTintColor: UIColor? { return Colors.blueishGrey }
-    var keyboardAppearance: UIKeyboardAppearance = .dark
 
     var switchON: UIColor? { return Colors.lightBlue }
     var switchThumb: UIColor? { return .greyEEE }
@@ -143,9 +121,6 @@ struct DarkTheme: iOSTheme {
 
     var barButtonItemTint: UIColor? { return Colors.lightBlue }
     var navigationBarBackgroundColor: UIColor? { return .grey1C }
-
-    var alertViewBackground: UIColor { return .darkGray }
-    var alertViewText: UIColor { return .lightGray }
 
     var settingsHeaderBackground: UIColor? { return .black }
     var settingsHeaderText: UIColor? { return .middleGrey }
