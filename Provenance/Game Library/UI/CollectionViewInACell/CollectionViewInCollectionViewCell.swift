@@ -40,7 +40,7 @@ class CollectionViewInCollectionViewCell<Item: SubCellItem>: UICollectionViewCel
 
     var subCellSize: CGSize {
         #if os(tvOS)
-            return CGSize(width: 350, height: 280)
+            return CGSize(width: 350, height: 244)
         #else
             let ratio = 5.0 / 4.0
             let width = 100.0
@@ -142,7 +142,7 @@ class CollectionViewInCollectionViewCell<Item: SubCellItem>: UICollectionViewCel
 
         internalCollectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 0).isActive = true
         internalCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 0).isActive = true
-        internalCollectionView.heightAnchor.constraint(equalTo: margins.heightAnchor, constant: 0).isActive = true
+        internalCollectionView.heightAnchor.constraint(equalTo: margins.heightAnchor, constant: 36).isActive = true
 
         // setup page indicator layout
         addSubview(pageIndicator)
