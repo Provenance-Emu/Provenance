@@ -44,9 +44,8 @@ protocol tvOSTheme {}
 public protocol iOSTheme {
     var theme: Themes { get }
 
-    #if !os(tvOS)
     var statusBarColor: UIColor { get }
-    #endif
+
     // Mandatory
     var gameLibraryBackground: UIColor { get }
     var gameLibraryText: UIColor { get }
@@ -68,28 +67,23 @@ public protocol iOSTheme {
 
     var settingsCellBackground: UIColor? { get }
     var settingsCellText: UIColor? { get }
-
-    // Doesn't seem to be themeable
-//    var alertViewBackground : UIColor {get}
-//    var alertViewText : UIColor {get}
-//    var alertViewTintColor : UIColor {get}
 }
 
 // Default implimentnations
 extension iOSTheme {
+    var statusBarColor: UIColor? { return nil }
+        
     // Defaults to NIL will use iOS defaults
     var defaultTintColor: UIColor? { return nil }
     var switchThumb: UIColor? { return nil }
+    
     var navigationBarBackgroundColor: UIColor? { return nil }
 
     var settingsHeaderBackground: UIColor? { return nil }
     var settingsHeaderText: UIColor? { return nil }
+
     var settingsCellBackground: UIColor? { return nil }
     var settingsCellText: UIColor? { return nil }
-
-    #if !os(tvOS)
-    var statusBarColor: UIColor? { return nil }
-    #endif
 
     // Default to default tint (which defaults to nil)
     var barButtonItemTint: UIColor? { return defaultTintColor }
@@ -105,9 +99,8 @@ struct DarkTheme: iOSTheme {
 
     let theme = Themes.dark
 
-    #if !os(tvOS)
     var statusBarColor: UIColor { return .grey1C }
-    #endif
+
     var defaultTintColor: UIColor? { return Colors.blueishGrey }
 
     var switchON: UIColor? { return Colors.lightBlue }
@@ -152,7 +145,6 @@ struct LightTheme: iOSTheme {
     var settingsCellTextDetail: UIColor? { return .gray }
 }
 
-// @available(iOS 9.0, *)
 public final class Theme {
     public static var currentTheme: iOSTheme = DarkTheme() {
         didSet {
@@ -161,17 +153,10 @@ public final class Theme {
         }
     }
 
-    //	class func test() {
-    //		let light = AppearanceStyle("light")
-    //	}
-    static weak var statusBarView: UIView?
     private class func styleStatusBar(withColor color: UIColor) {
-        #if !os(tvOS)
+        #if os(iOS)
         DispatchQueue.main.async {
-            let keyWindow = UIApplication.shared.connectedScenes
-                .map({$0 as? UIWindowScene})
-                .compactMap({$0})
-                .first?.windows.first
+            let keyWindow = UIApplication.shared.windows.first { $0.isKeyWindow }
 
             guard
                 let scene = keyWindow?.windowScene,
@@ -180,17 +165,16 @@ public final class Theme {
                 return
             }
 
-            let statusBar1 = statusBarView ?? UIView()
-            statusBar1.frame = manager.statusBarFrame
-            statusBar1.backgroundColor = color
-            statusBarView = statusBar1
-            keyWindow?.addSubview(statusBar1)
+            let statusBar = UIView()
+            statusBar.frame = manager.statusBarFrame
+            statusBar.backgroundColor = color
+            keyWindow?.addSubview(statusBar)
         }
         #endif
     }
 
     private class func setTheme(_ theme: iOSTheme) {
-        #if !os(tvOS)
+        #if os(iOS)
         UISwitch.appearance {
             $0.onTintColor = theme.switchON
 			#if !targetEnvironment(macCatalyst)
