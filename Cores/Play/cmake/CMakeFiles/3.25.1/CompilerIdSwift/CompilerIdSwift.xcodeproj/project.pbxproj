@@ -41,7 +41,7 @@
 				en,
 			);
 			mainGroup = 08FB7794FE84155DC02AAC07;
-			projectDirPath = "";
+			projectDirPath = "../Play-";
 			projectRoot = "";
 			targets = (
 				8DD76FA90486AB0100D96B5E,
@@ -82,16 +82,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGNING_REQUIRED = NO;
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
+				
 				GENERATE_INFOPLIST_FILE = YES;
-				SYMROOT = .;
+				
 				
 				ONLY_ACTIVE_ARCH = YES;
 				
 				SWIFT_VERSION = 4.0;
 				CLANG_CXX_LIBRARY = "libc++";
 				
-				SDKROOT = "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk";
+				SDKROOT = iphoneos;
 			};
 			name = Debug;
 		};

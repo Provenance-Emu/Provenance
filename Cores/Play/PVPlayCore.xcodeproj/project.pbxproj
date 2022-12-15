@@ -6,6 +6,20 @@
 	objectVersion = 55;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		934D2DFF294B4D4600BDEBA5 /* PlayLibAdjustments */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 934D2E18294B4D4700BDEBA5 /* Build configuration list for PBXAggregateTarget "PlayLibAdjustments" */;
+			buildPhases = (
+				934D2E19294B4D5900BDEBA5 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = PlayLibAdjustments;
+			productName = CoreLibAdjustments;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		9310345A29436AC3002D218C /* CGSH_Provenance_OGL.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9310344A29436AC2002D218C /* CGSH_Provenance_OGL.mm */; };
 		9310345B29436AC3002D218C /* CGSH_Provenance_OGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 9310345929436AC3002D218C /* CGSH_Provenance_OGL.h */; };
@@ -73,6 +87,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		934D2E1A294B4D8800BDEBA5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 934D2DFF294B4D4600BDEBA5;
+			remoteInfo = PlayLibAdjustments;
+		};
 		B313596026E4C49F0047F338 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B313558626E4C4950047F338 /* PsfPlayer.xcodeproj */;
@@ -238,77 +259,77 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = E2089DE6990B453A899EBFF9;
+			remoteGlobalIDString = FC3310DA61BD4D50BAE9B167;
 			remoteInfo = CodeGen;
 		};
 		B3135B8926E4CA1A0047F338 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 8A7B7ACB9D734DC09B1F0A90;
+			remoteGlobalIDString = D5D6888B2B3043909FB439E6;
 			remoteInfo = Framework;
 		};
 		B3135B8B26E4CA1A0047F338 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 099ED6FBCCBD46D4B9E60C08;
+			remoteGlobalIDString = B6AA8A69572C4DDAA4B70057;
 			remoteInfo = Framework_OpenAl;
 		};
 		B3135B8D26E4CA1A0047F338 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = FAC9A99D9090445D99083024;
+			remoteGlobalIDString = 403161BCAAF347D787FD1022;
 			remoteInfo = Framework_OpenGl;
 		};
 		B3135B8F26E4CA1A0047F338 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 0CFC84600B3443C7A4F04031;
+			remoteGlobalIDString = 2D0FBC7FFB66414E97B4C7A6;
 			remoteInfo = PlayCore;
 		};
 		B3135B9126E4CA1A0047F338 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 7A982B529BE64816BD7450B7;
+			remoteGlobalIDString = A000553235F24AF7A87F97A5;
 			remoteInfo = "chdr-static";
 		};
 		B3135B9326E4CA1A0047F338 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = A96AD83DE30D4914B0FB5C55;
+			remoteGlobalIDString = 7AB6CF123A2540ECA5948DA5;
 			remoteInfo = lzma;
 		};
 		B3135B9526E4CA1A0047F338 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = FF121F7944634CD3901E7550;
+			remoteGlobalIDString = A8A0082C1A1647CA8CF3A213;
 			remoteInfo = sh_openal;
 		};
 		B3135B9726E4CA1A0047F338 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 9AED7B2930B8471F8E793B7F;
+			remoteGlobalIDString = 6B909B7EA81342B991A234EB;
 			remoteInfo = ui_shared;
 		};
 		B3135B9926E4CA1A0047F338 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = B5CB243FA4E943E890788C93;
+			remoteGlobalIDString = 64A4FEB30338432682DBEEE8;
 			remoteInfo = zlib;
 		};
 		B37CE7DD293F2B110010B746 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 1AF9B0EE92F147D2B22024C3;
+			remoteGlobalIDString = B7153CEFBF5E4E58BA98535E;
 			remoteInfo = gsh_opengl;
 		};
 		B3A33CF12947695F0090F1F3 /* PBXContainerItemProxy */ = {
@@ -357,21 +378,21 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = C2F7BA36AAEA491487FCC793;
+			remoteGlobalIDString = 2031809F76EF4DDE860464E8;
 			remoteInfo = libzstd_zlibwrapper_static;
 		};
 		B3A6205E294771AB00ED28E3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = B3AAFE7B7D354AB7B6FF1BF0;
+			remoteGlobalIDString = D72824E600034786A2A9F513;
 			remoteInfo = libzstd_static;
 		};
 		B3A620682947853800ED28E3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 2E2DA60CD8424ED8962D6438;
+			remoteGlobalIDString = 0EC6F3A540D344D4B65A3DEB;
 			remoteInfo = Framework_Vulkan;
 		};
 		B3A620812947853800ED28E3 /* PBXContainerItemProxy */ = {
@@ -399,28 +420,28 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = F640288762374196A61C4C6F;
+			remoteGlobalIDString = 69E486FE4D724D3F81E305A5;
 			remoteInfo = gsh_vulkan;
 		};
 		B3A6209629478BD500ED28E3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = F7EEC3A6CDC24FC3BEE0DD54;
+			remoteGlobalIDString = 0528C63AEE3C4EA1B1C2EB66;
 			remoteInfo = Nuanceur;
 		};
 		B3AEDE16293F2F5D0050BDB6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 02CDDDA715E24C5E9D078C1B;
+			remoteGlobalIDString = 29F816991A4A45B3AC9DBDBD;
 			remoteInfo = Framework_Amazon;
 		};
 		B3AEDE19293F2FA50050BDB6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = E19F59E613A544F59349C725;
+			remoteGlobalIDString = 68EDEA0D5D3A43A0AC16D41A;
 			remoteInfo = Framework_Http;
 		};
 		B3B2546B27842B7B00F97E55 /* PBXContainerItemProxy */ = {
@@ -4017,6 +4038,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				934D2E1B294B4D8800BDEBA5 /* PBXTargetDependency */,
 				B3A6209729478BD500ED28E3 /* PBXTargetDependency */,
 				B3A6208A2947878000ED28E3 /* PBXTargetDependency */,
 				B3A620692947853800ED28E3 /* PBXTargetDependency */,
@@ -4071,6 +4093,9 @@
 				LastUpgradeCheck = 1300;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
+					934D2DFF294B4D4600BDEBA5 = {
+						CreatedOnToolsVersion = 14.1;
+					};
 					B30178D2207C901D0051B93D = {
 						CreatedOnToolsVersion = 9.3;
 						ProvisioningStyle = Automatic;
@@ -4106,6 +4131,7 @@
 			targets = (
 				B3C7620F20783162009950E4 /* PVPlay */,
 				B30178D2207C901D0051B93D /* play */,
+				934D2DFF294B4D4600BDEBA5 /* PlayLibAdjustments */,
 			);
 		};
 /* End PBXProject section */
@@ -4356,6 +4382,26 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		934D2E19294B4D5900BDEBA5 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncp ${SRCROOT}/PVPlayCore/Core/GSH_VulkanPlatformDefs.h ${SRCROOT}/Play-/Source/gs/GSH_Vulkan/\n\n\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		B30178CF207C901D0051B93D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -4392,6 +4438,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		934D2E1B294B4D8800BDEBA5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 934D2DFF294B4D4600BDEBA5 /* PlayLibAdjustments */;
+			targetProxy = 934D2E1A294B4D8800BDEBA5 /* PBXContainerItemProxy */;
+		};
 		B3135B8826E4CA1A0047F338 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = CodeGen;
@@ -4509,6 +4560,30 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		934D2E00294B4D4700BDEBA5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		934D2E01294B4D4700BDEBA5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		934D2E02294B4D4700BDEBA5 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Archive;
+		};
 		B30178DA207C901D0051B93D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -4954,6 +5029,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		934D2E18294B4D4700BDEBA5 /* Build configuration list for PBXAggregateTarget "PlayLibAdjustments" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				934D2E00294B4D4700BDEBA5 /* Debug */,
+				934D2E01294B4D4700BDEBA5 /* Release */,
+				934D2E02294B4D4700BDEBA5 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "play" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

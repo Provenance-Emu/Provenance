@@ -70,67 +70,67 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		01BAFEDED51D4A4E97EF322C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/zutil.h */ = {isa = PBXBuildFile; fileRef = 177BB3EF834D4197B95908DB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/zutil.h */; };
-		04D34F1D209B46C599827029 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/Sort.h */ = {isa = PBXBuildFile; fileRef = 0965ABABBF044B4F87AE861B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/Sort.h */; };
-		061D122912134584BBA48489 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/Lzma86.h */ = {isa = PBXBuildFile; fileRef = 90002966D5EA411C976451EA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/Lzma86.h */; };
-		094B2C4D4A834E00B9695135 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/Delta.h */ = {isa = PBXBuildFile; fileRef = 6BD0BF21DBB74D03944411C6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/Delta.h */; };
-		0B9C19E04F5946C28EC33E8C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_flac.c */ = {isa = PBXBuildFile; fileRef = B4660A0EFF784E7EA4D6DCA8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_flac.c */; };
-		22A82006E3AC4364A75D09CE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/Precomp.h */ = {isa = PBXBuildFile; fileRef = E64DF1490BBD4759BEAB9B50 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/Precomp.h */; };
-		25E26C8EA7AF4BE9AECBED96 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/tests/CMakeFiles/chdr-benchmark.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 1B0D155FFBA04CB9BAD5638C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/tests/CMakeFiles/chdr-benchmark.dir/Info.plist */; };
-		2A95F34AA05246DC9A99046F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/uncompr.c */ = {isa = PBXBuildFile; fileRef = F8727CD5EB0A40B8A6E430BE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/uncompr.c */; };
-		2AEC2DF452BC4D1AB6252E78 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/LzmaLib.h */ = {isa = PBXBuildFile; fileRef = D6B2715BC8A146008BCA0B6B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/LzmaLib.h */; };
-		35516AC158FA4DECB68AE8EE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/infback.c */ = {isa = PBXBuildFile; fileRef = 1B42D82F23A14793B34467D6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/infback.c */; };
-		370CD7A2078947569DBE739A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/CpuArch.h */ = {isa = PBXBuildFile; fileRef = FA1B30B430014F9886AB88C5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/CpuArch.h */; };
-		38FCE563783E463BB7A83100 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/LzmaEnc.h */ = {isa = PBXBuildFile; fileRef = 9E172AA385334613984DE726 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/LzmaEnc.h */; };
-		3A3C311E0FEF44009D74A1FD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/gzguts.h */ = {isa = PBXBuildFile; fileRef = 73C1AFEAE72F4F1F82793190 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/gzguts.h */; };
-		3C5BA793C0604F5C90BC0029 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = B39FF693890143928E1C11DD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/CMakeLists.txt */; };
-		4DE3720C79654F04A77EB7B5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/CMakeFiles/chdr-static.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 0EBB575407D3425388D979BA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/CMakeFiles/chdr-static.dir/Info.plist */; };
-		5A896712A8B94D339B5C8FBF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/tests/benchmark.c */ = {isa = PBXBuildFile; fileRef = 1DF10E35454A440B9D3626F4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/tests/benchmark.c */; };
-		5F926C90B7184AC18EA74F31 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/adler32.c */ = {isa = PBXBuildFile; fileRef = B99BC1FF44B64741A3AE4F97 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/adler32.c */; };
-		6029A9D477D34537A3F0A1EF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_huffman.c */ = {isa = PBXBuildFile; fileRef = 220A895B87F04BC3B491E75E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_huffman.c */; };
-		663F40350E2043E99D1D172C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inffixed.h */ = {isa = PBXBuildFile; fileRef = 33AC2076B0CD427398DDEFFF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inffixed.h */; };
-		68C8F2CC32B04B3AB0C5620C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inflate.c */ = {isa = PBXBuildFile; fileRef = 705BE7309C1C4995AFD3ADB1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inflate.c */; };
-		6A7F6BFDA9DA472CA2FE7398 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/deflate.c */ = {isa = PBXBuildFile; fileRef = C661DC2967D74337925E3906 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/deflate.c */; };
-		6A96D3C7B7F94AD8B01305C3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/Bra.h */ = {isa = PBXBuildFile; fileRef = 92CF1C3980EF4743A9CF5DBB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/Bra.h */; };
-		735E4AEB8C6248F390C4199A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/LzmaDec.c */ = {isa = PBXBuildFile; fileRef = EBED78D0B4234117A7777B57 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/LzmaDec.c */; };
-		773EC6C6242C433F867BFB90 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inffast.c */ = {isa = PBXBuildFile; fileRef = 6C30B999B76543FEADAA6F8A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inffast.c */; };
-		7C0158E5F3C44CC587761CD4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/CMakeFiles/lzma.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = BF077B4D5C08469592F23561 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/CMakeFiles/lzma.dir/Info.plist */; };
-		844646686C9142289540C209 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/tests/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = A1D6FFC55C86404D8F52C2AA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/tests/CMakeLists.txt */; };
-		86C4FCD994204E18A51FF534 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/CMakeFiles/zlib.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 19925DB7F35644878B319481 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/CMakeFiles/zlib.dir/Info.plist */; };
-		8A60B1A1D9DE4DCFA33E933F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/zconf.h */ = {isa = PBXBuildFile; fileRef = 868315E4DACD44F29C302591 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/zconf.h */; };
-		8DA5D17490F641BCBD806A53 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_cdrom.c */ = {isa = PBXBuildFile; fileRef = 396BA097BD4D4EC688E72702 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_cdrom.c */; };
-		908BFF89B6FC4396B2224200 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/trees.h */ = {isa = PBXBuildFile; fileRef = FE96324D8AA34A7985B1619D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/trees.h */; };
-		930AC5E8F87E4A9FB6322FF9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/deflate.h */ = {isa = PBXBuildFile; fileRef = 2265A67D3EB24F48ACCE9794 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/deflate.h */; };
-		965D312C06E349BD95463E2A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/zutil.c */ = {isa = PBXBuildFile; fileRef = 401B1519A73446319C3BBF51 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/zutil.c */; };
-		97E80BCE7FFF41F686D67544 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/Alloc.h */ = {isa = PBXBuildFile; fileRef = 52D0E89D1F034C288DE68B63 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/Alloc.h */; };
-		990942CF339844DB9B40EC58 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/CpuArch.c */ = {isa = PBXBuildFile; fileRef = 476D6701553447A6AD8B0FA7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/CpuArch.c */; };
-		99902D07E99C4004ABC7D9BE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inftrees.c */ = {isa = PBXBuildFile; fileRef = A3505ED383D143DF873AC534 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inftrees.c */; };
-		9D7588DB4A384E5286B66261 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 62527D57C9474801BFCF9A8C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/CMakeLists.txt */; };
-		9E5244BA190A4FC9BEB83EB5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_chd.c */ = {isa = PBXBuildFile; fileRef = 3AFEF8E714A3470682C8927C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_chd.c */; };
-		9E687B61A46F40CD8F1A0FB6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/crc32.c */ = {isa = PBXBuildFile; fileRef = 4A36BE00486D459399F7E870 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/crc32.c */; };
-		A075A7341C374A59B70F4165 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/Sort.c */ = {isa = PBXBuildFile; fileRef = 73147B975F0A4A34B113920C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/Sort.c */; };
-		A3F74D8C1EC049DFB155554C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/LzHash.h */ = {isa = PBXBuildFile; fileRef = A422E023B011463FA846D109 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/LzHash.h */; };
-		A443AD29642F4FFB980CFCD1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/Alloc.c */ = {isa = PBXBuildFile; fileRef = C2EF6833F01F4F1AA7746BD3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/Alloc.c */; };
-		A8A1E413E9484927888AB930 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/LzmaEnc.c */ = {isa = PBXBuildFile; fileRef = DB843D02BCED4B4BA8AC6B0A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/LzmaEnc.c */; };
-		AD1929BA1A7F4EC383C1663F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/Compiler.h */ = {isa = PBXBuildFile; fileRef = 3DA75FD9EBD44C40A9C59874 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/Compiler.h */; };
-		B3ED89E9CCE14D7E91FA0ACB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/Lzma86Dec.c */ = {isa = PBXBuildFile; fileRef = 7BA0C6BDB2494EF4BBC89934 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/Lzma86Dec.c */; };
-		B9659259C41B4CA589426264 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/trees.c */ = {isa = PBXBuildFile; fileRef = EE0525626A9E4CEAA3F0B982 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/trees.c */; };
-		B98EC0980D3A43258842FE5E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 1111B59FF0624347955AB098 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/CMakeLists.txt */; };
-		BA4CFB6CC54D4B7695E973E8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/LzFind.h */ = {isa = PBXBuildFile; fileRef = CEB2C60E1C67465CAA8CDBC9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/LzFind.h */; };
-		BAFE6B53CB454B1B8AFD4C6C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/zlib.h */ = {isa = PBXBuildFile; fileRef = 7181EDE6B4EE4AA8A4AB69A9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/zlib.h */; };
-		C603227E634E488D9429ACCE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/Bra86.c */ = {isa = PBXBuildFile; fileRef = 4D9ACD3404EA41FBBD24C5B0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/Bra86.c */; };
-		D4545D557F32467385A673ED /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/BraIA64.c */ = {isa = PBXBuildFile; fileRef = 2A264D00D86E4B69B647D245 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/BraIA64.c */; };
-		D5813413D557463AA8B5CA62 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/LzmaDec.h */ = {isa = PBXBuildFile; fileRef = 84FAF3893AAF42C08368B99E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/LzmaDec.h */; };
-		E4C08CEE11B64B3FABB6DA34 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inflate.h */ = {isa = PBXBuildFile; fileRef = B6FAA187DF0443AB9D398BAF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inflate.h */; };
-		E5E626C13B3943F6B76E8E34 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/Delta.c */ = {isa = PBXBuildFile; fileRef = 2F161CF98BB84E9FB8CFDF53 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/Delta.c */; };
-		E622F4D998F84FC589F87547 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_file.c */ = {isa = PBXBuildFile; fileRef = 5DA20299B48D4AE4AD9C80ED /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_file.c */; };
-		E74F138C890B40038A42E83E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_bitstream.c */ = {isa = PBXBuildFile; fileRef = 9BCCAA0AF6414C93A3D8C809 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_bitstream.c */; };
-		EF9D8A2AB634483E9B95FF28 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inftrees.h */ = {isa = PBXBuildFile; fileRef = A86A45D1111E4BECACF5059A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inftrees.h */; };
-		F16ABE438F0247A69E8AF692 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inffast.h */ = {isa = PBXBuildFile; fileRef = A7E91F4034644B9682F68BB0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inffast.h */; };
-		F2ADF590B7F14679A1383A10 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/LzFind.c */ = {isa = PBXBuildFile; fileRef = 06C099E2960F4130ACA3CCE0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/LzFind.c */; };
-		F38F3350210140E787AC437C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/crc32.h */ = {isa = PBXBuildFile; fileRef = 9321B36BAAE44BA281193038 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/crc32.h */; };
-		FBB71BD0641540EE81587291 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/7zTypes.h */ = {isa = PBXBuildFile; fileRef = 9392FD56DE8A44DA84B691BF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/7zTypes.h */; };
-		FE987B22029640F99D47EDA7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/compress.c */ = {isa = PBXBuildFile; fileRef = 8D86B9D258BE462E8CC33086 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/compress.c */; };
+		01BAFEDED51D4A4E97EF322C /* ../Play-/deps/libchdr/deps/zlib-1.2.11/zutil.h */ = {isa = PBXBuildFile; fileRef = 177BB3EF834D4197B95908DB /* ../Play-/deps/libchdr/deps/zlib-1.2.11/zutil.h */; };
+		04D34F1D209B46C599827029 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/Sort.h */ = {isa = PBXBuildFile; fileRef = 0965ABABBF044B4F87AE861B /* ../Play-/deps/libchdr/deps/lzma-19.00/include/Sort.h */; };
+		061D122912134584BBA48489 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/Lzma86.h */ = {isa = PBXBuildFile; fileRef = 90002966D5EA411C976451EA /* ../Play-/deps/libchdr/deps/lzma-19.00/include/Lzma86.h */; };
+		094B2C4D4A834E00B9695135 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/Delta.h */ = {isa = PBXBuildFile; fileRef = 6BD0BF21DBB74D03944411C6 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/Delta.h */; };
+		0B9C19E04F5946C28EC33E8C /* ../Play-/deps/libchdr/src/libchdr_flac.c */ = {isa = PBXBuildFile; fileRef = B4660A0EFF784E7EA4D6DCA8 /* ../Play-/deps/libchdr/src/libchdr_flac.c */; };
+		22A82006E3AC4364A75D09CE /* ../Play-/deps/libchdr/deps/lzma-19.00/include/Precomp.h */ = {isa = PBXBuildFile; fileRef = E64DF1490BBD4759BEAB9B50 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/Precomp.h */; };
+		25E26C8EA7AF4BE9AECBED96 /* ../cmake/Source/ui_ios/Source/libchdr/tests/CMakeFiles/chdr-benchmark.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 1B0D155FFBA04CB9BAD5638C /* ../cmake/Source/ui_ios/Source/libchdr/tests/CMakeFiles/chdr-benchmark.dir/Info.plist */; };
+		2A95F34AA05246DC9A99046F /* ../Play-/deps/libchdr/deps/zlib-1.2.11/uncompr.c */ = {isa = PBXBuildFile; fileRef = F8727CD5EB0A40B8A6E430BE /* ../Play-/deps/libchdr/deps/zlib-1.2.11/uncompr.c */; };
+		2AEC2DF452BC4D1AB6252E78 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/LzmaLib.h */ = {isa = PBXBuildFile; fileRef = D6B2715BC8A146008BCA0B6B /* ../Play-/deps/libchdr/deps/lzma-19.00/include/LzmaLib.h */; };
+		35516AC158FA4DECB68AE8EE /* ../Play-/deps/libchdr/deps/zlib-1.2.11/infback.c */ = {isa = PBXBuildFile; fileRef = 1B42D82F23A14793B34467D6 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/infback.c */; };
+		370CD7A2078947569DBE739A /* ../Play-/deps/libchdr/deps/lzma-19.00/include/CpuArch.h */ = {isa = PBXBuildFile; fileRef = FA1B30B430014F9886AB88C5 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/CpuArch.h */; };
+		38FCE563783E463BB7A83100 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/LzmaEnc.h */ = {isa = PBXBuildFile; fileRef = 9E172AA385334613984DE726 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/LzmaEnc.h */; };
+		3A3C311E0FEF44009D74A1FD /* ../Play-/deps/libchdr/deps/zlib-1.2.11/gzguts.h */ = {isa = PBXBuildFile; fileRef = 73C1AFEAE72F4F1F82793190 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/gzguts.h */; };
+		3C5BA793C0604F5C90BC0029 /* ../Play-/deps/libchdr/deps/lzma-19.00/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = B39FF693890143928E1C11DD /* ../Play-/deps/libchdr/deps/lzma-19.00/CMakeLists.txt */; };
+		4DE3720C79654F04A77EB7B5 /* ../cmake/Source/ui_ios/Source/libchdr/CMakeFiles/chdr-static.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 0EBB575407D3425388D979BA /* ../cmake/Source/ui_ios/Source/libchdr/CMakeFiles/chdr-static.dir/Info.plist */; };
+		5A896712A8B94D339B5C8FBF /* ../Play-/deps/libchdr/tests/benchmark.c */ = {isa = PBXBuildFile; fileRef = 1DF10E35454A440B9D3626F4 /* ../Play-/deps/libchdr/tests/benchmark.c */; };
+		5F926C90B7184AC18EA74F31 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/adler32.c */ = {isa = PBXBuildFile; fileRef = B99BC1FF44B64741A3AE4F97 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/adler32.c */; };
+		6029A9D477D34537A3F0A1EF /* ../Play-/deps/libchdr/src/libchdr_huffman.c */ = {isa = PBXBuildFile; fileRef = 220A895B87F04BC3B491E75E /* ../Play-/deps/libchdr/src/libchdr_huffman.c */; };
+		663F40350E2043E99D1D172C /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inffixed.h */ = {isa = PBXBuildFile; fileRef = 33AC2076B0CD427398DDEFFF /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inffixed.h */; };
+		68C8F2CC32B04B3AB0C5620C /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inflate.c */ = {isa = PBXBuildFile; fileRef = 705BE7309C1C4995AFD3ADB1 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inflate.c */; };
+		6A7F6BFDA9DA472CA2FE7398 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/deflate.c */ = {isa = PBXBuildFile; fileRef = C661DC2967D74337925E3906 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/deflate.c */; };
+		6A96D3C7B7F94AD8B01305C3 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/Bra.h */ = {isa = PBXBuildFile; fileRef = 92CF1C3980EF4743A9CF5DBB /* ../Play-/deps/libchdr/deps/lzma-19.00/include/Bra.h */; };
+		735E4AEB8C6248F390C4199A /* ../Play-/deps/libchdr/deps/lzma-19.00/src/LzmaDec.c */ = {isa = PBXBuildFile; fileRef = EBED78D0B4234117A7777B57 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/LzmaDec.c */; };
+		773EC6C6242C433F867BFB90 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inffast.c */ = {isa = PBXBuildFile; fileRef = 6C30B999B76543FEADAA6F8A /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inffast.c */; };
+		7C0158E5F3C44CC587761CD4 /* ../cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/CMakeFiles/lzma.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = BF077B4D5C08469592F23561 /* ../cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/CMakeFiles/lzma.dir/Info.plist */; };
+		844646686C9142289540C209 /* ../Play-/deps/libchdr/tests/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = A1D6FFC55C86404D8F52C2AA /* ../Play-/deps/libchdr/tests/CMakeLists.txt */; };
+		86C4FCD994204E18A51FF534 /* ../cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/CMakeFiles/zlib.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 19925DB7F35644878B319481 /* ../cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/CMakeFiles/zlib.dir/Info.plist */; };
+		8A60B1A1D9DE4DCFA33E933F /* ../Play-/deps/libchdr/deps/zlib-1.2.11/zconf.h */ = {isa = PBXBuildFile; fileRef = 868315E4DACD44F29C302591 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/zconf.h */; };
+		8DA5D17490F641BCBD806A53 /* ../Play-/deps/libchdr/src/libchdr_cdrom.c */ = {isa = PBXBuildFile; fileRef = 396BA097BD4D4EC688E72702 /* ../Play-/deps/libchdr/src/libchdr_cdrom.c */; };
+		908BFF89B6FC4396B2224200 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/trees.h */ = {isa = PBXBuildFile; fileRef = FE96324D8AA34A7985B1619D /* ../Play-/deps/libchdr/deps/zlib-1.2.11/trees.h */; };
+		930AC5E8F87E4A9FB6322FF9 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/deflate.h */ = {isa = PBXBuildFile; fileRef = 2265A67D3EB24F48ACCE9794 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/deflate.h */; };
+		965D312C06E349BD95463E2A /* ../Play-/deps/libchdr/deps/zlib-1.2.11/zutil.c */ = {isa = PBXBuildFile; fileRef = 401B1519A73446319C3BBF51 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/zutil.c */; };
+		97E80BCE7FFF41F686D67544 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/Alloc.h */ = {isa = PBXBuildFile; fileRef = 52D0E89D1F034C288DE68B63 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/Alloc.h */; };
+		990942CF339844DB9B40EC58 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/CpuArch.c */ = {isa = PBXBuildFile; fileRef = 476D6701553447A6AD8B0FA7 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/CpuArch.c */; };
+		99902D07E99C4004ABC7D9BE /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inftrees.c */ = {isa = PBXBuildFile; fileRef = A3505ED383D143DF873AC534 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inftrees.c */; };
+		9D7588DB4A384E5286B66261 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 62527D57C9474801BFCF9A8C /* ../Play-/deps/libchdr/deps/zlib-1.2.11/CMakeLists.txt */; };
+		9E5244BA190A4FC9BEB83EB5 /* ../Play-/deps/libchdr/src/libchdr_chd.c */ = {isa = PBXBuildFile; fileRef = 3AFEF8E714A3470682C8927C /* ../Play-/deps/libchdr/src/libchdr_chd.c */; };
+		9E687B61A46F40CD8F1A0FB6 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/crc32.c */ = {isa = PBXBuildFile; fileRef = 4A36BE00486D459399F7E870 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/crc32.c */; };
+		A075A7341C374A59B70F4165 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/Sort.c */ = {isa = PBXBuildFile; fileRef = 73147B975F0A4A34B113920C /* ../Play-/deps/libchdr/deps/lzma-19.00/src/Sort.c */; };
+		A3F74D8C1EC049DFB155554C /* ../Play-/deps/libchdr/deps/lzma-19.00/include/LzHash.h */ = {isa = PBXBuildFile; fileRef = A422E023B011463FA846D109 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/LzHash.h */; };
+		A443AD29642F4FFB980CFCD1 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/Alloc.c */ = {isa = PBXBuildFile; fileRef = C2EF6833F01F4F1AA7746BD3 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/Alloc.c */; };
+		A8A1E413E9484927888AB930 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/LzmaEnc.c */ = {isa = PBXBuildFile; fileRef = DB843D02BCED4B4BA8AC6B0A /* ../Play-/deps/libchdr/deps/lzma-19.00/src/LzmaEnc.c */; };
+		AD1929BA1A7F4EC383C1663F /* ../Play-/deps/libchdr/deps/lzma-19.00/include/Compiler.h */ = {isa = PBXBuildFile; fileRef = 3DA75FD9EBD44C40A9C59874 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/Compiler.h */; };
+		B3ED89E9CCE14D7E91FA0ACB /* ../Play-/deps/libchdr/deps/lzma-19.00/src/Lzma86Dec.c */ = {isa = PBXBuildFile; fileRef = 7BA0C6BDB2494EF4BBC89934 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/Lzma86Dec.c */; };
+		B9659259C41B4CA589426264 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/trees.c */ = {isa = PBXBuildFile; fileRef = EE0525626A9E4CEAA3F0B982 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/trees.c */; };
+		B98EC0980D3A43258842FE5E /* ../Play-/deps/libchdr/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 1111B59FF0624347955AB098 /* ../Play-/deps/libchdr/CMakeLists.txt */; };
+		BA4CFB6CC54D4B7695E973E8 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/LzFind.h */ = {isa = PBXBuildFile; fileRef = CEB2C60E1C67465CAA8CDBC9 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/LzFind.h */; };
+		BAFE6B53CB454B1B8AFD4C6C /* ../Play-/deps/libchdr/deps/zlib-1.2.11/zlib.h */ = {isa = PBXBuildFile; fileRef = 7181EDE6B4EE4AA8A4AB69A9 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/zlib.h */; };
+		C603227E634E488D9429ACCE /* ../Play-/deps/libchdr/deps/lzma-19.00/src/Bra86.c */ = {isa = PBXBuildFile; fileRef = 4D9ACD3404EA41FBBD24C5B0 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/Bra86.c */; };
+		D4545D557F32467385A673ED /* ../Play-/deps/libchdr/deps/lzma-19.00/src/BraIA64.c */ = {isa = PBXBuildFile; fileRef = 2A264D00D86E4B69B647D245 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/BraIA64.c */; };
+		D5813413D557463AA8B5CA62 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/LzmaDec.h */ = {isa = PBXBuildFile; fileRef = 84FAF3893AAF42C08368B99E /* ../Play-/deps/libchdr/deps/lzma-19.00/include/LzmaDec.h */; };
+		E4C08CEE11B64B3FABB6DA34 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inflate.h */ = {isa = PBXBuildFile; fileRef = B6FAA187DF0443AB9D398BAF /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inflate.h */; };
+		E5E626C13B3943F6B76E8E34 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/Delta.c */ = {isa = PBXBuildFile; fileRef = 2F161CF98BB84E9FB8CFDF53 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/Delta.c */; };
+		E622F4D998F84FC589F87547 /* ../Play-/deps/libchdr/src/libchdr_file.c */ = {isa = PBXBuildFile; fileRef = 5DA20299B48D4AE4AD9C80ED /* ../Play-/deps/libchdr/src/libchdr_file.c */; };
+		E74F138C890B40038A42E83E /* ../Play-/deps/libchdr/src/libchdr_bitstream.c */ = {isa = PBXBuildFile; fileRef = 9BCCAA0AF6414C93A3D8C809 /* ../Play-/deps/libchdr/src/libchdr_bitstream.c */; };
+		EF9D8A2AB634483E9B95FF28 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inftrees.h */ = {isa = PBXBuildFile; fileRef = A86A45D1111E4BECACF5059A /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inftrees.h */; };
+		F16ABE438F0247A69E8AF692 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inffast.h */ = {isa = PBXBuildFile; fileRef = A7E91F4034644B9682F68BB0 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inffast.h */; };
+		F2ADF590B7F14679A1383A10 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/LzFind.c */ = {isa = PBXBuildFile; fileRef = 06C099E2960F4130ACA3CCE0 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/LzFind.c */; };
+		F38F3350210140E787AC437C /* ../Play-/deps/libchdr/deps/zlib-1.2.11/crc32.h */ = {isa = PBXBuildFile; fileRef = 9321B36BAAE44BA281193038 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/crc32.h */; };
+		FBB71BD0641540EE81587291 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/7zTypes.h */ = {isa = PBXBuildFile; fileRef = 9392FD56DE8A44DA84B691BF /* ../Play-/deps/libchdr/deps/lzma-19.00/include/7zTypes.h */; };
+		FE987B22029640F99D47EDA7 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/compress.c */ = {isa = PBXBuildFile; fileRef = 8D86B9D258BE462E8CC33086 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/compress.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -245,72 +245,72 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		06C099E2960F4130ACA3CCE0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/LzFind.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = LzFind.c; path = "deps/lzma-19.00/src/LzFind.c"; sourceTree = SOURCE_ROOT; };
-		0965ABABBF044B4F87AE861B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/Sort.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Sort.h; path = "deps/lzma-19.00/include/Sort.h"; sourceTree = SOURCE_ROOT; };
-		0EBB575407D3425388D979BA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/CMakeFiles/chdr-static.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/CMakeFiles/chdr-static.dir/Info.plist"; sourceTree = "<absolute>"; };
-		1111B59FF0624347955AB098 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		177BB3EF834D4197B95908DB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/zutil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zutil.h; path = "deps/zlib-1.2.11/zutil.h"; sourceTree = SOURCE_ROOT; };
-		19925DB7F35644878B319481 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/CMakeFiles/zlib.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/CMakeFiles/zlib.dir/Info.plist"; sourceTree = "<absolute>"; };
-		1B0D155FFBA04CB9BAD5638C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/tests/CMakeFiles/chdr-benchmark.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/tests/CMakeFiles/chdr-benchmark.dir/Info.plist"; sourceTree = "<absolute>"; };
-		1B42D82F23A14793B34467D6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/infback.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = infback.c; path = "deps/zlib-1.2.11/infback.c"; sourceTree = SOURCE_ROOT; };
-		1DF10E35454A440B9D3626F4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/tests/benchmark.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = benchmark.c; path = tests/benchmark.c; sourceTree = SOURCE_ROOT; };
-		220A895B87F04BC3B491E75E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_huffman.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = libchdr_huffman.c; path = src/libchdr_huffman.c; sourceTree = SOURCE_ROOT; };
-		2265A67D3EB24F48ACCE9794 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/deflate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = deflate.h; path = "deps/zlib-1.2.11/deflate.h"; sourceTree = SOURCE_ROOT; };
-		2A264D00D86E4B69B647D245 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/BraIA64.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = BraIA64.c; path = "deps/lzma-19.00/src/BraIA64.c"; sourceTree = SOURCE_ROOT; };
+		06C099E2960F4130ACA3CCE0 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/LzFind.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = LzFind.c; path = "deps/lzma-19.00/src/LzFind.c"; sourceTree = SOURCE_ROOT; };
+		0965ABABBF044B4F87AE861B /* ../Play-/deps/libchdr/deps/lzma-19.00/include/Sort.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Sort.h; path = "deps/lzma-19.00/include/Sort.h"; sourceTree = SOURCE_ROOT; };
+		0EBB575407D3425388D979BA /* ../cmake/Source/ui_ios/Source/libchdr/CMakeFiles/chdr-static.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "../cmake/Source/ui_ios/Source/libchdr/CMakeFiles/chdr-static.dir/Info.plist"; sourceTree = "<absolute>"; };
+		1111B59FF0624347955AB098 /* ../Play-/deps/libchdr/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		177BB3EF834D4197B95908DB /* ../Play-/deps/libchdr/deps/zlib-1.2.11/zutil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zutil.h; path = "deps/zlib-1.2.11/zutil.h"; sourceTree = SOURCE_ROOT; };
+		19925DB7F35644878B319481 /* ../cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/CMakeFiles/zlib.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "../cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/CMakeFiles/zlib.dir/Info.plist"; sourceTree = "<absolute>"; };
+		1B0D155FFBA04CB9BAD5638C /* ../cmake/Source/ui_ios/Source/libchdr/tests/CMakeFiles/chdr-benchmark.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "../cmake/Source/ui_ios/Source/libchdr/tests/CMakeFiles/chdr-benchmark.dir/Info.plist"; sourceTree = "<absolute>"; };
+		1B42D82F23A14793B34467D6 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/infback.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = infback.c; path = "deps/zlib-1.2.11/infback.c"; sourceTree = SOURCE_ROOT; };
+		1DF10E35454A440B9D3626F4 /* ../Play-/deps/libchdr/tests/benchmark.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = benchmark.c; path = tests/benchmark.c; sourceTree = SOURCE_ROOT; };
+		220A895B87F04BC3B491E75E /* ../Play-/deps/libchdr/src/libchdr_huffman.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = libchdr_huffman.c; path = src/libchdr_huffman.c; sourceTree = SOURCE_ROOT; };
+		2265A67D3EB24F48ACCE9794 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/deflate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = deflate.h; path = "deps/zlib-1.2.11/deflate.h"; sourceTree = SOURCE_ROOT; };
+		2A264D00D86E4B69B647D245 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/BraIA64.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = BraIA64.c; path = "deps/lzma-19.00/src/BraIA64.c"; sourceTree = SOURCE_ROOT; };
 		2C3753DD343240318624EC8B /* lzma */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = liblzma.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		2F161CF98BB84E9FB8CFDF53 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/Delta.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = Delta.c; path = "deps/lzma-19.00/src/Delta.c"; sourceTree = SOURCE_ROOT; };
-		33AC2076B0CD427398DDEFFF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inffixed.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = inffixed.h; path = "deps/zlib-1.2.11/inffixed.h"; sourceTree = SOURCE_ROOT; };
-		396BA097BD4D4EC688E72702 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_cdrom.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = libchdr_cdrom.c; path = src/libchdr_cdrom.c; sourceTree = SOURCE_ROOT; };
-		3AFEF8E714A3470682C8927C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_chd.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = libchdr_chd.c; path = src/libchdr_chd.c; sourceTree = SOURCE_ROOT; };
-		3DA75FD9EBD44C40A9C59874 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/Compiler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Compiler.h; path = "deps/lzma-19.00/include/Compiler.h"; sourceTree = SOURCE_ROOT; };
-		401B1519A73446319C3BBF51 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/zutil.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zutil.c; path = "deps/zlib-1.2.11/zutil.c"; sourceTree = SOURCE_ROOT; };
-		476D6701553447A6AD8B0FA7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/CpuArch.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = CpuArch.c; path = "deps/lzma-19.00/src/CpuArch.c"; sourceTree = SOURCE_ROOT; };
-		4A36BE00486D459399F7E870 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/crc32.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = crc32.c; path = "deps/zlib-1.2.11/crc32.c"; sourceTree = SOURCE_ROOT; };
-		4D9ACD3404EA41FBBD24C5B0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/Bra86.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = Bra86.c; path = "deps/lzma-19.00/src/Bra86.c"; sourceTree = SOURCE_ROOT; };
-		52D0E89D1F034C288DE68B63 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/Alloc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Alloc.h; path = "deps/lzma-19.00/include/Alloc.h"; sourceTree = SOURCE_ROOT; };
-		5DA20299B48D4AE4AD9C80ED /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_file.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = libchdr_file.c; path = src/libchdr_file.c; sourceTree = SOURCE_ROOT; };
+		2F161CF98BB84E9FB8CFDF53 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/Delta.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = Delta.c; path = "deps/lzma-19.00/src/Delta.c"; sourceTree = SOURCE_ROOT; };
+		33AC2076B0CD427398DDEFFF /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inffixed.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = inffixed.h; path = "deps/zlib-1.2.11/inffixed.h"; sourceTree = SOURCE_ROOT; };
+		396BA097BD4D4EC688E72702 /* ../Play-/deps/libchdr/src/libchdr_cdrom.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = libchdr_cdrom.c; path = src/libchdr_cdrom.c; sourceTree = SOURCE_ROOT; };
+		3AFEF8E714A3470682C8927C /* ../Play-/deps/libchdr/src/libchdr_chd.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = libchdr_chd.c; path = src/libchdr_chd.c; sourceTree = SOURCE_ROOT; };
+		3DA75FD9EBD44C40A9C59874 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/Compiler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Compiler.h; path = "deps/lzma-19.00/include/Compiler.h"; sourceTree = SOURCE_ROOT; };
+		401B1519A73446319C3BBF51 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/zutil.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zutil.c; path = "deps/zlib-1.2.11/zutil.c"; sourceTree = SOURCE_ROOT; };
+		476D6701553447A6AD8B0FA7 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/CpuArch.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = CpuArch.c; path = "deps/lzma-19.00/src/CpuArch.c"; sourceTree = SOURCE_ROOT; };
+		4A36BE00486D459399F7E870 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/crc32.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = crc32.c; path = "deps/zlib-1.2.11/crc32.c"; sourceTree = SOURCE_ROOT; };
+		4D9ACD3404EA41FBBD24C5B0 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/Bra86.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = Bra86.c; path = "deps/lzma-19.00/src/Bra86.c"; sourceTree = SOURCE_ROOT; };
+		52D0E89D1F034C288DE68B63 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/Alloc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Alloc.h; path = "deps/lzma-19.00/include/Alloc.h"; sourceTree = SOURCE_ROOT; };
+		5DA20299B48D4AE4AD9C80ED /* ../Play-/deps/libchdr/src/libchdr_file.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = libchdr_file.c; path = src/libchdr_file.c; sourceTree = SOURCE_ROOT; };
 		620A3C7A2E134C8BB6E55EC9 /* chdr-benchmark */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = "chdr-benchmark"; sourceTree = BUILT_PRODUCTS_DIR; };
-		62527D57C9474801BFCF9A8C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = "deps/zlib-1.2.11/CMakeLists.txt"; sourceTree = SOURCE_ROOT; };
-		6BD0BF21DBB74D03944411C6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/Delta.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Delta.h; path = "deps/lzma-19.00/include/Delta.h"; sourceTree = SOURCE_ROOT; };
-		6C30B999B76543FEADAA6F8A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inffast.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = inffast.c; path = "deps/zlib-1.2.11/inffast.c"; sourceTree = SOURCE_ROOT; };
-		705BE7309C1C4995AFD3ADB1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inflate.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = inflate.c; path = "deps/zlib-1.2.11/inflate.c"; sourceTree = SOURCE_ROOT; };
-		7181EDE6B4EE4AA8A4AB69A9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/zlib.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zlib.h; path = "deps/zlib-1.2.11/zlib.h"; sourceTree = SOURCE_ROOT; };
-		723CF78C857D463C8E6D140E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		73147B975F0A4A34B113920C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/Sort.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = Sort.c; path = "deps/lzma-19.00/src/Sort.c"; sourceTree = SOURCE_ROOT; };
-		73C1AFEAE72F4F1F82793190 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/gzguts.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = gzguts.h; path = "deps/zlib-1.2.11/gzguts.h"; sourceTree = SOURCE_ROOT; };
-		7BA0C6BDB2494EF4BBC89934 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/Lzma86Dec.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = Lzma86Dec.c; path = "deps/lzma-19.00/src/Lzma86Dec.c"; sourceTree = SOURCE_ROOT; };
-		84FAF3893AAF42C08368B99E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/LzmaDec.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LzmaDec.h; path = "deps/lzma-19.00/include/LzmaDec.h"; sourceTree = SOURCE_ROOT; };
-		868315E4DACD44F29C302591 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/zconf.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zconf.h; path = "deps/zlib-1.2.11/zconf.h"; sourceTree = SOURCE_ROOT; };
-		8D86B9D258BE462E8CC33086 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = compress.c; path = "deps/zlib-1.2.11/compress.c"; sourceTree = SOURCE_ROOT; };
-		90002966D5EA411C976451EA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/Lzma86.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Lzma86.h; path = "deps/lzma-19.00/include/Lzma86.h"; sourceTree = SOURCE_ROOT; };
-		92CF1C3980EF4743A9CF5DBB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/Bra.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Bra.h; path = "deps/lzma-19.00/include/Bra.h"; sourceTree = SOURCE_ROOT; };
-		9321B36BAAE44BA281193038 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/crc32.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = crc32.h; path = "deps/zlib-1.2.11/crc32.h"; sourceTree = SOURCE_ROOT; };
-		9392FD56DE8A44DA84B691BF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/7zTypes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = 7zTypes.h; path = "deps/lzma-19.00/include/7zTypes.h"; sourceTree = SOURCE_ROOT; };
-		9BCCAA0AF6414C93A3D8C809 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_bitstream.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = libchdr_bitstream.c; path = src/libchdr_bitstream.c; sourceTree = SOURCE_ROOT; };
-		9E172AA385334613984DE726 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/LzmaEnc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LzmaEnc.h; path = "deps/lzma-19.00/include/LzmaEnc.h"; sourceTree = SOURCE_ROOT; };
-		A1D6FFC55C86404D8F52C2AA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = tests/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		A3505ED383D143DF873AC534 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inftrees.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = inftrees.c; path = "deps/zlib-1.2.11/inftrees.c"; sourceTree = SOURCE_ROOT; };
-		A422E023B011463FA846D109 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/LzHash.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LzHash.h; path = "deps/lzma-19.00/include/LzHash.h"; sourceTree = SOURCE_ROOT; };
-		A7E91F4034644B9682F68BB0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inffast.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = inffast.h; path = "deps/zlib-1.2.11/inffast.h"; sourceTree = SOURCE_ROOT; };
-		A86A45D1111E4BECACF5059A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inftrees.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = inftrees.h; path = "deps/zlib-1.2.11/inftrees.h"; sourceTree = SOURCE_ROOT; };
-		B39FF693890143928E1C11DD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = "deps/lzma-19.00/CMakeLists.txt"; sourceTree = SOURCE_ROOT; };
-		B4660A0EFF784E7EA4D6DCA8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_flac.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = libchdr_flac.c; path = src/libchdr_flac.c; sourceTree = SOURCE_ROOT; };
-		B6FAA187DF0443AB9D398BAF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inflate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = inflate.h; path = "deps/zlib-1.2.11/inflate.h"; sourceTree = SOURCE_ROOT; };
-		B99BC1FF44B64741A3AE4F97 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/adler32.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = adler32.c; path = "deps/zlib-1.2.11/adler32.c"; sourceTree = SOURCE_ROOT; };
-		BF077B4D5C08469592F23561 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/CMakeFiles/lzma.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/CMakeFiles/lzma.dir/Info.plist"; sourceTree = "<absolute>"; };
-		C2EF6833F01F4F1AA7746BD3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/Alloc.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = Alloc.c; path = "deps/lzma-19.00/src/Alloc.c"; sourceTree = SOURCE_ROOT; };
-		C661DC2967D74337925E3906 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/deflate.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = deflate.c; path = "deps/zlib-1.2.11/deflate.c"; sourceTree = SOURCE_ROOT; };
-		CEB2C60E1C67465CAA8CDBC9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/LzFind.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LzFind.h; path = "deps/lzma-19.00/include/LzFind.h"; sourceTree = SOURCE_ROOT; };
-		D6B2715BC8A146008BCA0B6B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/LzmaLib.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LzmaLib.h; path = "deps/lzma-19.00/include/LzmaLib.h"; sourceTree = SOURCE_ROOT; };
+		62527D57C9474801BFCF9A8C /* ../Play-/deps/libchdr/deps/zlib-1.2.11/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = "deps/zlib-1.2.11/CMakeLists.txt"; sourceTree = SOURCE_ROOT; };
+		6BD0BF21DBB74D03944411C6 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/Delta.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Delta.h; path = "deps/lzma-19.00/include/Delta.h"; sourceTree = SOURCE_ROOT; };
+		6C30B999B76543FEADAA6F8A /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inffast.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = inffast.c; path = "deps/zlib-1.2.11/inffast.c"; sourceTree = SOURCE_ROOT; };
+		705BE7309C1C4995AFD3ADB1 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inflate.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = inflate.c; path = "deps/zlib-1.2.11/inflate.c"; sourceTree = SOURCE_ROOT; };
+		7181EDE6B4EE4AA8A4AB69A9 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/zlib.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zlib.h; path = "deps/zlib-1.2.11/zlib.h"; sourceTree = SOURCE_ROOT; };
+		723CF78C857D463C8E6D140E /* ../Play-/deps/libchdr/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		73147B975F0A4A34B113920C /* ../Play-/deps/libchdr/deps/lzma-19.00/src/Sort.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = Sort.c; path = "deps/lzma-19.00/src/Sort.c"; sourceTree = SOURCE_ROOT; };
+		73C1AFEAE72F4F1F82793190 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/gzguts.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = gzguts.h; path = "deps/zlib-1.2.11/gzguts.h"; sourceTree = SOURCE_ROOT; };
+		7BA0C6BDB2494EF4BBC89934 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/Lzma86Dec.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = Lzma86Dec.c; path = "deps/lzma-19.00/src/Lzma86Dec.c"; sourceTree = SOURCE_ROOT; };
+		84FAF3893AAF42C08368B99E /* ../Play-/deps/libchdr/deps/lzma-19.00/include/LzmaDec.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LzmaDec.h; path = "deps/lzma-19.00/include/LzmaDec.h"; sourceTree = SOURCE_ROOT; };
+		868315E4DACD44F29C302591 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/zconf.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zconf.h; path = "deps/zlib-1.2.11/zconf.h"; sourceTree = SOURCE_ROOT; };
+		8D86B9D258BE462E8CC33086 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = compress.c; path = "deps/zlib-1.2.11/compress.c"; sourceTree = SOURCE_ROOT; };
+		90002966D5EA411C976451EA /* ../Play-/deps/libchdr/deps/lzma-19.00/include/Lzma86.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Lzma86.h; path = "deps/lzma-19.00/include/Lzma86.h"; sourceTree = SOURCE_ROOT; };
+		92CF1C3980EF4743A9CF5DBB /* ../Play-/deps/libchdr/deps/lzma-19.00/include/Bra.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Bra.h; path = "deps/lzma-19.00/include/Bra.h"; sourceTree = SOURCE_ROOT; };
+		9321B36BAAE44BA281193038 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/crc32.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = crc32.h; path = "deps/zlib-1.2.11/crc32.h"; sourceTree = SOURCE_ROOT; };
+		9392FD56DE8A44DA84B691BF /* ../Play-/deps/libchdr/deps/lzma-19.00/include/7zTypes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = 7zTypes.h; path = "deps/lzma-19.00/include/7zTypes.h"; sourceTree = SOURCE_ROOT; };
+		9BCCAA0AF6414C93A3D8C809 /* ../Play-/deps/libchdr/src/libchdr_bitstream.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = libchdr_bitstream.c; path = src/libchdr_bitstream.c; sourceTree = SOURCE_ROOT; };
+		9E172AA385334613984DE726 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/LzmaEnc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LzmaEnc.h; path = "deps/lzma-19.00/include/LzmaEnc.h"; sourceTree = SOURCE_ROOT; };
+		A1D6FFC55C86404D8F52C2AA /* ../Play-/deps/libchdr/tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = tests/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		A3505ED383D143DF873AC534 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inftrees.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = inftrees.c; path = "deps/zlib-1.2.11/inftrees.c"; sourceTree = SOURCE_ROOT; };
+		A422E023B011463FA846D109 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/LzHash.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LzHash.h; path = "deps/lzma-19.00/include/LzHash.h"; sourceTree = SOURCE_ROOT; };
+		A7E91F4034644B9682F68BB0 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inffast.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = inffast.h; path = "deps/zlib-1.2.11/inffast.h"; sourceTree = SOURCE_ROOT; };
+		A86A45D1111E4BECACF5059A /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inftrees.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = inftrees.h; path = "deps/zlib-1.2.11/inftrees.h"; sourceTree = SOURCE_ROOT; };
+		B39FF693890143928E1C11DD /* ../Play-/deps/libchdr/deps/lzma-19.00/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = "deps/lzma-19.00/CMakeLists.txt"; sourceTree = SOURCE_ROOT; };
+		B4660A0EFF784E7EA4D6DCA8 /* ../Play-/deps/libchdr/src/libchdr_flac.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = libchdr_flac.c; path = src/libchdr_flac.c; sourceTree = SOURCE_ROOT; };
+		B6FAA187DF0443AB9D398BAF /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inflate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = inflate.h; path = "deps/zlib-1.2.11/inflate.h"; sourceTree = SOURCE_ROOT; };
+		B99BC1FF44B64741A3AE4F97 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/adler32.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = adler32.c; path = "deps/zlib-1.2.11/adler32.c"; sourceTree = SOURCE_ROOT; };
+		BF077B4D5C08469592F23561 /* ../cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/CMakeFiles/lzma.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "../cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/CMakeFiles/lzma.dir/Info.plist"; sourceTree = "<absolute>"; };
+		C2EF6833F01F4F1AA7746BD3 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/Alloc.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = Alloc.c; path = "deps/lzma-19.00/src/Alloc.c"; sourceTree = SOURCE_ROOT; };
+		C661DC2967D74337925E3906 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/deflate.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = deflate.c; path = "deps/zlib-1.2.11/deflate.c"; sourceTree = SOURCE_ROOT; };
+		CEB2C60E1C67465CAA8CDBC9 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/LzFind.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LzFind.h; path = "deps/lzma-19.00/include/LzFind.h"; sourceTree = SOURCE_ROOT; };
+		D6B2715BC8A146008BCA0B6B /* ../Play-/deps/libchdr/deps/lzma-19.00/include/LzmaLib.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LzmaLib.h; path = "deps/lzma-19.00/include/LzmaLib.h"; sourceTree = SOURCE_ROOT; };
 		DA29A388DBD54014B668F595 /* zlib */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libzlib.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		DB843D02BCED4B4BA8AC6B0A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/LzmaEnc.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = LzmaEnc.c; path = "deps/lzma-19.00/src/LzmaEnc.c"; sourceTree = SOURCE_ROOT; };
-		E64DF1490BBD4759BEAB9B50 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/Precomp.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Precomp.h; path = "deps/lzma-19.00/include/Precomp.h"; sourceTree = SOURCE_ROOT; };
-		EBED78D0B4234117A7777B57 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/LzmaDec.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = LzmaDec.c; path = "deps/lzma-19.00/src/LzmaDec.c"; sourceTree = SOURCE_ROOT; };
-		EE0525626A9E4CEAA3F0B982 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/trees.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = trees.c; path = "deps/zlib-1.2.11/trees.c"; sourceTree = SOURCE_ROOT; };
+		DB843D02BCED4B4BA8AC6B0A /* ../Play-/deps/libchdr/deps/lzma-19.00/src/LzmaEnc.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = LzmaEnc.c; path = "deps/lzma-19.00/src/LzmaEnc.c"; sourceTree = SOURCE_ROOT; };
+		E64DF1490BBD4759BEAB9B50 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/Precomp.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Precomp.h; path = "deps/lzma-19.00/include/Precomp.h"; sourceTree = SOURCE_ROOT; };
+		EBED78D0B4234117A7777B57 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/LzmaDec.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = LzmaDec.c; path = "deps/lzma-19.00/src/LzmaDec.c"; sourceTree = SOURCE_ROOT; };
+		EE0525626A9E4CEAA3F0B982 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/trees.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = trees.c; path = "deps/zlib-1.2.11/trees.c"; sourceTree = SOURCE_ROOT; };
 		F0C697620D144C72A8527E9C /* chdr-static */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libchdr-static.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		F8727CD5EB0A40B8A6E430BE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/uncompr.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = uncompr.c; path = "deps/zlib-1.2.11/uncompr.c"; sourceTree = SOURCE_ROOT; };
-		FA1B30B430014F9886AB88C5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/CpuArch.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = CpuArch.h; path = "deps/lzma-19.00/include/CpuArch.h"; sourceTree = SOURCE_ROOT; };
-		FE96324D8AA34A7985B1619D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/trees.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = trees.h; path = "deps/zlib-1.2.11/trees.h"; sourceTree = SOURCE_ROOT; };
+		F8727CD5EB0A40B8A6E430BE /* ../Play-/deps/libchdr/deps/zlib-1.2.11/uncompr.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = uncompr.c; path = "deps/zlib-1.2.11/uncompr.c"; sourceTree = SOURCE_ROOT; };
+		FA1B30B430014F9886AB88C5 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/CpuArch.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = CpuArch.h; path = "deps/lzma-19.00/include/CpuArch.h"; sourceTree = SOURCE_ROOT; };
+		FE96324D8AA34A7985B1619D /* ../Play-/deps/libchdr/deps/zlib-1.2.11/trees.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = trees.h; path = "deps/zlib-1.2.11/trees.h"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -348,20 +348,20 @@
 		10E2BEDD1E6C4223A45E069F /* Header Files */ = {
 			isa = PBXGroup;
 			children = (
-				9392FD56DE8A44DA84B691BF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/7zTypes.h */,
-				52D0E89D1F034C288DE68B63 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/Alloc.h */,
-				92CF1C3980EF4743A9CF5DBB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/Bra.h */,
-				3DA75FD9EBD44C40A9C59874 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/Compiler.h */,
-				FA1B30B430014F9886AB88C5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/CpuArch.h */,
-				6BD0BF21DBB74D03944411C6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/Delta.h */,
-				CEB2C60E1C67465CAA8CDBC9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/LzFind.h */,
-				A422E023B011463FA846D109 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/LzHash.h */,
-				90002966D5EA411C976451EA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/Lzma86.h */,
-				84FAF3893AAF42C08368B99E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/LzmaDec.h */,
-				9E172AA385334613984DE726 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/LzmaEnc.h */,
-				D6B2715BC8A146008BCA0B6B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/LzmaLib.h */,
-				E64DF1490BBD4759BEAB9B50 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/Precomp.h */,
-				0965ABABBF044B4F87AE861B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include/Sort.h */,
+				9392FD56DE8A44DA84B691BF /* ../Play-/deps/libchdr/deps/lzma-19.00/include/7zTypes.h */,
+				52D0E89D1F034C288DE68B63 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/Alloc.h */,
+				92CF1C3980EF4743A9CF5DBB /* ../Play-/deps/libchdr/deps/lzma-19.00/include/Bra.h */,
+				3DA75FD9EBD44C40A9C59874 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/Compiler.h */,
+				FA1B30B430014F9886AB88C5 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/CpuArch.h */,
+				6BD0BF21DBB74D03944411C6 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/Delta.h */,
+				CEB2C60E1C67465CAA8CDBC9 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/LzFind.h */,
+				A422E023B011463FA846D109 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/LzHash.h */,
+				90002966D5EA411C976451EA /* ../Play-/deps/libchdr/deps/lzma-19.00/include/Lzma86.h */,
+				84FAF3893AAF42C08368B99E /* ../Play-/deps/libchdr/deps/lzma-19.00/include/LzmaDec.h */,
+				9E172AA385334613984DE726 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/LzmaEnc.h */,
+				D6B2715BC8A146008BCA0B6B /* ../Play-/deps/libchdr/deps/lzma-19.00/include/LzmaLib.h */,
+				E64DF1490BBD4759BEAB9B50 /* ../Play-/deps/libchdr/deps/lzma-19.00/include/Precomp.h */,
+				0965ABABBF044B4F87AE861B /* ../Play-/deps/libchdr/deps/lzma-19.00/include/Sort.h */,
 			);
 			name = "Header Files";
 			sourceTree = "<group>";
@@ -377,7 +377,7 @@
 			isa = PBXGroup;
 			children = (
 				3DE1B23685A44504A03AA631 /* CMake Rules */,
-				723CF78C857D463C8E6D140E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/CMakeLists.txt */,
+				723CF78C857D463C8E6D140E /* ../Play-/deps/libchdr/CMakeLists.txt */,
 			);
 			name = ALL_BUILD;
 			sourceTree = "<group>";
@@ -385,17 +385,17 @@
 		64D04EE958C54ABFB3283984 /* Header Files */ = {
 			isa = PBXGroup;
 			children = (
-				9321B36BAAE44BA281193038 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/crc32.h */,
-				2265A67D3EB24F48ACCE9794 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/deflate.h */,
-				73C1AFEAE72F4F1F82793190 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/gzguts.h */,
-				A7E91F4034644B9682F68BB0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inffast.h */,
-				33AC2076B0CD427398DDEFFF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inffixed.h */,
-				B6FAA187DF0443AB9D398BAF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inflate.h */,
-				A86A45D1111E4BECACF5059A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inftrees.h */,
-				FE96324D8AA34A7985B1619D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/trees.h */,
-				868315E4DACD44F29C302591 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/zconf.h */,
-				7181EDE6B4EE4AA8A4AB69A9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/zlib.h */,
-				177BB3EF834D4197B95908DB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/zutil.h */,
+				9321B36BAAE44BA281193038 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/crc32.h */,
+				2265A67D3EB24F48ACCE9794 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/deflate.h */,
+				73C1AFEAE72F4F1F82793190 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/gzguts.h */,
+				A7E91F4034644B9682F68BB0 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inffast.h */,
+				33AC2076B0CD427398DDEFFF /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inffixed.h */,
+				B6FAA187DF0443AB9D398BAF /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inflate.h */,
+				A86A45D1111E4BECACF5059A /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inftrees.h */,
+				FE96324D8AA34A7985B1619D /* ../Play-/deps/libchdr/deps/zlib-1.2.11/trees.h */,
+				868315E4DACD44F29C302591 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/zconf.h */,
+				7181EDE6B4EE4AA8A4AB69A9 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/zlib.h */,
+				177BB3EF834D4197B95908DB /* ../Play-/deps/libchdr/deps/zlib-1.2.11/zutil.h */,
 			);
 			name = "Header Files";
 			sourceTree = "<group>";
@@ -403,7 +403,7 @@
 		69431B110D4A41CB8BAE9C2D /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				1B0D155FFBA04CB9BAD5638C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/tests/CMakeFiles/chdr-benchmark.dir/Info.plist */,
+				1B0D155FFBA04CB9BAD5638C /* ../cmake/Source/ui_ios/Source/libchdr/tests/CMakeFiles/chdr-benchmark.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -414,7 +414,7 @@
 				10E2BEDD1E6C4223A45E069F /* Header Files */,
 				E050136A92D247A3836AB541 /* Source Files */,
 				A48BD1E89DD34203826AA277 /* Resources */,
-				B39FF693890143928E1C11DD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/CMakeLists.txt */,
+				B39FF693890143928E1C11DD /* ../Play-/deps/libchdr/deps/lzma-19.00/CMakeLists.txt */,
 			);
 			name = lzma;
 			sourceTree = "<group>";
@@ -422,7 +422,7 @@
 		8043C4E9BD3B482B900E9444 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				0EBB575407D3425388D979BA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/CMakeFiles/chdr-static.dir/Info.plist */,
+				0EBB575407D3425388D979BA /* ../cmake/Source/ui_ios/Source/libchdr/CMakeFiles/chdr-static.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -448,7 +448,7 @@
 		A48BD1E89DD34203826AA277 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				BF077B4D5C08469592F23561 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/CMakeFiles/lzma.dir/Info.plist */,
+				BF077B4D5C08469592F23561 /* ../cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/CMakeFiles/lzma.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -459,7 +459,7 @@
 				64D04EE958C54ABFB3283984 /* Header Files */,
 				C7FA1B4C76914B4CAB62FCD6 /* Source Files */,
 				EDDD4C3718FE4469BF0EC405 /* Resources */,
-				62527D57C9474801BFCF9A8C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/CMakeLists.txt */,
+				62527D57C9474801BFCF9A8C /* ../Play-/deps/libchdr/deps/zlib-1.2.11/CMakeLists.txt */,
 			);
 			name = zlib;
 			sourceTree = "<group>";
@@ -469,7 +469,7 @@
 			children = (
 				DD83F8F0BBEC49C5BB5278AC /* Source Files */,
 				69431B110D4A41CB8BAE9C2D /* Resources */,
-				A1D6FFC55C86404D8F52C2AA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/tests/CMakeLists.txt */,
+				A1D6FFC55C86404D8F52C2AA /* ../Play-/deps/libchdr/tests/CMakeLists.txt */,
 			);
 			name = "chdr-benchmark";
 			sourceTree = "<group>";
@@ -477,17 +477,17 @@
 		C7FA1B4C76914B4CAB62FCD6 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				B99BC1FF44B64741A3AE4F97 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/adler32.c */,
-				8D86B9D258BE462E8CC33086 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/compress.c */,
-				4A36BE00486D459399F7E870 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/crc32.c */,
-				C661DC2967D74337925E3906 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/deflate.c */,
-				1B42D82F23A14793B34467D6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/infback.c */,
-				6C30B999B76543FEADAA6F8A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inffast.c */,
-				705BE7309C1C4995AFD3ADB1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inflate.c */,
-				A3505ED383D143DF873AC534 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inftrees.c */,
-				EE0525626A9E4CEAA3F0B982 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/trees.c */,
-				F8727CD5EB0A40B8A6E430BE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/uncompr.c */,
-				401B1519A73446319C3BBF51 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/zutil.c */,
+				B99BC1FF44B64741A3AE4F97 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/adler32.c */,
+				8D86B9D258BE462E8CC33086 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/compress.c */,
+				4A36BE00486D459399F7E870 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/crc32.c */,
+				C661DC2967D74337925E3906 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/deflate.c */,
+				1B42D82F23A14793B34467D6 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/infback.c */,
+				6C30B999B76543FEADAA6F8A /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inffast.c */,
+				705BE7309C1C4995AFD3ADB1 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inflate.c */,
+				A3505ED383D143DF873AC534 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inftrees.c */,
+				EE0525626A9E4CEAA3F0B982 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/trees.c */,
+				F8727CD5EB0A40B8A6E430BE /* ../Play-/deps/libchdr/deps/zlib-1.2.11/uncompr.c */,
+				401B1519A73446319C3BBF51 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/zutil.c */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
@@ -495,7 +495,7 @@
 		DD83F8F0BBEC49C5BB5278AC /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				1DF10E35454A440B9D3626F4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/tests/benchmark.c */,
+				1DF10E35454A440B9D3626F4 /* ../Play-/deps/libchdr/tests/benchmark.c */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
@@ -503,16 +503,16 @@
 		E050136A92D247A3836AB541 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				C2EF6833F01F4F1AA7746BD3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/Alloc.c */,
-				4D9ACD3404EA41FBBD24C5B0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/Bra86.c */,
-				2A264D00D86E4B69B647D245 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/BraIA64.c */,
-				476D6701553447A6AD8B0FA7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/CpuArch.c */,
-				2F161CF98BB84E9FB8CFDF53 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/Delta.c */,
-				06C099E2960F4130ACA3CCE0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/LzFind.c */,
-				7BA0C6BDB2494EF4BBC89934 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/Lzma86Dec.c */,
-				EBED78D0B4234117A7777B57 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/LzmaDec.c */,
-				DB843D02BCED4B4BA8AC6B0A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/LzmaEnc.c */,
-				73147B975F0A4A34B113920C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/Sort.c */,
+				C2EF6833F01F4F1AA7746BD3 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/Alloc.c */,
+				4D9ACD3404EA41FBBD24C5B0 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/Bra86.c */,
+				2A264D00D86E4B69B647D245 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/BraIA64.c */,
+				476D6701553447A6AD8B0FA7 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/CpuArch.c */,
+				2F161CF98BB84E9FB8CFDF53 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/Delta.c */,
+				06C099E2960F4130ACA3CCE0 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/LzFind.c */,
+				7BA0C6BDB2494EF4BBC89934 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/Lzma86Dec.c */,
+				EBED78D0B4234117A7777B57 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/LzmaDec.c */,
+				DB843D02BCED4B4BA8AC6B0A /* ../Play-/deps/libchdr/deps/lzma-19.00/src/LzmaEnc.c */,
+				73147B975F0A4A34B113920C /* ../Play-/deps/libchdr/deps/lzma-19.00/src/Sort.c */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
@@ -520,12 +520,12 @@
 		E16A6CCD53F54FF7B47CA06C /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				9BCCAA0AF6414C93A3D8C809 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_bitstream.c */,
-				396BA097BD4D4EC688E72702 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_cdrom.c */,
-				3AFEF8E714A3470682C8927C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_chd.c */,
-				5DA20299B48D4AE4AD9C80ED /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_file.c */,
-				B4660A0EFF784E7EA4D6DCA8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_flac.c */,
-				220A895B87F04BC3B491E75E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_huffman.c */,
+				9BCCAA0AF6414C93A3D8C809 /* ../Play-/deps/libchdr/src/libchdr_bitstream.c */,
+				396BA097BD4D4EC688E72702 /* ../Play-/deps/libchdr/src/libchdr_cdrom.c */,
+				3AFEF8E714A3470682C8927C /* ../Play-/deps/libchdr/src/libchdr_chd.c */,
+				5DA20299B48D4AE4AD9C80ED /* ../Play-/deps/libchdr/src/libchdr_file.c */,
+				B4660A0EFF784E7EA4D6DCA8 /* ../Play-/deps/libchdr/src/libchdr_flac.c */,
+				220A895B87F04BC3B491E75E /* ../Play-/deps/libchdr/src/libchdr_huffman.c */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
@@ -535,7 +535,7 @@
 			children = (
 				E16A6CCD53F54FF7B47CA06C /* Source Files */,
 				8043C4E9BD3B482B900E9444 /* Resources */,
-				1111B59FF0624347955AB098 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/CMakeLists.txt */,
+				1111B59FF0624347955AB098 /* ../Play-/deps/libchdr/CMakeLists.txt */,
 			);
 			name = "chdr-static";
 			sourceTree = "<group>";
@@ -556,7 +556,7 @@
 		EDDD4C3718FE4469BF0EC405 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				19925DB7F35644878B319481 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/CMakeFiles/zlib.dir/Info.plist */,
+				19925DB7F35644878B319481 /* ../cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/CMakeFiles/zlib.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -655,7 +655,7 @@
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
 			mainGroup = E8658EBB8CB442F28D57CE90;
-			projectDirPath = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr";
+			projectDirPath = "../Play-";
 			projectRoot = "";
 			targets = (
 				813B9411ED6148CBBF6FDF45 /* ALL_BUILD */,
@@ -685,19 +685,19 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr
+  cd ../cmake/Source/ui_ios/Source/libchdr
   /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr
+  cd ../cmake/Source/ui_ios/Source/libchdr
   /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr
+  cd ../cmake/Source/ui_ios/Source/libchdr
   /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr
+  cd ../cmake/Source/ui_ios/Source/libchdr
   /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 ";
@@ -713,25 +713,25 @@ fi
 			);
 			name = "Generate CMakeFiles/ZERO_CHECK";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/CMakeFiles/ZERO_CHECK			);
+../cmake/Source/ui_ios/Source/libchdr/CMakeFiles/ZERO_CHECK			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Source/ui_ios/Source/libchdr
+  make -f ../cmake/Source/ui_ios/Source/libchdr/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Source/ui_ios/Source/libchdr
+  make -f ../cmake/Source/ui_ios/Source/libchdr/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Source/ui_ios/Source/libchdr
+  make -f ../cmake/Source/ui_ios/Source/libchdr/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Source/ui_ios/Source/libchdr
+  make -f ../cmake/Source/ui_ios/Source/libchdr/CMakeScripts/ReRunCMake.make
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -764,19 +764,19 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 ";
@@ -792,24 +792,24 @@ fi
 			);
 			name = "Generate CMakeFiles/ALL_BUILD";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/CMakeFiles/ALL_BUILD			);
+../cmake/Source/ui_ios/Source/libchdr/CMakeFiles/ALL_BUILD			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr
+  cd ../cmake/Source/ui_ios/Source/libchdr
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr
+  cd ../cmake/Source/ui_ios/Source/libchdr
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr
+  cd ../cmake/Source/ui_ios/Source/libchdr
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr
+  cd ../cmake/Source/ui_ios/Source/libchdr
   echo Build\\ all\\ projects
 fi
 ";
@@ -873,19 +873,19 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr
+  cd ../cmake/Source/ui_ios/Source/libchdr
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr
+  cd ../cmake/Source/ui_ios/Source/libchdr
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr
+  cd ../cmake/Source/ui_ios/Source/libchdr
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr
+  cd ../cmake/Source/ui_ios/Source/libchdr
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 ";
@@ -913,7 +913,7 @@ exit 0";
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5A896712A8B94D339B5C8FBF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/tests/benchmark.c */,
+				5A896712A8B94D339B5C8FBF /* ../Play-/deps/libchdr/tests/benchmark.c */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -921,16 +921,16 @@ exit 0";
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A443AD29642F4FFB980CFCD1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/Alloc.c */,
-				C603227E634E488D9429ACCE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/Bra86.c */,
-				D4545D557F32467385A673ED /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/BraIA64.c */,
-				990942CF339844DB9B40EC58 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/CpuArch.c */,
-				E5E626C13B3943F6B76E8E34 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/Delta.c */,
-				F2ADF590B7F14679A1383A10 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/LzFind.c */,
-				B3ED89E9CCE14D7E91FA0ACB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/Lzma86Dec.c */,
-				735E4AEB8C6248F390C4199A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/LzmaDec.c */,
-				A8A1E413E9484927888AB930 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/LzmaEnc.c */,
-				A075A7341C374A59B70F4165 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/src/Sort.c */,
+				A443AD29642F4FFB980CFCD1 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/Alloc.c */,
+				C603227E634E488D9429ACCE /* ../Play-/deps/libchdr/deps/lzma-19.00/src/Bra86.c */,
+				D4545D557F32467385A673ED /* ../Play-/deps/libchdr/deps/lzma-19.00/src/BraIA64.c */,
+				990942CF339844DB9B40EC58 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/CpuArch.c */,
+				E5E626C13B3943F6B76E8E34 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/Delta.c */,
+				F2ADF590B7F14679A1383A10 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/LzFind.c */,
+				B3ED89E9CCE14D7E91FA0ACB /* ../Play-/deps/libchdr/deps/lzma-19.00/src/Lzma86Dec.c */,
+				735E4AEB8C6248F390C4199A /* ../Play-/deps/libchdr/deps/lzma-19.00/src/LzmaDec.c */,
+				A8A1E413E9484927888AB930 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/LzmaEnc.c */,
+				A075A7341C374A59B70F4165 /* ../Play-/deps/libchdr/deps/lzma-19.00/src/Sort.c */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -938,17 +938,17 @@ exit 0";
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5F926C90B7184AC18EA74F31 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/adler32.c */,
-				FE987B22029640F99D47EDA7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/compress.c */,
-				9E687B61A46F40CD8F1A0FB6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/crc32.c */,
-				6A7F6BFDA9DA472CA2FE7398 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/deflate.c */,
-				35516AC158FA4DECB68AE8EE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/infback.c */,
-				773EC6C6242C433F867BFB90 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inffast.c */,
-				68C8F2CC32B04B3AB0C5620C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inflate.c */,
-				99902D07E99C4004ABC7D9BE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/inftrees.c */,
-				B9659259C41B4CA589426264 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/trees.c */,
-				2A95F34AA05246DC9A99046F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/uncompr.c */,
-				965D312C06E349BD95463E2A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/zutil.c */,
+				5F926C90B7184AC18EA74F31 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/adler32.c */,
+				FE987B22029640F99D47EDA7 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/compress.c */,
+				9E687B61A46F40CD8F1A0FB6 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/crc32.c */,
+				6A7F6BFDA9DA472CA2FE7398 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/deflate.c */,
+				35516AC158FA4DECB68AE8EE /* ../Play-/deps/libchdr/deps/zlib-1.2.11/infback.c */,
+				773EC6C6242C433F867BFB90 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inffast.c */,
+				68C8F2CC32B04B3AB0C5620C /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inflate.c */,
+				99902D07E99C4004ABC7D9BE /* ../Play-/deps/libchdr/deps/zlib-1.2.11/inftrees.c */,
+				B9659259C41B4CA589426264 /* ../Play-/deps/libchdr/deps/zlib-1.2.11/trees.c */,
+				2A95F34AA05246DC9A99046F /* ../Play-/deps/libchdr/deps/zlib-1.2.11/uncompr.c */,
+				965D312C06E349BD95463E2A /* ../Play-/deps/libchdr/deps/zlib-1.2.11/zutil.c */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -956,12 +956,12 @@ exit 0";
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E74F138C890B40038A42E83E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_bitstream.c */,
-				8DA5D17490F641BCBD806A53 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_cdrom.c */,
-				9E5244BA190A4FC9BEB83EB5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_chd.c */,
-				E622F4D998F84FC589F87547 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_file.c */,
-				0B9C19E04F5946C28EC33E8C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_flac.c */,
-				6029A9D477D34537A3F0A1EF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/src/libchdr_huffman.c */,
+				E74F138C890B40038A42E83E /* ../Play-/deps/libchdr/src/libchdr_bitstream.c */,
+				8DA5D17490F641BCBD806A53 /* ../Play-/deps/libchdr/src/libchdr_cdrom.c */,
+				9E5244BA190A4FC9BEB83EB5 /* ../Play-/deps/libchdr/src/libchdr_chd.c */,
+				E622F4D998F84FC589F87547 /* ../Play-/deps/libchdr/src/libchdr_file.c */,
+				0B9C19E04F5946C28EC33E8C /* ../Play-/deps/libchdr/src/libchdr_flac.c */,
+				6029A9D477D34537A3F0A1EF /* ../Play-/deps/libchdr/src/libchdr_huffman.c */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1037,9 +1037,9 @@ exit 0";
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk";
+				SDKROOT = iphoneos;
 				SWIFT_VERSION = 4.0;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build;
+				
 			};
 			name = Debug;
 		};
@@ -1067,7 +1067,7 @@ exit 0";
 			buildSettings = {
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -1075,7 +1075,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/lzma","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/zlib",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/include,"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/deps/libchdr/lzma","../Play-/deps/libchdr/zlib",../cmake/Source/ui_ios/Source/libchdr/include,"../Play-/deps/libchdr/include","../Play-/deps/libchdr/deps/lzma-19.00/include","../Play-/deps/libchdr/deps/zlib-1.2.11","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1084,7 +1084,7 @@ exit 0";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "chdr-static";
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/chdr-static.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1171,7 +1171,7 @@ exit 0";
 			buildSettings = {
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -1179,7 +1179,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/deps/libchdr/deps/zlib-1.2.11","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1188,7 +1188,7 @@ exit 0";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = zlib;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/zlib.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1199,7 +1199,7 @@ exit 0";
 			buildSettings = {
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/tests/Debug${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = "";
 				EXECUTABLE_SUFFIX = "";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -1207,16 +1207,16 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
-				INFOPLIST_FILE = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/tests/CMakeFiles/chdr-benchmark.dir/Info.plist";
+				HEADER_SEARCH_PATHS = ("../Play-/deps/libchdr/include","$(inherited)");
+				INFOPLIST_FILE = "../cmake/Source/ui_ios/Source/libchdr/tests/CMakeFiles/chdr-benchmark.dir/Info.plist";
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (" -mios-version-min=12.2    ","$(inherited)");
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/Debug${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/Debug${EFFECTIVE_PLATFORM_NAME}/liblzma.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/Debug${EFFECTIVE_PLATFORM_NAME}/libzlib.a","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","../cmake/Source/ui_ios/Source/libchdr/Debug${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","../cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/Debug${EFFECTIVE_PLATFORM_NAME}/liblzma.a","../cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/Debug${EFFECTIVE_PLATFORM_NAME}/libzlib.a","$(inherited)");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "chdr-benchmark";
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/chdr-benchmark.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1246,7 +1246,7 @@ exit 0";
 			buildSettings = {
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/Release${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -1254,7 +1254,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",_7ZIP_ST,"'PLAY_VERSION=\"0.30\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/deps/libchdr/deps/lzma-19.00/include","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1263,7 +1263,7 @@ exit 0";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = lzma;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/lzma.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1312,7 +1312,7 @@ exit 0";
 			buildSettings = {
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/Debug${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -1320,7 +1320,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",_7ZIP_ST,"'PLAY_VERSION=\"0.30\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/deps/libchdr/deps/lzma-19.00/include","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1329,7 +1329,7 @@ exit 0";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = lzma;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/lzma.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1365,9 +1365,9 @@ exit 0";
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk";
+				SDKROOT = iphoneos;
 				SWIFT_VERSION = 4.0;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build;
+				
 			};
 			name = Release;
 		};
@@ -1414,7 +1414,7 @@ exit 0";
 			buildSettings = {
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/Release${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -1422,7 +1422,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/lzma","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/zlib",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/include,"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/deps/libchdr/lzma","../Play-/deps/libchdr/zlib",../cmake/Source/ui_ios/Source/libchdr/include,"../Play-/deps/libchdr/include","../Play-/deps/libchdr/deps/lzma-19.00/include","../Play-/deps/libchdr/deps/zlib-1.2.11","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1431,7 +1431,7 @@ exit 0";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "chdr-static";
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/chdr-static.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1442,7 +1442,7 @@ exit 0";
 			buildSettings = {
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/tests/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = "";
 				EXECUTABLE_SUFFIX = "";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -1450,16 +1450,16 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
-				INFOPLIST_FILE = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/tests/CMakeFiles/chdr-benchmark.dir/Info.plist";
+				HEADER_SEARCH_PATHS = ("../Play-/deps/libchdr/include","$(inherited)");
+				INFOPLIST_FILE = "../cmake/Source/ui_ios/Source/libchdr/tests/CMakeFiles/chdr-benchmark.dir/Info.plist";
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (" -mios-version-min=12.2     -DNDEBUG ","$(inherited)");
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/liblzma.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libzlib.a","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","../cmake/Source/ui_ios/Source/libchdr/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","../cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/liblzma.a","../cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libzlib.a","$(inherited)");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "chdr-benchmark";
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/chdr-benchmark.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1476,9 +1476,9 @@ exit 0";
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk";
+				SDKROOT = iphoneos;
 				SWIFT_VERSION = 4.0;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build;
+				
 			};
 			name = MinSizeRel;
 		};
@@ -1525,7 +1525,7 @@ exit 0";
 			buildSettings = {
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/Debug${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -1533,7 +1533,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/lzma","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/zlib",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/include,"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/deps/libchdr/lzma","../Play-/deps/libchdr/zlib",../cmake/Source/ui_ios/Source/libchdr/include,"../Play-/deps/libchdr/include","../Play-/deps/libchdr/deps/lzma-19.00/include","../Play-/deps/libchdr/deps/zlib-1.2.11","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1542,7 +1542,7 @@ exit 0";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "chdr-static";
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/chdr-static.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1572,7 +1572,7 @@ exit 0";
 			buildSettings = {
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -1580,7 +1580,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/lzma","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/zlib",/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/include,"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/deps/libchdr/lzma","../Play-/deps/libchdr/zlib",../cmake/Source/ui_ios/Source/libchdr/include,"../Play-/deps/libchdr/include","../Play-/deps/libchdr/deps/lzma-19.00/include","../Play-/deps/libchdr/deps/zlib-1.2.11","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1589,7 +1589,7 @@ exit 0";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "chdr-static";
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/chdr-static.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1600,7 +1600,7 @@ exit 0";
 			buildSettings = {
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -1608,7 +1608,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",_7ZIP_ST,"'PLAY_VERSION=\"0.30\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/deps/libchdr/deps/lzma-19.00/include","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1617,7 +1617,7 @@ exit 0";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = lzma;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/lzma.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1647,7 +1647,7 @@ exit 0";
 			buildSettings = {
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -1655,7 +1655,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",_7ZIP_ST,"'PLAY_VERSION=\"0.30\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/include","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/deps/libchdr/deps/lzma-19.00/include","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1664,7 +1664,7 @@ exit 0";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = lzma;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/lzma.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1694,7 +1694,7 @@ exit 0";
 			buildSettings = {
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/tests/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = "";
 				EXECUTABLE_SUFFIX = "";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -1702,16 +1702,16 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
-				INFOPLIST_FILE = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/tests/CMakeFiles/chdr-benchmark.dir/Info.plist";
+				HEADER_SEARCH_PATHS = ("../Play-/deps/libchdr/include","$(inherited)");
+				INFOPLIST_FILE = "../cmake/Source/ui_ios/Source/libchdr/tests/CMakeFiles/chdr-benchmark.dir/Info.plist";
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (" -mios-version-min=12.2        -DNDEBUG ","$(inherited)");
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/liblzma.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libzlib.a","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","../cmake/Source/ui_ios/Source/libchdr/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","../cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/liblzma.a","../cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libzlib.a","$(inherited)");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "chdr-benchmark";
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/chdr-benchmark.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1760,7 +1760,7 @@ exit 0";
 			buildSettings = {
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/Release${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -1768,7 +1768,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/deps/libchdr/deps/zlib-1.2.11","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1777,7 +1777,7 @@ exit 0";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = zlib;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/zlib.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1794,9 +1794,9 @@ exit 0";
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk";
+				SDKROOT = iphoneos;
 				SWIFT_VERSION = 4.0;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build;
+				
 			};
 			name = RelWithDebInfo;
 		};
@@ -1805,7 +1805,7 @@ exit 0";
 			buildSettings = {
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -1813,7 +1813,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/deps/libchdr/deps/zlib-1.2.11","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1822,7 +1822,7 @@ exit 0";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = zlib;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/zlib.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1852,7 +1852,7 @@ exit 0";
 			buildSettings = {
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/Debug${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -1860,7 +1860,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/deps/libchdr/deps/zlib-1.2.11","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1869,7 +1869,7 @@ exit 0";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = zlib;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/zlib.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1880,7 +1880,7 @@ exit 0";
 			buildSettings = {
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/tests/Release${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = "";
 				EXECUTABLE_SUFFIX = "";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -1888,16 +1888,16 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
-				INFOPLIST_FILE = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/tests/CMakeFiles/chdr-benchmark.dir/Info.plist";
+				HEADER_SEARCH_PATHS = ("../Play-/deps/libchdr/include","$(inherited)");
+				INFOPLIST_FILE = "../cmake/Source/ui_ios/Source/libchdr/tests/CMakeFiles/chdr-benchmark.dir/Info.plist";
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (" -mios-version-min=12.2     -DNDEBUG ","$(inherited)");
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/Release${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/Release${EFFECTIVE_PLATFORM_NAME}/liblzma.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/Release${EFFECTIVE_PLATFORM_NAME}/libzlib.a","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","../cmake/Source/ui_ios/Source/libchdr/Release${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","../cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/Release${EFFECTIVE_PLATFORM_NAME}/liblzma.a","../cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/Release${EFFECTIVE_PLATFORM_NAME}/libzlib.a","$(inherited)");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "chdr-benchmark";
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/chdr-benchmark.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};

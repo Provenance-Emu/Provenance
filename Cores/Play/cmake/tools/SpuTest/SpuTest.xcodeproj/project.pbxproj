@@ -69,19 +69,19 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		047640480583419D80AEC2E4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest/CMakeFiles/SpuTest.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = B0C599DD639B44CD8439A563 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest/CMakeFiles/SpuTest.dir/Info.plist */; };
-		2C583AB9250045C29BC8F80C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/KeyOnOffTest.cpp */ = {isa = PBXBuildFile; fileRef = 4A9E8FF831F0473AB240AC5C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/KeyOnOffTest.cpp */; };
-		3DAAA1865ACF40B7B4594097 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/SetRepeatTest.h */ = {isa = PBXBuildFile; fileRef = 7AE71D5795F244A082A6D9B5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/SetRepeatTest.h */; };
-		3E1E720915774A07B35773E3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/SimpleIrqTest.cpp */ = {isa = PBXBuildFile; fileRef = 431CDB8156D3428F810D1F23 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/SimpleIrqTest.cpp */; };
-		42EA1E793AE24742A64F092C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = ECAB4DAAA1F44EF2962A50BB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/CMakeLists.txt */; };
-		54C87431FDA9465A9AD1A5CB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/SweepTest.h */ = {isa = PBXBuildFile; fileRef = D00ED936A01D47708E1C55C1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/SweepTest.h */; };
-		554A2F55770143F3B51602DE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/Test.cpp */ = {isa = PBXBuildFile; fileRef = 1390BCD674AF41CDA8F886A8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/Test.cpp */; };
-		65BE58D6605142EE96EC14EE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/KeyOnOffTest.h */ = {isa = PBXBuildFile; fileRef = 55A6E9AF1390433EA85E1C61 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/KeyOnOffTest.h */; };
-		67D98807B8AF4136B13DA187 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/Test.h */ = {isa = PBXBuildFile; fileRef = ACFA926B4A7F4A9196FADFB8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/Test.h */; };
-		9E9983F87E2B4A2FA7F7F291 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/SimpleIrqTest.h */ = {isa = PBXBuildFile; fileRef = 7E3A5ECFDA3E4783A57A6FBA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/SimpleIrqTest.h */; };
-		A7A9022CC1264DBCA28E1D42 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/SweepTest.cpp */ = {isa = PBXBuildFile; fileRef = A317247185594D0DB8BDDA9A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/SweepTest.cpp */; };
-		BD5619E64EB148489F07A1CF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/SetRepeatTest.cpp */ = {isa = PBXBuildFile; fileRef = A099D4619581440789A04675 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/SetRepeatTest.cpp */; };
-		D6D736CE88EE4844A3FD5D5C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/Main.cpp */ = {isa = PBXBuildFile; fileRef = 08A8889978D544BF987A3868 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/Main.cpp */; };
+		047640480583419D80AEC2E4 /* ../cmake/tools/SpuTest/CMakeFiles/SpuTest.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = B0C599DD639B44CD8439A563 /* ../cmake/tools/SpuTest/CMakeFiles/SpuTest.dir/Info.plist */; };
+		2C583AB9250045C29BC8F80C /* ../Play-/tools/SpuTest/KeyOnOffTest.cpp */ = {isa = PBXBuildFile; fileRef = 4A9E8FF831F0473AB240AC5C /* ../Play-/tools/SpuTest/KeyOnOffTest.cpp */; };
+		3DAAA1865ACF40B7B4594097 /* ../Play-/tools/SpuTest/SetRepeatTest.h */ = {isa = PBXBuildFile; fileRef = 7AE71D5795F244A082A6D9B5 /* ../Play-/tools/SpuTest/SetRepeatTest.h */; };
+		3E1E720915774A07B35773E3 /* ../Play-/tools/SpuTest/SimpleIrqTest.cpp */ = {isa = PBXBuildFile; fileRef = 431CDB8156D3428F810D1F23 /* ../Play-/tools/SpuTest/SimpleIrqTest.cpp */; };
+		42EA1E793AE24742A64F092C /* ../Play-/tools/SpuTest/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = ECAB4DAAA1F44EF2962A50BB /* ../Play-/tools/SpuTest/CMakeLists.txt */; };
+		54C87431FDA9465A9AD1A5CB /* ../Play-/tools/SpuTest/SweepTest.h */ = {isa = PBXBuildFile; fileRef = D00ED936A01D47708E1C55C1 /* ../Play-/tools/SpuTest/SweepTest.h */; };
+		554A2F55770143F3B51602DE /* ../Play-/tools/SpuTest/Test.cpp */ = {isa = PBXBuildFile; fileRef = 1390BCD674AF41CDA8F886A8 /* ../Play-/tools/SpuTest/Test.cpp */; };
+		65BE58D6605142EE96EC14EE /* ../Play-/tools/SpuTest/KeyOnOffTest.h */ = {isa = PBXBuildFile; fileRef = 55A6E9AF1390433EA85E1C61 /* ../Play-/tools/SpuTest/KeyOnOffTest.h */; };
+		67D98807B8AF4136B13DA187 /* ../Play-/tools/SpuTest/Test.h */ = {isa = PBXBuildFile; fileRef = ACFA926B4A7F4A9196FADFB8 /* ../Play-/tools/SpuTest/Test.h */; };
+		9E9983F87E2B4A2FA7F7F291 /* ../Play-/tools/SpuTest/SimpleIrqTest.h */ = {isa = PBXBuildFile; fileRef = 7E3A5ECFDA3E4783A57A6FBA /* ../Play-/tools/SpuTest/SimpleIrqTest.h */; };
+		A7A9022CC1264DBCA28E1D42 /* ../Play-/tools/SpuTest/SweepTest.cpp */ = {isa = PBXBuildFile; fileRef = A317247185594D0DB8BDDA9A /* ../Play-/tools/SpuTest/SweepTest.cpp */; };
+		BD5619E64EB148489F07A1CF /* ../Play-/tools/SpuTest/SetRepeatTest.cpp */ = {isa = PBXBuildFile; fileRef = A099D4619581440789A04675 /* ../Play-/tools/SpuTest/SetRepeatTest.cpp */; };
+		D6D736CE88EE4844A3FD5D5C /* ../Play-/tools/SpuTest/Main.cpp */ = {isa = PBXBuildFile; fileRef = 08A8889978D544BF987A3868 /* ../Play-/tools/SpuTest/Main.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -154,21 +154,21 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		08A8889978D544BF987A3868 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/Main.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Main.cpp; path = Main.cpp; sourceTree = SOURCE_ROOT; };
-		1390BCD674AF41CDA8F886A8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/Test.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Test.cpp; path = Test.cpp; sourceTree = SOURCE_ROOT; };
-		431CDB8156D3428F810D1F23 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/SimpleIrqTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = SimpleIrqTest.cpp; path = SimpleIrqTest.cpp; sourceTree = SOURCE_ROOT; };
-		4A9E8FF831F0473AB240AC5C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/KeyOnOffTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = KeyOnOffTest.cpp; path = KeyOnOffTest.cpp; sourceTree = SOURCE_ROOT; };
-		55A6E9AF1390433EA85E1C61 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/KeyOnOffTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = KeyOnOffTest.h; path = KeyOnOffTest.h; sourceTree = SOURCE_ROOT; };
-		7AE71D5795F244A082A6D9B5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/SetRepeatTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = SetRepeatTest.h; path = SetRepeatTest.h; sourceTree = SOURCE_ROOT; };
-		7E3A5ECFDA3E4783A57A6FBA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/SimpleIrqTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = SimpleIrqTest.h; path = SimpleIrqTest.h; sourceTree = SOURCE_ROOT; };
-		A099D4619581440789A04675 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/SetRepeatTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = SetRepeatTest.cpp; path = SetRepeatTest.cpp; sourceTree = SOURCE_ROOT; };
-		A317247185594D0DB8BDDA9A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/SweepTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = SweepTest.cpp; path = SweepTest.cpp; sourceTree = SOURCE_ROOT; };
-		ACFA926B4A7F4A9196FADFB8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/Test.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Test.h; path = Test.h; sourceTree = SOURCE_ROOT; };
-		B0C599DD639B44CD8439A563 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest/CMakeFiles/SpuTest.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest/CMakeFiles/SpuTest.dir/Info.plist; sourceTree = "<absolute>"; };
-		BA904C04BB82450E87455C6F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		D00ED936A01D47708E1C55C1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/SweepTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = SweepTest.h; path = SweepTest.h; sourceTree = SOURCE_ROOT; };
+		08A8889978D544BF987A3868 /* ../Play-/tools/SpuTest/Main.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Main.cpp; path = Main.cpp; sourceTree = SOURCE_ROOT; };
+		1390BCD674AF41CDA8F886A8 /* ../Play-/tools/SpuTest/Test.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Test.cpp; path = Test.cpp; sourceTree = SOURCE_ROOT; };
+		431CDB8156D3428F810D1F23 /* ../Play-/tools/SpuTest/SimpleIrqTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = SimpleIrqTest.cpp; path = SimpleIrqTest.cpp; sourceTree = SOURCE_ROOT; };
+		4A9E8FF831F0473AB240AC5C /* ../Play-/tools/SpuTest/KeyOnOffTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = KeyOnOffTest.cpp; path = KeyOnOffTest.cpp; sourceTree = SOURCE_ROOT; };
+		55A6E9AF1390433EA85E1C61 /* ../Play-/tools/SpuTest/KeyOnOffTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = KeyOnOffTest.h; path = KeyOnOffTest.h; sourceTree = SOURCE_ROOT; };
+		7AE71D5795F244A082A6D9B5 /* ../Play-/tools/SpuTest/SetRepeatTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = SetRepeatTest.h; path = SetRepeatTest.h; sourceTree = SOURCE_ROOT; };
+		7E3A5ECFDA3E4783A57A6FBA /* ../Play-/tools/SpuTest/SimpleIrqTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = SimpleIrqTest.h; path = SimpleIrqTest.h; sourceTree = SOURCE_ROOT; };
+		A099D4619581440789A04675 /* ../Play-/tools/SpuTest/SetRepeatTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = SetRepeatTest.cpp; path = SetRepeatTest.cpp; sourceTree = SOURCE_ROOT; };
+		A317247185594D0DB8BDDA9A /* ../Play-/tools/SpuTest/SweepTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = SweepTest.cpp; path = SweepTest.cpp; sourceTree = SOURCE_ROOT; };
+		ACFA926B4A7F4A9196FADFB8 /* ../Play-/tools/SpuTest/Test.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Test.h; path = Test.h; sourceTree = SOURCE_ROOT; };
+		B0C599DD639B44CD8439A563 /* ../cmake/tools/SpuTest/CMakeFiles/SpuTest.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/tools/SpuTest/CMakeFiles/SpuTest.dir/Info.plist; sourceTree = "<absolute>"; };
+		BA904C04BB82450E87455C6F /* ../Play-/tools/SpuTest/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		D00ED936A01D47708E1C55C1 /* ../Play-/tools/SpuTest/SweepTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = SweepTest.h; path = SweepTest.h; sourceTree = SOURCE_ROOT; };
 		EBD6D86E3F62472490669E7C /* SpuTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = SpuTest; sourceTree = BUILT_PRODUCTS_DIR; };
-		ECAB4DAAA1F44EF2962A50BB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		ECAB4DAAA1F44EF2962A50BB /* ../Play-/tools/SpuTest/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -185,7 +185,7 @@
 		05AB1C2E521340E7BBB8E802 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				B0C599DD639B44CD8439A563 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest/CMakeFiles/SpuTest.dir/Info.plist */,
+				B0C599DD639B44CD8439A563 /* ../cmake/tools/SpuTest/CMakeFiles/SpuTest.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -201,12 +201,12 @@
 		193425B7E5684118B88865A2 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				4A9E8FF831F0473AB240AC5C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/KeyOnOffTest.cpp */,
-				08A8889978D544BF987A3868 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/Main.cpp */,
-				A099D4619581440789A04675 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/SetRepeatTest.cpp */,
-				431CDB8156D3428F810D1F23 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/SimpleIrqTest.cpp */,
-				A317247185594D0DB8BDDA9A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/SweepTest.cpp */,
-				1390BCD674AF41CDA8F886A8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/Test.cpp */,
+				4A9E8FF831F0473AB240AC5C /* ../Play-/tools/SpuTest/KeyOnOffTest.cpp */,
+				08A8889978D544BF987A3868 /* ../Play-/tools/SpuTest/Main.cpp */,
+				A099D4619581440789A04675 /* ../Play-/tools/SpuTest/SetRepeatTest.cpp */,
+				431CDB8156D3428F810D1F23 /* ../Play-/tools/SpuTest/SimpleIrqTest.cpp */,
+				A317247185594D0DB8BDDA9A /* ../Play-/tools/SpuTest/SweepTest.cpp */,
+				1390BCD674AF41CDA8F886A8 /* ../Play-/tools/SpuTest/Test.cpp */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
@@ -217,7 +217,7 @@
 				193425B7E5684118B88865A2 /* Source Files */,
 				6DC546F5E1F941DAB803F827 /* Header Files */,
 				05AB1C2E521340E7BBB8E802 /* Resources */,
-				ECAB4DAAA1F44EF2962A50BB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/CMakeLists.txt */,
+				ECAB4DAAA1F44EF2962A50BB /* ../Play-/tools/SpuTest/CMakeLists.txt */,
 			);
 			name = SpuTest;
 			sourceTree = "<group>";
@@ -226,7 +226,7 @@
 			isa = PBXGroup;
 			children = (
 				51D76FE35CC14B33BC0FA8F1 /* CMake Rules */,
-				BA904C04BB82450E87455C6F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/CMakeLists.txt */,
+				BA904C04BB82450E87455C6F /* ../Play-/tools/SpuTest/CMakeLists.txt */,
 			);
 			name = ALL_BUILD;
 			sourceTree = "<group>";
@@ -248,11 +248,11 @@
 		6DC546F5E1F941DAB803F827 /* Header Files */ = {
 			isa = PBXGroup;
 			children = (
-				55A6E9AF1390433EA85E1C61 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/KeyOnOffTest.h */,
-				7AE71D5795F244A082A6D9B5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/SetRepeatTest.h */,
-				7E3A5ECFDA3E4783A57A6FBA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/SimpleIrqTest.h */,
-				D00ED936A01D47708E1C55C1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/SweepTest.h */,
-				ACFA926B4A7F4A9196FADFB8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/Test.h */,
+				55A6E9AF1390433EA85E1C61 /* ../Play-/tools/SpuTest/KeyOnOffTest.h */,
+				7AE71D5795F244A082A6D9B5 /* ../Play-/tools/SpuTest/SetRepeatTest.h */,
+				7E3A5ECFDA3E4783A57A6FBA /* ../Play-/tools/SpuTest/SimpleIrqTest.h */,
+				D00ED936A01D47708E1C55C1 /* ../Play-/tools/SpuTest/SweepTest.h */,
+				ACFA926B4A7F4A9196FADFB8 /* ../Play-/tools/SpuTest/Test.h */,
 			);
 			name = "Header Files";
 			sourceTree = "<group>";
@@ -308,7 +308,7 @@
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
 			mainGroup = 72246E9073F0428182383AD9;
-			projectDirPath = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest";
+			projectDirPath = "../Play-";
 			projectRoot = "";
 			targets = (
 				813B9411ED6148CBBF6FDF45 /* ALL_BUILD */,
@@ -335,19 +335,19 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest
+  cd ../cmake/tools/SpuTest
   /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest
+  cd ../cmake/tools/SpuTest
   /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest
+  cd ../cmake/tools/SpuTest
   /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest
+  cd ../cmake/tools/SpuTest
   /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 ";
@@ -381,19 +381,19 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 ";
@@ -409,24 +409,24 @@ fi
 			);
 			name = "Generate CMakeFiles/ALL_BUILD";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest/CMakeFiles/ALL_BUILD			);
+../cmake/tools/SpuTest/CMakeFiles/ALL_BUILD			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest
+  cd ../cmake/tools/SpuTest
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest
+  cd ../cmake/tools/SpuTest
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest
+  cd ../cmake/tools/SpuTest
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest
+  cd ../cmake/tools/SpuTest
   echo Build\\ all\\ projects
 fi
 ";
@@ -457,25 +457,25 @@ exit 0";
 			);
 			name = "Generate CMakeFiles/ZERO_CHECK";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest/CMakeFiles/ZERO_CHECK			);
+../cmake/tools/SpuTest/CMakeFiles/ZERO_CHECK			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest/CMakeScripts/ReRunCMake.make
+  cd ../cmake/tools/SpuTest
+  make -f ../cmake/tools/SpuTest/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest/CMakeScripts/ReRunCMake.make
+  cd ../cmake/tools/SpuTest
+  make -f ../cmake/tools/SpuTest/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest/CMakeScripts/ReRunCMake.make
+  cd ../cmake/tools/SpuTest
+  make -f ../cmake/tools/SpuTest/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest/CMakeScripts/ReRunCMake.make
+  cd ../cmake/tools/SpuTest
+  make -f ../cmake/tools/SpuTest/CMakeScripts/ReRunCMake.make
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -523,19 +523,19 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest
+  cd ../cmake/tools/SpuTest
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest
+  cd ../cmake/tools/SpuTest
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest
+  cd ../cmake/tools/SpuTest
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest
+  cd ../cmake/tools/SpuTest
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 ";
@@ -563,12 +563,12 @@ exit 0";
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2C583AB9250045C29BC8F80C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/KeyOnOffTest.cpp */,
-				D6D736CE88EE4844A3FD5D5C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/Main.cpp */,
-				BD5619E64EB148489F07A1CF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/SetRepeatTest.cpp */,
-				3E1E720915774A07B35773E3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/SimpleIrqTest.cpp */,
-				A7A9022CC1264DBCA28E1D42 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/SweepTest.cpp */,
-				554A2F55770143F3B51602DE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/SpuTest/Test.cpp */,
+				2C583AB9250045C29BC8F80C /* ../Play-/tools/SpuTest/KeyOnOffTest.cpp */,
+				D6D736CE88EE4844A3FD5D5C /* ../Play-/tools/SpuTest/Main.cpp */,
+				BD5619E64EB148489F07A1CF /* ../Play-/tools/SpuTest/SetRepeatTest.cpp */,
+				3E1E720915774A07B35773E3 /* ../Play-/tools/SpuTest/SimpleIrqTest.cpp */,
+				A7A9022CC1264DBCA28E1D42 /* ../Play-/tools/SpuTest/SweepTest.cpp */,
+				554A2F55770143F3B51602DE /* ../Play-/tools/SpuTest/Test.cpp */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -633,9 +633,9 @@ exit 0";
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk";
+				SDKROOT = iphoneos;
 				SWIFT_VERSION = 4.0;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build;
+				
 			};
 			name = Debug;
 		};
@@ -745,9 +745,9 @@ exit 0";
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk";
+				SDKROOT = iphoneos;
 				SWIFT_VERSION = 4.0;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build;
+				
 			};
 			name = MinSizeRel;
 		};
@@ -776,7 +776,7 @@ exit 0";
 				ARCHS = arm64;
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest/Release${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = "";
 				EXECUTABLE_SUFFIX = "";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -784,16 +784,16 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'",ZWRAP_USE_ZSTD,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/xxHash/cmake_unofficial/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest/CMakeFiles/SpuTest.dir/Info.plist;
+				HEADER_SEARCH_PATHS = ("../Play-/Source","../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","../Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","../Play-/deps/CodeGen/build_cmake/../include","../Play-/deps/Dependencies/xxHash/cmake_unofficial/..","../Play-/deps/libchdr/include","$(inherited)");
+				INFOPLIST_FILE = ../cmake/tools/SpuTest/CMakeFiles/SpuTest.dir/Info.plist;
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2     -DNDEBUG -DNDEBUG '-std=gnu++17' ";
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Release${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/CodeGen/Release${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkAmazon/Release${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkAmazon/FrameworkHttp/Release${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/Release${EFFECTIVE_PLATFORM_NAME}/libFramework.a","-framework Foundation","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libbz2.tbd","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/Release${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/Release${EFFECTIVE_PLATFORM_NAME}/libzstd.a","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libz.tbd","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/xxHash/Release${EFFECTIVE_PLATFORM_NAME}/libxxhash.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/Release${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/Release${EFFECTIVE_PLATFORM_NAME}/liblzma.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/Release${EFFECTIVE_PLATFORM_NAME}/libzlib.a","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","../cmake/Source/ui_ios/Source/Release${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","../cmake/Source/ui_ios/Source/CodeGen/Release${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","../cmake/Source/ui_ios/Source/FrameworkAmazon/Release${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","../cmake/Source/ui_ios/Source/FrameworkAmazon/FrameworkHttp/Release${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","../cmake/Source/ui_ios/Source/Framework/Release${EFFECTIVE_PLATFORM_NAME}/libFramework.a","-framework Foundation","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libbz2.tbd","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/Release${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/Release${EFFECTIVE_PLATFORM_NAME}/libzstd.a","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libz.tbd","../cmake/Source/ui_ios/Source/xxHash/Release${EFFECTIVE_PLATFORM_NAME}/libxxhash.a","../cmake/Source/ui_ios/Source/libchdr/Release${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","../cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/Release${EFFECTIVE_PLATFORM_NAME}/liblzma.a","../cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/Release${EFFECTIVE_PLATFORM_NAME}/libzlib.a","$(inherited)");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = SpuTest;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/SpuTest.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -829,9 +829,9 @@ exit 0";
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk";
+				SDKROOT = iphoneos;
 				SWIFT_VERSION = 4.0;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build;
+				
 			};
 			name = RelWithDebInfo;
 		};
@@ -846,9 +846,9 @@ exit 0";
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk";
+				SDKROOT = iphoneos;
 				SWIFT_VERSION = 4.0;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build;
+				
 			};
 			name = Release;
 		};
@@ -1048,7 +1048,7 @@ exit 0";
 				ARCHS = arm64;
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = "";
 				EXECUTABLE_SUFFIX = "";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -1056,16 +1056,16 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'",ZWRAP_USE_ZSTD,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/xxHash/cmake_unofficial/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest/CMakeFiles/SpuTest.dir/Info.plist;
+				HEADER_SEARCH_PATHS = ("../Play-/Source","../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","../Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","../Play-/deps/CodeGen/build_cmake/../include","../Play-/deps/Dependencies/xxHash/cmake_unofficial/..","../Play-/deps/libchdr/include","$(inherited)");
+				INFOPLIST_FILE = ../cmake/tools/SpuTest/CMakeFiles/SpuTest.dir/Info.plist;
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2        -DNDEBUG '-std=gnu++17' ";
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/CodeGen/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkAmazon/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkAmazon/FrameworkHttp/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libFramework.a","-framework Foundation","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libbz2.tbd","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libzstd.a","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libz.tbd","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/xxHash/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libxxhash.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/liblzma.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libzlib.a","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","../cmake/Source/ui_ios/Source/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","../cmake/Source/ui_ios/Source/CodeGen/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","../cmake/Source/ui_ios/Source/FrameworkAmazon/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","../cmake/Source/ui_ios/Source/FrameworkAmazon/FrameworkHttp/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","../cmake/Source/ui_ios/Source/Framework/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libFramework.a","-framework Foundation","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libbz2.tbd","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libzstd.a","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libz.tbd","../cmake/Source/ui_ios/Source/xxHash/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libxxhash.a","../cmake/Source/ui_ios/Source/libchdr/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","../cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/liblzma.a","../cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libzlib.a","$(inherited)");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = SpuTest;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/SpuTest.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1096,7 +1096,7 @@ exit 0";
 				ARCHS = arm64;
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest/Debug${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = "";
 				EXECUTABLE_SUFFIX = "";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -1104,16 +1104,16 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'",ZWRAP_USE_ZSTD,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/xxHash/cmake_unofficial/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest/CMakeFiles/SpuTest.dir/Info.plist;
+				HEADER_SEARCH_PATHS = ("../Play-/Source","../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","../Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","../Play-/deps/CodeGen/build_cmake/../include","../Play-/deps/Dependencies/xxHash/cmake_unofficial/..","../Play-/deps/libchdr/include","$(inherited)");
+				INFOPLIST_FILE = ../cmake/tools/SpuTest/CMakeFiles/SpuTest.dir/Info.plist;
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2    -D_DEBUG '-std=gnu++17' ";
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Debug${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/CodeGen/Debug${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkAmazon/Debug${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkAmazon/FrameworkHttp/Debug${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/Debug${EFFECTIVE_PLATFORM_NAME}/libFramework.a","-framework Foundation","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libbz2.tbd","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/Debug${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/Debug${EFFECTIVE_PLATFORM_NAME}/libzstd.a","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libz.tbd","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/xxHash/Debug${EFFECTIVE_PLATFORM_NAME}/libxxhash.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/Debug${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/Debug${EFFECTIVE_PLATFORM_NAME}/liblzma.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/Debug${EFFECTIVE_PLATFORM_NAME}/libzlib.a","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","../cmake/Source/ui_ios/Source/Debug${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","../cmake/Source/ui_ios/Source/CodeGen/Debug${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","../cmake/Source/ui_ios/Source/FrameworkAmazon/Debug${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","../cmake/Source/ui_ios/Source/FrameworkAmazon/FrameworkHttp/Debug${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","../cmake/Source/ui_ios/Source/Framework/Debug${EFFECTIVE_PLATFORM_NAME}/libFramework.a","-framework Foundation","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libbz2.tbd","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/Debug${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/Debug${EFFECTIVE_PLATFORM_NAME}/libzstd.a","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libz.tbd","../cmake/Source/ui_ios/Source/xxHash/Debug${EFFECTIVE_PLATFORM_NAME}/libxxhash.a","../cmake/Source/ui_ios/Source/libchdr/Debug${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","../cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/Debug${EFFECTIVE_PLATFORM_NAME}/liblzma.a","../cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/Debug${EFFECTIVE_PLATFORM_NAME}/libzlib.a","$(inherited)");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = SpuTest;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/SpuTest.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -1125,7 +1125,7 @@ exit 0";
 				ARCHS = arm64;
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = "";
 				EXECUTABLE_SUFFIX = "";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -1133,16 +1133,16 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'",ZWRAP_USE_ZSTD,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/xxHash/cmake_unofficial/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/SpuTest/CMakeFiles/SpuTest.dir/Info.plist;
+				HEADER_SEARCH_PATHS = ("../Play-/Source","../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","../Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","../Play-/deps/CodeGen/build_cmake/../include","../Play-/deps/Dependencies/xxHash/cmake_unofficial/..","../Play-/deps/libchdr/include","$(inherited)");
+				INFOPLIST_FILE = ../cmake/tools/SpuTest/CMakeFiles/SpuTest.dir/Info.plist;
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2     -DNDEBUG '-std=gnu++17' ";
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/CodeGen/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkAmazon/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkAmazon/FrameworkHttp/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libFramework.a","-framework Foundation","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libbz2.tbd","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libzstd.a","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libz.tbd","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/xxHash/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libxxhash.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/liblzma.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libzlib.a","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","../cmake/Source/ui_ios/Source/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","../cmake/Source/ui_ios/Source/CodeGen/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","../cmake/Source/ui_ios/Source/FrameworkAmazon/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","../cmake/Source/ui_ios/Source/FrameworkAmazon/FrameworkHttp/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","../cmake/Source/ui_ios/Source/Framework/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libFramework.a","-framework Foundation","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libbz2.tbd","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libzstd.a","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libz.tbd","../cmake/Source/ui_ios/Source/xxHash/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libxxhash.a","../cmake/Source/ui_ios/Source/libchdr/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","../cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/liblzma.a","../cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libzlib.a","$(inherited)");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = SpuTest;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/build/SpuTest.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
