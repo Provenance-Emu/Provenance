@@ -1937,7 +1937,7 @@ extension PVGameLibraryViewController: ControllerButtonPress {
     // just hilight (with a cheesy overlay) the item
     private func select(_ indexPath:IndexPath?) {
 
-        guard var indexPath = indexPath else {
+        guard var indexPath = indexPath, collectionView!.numberOfSections > 0 else {
             _selectedIndexPath = nil
             _selectedIndexPathView?.frame = .zero
             return
