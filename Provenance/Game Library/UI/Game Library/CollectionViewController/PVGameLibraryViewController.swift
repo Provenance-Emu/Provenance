@@ -1714,6 +1714,7 @@ extension PVGameLibraryViewController {
     @objc func selectSearch(_: UIKeyCommand) {
 		#if os(iOS)
 		navigationItem.searchController?.isActive = true
+        navigationItem.searchController?.searchBar.becomeFirstResponder()
 		#endif
     }
 
