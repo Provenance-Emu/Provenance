@@ -108,20 +108,6 @@
 			remoteGlobalIDString = B39768ED2859E18B00558958;
 			remoteInfo = "dos-box-libretro-tvOS";
 		};
-		B3EBA0F62872965100EAEB37 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3EB9F9A2872965000EAEB37 /* Yabause.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 2A7D3A55115BA3E700DE3BD1;
-			remoteInfo = gen68k;
-		};
-		B3EBA0F82872965100EAEB37 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3EB9F9A2872965000EAEB37 /* Yabause.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8D1107320486CEB800E47090;
-			remoteInfo = Yabause;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -1215,7 +1201,6 @@
 		B3EB9F962872965000EAEB37 /* English */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B3EB9F982872965000EAEB37 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		B3EB9F992872965000EAEB37 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
-		B3EB9F9A2872965000EAEB37 /* Yabause.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Yabause.xcodeproj; sourceTree = "<group>"; };
 		B3EB9F9D2872965000EAEB37 /* YabauseController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YabauseController.m; sourceTree = "<group>"; };
 		B3EB9F9E2872965000EAEB37 /* PerCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PerCocoa.h; sourceTree = "<group>"; };
 		B3EB9F9F2872965000EAEB37 /* YabauseGLView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YabauseGLView.h; sourceTree = "<group>"; };
@@ -4149,21 +4134,11 @@
 				B3EB9F932872964F00EAEB37 /* CMake-Info.plist */,
 				B3EB9FA52872965000EAEB37 /* Yabause-Info.plist */,
 				B3EB9F992872965000EAEB37 /* CMakeLists.txt */,
-				B3EB9F9A2872965000EAEB37 /* Yabause.xcodeproj */,
 				B3EB9F952872965000EAEB37 /* InfoPlist.strings */,
 				B3EB9F972872965000EAEB37 /* MainMenu.xib */,
 				B3EB9FA22872965000EAEB37 /* resources */,
 			);
 			path = cocoa;
-			sourceTree = "<group>";
-		};
-		B3EB9F9B2872965000EAEB37 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				B3EBA0F72872965100EAEB37 /* gen68k */,
-				B3EBA0F92872965100EAEB37 /* Yabause.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		B3EB9FA22872965000EAEB37 /* resources */ = {
@@ -4826,12 +4801,6 @@
 			mainGroup = B3C7620620783162009950E4;
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = B3EB9F9B2872965000EAEB37 /* Products */;
-					ProjectRef = B3EB9F9A2872965000EAEB37 /* Yabause.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				B3C7620F20783162009950E4 /* PVYabause-iOS */,
@@ -4843,23 +4812,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		B3EBA0F72872965100EAEB37 /* gen68k */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = gen68k;
-			remoteRef = B3EBA0F62872965100EAEB37 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3EBA0F92872965100EAEB37 /* Yabause.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = Yabause.app;
-			remoteRef = B3EBA0F82872965100EAEB37 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		B3447EDF218BEDD200557ACE /* Resources */ = {

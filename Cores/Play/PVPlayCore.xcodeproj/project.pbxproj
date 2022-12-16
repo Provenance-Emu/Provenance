@@ -94,13 +94,6 @@
 			remoteGlobalIDString = 934D2DFF294B4D4600BDEBA5;
 			remoteInfo = PlayLibAdjustments;
 		};
-		B313596026E4C49F0047F338 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B313558626E4C4950047F338 /* PsfPlayer.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8D1107320486CEB800E47090;
-			remoteInfo = PsfPlayer;
-		};
 		B3135B4726E4C6860047F338 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
@@ -749,7 +742,6 @@
 		B313558326E4C4950047F338 /* GeneralSettingsDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = GeneralSettingsDebug.xcconfig; sourceTree = "<group>"; };
 		B313558426E4C4950047F338 /* GeneralSettingsRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = GeneralSettingsRelease.xcconfig; sourceTree = "<group>"; };
 		B313558526E4C4950047F338 /* GeneralSettings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = GeneralSettings.xcconfig; sourceTree = "<group>"; };
-		B313558626E4C4950047F338 /* PsfPlayer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = PsfPlayer.xcodeproj; sourceTree = "<group>"; };
 		B313558C26E4C4950047F338 /* installer64.nsi */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = installer64.nsi; sourceTree = "<group>"; };
 		B313558D26E4C4950047F338 /* installer32.nsi */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = installer32.nsi; sourceTree = "<group>"; };
 		B313558E26E4C4950047F338 /* Todolist.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Todolist.txt; sourceTree = "<group>"; };
@@ -2336,17 +2328,8 @@
 				B313558326E4C4950047F338 /* GeneralSettingsDebug.xcconfig */,
 				B313558426E4C4950047F338 /* GeneralSettingsRelease.xcconfig */,
 				B313558526E4C4950047F338 /* GeneralSettings.xcconfig */,
-				B313558626E4C4950047F338 /* PsfPlayer.xcodeproj */,
 			);
 			path = build_macosx;
-			sourceTree = "<group>";
-		};
-		B313558726E4C4950047F338 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				B313596126E4C49F0047F338 /* PsfPlayer.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		B313558B26E4C4950047F338 /* installer_win32 */ = {
@@ -4122,10 +4105,6 @@
 					ProductGroup = B3135B2B26E4C6850047F338 /* Products */;
 					ProjectRef = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 				},
-				{
-					ProductGroup = B313558726E4C4950047F338 /* Products */;
-					ProjectRef = B313558626E4C4950047F338 /* PsfPlayer.xcodeproj */;
-				},
 			);
 			projectRoot = "";
 			targets = (
@@ -4137,13 +4116,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		B313596126E4C49F0047F338 /* PsfPlayer.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = PsfPlayer.app;
-			remoteRef = B313596026E4C49F0047F338 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		B3135B4826E4C6860047F338 /* libCodeGen.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;

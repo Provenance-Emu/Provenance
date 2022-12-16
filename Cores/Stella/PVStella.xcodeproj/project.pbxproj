@@ -163,13 +163,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B312F9C3292B0F1F00286CFE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B312F97D292B0F1E00286CFE /* stella.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = DCBA710010DED62E0077193B;
-			remoteInfo = Stella;
-		};
 		B3E6BF2A2894B3F800CF98C7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
@@ -280,7 +273,6 @@
 		B312F97A292B0F1E00286CFE /* SDLMain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
 		B312F97B292B0F1E00286CFE /* OSystemMACOS.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = OSystemMACOS.hxx; sourceTree = "<group>"; };
 		B312F97C292B0F1E00286CFE /* SerialPortMACOS.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SerialPortMACOS.cxx; sourceTree = "<group>"; };
-		B312F97D292B0F1E00286CFE /* stella.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = stella.xcodeproj; sourceTree = "<group>"; };
 		B312F980292B0F1E00286CFE /* SDLMain.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; path = SDLMain.nib; sourceTree = "<group>"; };
 		B312F981292B0F1E00286CFE /* template.dmg.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = template.dmg.gz; sourceTree = "<group>"; };
 		B312F982292B0F1E00286CFE /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
@@ -1911,7 +1903,6 @@
 				B312F97A292B0F1E00286CFE /* SDLMain.h */,
 				B312F97B292B0F1E00286CFE /* OSystemMACOS.hxx */,
 				B312F97C292B0F1E00286CFE /* SerialPortMACOS.cxx */,
-				B312F97D292B0F1E00286CFE /* stella.xcodeproj */,
 				B312F980292B0F1E00286CFE /* SDLMain.nib */,
 				B312F981292B0F1E00286CFE /* template.dmg.gz */,
 				B312F982292B0F1E00286CFE /* .gitignore */,
@@ -1927,14 +1918,6 @@
 				B312F98C292B0F1E00286CFE /* Stella.icns */,
 			);
 			path = macos;
-			sourceTree = "<group>";
-		};
-		B312F97E292B0F1E00286CFE /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				B312F9C4292B0F1F00286CFE /* Stella.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		B312F98D292B0F1E00286CFE /* unix */ = {
@@ -4093,12 +4076,6 @@
 			);
 			mainGroup = 089C166AFE841209C02AAC07 /* VisualBoyAdvance */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = B312F97E292B0F1E00286CFE /* Products */;
-					ProjectRef = B312F97D292B0F1E00286CFE /* stella.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				B38FB4BF1C839BE500CD73BE /* PVStella */,
@@ -4106,16 +4083,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		B312F9C4292B0F1F00286CFE /* Stella.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = Stella.app;
-			remoteRef = B312F9C3292B0F1F00286CFE /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		B38FB4BE1C839BE500CD73BE /* Resources */ = {
