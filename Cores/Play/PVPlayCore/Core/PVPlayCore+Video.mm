@@ -37,6 +37,7 @@ extern CPS2VM *_ps2VM;
 //#import "PS2VM_Preferences.h"
 //#import "AppConfig.h"
 //#import "StdStream.h"
+void MakeCurrentThreadRealTime();
 
 @implementation PVPlayCore (Video)
 
@@ -54,7 +55,10 @@ extern CPS2VM *_ps2VM;
 
 - (void)executeFrameSkippingFrame:(BOOL)skip {
     //dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
-
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        MakeCurrentThreadRealTime();
+    });
     //dispatch_semaphore_wait(coreWaitToEndFrameSemaphore, DISPATCH_TIME_FOREVER);
     if (_ps2VM
         && _ps2VM->GetStatus() != CVirtualMachine::PAUSED

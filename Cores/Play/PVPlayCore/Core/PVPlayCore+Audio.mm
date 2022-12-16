@@ -11,8 +11,12 @@
 @implementation PVPlayCore (Audio)
 
 - (NSTimeInterval)frameInterval {
-    return isNTSC ? 60 : 50;
+    return 30.0;
 }
+
+//- (NSTimeInterval)frameInterval {
+//    return isNTSC ? 60 : 50;
+//}
 
 - (NSUInteger)channelCount {
     return 2;

@@ -18,6 +18,7 @@ extension PVPlayCore: CoreOptional {
             ],
             defaultValue: 2)
             }()
+    
     static var gsOption: CoreOption = {
          .enumeration(.init(title: "Graphics Handler",
                description: "(Requires Restart)",
@@ -28,27 +29,37 @@ extension PVPlayCore: CoreOptional {
           ],
           defaultValue: 0)
     }()
-     public static var options: [CoreOption] {
+    
+    static var forceBilinearFilteringOption: CoreOption = {
+        .bool(.init(
+            title: "Enable bilinear filtering.",
+            description: nil,
+            requiresRestart: false))
+    }()
+    
+    public static var options: [CoreOption] {
         var options = [CoreOption]()
-          var coreOptions = [CoreOption]()
-        coreOptions.append(resolutionOption)
-          coreOptions.append(gsOption)
-        let coreGroup:CoreOption = .group(.init(title: "Play! Core", description: "Global options for Play!"),
+        let coreOptions: [CoreOption] = [resolutionOption, gsOption, forceBilinearFilteringOption]
+        let coreGroup:CoreOption = .group(.init(title: "Play! Core",
+                                                description: "Global options for Play!"),
                                           subOptions: coreOptions)
-          options.append(contentsOf: [coreGroup])
+        options.append(contentsOf: [coreGroup])
         return options
     }
 }
 
 @objc public extension PVPlayCore {
-     @objc var resolution: Int{
-          PVPlayCore.valueForOption(PVPlayCore.resolutionOption).asInt ?? 0
-     }
-    @objc var gs: Int{
-         PVPlayCore.valueForOption(PVPlayCore.gsOption).asInt ?? 0
+    @objc var resolution: Int{
+        PVPlayCore.valueForOption(PVPlayCore.resolutionOption).asInt ?? 0
     }
-     func parseOptions() {
+    @objc var gs: Int{
+        PVPlayCore.valueForOption(PVPlayCore.gsOption).asInt ?? 0
+    }
+    @objc var bilinearFiltering: Bool {
+        PVPlayCore.valueForOption(PVPlayCore.forceBilinearFilteringOption).asBool
+    }
+    func parseOptions() {
         self.gsPreference = NSNumber(value: gs).int8Value
-          self.resFactor = NSNumber(value: resolution).int8Value
-     }
+        self.resFactor = NSNumber(value: resolution).int8Value
+    }
 }

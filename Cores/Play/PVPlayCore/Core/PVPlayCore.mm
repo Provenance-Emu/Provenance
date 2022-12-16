@@ -157,9 +157,6 @@ private:
         dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, 0);
         _callbackQueue = dispatch_queue_create("org.provenance-emu.play.CallbackHandlerQueue", queueAttributes);
         _ps2VM = new CPS2VM();
-        [self parseOptions];
-        // Set OpenGL or Vulkan
-        CAppConfig::GetInstance().SetPreferenceInteger(PREFERENCE_VIDEO_GS_HANDLER, (self.gsPreference));
     }
     
     _current = self;
@@ -192,7 +189,21 @@ private:
     
     _romPath = [path copy];
     
+    [self setOptionValues];
     return YES;
+}
+
+- (void)setOptionValues {
+    [self parseOptions];
+    // Set OpenGL or Vulkan
+    CAppConfig::GetInstance().SetPreferenceInteger(PREFERENCE_VIDEO_GS_HANDLER, (self.gsPreference));
+    
+//    CAppConfig::GetInstance().SetPreferenceBoolean(PREF_CGSHANDLER_WIDESCREEN, resizeOutputToWidescreen.isOn);
+    CAppConfig::GetInstance().SetPreferenceBoolean(PREF_CGSH_OPENGL_FORCEBILINEARTEXTURES, self.bilinearFiltering);
+
+//    CAppConfig::GetInstance().SetPreferenceBoolean(PREFERENCE_AUDIO_ENABLEOUTPUT, enableAudioOutput.isOn);
+
+    CAppConfig::GetInstance().SetPreferenceBoolean(PREFERENCE_ALTSTORE_JIT_ENABLED, true);
 }
 
 #pragma mark - Running
@@ -334,12 +345,12 @@ private:
     CAppConfig::GetInstance().SetPreferenceInteger(PREF_CGSH_OPENGL_RESOLUTION_FACTOR, self.resFactor);
     CAppConfig::GetInstance().SetPreferenceInteger(PREF_AUDIO_SPUBLOCKCOUNT, 22);
     
-    CAppConfig::GetInstance().RegisterPreferenceBoolean(PREFERENCE_UI_SHOWFPS, true);
-    CAppConfig::GetInstance().RegisterPreferenceBoolean(PREFERENCE_UI_SHOWVIRTUALPAD, true);
+    CAppConfig::GetInstance().RegisterPreferenceBoolean(PREFERENCE_UI_SHOWFPS, false);
+    CAppConfig::GetInstance().RegisterPreferenceBoolean(PREFERENCE_UI_SHOWVIRTUALPAD, false);
     CAppConfig::GetInstance().RegisterPreferenceBoolean(PREFERENCE_AUDIO_ENABLEOUTPUT, true);
     CAppConfig::GetInstance().RegisterPreferenceInteger(PREFERENCE_UI_VIRTUALPADOPACITY, 100);
     CAppConfig::GetInstance().RegisterPreferenceBoolean(PREFERENCE_UI_HIDEVIRTUALPAD_CONTROLLER_CONNECTED, true);
-    CAppConfig::GetInstance().RegisterPreferenceBoolean(PREFERENCE_UI_VIRTUALPAD_HAPTICFEEDBACK, true);
+    CAppConfig::GetInstance().RegisterPreferenceBoolean(PREFERENCE_UI_VIRTUALPAD_HAPTICFEEDBACK, false);
     
     CAppConfig::GetInstance().Save();
     _ps2VM->Initialize();
@@ -621,7 +632,6 @@ void CPH_OpenEmu::Update(uint8* ram)
             }
         }
     }
-
 }
 
 static CPadHandler *PadHandlerFactory()
