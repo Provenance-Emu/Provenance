@@ -2,7 +2,7 @@
 #   Copyright (C) 2014-2016, Yann Collet, Facebook
 #   BSD 2-Clause License (http://www.opensource.org/licenses/bsd-license.php)
 
-prefix=/usr/local
+prefix=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp
 exec_prefix=${prefix}
 includedir=${prefix}/include
 libdir=${exec_prefix}/lib
