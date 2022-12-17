@@ -1116,9 +1116,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                 }
                 #endif
                 #if os(tvOS)
-                if #available(tvOS 11, *) {
-                    saveStatesNavController.modalPresentationStyle = .blurOverFullScreen
-                }
+                saveStatesNavController.modalPresentationStyle = .blurOverFullScreen
                 #endif
                 self.present(saveStatesNavController, animated: true)
             }))

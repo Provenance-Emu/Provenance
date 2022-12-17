@@ -170,9 +170,7 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
             }
         #endif
         #if os(tvOS)
-            if #available(tvOS 11, *) {
-                cheatsNavController.modalPresentationStyle = .blurOverFullScreen
-            }
+            cheatsNavController.modalPresentationStyle = .blurOverFullScreen
         #endif
         present(cheatsNavController, animated: true)
     }

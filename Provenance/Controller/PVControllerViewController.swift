@@ -428,7 +428,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
 		volume.superview?.bringSubviewToFront(volume)
 		volume.layer.cornerRadius = volumeHeight / 2
-		volume.frame = CGRect(x: safeAreaInsets.left + volumeXPadding, y: safeAreaInsets.top + volumeYPadding, width: UIScreen.main.bounds.width - (volumeXPadding * 2) - safeAreaInsets.left - safeAreaInsets.right, height: volumeHeight)
+        volume.frame = CGRect(x: view.safeAreaInsets.left + volumeXPadding, y: view.safeAreaInsets.top + volumeYPadding, width: UIScreen.main.bounds.width - (volumeXPadding * 2) - view.safeAreaInsets.left - view.safeAreaInsets.right, height: volumeHeight)
 	}
 #endif
 
@@ -460,14 +460,6 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 		}
 
 		setupTouchControls()
-	}
-
-	var safeAreaInsets: UIEdgeInsets {
-		if #available(iOS 11.0, tvOS 11.0, *) {
-			return view.safeAreaInsets
-		} else {
-			return UIEdgeInsets.zero
-		}
 	}
 
 		// MARK: - Controller Position And Size Editing
@@ -533,7 +525,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
                 adjustJoystick()
             } else if controlType == Keys.JoyPad, PVSettingsModel.shared.debugOptions.onscreenJoypad {
-                let xPadding: CGFloat = 0 // safeAreaInsets.left
+                let xPadding: CGFloat = 0 // view.safeAreaInsets.left
                 let bottomPadding: CGFloat = 16
                 let joyPadOriginY: CGFloat = min(controlOriginY - bottomPadding, view.frame.height - controlSize.height - bottomPadding)
                 var joyPadFrame = CGRect(x: xPadding, y: joyPadOriginY, width: controlSize.width, height: controlSize.height)
@@ -556,7 +548,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
                 adjustJoystick()
 			} else if controlType == Keys.ButtonGroup {
-				let xPadding: CGFloat = safeAreaInsets.right + 5
+                let xPadding: CGFloat = view.safeAreaInsets.right + 5
 				let bottomPadding: CGFloat = 16
 				let buttonsOriginY: CGFloat = min(controlOriginY - bottomPadding, view.frame.height - controlSize.height - bottomPadding)
 				let buttonsFrame = CGRect(x: view.bounds.maxX - controlSize.width - xPadding, y: buttonsOriginY, width: controlSize.width, height: controlSize.height)
@@ -673,8 +665,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 #if os(iOS)
 	func layoutRightShoulderButtons(control: ControlLayoutEntry) {
 		let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
-		let xPadding: CGFloat = safeAreaInsets.right + 10
-		let yPadding: CGFloat = safeAreaInsets.bottom + 10
+        let xPadding: CGFloat = view.safeAreaInsets.right + 10
+        let yPadding: CGFloat = view.safeAreaInsets.bottom + 10
 		var rightShoulderFrame: CGRect!
 
 		if buttonGroup != nil, !(buttonGroup?.isHidden)! {
@@ -732,8 +724,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
 	func layoutZTriggerButton(control: ControlLayoutEntry) {
 		let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
-		let xPadding: CGFloat = safeAreaInsets.right + 10
-		let yPadding: CGFloat = safeAreaInsets.bottom + 10
+        let xPadding: CGFloat = view.safeAreaInsets.right + 10
+        let yPadding: CGFloat = view.safeAreaInsets.bottom + 10
 		var zTriggerFrame: CGRect!
 
 		if rightShoulderButton != nil {
@@ -768,10 +760,10 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
 	func layoutLeftShoulderButtons(control: ControlLayoutEntry) {
 		let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
-		let xPadding: CGFloat = safeAreaInsets.left + 10
-			// let yPadding: CGFloat = safeAreaInsets.top + 10
+        let xPadding: CGFloat = view.safeAreaInsets.left + 10
+			// let yPadding: CGFloat = view.safeAreaInsets.top + 10
 			// var leftShoulderFrame = CGRect(x: xPadding, y: yPadding, width: controlSize.width, height: controlSize.height)
-		let yPadding: CGFloat = safeAreaInsets.bottom + 10
+        let yPadding: CGFloat = view.safeAreaInsets.bottom + 10
 		var leftShoulderFrame: CGRect!
 		if buttonGroup != nil, !(buttonGroup?.isHidden)! {
 			leftShoulderFrame = CGRect(x: xPadding, y: (buttonGroup?.frame.minY)! - (controlSize.height * 2) - 4, width: controlSize.width, height: controlSize.height)
@@ -839,8 +831,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 	#if os(iOS)
 	func layoutSelectButton( control: ControlLayoutEntry ) {
 		let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
-		let yPadding: CGFloat = safeAreaInsets.bottom + 10
-		let xPadding: CGFloat = safeAreaInsets.left + 10
+        let yPadding: CGFloat = view.safeAreaInsets.bottom + 10
+        let xPadding: CGFloat = view.safeAreaInsets.left + 10
 		let spacing: CGFloat = 20
 		var selectFrame = CGRect(x: xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
 
@@ -892,8 +884,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
 	func layoutStartButton(control: ControlLayoutEntry) {
 		let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
-		let yPadding: CGFloat = safeAreaInsets.bottom
-		let xPadding: CGFloat = safeAreaInsets.right
+        let yPadding: CGFloat = view.safeAreaInsets.bottom
+        let xPadding: CGFloat = view.safeAreaInsets.right
 		let spacing: CGFloat = 20
 		var startFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding,
 								y: view.frame.height - yPadding - controlSize.height,
@@ -964,8 +956,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
 	func layoutLeftAnalogButton(control: ControlLayoutEntry) {
 		let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
-		let xPadding: CGFloat = safeAreaInsets.left + 10
-		let yPadding: CGFloat = safeAreaInsets.bottom + 10
+        let xPadding: CGFloat = view.safeAreaInsets.left + 10
+        let yPadding: CGFloat = view.safeAreaInsets.bottom + 10
 		let spacing: CGFloat = 10
 		var layoutIsLandscape = false
 		var leftAnalogFrame = CGRect(x: xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
@@ -1013,8 +1005,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
 	func layoutRightAnalogButton(control: ControlLayoutEntry) {
 		let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
-		let xPadding: CGFloat = safeAreaInsets.left + 10
-		let yPadding: CGFloat = safeAreaInsets.bottom + 10
+        let xPadding: CGFloat = view.safeAreaInsets.left + 10
+        let yPadding: CGFloat = view.safeAreaInsets.bottom + 10
 		let spacing: CGFloat = 10
 		var layoutIsLandscape = false
 		var rightAnalogFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
