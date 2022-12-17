@@ -929,30 +929,6 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                     } else {
                         self.superview?.bringSubviewToFront(self)
                     }
-                    if PVSettingsModel.shared.showGameBadges {
-                        if #available(tvOS 11, *) {} else {
-                            // Hide for non os 11 since we don't have the auto contentLayerView
-                            self.setupDots()
-                            let xySlideOffset = CGFloat(6)
-                            if self.topRightCornerBadgeView != nil { self.topRightCornerBadgeView?.transform = transform.translatedBy(x: xySlideOffset, y: -xySlideOffset) }
-                            if self.discCountContainerView != nil { self.discCountContainerView?.transform = transform.translatedBy(x: xySlideOffset, y: xySlideOffset) }
-                            if self.discCountContainerView != nil { self.discCountContainerView?.alpha = 0.0 }
-                            if self.topRightCornerBadgeView != nil { self.topRightCornerBadgeView?.alpha = 0.0 }
-
-                            /* -- Or here's my scaling code for older tvOS's. Parallex will still be off though
-                             let imageContentFrame = self.imageView.contentClippingRect // .applying(transform)
-
-                             let topConstant = imageContentFrame.origin.y
-                             let bottomConstant = imageContentFrame.origin.y * -1.0
-                             let trailingConstant = imageContentFrame.origin.x * -1.0
-
-                             let xTransform = imageContentFrame.width * 0.07
-                             let yTransform = imageContentFrame.height * 0.07
-                             if (self.topRightCornerBadgeView != nil) { self.topRightCornerBadgeView?.transform = transform.translatedBy(x: xTransform, y: yTransform * -1.0) }
-                             if (self.discCountContainerView != nil) { self.discCountContainerView?.transform = transform.translatedBy(x: xTransform, y: yTransform)  }
-                             */
-                        }
-                    }
 
                     if PVSettingsModel.shared.showGameTitles {
 //                        let imageContentFrame = self.imageView.contentClippingRect // .applying(transform)
@@ -970,14 +946,6 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                     self.titleLabel.textColor = UIColor.darkGray
                     self.titleLabel.font = UIFont.systemFont(ofSize: 20)
                     // self.titleLabel.alpha = 0.0
-                    if PVSettingsModel.shared.showGameBadges {
-                        if #available(tvOS 11, *) {} else {
-                            if self.topRightCornerBadgeView != nil { self.topRightCornerBadgeView?.alpha = 1.0 }
-                            if self.discCountContainerView != nil { self.discCountContainerView?.alpha = 1.0 }
-                            if self.topRightCornerBadgeView != nil { self.topRightCornerBadgeView?.transform = .identity }
-                            if self.discCountContainerView != nil { self.discCountContainerView?.transform = .identity }
-                        }
-                    }
                 }
             }) { () -> Void in }
         }

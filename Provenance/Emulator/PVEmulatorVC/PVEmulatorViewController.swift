@@ -474,16 +474,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         }
     #endif
 
-    #if os(iOS)
-        var safeAreaInsets: UIEdgeInsets {
-            if #available(iOS 11.0, tvOS 11.0, *) {
-                return view.safeAreaInsets
-            } else {
-                return UIEdgeInsets.zero
-            }
-        }
-    #endif
-
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         #if os(iOS)
@@ -497,7 +487,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
                 let height: CGFloat = 42
                 let width: CGFloat = 42
                 menuButton.imageView?.contentMode = .center
-                let frame = CGRect(x: safeAreaInsets.left + 10, y: safeAreaInsets.top + 5, width: width, height: height)
+                let frame = CGRect(x: view.safeAreaInsets.left + 10, y: view.safeAreaInsets.top + 5, width: width, height: height)
                 menuButton.frame = frame
             }
         }
