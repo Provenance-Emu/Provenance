@@ -771,7 +771,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 
     func image(withText text: String) -> UIImage? {
         #if os(iOS)
-            let backgroundColor: UIColor = .systemBackground
+            let backgroundColor: UIColor = .systemGray5
         #else
             let backgroundColor: UIColor = UIColor(white: 0.18, alpha: 1.0)
         #endif
