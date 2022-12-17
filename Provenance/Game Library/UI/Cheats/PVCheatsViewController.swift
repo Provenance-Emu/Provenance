@@ -17,12 +17,14 @@ protocol PVCheatsViewControllerDelegate: AnyObject {
     func cheatsViewControllerCreateNewState(_ cheatsViewController: PVCheatsViewController,
         code: String,
         type: String,
+        codeType: String,
         enabled: Bool,
         completion: @escaping CheatsCompletion)
     func cheatsViewControllerUpdateState(_:Any,
          cheat: PVCheats,
          completion: @escaping CheatsCompletion)
     func cheatsViewController(_ cheatsViewController: PVCheatsViewController, load state: PVCheats)
+    func getCheatTypes() -> NSArray
 }
 
 struct CheatsSection {
@@ -38,20 +40,15 @@ final class PVCheatsViewController: UITableViewController {
 
     var coreID: String?
 
-//    private var enabledCheats: Results<PVCheats>
-//    private var disabledCheats: Results<PVCheats>
     private var allCheats: Results<PVCheats>?
 
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Cheat Codes"
-
         var isFirstLoad: Bool=true
-
         if let emulatorViewController = presentingViewController as? PVEmulatorViewController {
             isFirstLoad=emulatorViewController.getIsFirstLoad()
         }
-
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             if let coreID = self.coreID {
@@ -60,7 +57,6 @@ final class PVCheatsViewController: UITableViewController {
             } else {
                 self.allCheats = self.cheats.sorted(byKeyPath: "date", ascending: false)
             }
-
             for cheat in self.allCheats! {
                 DLOG("Cheat Found \(String(describing: cheat.code)) \(String(describing: cheat.type))")
                 // start disabled to prevent bad cheat code from crashing the game all the time
@@ -81,17 +77,13 @@ final class PVCheatsViewController: UITableViewController {
                     }
                 }
             }
-			self.tableView.reloadData()
+            let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(self.longPressRecognized(_:)))
+            self.tableView.dataSource = self
+            self.tableView.delegate = self
+            self.tableView?.addGestureRecognizer(longPressRecognizer)
+            self.tableView.reloadData()
+            self.tableView.layoutIfNeeded()
         }
-
-        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressRecognized(_:)))
-        tableView.dataSource = self
-        tableView.delegate = self
-
-        tableView?.addGestureRecognizer(longPressRecognizer)
-
-        self.tableView.reloadData()
-        self.tableView.layoutIfNeeded()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -104,7 +96,6 @@ final class PVCheatsViewController: UITableViewController {
                 emulatorViewController.enableControllerInput(false)
                 emulatorViewController.setIsFirstLoad(isFirstLoad: false)
         }
-
     }
 
     @objc func longPressRecognized(_ recognizer: UILongPressGestureRecognizer) {
@@ -161,21 +152,25 @@ final class PVCheatsViewController: UITableViewController {
         delegate?.cheatsViewControllerDone(self)
     }
 
-    func saveCheatCode(code: String, type: String, enabled: Bool) {
+    func saveCheatCode(code: String, type: String, codeType: String, enabled: Bool) {
         ILOG("SaveCheatCode \(code) \(type)")
-        delegate?.cheatsViewControllerCreateNewState(self, code: code, type: type, enabled: enabled) { result in
-            switch result {
-            case .success:
-                self.tableView.reloadData()
-                self.tableView.layoutIfNeeded()
+        delegate?.cheatsViewControllerCreateNewState(self, code: code, type: type, codeType: codeType, enabled: enabled) {
+            result in
+                switch result {
+                case .success:
+                    self.tableView.reloadData()
+                    self.tableView.layoutIfNeeded()
 
-                break
-            case let .error(error):
-                let reason = (error as NSError).localizedFailureReason ?? ""
-                self.presentError("Error creating CheatCode: \(error.localizedDescription) \(reason)")
-            }
-
+                    break
+                case let .error(error):
+                    let reason = (error as NSError).localizedFailureReason ?? ""
+                    self.presentError("Error creating CheatCode: \(error.localizedDescription) \(reason)")
+                }
         }
+    }
+
+    func getCheatTypes() -> NSArray {
+        return delegate!.getCheatTypes();
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -190,8 +185,13 @@ final class PVCheatsViewController: UITableViewController {
 			ELOG("Nil allCheaets")
 			return cell
 		}
+        var cheatType = cheat.type ?? ""
+        if cheatType.contains("-~-") {
+            let types = cheatType.components(separatedBy: "-~-")
+            cheatType = types[0]
+        }
 		cell.codeText.text=cheat.code
-		cell.typeText.text=cheat.type
+		cell.typeText.text=cheatType
 #if os(iOS)
 		cell.enableSwitch.isOn=cheat.enabled
 #endif

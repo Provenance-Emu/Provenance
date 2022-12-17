@@ -23,6 +23,25 @@
 /* Begin PBXBuildFile section */
 		9310345A29436AC3002D218C /* CGSH_Provenance_OGL.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9310344A29436AC2002D218C /* CGSH_Provenance_OGL.mm */; };
 		9310345B29436AC3002D218C /* CGSH_Provenance_OGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 9310345929436AC3002D218C /* CGSH_Provenance_OGL.h */; };
+		9360C594294CB5E7000322B9 /* service_funcs.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C56E294CB5E6000322B9 /* service_funcs.c */; };
+		9360C595294CB5E7000322B9 /* or.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C570294CB5E6000322B9 /* or.c */; };
+		9360C596294CB5E7000322B9 /* mul.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C571294CB5E6000322B9 /* mul.c */; };
+		9360C597294CB5E7000322B9 /* div.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C572294CB5E6000322B9 /* div.c */; };
+		9360C598294CB5E8000322B9 /* xor.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C573294CB5E6000322B9 /* xor.c */; };
+		9360C599294CB5E8000322B9 /* andnot.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C574294CB5E6000322B9 /* andnot.c */; };
+		9360C59A294CB5E8000322B9 /* sqr.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C575294CB5E6000322B9 /* sqr.c */; };
+		9360C59B294CB5E8000322B9 /* and.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C576294CB5E6000322B9 /* and.c */; };
+		9360C59C294CB5E8000322B9 /* cmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C577294CB5E6000322B9 /* cmp.c */; };
+		9360C59D294CB5E8000322B9 /* add.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C578294CB5E6000322B9 /* add.c */; };
+		9360C59E294CB5E8000322B9 /* sub.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C579294CB5E6000322B9 /* sub.c */; };
+		9360C59F294CB5E8000322B9 /* bitset_funcs.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C57A294CB5E6000322B9 /* bitset_funcs.c */; };
+		9360C5A0294CB5E8000322B9 /* basic_funcs.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C57B294CB5E6000322B9 /* basic_funcs.c */; };
+		9360C5A1294CB5E8000322B9 /* modular_arithmetic.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C57C294CB5E6000322B9 /* modular_arithmetic.c */; };
+		9360C5A2294CB5E8000322B9 /* str_funcs.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C57D294CB5E6000322B9 /* str_funcs.c */; };
+		9360C5A3294CB5E8000322B9 /* number_theory.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C57E294CB5E6000322B9 /* number_theory.c */; };
+		9360C5A4294CB5E8000322B9 /* memory_manager.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C57F294CB5E6000322B9 /* memory_manager.c */; };
+		9360C5A7294CB607000322B9 /* PVPlayCore+Cheats.h in Headers */ = {isa = PBXBuildFile; fileRef = 9360C5A5294CB605000322B9 /* PVPlayCore+Cheats.h */; };
+		9360C5A8294CB607000322B9 /* PVPlayCore+Cheats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9360C5A6294CB607000322B9 /* PVPlayCore+Cheats.mm */; };
 		939B19432948B05F0024133A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 939B19422948B05F0024133A /* libsqlite3.tbd */; };
 		939B19442948B0780024133A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 939B19422948B05F0024133A /* libsqlite3.tbd */; };
 		939B194A29490A840024133A /* CGSH_MTLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939B194929490A820024133A /* CGSH_MTLViewController.swift */; };
@@ -461,6 +480,25 @@
 /* Begin PBXFileReference section */
 		9310344A29436AC2002D218C /* CGSH_Provenance_OGL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CGSH_Provenance_OGL.mm; sourceTree = "<group>"; };
 		9310345929436AC3002D218C /* CGSH_Provenance_OGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGSH_Provenance_OGL.h; sourceTree = "<group>"; };
+		9360C56E294CB5E6000322B9 /* service_funcs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = service_funcs.c; sourceTree = "<group>"; };
+		9360C570294CB5E6000322B9 /* or.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = or.c; sourceTree = "<group>"; };
+		9360C571294CB5E6000322B9 /* mul.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mul.c; sourceTree = "<group>"; };
+		9360C572294CB5E6000322B9 /* div.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = div.c; sourceTree = "<group>"; };
+		9360C573294CB5E6000322B9 /* xor.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xor.c; sourceTree = "<group>"; };
+		9360C574294CB5E6000322B9 /* andnot.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = andnot.c; sourceTree = "<group>"; };
+		9360C575294CB5E6000322B9 /* sqr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sqr.c; sourceTree = "<group>"; };
+		9360C576294CB5E6000322B9 /* and.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = and.c; sourceTree = "<group>"; };
+		9360C577294CB5E6000322B9 /* cmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cmp.c; sourceTree = "<group>"; };
+		9360C578294CB5E6000322B9 /* add.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = add.c; sourceTree = "<group>"; };
+		9360C579294CB5E6000322B9 /* sub.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sub.c; sourceTree = "<group>"; };
+		9360C57A294CB5E6000322B9 /* bitset_funcs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bitset_funcs.c; sourceTree = "<group>"; };
+		9360C57B294CB5E6000322B9 /* basic_funcs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = basic_funcs.c; sourceTree = "<group>"; };
+		9360C57C294CB5E6000322B9 /* modular_arithmetic.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = modular_arithmetic.c; sourceTree = "<group>"; };
+		9360C57D294CB5E6000322B9 /* str_funcs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = str_funcs.c; sourceTree = "<group>"; };
+		9360C57E294CB5E6000322B9 /* number_theory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = number_theory.c; sourceTree = "<group>"; };
+		9360C57F294CB5E6000322B9 /* memory_manager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = memory_manager.c; sourceTree = "<group>"; };
+		9360C5A5294CB605000322B9 /* PVPlayCore+Cheats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVPlayCore+Cheats.h"; sourceTree = "<group>"; };
+		9360C5A6294CB607000322B9 /* PVPlayCore+Cheats.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVPlayCore+Cheats.mm"; sourceTree = "<group>"; };
 		939B190D2948A59C0024133A /* GSH_VulkanPlatformDefs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GSH_VulkanPlatformDefs.h; sourceTree = "<group>"; };
 		939B19422948B05F0024133A /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.sdk/usr/lib/libsqlite3.tbd; sourceTree = DEVELOPER_DIR; };
 		939B194929490A820024133A /* CGSH_MTLViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CGSH_MTLViewController.swift; sourceTree = "<group>"; };
@@ -1746,6 +1784,39 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9360C56D294CB5E6000322B9 /* libbig_int */ = {
+			isa = PBXGroup;
+			children = (
+				9360C56E294CB5E6000322B9 /* service_funcs.c */,
+				9360C56F294CB5E6000322B9 /* low_level_funcs */,
+				9360C57A294CB5E6000322B9 /* bitset_funcs.c */,
+				9360C57B294CB5E6000322B9 /* basic_funcs.c */,
+				9360C57C294CB5E6000322B9 /* modular_arithmetic.c */,
+				9360C57D294CB5E6000322B9 /* str_funcs.c */,
+				9360C57E294CB5E6000322B9 /* number_theory.c */,
+				9360C57F294CB5E6000322B9 /* memory_manager.c */,
+			);
+			name = libbig_int;
+			path = libbig_int/libbig_int;
+			sourceTree = "<group>";
+		};
+		9360C56F294CB5E6000322B9 /* low_level_funcs */ = {
+			isa = PBXGroup;
+			children = (
+				9360C570294CB5E6000322B9 /* or.c */,
+				9360C571294CB5E6000322B9 /* mul.c */,
+				9360C572294CB5E6000322B9 /* div.c */,
+				9360C573294CB5E6000322B9 /* xor.c */,
+				9360C574294CB5E6000322B9 /* andnot.c */,
+				9360C575294CB5E6000322B9 /* sqr.c */,
+				9360C576294CB5E6000322B9 /* and.c */,
+				9360C577294CB5E6000322B9 /* cmp.c */,
+				9360C578294CB5E6000322B9 /* add.c */,
+				9360C579294CB5E6000322B9 /* sub.c */,
+			);
+			path = low_level_funcs;
+			sourceTree = "<group>";
+		};
 		B313544F26E4C4920047F338 /* Play- */ = {
 			isa = PBXGroup;
 			children = (
@@ -3887,6 +3958,9 @@
 		B3447EB5218BCE2000557ACE /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				9360C5A5294CB605000322B9 /* PVPlayCore+Cheats.h */,
+				9360C5A6294CB607000322B9 /* PVPlayCore+Cheats.mm */,
+				9360C56D294CB5E6000322B9 /* libbig_int */,
 				939B194929490A820024133A /* CGSH_MTLViewController.swift */,
 				93F5FBF32945D1B600493D4F /* PVPlayCore.swift */,
 				9310345929436AC3002D218C /* CGSH_Provenance_OGL.h */,
@@ -4004,6 +4078,7 @@
 				9310345B29436AC3002D218C /* CGSH_Provenance_OGL.h in Headers */,
 				B3A6208E2947895B00ED28E3 /* CGSH_VulkaniOS.h in Headers */,
 				B3135B9E26E4CC330047F338 /* PVPlayCore+Video.h in Headers */,
+				9360C5A7294CB607000322B9 /* PVPlayCore+Cheats.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4394,16 +4469,34 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9360C5A8294CB607000322B9 /* PVPlayCore+Cheats.mm in Sources */,
+				9360C59E294CB5E8000322B9 /* sub.c in Sources */,
+				9360C59C294CB5E8000322B9 /* cmp.c in Sources */,
+				9360C598294CB5E8000322B9 /* xor.c in Sources */,
 				B3EB8B10293F653D00BCCBAE /* PVPlayCore+Controls.mm in Sources */,
 				93F5FBF42945D1B600493D4F /* PVPlayCore.swift in Sources */,
+				9360C59B294CB5E8000322B9 /* and.c in Sources */,
+				9360C59F294CB5E8000322B9 /* bitset_funcs.c in Sources */,
+				9360C5A2294CB5E8000322B9 /* str_funcs.c in Sources */,
 				B3135BA726E4CD5A0047F338 /* PVPlayCore+Video.mm in Sources */,
+				9360C5A4294CB5E8000322B9 /* memory_manager.c in Sources */,
 				B3135BA526E4CD500047F338 /* PVPlayCore+Saves.mm in Sources */,
+				9360C5A0294CB5E8000322B9 /* basic_funcs.c in Sources */,
+				9360C5A1294CB5E8000322B9 /* modular_arithmetic.c in Sources */,
 				B351223A27843318001C4B83 /* PVPlay.mm in Sources */,
+				9360C594294CB5E7000322B9 /* service_funcs.c in Sources */,
 				B3135B9B26E4CAD40047F338 /* PVPlayCore.mm in Sources */,
 				B3A6208F2947895B00ED28E3 /* CGSH_VulkaniOS.mm in Sources */,
 				9310345A29436AC3002D218C /* CGSH_Provenance_OGL.mm in Sources */,
+				9360C597294CB5E7000322B9 /* div.c in Sources */,
 				B3135BA926E4CD600047F338 /* PVPlayCore+Audio.mm in Sources */,
+				9360C5A3294CB5E8000322B9 /* number_theory.c in Sources */,
+				9360C59A294CB5E8000322B9 /* sqr.c in Sources */,
+				9360C595294CB5E7000322B9 /* or.c in Sources */,
+				9360C599294CB5E8000322B9 /* andnot.c in Sources */,
 				939B194A29490A840024133A /* CGSH_MTLViewController.swift in Sources */,
+				9360C596294CB5E7000322B9 /* mul.c in Sources */,
+				9360C59D294CB5E8000322B9 /* add.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4710,6 +4803,7 @@
 					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
 					"\"$(SRCROOT)/../../MoltenVK/MoltenVK/include\"",
 					"\"$(SRCROOT)/Play-/deps/Nuanceur/include\"",
+					"$(SRCROOT)/PVPlayCore/Core/libbig_int/include",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVPlay/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -4927,6 +5021,7 @@
 					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
 					"\"$(SRCROOT)/../../MoltenVK/MoltenVK/include\"",
 					"\"$(SRCROOT)/Play-/deps/Nuanceur/include\"",
+					"$(SRCROOT)/PVPlayCore/Core/libbig_int/include",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVPlay/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -4977,6 +5072,7 @@
 					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
 					"\"$(SRCROOT)/../../MoltenVK/MoltenVK/include\"",
 					"\"$(SRCROOT)/Play-/deps/Nuanceur/include\"",
+					"$(SRCROOT)/PVPlayCore/Core/libbig_int/include",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVPlay/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
