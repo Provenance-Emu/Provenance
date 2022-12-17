@@ -830,12 +830,9 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                 webServerAction.isEnabled = false
             }
 
-            if let barButtonItem = sender as? UIBarButtonItem {
+            if traitCollection.userInterfaceIdiom == .pad, let barButtonItem = sender as? UIBarButtonItem {
                 actionSheet.popoverPresentationController?.barButtonItem = barButtonItem
                 actionSheet.popoverPresentationController?.sourceView = collectionView
-            } else if let button = sender as? UIButton {
-                actionSheet.popoverPresentationController?.sourceView = collectionView
-                actionSheet.popoverPresentationController?.sourceRect = view.convert(libraryInfoContainerView.convert(button.frame, to: view), to: collectionView)
             }
 
             actionSheet.preferredContentSize = CGSize(width: 300, height: 150)
