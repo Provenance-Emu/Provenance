@@ -109,6 +109,11 @@ final class PVSettingsViewController: QuickTableViewController {
                 })
                 alert.addAction(action)
             }
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: { _ in
+                if let indexPathForSelectedRow = self.tableView.indexPathForSelectedRow {
+                    self.tableView.deselectRow(at: indexPathForSelectedRow, animated: false)
+                }
+            }))
             self.present(alert, animated: true)
         })
 
