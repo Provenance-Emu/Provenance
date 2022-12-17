@@ -373,7 +373,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 	}
 
 	func vibrate() {
-#if os(iOS)
+#if os(iOS) && !targetEnvironment(macCatalyst)
 		if PVSettingsModel.shared.buttonVibration {
 				// only iPhone 7 and 7 Plus support the taptic engine APIs for now.
 				// everything else should fall back to the vibration motor.
