@@ -18,23 +18,7 @@ import RealmSwift
 import UIKit
 import RxSwift
 
-class PVQuickTableViewController: QuickTableViewController {
-
-    open override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = super.tableView(tableView, cellForRowAt: indexPath)
-
-        #if os(iOS)
-            (cell as? SliderCell)?.delegate = self
-        #else
-            cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
-            cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
-        #endif
-
-        return cell
-    }
-}
-
-final class PVSettingsViewController: PVQuickTableViewController {
+final class PVSettingsViewController: QuickTableViewController {
     // Check to see if we are connected to WiFi. Cannot continue otherwise.
     let reachability: Reachability = try! Reachability()
     var conflictsController: ConflictsController!
@@ -79,6 +63,27 @@ final class PVSettingsViewController: PVQuickTableViewController {
         reachability.stopNotifier()
     }
 
+    #if os(tvOS)
+    private var heightDictionary: [IndexPath: CGFloat] = [:]
+
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        heightDictionary[indexPath] = cell.frame.size.height
+    }
+
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        let height = heightDictionary[indexPath]
+        return height ?? UITableView.automaticDimension
+    }
+
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
+        cell.textLabel?.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.regular)
+        cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.regular)
+        cell.layer.cornerRadius = 12
+        return cell
+    }
+    #endif
+
     func generateTableViewViewModels() {
         typealias TableRow = Row & RowStyle
 
@@ -104,9 +109,14 @@ final class PVSettingsViewController: PVQuickTableViewController {
                 })
                 alert.addAction(action)
             }
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: { _ in
+                if let indexPathForSelectedRow = self.tableView.indexPathForSelectedRow {
+                    self.tableView.deselectRow(at: indexPathForSelectedRow, animated: false)
+                }
+            }))
             self.present(alert, animated: true)
         })
-        
+
         #if os(tvOS)
             let appRows: [TableRow] = [systemsRow]
         #else
@@ -168,7 +178,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
                                                footer: "Post processing filter when using Metal",
                                                key: \PVSettingsModel.metalFilter,
                                                options: shaders)
-        
+
         // -- Section : Controler
 
         var controllerRows = [TableRow]()
@@ -219,14 +229,13 @@ final class PVSettingsViewController: PVQuickTableViewController {
                 detailText: .subtitle(""),
                 key: \PVSettingsModel.webDavAlwaysOn,
                 customization: { cell, _ in
-                    if PVSettingsModel.shared.webDavAlwaysOn {
-                        let subTitleText = "WebDAV: \(PVWebServer.shared.webDavURLString)"
-                        let subTitleAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20), NSAttributedString.Key.foregroundColor: UIColor.gray]
-                        let subTitleAttrString = NSMutableAttributedString(string: subTitleText, attributes: subTitleAttributes)
-                        cell.detailTextLabel?.attributedText = subTitleAttrString
-                    } else {
-                        cell.detailTextLabel?.text = nil
-                        cell.detailTextLabel?.attributedText = nil
+                    DispatchQueue.main.async {
+                        if PVSettingsModel.shared.webDavAlwaysOn {
+                            let subTitleText = "WebDAV: \(PVWebServer.shared.webDavURLString)"
+                            cell.detailTextLabel?.text = subTitleText
+                        } else {
+                            cell.detailTextLabel?.text = nil
+                        }
                     }
                 }
             )
@@ -315,17 +324,17 @@ final class PVSettingsViewController: PVQuickTableViewController {
 //                                        swiftUI.switchValue = false
 //                                    }
                                 },
-            
+
             PVSettingsSwitchRow(text: NSLocalizedString("Movable Buttons", comment: "Bool option to allow user to move on screen controller buttons"),
 								detailText: .subtitle("Allow user to move on screen controller buttons."),
 								key: \PVSettingsModel.debugOptions.movableButtons),
-            
+
             PVSettingsSwitchRow(text: NSLocalizedString("On screen Joypad", comment: ""),
                                 detailText: .subtitle("Show a touch Joystick pad on supported systems. Layout is strange on some devices while in beta."),
                                 key: \PVSettingsModel.debugOptions.onscreenJoypad),
             PVSettingsSwitchRow(text: NSLocalizedString("On screen Joypad with keyboard", comment: ""),
                                 detailText: .subtitle("Show a touch Joystick pad on supported systems when the P1 controller is 'Keyboard'. Useful on iPad OS for systems with an analog joystick (N64, PSX, etc.)"),
-                                key: \PVSettingsModel.debugOptions.onscreenJoypadWithKeyboard),
+                                key: \PVSettingsModel.debugOptions.onscreenJoypadWithKeyboard)
         ]
         #else // tvOS
          let betaRows: [TableRow] = [
@@ -358,7 +367,7 @@ final class PVSettingsViewController: PVQuickTableViewController {
             rows: betaRows,
             footer: "Untested, unsupported, work in progress features. Use at your own risk. May result in crashes and data loss."
         )
-        
+
         // - Social links
         let discordRow = NavigationRow(
             text: NSLocalizedString("Discord", comment: ""),
@@ -463,13 +472,13 @@ final class PVSettingsViewController: PVQuickTableViewController {
                 }
             }
         )
-            
+
         let socialLinksRows = [patreonRow, discordRow, twitterRow, youTubeRow, githubRow]
         let socialLinksSection = Section(title: NSLocalizedString("Socials", comment: ""), rows: socialLinksRows)
 
         let documentationLinksRow = [blogRow, faqRow, wikiRow]
         let documentationSection = Section(title: NSLocalizedString("Documentation", comment: ""), rows: documentationLinksRow)
-        
+
         // - Build Information
 
         #if DEBUG
@@ -615,7 +624,7 @@ You will need to completely relaunch the App to start the library rebuild proces
                                       handler: nil))
         present(alert, animated: true) { () -> Void in }
     }
-    
+
     func emptyImageCacheAction() {
         tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
         let alert = UIAlertController(title: NSLocalizedString("Empty Image Cache?", comment: ""),

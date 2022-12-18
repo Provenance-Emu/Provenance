@@ -984,13 +984,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B3B3DA2228713555008A0E2F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3B3D1842871354D008A0E2F /* Emulator.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = FE1B108D235615940065200C;
-			remoteInfo = Emulator;
-		};
 		B3B3DE11287144D0008A0E2F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3C7620720783162009950E4 /* Project object */;
@@ -1072,7 +1065,6 @@
 		B3B3D17F2871354D008A0E2F /* makefile.pi */ = {isa = PBXFileReference; lastKnownFileType = text; path = makefile.pi; sourceTree = "<group>"; };
 		B3B3D1802871354D008A0E2F /* makefile.vc */ = {isa = PBXFileReference; lastKnownFileType = text; path = makefile.vc; sourceTree = "<group>"; };
 		B3B3D1812871354D008A0E2F /* makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
-		B3B3D1842871354D008A0E2F /* Emulator.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Emulator.xcodeproj; sourceTree = "<group>"; };
 		B3B3D1872871354D008A0E2F /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		B3B3D1892871354D008A0E2F /* License.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = License.rtf; sourceTree = "<group>"; };
 		B3B3D18B2871354D008A0E2F /* Defaults.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Defaults.plist; sourceTree = "<group>"; };
@@ -3648,20 +3640,11 @@
 		B3B3D1832871354D008A0E2F /* xcode */ = {
 			isa = PBXGroup;
 			children = (
-				B3B3D1842871354D008A0E2F /* Emulator.xcodeproj */,
 				B3B3D1872871354D008A0E2F /* Sparkle.framework */,
 				B3B3D1882871354D008A0E2F /* Doc */,
 				B3B3D18A2871354D008A0E2F /* Emulator */,
 			);
 			path = xcode;
-			sourceTree = "<group>";
-		};
-		B3B3D1852871354D008A0E2F /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				B3B3DA2328713555008A0E2F /* FinalBurn Neo.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		B3B3D1882871354D008A0E2F /* Doc */ = {
@@ -8341,12 +8324,6 @@
 			mainGroup = B3C7620620783162009950E4;
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = B3B3D1852871354D008A0E2F /* Products */;
-					ProjectRef = B3B3D1842871354D008A0E2F /* Emulator.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				B3C7620F20783162009950E4 /* PVFBNeo */,
@@ -8355,16 +8332,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		B3B3DA2328713555008A0E2F /* FinalBurn Neo.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = "FinalBurn Neo.app";
-			remoteRef = B3B3DA2228713555008A0E2F /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		B3C7620E20783162009950E4 /* Resources */ = {

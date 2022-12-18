@@ -93,7 +93,6 @@ extension Cheats: RealmRepresentable {
 
     public func asRealm() -> PVCheats {
         return PVCheats.build { object in
-
             object.id = id
             let realm = try! Realm()
             let rmGame = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5) ?? game.asRealm()

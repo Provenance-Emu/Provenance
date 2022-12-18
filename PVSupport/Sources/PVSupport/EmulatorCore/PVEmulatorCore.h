@@ -9,10 +9,12 @@
 #ifdef __cplusplus
 #import <Foundation/Foundation.h>
 #import <GameController/GameController.h>
+#import <MetalKit/MTKView.h>
 #else
 @import Foundation;
 #if !TARGET_OS_WATCH
 @import GameController;
+@import MetalKit.MTKView;
 #endif
 #endif
 
@@ -59,6 +61,9 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 @required
 - (void)startRenderingOnAlternateThread;
 - (void)didRenderFrameOnAlternateThread;
+
+@optional
+@property (nonatomic, nullable, readonly) MTKView* mtlview;
 @end
 
 @interface PVEmulatorCore : NSObject {

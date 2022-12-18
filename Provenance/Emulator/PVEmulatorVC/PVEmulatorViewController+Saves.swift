@@ -286,9 +286,7 @@ extension PVEmulatorViewController {
             }
         #endif
         #if os(tvOS)
-            if #available(tvOS 11, *) {
-                saveStatesNavController.modalPresentationStyle = .blurOverFullScreen
-            }
+            saveStatesNavController.modalPresentationStyle = .blurOverFullScreen
         #endif
         present(saveStatesNavController, animated: true)
     }

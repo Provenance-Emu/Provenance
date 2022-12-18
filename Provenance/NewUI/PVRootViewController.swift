@@ -10,7 +10,6 @@ import Foundation
 
 #if canImport(SwiftUI)
 #if canImport(Combine)
-import Foundation
 import UIKit
 import SwiftUI
 import RealmSwift
@@ -105,7 +104,7 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
     func closeMenu() {
         self.sideNavigationController?.closeSide()
     }
-    
+
     func determineInitialView() {
         if let console = gameLibrary.activeSystems.first {
             didTapConsole(with: console.identifier)

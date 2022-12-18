@@ -5,13 +5,11 @@ empty:=
 space:= $(empty) $(empty)
 spaceplus:= $(empty)\ $(empty)
 
-TARGETS += $(subst $(space),$(spaceplus),$(wildcard /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/libchdr/CMakeLists.txt))
-TARGETS += $(subst $(space),$(spaceplus),$(wildcard /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/CMakeLists.txt))
-TARGETS += $(subst $(space),$(spaceplus),$(wildcard /Users/jmattiello/Workspace/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/CMakeLists.txt))
-TARGETS += $(subst $(space),$(spaceplus),$(wildcard /usr/local/Cellar/cmake/3.21.1/share/cmake/Modules/FindPackageHandleStandardArgs.cmake))
-TARGETS += $(subst $(space),$(spaceplus),$(wildcard /usr/local/Cellar/cmake/3.21.1/share/cmake/Modules/FindPackageMessage.cmake))
-TARGETS += $(subst $(space),$(spaceplus),$(wildcard /usr/local/Cellar/cmake/3.21.1/share/cmake/Modules/FindPkgConfig.cmake))
-TARGETS += $(subst $(space),$(spaceplus),$(wildcard /usr/local/Cellar/cmake/3.21.1/share/cmake/Modules/GNUInstallDirs.cmake))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/CMakeLists.txt))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/lzma-19.00/CMakeLists.txt))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/deps/zlib-1.2.11/CMakeLists.txt))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/tests/CMakeLists.txt))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard /opt/homebrew/Cellar/cmake/3.25.1/share/cmake/Modules/GNUInstallDirs.cmake))
 
-/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake/CMakeFiles/cmake.check_cache: $(TARGETS)
-	/usr/local/Cellar/cmake/3.21.1/bin/cmake -H/Users/jmattiello/Workspace/Provenance/Cores/Play/Play- -B/Users/jmattiello/Workspace/Provenance/Cores/Play/cmake
+/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/CMakeFiles/cmake.check_cache: $(TARGETS)
+	/opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -H/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play- -B/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake

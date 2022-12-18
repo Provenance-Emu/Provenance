@@ -172,7 +172,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             // Setup shortcuts
             Observable.combineLatest(
                 gameLibrary.favorites.mapMany { $0.asShortcut(isFavorite: true) },
-                gameLibrary.recents.mapMany { $0.game.asShortcut(isFavorite: false) }
+                gameLibrary.recents.mapMany { $0.game?.asShortcut(isFavorite: false) }
             ) { $0 + $1 }
                 .bind(onNext: { shortcuts in
                     application.shortcutItems = shortcuts
@@ -224,7 +224,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
         return true
     }
-    
+
     func applicationWillResignActive(_: UIApplication) {}
 
     func applicationDidEnterBackground(_: UIApplication) {}

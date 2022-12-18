@@ -373,7 +373,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 	}
 
 	func vibrate() {
-#if os(iOS)
+#if os(iOS) && !targetEnvironment(macCatalyst)
 		if PVSettingsModel.shared.buttonVibration {
 				// only iPhone 7 and 7 Plus support the taptic engine APIs for now.
 				// everything else should fall back to the vibration motor.
@@ -381,7 +381,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                 feedbackGenerator?.selectionChanged()
             }
 //			} else if UIDevice.current.systemName == "iOS" {
-//#if !targetEnvironment(macCatalyst) && !os(macOS)
+// #if !targetEnvironment(macCatalyst) && !os(macOS)
 //				AudioServicesStopSystemSound(Int32(kSystemSoundID_Vibrate))
 //				let vibrationLength: Int = 30
 //				let pattern: [Any] = [false, 0, true, vibrationLength]
@@ -389,7 +389,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 //				dictionary["VibePattern"] = pattern
 //				dictionary["Intensity"] = 1
 //				AudioServicesPlaySystemSoundWithVibration(Int32(kSystemSoundID_Vibrate), nil, dictionary)
-//#endif
+// #endif
 //			}
 		}
 #endif
@@ -428,10 +428,10 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
 		volume.superview?.bringSubviewToFront(volume)
 		volume.layer.cornerRadius = volumeHeight / 2
-		volume.frame = CGRect(x: safeAreaInsets.left + volumeXPadding, y: safeAreaInsets.top + volumeYPadding, width: UIScreen.main.bounds.width - (volumeXPadding * 2) - safeAreaInsets.left - safeAreaInsets.right, height: volumeHeight)
+        volume.frame = CGRect(x: view.safeAreaInsets.left + volumeXPadding, y: view.safeAreaInsets.top + volumeYPadding, width: UIScreen.main.bounds.width - (volumeXPadding * 2) - view.safeAreaInsets.left - view.safeAreaInsets.right, height: volumeHeight)
 	}
 #endif
-    
+
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         if inMoveMode {
             inMoveMode = false
@@ -462,21 +462,13 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 		setupTouchControls()
 	}
 
-	var safeAreaInsets: UIEdgeInsets {
-		if #available(iOS 11.0, tvOS 11.0, *) {
-			return view.safeAreaInsets
-		} else {
-			return UIEdgeInsets.zero
-		}
-	}
-
 		// MARK: - Controller Position And Size Editing
 #if !os(iOS)
 	func setupTouchControls() { }
 #else
 	func setupTouchControls() {
         if inMoveMode { return }
-        
+
 		let alpha = self.alpha
 
         for control in controlLayout {
@@ -489,7 +481,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
 			if controlType == Keys.DPad {
                 if let dPad = dPad, dPad.isCustomMoved { continue }
-                
+
 				let xPadding: CGFloat = 0 // safeAreaInsets.left
 				let bottomPadding: CGFloat = 16
 				let dPadOriginY: CGFloat = min(controlOriginY - bottomPadding, view.frame.height - controlSize.height - bottomPadding)
@@ -530,16 +522,16 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                 if let dPad2 = dPad2 {
                     dPad2.isHidden = compactVertical
                 }
-                
+
                 adjustJoystick()
             } else if controlType == Keys.JoyPad, PVSettingsModel.shared.debugOptions.onscreenJoypad {
-                let xPadding: CGFloat = 0 // safeAreaInsets.left
+                let xPadding: CGFloat = 0 // view.safeAreaInsets.left
                 let bottomPadding: CGFloat = 16
                 let joyPadOriginY: CGFloat = min(controlOriginY - bottomPadding, view.frame.height - controlSize.height - bottomPadding)
                 var joyPadFrame = CGRect(x: xPadding, y: joyPadOriginY, width: controlSize.width, height: controlSize.height)
-                
+
                 joyPadFrame.origin.y += joyPadFrame.height + bottomPadding
-                
+
                 let joyPad: JSDPad = self.joyPad ?? JSDPad.JoyPad(frame: joyPadFrame)
                 if !joyPad.isCustomMoved {
                     joyPad.frame = joyPadFrame
@@ -556,7 +548,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
                 adjustJoystick()
 			} else if controlType == Keys.ButtonGroup {
-				let xPadding: CGFloat = safeAreaInsets.right + 5
+                let xPadding: CGFloat = view.safeAreaInsets.right + 5
 				let bottomPadding: CGFloat = 16
 				let buttonsOriginY: CGFloat = min(controlOriginY - bottomPadding, view.frame.height - controlSize.height - bottomPadding)
 				let buttonsFrame = CGRect(x: view.bounds.maxX - controlSize.width - xPadding, y: buttonsOriginY, width: controlSize.width, height: controlSize.height)
@@ -673,8 +665,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 #if os(iOS)
 	func layoutRightShoulderButtons(control: ControlLayoutEntry) {
 		let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
-		let xPadding: CGFloat = safeAreaInsets.right + 10
-		let yPadding: CGFloat = safeAreaInsets.bottom + 10
+        let xPadding: CGFloat = view.safeAreaInsets.right + 10
+        let yPadding: CGFloat = view.safeAreaInsets.bottom + 10
 		var rightShoulderFrame: CGRect!
 
 		if buttonGroup != nil, !(buttonGroup?.isHidden)! {
@@ -732,8 +724,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
 	func layoutZTriggerButton(control: ControlLayoutEntry) {
 		let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
-		let xPadding: CGFloat = safeAreaInsets.right + 10
-		let yPadding: CGFloat = safeAreaInsets.bottom + 10
+        let xPadding: CGFloat = view.safeAreaInsets.right + 10
+        let yPadding: CGFloat = view.safeAreaInsets.bottom + 10
 		var zTriggerFrame: CGRect!
 
 		if rightShoulderButton != nil {
@@ -768,10 +760,10 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
 	func layoutLeftShoulderButtons(control: ControlLayoutEntry) {
 		let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
-		let xPadding: CGFloat = safeAreaInsets.left + 10
-			// let yPadding: CGFloat = safeAreaInsets.top + 10
+        let xPadding: CGFloat = view.safeAreaInsets.left + 10
+			// let yPadding: CGFloat = view.safeAreaInsets.top + 10
 			// var leftShoulderFrame = CGRect(x: xPadding, y: yPadding, width: controlSize.width, height: controlSize.height)
-		let yPadding: CGFloat = safeAreaInsets.bottom + 10
+        let yPadding: CGFloat = view.safeAreaInsets.bottom + 10
 		var leftShoulderFrame: CGRect!
 		if buttonGroup != nil, !(buttonGroup?.isHidden)! {
 			leftShoulderFrame = CGRect(x: xPadding, y: (buttonGroup?.frame.minY)! - (controlSize.height * 2) - 4, width: controlSize.width, height: controlSize.height)
@@ -839,8 +831,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 	#if os(iOS)
 	func layoutSelectButton( control: ControlLayoutEntry ) {
 		let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
-		let yPadding: CGFloat = safeAreaInsets.bottom + 10
-		let xPadding: CGFloat = safeAreaInsets.left + 10
+        let yPadding: CGFloat = view.safeAreaInsets.bottom + 10
+        let xPadding: CGFloat = view.safeAreaInsets.left + 10
 		let spacing: CGFloat = 20
 		var selectFrame = CGRect(x: xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
 
@@ -892,8 +884,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
 	func layoutStartButton(control: ControlLayoutEntry) {
 		let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
-		let yPadding: CGFloat = safeAreaInsets.bottom
-		let xPadding: CGFloat = safeAreaInsets.right
+        let yPadding: CGFloat = view.safeAreaInsets.bottom
+        let xPadding: CGFloat = view.safeAreaInsets.right
 		let spacing: CGFloat = 20
 		var startFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding,
 								y: view.frame.height - yPadding - controlSize.height,
@@ -906,8 +898,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                                     y: selectButton.frame.origin.y,
                                     width: controlSize.width,
                                     height: controlSize.height)
-            }
-			else if let buttonGroup = buttonGroup {
+            } else if let buttonGroup = buttonGroup {
 				if buttonGroup.isHidden {
 					startFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
 					if gripControl {
@@ -965,8 +956,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
 	func layoutLeftAnalogButton(control: ControlLayoutEntry) {
 		let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
-		let xPadding: CGFloat = safeAreaInsets.left + 10
-		let yPadding: CGFloat = safeAreaInsets.bottom + 10
+        let xPadding: CGFloat = view.safeAreaInsets.left + 10
+        let yPadding: CGFloat = view.safeAreaInsets.bottom + 10
 		let spacing: CGFloat = 10
 		var layoutIsLandscape = false
 		var leftAnalogFrame = CGRect(x: xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
@@ -1014,8 +1005,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
 	func layoutRightAnalogButton(control: ControlLayoutEntry) {
 		let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
-		let xPadding: CGFloat = safeAreaInsets.left + 10
-		let yPadding: CGFloat = safeAreaInsets.bottom + 10
+        let xPadding: CGFloat = view.safeAreaInsets.left + 10
+        let yPadding: CGFloat = view.safeAreaInsets.bottom + 10
 		let spacing: CGFloat = 10
 		var layoutIsLandscape = false
 		var rightAnalogFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
@@ -1065,7 +1056,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         guard  let joyPad = joyPad else {
             return
         }
-        
+
 //        guard PVSettingsModel.shared.debugOptions.onscreenJoypad else {
 //            DLOG("onscreenJoypad false, hiding")
 //            joyPad.isHidden = true
@@ -1079,19 +1070,19 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 //        }
 //
 //        joyPad.isHidden = false
-        
+
         guard let dPad = dPad, !dPad.isCustomMoved, !joyPad.isCustomMoved else {
             return
         }
-        
+
         var joyPadFrame = joyPad.frame
         var dPadFrame = dPad.frame
-        
+
         let joystickOverDPad = joyPadFrame.minY <= dPadFrame.minY
-        
+
         if joystickOverDPad {
             joyPadFrame.origin.y = dPadFrame.minY - joyPadFrame.size.height
-        } else  {
+        } else {
             let overlap = (dPadFrame.maxY + joyPadFrame.height) - view.frame.height
             if overlap > 1 {
                 dPadFrame.origin.y -= overlap

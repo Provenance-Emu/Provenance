@@ -24,15 +24,6 @@ import UIKit
  Wrap long press of UIGameLibrayVC to if !pushPop available, since all that stuff will be handled in this VC
  Add UICollectionView wrapper
  */
-#if os(iOS)
-    extension UIImageView {
-        public override var ignoresInvertColors: Bool {
-            get {
-                return true
-            } set {}
-        }
-    }
-#endif
 
 // Special label that renders Countries as flag emojis when available
 final class RegionLabel: LongPressLabel {
@@ -271,11 +262,6 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
         layer.shadowOffset = CGSize(width: 2, height: 1)
         layer.shadowRadius = 4.0
         layer.shadowOpacity = 0.7
-
-        #if os(iOS)
-            // Ignore Smart Invert
-            artworkImageView.ignoresInvertColors = true
-        #endif
     }
 
     deinit {
@@ -285,16 +271,16 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
 //    override func viewWillDisappear(_ animated: Bool) {
 //        super.viewWillDisappear(animated)
 //    }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+
 #if os(iOS)
         descriptionTextView.showsVerticalScrollIndicator = true
         descriptionTextView.flashScrollIndicators()
         descriptionTextView.indicatorStyle = .white
 #endif
-        
+
 #if os(tvOS)
 #if TVOS_HAS_EDIT
         if descriptionTextView.contentSize.height > descriptionTextView.bounds.height {
@@ -415,7 +401,7 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
 
     func image(withText text: String) -> UIImage? {
         #if os(iOS)
-            let backgroundColor: UIColor = .systemBackground
+            let backgroundColor: UIColor = .systemGray5
         #else
             let backgroundColor: UIColor = UIColor(white: 0.9, alpha: 0.9)
         #endif
@@ -1035,8 +1021,6 @@ extension PVGameMoreInfoViewController {
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-
-import UIKit
 
 public final class MediaZoom: UIView, UIScrollViewDelegate {
     public lazy var imageView: UIImageView = {

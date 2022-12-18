@@ -63,6 +63,7 @@ excluded: # paths to ignore during linting. overridden byincluded.
   - fastlane
   - build
   - archive
+  - .build
 
 analyzer_rules: # Rules run by `swiftlint analyze` (experimental)
   - explicit_self

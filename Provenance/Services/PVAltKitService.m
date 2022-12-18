@@ -23,8 +23,7 @@
 }
 
 - (void)start {
-#if !DEBUG && !TARGET_IPHONE_SIMULATOR
-  if (@available(iOS 11, tvOS 11, *)) {
+#if !TARGET_IPHONE_SIMULATOR
     [[ALTServerManager sharedManager] startDiscovering];
 
     [[ALTServerManager sharedManager]
@@ -46,7 +45,6 @@
             [connection disconnect];
           }];
         }];
-  }
 #endif
 }
 

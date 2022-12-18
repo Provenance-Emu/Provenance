@@ -48,9 +48,8 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
         CheatLoadState.isFirstLoad=isFirstLoad
     }
 
-    func setCheatState(code: String, type: String, enabled: Bool, completion: @escaping CheatsCompletion) {
+    func setCheatState(code: String, type: String, codeType: String, enabled: Bool, completion: @escaping CheatsCompletion) {
         if let gameWithCheat = core.features.cheats {
-
             // convert space to +
             var regex = try! NSRegularExpression(pattern: "[^a-fA-F0-9-:+]+|[G-Z\\s]+", options: NSRegularExpression.Options.caseInsensitive)
             var range = NSRange(location: 0, length: code.count)
@@ -64,27 +63,28 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
             range = NSRange(location: 0, length: modString.count)
             modString = regex.stringByReplacingMatches(in: modString, options: [], range: range, withTemplate: "+")
             NSLog("Formatted CheatCode \(modString)")
-
-            if (gameWithCheat.setCheat(code: modString, type:type, enabled:enabled)) {
+            if (gameWithCheat.setCheat(code: modString, type:type, codeType: codeType, enabled:enabled)) {
                 DLOG("Succeeded applying cheat: \(modString) \(type) \(enabled)")
                 let realm = try! Realm()
                 guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: self.core.coreIdentifier) else {
                     completion(.error(.noCoreFound(self.core.coreIdentifier ?? "nil")))
                     return
                 }
-
                 do {
                     let baseFilename = "\(game.md5Hash).\(Date().timeIntervalSinceReferenceDate)"
-
                     let saveURL = saveStatePath.appendingPathComponent("\(baseFilename).svc", isDirectory: false)
                     let saveFile = PVFile(withURL: saveURL, relativeRoot: .iCloud)
+                    var saveType = type;
+                    /* In order to avoid modifying realm schema the codeType is added in the
+                       type field next to cheat code name with -~- separator */
+                    if codeType.count > 0 {
+                        saveType += "-~-" + codeType
+                    }
                     var cheatsState: PVCheats!
-
                     try realm.write {
-                        cheatsState = PVCheats(withGame: self.game, core: core, code: modString, type: type, enabled: enabled, file: saveFile)
+                        cheatsState = PVCheats(withGame: self.game, core: core, code: modString, type: saveType, enabled: enabled, file: saveFile)
                         realm.add(cheatsState)
                     }
-
                     LibrarySerializer.storeMetadata(cheatsState, completion: { result in
                         switch result {
                         case let .success(url):
@@ -120,11 +120,13 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
     func cheatsViewControllerCreateNewState(_ cheatsViewController: PVCheatsViewController,
         code: String,
         type: String,
+        codeType: String,
         enabled: Bool,
         completion: @escaping CheatsCompletion) {
         setCheatState(
             code: code,
             type: type,
+            codeType: codeType,
             enabled: enabled,
             completion: completion
         )
@@ -133,8 +135,14 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
     func cheatsViewControllerUpdateState(_: Any, cheat: PVCheats,
         completion: @escaping CheatsCompletion) {
         if let gameWithCheat = core.features.cheats {
-            if gameWithCheat.setCheat(code: cheat.code, type:cheat.type, enabled:cheat.enabled) {
-
+            var cheatType = cheat.type ?? ""
+            var codeType = ""
+            if cheatType.contains("-~-") {
+                let types = cheatType.components(separatedBy: "-~-")
+                cheatType = types[0]
+                codeType = types[1]
+            }
+            if gameWithCheat.setCheat(code: cheat.code, type:cheatType, codeType: codeType, enabled:cheat.enabled) {
                 ILOG("Succeeded applying cheat: \(cheat.code ?? "null") \(cheat.type ?? "null") \(cheat.enabled)")
                 completion(.success)
             } else {
@@ -170,10 +178,43 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
             }
         #endif
         #if os(tvOS)
-            if #available(tvOS 11, *) {
-                cheatsNavController.modalPresentationStyle = .blurOverFullScreen
-            }
+            cheatsNavController.modalPresentationStyle = .blurOverFullScreen
         #endif
         present(cheatsNavController, animated: true)
+    }
+
+    @objc func getCheatTypes() -> NSArray {
+        if let gameWithCheat = core as? GameWithCheat {
+            return gameWithCheat.cheatCodeTypes();
+        }
+        return [];
+    }
+}
+
+@objc extension PVEmulatorCore {
+    /* This is now an optional function */
+    @objc public func setCheat(
+        code: String,
+        type: String,
+        enabled: Bool
+    ) -> Bool {
+        return true
+    }
+    @objc public func supportsCheatCode() -> Bool
+    {
+        return false
+    }
+    /* This is list of cheat code types (will be passed to codeType) */
+    @objc public func cheatCodeTypes() -> NSArray {
+        return [];
+    }
+    /* This is always called, with blank codeType if none is provided */
+    @objc public func setCheat(
+        code: String,
+        type: String,
+        codeType: String,
+        enabled: Bool
+    ) -> Bool {
+        return self.setCheat(code: code, type: type, enabled: enabled)
     }
 }

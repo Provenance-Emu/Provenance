@@ -114,7 +114,7 @@ public final class GameImporter {
     internal func isCDROM(_ romFile: ImportCandidateFile) -> Bool {
         let cdExtensions = PVEmulatorConfiguration.supportedCDFileExtensions
         let ext = romFile.filePath.pathExtension
-
+        if ext.lowercased() == "chd" { return false }
         return cdExtensions.contains(ext)
     }
 
@@ -642,7 +642,7 @@ public extension GameImporter {
             return nil
         }
         #else
-        let coverArtScaledData = coverArtScaledImage.jpegData(compressionQuality: 0.85) 
+        let coverArtScaledData = coverArtScaledImage.jpegData(compressionQuality: 0.85)
         #endif
         // Hash the image and save to cache
         let hash: String = (coverArtScaledData as NSData).md5Hash
@@ -1000,7 +1000,7 @@ public extension GameImporter {
 
                 if let gameDescription = chosenResult["gameDescription"] as? String, !gameDescription.isEmpty, overwrite || game.gameDescription == nil {
                     let options = [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html]
-                    let htmlDecodedGameDescription = try! NSMutableAttributedString(data: gameDescription.data(using: .utf8)!, options: options, documentAttributes: nil)
+                    let htmlDecodedGameDescription = try! NSMutableAttributedString(data: gameDescription.data(using: .isoLatin1)!, options: options, documentAttributes: nil)
                     game.gameDescription = htmlDecodedGameDescription.string.replacingOccurrences(of: "(\\.|\\!|\\?)([A-Z][A-Za-z\\s]{2,})", with: "$1\n\n$2", options: .regularExpression)
                 }
 
@@ -1081,7 +1081,7 @@ public extension GameImporter {
 
         return try searchDatabase(usingKey: key, value: value, systemID: systemIDInt)
     }
-    
+
     // TODO: This was a quick copy of the general version for filenames specifically
     func searchDatabase(usingFilename filename: String, systemID: String) throws -> [[String: NSObject]]? {
         guard let systemIDInt = PVEmulatorConfiguration.databaseID(forSystemID: systemID) else {
@@ -1104,7 +1104,7 @@ public extension GameImporter {
         let likeQuery = "SELECT DISTINCT romFileName, " + properties + ", systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE 'releaseTitleName' LIKE \"%%%@%%\" AND systemID IN (%@) ORDER BY case when 'releaseTitleName' LIKE \"%@%%\" then 1 else 0 end DESC"
         let dbSystemID: String = systemIDs.compactMap { "\($0)" }.joined(separator: ",")
         let queryString = String(format: likeQuery, filename, dbSystemID, filename)
-      
+
         let results: [Any]?
 
         do {
@@ -1132,7 +1132,7 @@ public extension GameImporter {
             let likeQuery = "SELECT DISTINCT romFileName, " + properties + ", systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE 'releaseTitleName' LIKE \"%%%@%%\" ORDER BY case when 'releaseTitleName' LIKE \"%@%%\" then 1 else 0 end DESC"
             queryString = String(format: likeQuery, filename, filename)
         }
-      
+
         let results: [Any]?
 
         do {
@@ -1148,7 +1148,7 @@ public extension GameImporter {
             return nil
         }
     }
-    
+
     func searchDatabase(usingKey key: String, value: String, systemID: Int? = nil) throws -> [[String: NSObject]]? {
         var results: [Any]?
 
@@ -1393,12 +1393,12 @@ extension GameImporter {
                     ELOG("finishedArtworkHandler == nil")
                 }
             }
-            
+
             if let error = error {
                 ELOG("Network error: \(error.localizedDescription)")
                 return
             }
-            
+
             guard let data = dataMaybe, let urlResponse = urlResponseMaybe as? HTTPURLResponse else {
                 ELOG("No response or data")
                 return
@@ -1559,20 +1559,20 @@ extension GameImporter {
             // Any results of MD5 match?
             var results: [[String: NSObject]]?
             // TODO: Would be better performance to search EVERY system MD5 in a single query? Need to rewrite searchDatabase for an array of systemIDs
-            
+
             // Wait, why are we even looking at MD5, shouldn't it be filename? testing that @JoeMatt 11/27/22
-            
+
             // New code, 11/22, check by filename being close to release name first
             let filename = candidateFile.filePath.deletingPathExtension().lastPathComponent
             DLOG("Will search for filename \(filename) in possible systems by extension.")
-            
+
             // TODO: test if search by name works
             #if false
             // TODO: test if search by system array works
             results =  try? self.searchDatabase(usingFilename: filename, systemIDs: [systemsForExtension])
             #else
             for currentSystem: String in systemsForExtension {
-                if let gotit = try? self.searchDatabase(usingFilename: filename, systemID: currentSystem){
+                if let gotit = try? self.searchDatabase(usingFilename: filename, systemID: currentSystem) {
                     foundSystemIDMaybe = currentSystem
                     results = gotit
                     DLOG("Got it by filename: \(gotit.debugDescription)")

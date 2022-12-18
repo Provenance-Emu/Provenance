@@ -23,18 +23,18 @@ public enum ScreenTypeObjC: UInt, CaseIterable, Codable {
         default: return false
         }
     }
-    
+
     var isCRT: Bool {
         return self == .crt
     }
-    
+
     var isMonoChromatic: Bool {
         switch self {
         case .monochromaticLCD, .dotMatrix: return true
         default: return false
         }
     }
-    
+
     public init(screenType: ScreenType) {
         switch screenType {
         case .unknown: self = .unknown
@@ -54,29 +54,29 @@ public enum ScreenType: String, CaseIterable, Codable {
     case crt = "CRT"
     case modern = "Modern"
     case dotMatrix = "DotMatrix"
-    
+
     var isLCD: Bool {
         switch self {
         case .monochromaticLCD, .colorLCD: return true
         default: return false
         }
     }
-    
+
     var isCRT: Bool {
         return self == .crt
     }
-    
+
     var isMonoChromatic: Bool {
         switch self {
         case .monochromaticLCD, .dotMatrix: return true
         default: return false
         }
     }
-    
+
     var objcType: ScreenTypeObjC {
         return .init(screenType: self)
     }
-    
+
     public init(screenType: ScreenTypeObjC) {
         switch screenType {
         case .unknown: self = .unknown

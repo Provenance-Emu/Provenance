@@ -58,7 +58,6 @@
     
 }
 
-@property (nonatomic, strong) MTKView *mtlview;
 @property (nonatomic, strong) id<MTLDevice> device;
 @property (nonatomic, strong) id<MTLCommandQueue> commandQueue;
 @property (nonatomic, strong) id<MTLRenderPipelineState> blitPipeline;
@@ -302,11 +301,8 @@ PV_OBJC_DIRECT_MEMBERS
 {
     [super viewDidLayoutSubviews];
 
-    UIEdgeInsets parentSafeAreaInsets = UIEdgeInsetsZero;
-    if (@available(iOS 11.0, tvOS 11.0, macOS 11.0, macCatalyst 11.0, *)) {
-        parentSafeAreaInsets = self.parentViewController.view.safeAreaInsets;
-    }
-    
+    UIEdgeInsets parentSafeAreaInsets = self.parentViewController.view.safeAreaInsets;
+
     if (!CGRectIsEmpty([self.emulatorCore screenRect]))
     {
         CGSize aspectSize = [self.emulatorCore aspectSize];

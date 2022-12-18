@@ -42,14 +42,14 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     var batterySavesPath: URL { return PVEmulatorConfiguration.batterySavesPath(forGame: game) }
     var BIOSPath: URL { return PVEmulatorConfiguration.biosPath(forGame: game) }
     var menuButton: MenuButton?
-    
+
 	let use_metal: Bool = PVSettingsModel.shared.debugOptions.useMetal
     private(set) lazy var gpuViewController: PVGPUViewController = use_metal ? PVMetalViewController(emulatorCore: core) : PVGLViewController(emulatorCore: core)
     private(set) lazy var controllerViewController: (UIViewController & StartSelectDelegate)? = {
         let controller = PVCoreFactory.controllerViewController(forSystem: game.system, core: core)
         return controller
     }()
-    
+
     var audioInited: Bool = false
     private(set) lazy var gameAudio: OEGameAudio = {
         audioInited = true
@@ -82,7 +82,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         self.game = game
 
         core.screenType = game.system.screenType.rawValue
-        
+
         super.init(nibName: nil, bundle: nil)
 
         staticSelf = self
@@ -330,7 +330,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         //			presentingViewController?.presentError("File doesn't exist at path \(romPath.absoluteString)")
         //			return
         //		}
-        
+
         do {
             try core.loadFile(atPath: romPath.path)
         } catch {
@@ -390,7 +390,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         gameAudio.volume = PVSettingsModel.shared.volume
         gameAudio.outputDeviceID = 0
         gameAudio.start()
-        
+
         core.startEmulation {
             ILOG("Started emulating")
         }
@@ -419,9 +419,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
         #if os(iOS)
             setNeedsUpdateOfHomeIndicatorAutoHidden()
-
-            // Ignore Smart Invert
-            view.ignoresInvertColors = true
         #endif
 
         if PVSettingsModel.shared.timedAutoSaves {
@@ -480,16 +477,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         }
     #endif
 
-    #if os(iOS)
-        var safeAreaInsets: UIEdgeInsets {
-            if #available(iOS 11.0, tvOS 11.0, *) {
-                return view.safeAreaInsets
-            } else {
-                return UIEdgeInsets.zero
-            }
-        }
-    #endif
-
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         #if os(iOS)
@@ -503,7 +490,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
                 let height: CGFloat = 42
                 let width: CGFloat = 42
                 menuButton.imageView?.contentMode = .center
-                let frame = CGRect(x: safeAreaInsets.left + 10, y: safeAreaInsets.top + 5, width: width, height: height)
+                let frame = CGRect(x: view.safeAreaInsets.left + 10, y: view.safeAreaInsets.top + 5, width: width, height: height)
                 menuButton.frame = frame
             }
         }

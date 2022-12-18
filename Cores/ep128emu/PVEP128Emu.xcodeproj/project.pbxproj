@@ -124,7 +124,6 @@
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
 		B35E6BF4207CD2740040709A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
-		B37021F9287253B200B3F6DA /* PVEP128Emu.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = PVEP128Emu.xcodeproj; sourceTree = "<group>"; };
 		B37022BD287253B300B3F6DA /* PVEP128Emu-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVEP128Emu-Prefix.pch"; sourceTree = "<group>"; };
 		B37022BF287253B300B3F6DA /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B37022C0287253B300B3F6DA /* PVEP128Emu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVEP128Emu.h; sourceTree = "<group>"; };
@@ -370,11 +369,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		B37021FA287253B200B3F6DA /* Products */ = {
-			isa = PBXGroup;
-			name = Products;
-			sourceTree = "<group>";
-		};
 		B37022BE287253B300B3F6DA /* PVEP128Emu */ = {
 			isa = PBXGroup;
 			children = (
@@ -403,7 +397,6 @@
 				B37022C3287253B300B3F6DA /* PVEP128Emu.h */,
 				B37022BD287253B300B3F6DA /* PVEP128Emu-Prefix.pch */,
 				B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */,
-				B37021F9287253B200B3F6DA /* PVEP128Emu.xcodeproj */,
 				B3C7621B20783242009950E4 /* Frameworks */,
 				B3C7621120783162009950E4 /* Products */,
 			);
@@ -806,12 +799,6 @@
 			mainGroup = B3C7620620783162009950E4;
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = B37021FA287253B200B3F6DA /* Products */;
-					ProjectRef = B37021F9287253B200B3F6DA /* PVEP128Emu.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				B3C7620F20783162009950E4 /* PVEP128Emu */,

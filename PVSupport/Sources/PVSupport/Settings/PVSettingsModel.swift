@@ -233,7 +233,7 @@ extension MirroredSettings {
         @objc public dynamic var useMetal = false
         #endif
         #if os(macOS) || targetEnvironment(macCatalyst)
-        @objc public dynamic var useSwiftUI = true
+        @objc public dynamic var useSwiftUI = false
         #else
         @objc public dynamic var useSwiftUI = false
         #endif

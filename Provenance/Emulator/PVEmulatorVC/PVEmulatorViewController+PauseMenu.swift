@@ -34,7 +34,7 @@ extension PVEmulatorViewController {
             actionSheet.popoverPresentationController?.sourceRect = menuButton.bounds
         }
 #endif
-        
+
         if PVControllerManager.shared.iCadeController != nil {
             actionSheet.addAction(UIAlertAction(title: "Disconnect iCade", style: .default, handler: { action in
                 NotificationCenter.default.post(name: .GCControllerDidDisconnect, object: PVControllerManager.shared.iCadeController)

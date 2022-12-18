@@ -493,7 +493,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                 collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
             ])
         #endif
-        
+
         // Force touch
         #if os(iOS)
             registerForPreviewing(with: self, sourceView: collectionView)
@@ -830,12 +830,9 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                 webServerAction.isEnabled = false
             }
 
-            if let barButtonItem = sender as? UIBarButtonItem {
+            if traitCollection.userInterfaceIdiom == .pad, let barButtonItem = sender as? UIBarButtonItem {
                 actionSheet.popoverPresentationController?.barButtonItem = barButtonItem
                 actionSheet.popoverPresentationController?.sourceView = collectionView
-            } else if let button = sender as? UIButton {
-                actionSheet.popoverPresentationController?.sourceView = collectionView
-                actionSheet.popoverPresentationController?.sourceRect = view.convert(libraryInfoContainerView.convert(button.frame, to: view), to: collectionView)
             }
 
             actionSheet.preferredContentSize = CGSize(width: 300, height: 150)
@@ -1119,9 +1116,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                 }
                 #endif
                 #if os(tvOS)
-                if #available(tvOS 11, *) {
-                    saveStatesNavController.modalPresentationStyle = .blurOverFullScreen
-                }
+                saveStatesNavController.modalPresentationStyle = .blurOverFullScreen
                 #endif
                 self.present(saveStatesNavController, animated: true)
             }))
@@ -1578,7 +1573,7 @@ extension PVGameLibraryViewController: UITableViewDelegate {
             case 4:
                 cell.textLabel?.text = "Show Large Game Artwork"
                 cell.accessoryType = PVSettingsModel.shared.largeGameArt ? .checkmark : .none
-            #endif            
+            #endif
 	    default:
                 fatalError("Invalid row")
             }
@@ -1610,7 +1605,7 @@ extension PVGameLibraryViewController: UITableViewDelegate {
 	    #if os(tvOS)
             case 4:
                 PVSettingsModel.shared.largeGameArt = !PVSettingsModel.shared.largeGameArt
-            #endif            
+            #endif
 	    default:
                 fatalError("Invalid row")
             }
@@ -1660,36 +1655,46 @@ extension PVGameLibraryViewController {
             for (i, section) in dataSource.sectionModels.enumerated() {
                 let input = "\(i)"
                 let title = section.header
-                let command = UIKeyCommand(input: input, modifierFlags: flags, action: #selector(PVGameLibraryViewController.selectSection(_:)), discoverabilityTitle: title)
+                #if os(tvOS)
+                    let command = UIKeyCommand(input: input, modifierFlags: flags, action: #selector(PVGameLibraryViewController.selectSection(_:)))
+                    command.discoverabilityTitle = title
+                #elseif os(iOS)
+                    let command = UIKeyCommand(title: title, action: #selector(PVGameLibraryViewController.selectSection(_:)), input: input, modifierFlags: flags)
+                #endif
                 sectionCommands.append(command)
             }
         }
 
         #if os(tvOS)
             if focusedGame != nil {
-                let toggleFavoriteCommand = UIKeyCommand(input: "=", modifierFlags: flags, action: #selector(PVGameLibraryViewController.toggleFavoriteCommand), discoverabilityTitle: "Toggle Favorite")
+                let toggleFavoriteCommand = UIKeyCommand(input: "=", modifierFlags: flags, action: #selector(PVGameLibraryViewController.toggleFavoriteCommand))
+                toggleFavoriteCommand.discoverabilityTitle = "Toggle Favorite"
                 sectionCommands.append(toggleFavoriteCommand)
 
-                let showMoreInfo = UIKeyCommand(input: "i", modifierFlags: flags, action: #selector(PVGameLibraryViewController.showMoreInfoCommand), discoverabilityTitle: "More info…")
+                let showMoreInfo = UIKeyCommand(input: "i", modifierFlags: flags, action: #selector(PVGameLibraryViewController.showMoreInfoCommand))
+                showMoreInfo.discoverabilityTitle = "More info…"
                 sectionCommands.append(showMoreInfo)
 
-                let renameCommand = UIKeyCommand(input: "r", modifierFlags: flags, action: #selector(PVGameLibraryViewController.renameCommand), discoverabilityTitle: "Rename…")
+                let renameCommand = UIKeyCommand(input: "r", modifierFlags: flags, action: #selector(PVGameLibraryViewController.renameCommand))
+                renameCommand.discoverabilityTitle = "Rename…"
                 sectionCommands.append(renameCommand)
 
-                let deleteCommand = UIKeyCommand(input: "x", modifierFlags: flags, action: #selector(PVGameLibraryViewController.deleteCommand), discoverabilityTitle: "Delete…")
+                let deleteCommand = UIKeyCommand(input: "x", modifierFlags: flags, action: #selector(PVGameLibraryViewController.deleteCommand))
+                deleteCommand.discoverabilityTitle = "Delete…"
                 sectionCommands.append(deleteCommand)
 
-                let sortCommand = UIKeyCommand(input: "s", modifierFlags: flags, action: #selector(PVGameLibraryViewController.sortButtonTapped(_:)), discoverabilityTitle: "Sorting")
+                let sortCommand = UIKeyCommand(input: "s", modifierFlags: flags, action: #selector(PVGameLibraryViewController.sortButtonTapped(_:)))
+                sortCommand.discoverabilityTitle = "Sorting"
                 sectionCommands.append(sortCommand)
             }
         #elseif os(iOS)
-            let findCommand = UIKeyCommand(input: "f", modifierFlags: flags, action: #selector(PVGameLibraryViewController.selectSearch(_:)), discoverabilityTitle: "Find…")
+            let findCommand = UIKeyCommand(title: "Find…", action: #selector(PVGameLibraryViewController.selectSearch(_:)), input: "f", modifierFlags: flags)
             sectionCommands.append(findCommand)
 
-            let sortCommand = UIKeyCommand(input: "s", modifierFlags: flags, action: #selector(PVGameLibraryViewController.sortButtonTapped(_:)), discoverabilityTitle: "Sorting")
+            let sortCommand = UIKeyCommand(title: "Sorting", action: #selector(PVGameLibraryViewController.sortButtonTapped(_:)), input: "s", modifierFlags: flags)
             sectionCommands.append(sortCommand)
-
-            let settingsCommand = UIKeyCommand(input: ",", modifierFlags: flags, action: #selector(PVGameLibraryViewController.settingsCommand), discoverabilityTitle: "Settings")
+        
+            let settingsCommand = UIKeyCommand(title: "Settings", action: #selector(PVGameLibraryViewController.settingsCommand), input: ",", modifierFlags: flags)
             sectionCommands.append(settingsCommand)
         #endif
 
@@ -1699,6 +1704,7 @@ extension PVGameLibraryViewController {
     @objc func selectSearch(_: UIKeyCommand) {
 		#if os(iOS)
 		navigationItem.searchController?.isActive = true
+        navigationItem.searchController?.searchBar.becomeFirstResponder()
 		#endif
     }
 
@@ -1711,7 +1717,7 @@ extension PVGameLibraryViewController {
     override var canBecomeFirstResponder: Bool {
         return true
     }
-    
+
     override func traitCollectionDidChange(_: UITraitCollection?) {
         #if os(iOS)
             viewDidLoad()
@@ -1926,7 +1932,7 @@ extension PVGameLibraryViewController: ControllerButtonPress {
     // just hilight (with a cheesy overlay) the item
     private func select(_ indexPath:IndexPath?) {
 
-        guard var indexPath = indexPath else {
+        guard var indexPath = indexPath, collectionView!.numberOfSections > 0 else {
             _selectedIndexPath = nil
             _selectedIndexPathView?.frame = .zero
             return
