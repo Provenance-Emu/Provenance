@@ -6763,7 +6763,7 @@
 				INFOPLIST_FILE = Extensions/WidgetExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = WidgetExtension;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -6814,7 +6814,7 @@
 				INFOPLIST_FILE = Extensions/WidgetExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = WidgetExtension;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -6864,7 +6864,7 @@
 				INFOPLIST_FILE = Extensions/WidgetExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = WidgetExtension;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
