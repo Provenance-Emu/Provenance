@@ -704,29 +704,19 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         discCountLabel = UILabel(frame: CGRect(x: 0, y: 0, width: dccWidth, height: dccWidth))
         discCountContainerView?.addSubview(discCountLabel!)
 
-//        if #available(iOS 9.0, tvOS 9.0, *) {
-            discCountContainerView?.translatesAutoresizingMaskIntoConstraints = false
-            discCountLabel?.translatesAutoresizingMaskIntoConstraints = false
+        discCountContainerView?.translatesAutoresizingMaskIntoConstraints = false
+        discCountLabel?.translatesAutoresizingMaskIntoConstraints = false
 
-            discCountContainerView?.trailingAnchor.constraint(equalTo: imageView.trailingAnchor).isActive = true
-            discCountContainerView?.bottomAnchor.constraint(equalTo: imageView.bottomAnchor).isActive = true
-            discCountContainerView?.widthAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: 0.25, constant: 0).isActive = true
-            discCountContainerView?.heightAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: 0.25, constant: 0).isActive = true
+        discCountContainerView?.trailingAnchor.constraint(equalTo: imageView.trailingAnchor).isActive = true
+        discCountContainerView?.bottomAnchor.constraint(equalTo: imageView.bottomAnchor).isActive = true
+        discCountContainerView?.widthAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: 0.25, constant: 0).isActive = true
+        discCountContainerView?.heightAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: 0.25, constant: 0).isActive = true
 
-            discCountLabel?.centerXAnchor.constraint(equalTo: discCountContainerView!.centerXAnchor).isActive = true
-            discCountLabel?.centerYAnchor.constraint(equalTo: discCountContainerView!.centerYAnchor).isActive = true
-            discCountLabel?.widthAnchor.constraint(equalTo: discCountContainerView!.widthAnchor, multiplier: 1, constant: -16).isActive = true
-            discCountLabel?.heightAnchor.constraint(equalTo: discCountContainerView!.heightAnchor, multiplier: 0.75, constant: 0).isActive = true
-//        } else {
-//            // TODO: iOS 8 layout, or just hide them?
-//            discCountContainerView?.isHidden = true
-//
-//            titleLabel.translatesAutoresizingMaskIntoConstraints = false
-//            NSLayoutConstraint(item: titleLabel, attribute: .leading, relatedBy: .equal, toItem: imageView, attribute: .leadingMargin, multiplier: 1.0, constant: 8.0).isActive = true
-//            NSLayoutConstraint(item: titleLabel, attribute: .trailing, relatedBy: .equal, toItem: imageView, attribute: .trailingMargin, multiplier: 1.0, constant: 8.0).isActive = true
-//            NSLayoutConstraint(item: titleLabel, attribute: .top, relatedBy: .equal, toItem: imageView, attribute: .bottom, multiplier: 1.0, constant: 5.0).isActive = true
-//            NSLayoutConstraint(item: titleLabel, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1.0, constant: LabelHeight).isActive = true
-//        }
+        discCountLabel?.centerXAnchor.constraint(equalTo: discCountContainerView!.centerXAnchor).isActive = true
+        discCountLabel?.centerYAnchor.constraint(equalTo: discCountContainerView!.centerYAnchor).isActive = true
+        discCountLabel?.widthAnchor.constraint(equalTo: discCountContainerView!.widthAnchor, multiplier: 1, constant: -16).isActive = true
+        discCountLabel?.heightAnchor.constraint(equalTo: discCountContainerView!.heightAnchor, multiplier: 0.75, constant: 0).isActive = true
+
         imageView.frame = imageFrame
         titleLabel.frame = titleFrame
     }
