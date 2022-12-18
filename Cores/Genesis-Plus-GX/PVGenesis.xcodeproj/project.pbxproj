@@ -280,7 +280,6 @@
 		1ACEA8D517F75B8A0031B1C9 /* error.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = error.h; sourceTree = "<group>"; };
 		1ACEA8D717F75B8A0031B1C9 /* fileio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fileio.h; sourceTree = "<group>"; };
 		1ACEA8D817F75B8A0031B1C9 /* osd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = osd.h; sourceTree = "<group>"; };
-		B324C63321920D5C009F4EDC /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B324C63521920D6D009F4EDC /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B326758227B1C5BB0033C5D1 /* GenesisOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenesisOptions.swift; sourceTree = "<group>"; };
 		B3547B562058589900CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
@@ -901,7 +900,6 @@
 			isa = PBXGroup;
 			children = (
 				B324C63521920D6D009F4EDC /* PVSupport.framework */,
-				B324C63321920D5C009F4EDC /* PVSupport.framework */,
 				B3A9F41F1DE7EB67008450F5 /* libz.tbd */,
 				1ACEA6E117F751590031B1C9 /* CoreGraphics.framework */,
 				1ACEA6DD17F751380031B1C9 /* AudioToolbox.framework */,
