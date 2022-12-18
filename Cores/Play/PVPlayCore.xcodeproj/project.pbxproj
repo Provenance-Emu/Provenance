@@ -40,7 +40,6 @@
 		9360C5A2294CB5E8000322B9 /* str_funcs.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C57D294CB5E6000322B9 /* str_funcs.c */; };
 		9360C5A3294CB5E8000322B9 /* number_theory.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C57E294CB5E6000322B9 /* number_theory.c */; };
 		9360C5A4294CB5E8000322B9 /* memory_manager.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C57F294CB5E6000322B9 /* memory_manager.c */; };
-		9360C5A7294CB607000322B9 /* PVPlayCore+Cheats.h in Headers */ = {isa = PBXBuildFile; fileRef = 9360C5A5294CB605000322B9 /* PVPlayCore+Cheats.h */; };
 		9360C5A8294CB607000322B9 /* PVPlayCore+Cheats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9360C5A6294CB607000322B9 /* PVPlayCore+Cheats.mm */; };
 		939B19432948B05F0024133A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 939B19422948B05F0024133A /* libsqlite3.tbd */; };
 		939B19442948B0780024133A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 939B19422948B05F0024133A /* libsqlite3.tbd */; };
@@ -497,7 +496,6 @@
 		9360C57D294CB5E6000322B9 /* str_funcs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = str_funcs.c; sourceTree = "<group>"; };
 		9360C57E294CB5E6000322B9 /* number_theory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = number_theory.c; sourceTree = "<group>"; };
 		9360C57F294CB5E6000322B9 /* memory_manager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = memory_manager.c; sourceTree = "<group>"; };
-		9360C5A5294CB605000322B9 /* PVPlayCore+Cheats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVPlayCore+Cheats.h"; sourceTree = "<group>"; };
 		9360C5A6294CB607000322B9 /* PVPlayCore+Cheats.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVPlayCore+Cheats.mm"; sourceTree = "<group>"; };
 		939B190D2948A59C0024133A /* GSH_VulkanPlatformDefs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GSH_VulkanPlatformDefs.h; sourceTree = "<group>"; };
 		939B19422948B05F0024133A /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.sdk/usr/lib/libsqlite3.tbd; sourceTree = DEVELOPER_DIR; };
@@ -3958,8 +3956,6 @@
 		B3447EB5218BCE2000557ACE /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				9360C5A5294CB605000322B9 /* PVPlayCore+Cheats.h */,
-				9360C5A6294CB607000322B9 /* PVPlayCore+Cheats.mm */,
 				9360C56D294CB5E6000322B9 /* libbig_int */,
 				939B194929490A820024133A /* CGSH_MTLViewController.swift */,
 				93F5FBF32945D1B600493D4F /* PVPlayCore.swift */,
@@ -3977,6 +3973,7 @@
 				B3447EAA218BC59D00557ACE /* PVPlayCore+Saves.mm */,
 				B3447E96218B809200557ACE /* PVPlayCore+Controls.h */,
 				B3447E97218B809300557ACE /* PVPlayCore+Controls.mm */,
+				9360C5A6294CB607000322B9 /* PVPlayCore+Cheats.mm */,
 				939B190D2948A59C0024133A /* GSH_VulkanPlatformDefs.h */,
 			);
 			path = Core;
@@ -4078,7 +4075,6 @@
 				9310345B29436AC3002D218C /* CGSH_Provenance_OGL.h in Headers */,
 				B3A6208E2947895B00ED28E3 /* CGSH_VulkaniOS.h in Headers */,
 				B3135B9E26E4CC330047F338 /* PVPlayCore+Video.h in Headers */,
-				9360C5A7294CB607000322B9 /* PVPlayCore+Cheats.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

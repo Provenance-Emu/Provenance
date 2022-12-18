@@ -18,7 +18,7 @@ extern CPS2VM *_ps2VM;
 @implementation PVPlayCore (Cheats)
 
 #pragma mark - Cheats
-- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType: (NSString *)codeType setEnabled:(BOOL)enabled  error:(NSError**)error {
+- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType: (NSString *)codeType setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled  error:(NSError**)error {
 	if (code && type && enabled) {
 		ELOG(@"Applying Cheat Code %s %s %d\n", code.UTF8String, type.UTF8String, enabled);
 		NSArray *multipleCodes = [code componentsSeparatedByString:@"+"];
@@ -44,8 +44,8 @@ extern CPS2VM *_ps2VM;
 		if ([codeType isEqualToString:@"Code Breaker"]) {
 			ELOG(@"Processing Code Breaker Decryption of Codes\n");
 			CBBatchDecrypt(&cheat);
-		} else if ([codeType isEqualToString:@"Game Genie"]) {
-			ELOG(@"Processing Code Game Genie Decryption of Codes\n");
+		} else if ([codeType isEqualToString:@"Game Shark V3"]) {
+			ELOG(@"Processing Code Game Shark Decryption of Codes\n");
 			gs3BatchDecrypt(&cheat);
 		} else if ([codeType isEqualToString:@"Pro Action Replay V1" ]) {
 			ELOG(@"Processing Code ARV1 of Codes\n");
@@ -54,9 +54,9 @@ extern CPS2VM *_ps2VM;
 			ELOG(@"Processing Code ARV2 of Codes\n");
 			ar2BatchDecrypt(&cheat);
 		} else {
-			ELOG(@"Processing Code RAW Codes\n");
+			ELOG(@"Processing RAW Codes\n");
 		}
-		ELOG(@"Decrypted %d Cheqts\n", cheat.codecnt);
+		ELOG(@"Decrypted %d Cheats\n", cheat.codecnt);
 		for (int i=0; i+1 < cheat.codecnt; i+=2) {
 			u32 code=(u32)cheat.code[i];
 			u32 value=(u32)cheat.code[i+1];
@@ -68,7 +68,6 @@ extern CPS2VM *_ps2VM;
 					(void*)((_ps2VM->m_ee->m_ram + code) ),
 								&value,
 								sizeof(u32));
-
 				ELOG(@"Code %d %d applied successfully\n", code, value);
 			} else {
 				ELOG(@"Code %d (of %d) invalid with value %d\n", code, PS2::EE_RAM_SIZE, value);
