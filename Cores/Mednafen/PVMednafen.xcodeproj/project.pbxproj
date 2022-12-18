@@ -34,6 +34,7 @@
 		11AFB33124881CBB000A3922 /* MThreading_POSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2F824880D19000A3922 /* MThreading_POSIX.cpp */; };
 		11AFB33424882054000A3922 /* idct.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB33324882053000A3922 /* idct.cpp */; };
 		11AFB339248820AF000A3922 /* crc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB3382488209B000A3922 /* crc.cpp */; };
+		93891C9F294F671D009EB211 /* MednafenGameCore+Cheats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93891C9D294F671C009EB211 /* MednafenGameCore+Cheats.mm */; };
 		B3223CDD1E09E0CA007BB244 /* MednafenGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 824088340FFDDCF400F0FE7D /* MednafenGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B324C63221920C56009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B314E30F21081E9200D0C27A /* PVSupport.framework */; };
 		B3335036207AFBDE0036A448 /* cdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB10B20736EEA0097D86F /* cdc.cpp */; };
@@ -1183,6 +1184,7 @@
 		8CB3E09E17F1DFFF0090372A /* triop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = triop.h; sourceTree = "<group>"; };
 		8CB3E09F17F1DFFF0090372A /* triostr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = triostr.h; sourceTree = "<group>"; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		93891C9D294F671C009EB211 /* MednafenGameCore+Cheats.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "MednafenGameCore+Cheats.mm"; sourceTree = "<group>"; };
 		94454E3617852E44006C057B /* thread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = thread.cpp; sourceTree = "<group>"; };
 		94454E3717852E44006C057B /* thread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = thread.h; sourceTree = "<group>"; };
 		94454E3B17852E61006C057B /* stubs.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = stubs.mm; sourceTree = "<group>"; };
@@ -3194,6 +3196,7 @@
 				B3AA9D6920736B030097D86F /* mednafen */,
 				824088340FFDDCF400F0FE7D /* MednafenGameCore.h */,
 				824088350FFDDCF400F0FE7D /* MednafenGameCore.mm */,
+				93891C9D294F671C009EB211 /* MednafenGameCore+Cheats.mm */,
 				B3B8C3BE290E15EB002B839A /* MednafenGameCore+Controls.mm */,
 				B3A74C8C20522B86001D3D2E /* MednafenGameCore.swift */,
 				B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */,
@@ -7605,6 +7608,7 @@
 				B3AAB43D2073820C0097D86F /* MednafenGameCore.mm in Sources */,
 				C66D56112626B12100CDECE9 /* Time_POSIX.cpp in Sources */,
 				B3B8C3BF290E15EC002B839A /* MednafenGameCore+Controls.mm in Sources */,
+				93891C9F294F671D009EB211 /* MednafenGameCore+Cheats.mm in Sources */,
 				B333559D207B1DC50036A448 /* thread.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
