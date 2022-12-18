@@ -5138,7 +5138,6 @@
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -5196,7 +5195,6 @@
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -5258,7 +5256,6 @@
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = ProvenanceTV/en.lproj/Info.plist;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -5312,7 +5309,6 @@
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = ProvenanceTV/en.lproj/Info.plist;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -6971,7 +6967,6 @@
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -7036,7 +7031,6 @@
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = ProvenanceTV/en.lproj/Info.plist;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

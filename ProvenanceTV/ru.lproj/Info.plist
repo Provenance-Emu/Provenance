@@ -66,8 +66,6 @@
 	<string></string>
 	<key>GitTag</key>
 	<string></string>
-	<key>LSApplicationCategoryType</key>
-	<string>public.app-category.games</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
