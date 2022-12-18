@@ -343,11 +343,7 @@ final class PVSettingsViewController: QuickTableViewController {
                                 key: \PVSettingsModel.debugOptions.iCloudSync, icon: .sfSymbol("icloud")),
             PVSettingsSwitchRow(text: NSLocalizedString("Use SwiftUI", comment: "Use SwiftUI"),
                                detailText: .subtitle("Don't use unless you enjoy empty windows."),
-                               key: \PVSettingsModel.videoOptions.multiSampling, icon: .sfSymbol("swift")),
-
-            PVSettingsSwitchRow(text: NSLocalizedString("Use Themes", comment: "Use Themes"),
-                               detailText: .subtitle("Use iOS themes on tvOS"),
-                               key: \PVSettingsModel.debugOptions.tvOSThemes, icon: .sfSymbol("tshirt"))
+                               key: \PVSettingsModel.videoOptions.multiSampling, icon: .sfSymbol("swift"))
                 ]
         #endif
 
