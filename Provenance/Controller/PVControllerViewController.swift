@@ -269,27 +269,23 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 				vibrancyView.contentView.addSubview(label)
 				blurView.contentView.addSubview(vibrancyView)
 
-					// Layout constraints
-				if #available(iOS 9.0, *) {
-					NSLayoutConstraint.activate([
-						vibrancyView.heightAnchor.constraint(equalTo: blurView.contentView.heightAnchor),
-						vibrancyView.widthAnchor.constraint(equalTo: blurView.contentView.widthAnchor),
-						vibrancyView.centerXAnchor.constraint(equalTo: blurView.contentView.centerXAnchor),
-						vibrancyView.centerYAnchor.constraint(equalTo: blurView.contentView.centerYAnchor)
-					])
+                // Layout constraints
+                NSLayoutConstraint.activate([
+                    vibrancyView.heightAnchor.constraint(equalTo: blurView.contentView.heightAnchor),
+                    vibrancyView.widthAnchor.constraint(equalTo: blurView.contentView.widthAnchor),
+                    vibrancyView.centerXAnchor.constraint(equalTo: blurView.contentView.centerXAnchor),
+                    vibrancyView.centerYAnchor.constraint(equalTo: blurView.contentView.centerYAnchor)
+                ])
 
-					NSLayoutConstraint.activate([
-						label.centerXAnchor.constraint(equalTo: vibrancyView.contentView.centerXAnchor),
-						label.centerYAnchor.constraint(equalTo: vibrancyView.contentView.centerYAnchor)
-					])
-				}
+                NSLayoutConstraint.activate([
+                    label.centerXAnchor.constraint(equalTo: vibrancyView.contentView.centerXAnchor),
+                    label.centerYAnchor.constraint(equalTo: vibrancyView.contentView.centerYAnchor)
+                ])
 
-				if #available(iOS 9.0, *) {
-					NSLayoutConstraint.activate([
-						vibrancyView.centerXAnchor.constraint(equalTo: label.centerXAnchor),
-						vibrancyView.centerYAnchor.constraint(equalTo: label.centerYAnchor)
-					])
-				}
+                NSLayoutConstraint.activate([
+                    vibrancyView.centerXAnchor.constraint(equalTo: label.centerXAnchor),
+                    vibrancyView.centerYAnchor.constraint(equalTo: label.centerYAnchor)
+                ])
 
 				self.blurView = blurView
 				view.insertSubview(blurView, at: 0)
