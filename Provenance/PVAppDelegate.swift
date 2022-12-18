@@ -13,7 +13,11 @@ import RealmSwift
 import RxSwift
 #if !targetEnvironment(macCatalyst) && !os(macOS) // && canImport(SteamController)
 import SteamController
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 #endif
 
 @UIApplicationMain

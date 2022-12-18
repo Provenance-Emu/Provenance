@@ -16,7 +16,11 @@ import RxSwift
 
     // MARK: - iOS / UIKit
 
-    import UIKit
+    #if canImport(UIKit)
+import UIKit
+#else
+import AppKit
+#endif
     extension Reactive where Base: UITableView {
         public func realmChanges<E>(_ dataSource: RxTableViewRealmDataSource<E>)
             -> RealmBindObserver<E, AnyRealmCollection<E>, RxTableViewRealmDataSource<E>> {

@@ -10,7 +10,11 @@ import RealmSwift
 import RxCocoa
 import RxRealm
 import RxSwift
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 protocol PVCheatsViewControllerDelegate: AnyObject {
     func cheatsViewControllerDone(_ cheatsViewController: PVCheatsViewController)

@@ -5,7 +5,7 @@
 //  Created by Joseph Mattiello on 7/30/21.
 //  Copyright © 2021 Provenance Emu. All rights reserved.
 //
-
+@import Foundation;
 #if !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
 #import "PVAltKitService.h"
 @import PVSupport;

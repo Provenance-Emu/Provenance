@@ -1,4 +1,10 @@
 // MARK: - Controllers
+#if canImport(UIKit)
+import UIKit
+#else
+import AppKit
+#endif
+import PVSupport
 
 extension PVEmulatorViewController {
     func controllerPauseButtonPressed() {

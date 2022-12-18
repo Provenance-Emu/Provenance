@@ -24,7 +24,11 @@
 //  SOFTWARE.
 //
 
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 /// A struct that represents the image used in a row.
 public struct Icon: Equatable {

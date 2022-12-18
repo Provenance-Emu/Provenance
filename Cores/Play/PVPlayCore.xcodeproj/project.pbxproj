@@ -79,24 +79,24 @@
 		B3512268278435B1001C4B83 /* bzlib.c in Sources */ = {isa = PBXBuildFile; fileRef = B351224B27843535001C4B83 /* bzlib.c */; };
 		B3512269278435B1001C4B83 /* bzip2.c in Sources */ = {isa = PBXBuildFile; fileRef = B351224F2784355E001C4B83 /* bzip2.c */; };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
-		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
+		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; platformFilters = (ios, maccatalyst, macos, watchos, ); };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
 		B37CE7DC293F2A8B0010B746 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE7DB293F2A8B0010B746 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		B3A33CB229475F010090F1F3 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A33CB129475F010090F1F3 /* libz.tbd */; };
 		B3A33CBD294761250090F1F3 /* libzlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B7226E4C6860047F338 /* libzlib.a */; };
-		B3A33CFD2947697C0090F1F3 /* libui_shared.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B7026E4C6860047F338 /* libui_shared.a */; platformFilters = (ios, maccatalyst, ); };
-		B3A33CFE29476A070090F1F3 /* libxxhash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A33CFC2947695F0090F1F3 /* libxxhash.a */; platformFilters = (ios, maccatalyst, ); };
-		B3A33D0029476A6F0090F1F3 /* libzstd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A33CF82947695F0090F1F3 /* libzstd.a */; platformFilters = (ios, maccatalyst, ); };
-		B3A6205B294770DE00ED28E3 /* liblibzstd_zlibwrapper_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A33CFA2947695F0090F1F3 /* liblibzstd_zlibwrapper_static.a */; platformFilters = (ios, maccatalyst, ); };
-		B3A620882947854100ED28E3 /* libFramework_Vulkan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A620822947853800ED28E3 /* libFramework_Vulkan.a */; platformFilters = (ios, maccatalyst, ); };
-		B3A6208B294787AE00ED28E3 /* libgsh_vulkan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A620862947853800ED28E3 /* libgsh_vulkan.a */; platformFilters = (ios, maccatalyst, ); };
+		B3A33CFD2947697C0090F1F3 /* libui_shared.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B7026E4C6860047F338 /* libui_shared.a */; };
+		B3A33CFE29476A070090F1F3 /* libxxhash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A33CFC2947695F0090F1F3 /* libxxhash.a */; };
+		B3A33D0029476A6F0090F1F3 /* libzstd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A33CF82947695F0090F1F3 /* libzstd.a */; };
+		B3A6205B294770DE00ED28E3 /* liblibzstd_zlibwrapper_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A33CFA2947695F0090F1F3 /* liblibzstd_zlibwrapper_static.a */; };
+		B3A620882947854100ED28E3 /* libFramework_Vulkan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A620822947853800ED28E3 /* libFramework_Vulkan.a */; };
+		B3A6208B294787AE00ED28E3 /* libgsh_vulkan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A620862947853800ED28E3 /* libgsh_vulkan.a */; };
 		B3A6208E2947895B00ED28E3 /* CGSH_VulkaniOS.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A6208C2947895B00ED28E3 /* CGSH_VulkaniOS.h */; };
 		B3A6208F2947895B00ED28E3 /* CGSH_VulkaniOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3A6208D2947895B00ED28E3 /* CGSH_VulkaniOS.mm */; };
 		B3A6209129478A7600ED28E3 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A6209029478A7600ED28E3 /* Metal.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
 		B3A6209329478A7F00ED28E3 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A6209229478A7F00ED28E3 /* CoreGraphics.framework */; };
 		B3A6209529478A9B00ED28E3 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A6209429478A9B00ED28E3 /* MetalKit.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
-		B3A6209829478BE200ED28E3 /* libNuanceur.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A620842947853800ED28E3 /* libNuanceur.a */; platformFilters = (ios, maccatalyst, ); };
+		B3A6209829478BE200ED28E3 /* libNuanceur.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A620842947853800ED28E3 /* libNuanceur.a */; };
 		B3AEDE18293F2F710050BDB6 /* libFramework_Amazon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B4E26E4C6860047F338 /* libFramework_Amazon.a */; };
 		B3AEDE1B293F2FBE0050BDB6 /* libFramework_Http.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135B5026E4C6860047F338 /* libFramework_Http.a */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (driverkit, ios, tvos, watchos, ); };
@@ -4438,10 +4438,12 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"${SRCROOT}/PVPlayCore/Core/GSH_VulkanPlatformDefs.h",
 			);
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"${SRCROOT}/Play-/Source/gs/GSH_Vulkan/GSH_VulkanPlatformDefs.h",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

@@ -6,7 +6,11 @@
 //  Copyright © 2018 Provenance Emu. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 final class PVSwitchCell: SwitchCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

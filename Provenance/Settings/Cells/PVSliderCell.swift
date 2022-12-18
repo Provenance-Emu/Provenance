@@ -5,9 +5,13 @@
 //  Created by Joseph Mattiello on 12/25/18.
 //  Copyright © 2018 Provenance Emu. All rights reserved.
 //
-
+#if !os(tvOS)
+#if canImport(UIKit)
 #if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 final class PVSliderCell: SliderCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -37,4 +41,5 @@ final class PVSliderCell: SliderCell {
         backgroundView = bg
     }
 }
+#endif
 #endif

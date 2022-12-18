@@ -1,4 +1,8 @@
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 @objc
 public protocol HitAreaEnlarger: AnyObject {

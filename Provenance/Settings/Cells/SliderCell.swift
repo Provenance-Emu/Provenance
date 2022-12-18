@@ -23,8 +23,12 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 //
-
+#if !os(tvOS)
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 public protocol SliderRowCompatible: Row, RowStyle {
     var value: Float { get set }
@@ -140,4 +144,5 @@ extension QuickTableViewController: SliderCellDelegate {
             delegate?.sliderCell(self, didChangeValue: sender.value)
         }
     }
+#endif
 #endif

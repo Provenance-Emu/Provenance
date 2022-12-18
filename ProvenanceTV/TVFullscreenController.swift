@@ -8,9 +8,12 @@
 //
 //  Created by Todd Laney on 22/01/2022.
 //
-
+#if os(tvOS)
+#if canImport(UIKit)
 import UIKit
-
+#else
+import AppKit
+#endif
 class TVFullscreenController: UIViewController {
 
     // these are the PV defaults assuming Dark mode, etc.
@@ -80,3 +83,4 @@ class TVFullscreenController: UIViewController {
         }
     }
 }
+#endif

@@ -10,7 +10,11 @@ import CoreGraphics
 import PVLibrary
 import PVSupport
 import RealmSwift
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 private let LabelHeight: CGFloat = 44.0
 

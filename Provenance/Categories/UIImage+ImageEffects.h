@@ -95,6 +95,9 @@
 
 #if __has_include(<UIKit/UIKit.h>)
 @import UIKit;
+#else
+@import AppKit;
+#endif
 
 @interface UIImage (ImageEffects)
 
@@ -106,4 +109,4 @@
 - (UIImage *)applyBlurWithRadius:(CGFloat)blurRadius tintColor:(UIColor *)tintColor saturationDeltaFactor:(CGFloat)saturationDeltaFactor maskImage:(UIImage *)maskImage;
 
 @end
-#endif
+//#endif

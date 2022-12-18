@@ -9,8 +9,11 @@
 import PVLibrary
 
 import RealmSwift
+#if canImport(UIKit)
 import UIKit
-
+#else
+import AppKit
+#endif
 final class PVCoresTableViewController: QuickTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()

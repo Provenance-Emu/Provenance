@@ -24,7 +24,11 @@
 //  SOFTWARE.
 //
 
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 extension UITableViewCell: Reusable {}
 

@@ -8,7 +8,11 @@
 //
 
 import PVSupport
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 protocol JSButtonDelegate: AnyObject {
     func buttonPressed(_ button: JSButton)

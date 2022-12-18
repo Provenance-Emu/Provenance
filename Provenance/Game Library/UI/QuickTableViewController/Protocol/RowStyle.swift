@@ -24,7 +24,11 @@
 //  SOFTWARE.
 //
 
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 /// Any type that conforms to this protocol carries the info for the UI.
 public protocol RowStyle {

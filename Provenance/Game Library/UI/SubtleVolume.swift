@@ -6,10 +6,14 @@
 //  Modified by Sev Gerk on 04/29/2018.
 //  Copyright © 2016 Fancy Pixel. All rights reserved.
 //
-
+#if !os(tvOS)
 import AVFoundation
 import MediaPlayer
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 /**
  The style of the volume indicator
@@ -264,3 +268,4 @@ public enum SubtleVolumeError: Error {
         NotificationCenter.default.removeObserver(self)
     }
 }
+#endif

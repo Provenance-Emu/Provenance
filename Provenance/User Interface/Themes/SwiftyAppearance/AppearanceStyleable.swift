@@ -6,7 +6,11 @@
 //  Copyright © 2017 address.wtf. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 /// <#Description#>
 public protocol AppearanceStyleable: NSObjectProtocol {

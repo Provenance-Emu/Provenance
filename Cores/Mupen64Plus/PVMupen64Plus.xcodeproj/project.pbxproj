@@ -5214,17 +5214,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_NS_ASSERTIONS = NO;
-				"EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*]" = (
-					3DMath.cpp,
-					RSP_LoadMatrix.cpp,
-					CRC_OPT.cpp,
-				);
-				"EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*]" = (
-					3DMathNeon.cpp,
-					gSPNeon.cpp,
-					RSP_LoadMatrixNeon.cpp,
-					CRC_OPT_NEON.cpp,
-				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_UNROLL_LOOPS = YES;
@@ -6269,17 +6258,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				"EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*]" = (
-					3DMath.cpp,
-					RSP_LoadMatrix.cpp,
-					CRC_OPT.cpp,
-				);
-				"EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*]" = (
-					3DMathNeon.cpp,
-					gSPNeon.cpp,
-					RSP_LoadMatrixNeon.cpp,
-					CRC_OPT_NEON.cpp,
-				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -6373,17 +6351,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_NS_ASSERTIONS = NO;
-				"EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*]" = (
-					3DMath.cpp,
-					RSP_LoadMatrix.cpp,
-					CRC_OPT.cpp,
-				);
-				"EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*]" = (
-					3DMathNeon.cpp,
-					gSPNeon.cpp,
-					RSP_LoadMatrixNeon.cpp,
-					CRC_OPT_NEON.cpp,
-				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_UNROLL_LOOPS = YES;

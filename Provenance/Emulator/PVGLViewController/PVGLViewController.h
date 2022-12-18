@@ -8,7 +8,7 @@
 
 @import Foundation;
 
-#import "PVGPUViewController.h"
+#import <PVAPP/PVGPUViewController.h>
 
 @interface PVGLViewController : PVGPUViewController
 

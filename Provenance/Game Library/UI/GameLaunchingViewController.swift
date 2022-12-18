@@ -9,7 +9,11 @@
 import PVLibrary
 import PVSupport
 import RealmSwift
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 import ZipArchive
 
 private let WIKI_BIOS_URL = "https://wiki.provenance-emu.com/installation-and-usage/bios-requirements"

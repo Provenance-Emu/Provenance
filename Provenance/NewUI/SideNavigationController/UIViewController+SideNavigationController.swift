@@ -6,7 +6,11 @@
 //  Copyright © 2017 Digipolitan. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 public extension UIViewController {
 

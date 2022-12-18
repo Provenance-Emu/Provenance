@@ -24,7 +24,11 @@
 //  SOFTWARE.
 //
 
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 /// A class that represents a row of selectable option.
 open class OptionRow<T: UITableViewCell>: OptionRowCompatible, Equatable {

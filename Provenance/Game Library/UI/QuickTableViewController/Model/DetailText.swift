@@ -24,7 +24,11 @@
 //  SOFTWARE.
 //
 
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 /// An enum that represents a detail text with `UITableViewCell.CellStyle`.
 public enum DetailText: Equatable {

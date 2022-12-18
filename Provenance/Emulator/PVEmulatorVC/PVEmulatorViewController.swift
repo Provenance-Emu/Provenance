@@ -11,7 +11,11 @@ import PVLibrary
 import PVSupport
 import QuartzCore
 import RealmSwift
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 private weak var staticSelf: PVEmulatorViewController?
 

@@ -8,7 +8,7 @@
 
 #import "PVMetalViewController.h"
 @import PVSupport;
-#import "Provenance-Swift.h"
+#import <PVApp/PVApp-Swift.h>
 #import <QuartzCore/QuartzCore.h>
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX

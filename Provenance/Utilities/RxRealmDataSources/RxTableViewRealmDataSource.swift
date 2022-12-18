@@ -16,7 +16,11 @@ import RxSwift
 
     // MARK: - iOS / UIKit
 
-    import UIKit
+    #if canImport(UIKit)
+import UIKit
+#else
+import AppKit
+#endif
 
     public typealias TableCellFactory<E: Object> = (RxTableViewRealmDataSource<E>, UITableView, IndexPath, E) -> UITableViewCell
     public typealias TableCellConfig<E: Object, CellType: UITableViewCell> = (CellType, IndexPath, E) -> Void

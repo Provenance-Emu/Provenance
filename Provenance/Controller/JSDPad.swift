@@ -8,7 +8,11 @@
 
 import PVSupport
 #if canImport(UIKit)
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 enum JSDPadDirection: Int, CaseIterable {
     case upLeft = 1

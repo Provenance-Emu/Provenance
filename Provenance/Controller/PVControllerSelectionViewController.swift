@@ -8,7 +8,11 @@
 //
 
 import GameController
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 final class PVControllerSelectionViewController: UITableViewController {
     override func viewDidLoad() {

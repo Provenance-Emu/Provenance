@@ -34,9 +34,9 @@ jobs:
           - target: Provenance
             sdk: iphoneos
             scheme: Provenance
-          - target: ProvenanceTV
+          - target: Provenance
             sdk: appletvos
-            scheme: ProvenanceTV
+            scheme: Provenance
           # - target: macOS
           #   sdk: macosx
           #   scheme: Provenance

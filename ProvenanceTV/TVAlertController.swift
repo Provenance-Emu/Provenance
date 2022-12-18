@@ -8,7 +8,11 @@
 //  Created by Todd Laney on 22/01/2022.
 //
 
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 // these are the defaults assuming Dark mode, etc.
 private let _fullscreenColor = UIColor.black.withAlphaComponent(0.8)

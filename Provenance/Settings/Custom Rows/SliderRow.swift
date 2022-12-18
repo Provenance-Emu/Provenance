@@ -23,8 +23,12 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 //
-
+#if !os(tvOS)
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 /// A class that represents a row with a switch.
 open class SliderRow<T>: SliderRowCompatible, Equatable where T: SliderCell {
@@ -113,3 +117,4 @@ open class SliderRow<T>: SliderRowCompatible, Equatable where T: SliderCell {
             lhs.icon == rhs.icon
     }
 }
+#endif

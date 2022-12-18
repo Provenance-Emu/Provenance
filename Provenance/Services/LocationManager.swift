@@ -8,7 +8,11 @@
 
 import CoreLocation
 import Combine
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 #if LocationManager
 extension LocationManager {

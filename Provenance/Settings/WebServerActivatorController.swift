@@ -8,8 +8,14 @@
 
 import PVLibrary
 import PVSupport
+#if canImport(Reachability)
 import Reachability
+#endif
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 protocol WebServerActivatorController: AnyObject {
     func showServerActiveAlert()
@@ -92,6 +98,7 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
     func showServerActiveAlert() {
         // Start Webserver
         // Check to see if we are connected to WiFi. Cannot continue otherwise.
+#if canImport(Reachability)
         let reachability = try! Reachability()
 
         do {
@@ -131,5 +138,29 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
             }))
             present(alert, animated: true) { () -> Void in }
         }
+        #else
+        if PVWebServer.shared.startServers() {
+            let alert = UIAlertController(title: "Web Server Active", message: webServerAlertMessage, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Stop", style: .cancel, handler: { (_: UIAlertAction) -> Void in
+                PVWebServer.shared.stopServers()
+            }))
+            #if os(iOS)
+                let viewAction = UIAlertAction(title: "View", style: .default, handler: { (_: UIAlertAction) -> Void in
+                    self.showServer()
+                })
+                alert.addAction(viewAction)
+            #endif
+            alert.preferredAction = alert.actions.last
+            present(alert, animated: true) { () -> Void in
+                alert.message = self.webServerAlertMessage
+            }
+        } else {
+            // Display error
+            let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or settings and free up ports: 80, 81.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
+            }))
+            present(alert, animated: true) { () -> Void in }
+        }
+        #endif
     }
 }

@@ -14,7 +14,11 @@ import GameController
 import PVLibrary
 import PVSupport
 import QuartzCore
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 protocol JSButtonDisplayer {
 	var dPad: JSDPad? { get set }

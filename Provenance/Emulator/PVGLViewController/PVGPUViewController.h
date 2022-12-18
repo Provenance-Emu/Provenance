@@ -6,6 +6,7 @@
 //  Copyright © 2022 Provenance Emu. All rights reserved.
 //
 
+@import Foundation;
 #if TARGET_OS_OSX
 @import SwiftUI;
 @import AppKit;

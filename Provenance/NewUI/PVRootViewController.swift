@@ -10,7 +10,11 @@ import Foundation
 
 #if canImport(SwiftUI)
 #if canImport(Combine)
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 import SwiftUI
 import RealmSwift
 import Combine

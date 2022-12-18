@@ -6,8 +6,12 @@
 //  Created by James Addyman on 26/09/2015.
 //  Copyright © 2015 James Addyman. All rights reserved.
 //
-
+#if os(tvOS)
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 final class PVTVSplitViewController: UISplitViewController {
     override func viewDidLoad() {
@@ -15,3 +19,4 @@ final class PVTVSplitViewController: UISplitViewController {
         preferredPrimaryColumnWidthFraction = 0.5
     }
 }
+#endif

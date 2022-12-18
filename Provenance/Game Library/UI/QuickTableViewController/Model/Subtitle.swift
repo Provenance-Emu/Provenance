@@ -24,7 +24,11 @@
 //  SOFTWARE.
 //
 
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 @available(*, deprecated, message: "Use `DetailText` instead.")
 public enum Subtitle: Equatable {

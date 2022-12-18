@@ -24,7 +24,11 @@
 //  SOFTWARE.
 //
 
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 /// Any type that conforms to this protocol is able to take `Row & RowStyle` as the configuration.
 public protocol Configurable {

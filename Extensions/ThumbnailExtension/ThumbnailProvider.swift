@@ -6,7 +6,11 @@
 //  Copyright © 2022 Provenance Emu. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 import QuickLookThumbnailing
 
 // https://developer.apple.com/documentation/quicklookthumbnailing/providing_thumbnails_of_your_custom_file_types

@@ -6,7 +6,11 @@
 //  Copyright © 2022 Provenance Emu. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 import QuickLook
 
 class PreviewViewController: UIViewController, QLPreviewingController {

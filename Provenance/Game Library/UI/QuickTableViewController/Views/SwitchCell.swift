@@ -24,7 +24,11 @@
 //  SOFTWARE.
 //
 
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 /// The `SwitchCellDelegate` protocol allows the adopting delegate to respond to the UI interaction. Not available on tvOS.
 @available(tvOS, unavailable, message: "SwitchCellDelegate is not available on tvOS.")

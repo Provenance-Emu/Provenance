@@ -5,7 +5,7 @@
 //  Created by Joseph Mattiello on 12/25/18.
 //  Copyright © 2018 Provenance Emu. All rights reserved.
 //
-
+#if !os(tvOS)
 import Foundation
 
 final class PVSettingsSliderRow<T>: SliderRow<PVSliderCell> where T: BinaryFloatingPoint {
@@ -34,3 +34,4 @@ final class PVSettingsSliderRow<T>: SliderRow<PVSliderCell> where T: BinaryFloat
         )
     }
 }
+#endif

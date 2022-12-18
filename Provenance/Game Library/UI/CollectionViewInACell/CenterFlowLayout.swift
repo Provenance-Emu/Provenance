@@ -6,7 +6,11 @@
 //  Copyright © 2018 Provenance. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 final class CenterViewFlowLayout: UICollectionViewFlowLayout {
     var canvasSize: CGSize {

@@ -8,8 +8,10 @@
 
 // All
 GCC_PREPROCESSOR_DEFINITIONS[arch=*] = $(inherited) MUPENPLUSAPI=1 TXFILTER_LIB=1 GL_SILENCE_DEPRECATION=1
-OTHER_CFLAGS[arch=*] = $(inherited) -DGCC -pthread -fPIC -D__unix__ -DVFP_HARD=1 -DNO_ASM -DMUPENPLUSAPI=1 -DTXFILTER_LIB=1 -DM64P_PLUGIN_PROTOTYPES=1 -DPROVENANCE
+OTHER_CFLAGS[arch=*] = $(inherited) -DGCC -pthread -fPIC -D__unix__ -DVFP_HARD=1 -DMUPENPLUSAPI=1 -DTXFILTER_LIB=1 -DM64P_PLUGIN_PROTOTYPES=1 -DPROVENANCE -fno-strict-aliasing
+//-fvisibility=hidden
 
+OTHER_CPLUSPLUSFLAGS[arch=*] = $(inherited) $(OTHER_CFLAGS) -fvisibility-inlines-hidden
 //GCC_PREPROCESSOR_DEFINITIONS[arch=arm64] = $(inherited) NEW_DYNAREC=3 DYNAREC=3
 //GCC_PREPROCESSOR_DEFINITIONS[arch=armv7s] = $(inherited) NEW_DYNAREC=3
 //GCC_PREPROCESSOR_DEFINITIONS[arch=armv7] = $(inherited) NEW_DYNAREC=3
@@ -18,8 +20,13 @@ GCC_PREPROCESSOR_DEFINITIONS[arch=x86_64] = $(inherited) NO_ASM=0
 
 // MacOS Catalyst
 GCC_PREPROCESSOR_DEFINITIONS[sdk=macosx*] = $(inherited) OS_MAC_OS_X=1 SDL_VIDEO_OPENGL=1
-OTHER_CFLAGS[sdk=macosx*] = $(inherited) -fno-strict-aliasing -fvisibility=hidden -DGCC -pthread -fPIC -D__unix__ -D__VEC4_OPT -D__NEON_OPT -DX86_ASM
-EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = $(inherited) 3DMathNeon.cpp gSPNeon.cpp RSP_LoadMatrixNeon.cpp CRC_OPT_NEON.cpp
+OTHER_CFLAGS[sdk=macosx*] = $(inherited) -fno-strict-aliasing -fvisibility=hidden -DGCC -pthread -fPIC -D__unix__ -D__VEC4_OPT -D__NEON_OPT
+
+OTHER_CFLAGS[arch=arm64] = $(inherited) -mfpu=neon -D__VEC4_OPT -D__NEON_OPT -DNO_ASM=1
+OTHER_CFLAGS[arch=x86_64] = $(inherited) -DX86_ASM
+
+EXCLUDED_SOURCE_FILE_NAMES[arch=x86_64] = $(inherited) 3DMathNeon.cpp gSPNeon.cpp RSP_LoadMatrixNeon.cpp CRC_OPT_NEON.cpp
+EXCLUDED_SOURCE_FILE_NAMES[arch=arm64] = $(inherited) 3DMath.cpp RSP_LoadMatrix.cpp CRC_OPT.cpp
 
 // iPhone
 GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*] = $(inherited) OS_IOS GLESX USE_GLES=1 NEON=1 SDL_VIDEO_OPENGL_ES2=1
@@ -32,7 +39,7 @@ OTHER_CFLAGS[sdk=iphonesimulator*] = $(inherited) -DOS_IOS
 // tvOS Device
 GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvos*] = $(inherited) OS_IOS GLESX USE_GLES=1 NEON=1 SDL_VIDEO_OPENGL_ES2=1
 OTHER_CFLAGS[sdk=appletvos*] = $(inherited) -DOS_IOS -mfpu=neon  -D__VEC4_OPT -D__NEON_OPT
-EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvos*] = $(inherited) 3DMath.cpp  RSP_LoadMatrix.cpp CRC_OPT.cpp
+//EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvos*] = $(inherited) 3DMath.cpp  RSP_LoadMatrix.cpp CRC_OPT.cpp
 // gSPNeon.cpp
 
 // tvOS Simulator

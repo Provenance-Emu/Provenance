@@ -6,7 +6,11 @@
 //  Copyright © 2018 James Addyman. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 class MovableButtonView : UIView, Moveable {
     public private(set) var isCustomMoved : Bool = false

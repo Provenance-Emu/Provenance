@@ -14,7 +14,11 @@ import RxCocoa
 import RxRealm
 import RxSwift
 #if canImport(UIKit)
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 #endif
 
 protocol PVSaveStatesViewControllerDelegate: AnyObject {

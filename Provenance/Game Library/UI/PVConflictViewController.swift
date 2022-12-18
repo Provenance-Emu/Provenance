@@ -9,7 +9,11 @@
 
 import PVLibrary
 import PVSupport
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 import RxSwift
 import RxDataSources
 

@@ -8,7 +8,11 @@
 
 import Foundation
 import PVSupport
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 final class CoreOptionsViewController: QuickTableViewController {
     let core: CoreOptional.Type

@@ -81,7 +81,11 @@ public class RxRealmDataSourceSection<E: Object> {
 
     // MARK: - iOS / UIKi
 
-    import UIKit
+    #if canImport(UIKit)
+import UIKit
+#else
+import AppKit
+#endif
 
     public typealias CollectionCellFactory<E: Object> = (RxCollectionViewRealmDataSource, UICollectionView, IndexPath, E) -> UICollectionViewCell
     public typealias CollectionCellConfig<E: Object, CellType: UICollectionViewCell> = (CellType, IndexPath, E) -> Void

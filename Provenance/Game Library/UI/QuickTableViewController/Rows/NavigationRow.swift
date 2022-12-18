@@ -24,7 +24,11 @@
 //  SOFTWARE.
 //
 
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 /// A class that represents a row that triggers certain navigation when selected.
 open class NavigationRow<T: UITableViewCell>: NavigationRowCompatible, Equatable {

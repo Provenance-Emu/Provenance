@@ -9,7 +9,11 @@
 import PVLibrary
 import PVSupport
 import RealmSwift
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 final class PVSaveStateInfoViewController: UIViewController, GameLaunchingViewController {
     var mustRefreshDataSource: Bool = false

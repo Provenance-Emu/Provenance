@@ -15,7 +15,7 @@
  */
 #include <stdlib.h>
 
-
+#include <CoreFoundation/CoreFoundation.h>
 #if TARGET_OS_IPHONE
 #include <AudioToolbox/AudioToolbox.h>
 #else

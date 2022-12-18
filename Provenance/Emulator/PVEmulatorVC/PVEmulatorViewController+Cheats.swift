@@ -6,7 +6,11 @@
 import PVLibrary
 import PVSupport
 import RealmSwift
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 public enum CheatsStateError: Error {
     case coreCheatsError(Error?)

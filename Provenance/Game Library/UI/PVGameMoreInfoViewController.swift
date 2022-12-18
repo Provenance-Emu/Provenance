@@ -9,7 +9,11 @@
 import PVLibrary
 import PVSupport
 import RealmSwift
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 #if os(iOS)
     import AssetsLibrary

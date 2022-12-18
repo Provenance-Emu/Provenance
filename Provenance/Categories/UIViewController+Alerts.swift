@@ -6,7 +6,12 @@
 //  Copyright © 2022 Provenance Emu. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
+import PVSupport
 
 extension UIViewController {
     func presentMessage(_ message: String, title: String, completion _: (() -> Swift.Void)? = nil) {

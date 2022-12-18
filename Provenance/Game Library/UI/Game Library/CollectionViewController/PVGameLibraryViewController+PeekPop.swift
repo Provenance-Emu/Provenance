@@ -9,7 +9,11 @@
 import Foundation
 import PVLibrary
 import PVSupport
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 #if os(iOS)
     extension PVGameLibraryViewController: UIViewControllerPreviewingDelegate {

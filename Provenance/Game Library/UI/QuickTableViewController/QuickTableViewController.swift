@@ -24,7 +24,11 @@
 //  SOFTWARE.
 //
 #if canImport(UIKit)
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 #endif
 
 /// A table view controller that shows `tableContents` as formatted sections and rows.

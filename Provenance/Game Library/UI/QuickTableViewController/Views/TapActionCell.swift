@@ -24,7 +24,11 @@
 //  SOFTWARE.
 //
 
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 /// A `UITableViewCell` subclass with the title text center aligned.
 open class TapActionCell: UITableViewCell {

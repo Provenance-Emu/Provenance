@@ -6,7 +6,11 @@
 import PVLibrary
 import PVSupport
 import RealmSwift
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
     weak var delegate: PVCheatsViewController?

@@ -6,12 +6,16 @@
 //  Created by James Addyman on 12/06/2016.
 //  Copyright © 2016 James Addyman. All rights reserved.
 //
-
+#if os(tvOS)
 import PVLibrary
 import PVSupport
 import RxSwift
 import RxDataSources
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 extension PVSearchViewController {
     static func createEmbeddedInNavigationController(gameLibrary: PVGameLibrary) -> UINavigationController {
@@ -122,3 +126,4 @@ private extension UIAlertAction {
         return (action, didSelect.map { _ in})
     }
 }
+#endif

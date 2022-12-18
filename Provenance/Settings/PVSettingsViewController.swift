@@ -12,15 +12,22 @@
 #endif
 import PVLibrary
 import PVSupport
-
+#if canImport(Reachability)
 import Reachability
+#endif
 import RealmSwift
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 import RxSwift
 
 final class PVSettingsViewController: QuickTableViewController {
     // Check to see if we are connected to WiFi. Cannot continue otherwise.
+#if canImport(Reachability)
     let reachability: Reachability = try! Reachability()
+#endif
     var conflictsController: ConflictsController!
     private var numberOfConflicts = 0
     private let disposeBag = DisposeBag()
@@ -50,17 +57,20 @@ final class PVSettingsViewController: QuickTableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         splitViewController?.title = "Settings"
+#if canImport(Reachability)
         do {
             try reachability.startNotifier()
         } catch {
             print("Unable to start notifier")
         }
+    #endif
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-
+#if canImport(Reachability)
         reachability.stopNotifier()
+#endif
     }
 
     #if os(tvOS)
@@ -580,6 +590,7 @@ final class PVSettingsViewController: QuickTableViewController {
     }
 
     func launchWebServerAction() {
+#if canImport(Reachability)
         if reachability.connection == .wifi {
             // connected via wifi, let's continue
             // start web transfer service
@@ -603,6 +614,20 @@ final class PVSettingsViewController: QuickTableViewController {
             }))
             present(alert, animated: true) { () -> Void in }
         }
+        #else
+        if PVWebServer.shared.startServers() {
+            // show alert view
+            showServerActiveAlert()
+        } else {
+            // Display error
+            let alert = UIAlertController(title: "Unable to start web server!",
+                                          message: "Check your network connection or settings and free up ports: 80, 81.",
+                                          preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
+            }))
+            present(alert, animated: true) { () -> Void in }
+        }
+        #endif
     }
 
     func refreshGameLibraryAction() {

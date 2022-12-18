@@ -24,7 +24,11 @@
 //  SOFTWARE.
 //
 
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 /// A class that represents a row with a switch.
 open class SwitchRow<T: SwitchCell>: SwitchRowCompatible, Equatable {

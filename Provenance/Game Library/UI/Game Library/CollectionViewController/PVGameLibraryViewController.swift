@@ -16,12 +16,18 @@ import GameController
 import PVLibrary
 import PVSupport
 import QuartzCore
+#if canImport(Reachability)
 import Reachability
+#endif
 import RealmSwift
 import RxCocoa
 import RxDataSources
 import RxSwift
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
 let PVGameLibraryHeaderViewIdentifier = "PVGameLibraryHeaderView"
 let PVGameLibraryFooterViewIdentifier = "PVGameLibraryFooterView"
@@ -780,17 +786,19 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
     @objc func dismissVC() {
         dismiss(animated: true, completion: nil)
     }
-
+    #if canImport(Reachability)
     lazy var reachability = try! Reachability()
-
+    #endif
     // MARK: - Filesystem Helpers
 
     @IBAction func getMoreROMs(_ sender: Any?) {
+#if canImport(Reachability)
         do {
             try reachability.startNotifier()
         } catch {
             ELOG("Unable to start notifier")
         }
+#endif
 
         #if !os(tvOS)
             // connected via wifi, let's continue
@@ -817,7 +825,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             actionSheet.addAction(webServerAction)
 
             actionSheet.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
-
+            #if canImport(Reachability)
             reachability.whenReachable = { reachability in
                 if reachability.connection == .wifi {
                     webServerAction.isEnabled = true
@@ -829,6 +837,9 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             reachability.whenUnreachable = { _ in
                 webServerAction.isEnabled = false
             }
+        #else
+        webServerAction.isEnabled = true
+        #endif
 
             if traitCollection.userInterfaceIdiom == .pad, let barButtonItem = sender as? UIBarButtonItem {
                 actionSheet.popoverPresentationController?.barButtonItem = barButtonItem
@@ -840,7 +851,9 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             present(actionSheet, animated: true, completion: nil)
 
             (actionSheet as UIViewController).rx.deallocating.asObservable().bind { [weak self] in
+                #if canImport(Reachability)
                 self?.reachability.stopNotifier()
+                #endif
             }.disposed(by: disposeBag)
         #else // tvOS
             defer {

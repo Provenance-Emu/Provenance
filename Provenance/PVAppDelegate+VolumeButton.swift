@@ -14,9 +14,13 @@
 
 import PVSupport.PVLogging
 import Foundation
+#if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+#endif
 
-import CarPlay
+//import CarPlay
 
 /*
  https://developer.apple.com/documentation/carplay/cpinstrumentclustersetting
@@ -123,7 +127,7 @@ import CarPlay
 //        simulateNavigation(for: navSession, maneuvers: mapTemplate.coastalRoadsManeuvers(compatibleWith: mainMapViewController.traitCollection))
 //    }
 
-extension PVAppDelegate: CPTemplateApplicationSceneDelegate {
+//extension PVAppDelegate: CPTemplateApplicationSceneDelegate {
 //    func templateApplicationScene(
 //        _ templateApplicationScene: CPTemplateApplicationScene,
 //        didConnect interfaceController: CPInterfaceController
@@ -166,7 +170,7 @@ extension PVAppDelegate: CPTemplateApplicationSceneDelegate {
 //            }
 //        }
 //    }
-}
+//}
 
 @objc public protocol UIApplicationPrivate {
     @objc func setWantsVolumeButtonEvents(_:Bool)
