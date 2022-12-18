@@ -1,0 +1,16 @@
+//
+//  Config.xcconfig
+//  PVLibrary
+//
+//  Created by Joseph Mattiello on 12/17/22.
+//  Copyright © 2022 Provenance Emu. All rights reserved.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+CLIENT_SECRET = "QkHx9MirO0QYvVcJzrsoRU5IO9qusihvbwaXVQRlUohnS631CQKunSkDDVAnJbkZ"
+CLIENT_ID = "nSNDsv4K_SHF_kLfNgjTi52cU2bTuwunxu9g6j61WtQxoaGEHy1aNAZydM4VcMiz"
+CAMPAIGN_ID = "2198356"
+KEYCHAIN_SERIVCE = "org.provenance-emu.provenance"
+REDIRECT_URL = "https://rileytestut.com/patreon/altstore"
+CALLBACK_URL_SCHEME = "altstore"
