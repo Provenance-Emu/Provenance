@@ -31,7 +31,6 @@
 	float sampleRate;
 
 	BOOL isNTSC;
-
 @public
     dispatch_queue_t _callbackQueue;
 }
@@ -44,6 +43,7 @@
 
 -(void)pollControllers;
 -(void)executeFrameSkippingFrame:(BOOL)skip;
+-(BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)type setEnabled:(BOOL)enabled error:(NSError**)error;
 
 @end
 

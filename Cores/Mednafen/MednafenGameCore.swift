@@ -55,6 +55,14 @@ extension MednafenGameCore: CoreActions {
 }
 
 extension MednafenGameCore: GameWithCheat {
+    public func setCheat(code: String, type: String, codeType: String, enabled: Bool) -> Bool {
+        return self.setCheat(code: code, type: type, enabled: enabled)
+    }
+
+    public func cheatCodeTypes() -> NSArray {
+        return []
+    }
+
     public func setCheat(
         code: String,
         type: String,

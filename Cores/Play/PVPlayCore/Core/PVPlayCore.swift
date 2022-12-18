@@ -63,3 +63,38 @@ extension PVPlayCore: CoreOptional {
         self.resFactor = NSNumber(value: resolution).int8Value
     }
 }
+
+extension PVPlayCore: GameWithCheat {
+    public func setCheat(
+        code: String,
+        type: String,
+        codeType: String,
+        enabled: Bool
+    ) -> Bool
+    {
+        do {
+            NSLog("Calling setCheat %@ %@ %@", code, type, codeType)
+            try self.setCheat(code, setType: type, setCodeType: codeType, setEnabled: enabled)
+            return true
+        } catch let error {
+            NSLog("Error setCheat \(error)")
+            return false
+        }
+    }
+
+    public func supportsCheatCode() -> Bool
+    {
+        return true
+    }
+
+    public func cheatCodeTypes() -> NSArray {
+        return [
+            "Code Breaker",
+            "Game Genie",
+            "Pro Action Replay V1",
+            "Pro Action Replay V2",
+            "Raw MemAddress:Value Pairs"
+        ];
+    }
+}
+

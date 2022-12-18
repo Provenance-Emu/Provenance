@@ -57,7 +57,7 @@ void MakeCurrentThreadRealTime();
     //dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        MakeCurrentThreadRealTime();
+        //MakeCurrentThreadRealTime();
     });
     //dispatch_semaphore_wait(coreWaitToEndFrameSemaphore, DISPATCH_TIME_FOREVER);
     if (_ps2VM
