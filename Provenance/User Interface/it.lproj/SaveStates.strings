@@ -1,0 +1,48 @@
+
+/* Class = "UILabel"; text = "Core Version"; ObjectID = "5Fz-Yu-3Zp"; */
+"5Fz-Yu-3Zp.text" = "Core Version";
+
+/* Class = "UINavigationItem"; title = "Title"; ObjectID = "63i-bn-lje"; */
+"63i-bn-lje.title" = "Title";
+
+/* Class = "UILabel"; text = "Name"; ObjectID = "6YY-KJ-ppC"; */
+"6YY-KJ-ppC.text" = "Name";
+
+/* Class = "UILabel"; text = "Last Played"; ObjectID = "7YU-ie-a2W"; */
+"7YU-ie-a2W.text" = "Last Played";
+
+/* Class = "UILabel"; text = "Created"; ObjectID = "8p2-R0-xhF"; */
+"8p2-R0-xhF.text" = "Created";
+
+/* Class = "UILabel"; text = "Core"; ObjectID = "L0B-4y-dic"; */
+"L0B-4y-dic.text" = "Core";
+
+/* Class = "UILabel"; text = "Name"; ObjectID = "Lsc-nM-zxX"; */
+"Lsc-nM-zxX.text" = "Name";
+
+/* Class = "UILabel"; text = "Save States"; ObjectID = "TXP-Wg-PKX"; */
+"TXP-Wg-PKX.text" = "Save States";
+
+/* Class = "UILabel"; text = "System"; ObjectID = "UNt-gt-vi7"; */
+"UNt-gt-vi7.text" = "System";
+
+/* Class = "UILabel"; text = "Auto save"; ObjectID = "XfV-AX-XEk"; */
+"XfV-AX-XEk.text" = "Auto save";
+
+/* Class = "UILabel"; text = "Created"; ObjectID = "Xh5-2d-FbL"; */
+"Xh5-2d-FbL.text" = "Created";
+
+/* Class = "UILabel"; text = "Core"; ObjectID = "ZPS-Sr-ac8"; */
+"ZPS-Sr-ac8.text" = "Core";
+
+/* Class = "UILabel"; text = "Last Played"; ObjectID = "aqF-fy-FNA"; */
+"aqF-fy-FNA.text" = "Last Played";
+
+/* Class = "UILabel"; text = "Core Version"; ObjectID = "pzB-Ff-Rvs"; */
+"pzB-Ff-Rvs.text" = "Core Version";
+
+/* Class = "UILabel"; text = "System"; ObjectID = "rsP-1d-QE4"; */
+"rsP-1d-QE4.text" = "System";
+
+/* Class = "UILabel"; text = "Yes"; ObjectID = "s1T-eA-pAC"; */
+"s1T-eA-pAC.text" = "Yes";
