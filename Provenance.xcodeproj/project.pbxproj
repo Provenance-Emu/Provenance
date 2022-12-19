@@ -131,7 +131,6 @@
 		B307830728924D6B007E7A2D /* GLES in Resources */ = {isa = PBXBuildFile; fileRef = B3427C0C287EA5030054C1B5 /* GLES */; };
 		B30CC7B8294F2635005E367C /* PVAppDelegate+NitoTV.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3290498270D1F95002707AC /* PVAppDelegate+NitoTV.swift */; };
 		B30CC7B9294F2635005E367C /* PVAppDelegate+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF8D29208A4A00E4C858 /* PVAppDelegate+Helpers.swift */; };
-		B30CC7BA294F2635005E367C /* PVAppDelegate+AppCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */; };
 		B30CC7BB294F2635005E367C /* PVAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */; };
 		B30CC7BC294F2635005E367C /* PVAppDelegate+Open.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF8A292088E500E4C858 /* PVAppDelegate+Open.swift */; };
 		B30CC7BD294F2825005E367C /* TVFullscreenController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF474BA7279CCDD100578663 /* TVFullscreenController.swift */; };
@@ -141,7 +140,7 @@
 		B30CC7CB294F3E9B005E367C /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC026CABF9F0088AC32 /* Provenance.storyboard */; platformFilters = (tvos, ); };
 		B30CC7CC294F3E9C005E367C /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ECA26CABFCA0088AC32 /* SaveStates.storyboard */; platformFilters = (tvos, ); };
 		B30CC7CD294F3E9C005E367C /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ED126CABFDE0088AC32 /* Cheats.storyboard */; platformFilters = (tvos, ); };
-		B30CC7CE294F3E9C005E367C /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC526CABFB00088AC32 /* Settings.storyboard */; platformFilters = (tvos, ); };
+		B30CC7CE294F3E9C005E367C /* Settings~tvOS.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC526CABFB00088AC32 /* Settings~tvOS.storyboard */; platformFilters = (tvos, ); };
 		B30CC7CF294F3EEA005E367C /* PVGameLibraryCollectionViewCell~tvOS.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3890BF820B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib */; platformFilters = (tvos, ); };
 		B30CC7D0294F3EEA005E367C /* PVSaveStateCollectionViewCell~tvOS.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3AE1F752073504400AD06D4 /* PVSaveStateCollectionViewCell~tvOS.xib */; platformFilters = (tvos, ); };
 		B30CC7D1294F3EFD005E367C /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; platformFilters = (tvos, ); };
@@ -179,7 +178,7 @@
 		B3270FBB27DCB62C00E83180 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D717C8D54D0019F6D2 /* libxml2.dylib */; };
 		B3270FBC27DCB62C00E83180 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270FB727DCB62C00E83180 /* libz.dylib */; };
 		B3271BDB276B8B2E0031AECC /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BDA276B8B2E0031AECC /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
-		B3271BDD276B8B660031AECC /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BDC276B8B660031AECC /* CoreTelephony.framework */; };
+		B3271BDD276B8B660031AECC /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BDC276B8B660031AECC /* CoreTelephony.framework */; platformFilters = (ios, maccatalyst, macos, ); };
 		B32746BE219BD65F00B78124 /* PVGameLibraryCollectionFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32746BC219BD65F00B78124 /* PVGameLibraryCollectionFlowLayout.swift */; };
 		B3290499270D1F95002707AC /* PVAppDelegate+NitoTV.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3290498270D1F95002707AC /* PVAppDelegate+NitoTV.swift */; };
 		B3296EAA26CABE880088AC32 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EAC26CABE880088AC32 /* Provenance.storyboard */; platformFilters = (ios, maccatalyst, ); };
@@ -187,7 +186,7 @@
 		B3296EB226CABEE00088AC32 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EB426CABEE00088AC32 /* Settings.storyboard */; platformFilters = (ios, maccatalyst, ); };
 		B3296EB526CABF250088AC32 /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EB726CABF250088AC32 /* Cheats.storyboard */; platformFilters = (ios, maccatalyst, ); };
 		B3296EBE26CABF9F0088AC32 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC026CABF9F0088AC32 /* Provenance.storyboard */; };
-		B3296EC326CABFB00088AC32 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC526CABFB00088AC32 /* Settings.storyboard */; };
+		B3296EC326CABFB00088AC32 /* Settings~tvOS.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC526CABFB00088AC32 /* Settings~tvOS.storyboard */; };
 		B3296EC826CABFCA0088AC32 /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ECA26CABFCA0088AC32 /* SaveStates.storyboard */; };
 		B3296ECF26CABFDE0088AC32 /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ED126CABFDE0088AC32 /* Cheats.storyboard */; };
 		B3296EDE26CAC27C0088AC32 /* PVGameLibraryCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3296EE026CAC27C0088AC32 /* PVGameLibraryCollectionViewCell.xib */; platformFilters = (ios, maccatalyst, ); };
@@ -195,6 +194,7 @@
 		B3296EE826CAC3ED0088AC32 /* Strings.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3296EEA26CAC3ED0088AC32 /* Strings.strings */; };
 		B32D8F801EA7FDB900175FBF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409717B2DCE4004DFFFC /* UIKit.framework */; };
 		B32D8F821EA7FDBE00175FBF /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
+		B33159FE294F5C57000CC10C /* PVAppDelegate+AppCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */; };
 		B33468D320AB347300092CA6 /* CenterFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D120AB347300092CA6 /* CenterFlowLayout.swift */; };
 		B33468D720AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D520AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift */; };
 		B33625FC26EDF88200DC41EA /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FA26EDF88200DC41EA /* MetalKit.framework */; };
@@ -398,7 +398,6 @@
 		B33F51D4294F22D0003AFCB2 /* AppCenterAnalytics in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, tvos, ); productRef = B33F51D3294F22D0003AFCB2 /* AppCenterAnalytics */; };
 		B33F51D6294F22D1003AFCB2 /* AppCenterCrashes in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, tvos, ); productRef = B33F51D5294F22D1003AFCB2 /* AppCenterCrashes */; };
 		B33F51D7294F230C003AFCB2 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6AE28781E9F0037A946 /* PVLibRetro.framework */; };
-		B33F51D8294F230C003AFCB2 /* PVLibRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6AE28781E9F0037A946 /* PVLibRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3411BF9276B37DE00D85327 /* PVDSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411BF7276B37DE00D85327 /* PVDSControllerViewController.swift */; };
 		B3411C23276B472900D85327 /* Icon.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C09276B470B00D85327 /* Icon.swift */; };
 		B3411C24276B472900D85327 /* RadioSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C0A276B470B00D85327 /* RadioSection.swift */; };
@@ -443,8 +442,6 @@
 		B343717E276B0FA40014F87C /* PVVectrexControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B343717C276B0FA40014F87C /* PVVectrexControllerViewController.swift */; };
 		B3475E66293CB6F300725A82 /* PVDesmume2015.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3475E65293CB6F200725A82 /* PVDesmume2015.framework */; };
 		B3475E67293CB6F300725A82 /* PVDesmume2015.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3475E65293CB6F200725A82 /* PVDesmume2015.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B34A60802947951E0070ED25 /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B34A6077294794860070ED25 /* libMoltenVK.dylib */; platformFilters = (ios, tvos, ); };
-		B34A60812947951E0070ED25 /* libMoltenVK.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B34A6077294794860070ED25 /* libMoltenVK.dylib */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B34DA3C8294F507F00EC897A /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34DA3C7294F507E00EC897A /* AppKit.framework */; platformFilter = maccatalyst; };
 		B34EADAF218824C3008F52EE /* PViCadeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37F421881CDC009D9244 /* PViCadeControllerViewController.swift */; };
 		B3532B2C21A78FB2006CDA0F /* PVSwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532B2A21A78FB2006CDA0F /* PVSwitchCell.swift */; };
@@ -576,8 +573,6 @@
 		B3A40C7221A67C7800544C20 /* PVGameLibrarySectionFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A40C7021A67C7800544C20 /* PVGameLibrarySectionFooterView.swift */; };
 		B3A70062288DD24000355823 /* PVEP128ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A70060288DD23F00355823 /* PVEP128ControllerViewController.swift */; };
 		B3A70066288DF1C400355823 /* PVMSXControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A70064288DF1BF00355823 /* PVMSXControllerViewController.swift */; };
-		B3AB13C129497DF5005DCCDE /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AB13C029497DF5005DCCDE /* libMoltenVK.dylib */; };
-		B3AB13C329497E0A005DCCDE /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AB13C229497E08005DCCDE /* libMoltenVK.dylib */; platformFilters = (maccatalyst, macos, ); };
 		B3AE1F762073504400AD06D4 /* PVSaveStateCollectionViewCell~tvOS.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3AE1F752073504400AD06D4 /* PVSaveStateCollectionViewCell~tvOS.xib */; };
 		B3AEDE1C293F2FF10050BDB6 /* PVPlay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B313544926E4C3B90047F338 /* PVPlay.framework */; platformFilters = (ios, tvos, ); };
 		B3AEDE1D293F2FF10050BDB6 /* PVPlay.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B313544926E4C3B90047F338 /* PVPlay.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -918,7 +913,6 @@
 			files = (
 				B3FAC92A292B4505005E8B11 /* PVFCEU.framework in Embed Frameworks */,
 				B37CE667293F23B60010B746 /* PVDosBox.framework in Embed Frameworks */,
-				B34A60812947951E0070ED25 /* libMoltenVK.dylib in Embed Frameworks */,
 				B3FAC93A292B4589005E8B11 /* PVMednafen.framework in Embed Frameworks */,
 				B3475E67293CB6F300725A82 /* PVDesmume2015.framework in Embed Frameworks */,
 				B3FAC952292B45A9005E8B11 /* PVSNES.framework in Embed Frameworks */,
@@ -989,17 +983,6 @@
 				B305F089276B5243003AE510 /* PVLibrary.framework in Embed Frameworks */,
 				B311B1C527A52F2000D1DE41 /* PVPokeMini.framework in Embed Frameworks */,
 				B305EF30276B4CB0003AE510 /* PVStella.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B33F51D9294F230E003AFCB2 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				B33F51D8294F230C003AFCB2 /* PVLibRetro.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1190,12 +1173,7 @@
 		B311B1D327A53E7400D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Strings.strings; sourceTree = "<group>"; };
 		B311B1D427A53E7500D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B311B1D527A53E7600D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ru; path = ru.lproj/Provenance.storyboard; sourceTree = "<group>"; };
-		B311B1D627A53E7700D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ru; path = ru.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
-		B311B1D727A53E7800D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ru; path = ru.lproj/Settings.storyboard; sourceTree = "<group>"; };
 		B311B1D827A53E7900D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ru; path = ru.lproj/Default.xib; sourceTree = "<group>"; };
-		B311B1D927A53E7B00D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ru; path = ru.lproj/Cheats.storyboard; sourceTree = "<group>"; };
-		B311B1DA27A53E7C00D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ru; path = ru.lproj/Provenance.storyboard; sourceTree = "<group>"; };
-		B311B1DB27A53E7D00D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ru; path = ru.lproj/Settings.storyboard; sourceTree = "<group>"; };
 		B311B1DC27A53E7E00D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ru; path = ru.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
 		B311B1DD27A53E7F00D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ru; path = ru.lproj/Cheats.storyboard; sourceTree = "<group>"; };
 		B311B1DE27A53E8000D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = ru; path = ../ru.lproj/Info.plist; sourceTree = "<group>"; };
@@ -1204,11 +1182,7 @@
 		B311B1E127A53F9E00D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B311B1E227A53F9E00D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ja; path = ja.lproj/Provenance.storyboard; sourceTree = "<group>"; };
 		B311B1E327A53F9F00D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ja; path = ja.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
-		B311B1E427A53FA000D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ja; path = ja.lproj/Settings.storyboard; sourceTree = "<group>"; };
 		B311B1E527A53FA000D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/Default.xib; sourceTree = "<group>"; };
-		B311B1E627A53FA100D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ja; path = ja.lproj/Cheats.storyboard; sourceTree = "<group>"; };
-		B311B1E727A53FA200D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ja; path = ja.lproj/Provenance.storyboard; sourceTree = "<group>"; };
-		B311B1E827A53FA200D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ja; path = ja.lproj/Settings.storyboard; sourceTree = "<group>"; };
 		B311B1E927A53FA300D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ja; path = ja.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
 		B311B1EA27A53FA400D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ja; path = ja.lproj/Cheats.storyboard; sourceTree = "<group>"; };
 		B311B1EB27A53FA400D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = ja; path = ../ja.lproj/Info.plist; sourceTree = "<group>"; };
@@ -1217,10 +1191,7 @@
 		B311B1EE27A53FC500D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B311B1EF27A53FC500D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = nl; path = nl.lproj/Provenance.storyboard; sourceTree = "<group>"; };
 		B311B1F027A53FC600D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = nl; path = nl.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
-		B311B1F127A53FC700D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = nl; path = nl.lproj/Settings.storyboard; sourceTree = "<group>"; };
 		B311B1F227A53FC700D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = nl; path = nl.lproj/Default.xib; sourceTree = "<group>"; };
-		B311B1F327A53FC800D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = nl; path = nl.lproj/Cheats.storyboard; sourceTree = "<group>"; };
-		B311B1F427A53FC900D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = nl; path = nl.lproj/Provenance.storyboard; sourceTree = "<group>"; };
 		B311B1F627A53FCA00D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = nl; path = nl.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
 		B311B1F727A53FCB00D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = nl; path = nl.lproj/Cheats.storyboard; sourceTree = "<group>"; };
 		B311B1F827A53FCB00D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = nl; path = ../nl.lproj/Info.plist; sourceTree = "<group>"; };
@@ -1229,11 +1200,7 @@
 		B311B1FB27A53FF000D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B311B1FC27A53FF100D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/Provenance.storyboard; sourceTree = "<group>"; };
 		B311B1FD27A53FF100D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
-		B311B1FE27A53FF200D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/Settings.storyboard; sourceTree = "<group>"; };
 		B311B1FF27A53FF300D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = it; path = it.lproj/Default.xib; sourceTree = "<group>"; };
-		B311B20027A53FF300D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/Cheats.storyboard; sourceTree = "<group>"; };
-		B311B20127A53FF400D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/Provenance.storyboard; sourceTree = "<group>"; };
-		B311B20227A53FF500D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/Settings.storyboard; sourceTree = "<group>"; };
 		B311B20327A53FF500D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
 		B311B20427A53FF600D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/Cheats.storyboard; sourceTree = "<group>"; };
 		B311B20527A53FF700D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = it; path = ../it.lproj/Info.plist; sourceTree = "<group>"; };
@@ -1315,10 +1282,9 @@
 		B3296EBD26CABF6D0088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/SaveStates.strings"; sourceTree = "<group>"; };
 		B3296EBF26CABF9F0088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Provenance.storyboard; sourceTree = "<group>"; };
 		B3296EC226CABFA70088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Provenance.strings"; sourceTree = "<group>"; };
-		B3296EC426CABFB00088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Settings.storyboard; sourceTree = "<group>"; };
-		B3296EC726CABFB90088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Settings.strings"; sourceTree = "<group>"; };
+		B3296EC426CABFB00088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = "en.lproj/Settings~tvOS.storyboard"; sourceTree = "<group>"; };
+		B3296EC726CABFB90088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Settings~tvOS.strings"; sourceTree = "<group>"; };
 		B3296ED026CABFDE0088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Cheats.storyboard; sourceTree = "<group>"; };
-		B3296EDB26CAC2220088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "zh-Hans"; path = "zh-Hans.lproj/SaveStates.storyboard"; sourceTree = "<group>"; };
 		B3296EDC26CAC2220088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
 		B3296EDD26CAC2320088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "zh-Hans"; path = "zh-Hans.lproj/Cheats.storyboard"; sourceTree = "<group>"; };
 		B3296EDF26CAC27C0088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/PVGameLibraryCollectionViewCell.xib; sourceTree = "<group>"; };
@@ -1377,10 +1343,8 @@
 		B344605A27DCB73E0035B08E /* libswift_Concurrency.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libswift_Concurrency.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/usr/lib/swift/libswift_Concurrency.tbd; sourceTree = DEVELOPER_DIR; };
 		B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVDreamcastControllerViewController.swift; sourceTree = "<group>"; };
 		B3475E65293CB6F200725A82 /* PVDesmume2015.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDesmume2015.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B34A6077294794860070ED25 /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = MoltenVK/MoltenVK/dylib/iOS/libMoltenVK.dylib; sourceTree = "<group>"; };
-		B34A607A294794960070ED25 /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = MoltenVK/MoltenVK/dylib/macOS/libMoltenVK.dylib; sourceTree = "<group>"; };
 		B34A607D294794B60070ED25 /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = MoltenVK/MoltenVK/MoltenVK.xcframework; sourceTree = "<group>"; };
-		B34DA3AE294F430400EC897A /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Settings.strings; sourceTree = "<group>"; };
+		B34DA3AE294F430400EC897A /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = "nl.lproj/Settings~tvOS.strings"; sourceTree = "<group>"; };
 		B34DA3C7294F507E00EC897A /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/AppKit.framework; sourceTree = DEVELOPER_DIR; };
 		B35104C32896646800FA401F /* PVBeetlePSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBeetlePSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B35104C62896648500FA401F /* PVVecX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVecX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1473,6 +1437,20 @@
 		B37263A626EA159400E95488 /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B37263A726EA159400E95488 /* PVMupen64PlusVideoRice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoRice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B37263A826EA159400E95488 /* PVRSPCXD4.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVRSPCXD4.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B373BD45294FE5CF00E7D845 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = "it.lproj/Settings~tvOS.strings"; sourceTree = "<group>"; };
+		B373BD46294FE5E200E7D845 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = "ja.lproj/Settings~tvOS.strings"; sourceTree = "<group>"; };
+		B373BD48294FE60900E7D845 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Settings~tvOS.strings"; sourceTree = "<group>"; };
+		B373BD49294FE62700E7D845 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Provenance.strings; sourceTree = "<group>"; };
+		B373BD4A294FE63A00E7D845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = "ru.lproj/Settings~tvOS.strings"; sourceTree = "<group>"; };
+		B373BD4B294FE65600E7D845 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Provenance.strings; sourceTree = "<group>"; };
+		B373BD4C294FE67000E7D845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Cheats.strings; sourceTree = "<group>"; };
+		B373BD4D294FE68200E7D845 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Cheats.strings; sourceTree = "<group>"; };
+		B373BD4E294FE6B200E7D845 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Provenance.strings; sourceTree = "<group>"; };
+		B373BD4F294FE6F600E7D845 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Cheats.strings; sourceTree = "<group>"; };
+		B373BD50294FE70E00E7D845 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Cheats.strings; sourceTree = "<group>"; };
+		B373BD51294FE73D00E7D845 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = "es.lproj/Settings~tvOS.strings"; sourceTree = "<group>"; };
+		B373BD52294FE77A00E7D845 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Cheats.strings; sourceTree = "<group>"; };
+		B373BD53294FE7AE00E7D845 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/SaveStates.strings"; sourceTree = "<group>"; };
 		B378224921D329EC0077E86F /* SettingsRowSwitch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRowSwitch.swift; sourceTree = "<group>"; };
 		B378224D21D32A360077E86F /* SegueNavigationRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegueNavigationRow.swift; sourceTree = "<group>"; };
 		B378225321D32AD60077E86F /* SliderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderCell.swift; sourceTree = "<group>"; };
@@ -1555,8 +1533,6 @@
 		B3A4FB65278FFB6600A65248 /* Result+Conveniences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Result+Conveniences.swift"; sourceTree = "<group>"; };
 		B3A70060288DD23F00355823 /* PVEP128ControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVEP128ControllerViewController.swift; sourceTree = "<group>"; };
 		B3A70064288DF1BF00355823 /* PVMSXControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVMSXControllerViewController.swift; sourceTree = "<group>"; };
-		B3AB13C029497DF5005DCCDE /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = MoltenVK/MoltenVK/dylib/tvOS/libMoltenVK.dylib; sourceTree = "<group>"; };
-		B3AB13C229497E08005DCCDE /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = MoltenVK/MoltenVK/dylib/macOS/libMoltenVK.dylib; sourceTree = "<group>"; };
 		B3AB371E2187F568009D9244 /* PVSNESControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVSNESControllerViewController.swift; sourceTree = "<group>"; };
 		B3AB371F2187F568009D9244 /* PVAtari2600ControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVAtari2600ControllerViewController.swift; sourceTree = "<group>"; };
 		B3AB37202187F568009D9244 /* PVGBControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVGBControllerViewController.swift; sourceTree = "<group>"; };
@@ -1630,12 +1606,7 @@
 		B3CEC5A62794CD8C004A7CC1 /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Strings.strings; sourceTree = "<group>"; };
 		B3CEC5A72794CD8D004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B3CEC5A82794CD8E004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = es; path = es.lproj/Provenance.storyboard; sourceTree = "<group>"; };
-		B3CEC5A92794CD8E004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = es; path = es.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
-		B3CEC5AA2794CD8F004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = es; path = es.lproj/Settings.storyboard; sourceTree = "<group>"; };
 		B3CEC5AB2794CD90004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = es; path = es.lproj/Default.xib; sourceTree = "<group>"; };
-		B3CEC5AC2794CD91004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = es; path = es.lproj/Cheats.storyboard; sourceTree = "<group>"; };
-		B3CEC5AD2794CD92004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = es; path = es.lproj/Provenance.storyboard; sourceTree = "<group>"; };
-		B3CEC5AE2794CD92004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = es; path = es.lproj/Settings.storyboard; sourceTree = "<group>"; };
 		B3CEC5AF2794CD93004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = es; path = es.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
 		B3CEC5B02794CD94004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = es; path = es.lproj/Cheats.storyboard; sourceTree = "<group>"; };
 		B3CEC5B12794CD94004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = es; path = ../es.lproj/Info.plist; sourceTree = "<group>"; };
@@ -1709,6 +1680,15 @@
 		B3F64ED4205CD21400C273C7 /* PVControllerManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVControllerManager.swift; sourceTree = "<group>"; };
 		B3F64ED7205CD21F00C273C7 /* PVControllerSelectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVControllerSelectionViewController.swift; sourceTree = "<group>"; };
 		B3F7BE78204A289B000D0B4D /* PVConflictViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVConflictViewController.swift; sourceTree = "<group>"; };
+		B3FEBFE5294FE8D90097D613 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Settings.strings; sourceTree = "<group>"; };
+		B3FEBFE6294FE8FE0097D613 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Provenance.strings; sourceTree = "<group>"; };
+		B3FEBFE7294FE92C0097D613 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Provenance.strings; sourceTree = "<group>"; };
+		B3FEBFE8294FE9900097D613 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Settings.strings; sourceTree = "<group>"; };
+		B3FEBFE9294FE9A70097D613 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Settings.strings; sourceTree = "<group>"; };
+		B3FEBFEA294FE9EF0097D613 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Settings.strings; sourceTree = "<group>"; };
+		B3FEBFEB294FEA1A0097D613 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Settings.strings; sourceTree = "<group>"; };
+		B3FEBFEC294FF08E0097D613 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/SaveStates.strings; sourceTree = "<group>"; };
+		B3FEBFED294FF1300097D613 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/SaveStates.strings; sourceTree = "<group>"; };
 		B3FF641C2873EAEB00829C14 /* PVYabause.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVYabause.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3FF642F2873EC8000829C14 /* PVPotator.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPotator.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TopShelf.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1738,8 +1718,6 @@
 			files = (
 				B357A43A27092254002C7C0F /* AppCenterCrashes in Frameworks */,
 				B3AEDE20293F34250050BDB6 /* PVReicast.framework in Frameworks */,
-				B34A60802947951E0070ED25 /* libMoltenVK.dylib in Frameworks */,
-				B3AB13C329497E0A005DCCDE /* libMoltenVK.dylib in Frameworks */,
 				B3FAC92D292B450C005E8B11 /* PVGB.framework in Frameworks */,
 				B3FAC927292B4501005E8B11 /* PVEP128Emu.framework in Frameworks */,
 				B3271BDD276B8B660031AECC /* CoreTelephony.framework in Frameworks */,
@@ -1817,7 +1795,6 @@
 				B3FAC99A292B476E005E8B11 /* PVLibRetro.framework in Frameworks */,
 				B324C619219203A5009F4EDC /* libsqlite3.tbd in Frameworks */,
 				B3FAC9B4292B4784005E8B11 /* PVSNES.framework in Frameworks */,
-				B3AB13C129497DF5005DCCDE /* libMoltenVK.dylib in Frameworks */,
 				B3CE94B7293446AC0053B891 /* Introspect in Frameworks */,
 				B3FAC9A4292B4778005E8B11 /* PVMupen64Plus.framework in Frameworks */,
 				B324C6172192038C009F4EDC /* libxml2.tbd in Frameworks */,
@@ -2114,11 +2091,7 @@
 				B33F51C7294F1D5C003AFCB2 /* UIKit.framework */,
 				B33F51BF294F1CFC003AFCB2 /* PVSupport.framework */,
 				B33F51BB294F1CF1003AFCB2 /* PVLibrary.framework */,
-				B3AB13C229497E08005DCCDE /* libMoltenVK.dylib */,
-				B3AB13C029497DF5005DCCDE /* libMoltenVK.dylib */,
 				B34A607D294794B60070ED25 /* MoltenVK.xcframework */,
-				B34A6077294794860070ED25 /* libMoltenVK.dylib */,
-				B34A607A294794960070ED25 /* libMoltenVK.dylib */,
 				B3DEEF942942F96900A6957C /* PVBliss.framework */,
 				B3DEEF912942F92C00A6957C /* PVBliss.framework */,
 				B3AEE311293F3BA30050BDB6 /* PVMu.framework */,
@@ -2997,7 +2970,7 @@
 			isa = PBXGroup;
 			children = (
 				B3296EC026CABF9F0088AC32 /* Provenance.storyboard */,
-				B3296EC526CABFB00088AC32 /* Settings.storyboard */,
+				B3296EC526CABFB00088AC32 /* Settings~tvOS.storyboard */,
 				B3296ECA26CABFCA0088AC32 /* SaveStates.storyboard */,
 				B3296ED126CABFDE0088AC32 /* Cheats.storyboard */,
 			);
@@ -3556,7 +3529,6 @@
 				B33F50EB294F19D3003AFCB2 /* Sources */,
 				B33F50EC294F19D3003AFCB2 /* Frameworks */,
 				B33F50ED294F19D3003AFCB2 /* Resources */,
-				B33F51D9294F230E003AFCB2 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -4006,7 +3978,7 @@
 				B30CC7CB294F3E9B005E367C /* Provenance.storyboard in Resources */,
 				B36703762896314300F75595 /* OmniScaleLegacy.fsh in Resources */,
 				B307830628924D69007E7A2D /* GLES in Resources */,
-				B30CC7CE294F3E9C005E367C /* Settings.storyboard in Resources */,
+				B30CC7CE294F3E9C005E367C /* Settings~tvOS.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4037,7 +4009,7 @@
 				1AD482361BA35A2D00FDA50A /* Assets.xcassets in Resources */,
 				B367036B2896314200F75595 /* LCD.fsh in Resources */,
 				B3F43DD02168075200CDD40A /* Settings.bundle in Resources */,
-				B3296EC326CABFB00088AC32 /* Settings.storyboard in Resources */,
+				B3296EC326CABFB00088AC32 /* Settings~tvOS.storyboard in Resources */,
 				B36703672896314200F75595 /* MasterShader.fsh in Resources */,
 				B367035D2896314200F75595 /* AAScale2x.fsh in Resources */,
 				B36703772896314300F75595 /* OmniScaleLegacy.fsh in Resources */,
@@ -4618,7 +4590,6 @@
 				B33F51BA294F1A1F003AFCB2 /* PVGenesisControllerViewController.swift in Sources */,
 				B33F5191294F1A1F003AFCB2 /* GCDWebServerFunctions.m in Sources */,
 				B33F514E294F1A1E003AFCB2 /* PVGameMoreInfoViewController.swift in Sources */,
-				B30CC7BA294F2635005E367C /* PVAppDelegate+AppCenter.swift in Sources */,
 				B33F510C294F1A1E003AFCB2 /* PVCheatsHeaderView.swift in Sources */,
 				B33F50FF294F1A1E003AFCB2 /* SwitchRow.swift in Sources */,
 				B33F5105294F1A1E003AFCB2 /* PVRootViewModel.swift in Sources */,
@@ -4692,6 +4663,7 @@
 				B33F5134294F1A1E003AFCB2 /* PVGameLibraryViewController.swift in Sources */,
 				B33F5139294F1A1E003AFCB2 /* PVAppDelegate+VolumeButton.swift in Sources */,
 				B33F51A1294F1A1F003AFCB2 /* PVGameLibraryCollectionFlowLayout.swift in Sources */,
+				B33159FE294F5C57000CC10C /* PVAppDelegate+AppCenter.swift in Sources */,
 				B33F5155294F1A1E003AFCB2 /* PVAtari5200ControllerViewController.swift in Sources */,
 				B33F5120294F1A1E003AFCB2 /* PVSaveStatesViewController.swift in Sources */,
 				B33F51A0294F1A1F003AFCB2 /* PVGameCubeControllerViewController.swift in Sources */,
@@ -4994,11 +4966,11 @@
 			children = (
 				B3296EB026CABEA80088AC32 /* en */,
 				B3296EBD26CABF6D0088AC32 /* zh-Hans */,
-				B3CEC5A92794CD8E004A7CC1 /* es */,
-				B311B1D627A53E7700D1DE41 /* ru */,
 				B311B1E327A53F9F00D1DE41 /* ja */,
 				B311B1F027A53FC600D1DE41 /* nl */,
 				B311B1FD27A53FF100D1DE41 /* it */,
+				B3FEBFEC294FF08E0097D613 /* es */,
+				B3FEBFED294FF1300097D613 /* ru */,
 			);
 			name = SaveStates.storyboard;
 			sourceTree = "<group>";
@@ -5008,11 +4980,11 @@
 			children = (
 				B3296EB326CABEE00088AC32 /* en */,
 				B3296EB926CABF300088AC32 /* zh-Hans */,
-				B3CEC5AA2794CD8F004A7CC1 /* es */,
-				B311B1D727A53E7800D1DE41 /* ru */,
-				B311B1E427A53FA000D1DE41 /* ja */,
-				B311B1F127A53FC700D1DE41 /* nl */,
-				B311B1FE27A53FF200D1DE41 /* it */,
+				B3FEBFE5294FE8D90097D613 /* es */,
+				B3FEBFE8294FE9900097D613 /* ru */,
+				B3FEBFE9294FE9A70097D613 /* ja */,
+				B3FEBFEA294FE9EF0097D613 /* it */,
+				B3FEBFEB294FEA1A0097D613 /* nl */,
 			);
 			name = Settings.storyboard;
 			sourceTree = "<group>";
@@ -5022,11 +4994,11 @@
 			children = (
 				B3296EB626CABF250088AC32 /* en */,
 				B3296EBB26CABF340088AC32 /* zh-Hans */,
-				B3CEC5AC2794CD91004A7CC1 /* es */,
-				B311B1D927A53E7B00D1DE41 /* ru */,
-				B311B1E627A53FA100D1DE41 /* ja */,
-				B311B1F327A53FC800D1DE41 /* nl */,
-				B311B20027A53FF300D1DE41 /* it */,
+				B373BD4C294FE67000E7D845 /* ru */,
+				B373BD4D294FE68200E7D845 /* es */,
+				B373BD4F294FE6F600E7D845 /* ja */,
+				B373BD50294FE70E00E7D845 /* it */,
+				B373BD52294FE77A00E7D845 /* nl */,
 			);
 			name = Cheats.storyboard;
 			sourceTree = "<group>";
@@ -5036,39 +5008,40 @@
 			children = (
 				B3296EBF26CABF9F0088AC32 /* en */,
 				B3296EC226CABFA70088AC32 /* zh-Hans */,
-				B3CEC5AD2794CD92004A7CC1 /* es */,
-				B311B1DA27A53E7C00D1DE41 /* ru */,
-				B311B1E727A53FA200D1DE41 /* ja */,
-				B311B1F427A53FC900D1DE41 /* nl */,
-				B311B20127A53FF400D1DE41 /* it */,
+				B373BD49294FE62700E7D845 /* nl */,
+				B373BD4B294FE65600E7D845 /* it */,
+				B373BD4E294FE6B200E7D845 /* ja */,
+				B3FEBFE6294FE8FE0097D613 /* ru */,
+				B3FEBFE7294FE92C0097D613 /* es */,
 			);
 			name = Provenance.storyboard;
 			sourceTree = "<group>";
 		};
-		B3296EC526CABFB00088AC32 /* Settings.storyboard */ = {
+		B3296EC526CABFB00088AC32 /* Settings~tvOS.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				B3296EC426CABFB00088AC32 /* en */,
 				B3296EC726CABFB90088AC32 /* zh-Hans */,
-				B3CEC5AE2794CD92004A7CC1 /* es */,
-				B311B1DB27A53E7D00D1DE41 /* ru */,
-				B311B1E827A53FA200D1DE41 /* ja */,
-				B311B20227A53FF500D1DE41 /* it */,
 				B34DA3AE294F430400EC897A /* nl */,
+				B373BD45294FE5CF00E7D845 /* it */,
+				B373BD46294FE5E200E7D845 /* ja */,
+				B373BD48294FE60900E7D845 /* pt-BR */,
+				B373BD4A294FE63A00E7D845 /* ru */,
+				B373BD51294FE73D00E7D845 /* es */,
 			);
-			name = Settings.storyboard;
+			name = "Settings~tvOS.storyboard";
 			sourceTree = "<group>";
 		};
 		B3296ECA26CABFCA0088AC32 /* SaveStates.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				B3296EDB26CAC2220088AC32 /* zh-Hans */,
 				B3296EDC26CAC2220088AC32 /* en */,
 				B3CEC5AF2794CD93004A7CC1 /* es */,
 				B311B1DC27A53E7E00D1DE41 /* ru */,
 				B311B1E927A53FA300D1DE41 /* ja */,
 				B311B1F627A53FCA00D1DE41 /* nl */,
 				B311B20327A53FF500D1DE41 /* it */,
+				B373BD53294FE7AE00E7D845 /* zh-Hans */,
 			);
 			name = SaveStates.storyboard;
 			sourceTree = "<group>";
@@ -5332,6 +5305,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
+					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/tvOS",
 				);
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = "-Wno-deprecated-declarations";
@@ -5339,6 +5313,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -5392,6 +5367,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
+					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/tvOS",
 				);
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = (
@@ -5402,6 +5378,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -6280,8 +6257,10 @@
 				);
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVApp";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = auto;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
@@ -6335,8 +6314,10 @@
 				);
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVApp";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = auto;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
@@ -6389,8 +6370,10 @@
 				);
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVApp";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = auto;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
@@ -7328,6 +7311,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
+					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/tvOS",
 				);
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = (
@@ -7338,6 +7322,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;

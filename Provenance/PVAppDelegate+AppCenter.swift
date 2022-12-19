@@ -7,12 +7,12 @@
 //
 
 import Foundation
-
-#if canImport(AppCenter)
-import AppCenter
-import AppCenterAnalytics
-import AppCenterCrashes
 import PVSupport
+
+#if canImport(AppCenter) && canImport(AppCenterAnalytics)
+@_exported import AppCenter
+@_exported import AppCenterAnalytics
+@_exported import AppCenterCrashes
 
 extension PVAppDelegate {
     public func _initAppCenter() {
@@ -20,7 +20,10 @@ extension PVAppDelegate {
             ELOG("No value for Info.plist key 'appcenter'")
             return
         }
-//        AppCenter.start(withAppSecret:"ios={Your iOS App Secret};macos={Your macOS App Secret}", services: [Analytics.self, Crashes.self])
+        // TODO: This isn't linking in tvOS, but only when building the app. Building PVApp.framework for tvOS links fine.
+        // probaby some stupid objc / swiftpm bug.
+        #if !os(tvOS)
+        //        AppCenter.start(withAppSecret:"ios={Your iOS App Secret};macos={Your macOS App Secret}", services: [Analytics.self, Crashes.self])
         AppCenter.configure(withAppSecret: secretKey)
         if AppCenter.isConfigured {
             AppCenter.startService(Analytics.self)
@@ -29,6 +32,7 @@ extension PVAppDelegate {
         } else {
             ELOG("AppCenter not configured.")
         }
+        #endif
     }
 }
 #else

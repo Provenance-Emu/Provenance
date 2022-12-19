@@ -65,6 +65,10 @@
 	<true/>
 	<key>com.apple.security.personal-information.photos-library</key>
 	<true/>
+	<key>get-task-allow</key>
+	<true/>
+	<key>dynamic-codesigning</key>
+	<true/>
 	<key>keychain-access-groups</key>
 	<array>
 		<string>$(AppIdentifierPrefix)org.provenance-emu.provenance</string>
