@@ -53,13 +53,13 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
             // convert space to +
             var regex = try! NSRegularExpression(pattern: "[^a-zA-Z0-9-:+]+|[\\s]+", options: NSRegularExpression.Options.caseInsensitive)
             var range = NSRange(location: 0, length: code.count)
-            var modString = regex.stringByReplacingMatches(in: code, options: [], range: range, withTemplate: "+")
+            var modString = regex.stringByReplacingMatches(in: code.uppercased(), options: [], range: range, withTemplate: "+")
             // clean +++
             regex = try! NSRegularExpression(pattern: "[+]+|[\\s]+", options: NSRegularExpression.Options.caseInsensitive)
             range = NSRange(location: 0, length: modString.count)
             modString = regex.stringByReplacingMatches(in: modString, options: [], range: range, withTemplate: "+")
             // clean + at front and back of code
-            regex = try! NSRegularExpression(pattern: "^[+]+|:|[+]+$", options: NSRegularExpression.Options.caseInsensitive)
+            regex = try! NSRegularExpression(pattern: "^[+]+|[+]+$", options: NSRegularExpression.Options.caseInsensitive)
             range = NSRange(location: 0, length: modString.count)
             modString = regex.stringByReplacingMatches(in: modString, options: [], range: range, withTemplate: "")
             NSLog("Formatted CheatCode \(modString)")
@@ -194,6 +194,13 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
 }
 
 @objc extension PVEmulatorCore {
+    @objc public func setCheat(
+        code: String,
+        type: String,
+        enabled: Bool
+    ) -> Bool {
+        return false
+    }
     @objc public func supportsCheatCode() -> Bool
     {
         return false
@@ -210,6 +217,6 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
         cheatIndex: UInt8,
         enabled: Bool
     ) -> Bool {
-        return false
+        return self.setCheat(code:code, type:type, enabled:enabled)
     }
 }
