@@ -703,16 +703,17 @@ static bool environment_callback(unsigned cmd, void *data)
     // GameGear
     if([[self systemIdentifier] isEqualToString:@"com.provenance.gamegear"]) {
         
-        return config.gg_extra ? CGSizeMake(256, 192): CGSizeMake(160, 144);
+        return config.gg_extra ? CGSizeMake(256.0, 192.0): CGSizeMake(160.0, 144.0);
     }
     // Master System
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.mastersystem"] || [[self systemIdentifier] isEqualToString:@"com.provenance.sg1000"]) {
-        float ratio = 8.0/7.0;
-        return CGSizeMake(256 * ratio, 192);
+        float ratio = 8.0 / 7.0;
+        return CGSizeMake(256.0 * ratio, 192.0);
     }
     // Genesis/Megadrive
     else {
-        return CGSizeMake(_videoWidth, _videoHeight);
+        float ratio =  32.0 / 35.0;
+        return CGSizeMake( ((320.0 / 224.0) * ratio), 1.0);
     }
 }
  
